@@ -168,6 +168,24 @@
                 <unique-key name="UK_MNT_EQUIPMENT_CODE_ORG" columns="code,orgId"/>
                 <unique-key name="UK_MNT_EQUIPMENT_SERIAL_NO" columns="serialNo"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MNT_EQUIPMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_EQUIPMENT_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_MNT_EQUIPMENT_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+                <index name="IDX_MNT_EQUIPMENT_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_MNT_EQUIPMENT_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 设备分类 -->
@@ -193,6 +211,11 @@
             <unique-keys>
                 <unique-key name="UK_MNT_EQUIPMENT_CATEGORY_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MNT_EQUIPMENT_CATEGORY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 维护计划 -->
@@ -226,6 +249,11 @@
             <unique-keys>
                 <unique-key name="UK_MNT_SCHEDULE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MNT_SCHEDULE_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 维护访问 -->
@@ -272,6 +300,22 @@
             <unique-keys>
                 <unique-key name="UK_MNT_VISIT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MNT_VISIT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_VISIT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MNT_VISIT_SCHEDULE_ID" unique="false">
+                    <column name="scheduleId"/>
+                </index>
+                <index name="IDX_MNT_VISIT_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 维护任务 -->
@@ -297,6 +341,14 @@
             <relations>
                 <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub" i18n-en:displayName='Visit'><join><on leftProp="visitId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MNT_VISIT_TASK_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_VISIT_TASK_VISIT_ID" unique="false">
+                    <column name="visitId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 维护请求 -->
@@ -330,6 +382,14 @@
             <unique-keys>
                 <unique-key name="UK_MNT_REQUEST_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MNT_REQUEST_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_REQUEST_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 停机记录 -->
@@ -358,6 +418,14 @@
                     <join><on leftProp="relatedJobOrderId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MNT_DOWNTIME_ENTRY_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+                <index name="IDX_MNT_DOWNTIME_ENTRY_RELATED_JOB_ORDER_ID" unique="false">
+                    <column name="relatedJobOrderId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 维护团队 -->
@@ -389,6 +457,11 @@
             <unique-keys>
                 <unique-key name="UK_MNT_MAINTENANCE_TEAM_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MNT_MAINTENANCE_TEAM_LEADER_ID" unique="false">
+                    <column name="leaderId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 维护团队成员 -->
@@ -413,6 +486,14 @@
                 <to-one name="team" refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
                 <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Employee'><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MNT_MAINTENANCE_TEAM_MEMBER_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_MNT_MAINTENANCE_TEAM_MEMBER_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 备件消耗行（维修消耗备件触发 inventory 出库） -->
@@ -459,6 +540,28 @@
             <unique-keys>
                 <unique-key name="UK_MNT_SPARE_PART_USAGE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MNT_SPARE_PART_USAGE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_VISIT_ID" unique="false">
+                    <column name="visitId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_REQUEST_ID" unique="false">
+                    <column name="requestId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 备件消耗行 -->
@@ -488,6 +591,17 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MNT_SPARE_PART_USAGE_LINE_SPARE_PART_USAGE_ID" unique="false">
+                    <column name="sparePartUsageId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 校准记录（量具/设备校准） -->
@@ -529,6 +643,19 @@
             <unique-keys>
                 <unique-key name="UK_MNT_CALIBRATION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MNT_CALIBRATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_MNT_CALIBRATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MNT_CALIBRATION_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

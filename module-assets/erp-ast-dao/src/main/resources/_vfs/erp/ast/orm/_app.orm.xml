@@ -161,6 +161,30 @@
                         precision="20" propId="28" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Net Book Value"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_ASSET_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_AST_ASSET_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_AST_ASSET_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_AST_ASSET_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_AST_ASSET_STAFF_ID" unique="false">
+                    <column name="staffId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub"
                         i18n-en:displayName="Category">
@@ -256,6 +280,23 @@
                 <column code="CIP_SUBJECT_ID" displayName="在建工程科目" name="cipSubjectId" propId="17" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="CIP Subject"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_ASSET_CATEGORY_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_DEPRECIATION_SUBJECT_ID" unique="false">
+                    <column name="depreciationSubjectId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_EXPENSE_SUBJECT_ID" unique="false">
+                    <column name="expenseSubjectId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_DISPOSAL_GAIN_LOSS_SUBJECT_ID" unique="false">
+                    <column name="disposalGainLossSubjectId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_CIP_SUBJECT_ID" unique="false">
+                    <column name="cipSubjectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
                         i18n-en:displayName="Subject">
@@ -361,6 +402,25 @@
                         precision="20" propId="25" scale="4" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
                         i18n-en:displayName="Asset">
@@ -464,6 +524,43 @@
                         precision="20" propId="205" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_MOVEMENT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_FROM_DEPARTMENT_ID" unique="false">
+                    <column name="fromDepartmentId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_TO_DEPARTMENT_ID" unique="false">
+                    <column name="toDepartmentId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_FROM_STAFF_ID" unique="false">
+                    <column name="fromStaffId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_TO_STAFF_ID" unique="false">
+                    <column name="toStaffId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_FROM_LOCATION_ID" unique="false">
+                    <column name="fromLocationId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_TO_LOCATION_ID" unique="false">
+                    <column name="toLocationId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_HANDLER_ID" unique="false">
+                    <column name="handlerId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
                         i18n-en:displayName="Asset">
@@ -600,6 +697,22 @@
                         precision="20" propId="26" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_VALUE_ADJUSTMENT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_VALUE_ADJUSTMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_VALUE_ADJUSTMENT_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_VALUE_ADJUSTMENT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
                         i18n-en:displayName="Asset">
@@ -695,6 +808,22 @@
                         precision="20" propId="28" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_DISPOSAL_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_DISPOSAL_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_DISPOSAL_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_DISPOSAL_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
                         i18n-en:displayName="Asset">
@@ -795,6 +924,22 @@
                         precision="20" propId="29" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_ASSET_CAPITALIZATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_ASSET_CAPITALIZATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_ASSET_CAPITALIZATION_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CAPITALIZATION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub"
                         i18n-en:displayName="Category">
@@ -884,6 +1029,25 @@
                         precision="20" propId="25" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_CIP_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_AST_CIP_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_CIP_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_AST_CIP_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_AST_CIP_COMPLETED_ASSET_ID" unique="false">
+                    <column name="completedAssetId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub"
                         i18n-en:displayName="Category">
@@ -977,6 +1141,22 @@
                         precision="20" propId="24" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_SPLIT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_SPLIT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_SPLIT_SOURCE_ASSET_ID" unique="false">
+                    <column name="sourceAssetId"/>
+                </index>
+                <index name="IDX_AST_SPLIT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="sourceAsset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
                         i18n-en:displayName="Source Asset">
@@ -1064,6 +1244,22 @@
                         precision="20" propId="24" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_AST_MERGE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_MERGE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_MERGE_TARGET_ASSET_ID" unique="false">
+                    <column name="targetAssetId"/>
+                </index>
+                <index name="IDX_AST_MERGE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="targetAsset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
                         i18n-en:displayName="Target Asset">

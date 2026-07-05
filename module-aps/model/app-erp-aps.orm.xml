@@ -91,6 +91,21 @@
             <unique-keys>
                 <unique-key name="UK_APS_OPERATION_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_APS_OPERATION_ORDER_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_APS_OPERATION_ORDER_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+                <index name="IDX_APS_OPERATION_ORDER_MACHINE_ID" unique="false">
+                    <column name="machineId"/>
+                </index>
+                <index name="IDX_APS_OPERATION_ORDER_ASSIGNED_TO_ID" unique="false">
+                    <column name="assignedToId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 排产方案 -->
@@ -121,6 +136,12 @@
             <unique-keys>
                 <unique-key name="UK_APS_SCHEDULE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_APS_SCHEDULE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 排产约束 -->
@@ -146,6 +167,11 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_APS_CONSTRAINT_MACHINE_ID" unique="false">
+                    <column name="machineId"/>
+                </index>
+            </indexes>
         </entity>
     
         <!-- 替代工艺路线 -->
@@ -177,6 +203,14 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_APS_OP_ROUTING_OPERATION_ID" unique="false">
+                    <column name="operationId"/>
+                </index>
+                <index name="IDX_APS_OP_ROUTING_MACHINE_ID" unique="false">
+                    <column name="machineId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 自动派工规则 -->
@@ -211,6 +245,11 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_APS_DISPATCH_RULE_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 派工日志 -->
@@ -245,6 +284,14 @@
                     <join><on leftProp="operationOrderId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_APS_DISPATCH_LOG_OPERATION_ORDER_ID" unique="false">
+                    <column name="operationOrderId"/>
+                </index>
+                <index name="IDX_APS_DISPATCH_LOG_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->

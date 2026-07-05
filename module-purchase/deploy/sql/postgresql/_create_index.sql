@@ -1,0 +1,94 @@
+-- app-erp-purchase indexes generated from model/app-erp-purchase.orm.xml
+-- Dialect: postgresql.
+-- This file is maintained separately from _create_erp-purchase.sql because the
+-- platform _create.sql.xgen template (ddl.xlib CreateTables) does not emit CREATE INDEX.
+-- Runtime: ddl.xlib AddIndex also applies these at app startup from the ORM model.
+-- Run AFTER _create_erp-purchase.sql during manual production deployment.
+-- Source of truth: model <indexes> definitions (86 indexes).
+-- Regenerate: node scripts/add-orm-indexes.js
+CREATE INDEX IDX_PUR_REQUISITION_ORG_DOC_STATUS ON erp_pur_requisition (org_id, doc_status);
+CREATE INDEX IDX_PUR_REQUISITION_ORG_BUSINESS_DATE ON erp_pur_requisition (org_id, business_date);
+CREATE INDEX IDX_PUR_REQUISITION_REQUESTER_ID ON erp_pur_requisition (requester_id);
+CREATE INDEX IDX_PUR_REQUISITION_DEPARTMENT_ID ON erp_pur_requisition (department_id);
+CREATE INDEX IDX_PUR_REQUISITION_LINE_REQUISITION_ID ON erp_pur_requisition_line (requisition_id);
+CREATE INDEX IDX_PUR_REQUISITION_LINE_MATERIAL_ID ON erp_pur_requisition_line (material_id);
+CREATE INDEX IDX_PUR_REQUISITION_LINE_UO_M_ID ON erp_pur_requisition_line (uo_m_id);
+CREATE INDEX IDX_PUR_REQUISITION_LINE_SUGGESTED_SUPPLIER_ID ON erp_pur_requisition_line (suggested_supplier_id);
+CREATE INDEX IDX_PUR_REQUISITION_LINE_PROJECT_ID ON erp_pur_requisition_line (project_id);
+CREATE INDEX IDX_PUR_RFQ_ORG_DOC_STATUS ON erp_pur_rfq (org_id, doc_status);
+CREATE INDEX IDX_PUR_RFQ_ORG_BUSINESS_DATE ON erp_pur_rfq (org_id, business_date);
+CREATE INDEX IDX_PUR_RFQ_REQUISITION_ID ON erp_pur_rfq (requisition_id);
+CREATE INDEX IDX_PUR_RFQ_LINE_RFQ_ID ON erp_pur_rfq_line (rfq_id);
+CREATE INDEX IDX_PUR_RFQ_LINE_MATERIAL_ID ON erp_pur_rfq_line (material_id);
+CREATE INDEX IDX_PUR_RFQ_LINE_UO_M_ID ON erp_pur_rfq_line (uo_m_id);
+CREATE INDEX IDX_PUR_QUOTATION_ORG_DOC_STATUS ON erp_pur_quotation (org_id, doc_status);
+CREATE INDEX IDX_PUR_QUOTATION_ORG_BUSINESS_DATE ON erp_pur_quotation (org_id, business_date);
+CREATE INDEX IDX_PUR_QUOTATION_RFQ_ID ON erp_pur_quotation (rfq_id);
+CREATE INDEX IDX_PUR_QUOTATION_SUPPLIER_ID ON erp_pur_quotation (supplier_id);
+CREATE INDEX IDX_PUR_QUOTATION_CURRENCY_ID ON erp_pur_quotation (currency_id);
+CREATE INDEX IDX_PUR_QUOTATION_LINE_QUOTATION_ID ON erp_pur_quotation_line (quotation_id);
+CREATE INDEX IDX_PUR_QUOTATION_LINE_MATERIAL_ID ON erp_pur_quotation_line (material_id);
+CREATE INDEX IDX_PUR_QUOTATION_LINE_UO_M_ID ON erp_pur_quotation_line (uo_m_id);
+CREATE INDEX IDX_PUR_SUPPLIER_PRICE_LIST_SUPPLIER_ID ON erp_pur_supplier_price_list (supplier_id);
+CREATE INDEX IDX_PUR_SUPPLIER_PRICE_LIST_MATERIAL_ID ON erp_pur_supplier_price_list (material_id);
+CREATE INDEX IDX_PUR_SUPPLIER_PRICE_LIST_UO_M_ID ON erp_pur_supplier_price_list (uo_m_id);
+CREATE INDEX IDX_PUR_SUPPLIER_PRICE_LIST_CURRENCY_ID ON erp_pur_supplier_price_list (currency_id);
+CREATE INDEX IDX_PUR_SUPPLIER_SCORECARD_ORG_STATUS ON erp_pur_supplier_scorecard (org_id, status);
+CREATE INDEX IDX_PUR_SUPPLIER_SCORECARD_PARTNER_ID ON erp_pur_supplier_scorecard (partner_id);
+CREATE INDEX IDX_PUR_SUPPLIER_SCORECARD_CRITERIA_SCORECARD_ID ON erp_pur_supplier_scorecard_criteria (scorecard_id);
+CREATE INDEX IDX_PUR_SUPPLIER_SCORECARD_VARIABLE_CRITERIA_ID ON erp_pur_supplier_scorecard_variable (criteria_id);
+CREATE INDEX IDX_PUR_ORDER_ORG_DOC_STATUS ON erp_pur_order (org_id, doc_status);
+CREATE INDEX IDX_PUR_ORDER_ORG_BUSINESS_DATE ON erp_pur_order (org_id, business_date);
+CREATE INDEX IDX_PUR_ORDER_REQUISITION_ID ON erp_pur_order (requisition_id);
+CREATE INDEX IDX_PUR_ORDER_QUOTATION_ID ON erp_pur_order (quotation_id);
+CREATE INDEX IDX_PUR_ORDER_SUPPLIER_ID ON erp_pur_order (supplier_id);
+CREATE INDEX IDX_PUR_ORDER_WAREHOUSE_ID ON erp_pur_order (warehouse_id);
+CREATE INDEX IDX_PUR_ORDER_CURRENCY_ID ON erp_pur_order (currency_id);
+CREATE INDEX IDX_PUR_ORDER_SETTLEMENT_METHOD_ID ON erp_pur_order (settlement_method_id);
+CREATE INDEX IDX_PUR_ORDER_LINE_ORDER_ID ON erp_pur_order_line (order_id);
+CREATE INDEX IDX_PUR_ORDER_LINE_MATERIAL_ID ON erp_pur_order_line (material_id);
+CREATE INDEX IDX_PUR_ORDER_LINE_SKU_ID ON erp_pur_order_line (sku_id);
+CREATE INDEX IDX_PUR_ORDER_LINE_UO_M_ID ON erp_pur_order_line (uo_m_id);
+CREATE INDEX IDX_PUR_ORDER_LINE_TAX_RATE_ID ON erp_pur_order_line (tax_rate_id);
+CREATE INDEX IDX_PUR_ORDER_LINE_WAREHOUSE_ID ON erp_pur_order_line (warehouse_id);
+CREATE INDEX IDX_PUR_ORDER_LINE_PROJECT_ID ON erp_pur_order_line (project_id);
+CREATE INDEX IDX_PUR_RECEIVE_ORG_DOC_STATUS ON erp_pur_receive (org_id, doc_status);
+CREATE INDEX IDX_PUR_RECEIVE_ORG_BUSINESS_DATE ON erp_pur_receive (org_id, business_date);
+CREATE INDEX IDX_PUR_RECEIVE_ORDER_ID ON erp_pur_receive (order_id);
+CREATE INDEX IDX_PUR_RECEIVE_SUPPLIER_ID ON erp_pur_receive (supplier_id);
+CREATE INDEX IDX_PUR_RECEIVE_WAREHOUSE_ID ON erp_pur_receive (warehouse_id);
+CREATE INDEX IDX_PUR_RECEIVE_CURRENCY_ID ON erp_pur_receive (currency_id);
+CREATE INDEX IDX_PUR_RECEIVE_LINE_RECEIVE_ID ON erp_pur_receive_line (receive_id);
+CREATE INDEX IDX_PUR_RECEIVE_LINE_ORDER_LINE_ID ON erp_pur_receive_line (order_line_id);
+CREATE INDEX IDX_PUR_RECEIVE_LINE_MATERIAL_ID ON erp_pur_receive_line (material_id);
+CREATE INDEX IDX_PUR_RECEIVE_LINE_SKU_ID ON erp_pur_receive_line (sku_id);
+CREATE INDEX IDX_PUR_RECEIVE_LINE_UO_M_ID ON erp_pur_receive_line (uo_m_id);
+CREATE INDEX IDX_PUR_RECEIVE_LINE_WAREHOUSE_ID ON erp_pur_receive_line (warehouse_id);
+CREATE INDEX IDX_PUR_INVOICE_ORG_DOC_STATUS ON erp_pur_invoice (org_id, doc_status);
+CREATE INDEX IDX_PUR_INVOICE_ORG_BUSINESS_DATE ON erp_pur_invoice (org_id, business_date);
+CREATE INDEX IDX_PUR_INVOICE_SUPPLIER_ID ON erp_pur_invoice (supplier_id);
+CREATE INDEX IDX_PUR_INVOICE_CURRENCY_ID ON erp_pur_invoice (currency_id);
+CREATE INDEX IDX_PUR_INVOICE_LINE_INVOICE_ID ON erp_pur_invoice_line (invoice_id);
+CREATE INDEX IDX_PUR_INVOICE_LINE_RECEIVE_LINE_ID ON erp_pur_invoice_line (receive_line_id);
+CREATE INDEX IDX_PUR_INVOICE_LINE_MATERIAL_ID ON erp_pur_invoice_line (material_id);
+CREATE INDEX IDX_PUR_INVOICE_LINE_UO_M_ID ON erp_pur_invoice_line (uo_m_id);
+CREATE INDEX IDX_PUR_PAYMENT_ORG_DOC_STATUS ON erp_pur_payment (org_id, doc_status);
+CREATE INDEX IDX_PUR_PAYMENT_ORG_BUSINESS_DATE ON erp_pur_payment (org_id, business_date);
+CREATE INDEX IDX_PUR_PAYMENT_SUPPLIER_ID ON erp_pur_payment (supplier_id);
+CREATE INDEX IDX_PUR_PAYMENT_CURRENCY_ID ON erp_pur_payment (currency_id);
+CREATE INDEX IDX_PUR_PAYMENT_SETTLEMENT_METHOD_ID ON erp_pur_payment (settlement_method_id);
+CREATE INDEX IDX_PUR_PAYMENT_BANK_ACCOUNT_ID ON erp_pur_payment (bank_account_id);
+CREATE INDEX IDX_PUR_PAYMENT_PARTNER_BANK_ACCOUNT_ID ON erp_pur_payment (partner_bank_account_id);
+CREATE INDEX IDX_PUR_PAYMENT_LINE_PAYMENT_ID ON erp_pur_payment_line (payment_id);
+CREATE INDEX IDX_PUR_PAYMENT_LINE_INVOICE_ID ON erp_pur_payment_line (invoice_id);
+CREATE INDEX IDX_PUR_RETURN_ORG_DOC_STATUS ON erp_pur_return (org_id, doc_status);
+CREATE INDEX IDX_PUR_RETURN_ORG_BUSINESS_DATE ON erp_pur_return (org_id, business_date);
+CREATE INDEX IDX_PUR_RETURN_RECEIVE_ID ON erp_pur_return (receive_id);
+CREATE INDEX IDX_PUR_RETURN_SUPPLIER_ID ON erp_pur_return (supplier_id);
+CREATE INDEX IDX_PUR_RETURN_WAREHOUSE_ID ON erp_pur_return (warehouse_id);
+CREATE INDEX IDX_PUR_RETURN_CURRENCY_ID ON erp_pur_return (currency_id);
+CREATE INDEX IDX_PUR_RETURN_LINE_RETURN_ID ON erp_pur_return_line (return_id);
+CREATE INDEX IDX_PUR_RETURN_LINE_RECEIVE_LINE_ID ON erp_pur_return_line (receive_line_id);
+CREATE INDEX IDX_PUR_RETURN_LINE_MATERIAL_ID ON erp_pur_return_line (material_id);
+CREATE INDEX IDX_PUR_RETURN_LINE_SKU_ID ON erp_pur_return_line (sku_id);
+CREATE INDEX IDX_PUR_RETURN_LINE_UO_M_ID ON erp_pur_return_line (uo_m_id);

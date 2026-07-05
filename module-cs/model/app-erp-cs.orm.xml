@@ -199,6 +199,30 @@
             <unique-keys>
                 <unique-key name="UK_CS_TICKET_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_TICKET_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_CS_TICKET_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_CS_TICKET_CONTACT_ID" unique="false">
+                    <column name="contactId"/>
+                </index>
+                <index name="IDX_CS_TICKET_TICKET_TYPE_ID" unique="false">
+                    <column name="ticketTypeId"/>
+                </index>
+                <index name="IDX_CS_TICKET_ASSIGNED_TO_ID" unique="false">
+                    <column name="assignedToId"/>
+                </index>
+                <index name="IDX_CS_TICKET_SLA_POLICY_ID" unique="false">
+                    <column name="slaPolicyId"/>
+                </index>
+                <index name="IDX_CS_TICKET_CATALOG_ITEM_ID" unique="false">
+                    <column name="catalogItemId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工单类型 -->
@@ -229,6 +253,11 @@
             <unique-keys>
                 <unique-key name="UK_CS_TICKET_TYPE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_TICKET_TYPE_DEFAULT_SLA_POLICY_ID" unique="false">
+                    <column name="defaultSlaPolicyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- SLA 策略 -->
@@ -261,6 +290,17 @@
             <unique-keys>
                 <unique-key name="UK_CS_SLA_POLICY_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_SLA_POLICY_TICKET_TYPE_ID" unique="false">
+                    <column name="ticketTypeId"/>
+                </index>
+                <index name="IDX_CS_SLA_POLICY_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CS_SLA_POLICY_ESCALATION_USER_ID" unique="false">
+                    <column name="escalationUserId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 客服团队 -->
@@ -285,6 +325,11 @@
             <unique-keys>
                 <unique-key name="UK_CS_TEAM_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_TEAM_TEAM_LEADER_ID" unique="false">
+                    <column name="teamLeaderId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工单操作日志 -->
@@ -309,6 +354,14 @@
             <relations>
                 <to-one name="ticket" refEntityName="app.erp.cs.dao.entity.ErpCsTicket" tagSet="pub" i18n-en:displayName='Ticket'><join><on leftProp="ticketId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CS_TICKET_ACTION_TICKET_ID" unique="false">
+                    <column name="ticketId"/>
+                </index>
+                <index name="IDX_CS_TICKET_ACTION_OPERATOR_ID" unique="false">
+                    <column name="operatorId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 知识库 -->
@@ -339,6 +392,11 @@
             <unique-keys>
                 <unique-key name="UK_CS_KNOWLEDGE_BASE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_KNOWLEDGE_BASE_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 预设应答分类 -->
@@ -369,6 +427,11 @@
             <unique-keys>
                 <unique-key name="UK_CS_CANNED_CATEGORY_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_CANNED_CATEGORY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 预设应答模板 -->
@@ -405,6 +468,14 @@
             <unique-keys>
                 <unique-key name="UK_CS_CANNED_RESPONSE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_CANNED_RESPONSE_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_CS_CANNED_RESPONSE_MACRO_TICKET_TYPE_ID" unique="false">
+                    <column name="macroTicketTypeId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 满意度调查 -->
@@ -436,6 +507,11 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CS_SURVEY_TICKET_ID" unique="false">
+                    <column name="ticketId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 客服费率 -->
@@ -462,6 +538,11 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CS_AGENT_RATE_AGENT_ID" unique="false">
+                    <column name="agentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 支持合同 -->
@@ -498,6 +579,18 @@
             <unique-keys>
                 <unique-key name="UK_CS_CONTRACT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_CONTRACT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CS_CONTRACT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_CS_CONTRACT_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 服务权益 -->
@@ -538,6 +631,17 @@
             <unique-keys>
                 <unique-key name="UK_CS_ENTITLEMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_ENTITLEMENT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_CS_ENTITLEMENT_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CS_ENTITLEMENT_SLA_POLICY_ID" unique="false">
+                    <column name="slaPolicyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 目录分类 -->
@@ -569,6 +673,11 @@
             <unique-keys>
                 <unique-key name="UK_CS_CATALOG_CATEGORY_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_CATALOG_CATEGORY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 服务目录项 -->
@@ -611,6 +720,23 @@
             <unique-keys>
                 <unique-key name="UK_CS_SERVICE_CATALOG_ITEM_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_SERVICE_CATALOG_ITEM_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_CS_SERVICE_CATALOG_ITEM_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_CS_SERVICE_CATALOG_ITEM_TICKET_TYPE_ID" unique="false">
+                    <column name="ticketTypeId"/>
+                </index>
+                <index name="IDX_CS_SERVICE_CATALOG_ITEM_SLA_POLICY_ID" unique="false">
+                    <column name="slaPolicyId"/>
+                </index>
+                <index name="IDX_CS_SERVICE_CATALOG_ITEM_FULFILLMENT_PROCESS_ID" unique="false">
+                    <column name="fulfillmentProcessId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 目录项履行映射 -->
@@ -644,6 +770,11 @@
             <unique-keys>
                 <unique-key name="UK_CS_CATALOG_FULFILLMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CS_CATALOG_FULFILLMENT_CATALOG_ITEM_ID" unique="false">
+                    <column name="catalogItemId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工单计时条目 -->
@@ -681,6 +812,23 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CS_TIME_ENTRY_TICKET_ID" unique="false">
+                    <column name="ticketId"/>
+                </index>
+                <index name="IDX_CS_TIME_ENTRY_AGENT_ID" unique="false">
+                    <column name="agentId"/>
+                </index>
+                <index name="IDX_CS_TIME_ENTRY_APPROVED_BY_ID" unique="false">
+                    <column name="approvedById"/>
+                </index>
+                <index name="IDX_CS_TIME_ENTRY_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_CS_TIME_ENTRY_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+            </indexes>
         </entity>
     
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->

@@ -172,6 +172,34 @@
             <unique-keys>
                 <unique-key name="UK_INV_STOCK_MOVE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_STOCK_MOVE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_SOURCE_WAREHOUSE_ID" unique="false">
+                    <column name="sourceWarehouseId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_SOURCE_LOCATION_ID" unique="false">
+                    <column name="sourceLocationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_DEST_WAREHOUSE_ID" unique="false">
+                    <column name="destWarehouseId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_DEST_LOCATION_ID" unique="false">
+                    <column name="destLocationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_ORIGIN_MOVE_ID" unique="false">
+                    <column name="originMoveId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_ORIGIN_RETURNED_MOVE_ID" unique="false">
+                    <column name="originReturnedMoveId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 库存移动单行 -->
@@ -210,6 +238,29 @@
                 <to-one name="sourceLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Source Location'><join><on leftProp="sourceLocationId" rightProp="id"/></join></to-one>
                 <to-one name="destLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Dest Location'><join><on leftProp="destLocationId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_STOCK_MOVE_LINE_MOVE_ID" unique="false">
+                    <column name="moveId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_SOURCE_LOCATION_ID" unique="false">
+                    <column name="sourceLocationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_DEST_LOCATION_ID" unique="false">
+                    <column name="destLocationId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 库存流水（不可变） -->
@@ -261,6 +312,39 @@
             <unique-keys>
                 <unique-key name="UK_INV_STOCK_LEDGER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_STOCK_LEDGER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_MOVE_ID" unique="false">
+                    <column name="moveId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_MOVE_LINE_ID" unique="false">
+                    <column name="moveLineId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 库存余额快照 -->
@@ -301,6 +385,26 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="owner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Owner'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_STOCK_BALANCE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 库存预留单头（记录级预留，支撑可用量校验与按订单/工单预留） -->
@@ -333,6 +437,19 @@
             <unique-keys>
                 <unique-key name="UK_INV_RESERVATION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_RESERVATION_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_RESERVED_FOR_PARTNER_ID" unique="false">
+                    <column name="reservedForPartnerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 库存预留单行 -->
@@ -367,6 +484,26 @@
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Location'><join><on leftProp="locationId" rightProp="id"/></join></to-one>
                 <to-one name="uom" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uomId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_RESERVATION_LINE_RESERVATION_ID" unique="false">
+                    <column name="reservationId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_UOM_ID" unique="false">
+                    <column name="uomId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 成本层（支撑 FIFO/批次/具体辨认的多层成本核算） -->
@@ -405,6 +542,26 @@
                 <to-one name="incomingMove" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub" i18n-en:displayName='Incoming Move'><join><on leftProp="incomingMoveId" rightProp="id"/></join></to-one>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_COST_LAYER_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_INCOMING_MOVE_ID" unique="false">
+                    <column name="incomingMoveId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 调拨单 -->
@@ -444,6 +601,25 @@
             <unique-keys>
                 <unique-key name="UK_INV_TRANSFER_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_TRANSFER_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_FROM_WAREHOUSE_ID" unique="false">
+                    <column name="fromWarehouseId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_TO_WAREHOUSE_ID" unique="false">
+                    <column name="toWarehouseId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_IN_TRANSIT_WAREHOUSE_ID" unique="false">
+                    <column name="inTransitWarehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 调拨单行 -->
@@ -473,6 +649,20 @@
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub" i18n-en:displayName='Sku'><join><on leftProp="skuId" rightProp="id"/></join></to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_TRANSFER_ORDER_LINE_TRANSFER_ID" unique="false">
+                    <column name="transferId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 盘点单 -->
@@ -507,6 +697,19 @@
             <unique-keys>
                 <unique-key name="UK_INV_STOCK_TAKE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_STOCK_TAKE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 盘点单行 -->
@@ -542,6 +745,23 @@
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Location'><join><on leftProp="locationId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_STOCK_TAKE_LINE_TAKE_ID" unique="false">
+                    <column name="takeId"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_LINE_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 拣货单头 -->
@@ -575,6 +795,22 @@
             <unique-keys>
                 <unique-key name="UK_INV_PICKING_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_PICKING_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_PICKER_ID" unique="false">
+                    <column name="pickerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 拣货单行 -->
@@ -607,6 +843,23 @@
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
                 <to-one name="sourceLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Source Location'><join><on leftProp="sourceLocationId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_PICKING_ORDER_LINE_PICKING_ID" unique="false">
+                    <column name="pickingId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_LINE_SOURCE_LOCATION_ID" unique="false">
+                    <column name="sourceLocationId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 批次台账 -->
@@ -640,6 +893,21 @@
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_BATCH_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_BATCH_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_BATCH_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_BATCH_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 序列号台账 -->
@@ -677,6 +945,24 @@
             <unique-keys>
                 <unique-key name="UK_INV_SERIAL_NUMBER_SERIAL_NO" columns="serialNo"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_SERIAL_NUMBER_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_SERIAL_NUMBER_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_SERIAL_NUMBER_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_SERIAL_NUMBER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_SERIAL_NUMBER_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 所有权转移单头（consignment.md §ErpInvOwnershipTransfer；法权变更，物理位置不变 sourceLocId=destLocId） -->
@@ -720,6 +1006,31 @@
             <unique-keys>
                 <unique-key name="UK_INV_OWNERSHIP_TRANSFER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_SOURCE_LOC_ID" unique="false">
+                    <column name="sourceLocId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_DEST_LOC_ID" unique="false">
+                    <column name="destLocId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 所有权转移单行 -->
@@ -751,6 +1062,17 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub" i18n-en:displayName='Sku'><join><on leftProp="skuId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_LINE_TRANSFER_ID" unique="false">
+                    <column name="transferId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

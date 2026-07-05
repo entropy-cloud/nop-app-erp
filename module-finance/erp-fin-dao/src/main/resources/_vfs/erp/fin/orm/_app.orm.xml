@@ -311,6 +311,21 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_REVERSAL_OF_VOUCHER_ID" unique="false">
+                    <column name="reversalOfVoucherId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"
                         i18n-en:displayName="Period">
@@ -429,6 +444,38 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_LINE_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_COST_CENTER_ID" unique="false">
+                    <column name="costCenterId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub"
                         i18n-en:displayName="Voucher">
@@ -543,6 +590,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_TEMPLATE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"
                         i18n-en:displayName="Acct Schema">
@@ -607,6 +659,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_TEMPLATE_LINE_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="template" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherTemplate" tagSet="pub"
                         i18n-en:displayName="Template">
@@ -652,6 +709,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_BILL_R_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub"
                         i18n-en:displayName="Voucher">
@@ -711,6 +773,12 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_ACCOUNTING_PERIOD_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
             <relations>
                 <to-many cascadeDelete="true" name="statusRecords"
                          refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus"
@@ -780,6 +848,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_ACCOUNTING_PERIOD_STATUS_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_ACCOUNTING_PERIOD_STATUS_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"
                         i18n-en:displayName="Period">
@@ -870,6 +946,28 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_AR_AP_ITEM_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -965,6 +1063,25 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_RECONCILIATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -1043,6 +1160,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_RECONCILIATION_LINE_RECONCILIATION_ID" unique="false">
+                    <column name="reconciliationId"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_LINE_PAYMENT_ITEM_ID" unique="false">
+                    <column name="paymentItemId"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_LINE_INVOICE_ITEM_ID" unique="false">
+                    <column name="invoiceItemId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinReconciliation" tagSet="pub"
                         i18n-en:displayName="Reconciliation">
@@ -1128,6 +1256,32 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_GL_BALANCE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"
                         i18n-en:displayName="Acct Schema">
@@ -1238,6 +1392,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_TRIAL_BALANCE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_TRIAL_BALANCE_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_TRIAL_BALANCE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"
                         i18n-en:displayName="Acct Schema">
@@ -1317,6 +1482,18 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_FUND_ACCOUNT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_FIN_FUND_ACCOUNT_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_FIN_FUND_ACCOUNT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
                         i18n-en:displayName="Currency">
@@ -1392,6 +1569,15 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_BANK_STATEMENT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_BANK_STATEMENT_FUND_ACCOUNT_ID" unique="false">
+                    <column name="fundAccountId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="fundAccount" refEntityName="app.erp.fin.dao.entity.ErpFinFundAccount" tagSet="pub"
                         i18n-en:displayName="Fund Account">
@@ -1461,6 +1647,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_BANK_STATEMENT_LINE_STATEMENT_ID" unique="false">
+                    <column name="statementId"/>
+                </index>
+                <index name="IDX_FIN_BANK_STATEMENT_LINE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_BANK_STATEMENT_LINE_MATCHED_LINE_ID" unique="false">
+                    <column name="matchedLineId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="statement" refEntityName="app.erp.fin.dao.entity.ErpFinBankStatement" tagSet="pub"
                         i18n-en:displayName="Statement">
@@ -1537,6 +1734,18 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_BANK_RECONCILIATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_BANK_RECONCILIATION_FUND_ACCOUNT_ID" unique="false">
+                    <column name="fundAccountId"/>
+                </index>
+                <index name="IDX_FIN_BANK_RECONCILIATION_STATEMENT_ID" unique="false">
+                    <column name="statementId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="fundAccount" refEntityName="app.erp.fin.dao.entity.ErpFinFundAccount" tagSet="pub"
                         i18n-en:displayName="Fund Account">
@@ -1610,6 +1819,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_BANK_RECONCILIATION_LINE_RECONCILIATION_ID" unique="false">
+                    <column name="reconciliationId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinBankReconciliation"
                         tagSet="pub" i18n-en:displayName="Reconciliation">
@@ -1699,6 +1913,28 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="30" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_EXPENSE_CLAIM_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_CLAIMANT_ID" unique="false">
+                    <column name="claimantId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_SETTLE_ADVANCE_ID" unique="false">
+                    <column name="settleAdvanceId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="claimant" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
                         i18n-en:displayName="Claimant">
@@ -1794,6 +2030,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_EXPENSE_CLAIM_LINE_CLAIM_ID" unique="false">
+                    <column name="claimId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_LINE_COST_CENTER_ID" unique="false">
+                    <column name="costCenterId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="claim" refEntityName="app.erp.fin.dao.entity.ErpFinExpenseClaim" tagSet="pub"
                         i18n-en:displayName="Claim">
@@ -1894,6 +2144,25 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -2404,6 +2673,24 @@
                 <column code="EVENT_DATA" displayName="原始事件数据(JSON)" name="eventData" precision="4000" propId="29"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Event Data"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_POSTING_EXCEPTION_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_FIN_POSTING_EXCEPTION_TRACE_ID" unique="false">
+                    <column name="traceId"/>
+                </index>
+                <index name="IDX_FIN_POSTING_EXCEPTION_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_POSTING_EXCEPTION_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+                <index name="IDX_FIN_POSTING_EXCEPTION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinBadDebt" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="坏账单"
@@ -2463,6 +2750,30 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_FIN_BAD_DEBT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_SOURCE_AR_AP_ITEM_ID" unique="false">
+                    <column name="sourceArApItemId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">

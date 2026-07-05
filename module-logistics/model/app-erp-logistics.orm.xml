@@ -119,6 +119,14 @@
             <unique-keys>
                 <unique-key name="UK_LOG_CARRIER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_LOG_CARRIER_GATEWAY_ID" unique="false">
+                    <column name="gatewayId"/>
+                </index>
+                <index name="IDX_LOG_CARRIER_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 承运商配置 -->
@@ -151,6 +159,11 @@
                 <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub" i18n-en:displayName='Carrier'><join><on leftProp="carrierId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_LOG_CARRIER_CONFIG_CARRIER_ID" unique="false">
+                    <column name="carrierId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 发运单 -->
@@ -213,6 +226,24 @@
             <unique-keys>
                 <unique-key name="UK_LOG_SHIPMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_LOG_SHIPMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_CARRIER_ID" unique="false">
+                    <column name="carrierId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_CARRIER_CONFIG_ID" unique="false">
+                    <column name="carrierConfigId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_FREIGHT_CURRENCY_ID" unique="false">
+                    <column name="freightCurrencyId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_SHIPPER_ID" unique="false">
+                    <column name="shipperId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 发运明细 -->
@@ -239,6 +270,14 @@
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_LOG_SHIPMENT_LINE_SHIPMENT_ID" unique="false">
+                    <column name="shipmentId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 包裹 -->
@@ -268,6 +307,11 @@
             <relations>
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_LOG_SHIPMENT_PARCEL_SHIPMENT_ID" unique="false">
+                    <column name="shipmentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 网关交互日志 -->
@@ -299,6 +343,14 @@
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_LOG_SHIPMENT_LOG_SHIPMENT_ID" unique="false">
+                    <column name="shipmentId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_LOG_GATEWAY_ID" unique="false">
+                    <column name="gatewayId"/>
+                </index>
+            </indexes>
         </entity>
     
         <!-- 配送时间窗口 -->
@@ -330,6 +382,11 @@
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_LOG_DELIVERY_WINDOW_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->

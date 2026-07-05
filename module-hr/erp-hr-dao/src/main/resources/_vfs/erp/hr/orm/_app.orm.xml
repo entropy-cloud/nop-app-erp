@@ -367,6 +367,26 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="39" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_EMPLOYEE_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_POSITION_ID" unique="false">
+                    <column name="positionId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_SUPERIOR_ID" unique="false">
+                    <column name="superiorId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_COST_CENTER_ID" unique="false">
+                    <column name="costCenterId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_BANK_ACCOUNT_ID" unique="false">
+                    <column name="bankAccountId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_USER_ACCOUNT_ID" unique="false">
+                    <column name="userAccountId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="department" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub"
                         i18n-en:displayName="Department">
@@ -447,6 +467,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_DEPARTMENT_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_HR_DEPARTMENT_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+                <index name="IDX_HR_DEPARTMENT_COST_CENTER_ID" unique="false">
+                    <column name="costCenterId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one ignoreDepends="true" name="parent" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment"
                         tagSet="pub" i18n-en:displayName="Parent Department">
@@ -515,6 +546,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_POSITION_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="department" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub"
                         i18n-en:displayName="Department">
@@ -601,6 +637,21 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_SALARY_CURRENCY_ID" unique="false">
+                    <column name="salaryCurrencyId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -676,6 +727,18 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_LEAVE_REQUEST_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_LEAVE_REQUEST_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_LEAVE_REQUEST_APPROVER_ID" unique="false">
+                    <column name="approverId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -741,6 +804,15 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_TIMESHEET_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -806,6 +878,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_TIMESHEET_LINE_TIMESHEET_ID" unique="false">
+                    <column name="timesheetId"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_LINE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_LINE_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="timesheet" refEntityName="app.erp.hr.dao.entity.ErpHrTimesheet" tagSet="pub"
                         i18n-en:displayName="Timesheet">
@@ -881,6 +967,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_ATTENDANCE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_ATTENDANCE_LEAVE_REQUEST_ID" unique="false">
+                    <column name="leaveRequestId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -1004,6 +1098,18 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="91" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SALARY_ORG_APPROVE_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="approveStatus"/>
+                </index>
+                <index name="IDX_HR_SALARY_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_SALARY_BANK_FILE_ID" unique="false">
+                    <column name="bankFileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -1086,6 +1192,27 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_RECRUITMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_POSITION_ID" unique="false">
+                    <column name="positionId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_RESUME_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="resumeAttachmentFileId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_INTERVIEWER_ID" unique="false">
+                    <column name="interviewerId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="position" refEntityName="app.erp.hr.dao.entity.ErpHrPosition" tagSet="pub"
                         i18n-en:displayName="Position">
@@ -1172,6 +1299,21 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SALARY_SIMULATION_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_SOURCE_SALARY_ID" unique="false">
+                    <column name="sourceSalaryId"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_REVIEWER_ID" unique="false">
+                    <column name="reviewerId"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_CONVERTED_SALARY_ID" unique="false">
+                    <column name="convertedSalaryId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="sourceSalary" refEntityName="app.erp.hr.dao.entity.ErpHrSalary" tagSet="pub"
                         i18n-en:displayName="Source Salary">
@@ -1251,6 +1393,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SALARY_SIMULATION_ITEM_ADJ_SIMULATION_ID" unique="false">
+                    <column name="simulationId"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_ITEM_ADJ_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="simulation" refEntityName="app.erp.hr.dao.entity.ErpHrSalarySimulation" tagSet="pub"
                         i18n-en:displayName="Simulation">
@@ -1438,6 +1588,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SOCIAL_INSURANCE_BASE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -1543,6 +1698,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_TAX_SPECIAL_DEDUCTION_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -1606,6 +1766,15 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_PAYROLL_BANK_FILE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_PAYROLL_BANK_FILE_BANK_ID" unique="false">
+                    <column name="bankId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="bank" refEntityName="app.erp.md.dao.entity.ErpMdBankAccount" tagSet="pub"
                         i18n-en:displayName="Bank">
@@ -1741,6 +1910,27 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_SHIFT_ID" unique="false">
+                    <column name="shiftId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_LEAVE_REQUEST_ID" unique="false">
+                    <column name="leaveRequestId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_SWAP_REQUEST_ID" unique="false">
+                    <column name="swapRequestId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_REPLACED_BY_ASSIGNMENT_ID" unique="false">
+                    <column name="replacedByAssignmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -1823,6 +2013,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SHIFT_ROTATION_PATTERN_GROUP_ID" unique="false">
+                    <column name="groupId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one ignoreDepends="true" name="group"
                         refEntityName="app.erp.hr.dao.entity.ErpHrShiftRotationPattern" tagSet="pub"
@@ -1888,6 +2083,27 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_REQUESTER_ID" unique="false">
+                    <column name="requesterId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_TARGET_EMPLOYEE_ID" unique="false">
+                    <column name="targetEmployeeId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_SOURCE_ASSIGNMENT_ID" unique="false">
+                    <column name="sourceAssignmentId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_TARGET_ASSIGNMENT_ID" unique="false">
+                    <column name="targetAssignmentId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_APPROVED_BY_ID" unique="false">
+                    <column name="approvedById"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="requester" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Requester">
@@ -1988,6 +2204,15 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SURVEY_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_SURVEY_TARGET_DEPARTMENT_ID" unique="false">
+                    <column name="targetDepartmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-many cascadeDelete="true" name="questions" refEntityName="app.erp.hr.dao.entity.ErpHrSurveyQuestion"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Questions"
@@ -2069,6 +2294,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SURVEY_QUESTION_SURVEY_ID" unique="false">
+                    <column name="surveyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="survey" refEntityName="app.erp.hr.dao.entity.ErpHrSurvey" tagSet="pub"
                         i18n-en:displayName="Survey">
@@ -2117,6 +2347,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SURVEY_RESPONSE_SURVEY_ID" unique="false">
+                    <column name="surveyId"/>
+                </index>
+                <index name="IDX_HR_SURVEY_RESPONSE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="survey" refEntityName="app.erp.hr.dao.entity.ErpHrSurvey" tagSet="pub"
                         i18n-en:displayName="Survey">
@@ -2178,6 +2416,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SURVEY_ANSWER_RESPONSE_ID" unique="false">
+                    <column name="responseId"/>
+                </index>
+                <index name="IDX_HR_SURVEY_ANSWER_QUESTION_ID" unique="false">
+                    <column name="questionId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="response" refEntityName="app.erp.hr.dao.entity.ErpHrSurveyResponse" tagSet="pub"
                         i18n-en:displayName="Response">
@@ -2235,6 +2481,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_SURVEY_RESULT_SURVEY_ID" unique="false">
+                    <column name="surveyId"/>
+                </index>
+                <index name="IDX_HR_SURVEY_RESULT_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="survey" refEntityName="app.erp.hr.dao.entity.ErpHrSurvey" tagSet="pub"
                         i18n-en:displayName="Survey">
@@ -2293,6 +2547,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_COMPETENCY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-many cascadeDelete="true" name="levels" refEntityName="app.erp.hr.dao.entity.ErpHrCompetencyLevel"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Levels" ext:estRows="5">
@@ -2352,6 +2611,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_COMPETENCY_LEVEL_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="competency" refEntityName="app.erp.hr.dao.entity.ErpHrCompetency" tagSet="pub"
                         i18n-en:displayName="Competency">
@@ -2396,6 +2660,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_ROLE_COMPETENCY_POSITION_ID" unique="false">
+                    <column name="positionId"/>
+                </index>
+                <index name="IDX_HR_ROLE_COMPETENCY_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="position" refEntityName="app.erp.hr.dao.entity.ErpHrPosition" tagSet="pub"
                         i18n-en:displayName="Position">
@@ -2454,6 +2726,18 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_EMPLOYEE_ASSESSMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_ASSESSMENT_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_ASSESSMENT_ASSESSOR_ID" unique="false">
+                    <column name="assessorId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -2517,6 +2801,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_ASSESSMENT_DETAIL_ASSESSMENT_ID" unique="false">
+                    <column name="assessmentId"/>
+                </index>
+                <index name="IDX_HR_ASSESSMENT_DETAIL_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="assessment" refEntityName="app.erp.hr.dao.entity.ErpHrEmployeeAssessment" tagSet="pub"
                         i18n-en:displayName="Assessment">
@@ -2573,6 +2865,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_GAP_ANALYSIS_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_GAP_ANALYSIS_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -2626,6 +2926,15 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
                         i18n-en:displayName="Employee">
@@ -2694,6 +3003,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_PLAN_ID" unique="false">
+                    <column name="planId"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_GAP_ID" unique="false">
+                    <column name="gapId"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_MENTOR_ID" unique="false">
+                    <column name="mentorId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="plan" refEntityName="app.erp.hr.dao.entity.ErpHrDevelopmentPlan" tagSet="pub"
                         i18n-en:displayName="Development Plan">

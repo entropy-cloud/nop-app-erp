@@ -169,6 +169,27 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_CONTRACT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_PARENT_CONTRACT_ID" unique="false">
+                    <column name="parentContractId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -259,6 +280,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_CONTRACT_LINE_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
                         i18n-en:displayName="Contract">
@@ -335,6 +364,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_CONTRACT_VERSION_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_VERSION_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_VERSION_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
                         i18n-en:displayName="Contract">
@@ -386,6 +426,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_INVOICE_PLAN_CONTRACT_LINE_ID" unique="false">
+                    <column name="contractLineId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub"
                         i18n-en:displayName="Contract Line">
@@ -436,6 +481,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_CONSUMPTION_LINE_CONTRACT_LINE_ID" unique="false">
+                    <column name="contractLineId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub"
                         i18n-en:displayName="Contract Line">
@@ -590,6 +640,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_APPROVAL_RECORD_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_APPROVAL_RECORD_APPROVAL_MATRIX_ID" unique="false">
+                    <column name="approvalMatrixId"/>
+                </index>
+                <index name="IDX_CT_APPROVAL_RECORD_APPROVER_ID" unique="false">
+                    <column name="approverId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
                         i18n-en:displayName="Contract">
@@ -652,6 +713,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_VOLUME_DISCOUNT_CONTRACT_LINE_ID" unique="false">
+                    <column name="contractLineId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub"
                         i18n-en:displayName="Contract Line">
@@ -723,6 +789,18 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_REBATE_AGREEMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_REBATE_AGREEMENT_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_REBATE_AGREEMENT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
                         i18n-en:displayName="Contract">
@@ -785,6 +863,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_REBATE_TIER_REBATE_AGREEMENT_ID" unique="false">
+                    <column name="rebateAgreementId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement"
                         tagSet="pub" i18n-en:displayName="Rebate Agreement">
@@ -841,6 +924,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_REBATE_ACCRUAL_REBATE_AGREEMENT_ID" unique="false">
+                    <column name="rebateAgreementId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement"
                         tagSet="pub" i18n-en:displayName="Rebate Agreement">
@@ -903,6 +991,15 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_REBATE_SETTLEMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_REBATE_SETTLEMENT_REBATE_AGREEMENT_ID" unique="false">
+                    <column name="rebateAgreementId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement"
                         tagSet="pub" i18n-en:displayName="Rebate Agreement">
@@ -972,6 +1069,21 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_SIGNATURE_REQUEST_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_SIGNATURE_REQUEST_CONTRACT_VERSION_ID" unique="false">
+                    <column name="contractVersionId"/>
+                </index>
+                <index name="IDX_CT_SIGNATURE_REQUEST_PROVIDER_REQUEST_ID" unique="false">
+                    <column name="providerRequestId"/>
+                </index>
+                <index name="IDX_CT_SIGNATURE_REQUEST_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contractVersion" refEntityName="app.erp.contract.dao.entity.ErpCtContractVersion"
                         tagSet="pub" i18n-en:displayName="Contract Version">
@@ -1055,6 +1167,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CT_DOCUMENT_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_DOCUMENT_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub"
                         i18n-en:displayName="Contract">

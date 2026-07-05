@@ -94,6 +94,12 @@
             <unique-keys>
                 <unique-key name="UK_DRP_PLAN_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_DRP_PLAN_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- DRP明细行 -->
@@ -135,6 +141,24 @@
                 <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Source Warehouse'><join><on leftProp="sourceWarehouseId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_DRP_LINE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_DRP_LINE_PLAN_ID" unique="false">
+                    <column name="planId"/>
+                </index>
+                <index name="IDX_DRP_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_DRP_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_DRP_LINE_SOURCE_WAREHOUSE_ID" unique="false">
+                    <column name="sourceWarehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 仓库补货参数 -->
@@ -170,6 +194,20 @@
                 <to-one name="preferredSupplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Preferred Supplier'><join><on leftProp="preferredSupplierId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_DRP_PARAMETER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_DRP_PARAMETER_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_DRP_PARAMETER_PREFERRED_SOURCE_WAREHOUSE_ID" unique="false">
+                    <column name="preferredSourceWarehouseId"/>
+                </index>
+                <index name="IDX_DRP_PARAMETER_PREFERRED_SUPPLIER_ID" unique="false">
+                    <column name="preferredSupplierId"/>
+                </index>
+            </indexes>
         </entity>
     
         <!-- 安全库存计算结果 -->
@@ -207,6 +245,14 @@
             <unique-keys>
                 <unique-key name="UK_INV_DRP_SAFETY_STOCK_CALC_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_DRP_SAFETY_STOCK_CALC_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_DRP_SAFETY_STOCK_CALC_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 越库执行记录 -->
@@ -250,6 +296,27 @@
             <unique-keys>
                 <unique-key name="UK_INV_DRP_CROSS_DOCK_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_INV_DRP_CROSS_DOCK_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_DRP_LINE_ID" unique="false">
+                    <column name="drpLineId"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_INBOUND_MOVE_ID" unique="false">
+                    <column name="inboundMoveId"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_OUTBOUND_MOVE_ID" unique="false">
+                    <column name="outboundMoveId"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_STAGING_LOCATION_ID" unique="false">
+                    <column name="stagingLocationId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 月台预约 -->
@@ -281,6 +348,21 @@
                 <to-one name="crossDock" refEntityName="app.erp.drp.dao.entity.ErpInvDrpCrossDock" tagSet="pub" i18n-en:displayName='Cross Dock'><join><on leftProp="crossDockId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_DRP_DOCK_APPOINTMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_DRP_DOCK_APPOINTMENT_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_DRP_DOCK_APPOINTMENT_DOCK_ID" unique="false">
+                    <column name="dockId"/>
+                </index>
+                <index name="IDX_INV_DRP_DOCK_APPOINTMENT_CROSS_DOCK_ID" unique="false">
+                    <column name="crossDockId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 提前期跟踪记录 -->
@@ -313,6 +395,14 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_INV_DRP_LEAD_TIME_RECORD_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_INV_DRP_LEAD_TIME_RECORD_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->

@@ -269,6 +269,36 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="40" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_LEAD_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_CRM_LEAD_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SOURCE_ID" unique="false">
+                    <column name="sourceId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_LEAD_STATUS_ID" unique="false">
+                    <column name="leadStatusId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_STAGE_ID" unique="false">
+                    <column name="stageId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_CAMPAIGN_ID" unique="false">
+                    <column name="campaignId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_LOST_REASON_ID" unique="false">
+                    <column name="lostReasonId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -420,6 +450,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_STAGE_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
                         i18n-en:displayName="Team">
@@ -544,6 +579,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_TEAM_TEAM_LEADER_ID" unique="false">
+                    <column name="teamLeaderId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Org">
@@ -687,6 +727,30 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="28" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_EVENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CRM_EVENT_EVENT_CATEGORY_ID" unique="false">
+                    <column name="eventCategoryId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_RELATED_LEAD_ID" unique="false">
+                    <column name="relatedLeadId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_CONTACT_ID" unique="false">
+                    <column name="contactId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_PARENT_EVENT_ID" unique="false">
+                    <column name="parentEventId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="relatedLead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
                         i18n-en:displayName="Related Lead">
@@ -805,6 +869,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_ACTIVITY_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+                <index name="IDX_CRM_ACTIVITY_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
                         i18n-en:displayName="Lead">
@@ -859,6 +931,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_LEAD_CONV_LOG_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_CONV_LOG_FROM_STAGE_ID" unique="false">
+                    <column name="fromStageId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_CONV_LOG_TO_STAGE_ID" unique="false">
+                    <column name="toStageId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
                         i18n-en:displayName="Lead">
@@ -1030,6 +1113,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_LEAD_SCORE_CONFIG_LINE_CONFIG_ID" unique="false">
+                    <column name="configId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub"
                         i18n-en:displayName="Config">
@@ -1092,6 +1180,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_LEAD_SCORE_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SCORE_CONFIG_ID" unique="false">
+                    <column name="configId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
                         i18n-en:displayName="Lead">
@@ -1158,6 +1254,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_LEAD_SCORE_LINE_SCORE_ID" unique="false">
+                    <column name="scoreId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SCORE_LINE_CONFIG_LINE_ID" unique="false">
+                    <column name="configLineId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="score" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScore" tagSet="pub"
                         i18n-en:displayName="Score">
@@ -1224,6 +1328,12 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_FORECAST_PERIOD_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Org">
@@ -1296,6 +1406,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_FORECAST_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="period" refEntityName="app.erp.crm.dao.entity.ErpCrmForecastPeriod" tagSet="pub"
                         i18n-en:displayName="Period">
@@ -1374,6 +1501,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_FORECAST_LINE_FORECAST_ID" unique="false">
+                    <column name="forecastId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_LINE_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="forecast" refEntityName="app.erp.crm.dao.entity.ErpCrmForecast" tagSet="pub"
                         i18n-en:displayName="Forecast">
@@ -1452,6 +1587,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_FORECAST_ACCURACY_FORECAST_ID" unique="false">
+                    <column name="forecastId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_ACCURACY_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_ACCURACY_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_ACCURACY_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_ACCURACY_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="forecast" refEntityName="app.erp.crm.dao.entity.ErpCrmForecast" tagSet="pub"
                         i18n-en:displayName="Forecast">
@@ -1534,6 +1686,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_TERRITORY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_CRM_TERRITORY_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub"
                         i18n-en:displayName="Parent">
@@ -1603,6 +1763,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_TERRITORY_ASSIGNMENT_RULE_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+                <index name="IDX_CRM_TERRITORY_ASSIGNMENT_RULE_GROUP_ID" unique="false">
+                    <column name="groupId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub"
                         i18n-en:displayName="Territory">
@@ -1672,6 +1840,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_QUOTA_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+                <index name="IDX_CRM_QUOTA_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_QUOTA_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_QUOTA_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub"
                         i18n-en:displayName="Territory">
@@ -1801,6 +1983,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_CONFIG_RULE_CONFIGURATOR_ID" unique="false">
+                    <column name="configuratorId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="configurator" refEntityName="app.erp.crm.dao.entity.ErpCrmProductConfigurator"
                         tagSet="pub" i18n-en:displayName="Configurator">
@@ -1920,6 +2107,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_BUNDLE_PRICING_LINE_BUNDLE_ID" unique="false">
+                    <column name="bundleId"/>
+                </index>
+                <index name="IDX_CRM_BUNDLE_PRICING_LINE_PRODUCT_ID" unique="false">
+                    <column name="productId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="bundle" refEntityName="app.erp.crm.dao.entity.ErpCrmBundlePricing" tagSet="pub"
                         i18n-en:displayName="Bundle">
@@ -2007,6 +2202,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_PRICE_RULE_PRODUCT_ID" unique="false">
+                    <column name="productId"/>
+                </index>
+                <index name="IDX_CRM_PRICE_RULE_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_CRM_PRICE_RULE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Org">
@@ -2139,6 +2345,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_SEQUENCE_STEP_SEQUENCE_ID" unique="false">
+                    <column name="sequenceId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub"
                         i18n-en:displayName="Sequence">
@@ -2197,6 +2408,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_SEQUENCE_ASSIGNMENT_SEQUENCE_ID" unique="false">
+                    <column name="sequenceId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub"
                         i18n-en:displayName="Sequence">
@@ -2254,6 +2470,18 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_LEAD_SEQ_PROGRESS_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SEQ_PROGRESS_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SEQ_PROGRESS_SEQUENCE_ID" unique="false">
+                    <column name="sequenceId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub"
                         i18n-en:displayName="Lead">
@@ -2343,6 +2571,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_LEAD_FUNNEL_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_FUNNEL_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_FUNNEL_SOURCE_ID" unique="false">
+                    <column name="sourceId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Org">
@@ -2427,6 +2666,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_CRM_FUNNEL_STAGE_METRICS_FUNNEL_ID" unique="false">
+                    <column name="funnelId"/>
+                </index>
+                <index name="IDX_CRM_FUNNEL_STAGE_METRICS_STAGE_ID" unique="false">
+                    <column name="stageId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="funnel" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadFunnel" tagSet="pub"
                         i18n-en:displayName="Funnel">

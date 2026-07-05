@@ -218,6 +218,11 @@
             <unique-keys>
                 <unique-key name="UK_MFG_BOM_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_BOM_PRODUCT_ID" unique="false">
+                    <column name="productId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- BOM 行 -->
@@ -253,6 +258,29 @@
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
                 <to-one name="alternativeMaterial" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Alternative Material'><join><on leftProp="alternativeMaterialId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_BOM_LINE_BOM_ID" unique="false">
+                    <column name="bomId"/>
+                </index>
+                <index name="IDX_MFG_BOM_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_BOM_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_MFG_BOM_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MFG_BOM_LINE_OPERATION_ID" unique="false">
+                    <column name="operationId"/>
+                </index>
+                <index name="IDX_MFG_BOM_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_MFG_BOM_LINE_ALTERNATIVE_MATERIAL_ID" unique="false">
+                    <column name="alternativeMaterialId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- BOM 工艺 -->
@@ -281,6 +309,17 @@
                 <to-one name="workcenter" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkcenter" tagSet="pub" i18n-en:displayName='Workcenter'><join><on leftProp="workcenterId" rightProp="id"/></join></to-one>
                 <to-one name="operation" refEntityName="app.erp.mfg.dao.entity.ErpMfgRoutingOperation" tagSet="pub" i18n-en:displayName='Operation'><join><on leftProp="operationId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_BOM_OPERATION_BOM_ID" unique="false">
+                    <column name="bomId"/>
+                </index>
+                <index name="IDX_MFG_BOM_OPERATION_OPERATION_ID" unique="false">
+                    <column name="operationId"/>
+                </index>
+                <index name="IDX_MFG_BOM_OPERATION_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- BOM 联副产品 -->
@@ -312,6 +351,20 @@
                 <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub" i18n-en:displayName='Sku'><join><on leftProp="skuId" rightProp="id"/></join></to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_BOM_BYPRODUCT_BOM_ID" unique="false">
+                    <column name="bomId"/>
+                </index>
+                <index name="IDX_MFG_BOM_BYPRODUCT_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_BOM_BYPRODUCT_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_MFG_BOM_BYPRODUCT_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 工艺路线 -->
@@ -366,6 +419,14 @@
                 <to-one name="routing" refEntityName="app.erp.mfg.dao.entity.ErpMfgRouting" tagSet="pub" i18n-en:displayName='Routing'><join><on leftProp="routingId" rightProp="id"/></join></to-one>
                 <to-one name="workcenter" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkcenter" tagSet="pub" i18n-en:displayName='Workcenter'><join><on leftProp="workcenterId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_ROUTING_OPERATION_ROUTING_ID" unique="false">
+                    <column name="routingId"/>
+                </index>
+                <index name="IDX_MFG_ROUTING_OPERATION_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工作中心 -->
@@ -422,6 +483,11 @@
                 <to-one name="workcenter" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkcenter" tagSet="pub" i18n-en:displayName='Workcenter'><join><on leftProp="workcenterId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_WORKCENTER_CALENDAR_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工作中心按产品产能（CRP 产能四要素之一：按产品并行产能/换模/清理/效率） -->
@@ -451,6 +517,14 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_WORKCENTER_CAPACITY_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+                <index name="IDX_MFG_WORKCENTER_CAPACITY_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- CRP 负荷快照行（workcenter×date 聚合的占用工时/换模工时） -->
@@ -478,6 +552,14 @@
                 <to-one name="workOrder" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrder" tagSet="pub" i18n-en:displayName='Work Order'><join><on leftProp="workOrderId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_CRP_LOAD_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+                <index name="IDX_MFG_CRP_LOAD_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工单 -->
@@ -545,6 +627,37 @@
             <unique-keys>
                 <unique-key name="UK_MFG_WORK_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_WORK_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_BOM_ID" unique="false">
+                    <column name="bomId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_ROUTING_ID" unique="false">
+                    <column name="routingId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_PRODUCTION_VERSION_ID" unique="false">
+                    <column name="productionVersionId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_SOURCE_MRP_PLAN_ID" unique="false">
+                    <column name="sourceMrpPlanId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_PRODUCT_ID" unique="false">
+                    <column name="productId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_SOURCE_SCHEDULE_ID" unique="false">
+                    <column name="sourceScheduleId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工单行（多产出/多投入，替代单 productId 的弱表达） -->
@@ -580,6 +693,26 @@
                 <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Source Warehouse'><join><on leftProp="sourceWarehouseId" rightProp="id"/></join></to-one>
                 <to-one name="destWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Dest Warehouse'><join><on leftProp="destWarehouseId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_WORK_ORDER_LINE_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_LINE_SOURCE_WAREHOUSE_ID" unique="false">
+                    <column name="sourceWarehouseId"/>
+                </index>
+                <index name="IDX_MFG_WORK_ORDER_LINE_DEST_WAREHOUSE_ID" unique="false">
+                    <column name="destWarehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 生产版本（SAP 风格：产品 × BOM × 工艺路线 × 有效期） -->
@@ -614,6 +747,17 @@
             <unique-keys>
                 <unique-key name="UK_MFG_PRODUCTION_VERSION_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_PRODUCTION_VERSION_PRODUCT_ID" unique="false">
+                    <column name="productId"/>
+                </index>
+                <index name="IDX_MFG_PRODUCTION_VERSION_BOM_ID" unique="false">
+                    <column name="bomId"/>
+                </index>
+                <index name="IDX_MFG_PRODUCTION_VERSION_ROUTING_ID" unique="false">
+                    <column name="routingId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- MRP 计划头 -->
@@ -643,6 +787,16 @@
             <unique-keys>
                 <unique-key name="UK_MFG_MRP_PLAN_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_MRP_PLAN_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MFG_MRP_PLAN_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- MRP 计划行/计划订单 -->
@@ -678,6 +832,20 @@
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
                 <to-one name="parentLine" refEntityName="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine" tagSet="pub" i18n-en:displayName='Parent Line'><join><on leftProp="parentLineId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_MRP_PLAN_LINE_MRP_PLAN_ID" unique="false">
+                    <column name="mrpPlanId"/>
+                </index>
+                <index name="IDX_MFG_MRP_PLAN_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_MRP_PLAN_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MFG_MRP_PLAN_LINE_PARENT_LINE_ID" unique="false">
+                    <column name="parentLineId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- MRP 独立需求 -->
@@ -707,6 +875,17 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_MRP_DEMAND_MRP_PLAN_ID" unique="false">
+                    <column name="mrpPlanId"/>
+                </index>
+                <index name="IDX_MFG_MRP_DEMAND_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_MRP_DEMAND_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 需求预测头（运营需求预测：产品×时间桶，仓库维度可选以同时服务 MRP/DRP） -->
@@ -736,6 +915,12 @@
             <unique-keys>
                 <unique-key name="UK_MFG_FORECAST_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_FORECAST_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 需求预测行（materialId 必填；warehouseId 可选——空=产品级 MRP 消费，填=仓级 DRP 消费） -->
@@ -767,6 +952,20 @@
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_FORECAST_LINE_FORECAST_ID" unique="false">
+                    <column name="forecastId"/>
+                </index>
+                <index name="IDX_MFG_FORECAST_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_FORECAST_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_MFG_FORECAST_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 领料单头（绑定工单/作业卡，触发库存出库） -->
@@ -811,6 +1010,28 @@
             <unique-keys>
                 <unique-key name="UK_MFG_MATERIAL_ISSUE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_MATERIAL_ISSUE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_JOB_CARD_ID" unique="false">
+                    <column name="jobCardId"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 领料单行 -->
@@ -847,6 +1068,26 @@
                 <to-one name="workOrderLine" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine" tagSet="pub" i18n-en:displayName='Work Order Line'><join><on leftProp="workOrderLineId" rightProp="id"/></join></to-one>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Location'><join><on leftProp="locationId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_MATERIAL_ISSUE_LINE_ISSUE_ID" unique="false">
+                    <column name="issueId"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_LINE_WORK_ORDER_LINE_ID" unique="false">
+                    <column name="workOrderLineId"/>
+                </index>
+                <index name="IDX_MFG_MATERIAL_ISSUE_LINE_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 委外加工单头 -->
@@ -900,6 +1141,37 @@
             <unique-keys>
                 <unique-key name="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_ROUTING_ID" unique="false">
+                    <column name="routingId"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_PRODUCTION_VERSION_ID" unique="false">
+                    <column name="productionVersionId"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_PRODUCT_ID" unique="false">
+                    <column name="productId"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 委外加工单行 -->
@@ -928,6 +1200,17 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_LINE_SUBCONTRACT_ORDER_ID" unique="false">
+                    <column name="subcontractOrderId"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_SUBCONTRACT_ORDER_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 标准成本滚算头 -->
@@ -956,6 +1239,16 @@
             <unique-keys>
                 <unique-key name="UK_MFG_COST_ROLLUP_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_COST_ROLLUP_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MFG_COST_ROLLUP_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 标准成本滚算行（按产品汇总 材料成本+人工+制造费用+委外） -->
@@ -988,6 +1281,20 @@
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_COST_ROLLUP_LINE_COST_ROLLUP_ID" unique="false">
+                    <column name="costRollupId"/>
+                </index>
+                <index name="IDX_MFG_COST_ROLLUP_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_COST_ROLLUP_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MFG_COST_ROLLUP_LINE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 作业卡 -->
@@ -1025,6 +1332,23 @@
             <unique-keys>
                 <unique-key name="UK_MFG_JOB_CARD_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MFG_JOB_CARD_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MFG_JOB_CARD_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+                <index name="IDX_MFG_JOB_CARD_OPERATION_ID" unique="false">
+                    <column name="operationId"/>
+                </index>
+                <index name="IDX_MFG_JOB_CARD_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+                <index name="IDX_MFG_JOB_CARD_SOURCE_SCHEDULE_ID" unique="false">
+                    <column name="sourceScheduleId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 作业工时记录（按操作员逐条，state-machine.md 引用） -->
@@ -1059,6 +1383,17 @@
                 <to-one name="workOrder" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrder" tagSet="pub" i18n-en:displayName='Work Order'><join><on leftProp="workOrderId" rightProp="id"/></join></to-one>
                 <to-one name="operator" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Operator'><join><on leftProp="operatorId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_JOB_CARD_TIME_LOG_JOB_CARD_ID" unique="false">
+                    <column name="jobCardId"/>
+                </index>
+                <index name="IDX_MFG_JOB_CARD_TIME_LOG_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+                <index name="IDX_MFG_JOB_CARD_TIME_LOG_OPERATOR_ID" unique="false">
+                    <column name="operatorId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 标准成本差异记录 -->
@@ -1098,6 +1433,23 @@
                 <to-one name="workcenter" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkcenter" tagSet="pub" i18n-en:displayName='Workcenter'><join><on leftProp="workcenterId" rightProp="id"/></join></to-one>
                 <to-one name="operation" refEntityName="app.erp.mfg.dao.entity.ErpMfgBomOperation" tagSet="pub" i18n-en:displayName='Operation'><join><on leftProp="operationId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_COST_VARIANCE_BUSINESS_DATE" unique="false">
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MFG_COST_VARIANCE_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+                <index name="IDX_MFG_COST_VARIANCE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MFG_COST_VARIANCE_OPERATION_ID" unique="false">
+                    <column name="operationId"/>
+                </index>
+                <index name="IDX_MFG_COST_VARIANCE_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 批次追溯记录 -->
@@ -1141,6 +1493,35 @@
                 <to-one name="outputLot" refEntityName="app.erp.inv.dao.entity.ErpInvBatch" tagSet="pub" i18n-en:displayName='Output Lot'><join><on leftProp="outputLotId" rightProp="id"/></join></to-one>
                 <to-one name="outputUoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Output UoM'><join><on leftProp="outputUoMId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MFG_BATCH_GENEALOGY_WORK_ORDER_ID" unique="false">
+                    <column name="workOrderId"/>
+                </index>
+                <index name="IDX_MFG_BATCH_GENEALOGY_JOB_CARD_ID" unique="false">
+                    <column name="jobCardId"/>
+                </index>
+                <index name="IDX_MFG_BATCH_GENEALOGY_OPERATION_ID" unique="false">
+                    <column name="operationId"/>
+                </index>
+                <index name="IDX_MFG_BATCH_GENEALOGY_INPUT_LOT_ID" unique="false">
+                    <column name="inputLotId"/>
+                </index>
+                <index name="IDX_MFG_BATCH_GENEALOGY_INPUT_MATERIAL_ID" unique="false">
+                    <column name="inputMaterialId"/>
+                </index>
+                <index name="IDX_MFG_BATCH_GENEALOGY_INPUT_UO_M_ID" unique="false">
+                    <column name="inputUoMId"/>
+                </index>
+                <index name="IDX_MFG_BATCH_GENEALOGY_OUTPUT_LOT_ID" unique="false">
+                    <column name="outputLotId"/>
+                </index>
+                <index name="IDX_MFG_BATCH_GENEALOGY_OUTPUT_MATERIAL_ID" unique="false">
+                    <column name="outputMaterialId"/>
+                </index>
+                <index name="IDX_MFG_BATCH_GENEALOGY_OUTPUT_UO_M_ID" unique="false">
+                    <column name="outputUoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

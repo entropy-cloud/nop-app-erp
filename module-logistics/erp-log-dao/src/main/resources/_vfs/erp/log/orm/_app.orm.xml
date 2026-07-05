@@ -126,6 +126,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_LOG_CARRIER_GATEWAY_ID" unique="false">
+                    <column name="gatewayId"/>
+                </index>
+                <index name="IDX_LOG_CARRIER_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -204,6 +212,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_LOG_CARRIER_CONFIG_CARRIER_ID" unique="false">
+                    <column name="carrierId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub"
                         i18n-en:displayName="Carrier">
@@ -314,6 +327,24 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="39" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_LOG_SHIPMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_CARRIER_ID" unique="false">
+                    <column name="carrierId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_CARRIER_CONFIG_ID" unique="false">
+                    <column name="carrierConfigId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_FREIGHT_CURRENCY_ID" unique="false">
+                    <column name="freightCurrencyId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_SHIPPER_ID" unique="false">
+                    <column name="shipperId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="carrier" refEntityName="app.erp.log.dao.entity.ErpLogCarrier" tagSet="pub"
                         i18n-en:displayName="Carrier">
@@ -406,6 +437,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_LOG_SHIPMENT_LINE_SHIPMENT_ID" unique="false">
+                    <column name="shipmentId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub"
                         i18n-en:displayName="Shipment">
@@ -469,6 +508,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_LOG_SHIPMENT_PARCEL_SHIPMENT_ID" unique="false">
+                    <column name="shipmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub"
                         i18n-en:displayName="Shipment">
@@ -528,6 +572,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_LOG_SHIPMENT_LOG_SHIPMENT_ID" unique="false">
+                    <column name="shipmentId"/>
+                </index>
+                <index name="IDX_LOG_SHIPMENT_LOG_GATEWAY_ID" unique="false">
+                    <column name="gatewayId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub"
                         i18n-en:displayName="Shipment">
@@ -593,6 +645,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_LOG_DELIVERY_WINDOW_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">

@@ -164,6 +164,24 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_EQUIPMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_EQUIPMENT_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_MNT_EQUIPMENT_WORKCENTER_ID" unique="false">
+                    <column name="workcenterId"/>
+                </index>
+                <index name="IDX_MNT_EQUIPMENT_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_MNT_EQUIPMENT_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="location" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub"
                         i18n-en:displayName="Location">
@@ -264,6 +282,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_EQUIPMENT_CATEGORY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub"
                         i18n-en:displayName="Parent">
@@ -326,6 +349,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_SCHEDULE_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
                         i18n-en:displayName="Equipment">
@@ -403,6 +431,22 @@
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="50" propId="26"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_VISIT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_VISIT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MNT_VISIT_SCHEDULE_ID" unique="false">
+                    <column name="scheduleId"/>
+                </index>
+                <index name="IDX_MNT_VISIT_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="schedule" refEntityName="app.erp.mnt.dao.entity.ErpMntSchedule" tagSet="pub"
                         i18n-en:displayName="Schedule">
@@ -480,6 +524,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_VISIT_TASK_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_VISIT_TASK_VISIT_ID" unique="false">
+                    <column name="visitId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub"
                         i18n-en:displayName="Visit">
@@ -540,6 +592,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_REQUEST_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_REQUEST_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
                         i18n-en:displayName="Equipment">
@@ -592,6 +652,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_DOWNTIME_ENTRY_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+                <index name="IDX_MNT_DOWNTIME_ENTRY_RELATED_JOB_ORDER_ID" unique="false">
+                    <column name="relatedJobOrderId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
                         i18n-en:displayName="Equipment">
@@ -643,6 +711,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_MAINTENANCE_TEAM_LEADER_ID" unique="false">
+                    <column name="leaderId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="leader" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
                         i18n-en:displayName="Leader">
@@ -702,6 +775,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_MAINTENANCE_TEAM_MEMBER_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_MNT_MAINTENANCE_TEAM_MEMBER_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="team" refEntityName="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam" tagSet="pub"
                         i18n-en:displayName="Team">
@@ -777,6 +858,28 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_SPARE_PART_USAGE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_VISIT_ID" unique="false">
+                    <column name="visitId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_REQUEST_ID" unique="false">
+                    <column name="requestId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub"
                         i18n-en:displayName="Visit">
@@ -862,6 +965,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_SPARE_PART_USAGE_LINE_SPARE_PART_USAGE_ID" unique="false">
+                    <column name="sparePartUsageId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MNT_SPARE_PART_USAGE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="sparePartUsage" refEntityName="app.erp.mnt.dao.entity.ErpMntSparePartUsage" tagSet="pub"
                         i18n-en:displayName="Spare Part Usage">
@@ -942,6 +1056,19 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_MNT_CALIBRATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_MNT_CALIBRATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_MNT_CALIBRATION_EQUIPMENT_ID" unique="false">
+                    <column name="equipmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
                         i18n-en:displayName="Equipment">

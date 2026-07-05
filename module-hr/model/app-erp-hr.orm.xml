@@ -317,6 +317,26 @@
             <unique-keys>
                 <unique-key name="UK_HR_EMPLOYEE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_EMPLOYEE_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_POSITION_ID" unique="false">
+                    <column name="positionId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_SUPERIOR_ID" unique="false">
+                    <column name="superiorId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_COST_CENTER_ID" unique="false">
+                    <column name="costCenterId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_BANK_ACCOUNT_ID" unique="false">
+                    <column name="bankAccountId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_USER_ACCOUNT_ID" unique="false">
+                    <column name="userAccountId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 部门 -->
@@ -348,6 +368,17 @@
             <unique-keys>
                 <unique-key name="UK_HR_DEPARTMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_DEPARTMENT_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_HR_DEPARTMENT_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+                <index name="IDX_HR_DEPARTMENT_COST_CENTER_ID" unique="false">
+                    <column name="costCenterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 职位 -->
@@ -377,6 +408,11 @@
             <unique-keys>
                 <unique-key name="UK_HR_POSITION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_POSITION_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 劳动合同 -->
@@ -419,6 +455,21 @@
             <unique-keys>
                 <unique-key name="UK_HR_EMPLOYMENT_CONTRACT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_SALARY_CURRENCY_ID" unique="false">
+                    <column name="salaryCurrencyId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 休假申请 -->
@@ -454,6 +505,18 @@
             <unique-keys>
                 <unique-key name="UK_HR_LEAVE_REQUEST_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_LEAVE_REQUEST_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_LEAVE_REQUEST_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_LEAVE_REQUEST_APPROVER_ID" unique="false">
+                    <column name="approverId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工时表 -->
@@ -485,6 +548,15 @@
             <unique-keys>
                 <unique-key name="UK_HR_TIMESHEET_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_TIMESHEET_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工时表明细 -->
@@ -514,6 +586,20 @@
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
                 <to-one name="task" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub" i18n-en:displayName='Task'><join><on leftProp="taskId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_TIMESHEET_LINE_TIMESHEET_ID" unique="false">
+                    <column name="timesheetId"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_LINE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_LINE_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 考勤记录 -->
@@ -546,6 +632,14 @@
                 <to-one name="leaveRequest" refEntityName="app.erp.hr.dao.entity.ErpHrLeaveRequest" tagSet="pub" i18n-en:displayName='Leave Request'><join><on leftProp="leaveRequestId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_ATTENDANCE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_ATTENDANCE_LEAVE_REQUEST_ID" unique="false">
+                    <column name="leaveRequestId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 薪酬记录 -->
@@ -598,6 +692,18 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="bankFile" refEntityName="app.erp.hr.dao.entity.ErpHrPayrollBankFile" tagSet="pub" i18n-en:displayName='Bank File'><join><on leftProp="bankFileId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_SALARY_ORG_APPROVE_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="approveStatus"/>
+                </index>
+                <index name="IDX_HR_SALARY_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_SALARY_BANK_FILE_ID" unique="false">
+                    <column name="bankFileId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 招聘记录 -->
@@ -641,6 +747,27 @@
             <unique-keys>
                 <unique-key name="UK_HR_RECRUITMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_RECRUITMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_POSITION_ID" unique="false">
+                    <column name="positionId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_RESUME_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="resumeAttachmentFileId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_INTERVIEWER_ID" unique="false">
+                    <column name="interviewerId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
         </entity>
     
         <!-- 薪酬模拟 -->
@@ -677,6 +804,21 @@
             <unique-keys>
                 <unique-key name="UK_HR_SALARY_SIMULATION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_SALARY_SIMULATION_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_SOURCE_SALARY_ID" unique="false">
+                    <column name="sourceSalaryId"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_REVIEWER_ID" unique="false">
+                    <column name="reviewerId"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_CONVERTED_SALARY_ID" unique="false">
+                    <column name="convertedSalaryId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 薪酬模拟调整项（payroll-simulation.md §2.2） -->
@@ -707,6 +849,14 @@
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Employee'><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_SALARY_SIMULATION_ITEM_ADJ_SIMULATION_ID" unique="false">
+                    <column name="simulationId"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_ITEM_ADJ_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrSalaryItem"
                 displayName="薪酬项目" ext:icon="list" i18n-en:displayName="Salary Item" name="app.erp.hr.dao.entity.ErpHrSalaryItem"
@@ -793,6 +943,11 @@
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Employee'><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_SOCIAL_INSURANCE_BASE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 个税配置 -->
@@ -844,6 +999,11 @@
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Employee'><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_TAX_SPECIAL_DEDUCTION_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 银行代发文件 -->
@@ -873,6 +1033,15 @@
                 <to-one name="bank" refEntityName="app.erp.md.dao.entity.ErpMdBankAccount" tagSet="pub" i18n-en:displayName='Bank'><join><on leftProp="bankId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_PAYROLL_BANK_FILE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_PAYROLL_BANK_FILE_BANK_ID" unique="false">
+                    <column name="bankId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 班次模板 -->
@@ -945,6 +1114,27 @@
                 <to-one name="replacedByAssignment" ignoreDepends="true" refEntityName="app.erp.hr.dao.entity.ErpHrShiftAssignment" tagSet="pub" i18n-en:displayName='Replaced By'><join><on leftProp="replacedByAssignmentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_SHIFT_ID" unique="false">
+                    <column name="shiftId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_LEAVE_REQUEST_ID" unique="false">
+                    <column name="leaveRequestId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_SWAP_REQUEST_ID" unique="false">
+                    <column name="swapRequestId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_REPLACED_BY_ASSIGNMENT_ID" unique="false">
+                    <column name="replacedByAssignmentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 轮换排班模板 -->
@@ -975,6 +1165,11 @@
             <unique-keys>
                 <unique-key name="UK_HR_SHIFT_ROTATION_PATTERN_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_SHIFT_ROTATION_PATTERN_GROUP_ID" unique="false">
+                    <column name="groupId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 排班调换申请 -->
@@ -1010,6 +1205,27 @@
             <unique-keys>
                 <unique-key name="UK_HR_SHIFT_SWAP_REQUEST_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_REQUESTER_ID" unique="false">
+                    <column name="requesterId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_TARGET_EMPLOYEE_ID" unique="false">
+                    <column name="targetEmployeeId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_SOURCE_ASSIGNMENT_ID" unique="false">
+                    <column name="sourceAssignmentId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_TARGET_ASSIGNMENT_ID" unique="false">
+                    <column name="targetAssignmentId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_APPROVED_BY_ID" unique="false">
+                    <column name="approvedById"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 问卷模板 -->
@@ -1053,6 +1269,15 @@
             <unique-keys>
                 <unique-key name="UK_HR_SURVEY_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_SURVEY_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_SURVEY_TARGET_DEPARTMENT_ID" unique="false">
+                    <column name="targetDepartmentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 问卷题目 -->
@@ -1082,6 +1307,11 @@
             <relations>
                 <to-one name="survey" refEntityName="app.erp.hr.dao.entity.ErpHrSurvey" tagSet="pub" i18n-en:displayName='Survey'><join><on leftProp="surveyId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_SURVEY_QUESTION_SURVEY_ID" unique="false">
+                    <column name="surveyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 答卷 -->
@@ -1110,6 +1340,14 @@
                 <to-many name="answers" refEntityName="app.erp.hr.dao.entity.ErpHrSurveyAnswer" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Answers' ext:estRows="20"><join><on leftProp="id" rightProp="responseId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_SURVEY_RESPONSE_SURVEY_ID" unique="false">
+                    <column name="surveyId"/>
+                </index>
+                <index name="IDX_HR_SURVEY_RESPONSE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 回答明细 -->
@@ -1134,6 +1372,14 @@
                 <to-one name="response" refEntityName="app.erp.hr.dao.entity.ErpHrSurveyResponse" tagSet="pub" i18n-en:displayName='Response'><join><on leftProp="responseId" rightProp="id"/></join></to-one>
                 <to-one name="question" refEntityName="app.erp.hr.dao.entity.ErpHrSurveyQuestion" tagSet="pub" i18n-en:displayName='Question'><join><on leftProp="questionId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_SURVEY_ANSWER_RESPONSE_ID" unique="false">
+                    <column name="responseId"/>
+                </index>
+                <index name="IDX_HR_SURVEY_ANSWER_QUESTION_ID" unique="false">
+                    <column name="questionId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 调研结果聚合 -->
@@ -1162,6 +1408,14 @@
                 <to-one name="survey" refEntityName="app.erp.hr.dao.entity.ErpHrSurvey" tagSet="pub" i18n-en:displayName='Survey'><join><on leftProp="surveyId" rightProp="id"/></join></to-one>
                 <to-one name="department" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub" i18n-en:displayName='Department'><join><on leftProp="departmentId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_SURVEY_RESULT_SURVEY_ID" unique="false">
+                    <column name="surveyId"/>
+                </index>
+                <index name="IDX_HR_SURVEY_RESULT_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 胜任力字典 -->
@@ -1194,6 +1448,11 @@
             <unique-keys>
                 <unique-key name="UK_HR_COMPETENCY_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_HR_COMPETENCY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 胜任力等级 -->
@@ -1217,6 +1476,11 @@
             <relations>
                 <to-one name="competency" refEntityName="app.erp.hr.dao.entity.ErpHrCompetency" tagSet="pub" i18n-en:displayName='Competency'><join><on leftProp="competencyId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_COMPETENCY_LEVEL_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 岗位胜任力要求 -->
@@ -1241,6 +1505,14 @@
                 <to-one name="position" refEntityName="app.erp.hr.dao.entity.ErpHrPosition" tagSet="pub" i18n-en:displayName='Position'><join><on leftProp="positionId" rightProp="id"/></join></to-one>
                 <to-one name="competency" refEntityName="app.erp.hr.dao.entity.ErpHrCompetency" tagSet="pub" i18n-en:displayName='Competency'><join><on leftProp="competencyId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_ROLE_COMPETENCY_POSITION_ID" unique="false">
+                    <column name="positionId"/>
+                </index>
+                <index name="IDX_HR_ROLE_COMPETENCY_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 员工评估 -->
@@ -1270,6 +1542,18 @@
                 <to-many name="details" refEntityName="app.erp.hr.dao.entity.ErpHrAssessmentDetail" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Details' ext:estRows="30"><join><on leftProp="id" rightProp="assessmentId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_EMPLOYEE_ASSESSMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_ASSESSMENT_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_ASSESSMENT_ASSESSOR_ID" unique="false">
+                    <column name="assessorId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 评估明细 -->
@@ -1294,6 +1578,14 @@
                 <to-one name="assessment" refEntityName="app.erp.hr.dao.entity.ErpHrEmployeeAssessment" tagSet="pub" i18n-en:displayName='Assessment'><join><on leftProp="assessmentId" rightProp="id"/></join></to-one>
                 <to-one name="competency" refEntityName="app.erp.hr.dao.entity.ErpHrCompetency" tagSet="pub" i18n-en:displayName='Competency'><join><on leftProp="competencyId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_ASSESSMENT_DETAIL_ASSESSMENT_ID" unique="false">
+                    <column name="assessmentId"/>
+                </index>
+                <index name="IDX_HR_ASSESSMENT_DETAIL_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 差距分析 -->
@@ -1321,6 +1613,14 @@
                 <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Employee'><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
                 <to-one name="competency" refEntityName="app.erp.hr.dao.entity.ErpHrCompetency" tagSet="pub" i18n-en:displayName='Competency'><join><on leftProp="competencyId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_GAP_ANALYSIS_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_GAP_ANALYSIS_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 发展计划 -->
@@ -1347,6 +1647,15 @@
                 <to-many name="items" refEntityName="app.erp.hr.dao.entity.ErpHrDevelopmentPlanItem" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Items' ext:estRows="10"><join><on leftProp="id" rightProp="planId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 发展计划项 -->
@@ -1378,6 +1687,23 @@
                 <to-one name="gap" refEntityName="app.erp.hr.dao.entity.ErpHrGapAnalysis" tagSet="pub" i18n-en:displayName='Gap Analysis'><join><on leftProp="gapId" rightProp="id"/></join></to-one>
                 <to-one name="mentor" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Mentor'><join><on leftProp="mentorId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_PLAN_ID" unique="false">
+                    <column name="planId"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_COMPETENCY_ID" unique="false">
+                    <column name="competencyId"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_GAP_ID" unique="false">
+                    <column name="gapId"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ITEM_MENTOR_ID" unique="false">
+                    <column name="mentorId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->

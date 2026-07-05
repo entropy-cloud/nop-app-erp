@@ -172,6 +172,34 @@
                 <column code="ORIGIN_RETURNED_MOVE_ID" displayName="原退货移动单" name="originReturnedMoveId" propId="25"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Origin Returned Move"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_STOCK_MOVE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_SOURCE_WAREHOUSE_ID" unique="false">
+                    <column name="sourceWarehouseId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_SOURCE_LOCATION_ID" unique="false">
+                    <column name="sourceLocationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_DEST_WAREHOUSE_ID" unique="false">
+                    <column name="destWarehouseId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_DEST_LOCATION_ID" unique="false">
+                    <column name="destLocationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_ORIGIN_MOVE_ID" unique="false">
+                    <column name="originMoveId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_ORIGIN_RETURNED_MOVE_ID" unique="false">
+                    <column name="originReturnedMoveId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="sourceWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
                         i18n-en:displayName="Source Warehouse">
@@ -280,6 +308,29 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_STOCK_MOVE_LINE_MOVE_ID" unique="false">
+                    <column name="moveId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_SOURCE_LOCATION_ID" unique="false">
+                    <column name="sourceLocationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_MOVE_LINE_DEST_LOCATION_ID" unique="false">
+                    <column name="destLocationId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="move" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub"
                         i18n-en:displayName="Move">
@@ -397,6 +448,39 @@
                         precision="20" propId="28" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-inv/ownership-type" i18n-en:displayName="Ownership Type"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_STOCK_LEDGER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_MOVE_ID" unique="false">
+                    <column name="moveId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_MOVE_LINE_ID" unique="false">
+                    <column name="moveLineId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_INV_STOCK_LEDGER_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="move" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" tagSet="pub"
                         i18n-en:displayName="Move">
@@ -526,6 +610,26 @@
                         precision="20" propId="23" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-inv/ownership-type" i18n-en:displayName="Ownership Type"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_STOCK_BALANCE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_INV_STOCK_BALANCE_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
                         i18n-en:displayName="Material">
@@ -616,6 +720,19 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_RESERVATION_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_RESERVED_FOR_PARTNER_ID" unique="false">
+                    <column name="reservedForPartnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Org">
@@ -689,6 +806,26 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_RESERVATION_LINE_RESERVATION_ID" unique="false">
+                    <column name="reservationId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_INV_RESERVATION_LINE_UOM_ID" unique="false">
+                    <column name="uomId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="reservation" refEntityName="app.erp.inv.dao.entity.ErpInvReservation" tagSet="pub"
                         i18n-en:displayName="Reservation">
@@ -785,6 +922,26 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_COST_LAYER_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_INCOMING_MOVE_ID" unique="false">
+                    <column name="incomingMoveId"/>
+                </index>
+                <index name="IDX_INV_COST_LAYER_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
                         i18n-en:displayName="Material">
@@ -885,6 +1042,25 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_TRANSFER_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_FROM_WAREHOUSE_ID" unique="false">
+                    <column name="fromWarehouseId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_TO_WAREHOUSE_ID" unique="false">
+                    <column name="toWarehouseId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_IN_TRANSIT_WAREHOUSE_ID" unique="false">
+                    <column name="inTransitWarehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="fromWarehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
                         i18n-en:displayName="From Warehouse">
@@ -964,6 +1140,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_TRANSFER_ORDER_LINE_TRANSFER_ID" unique="false">
+                    <column name="transferId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_TRANSFER_ORDER_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="transfer" refEntityName="app.erp.inv.dao.entity.ErpInvTransferOrder" tagSet="pub"
                         i18n-en:displayName="Transfer">
@@ -1040,6 +1230,19 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_STOCK_TAKE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
                         i18n-en:displayName="Warehouse">
@@ -1119,6 +1322,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_STOCK_TAKE_LINE_TAKE_ID" unique="false">
+                    <column name="takeId"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_INV_STOCK_TAKE_LINE_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="take" refEntityName="app.erp.inv.dao.entity.ErpInvStockTake" tagSet="pub"
                         i18n-en:displayName="Take">
@@ -1197,6 +1417,22 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_PICKING_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_PICKER_ID" unique="false">
+                    <column name="pickerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
                         i18n-en:displayName="Warehouse">
@@ -1274,6 +1510,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_PICKING_ORDER_LINE_PICKING_ID" unique="false">
+                    <column name="pickingId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_INV_PICKING_ORDER_LINE_SOURCE_LOCATION_ID" unique="false">
+                    <column name="sourceLocationId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="picking" refEntityName="app.erp.inv.dao.entity.ErpInvPickingOrder" tagSet="pub"
                         i18n-en:displayName="Picking">
@@ -1358,6 +1611,21 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_BATCH_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_BATCH_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_BATCH_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_BATCH_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
                         i18n-en:displayName="Material">
@@ -1435,6 +1703,24 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_SERIAL_NUMBER_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_SERIAL_NUMBER_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_SERIAL_NUMBER_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_INV_SERIAL_NUMBER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_SERIAL_NUMBER_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
                         i18n-en:displayName="Material">
@@ -1532,6 +1818,31 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_SOURCE_LOC_ID" unique="false">
+                    <column name="sourceLocId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_DEST_LOC_ID" unique="false">
+                    <column name="destLocId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Org">
@@ -1629,6 +1940,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_LINE_TRANSFER_ID" unique="false">
+                    <column name="transferId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_OWNERSHIP_TRANSFER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="transfer" refEntityName="app.erp.inv.dao.entity.ErpInvOwnershipTransfer" tagSet="pub"
                         i18n-en:displayName="Transfer">

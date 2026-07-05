@@ -138,6 +138,22 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_QUOTATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Customer">
@@ -217,6 +233,17 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_QUOTATION_LINE_QUOTATION_ID" unique="false">
+                    <column name="quotationId"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="quotation" refEntityName="app.erp.sal.dao.entity.ErpSalQuotation" tagSet="pub"
                         i18n-en:displayName="Quotation">
@@ -304,6 +331,22 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_CONTRACT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_CONTRACT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_CONTRACT_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_CONTRACT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Customer">
@@ -423,6 +466,34 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="36"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_ORDER_QUOTATION_ID" unique="false">
+                    <column name="quotationId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_SETTLEMENT_METHOD_ID" unique="false">
+                    <column name="settlementMethodId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Customer">
@@ -542,6 +613,29 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="24"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_ORDER_LINE_ORDER_ID" unique="false">
+                    <column name="orderId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_TAX_RATE_ID" unique="false">
+                    <column name="taxRateId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="order" refEntityName="app.erp.sal.dao.entity.ErpSalOrder" tagSet="pub"
                         i18n-en:displayName="Order">
@@ -662,6 +756,28 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="28"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_DELIVERY_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_ORDER_ID" unique="false">
+                    <column name="orderId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="order" refEntityName="app.erp.sal.dao.entity.ErpSalOrder" tagSet="pub"
                         i18n-en:displayName="Order">
@@ -759,6 +875,26 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="21"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_DELIVERY_LINE_DELIVERY_ID" unique="false">
+                    <column name="deliveryId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_ORDER_LINE_ID" unique="false">
+                    <column name="orderLineId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="delivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub"
                         i18n-en:displayName="Delivery">
@@ -879,6 +1015,22 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="30"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_INVOICE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Customer">
@@ -958,6 +1110,20 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_INVOICE_LINE_INVOICE_ID" unique="false">
+                    <column name="invoiceId"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_LINE_DELIVERY_LINE_ID" unique="false">
+                    <column name="deliveryLineId"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="invoice" refEntityName="app.erp.sal.dao.entity.ErpSalInvoice" tagSet="pub"
                         i18n-en:displayName="Invoice">
@@ -1060,6 +1226,31 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="29"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_RECEIPT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_SETTLEMENT_METHOD_ID" unique="false">
+                    <column name="settlementMethodId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_BANK_ACCOUNT_ID" unique="false">
+                    <column name="bankAccountId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_PARTNER_BANK_ACCOUNT_ID" unique="false">
+                    <column name="partnerBankAccountId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Customer">
@@ -1141,6 +1332,14 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_RECEIPT_LINE_RECEIPT_ID" unique="false">
+                    <column name="receiptId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_LINE_INVOICE_ID" unique="false">
+                    <column name="invoiceId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="receipt" refEntityName="app.erp.sal.dao.entity.ErpSalReceipt" tagSet="pub"
                         i18n-en:displayName="Receipt">
@@ -1230,6 +1429,28 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="28"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_RETURN_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_RETURN_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_RETURN_DELIVERY_ID" unique="false">
+                    <column name="deliveryId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="delivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub"
                         i18n-en:displayName="Delivery">
@@ -1324,6 +1545,23 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="20"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_SAL_RETURN_LINE_RETURN_ID" unique="false">
+                    <column name="returnId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_LINE_DELIVERY_LINE_ID" unique="false">
+                    <column name="deliveryLineId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="return" refEntityName="app.erp.sal.dao.entity.ErpSalReturn" tagSet="pub"
                         i18n-en:displayName="Return">

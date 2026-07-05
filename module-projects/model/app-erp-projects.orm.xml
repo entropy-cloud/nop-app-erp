@@ -125,6 +125,24 @@
             <unique-keys>
                 <unique-key name="UK_PRJ_PROJECT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_PRJ_PROJECT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_PROJECT_TYPE_ID" unique="false">
+                    <column name="projectTypeId"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 任务 -->
@@ -164,6 +182,23 @@
                 <to-many name="childTasks" refEntityName="app.erp.prj.dao.entity.ErpPrjTask" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Child Tasks' ext:estRows="10"><join><on leftProp="id" rightProp="parentTaskId"/></join></to-many>
                 <to-many name="timesheets" refEntityName="app.erp.prj.dao.entity.ErpPrjTimesheet" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Timesheets' ext:estRows="30"><join><on leftProp="id" rightProp="taskId"/></join></to-many>
             </relations>
+            <indexes>
+                <index name="IDX_PRJ_TASK_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PRJ_TASK_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_TASK_PARENT_TASK_ID" unique="false">
+                    <column name="parentTaskId"/>
+                </index>
+                <index name="IDX_PRJ_TASK_ASSIGNEE_ID" unique="false">
+                    <column name="assigneeId"/>
+                </index>
+                <index name="IDX_PRJ_TASK_DEPENDS_ON_ID" unique="false">
+                    <column name="dependsOnId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 工时记录 -->
@@ -210,6 +245,27 @@
             <unique-keys>
                 <unique-key name="UK_PRJ_TIMESHEET_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_PRJ_TIMESHEET_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_USER_ID" unique="false">
+                    <column name="userId"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_ACTIVITY_TYPE_ID" unique="false">
+                    <column name="activityTypeId"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目类型 -->
@@ -235,6 +291,11 @@
             <unique-keys>
                 <unique-key name="UK_PRJ_PROJECT_TYPE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_PRJ_PROJECT_TYPE_DEFAULT_SUBJECT_ID" unique="false">
+                    <column name="defaultSubjectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 活动类型 -->
@@ -261,6 +322,11 @@
             <unique-keys>
                 <unique-key name="UK_PRJ_ACTIVITY_TYPE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_PRJ_ACTIVITY_TYPE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目成员 -->
@@ -285,6 +351,14 @@
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
                 <to-one name="user" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='User'><join><on leftProp="userId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_PRJ_PROJECT_USER_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_USER_USER_ID" unique="false">
+                    <column name="userId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目预算头 -->
@@ -324,6 +398,22 @@
             <unique-keys>
                 <unique-key name="UK_PRJ_BUDGET_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_PRJ_BUDGET_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目预算行 -->
@@ -355,6 +445,17 @@
                     <join><on leftProp="taskId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_PRJ_BUDGET_LINE_BUDGET_ID" unique="false">
+                    <column name="budgetId"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_LINE_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目成本归集头（汇总采购/工时/费用到项目） -->
@@ -400,6 +501,22 @@
             <unique-keys>
                 <unique-key name="UK_PRJ_COST_COLLECTION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_PRJ_COST_COLLECTION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目成本归集行 -->
@@ -431,6 +548,17 @@
                     <join><on leftProp="taskId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_PRJ_COST_COLLECTION_LINE_COST_COLLECTION_ID" unique="false">
+                    <column name="costCollectionId"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_LINE_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目里程碑 -->
@@ -461,6 +589,14 @@
             <unique-keys>
                 <unique-key name="UK_PRJ_MILESTONE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_PRJ_MILESTONE_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PRJ_MILESTONE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目开票头 -->
@@ -510,6 +646,28 @@
             <unique-keys>
                 <unique-key name="UK_PRJ_BILLING_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_PRJ_BILLING_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_MILESTONE_ID" unique="false">
+                    <column name="milestoneId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 项目开票行 -->
@@ -539,6 +697,17 @@
                     <join><on leftProp="taskId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_PRJ_BILLING_LINE_BILLING_ID" unique="false">
+                    <column name="billingId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_LINE_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

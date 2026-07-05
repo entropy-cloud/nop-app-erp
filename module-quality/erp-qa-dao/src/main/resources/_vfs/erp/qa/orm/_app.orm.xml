@@ -214,6 +214,31 @@
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="33"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_INSPECTION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_INSPECTOR_ID" unique="false">
+                    <column name="inspectorId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
                         i18n-en:displayName="Material">
@@ -309,6 +334,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_INSPECTION_LINE_INSPECTION_ID" unique="false">
+                    <column name="inspectionId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_LINE_PARAMETER_ID" unique="false">
+                    <column name="parameterId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub"
                         i18n-en:displayName="Inspection">
@@ -356,6 +389,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_INSPECTION_TEMPLATE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-many cascadeDelete="true" name="lines"
                          refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine"
@@ -417,6 +455,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_INSPECTION_TEMPLATE_LINE_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub"
                         i18n-en:displayName="Template">
@@ -497,6 +540,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_NON_CONFORMANCE_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_QA_NON_CONFORMANCE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_QA_NON_CONFORMANCE_INSPECTION_ID" unique="false">
+                    <column name="inspectionId"/>
+                </index>
+                <index name="IDX_QA_NON_CONFORMANCE_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-many cascadeDelete="true" name="actions" refEntityName="app.erp.qa.dao.entity.ErpQaAction"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Actions" ext:estRows="10">
@@ -573,6 +630,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_ACTION_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_QA_ACTION_NCR_ID" unique="false">
+                    <column name="ncrId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="ncr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub"
                         i18n-en:displayName="Ncr">
@@ -629,6 +694,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_RISK_REGISTER_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_QA_RISK_REGISTER_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+            </indexes>
             <unique-keys>
                 <unique-key columns="code" name="UK_QA_RISK_REGISTER_CODE"/>
             </unique-keys>
@@ -680,6 +753,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_QUALITY_GOAL_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_QA_QUALITY_GOAL_RESPONSIBLE_PERSON_ID" unique="false">
+                    <column name="responsiblePersonId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="responsiblePerson" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
                         i18n-en:displayName="Responsible Person">
@@ -748,6 +829,12 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_REVIEW_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
                     <join>
@@ -874,6 +961,16 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_CALIBRATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_QA_CALIBRATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
                         i18n-en:displayName="Calibrated By Employee">
@@ -952,6 +1049,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_RECALL_APPROVE_STATUS" unique="false">
+                    <column name="approveStatus"/>
+                </index>
+                <index name="IDX_QA_RECALL_BUSINESS_DATE" unique="false">
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_QA_RECALL_SOURCE_NCR_ID" unique="false">
+                    <column name="sourceNcrId"/>
+                </index>
+                <index name="IDX_QA_RECALL_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_QA_RECALL_BATCH_ID" unique="false">
+                    <column name="batchId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="sourceNcr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub"
                         i18n-en:displayName="Source NCR">
@@ -1024,6 +1138,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_QA_RECALL_TARGET_RECALL_ID" unique="false">
+                    <column name="recallId"/>
+                </index>
+                <index name="IDX_QA_RECALL_TARGET_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_QA_RECALL_TARGET_SALES_DELIVERY_ID" unique="false">
+                    <column name="salesDeliveryId"/>
+                </index>
+                <index name="IDX_QA_RECALL_TARGET_GENERATED_RETURN_ID" unique="false">
+                    <column name="generatedReturnId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="recall" refEntityName="app.erp.qa.dao.entity.ErpQaRecall" tagSet="pub"
                         i18n-en:displayName="Recall">

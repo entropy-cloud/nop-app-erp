@@ -177,6 +177,30 @@
             <unique-keys>
                 <unique-key name="UK_AST_ASSET_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_ASSET_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_AST_ASSET_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_AST_ASSET_LOCATION_ID" unique="false">
+                    <column name="locationId"/>
+                </index>
+                <index name="IDX_AST_ASSET_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_AST_ASSET_STAFF_ID" unique="false">
+                    <column name="staffId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 资产类别 -->
@@ -227,6 +251,23 @@
             <unique-keys>
                 <unique-key name="UK_AST_ASSET_CATEGORY_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_ASSET_CATEGORY_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_DEPRECIATION_SUBJECT_ID" unique="false">
+                    <column name="depreciationSubjectId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_EXPENSE_SUBJECT_ID" unique="false">
+                    <column name="expenseSubjectId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_DISPOSAL_GAIN_LOSS_SUBJECT_ID" unique="false">
+                    <column name="disposalGainLossSubjectId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CATEGORY_CIP_SUBJECT_ID" unique="false">
+                    <column name="cipSubjectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 折旧计划 -->
@@ -274,6 +315,25 @@
                     <join><on leftProp="currencyId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+                <index name="IDX_AST_DEPRECIATION_SCHEDULE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 资产移动 -->
@@ -353,6 +413,43 @@
             <unique-keys>
                 <unique-key name="UK_AST_MOVEMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_MOVEMENT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_FROM_DEPARTMENT_ID" unique="false">
+                    <column name="fromDepartmentId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_TO_DEPARTMENT_ID" unique="false">
+                    <column name="toDepartmentId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_FROM_STAFF_ID" unique="false">
+                    <column name="fromStaffId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_TO_STAFF_ID" unique="false">
+                    <column name="toStaffId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_FROM_LOCATION_ID" unique="false">
+                    <column name="fromLocationId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_TO_LOCATION_ID" unique="false">
+                    <column name="toLocationId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_HANDLER_ID" unique="false">
+                    <column name="handlerId"/>
+                </index>
+                <index name="IDX_AST_MOVEMENT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 资产价值调整 -->
@@ -404,6 +501,22 @@
             <unique-keys>
                 <unique-key name="UK_AST_VALUE_ADJUSTMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_VALUE_ADJUSTMENT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_VALUE_ADJUSTMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_VALUE_ADJUSTMENT_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_VALUE_ADJUSTMENT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 资产处置 -->
@@ -456,6 +569,22 @@
             <unique-keys>
                 <unique-key name="UK_AST_DISPOSAL_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_DISPOSAL_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_DISPOSAL_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_DISPOSAL_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_DISPOSAL_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 资产资本化 -->
@@ -510,6 +639,22 @@
             <unique-keys>
                 <unique-key name="UK_AST_ASSET_CAPITALIZATION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_ASSET_CAPITALIZATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_ASSET_CAPITALIZATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_ASSET_CAPITALIZATION_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_AST_ASSET_CAPITALIZATION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 在建工程（CIP）主数据 -->
@@ -564,6 +709,25 @@
             <unique-keys>
                 <unique-key name="UK_AST_CIP_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_CIP_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_AST_CIP_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_CIP_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_AST_CIP_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_AST_CIP_COMPLETED_ASSET_ID" unique="false">
+                    <column name="completedAssetId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 资产拆分单头 -->
@@ -613,6 +777,22 @@
             <unique-keys>
                 <unique-key name="UK_AST_SPLIT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_SPLIT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_SPLIT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_SPLIT_SOURCE_ASSET_ID" unique="false">
+                    <column name="sourceAssetId"/>
+                </index>
+                <index name="IDX_AST_SPLIT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 资产合并单头 -->
@@ -662,6 +842,22 @@
             <unique-keys>
                 <unique-key name="UK_AST_MERGE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_AST_MERGE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_AST_MERGE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_MERGE_TARGET_ASSET_ID" unique="false">
+                    <column name="targetAssetId"/>
+                </index>
+                <index name="IDX_AST_MERGE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

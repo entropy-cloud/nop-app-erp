@@ -123,6 +123,24 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_PROJECT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_PROJECT_TYPE_ID" unique="false">
+                    <column name="projectTypeId"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="projectType" refEntityName="app.erp.prj.dao.entity.ErpPrjProjectType" tagSet="pub"
                         i18n-en:displayName="Project Type">
@@ -249,6 +267,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_TASK_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PRJ_TASK_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_TASK_PARENT_TASK_ID" unique="false">
+                    <column name="parentTaskId"/>
+                </index>
+                <index name="IDX_PRJ_TASK_ASSIGNEE_ID" unique="false">
+                    <column name="assigneeId"/>
+                </index>
+                <index name="IDX_PRJ_TASK_DEPENDS_ON_ID" unique="false">
+                    <column name="dependsOnId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
                         i18n-en:displayName="Project">
@@ -352,6 +387,27 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_TIMESHEET_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_USER_ID" unique="false">
+                    <column name="userId"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_ACTIVITY_TYPE_ID" unique="false">
+                    <column name="activityTypeId"/>
+                </index>
+                <index name="IDX_PRJ_TIMESHEET_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
                         i18n-en:displayName="Project">
@@ -426,6 +482,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_PROJECT_TYPE_DEFAULT_SUBJECT_ID" unique="false">
+                    <column name="defaultSubjectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
                         i18n-en:displayName="Default Subject">
@@ -473,6 +534,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_ACTIVITY_TYPE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
                         i18n-en:displayName="Subject">
@@ -520,6 +586,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_PROJECT_USER_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_PROJECT_USER_USER_ID" unique="false">
+                    <column name="userId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
                         i18n-en:displayName="Project">
@@ -584,6 +658,22 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_BUDGET_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
                         i18n-en:displayName="Project">
@@ -658,6 +748,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_BUDGET_LINE_BUDGET_ID" unique="false">
+                    <column name="budgetId"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_PRJ_BUDGET_LINE_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="budget" refEntityName="app.erp.prj.dao.entity.ErpPrjBudget" tagSet="pub"
                         i18n-en:displayName="Budget">
@@ -743,6 +844,22 @@
                         precision="20" propId="204" scale="4" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_COST_COLLECTION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
                         i18n-en:displayName="Project">
@@ -817,6 +934,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_COST_COLLECTION_LINE_COST_COLLECTION_ID" unique="false">
+                    <column name="costCollectionId"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_PRJ_COST_COLLECTION_LINE_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="costCollection" refEntityName="app.erp.prj.dao.entity.ErpPrjCostCollection" tagSet="pub"
                         i18n-en:displayName="Cost Collection">
@@ -881,6 +1009,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_MILESTONE_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PRJ_MILESTONE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
                         i18n-en:displayName="Project">
@@ -961,6 +1097,28 @@
                         precision="20" propId="203" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_BILLING_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_MILESTONE_ID" unique="false">
+                    <column name="milestoneId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
                         i18n-en:displayName="Project">
@@ -1040,6 +1198,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PRJ_BILLING_LINE_BILLING_ID" unique="false">
+                    <column name="billingId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_LINE_TASK_ID" unique="false">
+                    <column name="taskId"/>
+                </index>
+                <index name="IDX_PRJ_BILLING_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="billing" refEntityName="app.erp.prj.dao.entity.ErpPrjBilling" tagSet="pub"
                         i18n-en:displayName="Billing">

@@ -141,6 +141,22 @@
             <unique-keys>
                 <unique-key name="UK_SAL_QUOTATION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_QUOTATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售报价单行 -->
@@ -181,6 +197,17 @@
                     <join><on leftProp="uoMId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_SAL_QUOTATION_LINE_QUOTATION_ID" unique="false">
+                    <column name="quotationId"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_QUOTATION_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售合同头 -->
@@ -229,6 +256,22 @@
             <unique-keys>
                 <unique-key name="UK_SAL_CONTRACT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_CONTRACT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_CONTRACT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_CONTRACT_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_CONTRACT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售订单头 -->
@@ -299,6 +342,34 @@
             <unique-keys>
                 <unique-key name="UK_SAL_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_ORDER_QUOTATION_ID" unique="false">
+                    <column name="quotationId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_SETTLEMENT_METHOD_ID" unique="false">
+                    <column name="settlementMethodId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售订单行 -->
@@ -351,6 +422,29 @@
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_SAL_ORDER_LINE_ORDER_ID" unique="false">
+                    <column name="orderId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_TAX_RATE_ID" unique="false">
+                    <column name="taxRateId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_SAL_ORDER_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售出库单头 -->
@@ -409,6 +503,28 @@
             <unique-keys>
                 <unique-key name="UK_SAL_DELIVERY_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_DELIVERY_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_ORDER_ID" unique="false">
+                    <column name="orderId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售出库单行 -->
@@ -457,6 +573,26 @@
                 <to-one name="orderLine" refEntityName="app.erp.sal.dao.entity.ErpSalOrderLine" tagSet="pub" i18n-en:displayName='Order Line'><join><on leftProp="orderLineId" rightProp="id"/></join></to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_SAL_DELIVERY_LINE_DELIVERY_ID" unique="false">
+                    <column name="deliveryId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_ORDER_LINE_ID" unique="false">
+                    <column name="orderLineId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_SAL_DELIVERY_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售发票头 -->
@@ -513,6 +649,22 @@
             <unique-keys>
                 <unique-key name="UK_SAL_INVOICE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_INVOICE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售发票行 -->
@@ -552,6 +704,20 @@
                 <to-one name="deliveryLine" refEntityName="app.erp.sal.dao.entity.ErpSalDeliveryLine" tagSet="pub" i18n-en:displayName='Delivery Line'><join><on leftProp="deliveryLineId" rightProp="id"/></join></to-one>
                 <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'><join><on leftProp="uoMId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_SAL_INVOICE_LINE_INVOICE_ID" unique="false">
+                    <column name="invoiceId"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_LINE_DELIVERY_LINE_ID" unique="false">
+                    <column name="deliveryLineId"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_INVOICE_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 收款单头 -->
@@ -612,6 +778,31 @@
             <unique-keys>
                 <unique-key name="UK_SAL_RECEIPT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_RECEIPT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_SETTLEMENT_METHOD_ID" unique="false">
+                    <column name="settlementMethodId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_BANK_ACCOUNT_ID" unique="false">
+                    <column name="bankAccountId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_PARTNER_BANK_ACCOUNT_ID" unique="false">
+                    <column name="partnerBankAccountId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 收款核销行（收款与发票多对多） -->
@@ -642,6 +833,14 @@
                     <join><on leftProp="invoiceId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_SAL_RECEIPT_LINE_RECEIPT_ID" unique="false">
+                    <column name="receiptId"/>
+                </index>
+                <index name="IDX_SAL_RECEIPT_LINE_INVOICE_ID" unique="false">
+                    <column name="invoiceId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售退货单头 -->
@@ -700,6 +899,28 @@
             <unique-keys>
                 <unique-key name="UK_SAL_RETURN_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_RETURN_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_SAL_RETURN_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_SAL_RETURN_DELIVERY_ID" unique="false">
+                    <column name="deliveryId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售退货单行 -->
@@ -746,6 +967,23 @@
                 </to-one>
                 <to-one name="deliveryLine" refEntityName="app.erp.sal.dao.entity.ErpSalDeliveryLine" tagSet="pub" i18n-en:displayName='Delivery Line'><join><on leftProp="deliveryLineId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_SAL_RETURN_LINE_RETURN_ID" unique="false">
+                    <column name="returnId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_LINE_DELIVERY_LINE_ID" unique="false">
+                    <column name="deliveryLineId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_SAL_RETURN_LINE_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

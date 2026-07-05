@@ -163,6 +163,27 @@
             <unique-keys>
                 <unique-key name="UK_CT_CONTRACT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CT_CONTRACT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_PARENT_CONTRACT_ID" unique="false">
+                    <column name="parentContractId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 合同行 -->
@@ -194,6 +215,14 @@
                     <join><on leftProp="materialId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CT_CONTRACT_LINE_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 合同版本 -->
@@ -223,6 +252,17 @@
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub" i18n-en:displayName='Contract'><join><on leftProp="contractId" rightProp="id"/></join></to-one>
                 
             </relations>
+            <indexes>
+                <index name="IDX_CT_CONTRACT_VERSION_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_VERSION_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_VERSION_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 开票计划 -->
@@ -249,6 +289,11 @@
             <relations>
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub" i18n-en:displayName='Contract Line'><join><on leftProp="contractLineId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CT_INVOICE_PLAN_CONTRACT_LINE_ID" unique="false">
+                    <column name="contractLineId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 消耗计费行 -->
@@ -275,6 +320,11 @@
             <relations>
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub" i18n-en:displayName='Contract Line'><join><on leftProp="contractLineId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CT_CONSUMPTION_LINE_CONTRACT_LINE_ID" unique="false">
+                    <column name="contractLineId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 合同模板 -->
@@ -362,6 +412,17 @@
                     <join><on leftProp="approvalMatrixId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CT_APPROVAL_RECORD_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_APPROVAL_RECORD_APPROVAL_MATRIX_ID" unique="false">
+                    <column name="approvalMatrixId"/>
+                </index>
+                <index name="IDX_CT_APPROVAL_RECORD_APPROVER_ID" unique="false">
+                    <column name="approverId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 批量折扣 -->
@@ -388,6 +449,11 @@
                 <to-one name="contractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" tagSet="pub" i18n-en:displayName='Contract Line'><join><on leftProp="contractLineId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CT_VOLUME_DISCOUNT_CONTRACT_LINE_ID" unique="false">
+                    <column name="contractLineId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 返利协议 -->
@@ -426,6 +492,18 @@
             <unique-keys>
                 <unique-key name="UK_CT_REBATE_AGREEMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CT_REBATE_AGREEMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_REBATE_AGREEMENT_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_REBATE_AGREEMENT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 返利阶梯 -->
@@ -450,6 +528,11 @@
             <relations>
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement" tagSet="pub" i18n-en:displayName='Rebate Agreement'><join><on leftProp="rebateAgreementId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CT_REBATE_TIER_REBATE_AGREEMENT_ID" unique="false">
+                    <column name="rebateAgreementId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 返利计提明细 -->
@@ -479,6 +562,11 @@
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement" tagSet="pub" i18n-en:displayName='Rebate Agreement'><join><on leftProp="rebateAgreementId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CT_REBATE_ACCRUAL_REBATE_AGREEMENT_ID" unique="false">
+                    <column name="rebateAgreementId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 返利结算单 -->
@@ -508,6 +596,15 @@
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement" tagSet="pub" i18n-en:displayName='Rebate Agreement'><join><on leftProp="rebateAgreementId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CT_REBATE_SETTLEMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_REBATE_SETTLEMENT_REBATE_AGREEMENT_ID" unique="false">
+                    <column name="rebateAgreementId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 电子签章请求 -->
@@ -544,6 +641,21 @@
                 </to-one>
                 
             </relations>
+            <indexes>
+                <index name="IDX_CT_SIGNATURE_REQUEST_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CT_SIGNATURE_REQUEST_CONTRACT_VERSION_ID" unique="false">
+                    <column name="contractVersionId"/>
+                </index>
+                <index name="IDX_CT_SIGNATURE_REQUEST_PROVIDER_REQUEST_ID" unique="false">
+                    <column name="providerRequestId"/>
+                </index>
+                <index name="IDX_CT_SIGNATURE_REQUEST_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 合同文档仓库 -->
@@ -586,6 +698,14 @@
             <unique-keys>
                 <unique-key name="UK_CT_DOCUMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CT_DOCUMENT_CONTRACT_ID" unique="false">
+                    <column name="contractId"/>
+                </index>
+                <index name="IDX_CT_DOCUMENT_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->

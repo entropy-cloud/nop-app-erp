@@ -242,6 +242,36 @@
             <unique-keys>
                 <unique-key name="UK_CRM_LEAD_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CRM_LEAD_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_CRM_LEAD_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SOURCE_ID" unique="false">
+                    <column name="sourceId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_LEAD_STATUS_ID" unique="false">
+                    <column name="leadStatusId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_STAGE_ID" unique="false">
+                    <column name="stageId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_CAMPAIGN_ID" unique="false">
+                    <column name="campaignId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_LOST_REASON_ID" unique="false">
+                    <column name="lostReasonId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 线索状态字典 -->
@@ -295,6 +325,11 @@
             <unique-keys>
                 <unique-key name="UK_CRM_STAGE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CRM_STAGE_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 线索来源 -->
@@ -365,6 +400,11 @@
             <unique-keys>
                 <unique-key name="UK_CRM_TEAM_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CRM_TEAM_TEAM_LEADER_ID" unique="false">
+                    <column name="teamLeaderId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 营销活动（UTM 归因） -->
@@ -444,6 +484,30 @@
             <unique-keys>
                 <unique-key name="UK_CRM_EVENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CRM_EVENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CRM_EVENT_EVENT_CATEGORY_ID" unique="false">
+                    <column name="eventCategoryId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_RELATED_LEAD_ID" unique="false">
+                    <column name="relatedLeadId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_CONTACT_ID" unique="false">
+                    <column name="contactId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_EVENT_PARENT_EVENT_ID" unique="false">
+                    <column name="parentEventId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 活动类别字典 -->
@@ -492,6 +556,14 @@
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_ACTIVITY_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+                <index name="IDX_CRM_ACTIVITY_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 阶段流转审计日志 -->
@@ -520,6 +592,17 @@
                 <to-one name="toStage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='To Stage'><join><on leftProp="toStageId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_LEAD_CONV_LOG_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_CONV_LOG_FROM_STAGE_ID" unique="false">
+                    <column name="fromStageId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_CONV_LOG_TO_STAGE_ID" unique="false">
+                    <column name="toStageId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 报价模板（可选项） -->
@@ -603,6 +686,11 @@
                 <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub" i18n-en:displayName='Config'><join><on leftProp="configId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_LEAD_SCORE_CONFIG_LINE_CONFIG_ID" unique="false">
+                    <column name="configId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 线索评分记录头 -->
@@ -633,6 +721,14 @@
                 <to-one name="config" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" tagSet="pub" i18n-en:displayName='Config'><join><on leftProp="configId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_LEAD_SCORE_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SCORE_CONFIG_ID" unique="false">
+                    <column name="configId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 评分记录明细行 -->
@@ -663,6 +759,14 @@
                 <to-one name="configLine" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadScoreConfigLine" tagSet="pub" i18n-en:displayName='Config Line'><join><on leftProp="configLineId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_LEAD_SCORE_LINE_SCORE_ID" unique="false">
+                    <column name="scoreId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SCORE_LINE_CONFIG_LINE_ID" unique="false">
+                    <column name="configLineId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 预测期间 -->
@@ -693,6 +797,12 @@
             <unique-keys>
                 <unique-key name="UK_CRM_FORECAST_PERIOD_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CRM_FORECAST_PERIOD_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 预测数据行 -->
@@ -732,6 +842,23 @@
                     <join><on leftProp="currencyId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_FORECAST_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 预测明细溯源行 -->
@@ -761,6 +888,14 @@
                 <to-one name="lead" refEntityName="app.erp.crm.dao.entity.ErpCrmLead" tagSet="pub" i18n-en:displayName='Lead'><join><on leftProp="leadId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_FORECAST_LINE_FORECAST_ID" unique="false">
+                    <column name="forecastId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_LINE_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 预测准确率 -->
@@ -801,6 +936,23 @@
                     <join><on leftProp="territoryId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_FORECAST_ACCURACY_FORECAST_ID" unique="false">
+                    <column name="forecastId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_ACCURACY_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_ACCURACY_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_ACCURACY_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_FORECAST_ACCURACY_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售区域节点 -->
@@ -836,6 +988,14 @@
             <unique-keys>
                 <unique-key name="UK_CRM_TERRITORY_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CRM_TERRITORY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_CRM_TERRITORY_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 区域分配规则 -->
@@ -867,6 +1027,14 @@
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="groupId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_TERRITORY_ASSIGNMENT_RULE_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+                <index name="IDX_CRM_TERRITORY_ASSIGNMENT_RULE_GROUP_ID" unique="false">
+                    <column name="groupId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 销售配额 -->
@@ -901,6 +1069,20 @@
                     <join><on leftProp="currencyId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_QUOTA_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+                <index name="IDX_CRM_QUOTA_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_QUOTA_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+                <index name="IDX_CRM_QUOTA_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ CPQ 实体 ============================ -->
@@ -963,6 +1145,11 @@
                 <to-one name="configurator" refEntityName="app.erp.crm.dao.entity.ErpCrmProductConfigurator" tagSet="pub" i18n-en:displayName='Configurator'><join><on leftProp="configuratorId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_CONFIG_RULE_CONFIGURATOR_ID" unique="false">
+                    <column name="configuratorId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 捆绑定价头 -->
@@ -1025,6 +1212,14 @@
                     <join><on leftProp="productId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_BUNDLE_PRICING_LINE_BUNDLE_ID" unique="false">
+                    <column name="bundleId"/>
+                </index>
+                <index name="IDX_CRM_BUNDLE_PRICING_LINE_PRODUCT_ID" unique="false">
+                    <column name="productId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 价格规则 -->
@@ -1074,6 +1269,17 @@
             <unique-keys>
                 <unique-key name="UK_CRM_PRICE_RULE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_CRM_PRICE_RULE_PRODUCT_ID" unique="false">
+                    <column name="productId"/>
+                </index>
+                <index name="IDX_CRM_PRICE_RULE_CUSTOMER_ID" unique="false">
+                    <column name="customerId"/>
+                </index>
+                <index name="IDX_CRM_PRICE_RULE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 销售序列实体 ============================ -->
@@ -1136,6 +1342,11 @@
                 <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_SEQUENCE_STEP_SEQUENCE_ID" unique="false">
+                    <column name="sequenceId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 序列分配规则 -->
@@ -1163,6 +1374,11 @@
                 <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_SEQUENCE_ASSIGNMENT_SEQUENCE_ID" unique="false">
+                    <column name="sequenceId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 线索序列进度 -->
@@ -1191,6 +1407,18 @@
                 <to-one name="sequence" refEntityName="app.erp.crm.dao.entity.ErpCrmSequence" tagSet="pub" i18n-en:displayName='Sequence'><join><on leftProp="sequenceId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_LEAD_SEQ_PROGRESS_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SEQ_PROGRESS_LEAD_ID" unique="false">
+                    <column name="leadId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_SEQ_PROGRESS_SEQUENCE_ID" unique="false">
+                    <column name="sequenceId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 线索漏斗分析实体 ============================ -->
@@ -1233,6 +1461,17 @@
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
                 <to-one name="source" refEntityName="app.erp.crm.dao.entity.ErpCrmSource" tagSet="pub" i18n-en:displayName='Source'><join><on leftProp="sourceId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_LEAD_FUNNEL_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_FUNNEL_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_FUNNEL_SOURCE_ID" unique="false">
+                    <column name="sourceId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 漏斗阶段度量明细 -->
@@ -1268,6 +1507,14 @@
                 <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='Stage'><join><on leftProp="stageId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_CRM_FUNNEL_STAGE_METRICS_FUNNEL_ID" unique="false">
+                    <column name="funnelId"/>
+                </index>
+                <index name="IDX_CRM_FUNNEL_STAGE_METRICS_STAGE_ID" unique="false">
+                    <column name="stageId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用 ============================ -->

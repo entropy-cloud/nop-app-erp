@@ -142,6 +142,22 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_REQUISITION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PUR_REQUISITION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PUR_REQUISITION_REQUESTER_ID" unique="false">
+                    <column name="requesterId"/>
+                </index>
+                <index name="IDX_PUR_REQUISITION_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Org">
@@ -216,6 +232,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_REQUISITION_LINE_REQUISITION_ID" unique="false">
+                    <column name="requisitionId"/>
+                </index>
+                <index name="IDX_PUR_REQUISITION_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_PUR_REQUISITION_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_PUR_REQUISITION_LINE_SUGGESTED_SUPPLIER_ID" unique="false">
+                    <column name="suggestedSupplierId"/>
+                </index>
+                <index name="IDX_PUR_REQUISITION_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="requisition" refEntityName="app.erp.pur.dao.entity.ErpPurRequisition" tagSet="pub"
                         i18n-en:displayName="Requisition">
@@ -296,6 +329,19 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_RFQ_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PUR_RFQ_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PUR_RFQ_REQUISITION_ID" unique="false">
+                    <column name="requisitionId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="requisition" refEntityName="app.erp.pur.dao.entity.ErpPurRequisition" tagSet="pub"
                         i18n-en:displayName="Requisition">
@@ -364,6 +410,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_RFQ_LINE_RFQ_ID" unique="false">
+                    <column name="rfqId"/>
+                </index>
+                <index name="IDX_PUR_RFQ_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_PUR_RFQ_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="rfq" refEntityName="app.erp.pur.dao.entity.ErpPurRfq" tagSet="pub"
                         i18n-en:displayName="Rfq">
@@ -443,6 +500,25 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_QUOTATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PUR_QUOTATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PUR_QUOTATION_RFQ_ID" unique="false">
+                    <column name="rfqId"/>
+                </index>
+                <index name="IDX_PUR_QUOTATION_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_PUR_QUOTATION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="rfq" refEntityName="app.erp.pur.dao.entity.ErpPurRfq" tagSet="pub"
                         i18n-en:displayName="Rfq">
@@ -523,6 +599,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_QUOTATION_LINE_QUOTATION_ID" unique="false">
+                    <column name="quotationId"/>
+                </index>
+                <index name="IDX_PUR_QUOTATION_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_PUR_QUOTATION_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="quotation" refEntityName="app.erp.pur.dao.entity.ErpPurQuotation" tagSet="pub"
                         i18n-en:displayName="Quotation">
@@ -595,6 +682,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_SUPPLIER_PRICE_LIST_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_PUR_SUPPLIER_PRICE_LIST_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_PUR_SUPPLIER_PRICE_LIST_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_PUR_SUPPLIER_PRICE_LIST_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Supplier">
@@ -674,6 +775,15 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_SUPPLIER_SCORECARD_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_PUR_SUPPLIER_SCORECARD_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Supplier">
@@ -736,6 +846,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_SUPPLIER_SCORECARD_CRITERIA_SCORECARD_ID" unique="false">
+                    <column name="scorecardId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="scorecard" refEntityName="app.erp.pur.dao.entity.ErpPurSupplierScorecard" tagSet="pub"
                         i18n-en:displayName="Scorecard">
@@ -786,6 +901,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_SUPPLIER_SCORECARD_VARIABLE_CRITERIA_ID" unique="false">
+                    <column name="criteriaId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="criteria" refEntityName="app.erp.pur.dao.entity.ErpPurSupplierScorecardCriteria"
                         tagSet="pub" i18n-en:displayName="Criteria">
@@ -891,6 +1011,34 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="36" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_ORDER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PUR_ORDER_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PUR_ORDER_REQUISITION_ID" unique="false">
+                    <column name="requisitionId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_QUOTATION_ID" unique="false">
+                    <column name="quotationId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_SETTLEMENT_METHOD_ID" unique="false">
+                    <column name="settlementMethodId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Supplier">
@@ -1010,6 +1158,29 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_ORDER_LINE_ORDER_ID" unique="false">
+                    <column name="orderId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_LINE_TAX_RATE_ID" unique="false">
+                    <column name="taxRateId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_PUR_ORDER_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="order" refEntityName="app.erp.pur.dao.entity.ErpPurOrder" tagSet="pub"
                         i18n-en:displayName="Order">
@@ -1136,6 +1307,28 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="30" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_RECEIVE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_ORDER_ID" unique="false">
+                    <column name="orderId"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="order" refEntityName="app.erp.pur.dao.entity.ErpPurOrder" tagSet="pub"
                         i18n-en:displayName="Order">
@@ -1237,6 +1430,26 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_RECEIVE_LINE_RECEIVE_ID" unique="false">
+                    <column name="receiveId"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_LINE_ORDER_LINE_ID" unique="false">
+                    <column name="orderLineId"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_PUR_RECEIVE_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="receive" refEntityName="app.erp.pur.dao.entity.ErpPurReceive" tagSet="pub"
                         i18n-en:displayName="Receive">
@@ -1357,6 +1570,22 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="30" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_INVOICE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PUR_INVOICE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PUR_INVOICE_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_PUR_INVOICE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Supplier">
@@ -1436,6 +1665,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_INVOICE_LINE_INVOICE_ID" unique="false">
+                    <column name="invoiceId"/>
+                </index>
+                <index name="IDX_PUR_INVOICE_LINE_RECEIVE_LINE_ID" unique="false">
+                    <column name="receiveLineId"/>
+                </index>
+                <index name="IDX_PUR_INVOICE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_PUR_INVOICE_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="invoice" refEntityName="app.erp.pur.dao.entity.ErpPurInvoice" tagSet="pub"
                         i18n-en:displayName="Invoice">
@@ -1538,6 +1781,31 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_PAYMENT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PUR_PAYMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PUR_PAYMENT_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_PUR_PAYMENT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_PUR_PAYMENT_SETTLEMENT_METHOD_ID" unique="false">
+                    <column name="settlementMethodId"/>
+                </index>
+                <index name="IDX_PUR_PAYMENT_BANK_ACCOUNT_ID" unique="false">
+                    <column name="bankAccountId"/>
+                </index>
+                <index name="IDX_PUR_PAYMENT_PARTNER_BANK_ACCOUNT_ID" unique="false">
+                    <column name="partnerBankAccountId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Supplier">
@@ -1619,6 +1887,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_PAYMENT_LINE_PAYMENT_ID" unique="false">
+                    <column name="paymentId"/>
+                </index>
+                <index name="IDX_PUR_PAYMENT_LINE_INVOICE_ID" unique="false">
+                    <column name="invoiceId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="payment" refEntityName="app.erp.pur.dao.entity.ErpPurPayment" tagSet="pub"
                         i18n-en:displayName="Payment">
@@ -1708,6 +1984,28 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="28" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_RETURN_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_PUR_RETURN_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_PUR_RETURN_RECEIVE_ID" unique="false">
+                    <column name="receiveId"/>
+                </index>
+                <index name="IDX_PUR_RETURN_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_PUR_RETURN_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_PUR_RETURN_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="receive" refEntityName="app.erp.pur.dao.entity.ErpPurReceive" tagSet="pub"
                         i18n-en:displayName="Receive">
@@ -1802,6 +2100,23 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_PUR_RETURN_LINE_RETURN_ID" unique="false">
+                    <column name="returnId"/>
+                </index>
+                <index name="IDX_PUR_RETURN_LINE_RECEIVE_LINE_ID" unique="false">
+                    <column name="receiveLineId"/>
+                </index>
+                <index name="IDX_PUR_RETURN_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_PUR_RETURN_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+                <index name="IDX_PUR_RETURN_LINE_UO_M_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="return" refEntityName="app.erp.pur.dao.entity.ErpPurReturn" tagSet="pub"
                         i18n-en:displayName="Return">

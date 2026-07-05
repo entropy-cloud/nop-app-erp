@@ -221,6 +221,20 @@
             <unique-keys>
                 <unique-key name="UK_MD_MATERIAL_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_MATERIAL_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_DEFAULT_WAREHOUSE_ID" unique="false">
+                    <column name="defaultWarehouseId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_DEFAULT_TAX_RATE_ID" unique="false">
+                    <column name="defaultTaxRateId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 物料分类（树形） -->
@@ -255,6 +269,11 @@
             <unique-keys>
                 <unique-key name="UK_MD_MATERIAL_CATEGORY_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_MATERIAL_CATEGORY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 物料 SKU -->
@@ -295,6 +314,17 @@
                     <join><on leftProp="taxRateId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MD_MATERIAL_SKU_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_SKU_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_SKU_TAX_RATE_ID" unique="false">
+                    <column name="taxRateId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 往来单位 -->
@@ -370,6 +400,11 @@
                     <join><on leftProp="partnerId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MD_PARTNER_ADDRESS_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 往来单位联系人 -->
@@ -400,6 +435,11 @@
                     <join><on leftProp="partnerId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MD_PARTNER_CONTACT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 仓库 -->
@@ -441,6 +481,11 @@
             <unique-keys>
                 <unique-key name="UK_MD_WAREHOUSE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_WAREHOUSE_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 库位 -->
@@ -475,6 +520,14 @@
             <unique-keys>
                 <unique-key name="UK_MD_LOCATION_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_LOCATION_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_MD_LOCATION_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 计量单位 -->
@@ -533,6 +586,17 @@
                     <join><on leftProp="toUoMId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MD_UOM_CONVERSION_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MD_UOM_CONVERSION_FROM_UOM_ID" unique="false">
+                    <column name="fromUoMId"/>
+                </index>
+                <index name="IDX_MD_UOM_CONVERSION_TO_UOM_ID" unique="false">
+                    <column name="toUoMId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 币种 -->
@@ -592,6 +656,14 @@
                     <join><on leftProp="toCurrencyId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MD_EXCHANGE_RATE_FROM_CURRENCY_ID" unique="false">
+                    <column name="fromCurrencyId"/>
+                </index>
+                <index name="IDX_MD_EXCHANGE_RATE_TO_CURRENCY_ID" unique="false">
+                    <column name="toCurrencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 税率主数据 -->
@@ -649,6 +721,11 @@
             <unique-keys>
                 <unique-key name="UK_MD_SETTLEMENT_METHOD_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_SETTLEMENT_METHOD_DEFAULT_FUND_ACCOUNT_ID" unique="false">
+                    <column name="defaultFundAccountId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 银行账户 -->
@@ -679,6 +756,11 @@
                     <join><on leftProp="partnerId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MD_BANK_ACCOUNT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 职员 -->
@@ -716,6 +798,11 @@
             <unique-keys>
                 <unique-key name="UK_MD_EMPLOYEE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_EMPLOYEE_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 会计科目 -->
@@ -765,6 +852,14 @@
             <unique-keys>
                 <unique-key name="UK_MD_SUBJECT_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_SUBJECT_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_MD_SUBJECT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 会计核算表（账套） -->
@@ -806,6 +901,11 @@
             <unique-keys>
                 <unique-key name="UK_MD_ACCT_SCHEMA_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_ACCT_SCHEMA_FUNCTIONAL_CURRENCY_ID" unique="false">
+                    <column name="functionalCurrencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 账套科目表 -->
@@ -832,6 +932,11 @@
                     <join><on leftProp="acctSchemaId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MD_ACCT_SCHEMA_COA_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 组织 -->
@@ -870,6 +975,14 @@
             <unique-keys>
                 <unique-key name="UK_MD_ORGANIZATION_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_ORGANIZATION_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_MD_ORGANIZATION_FUNCTIONAL_CURRENCY_ID" unique="false">
+                    <column name="functionalCurrencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 成本中心 -->
@@ -913,6 +1026,14 @@
             <unique-keys>
                 <unique-key name="UK_MD_COST_CENTER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_MD_COST_CENTER_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+                <index name="IDX_MD_COST_CENTER_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 供应商准入资格 AVL（Approved Vendor List）——评分 standing=RED 触发 SUSPENDED 联动入口 -->
@@ -953,6 +1074,18 @@
                     <join><on leftProp="materialCategoryId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_MD_SUPPLIER_APPROVAL_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MD_SUPPLIER_APPROVAL_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_MD_SUPPLIER_APPROVAL_MATERIAL_CATEGORY_ID" unique="false">
+                    <column name="materialCategoryId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 系统配置（独立配置表，按 orgId 级联回退） -->

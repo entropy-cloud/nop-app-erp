@@ -220,6 +220,20 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="25"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_MATERIAL_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_DEFAULT_WAREHOUSE_ID" unique="false">
+                    <column name="defaultWarehouseId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_DEFAULT_TAX_RATE_ID" unique="false">
+                    <column name="defaultTaxRateId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="category" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"
                         i18n-en:displayName="Category">
@@ -292,6 +306,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_MATERIAL_CATEGORY_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"
                         i18n-en:displayName="Parent">
@@ -357,6 +376,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_MATERIAL_SKU_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_SKU_UOM_ID" unique="false">
+                    <column name="uoMId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_SKU_TAX_RATE_ID" unique="false">
+                    <column name="taxRateId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
                         i18n-en:displayName="Material">
@@ -499,6 +529,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_PARTNER_ADDRESS_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -547,6 +582,11 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="14"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_PARTNER_CONTACT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -601,6 +641,11 @@
                         precision="20" propId="16" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-md/batch-strategy" i18n-en:displayName="Batch Selection Strategy"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_WAREHOUSE_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Organization">
@@ -660,6 +705,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_LOCATION_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_MD_LOCATION_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
                         i18n-en:displayName="Warehouse">
@@ -748,6 +801,17 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_UOM_CONVERSION_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MD_UOM_CONVERSION_FROM_UOM_ID" unique="false">
+                    <column name="fromUoMId"/>
+                </index>
+                <index name="IDX_MD_UOM_CONVERSION_TO_UOM_ID" unique="false">
+                    <column name="toUoMId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
                         i18n-en:displayName="Material">
@@ -845,6 +909,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_EXCHANGE_RATE_FROM_CURRENCY_ID" unique="false">
+                    <column name="fromCurrencyId"/>
+                </index>
+                <index name="IDX_MD_EXCHANGE_RATE_TO_CURRENCY_ID" unique="false">
+                    <column name="toCurrencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="fromCurrency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
                         i18n-en:displayName="From Currency">
@@ -947,6 +1019,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_SETTLEMENT_METHOD_DEFAULT_FUND_ACCOUNT_ID" unique="false">
+                    <column name="defaultFundAccountId"/>
+                </index>
+            </indexes>
             <unique-keys>
                 <unique-key columns="code" name="UK_MD_SETTLEMENT_METHOD_CODE"/>
             </unique-keys>
@@ -990,6 +1067,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_BANK_ACCOUNT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -1040,6 +1122,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_EMPLOYEE_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Organization">
@@ -1125,6 +1212,14 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="24"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_SUBJECT_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_MD_SUBJECT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
                         i18n-en:displayName="Parent">
@@ -1194,6 +1289,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_ACCT_SCHEMA_FUNCTIONAL_CURRENCY_ID" unique="false">
+                    <column name="functionalCurrencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Organization">
@@ -1251,6 +1351,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="10" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_ACCT_SCHEMA_COA_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"
                         i18n-en:displayName="Acct Schema">
@@ -1298,6 +1403,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_ORGANIZATION_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+                <index name="IDX_MD_ORGANIZATION_FUNCTIONAL_CURRENCY_ID" unique="false">
+                    <column name="functionalCurrencyId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Parent">
@@ -1363,6 +1476,14 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="15"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_COST_CENTER_MANAGER_ID" unique="false">
+                    <column name="managerId"/>
+                </index>
+                <index name="IDX_MD_COST_CENTER_PARENT_ID" unique="false">
+                    <column name="parentId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="organization" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Organization">
@@ -1442,6 +1563,18 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
+            <indexes>
+                <index name="IDX_MD_SUPPLIER_APPROVAL_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MD_SUPPLIER_APPROVAL_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_MD_SUPPLIER_APPROVAL_MATERIAL_CATEGORY_ID" unique="false">
+                    <column name="materialCategoryId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">

@@ -122,6 +122,12 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_DRP_PLAN_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
             <relations>
                 <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.drp.dao.entity.ErpDrpLine"
                          tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="100">
@@ -212,6 +218,24 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_DRP_LINE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_DRP_LINE_PLAN_ID" unique="false">
+                    <column name="planId"/>
+                </index>
+                <index name="IDX_DRP_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_DRP_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_DRP_LINE_SOURCE_WAREHOUSE_ID" unique="false">
+                    <column name="sourceWarehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="plan" refEntityName="app.erp.drp.dao.entity.ErpDrpPlan" tagSet="pub"
                         i18n-en:displayName="Plan">
@@ -301,6 +325,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_DRP_PARAMETER_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_DRP_PARAMETER_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_DRP_PARAMETER_PREFERRED_SOURCE_WAREHOUSE_ID" unique="false">
+                    <column name="preferredSourceWarehouseId"/>
+                </index>
+                <index name="IDX_DRP_PARAMETER_PREFERRED_SUPPLIER_ID" unique="false">
+                    <column name="preferredSupplierId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
                         i18n-en:displayName="Warehouse">
@@ -392,6 +430,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_DRP_SAFETY_STOCK_CALC_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_DRP_SAFETY_STOCK_CALC_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
                         i18n-en:displayName="Material">
@@ -477,6 +523,27 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_DRP_CROSS_DOCK_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_DRP_LINE_ID" unique="false">
+                    <column name="drpLineId"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_INBOUND_MOVE_ID" unique="false">
+                    <column name="inboundMoveId"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_OUTBOUND_MOVE_ID" unique="false">
+                    <column name="outboundMoveId"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_DRP_CROSS_DOCK_STAGING_LOCATION_ID" unique="false">
+                    <column name="stagingLocationId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="drpLine" refEntityName="app.erp.drp.dao.entity.ErpDrpLine" tagSet="pub"
                         i18n-en:displayName="DRP Line">
@@ -564,6 +631,21 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="17" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_DRP_DOCK_APPOINTMENT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_INV_DRP_DOCK_APPOINTMENT_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_INV_DRP_DOCK_APPOINTMENT_DOCK_ID" unique="false">
+                    <column name="dockId"/>
+                </index>
+                <index name="IDX_INV_DRP_DOCK_APPOINTMENT_CROSS_DOCK_ID" unique="false">
+                    <column name="crossDockId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
                         i18n-en:displayName="Warehouse">
@@ -640,6 +722,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_INV_DRP_LEAD_TIME_RECORD_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_INV_DRP_LEAD_TIME_RECORD_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Supplier">

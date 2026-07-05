@@ -1,0 +1,92 @@
+-- app-erp-hr indexes generated from model/app-erp-hr.orm.xml
+-- Dialect: oracle.
+-- This file is maintained separately from _create_erp-hr.sql because the
+-- platform _create.sql.xgen template (ddl.xlib CreateTables) does not emit CREATE INDEX.
+-- Runtime: ddl.xlib AddIndex also applies these at app startup from the ORM model.
+-- Run AFTER _create_erp-hr.sql during manual production deployment.
+-- Source of truth: model <indexes> definitions (84 indexes).
+-- Regenerate: node scripts/add-orm-indexes.js
+CREATE INDEX IDX_HR_EMPLOYEE_DEPARTMENT_ID ON erp_hr_employee (department_id);
+CREATE INDEX IDX_HR_EMPLOYEE_POSITION_ID ON erp_hr_employee (position_id);
+CREATE INDEX IDX_HR_EMPLOYEE_SUPERIOR_ID ON erp_hr_employee (superior_id);
+CREATE INDEX IDX_HR_EMPLOYEE_COST_CENTER_ID ON erp_hr_employee (cost_center_id);
+CREATE INDEX IDX_HR_EMPLOYEE_BANK_ACCOUNT_ID ON erp_hr_employee (bank_account_id);
+CREATE INDEX IDX_HR_EMPLOYEE_USER_ACCOUNT_ID ON erp_hr_employee (user_account_id);
+CREATE INDEX IDX_HR_DEPARTMENT_PARENT_ID ON erp_hr_department (parent_id);
+CREATE INDEX IDX_HR_DEPARTMENT_MANAGER_ID ON erp_hr_department (manager_id);
+CREATE INDEX IDX_HR_DEPARTMENT_COST_CENTER_ID ON erp_hr_department (cost_center_id);
+CREATE INDEX IDX_HR_POSITION_DEPARTMENT_ID ON erp_hr_position (department_id);
+CREATE INDEX IDX_HR_EMPLOYMENT_CONTRACT_ORG_STATUS ON erp_hr_employment_contract (org_id, status);
+CREATE INDEX IDX_HR_EMPLOYMENT_CONTRACT_EMPLOYEE_ID ON erp_hr_employment_contract (employee_id);
+CREATE INDEX IDX_HR_EMPLOYMENT_CONTRACT_SALARY_CURRENCY_ID ON erp_hr_employment_contract (salary_currency_id);
+CREATE INDEX IDX_HR_EMPLOYMENT_CONTRACT_ATTACHMENT_FILE_ID ON erp_hr_employment_contract (attachment_file_id);
+CREATE INDEX IDX_HR_LEAVE_REQUEST_ORG_STATUS ON erp_hr_leave_request (org_id, status);
+CREATE INDEX IDX_HR_LEAVE_REQUEST_EMPLOYEE_ID ON erp_hr_leave_request (employee_id);
+CREATE INDEX IDX_HR_LEAVE_REQUEST_APPROVER_ID ON erp_hr_leave_request (approver_id);
+CREATE INDEX IDX_HR_TIMESHEET_ORG_STATUS ON erp_hr_timesheet (org_id, status);
+CREATE INDEX IDX_HR_TIMESHEET_EMPLOYEE_ID ON erp_hr_timesheet (employee_id);
+CREATE INDEX IDX_HR_TIMESHEET_LINE_TIMESHEET_ID ON erp_hr_timesheet_line (timesheet_id);
+CREATE INDEX IDX_HR_TIMESHEET_LINE_EMPLOYEE_ID ON erp_hr_timesheet_line (employee_id);
+CREATE INDEX IDX_HR_TIMESHEET_LINE_PROJECT_ID ON erp_hr_timesheet_line (project_id);
+CREATE INDEX IDX_HR_TIMESHEET_LINE_TASK_ID ON erp_hr_timesheet_line (task_id);
+CREATE INDEX IDX_HR_ATTENDANCE_EMPLOYEE_ID ON erp_hr_attendance (employee_id);
+CREATE INDEX IDX_HR_ATTENDANCE_LEAVE_REQUEST_ID ON erp_hr_attendance (leave_request_id);
+CREATE INDEX IDX_HR_SALARY_ORG_APPROVE_STATUS ON erp_hr_salary (org_id, approve_status);
+CREATE INDEX IDX_HR_SALARY_EMPLOYEE_ID ON erp_hr_salary (employee_id);
+CREATE INDEX IDX_HR_SALARY_BANK_FILE_ID ON erp_hr_salary (bank_file_id);
+CREATE INDEX IDX_HR_RECRUITMENT_ORG_STATUS ON erp_hr_recruitment (org_id, status);
+CREATE INDEX IDX_HR_RECRUITMENT_POSITION_ID ON erp_hr_recruitment (position_id);
+CREATE INDEX IDX_HR_RECRUITMENT_DEPARTMENT_ID ON erp_hr_recruitment (department_id);
+CREATE INDEX IDX_HR_RECRUITMENT_RESUME_ATTACHMENT_FILE_ID ON erp_hr_recruitment (resume_attachment_file_id);
+CREATE INDEX IDX_HR_RECRUITMENT_INTERVIEWER_ID ON erp_hr_recruitment (interviewer_id);
+CREATE INDEX IDX_HR_RECRUITMENT_EMPLOYEE_ID ON erp_hr_recruitment (employee_id);
+CREATE INDEX IDX_HR_SALARY_SIMULATION_ORG_STATUS ON erp_hr_salary_simulation (org_id, status);
+CREATE INDEX IDX_HR_SALARY_SIMULATION_SOURCE_SALARY_ID ON erp_hr_salary_simulation (source_salary_id);
+CREATE INDEX IDX_HR_SALARY_SIMULATION_REVIEWER_ID ON erp_hr_salary_simulation (reviewer_id);
+CREATE INDEX IDX_HR_SALARY_SIMULATION_CONVERTED_SALARY_ID ON erp_hr_salary_simulation (converted_salary_id);
+CREATE INDEX IDX_HR_SALARY_SIMULATION_ITEM_ADJ_SIMULATION_ID ON erp_hr_salary_simulation_item_adj (simulation_id);
+CREATE INDEX IDX_HR_SALARY_SIMULATION_ITEM_ADJ_EMPLOYEE_ID ON erp_hr_salary_simulation_item_adj (employee_id);
+CREATE INDEX IDX_HR_SOCIAL_INSURANCE_BASE_EMPLOYEE_ID ON erp_hr_social_insurance_base (employee_id);
+CREATE INDEX IDX_HR_TAX_SPECIAL_DEDUCTION_EMPLOYEE_ID ON erp_hr_tax_special_deduction (employee_id);
+CREATE INDEX IDX_HR_PAYROLL_BANK_FILE_ORG_STATUS ON erp_hr_payroll_bank_file (org_id, status);
+CREATE INDEX IDX_HR_PAYROLL_BANK_FILE_BANK_ID ON erp_hr_payroll_bank_file (bank_id);
+CREATE INDEX IDX_HR_SHIFT_ASSIGNMENT_ORG_STATUS ON erp_hr_shift_assignment (org_id, status);
+CREATE INDEX IDX_HR_SHIFT_ASSIGNMENT_EMPLOYEE_ID ON erp_hr_shift_assignment (employee_id);
+CREATE INDEX IDX_HR_SHIFT_ASSIGNMENT_SHIFT_ID ON erp_hr_shift_assignment (shift_id);
+CREATE INDEX IDX_HR_SHIFT_ASSIGNMENT_LEAVE_REQUEST_ID ON erp_hr_shift_assignment (leave_request_id);
+CREATE INDEX IDX_HR_SHIFT_ASSIGNMENT_SWAP_REQUEST_ID ON erp_hr_shift_assignment (swap_request_id);
+CREATE INDEX IDX_HR_SHIFT_ASSIGNMENT_REPLACED_BY_ASSIGNMENT_ID ON erp_hr_shift_assignment (replaced_by_assignment_id);
+CREATE INDEX IDX_HR_SHIFT_ROTATION_PATTERN_GROUP_ID ON erp_hr_shift_rotation_pattern (group_id);
+CREATE INDEX IDX_HR_SHIFT_SWAP_REQUEST_ORG_STATUS ON erp_hr_shift_swap_request (org_id, status);
+CREATE INDEX IDX_HR_SHIFT_SWAP_REQUEST_REQUESTER_ID ON erp_hr_shift_swap_request (requester_id);
+CREATE INDEX IDX_HR_SHIFT_SWAP_REQUEST_TARGET_EMPLOYEE_ID ON erp_hr_shift_swap_request (target_employee_id);
+CREATE INDEX IDX_HR_SHIFT_SWAP_REQUEST_SOURCE_ASSIGNMENT_ID ON erp_hr_shift_swap_request (source_assignment_id);
+CREATE INDEX IDX_HR_SHIFT_SWAP_REQUEST_TARGET_ASSIGNMENT_ID ON erp_hr_shift_swap_request (target_assignment_id);
+CREATE INDEX IDX_HR_SHIFT_SWAP_REQUEST_APPROVED_BY_ID ON erp_hr_shift_swap_request (approved_by_id);
+CREATE INDEX IDX_HR_SURVEY_ORG_STATUS ON erp_hr_survey (org_id, status);
+CREATE INDEX IDX_HR_SURVEY_TARGET_DEPARTMENT_ID ON erp_hr_survey (target_department_id);
+CREATE INDEX IDX_HR_SURVEY_QUESTION_SURVEY_ID ON erp_hr_survey_question (survey_id);
+CREATE INDEX IDX_HR_SURVEY_RESPONSE_SURVEY_ID ON erp_hr_survey_response (survey_id);
+CREATE INDEX IDX_HR_SURVEY_RESPONSE_EMPLOYEE_ID ON erp_hr_survey_response (employee_id);
+CREATE INDEX IDX_HR_SURVEY_ANSWER_RESPONSE_ID ON erp_hr_survey_answer (response_id);
+CREATE INDEX IDX_HR_SURVEY_ANSWER_QUESTION_ID ON erp_hr_survey_answer (question_id);
+CREATE INDEX IDX_HR_SURVEY_RESULT_SURVEY_ID ON erp_hr_survey_result (survey_id);
+CREATE INDEX IDX_HR_SURVEY_RESULT_DEPARTMENT_ID ON erp_hr_survey_result (department_id);
+CREATE INDEX IDX_HR_COMPETENCY_PARENT_ID ON erp_hr_competency (parent_id);
+CREATE INDEX IDX_HR_COMPETENCY_LEVEL_COMPETENCY_ID ON erp_hr_competency_level (competency_id);
+CREATE INDEX IDX_HR_ROLE_COMPETENCY_POSITION_ID ON erp_hr_role_competency (position_id);
+CREATE INDEX IDX_HR_ROLE_COMPETENCY_COMPETENCY_ID ON erp_hr_role_competency (competency_id);
+CREATE INDEX IDX_HR_EMPLOYEE_ASSESSMENT_ORG_STATUS ON erp_hr_employee_assessment (org_id, status);
+CREATE INDEX IDX_HR_EMPLOYEE_ASSESSMENT_EMPLOYEE_ID ON erp_hr_employee_assessment (employee_id);
+CREATE INDEX IDX_HR_EMPLOYEE_ASSESSMENT_ASSESSOR_ID ON erp_hr_employee_assessment (assessor_id);
+CREATE INDEX IDX_HR_ASSESSMENT_DETAIL_ASSESSMENT_ID ON erp_hr_assessment_detail (assessment_id);
+CREATE INDEX IDX_HR_ASSESSMENT_DETAIL_COMPETENCY_ID ON erp_hr_assessment_detail (competency_id);
+CREATE INDEX IDX_HR_GAP_ANALYSIS_EMPLOYEE_ID ON erp_hr_gap_analysis (employee_id);
+CREATE INDEX IDX_HR_GAP_ANALYSIS_COMPETENCY_ID ON erp_hr_gap_analysis (competency_id);
+CREATE INDEX IDX_HR_DEVELOPMENT_PLAN_ORG_STATUS ON erp_hr_development_plan (org_id, status);
+CREATE INDEX IDX_HR_DEVELOPMENT_PLAN_EMPLOYEE_ID ON erp_hr_development_plan (employee_id);
+CREATE INDEX IDX_HR_DEVELOPMENT_PLAN_ITEM_STATUS ON erp_hr_development_plan_item (status);
+CREATE INDEX IDX_HR_DEVELOPMENT_PLAN_ITEM_PLAN_ID ON erp_hr_development_plan_item (plan_id);
+CREATE INDEX IDX_HR_DEVELOPMENT_PLAN_ITEM_COMPETENCY_ID ON erp_hr_development_plan_item (competency_id);
+CREATE INDEX IDX_HR_DEVELOPMENT_PLAN_ITEM_GAP_ID ON erp_hr_development_plan_item (gap_id);
+CREATE INDEX IDX_HR_DEVELOPMENT_PLAN_ITEM_MENTOR_ID ON erp_hr_development_plan_item (mentor_id);

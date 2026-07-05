@@ -198,6 +198,31 @@
             <unique-keys>
                 <unique-key name="UK_QA_INSPECTION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_QA_INSPECTION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_INSPECTOR_ID" unique="false">
+                    <column name="inspectorId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 质检单行 -->
@@ -226,6 +251,14 @@
             <relations>
                 <to-one name="inspection" refEntityName="app.erp.qa.dao.entity.ErpQaInspection" tagSet="pub" i18n-en:displayName='Inspection'><join><on leftProp="inspectionId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_QA_INSPECTION_LINE_INSPECTION_ID" unique="false">
+                    <column name="inspectionId"/>
+                </index>
+                <index name="IDX_QA_INSPECTION_LINE_PARAMETER_ID" unique="false">
+                    <column name="parameterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 质检模板 -->
@@ -256,6 +289,11 @@
             <unique-keys>
                 <unique-key name="UK_QA_INSPECTION_TEMPLATE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_QA_INSPECTION_TEMPLATE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 质检模板行 -->
@@ -283,6 +321,11 @@
             <relations>
                 <to-one name="template" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub" i18n-en:displayName='Template'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_QA_INSPECTION_TEMPLATE_LINE_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 不合格品报告 -->
@@ -332,6 +375,20 @@
             <unique-keys>
                 <unique-key name="UK_QA_NON_CONFORMANCE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_QA_NON_CONFORMANCE_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_QA_NON_CONFORMANCE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_QA_NON_CONFORMANCE_INSPECTION_ID" unique="false">
+                    <column name="inspectionId"/>
+                </index>
+                <index name="IDX_QA_NON_CONFORMANCE_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+            </indexes>
         </entity>
         
         <!-- 纠正预防措施 -->
@@ -361,6 +418,14 @@
             <relations>
                 <to-one name="ncr" refEntityName="app.erp.qa.dao.entity.ErpQaNonConformance" tagSet="pub" i18n-en:displayName='Ncr'><join><on leftProp="ncrId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_QA_ACTION_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_QA_ACTION_NCR_ID" unique="false">
+                    <column name="ncrId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 风险登记 -->
@@ -393,6 +458,14 @@
             <unique-keys>
                 <unique-key name="UK_QA_RISK_REGISTER_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_QA_RISK_REGISTER_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_QA_RISK_REGISTER_OWNER_ID" unique="false">
+                    <column name="ownerId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 质量目标 -->
@@ -425,6 +498,14 @@
             <unique-keys>
                 <unique-key name="UK_QA_QUALITY_GOAL_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_QA_QUALITY_GOAL_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_QA_QUALITY_GOAL_RESPONSIBLE_PERSON_ID" unique="false">
+                    <column name="responsiblePersonId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 质量评审 -->
@@ -463,6 +544,12 @@
             <unique-keys>
                 <unique-key name="UK_QA_REVIEW_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_QA_REVIEW_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 抽样方案（AQL） -->
@@ -532,6 +619,16 @@
             <unique-keys>
                 <unique-key name="UK_QA_CALIBRATION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_QA_CALIBRATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_QA_CALIBRATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 召回事件头（2.11） -->
@@ -571,6 +668,23 @@
             <unique-keys>
                 <unique-key name="UK_QA_RECALL_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_QA_RECALL_APPROVE_STATUS" unique="false">
+                    <column name="approveStatus"/>
+                </index>
+                <index name="IDX_QA_RECALL_BUSINESS_DATE" unique="false">
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_QA_RECALL_SOURCE_NCR_ID" unique="false">
+                    <column name="sourceNcrId"/>
+                </index>
+                <index name="IDX_QA_RECALL_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_QA_RECALL_BATCH_ID" unique="false">
+                    <column name="batchId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 召回目标（受影响客户/批次，2.11） -->
@@ -601,6 +715,20 @@
                 <to-one name="recall" refEntityName="app.erp.qa.dao.entity.ErpQaRecall" tagSet="pub" i18n-en:displayName='Recall'><join><on leftProp="recallId" rightProp="id"/></join></to-one>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Affected Customer'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_QA_RECALL_TARGET_RECALL_ID" unique="false">
+                    <column name="recallId"/>
+                </index>
+                <index name="IDX_QA_RECALL_TARGET_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_QA_RECALL_TARGET_SALES_DELIVERY_ID" unique="false">
+                    <column name="salesDeliveryId"/>
+                </index>
+                <index name="IDX_QA_RECALL_TARGET_GENERATED_RETURN_ID" unique="false">
+                    <column name="generatedReturnId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

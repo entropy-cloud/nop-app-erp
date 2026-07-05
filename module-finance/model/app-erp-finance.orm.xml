@@ -293,6 +293,21 @@
             <unique-keys>
                 <unique-key name="UK_FIN_VOUCHER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_REVERSAL_OF_VOUCHER_ID" unique="false">
+                    <column name="reversalOfVoucherId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 凭证分录行 -->
@@ -344,6 +359,38 @@
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
                 <to-one name="costCenter" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub" i18n-en:displayName='Cost Center'><join><on leftProp="costCenterId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_LINE_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_FIN_VOUCHER_LINE_COST_CENTER_ID" unique="false">
+                    <column name="costCenterId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 凭证模板头（tagSet audit+audit-save：复用平台 NopSysChangeLog 记字段级变更审计，见 posting-log.md §裁决1；
@@ -376,6 +423,11 @@
             <unique-keys>
                 <unique-key name="UK_FIN_VOUCHER_TEMPLATE_CODE" columns="code"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_TEMPLATE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 凭证模板行（tagSet audit+audit-save：复用平台 NopSysChangeLog 记字段级变更审计，见 posting-log.md §裁决1） -->
@@ -402,6 +454,11 @@
             <relations>
                 <to-one name="template" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherTemplate" tagSet="pub" i18n-en:displayName='Template'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_TEMPLATE_LINE_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 业财回链表 -->
@@ -425,6 +482,11 @@
             <relations>
                 <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub" i18n-en:displayName='Voucher'><join><on leftProp="voucherId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_VOUCHER_BILL_R_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 会计期间 -->
@@ -461,6 +523,12 @@
             <unique-keys>
                 <unique-key name="UK_FIN_ACCOUNTING_PERIOD_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_ACCOUNTING_PERIOD_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 期间结账状态（按账套 × 模块 AR/AP/INV/GL） -->
@@ -490,6 +558,14 @@
                 <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub" i18n-en:displayName='Period'><join><on leftProp="periodId" rightProp="id"/></join></to-one>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_ACCOUNTING_PERIOD_STATUS_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_ACCOUNTING_PERIOD_STATUS_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 应收应付明细账（open-item 模型，逐笔核销） -->
@@ -539,6 +615,28 @@
             <unique-keys>
                 <unique-key name="UK_FIN_AR_AP_ITEM_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_AR_AP_ITEM_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_AR_AP_ITEM_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 核销单头（付款/收款与发票多对多核销） -->
@@ -581,6 +679,25 @@
             <unique-keys>
                 <unique-key name="UK_FIN_RECONCILIATION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_RECONCILIATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 核销单行（付款/收款项 ↔ 发票项多对多） -->
@@ -612,6 +729,17 @@
                     <join><on leftProp="invoiceItemId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_RECONCILIATION_LINE_RECONCILIATION_ID" unique="false">
+                    <column name="reconciliationId"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_LINE_PAYMENT_ITEM_ID" unique="false">
+                    <column name="paymentItemId"/>
+                </index>
+                <index name="IDX_FIN_RECONCILIATION_LINE_INVOICE_ITEM_ID" unique="false">
+                    <column name="invoiceItemId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 总账余额快照（按 账套×科目×期间×辅助维度 聚合） -->
@@ -666,6 +794,32 @@
                     <join><on leftProp="projectId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_GL_BALANCE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_FIN_GL_BALANCE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 试算平衡表快照（期末结账产出） -->
@@ -702,6 +856,17 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_TRIAL_BALANCE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_TRIAL_BALANCE_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_TRIAL_BALANCE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 资金账户 -->
@@ -739,6 +904,18 @@
             <unique-keys>
                 <unique-key name="UK_FIN_FUND_ACCOUNT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_FUND_ACCOUNT_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_FIN_FUND_ACCOUNT_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+                <index name="IDX_FIN_FUND_ACCOUNT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 银行对账单 -->
@@ -774,6 +951,15 @@
             <unique-keys>
                 <unique-key name="UK_FIN_BANK_STATEMENT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_BANK_STATEMENT_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_BANK_STATEMENT_FUND_ACCOUNT_ID" unique="false">
+                    <column name="fundAccountId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 银行对账单行 -->
@@ -806,6 +992,17 @@
                 <to-one name="matchedLine" refEntityName="app.erp.fin.dao.entity.ErpFinVoucherLine" tagSet="pub" i18n-en:displayName='Matched Voucher Line'><join><on leftProp="matchedLineId" rightProp="id"/></join></to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_BANK_STATEMENT_LINE_STATEMENT_ID" unique="false">
+                    <column name="statementId"/>
+                </index>
+                <index name="IDX_FIN_BANK_STATEMENT_LINE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_BANK_STATEMENT_LINE_MATCHED_LINE_ID" unique="false">
+                    <column name="matchedLineId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 银行对账记录（余额调节表） -->
@@ -845,6 +1042,18 @@
             <unique-keys>
                 <unique-key name="UK_FIN_BANK_RECONCILIATION_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_BANK_RECONCILIATION_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_BANK_RECONCILIATION_FUND_ACCOUNT_ID" unique="false">
+                    <column name="fundAccountId"/>
+                </index>
+                <index name="IDX_FIN_BANK_RECONCILIATION_STATEMENT_ID" unique="false">
+                    <column name="statementId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 银行对账调整行（未达账项） -->
@@ -871,6 +1080,11 @@
             <relations>
                 <to-one name="reconciliation" refEntityName="app.erp.fin.dao.entity.ErpFinBankReconciliation" tagSet="pub" i18n-en:displayName='Reconciliation'><join><on leftProp="reconciliationId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_BANK_RECONCILIATION_LINE_RECONCILIATION_ID" unique="false">
+                    <column name="reconciliationId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 费用报销单头（员工费用报销，价税分离 + 项目/成本中心归集 + 业财过账） -->
@@ -920,6 +1134,28 @@
             <unique-keys>
                 <unique-key name="UK_FIN_EXPENSE_CLAIM_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_EXPENSE_CLAIM_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_CLAIMANT_ID" unique="false">
+                    <column name="claimantId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_DEPARTMENT_ID" unique="false">
+                    <column name="departmentId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_SETTLE_ADVANCE_ID" unique="false">
+                    <column name="settleAdvanceId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 费用报销单行（价税分离 + 项目/成本中心归集维度） -->
@@ -953,6 +1189,20 @@
                 <to-one name="costCenter" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub" i18n-en:displayName='Cost Center'><join><on leftProp="costCenterId" rightProp="id"/></join></to-one>
                 <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
             </relations>
+            <indexes>
+                <index name="IDX_FIN_EXPENSE_CLAIM_LINE_CLAIM_ID" unique="false">
+                    <column name="claimId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_LINE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_LINE_COST_CENTER_ID" unique="false">
+                    <column name="costCenterId"/>
+                </index>
+                <index name="IDX_FIN_EXPENSE_CLAIM_LINE_SUBJECT_ID" unique="false">
+                    <column name="subjectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 员工借款单（预支/备用金/差旅借款，方向=其他应收款-员工预支） -->
@@ -997,6 +1247,25 @@
             <unique-keys>
                 <unique-key name="UK_FIN_EMPLOYEE_ADVANCE_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_EMPLOYEE_ADVANCE_PROJECT_ID" unique="false">
+                    <column name="projectId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 资金/票据（treasury.md） ============================ -->
@@ -1206,6 +1475,24 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="24" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="25" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <indexes>
+                <index name="IDX_FIN_POSTING_EXCEPTION_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_FIN_POSTING_EXCEPTION_TRACE_ID" unique="false">
+                    <column name="traceId"/>
+                </index>
+                <index name="IDX_FIN_POSTING_EXCEPTION_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_POSTING_EXCEPTION_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+                <index name="IDX_FIN_POSTING_EXCEPTION_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- 坏账核销/收回单（头，承载 writeOff/recovery 事件，关联客户 + 源 AR 辅助账项 + 审批状态机；bad-debt.md） -->
@@ -1250,6 +1537,30 @@
             <unique-keys>
                 <unique-key name="UK_FIN_BAD_DEBT_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
+            <indexes>
+                <index name="IDX_FIN_BAD_DEBT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_SOURCE_AR_AP_ITEM_ID" unique="false">
+                    <column name="sourceArApItemId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_PERIOD_ID" unique="false">
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_BAD_DEBT_VOUCHER_ID" unique="false">
+                    <column name="voucherId"/>
+                </index>
+            </indexes>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

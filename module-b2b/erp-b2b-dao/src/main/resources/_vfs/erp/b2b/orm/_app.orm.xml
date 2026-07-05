@@ -226,6 +226,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_EDI_DOC_FORMAT_ID" unique="false">
+                    <column name="formatId"/>
+                </index>
+                <index name="IDX_B2B_EDI_DOC_ATTACHMENT_FILE_ID" unique="false">
+                    <column name="attachmentFileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="format" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiFormat" tagSet="pub"
                         i18n-en:displayName="Format">
@@ -292,6 +300,18 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_ASN_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_B2B_ASN_SOURCE_EDI_DOC_ID" unique="false">
+                    <column name="sourceEdiDocId"/>
+                </index>
+                <index name="IDX_B2B_ASN_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="sourceEdiDoc" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiDoc" tagSet="pub"
                         i18n-en:displayName="Source EDI Document">
@@ -361,6 +381,14 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_ASN_LINE_ASN_ID" unique="false">
+                    <column name="asnId"/>
+                </index>
+                <index name="IDX_B2B_ASN_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="asn" refEntityName="app.erp.b2b.dao.entity.ErpB2bAsn" tagSet="pub"
                         i18n-en:displayName="ASN">
@@ -414,6 +442,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_CODE_MAPPING_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
                         i18n-en:displayName="Org">
@@ -472,6 +505,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_EDI_LOG_EDI_DOC_ID" unique="false">
+                    <column name="ediDocId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="ediDoc" refEntityName="app.erp.b2b.dao.entity.ErpB2bEdiDoc" tagSet="pub"
                         i18n-en:displayName="EDI Document">
@@ -554,6 +592,15 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_PARTNER_PROFILE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_B2B_PARTNER_PROFILE_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -614,6 +661,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_PARTNER_CREDENTIAL_PARTNER_PROFILE_ID" unique="false">
+                    <column name="partnerProfileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub"
                         i18n-en:displayName="Partner Profile">
@@ -673,6 +725,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_TEST_EXCHANGE_PARTNER_PROFILE_ID" unique="false">
+                    <column name="partnerProfileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub"
                         i18n-en:displayName="Partner Profile">
@@ -725,6 +782,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_CERTIFICATION_CHECKLIST_PARTNER_PROFILE_ID" unique="false">
+                    <column name="partnerProfileId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partnerProfile" refEntityName="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" tagSet="pub"
                         i18n-en:displayName="Partner Profile">
@@ -806,6 +868,20 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="30" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_MFT_CONFIG_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_B2B_MFT_CONFIG_LOCAL_AS2_ID" unique="false">
+                    <column name="localAs2Id"/>
+                </index>
+                <index name="IDX_B2B_MFT_CONFIG_REMOTE_AS2_ID" unique="false">
+                    <column name="remoteAs2Id"/>
+                </index>
+                <index name="IDX_B2B_MFT_CONFIG_CERT_ID" unique="false">
+                    <column name="certId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -879,6 +955,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_MFT_CERTIFICATE_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
                         i18n-en:displayName="Partner">
@@ -967,6 +1048,18 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <indexes>
+                <index name="IDX_B2B_MFT_LOG_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_B2B_MFT_LOG_CONFIG_ID" unique="false">
+                    <column name="configId"/>
+                </index>
+                <index name="IDX_B2B_MFT_LOG_MESSAGE_ID" unique="false">
+                    <column name="messageId"/>
+                </index>
+            </indexes>
             <relations>
                 <to-one name="config" refEntityName="app.erp.b2b.dao.entity.ErpB2bMftConfig" tagSet="pub"
                         i18n-en:displayName="MFT Config">

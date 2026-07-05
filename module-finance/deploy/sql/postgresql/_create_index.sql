@@ -1,0 +1,92 @@
+-- app-erp-finance indexes generated from model/app-erp-finance.orm.xml
+-- Dialect: postgresql.
+-- This file is maintained separately from _create_erp-finance.sql because the
+-- platform _create.sql.xgen template (ddl.xlib CreateTables) does not emit CREATE INDEX.
+-- Runtime: ddl.xlib AddIndex also applies these at app startup from the ORM model.
+-- Run AFTER _create_erp-finance.sql during manual production deployment.
+-- Source of truth: model <indexes> definitions (84 indexes).
+-- Regenerate: node scripts/add-orm-indexes.js
+CREATE INDEX IDX_FIN_VOUCHER_ORG_DOC_STATUS ON erp_fin_voucher (org_id, doc_status);
+CREATE INDEX IDX_FIN_VOUCHER_ACCT_SCHEMA_ID ON erp_fin_voucher (acct_schema_id);
+CREATE INDEX IDX_FIN_VOUCHER_PERIOD_ID ON erp_fin_voucher (period_id);
+CREATE INDEX IDX_FIN_VOUCHER_REVERSAL_OF_VOUCHER_ID ON erp_fin_voucher (reversal_of_voucher_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_VOUCHER_ID ON erp_fin_voucher_line (voucher_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_SUBJECT_ID ON erp_fin_voucher_line (subject_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_CURRENCY_ID ON erp_fin_voucher_line (currency_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_ACCT_SCHEMA_ID ON erp_fin_voucher_line (acct_schema_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_PARTNER_ID ON erp_fin_voucher_line (partner_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_DEPARTMENT_ID ON erp_fin_voucher_line (department_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_PROJECT_ID ON erp_fin_voucher_line (project_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_WAREHOUSE_ID ON erp_fin_voucher_line (warehouse_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_MATERIAL_ID ON erp_fin_voucher_line (material_id);
+CREATE INDEX IDX_FIN_VOUCHER_LINE_COST_CENTER_ID ON erp_fin_voucher_line (cost_center_id);
+CREATE INDEX IDX_FIN_VOUCHER_TEMPLATE_ACCT_SCHEMA_ID ON erp_fin_voucher_template (acct_schema_id);
+CREATE INDEX IDX_FIN_VOUCHER_TEMPLATE_LINE_TEMPLATE_ID ON erp_fin_voucher_template_line (template_id);
+CREATE INDEX IDX_FIN_VOUCHER_BILL_R_VOUCHER_ID ON erp_fin_voucher_bill_r (voucher_id);
+CREATE INDEX IDX_FIN_ACCOUNTING_PERIOD_ORG_STATUS ON erp_fin_accounting_period (org_id, status);
+CREATE INDEX IDX_FIN_ACCOUNTING_PERIOD_STATUS_PERIOD_ID ON erp_fin_accounting_period_status (period_id);
+CREATE INDEX IDX_FIN_ACCOUNTING_PERIOD_STATUS_ACCT_SCHEMA_ID ON erp_fin_accounting_period_status (acct_schema_id);
+CREATE INDEX IDX_FIN_AR_AP_ITEM_ORG_STATUS ON erp_fin_ar_ap_item (org_id, status);
+CREATE INDEX IDX_FIN_AR_AP_ITEM_ORG_BUSINESS_DATE ON erp_fin_ar_ap_item (org_id, business_date);
+CREATE INDEX IDX_FIN_AR_AP_ITEM_ACCT_SCHEMA_ID ON erp_fin_ar_ap_item (acct_schema_id);
+CREATE INDEX IDX_FIN_AR_AP_ITEM_PARTNER_ID ON erp_fin_ar_ap_item (partner_id);
+CREATE INDEX IDX_FIN_AR_AP_ITEM_CURRENCY_ID ON erp_fin_ar_ap_item (currency_id);
+CREATE INDEX IDX_FIN_AR_AP_ITEM_PERIOD_ID ON erp_fin_ar_ap_item (period_id);
+CREATE INDEX IDX_FIN_RECONCILIATION_ORG_DOC_STATUS ON erp_fin_reconciliation (org_id, doc_status);
+CREATE INDEX IDX_FIN_RECONCILIATION_ORG_BUSINESS_DATE ON erp_fin_reconciliation (org_id, business_date);
+CREATE INDEX IDX_FIN_RECONCILIATION_ACCT_SCHEMA_ID ON erp_fin_reconciliation (acct_schema_id);
+CREATE INDEX IDX_FIN_RECONCILIATION_PARTNER_ID ON erp_fin_reconciliation (partner_id);
+CREATE INDEX IDX_FIN_RECONCILIATION_CURRENCY_ID ON erp_fin_reconciliation (currency_id);
+CREATE INDEX IDX_FIN_RECONCILIATION_LINE_RECONCILIATION_ID ON erp_fin_reconciliation_line (reconciliation_id);
+CREATE INDEX IDX_FIN_RECONCILIATION_LINE_PAYMENT_ITEM_ID ON erp_fin_reconciliation_line (payment_item_id);
+CREATE INDEX IDX_FIN_RECONCILIATION_LINE_INVOICE_ITEM_ID ON erp_fin_reconciliation_line (invoice_item_id);
+CREATE INDEX IDX_FIN_GL_BALANCE_ACCT_SCHEMA_ID ON erp_fin_gl_balance (acct_schema_id);
+CREATE INDEX IDX_FIN_GL_BALANCE_PERIOD_ID ON erp_fin_gl_balance (period_id);
+CREATE INDEX IDX_FIN_GL_BALANCE_SUBJECT_ID ON erp_fin_gl_balance (subject_id);
+CREATE INDEX IDX_FIN_GL_BALANCE_CURRENCY_ID ON erp_fin_gl_balance (currency_id);
+CREATE INDEX IDX_FIN_GL_BALANCE_PARTNER_ID ON erp_fin_gl_balance (partner_id);
+CREATE INDEX IDX_FIN_GL_BALANCE_DEPARTMENT_ID ON erp_fin_gl_balance (department_id);
+CREATE INDEX IDX_FIN_GL_BALANCE_PROJECT_ID ON erp_fin_gl_balance (project_id);
+CREATE INDEX IDX_FIN_GL_BALANCE_WAREHOUSE_ID ON erp_fin_gl_balance (warehouse_id);
+CREATE INDEX IDX_FIN_TRIAL_BALANCE_ACCT_SCHEMA_ID ON erp_fin_trial_balance (acct_schema_id);
+CREATE INDEX IDX_FIN_TRIAL_BALANCE_PERIOD_ID ON erp_fin_trial_balance (period_id);
+CREATE INDEX IDX_FIN_TRIAL_BALANCE_SUBJECT_ID ON erp_fin_trial_balance (subject_id);
+CREATE INDEX IDX_FIN_FUND_ACCOUNT_ORG_STATUS ON erp_fin_fund_account (org_id, status);
+CREATE INDEX IDX_FIN_FUND_ACCOUNT_SUBJECT_ID ON erp_fin_fund_account (subject_id);
+CREATE INDEX IDX_FIN_FUND_ACCOUNT_CURRENCY_ID ON erp_fin_fund_account (currency_id);
+CREATE INDEX IDX_FIN_BANK_STATEMENT_ORG_DOC_STATUS ON erp_fin_bank_statement (org_id, doc_status);
+CREATE INDEX IDX_FIN_BANK_STATEMENT_FUND_ACCOUNT_ID ON erp_fin_bank_statement (fund_account_id);
+CREATE INDEX IDX_FIN_BANK_STATEMENT_LINE_STATEMENT_ID ON erp_fin_bank_statement_line (statement_id);
+CREATE INDEX IDX_FIN_BANK_STATEMENT_LINE_CURRENCY_ID ON erp_fin_bank_statement_line (currency_id);
+CREATE INDEX IDX_FIN_BANK_STATEMENT_LINE_MATCHED_LINE_ID ON erp_fin_bank_statement_line (matched_line_id);
+CREATE INDEX IDX_FIN_BANK_RECONCILIATION_ORG_DOC_STATUS ON erp_fin_bank_reconciliation (org_id, doc_status);
+CREATE INDEX IDX_FIN_BANK_RECONCILIATION_FUND_ACCOUNT_ID ON erp_fin_bank_reconciliation (fund_account_id);
+CREATE INDEX IDX_FIN_BANK_RECONCILIATION_STATEMENT_ID ON erp_fin_bank_reconciliation (statement_id);
+CREATE INDEX IDX_FIN_BANK_RECONCILIATION_LINE_RECONCILIATION_ID ON erp_fin_bank_reconciliation_line (reconciliation_id);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_ORG_DOC_STATUS ON erp_fin_expense_claim (org_id, doc_status);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_ORG_BUSINESS_DATE ON erp_fin_expense_claim (org_id, business_date);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_CLAIMANT_ID ON erp_fin_expense_claim (claimant_id);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_DEPARTMENT_ID ON erp_fin_expense_claim (department_id);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_CURRENCY_ID ON erp_fin_expense_claim (currency_id);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_SETTLE_ADVANCE_ID ON erp_fin_expense_claim (settle_advance_id);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_LINE_CLAIM_ID ON erp_fin_expense_claim_line (claim_id);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_LINE_PROJECT_ID ON erp_fin_expense_claim_line (project_id);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_LINE_COST_CENTER_ID ON erp_fin_expense_claim_line (cost_center_id);
+CREATE INDEX IDX_FIN_EXPENSE_CLAIM_LINE_SUBJECT_ID ON erp_fin_expense_claim_line (subject_id);
+CREATE INDEX IDX_FIN_EMPLOYEE_ADVANCE_ORG_DOC_STATUS ON erp_fin_employee_advance (org_id, doc_status);
+CREATE INDEX IDX_FIN_EMPLOYEE_ADVANCE_ORG_BUSINESS_DATE ON erp_fin_employee_advance (org_id, business_date);
+CREATE INDEX IDX_FIN_EMPLOYEE_ADVANCE_EMPLOYEE_ID ON erp_fin_employee_advance (employee_id);
+CREATE INDEX IDX_FIN_EMPLOYEE_ADVANCE_CURRENCY_ID ON erp_fin_employee_advance (currency_id);
+CREATE INDEX IDX_FIN_EMPLOYEE_ADVANCE_PROJECT_ID ON erp_fin_employee_advance (project_id);
+CREATE INDEX IDX_FIN_POSTING_EXCEPTION_ORG_STATUS ON erp_fin_posting_exception (org_id, status);
+CREATE INDEX IDX_FIN_POSTING_EXCEPTION_TRACE_ID ON erp_fin_posting_exception (trace_id);
+CREATE INDEX IDX_FIN_POSTING_EXCEPTION_ACCT_SCHEMA_ID ON erp_fin_posting_exception (acct_schema_id);
+CREATE INDEX IDX_FIN_POSTING_EXCEPTION_VOUCHER_ID ON erp_fin_posting_exception (voucher_id);
+CREATE INDEX IDX_FIN_POSTING_EXCEPTION_CURRENCY_ID ON erp_fin_posting_exception (currency_id);
+CREATE INDEX IDX_FIN_BAD_DEBT_ORG_BUSINESS_DATE ON erp_fin_bad_debt (org_id, business_date);
+CREATE INDEX IDX_FIN_BAD_DEBT_ACCT_SCHEMA_ID ON erp_fin_bad_debt (acct_schema_id);
+CREATE INDEX IDX_FIN_BAD_DEBT_PARTNER_ID ON erp_fin_bad_debt (partner_id);
+CREATE INDEX IDX_FIN_BAD_DEBT_SOURCE_AR_AP_ITEM_ID ON erp_fin_bad_debt (source_ar_ap_item_id);
+CREATE INDEX IDX_FIN_BAD_DEBT_CURRENCY_ID ON erp_fin_bad_debt (currency_id);
+CREATE INDEX IDX_FIN_BAD_DEBT_PERIOD_ID ON erp_fin_bad_debt (period_id);
+CREATE INDEX IDX_FIN_BAD_DEBT_VOUCHER_ID ON erp_fin_bad_debt (voucher_id);
