@@ -210,6 +210,31 @@ CREATE TABLE erp_inv_serial_number(
   constraint PK_erp_inv_serial_number primary key (ID)
 );
 
+CREATE TABLE erp_inv_cost_adjust(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  BUSINESS_DATE DATE NOT NULL ,
+  ADJUST_TYPE VARCHAR2(20) NOT NULL ,
+  REASON VARCHAR2(500)  ,
+  DOC_STATUS VARCHAR2(20) NOT NULL ,
+  APPROVE_STATUS VARCHAR2(20) NOT NULL ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
+  CURRENCY_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_cost_adjust primary key (ID)
+);
+
 CREATE TABLE erp_inv_stock_balance(
   ID NUMBER(20) NOT NULL ,
   ORG_ID NUMBER(20)  ,
@@ -395,6 +420,29 @@ CREATE TABLE erp_inv_cost_layer(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_inv_cost_layer primary key (ID)
+);
+
+CREATE TABLE erp_inv_cost_adjust_line(
+  ID NUMBER(20) NOT NULL ,
+  ADJUST_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  MATERIAL_ID NUMBER(20) NOT NULL ,
+  WAREHOUSE_ID NUMBER(20) NOT NULL ,
+  BATCH_NO VARCHAR2(50)  ,
+  OLD_UNIT_COST NUMBER(20,4)  ,
+  NEW_UNIT_COST NUMBER(20,4) NOT NULL ,
+  ADJUST_QTY NUMBER(20,4)  ,
+  ADJUST_AMOUNT NUMBER(20,4)  ,
+  ADJUST_REASON VARCHAR2(200)  ,
+  CURRENCY_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_cost_adjust_line primary key (ID)
 );
 
 CREATE TABLE erp_inv_reservation_line(
@@ -729,6 +777,50 @@ CREATE TABLE erp_inv_stock_ledger(
                     
       COMMENT ON COLUMN erp_inv_serial_number.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_inv_cost_adjust IS '成本调整单';
+                
+      COMMENT ON COLUMN erp_inv_cost_adjust.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.ADJUST_TYPE IS '调整类型';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.REASON IS '调整原因';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.DOC_STATUS IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.APPROVE_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.POSTED IS '已过账';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.APPROVED_AT IS '审核时间';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_inv_stock_balance IS '库存余额';
                 
       COMMENT ON COLUMN erp_inv_stock_balance.ID IS 'ID';
@@ -1054,6 +1146,46 @@ CREATE TABLE erp_inv_stock_ledger(
       COMMENT ON COLUMN erp_inv_cost_layer.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_inv_cost_layer.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_cost_adjust_line IS '成本调整单行';
+                
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.ADJUST_ID IS '成本调整单ID';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.WAREHOUSE_ID IS '仓库';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.BATCH_NO IS '批号';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.OLD_UNIT_COST IS '原单位成本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.NEW_UNIT_COST IS '新单位成本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.ADJUST_QTY IS '调整数量';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.ADJUST_AMOUNT IS '调整金额';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.ADJUST_REASON IS '行调整原因';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_cost_adjust_line.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_inv_reservation_line IS '库存预留单行';
                 

@@ -50,7 +50,8 @@ public enum ErpFinBusinessType {
     PROFIT_TO_RETAINED_EARNINGS(380),
     VALUE_ADJUSTMENT(390),
     PRODUCTION_VARIANCE(400),
-    NCR_SCRAP(410);
+    NCR_SCRAP(410),
+    COST_ADJUSTMENT(420);
 
     private final int code;
 

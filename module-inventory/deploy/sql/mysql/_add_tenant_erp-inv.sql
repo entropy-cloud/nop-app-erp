@@ -29,6 +29,8 @@ alter table erp_inv_batch add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_serial_number add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_inv_cost_adjust add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_inv_stock_balance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_reservation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -44,6 +46,8 @@ alter table erp_inv_stock_take_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NO
 alter table erp_inv_stock_move_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_cost_layer add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_inv_cost_adjust_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_reservation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -98,6 +102,9 @@ alter table erp_inv_batch add primary key (NOP_TENANT_ID, ID);
 alter table erp_inv_serial_number drop primary key;
 alter table erp_inv_serial_number add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_inv_cost_adjust drop primary key;
+alter table erp_inv_cost_adjust add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_inv_stock_balance drop primary key;
 alter table erp_inv_stock_balance add primary key (NOP_TENANT_ID, ID);
 
@@ -121,6 +128,9 @@ alter table erp_inv_stock_move_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_inv_cost_layer drop primary key;
 alter table erp_inv_cost_layer add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_inv_cost_adjust_line drop primary key;
+alter table erp_inv_cost_adjust_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_inv_reservation_line drop primary key;
 alter table erp_inv_reservation_line add primary key (NOP_TENANT_ID, ID);

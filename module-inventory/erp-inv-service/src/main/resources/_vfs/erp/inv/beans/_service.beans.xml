@@ -42,6 +42,13 @@
         <property name="bizObjName" value="ErpInvSerialNumber"/>
     </bean>
 
+    <bean id="app.erp.inv.service.entity.ErpInvCostAdjustBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvCostAdjust" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.inv.biz.IErpInvCostAdjustBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpInvCostAdjust"/>
+    </bean>
+
     <bean id="app.erp.inv.service.entity.ErpInvStockBalanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpInvStockBalance" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -103,6 +110,14 @@
     <bean id="biz_ErpInvCostLayer" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.inv.biz.IErpInvCostLayerBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpInvCostLayer"/>
+    </bean>
+
+    <bean id="app.erp.inv.service.entity.ErpInvCostAdjustLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvCostAdjustLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.inv.biz.IErpInvCostAdjustLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvCostAdjustLine"/>
     </bean>
 
     <bean id="app.erp.inv.service.entity.ErpInvReservationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

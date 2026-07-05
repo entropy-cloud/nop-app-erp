@@ -1,6 +1,8 @@
 entity:
   label:
     ErpInvBatch: 批次台账
+    ErpInvCostAdjust: 成本调整单
+    ErpInvCostAdjustLine: 成本调整单行
     ErpInvCostLayer: 成本层
     ErpInvOwnershipTransfer: 所有权转移单
     ErpInvOwnershipTransferLine: 所有权转移单行
@@ -39,6 +41,58 @@ prop:
       status: 状态
       status_label: 状态
       totalQuantity: 总数量
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      warehouse: null
+      warehouseId: 仓库
+    ErpInvCostAdjust:
+      adjustType: 调整类型
+      adjustType_label: 调整类型
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
+      businessDate: 业务日期
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      docStatus: 单据状态
+      docStatus_label: 单据状态
+      id: ID
+      lines: null
+      org: null
+      orgId: 业务组织
+      posted: 已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      reason: 调整原因
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpInvCostAdjustLine:
+      adjust: null
+      adjustAmount: 调整金额
+      adjustId: 成本调整单ID
+      adjustQty: 调整数量
+      adjustReason: 行调整原因
+      batchNo: 批号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      material: null
+      materialId: 物料
+      newUnitCost: 新单位成本
+      oldUnitCost: 原单位成本
+      remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

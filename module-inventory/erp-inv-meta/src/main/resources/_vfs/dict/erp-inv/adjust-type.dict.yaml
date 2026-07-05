@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 成本调整类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 采购价格调整
+    value: PURCHASE_PRICE_ADJUST
+    description: 
+  
+  - label: 成本差异调整
+    value: COST_DIFFERENCE
+    description: 
+  
+  - label: 标准成本重估
+    value: STANDARD_REVALUATION
+    description: 
+  
+  - label: 到岸成本补录
+    value: LANDED_COST_SUPPLEMENT
+    description: 
+  

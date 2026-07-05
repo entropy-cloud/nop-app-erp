@@ -859,6 +859,7 @@ dict.option.label:
     VALUE_ADJUSTMENT: Asset Value Adjustment
     PRODUCTION_VARIANCE: Production Variance
     NCR_SCRAP: NCR Scrap Loss
+    COST_ADJUSTMENT: Cost Adjustment
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

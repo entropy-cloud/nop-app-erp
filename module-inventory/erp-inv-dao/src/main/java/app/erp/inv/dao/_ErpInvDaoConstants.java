@@ -233,4 +233,24 @@ public interface _ErpInvDaoConstants {
      */
     String OWNERSHIP_TRANSFER_STATUS_CANCELLED = "CANCELLED";
                     
+    /**
+     * 成本调整类型: 采购价格调整 
+     */
+    String ADJUST_TYPE_PURCHASE_PRICE_ADJUST = "PURCHASE_PRICE_ADJUST";
+                    
+    /**
+     * 成本调整类型: 成本差异调整 
+     */
+    String ADJUST_TYPE_COST_DIFFERENCE = "COST_DIFFERENCE";
+                    
+    /**
+     * 成本调整类型: 标准成本重估 
+     */
+    String ADJUST_TYPE_STANDARD_REVALUATION = "STANDARD_REVALUATION";
+                    
+    /**
+     * 成本调整类型: 到岸成本补录 
+     */
+    String ADJUST_TYPE_LANDED_COST_SUPPLEMENT = "LANDED_COST_SUPPLEMENT";
+                    
 }

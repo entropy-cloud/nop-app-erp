@@ -96,6 +96,8 @@
             <option code="PRODUCTION_VARIANCE" label="生产差异" value="PRODUCTION_VARIANCE" i18n-en:label='Production Variance'/>
             <!-- NCR 报废处置过账（plan 2026-07-05-2352-2）：不合格报废→报废损失凭证，承接 PPV 方向相关 Dr/Cr 范式。 -->
             <option code="NCR_SCRAP" label="NCR报废损失" value="NCR_SCRAP" i18n-en:label='NCR Scrap Loss'/>
+            <!-- 成本调整过账（plan 2026-07-05-2352-3）：成本调整 apply→调整凭证，方向相关 借存货/贷成本差异 或相反。 -->
+            <option code="COST_ADJUSTMENT" label="成本调整" value="COST_ADJUSTMENT" i18n-en:label='Cost Adjustment'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>

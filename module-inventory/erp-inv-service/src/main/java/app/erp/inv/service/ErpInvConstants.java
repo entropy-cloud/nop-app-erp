@@ -23,6 +23,8 @@ public interface ErpInvConstants {
     String CONFIG_STANDARD_COST_FALLBACK_TO_MATERIAL_MASTER = "erp-inv.standard-cost-fallback-to-material-master";
     // STANDARD 计价：采购价差（PPV）捕获总开关（plan 2026-07-05-0427-2）
     String CONFIG_STANDARD_COST_PPV_ENABLED = "erp-inv.standard-cost-ppv-enabled";
+    // 成本调整审批门控（plan 2026-07-05-2352-3；costing-methods.md §配置项 erp-fin.cost-adjust-approval，默认 true）
+    String CONFIG_COST_ADJUST_APPROVAL = "erp-fin.cost-adjust-approval";
 
     // 所有权维度配置项（consignment.md §配置点）
     // ownership-tracking-enabled=false（默认关，对齐 Odoo feature group）时 ownerId 一律 null、ownershipType=OWNED，
@@ -81,4 +83,24 @@ public interface ErpInvConstants {
 
     // 业财回链/PostingEvent billType 标识（所有权转移单源单识别）
     String BILL_TYPE_OWNERSHIP_TRANSFER = "OWNERSHIP_TRANSFER";
+
+    // 成本调整类型（dict erp-inv/adjust-type，plan 2026-07-05-2352-3）
+    String ADJUST_TYPE_PURCHASE_PRICE_ADJUST = "PURCHASE_PRICE_ADJUST";
+    String ADJUST_TYPE_COST_DIFFERENCE = "COST_DIFFERENCE";
+    String ADJUST_TYPE_STANDARD_REVALUATION = "STANDARD_REVALUATION";
+    String ADJUST_TYPE_LANDED_COST_SUPPLEMENT = "LANDED_COST_SUPPLEMENT";
+
+    // 成本调整过账 PostingEvent.billData 键（派发器填入，Provider 读取）
+    String BILL_DATA_ADJUST_AMOUNT = "ADJUST_AMOUNT";        // Σ 行调整金额（带符号）
+    String BILL_DATA_ADJUST_DIRECTION = "ADJUST_DIRECTION";  // INCREASE / DECREASE
+    String BILL_DATA_ADJUST_TYPE = "ADJUST_TYPE";            // 头调整类型
+    String DIRECTION_INCREASE = "INCREASE";
+    String DIRECTION_DECREASE = "DECREASE";
+
+    // 成本调整科目编码（costing-methods.md §成本调整凭证；借/贷 1401 存货 / 6603 成本差异）
+    String SUBJECT_INVENTORY = "1401";
+    String SUBJECT_COST_VARIANCE = "6603";
+
+    // 成本调整流水 moveId 哨兵：成本调整为纯成本变更（无 StockMove），流水 moveId/moveLineId 置 0 标识非移动单来源
+    long LEDGER_MOVE_ID_COST_ADJUST = 0L;
 }

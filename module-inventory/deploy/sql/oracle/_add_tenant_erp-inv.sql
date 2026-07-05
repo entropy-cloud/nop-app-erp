@@ -29,6 +29,8 @@ alter table erp_inv_batch add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_serial_number add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_inv_cost_adjust add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_inv_stock_balance add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_reservation add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -44,6 +46,8 @@ alter table erp_inv_stock_take_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' N
 alter table erp_inv_stock_move_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_cost_layer add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_inv_cost_adjust_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_reservation_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -98,6 +102,9 @@ alter table erp_inv_batch add constraint PK_erp_inv_batch primary key (NOP_TENAN
 alter table erp_inv_serial_number drop constraint PK_erp_inv_serial_number;
 alter table erp_inv_serial_number add constraint PK_erp_inv_serial_number primary key (NOP_TENANT_ID, ID);
 
+alter table erp_inv_cost_adjust drop constraint PK_erp_inv_cost_adjust;
+alter table erp_inv_cost_adjust add constraint PK_erp_inv_cost_adjust primary key (NOP_TENANT_ID, ID);
+
 alter table erp_inv_stock_balance drop constraint PK_erp_inv_stock_balance;
 alter table erp_inv_stock_balance add constraint PK_erp_inv_stock_balance primary key (NOP_TENANT_ID, ID);
 
@@ -121,6 +128,9 @@ alter table erp_inv_stock_move_line add constraint PK_erp_inv_stock_move_line pr
 
 alter table erp_inv_cost_layer drop constraint PK_erp_inv_cost_layer;
 alter table erp_inv_cost_layer add constraint PK_erp_inv_cost_layer primary key (NOP_TENANT_ID, ID);
+
+alter table erp_inv_cost_adjust_line drop constraint PK_erp_inv_cost_adjust_line;
+alter table erp_inv_cost_adjust_line add constraint PK_erp_inv_cost_adjust_line primary key (NOP_TENANT_ID, ID);
 
 alter table erp_inv_reservation_line drop constraint PK_erp_inv_reservation_line;
 alter table erp_inv_reservation_line add constraint PK_erp_inv_reservation_line primary key (NOP_TENANT_ID, ID);

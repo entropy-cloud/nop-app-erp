@@ -107,6 +107,14 @@
             <option code="DONE" label="已完成" value="DONE" i18n-en:label='Completed'/>
             <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
         </dict>
+        <!-- 成本调整类型（plan 2026-07-05-2352-3；costing-methods.md §成本调整场景） -->
+        <dict label="成本调整类型" name="erp-inv/adjust-type" valueType="string" i18n-en:label='Cost Adjust Type'>
+            <option code="PURCHASE_PRICE_ADJUST" label="采购价格调整" value="PURCHASE_PRICE_ADJUST" i18n-en:label='Purchase Price Adjust'/>
+            <option code="COST_DIFFERENCE" label="成本差异调整" value="COST_DIFFERENCE" i18n-en:label='Cost Difference'/>
+            <option code="STANDARD_REVALUATION" label="标准成本重估" value="STANDARD_REVALUATION" i18n-en:label='Standard Revaluation'/>
+            <!-- 到岸成本补录：本期 Non-Goal（不实现分摊算法），预留码值供 successor -->
+            <option code="LANDED_COST_SUPPLEMENT" label="到岸成本补录" value="LANDED_COST_SUPPLEMENT" i18n-en:label='Landed Cost Supplement'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -1187,6 +1195,100 @@
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
                 <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
             </columns>
+        </entity>
+
+        <!-- 成本调整单头（plan 2026-07-05-2352-3；costing-methods.md §成本调整） -->
+        <entity className="app.erp.inv.dao.entity.ErpInvCostAdjust"
+                displayName="成本调整单" ext:icon="scale" i18n-en:displayName="Cost Adjustment" name="app.erp.inv.dao.entity.ErpInvCostAdjust"
+                tableName="erp_inv_cost_adjust" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="4" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="adjustType" displayName="调整类型" ext:dict="erp-inv/adjust-type" mandatory="true" code="ADJUST_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Adjust Type' />
+                <column name="reason" displayName="调整原因" stdSqlType="VARCHAR" precision="500" code="REASON" propId="6" stdDataType="string" i18n-en:displayName='Reason' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp-inv/move-status" mandatory="true" code="DOC_STATUS" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="erp-inv/approve-status" mandatory="true" code="APPROVE_STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="9" stdDataType="boolean" i18n-en:displayName='Posted' />
+                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="10" stdDataType="datetime" i18n-en:displayName='Posted At' />
+                <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="11" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="12" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="13" stdDataType="datetime" i18n-en:displayName='Approved At' />
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="14" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="15" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="18" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+                <to-many name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvCostAdjustLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="adjustId"/></join></to-many>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_INV_COST_ADJUST_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_INV_COST_ADJUST_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_INV_COST_ADJUST_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_INV_COST_ADJUST_ADJUST_TYPE" unique="false">
+                    <column name="adjustType"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 成本调整单行 -->
+        <entity className="app.erp.inv.dao.entity.ErpInvCostAdjustLine"
+                displayName="成本调整单行" ext:icon="list" i18n-en:displayName="Cost Adjustment Line" name="app.erp.inv.dao.entity.ErpInvCostAdjustLine"
+                tableName="erp_inv_cost_adjust_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="adjustId" displayName="成本调整单ID" stdSqlType="BIGINT" mandatory="true" code="ADJUST_ID" propId="2" stdDataType="long" i18n-en:displayName='Cost Adjust' />
+                <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" mandatory="true" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="5" stdDataType="long" i18n-en:displayName='Warehouse' />
+                <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="6" stdDataType="string" i18n-en:displayName='Batch No' />
+                <column name="oldUnitCost" displayName="原单位成本" domain="unitPrice" code="OLD_UNIT_COST" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Old Unit Cost' />
+                <column name="newUnitCost" displayName="新单位成本" domain="unitPrice" mandatory="true" code="NEW_UNIT_COST" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='New Unit Cost' />
+                <column name="adjustQty" displayName="调整数量" domain="quantity" code="ADJUST_QTY" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Adjust Qty' />
+                <column name="adjustAmount" displayName="调整金额" domain="amount" code="ADJUST_AMOUNT" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Adjust Amount' />
+                <column name="adjustReason" displayName="行调整原因" stdSqlType="VARCHAR" precision="200" code="ADJUST_REASON" propId="11" stdDataType="string" i18n-en:displayName='Adjust Reason' />
+                <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="12" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="17" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="18" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="19" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="adjust" refEntityName="app.erp.inv.dao.entity.ErpInvCostAdjust" tagSet="pub" i18n-en:displayName='Cost Adjust'><join><on leftProp="adjustId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+            </relations>
+            <indexes>
+                <index name="IDX_INV_COST_ADJUST_LINE_ADJUST_ID" unique="false">
+                    <column name="adjustId"/>
+                </index>
+                <index name="IDX_INV_COST_ADJUST_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_INV_COST_ADJUST_LINE_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+            </indexes>
         </entity>
     </entities>
 </orm>

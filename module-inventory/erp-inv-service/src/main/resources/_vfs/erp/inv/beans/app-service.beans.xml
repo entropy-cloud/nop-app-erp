@@ -42,6 +42,16 @@
     <bean id="app.erp.inv.service.posting.PurchasePriceVarianceAcctDocProvider"
           class="app.erp.inv.service.posting.PurchasePriceVarianceAcctDocProvider"/>
 
+    <!-- 成本调整（plan 2026-07-05-2352-3）：引擎 + 派发器 + Provider + Processor -->
+    <bean id="app.erp.inv.service.costing.CostAdjustmentService"
+          class="app.erp.inv.service.costing.CostAdjustmentService"/>
+    <bean id="app.erp.inv.service.posting.CostAdjustmentPostingDispatcher"
+          class="app.erp.inv.service.posting.CostAdjustmentPostingDispatcher"/>
+    <bean id="app.erp.inv.service.posting.CostAdjustmentAcctDocProvider"
+          class="app.erp.inv.service.posting.CostAdjustmentAcctDocProvider"/>
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustProcessor"/>
+
     <!-- 所有权转移过账（consignment.md §业财过账，plan 2026-07-04-0549-1） -->
     <bean id="app.erp.inv.service.posting.OwnershipTransferPostingDispatcher"
           class="app.erp.inv.service.posting.OwnershipTransferPostingDispatcher"/>

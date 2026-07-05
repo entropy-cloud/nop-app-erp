@@ -1,6 +1,8 @@
 entity:
   label:
     ErpInvBatch: Batch Ledger
+    ErpInvCostAdjust: Cost Adjustment
+    ErpInvCostAdjustLine: Cost Adjustment Line
     ErpInvCostLayer: Cost Layer
     ErpInvOwnershipTransfer: Ownership Transfer
     ErpInvOwnershipTransferLine: Ownership Transfer Line
@@ -44,6 +46,58 @@ prop:
       sku: Sku
       warehouse: Warehouse
       org: Org
+    ErpInvCostAdjust:
+      id: ID
+      code: Code
+      orgId: Organization
+      businessDate: Business Date
+      adjustType: Adjust Type
+      adjustType_label: null
+      reason: Reason
+      docStatus: Doc Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      currencyId: Currency
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+      currency: Currency
+      lines: Lines
+    ErpInvCostAdjustLine:
+      id: ID
+      adjustId: Cost Adjust
+      lineNo: Line No
+      materialId: Material
+      warehouseId: Warehouse
+      batchNo: Batch No
+      oldUnitCost: Old Unit Cost
+      newUnitCost: New Unit Cost
+      adjustQty: Adjust Qty
+      adjustAmount: Adjust Amount
+      adjustReason: Adjust Reason
+      currencyId: Currency
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      adjust: Cost Adjust
+      material: Material
+      warehouse: Warehouse
+      currency: Currency
     ErpInvCostLayer:
       id: ID
       orgId: Organization
@@ -502,6 +556,7 @@ dict:
     erp-inv/ownership-type: Ownership Type
     erp-inv/ownership-transfer-type: Ownership Transfer Type
     erp-inv/ownership-transfer-status: Ownership Transfer Status
+    erp-inv/adjust-type: Cost Adjust Type
 dict.option.label:
   erp-inv/move-status:
     DRAFT: Draft
@@ -561,3 +616,8 @@ dict.option.label:
     CONFIRMED: Confirmed
     DONE: Completed
     CANCELLED: Cancelled
+  erp-inv/adjust-type:
+    PURCHASE_PRICE_ADJUST: Purchase Price Adjust
+    COST_DIFFERENCE: Cost Difference
+    STANDARD_REVALUATION: Standard Revaluation
+    LANDED_COST_SUPPLEMENT: Landed Cost Supplement

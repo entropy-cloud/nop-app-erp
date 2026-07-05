@@ -165,3 +165,7 @@ options:
     value: NCR_SCRAP
     description: 
   
+  - label: 成本调整
+    value: COST_ADJUSTMENT
+    description: 
+  

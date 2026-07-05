@@ -25,6 +25,9 @@ public interface ErpInvErrors {
     String ARG_DEST_LOC_ID = "destLocId";
     String ARG_REQUIRED_QTY = "requiredQty";
     String ARG_AVAILABLE_QTY = "availableQty";
+    String ARG_ADJUST_ID = "adjustId";
+    String ARG_ADJUST_CODE = "adjustCode";
+    String ARG_UNIT_COST = "unitCost";
 
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.inv.illegal-status-transition",
             "移动单 {moveCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
@@ -77,4 +80,29 @@ public interface ErpInvErrors {
     ErrorCode ERR_OWNERSHIP_TRANSFER_INSUFFICIENT = ErrorCode.define("erp.err.inv.ownership-transfer-insufficient",
             "所有权转移余额不足：物料 {materialId} / 所有权类型 {fromOwnershipType}，可用={availableQty}，需要={requiredQty}",
             ARG_TRANSFER_CODE, ARG_MATERIAL_ID, ARG_FROM_OWNERSHIP_TYPE, ARG_AVAILABLE_QTY, ARG_REQUIRED_QTY);
+
+    // ---------- 成本调整（plan 2026-07-05-2352-3） ----------
+
+    ErrorCode ERR_COST_ADJUST_NOT_FOUND = ErrorCode.define("erp.err.inv.cost-adjust-not-found",
+            "成本调整单 {adjustId} 不存在", ARG_ADJUST_ID);
+
+    ErrorCode ERR_COST_ADJUST_ALREADY_APPLIED = ErrorCode.define("erp.err.inv.cost-adjust-already-applied",
+            "成本调整单 {adjustCode} 已执行过账，不可重复 apply",
+            ARG_ADJUST_CODE);
+
+    ErrorCode ERR_COST_ADJUST_NOT_APPROVED = ErrorCode.define("erp.err.inv.cost-adjust-not-approved",
+            "成本调整单 {adjustCode} 未审核（当前审核状态={currentStatus}），审批门控开启时须先审核",
+            ARG_ADJUST_CODE, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_COST_ADJUST_NO_BALANCE = ErrorCode.define("erp.err.inv.cost-adjust-no-balance",
+            "物料 {materialId} / 仓库 {warehouseId} 无库存余额或余量为零，不可成本调整",
+            ARG_MATERIAL_ID, ARG_WAREHOUSE_ID);
+
+    ErrorCode ERR_COST_ADJUST_NEGATIVE_COST = ErrorCode.define("erp.err.inv.cost-adjust-negative-cost",
+            "成本调整单 {adjustCode} 新单位成本 {unitCost} 不可为负",
+            ARG_ADJUST_CODE, ARG_UNIT_COST);
+
+    ErrorCode ERR_COST_ADJUST_NOT_APPLIED = ErrorCode.define("erp.err.inv.cost-adjust-not-applied",
+            "成本调整单 {adjustCode} 未过账，不可冲销",
+            ARG_ADJUST_CODE);
 }

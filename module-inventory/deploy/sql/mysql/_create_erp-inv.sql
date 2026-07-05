@@ -210,6 +210,31 @@ CREATE TABLE erp_inv_serial_number(
   constraint PK_erp_inv_serial_number primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_inv_cost_adjust(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  ADJUST_TYPE VARCHAR(20) NOT NULL    COMMENT '调整类型',
+  REASON VARCHAR(500) NULL    COMMENT '调整原因',
+  DOC_STATUS VARCHAR(20) NOT NULL    COMMENT '单据状态',
+  APPROVE_STATUS VARCHAR(20) NOT NULL    COMMENT '审核状态',
+  POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
+  APPROVED_AT DATETIME NULL    COMMENT '审核时间',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_cost_adjust primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_inv_stock_balance(
   ID BIGINT NOT NULL    COMMENT 'ID',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
@@ -397,6 +422,29 @@ CREATE TABLE erp_inv_cost_layer(
   constraint PK_erp_inv_cost_layer primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_inv_cost_adjust_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ADJUST_ID BIGINT NOT NULL    COMMENT '成本调整单ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  WAREHOUSE_ID BIGINT NOT NULL    COMMENT '仓库',
+  BATCH_NO VARCHAR(50) NULL    COMMENT '批号',
+  OLD_UNIT_COST DECIMAL(20,4) NULL    COMMENT '原单位成本',
+  NEW_UNIT_COST DECIMAL(20,4) NOT NULL    COMMENT '新单位成本',
+  ADJUST_QTY DECIMAL(20,4) NULL    COMMENT '调整数量',
+  ADJUST_AMOUNT DECIMAL(20,4) NULL    COMMENT '调整金额',
+  ADJUST_REASON VARCHAR(200) NULL    COMMENT '行调整原因',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_cost_adjust_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_inv_reservation_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   RESERVATION_ID BIGINT NOT NULL    COMMENT '预留单ID',
@@ -525,6 +573,8 @@ CREATE TABLE erp_inv_stock_ledger(
                 
    ALTER TABLE erp_inv_serial_number COMMENT '序列号台账';
                 
+   ALTER TABLE erp_inv_cost_adjust COMMENT '成本调整单';
+                
    ALTER TABLE erp_inv_stock_balance COMMENT '库存余额';
                 
    ALTER TABLE erp_inv_reservation COMMENT '库存预留单';
@@ -540,6 +590,8 @@ CREATE TABLE erp_inv_stock_ledger(
    ALTER TABLE erp_inv_stock_move_line COMMENT '库存移动单行';
                 
    ALTER TABLE erp_inv_cost_layer COMMENT '成本层';
+                
+   ALTER TABLE erp_inv_cost_adjust_line COMMENT '成本调整单行';
                 
    ALTER TABLE erp_inv_reservation_line COMMENT '库存预留单行';
                 
