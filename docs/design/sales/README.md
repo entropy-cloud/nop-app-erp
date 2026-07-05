@@ -78,18 +78,29 @@
 |------|------|------|------|
 | SOFT_WARNING | 软警告 | 超额度时记录告警并放行审核 | ✅ 已实现（默认） |
 | HARD_BLOCK | 硬拦截 | 超额度时抛 `ERR_CREDIT_LIMIT_EXCEEDED` 拒绝审核 | ✅ 已实现 |
-| SPECIAL_APPROVAL | 特别审批 | 超额度时走多级审批工作流 | ❌ Non-Goal（见下） |
+| SPECIAL_APPROVAL | 特别审批 | 超额度时校验当前用户是否持有专项权限 `erp-sal:creditOverLimitApprove`（命令式 `IActionAuthChecker.isPermitted`），持有则放行，否则抛 `ERR_CREDIT_SPECIAL_APPROVAL_REQUIRED`。多级 `.xwf` 审批链归 Deferred | ✅ 已实现（DIRECT 模式 + 权限门控） |
 
 **已实现额度计算口径**：`available = 客户信用额度 − outstanding`，其中
-`outstanding = Σ(totalAmountWithTax × exchangeRate) of ErpSalOrder where customerId=该客户 AND approveStatus=APPROVED AND deliveryStatus≠DELIVERED AND docStatus≠CANCELLED`。
-本单含税亦按其 `exchangeRate` 折算为本位币（functional currency）后比较——**支持多币种订单**（外币订单经汇率换算到本位币后纳入 outstanding，与 `creditLimit` 同口径比较）。配置项：`erp-sal.credit-check-level`（默认 SOFT_WARNING）。
+`outstanding = Σ(totalAmountWithTax × exchangeRate) of ErpSalOrder where customerId=该客户 AND approveStatus=APPROVED AND deliveryStatus≠DELIVERED AND docStatus≠CANCELLED`
+**＋ Σ openAmountFunctional of ErpFinArApItem where partnerId=该客户 AND direction=RECEIVABLE AND status∈{OPEN,PARTIAL}**（AR 未核销余额本位币，经 `IErpFinArApItemBiz.findOpenItemsByPartner` 跨域只读查询）。
+本单含税亦按其 `exchangeRate` 折算为本位币（functional currency）后比较——**支持多币种订单与外币 AR**（外币订单/AR 经汇率换算到本位币后纳入 outstanding，与 `creditLimit` 同口径比较）。
+
+配置项：
+
+- `erp-sal.credit-check-level`（默认 SOFT_WARNING）——信用控制级别。
+- `erp-sal.credit-check-include-ar`（默认 true）——是否纳入 AR 未核销余额；关闭时回退纯订单口径。
+- `erp-sal.credit-check-ar-fallback`（默认 true）——AR 项 `openAmountFunctional` 缺失时是否回退 `openAmountSource × exchangeRate` 近似折算。
 
 **Non-Goals（已登记，触发后纳入）**：
 
-- **AR 未核销余额未纳入 outstanding**：开票后（订单转入 AR 发票）未核销余额当前不计入信用占用，开票后可绕过信用控制的风险已知。纳入需跨域查 finance 应收辅助账（`IErpFinReceivableBiz` 或弱指针），当前 bootstrap 阶段信用控制已有订单级保护（未发货订单金额）。
-  - 触发条件：业财一体端到端验证启动时。
-- **SPECIAL_APPROVAL 审批流未实现**：需 `use-approval` 多级审批工作流迁移，当前二分（HARD_BLOCK / 其他）已满足基本信用控制。
-  - 触发条件：`use-approval` 迁移启动时（见 `docs/plans/2026-07-04-2050-1-use-approval-migration.md`）。
+- **多级 `.xwf` 信用审批工作流链**（信用分析师→财务经理多步链）：本期 SPECIAL_APPROVAL 经 DIRECT 模式 + 权限门控实现"超额度需更高权限"核心语义；多步工作流定义（`useWorkflow="true"` + `wf:wfName` + 结束 listener）归 Deferred。
+  - 触发条件：多级审批链业务需求落地时（承接 `docs/plans/2026-07-04-2050-1-use-approval-migration.md` Deferred 范式）。
+- **信用冻结（credit hold）实时拦截开票/出库**：本期信用控制仅在订单审核环节；开票/出库环节实时信用冻结需跨域 hooks + 信用占用预留机制，独立 successor。
+  - 触发条件：开票/出库环节信用实时管控需求落地时。
+- **客户风险评分体系联动信用额度动态调整**：依赖 CRM 客户信用评分。
+  - 触发条件：CRM 客户风险评分体系落地时。
+- **跨账套（multi AcctSchema）AR 余额聚合**：本期单账套；多 `acctSchemaId` 维度 AR 聚合归多账套架构 successor。
+  - 触发条件：多账套上线时。
 
 ## 与采购域的对称性
 
