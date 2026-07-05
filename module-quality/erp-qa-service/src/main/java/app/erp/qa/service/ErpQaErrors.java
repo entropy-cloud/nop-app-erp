@@ -23,6 +23,7 @@ public interface ErpQaErrors {
     String ARG_RECALL_ID = "recallId";
     String ARG_RECALL_CODE = "recallCode";
     String ARG_BATCH_NO = "batchNo";
+    String ARG_DISPOSITION_TYPE = "dispositionType";
 
     ErrorCode ERR_INSPECTION_NOT_FOUND = ErrorCode.define(
             "nop.err.qa.inspection.not-found",
@@ -110,4 +111,31 @@ public interface ErpQaErrors {
             "nop.err.qa.recall.notify-incomplete",
             "召回事件[{recallCode}]存在未通知目标或未标记客户通知，禁止关闭（erp-qua.recall-notify-required-to-close=true）",
             ARG_RECALL_CODE);
+
+    // ---- NCR 财务过账（plan 2026-07-05-2352-2）----
+
+    ErrorCode ERR_NCR_ALREADY_POSTED = ErrorCode.define(
+            "nop.err.qa.ncr.already-posted",
+            "NCR[{ncrCode}]已过账，禁止重复过账",
+            ARG_NCR_CODE);
+
+    ErrorCode ERR_NCR_NOT_RESOLVED = ErrorCode.define(
+            "nop.err.qa.ncr.not-resolved",
+            "NCR[{ncrCode}]当前状态[{currentStatus}]未解决（RESOLVED），禁止过账",
+            ARG_NCR_CODE, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_NCR_NOT_POSTED = ErrorCode.define(
+            "nop.err.qa.ncr.not-posted",
+            "NCR[{ncrCode}]未过账，禁止红冲",
+            ARG_NCR_CODE);
+
+    ErrorCode ERR_NCR_NO_QUANTITY = ErrorCode.define(
+            "nop.err.qa.ncr.no-quantity",
+            "NCR[{ncrCode}]不合格数量为空或为零，无法过账",
+            ARG_NCR_CODE);
+
+    ErrorCode ERR_NCR_DISPOSITION_NOT_POSTABLE = ErrorCode.define(
+            "nop.err.qa.ncr.disposition-not-postable",
+            "NCR[{ncrCode}]处置方式[{dispositionType}]无财务影响（CONCESSION/DOWNGRADE），不需过账",
+            ARG_NCR_CODE, ARG_DISPOSITION_TYPE);
 }

@@ -94,6 +94,8 @@
             <option code="VALUE_ADJUSTMENT" label="资产减值/重估" value="VALUE_ADJUSTMENT" i18n-en:label='Asset Value Adjustment'/>
             <!-- 生产差异（plan 2026-07-05-1838-2）：工单完工→差异计算→差异入账，承接 PPV 范式按成本要素汇总净差异。 -->
             <option code="PRODUCTION_VARIANCE" label="生产差异" value="PRODUCTION_VARIANCE" i18n-en:label='Production Variance'/>
+            <!-- NCR 报废处置过账（plan 2026-07-05-2352-2）：不合格报废→报废损失凭证，承接 PPV 方向相关 Dr/Cr 范式。 -->
+            <option code="NCR_SCRAP" label="NCR报废损失" value="NCR_SCRAP" i18n-en:label='NCR Scrap Loss'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>

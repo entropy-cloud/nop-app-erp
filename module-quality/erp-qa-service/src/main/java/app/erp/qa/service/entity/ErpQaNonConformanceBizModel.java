@@ -5,8 +5,11 @@ import app.erp.qa.biz.IErpQaNonConformanceBiz;
 import app.erp.qa.biz.IErpQaRecallBiz;
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import app.erp.qa.dao.entity.ErpQaRecall;
+import app.erp.qa.service.ErpQaConfigs;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
+import app.erp.qa.service.posting.NcrPostingDispatcher;
+import app.erp.qa.service.posting.NcrReturnOrchestrator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -29,6 +32,10 @@ import io.nop.api.core.time.CoreMetrics;
  * 非法迁移抛 {@link ErpQaErrors#ERR_INVALID_NCR_STATUS_TRANSITION}。
  *
  * <p>resolve 门控经 {@link NcrLifecycleService#requireResolveGate}（CAPA 效果验证闭环）。
+ *
+ * <p>财务过账（plan 2026-07-05-2352-2）：resolve 时按 dispositionType + config-gated 分派——
+ * SCRAP 处置在 AUTO_POST 模式自动过账（{@link NcrPostingDispatcher#dispatchScrap}）；
+ * RETURN 处置编排退货域（登记关联退货单 code）；postNcr/reverseNcr 提供人工入口。
  */
 @BizModel("ErpQaNonConformance")
 public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformance> implements IErpQaNonConformanceBiz {
@@ -37,6 +44,10 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
     NcrLifecycleService ncrLifecycleService;
     @Inject
     IErpQaRecallBiz recallBiz;
+    @Inject
+    NcrPostingDispatcher ncrPostingDispatcher;
+    @Inject
+    NcrReturnOrchestrator ncrReturnOrchestrator;
 
     public ErpQaNonConformanceBizModel() {
         setEntityName(ErpQaNonConformance.class.getName());
@@ -48,6 +59,14 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     public void setRecallBiz(IErpQaRecallBiz recallBiz) {
         this.recallBiz = recallBiz;
+    }
+
+    public void setNcrPostingDispatcher(NcrPostingDispatcher ncrPostingDispatcher) {
+        this.ncrPostingDispatcher = ncrPostingDispatcher;
+    }
+
+    public void setNcrReturnOrchestrator(NcrReturnOrchestrator ncrReturnOrchestrator) {
+        this.ncrReturnOrchestrator = ncrReturnOrchestrator;
     }
 
     @Override
@@ -74,6 +93,43 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
             ncr.setResolution(resolution);
         }
         ncr.setResolvedAt(CoreMetrics.currentDateTime());
+        updateEntity(ncr, null, context);
+
+        // 财务过账分派（plan 2026-07-05-2352-2）
+        dispatchFinancialImpact(ncr, context);
+        return ncr;
+    }
+
+    @Override
+    @BizMutation
+    public ErpQaNonConformance postNcr(@Name("ncrId") Long ncrId, IServiceContext context) {
+        ErpQaNonConformance ncr = requireNcr(ncrId, context);
+        requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_RESOLVED, "RESOLVED");
+        if (Boolean.TRUE.equals(ncr.getPosted())) {
+            throw new NopException(ErpQaErrors.ERR_NCR_ALREADY_POSTED).param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
+        }
+        String disposition = ncr.getDispositionType();
+        if (!isScrap(disposition)) {
+            throw new NopException(ErpQaErrors.ERR_NCR_DISPOSITION_NOT_POSTABLE)
+                    .param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode())
+                    .param(ErpQaErrors.ARG_DISPOSITION_TYPE, disposition);
+        }
+        ncrPostingDispatcher.dispatchScrap(ncr, context);
+        updateEntity(ncr, null, context);
+        return ncr;
+    }
+
+    @Override
+    @BizMutation
+    public ErpQaNonConformance reverseNcr(@Name("ncrId") Long ncrId, IServiceContext context) {
+        ErpQaNonConformance ncr = requireNcr(ncrId, context);
+        if (!Boolean.TRUE.equals(ncr.getPosted())) {
+            throw new NopException(ErpQaErrors.ERR_NCR_NOT_POSTED).param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
+        }
+        String disposition = ncr.getDispositionType();
+        if (isScrap(disposition)) {
+            ncrPostingDispatcher.reverseScrap(ncr);
+        }
         updateEntity(ncr, null, context);
         return ncr;
     }
@@ -126,6 +182,38 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
         ncr.setStatus(ErpQaConstants.NCR_STATUS_CANCELLED);
         updateEntity(ncr, null, context);
         return ncr;
+    }
+
+    // ---------- financial posting helpers ----------
+
+    /**
+     * resolve 时按 dispositionType + config-gated 分派财务处理。
+     * SCRAP：AUTO_POST 自动过账 / MANUAL_POST 跳过（待人工 postNcr）。
+     * RETURN：编排退货域创建退货单，NCR 侧登记 returnCode。
+     * CONCESSION/DOWNGRADE/ESCALATED_TO_RECALL：无额外处理。
+     */
+    private void dispatchFinancialImpact(ErpQaNonConformance ncr, IServiceContext context) {
+        String disposition = ncr.getDispositionType();
+        if (disposition == null) {
+            return;
+        }
+        if (isScrap(disposition)) {
+            if (ErpQaConfigs.isNcrAutoPosting()) {
+                ncrPostingDispatcher.dispatchScrap(ncr, context);
+                updateEntity(ncr, null, context);
+            }
+        } else if (isReturn(disposition)) {
+            ncrReturnOrchestrator.orchestrateReturn(ncr, context);
+            updateEntity(ncr, null, context);
+        }
+    }
+
+    private static boolean isScrap(String disposition) {
+        return ErpQaConstants.DISPOSITION_TYPE_SCRAP.equals(disposition);
+    }
+
+    private static boolean isReturn(String disposition) {
+        return ErpQaConstants.DISPOSITION_TYPE_RETURN.equals(disposition);
     }
 
     // ---------- helpers ----------

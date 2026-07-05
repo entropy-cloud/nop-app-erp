@@ -288,6 +288,10 @@ CREATE TABLE erp_qa_non_conformance(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
+  RETURN_CODE VARCHAR2(50)  ,
   constraint PK_erp_qa_non_conformance primary key (ID)
 );
 
@@ -800,6 +804,14 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_non_conformance.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_non_conformance.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_qa_non_conformance.POSTED IS '已过账(报废处置已生成凭证)';
+                    
+      COMMENT ON COLUMN erp_qa_non_conformance.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_qa_non_conformance.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_qa_non_conformance.RETURN_CODE IS '关联退货单号(RETURN 处置编排退货域后登记)';
                     
       COMMENT ON TABLE erp_qa_action IS '纠正预防措施';
                 

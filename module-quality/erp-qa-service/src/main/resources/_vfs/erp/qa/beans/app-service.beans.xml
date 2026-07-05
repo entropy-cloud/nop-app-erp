@@ -19,4 +19,18 @@
     <!-- 召回事件审批状态机 Processor -->
     <bean id="app.erp.qa.service.processor.ErpQaRecallProcessor"
           class="app.erp.qa.service.processor.ErpQaRecallProcessor"/>
+
+    <!-- NCR 财务过账（plan 2026-07-05-2352-2）：报废损失凭证 Provider + 派发器 + 执行器 -->
+    <bean id="app.erp.qa.service.posting.NcrScrapAcctDocProvider"
+          class="app.erp.qa.service.posting.NcrScrapAcctDocProvider"/>
+
+    <bean id="app.erp.qa.service.posting.NcrPostingDispatcher"
+          class="app.erp.qa.service.posting.NcrPostingDispatcher"/>
+
+    <bean id="app.erp.qa.service.posting.NcrPostingExecutor"
+          class="app.erp.qa.service.posting.NcrPostingExecutor"/>
+
+    <!-- NCR→RETURN 处置退货编排器（plan 2026-07-05-2352-2 Phase 3） -->
+    <bean id="app.erp.qa.service.posting.NcrReturnOrchestrator"
+          class="app.erp.qa.service.posting.NcrReturnOrchestrator"/>
 </beans>

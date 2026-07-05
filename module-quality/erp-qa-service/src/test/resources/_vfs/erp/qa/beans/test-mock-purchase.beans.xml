@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 测试专用桩 bean：接管 purchase 域 IErpPurReturnBiz，避免引入 purchase-service 形成 reactor 环
+     （purchase-service 与 quality-service 存在反向 test 依赖：强制质检门控注入 IErpQaInspectionBiz）。
+     仅 quality-service 测试使用（NCR→RETURN 处置编排采购退货）。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:ioc="ioc">
+
+    <bean id="testMockErpPurReturn" class="app.erp.qa.service.TestStubErpPurReturnBiz"
+          ioc:type="app.erp.pur.biz.IErpPurReturnBiz"/>
+</beans>

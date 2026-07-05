@@ -133,8 +133,24 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 29;
     
+    /* 已过账(报废处置已生成凭证): POSTED BOOLEAN */
+    public static final String PROP_NAME_posted = "posted";
+    public static final int PROP_ID_posted = 30;
+    
+    /* 过账时间: POSTED_AT DATETIME */
+    public static final String PROP_NAME_postedAt = "postedAt";
+    public static final int PROP_ID_postedAt = 31;
+    
+    /* 过账人: POSTED_BY VARCHAR */
+    public static final String PROP_NAME_postedBy = "postedBy";
+    public static final int PROP_ID_postedBy = 32;
+    
+    /* 关联退货单号(RETURN 处置编排退货域后登记): RETURN_CODE VARCHAR */
+    public static final String PROP_NAME_returnCode = "returnCode";
+    public static final int PROP_ID_returnCode = 33;
+    
 
-    private static int _PROP_ID_BOUND = 30;
+    private static int _PROP_ID_BOUND = 34;
 
     
     /* relation:  */
@@ -153,7 +169,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[30];
+    private static final String[] PROP_ID_TO_NAME = new String[34];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -241,6 +257,18 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
+          PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
+      
+          PROP_ID_TO_NAME[PROP_ID_postedAt] = PROP_NAME_postedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedAt, PROP_ID_postedAt);
+      
+          PROP_ID_TO_NAME[PROP_ID_postedBy] = PROP_NAME_postedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedBy, PROP_ID_postedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_returnCode] = PROP_NAME_returnCode;
+          PROP_NAME_TO_ID.put(PROP_NAME_returnCode, PROP_ID_returnCode);
+      
     }
 
     
@@ -327,6 +355,18 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 已过账(报废处置已生成凭证): POSTED */
+    private java.lang.Boolean _posted;
+    
+    /* 过账时间: POSTED_AT */
+    private java.time.LocalDateTime _postedAt;
+    
+    /* 过账人: POSTED_BY */
+    private java.lang.String _postedBy;
+    
+    /* 关联退货单号(RETURN 处置编排退货域后登记): RETURN_CODE */
+    private java.lang.String _returnCode;
     
 
     public _ErpQaNonConformance(){
@@ -485,6 +525,18 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_posted:
+               return getPosted();
+        
+            case PROP_ID_postedAt:
+               return getPostedAt();
+        
+            case PROP_ID_postedBy:
+               return getPostedBy();
+        
+            case PROP_ID_returnCode:
+               return getReturnCode();
         
            default:
               return super.orm_propValue(propId);
@@ -777,6 +829,46 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_posted:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_posted));
+               }
+               setPosted(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               java.time.LocalDateTime typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDateTime(value,
+                       err-> newTypeConversionError(PROP_NAME_postedAt));
+               }
+               setPostedAt(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_postedBy));
+               }
+               setPostedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_returnCode:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_returnCode));
+               }
+               setReturnCode(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -978,6 +1070,34 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_posted:{
+               onInitProp(propId);
+               this._posted = (java.lang.Boolean)value;
+               
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               onInitProp(propId);
+               this._postedAt = (java.time.LocalDateTime)value;
+               
+               break;
+            }
+        
+            case PROP_ID_postedBy:{
+               onInitProp(propId);
+               this._postedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_returnCode:{
+               onInitProp(propId);
+               this._returnCode = (java.lang.String)value;
                
                break;
             }
@@ -1516,6 +1636,82 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 已过账(报废处置已生成凭证): POSTED
+     */
+    public final java.lang.Boolean getPosted(){
+         onPropGet(PROP_ID_posted);
+         return _posted;
+    }
+
+    /**
+     * 已过账(报废处置已生成凭证): POSTED
+     */
+    public final void setPosted(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_posted,value)){
+            this._posted = value;
+            internalClearRefs(PROP_ID_posted);
+            
+        }
+    }
+    
+    /**
+     * 过账时间: POSTED_AT
+     */
+    public final java.time.LocalDateTime getPostedAt(){
+         onPropGet(PROP_ID_postedAt);
+         return _postedAt;
+    }
+
+    /**
+     * 过账时间: POSTED_AT
+     */
+    public final void setPostedAt(java.time.LocalDateTime value){
+        if(onPropSet(PROP_ID_postedAt,value)){
+            this._postedAt = value;
+            internalClearRefs(PROP_ID_postedAt);
+            
+        }
+    }
+    
+    /**
+     * 过账人: POSTED_BY
+     */
+    public final java.lang.String getPostedBy(){
+         onPropGet(PROP_ID_postedBy);
+         return _postedBy;
+    }
+
+    /**
+     * 过账人: POSTED_BY
+     */
+    public final void setPostedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_postedBy,value)){
+            this._postedBy = value;
+            internalClearRefs(PROP_ID_postedBy);
+            
+        }
+    }
+    
+    /**
+     * 关联退货单号(RETURN 处置编排退货域后登记): RETURN_CODE
+     */
+    public final java.lang.String getReturnCode(){
+         onPropGet(PROP_ID_returnCode);
+         return _returnCode;
+    }
+
+    /**
+     * 关联退货单号(RETURN 处置编排退货域后登记): RETURN_CODE
+     */
+    public final void setReturnCode(java.lang.String value){
+        if(onPropSet(PROP_ID_returnCode,value)){
+            this._returnCode = value;
+            internalClearRefs(PROP_ID_returnCode);
             
         }
     }

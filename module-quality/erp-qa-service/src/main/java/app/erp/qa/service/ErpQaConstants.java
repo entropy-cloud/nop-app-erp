@@ -65,6 +65,12 @@ public interface ErpQaConstants {
     String CONFIG_DEFAULT_INSPECTION_TEMPLATE = "erp-qua.default-inspection-template";
     // REJECTED 时是否自动生成 NCR（默认 true）
     String CONFIG_AUTO_CREATE_NCR_ON_REJECT = "erp-qua.auto-create-ncr-on-reject";
+    // NCR 过账模式（plan 2026-07-05-2352-2）：AUTO_POST（resolve 时自动过账）/ MANUAL_POST（人工 postNcr 触发）
+    String CONFIG_NCR_POSTING_MODE = "erp-qua.ncr-posting-mode";
+    String NCR_POSTING_MODE_AUTO = "AUTO_POST";
+    String NCR_POSTING_MODE_MANUAL = "MANUAL_POST";
+    // NCR 过账默认账套（plan 2026-07-05-2352-2）：NCR 过账凭证所属账套 ID（NCR 无账套字段，经配置指定）
+    String CONFIG_NCR_DEFAULT_ACCT_SCHEMA = "erp-qua.ncr-default-acct-schema";
 
     // ---- 召回事件（2.11）----
 

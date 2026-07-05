@@ -184,11 +184,15 @@ prop:
       measuredValue: 实测值
       ncrDate: 报告日期
       parameterName: 不合格参数
+      posted: 已过账(报废处置已生成凭证)
+      postedAt: 过账时间
+      postedBy: 过账人
       quantity: 不合格数量
       remark: 备注
       resolution: 解决措施
       resolvedAt: 解决时间
       resolvedBy: 解决人
+      returnCode: 关联退货单号(RETURN 处置编排退货域后登记)
       severity: 严重程度
       severity_label: 严重程度
       sourceCode: 来源单号

@@ -161,3 +161,7 @@ options:
     value: PRODUCTION_VARIANCE
     description: 
   
+  - label: NCR报废损失
+    value: NCR_SCRAP
+    description: 
+  

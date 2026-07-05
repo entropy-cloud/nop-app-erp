@@ -98,6 +98,18 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--已过账(报废处置已生成凭证)-->
+                <col id="posted" sortable="true"/>
+
+                <!--过账时间-->
+                <col id="postedAt" sortable="true"/>
+
+                <!--过账人-->
+                <col id="postedBy" sortable="true"/>
+
+                <!--关联退货单号(RETURN 处置编排退货域后登记)-->
+                <col id="returnCode" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -119,7 +131,9 @@
  resolution[解决措施] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] posted[已过账(报废处置已生成凭证)]
+ postedAt[过账时间] postedBy[过账人]
+ returnCode[关联退货单号(RETURN 处置编排退货域后登记)] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-不合格品报告" i18n-en:title="Add Non-Conformance Report">
@@ -135,6 +149,8 @@
  specMax[规格上限] assignedTo[责任人]
  resolvedBy[解决人] resolvedAt[解决时间]
  resolution[解决措施] remark[备注]
+ posted[已过账(报废处置已生成凭证)] postedAt[过账时间]
+ postedBy[过账人] returnCode[关联退货单号(RETURN 处置编排退货域后登记)]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-不合格品报告" i18n-en:title="Edit Non-Conformance Report">
@@ -150,7 +166,9 @@
  specMax[规格上限] assignedTo[责任人]
  resolvedBy[解决人] resolvedAt[解决时间]
  resolution[解决措施] remark[备注]
- delVersion[逻辑删除版本] 
+ delVersion[逻辑删除版本] posted[已过账(报废处置已生成凭证)]
+ postedAt[过账时间] postedBy[过账人]
+ returnCode[关联退货单号(RETURN 处置编排退货域后登记)] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

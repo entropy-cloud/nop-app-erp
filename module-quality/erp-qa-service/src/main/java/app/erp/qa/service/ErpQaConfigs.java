@@ -52,6 +52,20 @@ public final class ErpQaConfigs {
         return Boolean.parseBoolean(raw.trim());
     }
 
+    /** NCR 过账模式：AUTO_POST（resolve 自动过账）/ MANUAL_POST（人工 postNcr 触发）。默认 AUTO_POST。 */
+    public static String getNcrPostingMode() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_NCR_POSTING_MODE, ErpQaConstants.NCR_POSTING_MODE_AUTO);
+        if (raw == null || raw.trim().isEmpty()) {
+            return ErpQaConstants.NCR_POSTING_MODE_AUTO;
+        }
+        return raw.trim();
+    }
+
+    /** NCR 过账是否自动模式（resolve 时自动触发）。 */
+    public static boolean isNcrAutoPosting() {
+        return ErpQaConstants.NCR_POSTING_MODE_AUTO.equalsIgnoreCase(getNcrPostingMode());
+    }
+
     /** 召回是否强制审批（默认 true：OPEN→APPROVED 须经 submit/approve）。 */
     public static boolean isRecallRequireApproval() {
         String raw = AppConfig.var(ErpQaConstants.CONFIG_RECALL_REQUIRE_APPROVAL, "true");

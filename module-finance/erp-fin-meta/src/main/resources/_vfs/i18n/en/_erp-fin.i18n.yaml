@@ -858,6 +858,7 @@ dict.option.label:
     PROFIT_TO_RETAINED_EARNINGS: Profit to Retained Earnings
     VALUE_ADJUSTMENT: Asset Value Adjustment
     PRODUCTION_VARIANCE: Production Variance
+    NCR_SCRAP: NCR Scrap Loss
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

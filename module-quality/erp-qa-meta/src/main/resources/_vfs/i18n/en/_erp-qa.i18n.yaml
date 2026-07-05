@@ -198,6 +198,10 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      returnCode: Related Return Code
       actions: Actions
       inspection: Inspection
       material: null

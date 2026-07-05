@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 测试专用桩 bean：NCR 财务过账测试（plan 2026-07-05-2352-2）。
+     接管 sales + purchase 域退货 Biz，避免引入 sales-service/purchase-service 形成 reactor 环。
+     仅 quality-service 测试使用。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:ioc="ioc">
+
+    <bean id="testMockErpSalReturn" class="app.erp.qa.service.TestStubErpSalReturnBiz"
+          ioc:type="app.erp.sal.biz.IErpSalReturnBiz"/>
+
+    <bean id="testMockErpSalDelivery" class="app.erp.qa.service.TestStubErpSalDeliveryBiz"
+          ioc:type="app.erp.sal.biz.IErpSalDeliveryBiz"/>
+
+    <bean id="testMockErpPurReturn" class="app.erp.qa.service.TestStubErpPurReturnBiz"
+          ioc:type="app.erp.pur.biz.IErpPurReturnBiz"/>
+</beans>

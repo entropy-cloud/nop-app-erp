@@ -335,6 +335,62 @@
         }
 
 
+        private Boolean _posted;
+
+    
+        @PropMeta(propId=30)
+    
+        public Boolean getPosted(){
+            return _posted;
+        }
+
+        public void setPosted(Boolean value){
+            this._posted = value;
+        }
+
+
+        private java.time.LocalDateTime _postedAt;
+
+    
+        @PropMeta(propId=31)
+    
+        public java.time.LocalDateTime getPostedAt(){
+            return _postedAt;
+        }
+
+        public void setPostedAt(java.time.LocalDateTime value){
+            this._postedAt = value;
+        }
+
+
+        private String _postedBy;
+
+    
+        @PropMeta(propId=32)
+    
+        public String getPostedBy(){
+            return _postedBy;
+        }
+
+        public void setPostedBy(String value){
+            this._postedBy = value;
+        }
+
+
+        private String _returnCode;
+
+    
+        @PropMeta(propId=33)
+    
+        public String getReturnCode(){
+            return _returnCode;
+        }
+
+        public void setReturnCode(String value){
+            this._returnCode = value;
+        }
+
+
         private List<ErpQaActionInputBean> _actions;
 
         public List<ErpQaActionInputBean> getActions(){

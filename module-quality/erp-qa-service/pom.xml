@@ -51,6 +51,23 @@
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <!-- compile: NCR 过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
+             IErpFinAcctDocDocProvider SPI 位于 finance-service）。quality→finance 单向无环（finance 为 DAG 顶）。
+             对齐 module-inventory/erp-inv-service/pom.xml:43 跨域 Provider 编译依赖范式（plan 2026-07-05-2352-2）。 -->
+        <dependency>
+            <artifactId>app-erp-finance-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- compile: NCR→RETURN 处置编排采购退货域（IErpPurReturnBiz + ErpPurReturn 位于 purchase dao）。
+             quality→purchase 单向写触发。注意：purchase-service 与 quality-service 已存在反向 test 依赖
+             （purchase 强制质检门控注入 IErpQaInspectionBiz，与 sales 同范式），故 quality 测试不直接依赖
+             purchase-service（避免 reactor 环），改用 test-mock-purchase.beans.xml 注册桩接管 IErpPurReturnBiz。 -->
+        <dependency>
+            <artifactId>app-erp-purchase-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- test-only: 引入 master-data 使 erp-md/* 字典与 ErpMd* 实体（物料/供应商/仓库/职员/组织）注册到
              qa-service 测试 classpath，质检单 ErpQaInspection 跨域引用校验与 schema 初始化可通过 -->
         <dependency>

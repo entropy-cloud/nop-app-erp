@@ -41,4 +41,18 @@ public interface IErpQaNonConformanceBiz extends ICrudBiz<ErpQaNonConformance> {
 
     @BizMutation
     ErpQaNonConformance cancel(@Name("ncrId") Long ncrId, IServiceContext context);
+
+    /**
+     * 人工触发 NCR 过账（MANUAL_POST 模式 + 补过账）。前置：status=RESOLVED + posted=false。
+     * SCRAP 处置 → 报废损失凭证；CONCESSION/DOWNGRADE → 拒（ERR_NCR_DISPOSITION_NOT_POSTABLE）；
+     * RETURN 处置 → 编排退货域（已由 resolve 触发，postNcr 对 RETURN 拒）。
+     */
+    @BizMutation
+    ErpQaNonConformance postNcr(@Name("ncrId") Long ncrId, IServiceContext context);
+
+    /**
+     * 红冲 NCR 已过账凭证（SCRAP 处置）。前置：posted=true。清除 posted 三件套 + 生成红字冲销凭证。
+     */
+    @BizMutation
+    ErpQaNonConformance reverseNcr(@Name("ncrId") Long ncrId, IServiceContext context);
 }
