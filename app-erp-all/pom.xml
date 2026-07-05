@@ -120,6 +120,18 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- 跨域 sys 子系统:通知派发(站内消息 + 经 nop-integration 派发邮件/短信) -->
+        <dependency>
+            <artifactId>app-erp-notify-app</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- 通知外发通道 API:邮件/短信 SPI(IEmailSender/ISmsSender),无供应商时 config-gated 跳过 -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-integration-api</artifactId>
+        </dependency>
+
         <!-- 系统级模块:nop-auth(已通过业务 app 传递)+ nop-sys -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>

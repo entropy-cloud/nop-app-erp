@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 通知渠道
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 站内消息
+    value: IN_APP
+    description: 
+  
+  - label: 邮件
+    value: EMAIL
+    description: 
+  
+  - label: 短信
+    value: SMS
+    description: 
+  

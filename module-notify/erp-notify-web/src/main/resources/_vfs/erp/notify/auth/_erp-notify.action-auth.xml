@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<auth x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
+
+    <site id="main">
+        <resource id="test-orm-erp-notify" displayName="测试erp-notify" i18n-en:displayName="Test erp-notify" icon="bell"
+                  resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-notify" component="layouts/default/index">
+            <children>
+                <resource id="ErpSysNotification-main" displayName="通知实例" orderNo="10001"
+                          i18n-en:displayName="Notification" icon="envelope" component="AMIS" resourceType="SUBM"
+                          url="/erp/notify/pages/ErpSysNotification/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpSysNotification:query" displayName="查询通知实例"
+                                  i18n-en:displayName="Query Notification" orderNo="10002" resourceType="FNPT">
+                            <permissions>ErpSysNotification:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpSysNotification:mutation" displayName="修改通知实例"
+                                  i18n-en:displayName="Modify Notification" orderNo="10003" resourceType="FNPT">
+                            <permissions>ErpSysNotification:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpSysNotificationRead-main" displayName="通知已读记录" orderNo="10004"
+                          i18n-en:displayName="Notification Read" icon="check-square" component="AMIS"
+                          resourceType="SUBM" url="/erp/notify/pages/ErpSysNotificationRead/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpSysNotificationRead:query" displayName="查询通知已读记录"
+                                  i18n-en:displayName="Query Notification Read" orderNo="10005" resourceType="FNPT">
+                            <permissions>ErpSysNotificationRead:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpSysNotificationRead:mutation" displayName="修改通知已读记录"
+                                  i18n-en:displayName="Modify Notification Read" orderNo="10006" resourceType="FNPT">
+                            <permissions>ErpSysNotificationRead:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpSysNotificationTemplate-main" displayName="通知模板" orderNo="10007"
+                          i18n-en:displayName="Notification Template" icon="bell" component="AMIS" resourceType="SUBM"
+                          url="/erp/notify/pages/ErpSysNotificationTemplate/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpSysNotificationTemplate:query" displayName="查询通知模板"
+                                  i18n-en:displayName="Query Notification Template" orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpSysNotificationTemplate:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpSysNotificationTemplate:mutation" displayName="修改通知模板"
+                                  i18n-en:displayName="Modify Notification Template" orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpSysNotificationTemplate:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
+</auth>

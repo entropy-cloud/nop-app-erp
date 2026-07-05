@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "notificationType": "",
+  "name": "",
+  "channelSet": "",
+  "subjectTpl": "",
+  "bodyTpl": "",
+  "recipientResolver": "",
+  "recipientResolver_label": "",
+  "recipientConfig": "",
+  "mergeWindowSeconds": 0,
+  "mergeStrategy": "",
+  "mergeStrategy_label": "",
+  "status": "",
+  "status_label": "",
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00"
+}

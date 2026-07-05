@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 通知实例状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 待发送
+    value: PENDING
+    description: 
+  
+  - label: 已发送
+    value: SENT
+    description: 
+  
+  - label: 已合并
+    value: MERGED
+    description: 
+  
+  - label: 发送失败
+    value: FAILED
+    description: 
+  

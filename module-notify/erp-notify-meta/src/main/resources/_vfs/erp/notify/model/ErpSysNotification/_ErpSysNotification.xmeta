@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="envelope" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="通知实例" i18n-en:displayName="Notification" tagSet="gid,erp.notify" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.notify.dao.entity.ErpSysNotification</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="templateId" displayName="模板ID" propId="2" i18n-en:displayName="Template" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="template">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="notificationType" displayName="业务事件键" propId="3" i18n-en:displayName="Notification Type"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="recipientUserId" displayName="接收用户" propId="4" i18n-en:displayName="Recipient User" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
+        </prop>
+        <prop name="recipientPartnerId" displayName="接收业务伙伴" propId="5" i18n-en:displayName="Recipient Partner"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="recipientDeptId" displayName="接收部门" propId="6" i18n-en:displayName="Recipient Dept" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="channel" displayName="渠道" propId="7" i18n-en:displayName="Channel" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="IN_APP">
+            <schema type="java.lang.String" precision="20" dict="erp-notify/notification-channel"/>
+        </prop>
+        <prop name="subject" displayName="标题" propId="8" i18n-en:displayName="Subject" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="body" displayName="正文" propId="9" i18n-en:displayName="Body" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="4000"/>
+        </prop>
+        <prop name="payloadJson" displayName="负载JSON" propId="10" i18n-en:displayName="Payload Json" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="payloadJson" type="java.lang.String" precision="4000"/>
+        </prop>
+        <prop name="status" displayName="状态" propId="11" i18n-en:displayName="Status" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="PENDING">
+            <schema type="java.lang.String" precision="20" dict="erp-notify/notification-status"/>
+        </prop>
+        <prop name="mergeGroupId" displayName="合并组ID" propId="12" i18n-en:displayName="Merge Group" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="mergeCount" displayName="合并次数" propId="13" i18n-en:displayName="Merge Count" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="1">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="sentAt" displayName="发送时间" propId="14" i18n-en:displayName="Sent At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="errorMsg" displayName="错误信息" propId="15" i18n-en:displayName="Error Msg" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="16" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="17" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="18" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="19" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="20" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="21" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="template" i18n-en:displayName="Template" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="templateId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpSysNotificationTemplate"/>
+        </prop>
+    </props>
+</meta>

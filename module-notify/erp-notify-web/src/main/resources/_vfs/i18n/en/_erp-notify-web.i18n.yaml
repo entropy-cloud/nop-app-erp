@@ -1,0 +1,22 @@
+site:
+  resource:
+    ErpSysNotification-main:
+      displayName: Notification
+    ErpSysNotificationRead-main:
+      displayName: Notification Read
+    ErpSysNotificationTemplate-main:
+      displayName: Notification Template
+    FNPT:ErpSysNotification:mutation:
+      displayName: Modify Notification
+    FNPT:ErpSysNotification:query:
+      displayName: Query Notification
+    FNPT:ErpSysNotificationRead:mutation:
+      displayName: Modify Notification Read
+    FNPT:ErpSysNotificationRead:query:
+      displayName: Query Notification Read
+    FNPT:ErpSysNotificationTemplate:mutation:
+      displayName: Modify Notification Template
+    FNPT:ErpSysNotificationTemplate:query:
+      displayName: Query Notification Template
+    test-orm-erp-notify:
+      displayName: Test erp-notify

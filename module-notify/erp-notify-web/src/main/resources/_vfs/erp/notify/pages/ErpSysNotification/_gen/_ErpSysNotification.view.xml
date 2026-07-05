@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpSysNotification" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/notify/model/ErpSysNotification/ErpSysNotification.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--模板ID-->
+                <col id="templateId" ui:number="true" sortable="true"/>
+
+                <!--业务事件键-->
+                <col id="notificationType" mandatory="true" sortable="true"/>
+
+                <!--接收用户-->
+                <col id="recipientUserId" sortable="true"/>
+
+                <!--接收业务伙伴-->
+                <col id="recipientPartnerId" ui:number="true" sortable="true"/>
+
+                <!--接收部门-->
+                <col id="recipientDeptId" ui:number="true" sortable="true"/>
+
+                <!--渠道-->
+                <col id="channel" mandatory="true" sortable="true"/>
+
+                <!--标题-->
+                <col id="subject" sortable="true"/>
+
+                <!--正文-->
+                <col id="body" sortable="true"/>
+
+                <!--负载JSON-->
+                <col id="payloadJson" sortable="true"/>
+
+                <!--状态-->
+                <col id="status" mandatory="true" sortable="true"/>
+
+                <!--合并组ID-->
+                <col id="mergeGroupId" sortable="true"/>
+
+                <!--合并次数-->
+                <col id="mergeCount" ui:number="true" sortable="true"/>
+
+                <!--发送时间-->
+                <col id="sentAt" sortable="true"/>
+
+                <!--错误信息-->
+                <col id="errorMsg" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-通知实例" i18n-en:title="View Notification">
+            <layout>
+ id[ID] templateId[模板ID]
+ notificationType[业务事件键] recipientUserId[接收用户]
+ recipientPartnerId[接收业务伙伴] recipientDeptId[接收部门]
+ channel[渠道] subject[标题]
+ body[正文] payloadJson[负载JSON]
+ status[状态] mergeGroupId[合并组ID]
+ mergeCount[合并次数] sentAt[发送时间]
+ errorMsg[错误信息] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-通知实例" i18n-en:title="Add Notification">
+            <layout>
+ id[ID] templateId[模板ID]
+ notificationType[业务事件键] recipientUserId[接收用户]
+ recipientPartnerId[接收业务伙伴] recipientDeptId[接收部门]
+ channel[渠道] subject[标题]
+ body[正文] payloadJson[负载JSON]
+ status[状态] mergeGroupId[合并组ID]
+ mergeCount[合并次数] sentAt[发送时间]
+ errorMsg[错误信息] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-通知实例" i18n-en:title="Edit Notification">
+            <layout>
+ id[ID] templateId[模板ID]
+ notificationType[业务事件键] recipientUserId[接收用户]
+ recipientPartnerId[接收业务伙伴] recipientDeptId[接收部门]
+ channel[渠道] subject[标题]
+ body[正文] payloadJson[负载JSON]
+ status[状态] mergeGroupId[合并组ID]
+ mergeCount[合并次数] sentAt[发送时间]
+ errorMsg[错误信息] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-通知实例" i18n-en:title="Update Notification"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpSysNotification__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpSysNotification__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpSysNotification__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpSysNotification__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpSysNotification__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpSysNotification__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpSysNotification__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpSysNotification__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpSysNotification__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpSysNotification__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

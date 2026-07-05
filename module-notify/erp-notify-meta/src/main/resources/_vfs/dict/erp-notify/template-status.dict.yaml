@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 模板状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 草稿
+    value: DRAFT
+    description: 
+  
+  - label: 启用
+    value: ACTIVE
+    description: 
+  

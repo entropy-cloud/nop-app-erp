@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" x:extends="/nop/biz/defaults/service-base.beans.xml"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.notify.service.entity.ErpSysNotificationTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSysNotificationTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.notify.biz.IErpSysNotificationTemplateBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSysNotificationTemplate"/>
+    </bean>
+
+    <bean id="app.erp.notify.service.entity.ErpSysNotificationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSysNotification" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.notify.biz.IErpSysNotificationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSysNotification"/>
+    </bean>
+
+    <bean id="app.erp.notify.service.entity.ErpSysNotificationReadBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSysNotificationRead" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.notify.biz.IErpSysNotificationReadBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSysNotificationRead"/>
+    </bean>
+</beans>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <import resource="_dao.beans.xml"/>
+
+    <import resource="_service.beans.xml"/>
+
+    <!-- 通知派发子系统引擎（plan 2026-07-06-0504-1 Phase 3）：接收人解析 + 频控合并 + 派发引擎 -->
+    <bean id="app.erp.notify.service.dispatch.NotificationRecipientResolver"
+          class="app.erp.notify.service.dispatch.NotificationRecipientResolver"/>
+
+    <bean id="app.erp.notify.service.dispatch.NotificationMergeCoordinator"
+          class="app.erp.notify.service.dispatch.NotificationMergeCoordinator"/>
+
+    <!-- bootstrap no-op 外发通道实现：无真实邮件/短信供应商时满足 IoC 注入；config-gated 默认不调用。
+         生产部署注册真实 nop-integration 实现（如 JavaEmailSender/TencentSmsSender）时覆盖此默认 -->
+    <bean id="app.erp.notify.service.dispatch.NoopEmailSender"
+          class="app.erp.notify.service.dispatch.NoopEmailSender" ioc:default="true"/>
+    <bean id="app.erp.notify.service.dispatch.NoopSmsSender"
+          class="app.erp.notify.service.dispatch.NoopSmsSender" ioc:default="true"/>
+
+    <bean id="app.erp.notify.service.dispatch.NotificationDispatcher"
+          class="app.erp.notify.service.dispatch.NotificationDispatcher">
+        <constructor-arg index="0" ref="app.erp.notify.service.dispatch.NotificationRecipientResolver"/>
+        <constructor-arg index="1" ref="app.erp.notify.service.dispatch.NotificationMergeCoordinator"/>
+    </bean>
+</beans>

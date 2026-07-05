@@ -1,0 +1,66 @@
+entity:
+  label:
+    ErpSysNotification: 通知实例
+    ErpSysNotificationRead: 通知已读记录
+    ErpSysNotificationTemplate: 通知模板
+prop:
+  label:
+    ErpSysNotification:
+      body: 正文
+      channel: 渠道
+      channel_label: 渠道
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      errorMsg: 错误信息
+      id: ID
+      mergeCount: 合并次数
+      mergeGroupId: 合并组ID
+      notificationType: 业务事件键
+      payloadJson: 负载JSON
+      recipientDeptId: 接收部门
+      recipientPartnerId: 接收业务伙伴
+      recipientUserId: 接收用户
+      sentAt: 发送时间
+      status: 状态
+      status_label: 状态
+      subject: 标题
+      template: null
+      templateId: 模板ID
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpSysNotificationRead:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      notification: null
+      notificationId: 通知ID
+      readTime: 阅读时间
+      updateTime: 修改时间
+      updatedBy: 修改人
+      userId: 用户
+      version: 数据版本
+    ErpSysNotificationTemplate:
+      bodyTpl: 正文模板
+      channelSet: 渠道集合
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      mergeStrategy: 合并策略
+      mergeStrategy_label: 合并策略
+      mergeWindowSeconds: 合并窗口(秒)
+      name: 模板名称
+      notificationType: 业务事件键
+      recipientConfig: 接收人配置(JSON)
+      recipientResolver: 接收人解析器
+      recipientResolver_label: 接收人解析器
+      remark: 备注
+      status: 模板状态
+      status_label: 模板状态
+      subjectTpl: 标题模板
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本

@@ -1,0 +1,94 @@
+entity:
+  label:
+    ErpSysNotification: Notification
+    ErpSysNotificationRead: Notification Read
+    ErpSysNotificationTemplate: Notification Template
+prop:
+  label:
+    ErpSysNotification:
+      id: ID
+      templateId: Template
+      notificationType: Notification Type
+      recipientUserId: Recipient User
+      recipientPartnerId: Recipient Partner
+      recipientDeptId: Recipient Dept
+      channel: Channel
+      channel_label: null
+      subject: Subject
+      body: Body
+      payloadJson: Payload Json
+      status: Status
+      status_label: null
+      mergeGroupId: Merge Group
+      mergeCount: Merge Count
+      sentAt: Sent At
+      errorMsg: Error Msg
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      template: Template
+    ErpSysNotificationRead:
+      id: ID
+      notificationId: Notification
+      userId: User
+      readTime: Read Time
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      notification: Notification
+    ErpSysNotificationTemplate:
+      id: ID
+      notificationType: Notification Type
+      name: Name
+      channelSet: Channel Set
+      subjectTpl: Subject Template
+      bodyTpl: Body Template
+      recipientResolver: Recipient Resolver
+      recipientResolver_label: null
+      recipientConfig: Recipient Config
+      mergeWindowSeconds: Merge Window Seconds
+      mergeStrategy: Merge Strategy
+      mergeStrategy_label: null
+      status: Status
+      status_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+dict:
+  label:
+    erp-notify/notification-channel: Notification Channel
+    erp-notify/notification-status: Notification Status
+    erp-notify/recipient-resolver: Recipient Resolver
+    erp-notify/merge-strategy: Merge Strategy
+    erp-notify/template-status: Template Status
+dict.option.label:
+  erp-notify/notification-channel:
+    IN_APP: In-App
+    EMAIL: Email
+    SMS: SMS
+  erp-notify/notification-status:
+    PENDING: Pending
+    SENT: Sent
+    MERGED: Merged
+    FAILED: Failed
+  erp-notify/recipient-resolver:
+    ROLE: By Role
+    ORG: By Dept
+    PARTNER: By Partner
+    USER_LIST: User List
+  erp-notify/merge-strategy:
+    NONE: None
+    MERGE_BY_USER_TYPE: Merge By User+Type
+  erp-notify/template-status:
+    DRAFT: Draft
+    ACTIVE: Active

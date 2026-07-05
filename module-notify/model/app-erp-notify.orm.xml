@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orm ext:registerShortName="true" ext:appName="erp-notify" ext:entityPackageName="app.erp.notify.dao.entity"
+     ext:basePackageName="app.erp.notify" ext:mavenGroupId="io.nop.app" ext:mavenArtifactId="app-erp-notify"
+     ext:mavenVersion="1.0-SNAPSHOT" ext:platformVersion="2.0.0-SNAPSHOT" ext:dialect="mysql,oracle,postgresql"
+     ext:allowIdAsColName="true" ext:icon="bell" x:schema="/nop/schema/orm/orm.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:biz="biz">
+
+    <dicts>
+        <dict label="通知渠道" name="erp-notify/notification-channel" valueType="string" i18n-en:label='Notification Channel'>
+            <option code="IN_APP" label="站内消息" value="IN_APP" i18n-en:label='In-App'/>
+            <option code="EMAIL" label="邮件" value="EMAIL" i18n-en:label='Email'/>
+            <option code="SMS" label="短信" value="SMS" i18n-en:label='SMS'/>
+        </dict>
+        <dict label="通知实例状态" name="erp-notify/notification-status" valueType="string" i18n-en:label='Notification Status'>
+            <option code="PENDING" label="待发送" value="PENDING" i18n-en:label='Pending'/>
+            <option code="SENT" label="已发送" value="SENT" i18n-en:label='Sent'/>
+            <option code="MERGED" label="已合并" value="MERGED" i18n-en:label='Merged'/>
+            <option code="FAILED" label="发送失败" value="FAILED" i18n-en:label='Failed'/>
+        </dict>
+        <dict label="接收人解析器" name="erp-notify/recipient-resolver" valueType="string" i18n-en:label='Recipient Resolver'>
+            <option code="ROLE" label="按角色" value="ROLE" i18n-en:label='By Role'/>
+            <option code="ORG" label="按部门" value="ORG" i18n-en:label='By Dept'/>
+            <option code="PARTNER" label="按业务伙伴" value="PARTNER" i18n-en:label='By Partner'/>
+            <option code="USER_LIST" label="用户列表" value="USER_LIST" i18n-en:label='User List'/>
+        </dict>
+        <dict label="频控合并策略" name="erp-notify/merge-strategy" valueType="string" i18n-en:label='Merge Strategy'>
+            <option code="NONE" label="不合并" value="NONE" i18n-en:label='None'/>
+            <option code="MERGE_BY_USER_TYPE" label="按用户与类型合并" value="MERGE_BY_USER_TYPE" i18n-en:label='Merge By User+Type'/>
+        </dict>
+        <dict label="模板状态" name="erp-notify/template-status" valueType="string" i18n-en:label='Template Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="ACTIVE" label="启用" value="ACTIVE" i18n-en:label='Active'/>
+        </dict>
+    </dicts>
+
+    <domains>
+        <domain name="boolFlag" stdSqlType="BOOLEAN" stdDataType="boolean"/>
+        <domain name="delVersion" stdSqlType="BIGINT"/>
+        <domain name="version" stdSqlType="INTEGER"/>
+        <domain name="createTime" stdSqlType="TIMESTAMP"/>
+        <domain name="createdBy" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="updateTime" stdSqlType="TIMESTAMP"/>
+        <domain name="updatedBy" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="remark" precision="1000" stdSqlType="VARCHAR"/>
+        <domain name="code" precision="50" stdSqlType="VARCHAR"/>
+        <domain name="name" precision="200" stdSqlType="VARCHAR"/>
+        <domain name="payloadJson" precision="4000" stdSqlType="VARCHAR"/>
+        <domain name="templateText" precision="2000" stdSqlType="VARCHAR"/>
+    </domains>
+
+    <entities>
+        <!-- 通知模板 -->
+        <entity className="app.erp.notify.dao.entity.ErpSysNotificationTemplate"
+                displayName="通知模板" ext:icon="bell" i18n-en:displayName="Notification Template" name="app.erp.notify.dao.entity.ErpSysNotificationTemplate"
+                tableName="erp_sys_notification_template" tagSet="gid,erp.notify" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="notificationType" displayName="业务事件键" stdSqlType="VARCHAR" precision="100" mandatory="true" code="NOTIFICATION_TYPE" propId="2" stdDataType="string" i18n-en:displayName='Notification Type' />
+                <column name="name" displayName="模板名称" domain="name" mandatory="true" code="NAME" propId="3" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="channelSet" displayName="渠道集合" stdSqlType="VARCHAR" precision="100" mandatory="true" defaultValue="IN_APP" code="CHANNEL_SET" propId="4" stdDataType="string" i18n-en:displayName='Channel Set' />
+                <column name="subjectTpl" displayName="标题模板" domain="templateText" code="SUBJECT_TPL" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Subject Template' />
+                <column name="bodyTpl" displayName="正文模板" stdSqlType="VARCHAR" precision="4000" code="BODY_TPL" propId="6" stdDataType="string" i18n-en:displayName='Body Template' />
+                <column name="recipientResolver" displayName="接收人解析器" ext:dict="erp-notify/recipient-resolver" mandatory="true" defaultValue="ROLE" code="RECIPIENT_RESOLVER" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Recipient Resolver' />
+                <column name="recipientConfig" displayName="接收人配置(JSON)" stdSqlType="VARCHAR" precision="2000" code="RECIPIENT_CONFIG" propId="8" stdDataType="string" i18n-en:displayName='Recipient Config' />
+                <column name="mergeWindowSeconds" displayName="合并窗口(秒)" stdSqlType="INTEGER" defaultValue="300" code="MERGE_WINDOW_SECONDS" propId="9" stdDataType="int" i18n-en:displayName='Merge Window Seconds' />
+                <column name="mergeStrategy" displayName="合并策略" ext:dict="erp-notify/merge-strategy" mandatory="true" defaultValue="MERGE_BY_USER_TYPE" code="MERGE_STRATEGY" propId="10" stdSqlType="VARCHAR" precision="30" stdDataType="string" i18n-en:displayName='Merge Strategy' />
+                <column name="status" displayName="模板状态" ext:dict="erp-notify/template-status" mandatory="true" defaultValue="DRAFT" code="STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <unique-keys>
+                <unique-key name="UK_SYS_NOTIFY_TPL_TYPE" columns="notificationType"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_SYS_NOTIFY_TPL_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 通知实例 -->
+        <entity className="app.erp.notify.dao.entity.ErpSysNotification"
+                displayName="通知实例" ext:icon="envelope" i18n-en:displayName="Notification" name="app.erp.notify.dao.entity.ErpSysNotification"
+                tableName="erp_sys_notification" tagSet="gid,erp.notify" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="templateId" displayName="模板ID" stdSqlType="BIGINT" code="TEMPLATE_ID" propId="2" stdDataType="long" i18n-en:displayName='Template' />
+                <column name="notificationType" displayName="业务事件键" stdSqlType="VARCHAR" precision="100" mandatory="true" code="NOTIFICATION_TYPE" propId="3" stdDataType="string" i18n-en:displayName='Notification Type' />
+                <column name="recipientUserId" displayName="接收用户" stdDomain="userId" stdSqlType="VARCHAR" precision="36" code="RECIPIENT_USER_ID" propId="4" stdDataType="string" i18n-en:displayName='Recipient User' />
+                <column name="recipientPartnerId" displayName="接收业务伙伴" stdSqlType="BIGINT" code="RECIPIENT_PARTNER_ID" propId="5" stdDataType="long" i18n-en:displayName='Recipient Partner' />
+                <column name="recipientDeptId" displayName="接收部门" stdSqlType="BIGINT" code="RECIPIENT_DEPT_ID" propId="6" stdDataType="long" i18n-en:displayName='Recipient Dept' />
+                <column name="channel" displayName="渠道" ext:dict="erp-notify/notification-channel" mandatory="true" defaultValue="IN_APP" code="CHANNEL" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Channel' />
+                <column name="subject" displayName="标题" stdSqlType="VARCHAR" precision="500" code="SUBJECT" propId="8" stdDataType="string" i18n-en:displayName='Subject' />
+                <column name="body" displayName="正文" stdSqlType="VARCHAR" precision="4000" code="BODY" propId="9" stdDataType="string" i18n-en:displayName='Body' />
+                <column name="payloadJson" displayName="负载JSON" domain="payloadJson" code="PAYLOAD_JSON" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Payload Json' />
+                <column name="status" displayName="状态" ext:dict="erp-notify/notification-status" mandatory="true" defaultValue="PENDING" code="STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="mergeGroupId" displayName="合并组ID" stdSqlType="VARCHAR" precision="200" code="MERGE_GROUP_ID" propId="12" stdDataType="string" i18n-en:displayName='Merge Group' />
+                <column name="mergeCount" displayName="合并次数" stdSqlType="INTEGER" defaultValue="1" code="MERGE_COUNT" propId="13" stdDataType="int" i18n-en:displayName='Merge Count' />
+                <column name="sentAt" displayName="发送时间" stdSqlType="DATETIME" code="SENT_AT" propId="14" stdDataType="datetime" i18n-en:displayName='Sent At' />
+                <column name="errorMsg" displayName="错误信息" stdSqlType="VARCHAR" precision="1000" code="ERROR_MSG" propId="15" stdDataType="string" i18n-en:displayName='Error Msg' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="18" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="20" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="21" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="template" refEntityName="app.erp.notify.dao.entity.ErpSysNotificationTemplate" tagSet="pub" i18n-en:displayName='Template'><join><on leftProp="templateId" rightProp="id"/></join></to-one>
+            </relations>
+            <indexes>
+                <index name="IDX_SYS_NOTIFY_USER_STATUS" unique="false">
+                    <column name="recipientUserId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_SYS_NOTIFY_MERGE_GROUP" unique="false">
+                    <column name="mergeGroupId"/>
+                </index>
+                <index name="IDX_SYS_NOTIFY_TYPE_USER" unique="false">
+                    <column name="notificationType"/>
+                    <column name="recipientUserId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 通知已读记录 -->
+        <entity className="app.erp.notify.dao.entity.ErpSysNotificationRead"
+                displayName="通知已读记录" ext:icon="check-square" i18n-en:displayName="Notification Read" name="app.erp.notify.dao.entity.ErpSysNotificationRead"
+                tableName="erp_sys_notification_read" tagSet="gid,erp.notify" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="notificationId" displayName="通知ID" stdSqlType="BIGINT" mandatory="true" code="NOTIFICATION_ID" propId="2" stdDataType="long" i18n-en:displayName='Notification' />
+                <column name="userId" displayName="用户" stdDomain="userId" stdSqlType="VARCHAR" precision="36" mandatory="true" code="USER_ID" propId="3" stdDataType="string" i18n-en:displayName='User' />
+                <column name="readTime" displayName="阅读时间" stdSqlType="DATETIME" mandatory="true" code="READ_TIME" propId="4" stdDataType="datetime" i18n-en:displayName='Read Time' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="5" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="6" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="7" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="8" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="9" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="10" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="notification" refEntityName="app.erp.notify.dao.entity.ErpSysNotification" tagSet="pub" i18n-en:displayName='Notification'><join><on leftProp="notificationId" rightProp="id"/></join></to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_SYS_NOTIFY_READ_NOTIF_USER" columns="notificationId,userId"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_SYS_NOTIFY_READ_USER" unique="false">
+                    <column name="userId"/>
+                </index>
+            </indexes>
+        </entity>
+    </entities>
+</orm>
