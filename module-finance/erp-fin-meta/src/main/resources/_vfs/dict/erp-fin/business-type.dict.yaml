@@ -149,3 +149,7 @@ options:
     value: BAD_DEBT_RELEASE
     description: 
   
+  - label: 本年利润结转未分配利润
+    value: PROFIT_TO_RETAINED_EARNINGS
+    description: 
+  

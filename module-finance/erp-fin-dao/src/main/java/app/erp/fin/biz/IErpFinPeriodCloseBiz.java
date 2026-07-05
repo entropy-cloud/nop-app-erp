@@ -43,4 +43,17 @@ public interface IErpFinPeriodCloseBiz {
      */
     @BizMutation
     ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId, IServiceContext context);
+
+    /**
+     * 批量生成指定年度 1-12 月会计期间（年度结转规则步骤5，{@code period-close.md §年度结转规则}）。
+     *
+     * <p>幂等策略：同年期间已存在时，默认抛 {@code ERR_PERIODS_ALREADY_EXIST}；
+     * 配置 {@code erp-fin.period-generate-skip-existing=true} 时仅补建缺失月份。
+     * 1 月状态设为 OPEN，其余月份设为 NEVER_OPENED（待自然月到达时由运营开启）。
+     *
+     * @param year 年度（如 2027）
+     * @return 生成的期间数量（已存在跳过时返回新增条数）
+     */
+    @BizMutation
+    Integer generateNextYearPeriods(@Name("year") Integer year, IServiceContext context);
 }

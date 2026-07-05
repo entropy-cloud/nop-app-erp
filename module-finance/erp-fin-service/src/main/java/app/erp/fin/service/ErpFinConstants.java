@@ -298,6 +298,18 @@ public interface ErpFinConstants {
     /** 期末 allowance 充足性门控开关，默认 true（不足阻止结账）。 */
     String CONFIG_BAD_DEBT_ALLOWANCE_GATE_ENABLED = "erp-fin.bad-debt-allowance-gate-enabled";
 
+    // ---- 年度结转配置项（period-close.md §年度结转规则，plan 2026-07-05-0540-2），经 AppConfig.var 读取 ----
+    /** 年度结转总开关（12 月结账后是否执行本年利润→未分配利润 + 次年期间创建 + 年初余额 populate），默认 true。 */
+    String CONFIG_ANNUAL_CLOSE_ENABLED = "erp-fin.annual-close-enabled";
+    /** 次年期间生成幂等策略：已存在同年期间时是否仅补缺失月份（true=补缺，false=抛错），默认 false。 */
+    String CONFIG_PERIOD_GENERATE_SKIP_EXISTING = "erp-fin.period-generate-skip-existing";
+    /** 银行存款外币汇兑重估开关，默认 true。 */
+    String CONFIG_BANK_FX_REVALUATION_ENABLED = "erp-fin.bank-fx-revaluation-enabled";
+    /** 年度结转时是否自动触发次年期间创建，默认 true。 */
+    String CONFIG_AUTO_GENERATE_NEXT_YEAR_PERIODS = "erp-fin.auto-generate-next-year-periods";
+    /** 辅助账跨年对账门控开关（不一致阻止年度结账），默认 true。 */
+    String CONFIG_AUXILIARY_RECON_GATE_ENABLED = "erp-fin.auxiliary-recon-gate-enabled";
+
     /** CONFIG_BAD_DEBT_METHOD 取值：账龄分桶法（默认）。 */
     String BAD_DEBT_METHOD_AGING_BUCKET = "AGING_BUCKET";
 

@@ -1,0 +1,16 @@
+erp-fin:
+  current-year-profit-subject-code: "4103"
+  retained-earnings-subject-code: "4104"
+  exchange-revaluation-enabled: true
+  bank-fx-revaluation-enabled: true
+  period-end-exchange-rate: 8.5
+  ar-subject-code: "1122"
+  ap-subject-code: "2202"
+  exchange-gain-loss-subject-code: "6603"
+  reverse-close-approval-required: false
+  auto-depreciation-on-close: false
+  auto-post-on-close: true
+  annual-close-enabled: true
+  auto-generate-next-year-periods: true
+  period-generate-skip-existing: false
+  auxiliary-recon-gate-enabled: false

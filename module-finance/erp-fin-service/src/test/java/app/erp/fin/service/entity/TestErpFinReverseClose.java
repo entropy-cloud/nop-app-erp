@@ -25,7 +25,8 @@ public class TestErpFinReverseClose extends PeriodCloseTestSupport {
 
     @Test
     public void testReverseCloseRestoresBalance() {
-        Long periodId = seedFullPeriod("2024-12", 2024, 12);
+        // 使用 6 月（非年末）期间隔离月度反结账行为；年度反结账由 TestErpFinAnnualClose 覆盖。
+        Long periodId = seedFullPeriod("2024-06", 2024, 6);
 
         periodBiz.closePeriod(periodId, CTX);
         periodBiz.finalizePeriod(periodId, CTX);
@@ -42,7 +43,7 @@ public class TestErpFinReverseClose extends PeriodCloseTestSupport {
         assertEquals(ErpFinConstants.MODULE_CLOSE_OPEN, status.getGlStatus(), "GL 模块回开");
         assertEquals(ErpFinConstants.MODULE_CLOSE_OPEN, status.getAssetStatus(), "AST 模块回开");
 
-        assertTrue(hasReversalVoucher("PERIOD-CLOSE-2024-12", ErpFinBusinessType.PERIOD_CLOSE.name()),
+        assertTrue(hasReversalVoucher("PERIOD-CLOSE-2024-06", ErpFinBusinessType.PERIOD_CLOSE.name()),
                 "结转凭证已红冲");
 
         period = periodBiz.closePeriod(periodId, CTX);

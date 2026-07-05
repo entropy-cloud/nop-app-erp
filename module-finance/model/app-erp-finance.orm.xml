@@ -90,6 +90,7 @@
             <option code="BAD_DEBT_WRITE_OFF" label="坏账核销" value="BAD_DEBT_WRITE_OFF" i18n-en:label='Bad Debt Write-off'/>
             <option code="BAD_DEBT_RECOVERY" label="坏账收回恢复" value="BAD_DEBT_RECOVERY" i18n-en:label='Bad Debt Recovery'/>
             <option code="BAD_DEBT_RELEASE" label="坏账准备释放" value="BAD_DEBT_RELEASE" i18n-en:label='Bad Debt Release'/>
+            <option code="PROFIT_TO_RETAINED_EARNINGS" label="本年利润结转未分配利润" value="PROFIT_TO_RETAINED_EARNINGS" i18n-en:label='Profit to Retained Earnings'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>

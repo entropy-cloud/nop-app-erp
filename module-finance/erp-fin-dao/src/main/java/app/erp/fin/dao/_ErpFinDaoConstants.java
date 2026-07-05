@@ -249,6 +249,11 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_BAD_DEBT_RELEASE = "BAD_DEBT_RELEASE";
                     
     /**
+     * 业务类型: 本年利润结转未分配利润 
+     */
+    String BUSINESS_TYPE_PROFIT_TO_RETAINED_EARNINGS = "PROFIT_TO_RETAINED_EARNINGS";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

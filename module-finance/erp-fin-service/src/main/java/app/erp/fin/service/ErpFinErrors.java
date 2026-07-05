@@ -56,6 +56,12 @@ public interface ErpFinErrors {
     String ARG_CURRENT_PERIOD_STATUS = "currentPeriodStatus";
     String ARG_EXPECTED_PERIOD_STATUS = "expectedPeriodStatus";
     String ARG_ISSUE_COUNT = "issueCount";
+    String ARG_YEAR = "year";
+    String ARG_EXISTING_PERIOD_COUNT = "existingPeriodCount";
+    String ARG_AUX_MODULE = "auxModule";
+    String ARG_GL_AMOUNT = "glAmount";
+    String ARG_AUX_AMOUNT = "auxAmount";
+    String ARG_NEXT_YEAR = "nextYear";
 
     // --- 银行对账作用域参数键 ---
     String ARG_FUND_ACCOUNT_ID = "fundAccountId";
@@ -230,6 +236,18 @@ public interface ErpFinErrors {
     ErrorCode ERR_REVERSE_CLOSE_APPROVAL_REQUIRED = ErrorCode.define("erp.err.fin.period-close.reverse-approval-required",
             "会计期间 {periodCode} 反结账需审批（配置 erp-fin.reverse-close-approval-required=true）",
             ARG_PERIOD_CODE);
+
+    ErrorCode ERR_PERIODS_ALREADY_EXIST = ErrorCode.define("erp.err.fin.period-close.periods-already-exist",
+            "年度 {year} 会计期间已存在 {existingPeriodCount} 条，禁止重复生成（配置 erp-fin.period-generate-skip-existing=true 可仅补缺失月份）",
+            ARG_YEAR, ARG_EXISTING_PERIOD_COUNT);
+
+    ErrorCode ERR_AUXILIARY_RECON_MISMATCH = ErrorCode.define("erp.err.fin.period-close.auxiliary-recon-mismatch",
+            "年度结转辅助账对账不一致：{auxModule} 辅助账合计 {auxAmount} ≠ 总账科目余额 {glAmount}（差异超过精度容忍），阻止年度结账",
+            ARG_AUX_MODULE, ARG_AUX_AMOUNT, ARG_GL_AMOUNT);
+
+    ErrorCode ERR_REVERSE_CLOSE_NEXT_YEAR_EXISTS = ErrorCode.define("erp.err.fin.period-close.reverse-next-year-exists",
+            "会计期间 {periodCode} 反结账被阻止：次年（{nextYear}）期间已创建，须先删除次年期间再反结账",
+            ARG_PERIOD_CODE, ARG_NEXT_YEAR);
 
     ErrorCode ERR_CLOSE_SUBJECT_NOT_CONFIGURED = ErrorCode.define("erp.err.fin.period-close.subject-not-configured",
             "期末结账所需科目/汇率未配置：配置键 {configKey}",

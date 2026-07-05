@@ -118,6 +118,9 @@
           class="app.erp.fin.service.profitloss.ProfitLossClosingService"/>
     <bean id="app.erp.fin.service.fx.ExchangeRevaluationService"
           class="app.erp.fin.service.fx.ExchangeRevaluationService"/>
+    <!-- 年度结转（plan 2026-07-05-0540-2）：本年利润→未分配利润 + 次年年初余额 populate。 -->
+    <bean id="app.erp.fin.service.annualclose.AnnualCloseService"
+          class="app.erp.fin.service.annualclose.AnnualCloseService"/>
 
     <!-- finance 域审批/状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。
          各 Facade BizModel 仅负责入口/事务/委托，编排委托对应 Processor。 -->

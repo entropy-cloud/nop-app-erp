@@ -1,0 +1,12 @@
+erp-fin:
+  current-year-profit-subject-code: "4103"
+  retained-earnings-subject-code: "4104"
+  exchange-revaluation-enabled: false
+  reverse-close-approval-required: false
+  auto-depreciation-on-close: false
+  auto-post-on-close: true
+  annual-close-enabled: true
+  auto-generate-next-year-periods: false
+  auxiliary-recon-gate-enabled: true
+  ar-subject-code: "1122"
+  ap-subject-code: "2202"
