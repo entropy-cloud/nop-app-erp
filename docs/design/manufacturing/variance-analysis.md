@@ -32,7 +32,7 @@
 | id | BIGINT | 主键 |
 | workOrderId | BIGINT | 工单ID |
 | lineNo | INT | 行号 |
-| varianceType | VARCHAR(50) | 差异类型：PRICE_USAGE / LABOR_EFFICIENCY / LABOR_RATE / OVERHEAD / VOLUME |
+| varianceType | VARCHAR(50) | 差异类型：MATERIAL_USAGE / LABOR_EFFICIENCY / LABOR_RATE / OVERHEAD / VOLUME（实现偏离补注：材料价格差异归 PPV 在采购入库捕获，本期材料段仅算用量差异避免重复计入） |
 | costElement | VARCHAR(50) | 成本要素：MATERIAL / LABOR / OVERHEAD / SUBCONTRACT |
 | materialId | BIGINT | 物料（如涉及） |
 | operationId | BIGINT | 工序（如涉及） |
@@ -78,13 +78,19 @@
 
 ## 使用流程
 
-> **当前实现范围（plan 2026-07-05-0427-2）**：仅 PPV（采购价差）在采购入库 DONE 时由 inventory 域 `InvPostingDispatcher.dispatchPurchasePriceVariance` 捕获并过账（`PURCHASE_PRICE_VARIANCE` 业务类型）。以下「工单完工→差异计算→差异入账」流程为后继触发面（`ErpMfgCostVariance` 模型尚未落地）。
+> **当前实现范围**：PPV（采购价差）在采购入库 DONE 时由 inventory 域 `InvPostingDispatcher.dispatchPurchasePriceVariance` 捕获并过账（`PURCHASE_PRICE_VARIANCE` 业务类型，plan 2026-07-05-0427-2）。生产差异（工单完工→差异计算→差异入账）由 plan 2026-07-05-1838-2 交付：`ErpMfgCostVariance` 实体已落地，差异引擎（`ProductionVarianceCalculator`）+ 完工触发（config-gated `erp-mfg.variance-auto-calc-enabled`）+ 过账（`ProductionVarianceDispatcher` + `PRODUCTION_VARIANCE` 业务类型）+ 手动入口（`ErpMfgCostVariance__calculateVariances`）均已实现。
 
-1. **工单完工** → 过账后触发差异计算
-2. **差异计算** → 聚合实际成本与标准成本逐项对比
-3. **差异入账** → 差异金额转入差异科目（财务域）
-4. **分析报表** → 按维度查看差异分布
-5. **异常预警** → 差异超过阈值触发通知
+1. **工单完工** → config-gated 自动触发差异计算（`erp-mfg.variance-auto-calc-enabled` 默认关，开启时 `willFinish` 分支调用 `ProductionVarianceCalculator`）；亦可经手动入口 `ErpMfgCostVariance__calculateVariances` 重算（幂等：先删旧行再重算，仅 COMPLETED 工单允许）
+2. **差异计算** → `ProductionVarianceCalculator` 聚合实际成本（WorkOrder 四要素）与标准成本（FIRMED cost rollup）逐项对比，写 `ErpMfgCostVariance` 行（5 类差异）
+3. **差异入账** → `ProductionVarianceDispatcher` 按成本要素汇总净差异组装 PostingEvent，经 `IErpFinVoucherBiz.post` 提交过账（`PRODUCTION_VARIANCE` 业务类型），成功回写 `posted=true`
+4. **分析报表** → 按维度查看差异分布（`ErpMfgCostVariance__findByWorkOrder` / `aggregateByType` 查询入口，报表渲染归 Deferred）
+5. **异常预警** → 差异超过阈值触发通知（Deferred，依赖通知派发通道）
+
+## 配置点
+
+| 配置键 | 默认值 | 说明 |
+|--------|--------|------|
+| `erp-mfg.variance-auto-calc-enabled` | `false` | 工单完工达量（willFinish）时自动触发生产差异计算 + 过账；关闭时需手动经 `calculateVariances` 入口计算 |
 
 ## 涉及的领域机制
 

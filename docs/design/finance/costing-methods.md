@@ -45,7 +45,16 @@
 
 - **STANDARD（`StandardCostingStrategy`）**：入库按标准成本写 `ledger.unitCost/totalCost`（实际成本经 PPV 通道分离），出库 `unitCost=标准成本` 写 `ledger` 走既有 `InvPostingDispatcher` 拾取（COGS 通道零改动，同 FIFO 范式）。标准成本来源经 `StandardCostResolver` 解析：(1) 最近一条 `status=FIRMED` 的 `ErpMfgCostRollupLine.unitCost`（直接查 mfg-dao 实体，inventory→manufacturing 经 mfg-dao 编译期依赖）；(2) config-gated `erp-inv.standard-cost-fallback-to-material-master=true`（默认）时回退物料主数据 `standardCost` 列（当前 `ErpMdMaterial` 无此列，本路径恒 null，后续冗余发布列落地后自动生效）；均无抛 `ERR_STANDARD_COST_NOT_AVAILABLE`。`CostMethodResolver.isSupported` 增 STANDARD 码值识别与分派。
 - **采购价差（PPV）捕获**：采购入库 DONE 时（`InvPostingDispatcher.dispatchPurchasePriceVariance`），STANDARD 物料的实际入库 `line.unitCost` 与标准 `ledger.unitCost` 差额 × qty = PPV，config-gated `erp-inv.standard-cost-ppv-enabled`（默认 true）。PPV 经新业务类型 `PURCHASE_PRICE_VARIANCE` 过账（`PurchasePriceVarianceAcctDocProvider`）：实际>标准→借材料成本差异(1404)/贷暂估应付(2202)；实际<标准→借暂估应付(2202)/贷材料成本差异(1404)；金额=|实际−标准|×qty。
-- **本期 Non-Goal**：生产差异（材料用量/人工效率/费率/产量/制造费用）归 `variance-analysis.md` 工单完工触发面（本期仅 PPV）；标准成本更新/重估流程（成本调整单+审批+重估凭证）归 1538-1 Deferred「成本调整单」，本期标准成本只读消费 rollup 输出。
+- **本期 Non-Goal**：~~生产差异（材料用量/人工效率/费率/产量/制造费用）归 `variance-analysis.md` 工单完工触发面~~（**已收口，见 plan 2026-07-05-1838-2 实现注记**：`ProductionVarianceCalculator` + 完工触发 + `ProductionVarianceDispatcher` 过账已落地）；标准成本更新/重估流程（成本调整单+审批+重估凭证）归 1538-1 Deferred「成本调整单」，本期标准成本只读消费 rollup 输出。
+
+## 实现注记（计划 `2026-07-05-1838-2`）
+
+本节承接 `0427-2` Deferred「生产差异」，触发条件「工单完工差异分析需求落地」（依据：`variance-analysis.md` 设计权威指定 + 技术前置就绪）。
+
+- **生产差异计算引擎（`ProductionVarianceCalculator`）**：工单完工（COMPLETED）时，按 5 类差异（材料用量/人工效率/人工费率/制造费用/产量）逐项对比标准成本（FIRMED cost rollup × 完工数量）vs 实际成本（WorkOrder 四要素累加），写 `ErpMfgCostVariance` 行。材料段仅算用量差异（价格差异归 PPV 避免重复计入）。
+- **完工触发**：`ErpMfgWorkOrderProcessor.reportCompletion` 的 `willFinish` 分支调用差异计算，config-gated `erp-mfg.variance-auto-calc-enabled`（默认关）。失败隔离仅记 ERROR 日志，不阻断完工。
+- **差异过账（`ProductionVarianceDispatcher`）**：差异计算后按成本要素（材料/人工/制造费用）汇总净差异，组装 PostingEvent 经 `IErpFinVoucherBiz.post` 提交（`PRODUCTION_VARIANCE` 业务类型，`ProductionVarianceAcctDocProvider` 方向相关借贷分解到差异科目/WIP 科目），成功回写 `posted=true`。
+- **手动入口**：`ErpMfgCostVariance__calculateVariances` @BizMutation（幂等：先删旧行再重算，仅 COMPLETED 工单允许）+ `findByWorkOrder` / `aggregateByType` @BizQuery 查询。
 
 ## 成本核算方法
 

@@ -66,7 +66,7 @@
 
 > **存货成本核算引擎（M4 前置 / 1000-3 step2 deferred 承接）**：`done` 计划 `2026-07-02-1538-1`——`StockMoveBookkeeper` 重构为按物料 `costMethod` 策略分派（`CostMethodResolver` → `MovingAverageCostingStrategy` 抽取既有逻辑行为不变 / 新增 `FifoCostingStrategy` 维护消耗 `ErpInvCostLayer` FIFO 队列、多层加权 COGS 经既有 `ledger.totalCost` 通道、红冲按加权 unitCost 追加层、首次无成本抛 `ERR_COST_NOT_AVAILABLE`）；`IErpInvCostingBiz.reclosePeriodCosts` + finance `closeInvModule` 接线 period-close §步骤2 兜底重算（finance→inventory R，config-gated）。解除 1000-3 step2 deferred。Non-Goal：BATCH/INDIVIDUAL/~~STANDARD~~/全月一次/LIFO/Landed Cost/成本调整/报表（见计划 Deferred）。
 >
-> **STANDARD 标准成本法 + 采购价差（PPV）**：✅ `done` 计划 `2026-07-05-0427-2`——新增 `StandardCostingStrategy`（出入库按标准成本记账，标准成本来源 `StandardCostResolver` 读 `ErpMfgCostRollupLine.unitCost` 最近 FIRMED 行）+ PPV 捕获（`InvPostingDispatcher.dispatchPurchasePriceVariance` + `PURCHASE_PRICE_VARIANCE` 业务类型 + `PurchasePriceVarianceAcctDocProvider` 方向相关 Dr/Cr）。承接 1538-1 Deferred「STANDARD 方法」，触发条件已满足（1538-2 BOM/工艺 rollup 落地）。Non-Goal：生产差异（归 variance-analysis.md 工单完工触发面）/ 标准成本重估（归 1538-1 成本调整单 Deferred）。
+> **STANDARD 标准成本法 + 采购价差（PPV）**：✅ `done` 计划 `2026-07-05-0427-2`——新增 `StandardCostingStrategy`（出入库按标准成本记账，标准成本来源 `StandardCostResolver` 读 `ErpMfgCostRollupLine.unitCost` 最近 FIRMED 行）+ PPV 捕获（`InvPostingDispatcher.dispatchPurchasePriceVariance` + `PURCHASE_PRICE_VARIANCE` 业务类型 + `PurchasePriceVarianceAcctDocProvider` 方向相关 Dr/Cr）。承接 1538-1 Deferred「STANDARD 方法」，触发条件已满足（1538-2 BOM/工艺 rollup 落地）。Non-Goal：~~生产差异（归 variance-analysis.md 工单完工触发面）~~ ✅ `done` 计划 `2026-07-05-1838-2`（`ProductionVarianceCalculator` + 完工触发 config-gated + `ProductionVarianceDispatcher` 过账 `PRODUCTION_VARIANCE` 业务类型）/ 标准成本重估（归 1538-1 成本调整单 Deferred）。
 | 4.4 | 采购/销售退货到退款全链路 | purchase/sales/finance | ✅ `done`（计划 1018-1） |
 
 ### M5 — 业财可运维性与闭环
