@@ -198,6 +198,18 @@
 
 作业卡承载工时记录（JobCardTimeLog）：作业员记录实际工时，用于成本核算。
 
+### APS 排程来源建卡（plan 2026-07-05-0427-3）
+
+> **触发条件**：APS 排产引擎（plan 0831-1）已落地 + WorkOrder/JobCard 状态机（plan 2237-1）已落地，本节补注排程产物 → 工序卡的自动消费入口。
+
+- **入口**：`ErpMfgWorkOrder__generateJobCardsFromSchedule(workOrderId)` @BizMutation。读取该工单关联的、已排程（`ErpApsOperationOrder.status=PLANNED`，`plannedStartT/plannedEndT` 非空）的工序，按工序生成 JobCard（一工序一卡），JobCard 初始状态 = `OPEN`（对齐本状态机入口），`plannedQuantity` = 工单计划生产量，`workcenterId` 来自 APS 排程。
+- **来源标记**：建卡时回写 `JobCard.sourceScheduleId` = 对应 `ErpApsOperationOrder.id`（弱参照），并标记 `WorkOrder.sourceOrderType=APS_SCHEDULE` + `WorkOrder.sourceScheduleId`。`sourceScheduleId`/`sourceOrderType` 为加性可选列/字典项（null/空 = 非排程生成，既有手工建卡流程不受影响）。
+- **幂等**：默认重复调用抛 `ERR_JOB_CARDS_ALREADY_GENERATED`；config `erp-mfg.jobcard-incremental-rebuild=true` 时仅补建缺失工序卡（已存在不重建不删，避免破坏已开工卡状态）。
+- **状态门**：仅允许在已审核且非终态的工单上建卡（`NOT_STARTED`/`STOCK_RESERVED`/`STOCK_PARTIAL`/`IN_PROCESS`/`STOPPED`）；`DRAFT`/`SUBMITTED`（未审核）/`COMPLETED`/`CLOSED`/`CANCELLED`（终态）拒绝（`ERR_WORK_ORDER_STATUS_NOT_ALLOWED_FOR_JOB_CARD_GEN`）。
+- **自动模式**：config-gated 批量入口 `ErpMfgWorkOrder__findWorkOrdersPendingJobCards` @BizQuery + `ErpMfgWorkOrder__generatePendingJobCards` @BizMutation，由 nop-job 双层门控（`erp-mfg.jobcard-auto-generate-cron` + `erp-mfg.jobcard-auto-generate-on-schedule`，默认均关）定时触发；手动入口为主、自动为辅。
+- **跨域读 APS**：复用 `IErpApsLoadSourceProvider` SPI（plan 0306-2 范式，声明于 mfg-dao、实现于 aps-service）；APS 模块缺失时 SPI 收集到空 list，`generateJobCardsFromSchedule` 抛 `ERR_NO_SCHEDULED_OPERATIONS`（行为降级）。
+- **Non-Goal（后继触发条件）**：事件驱动实时自动（APS 排程完成广播事件→制造域订阅即时建卡）需事件总线基础设施，本期手动 + 轮询；JobCard 重排/同步（APS 重排后已生成卡时间自动更新）需冲突解决（已开工卡是否可改时间），本期仅首次生成。
+
 作业卡的其他维度（异常/角色/TODO）与工单类似，不重复展开；审查时同样使用提示词。
 
 ## 审查提示

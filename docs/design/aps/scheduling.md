@@ -6,7 +6,8 @@
 > - **工作中心班次日历未展开**：本期工作中心可用时间轴 = horizon 全域 − 维护停机区间；班次/节假日重复展开（`ErpMfgWorkcenterCalendar` shift 模式展开）归 follow-up。
 > - **ATP/CTP 跨域只读聚合经 IDaoProvider**：本期对 inventory/manufacturing 域的 ATP 库存聚合与 CTP 工艺路线追溯采用 `IDaoProvider` 只读实体查询，而非跨域 I*Biz 强注入（I*Biz 强注入在 aps-service 单模块部署/测试时因依赖模块未组装而启动失败）。仅只读聚合、非裸 SQL、未破坏物理边界；完整 `app-erp-all` 部署等价。CTP 影子 OperationOrder 经 `IEntityDao.newEntity()` 构造，仅参与内存模拟，从不 save。
 > - **甘特图前端可视化 / `dragUpdateOperation` 拖拽后端校验**：Non-Goal，归前端计划。
-> - **APS→CRP 负荷来源 re-wiring / JobCard 按 OperationOrder 排程自动创建 / maintenance 停机事件订阅扣减 / 自动派工（DispatchRule/DispatchLog）执行 / nop-job 定时自动重排**：均为 Non-Goal，归各 owner 计划 follow-up（触发条件：本计划落地）。
+> - **APS→CRP 负荷来源 re-wiring / maintenance 停机事件订阅扣减 / 自动派工（DispatchRule/DispatchLog）执行 / nop-job 定时自动重排**：均为 Non-Goal，归各 owner 计划 follow-up（触发条件：本计划落地）。
+> - **JobCard 按 OperationOrder 排程自动创建**：已落地（plan `2026-07-05-0427-3`）。制造域 `ErpMfgWorkOrder__generateJobCardsFromSchedule` 经 `IErpApsLoadSourceProvider` SPI（plan 0306-2 范式）消费已排程（PLANNED）的 OperationOrder 时段，按工序生成 JobCard；详见 `docs/design/manufacturing/state-machine.md §APS 排程来源建卡`。
 
 ## 目的
 

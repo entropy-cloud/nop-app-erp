@@ -21,6 +21,7 @@
 - 2.11：✅ done（批次召回事件：召回事件头/目标实体 + 5 态状态机(OPEN→APPROVED→IN_PROGRESS→CLOSED/CANCELLED) + 强制审批(erp-qua.recall-require-approval) + 目标定位(IErpInvStockMoveBiz.batchTrace 批次聚合查询 + batchId→batchNo 类型桥 + 追溯未启用报错) + 客户通知门控(close 前全 target returnStatus≠PENDING + notifyCustomer=true) + 批量退货编排(IErpSalReturnBiz 同步调，召回只登记不直接改余额) + NCR 升级召回(upgradeToRecall→ESCALATED_TO_RECALL + 建召回继承物料/严重程度)，2026-07-03，`docs/plans/2026-07-03-1707-3-quality-recall-event.md`）
 - 2.10：✅ done（VMI 所有权转移：StockBalance/Ledger 加 ownerId/ownershipType 维度(config-gated, ownership-tracking-enabled 默认关) + ErpInvOwnershipTransfer/Line 三态状态机(DRAFT→CONFIRMED→DONE/CANCELLED) + 同库位余额重分类(sourceLocId=destLocId 物理不变) + OWNERSHIP_TRANSFER 业财过账(借存货/贷应付-供应商) + DIRECTION_PAYABLE 辅助账(待供应商采购发票核销) + vmi-auto-generate-ap config 门控，2026-07-04，`docs/plans/2026-07-04-0549-1-inventory-vmi-ownership-transfer.md`）
 - 2.12：✅ done（需求预测实体 + MRP/DRP 预测需求来源：ErpMfgForecast/ErpMfgForecastLine 实体(头-行 cascade-delete, dict forecast-status 4态) + 状态机(DRAFT→APPROVED approve / DRAFT|APPROVED→CANCELLED cancel, ERR_FORECAST_ILLEGAL_STATUS_TRANSITION) + MRP DemandAggregator 接入 FORECAST 来源(status=APPROVED + 区间相交 + 按物料聚合, config-gated erp-mfg.forecast-consume-enabled) + DRP DrpDemandAggregator forecastDemand 填充(materialId+warehouseId 仓级过滤, config-gated erp-drp.forecast-consume-enabled) + drp→mfg-dao 单向 R 跨域依赖 + CRM 销售预测关系说明(本期独立维护, disaggregation 归后继)；承接 2237-2/1115-2 多计划 Deferred，2026-07-05，`docs/plans/2026-07-05-0427-1-demand-forecast-entity-mrp-drp-source.md`）
+- 2.13：✅ done（APS 排程→工单/工序卡自动生成：WorkOrder/JobCard 加性 `sourceScheduleId` 弱参照 + 新字典 `erp-mfg/source-order-type`(含 APS_SCHEDULE) + `generateJobCardsFromSchedule` @BizMutation(一工序一卡, OPEN 入口, sourceScheduleId 回写, WorkOrder sourceOrderType=APS_SCHEDULE, 幂等门控 ERR_JOB_CARDS_ALREADY_GENERATED + incremental 补缺 + 状态门) + 复用 IErpApsLoadSourceProvider SPI 跨域读 APS(0306-2 范式, ApsLoadSlot 加性增 operationOrderId) + findWorkOrdersPendingJobCards/generatePendingJobCards config-gated 批量入口 + nop-job 三件套(ErpMfgJobCardAutoGenJob + scheduler.yaml 双层门控)；承接 0831-1/2237-1 Deferred，2026-07-05，`docs/plans/2026-07-05-0427-3-aps-schedule-to-workorder-jobcard.md`）
 
 ### Milestone M3 — 新增 8 域
 - 3.1：✅ done（CRM 线索→商机→报价单转化：Lead docStatus 状态机(NEW→QUALIFIED/LOST/CANCELLED, lostReason 必填) + 漏斗阶段流转(moveStage 允许回退+convLog 全量留痕+probability 默认回填) + 线索查重(companyName/contactEmail/contactPhone, auto-convert-duplicate-lead 默认关仅提示) + 转化闭环(convertToCustomer 经 IErpMdPartnerBiz 建客户+新建 OPPORTUNITY+原 lead CONVERTED 弱指针；convertToQuotation 经 IErpSalQuotationBiz save 建报价单+弱指针+CONVERTED；幂等 ERR_LEAD_ALREADY_CONVERTED)；核心零污染 sales/master-data 实体零字段新增，2026-07-04，`docs/plans/2026-07-04-0549-2-crm-lead-opportunity-quotation-conversion.md`）
@@ -51,6 +52,7 @@
 | 2.9 | 供应商评分卡计算 | purchase | `purchase/supplier-evaluation.md` |
 | 2.10 | VMI 所有权转移 | inventory | `inventory/consignment.md` |
 | 2.11 | 批次召回事件 | quality | `quality/recall.md` |
+| 2.13 | ✅ APS 排程→工单/工序卡自动生成 | manufacturing | `manufacturing/state-machine.md` |
 
 ### M3 — 新增 8 域
 
