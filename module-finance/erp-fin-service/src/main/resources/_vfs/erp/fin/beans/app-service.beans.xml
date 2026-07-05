@@ -161,4 +161,8 @@
     <!-- 银行对账未达账项调整凭证 Provider（处理 BANK_RECON_ADJ，注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合）。 -->
     <bean id="app.erp.fin.service.bankrecon.BankReconAdjAcctDocProvider"
           class="app.erp.fin.service.bankrecon.BankReconAdjAcctDocProvider"/>
+
+    <!-- 财务报表渲染入口（plan 2026-07-06-0504-2）：非实体 BizModel，注入平台 IReportEngine，
+         经 @BizQuery 暴露 renderHtml/download。@BizModel 注解由 bizObject 管理器自动识别。 -->
+    <bean id="app.erp.fin.service.report.ErpFinReportBizModel" ioc:type="@bean:id"/>
 </beans>

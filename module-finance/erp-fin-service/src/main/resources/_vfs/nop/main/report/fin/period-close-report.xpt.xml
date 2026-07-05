@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 期末结账报告（种子报表）。数据集 ds 由 ErpFinReportBizModel.buildPeriodCloseDataset 注入，
+     每行 {section:period|module-status|voucher, label, value}，覆盖结转损益/汇兑重估/坏账计提/存货成本核算/期间状态。
+     对齐 1000-3/0540-2 结账流程。 -->
+<workbook x:schema="/nop/schema/excel/workbook.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <sheets>
+        <sheet name="period-close-report" defaultColumnWidth="60.0" defaultRowHeight="16.0">
+            <model/>
+            <table>
+                <cols>
+                    <col width="100.0"/>
+                    <col width="180.0"/>
+                    <col width="120.0"/>
+                </cols>
+                <rows>
+                    <row height="24.0">
+                        <cells>
+                            <cell mergeAcross="2" styleId="title"><model/><value>期末结账报告</value></cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="18.0">
+                        <cells>
+                            <cell styleId="header"><model/><value>分组</value></cell>
+                            <cell styleId="header"><model/><value>项目</value></cell>
+                            <cell styleId="header"><model/><value>取值</value></cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="16.0">
+                        <cells>
+                            <cell styleId="cell">
+                                <model ds="ds" expandType="r" field="section"/>
+                                <value>*=^ds!section</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=label</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=value</value>
+                            </cell>
+                        </cells>
+                        <model/>
+                    </row>
+                </rows>
+            </table>
+        </sheet>
+    </sheets>
+
+    <styles>
+        <style id="title" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="14.0" bold="true"/>
+            <numberFormat>General</numberFormat>
+        </style>
+        <style id="header" fillPattern="solid" fillBgColor="FFECEFF4" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0" bold="true"/>
+            <numberFormat>General</numberFormat>
+            <topBorder type="thin" weight="1"/>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="cell" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0"/>
+            <numberFormat>General</numberFormat>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+    </styles>
+</workbook>

@@ -103,6 +103,14 @@
                                   i18n-en:displayName="Cash Flow Statement" icon="banknote"
                                   component="AMIS" resourceType="SUBM" orderNo="7030"
                                   url="/erp/fin/pages/report/cash-flow.page.yaml"/>
+                        <resource id="ar-ap-aging" app:useCases="UC-FIN-08,UC-FIN-16" displayName="应收应付账龄"
+                                  i18n-en:displayName="AR/AP Aging" icon="hourglass"
+                                  component="AMIS" resourceType="SUBM" orderNo="7040"
+                                  url="/erp/fin/pages/report/ar-ap-aging.page.yaml"/>
+                        <resource id="period-close-report" app:useCases="UC-FIN-06,UC-FIN-16" displayName="期末结账报告"
+                                  i18n-en:displayName="Period Close Report" icon="calendar-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="7050"
+                                  url="/erp/fin/pages/report/period-close-report.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 科目分摊 -->

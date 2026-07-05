@@ -20,6 +20,8 @@ site:
       displayName: Voucher Business Link
     ErpFinVoucherTemplate-main:
       displayName: Voucher Template
+    ar-ap-aging:
+      displayName: AR/AP Aging
     balance-sheet:
       displayName: Balance Sheet
     bank-ledger-line:
@@ -68,3 +70,5 @@ site:
       displayName: Distribution Rule
     income-statement:
       displayName: Income Statement
+    period-close-report:
+      displayName: Period Close Report

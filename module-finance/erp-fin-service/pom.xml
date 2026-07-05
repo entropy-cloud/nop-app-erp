@@ -63,6 +63,17 @@
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz-file-core</artifactId>
         </dependency>
+        <!-- compile: 财务报表渲染 BizModel 注入平台 IReportEngine（报表引擎契约在 nop-report-core）。
+             运行期 ReportEngine impl 由 app-erp-all 经 nop-report-service 间接引入。 -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-report-core</artifactId>
+        </dependency>
+        <!-- compile: 报表 PDF 输出（PDFBox 直接渲染，非 xlsx 转换）。三大表/结账报告/账龄均需 pdf 下载载体。 -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-report-pdf</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-config</artifactId>

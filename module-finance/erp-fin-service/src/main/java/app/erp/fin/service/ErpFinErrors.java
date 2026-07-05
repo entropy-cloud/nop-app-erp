@@ -86,6 +86,10 @@ public interface ErpFinErrors {
     String ARG_ALLOWANCE_BALANCE = "allowanceBalance";
     String ARG_WRITE_OFF_AMOUNT = "writeOffAmount";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     ErrorCode ERR_AR_AP_ITEM_PARTNER_MISSING = ErrorCode.define("erp.err.fin.ar-ap.partner-missing",
             "来源单据 {sourceBillCode}（类型 {sourceBillType}）的 billData 缺少 partnerId，无法生成辅助账",
             ARG_SOURCE_BILL_CODE, ARG_SOURCE_BILL_TYPE);
@@ -327,4 +331,14 @@ public interface ErpFinErrors {
     ErrorCode ERR_BAD_DEBT_NRV_NEGATIVE = ErrorCode.define("erp.err.fin.bad-debt.nrv-negative",
             "应收净额（NRV）为负：应收总额 {openAmount} − 坏账准备 {allowanceBalance} < 0，数据异常或 Allowance 反转",
             ARG_OPEN_AMOUNT, ARG_ALLOWANCE_BALANCE);
+
+    // --- 报表渲染作用域 ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define("erp.err.fin.report.name-invalid",
+            "报表名 {reportName} 非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define("erp.err.fin.report.render-type-invalid",
+            "渲染类型 {renderType} 非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }

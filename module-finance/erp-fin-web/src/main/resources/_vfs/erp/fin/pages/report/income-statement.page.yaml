@@ -1,7 +1,51 @@
 type: page
 title: "利润表"
 body:
-  - type: alert
-    body: "利润表 — 待实现占位页面"
-    level: info
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-number
+        name: periodId
+        label: "会计期间ID"
+        placeholder: "输入期间ID"
+        value: 1
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$periodId:BigDecimal){ ErpFinReport__renderHtml(reportName:$reportName,data:{periodId:$periodId}) }"
+            variables:
+              reportName: "income-statement"
+              periodId: "${periodId}"
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$periodId:BigDecimal){ ErpFinReport__download(reportName:$reportName,renderType:$renderType,data:{periodId:$periodId}){ fileName } }"
+                variables: { reportName: "income-statement", renderType: "xlsx", periodId: "${periodId}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$periodId:BigDecimal){ ErpFinReport__download(reportName:$reportName,renderType:$renderType,data:{periodId:$periodId}){ fileName } }"
+                variables: { reportName: "income-statement", renderType: "pdf", periodId: "${periodId}" }
+  - type: html
+    id: reportContainer
+    html: ""
     className: m-3
