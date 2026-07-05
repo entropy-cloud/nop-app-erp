@@ -87,6 +87,10 @@ public interface ErpSalErrors {
             "客户 {customerId} 信用额度不足：额度={creditLimit}，可用={available}，本单含税金额={orderAmount}",
             ARG_CUSTOMER_ID, ARG_CREDIT_LIMIT, ARG_AVAILABLE, ARG_ORDER_AMOUNT);
 
+    ErrorCode ERR_CREDIT_SPECIAL_APPROVAL_REQUIRED = ErrorCode.define("erp.err.sal.credit-special-approval-required",
+            "客户 {customerId} 的订单超信用额度（额度={creditLimit}，可用={available}，本单含税金额={orderAmount}），需持有专项审批权限方可审核",
+            ARG_CUSTOMER_ID, ARG_CREDIT_LIMIT, ARG_AVAILABLE, ARG_ORDER_AMOUNT);
+
     // ---- 销售报价单作用域 ----
 
     ErrorCode ERR_QUOTATION_NOT_FOUND = ErrorCode.define("erp.err.sal.quotation-not-found",

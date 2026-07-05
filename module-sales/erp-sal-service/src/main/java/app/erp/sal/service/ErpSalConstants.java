@@ -47,6 +47,17 @@ public interface ErpSalConstants {
     String CREDIT_CHECK_LEVEL_SPECIAL_APPROVAL = "SPECIAL_APPROVAL";
     String CREDIT_CHECK_LEVEL_HARD_BLOCK = "HARD_BLOCK";
 
+    // 信用控制是否纳入 AR 未核销余额（默认 true，关闭时回退纯订单口径）
+    String CONFIG_CREDIT_CHECK_INCLUDE_AR = "erp-sal.credit-check-include-ar";
+    boolean CREDIT_CHECK_INCLUDE_AR_DEFAULT = true;
+
+    // AR 未核销余额本位币字段缺失时的近似折算容错开关（默认 true）
+    String CONFIG_CREDIT_CHECK_AR_FALLBACK = "erp-sal.credit-check-ar-fallback";
+    boolean CREDIT_CHECK_AR_FALLBACK_DEFAULT = true;
+
+    // 超信用额度专项审批权限键（SPECIAL_APPROVAL 级别经权限门控实现）
+    String PERM_CREDIT_OVER_LIMIT_APPROVE = "erp-sal:creditOverLimitApprove";
+
     // 退货配置项（returns.md §配置项，缺失走默认，无需 .env）
     String CONFIG_RETURN_REASON_REQUIRED = "erp-sal.return-reason-required";
     String CONFIG_RETURN_APPROVAL_REQUIRED = "erp-sal.return-approval-required";
