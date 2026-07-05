@@ -8,19 +8,20 @@
 
 ## 当前结构
 
-根 pom.xml 列出 19 个 reactor 模块：18 个 `module-<domain>` + 1 个 `app-erp-all`（子模块链合计 146 个 reactor 模块）。
+根 pom.xml 列出 20 个 reactor 模块：18 个 `module-<domain>` + 1 个 `module-notify`（跨域 sys 通知派发子系统）+ 1 个 `app-erp-all`（子模块链合计 154 个 reactor 模块）。
 
-> **物理目录 ↔ 逻辑工程名 ↔ appName ↔ moduleId 映射**：完整 19 行映射表见 `docs/architecture/domain-module-split-analysis.md §2.0`（唯一规范）。物理目录 `module-<domain>/` 是 bootstrap 期别名，逻辑工程名为 `app-erp-<domain>`，聚合启动工程逻辑名 = 物理名 = `app-erp-all`。
+> **物理目录 ↔ 逻辑工程名 ↔ appName ↔ moduleId 映射**：完整 19 行映射表见 `docs/architecture/domain-module-split-analysis.md §2.0`（唯一规范）。物理目录 `module-<domain>/` 是 bootstrap 期别名，逻辑工程名为 `app-erp-<domain>`，聚合启动工程逻辑名 = 物理名 = `app-erp-all`。`module-notify`（逻辑工程名 `app-erp-notify`，appName `erp-notify`，moduleId `erp/notify`）为跨域 sys 子系统，与 18 业务域并列。
 
-所有域 codegen 骨架已生成（1721 个 Java 文件），含实体类、DAO、I*Biz 接口、BizModel 空壳、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
+所有域 codegen 骨架已生成（含 notify 子系统共 1730+ 个 Java 文件），含实体类、DAO、I*Biz 接口、BizModel、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
 
 ## 入口点
 
 | 区域 | 路径 | 说明 | 最后验证 | 置信度 |
 |------|------|------|----------|--------|
 | ORM 模型（真相）×18 | `module-<domain>/model/app-erp-<domain>.orm.xml` | 18 域权威模型，共 279 实体 | 2026-07-01 | high |
-| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖；`app.action-auth.xml` 合并 18 域 + 系统管理菜单 | 2026-07-01 | high |
-| 根 POM | `pom.xml` | 聚合 19 个模块（18 module-* + app-erp-all） | 2026-07-01 | high |
+| ORM 模型（通知子系统） | `module-notify/model/app-erp-notify.orm.xml` | 跨域 sys 通知派发（3 实体：模板/通知实例/已读），字典空间 `erp-notify/*` | 2026-07-06 | high |
+| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖（含 notify）+ `nop-integration-api`（邮件/短信 SPI）；`app.action-auth.xml` 合并 18 域 + 系统管理菜单 | 2026-07-06 | high |
+| 根 POM | `pom.xml` | 聚合 20 个模块（18 module-* + module-notify + app-erp-all） | 2026-07-06 | high |
 | 设计文档（全局） | `docs/design/*.md` | 7 份全局 owner doc（app-overview/flow-overview/domain-design-guidelines 等） | 2026-06-23 | high |
 | 设计文档（域） | `docs/design/<domain>/` | 18 域目录，含 README + state-machine + use-cases + ui-patterns 等 | 2026-07-01 | high |
 | 架构文档 | `docs/architecture/*.md` | 9 份技术基线文档 | 2026-06-23 | high |

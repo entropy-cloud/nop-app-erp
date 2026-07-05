@@ -27,7 +27,7 @@
 
 ## 当前项目阶段
 
-`nop-app-erp` 处于 **codegen 已完成、待 BizModel 业务逻辑深化阶段**。18 域 ORM 模型（279 实体）已设计完成并经审计验证。所有域的 `nop-cli gen` 骨架已生成（1721 个 Java 文件），包含实体类、DAO、I*Biz 接口、BizModel 空壳、XMeta、view.xml 骨架。`app-erp-all` 聚合 app 已构建通过（146 reactor 模块 / 18 域）。
+`nop-app-erp` 处于 **codegen 已完成、待 BizModel 业务逻辑深化阶段**。18 域 ORM 模型（279 实体）+ 跨域 sys 通知派发子系统（`module-notify`，3 实体）已设计完成并经审计验证。所有域的 `nop-cli gen` 骨架已生成（1730+ 个 Java 文件），包含实体类、DAO、I*Biz 接口、BizModel、XMeta、view.xml 骨架。`app-erp-all` 聚合 app 已构建通过（154 reactor 模块 / 18 域 + notify 子系统）。
 
 - codegen 产物是标准 CRUD 空壳（`CrudBizModel<T>` + 空 `I*Biz`），需深化业务逻辑
 - 后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`
@@ -37,7 +37,7 @@
 
 ## 验证命令
 
-> **当前状态**：根 pom 和 `app-erp-all` 已可构建（`mvn clean install -DskipTests` 全绿，146 reactor 模块 / 18 域）。所有域 codegen 骨架已就绪。
+> **当前状态**：根 pom 和 `app-erp-all` 已可构建（`mvn clean install -DskipTests` 全绿，154 reactor 模块 / 18 域 + notify 子系统）。所有域 codegen 骨架已就绪。
 
 | 目的 | 命令 |
 |------|------|
