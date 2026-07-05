@@ -55,7 +55,9 @@
 - Webhook 入站、消息队列消费等异步路径，**不能只靠业务代码查重**（存在并发窗口）
 - 必须在 DB 层面建 `<unique-key>`，接收事件时先 insert，冲突时 catch 唯一约束异常返回已有结果
 - 参见 `integration-pattern.md`：Webhook 入站幂等处理
-- **全域落地状态（2026-07-05，plan `2026-07-05-1000-1-unique-key-constraints.md`）**：18 域共 154 个 `<unique-key>` 已补齐——所有业务单据/主数据的 `code`（业务自然键）均配 `(code, orgId)` 或 `(code)` 全局唯一约束；单品追踪 `serialNo`（ErpInvSerialNumber/ErpB2bMftCertificate/ErpMntEquipment）配全局唯一。异步入口的 DB 级 UNIQUE 兜底已具备模型层基础（具体异步入口的组合幂等键，如 webhook eventId，仍按本规则在对应入口实体上补建）。
+- **全域落地状态（2026-07-05，plan `2026-07-05-1000-1-unique-key-constraints.md`）**：18 域共 154 个 `<unique-key>` 已补齐——所有业务单据/主数据的 `code`（业务自然键）均配 `(code, orgId)` 或 `(code)` 全局唯一约束；单品追踪 `serialNo`（ErpInvSerialNumber/ErpB2bMftCertificate/ErpMntEquipment）配全局唯一。异步入口的 DB 级 UNIQUE 兜底已具备模型层基础。
+- **异步入口组合幂等键核查（2026-07-06，plan `2026-07-05-2352-1-db-index-design.md` Decision 5）**：全仓核查确认无独立 webhook-eventId 入口实体；唯一异步入口列 `ErpB2bMftLog.messageId`（AS2 Message-ID）的去重查重路径由非唯一过滤索引 `IDX_B2B_MFT_LOG_MESSAGE_ID` 支撑（见下「过滤索引全域落地」）。结论：无需额外组合唯一键；本规则的异步入口 UNIQUE 兜底范围以现存 `code`/`serialNo` 唯一键 + 异步入口列过滤索引为完整覆盖。
+- **过滤索引全域落地（2026-07-06，plan `2026-07-05-2352-1-db-index-design.md`）**：18 域共 916 个非唯一 `<index>` 已补齐——覆盖多租户前缀复合（`(orgId, docStatus)`/`(orgId, businessDate)`）、外键导航单列（所有 `*Id`）、状态/业务日期过滤。命名 `IDX_{TABLE_NO_ERP_PREFIX}_{COLS}`，与 `UK_` 范式一致。索引是性能优化（不改业务语义），运行时由 `ddl.xlib AddIndex` 从模型自动应用；手工生产部署 DDL 由各域 `deploy/sql/{dialect}/_create_index.sql` 提供（平台 `_create_*.sql.xgen` 模板不输出 CREATE INDEX）。索引策略 Decision（orgId 复合前缀 / delVersion 不入索引 / 选择性门槛）记录于该 plan Phase 1。
 
 ### 规则 3：同步操作以状态守卫为第一道防线
 
