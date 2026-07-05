@@ -21,6 +21,9 @@ import java.util.List;
  * 工单 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。
  * 工单 10 态状态机 + 三轴审批 + 齐套校验 + 完工入库编排委托
  * {@link ErpMfgWorkOrderProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 标准审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）由平台
+ * {@code approval-support.xbiz} 标准 source 提供；submit→SUBMITTED、approve→NOT_STARTED 的 docStatus 联动经
+ * xbiz {@code <source x:override="replace">} 注入 {@link ErpMfgWorkOrderProcessor#onSubmit}/{@link ErpMfgWorkOrderProcessor#onApproved}。
  * APS 排程→工序卡自动生成委托 {@link ErpMfgScheduleToJobCardProcessor}（plan 2026-07-05-0427-3）。
  *
  * <p>语义见 {@code docs/design/manufacturing/state-machine.md §适用对象一}。
@@ -35,18 +38,6 @@ public class ErpMfgWorkOrderBizModel extends CrudBizModel<ErpMfgWorkOrder> imple
 
     public ErpMfgWorkOrderBizModel() {
         setEntityName(ErpMfgWorkOrder.class.getName());
-    }
-
-    @Override
-    @BizMutation
-    public ErpMfgWorkOrder submit(@Name("workOrderId") Long workOrderId, IServiceContext context) {
-        return workOrderProcessor.submit(workOrderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpMfgWorkOrder approve(@Name("workOrderId") Long workOrderId, IServiceContext context) {
-        return workOrderProcessor.approve(workOrderId, context);
     }
 
     @Override

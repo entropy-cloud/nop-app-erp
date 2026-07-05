@@ -10,19 +10,26 @@ import app.erp.hr.dao.entity.ErpHrSocialInsuranceConfig;
 import app.erp.hr.dao.entity.ErpHrTaxConfig;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -53,6 +60,8 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IErpHrSalaryBiz salaryBiz;
+    @Inject
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testSocialInsuranceBaseClampingAndGrossNet() {
@@ -79,8 +88,8 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         // 公积金个人 = 32694 × 12% = 3923.28
         assertEquals(0, salary.getHousingFund().compareTo(new BigDecimal("3923.28")),
                 "公积金个人=基数×个人比例");
-        // approvalStatus=PENDING
-        assertEquals(ErpHrConstants.APPROVAL_PENDING, salary.getApprovalStatus());
+        // approveStatus=UNSUBMITTED, paymentStatus=PENDING
+        assertEquals(ErpHrConstants.APPROVE_STATUS_UNSUBMITTED, salary.getApproveStatus());
         // 应发 > 0，实发 = 应发 − 社保个人 − 公积金个人 − 个税 − 其他扣款
         assertTrue(salary.getGrossSalary().signum() > 0, "应发合计>0");
         BigDecimal expectedNet = salary.getGrossSalary()
@@ -158,15 +167,15 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         ErpHrSalary salary = salaryBiz.calculateSalary(employeeId, 2026, 9, CTX);
         Long salaryId = salary.getId();
 
-        // 合法迁移全路径
-        assertEquals(ErpHrConstants.APPROVAL_REVIEWED,
-                salaryBiz.review(salaryId, CTX).getApprovalStatus());
-        assertEquals(ErpHrConstants.APPROVAL_APPROVED_FINANCE,
-                salaryBiz.approveFinance(salaryId, CTX).getApprovalStatus());
-        assertEquals(ErpHrConstants.APPROVAL_APPROVED_MANAGER,
-                salaryBiz.approveManager(salaryId, CTX).getApprovalStatus());
-        assertEquals(ErpHrConstants.APPROVAL_PAID,
-                salaryBiz.markPaid(salaryId, CTX).getApprovalStatus());
+        // 标准审批轴：UNSUBMITTED → SUBMITTED → APPROVED
+        assertEquals(0, submitSalary(salaryId).getStatus(), "提交应成功");
+        assertEquals(0, approveSalary(salaryId).getStatus(), "审核应成功");
+        ErpHrSalary approved = daoProvider.daoFor(ErpHrSalary.class).getEntityById(salaryId);
+        assertEquals(ErpHrConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
+
+        // 支付轴：APPROVED + paymentStatus=PENDING → PAID
+        ErpHrSalary paid = salaryBiz.markPaid(salaryId, CTX);
+        assertEquals(ErpHrConstants.PAYMENT_PAID, paid.getPaymentStatus());
 
         // PAID 后再 voidSalary → 应抛锁定异常
         NopException lockEx = assertThrows(NopException.class,
@@ -191,10 +200,10 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
         ErpHrSalary salary = salaryBiz.calculateSalary(employeeId, 2026, 10, CTX);
         Long salaryId = salary.getId();
-        // PENDING 直接跳到 approveManager（跳过 REVIEWED/APPROVED_FINANCE）→ 非法
-        NopException ex = assertThrows(NopException.class,
-                () -> salaryBiz.approveManager(salaryId, CTX));
-        assertEquals(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
+        // UNSUBMITTED 直接 approve（跳过 submit）→ 平台守卫拒绝
+        ApiResponse<?> bad = approveSalary(salaryId);
+        assertEquals(-1, bad.getStatus(),
+                "UNSUBMITTED 不可直接审核：平台守卫仅接受 SUBMITTED 源态");
     }
 
     @Test
@@ -214,9 +223,8 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
         ErpHrSalary salary = salaryBiz.calculateSalary(employeeId, 2026, 11, CTX);
         Long salaryId = salary.getId();
-        salaryBiz.review(salaryId, CTX);
-        salaryBiz.approveFinance(salaryId, CTX);
-        salaryBiz.approveManager(salaryId, CTX);
+        submitSalary(salaryId);
+        approveSalary(salaryId);
 
         ErpHrPayrollBankFile bankFile = salaryBiz.generateBankFile(2026, 11, 1L, CTX);
         assertNotNull(bankFile.getId(), "银行文件已落库");
@@ -224,11 +232,24 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         assertEquals(ErpHrConstants.BANK_FILE_STATUS_GENERATED, bankFile.getStatus());
         assertTrue(bankFile.getRecordCount() >= 1, "至少 1 条记录");
 
-        // ErpHrSalary 已转 PAID + paymentBatchNo 已写
+        // ErpHrSalary paymentStatus 已转 PAID + paymentBatchNo 已写
         ErpHrSalary updated = daoProvider.daoFor(ErpHrSalary.class).getEntityById(salaryId);
-        assertEquals(ErpHrConstants.APPROVAL_PAID, updated.getApprovalStatus());
         assertEquals(ErpHrConstants.PAYMENT_PAID, updated.getPaymentStatus());
+        assertEquals(ErpHrConstants.APPROVE_STATUS_APPROVED, updated.getApproveStatus());
         assertNotNull(updated.getPaymentBatchNo());
+    }
+
+    private ApiResponse<?> submitSalary(Long salaryId) {
+        return executeRpc(mutation, "ErpHrSalary__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
+    }
+
+    private ApiResponse<?> approveSalary(Long salaryId) {
+        return executeRpc(mutation, "ErpHrSalary__approve", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- seed helpers ----------

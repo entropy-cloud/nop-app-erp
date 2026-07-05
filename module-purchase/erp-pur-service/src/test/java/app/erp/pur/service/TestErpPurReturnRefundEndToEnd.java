@@ -272,37 +272,37 @@ public class TestErpPurReturnRefundEndToEnd extends JunitAutoTestCase {
             newReceiveLine(receiveLineId, receiveId, orderLineId, receiveQty, unitPrice);
             return null;
         });
-        assertEquals(0, executeRpc(mutation, "ErpPurReceive__submit",
-                ApiRequest.build(Map.of("receiveId", receiveId))).getStatus(), "源入库单提交");
+        assertEquals(0, executeRpc(mutation, "ErpPurReceive__submitForApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(receiveId)))).getStatus(), "源入库单提交");
         assertEquals(0, executeRpc(mutation, "ErpPurReceive__approve",
-                ApiRequest.build(Map.of("receiveId", receiveId))).getStatus(), "源入库单审核应成功");
+                ApiRequest.build(Map.of("id", String.valueOf(receiveId)))).getStatus(), "源入库单审核应成功");
         return new Long[]{receiveId, receiveLineId};
     }
 
     // ---------- rpc ----------
 
     private ApiResponse<?> approveReturn(Long id) {
-        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApproveReturn(Long id) {
-        return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> submitInvoice(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__submit", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpPurInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approveInvoice(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> submitPayment(Long id) {
-        return executeRpc(mutation, "ErpPurPayment__submit", ApiRequest.build(Map.of("paymentId", id)));
+        return executeRpc(mutation, "ErpPurPayment__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approvePayment(Long id) {
-        return executeRpc(mutation, "ErpPurPayment__approve", ApiRequest.build(Map.of("paymentId", id)));
+        return executeRpc(mutation, "ErpPurPayment__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

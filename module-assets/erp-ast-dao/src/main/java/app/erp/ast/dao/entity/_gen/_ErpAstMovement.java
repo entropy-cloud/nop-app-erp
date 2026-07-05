@@ -129,24 +129,32 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 27;
     
+    /* 审核人: APPROVED_BY VARCHAR */
+    public static final String PROP_NAME_approvedBy = "approvedBy";
+    public static final int PROP_ID_approvedBy = 200;
+    
+    /* 审核时间: APPROVED_AT DATETIME */
+    public static final String PROP_NAME_approvedAt = "approvedAt";
+    public static final int PROP_ID_approvedAt = 201;
+    
     /* 币种: CURRENCY_ID BIGINT */
     public static final String PROP_NAME_currencyId = "currencyId";
-    public static final int PROP_ID_currencyId = 28;
+    public static final int PROP_ID_currencyId = 202;
     
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 29;
+    public static final int PROP_ID_exchangeRate = 203;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 30;
+    public static final int PROP_ID_amountSource = 204;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 31;
+    public static final int PROP_ID_amountFunctional = 205;
     
 
-    private static int _PROP_ID_BOUND = 32;
+    private static int _PROP_ID_BOUND = 206;
 
     
     /* relation:  */
@@ -183,7 +191,7 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[32];
+    private static final String[] PROP_ID_TO_NAME = new String[206];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -267,6 +275,12 @@ public class _ErpAstMovement extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedBy] = PROP_NAME_approvedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedBy, PROP_ID_approvedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
       
           PROP_ID_TO_NAME[PROP_ID_currencyId] = PROP_NAME_currencyId;
           PROP_NAME_TO_ID.put(PROP_NAME_currencyId, PROP_ID_currencyId);
@@ -363,6 +377,12 @@ public class _ErpAstMovement extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 审核人: APPROVED_BY */
+    private java.lang.String _approvedBy;
+    
+    /* 审核时间: APPROVED_AT */
+    private java.time.LocalDateTime _approvedAt;
     
     /* 币种: CURRENCY_ID */
     private java.lang.Long _currencyId;
@@ -530,6 +550,12 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_approvedBy:
+               return getApprovedBy();
+        
+            case PROP_ID_approvedAt:
+               return getApprovedAt();
         
             case PROP_ID_currencyId:
                return getCurrencyId();
@@ -824,6 +850,26 @@ public class _ErpAstMovement extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_approvedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedBy));
+               }
+               setApprovedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               java.time.LocalDateTime typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDateTime(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedAt));
+               }
+               setApprovedAt(typedValue);
+               break;
+            }
+        
             case PROP_ID_currencyId:{
                java.lang.Long typedValue = null;
                if(value != null){
@@ -1058,6 +1104,20 @@ public class _ErpAstMovement extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedBy:{
+               onInitProp(propId);
+               this._approvedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               onInitProp(propId);
+               this._approvedAt = (java.time.LocalDateTime)value;
                
                break;
             }
@@ -1605,6 +1665,44 @@ public class _ErpAstMovement extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final java.lang.String getApprovedBy(){
+         onPropGet(PROP_ID_approvedBy);
+         return _approvedBy;
+    }
+
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final void setApprovedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_approvedBy,value)){
+            this._approvedBy = value;
+            internalClearRefs(PROP_ID_approvedBy);
+            
+        }
+    }
+    
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final java.time.LocalDateTime getApprovedAt(){
+         onPropGet(PROP_ID_approvedAt);
+         return _approvedAt;
+    }
+
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final void setApprovedAt(java.time.LocalDateTime value){
+        if(onPropSet(PROP_ID_approvedAt,value)){
+            this._approvedAt = value;
+            internalClearRefs(PROP_ID_approvedAt);
             
         }
     }

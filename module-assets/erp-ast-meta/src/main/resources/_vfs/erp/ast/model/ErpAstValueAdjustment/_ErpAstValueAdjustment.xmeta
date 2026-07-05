@@ -2,7 +2,7 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
       xmlns:xpl="xpl" ext:model="orm" ext:icon="sliders-horizontal" xmlns:c="c" xmlns:graphql="graphql"
       xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="资产价值调整" i18n-en:displayName="Asset Value Adjustment"
-      tagSet="gid,erp.assets" xmlns:ui="ui" xmlns:orm="orm">
+      tagSet="gid,erp.assets,use-approval" xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.ast.dao.entity.ErpAstValueAdjustment</entityName>
 
@@ -65,7 +65,7 @@
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="12" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-ast/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="13" i18n-en:displayName="Posted" queryable="true" sortable="true"
               insertable="true" updatable="true" defaultValue="false">

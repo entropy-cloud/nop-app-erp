@@ -87,8 +87,6 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
                                     ErpInvStockMove move, IServiceContext context) {
         usage.setDocStatus(ErpMntDaoConstants.DOC_STATUS_ACTIVE);
         usage.setApproveStatus(ErpMntDaoConstants.APPROVE_STATUS_APPROVED);
-        // posted 语义为「库存已出库」：取自移动单是否 DONE（generateMove 业务联动自动 DRAFT→CONFIRMED→DONE 扣余额），
-        // 非取自 inventory 的财务过账标记（维修费用过账 MAINTENANCE_ISSUE 为本期 Non-Goal，inventory 侧对此联动跳过）。
         usage.setPosted(isStockIssued(move));
         if (Boolean.TRUE.equals(usage.getPosted())) {
             usage.setPostedAt(CoreMetrics.currentDateTime());

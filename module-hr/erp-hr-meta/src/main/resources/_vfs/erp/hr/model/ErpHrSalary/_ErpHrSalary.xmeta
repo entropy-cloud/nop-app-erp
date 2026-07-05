@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
       xmlns:xpl="xpl" ext:model="orm" ext:icon="wallet" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
-      xmlns:biz="biz" displayName="薪酬记录" i18n-en:displayName="Salary Record" tagSet="gid,erp.hr" xmlns:ui="ui"
-      xmlns:orm="orm">
+      xmlns:biz="biz" displayName="薪酬记录" i18n-en:displayName="Salary Record" tagSet="gid,erp.hr,use-approval"
+      xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.hr.dao.entity.ErpHrSalary</entityName>
 
@@ -95,10 +95,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="approvalStatus" displayName="审批状态" propId="28" i18n-en:displayName="Approval Status"
-              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
-              defaultValue="PENDING">
-            <schema type="java.lang.String" precision="20" dict="erp-hr/salary-approval-status"/>
+        <prop name="approveStatus" displayName="审核状态" propId="28" i18n-en:displayName="Approve Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="UNSUBMITTED">
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
         </prop>
         <prop name="performanceFactor" displayName="绩效系数" propId="29" i18n-en:displayName="Performance Factor"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -167,6 +166,14 @@
         <prop name="updateTime" displayName="修改时间" propId="45" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="approvedBy" displayName="审核人" propId="90" i18n-en:displayName="Approved By" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
+        </prop>
+        <prop name="approvedAt" displayName="审核时间" propId="91" i18n-en:displayName="Approved At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="employee" i18n-en:displayName="Employee" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="employeeId" ext:joinRightProp="id" insertable="false" updatable="false"

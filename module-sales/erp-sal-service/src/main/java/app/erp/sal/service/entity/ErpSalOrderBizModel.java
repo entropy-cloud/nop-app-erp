@@ -26,11 +26,10 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 销售订单 BizModel（聚合根 Facade，{@code processor-extension-pattern.md} 两层结构）。
- * 三轴审批状态机 + 信用额度校验编排委托 {@link ErpSalOrderProcessor}（protected step 方法，下游可逐 step 覆盖）；
+ * 销售订单 BizModel（聚合根 Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由平台 {@code approval-support.xbiz} 标准 source 提供，业务联动经 xbiz
+ * {@code <source x:override="replace">} 注入 {@link ErpSalOrderProcessor#onSubmit}/{@link ErpSalOrderProcessor#onApproved}；
  * 跨聚合写契约（报价→订单转化、发货进度回写、防重查询）留 Facade。
- *
- * <p>订单审核 = 纯状态推进（state-machine §2），不触发库存/凭证（下游单据才触发）。
  */
 @BizModel("ErpSalOrder")
 public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IErpSalOrderBiz {
@@ -47,38 +46,8 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
 
     @Override
     @BizMutation
-    public ErpSalOrder submit(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.submit(orderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalOrder withdrawSubmit(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.withdrawSubmit(orderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalOrder approve(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.approve(orderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalOrder reject(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.reject(orderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalOrder reverseApprove(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.reverseApprove(orderId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpSalOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.cancel(orderId, context);
+        return orderProcessor.cancel(String.valueOf(orderId), context);
     }
 
     // ---------- 跨聚合写契约（报价→订单转化、发货进度回写） ----------

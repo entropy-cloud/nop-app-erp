@@ -195,7 +195,7 @@ public class TestErpPurReturnApproval extends JunitAutoTestCase {
             return null;
         });
         assertEquals(0, executeRpc(mutation, "ErpPurReceive__approve",
-                ApiRequest.build(Map.of("receiveId", receiveId))).getStatus(), "源入库单审核应成功");
+                ApiRequest.build(Map.of("id", String.valueOf(receiveId)))).getStatus(), "源入库单审核应成功");
         return new Long[]{receiveId, receiveLineId};
     }
 
@@ -206,23 +206,23 @@ public class TestErpPurReturnApproval extends JunitAutoTestCase {
     // ---------- rpc ----------
 
     private ApiResponse<?> submitReturn(Long id) {
-        return executeRpc(mutation, "ErpPurReturn__submit", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpPurReturn__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> withdrawSubmitReturn(Long id) {
-        return executeRpc(mutation, "ErpPurReturn__withdrawSubmit", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpPurReturn__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approveReturn(Long id) {
-        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> rejectReturn(Long id) {
-        return executeRpc(mutation, "ErpPurReturn__reject", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpPurReturn__reject", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApproveReturn(Long id) {
-        return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> cancelReturn(Long id) {

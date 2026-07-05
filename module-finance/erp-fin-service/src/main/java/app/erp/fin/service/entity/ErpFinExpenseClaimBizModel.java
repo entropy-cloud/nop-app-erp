@@ -13,11 +13,8 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
- * 费用报销单 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。
- * 三轴审批状态机 + EXPENSE_CLAIM 业财过账 + 借款抵扣编排委托
- * {@link ErpFinExpenseClaimProcessor}（protected step 方法，下游可逐 step 覆盖）。
- *
- * <p>语义与配置门控见 {@code expense-claim.md}；{@code @BizMutation}+{@code @SingleSession} 钉事务/会话边界。
+ * 费用报销单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）经 xbiz 单行委托 {@link ErpFinExpenseClaimProcessor} 全权处理。
  */
 @BizModel("ErpFinExpenseClaim")
 public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim> implements IErpFinExpenseClaimBiz {
@@ -27,41 +24,6 @@ public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim>
 
     public ErpFinExpenseClaimBizModel() {
         setEntityName(ErpFinExpenseClaim.class.getName());
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpFinExpenseClaim submit(@Name("claimId") Long claimId, IServiceContext context) {
-        return claimProcessor.submit(claimId, context);
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpFinExpenseClaim withdrawSubmit(@Name("claimId") Long claimId, IServiceContext context) {
-        return claimProcessor.withdrawSubmit(claimId, context);
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpFinExpenseClaim approve(@Name("claimId") Long claimId, IServiceContext context) {
-        return claimProcessor.approve(claimId, context);
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpFinExpenseClaim reject(@Name("claimId") Long claimId, IServiceContext context) {
-        return claimProcessor.reject(claimId, context);
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpFinExpenseClaim reverseApprove(@Name("claimId") Long claimId, IServiceContext context) {
-        return claimProcessor.reverseApprove(claimId, context);
     }
 
     @Override

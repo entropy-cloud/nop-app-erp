@@ -145,11 +145,11 @@ public class TestErpPurReturnTrace extends JunitAutoTestCase {
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> approveReceive(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> approveReturn(Long returnId) {
-        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("returnId", returnId)));
+        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(returnId))));
     }
 
     private boolean returnTraceContains(Long rootMoveId, Long expectedNodeId) {

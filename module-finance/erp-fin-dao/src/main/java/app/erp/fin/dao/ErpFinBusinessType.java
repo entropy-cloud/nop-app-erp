@@ -47,7 +47,8 @@ public enum ErpFinBusinessType {
     BAD_DEBT_WRITE_OFF(350),
     BAD_DEBT_RECOVERY(360),
     BAD_DEBT_RELEASE(370),
-    PROFIT_TO_RETAINED_EARNINGS(380);
+    PROFIT_TO_RETAINED_EARNINGS(380),
+    VALUE_ADJUSTMENT(390);
 
     private final int code;
 

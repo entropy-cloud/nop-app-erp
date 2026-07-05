@@ -1,7 +1,7 @@
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_md_organization primary key (ID)
+  constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_aps_operation_order(
@@ -150,7 +150,7 @@ CREATE TABLE erp_aps_dispatch_log(
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 
-   ALTER TABLE erp_md_md_organization COMMENT 'ErpMdOrganization';
+   ALTER TABLE erp_md_organization COMMENT 'ErpMdOrganization';
                 
    ALTER TABLE erp_aps_operation_order COMMENT '工序工单';
                 

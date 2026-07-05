@@ -222,6 +222,8 @@ prop:
     ErpPurQuotation:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 报价日期
       code: 单号
       createTime: 创建时间
@@ -450,6 +452,8 @@ prop:
     ErpPurRfq:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 询价日期
       code: 单号
       createTime: 创建时间

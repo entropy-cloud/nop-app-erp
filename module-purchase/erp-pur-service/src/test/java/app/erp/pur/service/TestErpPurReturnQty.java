@@ -146,7 +146,7 @@ public class TestErpPurReturnQty extends JunitAutoTestCase {
             return null;
         });
         assertEquals(0, executeRpc(mutation, "ErpPurReceive__approve",
-                ApiRequest.build(Map.of("receiveId", receiveId))).getStatus(), "源入库单审核应成功");
+                ApiRequest.build(Map.of("id", String.valueOf(receiveId)))).getStatus(), "源入库单审核应成功");
         return new Long[]{receiveId, receiveLineId};
     }
 
@@ -155,7 +155,7 @@ public class TestErpPurReturnQty extends JunitAutoTestCase {
     }
 
     private ApiResponse<?> approveReturn(Long id) {
-        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

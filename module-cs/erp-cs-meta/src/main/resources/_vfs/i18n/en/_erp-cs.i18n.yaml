@@ -294,6 +294,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       customer: Customer
       contact: Contact
       ticketType: Ticket Type

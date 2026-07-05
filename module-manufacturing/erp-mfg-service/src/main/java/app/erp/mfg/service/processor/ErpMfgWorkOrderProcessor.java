@@ -14,9 +14,11 @@ import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
 import app.erp.qa.dao._ErpQaDaoConstants;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -33,12 +35,15 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 工单状态机编排 Processor（{@code processor-extension-pattern.md} 两层结构：Facade + Processor）。
- * Facade {@code ErpMfgWorkOrderBizModel} 仅负责入口/事务/委托，编排委托本类。
+ * 标准审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）由本类全权处理：
+ * 加载实体 → 状态守卫 → 业务校验 → setDocStatus/setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
  *
- * <p>工单 10 态状态机 + 三轴审批 + 齐套校验 + 完工入库。每个动作只编排步骤顺序，各步骤为 {@code protected}
- * 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
  *
- * <p>事务边界：跟随 Facade {@code @BizMutation} 事务，本类不带 {@code @Transactional}。
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpMfgWorkOrderProcessor {
 
@@ -51,22 +56,45 @@ public class ErpMfgWorkOrderProcessor {
     @Inject
     IErpQaInspectionBiz inspectionBiz;
 
-    public ErpMfgWorkOrder submit(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
-        requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_DRAFT, "DRAFT");
+    public ErpMfgWorkOrder submitForApproval(String id, IServiceContext context) {
+        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
+        validateTransitionForSubmit(wo, context);
+        validateBusinessRulesForSubmit(wo, context);
         doSubmit(wo, context);
         return wo;
     }
 
-    public ErpMfgWorkOrder approve(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
-        requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED, "SUBMITTED");
+    public ErpMfgWorkOrder withdrawApproval(String id, IServiceContext context) {
+        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
+        validateTransitionForWithdraw(wo, context);
+        doWithdrawSubmit(wo, context);
+        return wo;
+    }
+
+    public ErpMfgWorkOrder approve(String id, IServiceContext context) {
+        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
+        validateTransitionForApprove(wo, context);
+        validateBusinessRulesForApprove(wo, context);
         doApprove(wo, context);
         return wo;
     }
 
+    public ErpMfgWorkOrder reject(String id, IServiceContext context) {
+        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
+        validateTransitionForReject(wo, context);
+        doReject(wo, context);
+        return wo;
+    }
+
+    public ErpMfgWorkOrder reverseApprove(String id, IServiceContext context) {
+        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
+        validateTransitionForReverseApprove(wo, context);
+        doReverseApprove(wo, context);
+        return wo;
+    }
+
     public ErpMfgWorkOrder checkAvailability(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
+        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
         requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, "NOT_STARTED");
         KitAvailabilityResult result = kitAvailabilityChecker.check(workOrderId);
         wo.setDocStatus(result.getResultingStatus());
@@ -75,14 +103,14 @@ public class ErpMfgWorkOrderProcessor {
     }
 
     public ErpMfgWorkOrder start(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
+        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
         validateTransitionForStart(wo, context);
         doStart(wo, context);
         return wo;
     }
 
     public ErpMfgWorkOrder stop(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
+        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
         requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, "IN_PROCESS");
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_STOPPED);
         workOrderDao().updateEntity(wo);
@@ -90,7 +118,7 @@ public class ErpMfgWorkOrderProcessor {
     }
 
     public ErpMfgWorkOrder resume(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
+        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
         requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_STOPPED, "STOPPED");
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS);
         workOrderDao().updateEntity(wo);
@@ -98,7 +126,7 @@ public class ErpMfgWorkOrderProcessor {
     }
 
     public ErpMfgWorkOrder close(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
+        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
         String status = wo.getDocStatus();
         if (status == null || (!Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOPPED)
                 && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS))) {
@@ -113,10 +141,8 @@ public class ErpMfgWorkOrderProcessor {
     }
 
     public ErpMfgWorkOrder cancel(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
+        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
         String status = wo.getDocStatus();
-        // 仅未开工前可取消（DRAFT/SUBMITTED/NOT_STARTED）。STOCK_RESERVED/STOCK_PARTIAL 属 NOT_STARTED 后续态，
-        // 依 state-machine.md §迁移完整性「NOT_STARTED/SUBMITTED→CANCELLED」从严只允许前三态。
         if (status == null || (!Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_DRAFT)
                 && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED)
                 && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED))) {
@@ -132,7 +158,7 @@ public class ErpMfgWorkOrderProcessor {
      * 重算成本（totalCost = material+labor+overhead+subcontract；unitCost = total/completed），完工达量→COMPLETED。
      */
     public ErpMfgWorkOrder reportCompletion(Long workOrderId, BigDecimal completedQty, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId, context);
+        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
         requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, "IN_PROCESS");
         if (completedQty == null || completedQty.signum() < 0) {
             completedQty = BigDecimal.ZERO;
@@ -145,14 +171,12 @@ public class ErpMfgWorkOrderProcessor {
                     .param(ErpMfgErrors.ARG_PLANNED_QTY, planned);
         }
 
-        // 完工质检 config-gated 钩子：达量且需质检 → 拒绝 COMPLETED 待质检（不生成入库移动单，工单保持 IN_PROCESS）
         boolean willFinish = planned.signum() > 0 && newCompleted.compareTo(planned) >= 0;
         if (willFinish && isInspectionGated(wo)) {
             throw new NopException(ErpMfgErrors.ERR_INSPECTION_REQUIRED)
                     .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
 
-        // 强制完工质检门控：达量时若属强制质检类型，经 InspectionTrigger 生成 FINAL 质检单并阻塞。默认空=不强制。
         if (willFinish && wo.getProductId() != null) {
             int gate = InspectionTrigger.enforceGate(inspectionBiz, ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER,
                     wo.getCode(), wo.getProductId(), _ErpQaDaoConstants.INSPECTION_TYPE_FINAL,
@@ -163,11 +187,9 @@ public class ErpMfgWorkOrderProcessor {
             }
         }
 
-        // 累加完工数量 + 重算成本（unitCost 用累加后成本 / 累加后完工量）
         wo.setCompletedQuantity(newCompleted);
         recomputeTotals(wo);
 
-        // 生成产成品入库移动单（MANUFACTURING 入库方向；unitCost 取重算后的工单单位成本）
         generateCompletionMove(wo, completedQty, context);
 
         if (willFinish) {
@@ -178,14 +200,94 @@ public class ErpMfgWorkOrderProcessor {
         return wo;
     }
 
-    // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
+    // ---------- step：审批迁移校验（protected，下游可逐个覆盖） ----------
+
+    protected void validateTransitionForSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getApproveStatus();
+        if (status == null) {
+            status = ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED;
+        }
+        if (!Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED)
+                && !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_REJECTED)) {
+            throw illegalTransition(wo, status, "UNSUBMITTED 或 REJECTED");
+        }
+    }
+
+    protected void validateTransitionForWithdraw(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+            throw illegalTransition(wo, status, "SUBMITTED");
+        }
+    }
+
+    protected void validateTransitionForApprove(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+            throw illegalTransition(wo, status, "SUBMITTED");
+        }
+    }
+
+    protected void validateTransitionForReject(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+            throw illegalTransition(wo, status, "SUBMITTED");
+        }
+    }
+
+    protected void validateTransitionForReverseApprove(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getApproveStatus();
+        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_APPROVED)) {
+            throw illegalTransition(wo, status, "APPROVED");
+        }
+    }
+
+    // ---------- step：审批业务规则校验 ----------
+
+    protected void validateBusinessRulesForSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
+        requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_DRAFT, "DRAFT");
+    }
+
+    protected void validateBusinessRulesForApprove(ErpMfgWorkOrder wo, IServiceContext context) {
+        requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED, "SUBMITTED");
+    }
+
+    // ---------- step：审批执行 ----------
+
+    protected void doSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
+        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED);
+        workOrderDao().updateEntity(wo);
+    }
+
+    protected void doWithdrawSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
+        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED);
+        workOrderDao().updateEntity(wo);
+    }
+
+    protected void doApprove(ErpMfgWorkOrder wo, IServiceContext context) {
+        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
+        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED);
+        wo.setApprovedBy(currentUserId());
+        wo.setApprovedAt(CoreMetrics.currentDateTime());
+        workOrderDao().updateEntity(wo);
+    }
+
+    protected void doReject(ErpMfgWorkOrder wo, IServiceContext context) {
+        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_REJECTED);
+        workOrderDao().updateEntity(wo);
+    }
+
+    protected void doReverseApprove(ErpMfgWorkOrder wo, IServiceContext context) {
+        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_REJECTED);
+        workOrderDao().updateEntity(wo);
+    }
+
+    // ---------- step：工单操作迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForStart(ErpMfgWorkOrder wo, IServiceContext context) {
         String status = wo.getDocStatus();
         if (status != null && Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED)) {
-            // 全齐套：直接开工
         } else if (status != null && Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL)) {
-            // 部分齐套：须配置允许强制开工
             if (!isAllowPartialKitStart()) {
                 throw new NopException(ErpMfgErrors.ERR_PARTIAL_KIT_START_FORBIDDEN)
                         .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
@@ -195,19 +297,7 @@ public class ErpMfgWorkOrderProcessor {
         }
     }
 
-    // ---------- step：执行（状态推进 + 持久化） ----------
-
-    protected void doSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED);
-        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
-        workOrderDao().updateEntity(wo);
-    }
-
-    protected void doApprove(ErpMfgWorkOrder wo, IServiceContext context) {
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED);
-        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
-        workOrderDao().updateEntity(wo);
-    }
+    // ---------- step：工单操作执行 ----------
 
     protected void doStart(ErpMfgWorkOrder wo, IServiceContext context) {
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS);
@@ -224,14 +314,11 @@ public class ErpMfgWorkOrderProcessor {
         ErpMfgWorkOrderLine outputLine = findOutputLine(wo.getId());
         Long destWarehouseId = outputLine != null ? outputLine.getDestWarehouseId() : null;
         if (destWarehouseId == null) {
-            // 无目的仓库（未配 OUTPUT 行的入库仓库）则跳过入库移动单生成，仅完成状态迁移；
-            // 库存记账需仓库维度，缺仓库无法写流水（避免 mandatory 违规）
             return;
         }
         Long productId = wo.getProductId();
         Long uomId = outputLine != null ? outputLine.getUoMId() : null;
         if (uomId == null && productId != null) {
-            // 无 OUTPUT 行时回落到产品物料的计量单位
             ErpMdMaterial product = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(productId);
             uomId = product != null ? product.getUoMId() : null;
         }
@@ -280,11 +367,11 @@ public class ErpMfgWorkOrderProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpMfgWorkOrder requireWorkOrder(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = workOrderDao().getEntityById(workOrderId);
+    protected ErpMfgWorkOrder requireWorkOrder(String id, IServiceContext context) {
+        ErpMfgWorkOrder wo = workOrderDao().getEntityById(id);
         if (wo == null) {
             throw new NopException(ErpMfgErrors.ERR_WORK_ORDER_NOT_FOUND)
-                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, String.valueOf(workOrderId));
+                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, id);
         }
         return wo;
     }
@@ -334,6 +421,18 @@ public class ErpMfgWorkOrderProcessor {
 
     static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    protected String currentUserId() {
+        try {
+            IUserContext ctx = IUserContext.get();
+            if (ctx == null) {
+                return null;
+            }
+            return ctx.getUserId();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     protected NopException illegalTransition(ErpMfgWorkOrder wo, String current, String expected) {

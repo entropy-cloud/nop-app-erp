@@ -78,8 +78,8 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
         // 工单流转到 IN_PROCESS
-        rpcOk(mutation, "ErpMfgWorkOrder__submit", Map.of("workOrderId", woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 
@@ -134,8 +134,8 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submit", Map.of("workOrderId", woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 

@@ -18,6 +18,8 @@ prop:
     ErpSalContract:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 签订日期
       code: 合同号
       contractName: 合同名称
@@ -255,6 +257,8 @@ prop:
     ErpSalQuotation:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 报价日期
       code: 单号
       createTime: 创建时间

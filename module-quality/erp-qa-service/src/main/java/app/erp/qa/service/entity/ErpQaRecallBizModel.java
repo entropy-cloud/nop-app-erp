@@ -39,8 +39,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 召回事件 BizModel。在 {@link CrudBizModel} 标准 CRUD 之上实现召回 5 态状态机
  * （{@code docs/design/quality/recall.md §召回状态机`}）。
  *
- * <p>迁移：register（→OPEN）、submit（→SUBMITTED）、approve（→APPROVED，强制审批）、
- * reject（→CANCELLED）、cancel（非终态→CANCELLED）、close（IN_PROGRESS→CLOSED，门控通知）。
+ * <p>迁移：register（→OPEN）、标准审批（submitForApproval/approve/reject，由平台 {@code approval-support.xbiz}
+ * 提供，recall.status 联动经 xbiz {@code <source>} 内联）、cancel（非终态→CANCELLED）、close（IN_PROGRESS→CLOSED，门控通知）。
  * 非法迁移抛 {@link ErpQaErrors#ERR_INVALID_RECALL_STATUS_TRANSITION}。
  *
  * <p>目标定位（locateTargets）/客户通知（notifyCustomers）/批量退货（generateReturns）
@@ -97,48 +97,6 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
             recall.setBusinessDate(LocalDate.now());
         }
         saveEntity(recall, null, context);
-        return recall;
-    }
-
-    @Override
-    @BizMutation
-    public ErpQaRecall submit(@Name("recallId") Long recallId, IServiceContext context) {
-        ErpQaRecall recall = requireRecall(recallId, context);
-        requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_OPEN, "OPEN");
-        requireApproveStatus(recall, ErpQaConstants.APPROVE_STATUS_UNSUBMITTED, "UNSUBMITTED");
-        recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_SUBMITTED);
-        dao().updateEntity(recall);
-        return recall;
-    }
-
-    @Override
-    @BizMutation
-    public ErpQaRecall approve(@Name("recallId") Long recallId, IServiceContext context) {
-        ErpQaRecall recall = requireRecall(recallId, context);
-        requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_OPEN, "OPEN");
-        // 强制审批：配置开启时须先 submit（approveStatus=SUBMITTED）
-        if (ErpQaConfigs.isRecallRequireApproval()
-                && (recall.getApproveStatus() == null
-                || !Objects.equals(recall.getApproveStatus(), ErpQaConstants.APPROVE_STATUS_SUBMITTED))) {
-            throw new NopException(ErpQaErrors.ERR_RECALL_APPROVAL_REQUIRED)
-                    .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
-        }
-        recall.setStatus(ErpQaConstants.RECALL_STATUS_APPROVED);
-        recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_APPROVED);
-        recall.setApprovedAt(LocalDateTime.now());
-        recall.setApprovedBy(context.getUserId());
-        dao().updateEntity(recall);
-        return recall;
-    }
-
-    @Override
-    @BizMutation
-    public ErpQaRecall reject(@Name("recallId") Long recallId, IServiceContext context) {
-        ErpQaRecall recall = requireRecall(recallId, context);
-        requireApproveStatus(recall, ErpQaConstants.APPROVE_STATUS_SUBMITTED, "SUBMITTED");
-        recall.setStatus(ErpQaConstants.RECALL_STATUS_CANCELLED);
-        recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_REJECTED);
-        dao().updateEntity(recall);
         return recall;
     }
 
@@ -297,16 +255,6 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         String current = recall.getStatus();
         if (current == null || !Objects.equals(current, expected)) {
             throw illegalRecallTransition(recall, current, expectedLabel);
-        }
-    }
-
-    private void requireApproveStatus(ErpQaRecall recall, String expected, String expectedLabel) {
-        String current = recall.getApproveStatus();
-        if (current == null || !Objects.equals(current, expected)) {
-            throw new NopException(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION)
-                    .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode())
-                    .param(ErpQaErrors.ARG_CURRENT_STATUS, current)
-                    .param(ErpQaErrors.ARG_EXPECTED_STATUS, expectedLabel);
         }
     }
 

@@ -20,9 +20,15 @@ import java.util.Objects;
 import java.util.List;
 
 /**
- * 收款单审批状态机 + RECEIPT 过账 + 域级核销编排 Processor
- * （{@code processor-extension-pattern.md} Facade + Processor）。Facade {@code ErpSalReceiptBizModel}
- * 仅负责入口/事务/委托，编排委托本类。
+ * 收款单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
+ *
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
+ *
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  *
  * <p>跨实体：客户启用校验经 {@link IErpMdPartnerBiz}；过账经 {@link SalReceiptPostingDispatcher} →凭证聚合根 Facade；
  * 核销经 {@link ReceiptSettler}。
@@ -41,65 +47,54 @@ public class ErpSalReceiptProcessor {
     @Inject
     ReceiptSettler receiptSettler;
 
-    public ErpSalReceipt submit(Long receiptId, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(receiptId, context);
+    public ErpSalReceipt submitForApproval(String id, IServiceContext context) {
+        ErpSalReceipt receipt = requireReceipt(id, context);
+        validateNotCancelled(receipt, context);
         validateTransitionForSubmit(receipt, context);
         validateBusinessRulesForSubmit(receipt, context);
         doSubmit(receipt, context);
         return receipt;
     }
 
-    public ErpSalReceipt withdrawSubmit(Long receiptId, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(receiptId, context);
+    public ErpSalReceipt withdrawApproval(String id, IServiceContext context) {
+        ErpSalReceipt receipt = requireReceipt(id, context);
         validateNotCancelled(receipt, context);
         validateTransitionForWithdraw(receipt, context);
         doWithdrawSubmit(receipt, context);
         return receipt;
     }
 
-    public ErpSalReceipt approve(Long receiptId, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(receiptId, context);
-        // 幂等：已审核单据再次审核为空操作
+    public ErpSalReceipt approve(String id, IServiceContext context) {
+        ErpSalReceipt receipt = requireReceipt(id, context);
         if (isAlreadyApproved(receipt)) {
             return receipt;
         }
         validateNotCancelled(receipt, context);
         validateTransitionForApprove(receipt, context);
         validateBusinessRulesForApprove(receipt, context);
-
-        boolean posted = doPosting(receipt, context);
-        // 跨域 post 调用扰动会话脏跟踪，重新加载后置 posted 标志并显式持久化。
-        receipt = receiptDao().getEntityById(receiptId);
-        doApprove(receipt, posted, context);
+        doApprove(receipt, context);
         return receipt;
     }
 
-    public ErpSalReceipt reject(Long receiptId, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(receiptId, context);
+    public ErpSalReceipt reject(String id, IServiceContext context) {
+        ErpSalReceipt receipt = requireReceipt(id, context);
         validateNotCancelled(receipt, context);
         validateTransitionForReject(receipt, context);
         doReject(receipt, context);
         return receipt;
     }
 
-    public ErpSalReceipt reverseApprove(Long receiptId, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(receiptId, context);
+    public ErpSalReceipt reverseApprove(String id, IServiceContext context) {
+        ErpSalReceipt receipt = requireReceipt(id, context);
         if (isAlreadyRejected(receipt)) {
             return receipt;
         }
         validateTransitionForReverseApprove(receipt, context);
-        if (Boolean.TRUE.equals(receipt.getPosted())) {
-            postingDispatcher.reverse(receipt);
-            receipt = receiptDao().getEntityById(receiptId);
-            receipt.setPosted(false);
-            receipt.setPostedAt(null);
-            receipt.setPostedBy(null);
-        }
         doReverseApprove(receipt, context);
         return receipt;
     }
 
-    public ErpSalReceipt cancel(Long receiptId, IServiceContext context) {
+    public ErpSalReceipt cancel(String receiptId, IServiceContext context) {
         ErpSalReceipt receipt = requireReceipt(receiptId, context);
         validateTransitionForCancel(receipt, context);
         String approveStatus = receipt.getApproveStatus();
@@ -115,20 +110,19 @@ public class ErpSalReceiptProcessor {
         return receipt;
     }
 
-    public ErpSalReceipt settle(Long receiptId, List<SettlementAllocation> allocations, IServiceContext context) {
+    public ErpSalReceipt settle(String receiptId, List<SettlementAllocation> allocations, IServiceContext context) {
         ErpSalReceipt receipt = requireReceipt(receiptId, context);
         return receiptSettler.settle(receipt, allocations);
     }
 
-    public ErpSalReceipt reverseSettlement(Long receiptId, Long invoiceId, IServiceContext context) {
+    public ErpSalReceipt reverseSettlement(String receiptId, Long invoiceId, IServiceContext context) {
         ErpSalReceipt receipt = requireReceipt(receiptId, context);
         return receiptSettler.reverseSettlement(receipt, invoiceId);
     }
 
-    // ---------- step：迁移校验 ----------
+    // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpSalReceipt receipt, IServiceContext context) {
-        validateNotCancelled(receipt, context);
         String status = receipt.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
@@ -184,11 +178,7 @@ public class ErpSalReceiptProcessor {
         requireCustomerActive(receipt, context);
     }
 
-    // ---------- step：过账/执行 ----------
-
-    protected boolean doPosting(ErpSalReceipt receipt, IServiceContext context) {
-        return postingDispatcher.tryPost(receipt);
-    }
+    // ---------- step：执行（状态推进 + 持久化） ----------
 
     protected void doSubmit(ErpSalReceipt receipt, IServiceContext context) {
         receipt.setApproveStatus(ErpSalConstants.APPROVE_STATUS_SUBMITTED);
@@ -200,7 +190,9 @@ public class ErpSalReceiptProcessor {
         receiptDao().updateEntity(receipt);
     }
 
-    protected void doApprove(ErpSalReceipt receipt, boolean posted, IServiceContext context) {
+    protected void doApprove(ErpSalReceipt receipt, IServiceContext context) {
+        boolean posted = doPosting(receipt, context);
+        receipt = receiptDao().getEntityById(receipt.getId());
         receipt.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         receipt.setApprovedBy(currentUserId());
         receipt.setApprovedAt(CoreMetrics.currentDateTime());
@@ -218,6 +210,13 @@ public class ErpSalReceiptProcessor {
     }
 
     protected void doReverseApprove(ErpSalReceipt receipt, IServiceContext context) {
+        if (Boolean.TRUE.equals(receipt.getPosted())) {
+            postingDispatcher.reverse(receipt);
+            receipt = receiptDao().getEntityById(receipt.getId());
+            receipt.setPosted(false);
+            receipt.setPostedAt(null);
+            receipt.setPostedBy(null);
+        }
         receipt.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
         receiptDao().updateEntity(receipt);
     }
@@ -227,13 +226,19 @@ public class ErpSalReceiptProcessor {
         receiptDao().updateEntity(receipt);
     }
 
-    // ---------- 校验/查询辅助 ----------
+    // ---------- 过账 ----------
 
-    protected ErpSalReceipt requireReceipt(Long receiptId, IServiceContext context) {
-        ErpSalReceipt receipt = receiptDao().getEntityById(receiptId);
+    protected boolean doPosting(ErpSalReceipt receipt, IServiceContext context) {
+        return postingDispatcher.tryPost(receipt);
+    }
+
+    // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
+
+    protected ErpSalReceipt requireReceipt(String id, IServiceContext context) {
+        ErpSalReceipt receipt = receiptDao().getEntityById(id);
         if (receipt == null) {
             throw new NopException(ErpSalErrors.ERR_RECEIPT_NOT_FOUND)
-                    .param(ErpSalErrors.ARG_RECEIPT_ID, receiptId);
+                    .param(ErpSalErrors.ARG_RECEIPT_CODE, id);
         }
         return receipt;
     }

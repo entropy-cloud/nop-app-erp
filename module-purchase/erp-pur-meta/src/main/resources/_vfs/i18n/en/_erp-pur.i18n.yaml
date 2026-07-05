@@ -242,6 +242,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       rfq: Rfq
       supplier: Supplier
       currency: Currency
@@ -465,6 +467,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       requisition: Requisition
       org: Org
       lines: Lines

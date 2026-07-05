@@ -121,15 +121,15 @@ public class TestErpSalInvoicePosting extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private ApiResponse<?> approve(Long id) {
-        return executeRpc(mutation, "ErpSalInvoice__approve", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpSalInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> submit(Long id) {
-        return executeRpc(mutation, "ErpSalInvoice__submit", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpSalInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApprove(Long id) {
-        return executeRpc(mutation, "ErpSalInvoice__reverseApprove", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpSalInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

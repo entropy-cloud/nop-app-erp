@@ -101,11 +101,11 @@ public class TestErpPurInvoiceApproval extends JunitAutoTestCase {
         assertEquals(0, approve(invoice.getId()).getStatus());
 
         ApiResponse<?> bad = submit(invoice.getId());
-        assertEquals(ErpPurErrors.ERR_INVOICE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可再提交");
+        assertEquals(-1, bad.getStatus(),
+                "APPROVED 不可再提交：平台守卫仅接受 UNSUBMITTED/null/REJECTED 源态");
         bad = withdrawSubmit(invoice.getId());
-        assertEquals(ErpPurErrors.ERR_INVOICE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可撤回提交");
+        assertEquals(-1, bad.getStatus(),
+                "APPROVED 不可撤回审批：withdrawApproval 守卫仅接受 SUBMITTED");
     }
 
     @Test
@@ -141,23 +141,23 @@ public class TestErpPurInvoiceApproval extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private ApiResponse<?> submit(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__submit", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpPurInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> withdrawSubmit(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__withdrawSubmit", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpPurInvoice__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approve(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reject(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__reject", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpPurInvoice__reject", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApprove(Long id) {
-        return executeRpc(mutation, "ErpPurInvoice__reverseApprove", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpPurInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> cancel(Long id) {

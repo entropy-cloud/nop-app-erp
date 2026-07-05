@@ -24,6 +24,7 @@ import java.util.Map;
 
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 1 服务层集成测试：销售订单三轴审批状态机（仅状态推进，不触发库存/凭证）+ 客户启用校验 +
@@ -90,14 +91,12 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
         });
 
         ApiResponse<?> bad = approve(order.getId());
-        assertEquals(ErpSalErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "未提交不可直接审核，应返回非法迁移错误");
+        assertTrue(bad.getStatus() != 0, "未提交不可直接审核，应被状态守卫拒绝");
 
         assertEquals(0, submit(order.getId()).getStatus());
         assertEquals(0, withdrawSubmit(order.getId()).getStatus());
         bad = withdrawSubmit(order.getId());
-        assertEquals(ErpSalErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "UNSUBMITTED 不可撤回提交，应返回非法迁移错误");
+        assertTrue(bad.getStatus() != 0, "UNSUBMITTED 不可撤回提交，应被状态守卫拒绝");
     }
 
     @Test
@@ -196,19 +195,19 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submit(Long orderId) {
-        return executeRpc(mutation, "ErpSalOrder__submit", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpSalOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> withdrawSubmit(Long orderId) {
-        return executeRpc(mutation, "ErpSalOrder__withdrawSubmit", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpSalOrder__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> approve(Long orderId) {
-        return executeRpc(mutation, "ErpSalOrder__approve", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpSalOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> reject(Long orderId) {
-        return executeRpc(mutation, "ErpSalOrder__reject", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpSalOrder__reject", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

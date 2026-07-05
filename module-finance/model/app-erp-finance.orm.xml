@@ -91,6 +91,7 @@
             <option code="BAD_DEBT_RECOVERY" label="坏账收回恢复" value="BAD_DEBT_RECOVERY" i18n-en:label='Bad Debt Recovery'/>
             <option code="BAD_DEBT_RELEASE" label="坏账准备释放" value="BAD_DEBT_RELEASE" i18n-en:label='Bad Debt Release'/>
             <option code="PROFIT_TO_RETAINED_EARNINGS" label="本年利润结转未分配利润" value="PROFIT_TO_RETAINED_EARNINGS" i18n-en:label='Profit to Retained Earnings'/>
+            <option code="VALUE_ADJUSTMENT" label="资产减值/重估" value="VALUE_ADJUSTMENT" i18n-en:label='Asset Value Adjustment'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>
@@ -849,7 +850,7 @@
         <!-- 费用报销单头（员工费用报销，价税分离 + 项目/成本中心归集 + 业财过账） -->
         <entity className="app.erp.fin.dao.entity.ErpFinExpenseClaim"
                 displayName="费用报销单" ext:icon="receipt" i18n-en:displayName="Expense Claim" name="app.erp.fin.dao.entity.ErpFinExpenseClaim"
-                tableName="erp_fin_expense_claim" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_expense_claim" tagSet="gid,erp.finance,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
@@ -868,7 +869,7 @@
                 <column name="settleAdvanceId" displayName="抵扣借款单" stdSqlType="BIGINT" code="SETTLE_ADVANCE_ID" propId="15" stdDataType="long" i18n-en:displayName='Settle Advance' />
                 <column name="reason" displayName="报销事由" domain="memo" code="REASON" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Reason' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-fin/expense-claim-status" mandatory="true" code="DOC_STATUS" propId="17" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVE_STATUS" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="19" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="20" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean" i18n-en:displayName='Posted' />
@@ -928,7 +929,7 @@
         <!-- 员工借款单（预支/备用金/差旅借款，方向=其他应收款-员工预支） -->
         <entity className="app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
                 displayName="员工借款单" ext:icon="hand-coins" i18n-en:displayName="Employee Advance" name="app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
-                tableName="erp_fin_employee_advance" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_employee_advance" tagSet="gid,erp.finance,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
@@ -944,7 +945,7 @@
                 <column name="outstandingAmount" displayName="未还金额" domain="amount" defaultValue="0" code="OUTSTANDING_AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Outstanding Amount' />
                 <column name="projectId" displayName="关联项目" stdSqlType="BIGINT" code="PROJECT_ID" propId="13" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-fin/advance-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVE_STATUS" propId="15" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="15" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="16" stdDataType="string" i18n-en:displayName='Approved By' />
                 <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="17" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="posted" displayName="是否已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="18" stdDataType="boolean" i18n-en:displayName='Posted' />
@@ -1192,7 +1193,7 @@
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="10" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="11" stdDataType="date" i18n-en:displayName='Business Date' />
                 <column name="reason" displayName="核销/恢复原因" stdSqlType="VARCHAR" precision="500" code="REASON" propId="12" stdDataType="string" i18n-en:displayName='Reason' />
-                <column name="approvalStatus" displayName="审核状态" ext:dict="erp-fin/approve-status" mandatory="true" code="APPROVAL_STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approval Status' />
+                <column name="approvalStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVAL_STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approval Status' />
                 <column name="periodId" displayName="所属期间" stdSqlType="BIGINT" code="PERIOD_ID" propId="14" stdDataType="long" i18n-en:displayName='Period' />
                 <column name="voucherId" displayName="关联凭证ID" stdSqlType="BIGINT" code="VOUCHER_ID" propId="15" stdDataType="long" i18n-en:displayName='Voucher' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />

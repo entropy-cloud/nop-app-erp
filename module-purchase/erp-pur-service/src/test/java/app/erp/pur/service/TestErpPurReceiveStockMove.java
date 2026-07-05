@@ -128,7 +128,7 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         });
 
         assertEquals(0, approve(receiveId).getStatus());
-        assertEquals(0, approve(receiveId).getStatus()); // 二次审核幂等空操作
+        assertTrue(approve(receiveId).getStatus() == 0, "二次审核幂等返回成功（isAlreadyApproved 守卫：不重复执行业务回调）");
 
         assertEquals(1, countMoves("PR-IDEM-001"), "幂等：不应产生第二张入库移动单");
     }
@@ -209,18 +209,18 @@ public class TestErpPurReceiveStockMove extends JunitAutoTestCase {
         assertEquals(Boolean.TRUE.equals(reversal.getPosted()), reversalLink != null,
                 "冲销单 posted 与红字凭证回链一致");
 
-        assertEquals(0, reverseApprove(receiveId).getStatus());
+        assertTrue(reverseApprove(receiveId).getStatus() == 0, "二次反审核幂等返回成功（isAlreadyRejected 守卫：不重复执行冲销）");
         assertEquals(1, countReversals(original.getCode()), "二次反审核幂等，不产生第二张冲销单");
     }
 
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> approve(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> reverseApprove(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

@@ -23,9 +23,15 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 销售发票审批状态机 + AR_INVOICE 过账编排 Processor
- * （{@code processor-extension-pattern.md} Facade + Processor）。Facade {@code ErpSalInvoiceBizModel}
- * 仅负责入口/事务/委托，编排委托本类。
+ * 销售发票审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
+ *
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
+ *
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  *
  * <p>跨实体：客户启用校验经 {@link IErpMdPartnerBiz}；过账经 {@link SalInvoicePostingDispatcher} →凭证聚合根 Facade。
  */
@@ -40,67 +46,54 @@ public class ErpSalInvoiceProcessor {
     @Inject
     SalInvoicePostingDispatcher postingDispatcher;
 
-    public ErpSalInvoice submit(Long invoiceId, IServiceContext context) {
-        ErpSalInvoice invoice = requireInvoice(invoiceId, context);
+    public ErpSalInvoice submitForApproval(String id, IServiceContext context) {
+        ErpSalInvoice invoice = requireInvoice(id, context);
+        validateNotCancelled(invoice, context);
         validateTransitionForSubmit(invoice, context);
         validateBusinessRulesForSubmit(invoice, context);
         doSubmit(invoice, context);
         return invoice;
     }
 
-    public ErpSalInvoice withdrawSubmit(Long invoiceId, IServiceContext context) {
-        ErpSalInvoice invoice = requireInvoice(invoiceId, context);
+    public ErpSalInvoice withdrawApproval(String id, IServiceContext context) {
+        ErpSalInvoice invoice = requireInvoice(id, context);
         validateNotCancelled(invoice, context);
         validateTransitionForWithdraw(invoice, context);
         doWithdrawSubmit(invoice, context);
         return invoice;
     }
 
-    public ErpSalInvoice approve(Long invoiceId, IServiceContext context) {
-        ErpSalInvoice invoice = requireInvoice(invoiceId, context);
-        // 幂等：已审核单据再次审核为空操作（state-machine §4），凭证已存在，不重复触发。
+    public ErpSalInvoice approve(String id, IServiceContext context) {
+        ErpSalInvoice invoice = requireInvoice(id, context);
         if (isAlreadyApproved(invoice)) {
             return invoice;
         }
         validateNotCancelled(invoice, context);
         validateTransitionForApprove(invoice, context);
         validateBusinessRulesForApprove(invoice, context);
-
-        boolean posted = doPosting(invoice, context);
-        // 跨域 post 调用扰动会话脏跟踪，重新加载后置 posted 标志并显式持久化。
-        invoice = invoiceDao().getEntityById(invoiceId);
-        doApprove(invoice, posted, context);
+        doApprove(invoice, context);
         return invoice;
     }
 
-    public ErpSalInvoice reject(Long invoiceId, IServiceContext context) {
-        ErpSalInvoice invoice = requireInvoice(invoiceId, context);
+    public ErpSalInvoice reject(String id, IServiceContext context) {
+        ErpSalInvoice invoice = requireInvoice(id, context);
         validateNotCancelled(invoice, context);
         validateTransitionForReject(invoice, context);
         doReject(invoice, context);
         return invoice;
     }
 
-    public ErpSalInvoice reverseApprove(Long invoiceId, IServiceContext context) {
-        ErpSalInvoice invoice = requireInvoice(invoiceId, context);
-        // 幂等：已 REJECTED（曾驳回或已反审核）无更多可冲销，直接返回。
+    public ErpSalInvoice reverseApprove(String id, IServiceContext context) {
+        ErpSalInvoice invoice = requireInvoice(id, context);
         if (isAlreadyRejected(invoice)) {
             return invoice;
         }
         validateTransitionForReverseApprove(invoice, context);
-        // 红字冲销已过账凭证（幂等：未过账则跳过），冲销前置防篡改已入账数据（state-machine §3）
-        if (Boolean.TRUE.equals(invoice.getPosted())) {
-            postingDispatcher.reverse(invoice);
-            invoice = invoiceDao().getEntityById(invoiceId);
-            invoice.setPosted(false);
-            invoice.setPostedAt(null);
-            invoice.setPostedBy(null);
-        }
         doReverseApprove(invoice, context);
         return invoice;
     }
 
-    public ErpSalInvoice cancel(Long invoiceId, IServiceContext context) {
+    public ErpSalInvoice cancel(String invoiceId, IServiceContext context) {
         ErpSalInvoice invoice = requireInvoice(invoiceId, context);
         validateTransitionForCancel(invoice, context);
         String approveStatus = invoice.getApproveStatus();
@@ -116,10 +109,9 @@ public class ErpSalInvoiceProcessor {
         return invoice;
     }
 
-    // ---------- step：迁移校验 ----------
+    // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpSalInvoice invoice, IServiceContext context) {
-        validateNotCancelled(invoice, context);
         String status = invoice.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
@@ -176,11 +168,7 @@ public class ErpSalInvoiceProcessor {
         requireCustomerActive(invoice, context);
     }
 
-    // ---------- step：过账/执行 ----------
-
-    protected boolean doPosting(ErpSalInvoice invoice, IServiceContext context) {
-        return postingDispatcher.tryPost(invoice);
-    }
+    // ---------- step：执行（状态推进 + 持久化） ----------
 
     protected void doSubmit(ErpSalInvoice invoice, IServiceContext context) {
         invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_SUBMITTED);
@@ -192,7 +180,9 @@ public class ErpSalInvoiceProcessor {
         invoiceDao().updateEntity(invoice);
     }
 
-    protected void doApprove(ErpSalInvoice invoice, boolean posted, IServiceContext context) {
+    protected void doApprove(ErpSalInvoice invoice, IServiceContext context) {
+        boolean posted = doPosting(invoice, context);
+        invoice = invoiceDao().getEntityById(invoice.getId());
         invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         invoice.setApprovedBy(currentUserId());
         invoice.setApprovedAt(CoreMetrics.currentDateTime());
@@ -210,6 +200,13 @@ public class ErpSalInvoiceProcessor {
     }
 
     protected void doReverseApprove(ErpSalInvoice invoice, IServiceContext context) {
+        if (Boolean.TRUE.equals(invoice.getPosted())) {
+            postingDispatcher.reverse(invoice);
+            invoice = invoiceDao().getEntityById(invoice.getId());
+            invoice.setPosted(false);
+            invoice.setPostedAt(null);
+            invoice.setPostedBy(null);
+        }
         invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
         invoiceDao().updateEntity(invoice);
     }
@@ -219,13 +216,19 @@ public class ErpSalInvoiceProcessor {
         invoiceDao().updateEntity(invoice);
     }
 
-    // ---------- 校验/查询辅助 ----------
+    // ---------- 过账 ----------
 
-    protected ErpSalInvoice requireInvoice(Long invoiceId, IServiceContext context) {
-        ErpSalInvoice invoice = invoiceDao().getEntityById(invoiceId);
+    protected boolean doPosting(ErpSalInvoice invoice, IServiceContext context) {
+        return postingDispatcher.tryPost(invoice);
+    }
+
+    // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
+
+    protected ErpSalInvoice requireInvoice(String id, IServiceContext context) {
+        ErpSalInvoice invoice = invoiceDao().getEntityById(id);
         if (invoice == null) {
             throw new NopException(ErpSalErrors.ERR_INVOICE_NOT_FOUND)
-                    .param(ErpSalErrors.ARG_INVOICE_ID, invoiceId);
+                    .param(ErpSalErrors.ARG_INVOICE_CODE, id);
         }
         return invoice;
     }
@@ -267,7 +270,6 @@ public class ErpSalInvoiceProcessor {
     }
 
     protected List<ErpSalInvoiceLine> loadLines(Long invoiceId) {
-        // D2 边界场景：同聚合子表加载，父实体已授权，子行无独立权限规则。
         IEntityDao<ErpSalInvoiceLine> dao = daoProvider.daoFor(ErpSalInvoiceLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("invoiceId", invoiceId));

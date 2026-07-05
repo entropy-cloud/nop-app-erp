@@ -97,9 +97,9 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     public static final String PROP_NAME_paymentDate = "paymentDate";
     public static final int PROP_ID_paymentDate = 19;
     
-    /* 审批状态: APPROVAL_STATUS VARCHAR */
-    public static final String PROP_NAME_approvalStatus = "approvalStatus";
-    public static final int PROP_ID_approvalStatus = 28;
+    /* 审核状态: APPROVE_STATUS VARCHAR */
+    public static final String PROP_NAME_approveStatus = "approveStatus";
+    public static final int PROP_ID_approveStatus = 28;
     
     /* 绩效系数: PERFORMANCE_FACTOR DECIMAL */
     public static final String PROP_NAME_performanceFactor = "performanceFactor";
@@ -169,8 +169,16 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 45;
     
+    /* 审核人: APPROVED_BY VARCHAR */
+    public static final String PROP_NAME_approvedBy = "approvedBy";
+    public static final int PROP_ID_approvedBy = 90;
+    
+    /* 审核时间: APPROVED_AT DATETIME */
+    public static final String PROP_NAME_approvedAt = "approvedAt";
+    public static final int PROP_ID_approvedAt = 91;
+    
 
-    private static int _PROP_ID_BOUND = 46;
+    private static int _PROP_ID_BOUND = 92;
 
     
     /* relation:  */
@@ -186,7 +194,7 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[46];
+    private static final String[] PROP_ID_TO_NAME = new String[92];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -247,8 +255,8 @@ public class _ErpHrSalary extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_paymentDate] = PROP_NAME_paymentDate;
           PROP_NAME_TO_ID.put(PROP_NAME_paymentDate, PROP_ID_paymentDate);
       
-          PROP_ID_TO_NAME[PROP_ID_approvalStatus] = PROP_NAME_approvalStatus;
-          PROP_NAME_TO_ID.put(PROP_NAME_approvalStatus, PROP_ID_approvalStatus);
+          PROP_ID_TO_NAME[PROP_ID_approveStatus] = PROP_NAME_approveStatus;
+          PROP_NAME_TO_ID.put(PROP_NAME_approveStatus, PROP_ID_approveStatus);
       
           PROP_ID_TO_NAME[PROP_ID_performanceFactor] = PROP_NAME_performanceFactor;
           PROP_NAME_TO_ID.put(PROP_NAME_performanceFactor, PROP_ID_performanceFactor);
@@ -300,6 +308,12 @@ public class _ErpHrSalary extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedBy] = PROP_NAME_approvedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedBy, PROP_ID_approvedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
       
     }
 
@@ -361,8 +375,8 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     /* 实发日期: PAYMENT_DATE */
     private java.time.LocalDate _paymentDate;
     
-    /* 审批状态: APPROVAL_STATUS */
-    private java.lang.String _approvalStatus;
+    /* 审核状态: APPROVE_STATUS */
+    private java.lang.String _approveStatus;
     
     /* 绩效系数: PERFORMANCE_FACTOR */
     private java.math.BigDecimal _performanceFactor;
@@ -414,6 +428,12 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 审核人: APPROVED_BY */
+    private java.lang.String _approvedBy;
+    
+    /* 审核时间: APPROVED_AT */
+    private java.time.LocalDateTime _approvedAt;
     
 
     public _ErpHrSalary(){
@@ -546,8 +566,8 @@ public class _ErpHrSalary extends DynamicOrmEntity{
             case PROP_ID_paymentDate:
                return getPaymentDate();
         
-            case PROP_ID_approvalStatus:
-               return getApprovalStatus();
+            case PROP_ID_approveStatus:
+               return getApproveStatus();
         
             case PROP_ID_performanceFactor:
                return getPerformanceFactor();
@@ -599,6 +619,12 @@ public class _ErpHrSalary extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_approvedBy:
+               return getApprovedBy();
+        
+            case PROP_ID_approvedAt:
+               return getApprovedAt();
         
            default:
               return super.orm_propValue(propId);
@@ -801,13 +827,13 @@ public class _ErpHrSalary extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_approvalStatus:{
+            case PROP_ID_approveStatus:{
                java.lang.String typedValue = null;
                if(value != null){
                    typedValue = ConvertHelper.toString(value,
-                       err-> newTypeConversionError(PROP_NAME_approvalStatus));
+                       err-> newTypeConversionError(PROP_NAME_approveStatus));
                }
-               setApprovalStatus(typedValue);
+               setApproveStatus(typedValue);
                break;
             }
         
@@ -981,6 +1007,26 @@ public class _ErpHrSalary extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_approvedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedBy));
+               }
+               setApprovedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               java.time.LocalDateTime typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDateTime(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedAt));
+               }
+               setApprovedAt(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1123,9 +1169,9 @@ public class _ErpHrSalary extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_approvalStatus:{
+            case PROP_ID_approveStatus:{
                onInitProp(propId);
-               this._approvalStatus = (java.lang.String)value;
+               this._approveStatus = (java.lang.String)value;
                
                break;
             }
@@ -1245,6 +1291,20 @@ public class _ErpHrSalary extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedBy:{
+               onInitProp(propId);
+               this._approvedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               onInitProp(propId);
+               this._approvedAt = (java.time.LocalDateTime)value;
                
                break;
             }
@@ -1617,20 +1677,20 @@ public class _ErpHrSalary extends DynamicOrmEntity{
     }
     
     /**
-     * 审批状态: APPROVAL_STATUS
+     * 审核状态: APPROVE_STATUS
      */
-    public final java.lang.String getApprovalStatus(){
-         onPropGet(PROP_ID_approvalStatus);
-         return _approvalStatus;
+    public final java.lang.String getApproveStatus(){
+         onPropGet(PROP_ID_approveStatus);
+         return _approveStatus;
     }
 
     /**
-     * 审批状态: APPROVAL_STATUS
+     * 审核状态: APPROVE_STATUS
      */
-    public final void setApprovalStatus(java.lang.String value){
-        if(onPropSet(PROP_ID_approvalStatus,value)){
-            this._approvalStatus = value;
-            internalClearRefs(PROP_ID_approvalStatus);
+    public final void setApproveStatus(java.lang.String value){
+        if(onPropSet(PROP_ID_approveStatus,value)){
+            this._approveStatus = value;
+            internalClearRefs(PROP_ID_approveStatus);
             
         }
     }
@@ -1954,6 +2014,44 @@ public class _ErpHrSalary extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final java.lang.String getApprovedBy(){
+         onPropGet(PROP_ID_approvedBy);
+         return _approvedBy;
+    }
+
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final void setApprovedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_approvedBy,value)){
+            this._approvedBy = value;
+            internalClearRefs(PROP_ID_approvedBy);
+            
+        }
+    }
+    
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final java.time.LocalDateTime getApprovedAt(){
+         onPropGet(PROP_ID_approvedAt);
+         return _approvedAt;
+    }
+
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final void setApprovedAt(java.time.LocalDateTime value){
+        if(onPropSet(PROP_ID_approvedAt,value)){
+            this._approvedAt = value;
+            internalClearRefs(PROP_ID_approvedAt);
             
         }
     }

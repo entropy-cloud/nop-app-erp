@@ -77,8 +77,8 @@
         <entity className="app.erp.sal.dao.entity.ErpSalQuotation" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售报价单"
                 name="app.erp.sal.dao.entity.ErpSalQuotation" registerShortName="true" tableName="erp_sal_quotation"
-                tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="file-sign" i18n-en:displayName="Sales Quotation">
+                tagSet="gid,erp.sales,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="file-sign" i18n-en:displayName="Sales Quotation">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -114,7 +114,7 @@
                         propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/approve-status"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="16" stdDataType="long" stdSqlType="BIGINT"
@@ -133,6 +133,10 @@
                         propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="22"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
@@ -234,8 +238,8 @@
         <entity className="app.erp.sal.dao.entity.ErpSalContract" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售合同"
                 name="app.erp.sal.dao.entity.ErpSalContract" registerShortName="true" tableName="erp_sal_contract"
-                tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="file-text" i18n-en:displayName="Sales Contract">
+                tagSet="gid,erp.sales,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="file-text" i18n-en:displayName="Sales Contract">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -273,7 +277,7 @@
                         propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/approve-status"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="17" stdDataType="long" stdSqlType="BIGINT"
@@ -292,6 +296,10 @@
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="23"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
@@ -317,8 +325,8 @@
         <entity className="app.erp.sal.dao.entity.ErpSalOrder" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售订单"
                 name="app.erp.sal.dao.entity.ErpSalOrder" registerShortName="true" tableName="erp_sal_order"
-                tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="receipt" i18n-en:displayName="Sales Order">
+                tagSet="gid,erp.sales,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="receipt" i18n-en:displayName="Sales Order">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -373,7 +381,7 @@
                         propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="22" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/approve-status"
+                        propId="22" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="RECEIVED_STATUS" displayName="收款进度" name="receivedStatus" precision="20" propId="23"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/received-status"
@@ -573,8 +581,9 @@
         <entity className="app.erp.sal.dao.entity.ErpSalDelivery" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售出库单"
                 name="app.erp.sal.dao.entity.ErpSalDelivery" registerShortName="true" tableName="erp_sal_delivery"
-                tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="package-minus" i18n-en:displayName="Sales Delivery">
+                tagSet="gid,erp.sales,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="package-minus"
+                i18n-en:displayName="Sales Delivery">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -614,7 +623,7 @@
                         propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/approve-status"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="17"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -780,8 +789,8 @@
         <entity className="app.erp.sal.dao.entity.ErpSalInvoice" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售发票"
                 name="app.erp.sal.dao.entity.ErpSalInvoice" registerShortName="true" tableName="erp_sal_invoice"
-                tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="receipt" i18n-en:displayName="Sales Invoice">
+                tagSet="gid,erp.sales,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="receipt" i18n-en:displayName="Sales Invoice">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -825,7 +834,7 @@
                         propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/approve-status"
+                        propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="RECEIVED_STATUS" displayName="收款进度" name="receivedStatus" precision="20" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/received-status"
@@ -964,8 +973,8 @@
         <entity className="app.erp.sal.dao.entity.ErpSalReceipt" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="收款单"
                 name="app.erp.sal.dao.entity.ErpSalReceipt" registerShortName="true" tableName="erp_sal_receipt"
-                tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="banknote" i18n-en:displayName="Receipt">
+                tagSet="gid,erp.sales,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="banknote" i18n-en:displayName="Receipt">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1003,7 +1012,7 @@
                         propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/approve-status"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="WRITTEN_OFF_STATUS" displayName="核销状态" name="writtenOffStatus" precision="20" propId="17"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/received-status"
@@ -1132,8 +1141,8 @@
         <entity className="app.erp.sal.dao.entity.ErpSalReturn" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售退货单"
                 name="app.erp.sal.dao.entity.ErpSalReturn" registerShortName="true" tableName="erp_sal_return"
-                tagSet="gid,erp.sales" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="undo-2" i18n-en:displayName="Sales Return">
+                tagSet="gid,erp.sales,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="undo-2" i18n-en:displayName="Sales Return">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1173,7 +1182,7 @@
                         propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/approve-status"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="17"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>

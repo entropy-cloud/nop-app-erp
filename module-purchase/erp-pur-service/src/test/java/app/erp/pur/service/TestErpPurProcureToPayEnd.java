@@ -435,35 +435,35 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submitReceive(Long id) {
-        return rpc(mutation, "ErpPurReceive__submit", Map.of("receiveId", id));
+        return rpc(mutation, "ErpPurReceive__submitForApproval", Map.of("id", String.valueOf(id)));
     }
 
     private ApiResponse<?> approveReceive(Long id) {
-        return rpc(mutation, "ErpPurReceive__approve", Map.of("receiveId", id));
+        return rpc(mutation, "ErpPurReceive__approve", Map.of("id", String.valueOf(id)));
     }
 
     private ApiResponse<?> submitInvoice(Long id) {
-        return rpc(mutation, "ErpPurInvoice__submit", Map.of("invoiceId", id));
+        return rpc(mutation, "ErpPurInvoice__submitForApproval", Map.of("id", String.valueOf(id)));
     }
 
     private ApiResponse<?> approveInvoice(Long id) {
-        return rpc(mutation, "ErpPurInvoice__approve", Map.of("invoiceId", id));
+        return rpc(mutation, "ErpPurInvoice__approve", Map.of("id", String.valueOf(id)));
     }
 
     private ApiResponse<?> reverseApproveInvoice(Long id) {
-        return rpc(mutation, "ErpPurInvoice__reverseApprove", Map.of("invoiceId", id));
+        return rpc(mutation, "ErpPurInvoice__reverseApprove", Map.of("id", String.valueOf(id)));
     }
 
     private ApiResponse<?> submitPayment(Long id) {
-        return rpc(mutation, "ErpPurPayment__submit", Map.of("paymentId", id));
+        return rpc(mutation, "ErpPurPayment__submitForApproval", Map.of("id", String.valueOf(id)));
     }
 
     private ApiResponse<?> approvePayment(Long id) {
-        return rpc(mutation, "ErpPurPayment__approve", Map.of("paymentId", id));
+        return rpc(mutation, "ErpPurPayment__approve", Map.of("id", String.valueOf(id)));
     }
 
     private ApiResponse<?> reverseApprovePayment(Long id) {
-        return rpc(mutation, "ErpPurPayment__reverseApprove", Map.of("paymentId", id));
+        return rpc(mutation, "ErpPurPayment__reverseApprove", Map.of("id", String.valueOf(id)));
     }
 
     private ApiResponse<?> settle(Long paymentId, Long invoiceId, BigDecimal amount) {

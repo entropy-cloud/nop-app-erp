@@ -24,6 +24,9 @@ public interface ErpAstErrors {
     String ARG_EXPECTED_DOC_STATUS = "expectedDocStatus";
     String ARG_DEPRECIATION_METHOD = "depreciationMethod";
     String ARG_AMOUNT = "amount";
+    String ARG_ADJUSTMENT_CODE = "adjustmentCode";
+    String ARG_ADJUSTMENT_ID = "adjustmentId";
+    String ARG_ADJUSTMENT_TYPE = "adjustmentType";
 
     // --- 资本化 ---
     ErrorCode ERR_CAPITALIZATION_NOT_FOUND = ErrorCode.define(
@@ -98,4 +101,42 @@ public interface ErpAstErrors {
             "erp.err.ast.disposal.asset-already-disposed",
             "资产 {assetCode} 已处置（终态不可恢复，需通过冲销处理）",
             ARG_ASSET_CODE);
+
+    // --- 价值调整（减值/重估） ---
+    ErrorCode ERR_ADJUSTMENT_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.adjustment.not-found",
+            "价值调整单 {adjustmentId} 不存在",
+            ARG_ADJUSTMENT_ID);
+    ErrorCode ERR_ADJUSTMENT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.ast.adjustment.illegal-status-transition",
+            "价值调整单 {adjustmentCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_ADJUSTMENT_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION = ErrorCode.define(
+            "erp.err.ast.adjustment.illegal-doc-transition",
+            "价值调整单 {adjustmentCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_ADJUSTMENT_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+    ErrorCode ERR_ADJUSTMENT_ASSET_NOT_ADJUSTABLE = ErrorCode.define(
+            "erp.err.ast.adjustment.asset-not-adjustable",
+            "资产 {assetCode} 当前状态不允许价值调整（须为使用中或闲置）",
+            ARG_ASSET_CODE);
+    ErrorCode ERR_ADJUSTMENT_ASSET_ALREADY_DISPOSED = ErrorCode.define(
+            "erp.err.ast.adjustment.asset-already-disposed",
+            "资产 {assetCode} 已处置，不允许价值调整",
+            ARG_ASSET_CODE);
+    ErrorCode ERR_ADJUSTMENT_TYPE_INVALID = ErrorCode.define(
+            "erp.err.ast.adjustment.type-invalid",
+            "价值调整单 {adjustmentCode} 调整类型={adjustmentType} 无效",
+            ARG_ADJUSTMENT_CODE, ARG_ADJUSTMENT_TYPE);
+    ErrorCode ERR_ADJUSTMENT_AMOUNT_INVALID = ErrorCode.define(
+            "erp.err.ast.adjustment.amount-invalid",
+            "价值调整单 {adjustmentCode} 调整金额无效",
+            ARG_ADJUSTMENT_CODE, ARG_AMOUNT);
+    ErrorCode ERR_ADJUSTMENT_ALREADY_REVERSED = ErrorCode.define(
+            "erp.err.ast.adjustment.already-reversed",
+            "价值调整单 {adjustmentCode} 已红冲，不允许二次红冲",
+            ARG_ADJUSTMENT_CODE);
+    ErrorCode ERR_ADJUSTMENT_APPROVAL_REQUIRED = ErrorCode.define(
+            "erp.err.ast.adjustment.approval-required",
+            "价值调整单 {adjustmentCode} 配置强制审批，须先审核通过再生效",
+            ARG_ADJUSTMENT_CODE);
 }

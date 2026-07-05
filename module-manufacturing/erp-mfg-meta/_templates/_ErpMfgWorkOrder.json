@@ -42,6 +42,8 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "sourceScheduleId": 0,
+  "approvedBy": "",
+  "approvedAt": "2000-01-01 14:00:00",
   "exchangeRate": "",
   "amountSource": "",
   "amountFunctional": "",

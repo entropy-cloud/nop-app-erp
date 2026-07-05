@@ -33,10 +33,13 @@ public interface ErpPrjConstants {
     String TASK_STATUS_DONE = "DONE";
     String TASK_STATUS_BLOCKED = "BLOCKED";
 
-    // ---- timesheet-status ----
-    String TIMESHEET_STATUS_DRAFT = "DRAFT";
-    String TIMESHEET_STATUS_SUBMITTED = "SUBMITTED";
-    String TIMESHEET_STATUS_APPROVED = "APPROVED";
+    // ---- timesheet-status 已合并到 approve-status（wf/approve-status 四态标准）----
+
+    // ---- approve-status（标准审批轴，归集头/预算头/账单头 approveStatus 字段使用）----
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
+    String APPROVE_STATUS_APPROVED = "APPROVED";
+    String APPROVE_STATUS_REJECTED = "REJECTED";
 
     // ---- erp-fin/doc-status（归集头/预算头沿用 finance 单据状态语义） ----
     String DOC_STATUS_DRAFT = "DRAFT";

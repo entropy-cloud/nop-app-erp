@@ -221,23 +221,23 @@ public class TestErpSalReturnApproval extends JunitAutoTestCase {
     // ---------- rpc ----------
 
     private ApiResponse<?> submitReturn(Long id) {
-        return executeRpc(mutation, "ErpSalReturn__submit", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpSalReturn__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> withdrawSubmitReturn(Long id) {
-        return executeRpc(mutation, "ErpSalReturn__withdrawSubmit", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpSalReturn__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approveReturn(Long id) {
-        return executeRpc(mutation, "ErpSalReturn__approve", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpSalReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> rejectReturn(Long id) {
-        return executeRpc(mutation, "ErpSalReturn__reject", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpSalReturn__reject", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApproveReturn(Long id) {
-        return executeRpc(mutation, "ErpSalReturn__reverseApprove", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpSalReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> cancelReturn(Long id) {

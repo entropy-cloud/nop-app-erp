@@ -159,7 +159,7 @@ public class TestErpSalReturnQty extends JunitAutoTestCase {
 
     private ApiResponse<?> approveReturn(Long id) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, "ErpSalReturn__approve",
-                ApiRequest.build(Map.of("returnId", id)));
+                ApiRequest.build(Map.of("id", String.valueOf(id))));
         return graphQLEngine.executeRpc(ctx);
     }
 

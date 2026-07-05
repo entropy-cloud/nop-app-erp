@@ -1,5 +1,5 @@
 
-    alter table erp_md_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+    alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_material add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -25,8 +25,8 @@ alter table erp_inv_drp_cross_dock add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT
 
 alter table erp_inv_drp_dock_appointment add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_md_md_organization drop constraint PK_erp_md_md_organization;
-alter table erp_md_md_organization add constraint PK_erp_md_md_organization primary key (NOP_TENANT_ID, id);
+alter table erp_md_organization drop constraint PK_erp_md_organization;
+alter table erp_md_organization add constraint PK_erp_md_organization primary key (NOP_TENANT_ID, id);
 
 alter table erp_md_material drop constraint PK_erp_md_material;
 alter table erp_md_material add constraint PK_erp_md_material primary key (NOP_TENANT_ID, id);

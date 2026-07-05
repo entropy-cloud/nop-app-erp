@@ -21,19 +21,9 @@ import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
-/**
- * 资产处置状态机编排 Processor（{@code processor-extension-pattern.md} 两层结构：Facade + Processor）。
- * Facade {@code ErpAstDisposalBizModel} 仅负责入口/事务/委托，编排委托本类。
- *
- * <p>配置余地：每个动作只编排步骤顺序，各步骤为 {@code protected} 方法、以 {@link IServiceContext} 为末参。
- * APPROVED 时计算清理损益 + 资产 status→SCRAPPED/SOLD + 后续折旧计划标记 CANCELLED + DISPOSAL 业财过账。
- *
- * <p>事务边界：跟随 Facade {@code @BizMutation}+{@code @SingleSession} 事务；ORM Session 由 {@link #orm()} 获取。
- */
 public class ErpAstDisposalProcessor {
 
     @Inject
@@ -42,7 +32,7 @@ public class ErpAstDisposalProcessor {
     @Inject
     DisposalPostingDispatcher postingDispatcher;
 
-    public ErpAstDisposal submit(Long id, IServiceContext context) {
+    public ErpAstDisposal submitForApproval(String id, IServiceContext context) {
         ErpAstDisposal disposal = requireDisposal(id, context);
         validateNotCancelled(disposal, context);
         validateTransitionForSubmit(disposal, context);
@@ -52,7 +42,16 @@ public class ErpAstDisposalProcessor {
         return disposal;
     }
 
-    public ErpAstDisposal approve(Long id, IServiceContext context) {
+    public ErpAstDisposal withdrawApproval(String id, IServiceContext context) {
+        ErpAstDisposal disposal = requireDisposal(id, context);
+        validateNotCancelled(disposal, context);
+        validateTransitionForWithdraw(disposal, context);
+        disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
+        disposalDao().updateEntity(disposal);
+        return disposal;
+    }
+
+    public ErpAstDisposal approve(String id, IServiceContext context) {
         ErpAstDisposal disposal = requireDisposal(id, context);
         if (isAlreadyApproved(disposal)) {
             return disposal;
@@ -64,14 +63,12 @@ public class ErpAstDisposalProcessor {
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(disposal.getAssetId());
         validateAssetDisposable(asset, context);
 
-        // 清理损益 = 处置收入 − 账面净值（账面净值 = 原值 − 累计折旧）
         BigDecimal original = nz(asset.getOriginalValue());
         BigDecimal accumDep = nz(asset.getAccumulatedDepreciation());
         BigDecimal nbv = original.subtract(accumDep);
         BigDecimal disposalAmount = nz(disposal.getDisposalAmount());
         BigDecimal gainLoss = disposalAmount.subtract(nbv);
 
-        // 资产终态：SCRAPPED/SOLD
         String terminalStatus = disposal.getDisposalType() != null
                 && Objects.equals(disposal.getDisposalType(), ErpAstConstants.DISPOSAL_TYPE_SOLD)
                         ? ErpAstConstants.ASSET_STATUS_SOLD
@@ -79,7 +76,6 @@ public class ErpAstDisposalProcessor {
         asset.setStatus(terminalStatus);
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
 
-        // 后续未执行折旧计划标记 CANCELLED（§5.1 当月减少当月停）
         cancelPendingSchedules(asset.getId());
 
         disposal.setGainLoss(gainLoss);
@@ -90,7 +86,6 @@ public class ErpAstDisposalProcessor {
         disposalDao().updateEntity(disposal);
         orm().flushSession();
 
-        // DISPOSAL(90) 业财过账
         ErpAstAssetCategory category = asset.getCategoryId() == null ? null
                 : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
         Long voucherId = postingDispatcher.tryPost(disposal, asset, category);
@@ -106,7 +101,7 @@ public class ErpAstDisposalProcessor {
         return disposal;
     }
 
-    public ErpAstDisposal reject(Long id, IServiceContext context) {
+    public ErpAstDisposal reject(String id, IServiceContext context) {
         ErpAstDisposal disposal = requireDisposal(id, context);
         validateNotCancelled(disposal, context);
         validateTransitionForReject(disposal, context);
@@ -115,22 +110,19 @@ public class ErpAstDisposalProcessor {
         return disposal;
     }
 
-    public ErpAstDisposal reverseApprove(Long id, IServiceContext context) {
+    public ErpAstDisposal reverseApprove(String id, IServiceContext context) {
         ErpAstDisposal disposal = requireDisposal(id, context);
         if (isAlreadyRejected(disposal)) {
             return disposal;
         }
         validateTransitionForReverseApprove(disposal, context);
         if (Boolean.TRUE.equals(disposal.getPosted())) {
-            // 红字冲销 DISPOSAL 凭证（硬前置）
             postingDispatcher.reverse(disposal);
             ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(disposal.getAssetId());
             if (asset != null) {
-                // 恢复资产状态（终态可经冲销恢复，§关键规则3 例外）
                 asset.setStatus(ErpAstConstants.ASSET_STATUS_IN_SERVICE);
                 daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
             }
-            // CANCELLED 折旧计划恢复 PENDING
             restoreCancelledSchedules(disposal.getAssetId());
             disposal = reload(id);
             disposal.setPosted(false);
@@ -150,6 +142,13 @@ public class ErpAstDisposalProcessor {
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
                 && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(disposal, status, "UNSUBMITTED 或 REJECTED");
+        }
+    }
+
+    protected void validateTransitionForWithdraw(ErpAstDisposal disposal, IServiceContext context) {
+        String status = currentApproveStatus(disposal);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
+            throw illegalTransition(disposal, status, "SUBMITTED");
         }
     }
 
@@ -232,7 +231,7 @@ public class ErpAstDisposalProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpAstDisposal requireDisposal(Long id, IServiceContext context) {
+    protected ErpAstDisposal requireDisposal(String id, IServiceContext context) {
         ErpAstDisposal disposal = disposalDao().getEntityById(id);
         if (disposal == null) {
             throw new NopException(ErpAstErrors.ERR_DISPOSAL_NOT_FOUND)
@@ -260,7 +259,7 @@ public class ErpAstDisposalProcessor {
         return status != null ? status : ErpAstConstants.APPROVE_STATUS_UNSUBMITTED;
     }
 
-    protected ErpAstDisposal reload(Long id) {
+    protected ErpAstDisposal reload(String id) {
         return disposalDao().getEntityById(id);
     }
 

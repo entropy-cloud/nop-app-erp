@@ -107,7 +107,7 @@ public class ExpenseCostAggregator {
             newHead.setBusinessDate(CoreMetrics.today());
             newHead.setTotalAmount(addedTotal);
             newHead.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
-            newHead.setApproveStatus(ErpPrjConstants.TIMESHEET_STATUS_APPROVED);
+            newHead.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
             newHead.setPosted(false);
             newHead.setExchangeRate("1");
             newHead.setAmountSource(addedTotal.toPlainString());

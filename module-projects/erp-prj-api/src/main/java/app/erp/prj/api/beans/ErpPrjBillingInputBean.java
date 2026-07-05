@@ -251,10 +251,38 @@
         }
 
 
+        private String _approvedBy;
+
+    
+        @PropMeta(propId=200)
+    
+        public String getApprovedBy(){
+            return _approvedBy;
+        }
+
+        public void setApprovedBy(String value){
+            this._approvedBy = value;
+        }
+
+
+        private java.time.LocalDateTime _approvedAt;
+
+    
+        @PropMeta(propId=201)
+    
+        public java.time.LocalDateTime getApprovedAt(){
+            return _approvedAt;
+        }
+
+        public void setApprovedAt(java.time.LocalDateTime value){
+            this._approvedAt = value;
+        }
+
+
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=202)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -268,7 +296,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=203)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;

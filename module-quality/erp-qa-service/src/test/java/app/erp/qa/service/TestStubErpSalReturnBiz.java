@@ -64,28 +64,28 @@ public class TestStubErpSalReturnBiz extends CrudBizModel<ErpSalReturn> implemen
     }
 
     @Override
-    public ErpSalReturn submit(Long returnId, IServiceContext context) {
-        return get(String.valueOf(returnId), false, context);
+    public ErpSalReturn submitForApproval(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override
-    public ErpSalReturn withdrawSubmit(Long returnId, IServiceContext context) {
-        return get(String.valueOf(returnId), false, context);
+    public ErpSalReturn withdrawApproval(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override
-    public ErpSalReturn approve(Long returnId, IServiceContext context) {
-        return get(String.valueOf(returnId), false, context);
+    public ErpSalReturn approve(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override
-    public ErpSalReturn reject(Long returnId, IServiceContext context) {
-        return get(String.valueOf(returnId), false, context);
+    public ErpSalReturn reject(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override
-    public ErpSalReturn reverseApprove(Long returnId, IServiceContext context) {
-        return get(String.valueOf(returnId), false, context);
+    public ErpSalReturn reverseApprove(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override

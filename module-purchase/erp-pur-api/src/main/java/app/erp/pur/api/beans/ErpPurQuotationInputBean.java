@@ -223,6 +223,34 @@
         }
 
 
+        private String _approvedBy;
+
+    
+        @PropMeta(propId=200)
+    
+        public String getApprovedBy(){
+            return _approvedBy;
+        }
+
+        public void setApprovedBy(String value){
+            this._approvedBy = value;
+        }
+
+
+        private java.time.LocalDateTime _approvedAt;
+
+    
+        @PropMeta(propId=201)
+    
+        public java.time.LocalDateTime getApprovedAt(){
+            return _approvedAt;
+        }
+
+        public void setApprovedAt(java.time.LocalDateTime value){
+            this._approvedAt = value;
+        }
+
+
         private List<ErpPurQuotationLineInputBean> _lines;
 
         public List<ErpPurQuotationLineInputBean> getLines(){

@@ -177,20 +177,28 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_sourceScheduleId = "sourceScheduleId";
     public static final int PROP_ID_sourceScheduleId = 39;
     
+    /* 审核人: APPROVED_BY VARCHAR */
+    public static final String PROP_NAME_approvedBy = "approvedBy";
+    public static final int PROP_ID_approvedBy = 200;
+    
+    /* 审核时间: APPROVED_AT DATETIME */
+    public static final String PROP_NAME_approvedAt = "approvedAt";
+    public static final int PROP_ID_approvedAt = 201;
+    
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 40;
+    public static final int PROP_ID_exchangeRate = 202;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 41;
+    public static final int PROP_ID_amountSource = 203;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 42;
+    public static final int PROP_ID_amountFunctional = 204;
     
 
-    private static int _PROP_ID_BOUND = 43;
+    private static int _PROP_ID_BOUND = 205;
 
     
     /* relation:  */
@@ -224,7 +232,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[43];
+    private static final String[] PROP_ID_TO_NAME = new String[205];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -344,6 +352,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_sourceScheduleId] = PROP_NAME_sourceScheduleId;
           PROP_NAME_TO_ID.put(PROP_NAME_sourceScheduleId, PROP_ID_sourceScheduleId);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedBy] = PROP_NAME_approvedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedBy, PROP_ID_approvedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
       
           PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
           PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
@@ -473,6 +487,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     
     /* APS排程来源(弱参照): SOURCE_SCHEDULE_ID */
     private java.lang.Long _sourceScheduleId;
+    
+    /* 审核人: APPROVED_BY */
+    private java.lang.String _approvedBy;
+    
+    /* 审核时间: APPROVED_AT */
+    private java.time.LocalDateTime _approvedAt;
     
     /* 汇率: EXCHANGE_RATE */
     private java.lang.String _exchangeRate;
@@ -673,6 +693,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_sourceScheduleId:
                return getSourceScheduleId();
+        
+            case PROP_ID_approvedBy:
+               return getApprovedBy();
+        
+            case PROP_ID_approvedAt:
+               return getApprovedAt();
         
             case PROP_ID_exchangeRate:
                return getExchangeRate();
@@ -1084,6 +1110,26 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_approvedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedBy));
+               }
+               setApprovedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               java.time.LocalDateTime typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDateTime(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedAt));
+               }
+               setApprovedAt(typedValue);
+               break;
+            }
+        
             case PROP_ID_exchangeRate:{
                java.lang.String typedValue = null;
                if(value != null){
@@ -1392,6 +1438,20 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             case PROP_ID_sourceScheduleId:{
                onInitProp(propId);
                this._sourceScheduleId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedBy:{
+               onInitProp(propId);
+               this._approvedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               onInitProp(propId);
+               this._approvedAt = (java.time.LocalDateTime)value;
                
                break;
             }
@@ -2160,6 +2220,44 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_sourceScheduleId,value)){
             this._sourceScheduleId = value;
             internalClearRefs(PROP_ID_sourceScheduleId);
+            
+        }
+    }
+    
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final java.lang.String getApprovedBy(){
+         onPropGet(PROP_ID_approvedBy);
+         return _approvedBy;
+    }
+
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final void setApprovedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_approvedBy,value)){
+            this._approvedBy = value;
+            internalClearRefs(PROP_ID_approvedBy);
+            
+        }
+    }
+    
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final java.time.LocalDateTime getApprovedAt(){
+         onPropGet(PROP_ID_approvedAt);
+         return _approvedAt;
+    }
+
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final void setApprovedAt(java.time.LocalDateTime value){
+        if(onPropSet(PROP_ID_approvedAt,value)){
+            this._approvedAt = value;
+            internalClearRefs(PROP_ID_approvedAt);
             
         }
     }

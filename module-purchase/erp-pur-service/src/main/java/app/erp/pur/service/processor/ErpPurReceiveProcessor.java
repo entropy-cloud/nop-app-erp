@@ -34,14 +34,15 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 采购入库单审批状态机 + 入库审核触发库存移动编排 Processor（{@code processor-extension-pattern.md} Facade + Processor）。
- * Facade {@code ErpPurReceiveBizModel} 仅负责入口/事务/委托，编排委托本类。
+ * 采购入库单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
  *
- * <p>配置余地：每个动作只编排步骤顺序（加载→校验迁移→校验业务规则→执行→后置回写），各步骤为 {@code protected}
- * 方法、以 {@link IServiceContext} 为末参。
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
  *
- * <p>跨实体：供应商启用校验经 {@link IErpMdPartnerBiz}；收货进度回写经 {@link IErpPurOrderBiz}；
- * 入库移动单经 {@link IErpInvStockMoveBiz}；强制质检经 {@link IErpQaInspectionBiz}。
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpPurReceiveProcessor {
 
@@ -63,24 +64,24 @@ public class ErpPurReceiveProcessor {
     @Inject
     IErpQaInspectionBiz inspectionBiz;
 
-    public ErpPurReceive submit(Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
+    public ErpPurReceive submitForApproval(String id, IServiceContext context) {
+        ErpPurReceive receive = requireReceive(id, context);
         validateTransitionForSubmit(receive, context);
         validateBusinessRulesForSubmit(receive, context);
         doSubmit(receive, context);
         return receive;
     }
 
-    public ErpPurReceive withdrawSubmit(Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
+    public ErpPurReceive withdrawApproval(String id, IServiceContext context) {
+        ErpPurReceive receive = requireReceive(id, context);
         validateNotCancelled(receive, context);
         validateTransitionForWithdraw(receive, context);
         doWithdrawSubmit(receive, context);
         return receive;
     }
 
-    public ErpPurReceive approve(Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
+    public ErpPurReceive approve(String id, IServiceContext context) {
+        ErpPurReceive receive = requireReceive(id, context);
         if (isAlreadyApproved(receive)) {
             return receive;
         }
@@ -90,39 +91,38 @@ public class ErpPurReceiveProcessor {
         enforceInspectionGate(receive, context);
 
         ErpInvStockMove move = triggerIncomingMove(receive, context);
-        // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
-        receive = receiveDao().getEntityById(receiveId);
+        receive = receiveDao().getEntityById(id);
         doApprove(receive, move, context);
         postProcessApprove(receive, context);
         return receive;
     }
 
-    public ErpPurReceive reject(Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
+    public ErpPurReceive reject(String id, IServiceContext context) {
+        ErpPurReceive receive = requireReceive(id, context);
         validateNotCancelled(receive, context);
         validateTransitionForReject(receive, context);
         doReject(receive, context);
         return receive;
     }
 
-    public ErpPurReceive reverseApprove(Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
+    public ErpPurReceive reverseApprove(String id, IServiceContext context) {
+        ErpPurReceive receive = requireReceive(id, context);
         if (isAlreadyRejected(receive)) {
             return receive;
         }
         validateTransitionForReverseApprove(receive, context);
         ensureReversed(receive, context);
-        receive = receiveDao().getEntityById(receiveId);
+        receive = receiveDao().getEntityById(id);
         doReverseApprove(receive, context);
         return receive;
     }
 
-    public ErpPurReceive cancel(Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(receiveId, context);
+    public ErpPurReceive cancel(String id, IServiceContext context) {
+        ErpPurReceive receive = requireReceive(id, context);
         validateTransitionForCancel(receive, context);
         if (isApproved(receive)) {
             ensureReversed(receive, context);
-            receive = receiveDao().getEntityById(receiveId);
+            receive = receiveDao().getEntityById(id);
         }
         doCancel(receive, context);
         return receive;
@@ -311,7 +311,7 @@ public class ErpPurReceiveProcessor {
                 continue;
             }
             int gate = InspectionTrigger.enforceGate(inspectionBiz, billType, receive.getCode(),
-                    line.getMaterialId(), "INCOMING" /* erp-qa/inspection-type INCOMING */,
+                    line.getMaterialId(), "INCOMING",
                     line.getQuantity(), receive.getSupplierId(), receive.getWarehouseId(), null, context);
             if (gate == InspectionTrigger.BLOCKED) {
                 throw new NopException(ErpPurErrors.ERR_RECEIVE_INSPECTION_BLOCKED)
@@ -322,11 +322,11 @@ public class ErpPurReceiveProcessor {
 
     // ---------- 校验/查询辅助 ----------
 
-    protected ErpPurReceive requireReceive(Long receiveId, IServiceContext context) {
-        ErpPurReceive receive = receiveDao().getEntityById(receiveId);
+    protected ErpPurReceive requireReceive(String id, IServiceContext context) {
+        ErpPurReceive receive = receiveDao().getEntityById(id);
         if (receive == null) {
             throw new NopException(ErpPurErrors.ERR_RECEIVE_NOT_FOUND)
-                    .param(ErpPurErrors.ARG_RECEIVE_ID, receiveId);
+                    .param(ErpPurErrors.ARG_RECEIVE_ID, id);
         }
         return receive;
     }

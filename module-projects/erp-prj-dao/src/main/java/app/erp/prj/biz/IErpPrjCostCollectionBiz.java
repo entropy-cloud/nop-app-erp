@@ -5,11 +5,12 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
+import io.nop.wf.core.biz.IApprovableBiz;
 
 import java.math.BigDecimal;
 
 /**
- * 项目成本归集 Biz 契约。CRUD 之上承载费用报销归集接入：
+ * 项目成本归集 Biz 契约。CRUD 之上承载费用报销归集接入 + 标准审批动作（{@link IApprovableBiz}）：
  * <ul>
  *   <li>{@link #refreshExpenseCost(Long, IServiceContext)}：projects 驱动只读聚合——
  *       经 {@code IErpFinExpenseClaimBiz} 只读查已审核报销单（行 projectId 命中），
@@ -20,7 +21,7 @@ import java.math.BigDecimal;
  * <p>费用归集受 {@code erp-prj.expense-aggregation-enabled}（默认 true）config-gated。
  * 关闭时 {@code refreshExpenseCost} 直接返回 0。
  */
-public interface IErpPrjCostCollectionBiz extends ICrudBiz<ErpPrjCostCollection> {
+public interface IErpPrjCostCollectionBiz extends ICrudBiz<ErpPrjCostCollection>, IApprovableBiz<ErpPrjCostCollection> {
 
     /**
      * 刷新项目的费用报销归集。返回本次新增的归集金额合计。

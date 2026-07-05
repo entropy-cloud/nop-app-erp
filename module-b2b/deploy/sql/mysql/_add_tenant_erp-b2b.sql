@@ -1,5 +1,5 @@
 
-    alter table erp_md_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+    alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_md_partner add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -31,8 +31,8 @@ alter table erp_b2b_mft_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_b2b_asn_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_md_md_organization drop primary key;
-alter table erp_md_md_organization add primary key (NOP_TENANT_ID, ID);
+alter table erp_md_organization drop primary key;
+alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_md_partner drop primary key;
 alter table erp_md_md_partner add primary key (NOP_TENANT_ID, ID);

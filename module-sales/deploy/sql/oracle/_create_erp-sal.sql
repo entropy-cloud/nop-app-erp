@@ -123,6 +123,8 @@ CREATE TABLE erp_sal_quotation(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
   constraint PK_erp_sal_quotation primary key (ID)
 );
 
@@ -150,6 +152,8 @@ CREATE TABLE erp_sal_contract(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
   constraint PK_erp_sal_contract primary key (ID)
 );
 
@@ -529,6 +533,10 @@ CREATE TABLE erp_sal_return_line(
                     
       COMMENT ON COLUMN erp_sal_quotation.REMARK IS '备注';
                     
+      COMMENT ON COLUMN erp_sal_quotation.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_sal_quotation.APPROVED_AT IS '审核时间';
+                    
       COMMENT ON TABLE erp_sal_contract IS '销售合同';
                 
       COMMENT ON COLUMN erp_sal_contract.ID IS 'ID';
@@ -576,6 +584,10 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_contract.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON COLUMN erp_sal_contract.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_sal_contract.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_sal_contract.APPROVED_AT IS '审核时间';
                     
       COMMENT ON TABLE erp_sal_invoice IS '销售发票';
                 

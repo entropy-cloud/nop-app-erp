@@ -80,11 +80,11 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
             ids[0] = projectId;
             // 工时单填 costRate=800（应优先于活动类型 300）
             return seedTimesheet("TS-001", projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         ErpPrjTimesheet ts = timesheetBiz.submit(tsId, CTX);
-        assertEquals(ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED, ts.getStatus());
+        assertEquals(ErpPrjConstants.APPROVE_STATUS_SUBMITTED, ts.getStatus());
         // costAmount = 10 × 800 = 8000
         assertEquals(0, ts.getCostAmount().compareTo(new BigDecimal("8000.0000")),
                 "costAmount=hours×costRate");
@@ -107,7 +107,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
             Long taskId = seedTask(projectId, "任务-002", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             // costRate 留空 → 应取活动类型 300
             return seedTimesheet("TS-002", projectId, taskId, activityTypeId,
-                    "10", null, ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", null, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         ErpPrjTimesheet ts = timesheetBiz.submit(tsId, CTX);
@@ -132,7 +132,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV-NO-RATE", "开发-无费率", null, null);
             Long taskId = seedTask(projectId, "任务-003", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-003", projectId, taskId, activityTypeId,
-                    "10", null, ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", null, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(tsId, CTX));
@@ -153,7 +153,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
             Long taskId = seedTask(projectId, "任务-004", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-004", projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(tsId, CTX));
@@ -174,7 +174,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
             Long taskId = seedTask(projectId, "任务-阻塞", ErpPrjConstants.TASK_STATUS_BLOCKED);
             return seedTimesheet("TS-005", projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(tsId, CTX));
@@ -196,12 +196,12 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
             Long taskId = seedTask(projectId, "任务-过账", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet(tsCode, projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         timesheetBiz.submit(tsId, CTX);
         ErpPrjTimesheet ts = timesheetBiz.approve(tsId, CTX);
-        assertEquals(ErpPrjConstants.TIMESHEET_STATUS_APPROVED, ts.getStatus());
+        assertEquals(ErpPrjConstants.APPROVE_STATUS_APPROVED, ts.getStatus());
         assertTrue(Boolean.TRUE.equals(ts.getPosted()), "过账成功 posted=true");
 
         // PROJECT_COST_COLLECTION(110) 凭证经业财回链可查
@@ -238,7 +238,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV", "开发", "300", null);
             Long taskId = seedTask(projectId, "任务-006", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-006", projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         // 直接 approve（DRAFT 状态，未 submit）→ 应抛非法迁移

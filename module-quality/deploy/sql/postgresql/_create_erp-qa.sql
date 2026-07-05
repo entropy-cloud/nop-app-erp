@@ -149,6 +149,8 @@ CREATE TABLE erp_qa_review(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   constraint PK_erp_qa_review primary key (id)
 );
 
@@ -175,6 +177,8 @@ CREATE TABLE erp_qa_calibration(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   constraint PK_erp_qa_calibration primary key (id)
 );
 
@@ -549,6 +553,10 @@ CREATE TABLE erp_qa_recall_target(
                     
       COMMENT ON COLUMN erp_qa_review.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_qa_review.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_qa_review.approved_at IS '审核时间';
+                    
       COMMENT ON TABLE erp_qa_calibration IS '量具校准';
                 
       COMMENT ON COLUMN erp_qa_calibration.id IS 'ID';
@@ -594,6 +602,10 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_calibration.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_calibration.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_qa_calibration.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_qa_calibration.approved_at IS '审核时间';
                     
       COMMENT ON TABLE erp_qa_inspection IS '质检单';
                 

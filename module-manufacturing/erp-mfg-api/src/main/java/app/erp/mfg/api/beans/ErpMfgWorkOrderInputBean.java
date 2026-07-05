@@ -489,10 +489,38 @@
         }
 
 
+        private String _approvedBy;
+
+    
+        @PropMeta(propId=200)
+    
+        public String getApprovedBy(){
+            return _approvedBy;
+        }
+
+        public void setApprovedBy(String value){
+            this._approvedBy = value;
+        }
+
+
+        private java.time.LocalDateTime _approvedAt;
+
+    
+        @PropMeta(propId=201)
+    
+        public java.time.LocalDateTime getApprovedAt(){
+            return _approvedAt;
+        }
+
+        public void setApprovedAt(java.time.LocalDateTime value){
+            this._approvedAt = value;
+        }
+
+
         private String _exchangeRate;
 
     
-        @PropMeta(propId=40)
+        @PropMeta(propId=202)
     
         public String getExchangeRate(){
             return _exchangeRate;
@@ -506,7 +534,7 @@
         private String _amountSource;
 
     
-        @PropMeta(propId=41)
+        @PropMeta(propId=203)
     
         public String getAmountSource(){
             return _amountSource;
@@ -520,7 +548,7 @@
         private String _amountFunctional;
 
     
-        @PropMeta(propId=42)
+        @PropMeta(propId=204)
     
         public String getAmountFunctional(){
             return _amountFunctional;

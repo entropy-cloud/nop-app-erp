@@ -357,6 +357,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       currencyId: Currency
       exchangeRate: Exchange Rate
       amountSource: Amt (Source)
@@ -548,6 +550,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       workOrder: Work Order
       supplier: Supplier
       workcenter: Workcenter
@@ -620,6 +624,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       sourceScheduleId: Source Schedule Id
+      approvedBy: Approved By
+      approvedAt: Approved At
       exchangeRate: Exchange Rate
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)

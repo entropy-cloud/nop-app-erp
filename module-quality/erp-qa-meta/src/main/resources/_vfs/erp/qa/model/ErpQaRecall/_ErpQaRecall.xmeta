@@ -2,7 +2,7 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
       xmlns:xpl="xpl" ext:model="orm" ext:icon="alert-octagon" xmlns:c="c" xmlns:graphql="graphql"
       xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="召回事件" i18n-en:displayName="Recall Event"
-      tagSet="gid,erp.quality" xmlns:ui="ui" xmlns:orm="orm">
+      tagSet="gid,erp.quality,use-approval" xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.qa.dao.entity.ErpQaRecall</entityName>
 
@@ -73,7 +73,7 @@
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="14" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-qa/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
         </prop>
         <prop name="approvedBy" displayName="审批人" propId="15" i18n-en:displayName="Approved By" queryable="true"
               sortable="true" insertable="true" updatable="true">

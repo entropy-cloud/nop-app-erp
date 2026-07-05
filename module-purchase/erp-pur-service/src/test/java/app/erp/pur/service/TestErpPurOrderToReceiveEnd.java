@@ -123,15 +123,15 @@ public class TestErpPurOrderToReceiveEnd extends JunitAutoTestCase {
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submit(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__submit", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> approve(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> reverseApprove(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

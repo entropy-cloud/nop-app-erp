@@ -69,7 +69,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="13" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-prj/timesheet-status"/>
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
         </prop>
         <prop name="posted" displayName="已过账(已转成本凭证)" propId="14" i18n-en:displayName="Posted" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

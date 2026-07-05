@@ -40,6 +40,8 @@ prop:
     ErpQaCalibration:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 校准日期
       calibratedBy: 校准人(职员)
       calibratedByEmployee: null
@@ -278,6 +280,8 @@ prop:
       actionRequired: 是否需要措施
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       code: 编号
       conclusion: 评审结论
       createTime: 创建时间

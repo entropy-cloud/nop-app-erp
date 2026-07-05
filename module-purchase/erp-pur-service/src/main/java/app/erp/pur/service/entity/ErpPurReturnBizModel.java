@@ -12,8 +12,9 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
- * 采购退货单 BizModel（Facade）。审批状态机 + 退货审核触发库存反向出库 + PURCHASE_RETURN 过账编排委托
- * {@link ErpPurReturnProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 采购退货单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由 xbiz 一行委托注入 Processor；非审批动作（cancel）在本类完成
+ * Long→String 转换后委托 Processor。
  */
 @BizModel("ErpPurReturn")
 public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements IErpPurReturnBiz {
@@ -27,37 +28,7 @@ public class ErpPurReturnBizModel extends CrudBizModel<ErpPurReturn> implements 
 
     @Override
     @BizMutation
-    public ErpPurReturn submit(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.submit(returnId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurReturn withdrawSubmit(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.withdrawSubmit(returnId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurReturn approve(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.approve(returnId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurReturn reject(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.reject(returnId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurReturn reverseApprove(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.reverseApprove(returnId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpPurReturn cancel(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.cancel(returnId, context);
+        return returnProcessor.cancel(String.valueOf(returnId), context);
     }
 }

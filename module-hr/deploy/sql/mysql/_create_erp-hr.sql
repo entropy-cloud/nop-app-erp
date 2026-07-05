@@ -13,9 +13,9 @@ CREATE TABLE erp_md_bank_account(
   constraint PK_erp_md_bank_account primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_md_organization primary key (ID)
+  constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_currency(
@@ -461,7 +461,7 @@ CREATE TABLE erp_hr_salary(
   NET_SALARY DECIMAL(18,2) NULL    COMMENT '实发合计',
   PAYMENT_STATUS VARCHAR(20) NOT NULL    COMMENT '支付状态',
   PAYMENT_DATE DATE NULL    COMMENT '实发日期',
-  APPROVAL_STATUS VARCHAR(20) default 'PENDING'  NOT NULL    COMMENT '审批状态',
+  APPROVE_STATUS VARCHAR(20) default 'UNSUBMITTED'  NOT NULL    COMMENT '审核状态',
   PERFORMANCE_FACTOR DECIMAL(5,2) NULL    COMMENT '绩效系数',
   ACTUAL_WORK_DAYS DECIMAL(10,2) NULL    COMMENT '实际出勤日',
   REQUIRED_WORK_DAYS DECIMAL(10,2) NULL    COMMENT '应出勤日',
@@ -479,6 +479,8 @@ CREATE TABLE erp_hr_salary(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
+  APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   constraint PK_erp_hr_salary primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -809,7 +811,7 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                 
    ALTER TABLE erp_md_bank_account COMMENT '银行账户';
                 
-   ALTER TABLE erp_md_md_organization COMMENT 'ErpMdOrganization';
+   ALTER TABLE erp_md_organization COMMENT 'ErpMdOrganization';
                 
    ALTER TABLE erp_md_currency COMMENT '币种';
                 

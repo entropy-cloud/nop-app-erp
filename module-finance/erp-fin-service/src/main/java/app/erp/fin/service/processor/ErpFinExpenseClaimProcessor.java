@@ -26,15 +26,6 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
-/**
- * 费用报销单审批状态机编排 Processor（{@code processor-extension-pattern.md} 两层结构：Facade + Processor）。
- * Facade {@code ErpFinExpenseClaimBizModel} 仅负责入口/事务/委托，编排委托本类。
- *
- * <p>配置余地：每个 {@code public} 动作方法只编排步骤顺序（加载→校验迁移→校验业务规则→执行），
- * 各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
- *
- * <p>事务边界：跟随 Facade {@code @BizMutation}+{@code @SingleSession} 事务，本类不带 {@code @Transactional}。
- */
 public class ErpFinExpenseClaimProcessor {
 
     @Inject
@@ -46,8 +37,8 @@ public class ErpFinExpenseClaimProcessor {
     @Inject
     AdvanceOffsetOrchestrator offsetOrchestrator;
 
-    public ErpFinExpenseClaim submit(Long claimId, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(claimId, context);
+    public ErpFinExpenseClaim submitForApproval(String id, IServiceContext context) {
+        ErpFinExpenseClaim claim = requireClaim(id, context);
         validateNotCancelled(claim, context);
         validateTransitionForSubmit(claim, context);
         validateForApproval(claim, context);
@@ -55,16 +46,16 @@ public class ErpFinExpenseClaimProcessor {
         return claim;
     }
 
-    public ErpFinExpenseClaim withdrawSubmit(Long claimId, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(claimId, context);
+    public ErpFinExpenseClaim withdrawApproval(String id, IServiceContext context) {
+        ErpFinExpenseClaim claim = requireClaim(id, context);
         validateNotCancelled(claim, context);
         validateTransitionForWithdraw(claim, context);
         doWithdrawSubmit(claim, context);
         return claim;
     }
 
-    public ErpFinExpenseClaim approve(Long claimId, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(claimId, context);
+    public ErpFinExpenseClaim approve(String id, IServiceContext context) {
+        ErpFinExpenseClaim claim = requireClaim(id, context);
         if (isAlreadyApproved(claim)) {
             return claim;
         }
@@ -72,24 +63,24 @@ public class ErpFinExpenseClaimProcessor {
         validateTransitionForApprove(claim, context);
         validateForApproval(claim, context);
         runBudgetCheckHook(claim, context);
-        return doApprove(claimId, claim, context);
+        return doApprove(id, claim, context);
     }
 
-    public ErpFinExpenseClaim reject(Long claimId, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(claimId, context);
+    public ErpFinExpenseClaim reject(String id, IServiceContext context) {
+        ErpFinExpenseClaim claim = requireClaim(id, context);
         validateNotCancelled(claim, context);
         validateTransitionForReject(claim, context);
         doReject(claim, context);
         return claim;
     }
 
-    public ErpFinExpenseClaim reverseApprove(Long claimId, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(claimId, context);
+    public ErpFinExpenseClaim reverseApprove(String id, IServiceContext context) {
+        ErpFinExpenseClaim claim = requireClaim(id, context);
         if (isAlreadyRejected(claim)) {
             return claim;
         }
         validateTransitionForReverseApprove(claim, context);
-        return doReverseApprove(claimId, claim, context);
+        return doReverseApprove(id, claim, context);
     }
 
     public ErpFinExpenseClaim cancel(Long claimId, IServiceContext context) {
@@ -157,7 +148,6 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected void requireClaimantReady(ErpFinExpenseClaim claim, IServiceContext context) {
-        // 经 daoProvider 直接加载员工（避免跨会话关系懒加载）。
         ErpMdEmployee claimant = claim.getClaimantId() == null ? null
                 : daoProvider.daoFor(ErpMdEmployee.class).getEntityById(claim.getClaimantId());
         if (claimant == null || claimant.getStatus() == null
@@ -203,9 +193,6 @@ public class ErpFinExpenseClaimProcessor {
         }
     }
 
-    /**
-     * 预算控制钩子点。{@code erp-fin.expense-budget-check-enabled} 默认 false，预算模块未落地，仅留注入位不实现校验。
-     */
     protected void runBudgetCheckHook(ErpFinExpenseClaim claim, IServiceContext context) {
         AppConfig.var(ErpFinConstants.CONFIG_EXPENSE_BUDGET_CHECK_ENABLED, Boolean.FALSE);
     }
@@ -222,10 +209,9 @@ public class ErpFinExpenseClaimProcessor {
         claimDao().updateEntity(claim);
     }
 
-    protected ErpFinExpenseClaim doApprove(Long claimId, ErpFinExpenseClaim claim, IServiceContext context) {
+    protected ErpFinExpenseClaim doApprove(String id, ErpFinExpenseClaim claim, IServiceContext context) {
         boolean posted = postingDispatcher.tryPost(claim);
-        // 跨域 post 扰动会话脏跟踪，重新加载后置标志并显式持久化。
-        claim = reload(claimId);
+        claim = reload(id);
         claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
         claim.setApprovedBy(currentUserId());
         claim.setApprovedAt(CoreMetrics.currentDateTime());
@@ -233,9 +219,8 @@ public class ErpFinExpenseClaimProcessor {
             claim.setPosted(true);
             claim.setPostedAt(CoreMetrics.currentDateTime());
             claim.setPostedBy(currentUserId());
-            // 过账生成辅助账后、同事务抵扣同员工未还借款
             offsetOrchestrator.offset(claim);
-            claim = reload(claimId);
+            claim = reload(id);
         }
         claimDao().updateEntity(claim);
         return claim;
@@ -246,12 +231,11 @@ public class ErpFinExpenseClaimProcessor {
         claimDao().updateEntity(claim);
     }
 
-    protected ErpFinExpenseClaim doReverseApprove(Long claimId, ErpFinExpenseClaim claim, IServiceContext context) {
+    protected ErpFinExpenseClaim doReverseApprove(String id, ErpFinExpenseClaim claim, IServiceContext context) {
         if (Boolean.TRUE.equals(claim.getPosted())) {
-            // 先反向抵扣（恢复借款应收 + 红冲 SETTLE 凭证），再红冲 EXPENSE_CLAIM（取消报销应付辅助账）
             offsetOrchestrator.reverseOffset(claim);
             postingDispatcher.reverse(claim);
-            claim = reload(claimId);
+            claim = reload(id);
             claim.setPosted(false);
             claim.setPostedAt(null);
             claim.setPostedBy(null);
@@ -268,7 +252,7 @@ public class ErpFinExpenseClaimProcessor {
                 && Boolean.TRUE.equals(claim.getPosted())) {
             offsetOrchestrator.reverseOffset(claim);
             postingDispatcher.reverse(claim);
-            claim = reload(claimId);
+            claim = reload(String.valueOf(claimId));
             claim.setPosted(false);
             claim.setPostedAt(null);
             claim.setPostedBy(null);
@@ -282,14 +266,14 @@ public class ErpFinExpenseClaimProcessor {
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
     protected ErpFinExpenseClaim requireClaim(Long claimId, IServiceContext context) {
-        return requireClaim(claimId);
+        return requireClaim(String.valueOf(claimId), context);
     }
 
-    protected ErpFinExpenseClaim requireClaim(Long claimId) {
-        ErpFinExpenseClaim claim = claimDao().getEntityById(claimId);
+    protected ErpFinExpenseClaim requireClaim(String id, IServiceContext context) {
+        ErpFinExpenseClaim claim = claimDao().getEntityById(id);
         if (claim == null) {
             throw new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_NOT_FOUND)
-                    .param(ErpFinErrors.ARG_CLAIM_CODE, String.valueOf(claimId));
+                    .param(ErpFinErrors.ARG_CLAIM_CODE, id);
         }
         return claim;
     }
@@ -299,15 +283,14 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected List<ErpFinExpenseClaimLine> loadLines(Long claimId) {
-        // D2 边界场景：同聚合子表加载，父实体已授权，子行无独立权限规则。
         IEntityDao<ErpFinExpenseClaimLine> dao = daoProvider.daoFor(ErpFinExpenseClaimLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("claimId", claimId));
         return new ArrayList<>(dao.findAllByQuery(q));
     }
 
-    protected ErpFinExpenseClaim reload(Long claimId) {
-        return claimDao().getEntityById(claimId);
+    protected ErpFinExpenseClaim reload(String id) {
+        return claimDao().getEntityById(id);
     }
 
     protected boolean isAlreadyApproved(ErpFinExpenseClaim claim) {

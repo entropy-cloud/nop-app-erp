@@ -12,12 +12,17 @@ import app.erp.hr.dao.entity.ErpHrSocialInsuranceConfig;
 import app.erp.hr.dao.entity.ErpHrTaxConfig;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -27,6 +32,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -59,6 +65,8 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
     IErpHrSalaryBiz salaryBiz;
     @Inject
     IErpHrSalarySimulationBiz simulationBiz;
+    @Inject
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testCreateSimulationFreezesSourceAndAdjustItemRecalculates() {
@@ -362,7 +370,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         // 验证正式 PENDING 薪酬已创建（2026-12）
         ErpHrSalary formal = daoProvider.daoFor(ErpHrSalary.class).getEntityById(
                 simulation.getConvertedSalaryId());
-        assertEquals(ErpHrConstants.APPROVAL_PENDING, formal.getApprovalStatus());
+        assertEquals(ErpHrConstants.APPROVE_STATUS_UNSUBMITTED, formal.getApproveStatus());
         assertEquals(Integer.valueOf(2026), formal.getYear());
         assertEquals(Integer.valueOf(12), formal.getMonth());
         assertEquals(0, formal.getBasicSalary().compareTo(new BigDecimal("12000")),
@@ -425,9 +433,8 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
         // 目标期间已有 PAID 薪酬
         ErpHrSalary target = salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        salaryBiz.review(target.getId(), CTX);
-        salaryBiz.approveFinance(target.getId(), CTX);
-        salaryBiz.approveManager(target.getId(), CTX);
+        submitSalary(target.getId());
+        approveSalary(target.getId());
         salaryBiz.markPaid(target.getId(), CTX);
 
         ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
@@ -479,6 +486,19 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
     }
 
     // ---------- seed helpers ----------
+
+    private ApiResponse<?> submitSalary(Long salaryId) {
+        return executeRpc(mutation, "ErpHrSalary__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
+    }
+
+    private ApiResponse<?> approveSalary(Long salaryId) {
+        return executeRpc(mutation, "ErpHrSalary__approve", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
+    }
 
     private void seedTaxConfig(int year) {
         IEntityDao<ErpHrTaxConfig> dao = daoProvider.daoFor(ErpHrTaxConfig.class);

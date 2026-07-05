@@ -62,13 +62,13 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
     public ErpPrjTimesheet submit(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
-        if (status != null && Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED)) {
+        if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)) {
             return timesheet;
         }
-        if (status != null && Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_APPROVED)) {
+        if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_APPROVED)) {
             throw illegalTransition(timesheet, status, "DRAFT");
         }
-        if (status != null && !Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_DRAFT)) {
+        if (status != null && !Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED)) {
             throw illegalTransition(timesheet, status, "DRAFT");
         }
 
@@ -82,7 +82,7 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
 
         timesheet.setCostRate(costRate);
         timesheet.setCostAmount(costAmount);
-        timesheet.setStatus(ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED);
+        timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
         runBudgetCheckHook(timesheet, costAmount);
         dao().updateEntity(timesheet);
         return timesheet;
@@ -94,16 +94,16 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
     public ErpPrjTimesheet approve(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
-        if (status != null && Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_APPROVED)) {
+        if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_APPROVED)) {
             return timesheet;
         }
-        if (status == null || !Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED)) {
+        if (status == null || !Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(timesheet, status, "SUBMITTED");
         }
 
         boolean posted = postingDispatcher.tryPost(timesheet);
         timesheet = requireEntity(String.valueOf(timesheetId), null, context);
-        timesheet.setStatus(ErpPrjConstants.TIMESHEET_STATUS_APPROVED);
+        timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
         timesheet.setApprovedBy(currentUserId());
         timesheet.setApprovedAt(CoreMetrics.currentDateTime());
         if (posted) {
@@ -125,10 +125,10 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
     public ErpPrjTimesheet reject(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
-        if (status == null || !Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED)) {
+        if (status == null || !Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)) {
             throw illegalTransition(timesheet, status, "SUBMITTED");
         }
-        timesheet.setStatus(ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+        timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         dao().updateEntity(timesheet);
         return timesheet;
     }
@@ -139,7 +139,7 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
     public ErpPrjTimesheet cancel(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
-        if (status != null && Objects.equals(status, ErpPrjConstants.TIMESHEET_STATUS_APPROVED)) {
+        if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_APPROVED)) {
             if (Boolean.TRUE.equals(timesheet.getPosted())) {
                 postingDispatcher.reverse(timesheet);
                 timesheet = requireEntity(String.valueOf(timesheetId), null, context);
@@ -148,7 +148,7 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
                 timesheet.setPostedBy(null);
             }
         }
-        timesheet.setStatus(ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+        timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         dao().updateEntity(timesheet);
         return timesheet;
     }

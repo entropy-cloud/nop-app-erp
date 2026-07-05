@@ -187,11 +187,11 @@ public class TestErpSalReturnPosting extends JunitAutoTestCase {
     // ---------- rpc ----------
 
     private ApiResponse<?> approveReturn(Long id) {
-        return executeRpc(mutation, "ErpSalReturn__approve", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpSalReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApproveReturn(Long id) {
-        return executeRpc(mutation, "ErpSalReturn__reverseApprove", ApiRequest.build(Map.of("returnId", id)));
+        return executeRpc(mutation, "ErpSalReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

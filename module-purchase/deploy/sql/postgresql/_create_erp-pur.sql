@@ -277,6 +277,8 @@ CREATE TABLE erp_pur_rfq(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   constraint PK_erp_pur_rfq primary key (id)
 );
 
@@ -350,6 +352,8 @@ CREATE TABLE erp_pur_quotation(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   constraint PK_erp_pur_quotation primary key (id)
 );
 
@@ -923,6 +927,10 @@ CREATE TABLE erp_pur_return_line(
                     
       COMMENT ON COLUMN erp_pur_rfq.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_pur_rfq.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_pur_rfq.approved_at IS '审核时间';
+                    
       COMMENT ON TABLE erp_pur_supplier_scorecard_criteria IS '评分维度';
                 
       COMMENT ON COLUMN erp_pur_supplier_scorecard_criteria.id IS 'ID';
@@ -1044,6 +1052,10 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_quotation.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_pur_quotation.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_pur_quotation.approved_at IS '审核时间';
                     
       COMMENT ON TABLE erp_pur_supplier_scorecard_variable IS '评分变量';
                 

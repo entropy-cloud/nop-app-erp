@@ -448,6 +448,8 @@ CREATE TABLE erp_mfg_work_order(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   SOURCE_SCHEDULE_ID NUMBER(20)  ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
   EXCHANGE_RATE NUMBER(20,8) default 1  NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
@@ -547,6 +549,8 @@ CREATE TABLE erp_mfg_subcontract_order(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
   constraint PK_erp_mfg_subcontract_order primary key (ID)
 );
 
@@ -642,6 +646,8 @@ CREATE TABLE erp_mfg_material_issue(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
   CURRENCY_ID NUMBER(20)  ,
   EXCHANGE_RATE NUMBER(20,8) default 1  NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
@@ -1373,6 +1379,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_work_order.SOURCE_SCHEDULE_ID IS 'APS排程来源(弱参照)';
                     
+      COMMENT ON COLUMN erp_mfg_work_order.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.APPROVED_AT IS '审核时间';
+                    
       COMMENT ON COLUMN erp_mfg_work_order.EXCHANGE_RATE IS '汇率';
                     
       COMMENT ON COLUMN erp_mfg_work_order.AMOUNT_SOURCE IS '源币种金额';
@@ -1547,6 +1557,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON COLUMN erp_mfg_subcontract_order.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_subcontract_order.APPROVED_AT IS '审核时间';
+                    
       COMMENT ON TABLE erp_mfg_job_card IS '作业卡';
                 
       COMMENT ON COLUMN erp_mfg_job_card.ID IS 'ID';
@@ -1712,6 +1726,10 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_material_issue.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_material_issue.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.APPROVED_AT IS '审核时间';
                     
       COMMENT ON COLUMN erp_mfg_material_issue.CURRENCY_ID IS '币种';
                     

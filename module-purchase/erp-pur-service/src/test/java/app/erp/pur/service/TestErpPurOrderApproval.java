@@ -25,11 +25,9 @@ import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Phase 1 服务层集成测试：采购订单三轴审批状态机 + 供应商启用校验。
- *
- * <p>经 {@link IGraphQLEngine} 调 {@code ErpPurOrder__submit/approve/reject/withdrawSubmit/reverseApprove/cancel}，
- * 引擎负责建 session/事务/管道（直调缺 OrmSession 会报错，见 lessons/04）。测试自建供应商/行明细后断言状态迁移。
- * 订单审核 = 纯状态推进（state-machine §2「采购订单｜仅状态推进」），不触发库存/凭证。
+ * 采购订单审批集成测试。经 {@link IGraphQLEngine} 调标准审批 action（{@code submitForApproval/approve/reject/
+ * reverseApprove/withdrawApproval}），状态守卫由平台 {@code approval-support.xbiz} 承担，业务联动
+ * （requireLinesNonEmpty/requireSupplierActive/validateNotCancelled）经 xbiz prepend 注入 Processor。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
@@ -106,16 +104,22 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         ApiResponse<?> bad = submit(order.getId());
-        assertEquals(ErpPurErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可再提交，应返回非法迁移错误");
-        bad = withdrawSubmit(order.getId());
-        assertEquals(ErpPurErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可撤回提交，应返回非法迁移错误");
+        assertEquals(-1, bad.getStatus(),
+                "APPROVED 不可再提交：平台守卫仅接受 UNSUBMITTED/null/REJECTED 源态");
+
+        bad = withdrawApproval(order.getId());
+        assertEquals(-1, bad.getStatus(),
+                "APPROVED 不可撤回审批：withdrawApproval 守卫仅接受 SUBMITTED");
 
         assertEquals(0, reverseApprove(order.getId()).getStatus());
         ErpPurOrder reversed = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, reversed.getApproveStatus(),
                 "反审核目标态 = REJECTED 非 UNSUBMITTED");
+
+        assertEquals(0, submit(order.getId()).getStatus(),
+                "REJECTED 可重提（平台 5 态扩展）");
+        ErpPurOrder resubmitted = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId());
+        assertEquals(ErpPurConstants.APPROVE_STATUS_SUBMITTED, resubmitted.getApproveStatus());
     }
 
     @Test
@@ -128,7 +132,7 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
         });
         ApiResponse<?> bad = submit(order.getId());
         assertEquals(ErpPurErrors.ERR_PARTNER_INACTIVE.getErrorCode(), bad.getCode(),
-                "供应商停用 → submit 应返回 ERR_PARTNER_INACTIVE");
+                "供应商停用 → submitForApproval 应返回 ERR_PARTNER_INACTIVE（xbiz prepend 注入 Processor 校验）");
 
         ErpPurOrder submittedOrder = newOrder("PO-INACTIVE-002");
         submittedOrder.setApproveStatus(ErpPurConstants.APPROVE_STATUS_SUBMITTED);
@@ -153,29 +157,29 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
 
         ApiResponse<?> bad = submit(order.getId());
         assertEquals(ErpPurErrors.ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "已作废订单不可提交，应返回非法单据状态迁移错误");
+                "已作废订单不可提交，Processor.onSubmit 的 validateNotCancelled 经 xbiz prepend 拦截");
     }
 
     // ---------- helpers ----------
 
     private ApiResponse<?> submit(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__submit", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpPurOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
-    private ApiResponse<?> withdrawSubmit(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__withdrawSubmit", ApiRequest.build(Map.of("orderId", orderId)));
+    private ApiResponse<?> withdrawApproval(Long orderId) {
+        return executeRpc(mutation, "ErpPurOrder__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> approve(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> reject(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__reject", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpPurOrder__reject", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> reverseApprove(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__reverseApprove", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpPurOrder__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> cancel(Long orderId) {

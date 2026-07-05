@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Phase 1 服务层集成测试：维护访问 5 态状态机 + 设备状态联动 + 维护请求 6 态状态机（受理生成访问）。
  *
  * <p>经 {@link IGraphQLEngine} 调 {@code ErpMntVisit__schedule/start/complete/cancel} 与
- * {@code ErpMntRequest__accept/startRepair/complete/reject/cancel}，引擎建 session/事务/管道。
+ * {@code ErpMntRequest__accept/startRepair/complete/rejectRequest/cancel}，引擎建 session/事务/管道。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
@@ -245,7 +245,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
     }
 
     private ApiResponse<?> reject(Long requestId) {
-        return executeRpc(mutation, "ErpMntRequest__reject", ApiRequest.build(Map.of("requestId", requestId)));
+        return executeRpc(mutation, "ErpMntRequest__rejectRequest", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
     private ApiResponse<?> completeRequest(Long requestId) {

@@ -1,6 +1,6 @@
 
 drop table  if exists  erp_md_md_partner;
-drop table  if exists  erp_md_md_organization;
+drop table  if exists  erp_md_organization;
 drop table  if exists  erp_md_md_employee;
 drop table  if exists  erp_md_currency;
 drop table  if exists  erp_md_md_material;

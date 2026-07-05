@@ -34,8 +34,15 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 销售出库单审批状态机 + 出库审核触发库存移动编排 Processor（{@code processor-extension-pattern.md} Facade + Processor）。
- * Facade {@code ErpSalDeliveryBizModel} 仅负责入口/事务/委托，编排委托本类。
+ * 销售出库单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
+ *
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
+ *
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  *
  * <p>跨实体：客户启用校验经 {@link IErpMdPartnerBiz}；发货进度回写经 {@link IErpSalOrderBiz}；
  * 出库移动单经 {@link IErpInvStockMoveBiz}；强制质检经 {@link IErpQaInspectionBiz}。
@@ -60,25 +67,25 @@ public class ErpSalDeliveryProcessor {
     @Inject
     IErpQaInspectionBiz inspectionBiz;
 
-    public ErpSalDelivery submit(Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
+    public ErpSalDelivery submitForApproval(String id, IServiceContext context) {
+        ErpSalDelivery delivery = requireDelivery(id, context);
+        validateNotCancelled(delivery, context);
         validateTransitionForSubmit(delivery, context);
         validateBusinessRulesForSubmit(delivery, context);
         doSubmit(delivery, context);
         return delivery;
     }
 
-    public ErpSalDelivery withdrawSubmit(Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
+    public ErpSalDelivery withdrawApproval(String id, IServiceContext context) {
+        ErpSalDelivery delivery = requireDelivery(id, context);
         validateNotCancelled(delivery, context);
         validateTransitionForWithdraw(delivery, context);
         doWithdrawSubmit(delivery, context);
         return delivery;
     }
 
-    public ErpSalDelivery approve(Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
-        // 幂等：已审核单据再次审核为空操作（state-machine §4），出库移动单已存在，不重复触发。
+    public ErpSalDelivery approve(String id, IServiceContext context) {
+        ErpSalDelivery delivery = requireDelivery(id, context);
         if (isAlreadyApproved(delivery)) {
             return delivery;
         }
@@ -86,37 +93,29 @@ public class ErpSalDeliveryProcessor {
         validateTransitionForApprove(delivery, context);
         validateBusinessRulesForApprove(delivery, context);
         enforceInspectionGate(delivery, context);
-
-        ErpInvStockMove move = triggerOutgoingMove(delivery, context);
-        // 跨域 generateMove 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
-        delivery = deliveryDao().getEntityById(deliveryId);
-        doApprove(delivery, move, context);
-        postProcessApprove(delivery, context);
+        doApprove(delivery, context);
         return delivery;
     }
 
-    public ErpSalDelivery reject(Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
+    public ErpSalDelivery reject(String id, IServiceContext context) {
+        ErpSalDelivery delivery = requireDelivery(id, context);
         validateNotCancelled(delivery, context);
         validateTransitionForReject(delivery, context);
         doReject(delivery, context);
         return delivery;
     }
 
-    public ErpSalDelivery reverseApprove(Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
-        // 幂等：已 REJECTED（曾驳回或已反审核）无更多可冲销，直接返回。
+    public ErpSalDelivery reverseApprove(String id, IServiceContext context) {
+        ErpSalDelivery delivery = requireDelivery(id, context);
         if (isAlreadyRejected(delivery)) {
             return delivery;
         }
         validateTransitionForReverseApprove(delivery, context);
-        ensureReversed(delivery, context);
-        delivery = deliveryDao().getEntityById(deliveryId);
         doReverseApprove(delivery, context);
         return delivery;
     }
 
-    public ErpSalDelivery cancel(Long deliveryId, IServiceContext context) {
+    public ErpSalDelivery cancel(String deliveryId, IServiceContext context) {
         ErpSalDelivery delivery = requireDelivery(deliveryId, context);
         validateTransitionForCancel(delivery, context);
         if (isApproved(delivery)) {
@@ -127,10 +126,9 @@ public class ErpSalDeliveryProcessor {
         return delivery;
     }
 
-    // ---------- step：迁移校验 ----------
+    // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpSalDelivery delivery, IServiceContext context) {
-        validateNotCancelled(delivery, context);
         String status = delivery.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
@@ -187,7 +185,7 @@ public class ErpSalDeliveryProcessor {
         requireCustomerActive(delivery, context);
     }
 
-    // ---------- step：执行 ----------
+    // ---------- step：执行（状态推进 + 持久化） ----------
 
     protected void doSubmit(ErpSalDelivery delivery, IServiceContext context) {
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_SUBMITTED);
@@ -199,12 +197,14 @@ public class ErpSalDeliveryProcessor {
         deliveryDao().updateEntity(delivery);
     }
 
-    protected void doApprove(ErpSalDelivery delivery, ErpInvStockMove move, IServiceContext context) {
+    protected void doApprove(ErpSalDelivery delivery, IServiceContext context) {
+        ErpInvStockMove move = triggerOutgoingMove(delivery, context);
+        applyPostingResult(delivery, move);
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         delivery.setApprovedBy(currentUserId());
         delivery.setApprovedAt(CoreMetrics.currentDateTime());
-        applyPostingResult(delivery, move);
         deliveryDao().updateEntity(delivery);
+        postProcessApprove(delivery, context);
     }
 
     protected void doReject(ErpSalDelivery delivery, IServiceContext context) {
@@ -213,7 +213,11 @@ public class ErpSalDeliveryProcessor {
     }
 
     protected void doReverseApprove(ErpSalDelivery delivery, IServiceContext context) {
+        ensureReversed(delivery, context);
+        delivery = deliveryDao().getEntityById(delivery.getId());
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
+        delivery.setApprovedBy(null);
+        delivery.setApprovedAt(null);
         deliveryDao().updateEntity(delivery);
     }
 
@@ -228,19 +232,12 @@ public class ErpSalDeliveryProcessor {
 
     // ---------- 出库触发 + 过账接线 + 冲销 ----------
 
-    /**
-     * 审核通过后构造 {@link StockMoveRequest}(OUTGOING) 调 {@link IErpInvStockMoveBiz#generateMove}。
-     * 出库类在库存域 CONFIRM 校验可用量，不足抛 {@link NopException} 致整个出库单审核回滚。
-     */
     protected ErpInvStockMove triggerOutgoingMove(ErpSalDelivery delivery, IServiceContext context) {
         List<ErpSalDeliveryLine> lines = loadLines(delivery.getId());
         StockMoveRequest request = stockMoveBuilder.build(delivery, lines, context);
         return stockMoveBiz.generateMove(request, context);
     }
 
-    /**
-     * 将移动单过账结果接线到出库单：{@code delivery.posted = move.posted}、{@code postedAt}/{@code postedBy} 落地。
-     */
     protected void applyPostingResult(ErpSalDelivery delivery, ErpInvStockMove move) {
         delivery.setPosted(Boolean.TRUE.equals(move.getPosted()));
         if (Boolean.TRUE.equals(delivery.getPosted())) {
@@ -249,10 +246,6 @@ public class ErpSalDeliveryProcessor {
         }
     }
 
-    /**
-     * 反审核/作废前的内部冲销（Design A）：经 {@link IErpInvStockMoveBiz} 定位原出库移动单与既有冲销单，
-     * 不存在冲销单则调 {@link IErpInvStockMoveBiz#reverse}。
-     */
     protected void ensureReversed(ErpSalDelivery delivery, IServiceContext context) {
         ErpInvStockMove original = stockMoveBiz.findByRelatedBill(
                 ErpSalConstants.RELATED_BILL_TYPE_SAL_DELIVERY, delivery.getCode(), context);
@@ -268,10 +261,6 @@ public class ErpSalDeliveryProcessor {
         stockMoveBiz.reverse(original.getId(), context);
     }
 
-    /**
-     * 回写源订单 {@code deliveryStatus}：按「累计已发 / 订单数量」按行比较，全发清→DELIVERED、
-     * 部分发→PARTIAL、未发→UNDELIVERED。进度回写经 {@link IErpSalOrderBiz}（跨聚合写）。
-     */
     protected void rollupOrderDeliveryStatus(ErpSalDelivery currentDelivery, IServiceContext context) {
         Long orderId = currentDelivery.getOrderId();
         if (orderId == null) {
@@ -314,10 +303,6 @@ public class ErpSalDeliveryProcessor {
         orderBiz.updateDeliveryStatus(orderId, rolled, context);
     }
 
-    /**
-     * 强制质检门控（config-gated，默认空=不强制）。属强制类型时按出库单行物料逐行触发：首次生成 PENDING 质检单并阻塞，
-     * 质检合格/让步后再次审核放行。billType=ERP_SAL_DELIVERY，inspectionType=OUTGOING。
-     */
     protected void enforceInspectionGate(ErpSalDelivery delivery, IServiceContext context) {
         String billType = ErpSalConstants.RELATED_BILL_TYPE_SAL_DELIVERY;
         if (!InspectionTrigger.isMandatoryBillType(billType)) {
@@ -328,7 +313,7 @@ public class ErpSalDeliveryProcessor {
                 continue;
             }
             int gate = InspectionTrigger.enforceGate(inspectionBiz, billType, delivery.getCode(),
-                    line.getMaterialId(), "OUTGOING" /* erp-qa/inspection-type OUTGOING */,
+                    line.getMaterialId(), "OUTGOING",
                     line.getQuantity(), null, delivery.getWarehouseId(), null, context);
             if (gate == InspectionTrigger.BLOCKED) {
                 throw new NopException(ErpSalErrors.ERR_DELIVERY_INSPECTION_BLOCKED)
@@ -337,13 +322,13 @@ public class ErpSalDeliveryProcessor {
         }
     }
 
-    // ---------- 校验/查询辅助 ----------
+    // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpSalDelivery requireDelivery(Long deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = deliveryDao().getEntityById(deliveryId);
+    protected ErpSalDelivery requireDelivery(String id, IServiceContext context) {
+        ErpSalDelivery delivery = deliveryDao().getEntityById(id);
         if (delivery == null) {
             throw new NopException(ErpSalErrors.ERR_DELIVERY_NOT_FOUND)
-                    .param(ErpSalErrors.ARG_DELIVERY_ID, deliveryId);
+                    .param(ErpSalErrors.ARG_DELIVERY_CODE, id);
         }
         return delivery;
     }
@@ -355,13 +340,13 @@ public class ErpSalDeliveryProcessor {
         }
     }
 
-    protected boolean isAlreadyApproved(ErpSalDelivery delivery) {
+    protected boolean isApproved(ErpSalDelivery delivery) {
         String status = delivery.getApproveStatus();
         return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
     }
 
-    protected boolean isApproved(ErpSalDelivery delivery) {
-        return isAlreadyApproved(delivery);
+    protected boolean isAlreadyApproved(ErpSalDelivery delivery) {
+        return isApproved(delivery);
     }
 
     protected boolean isAlreadyRejected(ErpSalDelivery delivery) {
@@ -389,7 +374,6 @@ public class ErpSalDeliveryProcessor {
     }
 
     protected List<ErpSalDeliveryLine> loadLines(Long deliveryId) {
-        // D2 边界场景：同聚合子表加载，父实体已授权，子行无独立权限规则。
         IEntityDao<ErpSalDeliveryLine> dao = daoProvider.daoFor(ErpSalDeliveryLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("deliveryId", deliveryId));
@@ -397,7 +381,6 @@ public class ErpSalDeliveryProcessor {
     }
 
     protected List<ErpSalOrderLine> loadOrderLines(Long orderId) {
-        // D2 边界场景：跨聚合只读加载销售订单行（进度回写用），订单聚合经 orderBiz 跨聚合写时已校验存在性。
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));

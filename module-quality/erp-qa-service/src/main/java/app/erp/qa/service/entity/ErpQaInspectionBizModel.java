@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -82,9 +83,10 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
         String aggregated = InspectionResultEvaluator.aggregate(lines, concession);
         inspection.setResult(aggregated);
         inspection.setPosted(Boolean.TRUE);
-        if (Objects.equals(aggregated, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL)) {
-            // 让步接收须经审批：本期以质量主管审核（approveStatus=APPROVED）简化（完整多级审批流 Non-Goal）
+        if (concession && Objects.equals(aggregated, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL)) {
             inspection.setApproveStatus(ErpQaConstants.APPROVE_STATUS_APPROVED);
+            inspection.setApprovedBy(context.getUserId());
+            inspection.setApprovedAt(CoreMetrics.currentDateTime());
         }
         dao().updateEntity(inspection);
 

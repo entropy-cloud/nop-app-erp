@@ -101,13 +101,13 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submit(Long requisitionId) {
-        return executeRpc(mutation, "ErpPurRequisition__submit",
-                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+        return executeRpc(mutation, "ErpPurRequisition__submitForApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
     private ApiResponse<?> approve(Long requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__approve",
-                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+                ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
     private ApiResponse<?> convertToOrder(Long requisitionId, Map<String, Object> request) {
@@ -116,11 +116,11 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
     }
 
     private ApiResponse<?> orderSubmit(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__submit", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpPurOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> orderApprove(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> orderCancel(Long orderId) {

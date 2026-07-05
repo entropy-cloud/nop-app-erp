@@ -213,6 +213,8 @@ CREATE TABLE erp_mnt_calibration(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
   constraint PK_erp_mnt_calibration primary key (ID)
 );
 
@@ -302,6 +304,8 @@ CREATE TABLE erp_mnt_spare_part_usage(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
   constraint PK_erp_mnt_spare_part_usage primary key (ID)
 );
 
@@ -592,6 +596,10 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                     
       COMMENT ON COLUMN erp_mnt_calibration.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON COLUMN erp_mnt_calibration.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mnt_calibration.APPROVED_AT IS '审核时间';
+                    
       COMMENT ON TABLE erp_mnt_maintenance_team_member IS '维护团队成员';
                 
       COMMENT ON COLUMN erp_mnt_maintenance_team_member.ID IS 'ID';
@@ -745,6 +753,10 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
       COMMENT ON COLUMN erp_mnt_spare_part_usage.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mnt_spare_part_usage.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_mnt_spare_part_usage.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mnt_spare_part_usage.APPROVED_AT IS '审核时间';
                     
       COMMENT ON TABLE erp_mnt_spare_part_usage_line IS '备件消耗行';
                 

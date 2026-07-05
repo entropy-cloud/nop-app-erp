@@ -130,7 +130,7 @@ public class IncomeTaxCalculator {
                 BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
                 BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
         for (ErpHrSalary s : history) {
-            if (ErpHrConstants.APPROVAL_VOID.equals(s.getApprovalStatus())) {
+            if (ErpHrConstants.PAYMENT_VOID.equals(s.getPaymentStatus())) {
                 continue;
             }
             java.util.Map<String, BigDecimal> cd = parseCumulativeData(s.getCumulativeData());
@@ -140,7 +140,7 @@ public class IncomeTaxCalculator {
         if (!history.isEmpty()) {
             ErpHrSalary latest = null;
             for (ErpHrSalary s : history) {
-                if (ErpHrConstants.APPROVAL_VOID.equals(s.getApprovalStatus())) {
+                if (ErpHrConstants.PAYMENT_VOID.equals(s.getPaymentStatus())) {
                     continue;
                 }
                 if (latest == null || (s.getMonth() != null && s.getMonth() > latest.getMonth())) {

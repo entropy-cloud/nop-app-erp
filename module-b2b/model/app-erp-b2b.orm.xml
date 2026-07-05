@@ -551,7 +551,7 @@
             </columns>
         </entity>
         <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
-                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_md_organization">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
             </columns>

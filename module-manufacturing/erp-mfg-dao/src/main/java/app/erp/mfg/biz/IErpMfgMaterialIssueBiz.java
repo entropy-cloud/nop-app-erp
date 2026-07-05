@@ -5,11 +5,15 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
+import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
 
 /**
  * 领料单业务接口。除标准 CRUD 外，定义领料确认→出库移动单 + 材料成本回写契约。
+ *
+ * <p>标准审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）由 {@link IApprovableBiz}
+ * 声明，运行时由平台 {@code approval-support.xbiz} 标准 source 提供。
  *
  * <p>领料确认（{@link #confirm}）：issue-status DRAFT→CONFIRMED→DONE；DONE 时调
  * {@code IErpInvStockMoveBiz.generateMove}（出库方向、moveType=MANUFACTURING、relatedBillType=ERP_MFG_ISSUE），
@@ -20,7 +24,7 @@ import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
  * 权威：{@code docs/design/manufacturing/state-machine.md}、{@code docs/design/inventory/cross-domain.md}、
  * {@code docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md} Phase 3。
  */
-public interface IErpMfgMaterialIssueBiz extends ICrudBiz<ErpMfgMaterialIssue> {
+public interface IErpMfgMaterialIssueBiz extends ICrudBiz<ErpMfgMaterialIssue>, IApprovableBiz<ErpMfgMaterialIssue> {
 
     @BizMutation
     ErpMfgMaterialIssue confirm(@Name("issueId") Long issueId, IServiceContext context);

@@ -87,11 +87,11 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         ApiResponse<?> bad = submit(receive.getId());
-        assertEquals(ErpPurErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可再提交，应返回非法迁移错误");
+        assertEquals(-1, bad.getStatus(),
+                "APPROVED 不可再提交：平台守卫仅接受 UNSUBMITTED/null/REJECTED 源态");
         bad = withdrawSubmit(receive.getId());
-        assertEquals(ErpPurErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可撤回提交，应返回非法迁移错误");
+        assertEquals(-1, bad.getStatus(),
+                "APPROVED 不可撤回审批：withdrawApproval 守卫仅接受 SUBMITTED");
     }
 
     @Test
@@ -128,19 +128,19 @@ public class TestErpPurReceiveApproval extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private ApiResponse<?> submit(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__submit", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> withdrawSubmit(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__withdrawSubmit", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__withdrawApproval", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> approve(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> reject(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__reject", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__reject", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> cancel(Long receiveId) {

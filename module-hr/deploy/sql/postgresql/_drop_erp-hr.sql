@@ -1,7 +1,7 @@
 
 drop table  if exists  erp_md_cost_center;
 drop table  if exists  erp_md_bank_account;
-drop table  if exists  erp_md_md_organization;
+drop table  if exists  erp_md_organization;
 drop table  if exists  erp_md_currency;
 drop table  if exists  erp_prj_project;
 drop table  if exists  erp_prj_task;

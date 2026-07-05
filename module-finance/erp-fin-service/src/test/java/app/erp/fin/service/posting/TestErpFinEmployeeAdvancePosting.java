@@ -1,6 +1,5 @@
 package app.erp.fin.service.posting;
 
-import app.erp.fin.biz.IErpFinEmployeeAdvanceBiz;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinEmployeeAdvance;
@@ -10,12 +9,15 @@ import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -23,29 +25,32 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 员工借款单业财过账端到端单测（Phase 3）。验证 APPROVED→EMPLOYEE_ADVANCE 凭证落库（借其他应收-员工预支/贷银行）
  * + DIRECTION_RECEIVABLE 辅助账（partnerId=employee.partnerId）+ posted=true；reverseApprove→红冲 + 辅助账 CANCELLED。
+ *
+ * <p>审批动作经 {@link IGraphQLEngine} 调 {@code ErpFinEmployeeAdvance__approve/reverseApprove}
+ * （approval-support.xbiz 标准 source），引擎建 session/事务/管道。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
 
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
     @Inject
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpFinEmployeeAdvanceBiz advanceBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testApprovePostsAndGeneratesReceivableSubledger() {
@@ -59,7 +64,8 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
             return seedAdvance("ADV-POST-001", empId, new BigDecimal("500"));
         });
 
-        ErpFinEmployeeAdvance advance = advanceBiz.approve(advanceId, CTX);
+        assertEquals(0, approve(advanceId).getStatus());
+        ErpFinEmployeeAdvance advance = fetchAdvance(advanceId);
         assertTrue(Boolean.TRUE.equals(advance.getPosted()), "过账成功 posted=true");
 
         ErpFinArApItem item = findItem("EMPLOYEE_ADVANCE", "ADV-POST-001");
@@ -81,12 +87,34 @@ public class TestErpFinEmployeeAdvancePosting extends JunitAutoTestCase {
             return seedAdvance("ADV-POST-002", empId, new BigDecimal("300"));
         });
 
-        advanceBiz.approve(advanceId, CTX);
-        ErpFinEmployeeAdvance advance = advanceBiz.reverseApprove(advanceId, CTX);
+        assertEquals(0, approve(advanceId).getStatus());
+        assertEquals(0, reverseApprove(advanceId).getStatus());
+        ErpFinEmployeeAdvance advance = fetchAdvance(advanceId);
         assertTrue(!Boolean.TRUE.equals(advance.getPosted()), "反审核后 posted=false");
 
         ErpFinArApItem item = findItem("EMPLOYEE_ADVANCE", "ADV-POST-002");
         assertEquals(ErpFinConstants.AR_AP_STATUS_CANCELLED, item.getStatus());
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> approve(Long advanceId) {
+        return executeRpc(mutation, "ErpFinEmployeeAdvance__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(advanceId))));
+    }
+
+    private ApiResponse<?> reverseApprove(Long advanceId) {
+        return executeRpc(mutation, "ErpFinEmployeeAdvance__reverseApprove",
+                ApiRequest.build(Map.of("id", String.valueOf(advanceId))));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
+    }
+
+    private ErpFinEmployeeAdvance fetchAdvance(Long id) {
+        return daoProvider.daoFor(ErpFinEmployeeAdvance.class).getEntityById(id);
     }
 
     // ---------- seed helpers ----------

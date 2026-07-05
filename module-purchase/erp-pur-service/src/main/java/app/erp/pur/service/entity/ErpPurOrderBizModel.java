@@ -24,12 +24,9 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 采购订单 BizModel（聚合根 Facade，{@code processor-extension-pattern.md} 两层结构）。
- * 三轴审批状态机编排委托 {@link ErpPurOrderProcessor}（protected step 方法，下游可逐 step 覆盖）；
- * 跨聚合写契约（请购→订单转化、收货进度回写、防重查询）留 Facade。
- *
- * <p>订单审核 = 纯状态推进，不触发库存/凭证（下游单据才触发）——与入库单审核触发
- * {@code generateMove} 实质性不同。
+ * 采购订单 BizModel（聚合根 Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由 xbiz 一行委托注入 Processor；非审批动作（cancel）在本类完成
+ * Long→String 转换后委托 Processor。
  */
 @BizModel("ErpPurOrder")
 public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IErpPurOrderBiz {
@@ -46,38 +43,8 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
 
     @Override
     @BizMutation
-    public ErpPurOrder submit(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.submit(orderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurOrder withdrawSubmit(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.withdrawSubmit(orderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurOrder approve(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.approve(orderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurOrder reject(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.reject(orderId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurOrder reverseApprove(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.reverseApprove(orderId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpPurOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.cancel(orderId, context);
+        return orderProcessor.cancel(String.valueOf(orderId), context);
     }
 
     // ---------- 跨聚合写契约（请购→订单转化、收货进度回写） ----------

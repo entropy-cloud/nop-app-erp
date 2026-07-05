@@ -12,8 +12,9 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
- * 采购发票 BizModel（Facade）。审批状态机 + 三单匹配 + AP_INVOICE 过账编排委托
- * {@link ErpPurInvoiceProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 采购发票 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由 xbiz 一行委托注入 Processor；非审批动作（cancel）在本类完成
+ * Long→String 转换后委托 Processor。
  */
 @BizModel("ErpPurInvoice")
 public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implements IErpPurInvoiceBiz {
@@ -27,37 +28,7 @@ public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implement
 
     @Override
     @BizMutation
-    public ErpPurInvoice submit(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.submit(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurInvoice withdrawSubmit(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.withdrawSubmit(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurInvoice approve(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.approve(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurInvoice reject(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.reject(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurInvoice reverseApprove(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.reverseApprove(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpPurInvoice cancel(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.cancel(invoiceId, context);
+        return invoiceProcessor.cancel(String.valueOf(invoiceId), context);
     }
 }

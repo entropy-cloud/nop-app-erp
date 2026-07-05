@@ -6,6 +6,7 @@ import app.erp.sal.dao.entity.ErpSalQuotation;
 import app.erp.sal.dao.entity.ErpSalQuotationLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -22,14 +23,17 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 销售报价单审批状态机 + 客户确认 + 报价→订单转化编排 Processor
- * （{@code processor-extension-pattern.md} Facade + Processor）。Facade {@code ErpSalQuotationBizModel}
- * 仅负责入口/事务/委托，编排委托本类。
+ * 销售报价单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
  *
- * <p>跨实体：报价→订单转化经 {@link IErpSalOrderBiz}（create{@code FromQuotation} + {@code existsActiveByQuotation} 防重）。
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
  *
- * <p>模型边界：报价单无 {@code approvedBy}/{@code approvedAt} 列——审核仅翻转 {@code approveStatus}，
- * 不记录审核人/时间。「EXPIRED」不在持久化（无列），由 {@code validTo < today} 在确认/转化时派生校验。
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
+ *
+ * <p>跨实体：报价→订单转化经 {@link IErpSalOrderBiz}（createFromQuotation + existsActiveByQuotation 防重）。
  */
 public class ErpSalQuotationProcessor {
 
@@ -39,25 +43,25 @@ public class ErpSalQuotationProcessor {
     @Inject
     IErpSalOrderBiz orderBiz;
 
-    public ErpSalQuotation submit(Long quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
+    public ErpSalQuotation submitForApproval(String id, IServiceContext context) {
+        ErpSalQuotation quotation = requireQuotation(id, context);
+        validateNotCancelled(quotation, context);
         validateTransitionForSubmit(quotation, context);
         validateBusinessRulesForSubmit(quotation, context);
         doSubmit(quotation, context);
         return quotation;
     }
 
-    public ErpSalQuotation withdrawSubmit(Long quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
+    public ErpSalQuotation withdrawApproval(String id, IServiceContext context) {
+        ErpSalQuotation quotation = requireQuotation(id, context);
         validateNotCancelled(quotation, context);
         validateTransitionForWithdraw(quotation, context);
         doWithdrawSubmit(quotation, context);
         return quotation;
     }
 
-    public ErpSalQuotation approve(Long quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
-        // 幂等：已审核再次审核为空操作。
+    public ErpSalQuotation approve(String id, IServiceContext context) {
+        ErpSalQuotation quotation = requireQuotation(id, context);
         if (isAlreadyApproved(quotation)) {
             return quotation;
         }
@@ -67,17 +71,16 @@ public class ErpSalQuotationProcessor {
         return quotation;
     }
 
-    public ErpSalQuotation reject(Long quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
+    public ErpSalQuotation reject(String id, IServiceContext context) {
+        ErpSalQuotation quotation = requireQuotation(id, context);
         validateNotCancelled(quotation, context);
         validateTransitionForReject(quotation, context);
         doReject(quotation, context);
         return quotation;
     }
 
-    public ErpSalQuotation reverseApprove(Long quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
-        // 幂等：已 REJECTED 直接返回。
+    public ErpSalQuotation reverseApprove(String id, IServiceContext context) {
+        ErpSalQuotation quotation = requireQuotation(id, context);
         if (isAlreadyRejected(quotation)) {
             return quotation;
         }
@@ -86,14 +89,14 @@ public class ErpSalQuotationProcessor {
         return quotation;
     }
 
-    public ErpSalQuotation cancel(Long quotationId, IServiceContext context) {
+    public ErpSalQuotation cancel(String quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId, context);
         validateTransitionForCancel(quotation, context);
         doCancel(quotation, context);
         return quotation;
     }
 
-    public ErpSalQuotation confirmCustomerAccepted(Long quotationId, IServiceContext context) {
+    public ErpSalQuotation confirmCustomerAccepted(String quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId, context);
         validateNotCancelled(quotation, context);
         validateTransitionForConfirm(quotation, context);
@@ -102,7 +105,7 @@ public class ErpSalQuotationProcessor {
         return quotation;
     }
 
-    public ErpSalOrder convertToOrder(Long quotationId, IServiceContext context) {
+    public ErpSalOrder convertToOrder(String quotationId, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(quotationId, context);
         validateReadyForConvert(quotation, context);
         requireNotExpired(quotation, context);
@@ -112,7 +115,7 @@ public class ErpSalQuotationProcessor {
         return order;
     }
 
-    // ---------- step：迁移校验 ----------
+    // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpSalQuotation quotation, IServiceContext context) {
         validateNotCancelled(quotation, context);
@@ -168,9 +171,6 @@ public class ErpSalQuotationProcessor {
         }
     }
 
-    /**
-     * 转化前置校验：须未作废 + APPROVED + isAccepted（否则 ERR_QUOTATION_NOT_READY）。
-     */
     protected void validateReadyForConvert(ErpSalQuotation quotation, IServiceContext context) {
         validateNotCancelled(quotation, context);
         String status = quotation.getApproveStatus();
@@ -183,9 +183,6 @@ public class ErpSalQuotationProcessor {
         }
     }
 
-    /**
-     * 幂等防重复转化：订单侧查既有 docStatus≠CANCELLED 且 quotationId 命中 → 拒绝。
-     */
     protected void validateNotAlreadyConverted(ErpSalQuotation quotation, IServiceContext context) {
         if (orderBiz.existsActiveByQuotation(quotation.getId(), context)) {
             throw new NopException(ErpSalErrors.ERR_QUOTATION_ALREADY_CONVERTED)
@@ -193,15 +190,6 @@ public class ErpSalQuotationProcessor {
         }
     }
 
-    // ---------- step：业务规则校验 ----------
-
-    protected void validateBusinessRulesForSubmit(ErpSalQuotation quotation, IServiceContext context) {
-        requireLinesNonEmpty(quotation, context);
-    }
-
-    /**
-     * EXPIRED 派生校验：{@code validTo < today} 视为过期（无持久化 EXPIRED 列）。
-     */
     protected void requireNotExpired(ErpSalQuotation quotation, IServiceContext context) {
         LocalDate validTo = quotation.getValidTo();
         if (validTo != null && validTo.isBefore(CoreMetrics.currentDate())) {
@@ -211,7 +199,13 @@ public class ErpSalQuotationProcessor {
         }
     }
 
-    // ---------- step：执行 ----------
+    // ---------- step：业务规则校验 ----------
+
+    protected void validateBusinessRulesForSubmit(ErpSalQuotation quotation, IServiceContext context) {
+        requireLinesNonEmpty(quotation, context);
+    }
+
+    // ---------- step：执行（状态推进 + 持久化） ----------
 
     protected void doSubmit(ErpSalQuotation quotation, IServiceContext context) {
         quotation.setApproveStatus(ErpSalConstants.APPROVE_STATUS_SUBMITTED);
@@ -224,8 +218,9 @@ public class ErpSalQuotationProcessor {
     }
 
     protected void doApprove(ErpSalQuotation quotation, IServiceContext context) {
-        // 模型边界：无 approvedBy/approvedAt 列，审核仅翻转 approveStatus。
         quotation.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
+        quotation.setApprovedBy(currentUserId());
+        quotation.setApprovedAt(CoreMetrics.currentDateTime());
         quotationDao().updateEntity(quotation);
     }
 
@@ -249,30 +244,24 @@ public class ErpSalQuotationProcessor {
         quotationDao().updateEntity(quotation);
     }
 
-    /**
-     * 跨聚合转化：经 {@link IErpSalOrderBiz#createFromQuotation} 委托订单聚合（订单/行的组装与持久化归订单侧）。
-     */
     protected ErpSalOrder createOrderFromQuotation(ErpSalQuotation quotation, IServiceContext context) {
         List<ErpSalQuotationLine> quotationLines = loadLines(quotation.getId());
         return orderBiz.createFromQuotation(quotation, quotationLines, context);
     }
 
-    /**
-     * 回链：重新加载后置 quotation.isAccepted=true（纯标记，无 ORM FK 改动；quotationId 列已存在于订单）。
-     */
-    protected void markQuotationAccepted(Long quotationId, IServiceContext context) {
+    protected void markQuotationAccepted(String quotationId, IServiceContext context) {
         ErpSalQuotation quotation = quotationDao().getEntityById(quotationId);
         quotation.setIsAccepted(true);
         quotationDao().updateEntity(quotation);
     }
 
-    // ---------- 校验/查询辅助 ----------
+    // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpSalQuotation requireQuotation(Long quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = quotationDao().getEntityById(quotationId);
+    protected ErpSalQuotation requireQuotation(String id, IServiceContext context) {
+        ErpSalQuotation quotation = quotationDao().getEntityById(id);
         if (quotation == null) {
             throw new NopException(ErpSalErrors.ERR_QUOTATION_NOT_FOUND)
-                    .param(ErpSalErrors.ARG_QUOTATION_ID, quotationId);
+                    .param(ErpSalErrors.ARG_QUOTATION_CODE, id);
         }
         return quotation;
     }
@@ -302,7 +291,6 @@ public class ErpSalQuotationProcessor {
     }
 
     protected List<ErpSalQuotationLine> loadLines(Long quotationId) {
-        // D2 边界场景：同聚合子表加载，父实体已授权，子行无独立权限规则。
         IEntityDao<ErpSalQuotationLine> dao = daoProvider.daoFor(ErpSalQuotationLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("quotationId", quotationId));
@@ -313,6 +301,18 @@ public class ErpSalQuotationProcessor {
 
     protected IEntityDao<ErpSalQuotation> quotationDao() {
         return daoProvider.daoFor(ErpSalQuotation.class);
+    }
+
+    protected String currentUserId() {
+        try {
+            IUserContext ctx = IUserContext.get();
+            if (ctx == null) {
+                return null;
+            }
+            return ctx.getUserId();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     protected NopException illegalTransition(ErpSalQuotation quotation, String current, String expected) {

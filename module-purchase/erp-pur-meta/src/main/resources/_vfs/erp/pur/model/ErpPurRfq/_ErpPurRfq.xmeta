@@ -2,7 +2,7 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
       xmlns:xpl="xpl" ext:model="orm" ext:icon="message-circle-question" xmlns:c="c" xmlns:graphql="graphql"
       xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="采购询价单" i18n-en:displayName="Purchase RFQ"
-      tagSet="gid,erp.purchase" xmlns:ui="ui" xmlns:orm="orm">
+      tagSet="gid,erp.purchase,use-approval" xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.pur.dao.entity.ErpPurRfq</entityName>
 
@@ -49,7 +49,7 @@
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="8" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-pur/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
         </prop>
         <prop name="remark" displayName="备注" propId="9" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -78,6 +78,14 @@
         <prop name="updateTime" displayName="修改时间" propId="15" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="approvedBy" displayName="审核人" propId="200" i18n-en:displayName="Approved By" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
+        </prop>
+        <prop name="approvedAt" displayName="审核时间" propId="201" i18n-en:displayName="Approved At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="requisition" i18n-en:displayName="Requisition" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="requisitionId" ext:joinRightProp="id" insertable="false"

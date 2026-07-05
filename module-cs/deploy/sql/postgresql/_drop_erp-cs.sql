@@ -1,6 +1,6 @@
 
 drop table  if exists  erp_md_md_partner;
-drop table  if exists  erp_md_md_organization;
+drop table  if exists  erp_md_organization;
 drop table  if exists  erp_cs_team;
 drop table  if exists  erp_cs_canned_category;
 drop table  if exists  erp_cs_agent_rate;

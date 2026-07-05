@@ -28,15 +28,6 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
-/**
- * 资产资本化（转固）状态机编排 Processor（{@code processor-extension-pattern.md} 两层结构：Facade + Processor）。
- * Facade {@code ErpAstAssetCapitalizationBizModel} 仅负责入口/事务/委托，编排委托本类。
- *
- * <p>配置余地：每个动作只编排步骤顺序，各步骤为 {@code protected} 方法、以 {@link IServiceContext} 为末参。
- * APPROVED 时建/激活 {@link ErpAstAsset} + 生成 {@link ErpAstDepreciationSchedule} 折旧计划 + CAPITALIZATION 业财过账。
- *
- * <p>事务边界：跟随 Facade {@code @BizMutation}+{@code @SingleSession} 事务；ORM Session 由 {@link #orm()} 获取。
- */
 public class ErpAstAssetCapitalizationProcessor {
 
     private static final DateTimeFormatter PERIOD_FMT = DateTimeFormatter.ofPattern("yyyy-MM");
@@ -48,7 +39,7 @@ public class ErpAstAssetCapitalizationProcessor {
     @Inject
     CapitalizationPostingDispatcher postingDispatcher;
 
-    public ErpAstAssetCapitalization submit(Long id, IServiceContext context) {
+    public ErpAstAssetCapitalization submitForApproval(String id, IServiceContext context) {
         ErpAstAssetCapitalization cap = requireCap(id, context);
         validateNotCancelled(cap, context);
         validateTransitionForSubmit(cap, context);
@@ -58,7 +49,16 @@ public class ErpAstAssetCapitalizationProcessor {
         return cap;
     }
 
-    public ErpAstAssetCapitalization approve(Long id, IServiceContext context) {
+    public ErpAstAssetCapitalization withdrawApproval(String id, IServiceContext context) {
+        ErpAstAssetCapitalization cap = requireCap(id, context);
+        validateNotCancelled(cap, context);
+        validateTransitionForWithdraw(cap, context);
+        cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
+        capDao().updateEntity(cap);
+        return cap;
+    }
+
+    public ErpAstAssetCapitalization approve(String id, IServiceContext context) {
         ErpAstAssetCapitalization cap = requireCap(id, context);
         if (isAlreadyApproved(cap)) {
             return cap;
@@ -67,15 +67,12 @@ public class ErpAstAssetCapitalizationProcessor {
         validateTransitionForApprove(cap, context);
         validateForApproval(cap, context);
 
-        // 建卡 + 折旧计划生成（资本化单是转固凭证，资产卡片是其产物）
         ErpAstAsset asset = createAndActivateAsset(cap, context);
         generateDepreciationSchedule(cap, asset, context);
         orm().flushSession();
 
-        // CAPITALIZATION 业财过账
         boolean posted = postingDispatcher.tryPost(cap);
 
-        // 跨域 post 扰动会话脏跟踪，重新加载后置标志并显式持久化。
         cap = reload(id);
         cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
         cap.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
@@ -88,7 +85,7 @@ public class ErpAstAssetCapitalizationProcessor {
         return cap;
     }
 
-    public ErpAstAssetCapitalization reject(Long id, IServiceContext context) {
+    public ErpAstAssetCapitalization reject(String id, IServiceContext context) {
         ErpAstAssetCapitalization cap = requireCap(id, context);
         validateNotCancelled(cap, context);
         validateTransitionForReject(cap, context);
@@ -97,16 +94,14 @@ public class ErpAstAssetCapitalizationProcessor {
         return cap;
     }
 
-    public ErpAstAssetCapitalization reverseApprove(Long id, IServiceContext context) {
+    public ErpAstAssetCapitalization reverseApprove(String id, IServiceContext context) {
         ErpAstAssetCapitalization cap = requireCap(id, context);
         if (isAlreadyRejected(cap)) {
             return cap;
         }
         validateTransitionForReverseApprove(cap, context);
         if (Boolean.TRUE.equals(cap.getPosted())) {
-            // 红字冲销 CAPITALIZATION 凭证（硬前置）
             postingDispatcher.reverse(cap);
-            // 回滚资本化产物：资产状态恢复草稿、折旧计划取消
             ErpAstAsset asset = findAssetByCode(resolveAssetCode(cap));
             if (asset != null) {
                 asset.setStatus(ErpAstConstants.ASSET_STATUS_DRAFT);
@@ -131,6 +126,13 @@ public class ErpAstAssetCapitalizationProcessor {
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
                 && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(cap, status, "UNSUBMITTED 或 REJECTED");
+        }
+    }
+
+    protected void validateTransitionForWithdraw(ErpAstAssetCapitalization cap, IServiceContext context) {
+        String status = currentApproveStatus(cap);
+        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
+            throw illegalTransition(cap, status, "SUBMITTED");
         }
     }
 
@@ -218,7 +220,6 @@ public class ErpAstAssetCapitalizationProcessor {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
         LocalDate baseDate = cap.getCapitalizationDate() != null ? cap.getCapitalizationDate()
                 : CoreMetrics.today();
-        // 折旧起始月：资本化次月起（§5.1 当月增加下月提）
         LocalDate start = baseDate.plusMonths(1);
 
         BigDecimal straightMonthly = BigDecimal.ZERO;
@@ -245,10 +246,6 @@ public class ErpAstAssetCapitalizationProcessor {
         }
     }
 
-    /**
-     * 计划折旧额。直线法每期等额、最后一期按残值约束调整；双倍余额递减/工作量法的实际金额在折旧执行时
-     * 按账面净值/工作量计算，计划额置 0 占位。
-     */
     protected BigDecimal plannedAmount(String method, int monthIndex, int months, BigDecimal original,
                                        BigDecimal residual, BigDecimal straightMonthly) {
         if (Objects.equals(method, ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE)) {
@@ -263,7 +260,7 @@ public class ErpAstAssetCapitalizationProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpAstAssetCapitalization requireCap(Long id, IServiceContext context) {
+    protected ErpAstAssetCapitalization requireCap(String id, IServiceContext context) {
         ErpAstAssetCapitalization cap = capDao().getEntityById(id);
         if (cap == null) {
             throw new NopException(ErpAstErrors.ERR_CAPITALIZATION_NOT_FOUND)
@@ -331,7 +328,7 @@ public class ErpAstAssetCapitalizationProcessor {
         cap.setPostedBy(null);
     }
 
-    protected ErpAstAssetCapitalization reload(Long id) {
+    protected ErpAstAssetCapitalization reload(String id) {
         return capDao().getEntityById(id);
     }
 

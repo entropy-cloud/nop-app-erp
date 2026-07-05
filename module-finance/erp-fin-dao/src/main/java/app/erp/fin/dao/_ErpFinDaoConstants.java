@@ -254,6 +254,11 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_PROFIT_TO_RETAINED_EARNINGS = "PROFIT_TO_RETAINED_EARNINGS";
                     
     /**
+     * 业务类型: 资产减值/重估 
+     */
+    String BUSINESS_TYPE_VALUE_ADJUSTMENT = "VALUE_ADJUSTMENT";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

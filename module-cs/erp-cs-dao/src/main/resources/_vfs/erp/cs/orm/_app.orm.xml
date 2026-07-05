@@ -144,8 +144,8 @@
         <entity className="app.erp.cs.dao.entity.ErpCsTicket" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="客服工单"
                 name="app.erp.cs.dao.entity.ErpCsTicket" registerShortName="true" tableName="erp_cs_ticket"
-                tagSet="gid,erp.cs" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="headset" i18n-en:displayName="Ticket">
+                tagSet="gid,erp.cs,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="headset" i18n-en:displayName="Ticket">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -191,7 +191,7 @@
                         propId="20" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/approve-status"
+                        propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="22"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -212,6 +212,10 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
             <relations>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
@@ -1136,7 +1140,7 @@
             </columns>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="ErpMdOrganization"
-                name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_md_organization"
+                name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
                 biz:moduleId="erp/md">
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"

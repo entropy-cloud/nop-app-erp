@@ -428,8 +428,8 @@ prop:
       paymentStatus: Payment Status
       paymentStatus_label: null
       paymentDate: Payment Date
-      approvalStatus: Approval Status
-      approvalStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
       performanceFactor: Performance Factor
       actualWorkDays: Actual Work Days
       requiredWorkDays: Required Work Days
@@ -447,6 +447,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       employee: Employee
       org: Org
       bankFile: Bank File

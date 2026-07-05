@@ -83,12 +83,12 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV", "开发", "800", null);
             Long taskId = seedTask(projectId, "任务-W", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-W-001", projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         // WARNING 模式：submit 应放行（不抛错）
         ErpPrjTimesheet ts = timesheetBiz.submit(tsId, CTX);
-        assertEquals(ErpPrjConstants.TIMESHEET_STATUS_SUBMITTED, ts.getStatus());
+        assertEquals(ErpPrjConstants.APPROVE_STATUS_SUBMITTED, ts.getStatus());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
                 Long activityTypeId = seedActivityType("DEV", "开发", "800", null);
                 Long taskId = seedTask(projectId, "任务-S", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
                 return seedTimesheet("TS-S-001", projectId, taskId, activityTypeId,
-                        "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                        "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
             });
 
             // STRICT 模式：超预算应抛 ERR_BUDGET_EXCEEDED
@@ -134,7 +134,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV", "开发", "800", debitSubjectId);
             Long taskId = seedTask(projectId, "任务-AGG", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-AGG-001", projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         timesheetBiz.submit(tsId, CTX);
@@ -170,7 +170,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV", "开发", "800", null);
             Long taskId = seedTask(projectId, "任务-IDEM", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             return seedTimesheet("TS-IDEM-001", projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         timesheetBiz.submit(tsId, CTX);
@@ -200,7 +200,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
             Long activityTypeId = seedActivityType("DEV", "开发", "800", null);
             Long taskId = seedTask(projectId, "任务-CLOSE", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
             seedTimesheet("TS-CLOSE-001", projectId, taskId, activityTypeId,
-                    "10", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
             return null;
         });
 
@@ -215,7 +215,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
             Long taskId = daoProvider.daoFor(ErpPrjTask.class)
                     .findAllByQuery(new QueryBean().addFilter(eq("title", "任务-CLOSE"))).get(0).getId();
             return seedTimesheet("TS-CLOSE-002", projectHolder[0], taskId, activityTypeId,
-                    "5", "800", ErpPrjConstants.TIMESHEET_STATUS_DRAFT);
+                    "5", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
         NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(newTsId, CTX));

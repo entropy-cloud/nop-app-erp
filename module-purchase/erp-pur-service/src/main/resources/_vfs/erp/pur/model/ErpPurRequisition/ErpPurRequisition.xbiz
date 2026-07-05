@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpPurRequisition.xbiz">
+<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:c="c" x:extends="_ErpPurRequisition.xbiz">
 
-    <actions/>
+    <actions>
+        <mutation name="submitForApproval">
+            <source><c:script><![CDATA[
+                return inject('app.erp.pur.service.processor.ErpPurRequisitionProcessor').submitForApproval(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+    </actions>
 </biz>

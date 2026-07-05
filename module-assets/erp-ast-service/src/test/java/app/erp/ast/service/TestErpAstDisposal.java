@@ -1,18 +1,19 @@
 package app.erp.ast.service;
 
-import app.erp.ast.biz.IErpAstDisposalBiz;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.dao.entity.ErpAstDisposal;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -20,9 +21,11 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,14 +40,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpAstDisposal extends JunitAutoTestCase {
 
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
     @Inject
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpAstDisposalBiz disposalBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testScrapLossAndTerminalStatus() {
@@ -72,8 +73,9 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
                     BigDecimal.ZERO, LocalDate.of(2026, 7, 15));
         });
 
-        disposalBiz.submit(disposalId, CTX);
-        ErpAstDisposal disposal = disposalBiz.approve(disposalId, CTX);
+        assertEquals(0, submitForApproval(disposalId).getStatus(), "提交成功");
+        assertEquals(0, approve(disposalId).getStatus(), "审核成功");
+        ErpAstDisposal disposal = daoProvider.daoFor(ErpAstDisposal.class).getEntityById(disposalId);
 
         assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, disposal.getApproveStatus());
         assertTrue(Boolean.TRUE.equals(disposal.getPosted()), "处置过账 posted=true");
@@ -122,8 +124,9 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
                     new BigDecimal("10000"), LocalDate.of(2026, 7, 15));
         });
 
-        disposalBiz.submit(disposalId, CTX);
-        ErpAstDisposal disposal = disposalBiz.approve(disposalId, CTX);
+        assertEquals(0, submitForApproval(disposalId).getStatus(), "提交成功");
+        assertEquals(0, approve(disposalId).getStatus(), "审核成功");
+        ErpAstDisposal disposal = daoProvider.daoFor(ErpAstDisposal.class).getEntityById(disposalId);
 
         assertTrue(Boolean.TRUE.equals(disposal.getPosted()), "出售过账 posted=true");
         // 清理损益 = 10000 − (12000 − 4000) = +2000（收益）
@@ -131,6 +134,21 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]);
         assertEquals(ErpAstConstants.ASSET_STATUS_SOLD, asset.getStatus(), "资产终态=SOLD");
         assertTrue(!findBillLinks("DISP-SALE-001", "DISPOSAL").isEmpty(), "DISPOSAL 凭证回链已落库");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> submitForApproval(Long id) {
+        return executeRpc("ErpAstDisposal__submitForApproval", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> approve(Long id) {
+        return executeRpc("ErpAstDisposal__approve", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> executeRpc(String action, Map<String, Object> data) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, action, ApiRequest.build(data));
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- helpers ----------

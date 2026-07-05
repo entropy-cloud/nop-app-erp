@@ -87,6 +87,8 @@
             <option code="BAD_DEBT_RELEASE" label="坏账准备释放" value="BAD_DEBT_RELEASE" i18n-en:label="Bad Debt Release"/>
             <option code="PROFIT_TO_RETAINED_EARNINGS" label="本年利润结转未分配利润" value="PROFIT_TO_RETAINED_EARNINGS"
                     i18n-en:label="Profit to Retained Earnings"/>
+            <option code="VALUE_ADJUSTMENT" label="资产减值/重估" value="VALUE_ADJUSTMENT"
+                    i18n-en:label="Asset Value Adjustment"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>
@@ -1594,7 +1596,7 @@
         <entity className="app.erp.fin.dao.entity.ErpFinExpenseClaim" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="费用报销单"
                 name="app.erp.fin.dao.entity.ErpFinExpenseClaim" registerShortName="true"
-                tableName="erp_fin_expense_claim" tagSet="gid,erp.finance" updateTimeProp="updateTime"
+                tableName="erp_fin_expense_claim" tagSet="gid,erp.finance,use-approval" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="receipt"
                 i18n-en:displayName="Expense Claim">
             <columns>
@@ -1641,7 +1643,7 @@
                         propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/expense-claim-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="18" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/approve-status"
+                        propId="18" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="19"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
@@ -1793,7 +1795,7 @@
         <entity className="app.erp.fin.dao.entity.ErpFinEmployeeAdvance" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="员工借款单"
                 name="app.erp.fin.dao.entity.ErpFinEmployeeAdvance" registerShortName="true"
-                tableName="erp_fin_employee_advance" tagSet="gid,erp.finance" updateTimeProp="updateTime"
+                tableName="erp_fin_employee_advance" tagSet="gid,erp.finance,use-approval" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="hand-coins"
                 i18n-en:displayName="Employee Advance">
             <columns>
@@ -1833,7 +1835,7 @@
                         propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/advance-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/approve-status"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="16"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
@@ -2405,7 +2407,7 @@
                 <column code="REASON" displayName="核销/恢复原因" name="reason" precision="500" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
                 <column code="APPROVAL_STATUS" displayName="审核状态" mandatory="true" name="approvalStatus" precision="20"
-                        propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/approve-status"
+                        propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approval Status"/>
                 <column code="PERIOD_ID" displayName="所属期间" name="periodId" propId="14" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Period"/>

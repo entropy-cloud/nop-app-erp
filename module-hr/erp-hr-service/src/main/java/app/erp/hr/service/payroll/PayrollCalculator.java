@@ -134,7 +134,7 @@ public class PayrollCalculator {
         salary.setOtherDeductions(otherDeductions);
         salary.setNetSalary(netSalary);
         salary.setPaymentStatus(ErpHrConstants.PAYMENT_PENDING);
-        salary.setApprovalStatus(ErpHrConstants.APPROVAL_PENDING);
+        salary.setApproveStatus(ErpHrConstants.APPROVE_STATUS_UNSUBMITTED);
         salary.setActualWorkDays(actualDays);
         salary.setRequiredWorkDays(requiredDays);
         salary.setTotalOvertimeHours(overtimeHours);

@@ -1,7 +1,7 @@
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   id INT8 NOT NULL ,
-  constraint PK_erp_md_md_organization primary key (id)
+  constraint PK_erp_md_organization primary key (id)
 );
 
 CREATE TABLE erp_aps_operation_order(
@@ -150,7 +150,7 @@ CREATE TABLE erp_aps_dispatch_log(
 );
 
 
-      COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
+      COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
       COMMENT ON TABLE erp_aps_operation_order IS '工序工单';
                 

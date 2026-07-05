@@ -1,7 +1,7 @@
 
 drop table erp_md_cost_center;
 drop table erp_md_bank_account;
-drop table erp_md_md_organization;
+drop table erp_md_organization;
 drop table erp_md_currency;
 drop table erp_prj_project;
 drop table erp_prj_task;

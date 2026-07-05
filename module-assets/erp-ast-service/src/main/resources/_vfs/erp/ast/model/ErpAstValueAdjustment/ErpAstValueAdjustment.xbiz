@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpAstValueAdjustment.xbiz">
+<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:c="c" x:extends="_ErpAstValueAdjustment.xbiz">
 
-    <actions/>
+    <actions>
+        <mutation name="submitForApproval">
+            <source><c:script><![CDATA[
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').submitForApproval(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="approve">
+            <source><c:script><![CDATA[
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').approve(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="reject">
+            <source><c:script><![CDATA[
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').reject(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="reverseApprove">
+            <source><c:script><![CDATA[
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').reverseApprove(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="withdrawApproval">
+            <source><c:script><![CDATA[
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').withdrawApproval(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+    </actions>
 </biz>

@@ -165,6 +165,8 @@ CREATE TABLE erp_prj_budget(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   constraint PK_erp_prj_budget primary key (id)
 );
 
@@ -188,6 +190,8 @@ CREATE TABLE erp_prj_cost_collection(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
@@ -306,6 +310,8 @@ CREATE TABLE erp_prj_billing(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_prj_billing primary key (id)
@@ -544,6 +550,10 @@ CREATE TABLE erp_prj_billing_line(
                     
       COMMENT ON COLUMN erp_prj_budget.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_prj_budget.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_prj_budget.approved_at IS '审核时间';
+                    
       COMMENT ON TABLE erp_prj_cost_collection IS '项目成本归集';
                 
       COMMENT ON COLUMN erp_prj_cost_collection.id IS 'ID';
@@ -583,6 +593,10 @@ CREATE TABLE erp_prj_billing_line(
       COMMENT ON COLUMN erp_prj_cost_collection.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_cost_collection.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_prj_cost_collection.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_prj_cost_collection.approved_at IS '审核时间';
                     
       COMMENT ON COLUMN erp_prj_cost_collection.exchange_rate IS '汇率';
                     
@@ -789,6 +803,10 @@ CREATE TABLE erp_prj_billing_line(
       COMMENT ON COLUMN erp_prj_billing.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_billing.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_prj_billing.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_prj_billing.approved_at IS '审核时间';
                     
       COMMENT ON COLUMN erp_prj_billing.amount_source IS '源币种金额';
                     

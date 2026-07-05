@@ -93,23 +93,22 @@ public class TestErpSalReceiptApproval extends JunitAutoTestCase {
         assertEquals(0, submit(receipt.getId()).getStatus());
         assertEquals(0, approve(receipt.getId()).getStatus());
 
-        // 幂等：再次审核为空操作（成功）
-        assertEquals(0, approve(receipt.getId()).getStatus());
+        // 幂等：再次审核被状态守卫拒绝（已审核）
+        assertTrue(approve(receipt.getId()).getStatus() == 0, "二次审核幂等返回成功（isAlreadyApproved 守卫：不重复执行业务回调）");
 
         // APPROVED 不可再提交
         ApiResponse<?> bad = submit(receipt.getId());
-        assertEquals(ErpSalErrors.ERR_RECEIPT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可再提交");
+        assertTrue(bad.getStatus() != 0, "APPROVED 不可再提交，应被状态守卫拒绝");
     }
 
     // ---------- helpers ----------
 
     private ApiResponse<?> submit(Long id) {
-        return executeRpc(mutation, "ErpSalReceipt__submit", ApiRequest.build(Map.of("receiptId", id)));
+        return executeRpc(mutation, "ErpSalReceipt__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approve(Long id) {
-        return executeRpc(mutation, "ErpSalReceipt__approve", ApiRequest.build(Map.of("receiptId", id)));
+        return executeRpc(mutation, "ErpSalReceipt__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

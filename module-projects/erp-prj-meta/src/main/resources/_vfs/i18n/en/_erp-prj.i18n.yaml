@@ -54,6 +54,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
       project: Project
@@ -99,6 +101,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       project: Project
       lines: Lines
       currency: null
@@ -145,6 +149,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       exchangeRate: Exchange Rate
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)

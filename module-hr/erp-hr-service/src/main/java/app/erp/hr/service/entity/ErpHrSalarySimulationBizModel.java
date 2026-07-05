@@ -491,7 +491,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
             formal.setTotalOvertimeHours(simulated.getTotalOvertimeHours());
             formal.setUnpaidLeaveDays(simulated.getUnpaidLeaveDays());
             formal.setCumulativeData(simulated.getCumulativeData());
-            formal.setApprovalStatus(ErpHrConstants.APPROVAL_PENDING);
+            formal.setApproveStatus(ErpHrConstants.APPROVE_STATUS_UNSUBMITTED);
             formal.setPaymentStatus(ErpHrConstants.PAYMENT_PENDING);
             salaryBiz.saveEntity(formal, null, context);
 
@@ -554,12 +554,9 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         q.addFilter(and(
                 eq("year", year),
                 eq("month", month),
-                in("approvalStatus", Arrays.asList(
-                        ErpHrConstants.APPROVAL_PENDING,
-                        ErpHrConstants.APPROVAL_REVIEWED,
-                        ErpHrConstants.APPROVAL_APPROVED_FINANCE,
-                        ErpHrConstants.APPROVAL_APPROVED_MANAGER,
-                        ErpHrConstants.APPROVAL_PAID))));
+                in("paymentStatus", Arrays.asList(
+                        ErpHrConstants.PAYMENT_PENDING,
+                        ErpHrConstants.PAYMENT_PAID))));
         if (scope != null) {
             applyEmployeeScope(q, scope);
         }
@@ -776,12 +773,9 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         q.addFilter(and(
                 eq("year", sourceYear),
                 eq("month", sourceMonth),
-                in("approvalStatus", Arrays.asList(
-                        ErpHrConstants.APPROVAL_PENDING,
-                        ErpHrConstants.APPROVAL_REVIEWED,
-                        ErpHrConstants.APPROVAL_APPROVED_FINANCE,
-                        ErpHrConstants.APPROVAL_APPROVED_MANAGER,
-                        ErpHrConstants.APPROVAL_PAID))));
+                in("paymentStatus", Arrays.asList(
+                        ErpHrConstants.PAYMENT_PENDING,
+                        ErpHrConstants.PAYMENT_PAID))));
         q.setLimit(10000);
         IEntityDao<ErpHrSalary> dao = daoProvider().daoFor(ErpHrSalary.class);
         List<ErpHrSalary> sources = dao.findAllByQuery(q);
@@ -1031,7 +1025,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
                 eq("employeeId", employeeId),
                 eq("year", year),
                 eq("month", month),
-                eq("approvalStatus", ErpHrConstants.APPROVAL_PAID)));
+                eq("paymentStatus", ErpHrConstants.PAYMENT_PAID)));
         q.setLimit(1);
         IEntityDao<ErpHrSalary> dao = daoProvider().daoFor(ErpHrSalary.class);
         return !dao.findAllByQuery(q).isEmpty();
@@ -1043,12 +1037,9 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
                 eq("employeeId", employeeId),
                 eq("year", year),
                 eq("month", month),
-                in("approvalStatus", Arrays.asList(
-                        ErpHrConstants.APPROVAL_PENDING,
-                        ErpHrConstants.APPROVAL_REVIEWED,
-                        ErpHrConstants.APPROVAL_APPROVED_FINANCE,
-                        ErpHrConstants.APPROVAL_APPROVED_MANAGER,
-                        ErpHrConstants.APPROVAL_PAID))));
+                in("paymentStatus", Arrays.asList(
+                        ErpHrConstants.PAYMENT_PENDING,
+                        ErpHrConstants.PAYMENT_PAID))));
         q.setLimit(1);
         IEntityDao<ErpHrSalary> dao = daoProvider().daoFor(ErpHrSalary.class);
         return !dao.findAllByQuery(q).isEmpty();

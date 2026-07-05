@@ -17,6 +17,8 @@ prop:
     ErpMntCalibration:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 校准日期
       calibratedBy: 校准人(职员)
       calibratedByEmployee: null
@@ -185,6 +187,8 @@ prop:
     ErpMntSparePartUsage:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 消耗日期
       code: 单号
       createTime: 创建时间

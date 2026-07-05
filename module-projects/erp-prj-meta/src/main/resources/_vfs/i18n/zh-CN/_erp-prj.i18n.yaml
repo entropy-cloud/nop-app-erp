@@ -34,6 +34,8 @@ prop:
       amountSource: 源币种金额
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 开票日期
       code: 单号
       createTime: 创建时间
@@ -83,6 +85,8 @@ prop:
     ErpPrjBudget:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 预算日期
       code: 单号
       createTime: 创建时间
@@ -128,6 +132,8 @@ prop:
       amountSource: 源币种金额
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 归集日期
       code: 单号
       createTime: 创建时间

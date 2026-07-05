@@ -13,9 +13,9 @@ CREATE TABLE erp_md_bank_account(
   constraint PK_erp_md_bank_account primary key (ID)
 );
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_md_md_organization primary key (ID)
+  constraint PK_erp_md_organization primary key (ID)
 );
 
 CREATE TABLE erp_md_currency(
@@ -461,7 +461,7 @@ CREATE TABLE erp_hr_salary(
   NET_SALARY NUMBER(18,2)  ,
   PAYMENT_STATUS VARCHAR2(20) NOT NULL ,
   PAYMENT_DATE DATE  ,
-  APPROVAL_STATUS VARCHAR2(20) default 'PENDING'  NOT NULL ,
+  APPROVE_STATUS VARCHAR2(20) default 'UNSUBMITTED'  NOT NULL ,
   PERFORMANCE_FACTOR NUMBER(5,2)  ,
   ACTUAL_WORK_DAYS NUMBER(10,2)  ,
   REQUIRED_WORK_DAYS NUMBER(10,2)  ,
@@ -479,6 +479,8 @@ CREATE TABLE erp_hr_salary(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
   constraint PK_erp_hr_salary primary key (ID)
 );
 
@@ -809,7 +811,7 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                 
       COMMENT ON TABLE erp_md_bank_account IS '银行账户';
                 
-      COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
+      COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
       COMMENT ON TABLE erp_md_currency IS '币种';
                 
@@ -1553,7 +1555,7 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                     
       COMMENT ON COLUMN erp_hr_salary.PAYMENT_DATE IS '实发日期';
                     
-      COMMENT ON COLUMN erp_hr_salary.APPROVAL_STATUS IS '审批状态';
+      COMMENT ON COLUMN erp_hr_salary.APPROVE_STATUS IS '审核状态';
                     
       COMMENT ON COLUMN erp_hr_salary.PERFORMANCE_FACTOR IS '绩效系数';
                     
@@ -1588,6 +1590,10 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
       COMMENT ON COLUMN erp_hr_salary.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_salary.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_hr_salary.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_hr_salary.APPROVED_AT IS '审核时间';
                     
       COMMENT ON TABLE erp_hr_recruitment IS '招聘记录';
                 

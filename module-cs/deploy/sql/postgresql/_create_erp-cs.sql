@@ -4,9 +4,9 @@ CREATE TABLE erp_md_md_partner(
   constraint PK_erp_md_md_partner primary key (id)
 );
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   id INT8 NOT NULL ,
-  constraint PK_erp_md_md_organization primary key (id)
+  constraint PK_erp_md_organization primary key (id)
 );
 
 CREATE TABLE erp_cs_team(
@@ -256,6 +256,8 @@ CREATE TABLE erp_cs_ticket(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   constraint PK_erp_cs_ticket primary key (id)
 );
 
@@ -347,7 +349,7 @@ CREATE TABLE erp_cs_time_entry(
 
       COMMENT ON TABLE erp_md_md_partner IS 'ErpMdPartner';
                 
-      COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
+      COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
       COMMENT ON TABLE erp_cs_team IS '客服团队';
                 
@@ -776,6 +778,10 @@ CREATE TABLE erp_cs_time_entry(
       COMMENT ON COLUMN erp_cs_ticket.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_ticket.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_cs_ticket.approved_at IS '审核时间';
                     
       COMMENT ON TABLE erp_cs_catalog_fulfillment IS '目录项履行映射';
                 

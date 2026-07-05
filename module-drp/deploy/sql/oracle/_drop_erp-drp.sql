@@ -1,5 +1,5 @@
 
-drop table erp_md_md_organization;
+drop table erp_md_organization;
 drop table erp_md_material;
 drop table erp_md_warehouse;
 drop table erp_md_partner;

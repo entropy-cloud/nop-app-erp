@@ -3,7 +3,7 @@
 
 alter table erp_md_bank_account add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_md_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -87,8 +87,8 @@ alter table erp_md_cost_center add primary key (NOP_TENANT_ID, ID);
 alter table erp_md_bank_account drop primary key;
 alter table erp_md_bank_account add primary key (NOP_TENANT_ID, ID);
 
-alter table erp_md_md_organization drop primary key;
-alter table erp_md_md_organization add primary key (NOP_TENANT_ID, ID);
+alter table erp_md_organization drop primary key;
+alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_currency drop primary key;
 alter table erp_md_currency add primary key (NOP_TENANT_ID, ID);

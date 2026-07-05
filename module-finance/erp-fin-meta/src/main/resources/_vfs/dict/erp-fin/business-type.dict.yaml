@@ -153,3 +153,7 @@ options:
     value: PROFIT_TO_RETAINED_EARNINGS
     description: 
   
+  - label: 资产减值/重估
+    value: VALUE_ADJUSTMENT
+    description: 
+  

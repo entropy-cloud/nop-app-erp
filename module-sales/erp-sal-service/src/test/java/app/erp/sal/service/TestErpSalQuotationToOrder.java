@@ -280,11 +280,11 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
     // ---------- rpc helpers (quotation) ----------
 
     private ApiResponse<?> submit(Long quotationId) {
-        return executeRpc(mutation, "ErpSalQuotation__submit", ApiRequest.build(Map.of("quotationId", quotationId)));
+        return executeRpc(mutation, "ErpSalQuotation__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(quotationId))));
     }
 
     private ApiResponse<?> approve(Long quotationId) {
-        return executeRpc(mutation, "ErpSalQuotation__approve", ApiRequest.build(Map.of("quotationId", quotationId)));
+        return executeRpc(mutation, "ErpSalQuotation__approve", ApiRequest.build(Map.of("id", String.valueOf(quotationId))));
     }
 
     private ApiResponse<?> confirmCustomerAccepted(Long quotationId) {
@@ -300,11 +300,11 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
     // ---------- rpc helpers (order) ----------
 
     private ApiResponse<?> orderSubmit(Long orderId) {
-        return executeRpc(mutation, "ErpSalOrder__submit", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpSalOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> orderApprove(Long orderId) {
-        return executeRpc(mutation, "ErpSalOrder__approve", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpSalOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> orderCancel(Long orderId) {

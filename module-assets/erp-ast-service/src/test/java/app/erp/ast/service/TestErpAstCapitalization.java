@@ -1,6 +1,5 @@
 package app.erp.ast.service;
 
-import app.erp.ast.biz.IErpAstAssetCapitalizationBiz;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCapitalization;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
@@ -11,12 +10,14 @@ import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -24,9 +25,11 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,14 +46,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpAstCapitalization extends JunitAutoTestCase {
 
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
     @Inject
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpAstAssetCapitalizationBiz capBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testApproveCreatesAssetScheduleAndPosting() {
@@ -69,8 +70,9 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
         });
 
         // 三轴审批：UNSUBMITTED → submit → SUBMITTED → approve → APPROVED
-        capBiz.submit(capId, CTX);
-        ErpAstAssetCapitalization cap = capBiz.approve(capId, CTX);
+        assertEquals(0, submitForApproval(capId).getStatus(), "提交成功");
+        assertEquals(0, approve(capId).getStatus(), "审核成功");
+        ErpAstAssetCapitalization cap = daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId);
 
         assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, cap.getApproveStatus());
         assertEquals(ErpAstConstants.DOC_STATUS_ACTIVE, cap.getDocStatus());
@@ -112,8 +114,9 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
                     LocalDate.of(2026, 6, 15));
         });
 
-        capBiz.submit(capId, CTX);
-        ErpAstAssetCapitalization cap = capBiz.reject(capId, CTX);
+        assertEquals(0, submitForApproval(capId).getStatus(), "提交成功");
+        assertEquals(0, reject(capId).getStatus(), "驳回成功");
+        ErpAstAssetCapitalization cap = daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId);
         assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, cap.getApproveStatus());
         assertFalse(Boolean.TRUE.equals(cap.getPosted()), "驳回不过账");
         // 驳回后无资产卡片、无折旧计划、无凭证
@@ -137,10 +140,30 @@ public class TestErpAstCapitalization extends JunitAutoTestCase {
                     LocalDate.of(2026, 6, 15));
         });
 
-        capBiz.submit(capId, CTX);
-        ErpAstAssetCapitalization cap = capBiz.approve(capId, CTX);
+        assertEquals(0, submitForApproval(capId).getStatus(), "提交成功");
+        assertEquals(0, approve(capId).getStatus(), "审核成功");
+        ErpAstAssetCapitalization cap = daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId);
         assertTrue(Boolean.TRUE.equals(cap.getPosted()), "CIP 转固过账成功");
         assertTrue(!findBillLinks("CAP-AST-003", "CAPITALIZATION").isEmpty(), "CAPITALIZATION 凭证回链已落库");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> submitForApproval(Long id) {
+        return executeRpc("ErpAstAssetCapitalization__submitForApproval", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> approve(Long id) {
+        return executeRpc("ErpAstAssetCapitalization__approve", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> reject(Long id) {
+        return executeRpc("ErpAstAssetCapitalization__reject", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> executeRpc(String action, Map<String, Object> data) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, action, ApiRequest.build(data));
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- seed helpers ----------

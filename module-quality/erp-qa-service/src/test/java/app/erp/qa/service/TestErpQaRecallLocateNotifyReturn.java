@@ -272,11 +272,11 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
     }
 
     private void submit(Long recallId) {
-        rpcOk(mutation, "ErpQaRecall__submit", Map.of("recallId", recallId));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
     }
 
     private void approve(Long recallId) {
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("recallId", recallId));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
     }
 
     private ErpQaRecall reloadRecall(Long recallId) {

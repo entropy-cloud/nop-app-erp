@@ -171,7 +171,7 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
         seedStock("SEED-IDEM-001", new BigDecimal("20"), new BigDecimal("5"));
 
         assertEquals(0, approve(deliveryId).getStatus());
-        assertEquals(0, approve(deliveryId).getStatus()); // 二次审核幂等空操作
+        assertTrue(approve(deliveryId).getStatus() == 0, "二次审核幂等返回成功（isAlreadyApproved 守卫：不重复执行业务回调）");
 
         assertEquals(1, countMoves("SD-IDEM-001"), "幂等：不应产生第二张出库移动单");
     }
@@ -288,18 +288,18 @@ public class TestErpSalDeliveryStockMove extends JunitAutoTestCase {
                 "冲销单 posted 与红字凭证回链一致");
 
         // 二次反审核幂等：不产生第二张冲销单
-        assertEquals(0, reverseApprove(deliveryId).getStatus(), "二次反审核幂等");
+        assertTrue(reverseApprove(deliveryId).getStatus() == 0, "二次反审核幂等返回成功（isAlreadyRejected 守卫：不重复执行冲销）");
         assertEquals(1, countReversals(original.getCode()), "二次反审核幂等，不产生第二张冲销单");
     }
 
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> approve(Long deliveryId) {
-        return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("deliveryId", deliveryId)));
+        return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
     private ApiResponse<?> reverseApprove(Long deliveryId) {
-        return executeRpc(mutation, "ErpSalDelivery__reverseApprove", ApiRequest.build(Map.of("deliveryId", deliveryId)));
+        return executeRpc(mutation, "ErpSalDelivery__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

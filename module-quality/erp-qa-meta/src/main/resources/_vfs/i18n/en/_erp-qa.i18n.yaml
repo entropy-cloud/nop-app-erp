@@ -63,6 +63,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       calibratedByEmployee: Calibrated By Employee
       org: null
     ErpQaInspection:
@@ -297,6 +299,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       org: null
     ErpQaRiskRegister:
       id: ID

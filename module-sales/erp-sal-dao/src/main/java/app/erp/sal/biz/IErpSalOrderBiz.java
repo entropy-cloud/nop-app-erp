@@ -6,6 +6,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
+import io.nop.wf.core.biz.IApprovableBiz;
 
 import java.util.List;
 
@@ -14,24 +15,10 @@ import app.erp.sal.dao.entity.ErpSalQuotation;
 import app.erp.sal.dao.entity.ErpSalQuotationLine;
 
 /**
- * 销售订单业务接口。除标准 CRUD 外，定义三轴审批状态机契约（对齐 {@code docs/design/sales/state-machine.md}）。
+ * 销售订单业务接口。标准审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）
+ * 由 {@link IApprovableBiz} 声明，运行时由平台 {@code approval-support.xbiz} 标准 source 提供。
  */
-public interface IErpSalOrderBiz extends ICrudBiz<ErpSalOrder> {
-
-    @BizMutation
-    ErpSalOrder submit(@Name("orderId") Long orderId, IServiceContext context);
-
-    @BizMutation
-    ErpSalOrder withdrawSubmit(@Name("orderId") Long orderId, IServiceContext context);
-
-    @BizMutation
-    ErpSalOrder approve(@Name("orderId") Long orderId, IServiceContext context);
-
-    @BizMutation
-    ErpSalOrder reject(@Name("orderId") Long orderId, IServiceContext context);
-
-    @BizMutation
-    ErpSalOrder reverseApprove(@Name("orderId") Long orderId, IServiceContext context);
+public interface IErpSalOrderBiz extends ICrudBiz<ErpSalOrder>, IApprovableBiz<ErpSalOrder> {
 
     @BizMutation
     ErpSalOrder cancel(@Name("orderId") Long orderId, IServiceContext context);

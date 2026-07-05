@@ -41,6 +41,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      approvedBy: Approved By
+      approvedAt: Approved At
       customer: Customer
       currency: Currency
       org: Org
@@ -277,6 +279,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      approvedBy: Approved By
+      approvedAt: Approved At
       customer: Customer
       currency: Currency
       org: Org

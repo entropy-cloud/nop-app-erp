@@ -5,31 +5,36 @@ import app.erp.fin.dao.entity.ErpFinExpenseClaim;
 import app.erp.fin.dao.entity.ErpFinExpenseClaimLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdEmployee;
-import app.erp.md.dao.entity.ErpMdPartner;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
-import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 费用报销单三轴审批状态机 + 前置校验单测（Phase 2）。验证 UNSUBMITTED↔SUBMITTED→APPROVED/REJECTED
  * 正向/反向迁移、非法迁移拒绝、前置校验（报销人启用/partnerId/行非空/价税合计/事由必填）拒绝。
  *
- * <p>过账（posted 置位）属 Phase 3 端到端测试，本测试不 seed 会计期间，approve 时过账失败吞异常、posted 保持 false，
- * 仅验证状态机迁移。
+ * <p>审批动作经 {@link IGraphQLEngine} 调 {@code ErpFinExpenseClaim__submitForApproval/approve/reject/
+ * reverseApprove/withdrawApproval}（approval-support.xbiz 标准 source），引擎建 session/事务/管道。
+ * cancel 仍为 BizModel Java 方法（{@code @SingleSession}），直调即可。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
@@ -44,33 +49,41 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IErpFinExpenseClaimBiz claimBiz;
+    @Inject
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testSubmitWithdrawApproveReverse() {
         Long claimId = seedValidClaim("EC-APP-001", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
         // UNSUBMITTED → SUBMITTED
-        ErpFinExpenseClaim claim = claimBiz.submit(claimId, CTX);
+        assertEquals(0, submitForApproval(claimId).getStatus());
+        ErpFinExpenseClaim claim = fetchClaim(claimId);
         assertEquals(ErpFinConstants.APPROVE_STATUS_SUBMITTED, claim.getApproveStatus());
         // SUBMITTED → UNSUBMITTED
-        claim = claimBiz.withdrawSubmit(claimId, CTX);
+        assertEquals(0, withdrawApproval(claimId).getStatus());
+        claim = fetchClaim(claimId);
         assertEquals(ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, claim.getApproveStatus());
         // UNSUBMITTED → SUBMITTED again
-        claimBiz.submit(claimId, CTX);
+        assertEquals(0, submitForApproval(claimId).getStatus());
         // SUBMITTED → APPROVED（过账未配置，posted 保持 false）
-        claim = claimBiz.approve(claimId, CTX);
+        assertEquals(0, approve(claimId).getStatus());
+        claim = fetchClaim(claimId);
         assertEquals(ErpFinConstants.APPROVE_STATUS_APPROVED, claim.getApproveStatus());
         // APPROVED → REJECTED（reverseApprove，posted=false 不触发红冲）
-        claim = claimBiz.reverseApprove(claimId, CTX);
+        assertEquals(0, reverseApprove(claimId).getStatus());
+        claim = fetchClaim(claimId);
         assertEquals(ErpFinConstants.APPROVE_STATUS_REJECTED, claim.getApproveStatus());
     }
 
     @Test
     public void testRejectAndResubmit() {
         Long claimId = seedValidClaim("EC-APP-002", ErpFinConstants.APPROVE_STATUS_SUBMITTED, null);
-        ErpFinExpenseClaim claim = claimBiz.reject(claimId, CTX);
+        assertEquals(0, reject(claimId).getStatus());
+        ErpFinExpenseClaim claim = fetchClaim(claimId);
         assertEquals(ErpFinConstants.APPROVE_STATUS_REJECTED, claim.getApproveStatus());
         // REJECTED → SUBMITTED（修改重提）
-        claim = claimBiz.submit(claimId, CTX);
+        assertEquals(0, submitForApproval(claimId).getStatus());
+        claim = fetchClaim(claimId);
         assertEquals(ErpFinConstants.APPROVE_STATUS_SUBMITTED, claim.getApproveStatus());
     }
 
@@ -84,34 +97,69 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
     @Test
     public void testIllegalApproveFromUnsubmitted() {
         Long claimId = seedValidClaim("EC-APP-004", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
-        assertThrows(NopException.class, () -> claimBiz.approve(claimId, CTX));
+        assertTrue(approve(claimId).getStatus() != 0, "UNSUBMITTED 不可审核：状态守卫拒绝");
     }
 
     @Test
     public void testRejectClaimantPartnerMissing() {
         Long claimId = seedClaimWithClaimant("EC-APP-005", null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE,
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, true);
-        NopException ex = assertThrows(NopException.class, () -> claimBiz.submit(claimId, CTX));
-        assertTrue(ex.getMessage().contains("partnerId") || ex.getErrorCode() != null);
+        assertTrue(submitForApproval(claimId).getStatus() != 0, "partnerId 缺失：submit 被前置校验拒绝");
     }
 
     @Test
     public void testRejectClaimantInactive() {
         Long claimId = seedClaimWithClaimant("EC-APP-006", 9901L, "INACTIVE",
                 ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, true);
-        assertThrows(NopException.class, () -> claimBiz.submit(claimId, CTX));
+        assertTrue(submitForApproval(claimId).getStatus() != 0, "员工停用：submit 被前置校验拒绝");
     }
 
     @Test
     public void testRejectLinesEmpty() {
         Long claimId = seedValidClaimNoLines("EC-APP-007");
-        assertThrows(NopException.class, () -> claimBiz.submit(claimId, CTX));
+        assertTrue(submitForApproval(claimId).getStatus() != 0, "无明细行：submit 被前置校验拒绝");
     }
 
     @Test
     public void testRejectAmountMismatch() {
         Long claimId = seedClaimAmountMismatch("EC-APP-008");
-        assertThrows(NopException.class, () -> claimBiz.submit(claimId, CTX));
+        assertTrue(submitForApproval(claimId).getStatus() != 0, "价税合计不匹配：submit 被前置校验拒绝");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> submitForApproval(Long claimId) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__submitForApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(claimId))));
+    }
+
+    private ApiResponse<?> withdrawApproval(Long claimId) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__withdrawApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(claimId))));
+    }
+
+    private ApiResponse<?> approve(Long claimId) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(claimId))));
+    }
+
+    private ApiResponse<?> reject(Long claimId) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__reject",
+                ApiRequest.build(Map.of("id", String.valueOf(claimId))));
+    }
+
+    private ApiResponse<?> reverseApprove(Long claimId) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__reverseApprove",
+                ApiRequest.build(Map.of("id", String.valueOf(claimId))));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
+    }
+
+    private ErpFinExpenseClaim fetchClaim(Long id) {
+        return daoProvider.daoFor(ErpFinExpenseClaim.class).getEntityById(id);
     }
 
     // ---------- seed helpers ----------

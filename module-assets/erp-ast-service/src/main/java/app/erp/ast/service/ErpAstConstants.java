@@ -17,6 +17,10 @@ public interface ErpAstConstants {
     String CONFIG_RESIDUAL_VALUE_ENFORCED = "erp-ast.residual-value-enforced";
     /** 定时批量折旧 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
     String CONFIG_DEPRECIATION_CRON = "erp-ast.depreciation-cron";
+    /** 重估增值后是否调整折旧基数（默认 true）。 */
+    String CONFIG_REVALUATION_ADJUST_DEPRECIATION_BASE = "erp-ast.revaluation-adjust-depreciation-base";
+    /** 减值/重估是否强制审批（默认 true）。 */
+    String CONFIG_VALUE_ADJUSTMENT_REQUIRE_APPROVAL = "erp-ast.value-adjustment-require-approval";
 
     // ---- asset-status ----
     String ASSET_STATUS_DRAFT = "DRAFT";
@@ -39,6 +43,11 @@ public interface ErpAstConstants {
     // ---- disposal-type ----
     String DISPOSAL_TYPE_SCRAPPED = "SCRAPPED";
     String DISPOSAL_TYPE_SOLD = "SOLD";
+
+    // ---- adjustment-type ----
+    String ADJUSTMENT_TYPE_IMPAIRMENT = "IMPAIRMENT";
+    String ADJUSTMENT_TYPE_REVALUATION_UP = "REVALUATION_UP";
+    String ADJUSTMENT_TYPE_REVALUATION_DOWN = "REVALUATION_DOWN";
 
     // ---- doc-status ----
     String DOC_STATUS_DRAFT = "DRAFT";
@@ -78,4 +87,16 @@ public interface ErpAstConstants {
     String BILL_DATA_EXPENSE_SUBJECT_CODE = "EXPENSE_SUBJECT_CODE";
     String BILL_DATA_DISPOSAL_GAINLOSS_SUBJECT_CODE = "DISPOSAL_GAINLOSS_SUBJECT_CODE";
     String BILL_DATA_CREDIT_SUBJECT_CODE = "CREDIT_SUBJECT_CODE";
+
+    // ---- PostingEvent.billData 键（价值调整过账专用） ----
+    /** 调整类型（IMPAIRMENT/REVALUATION_UP/REVALUATION_DOWN）。 */
+    String BILL_DATA_ADJUSTMENT_TYPE = "ADJUSTMENT_TYPE";
+    /** 调整金额（正数）。 */
+    String BILL_DATA_ADJUSTMENT_AMOUNT = "ADJUSTMENT_AMOUNT";
+    /** 资产减值损失科目编码（借方，减值/重估减值）。 */
+    String BILL_DATA_IMPAIRMENT_LOSS_SUBJECT_CODE = "IMPAIRMENT_LOSS_SUBJECT_CODE";
+    /** 固定资产减值准备科目编码（贷方，减值）。 */
+    String BILL_DATA_IMPAIRMENT_PROVISION_SUBJECT_CODE = "IMPAIRMENT_PROVISION_SUBJECT_CODE";
+    /** 资本公积科目编码（贷方，重估增值）。 */
+    String BILL_DATA_CAPITAL_RESERVE_SUBJECT_CODE = "CAPITAL_RESERVE_SUBJECT_CODE";
 }

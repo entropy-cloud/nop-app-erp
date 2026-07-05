@@ -39,6 +39,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       equipment: Equipment
       calibratedByEmployee: Calibrated By Employee
       org: null
@@ -206,6 +208,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
       visit: Visit
       request: Request
       equipment: Equipment

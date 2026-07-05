@@ -80,6 +80,12 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -98,7 +104,8 @@
  approveStatus[审核状态] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] approvedBy[审核人]
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售报价单" i18n-en:title="Add Sales Quotation">
@@ -111,6 +118,7 @@
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
  isAccepted[是否已转订单] docStatus[单据状态]
  approveStatus[审核状态] remark[备注]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-销售报价单" i18n-en:title="Edit Sales Quotation">
@@ -123,7 +131,8 @@
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
  isAccepted[是否已转订单] docStatus[单据状态]
  approveStatus[审核状态] delVersion[逻辑删除版本]
- remark[备注] 
+ remark[备注] approvedBy[审核人]
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

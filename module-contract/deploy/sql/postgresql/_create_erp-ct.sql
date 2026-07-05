@@ -21,9 +21,9 @@ CREATE TABLE erp_ct_template(
   constraint PK_erp_ct_template primary key (id)
 );
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   id INT8 NOT NULL ,
-  constraint PK_erp_md_md_organization primary key (id)
+  constraint PK_erp_md_organization primary key (id)
 );
 
 CREATE TABLE erp_md_currency(
@@ -374,7 +374,7 @@ CREATE TABLE erp_ct_rebate_settlement(
                     
       COMMENT ON COLUMN erp_ct_template.update_time IS '修改时间';
                     
-      COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
+      COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
       COMMENT ON TABLE erp_md_currency IS '币种';
                 

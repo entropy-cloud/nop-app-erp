@@ -434,35 +434,35 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submitDelivery(Long id) {
-        return executeRpc(mutation, "ErpSalDelivery__submit", ApiRequest.build(Map.of("deliveryId", id)));
+        return executeRpc(mutation, "ErpSalDelivery__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approveDelivery(Long id) {
-        return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("deliveryId", id)));
+        return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> submitInvoice(Long id) {
-        return executeRpc(mutation, "ErpSalInvoice__submit", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpSalInvoice__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approveInvoice(Long id) {
-        return executeRpc(mutation, "ErpSalInvoice__approve", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpSalInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApproveInvoice(Long id) {
-        return executeRpc(mutation, "ErpSalInvoice__reverseApprove", ApiRequest.build(Map.of("invoiceId", id)));
+        return executeRpc(mutation, "ErpSalInvoice__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> submitReceipt(Long id) {
-        return executeRpc(mutation, "ErpSalReceipt__submit", ApiRequest.build(Map.of("receiptId", id)));
+        return executeRpc(mutation, "ErpSalReceipt__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approveReceipt(Long id) {
-        return executeRpc(mutation, "ErpSalReceipt__approve", ApiRequest.build(Map.of("receiptId", id)));
+        return executeRpc(mutation, "ErpSalReceipt__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApproveReceipt(Long id) {
-        return executeRpc(mutation, "ErpSalReceipt__reverseApprove", ApiRequest.build(Map.of("receiptId", id)));
+        return executeRpc(mutation, "ErpSalReceipt__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> settle(Long receiptId, Long invoiceId, BigDecimal amount) {

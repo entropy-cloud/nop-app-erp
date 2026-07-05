@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
       xmlns:xpl="xpl" ext:model="orm" ext:icon="receipt" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
-      xmlns:biz="biz" displayName="销售订单" i18n-en:displayName="Sales Order" tagSet="gid,erp.sales" xmlns:ui="ui"
-      xmlns:orm="orm">
+      xmlns:biz="biz" displayName="销售订单" i18n-en:displayName="Sales Order" tagSet="gid,erp.sales,use-approval"
+      xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.sal.dao.entity.ErpSalOrder</entityName>
 
@@ -105,7 +105,7 @@
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="22" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-sal/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
         </prop>
         <prop name="receivedStatus" displayName="收款进度" propId="23" i18n-en:displayName="Received Status"
               queryable="true" sortable="true" insertable="true" updatable="true">

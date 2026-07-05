@@ -242,6 +242,8 @@ prop:
       amountSource: 源币种金额
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       asset: null
       assetId: 资产ID
       businessDate: 移动日期

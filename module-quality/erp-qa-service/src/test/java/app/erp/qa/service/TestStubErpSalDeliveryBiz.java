@@ -34,28 +34,28 @@ public class TestStubErpSalDeliveryBiz extends CrudBizModel<ErpSalDelivery> impl
     }
 
     @Override
-    public ErpSalDelivery submit(Long deliveryId, IServiceContext context) {
-        return get(String.valueOf(deliveryId), false, context);
+    public ErpSalDelivery submitForApproval(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override
-    public ErpSalDelivery withdrawSubmit(Long deliveryId, IServiceContext context) {
-        return get(String.valueOf(deliveryId), false, context);
+    public ErpSalDelivery withdrawApproval(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override
-    public ErpSalDelivery approve(Long deliveryId, IServiceContext context) {
-        return get(String.valueOf(deliveryId), false, context);
+    public ErpSalDelivery approve(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override
-    public ErpSalDelivery reject(Long deliveryId, IServiceContext context) {
-        return get(String.valueOf(deliveryId), false, context);
+    public ErpSalDelivery reject(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override
-    public ErpSalDelivery reverseApprove(Long deliveryId, IServiceContext context) {
-        return get(String.valueOf(deliveryId), false, context);
+    public ErpSalDelivery reverseApprove(String id, IServiceContext context) {
+        return get(id, false, context);
     }
 
     @Override

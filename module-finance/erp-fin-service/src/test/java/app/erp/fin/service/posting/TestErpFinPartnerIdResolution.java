@@ -1,7 +1,5 @@
 package app.erp.fin.service.posting;
 
-import app.erp.fin.biz.IErpFinEmployeeAdvanceBiz;
-import app.erp.fin.biz.IErpFinExpenseClaimBiz;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinExpenseClaim;
@@ -12,13 +10,15 @@ import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -26,37 +26,38 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 员工→partnerId 解析端到端单测（Phase 3）。验证：
  * <ul>
- *   <li>claimant/employee.partnerId 为空时审核被拒抛 NopException（员工须有内部往来单位记录，否则辅助账 mandatory FK 违约）。</li>
+ *   <li>claimant/employee.partnerId 为空时审核被拒（员工须有内部往来单位记录，否则辅助账 mandatory FK 违约）。</li>
  *   <li>billData 的 EMPLOYEE_ID 键携带 employee.partnerId（即 ErpMdPartner.id），生成的辅助账 partnerId = employee.partnerId
  *       <b>非 employee.id</b>（员工与 partner 是不同 id 空间）。</li>
  * </ul>
  * 对应 plan Task Route Decision「员工→partnerId 解析」。
+ *
+ * <p>审批动作经 {@link IGraphQLEngine} 调 {@code ErpFinExpenseClaim__approve}、
+ * {@code ErpFinEmployeeAdvance__approve}（approval-support.xbiz 标准 source），引擎建 session/事务/管道。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
 
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
     @Inject
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpFinExpenseClaimBiz claimBiz;
-    @Inject
-    IErpFinEmployeeAdvanceBiz advanceBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testApproveRejectedWhenClaimantPartnerIdNull() {
@@ -68,7 +69,8 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
             return seedSubmittedClaim("EC-PID-001", empId);
         });
         // 直接置 SUBMITTED（绕过 submit 校验），approve 时 validateForApproval 拦截 partnerId 缺失
-        assertThrows(NopException.class, () -> claimBiz.approve(claimId, CTX));
+        assertTrue(approveClaim(claimId).getStatus() != 0,
+                "claimant.partnerId 为空：approve 被 validateForApproval 拦截");
     }
 
     @Test
@@ -79,7 +81,8 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
             Long empId = seedEmployee(null, ErpFinConstants.EMPLOYEE_STATUS_ACTIVE);
             return seedSubmittedAdvance("ADV-PID-001", empId, new BigDecimal("100"));
         });
-        assertThrows(NopException.class, () -> advanceBiz.approve(advanceId, CTX));
+        assertTrue(approveAdvance(advanceId).getStatus() != 0,
+                "employee.partnerId 为空：approve 被 validateForApproval 拦截");
     }
 
     @Test
@@ -102,15 +105,32 @@ public class TestErpFinPartnerIdResolution extends JunitAutoTestCase {
         Long claimId = ids[1];
         Long advanceId = ids[2];
 
-        claimBiz.approve(claimId, CTX);
+        assertEquals(0, approveClaim(claimId).getStatus());
         ErpFinArApItem payableItem = findItem("EXPENSE_CLAIM", "EC-PID-002");
         assertEquals(partnerId, payableItem.getPartnerId(), "报销辅助账 partnerId = employee.partnerId");
         assertNotEquals(employeeId, payableItem.getPartnerId(), "partnerId 非 employee.id");
 
-        advanceBiz.approve(advanceId, CTX);
+        assertEquals(0, approveAdvance(advanceId).getStatus());
         ErpFinArApItem receivableItem = findItem("EMPLOYEE_ADVANCE", "ADV-PID-002");
         assertEquals(partnerId, receivableItem.getPartnerId(), "借款辅助账 partnerId = employee.partnerId");
         assertNotEquals(employeeId, receivableItem.getPartnerId(), "partnerId 非 employee.id");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> approveClaim(Long id) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(id))));
+    }
+
+    private ApiResponse<?> approveAdvance(Long id) {
+        return executeRpc(mutation, "ErpFinEmployeeAdvance__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(id))));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- seed helpers ----------

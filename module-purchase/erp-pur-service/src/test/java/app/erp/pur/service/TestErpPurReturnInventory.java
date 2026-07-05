@@ -37,6 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Phase 1 服务层集成测试：采购退货审核触发库存反向出库移动（{@code generateMove}，{@code relatedBillType=PUR_RETURN}）
@@ -113,7 +114,7 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         });
 
         assertEquals(0, approveReturn(returnId).getStatus());
-        assertEquals(0, approveReturn(returnId).getStatus(), "二次审核幂等空操作");
+        assertTrue(approveReturn(returnId).getStatus() == 0, "二次审核幂等返回成功（isAlreadyApproved 守卫：不重复执行业务回调）");
         assertEquals(1, countReturnMoves("RT-IDM-001"), "幂等：不应产生第二张出库移动单");
     }
 
@@ -147,7 +148,7 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
         assertEquals(0, new BigDecimal("10").compareTo(findBalance().getTotalQuantity()),
                 "反审核冲销后余额恢复 = 入库 10");
 
-        assertEquals(0, reverseApproveReturn(returnId).getStatus(), "二次反审核幂等");
+        assertTrue(reverseApproveReturn(returnId).getStatus() == 0, "二次反审核幂等返回成功（isAlreadyRejected 守卫：不重复执行冲销）");
         assertEquals(1, countReversals(original.getCode()), "幂等：不产生第二张冲销单");
     }
 
@@ -172,15 +173,15 @@ public class TestErpPurReturnInventory extends JunitAutoTestCase {
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> approveReceive(Long receiveId) {
-        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("receiveId", receiveId)));
+        return executeRpc(mutation, "ErpPurReceive__approve", ApiRequest.build(Map.of("id", String.valueOf(receiveId))));
     }
 
     private ApiResponse<?> approveReturn(Long returnId) {
-        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("returnId", returnId)));
+        return executeRpc(mutation, "ErpPurReturn__approve", ApiRequest.build(Map.of("id", String.valueOf(returnId))));
     }
 
     private ApiResponse<?> reverseApproveReturn(Long returnId) {
-        return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("returnId", returnId)));
+        return executeRpc(mutation, "ErpPurReturn__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(returnId))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

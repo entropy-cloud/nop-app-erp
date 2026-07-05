@@ -340,6 +340,8 @@ prop:
       amountSource: 源币种金额
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 领料日期
       code: 单号
       createTime: 创建时间
@@ -520,6 +522,8 @@ prop:
       amountSource: 源币种金额
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       businessDate: 委外日期
       code: 单号
       createTime: 创建时间
@@ -583,6 +587,8 @@ prop:
       amountSource: 源币种金额
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       bom: null
       bomId: BOM
       businessDate: 工单日期

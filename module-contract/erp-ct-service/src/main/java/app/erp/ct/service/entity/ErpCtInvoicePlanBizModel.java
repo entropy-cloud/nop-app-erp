@@ -136,7 +136,7 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         invoice.setAmountFunctional(amount);
         invoice.setTotalAmountWithTax(amount);
         invoice.setDocStatus("DRAFT");
-        invoice.setApproveStatus("UNSUBMITTED");
+        invoice.setApproveStatus(ErpCtConstants.APPROVE_STATUS_UNSUBMITTED);
         invoice.setPaidStatus("UNPAID");
         invoice.setPosted(false);
         dao.saveEntity(invoice);
@@ -173,7 +173,7 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         invoice.setAmountFunctional(amount);
         invoice.setTotalAmountWithTax(amount);
         invoice.setDocStatus("DRAFT");
-        invoice.setApproveStatus("UNSUBMITTED");
+        invoice.setApproveStatus(ErpCtConstants.APPROVE_STATUS_UNSUBMITTED);
         invoice.setReceivedStatus("UNRECEIVED");
         invoice.setPosted(false);
         dao.saveEntity(invoice);

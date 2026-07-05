@@ -101,6 +101,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -123,6 +129,7 @@
  catalogItemId[服务目录项] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-客服工单" i18n-en:title="Add Ticket">
@@ -138,7 +145,8 @@
  duration[处理时长(分钟)] progress[进度(%)]
  status[工单状态] docStatus[单据状态]
  approveStatus[审核状态] remark[备注]
- catalogItemId[服务目录项] 
+ catalogItemId[服务目录项] approvedBy[审核人]
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-客服工单" i18n-en:title="Edit Ticket">
@@ -155,6 +163,7 @@
  status[工单状态] docStatus[单据状态]
  approveStatus[审核状态] remark[备注]
  catalogItemId[服务目录项] delVersion[逻辑删除版本]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * →COMPLETED/STOPPED/CLOSED/CANCELLED）+ 齐套校验（全齐/部分）+ 非法迁移拒绝。
  *
  * <p>覆盖 {@code docs/design/manufacturing/state-machine.md §迁移完整性} 主路径与异常路径。
- * 经 {@link IGraphQLEngine} 调 {@code ErpMfgWorkOrder__submit/approve/...}，引擎负责建 session/事务/管道。
+ * 经 {@link IGraphQLEngine} 调 {@code ErpMfgWorkOrder__submitForApproval/approve/...}，引擎负责建 session/事务/管道。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
@@ -62,9 +62,9 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         Long woId = seedWorkOrder("WO-HAPPY");
 
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT, statusOf(woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__submit", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED, statusOf(woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, statusOf(woId));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, statusOf(woId));
@@ -84,8 +84,8 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         seedComponentBomAndStock(bd("5"), bd("3"));   // 需 M1=2, M2=3，充足
         Long woId = seedWorkOrder("WO-FULL");
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submit", Map.of("workOrderId", woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED, statusOf(woId),
                 "全齐套 → STOCK_RESERVED");
@@ -96,8 +96,8 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         seedComponentBomAndStock(bd("5"), bd("1"));   // M2 仅 1 < 需 3 → 部分齐套
         Long woId = seedWorkOrder("WO-PARTIAL");
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submit", Map.of("workOrderId", woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL, statusOf(woId),
                 "M2 缺料 → STOCK_PARTIAL");
@@ -113,8 +113,8 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         seedComponentBomAndStock(bd("5"), bd("1"));
         Long woId = seedWorkOrder("WO-PARTIAL-START");
 
-        rpcOk(mutation, "ErpMfgWorkOrder__submit", Map.of("workOrderId", woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL, statusOf(woId));
 
@@ -147,7 +147,7 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     public void testCancelFromSubmitted() {
         seedComponentBomAndStock(bd("5"), bd("5"));
         Long woId = seedWorkOrder("WO-CANCEL");
-        rpcOk(mutation, "ErpMfgWorkOrder__submit", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
         rpcOk(mutation, "ErpMfgWorkOrder__cancel", Map.of("workOrderId", woId));
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_CANCELLED, statusOf(woId));
     }
@@ -196,8 +196,8 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
     }
 
     private void moveToInProcess(Long woId) {
-        rpcOk(mutation, "ErpMfgWorkOrder__submit", Map.of("workOrderId", woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
     }

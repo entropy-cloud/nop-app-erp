@@ -66,4 +66,8 @@ public interface ErpCtConstants {
 
     /** 签署顺序：顺序 / 并行（SignatureInitRequest.signingOrder）。 */
     String SIGNING_ORDER_SEQUENTIAL = "SEQUENTIAL";
+
+    // ---- 跨域镜像：发票草稿初始审核状态（对齐 ErpPurConstants/ErpSalConstants.APPROVE_STATUS_UNSUBMITTED）----
+    // 合同域触发生成的 AP/AR 发票草稿为新建实体初始化，非用户审批状态迁移。
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
 }

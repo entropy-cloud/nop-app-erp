@@ -127,15 +127,15 @@ public class TestErpSalOrderToDeliveryEnd extends JunitAutoTestCase {
     // ---------- rpc helpers ----------
 
     private ApiResponse<?> submit(Long deliveryId) {
-        return executeRpc(mutation, "ErpSalDelivery__submit", ApiRequest.build(Map.of("deliveryId", deliveryId)));
+        return executeRpc(mutation, "ErpSalDelivery__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
     private ApiResponse<?> approve(Long deliveryId) {
-        return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("deliveryId", deliveryId)));
+        return executeRpc(mutation, "ErpSalDelivery__approve", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
     private ApiResponse<?> reverseApprove(Long deliveryId) {
-        return executeRpc(mutation, "ErpSalDelivery__reverseApprove", ApiRequest.build(Map.of("deliveryId", deliveryId)));
+        return executeRpc(mutation, "ErpSalDelivery__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

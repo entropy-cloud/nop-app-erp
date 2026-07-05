@@ -77,6 +77,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -95,6 +101,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-备件消耗" i18n-en:title="Add Spare Part Usage">
@@ -106,7 +113,8 @@
  totalAmount[金额合计] docStatus[单据状态]
  approveStatus[审核状态] posted[已过账(库存已出库)]
  postedAt[过账时间] postedBy[过账人]
- remark[备注] 
+ remark[备注] approvedBy[审核人]
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-备件消耗" i18n-en:title="Edit Spare Part Usage">
@@ -119,6 +127,7 @@
  approveStatus[审核状态] posted[已过账(库存已出库)]
  postedAt[过账时间] postedBy[过账人]
  remark[备注] delVersion[逻辑删除版本]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

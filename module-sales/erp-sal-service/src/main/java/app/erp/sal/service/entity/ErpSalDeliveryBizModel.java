@@ -12,8 +12,9 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
- * 销售出库单 BizModel（Facade）。审批状态机 + 出库审核触发库存移动编排委托
- * {@link ErpSalDeliveryProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 销售出库单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由平台 {@code approval-support.xbiz} 标准 source 提供，业务联动经 xbiz
+ * {@code <source x:override="replace">} 注入 {@link ErpSalDeliveryProcessor#onSubmit}/{@link ErpSalDeliveryProcessor#onApproved}/{@link ErpSalDeliveryProcessor#onReverseApproved}。
  */
 @BizModel("ErpSalDelivery")
 public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> implements IErpSalDeliveryBiz {
@@ -27,37 +28,7 @@ public class ErpSalDeliveryBizModel extends CrudBizModel<ErpSalDelivery> impleme
 
     @Override
     @BizMutation
-    public ErpSalDelivery submit(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        return deliveryProcessor.submit(deliveryId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalDelivery withdrawSubmit(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        return deliveryProcessor.withdrawSubmit(deliveryId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalDelivery approve(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        return deliveryProcessor.approve(deliveryId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalDelivery reject(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        return deliveryProcessor.reject(deliveryId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalDelivery reverseApprove(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        return deliveryProcessor.reverseApprove(deliveryId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpSalDelivery cancel(@Name("deliveryId") Long deliveryId, IServiceContext context) {
-        return deliveryProcessor.cancel(deliveryId, context);
+        return deliveryProcessor.cancel(String.valueOf(deliveryId), context);
     }
 }

@@ -267,6 +267,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      approvedBy: Approved By
+      approvedAt: Approved At
       currencyId: Currency
       exchangeRate: Exchange Rate
       amountSource: Amt (Source)
@@ -373,7 +375,8 @@ dict.option.label:
     CANCELLED: Cancelled
   erp-ast/adjustment-type:
     IMPAIRMENT: Impairment
-    REVALUATION: Revaluation
+    REVALUATION_UP: Revaluation Up
+    REVALUATION_DOWN: Revaluation Down
   erp-ast/disposal-type:
     SCRAPPED: Scrap
     SOLD: Sale

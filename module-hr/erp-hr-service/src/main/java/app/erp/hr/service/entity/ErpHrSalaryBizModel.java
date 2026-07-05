@@ -32,9 +32,14 @@ import static io.nop.api.core.beans.FilterBeans.in;
 
 /**
  * 薪酬记录聚合根 BizModel（payroll.md §五/§六/§七）。继承 {@link CrudBizModel} 标准 CRUD，
- * 扩展薪酬核算引擎、审批状态机、银行代发文件生成入口。
+ * 扩展薪酬核算引擎与支付轴动作。
  *
- * <p>核算委托 {@link PayrollCalculator}（编排），APPROVED_MANAGER 计提及 PAID 发放凭证委托
+ * <p>审批轴（approveStatus UNSUBMITTED/SUBMITTED/APPROVED/REJECTED）由平台
+ * {@code approval-support.xbiz} 标准动作提供（DIRECT 模式，多级 WORKFLOW 归 .xwf 后续计划）。
+ * 支付轴（paymentStatus PENDING/PAID/VOID）由本类 {@code markPaid}/{@code voidSalary} 管理，
+ * 前提条件 {@code approveStatus=APPROVED}。
+ *
+ * <p>核算委托 {@link PayrollCalculator}（编排），PAID 发放凭证委托
  * {@link SalaryPostingDispatcher}（跨域经 finance {@code IErpFinVoucherBiz}）。
  */
 @BizModel("ErpHrSalary")
@@ -84,55 +89,25 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
     @Override
     @BizMutation
     @SingleSession
-    public ErpHrSalary review(@Name("salaryId") Long salaryId, IServiceContext context) {
+    public ErpHrSalary markPaid(@Name("salaryId") Long salaryId, IServiceContext context) {
         ErpHrSalary salary = requireSalary(salaryId, context);
-        assertTransition(salary, ErpHrConstants.APPROVAL_PENDING, ErpHrConstants.APPROVAL_REVIEWED);
-        salary.setApprovalStatus(ErpHrConstants.APPROVAL_REVIEWED);
-        updateEntity(salary, null, context);
-        return salary;
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpHrSalary approveFinance(@Name("salaryId") Long salaryId, IServiceContext context) {
-        ErpHrSalary salary = requireSalary(salaryId, context);
-        assertTransition(salary, ErpHrConstants.APPROVAL_REVIEWED, ErpHrConstants.APPROVAL_APPROVED_FINANCE);
-        salary.setApprovalStatus(ErpHrConstants.APPROVAL_APPROVED_FINANCE);
-        updateEntity(salary, null, context);
-        return salary;
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpHrSalary approveManager(@Name("salaryId") Long salaryId, IServiceContext context) {
-        ErpHrSalary salary = requireSalary(salaryId, context);
-        assertTransition(salary, ErpHrConstants.APPROVAL_APPROVED_FINANCE, ErpHrConstants.APPROVAL_APPROVED_MANAGER);
-        // 计提过账在状态迁移前触发（失败吞异常不阻塞审批流，对齐 assets/projects 失败语义）
-        postingDispatcher.tryPostAccrual(salary);
-        // 过账可能跨事务，重新加载实体后更新状态
-        salary = requireSalary(salaryId, context);
-        salary.setApprovalStatus(ErpHrConstants.APPROVAL_APPROVED_MANAGER);
-        dao().updateEntity(salary);
-        return salary;
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpHrSalary rejectSalary(@Name("salaryId") Long salaryId, IServiceContext context) {
-        ErpHrSalary salary = requireSalary(salaryId, context);
-        String current = salary.getApprovalStatus();
-        if (!ErpHrConstants.APPROVAL_REVIEWED.equals(current)
-                && !ErpHrConstants.APPROVAL_APPROVED_FINANCE.equals(current)) {
+        if (!ErpHrConstants.APPROVE_STATUS_APPROVED.equals(salary.getApproveStatus())) {
             throw new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpHrErrors.ARG_SALARY_ID, salaryId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, current)
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, "REVIEWED|APPROVED_FINANCE");
+                    .param(ErpHrErrors.ARG_CURRENT_STATUS, salary.getApproveStatus())
+                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, "APPROVED");
         }
-        salary.setApprovalStatus(ErpHrConstants.APPROVAL_PENDING);
-        updateEntity(salary, null, context);
+        if (!ErpHrConstants.PAYMENT_PENDING.equals(salary.getPaymentStatus())) {
+            throw new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION)
+                    .param(ErpHrErrors.ARG_SALARY_ID, salaryId)
+                    .param(ErpHrErrors.ARG_CURRENT_STATUS, salary.getPaymentStatus())
+                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, "PENDING(paymentStatus)");
+        }
+        postingDispatcher.tryPostPayment(salary);
+        salary = requireSalary(salaryId, context);
+        salary.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
+        salary.setPaymentDate(LocalDate.now());
+        dao().updateEntity(salary);
         return salary;
     }
 
@@ -141,29 +116,12 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
     @SingleSession
     public ErpHrSalary voidSalary(@Name("salaryId") Long salaryId, IServiceContext context) {
         ErpHrSalary salary = requireSalary(salaryId, context);
-        if (ErpHrConstants.APPROVAL_PAID.equals(salary.getApprovalStatus())) {
+        if (ErpHrConstants.PAYMENT_PAID.equals(salary.getPaymentStatus())) {
             throw new NopException(ErpHrErrors.ERR_SALARY_LOCKED_AFTER_PAID)
                     .param(ErpHrErrors.ARG_SALARY_ID, salaryId);
         }
-        salary.setApprovalStatus(ErpHrConstants.APPROVAL_VOID);
         salary.setPaymentStatus(ErpHrConstants.PAYMENT_VOID);
         updateEntity(salary, null, context);
-        return salary;
-    }
-
-    @Override
-    @BizMutation
-    @SingleSession
-    public ErpHrSalary markPaid(@Name("salaryId") Long salaryId, IServiceContext context) {
-        ErpHrSalary salary = requireSalary(salaryId, context);
-        assertTransition(salary, ErpHrConstants.APPROVAL_APPROVED_MANAGER, ErpHrConstants.APPROVAL_PAID);
-        // 发放过账在状态迁移前触发（失败吞异常不阻塞 PAID 终态）
-        postingDispatcher.tryPostPayment(salary);
-        salary = requireSalary(salaryId, context);
-        salary.setApprovalStatus(ErpHrConstants.APPROVAL_PAID);
-        salary.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
-        salary.setPaymentDate(LocalDate.now());
-        dao().updateEntity(salary);
         return salary;
     }
 
@@ -174,7 +132,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
                                                  @Name("month") int month,
                                                  @Name("bankId") Long bankId,
                                                  IServiceContext context) {
-        List<ErpHrSalary> pending = findApprovedManagerSalaries(year, month, context);
+        List<ErpHrSalary> pending = findPayableSalaries(year, month, context);
         if (pending.isEmpty()) {
             throw new NopException(ErpHrErrors.ERR_NO_APPROVED_SALARY_FOR_BANK_FILE)
                     .param(ErpHrErrors.ARG_BANK_ID, bankId);
@@ -191,7 +149,6 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
                     .append(s.getEmployeeId()).append(",")
                     .append(net.toPlainString()).append(",工资\n");
             s.setPaymentBatchNo(batchNo);
-            s.setApprovalStatus(ErpHrConstants.APPROVAL_PAID);
             s.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
             s.setPaymentDate(LocalDate.now());
             updateEntity(s, null, context);
@@ -228,7 +185,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
         List<ErpHrSalary> all = dao.findAllByQuery(q);
         ErpHrSalary latest = null;
         for (ErpHrSalary s : all) {
-            if (ErpHrConstants.APPROVAL_VOID.equals(s.getApprovalStatus())) {
+            if (ErpHrConstants.PAYMENT_VOID.equals(s.getPaymentStatus())) {
                 continue;
             }
             if (s.getMonth() != null && s.getMonth() <= upToMonth) {
@@ -246,16 +203,6 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
         return requireEntity(String.valueOf(salaryId), null, context);
     }
 
-    void assertTransition(ErpHrSalary salary, String expectedFrom, String targetTo) {
-        String current = salary.getApprovalStatus();
-        if (!expectedFrom.equals(current)) {
-            throw new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpHrErrors.ARG_SALARY_ID, salary.getId())
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, current)
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, targetTo);
-        }
-    }
-
     void assertNotDuplicated(Long employeeId, int year, int month, IServiceContext context) {
         if (existsNonVoidSalary(employeeId, year, month, context)) {
             throw new NopException(ErpHrErrors.ERR_SALARY_ALREADY_EXISTS)
@@ -271,12 +218,9 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
                 eq("employeeId", employeeId),
                 eq("year", year),
                 eq("month", month),
-                in("approvalStatus", Arrays.asList(
-                        ErpHrConstants.APPROVAL_PENDING,
-                        ErpHrConstants.APPROVAL_REVIEWED,
-                        ErpHrConstants.APPROVAL_APPROVED_FINANCE,
-                        ErpHrConstants.APPROVAL_APPROVED_MANAGER,
-                        ErpHrConstants.APPROVAL_PAID))));
+                in("paymentStatus", Arrays.asList(
+                        ErpHrConstants.PAYMENT_PENDING,
+                        ErpHrConstants.PAYMENT_PAID))));
         q.setLimit(1);
         return findCount(q, context) > 0;
     }
@@ -289,12 +233,13 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
         return dao.findAllByQuery(q);
     }
 
-    List<ErpHrSalary> findApprovedManagerSalaries(int year, int month, IServiceContext context) {
+    List<ErpHrSalary> findPayableSalaries(int year, int month, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("year", year),
                 eq("month", month),
-                eq("approvalStatus", ErpHrConstants.APPROVAL_APPROVED_MANAGER)));
+                eq("approveStatus", ErpHrConstants.APPROVE_STATUS_APPROVED),
+                eq("paymentStatus", ErpHrConstants.PAYMENT_PENDING)));
         return findList(q, null, context);
     }
 

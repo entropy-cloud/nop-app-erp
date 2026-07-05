@@ -1,7 +1,7 @@
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   id INT8 NOT NULL ,
-  constraint PK_erp_md_md_organization primary key (id)
+  constraint PK_erp_md_organization primary key (id)
 );
 
 CREATE TABLE erp_md_material(
@@ -211,7 +211,7 @@ CREATE TABLE erp_inv_drp_dock_appointment(
 );
 
 
-      COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
+      COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
       COMMENT ON TABLE erp_md_material IS '物料';
                 

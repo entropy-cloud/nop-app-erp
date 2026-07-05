@@ -409,8 +409,10 @@ prop:
       weight: 权重
     ErpHrSalary:
       actualWorkDays: 实际出勤日
-      approvalStatus: 审批状态
-      approvalStatus_label: 审批状态
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       bankFile: null
       bankFileId: 银行文件
       basicSalary: 基本工资

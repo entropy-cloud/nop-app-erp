@@ -72,6 +72,12 @@
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
 
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
                 <!--币种-->
                 <col id="currencyId" ui:number="true" sortable="true"/>
 
@@ -100,6 +106,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ approvedBy[审核人] approvedAt[审核时间]
  currencyId[币种] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
@@ -112,7 +119,8 @@
  businessDate[领料日期] docStatus[单据状态]
  approveStatus[审核状态] posted[已过账]
  postedAt[过账时间] postedBy[过账人]
- remark[备注] currencyId[币种]
+ remark[备注] approvedBy[审核人]
+ approvedAt[审核时间] currencyId[币种]
  exchangeRate[汇率] amountSource[源币种金额]
  amountFunctional[本位币金额] 
 </layout>
@@ -126,6 +134,7 @@
  approveStatus[审核状态] posted[已过账]
  postedAt[过账时间] postedBy[过账人]
  remark[备注] delVersion[逻辑删除版本]
+ approvedBy[审核人] approvedAt[审核时间]
  currencyId[币种] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>

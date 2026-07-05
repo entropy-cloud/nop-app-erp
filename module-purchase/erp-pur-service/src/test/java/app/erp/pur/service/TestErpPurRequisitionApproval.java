@@ -91,11 +91,11 @@ public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         ApiResponse<?> bad = submit(req.getId());
-        assertEquals(ErpPurErrors.ERR_REQ_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可再提交，应返回非法迁移错误");
+        assertEquals(-1, bad.getStatus(),
+                "APPROVED 不可再提交：平台守卫仅接受 UNSUBMITTED/null/REJECTED 源态");
         bad = withdrawSubmit(req.getId());
-        assertEquals(ErpPurErrors.ERR_REQ_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "APPROVED 不可撤回提交，应返回非法迁移错误");
+        assertEquals(-1, bad.getStatus(),
+                "APPROVED 不可撤回审批：withdrawApproval 守卫仅接受 SUBMITTED");
 
         assertEquals(0, reverseApprove(req.getId()).getStatus());
         ErpPurRequisition reversed = daoProvider.daoFor(ErpPurRequisition.class).getEntityById(req.getId());
@@ -121,28 +121,28 @@ public class TestErpPurRequisitionApproval extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private ApiResponse<?> submit(Long requisitionId) {
-        return executeRpc(mutation, "ErpPurRequisition__submit",
-                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+        return executeRpc(mutation, "ErpPurRequisition__submitForApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
     private ApiResponse<?> withdrawSubmit(Long requisitionId) {
-        return executeRpc(mutation, "ErpPurRequisition__withdrawSubmit",
-                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+        return executeRpc(mutation, "ErpPurRequisition__withdrawApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
     private ApiResponse<?> approve(Long requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__approve",
-                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+                ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
     private ApiResponse<?> reject(Long requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__reject",
-                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+                ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
     private ApiResponse<?> reverseApprove(Long requisitionId) {
         return executeRpc(mutation, "ErpPurRequisition__reverseApprove",
-                ApiRequest.build(Map.of("requisitionId", requisitionId)));
+                ApiRequest.build(Map.of("id", String.valueOf(requisitionId))));
     }
 
     private ApiResponse<?> cancel(Long requisitionId) {

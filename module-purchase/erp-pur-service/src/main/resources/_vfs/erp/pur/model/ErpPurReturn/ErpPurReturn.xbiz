@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpPurReturn.xbiz">
+<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:c="c" x:extends="_ErpPurReturn.xbiz">
 
-    <actions/>
+    <actions>
+        <mutation name="submitForApproval">
+            <source><c:script><![CDATA[
+                return inject('app.erp.pur.service.processor.ErpPurReturnProcessor').submitForApproval(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="approve">
+            <source><c:script><![CDATA[
+                return inject('app.erp.pur.service.processor.ErpPurReturnProcessor').approve(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="reverseApprove">
+            <source><c:script><![CDATA[
+                return inject('app.erp.pur.service.processor.ErpPurReturnProcessor').reverseApprove(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+    </actions>
 </biz>

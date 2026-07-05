@@ -263,6 +263,8 @@ prop:
       actions: null
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
       assignedToId: 分配处理人
       catalogItem: null
       catalogItemId: 服务目录项

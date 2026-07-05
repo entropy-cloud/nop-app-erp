@@ -448,6 +448,8 @@ CREATE TABLE erp_mfg_work_order(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   source_schedule_id INT8  ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
@@ -547,6 +549,8 @@ CREATE TABLE erp_mfg_subcontract_order(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   constraint PK_erp_mfg_subcontract_order primary key (id)
 );
 
@@ -642,6 +646,8 @@ CREATE TABLE erp_mfg_material_issue(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   currency_id INT8  ,
   exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
@@ -1373,6 +1379,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_work_order.source_schedule_id IS 'APS排程来源(弱参照)';
                     
+      COMMENT ON COLUMN erp_mfg_work_order.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_mfg_work_order.exchange_rate IS '汇率';
                     
       COMMENT ON COLUMN erp_mfg_work_order.amount_source IS '源币种金额';
@@ -1547,6 +1557,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_mfg_subcontract_order.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_subcontract_order.approved_at IS '审核时间';
+                    
       COMMENT ON TABLE erp_mfg_job_card IS '作业卡';
                 
       COMMENT ON COLUMN erp_mfg_job_card.id IS 'ID';
@@ -1712,6 +1726,10 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_material_issue.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_material_issue.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.approved_at IS '审核时间';
                     
       COMMENT ON COLUMN erp_mfg_material_issue.currency_id IS '币种';
                     

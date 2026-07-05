@@ -204,6 +204,8 @@ CREATE TABLE erp_ast_movement(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   currency_id INT8  ,
   exchange_rate NUMERIC(20,8) NOT NULL ,
   amount_source NUMERIC(20,4) default 0   ,
@@ -633,6 +635,10 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_movement.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_movement.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_ast_movement.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_ast_movement.approved_at IS '审核时间';
                     
       COMMENT ON COLUMN erp_ast_movement.currency_id IS '币种';
                     

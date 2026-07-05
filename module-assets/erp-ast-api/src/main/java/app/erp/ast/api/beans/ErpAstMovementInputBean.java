@@ -320,10 +320,38 @@
         }
 
 
+        private String _approvedBy;
+
+    
+        @PropMeta(propId=200)
+    
+        public String getApprovedBy(){
+            return _approvedBy;
+        }
+
+        public void setApprovedBy(String value){
+            this._approvedBy = value;
+        }
+
+
+        private java.time.LocalDateTime _approvedAt;
+
+    
+        @PropMeta(propId=201)
+    
+        public java.time.LocalDateTime getApprovedAt(){
+            return _approvedAt;
+        }
+
+        public void setApprovedAt(java.time.LocalDateTime value){
+            this._approvedAt = value;
+        }
+
+
         private Long _currencyId;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=202)
     
         public Long getCurrencyId(){
             return _currencyId;
@@ -337,7 +365,7 @@
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=29)
+        @PropMeta(propId=203)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -351,7 +379,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=30)
+        @PropMeta(propId=204)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -365,7 +393,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=31)
+        @PropMeta(propId=205)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;

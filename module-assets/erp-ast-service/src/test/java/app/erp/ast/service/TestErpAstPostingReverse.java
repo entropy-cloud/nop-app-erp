@@ -1,8 +1,6 @@
 package app.erp.ast.service;
 
-import app.erp.ast.biz.IErpAstAssetCapitalizationBiz;
 import app.erp.ast.biz.IErpAstDepreciationScheduleBiz;
-import app.erp.ast.biz.IErpAstDisposalBiz;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCapitalization;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
@@ -12,12 +10,16 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -25,9 +27,11 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -48,11 +52,9 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpAstAssetCapitalizationBiz capBiz;
-    @Inject
     IErpAstDepreciationScheduleBiz scheduleBiz;
     @Inject
-    IErpAstDisposalBiz disposalBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testCapitalizationReverseApproveRollsBack() {
@@ -67,12 +69,13 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
                     LocalDate.of(2026, 6, 15), "AST-CAP-REV-001");
         });
 
-        capBiz.submit(capId, CTX);
-        capBiz.approve(capId, CTX);
+        submitCap(capId);
+        approveCap(capId);
         ErpAstAsset assetBefore = findAsset("AST-CAP-REV-001");
         assertEquals(ErpAstConstants.ASSET_STATUS_IN_SERVICE, assetBefore.getStatus());
 
-        ErpAstAssetCapitalization cap = capBiz.reverseApprove(capId, CTX);
+        assertEquals(0, reverseApproveCap(capId).getStatus(), "资本化反审核成功");
+        ErpAstAssetCapitalization cap = daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId);
         assertFalse(Boolean.TRUE.equals(cap.getPosted()), "反审核后 posted=false");
         assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, cap.getApproveStatus());
 
@@ -143,12 +146,13 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
                     BigDecimal.ZERO, LocalDate.of(2026, 7, 15));
         });
 
-        disposalBiz.submit(disposalId, CTX);
-        disposalBiz.approve(disposalId, CTX);
+        submitDisposal(disposalId);
+        approveDisposal(disposalId);
         ErpAstAsset scrapped = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]);
         assertEquals(ErpAstConstants.ASSET_STATUS_SCRAPPED, scrapped.getStatus());
 
-        ErpAstDisposal disposal = disposalBiz.reverseApprove(disposalId, CTX);
+        assertEquals(0, reverseApproveDisposal(disposalId).getStatus(), "处置反审核成功");
+        ErpAstDisposal disposal = daoProvider.daoFor(ErpAstDisposal.class).getEntityById(disposalId);
         assertFalse(Boolean.TRUE.equals(disposal.getPosted()), "处置反审核后 posted=false");
         assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, disposal.getApproveStatus());
 
@@ -160,6 +164,37 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
             assertEquals(ErpAstConstants.SCHEDULE_STATUS_PENDING, s.getStatus(), "折旧计划恢复 PENDING");
         }
         assertTrue(isAllVouchersReversed("DISP-REV-001", "DISPOSAL"), "处置凭证已红字冲销");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> submitCap(Long id) {
+        return executeRpc("ErpAstAssetCapitalization__submitForApproval", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> approveCap(Long id) {
+        return executeRpc("ErpAstAssetCapitalization__approve", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> reverseApproveCap(Long id) {
+        return executeRpc("ErpAstAssetCapitalization__reverseApprove", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> submitDisposal(Long id) {
+        return executeRpc("ErpAstDisposal__submitForApproval", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> approveDisposal(Long id) {
+        return executeRpc("ErpAstDisposal__approve", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> reverseApproveDisposal(Long id) {
+        return executeRpc("ErpAstDisposal__reverseApprove", Map.of("id", String.valueOf(id)));
+    }
+
+    private ApiResponse<?> executeRpc(String action, Map<String, Object> data) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, action, ApiRequest.build(data));
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- helpers ----------
@@ -193,8 +228,8 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         });
 
         // 1. 资本化建卡
-        capBiz.submit(capId, CTX);
-        capBiz.approve(capId, CTX);
+        submitCap(capId);
+        approveCap(capId);
         ErpAstAsset asset = findAsset("AST-E2E-001");
         assetIdHolder[0] = asset.getId();
         assertEquals(ErpAstConstants.ASSET_STATUS_IN_SERVICE, asset.getStatus());
@@ -211,8 +246,9 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         // 3. 处置（账面净值 10000，报废收入 0 → 损失 -10000）
         Long disposalId = ormTemplate.runInSession(session -> seedDisposal("DISP-E2E-001", assetIdHolder[0],
                 ErpAstConstants.DISPOSAL_TYPE_SCRAPPED, BigDecimal.ZERO, LocalDate.of(2026, 8, 20)));
-        disposalBiz.submit(disposalId, CTX);
-        ErpAstDisposal disposal = disposalBiz.approve(disposalId, CTX);
+        submitDisposal(disposalId);
+        approveDisposal(disposalId);
+        ErpAstDisposal disposal = daoProvider.daoFor(ErpAstDisposal.class).getEntityById(disposalId);
         assertTrue(Boolean.TRUE.equals(disposal.getPosted()), "端到端处置过账成功");
         assertEquals(0, disposal.getGainLoss().compareTo(new BigDecimal("-10000")), "报废损失=-10000");
 

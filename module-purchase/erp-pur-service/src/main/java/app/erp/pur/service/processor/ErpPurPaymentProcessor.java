@@ -20,9 +20,15 @@ import java.util.Objects;
 import java.util.List;
 
 /**
- * 付款单审批状态机 + PAYMENT 过账 + 域级核销编排 Processor
- * （{@code processor-extension-pattern.md} Facade + Processor）。Facade {@code ErpPurPaymentBizModel}
- * 仅负责入口/事务/委托，编排委托本类。
+ * 付款单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
+ *
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
+ *
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpPurPaymentProcessor {
 
@@ -38,24 +44,24 @@ public class ErpPurPaymentProcessor {
     @Inject
     PaymentSettler paymentSettler;
 
-    public ErpPurPayment submit(Long paymentId, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(paymentId, context);
+    public ErpPurPayment submitForApproval(String id, IServiceContext context) {
+        ErpPurPayment payment = requirePayment(id, context);
         validateTransitionForSubmit(payment, context);
         validateBusinessRulesForSubmit(payment, context);
         doSubmit(payment, context);
         return payment;
     }
 
-    public ErpPurPayment withdrawSubmit(Long paymentId, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(paymentId, context);
+    public ErpPurPayment withdrawApproval(String id, IServiceContext context) {
+        ErpPurPayment payment = requirePayment(id, context);
         validateNotCancelled(payment, context);
         validateTransitionForWithdraw(payment, context);
         doWithdrawSubmit(payment, context);
         return payment;
     }
 
-    public ErpPurPayment approve(Long paymentId, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(paymentId, context);
+    public ErpPurPayment approve(String id, IServiceContext context) {
+        ErpPurPayment payment = requirePayment(id, context);
         if (isAlreadyApproved(payment)) {
             return payment;
         }
@@ -64,29 +70,28 @@ public class ErpPurPaymentProcessor {
         validateBusinessRulesForApprove(payment, context);
 
         boolean posted = doPosting(payment, context);
-        // 跨域 post 调用扰动会话脏跟踪，重新加载后置 posted 标志并显式持久化。
-        payment = paymentDao().getEntityById(paymentId);
+        payment = paymentDao().getEntityById(id);
         doApprove(payment, posted, context);
         return payment;
     }
 
-    public ErpPurPayment reject(Long paymentId, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(paymentId, context);
+    public ErpPurPayment reject(String id, IServiceContext context) {
+        ErpPurPayment payment = requirePayment(id, context);
         validateNotCancelled(payment, context);
         validateTransitionForReject(payment, context);
         doReject(payment, context);
         return payment;
     }
 
-    public ErpPurPayment reverseApprove(Long paymentId, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(paymentId, context);
+    public ErpPurPayment reverseApprove(String id, IServiceContext context) {
+        ErpPurPayment payment = requirePayment(id, context);
         if (isAlreadyRejected(payment)) {
             return payment;
         }
         validateTransitionForReverseApprove(payment, context);
         if (Boolean.TRUE.equals(payment.getPosted())) {
             postingDispatcher.reverse(payment);
-            payment = paymentDao().getEntityById(paymentId);
+            payment = paymentDao().getEntityById(id);
             payment.setPosted(false);
             payment.setPostedAt(null);
             payment.setPostedBy(null);
@@ -95,14 +100,14 @@ public class ErpPurPaymentProcessor {
         return payment;
     }
 
-    public ErpPurPayment cancel(Long paymentId, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(paymentId, context);
+    public ErpPurPayment cancel(String id, IServiceContext context) {
+        ErpPurPayment payment = requirePayment(id, context);
         validateTransitionForCancel(payment, context);
         String approveStatus = payment.getApproveStatus();
         if (approveStatus != null && Objects.equals(approveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED)
                 && Boolean.TRUE.equals(payment.getPosted())) {
             postingDispatcher.reverse(payment);
-            payment = paymentDao().getEntityById(paymentId);
+            payment = paymentDao().getEntityById(id);
             payment.setPosted(false);
             payment.setPostedAt(null);
             payment.setPostedBy(null);
@@ -111,13 +116,13 @@ public class ErpPurPaymentProcessor {
         return payment;
     }
 
-    public ErpPurPayment settle(Long paymentId, List<SettlementAllocation> allocations, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(paymentId, context);
+    public ErpPurPayment settle(String id, List<SettlementAllocation> allocations, IServiceContext context) {
+        ErpPurPayment payment = requirePayment(id, context);
         return paymentSettler.settle(payment, allocations);
     }
 
-    public ErpPurPayment reverseSettlement(Long paymentId, Long invoiceId, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(paymentId, context);
+    public ErpPurPayment reverseSettlement(String id, Long invoiceId, IServiceContext context) {
+        ErpPurPayment payment = requirePayment(id, context);
         return paymentSettler.reverseSettlement(payment, invoiceId);
     }
 
@@ -225,11 +230,11 @@ public class ErpPurPaymentProcessor {
 
     // ---------- 校验/查询辅助 ----------
 
-    protected ErpPurPayment requirePayment(Long paymentId, IServiceContext context) {
-        ErpPurPayment payment = paymentDao().getEntityById(paymentId);
+    protected ErpPurPayment requirePayment(String id, IServiceContext context) {
+        ErpPurPayment payment = paymentDao().getEntityById(id);
         if (payment == null) {
             throw new NopException(ErpPurErrors.ERR_PAYMENT_NOT_FOUND)
-                    .param(ErpPurErrors.ARG_PAYMENT_ID, paymentId);
+                    .param(ErpPurErrors.ARG_PAYMENT_ID, id);
         }
         return payment;
     }

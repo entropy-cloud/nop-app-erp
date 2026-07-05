@@ -32,9 +32,15 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 销售退货单审批状态机 + 退货审核触发库存反向入库移动 + SALES_RETURN 过账 + 退款编排 Processor
- * （{@code processor-extension-pattern.md} Facade + Processor）。Facade {@code ErpSalReturnBizModel}
- * 仅负责入口/事务/委托，编排委托本类。
+ * 销售退货单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
+ *
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
+ *
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  *
  * <p>跨实体：客户启用校验经 {@link IErpMdPartnerBiz}；源出库单经退货单 {@code delivery} 关系 getter；
  * 库存反向入库经 {@link IErpInvStockMoveBiz}；过账经 {@link SalReturnPostingDispatcher} →凭证聚合根 Facade；
@@ -66,71 +72,54 @@ public class ErpSalReturnProcessor {
     @Inject
     ReturnRefundOrchestrator refundOrchestrator;
 
-    public ErpSalReturn submit(Long returnId, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(returnId, context);
+    public ErpSalReturn submitForApproval(String id, IServiceContext context) {
+        ErpSalReturn returnOrder = requireReturn(id, context);
+        validateNotCancelled(returnOrder, context);
         validateTransitionForSubmit(returnOrder, context);
         validateBusinessRulesForSubmit(returnOrder, context);
         doSubmit(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpSalReturn withdrawSubmit(Long returnId, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(returnId, context);
+    public ErpSalReturn withdrawApproval(String id, IServiceContext context) {
+        ErpSalReturn returnOrder = requireReturn(id, context);
         validateNotCancelled(returnOrder, context);
         validateTransitionForWithdraw(returnOrder, context);
         doWithdrawSubmit(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpSalReturn approve(Long returnId, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(returnId, context);
-        // 幂等：已审核单据再次审核为空操作（state-machine §4），库存移动单/凭证已存在，不重复触发。
+    public ErpSalReturn approve(String id, IServiceContext context) {
+        ErpSalReturn returnOrder = requireReturn(id, context);
         if (isAlreadyApproved(returnOrder)) {
             return returnOrder;
         }
         validateNotCancelled(returnOrder, context);
         validateTransitionForApprove(returnOrder, context);
         validateBusinessRulesForApprove(returnOrder, context);
-
-        // 库存反向入库移动（物理正确性硬约束，失败抛异常回滚审核）。
-        ErpInvStockMove move = triggerIncomingMove(returnOrder, context);
-        // 跨域 generateMove 将移动单推进至 DONE 并更新库存余额；先刷盘使 DONE 状态与余额变动落地到当前事务的 DB 连接，
-        // 避免后续 REQUIRES_NEW 过账（独立会话）挂起当前会话时丢失会话内暂存的 DONE 暂态（跨域会话交互）。
-        ormTemplate.flushSession();
-
-        // SALES_RETURN 过账（跨域 REQUIRES_NEW 由 Facade 承接，失败吞异常保持终态 posted=false）。
-        boolean posted = triggerPosting(returnOrder, context);
-        // 退款编排：已收款退货→反向收款核销行；未收款退货→负 AR 辅助账（过账时已生成）即回减应收，无需额外动作。
-        refundOrchestrator.orchestrateRefund(returnOrder);
-
-        // 跨域调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
-        returnOrder = returnDao().getEntityById(returnId);
-        doApprove(returnOrder, posted, context);
+        doApprove(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpSalReturn reject(Long returnId, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(returnId, context);
+    public ErpSalReturn reject(String id, IServiceContext context) {
+        ErpSalReturn returnOrder = requireReturn(id, context);
         validateNotCancelled(returnOrder, context);
         validateTransitionForReject(returnOrder, context);
         doReject(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpSalReturn reverseApprove(Long returnId, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(returnId, context);
-        // 幂等：已 REJECTED（曾驳回或已反审核）无更多可冲销，直接返回。
+    public ErpSalReturn reverseApprove(String id, IServiceContext context) {
+        ErpSalReturn returnOrder = requireReturn(id, context);
         if (isAlreadyRejected(returnOrder)) {
             return returnOrder;
         }
         validateTransitionForReverseApprove(returnOrder, context);
-        ensureReversed(returnOrder, context);
-        returnOrder = returnDao().getEntityById(returnId);
         doReverseApprove(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpSalReturn cancel(Long returnId, IServiceContext context) {
+    public ErpSalReturn cancel(String returnId, IServiceContext context) {
         ErpSalReturn returnOrder = requireReturn(returnId, context);
         validateTransitionForCancel(returnOrder, context);
         if (isApproved(returnOrder)) {
@@ -141,10 +130,9 @@ public class ErpSalReturnProcessor {
         return returnOrder;
     }
 
-    // ---------- step：迁移校验 ----------
+    // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpSalReturn returnOrder, IServiceContext context) {
-        validateNotCancelled(returnOrder, context);
         String status = returnOrder.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
@@ -205,9 +193,54 @@ public class ErpSalReturnProcessor {
         returnQtyValidator.validate(returnOrder, lines);
     }
 
-    /**
-     * 源出库单须已审核通过（{@code returns.md §状态限制}：原出库单必须已审核）。
-     */
+    // ---------- step：执行（状态推进 + 持久化） ----------
+
+    protected void doSubmit(ErpSalReturn returnOrder, IServiceContext context) {
+        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+        returnDao().updateEntity(returnOrder);
+    }
+
+    protected void doWithdrawSubmit(ErpSalReturn returnOrder, IServiceContext context) {
+        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_UNSUBMITTED);
+        returnDao().updateEntity(returnOrder);
+    }
+
+    protected void doApprove(ErpSalReturn returnOrder, IServiceContext context) {
+        triggerIncomingMove(returnOrder, context);
+        ormTemplate.flushSession();
+
+        boolean posted = triggerPosting(returnOrder, context);
+        refundOrchestrator.orchestrateRefund(returnOrder);
+
+        returnOrder = returnDao().getEntityById(returnOrder.getId());
+        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
+        returnOrder.setApprovedBy(currentUserId());
+        returnOrder.setApprovedAt(CoreMetrics.currentDateTime());
+        applyPosted(returnOrder, posted);
+        returnDao().updateEntity(returnOrder);
+    }
+
+    protected void doReject(ErpSalReturn returnOrder, IServiceContext context) {
+        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
+        returnDao().updateEntity(returnOrder);
+    }
+
+    protected void doReverseApprove(ErpSalReturn returnOrder, IServiceContext context) {
+        ensureReversed(returnOrder, context);
+        returnOrder = returnDao().getEntityById(returnOrder.getId());
+        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
+        returnOrder.setApprovedBy(null);
+        returnOrder.setApprovedAt(null);
+        returnDao().updateEntity(returnOrder);
+    }
+
+    protected void doCancel(ErpSalReturn returnOrder, IServiceContext context) {
+        returnOrder.setDocStatus(ErpSalConstants.DOC_STATUS_CANCELLED);
+        returnDao().updateEntity(returnOrder);
+    }
+
+    // ---------- 业务规则校验 ----------
+
     protected void requireSourceDeliveryApproved(ErpSalReturn returnOrder, IServiceContext context) {
         ErpSalDelivery delivery = returnOrder.getDelivery();
         if (delivery == null) {
@@ -221,9 +254,6 @@ public class ErpSalReturnProcessor {
         }
     }
 
-    /**
-     * 退货原因必填（按配置 {@code erp-sal.return-reason-required}，默认 true）。
-     */
     protected void requireReasonIfConfigured(ErpSalReturn returnOrder, List<ErpSalReturnLine> lines,
                                              IServiceContext context) {
         if (!isReasonRequired()) {
@@ -254,42 +284,8 @@ public class ErpSalReturnProcessor {
         }
     }
 
-    // ---------- step：执行 ----------
+    // ---------- 过账接线 ----------
 
-    protected void doSubmit(ErpSalReturn returnOrder, IServiceContext context) {
-        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_SUBMITTED);
-        returnDao().updateEntity(returnOrder);
-    }
-
-    protected void doWithdrawSubmit(ErpSalReturn returnOrder, IServiceContext context) {
-        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_UNSUBMITTED);
-        returnDao().updateEntity(returnOrder);
-    }
-
-    protected void doApprove(ErpSalReturn returnOrder, boolean posted, IServiceContext context) {
-        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
-        returnOrder.setApprovedBy(currentUserId());
-        returnOrder.setApprovedAt(CoreMetrics.currentDateTime());
-        applyPosted(returnOrder, posted);
-        returnDao().updateEntity(returnOrder);
-    }
-
-    protected void doReject(ErpSalReturn returnOrder, IServiceContext context) {
-        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
-        returnDao().updateEntity(returnOrder);
-    }
-
-    protected void doReverseApprove(ErpSalReturn returnOrder, IServiceContext context) {
-        returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
-        returnDao().updateEntity(returnOrder);
-    }
-
-    protected void doCancel(ErpSalReturn returnOrder, IServiceContext context) {
-        returnOrder.setDocStatus(ErpSalConstants.DOC_STATUS_CANCELLED);
-        returnDao().updateEntity(returnOrder);
-    }
-
-    /** 将过账结果接线到退货单 posted 标志。 */
     protected void applyPosted(ErpSalReturn returnOrder, boolean posted) {
         if (posted) {
             returnOrder.setPosted(true);
@@ -298,14 +294,8 @@ public class ErpSalReturnProcessor {
         }
     }
 
-    // ---------- 库存触发 + 过账接线 + 冲销 ----------
+    // ---------- 库存触发 + 过账 + 冲销 ----------
 
-    /**
-     * 审核通过后构造 {@link StockMoveRequest}(INCOMING) 调 {@link IErpInvStockMoveBiz#generateMove}
-     * （业务联动自动 DONE、幂等键 {@code (ERP_SAL_RETURN, return.code)}）。
-     *
-     * <p>追溯挂链：解析源出库单生成的出库移动单 id，透传 {@code originReturnedMoveId}，使退货移动单可反向追溯到原出库移动单。
-     */
     protected ErpInvStockMove triggerIncomingMove(ErpSalReturn returnOrder, IServiceContext context) {
         List<ErpSalReturnLine> lines = loadLines(returnOrder.getId());
         StockMoveRequest request = stockMoveBuilder.build(returnOrder, lines, context);
@@ -313,10 +303,6 @@ public class ErpSalReturnProcessor {
         return stockMoveBiz.generateMove(request, context);
     }
 
-    /**
-     * 解析源出库单（退货单 {@code delivery} 关系）生成的库存出库移动单 id。源出库单或其移动单缺失时返回 null
-     * （不阻塞退货审核，仅追溯链缺失）。
-     */
     protected Long resolveSourceDeliveryMoveId(ErpSalReturn returnOrder, IServiceContext context) {
         ErpSalDelivery delivery = returnOrder.getDelivery();
         if (delivery == null) {
@@ -327,16 +313,10 @@ public class ErpSalReturnProcessor {
         return sourceMove == null ? null : sourceMove.getId();
     }
 
-    /**
-     * SALES_RETURN 过账（跨域 REQUIRES_NEW 由 Facade 承接，失败吞异常保持终态 posted=false）。
-     */
     protected boolean triggerPosting(ErpSalReturn returnOrder, IServiceContext context) {
         return postingDispatcher.tryPost(returnOrder);
     }
 
-    /**
-     * 反审核/作废前的内部冲销：红字冲销已过账 SALES_RETURN 凭证（幂等）+ 反向出库移动冲减库存（幂等防双冲销）。
-     */
     protected void ensureReversed(ErpSalReturn returnOrder, IServiceContext context) {
         reversePostingIfAny(returnOrder, context);
         ErpInvStockMove original = stockMoveBiz.findByRelatedBill(
@@ -353,10 +333,6 @@ public class ErpSalReturnProcessor {
         stockMoveBiz.reverse(original.getId(), context);
     }
 
-    /**
-     * 红字冲销已过账 SALES_RETURN 凭证（幂等：未过账则跳过）+ 退款红冲恢复占位。
-     * posted=false 在会话脏跟踪实例上置位，由调用方 reload 后的 updateEntity 一并持久化。
-     */
     protected void reversePostingIfAny(ErpSalReturn returnOrder, IServiceContext context) {
         if (Boolean.TRUE.equals(returnOrder.getPosted())) {
             postingDispatcher.reverse(returnOrder);
@@ -370,11 +346,11 @@ public class ErpSalReturnProcessor {
 
     // ---------- 校验/查询辅助 ----------
 
-    protected ErpSalReturn requireReturn(Long returnId, IServiceContext context) {
-        ErpSalReturn returnOrder = returnDao().getEntityById(returnId);
+    protected ErpSalReturn requireReturn(String id, IServiceContext context) {
+        ErpSalReturn returnOrder = returnDao().getEntityById(id);
         if (returnOrder == null) {
             throw new NopException(ErpSalErrors.ERR_RETURN_NOT_FOUND)
-                    .param(ErpSalErrors.ARG_RETURN_ID, returnId);
+                    .param(ErpSalErrors.ARG_RETURN_CODE, id);
         }
         return returnOrder;
     }
@@ -386,13 +362,13 @@ public class ErpSalReturnProcessor {
         }
     }
 
-    protected boolean isAlreadyApproved(ErpSalReturn returnOrder) {
+    protected boolean isApproved(ErpSalReturn returnOrder) {
         String status = returnOrder.getApproveStatus();
         return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
     }
 
-    protected boolean isApproved(ErpSalReturn returnOrder) {
-        return isAlreadyApproved(returnOrder);
+    protected boolean isAlreadyApproved(ErpSalReturn returnOrder) {
+        return isApproved(returnOrder);
     }
 
     protected boolean isAlreadyRejected(ErpSalReturn returnOrder) {
@@ -420,7 +396,6 @@ public class ErpSalReturnProcessor {
     }
 
     protected List<ErpSalReturnLine> loadLines(Long returnId) {
-        // D2 边界场景：同聚合子表加载，父实体已授权，子行无独立权限规则。
         IEntityDao<ErpSalReturnLine> dao = daoProvider.daoFor(ErpSalReturnLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("returnId", returnId));

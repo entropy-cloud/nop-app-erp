@@ -58,7 +58,7 @@ public class ErpMntRequestBizModel extends CrudBizModel<ErpMntRequest> implement
 
     @Override
     @BizMutation
-    public ErpMntRequest reject(@Name("requestId") Long requestId, IServiceContext context) {
+    public ErpMntRequest rejectRequest(@Name("requestId") Long requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
         String status = request.getStatus();
         if (status == null || (!Objects.equals(status, ErpMntDaoConstants.REQUEST_STATUS_OPEN)

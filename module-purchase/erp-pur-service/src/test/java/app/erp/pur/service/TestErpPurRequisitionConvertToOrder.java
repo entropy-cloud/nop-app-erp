@@ -190,11 +190,11 @@ public class TestErpPurRequisitionConvertToOrder extends JunitAutoTestCase {
     }
 
     private ApiResponse<?> orderSubmit(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__submit", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpPurOrder__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> orderApprove(Long orderId) {
-        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("orderId", orderId)));
+        return executeRpc(mutation, "ErpPurOrder__approve", ApiRequest.build(Map.of("id", String.valueOf(orderId))));
     }
 
     private ApiResponse<?> orderCancel(Long orderId) {

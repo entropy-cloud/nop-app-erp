@@ -9,7 +9,11 @@ options:
     value: IMPAIRMENT
     description: 
   
-  - label: 重估
-    value: REVALUATION
+  - label: 重估增值
+    value: REVALUATION_UP
+    description: 
+  
+  - label: 重估减值
+    value: REVALUATION_DOWN
     description: 
   

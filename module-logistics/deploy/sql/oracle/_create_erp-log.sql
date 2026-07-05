@@ -4,9 +4,9 @@ CREATE TABLE erp_md_md_partner(
   constraint PK_erp_md_md_partner primary key (ID)
 );
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_md_md_organization primary key (ID)
+  constraint PK_erp_md_organization primary key (ID)
 );
 
 CREATE TABLE erp_md_md_employee(
@@ -204,7 +204,7 @@ CREATE TABLE erp_log_shipment_log(
 
       COMMENT ON TABLE erp_md_md_partner IS 'ErpMdPartner';
                 
-      COMMENT ON TABLE erp_md_md_organization IS 'ErpMdOrganization';
+      COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
       COMMENT ON TABLE erp_md_md_employee IS 'ErpMdEmployee';
                 

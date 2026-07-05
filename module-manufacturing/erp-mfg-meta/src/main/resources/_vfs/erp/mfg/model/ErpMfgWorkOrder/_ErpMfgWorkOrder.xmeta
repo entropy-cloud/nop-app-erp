@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
       xmlns:xpl="xpl" ext:model="orm" ext:icon="factory" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
-      xmlns:biz="biz" displayName="工单" i18n-en:displayName="Work Order" tagSet="gid,erp.manufacturing" xmlns:ui="ui"
-      xmlns:orm="orm">
+      xmlns:biz="biz" displayName="工单" i18n-en:displayName="Work Order" tagSet="gid,erp.manufacturing,use-approval"
+      xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.mfg.dao.entity.ErpMfgWorkOrder</entityName>
 
@@ -125,7 +125,7 @@
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="27" i18n-en:displayName="Approve Status" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-mfg/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
         </prop>
         <prop name="priority" displayName="优先级" propId="28" i18n-en:displayName="Priority" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -175,15 +175,23 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="exchangeRate" displayName="汇率" propId="40" i18n-en:displayName="Exchange Rate" mandatory="true"
+        <prop name="approvedBy" displayName="审核人" propId="200" i18n-en:displayName="Approved By" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
+        </prop>
+        <prop name="approvedAt" displayName="审核时间" propId="201" i18n-en:displayName="Approved At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="exchangeRate" displayName="汇率" propId="202" i18n-en:displayName="Exchange Rate" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="1">
             <schema type="java.lang.String" precision="20" scale="8"/>
         </prop>
-        <prop name="amountSource" displayName="源币种金额" propId="41" i18n-en:displayName="Amt (Source)" queryable="true"
+        <prop name="amountSource" displayName="源币种金额" propId="203" i18n-en:displayName="Amt (Source)" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="amountFunctional" displayName="本位币金额" propId="42" i18n-en:displayName="Amt (Functional)"
+        <prop name="amountFunctional" displayName="本位币金额" propId="204" i18n-en:displayName="Amt (Functional)"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema type="java.lang.String" precision="20" scale="4"/>
         </prop>

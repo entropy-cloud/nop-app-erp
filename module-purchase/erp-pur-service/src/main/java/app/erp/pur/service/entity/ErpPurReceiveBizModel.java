@@ -12,8 +12,9 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
- * 采购入库单 BizModel（Facade）。审批状态机 + 入库审核触发库存移动编排委托
- * {@link ErpPurReceiveProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 采购入库单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由 xbiz 一行委托注入 Processor；非审批动作（cancel）在本类完成
+ * Long→String 转换后委托 Processor。
  */
 @BizModel("ErpPurReceive")
 public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implements IErpPurReceiveBiz {
@@ -27,37 +28,7 @@ public class ErpPurReceiveBizModel extends CrudBizModel<ErpPurReceive> implement
 
     @Override
     @BizMutation
-    public ErpPurReceive submit(@Name("receiveId") Long receiveId, IServiceContext context) {
-        return receiveProcessor.submit(receiveId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurReceive withdrawSubmit(@Name("receiveId") Long receiveId, IServiceContext context) {
-        return receiveProcessor.withdrawSubmit(receiveId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurReceive approve(@Name("receiveId") Long receiveId, IServiceContext context) {
-        return receiveProcessor.approve(receiveId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurReceive reject(@Name("receiveId") Long receiveId, IServiceContext context) {
-        return receiveProcessor.reject(receiveId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurReceive reverseApprove(@Name("receiveId") Long receiveId, IServiceContext context) {
-        return receiveProcessor.reverseApprove(receiveId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpPurReceive cancel(@Name("receiveId") Long receiveId, IServiceContext context) {
-        return receiveProcessor.cancel(receiveId, context);
+        return receiveProcessor.cancel(String.valueOf(receiveId), context);
     }
 }

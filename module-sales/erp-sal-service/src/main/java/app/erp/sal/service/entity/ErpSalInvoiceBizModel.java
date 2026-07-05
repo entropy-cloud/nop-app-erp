@@ -12,8 +12,9 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
- * 销售发票 BizModel（Facade）。审批状态机 + AR_INVOICE 过账编排委托
- * {@link ErpSalInvoiceProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 销售发票 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由平台 {@code approval-support.xbiz} 标准 source 提供，业务联动经 xbiz
+ * {@code <source x:override="replace">} 注入 {@link ErpSalInvoiceProcessor#onSubmit}/{@link ErpSalInvoiceProcessor#onApproved}/{@link ErpSalInvoiceProcessor#onReverseApproved}。
  */
 @BizModel("ErpSalInvoice")
 public class ErpSalInvoiceBizModel extends CrudBizModel<ErpSalInvoice> implements IErpSalInvoiceBiz {
@@ -27,37 +28,7 @@ public class ErpSalInvoiceBizModel extends CrudBizModel<ErpSalInvoice> implement
 
     @Override
     @BizMutation
-    public ErpSalInvoice submit(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.submit(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalInvoice withdrawSubmit(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.withdrawSubmit(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalInvoice approve(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.approve(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalInvoice reject(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.reject(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalInvoice reverseApprove(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.reverseApprove(invoiceId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpSalInvoice cancel(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.cancel(invoiceId, context);
+        return invoiceProcessor.cancel(String.valueOf(invoiceId), context);
     }
 }

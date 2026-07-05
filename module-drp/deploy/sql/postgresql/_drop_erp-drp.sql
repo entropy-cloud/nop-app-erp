@@ -1,5 +1,5 @@
 
-drop table  if exists  erp_md_md_organization;
+drop table  if exists  erp_md_organization;
 drop table  if exists  erp_md_material;
 drop table  if exists  erp_md_warehouse;
 drop table  if exists  erp_md_partner;

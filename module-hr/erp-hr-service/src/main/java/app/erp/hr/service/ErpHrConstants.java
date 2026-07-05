@@ -26,15 +26,13 @@ public interface ErpHrConstants {
     /** 是否允许跨天班次（默认 true）。 */
     String CONFIG_SHIFT_CROSS_DAY_ENABLED = "erp-hr.shift-cross-day-enabled";
 
-    // ---- salary-approval-status（payroll.md §6.1，权威端到端状态） ----
-    String APPROVAL_PENDING = "PENDING";
-    String APPROVAL_REVIEWED = "REVIEWED";
-    String APPROVAL_APPROVED_FINANCE = "APPROVED_FINANCE";
-    String APPROVAL_APPROVED_MANAGER = "APPROVED_MANAGER";
-    String APPROVAL_PAID = "PAID";
-    String APPROVAL_VOID = "VOID";
+    // ---- approve-status（标准 wf/approve-status 四态，payroll.md §设计修正记录三轴分离） ----
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
+    String APPROVE_STATUS_APPROVED = "APPROVED";
+    String APPROVE_STATUS_REJECTED = "REJECTED";
 
-    // ---- salary-payment-status（存量 3 态，approvalStatus 的派生投影） ----
+    // ---- salary-payment-status（独立支付轴，与 approveStatus 分离） ----
     String PAYMENT_PENDING = "PENDING";
     String PAYMENT_PAID = "PAID";
     String PAYMENT_VOID = "VOID";

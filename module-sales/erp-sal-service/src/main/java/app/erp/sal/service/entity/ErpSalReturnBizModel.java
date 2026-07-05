@@ -12,8 +12,9 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
- * 销售退货单 BizModel（Facade）。审批状态机 + 退货审核触发库存反向入库 + SALES_RETURN 过账 + 退款编排委托
- * {@link ErpSalReturnProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 销售退货单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由平台 {@code approval-support.xbiz} 标准 source 提供，业务联动经 xbiz
+ * {@code <source x:override="replace">} 注入 {@link ErpSalReturnProcessor#onSubmit}/{@link ErpSalReturnProcessor#onApproved}/{@link ErpSalReturnProcessor#onReverseApproved}。
  */
 @BizModel("ErpSalReturn")
 public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements IErpSalReturnBiz {
@@ -27,37 +28,7 @@ public class ErpSalReturnBizModel extends CrudBizModel<ErpSalReturn> implements 
 
     @Override
     @BizMutation
-    public ErpSalReturn submit(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.submit(returnId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalReturn withdrawSubmit(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.withdrawSubmit(returnId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalReturn approve(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.approve(returnId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalReturn reject(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.reject(returnId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalReturn reverseApprove(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.reverseApprove(returnId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpSalReturn cancel(@Name("returnId") Long returnId, IServiceContext context) {
-        return returnProcessor.cancel(returnId, context);
+        return returnProcessor.cancel(String.valueOf(returnId), context);
     }
 }

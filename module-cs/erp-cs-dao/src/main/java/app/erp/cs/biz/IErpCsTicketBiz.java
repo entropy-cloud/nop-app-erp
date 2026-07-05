@@ -7,11 +7,12 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.orm.biz.ICrudBiz;
+import io.nop.wf.core.biz.IApprovableBiz;
 import io.nop.core.context.IServiceContext;
 
 import java.util.List;
 
-public interface IErpCsTicketBiz extends ICrudBiz<ErpCsTicket> {
+public interface IErpCsTicketBiz extends ICrudBiz<ErpCsTicket>, IApprovableBiz<ErpCsTicket> {
 
     @BizMutation
     ErpCsTicket assign(@Name("ticketId") Long ticketId,

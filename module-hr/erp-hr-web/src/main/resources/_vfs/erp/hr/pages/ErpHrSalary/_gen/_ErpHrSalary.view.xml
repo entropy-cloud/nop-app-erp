@@ -75,8 +75,8 @@
                 <!--实发日期-->
                 <col id="paymentDate" sortable="true"/>
 
-                <!--审批状态-->
-                <col id="approvalStatus" mandatory="true" sortable="true"/>
+                <!--审核状态-->
+                <col id="approveStatus" mandatory="true" sortable="true"/>
 
                 <!--绩效系数-->
                 <col id="performanceFactor" ui:number="true" sortable="true"/>
@@ -125,6 +125,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -142,7 +148,7 @@
  socialInsurance[社保个人部分] housingFund[公积金个人部分]
  taxAmount[个税] otherDeductions[其他扣款]
  netSalary[实发合计] paymentStatus[支付状态]
- paymentDate[实发日期] approvalStatus[审批状态]
+ paymentDate[实发日期] approveStatus[审核状态]
  performanceFactor[绩效系数] actualWorkDays[实际出勤日]
  requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
  unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
@@ -151,6 +157,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-薪酬记录" i18n-en:title="Add Salary Record">
@@ -164,13 +171,14 @@
  socialInsurance[社保个人部分] housingFund[公积金个人部分]
  taxAmount[个税] otherDeductions[其他扣款]
  netSalary[实发合计] paymentStatus[支付状态]
- paymentDate[实发日期] approvalStatus[审批状态]
+ paymentDate[实发日期] approveStatus[审核状态]
  performanceFactor[绩效系数] actualWorkDays[实际出勤日]
  requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
  unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
  reviewNote[审核备注] paymentBatchNo[发放批次号]
  bankFileId[银行文件] orgId[业务组织]
- remark[备注] 
+ remark[备注] approvedBy[审核人]
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-薪酬记录" i18n-en:title="Edit Salary Record">
@@ -184,13 +192,14 @@
  socialInsurance[社保个人部分] housingFund[公积金个人部分]
  taxAmount[个税] otherDeductions[其他扣款]
  netSalary[实发合计] paymentStatus[支付状态]
- paymentDate[实发日期] approvalStatus[审批状态]
+ paymentDate[实发日期] approveStatus[审核状态]
  performanceFactor[绩效系数] actualWorkDays[实际出勤日]
  requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
  unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
  reviewNote[审核备注] paymentBatchNo[发放批次号]
  bankFileId[银行文件] orgId[业务组织]
  remark[备注] delVersion[逻辑删除版本]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

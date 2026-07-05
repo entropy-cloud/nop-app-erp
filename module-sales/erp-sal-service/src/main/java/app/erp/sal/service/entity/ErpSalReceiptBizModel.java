@@ -15,8 +15,9 @@ import jakarta.inject.Inject;
 import java.util.List;
 
 /**
- * 收款单 BizModel（Facade）。审批状态机 + RECEIPT 过账 + 域级核销编排委托
- * {@link ErpSalReceiptProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 收款单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由平台 {@code approval-support.xbiz} 标准 source 提供，业务联动经 xbiz
+ * {@code <source x:override="replace">} 注入 {@link ErpSalReceiptProcessor#onSubmit}/{@link ErpSalReceiptProcessor#onApproved}/{@link ErpSalReceiptProcessor#onReverseApproved}。
  */
 @BizModel("ErpSalReceipt")
 public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implements IErpSalReceiptBiz {
@@ -30,38 +31,8 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
 
     @Override
     @BizMutation
-    public ErpSalReceipt submit(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return receiptProcessor.submit(receiptId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalReceipt withdrawSubmit(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return receiptProcessor.withdrawSubmit(receiptId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalReceipt approve(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return receiptProcessor.approve(receiptId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalReceipt reject(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return receiptProcessor.reject(receiptId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalReceipt reverseApprove(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return receiptProcessor.reverseApprove(receiptId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpSalReceipt cancel(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return receiptProcessor.cancel(receiptId, context);
+        return receiptProcessor.cancel(String.valueOf(receiptId), context);
     }
 
     @Override
@@ -69,7 +40,7 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
     public ErpSalReceipt settle(@Name("receiptId") Long receiptId,
                                 @Name("allocations") List<SettlementAllocation> allocations,
                                 IServiceContext context) {
-        return receiptProcessor.settle(receiptId, allocations, context);
+        return receiptProcessor.settle(String.valueOf(receiptId), allocations, context);
     }
 
     @Override
@@ -77,6 +48,6 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
     public ErpSalReceipt reverseSettlement(@Name("receiptId") Long receiptId,
                                            @Name("invoiceId") Long invoiceId,
                                            IServiceContext context) {
-        return receiptProcessor.reverseSettlement(receiptId, invoiceId, context);
+        return receiptProcessor.reverseSettlement(String.valueOf(receiptId), invoiceId, context);
     }
 }

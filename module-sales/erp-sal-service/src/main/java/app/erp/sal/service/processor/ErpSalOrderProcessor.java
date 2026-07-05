@@ -23,15 +23,15 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 销售订单审批状态机编排 Processor（{@code processor-extension-pattern.md} 两层结构：Facade + Processor）。
- * Facade {@code ErpSalOrderBizModel} 仅负责入口/事务/委托，编排委托本类。
+ * 销售订单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
  *
- * <p>订单审核 = 纯状态推进（state-machine §2），不触发库存/凭证；审核时叠加客户启用校验与信用额度校验。
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
  *
- * <p>配置余地：每个 {@code public} 动作方法只编排步骤顺序（加载→校验迁移→校验业务规则→执行），
- * 各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
- *
- * <p>事务边界：跟随 Facade {@code @BizMutation} 事务，本类不带 {@code @Transactional}。
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpSalOrderProcessor {
 
@@ -44,25 +44,25 @@ public class ErpSalOrderProcessor {
     @Inject
     CreditLimitChecker creditLimitChecker;
 
-    public ErpSalOrder submit(Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId, context);
+    public ErpSalOrder submitForApproval(String id, IServiceContext context) {
+        ErpSalOrder order = requireOrder(id, context);
+        validateNotCancelled(order, context);
         validateTransitionForSubmit(order, context);
         validateBusinessRulesForSubmit(order, context);
         doSubmit(order, context);
         return order;
     }
 
-    public ErpSalOrder withdrawSubmit(Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId, context);
+    public ErpSalOrder withdrawApproval(String id, IServiceContext context) {
+        ErpSalOrder order = requireOrder(id, context);
         validateNotCancelled(order, context);
         validateTransitionForWithdraw(order, context);
         doWithdrawSubmit(order, context);
         return order;
     }
 
-    public ErpSalOrder approve(Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId, context);
-        // 幂等：已审核订单再次审核为空操作（state-machine §4，订单无库存触发故无副作用可重复）。
+    public ErpSalOrder approve(String id, IServiceContext context) {
+        ErpSalOrder order = requireOrder(id, context);
         if (isAlreadyApproved(order)) {
             return order;
         }
@@ -73,17 +73,16 @@ public class ErpSalOrderProcessor {
         return order;
     }
 
-    public ErpSalOrder reject(Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId, context);
+    public ErpSalOrder reject(String id, IServiceContext context) {
+        ErpSalOrder order = requireOrder(id, context);
         validateNotCancelled(order, context);
         validateTransitionForReject(order, context);
         doReject(order, context);
         return order;
     }
 
-    public ErpSalOrder reverseApprove(Long orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId, context);
-        // 幂等：已 REJECTED（曾驳回或已反审核）直接返回。
+    public ErpSalOrder reverseApprove(String id, IServiceContext context) {
+        ErpSalOrder order = requireOrder(id, context);
         if (isAlreadyRejected(order)) {
             return order;
         }
@@ -92,7 +91,7 @@ public class ErpSalOrderProcessor {
         return order;
     }
 
-    public ErpSalOrder cancel(Long orderId, IServiceContext context) {
+    public ErpSalOrder cancel(String orderId, IServiceContext context) {
         ErpSalOrder order = requireOrder(orderId, context);
         validateTransitionForCancel(order, context);
         doCancel(order, context);
@@ -102,7 +101,6 @@ public class ErpSalOrderProcessor {
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForSubmit(ErpSalOrder order, IServiceContext context) {
-        validateNotCancelled(order, context);
         String status = order.getApproveStatus();
         if (status == null) {
             status = ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
@@ -157,7 +155,6 @@ public class ErpSalOrderProcessor {
 
     protected void validateBusinessRulesForApprove(ErpSalOrder order, IServiceContext context) {
         requireCustomerActive(order, context);
-        // 信用额度校验（本单此时仍为 SUBMITTED，不在 outstanding 内，不会被重复计算）。
         creditLimitChecker.check(order.getCustomerId(), order.getTotalAmountWithTax(), context);
     }
 
@@ -197,11 +194,11 @@ public class ErpSalOrderProcessor {
 
     // ---------- 校验/查询辅助（protected，供派生复用与覆盖） ----------
 
-    protected ErpSalOrder requireOrder(Long orderId, IServiceContext context) {
-        ErpSalOrder order = orderDao().getEntityById(orderId);
+    protected ErpSalOrder requireOrder(String id, IServiceContext context) {
+        ErpSalOrder order = orderDao().getEntityById(id);
         if (order == null) {
             throw new NopException(ErpSalErrors.ERR_ORDER_NOT_FOUND)
-                    .param(ErpSalErrors.ARG_ORDER_ID, orderId);
+                    .param(ErpSalErrors.ARG_ORDER_CODE, id);
         }
         return order;
     }
@@ -243,7 +240,6 @@ public class ErpSalOrderProcessor {
     }
 
     protected List<ErpSalOrderLine> loadLines(Long orderId) {
-        // D2 边界场景：同聚合子表加载，父实体已授权，子行无独立权限规则。
         IEntityDao<ErpSalOrderLine> dao = daoProvider.daoFor(ErpSalOrderLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orderId", orderId));

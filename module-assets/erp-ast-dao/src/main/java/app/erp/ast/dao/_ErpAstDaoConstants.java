@@ -69,9 +69,14 @@ public interface _ErpAstDaoConstants {
     String ADJUSTMENT_TYPE_IMPAIRMENT = "IMPAIRMENT";
                     
     /**
-     * 价值调整类型: 重估 
+     * 价值调整类型: 重估增值 
      */
-    String ADJUSTMENT_TYPE_REVALUATION = "REVALUATION";
+    String ADJUSTMENT_TYPE_REVALUATION_UP = "REVALUATION_UP";
+                    
+    /**
+     * 价值调整类型: 重估减值 
+     */
+    String ADJUSTMENT_TYPE_REVALUATION_DOWN = "REVALUATION_DOWN";
                     
     /**
      * 处置类型: 报废 

@@ -533,7 +533,7 @@
         <!-- 薪酬记录 -->
         <entity className="app.erp.hr.dao.entity.ErpHrSalary"
                 displayName="薪酬记录" ext:icon="wallet" i18n-en:displayName="Salary Record" name="app.erp.hr.dao.entity.ErpHrSalary"
-                tableName="erp_hr_salary" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_hr_salary" tagSet="gid,erp.hr,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="employeeId" displayName="员工" stdSqlType="BIGINT" mandatory="true" code="EMPLOYEE_ID" propId="2" stdDataType="long" i18n-en:displayName='Employee' />
@@ -553,7 +553,9 @@
                 <column name="otherDeductions" displayName="其他扣款" domain="amount" code="OTHER_DEDUCTIONS" propId="16" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Other Deductions' />
                 <column name="netSalary" displayName="实发合计" domain="amount" code="NET_SALARY" propId="17" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Net Salary' />
                 <column name="paymentStatus" displayName="支付状态" ext:dict="erp-hr/salary-payment-status" mandatory="true" code="PAYMENT_STATUS" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Payment Status' />
-                <column name="approvalStatus" displayName="审批状态" ext:dict="erp-hr/salary-approval-status" mandatory="true" defaultValue="PENDING" code="APPROVAL_STATUS" propId="28" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approval Status' />
+                <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" defaultValue="UNSUBMITTED" code="APPROVE_STATUS" propId="28" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
+                <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="90" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="91" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="performanceFactor" displayName="绩效系数" stdSqlType="DECIMAL" precision="5" scale="2" code="PERFORMANCE_FACTOR" propId="29" stdDataType="decimal" i18n-en:displayName='Performance Factor' />
                 <column name="actualWorkDays" displayName="实际出勤日" stdSqlType="DECIMAL" precision="10" scale="2" code="ACTUAL_WORK_DAYS" propId="30" stdDataType="decimal" i18n-en:displayName='Actual Work Days' />
                 <column name="requiredWorkDays" displayName="应出勤日" stdSqlType="DECIMAL" precision="10" scale="2" code="REQUIRED_WORK_DAYS" propId="31" stdDataType="decimal" i18n-en:displayName='Required Work Days' />
@@ -1338,7 +1340,7 @@
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
         <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
-                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_md_organization">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
             </columns>

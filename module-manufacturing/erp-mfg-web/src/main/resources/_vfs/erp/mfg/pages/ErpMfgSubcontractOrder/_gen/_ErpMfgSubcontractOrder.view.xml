@@ -101,6 +101,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -123,6 +129,7 @@
  amountFunctional[本位币金额] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-委外加工单" i18n-en:title="Add Subcontract Order">
@@ -138,7 +145,8 @@
  posted[已过账] postedStatus[过账状态]
  postedAt[过账时间] postedBy[过账人]
  remark[备注] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ amountFunctional[本位币金额] approvedBy[审核人]
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-委外加工单" i18n-en:title="Edit Subcontract Order">
@@ -155,6 +163,7 @@
  postedAt[过账时间] postedBy[过账人]
  remark[备注] amountSource[源币种金额]
  amountFunctional[本位币金额] delVersion[逻辑删除版本]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

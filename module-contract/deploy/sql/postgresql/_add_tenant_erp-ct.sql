@@ -3,7 +3,7 @@
 
 alter table erp_ct_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_md_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_currency add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -43,8 +43,8 @@ alter table erp_md_md_partner add constraint PK_erp_md_md_partner primary key (N
 alter table erp_ct_template drop constraint PK_erp_ct_template;
 alter table erp_ct_template add constraint PK_erp_ct_template primary key (NOP_TENANT_ID, id);
 
-alter table erp_md_md_organization drop constraint PK_erp_md_md_organization;
-alter table erp_md_md_organization add constraint PK_erp_md_md_organization primary key (NOP_TENANT_ID, id);
+alter table erp_md_organization drop constraint PK_erp_md_organization;
+alter table erp_md_organization add constraint PK_erp_md_organization primary key (NOP_TENANT_ID, id);
 
 alter table erp_md_currency drop constraint PK_erp_md_currency;
 alter table erp_md_currency add constraint PK_erp_md_currency primary key (NOP_TENANT_ID, id);

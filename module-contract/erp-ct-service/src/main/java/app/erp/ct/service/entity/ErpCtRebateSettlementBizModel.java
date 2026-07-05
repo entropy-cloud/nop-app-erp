@@ -125,7 +125,7 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
         invoice.setAmountFunctional(negativeAmount);
         invoice.setTotalAmountWithTax(negativeAmount);
         invoice.setDocStatus("DRAFT");
-        invoice.setApproveStatus("UNSUBMITTED");
+        invoice.setApproveStatus(ErpCtConstants.APPROVE_STATUS_UNSUBMITTED);
         invoice.setPaidStatus("UNPAID");
         invoice.setPosted(false);
         dao.saveEntity(invoice);

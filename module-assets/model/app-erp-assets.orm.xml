@@ -83,7 +83,8 @@
         </dict>
         <dict label="价值调整类型" name="erp-ast/adjustment-type" valueType="string" i18n-en:label='Adjustment Type'>
             <option code="IMPAIRMENT" label="减值" value="IMPAIRMENT" i18n-en:label='Impairment'/>
-            <option code="REVALUATION" label="重估" value="REVALUATION" i18n-en:label='Revaluation'/>
+            <option code="REVALUATION_UP" label="重估增值" value="REVALUATION_UP" i18n-en:label='Revaluation Up'/>
+            <option code="REVALUATION_DOWN" label="重估减值" value="REVALUATION_DOWN" i18n-en:label='Revaluation Down'/>
         </dict>
         <dict label="处置类型" name="erp-ast/disposal-type" valueType="string" i18n-en:label='Disposal Type'>
             <option code="SCRAPPED" label="报废" value="SCRAPPED" i18n-en:label='Scrap'/>
@@ -275,7 +276,7 @@
         <!-- 资产移动 -->
         <entity className="app.erp.ast.dao.entity.ErpAstMovement"
                 displayName="资产移动" ext:icon="move" i18n-en:displayName="Asset Movement" name="app.erp.ast.dao.entity.ErpAstMovement"
-                tableName="erp_ast_movement" tagSet="gid,erp.assets" registerShortName="true"
+                tableName="erp_ast_movement" tagSet="gid,erp.assets,use-approval" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -295,7 +296,9 @@
                 <column name="toLocationId" code="TO_LOCATION_ID" displayName="新使用地点" propId="13" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='To Location' />
                 <column name="handlerId" code="HANDLER_ID" displayName="经办人" propId="14" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Handler' />
                 <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="15" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="16" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/approve-status" i18n-en:displayName='Approve Status' />
+                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="16" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
+                <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="201" stdDataType="datetime" i18n-en:displayName='Approved At' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="17" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="18" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="19" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
@@ -349,7 +352,7 @@
         <!-- 资产价值调整 -->
         <entity className="app.erp.ast.dao.entity.ErpAstValueAdjustment"
                 displayName="资产价值调整" ext:icon="sliders-horizontal" i18n-en:displayName="Asset Value Adjustment" name="app.erp.ast.dao.entity.ErpAstValueAdjustment"
-                tableName="erp_ast_value_adjustment" tagSet="gid,erp.assets" registerShortName="true"
+                tableName="erp_ast_value_adjustment" tagSet="gid,erp.assets,use-approval" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -365,7 +368,7 @@
                 <column name="adjustmentAmount" code="ADJUSTMENT_AMOUNT" displayName="调整金额" propId="9" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" mandatory="true" i18n-en:displayName='Adjustment Amount' />
                 <column name="reason" code="REASON" displayName="调整原因" propId="10" stdSqlType="VARCHAR" precision="500" i18n-en:displayName='Reason' />
                 <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/approve-status" i18n-en:displayName='Approve Status' />
+                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="13" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="14" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="15" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
@@ -397,7 +400,7 @@
         <!-- 资产处置 -->
         <entity className="app.erp.ast.dao.entity.ErpAstDisposal"
                 displayName="资产处置" ext:icon="trash-2" i18n-en:displayName="Asset Disposal" name="app.erp.ast.dao.entity.ErpAstDisposal"
-                tableName="erp_ast_disposal" tagSet="gid,erp.assets" registerShortName="true"
+                tableName="erp_ast_disposal" tagSet="gid,erp.assets,use-approval" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -414,7 +417,7 @@
                 <column name="gainLoss" code="GAIN_LOSS" displayName="损益" propId="10" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Gain Loss' />
                 <column name="reason" code="REASON" displayName="处置原因" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" ext:dict="erp-ast/disposal-reason" i18n-en:displayName='Reason' />
                 <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/approve-status" i18n-en:displayName='Approve Status' />
+                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="14" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="15" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="16" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
@@ -446,7 +449,7 @@
         <!-- 资产资本化 -->
         <entity className="app.erp.ast.dao.entity.ErpAstAssetCapitalization"
                 displayName="资产资本化" ext:icon="badge-plus" i18n-en:displayName="Asset Capitalization" name="app.erp.ast.dao.entity.ErpAstAssetCapitalization"
-                tableName="erp_ast_asset_capitalization" tagSet="gid,erp.assets" registerShortName="true"
+                tableName="erp_ast_asset_capitalization" tagSet="gid,erp.assets,use-approval" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -463,7 +466,7 @@
                 <column name="sourceType" code="SOURCE_TYPE" displayName="来源类型" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/capitalization-source-type" i18n-en:displayName='Source Type' />
                 <column name="sourceCode" code="SOURCE_CODE" displayName="来源单号" propId="11" stdSqlType="VARCHAR" precision="50" i18n-en:displayName='Source Code' />
                 <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/approve-status" i18n-en:displayName='Approve Status' />
+                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="14" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="15" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="16" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
@@ -548,7 +551,7 @@
         <!-- 资产拆分单头 -->
         <entity className="app.erp.ast.dao.entity.ErpAstSplit"
                 displayName="资产拆分单" ext:icon="split" i18n-en:displayName="Asset Split" name="app.erp.ast.dao.entity.ErpAstSplit"
-                tableName="erp_ast_split" tagSet="gid,erp.assets" registerShortName="true"
+                tableName="erp_ast_split" tagSet="gid,erp.assets,use-approval" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -561,7 +564,7 @@
                 <column name="currencyId" code="CURRENCY_ID" displayName="币种" propId="6" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="splitReason" code="SPLIT_REASON" displayName="拆分原因" propId="7" stdSqlType="VARCHAR" precision="500" i18n-en:displayName='Split Reason' />
                 <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/approve-status" i18n-en:displayName='Approve Status' />
+                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="10" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="11" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="12" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
@@ -594,7 +597,7 @@
         <!-- 资产合并单头 -->
         <entity className="app.erp.ast.dao.entity.ErpAstMerge"
                 displayName="资产合并单" ext:icon="git-merge" i18n-en:displayName="Asset Merge" name="app.erp.ast.dao.entity.ErpAstMerge"
-                tableName="erp_ast_merge" tagSet="gid,erp.assets" registerShortName="true"
+                tableName="erp_ast_merge" tagSet="gid,erp.assets,use-approval" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -607,7 +610,7 @@
                 <column name="currencyId" code="CURRENCY_ID" displayName="币种" propId="6" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="mergeReason" code="MERGE_REASON" displayName="合并原因" propId="7" stdSqlType="VARCHAR" precision="500" i18n-en:displayName='Merge Reason' />
                 <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
-                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/approve-status" i18n-en:displayName='Approve Status' />
+                <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="10" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
                 <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="11" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
                 <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="12" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />

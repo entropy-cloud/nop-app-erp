@@ -15,8 +15,9 @@ import jakarta.inject.Inject;
 import java.util.List;
 
 /**
- * 付款单 BizModel（Facade）。审批状态机 + PAYMENT 过账 + 域级核销编排委托
- * {@link ErpPurPaymentProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 付款单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由 xbiz 一行委托注入 Processor；非审批动作（cancel/settle/reverseSettlement）
+ * 在本类完成 Long→String 转换后委托 Processor。
  */
 @BizModel("ErpPurPayment")
 public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implements IErpPurPaymentBiz {
@@ -30,38 +31,8 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
 
     @Override
     @BizMutation
-    public ErpPurPayment submit(@Name("paymentId") Long paymentId, IServiceContext context) {
-        return paymentProcessor.submit(paymentId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurPayment withdrawSubmit(@Name("paymentId") Long paymentId, IServiceContext context) {
-        return paymentProcessor.withdrawSubmit(paymentId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurPayment approve(@Name("paymentId") Long paymentId, IServiceContext context) {
-        return paymentProcessor.approve(paymentId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurPayment reject(@Name("paymentId") Long paymentId, IServiceContext context) {
-        return paymentProcessor.reject(paymentId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpPurPayment reverseApprove(@Name("paymentId") Long paymentId, IServiceContext context) {
-        return paymentProcessor.reverseApprove(paymentId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpPurPayment cancel(@Name("paymentId") Long paymentId, IServiceContext context) {
-        return paymentProcessor.cancel(paymentId, context);
+        return paymentProcessor.cancel(String.valueOf(paymentId), context);
     }
 
     @Override
@@ -69,7 +40,7 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
     public ErpPurPayment settle(@Name("paymentId") Long paymentId,
                                 @Name("allocations") List<SettlementAllocation> allocations,
                                 IServiceContext context) {
-        return paymentProcessor.settle(paymentId, allocations, context);
+        return paymentProcessor.settle(String.valueOf(paymentId), allocations, context);
     }
 
     @Override
@@ -77,6 +48,6 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
     public ErpPurPayment reverseSettlement(@Name("paymentId") Long paymentId,
                                            @Name("invoiceId") Long invoiceId,
                                            IServiceContext context) {
-        return paymentProcessor.reverseSettlement(paymentId, invoiceId, context);
+        return paymentProcessor.reverseSettlement(String.valueOf(paymentId), invoiceId, context);
     }
 }

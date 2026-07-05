@@ -319,7 +319,7 @@
                         propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Cost Amount"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="13"
-                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/timesheet-status"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账(已转成本凭证)" name="posted" propId="14"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -526,8 +526,8 @@
         <entity className="app.erp.prj.dao.entity.ErpPrjBudget" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目预算"
                 name="app.erp.prj.dao.entity.ErpPrjBudget" registerShortName="true" tableName="erp_prj_budget"
-                tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="wallet" i18n-en:displayName="Project Budget">
+                tagSet="gid,erp.projects,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="wallet" i18n-en:displayName="Project Budget">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -548,7 +548,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/project-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/timesheet-status"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="10"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -567,6 +567,10 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
@@ -662,7 +666,7 @@
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollection" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成本归集"
                 name="app.erp.prj.dao.entity.ErpPrjCostCollection" registerShortName="true"
-                tableName="erp_prj_cost_collection" tagSet="gid,erp.projects" updateTimeProp="updateTime"
+                tableName="erp_prj_cost_collection" tagSet="gid,erp.projects,use-approval" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="coins"
                 i18n-en:displayName="Project Cost Collection">
             <columns>
@@ -685,7 +689,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/project-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/timesheet-status"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账(已转成本凭证)" name="posted" propId="10"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -710,14 +714,18 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" mandatory="true" name="exchangeRate"
-                        precision="20" propId="20" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="202" scale="8" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="21" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="203" scale="4" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="22" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="204" scale="4" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>
@@ -867,8 +875,8 @@
         <entity className="app.erp.prj.dao.entity.ErpPrjBilling" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目开票"
                 name="app.erp.prj.dao.entity.ErpPrjBilling" registerShortName="true" tableName="erp_prj_billing"
-                tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="receipt" i18n-en:displayName="Project Billing">
+                tagSet="gid,erp.projects,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="receipt" i18n-en:displayName="Project Billing">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -896,7 +904,7 @@
                         propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/project-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/timesheet-status"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="13"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -921,11 +929,15 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="23" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        propId="202" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="24" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="20" propId="203" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>

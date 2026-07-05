@@ -21,9 +21,9 @@ CREATE TABLE erp_ct_template(
   constraint PK_erp_ct_template primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_md_organization(
+CREATE TABLE erp_md_organization(
   ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_md_organization primary key (ID)
+  constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_currency(
@@ -348,7 +348,7 @@ CREATE TABLE erp_ct_rebate_settlement(
                 
    ALTER TABLE erp_ct_template COMMENT '合同模板';
                 
-   ALTER TABLE erp_md_md_organization COMMENT 'ErpMdOrganization';
+   ALTER TABLE erp_md_organization COMMENT 'ErpMdOrganization';
                 
    ALTER TABLE erp_md_currency COMMENT '币种';
                 

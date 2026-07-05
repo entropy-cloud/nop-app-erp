@@ -136,8 +136,9 @@
         <entity className="app.erp.qa.dao.entity.ErpQaInspection" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="质检单"
                 name="app.erp.qa.dao.entity.ErpQaInspection" registerShortName="true" tableName="erp_qa_inspection"
-                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="clipboard-check" i18n-en:displayName="Inspection">
+                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="clipboard-check"
+                i18n-en:displayName="Inspection">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -181,7 +182,7 @@
                         propId="19" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="20" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/approve-status"
+                        propId="20" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账(质量结论已回写业务单据)" name="posted" propId="21"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
@@ -679,8 +680,9 @@
         <entity className="app.erp.qa.dao.entity.ErpQaReview" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="质量评审"
                 name="app.erp.qa.dao.entity.ErpQaReview" registerShortName="true" tableName="erp_qa_review"
-                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="clipboard-list" i18n-en:displayName="Quality Review">
+                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="clipboard-list"
+                i18n-en:displayName="Quality Review">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -707,7 +709,7 @@
                         propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/approve-status"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -726,6 +728,10 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
@@ -786,8 +792,8 @@
         <entity className="app.erp.qa.dao.entity.ErpQaCalibration" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="量具校准"
                 name="app.erp.qa.dao.entity.ErpQaCalibration" registerShortName="true" tableName="erp_qa_calibration"
-                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="gauge" i18n-en:displayName="Gauge Calibration">
+                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="gauge" i18n-en:displayName="Gauge Calibration">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -823,7 +829,7 @@
                         propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/approve-status"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
@@ -842,6 +848,10 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
             </columns>
             <relations>
                 <to-one name="calibratedByEmployee" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
@@ -860,8 +870,9 @@
         <entity className="app.erp.qa.dao.entity.ErpQaRecall" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="召回事件"
                 name="app.erp.qa.dao.entity.ErpQaRecall" registerShortName="true" tableName="erp_qa_recall"
-                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="alert-octagon" i18n-en:displayName="Recall Event">
+                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="alert-octagon"
+                i18n-en:displayName="Recall Event">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -893,7 +904,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/recall-status"
                         i18n-en:displayName="Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/approve-status"
+                        propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="APPROVED_BY" displayName="审批人" name="approvedBy" precision="36" propId="15"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>

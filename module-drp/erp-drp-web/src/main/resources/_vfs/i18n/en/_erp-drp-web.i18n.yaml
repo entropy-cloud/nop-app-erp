@@ -1,13 +1,13 @@
 site:
   resource:
+    ErpDrpLine-main:
+      displayName: DRP Line
+    ErpDrpParameter-main:
+      displayName: Replenishment Parameter
+    ErpDrpPlan-main:
+      displayName: DRP Plan
     ErpInvDrpLeadTimeRecord-main:
       displayName: Lead Time Record
-    ErpInvDrpLine-main:
-      displayName: DRP Line
-    ErpInvDrpParameter-main:
-      displayName: Replenishment Parameter
-    ErpInvDrpPlan-main:
-      displayName: DRP Plan
     ErpInvDrpSafetyStockCalc-main:
       displayName: Safety Stock Calc
     drp-config:

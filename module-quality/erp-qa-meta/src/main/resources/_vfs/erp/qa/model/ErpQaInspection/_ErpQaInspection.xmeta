@@ -2,7 +2,7 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
       xmlns:xpl="xpl" ext:model="orm" ext:icon="clipboard-check" xmlns:c="c" xmlns:graphql="graphql"
       xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="质检单" i18n-en:displayName="Inspection"
-      tagSet="gid,erp.quality" xmlns:ui="ui" xmlns:orm="orm">
+      tagSet="gid,erp.quality,use-approval" xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.qa.dao.entity.ErpQaInspection</entityName>
 
@@ -93,7 +93,7 @@
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="20" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-qa/approve-status"/>
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
         </prop>
         <prop name="posted" displayName="已过账(质量结论已回写业务单据)" propId="21" i18n-en:displayName="Posted" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">

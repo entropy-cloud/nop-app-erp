@@ -95,8 +95,8 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         // 升级生成的召回未带批次（NCR 无批次列）→ 质量组补登受影响批次后定位
         setRecallBatch(recallId, BATCH_PK);
 
-        rpcOk(mutation, "ErpQaRecall__submit", Map.of("recallId", recallId));
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("recallId", recallId));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
         runFullChainFromApproved(recallId);
     }
 
@@ -104,8 +104,8 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
     public void testManualTriggerFullChain() {
         seedTraceFixture();
         Long recallId = registerManualRecall("RC-E2E-MANUAL", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
-        rpcOk(mutation, "ErpQaRecall__submit", Map.of("recallId", recallId));
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("recallId", recallId));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
         runFullChainFromApproved(recallId);
     }
 
@@ -114,8 +114,8 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         seedTraceFixture();
         Long recallId = registerManualRecall("RC-E2E-CRIT", ErpQaConstants.RECALL_SEVERITY_CRITICAL);
         assertEquals(ErpQaConstants.RECALL_SEVERITY_CRITICAL, reloadRecall(recallId).getSeverityLevel());
-        rpcOk(mutation, "ErpQaRecall__submit", Map.of("recallId", recallId));
-        rpcOk(mutation, "ErpQaRecall__approve", Map.of("recallId", recallId));
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
+        rpcOk(mutation, "ErpQaRecall__approve", Map.of("id", String.valueOf(recallId)));
         runFullChainFromApproved(recallId);
     }
 

@@ -95,8 +95,8 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
 
         // 草稿(UNSUBMITTED) 直接 approve 应被拒
         ApiResponse<?> bad = approve(payment.getId());
-        assertEquals(ErpPurErrors.ERR_PAYMENT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
-                "UNSUBMITTED 不可直接审核");
+        assertEquals(-1, bad.getStatus(),
+                "UNSUBMITTED 不可直接审核：平台守卫仅接受 SUBMITTED");
     }
 
     @Test
@@ -122,15 +122,15 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private ApiResponse<?> submit(Long id) {
-        return executeRpc(mutation, "ErpPurPayment__submit", ApiRequest.build(Map.of("paymentId", id)));
+        return executeRpc(mutation, "ErpPurPayment__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> approve(Long id) {
-        return executeRpc(mutation, "ErpPurPayment__approve", ApiRequest.build(Map.of("paymentId", id)));
+        return executeRpc(mutation, "ErpPurPayment__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> reverseApprove(Long id) {
-        return executeRpc(mutation, "ErpPurPayment__reverseApprove", ApiRequest.build(Map.of("paymentId", id)));
+        return executeRpc(mutation, "ErpPurPayment__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {

@@ -13,8 +13,9 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
- * 销售报价单 BizModel（Facade）。审批/客户确认状态机 + 报价→订单转化编排委托
- * {@link ErpSalQuotationProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * 销售报价单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由平台 {@code approval-support.xbiz} 标准 source 提供，业务联动经 xbiz
+ * {@code <source x:override="replace">} 注入 {@link ErpSalQuotationProcessor#onSubmit}/{@link ErpSalQuotationProcessor#onApproved}。
  */
 @BizModel("ErpSalQuotation")
 public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> implements IErpSalQuotationBiz {
@@ -28,49 +29,19 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
 
     @Override
     @BizMutation
-    public ErpSalQuotation submit(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.submit(quotationId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalQuotation withdrawSubmit(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.withdrawSubmit(quotationId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalQuotation approve(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.approve(quotationId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalQuotation reject(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.reject(quotationId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpSalQuotation reverseApprove(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.reverseApprove(quotationId, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpSalQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.cancel(quotationId, context);
+        return quotationProcessor.cancel(String.valueOf(quotationId), context);
     }
 
     @Override
     @BizMutation
     public ErpSalQuotation confirmCustomerAccepted(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.confirmCustomerAccepted(quotationId, context);
+        return quotationProcessor.confirmCustomerAccepted(String.valueOf(quotationId), context);
     }
 
     @Override
     @BizMutation
     public ErpSalOrder convertToOrder(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.convertToOrder(quotationId, context);
+        return quotationProcessor.convertToOrder(String.valueOf(quotationId), context);
     }
 }

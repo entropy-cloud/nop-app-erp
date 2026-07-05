@@ -1,7 +1,5 @@
 package app.erp.fin.service.posting;
 
-import app.erp.fin.biz.IErpFinEmployeeAdvanceBiz;
-import app.erp.fin.biz.IErpFinExpenseClaimBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
@@ -15,12 +13,15 @@ import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -28,9 +29,11 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,22 +42,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 报销抵扣借款端到端单测（Phase 3）。验证：借款审核→员工预支应收辅助账；报销审核（own_account）→
  * 报销应付辅助账 + 自动抵扣（净额=min(借款未还, 报销应付)）+ EMPLOYEE_ADVANCE_SETTLE 清算凭证 +
  * 借款 outstanding 下降 + 报销应付下降；报销反审核→反向抵扣（借款应收恢复）+ 红冲报销应付。
+ *
+ * <p>审批动作经 {@link IGraphQLEngine} 调 {@code ErpFinEmployeeAdvance__approve}、
+ * {@code ErpFinExpenseClaim__approve/reverseApprove}（approval-support.xbiz 标准 source），引擎建 session/事务/管道。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
 
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
     @Inject
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpFinExpenseClaimBiz claimBiz;
-    @Inject
-    IErpFinEmployeeAdvanceBiz advanceBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testOffsetThenReverse() {
@@ -77,13 +79,13 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         long claimId = ids[1];
 
         // 1. 借款审核 → 员工预支应收辅助账 open=500
-        advanceBiz.approve(advanceId, CTX);
+        assertEquals(0, approveAdvance(advanceId).getStatus());
         ErpFinArApItem advanceItem = findItem("EMPLOYEE_ADVANCE", "ADV-OFF-001");
         assertNotNull(advanceItem);
         assertEquals(0, advanceItem.getOpenAmountFunctional().compareTo(new BigDecimal("500")));
 
         // 2. 报销审核 → 报销应付辅助账 + 抵扣（净额=min(500,113)=113）+ SETTLE 凭证
-        claimBiz.approve(claimId, CTX);
+        assertEquals(0, approveClaim(claimId).getStatus());
 
         ErpFinArApItem payableItem = findItem("EXPENSE_CLAIM", "EC-OFF-001");
         assertEquals(0, payableItem.getOpenAmountFunctional().compareTo(BigDecimal.ZERO), "报销应付被全额抵扣 open=0");
@@ -106,7 +108,7 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         assertEquals(advanceId, claim.getSettleAdvanceId());
 
         // 3. 报销反审核 → 反向抵扣（借款应收恢复 open=500）+ 红冲报销应付
-        claimBiz.reverseApprove(claimId, CTX);
+        assertEquals(0, reverseApproveClaim(claimId).getStatus());
 
         ErpFinArApItem advanceItemRev = findItem("EMPLOYEE_ADVANCE", "ADV-OFF-001");
         assertEquals(0, advanceItemRev.getOpenAmountFunctional().compareTo(new BigDecimal("500")), "反向抵扣后借款应收恢复 open=500");
@@ -137,8 +139,8 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
                     BigDecimal.ZERO, new BigDecimal("300"));
             return new long[]{advanceId, claimId};
         });
-        advanceBiz.approve(ids[0], CTX);
-        claimBiz.approve(ids[1], CTX);
+        assertEquals(0, approveAdvance(ids[0]).getStatus());
+        assertEquals(0, approveClaim(ids[1]).getStatus());
 
         ErpFinArApItem advanceItem = findItem("EMPLOYEE_ADVANCE", "ADV-OFF-002");
         assertEquals(0, advanceItem.getOpenAmountFunctional().compareTo(BigDecimal.ZERO), "借款被全额抵扣 open=0");
@@ -147,6 +149,28 @@ public class TestErpFinExpenseOffsetAdvance extends JunitAutoTestCase {
         ErpFinArApItem payableItem = findItem("EXPENSE_CLAIM", "EC-OFF-002");
         assertEquals(0, payableItem.getOpenAmountFunctional().compareTo(new BigDecimal("100")), "报销剩余 100 留作应付-员工");
         assertEquals(ErpFinConstants.AR_AP_STATUS_PARTIAL, payableItem.getStatus());
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> approveClaim(Long id) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(id))));
+    }
+
+    private ApiResponse<?> reverseApproveClaim(Long id) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__reverseApprove",
+                ApiRequest.build(Map.of("id", String.valueOf(id))));
+    }
+
+    private ApiResponse<?> approveAdvance(Long id) {
+        return executeRpc(mutation, "ErpFinEmployeeAdvance__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(id))));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
     }
 
     // ---------- seed helpers ----------

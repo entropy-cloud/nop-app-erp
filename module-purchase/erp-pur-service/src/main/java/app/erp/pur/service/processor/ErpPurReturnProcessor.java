@@ -31,11 +31,15 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 采购退货单审批状态机 + 退货审核触发库存反向出库 + PURCHASE_RETURN 过账编排 Processor
- * （{@code processor-extension-pattern.md} Facade + Processor）。Facade {@code ErpPurReturnBizModel}
- * 仅负责入口/事务/委托，编排委托本类。
+ * 采购退货单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
+ * withdrawApproval）由本类全权处理：加载实体 → 状态守卫 → 业务校验 → setApproveStatus → 保存返回。
+ * xbiz 仅写一行委托：{@code return inject('processor').submitForApproval(id, svcCtx)}。
  *
- * <p>配置余地：每个动作只编排步骤顺序，各步骤为 {@code protected} 方法、以 {@link IServiceContext} 为末参。
+ * <p>各步骤为 {@code protected} 方法、单一职责、以 {@link IServiceContext} 为末参。
+ * 客户/行业覆盖单步实现时，写派生 Processor 重载目标 {@code protected} 方法，在 Delta beans.xml
+ * 以同名 bean id 注册覆盖基线。
+ *
+ * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpPurReturnProcessor {
 
@@ -60,24 +64,24 @@ public class ErpPurReturnProcessor {
     @Inject
     PurReturnPostingDispatcher postingDispatcher;
 
-    public ErpPurReturn submit(Long returnId, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(returnId, context);
+    public ErpPurReturn submitForApproval(String id, IServiceContext context) {
+        ErpPurReturn returnOrder = requireReturn(id, context);
         validateTransitionForSubmit(returnOrder, context);
         validateBusinessRulesForSubmit(returnOrder, context);
         doSubmit(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpPurReturn withdrawSubmit(Long returnId, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(returnId, context);
+    public ErpPurReturn withdrawApproval(String id, IServiceContext context) {
+        ErpPurReturn returnOrder = requireReturn(id, context);
         validateNotCancelled(returnOrder, context);
         validateTransitionForWithdraw(returnOrder, context);
         doWithdrawSubmit(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpPurReturn approve(Long returnId, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(returnId, context);
+    public ErpPurReturn approve(String id, IServiceContext context) {
+        ErpPurReturn returnOrder = requireReturn(id, context);
         if (isAlreadyApproved(returnOrder)) {
             return returnOrder;
         }
@@ -85,46 +89,42 @@ public class ErpPurReturnProcessor {
         validateTransitionForApprove(returnOrder, context);
         validateBusinessRulesForApprove(returnOrder, context);
 
-        // 库存反向出库移动（物理正确性硬约束，失败抛异常回滚审核）。
         ErpInvStockMove move = triggerOutgoingMove(returnOrder, context);
-        // 跨域 generateMove 将移动单推进至 DONE 并更新库存余额；先刷盘使 DONE 状态与余额变动落地到当前事务的 DB 连接，
-        // 避免后续 REQUIRES_NEW 过账（独立会话）挂起当前会话时丢失会话内暂存的 DONE 暂态。
         ormTemplate.flushSession();
 
         boolean posted = postingDispatcher.tryPost(returnOrder);
 
-        // 跨域调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化。
-        returnOrder = returnDao().getEntityById(returnId);
+        returnOrder = returnDao().getEntityById(id);
         doApprove(returnOrder, posted, context);
         return returnOrder;
     }
 
-    public ErpPurReturn reject(Long returnId, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(returnId, context);
+    public ErpPurReturn reject(String id, IServiceContext context) {
+        ErpPurReturn returnOrder = requireReturn(id, context);
         validateNotCancelled(returnOrder, context);
         validateTransitionForReject(returnOrder, context);
         doReject(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpPurReturn reverseApprove(Long returnId, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(returnId, context);
+    public ErpPurReturn reverseApprove(String id, IServiceContext context) {
+        ErpPurReturn returnOrder = requireReturn(id, context);
         if (isAlreadyRejected(returnOrder)) {
             return returnOrder;
         }
         validateTransitionForReverseApprove(returnOrder, context);
         ensureReversed(returnOrder, context);
-        returnOrder = returnDao().getEntityById(returnId);
+        returnOrder = returnDao().getEntityById(id);
         doReverseApprove(returnOrder, context);
         return returnOrder;
     }
 
-    public ErpPurReturn cancel(Long returnId, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(returnId, context);
+    public ErpPurReturn cancel(String id, IServiceContext context) {
+        ErpPurReturn returnOrder = requireReturn(id, context);
         validateTransitionForCancel(returnOrder, context);
         if (isApproved(returnOrder)) {
             ensureReversed(returnOrder, context);
-            returnOrder = returnDao().getEntityById(returnId);
+            returnOrder = returnDao().getEntityById(id);
         }
         doCancel(returnOrder, context);
         return returnOrder;
@@ -276,11 +276,11 @@ public class ErpPurReturnProcessor {
 
     // ---------- 校验/查询辅助 ----------
 
-    protected ErpPurReturn requireReturn(Long returnId, IServiceContext context) {
-        ErpPurReturn returnOrder = returnDao().getEntityById(returnId);
+    protected ErpPurReturn requireReturn(String id, IServiceContext context) {
+        ErpPurReturn returnOrder = returnDao().getEntityById(id);
         if (returnOrder == null) {
             throw new NopException(ErpPurErrors.ERR_RETURN_NOT_FOUND)
-                    .param(ErpPurErrors.ARG_RETURN_ID, returnId);
+                    .param(ErpPurErrors.ARG_RETURN_ID, id);
         }
         return returnOrder;
     }

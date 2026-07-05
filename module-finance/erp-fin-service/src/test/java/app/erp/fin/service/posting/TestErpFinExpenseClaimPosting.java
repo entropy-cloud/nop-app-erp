@@ -1,6 +1,5 @@
 package app.erp.fin.service.posting;
 
-import app.erp.fin.biz.IErpFinExpenseClaimBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
@@ -13,12 +12,15 @@ import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
-import io.nop.core.context.IServiceContext;
-import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -26,29 +28,32 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 报销单业财过账端到端单测（Phase 3）。验证 APPROVED→EXPENSE_CLAIM 凭证落库（借费用/进项税/贷方按 paymentMode）
  * + DIRECTION_PAYABLE 辅助账（partnerId=claimant.partnerId）+ posted=true；reverseApprove→红冲 + 辅助账 CANCELLED。
+ *
+ * <p>审批动作经 {@link IGraphQLEngine} 调 {@code ErpFinExpenseClaim__approve/reverseApprove}
+ * （approval-support.xbiz 标准 source），引擎建 session/事务/管道。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
 
-    private static final IServiceContext CTX = new ServiceContextImpl();
-
     @Inject
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
-    IErpFinExpenseClaimBiz claimBiz;
+    IGraphQLEngine graphQLEngine;
 
     @Test
     public void testApprovePostsAndGeneratesPayableSubledger() {
@@ -65,7 +70,8 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
                     ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
         });
 
-        ErpFinExpenseClaim claim = claimBiz.approve(claimId, CTX);
+        assertEquals(0, approve(claimId).getStatus());
+        ErpFinExpenseClaim claim = fetchClaim(claimId);
         assertEquals(ErpFinConstants.APPROVE_STATUS_APPROVED, claim.getApproveStatus());
         assertTrue(Boolean.TRUE.equals(claim.getPosted()), "过账成功 posted=true");
 
@@ -95,11 +101,12 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
                     ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
         });
 
-        claimBiz.approve(claimId, CTX);
+        assertEquals(0, approve(claimId).getStatus());
         ErpFinArApItem before = findItem("EXPENSE_CLAIM", "EC-POST-002");
         assertEquals(ErpFinConstants.AR_AP_STATUS_OPEN, before.getStatus());
 
-        ErpFinExpenseClaim claim = claimBiz.reverseApprove(claimId, CTX);
+        assertEquals(0, reverseApprove(claimId).getStatus());
+        ErpFinExpenseClaim claim = fetchClaim(claimId);
         assertTrue(!Boolean.TRUE.equals(claim.getPosted()), "反审核后 posted=false");
 
         ErpFinArApItem after = findItem("EXPENSE_CLAIM", "EC-POST-002");
@@ -122,11 +129,33 @@ public class TestErpFinExpenseClaimPosting extends JunitAutoTestCase {
                     ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT);
         });
 
-        ErpFinExpenseClaim claim = claimBiz.approve(claimId, CTX);
+        assertEquals(0, approve(claimId).getStatus());
+        ErpFinExpenseClaim claim = fetchClaim(claimId);
         assertTrue(Boolean.TRUE.equals(claim.getPosted()), "公司直付过账成功");
         // 公司直付贷银行存款，不生成应付-员工辅助账（PAYABLE 余额无新增）
         assertTrue(findItems("EXPENSE_CLAIM", "EC-POST-003").isEmpty(),
                 "company_account 贷银行存款，不生成员工应付辅助账");
+    }
+
+    // ---------- rpc helpers ----------
+
+    private ApiResponse<?> approve(Long claimId) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(claimId))));
+    }
+
+    private ApiResponse<?> reverseApprove(Long claimId) {
+        return executeRpc(mutation, "ErpFinExpenseClaim__reverseApprove",
+                ApiRequest.build(Map.of("id", String.valueOf(claimId))));
+    }
+
+    private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
+        return graphQLEngine.executeRpc(ctx);
+    }
+
+    private ErpFinExpenseClaim fetchClaim(Long id) {
+        return daoProvider.daoFor(ErpFinExpenseClaim.class).getEntityById(id);
     }
 
     // ---------- seed helpers ----------

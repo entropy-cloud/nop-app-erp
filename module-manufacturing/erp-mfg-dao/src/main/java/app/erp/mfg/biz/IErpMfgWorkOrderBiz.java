@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
+import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 
@@ -16,10 +17,15 @@ import java.util.List;
  * 工单业务接口。除标准 CRUD 外，定义工单 10 态状态机（{@code docs/design/manufacturing/state-machine.md §适用对象一`}）
  * + 三轴审批（提交→审核→NOT_STARTED）+ 齐套校验（STOCK_RESERVED / STOCK_PARTIAL）契约。
  *
+ * <p>标准审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）由 {@link IApprovableBiz}
+ * 声明，运行时由平台 {@code approval-support.xbiz} 标准 source 提供。
+ *
  * <p>状态机方法（{@link BizMutation}，自动事务包装）：
  * <ul>
- *   <li>{@link #submit}：DRAFT→SUBMITTED（提交轴）。</li>
- *   <li>{@link #approve}：SUBMITTED→NOT_STARTED（审核轴，置 approveStatus=APPROVED）。</li>
+ *   <li>{@code submitForApproval}（{@link IApprovableBiz}）：approveStatus UNSUBMITTED→SUBMITTED；
+ *       docStatus DRAFT→SUBMITTED 联动经 xbiz 注入 {@code ErpMfgWorkOrderProcessor.onSubmit}。</li>
+ *   <li>{@code approve}（{@link IApprovableBiz}）：approveStatus SUBMITTED→APPROVED；
+ *       docStatus SUBMITTED→NOT_STARTED 联动经 xbiz 注入 {@code ErpMfgWorkOrderProcessor.onApproved}。</li>
  *   <li>{@link #checkAvailability}：NOT_STARTED→STOCK_RESERVED（全齐）/ STOCK_PARTIAL（部分齐套）。</li>
  *   <li>{@link #start}：STOCK_RESERVED / STOCK_PARTIAL→IN_PROCESS（部分齐套须配置允许）。</li>
  *   <li>{@link #stop}：IN_PROCESS→STOPPED。</li>
@@ -33,13 +39,7 @@ import java.util.List;
  * {@code docs/design/manufacturing/state-machine.md}；计划见
  * {@code docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md}。
  */
-public interface IErpMfgWorkOrderBiz extends ICrudBiz<ErpMfgWorkOrder> {
-
-    @BizMutation
-    ErpMfgWorkOrder submit(@Name("workOrderId") Long workOrderId, IServiceContext context);
-
-    @BizMutation
-    ErpMfgWorkOrder approve(@Name("workOrderId") Long workOrderId, IServiceContext context);
+public interface IErpMfgWorkOrderBiz extends ICrudBiz<ErpMfgWorkOrder>, IApprovableBiz<ErpMfgWorkOrder> {
 
     @BizMutation
     ErpMfgWorkOrder checkAvailability(@Name("workOrderId") Long workOrderId, IServiceContext context);
