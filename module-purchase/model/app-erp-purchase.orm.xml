@@ -931,7 +931,7 @@
         <!-- 付款单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurPayment"
                 displayName="付款单" ext:icon="banknote" i18n-en:displayName="Payment" name="app.erp.pur.dao.entity.ErpPurPayment"
-                tableName="erp_pur_payment" tagSet="gid,erp.purchase,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_payment" tagSet="gid,erp.purchase,use-approval" useWorkflow="true" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />

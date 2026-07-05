@@ -203,6 +203,7 @@ prop:
       remark: Remark
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
+      nopFlowId: null
       asset: Asset
       org: Org
       currency: Currency

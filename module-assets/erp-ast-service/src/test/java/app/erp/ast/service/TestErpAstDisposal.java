@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.context.ContextProvider;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -49,6 +50,7 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
 
     @Test
     public void testScrapLossAndTerminalStatus() {
+        setUser();
         long[] assetIdHolder = new long[1];
         Long disposalId = ormTemplate.runInSession(session -> {
             seedBasics();
@@ -98,6 +100,7 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
 
     @Test
     public void testSaleGainAndBankCredit() {
+        setUser();
         long[] assetIdHolder = new long[1];
         Long disposalId = ormTemplate.runInSession(session -> {
             seedBasics();
@@ -152,6 +155,13 @@ public class TestErpAstDisposal extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    // WORKFLOW 模式下 submit 会启动 wf 实例，wf 引擎校验 caller 需 resolved 用户。
+    // 用 SYS（id=0）：submit 步骤 owner 解析为 SYS，caller=0 匹配跳过委托校验，避免 NopAuthUser 查询。
+    private void setUser() {
+        ContextProvider.getOrCreateContext().setUserId("0");
+        ContextProvider.getOrCreateContext().setUserName("SYS");
+    }
 
     private void seedBasics() {
         AstTestSupport.seedAcctSchema(daoProvider, 1L);

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<workflow x:extends="/nop/wf/base/oa.xwf"
+          x:schema="/nop/schema/wf/wf.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+          xmlns:wf="wf" xmlns:c="c" xmlns:wf-approval="/nop/wf/xlib/wf-approval.xlib"
+          wfName="salary-approval" wfVersion="1" displayName="薪酬三级审批"
+          bizEntityFlowIdProp="nopFlowId">
+
+    <description>
+        HR 薪酬三级审批链（payroll.md §6.3）：submit → hr-review → finance-review → manager-approval。
+        审批人在 wf 内 agree/reject，wf 结束经 listener 回调业务 approve/reject action。
+        bootstrap actor 用 actorType="all"（任意已认证用户可审），多级语义由步骤链体现；
+        精确角色路由（HR 专员/财务主管/部门负责人）与 StarterManager 组织层级待角色基础设施落地（Deferred）。
+        submit 起始步骤无 assignment（由 ApprovalFlowHelper.start 自动 complete，sysUser 兜底）。
+    </description>
+
+    <start startStepName="submit"/>
+    <end/>
+
+    <steps>
+        <step name="submit" displayName="提交">
+            <transition onAppStates="complete">
+                <to-step stepName="hr-review"/>
+            </transition>
+        </step>
+
+        <step name="hr-review" displayName="HR 复核" allowReject="true">
+            <assignment>
+                <actors>
+                    <actor actorModelId="hr" actorType="all"/>
+                </actors>
+            </assignment>
+            <transition onAppStates="agree">
+                <to-step stepName="finance-review"/>
+            </transition>
+        </step>
+
+        <step name="finance-review" displayName="财务复核" allowReject="true">
+            <assignment>
+                <actors>
+                    <actor actorModelId="finance" actorType="all"/>
+                </actors>
+            </assignment>
+            <transition onAppStates="agree">
+                <to-step stepName="manager-approval"/>
+            </transition>
+        </step>
+
+        <step name="manager-approval" displayName="经理审批" allowReject="true">
+            <assignment>
+                <actors>
+                    <actor actorModelId="manager" actorType="all"/>
+                </actors>
+            </assignment>
+            <transition onAppStates="agree">
+                <to-end/>
+            </transition>
+        </step>
+    </steps>
+
+    <listeners>
+        <listener id="on-wf-end" eventPattern="*end">
+            <source>
+                <c:script><![CDATA[
+                    // 判定 wf 结束原因：存在 disagree（驳回整单）或 REJECTED 步骤 → 驳回，否则 → 通过。
+                    // oa.xwf 的 reject action 是"退回上一步"（不结束 wf），disagree action 才"驳回整单并 to-end"。
+                    // 故审批人整单驳回走 disagree，此处按 lastAction=disagree 或 step.isRejected() 判定。
+                    let rejected = false;
+                    const allSteps = wfRt.wf.getSteps(true);
+                    for (let i = 0; i < allSteps.size(); i++) {
+                        const s = allSteps.get(i);
+                        if (s.isRejected() || 'disagree' === s.getRecord().getLastAction()) {
+                            rejected = true;
+                            break;
+                        }
+                    }
+                    const actionName = rejected ? 'reject' : 'approve';
+
+                    // 幂等：引擎 EVENT_BEFORE_END 与 EVENT_AFTER_END 常量同值（"before-end"），
+                    // eventPattern="*end" 会在两处都触发本 listener。第一次回调完成 approveStatus 迁移后，
+                    // 第二次回调的业务 action 状态守卫会抛 invalid-status。此处加载实体检查 approveStatus，
+                    // 若已到终态（APPROVED/REJECTED）则跳过，避免重复回调与事务回滚。
+                    // （等价于 <wf-approval:notifyResult> 标签逻辑 + 幂等守卫；listener XPL 作用域下
+                    // xlib 标签解析受限，故按 wf-approval.xlib notifyResult 标签源码内联。）
+                    const entityBizObj = inject('nopBizObjectManager').getBizObject('ErpHrSalary');
+                    const entityId = wfRt.wf.bizEntityId;
+                    const existing = entityBizObj.invoke('get', {id: entityId, ignoreUnknown: true}, null, svcCtx);
+                    if (existing != null
+                            && existing.approveStatus !== 'UNSUBMITTED'
+                            && existing.approveStatus !== 'SUBMITTED') {
+                        return;
+                    }
+                    entityBizObj.invoke(actionName, {id: entityId}, null, svcCtx);
+                ]]></c:script>
+            </source>
+        </listener>
+    </listeners>
+</workflow>

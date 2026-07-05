@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.context.ContextProvider;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -55,6 +56,7 @@ public class TestErpSalReceiptApproval extends JunitAutoTestCase {
 
     @Test
     public void testSubmitApproveAndReceiptPosting() {
+        setUser();
         seedPeriodAndSubjects();
 
         ErpSalReceipt receipt = newReceipt("SR-APP-001", new BigDecimal("113"));
@@ -83,6 +85,7 @@ public class TestErpSalReceiptApproval extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionAndInactiveCustomer() {
+        setUser();
         seedPeriodAndSubjects();
         ErpSalReceipt receipt = newReceipt("SR-ILL-001", new BigDecimal("113"));
         ormTemplate.runInSession(() -> {
@@ -102,6 +105,13 @@ public class TestErpSalReceiptApproval extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    // WORKFLOW 模式下 submit 会启动 wf 实例，wf 引擎校验 caller 需 resolved 用户。
+    // 用 SYS（id=0）：submit 步骤 owner 解析为 SYS，caller=0 匹配跳过委托校验，避免 NopAuthUser 查询。
+    private void setUser() {
+        ContextProvider.getOrCreateContext().setUserId("0");
+        ContextProvider.getOrCreateContext().setUserName("SYS");
+    }
 
     private ApiResponse<?> submit(Long id) {
         return executeRpc(mutation, "ErpSalReceipt__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(id))));

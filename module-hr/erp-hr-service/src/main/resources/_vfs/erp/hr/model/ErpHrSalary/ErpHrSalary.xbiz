@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpHrSalary.xbiz">
+<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:c="c" x:extends="_ErpHrSalary.xbiz">
 
-    <actions/>
+    <!--
+        WORKFLOW 模式（payroll.md §6）。覆盖 submitForApproval 标准 source：
+        平台 approval-support.xbiz 的 args.bizObjId 取 entity.id（Long），而 wf 引擎
+        WorkflowEngineImpl.removeStdStartParam 强制 (String) 转换会 ClassCastException，
+        故在此显式 String(entity.id) 转换（平台对 Long 主键实体的已知限制，本计划 Non-Goal
+        不改平台源码，由应用层 xbiz 适配）。其余逻辑与标准 source 对齐（状态守卫 + wf 启动）。
+        approve/reject/reverseApprove 由 approval-support.xbiz 标准 source 提供，wf 结束经
+        .xwf listener 回调。
+    -->
+    <actions>
+        <mutation name="submitForApproval">
+            <source><c:script><![CDATA[
+                import io.nop.wf.core.support.ApprovalFlowHelper;
+
+                const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
+                const status = entity.approveStatus;
+
+                if (status !== 'UNSUBMITTED' && status !== null && status !== 'REJECTED') {
+                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
+                        .param("bizObjName", thisObj.bizObjName)
+                        .param("bizObjId", entity.id)
+                        .param("action", "submitForApproval")
+                        .param("currentStatus", status)
+                        .param("expectedStatus", "UNSUBMITTED or REJECTED");
+                }
+
+                entity.approveStatus = 'SUBMITTED';
+
+                const wfName = thisObj.objMeta['wf:wfName'];
+                if (wfName) {
+                    const wfManager = inject('nopWorkflowManager');
+                    const wf = wfManager.newWorkflow(wfName, null);
+                    const args = {
+                        bizObjName: thisObj.bizObjName,
+                        bizObjId: '' + entity.id
+                    };
+                    ApprovalFlowHelper.start(wf, args, svcCtx);
+                }
+
+                return entity;
+            ]]></c:script></source>
+        </mutation>
+    </actions>
 </biz>

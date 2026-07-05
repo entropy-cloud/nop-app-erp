@@ -428,6 +428,7 @@ prop:
       mealAllowance: 餐补
       month: 月份
       netSalary: 实发合计
+      nopFlowId: null
       org: null
       orgId: 业务组织
       otherAllowance: 其他补贴

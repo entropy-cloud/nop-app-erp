@@ -4,7 +4,19 @@
     <actions>
         <mutation name="submitForApproval">
             <source><c:script><![CDATA[
-                return inject('app.erp.pur.service.processor.ErpPurPaymentProcessor').submitForApproval(id, svcCtx);
+                import io.nop.wf.core.support.ApprovalFlowHelper;
+                // Processor 全权处理状态守卫 + 业务校验 + setApproveStatus=SUBMITTED + 保存（DIRECT/WORKFLOW 无感）。
+                const entity = inject('app.erp.pur.service.processor.ErpPurPaymentProcessor').submitForApproval(id, svcCtx);
+                // WORKFLOW 模式：xmeta 配 wf:wfName 时启动 wf 实例并绑 nopFlowId。
+                // bizObjId 显式转 String：平台 approval-support.xbiz 标准 source 传 entity.id（Long），
+                // 而 WorkflowEngineImpl.removeStdStartParam 强制 (String) 会 CCE，故应用层适配。
+                const wfName = thisObj.objMeta['wf:wfName'];
+                if (wfName) {
+                    const wfManager = inject('nopWorkflowManager');
+                    const wf = wfManager.newWorkflow(wfName, null);
+                    ApprovalFlowHelper.start(wf, {bizObjName: thisObj.bizObjName, bizObjId: '' + entity.id}, svcCtx);
+                }
+                return entity;
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">

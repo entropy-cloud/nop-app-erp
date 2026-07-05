@@ -645,7 +645,7 @@
         <!-- 薪酬记录 -->
         <entity className="app.erp.hr.dao.entity.ErpHrSalary"
                 displayName="薪酬记录" ext:icon="wallet" i18n-en:displayName="Salary Record" name="app.erp.hr.dao.entity.ErpHrSalary"
-                tableName="erp_hr_salary" tagSet="gid,erp.hr,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_hr_salary" tagSet="gid,erp.hr,use-approval" useWorkflow="true" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="employeeId" displayName="员工" stdSqlType="BIGINT" mandatory="true" code="EMPLOYEE_ID" propId="2" stdDataType="long" i18n-en:displayName='Employee' />

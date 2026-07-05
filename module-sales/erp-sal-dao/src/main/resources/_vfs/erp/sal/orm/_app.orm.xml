@@ -1155,7 +1155,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="收款单"
                 name="app.erp.sal.dao.entity.ErpSalReceipt" registerShortName="true" tableName="erp_sal_receipt"
                 tagSet="gid,erp.sales,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="banknote" i18n-en:displayName="Receipt">
+                useLogicalDelete="true" useWorkflow="true" versionProp="version" ext:icon="banknote"
+                i18n-en:displayName="Receipt">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1225,6 +1226,8 @@
                         propId="28" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="29"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="NOP_FLOW_ID" name="nopFlowId" precision="32" propId="30" stdDataType="string"
+                        stdSqlType="VARCHAR"/>
             </columns>
             <indexes>
                 <index name="IDX_SAL_RECEIPT_ORG_DOC_STATUS" unique="false">

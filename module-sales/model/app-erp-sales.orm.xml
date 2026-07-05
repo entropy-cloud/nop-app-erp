@@ -723,7 +723,7 @@
         <!-- 收款单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalReceipt"
                 displayName="收款单" ext:icon="banknote" i18n-en:displayName="Receipt" name="app.erp.sal.dao.entity.ErpSalReceipt"
-                tableName="erp_sal_receipt" tagSet="gid,erp.sales,use-approval" registerShortName="true"
+                tableName="erp_sal_receipt" tagSet="gid,erp.sales,use-approval" useWorkflow="true" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">

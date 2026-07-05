@@ -265,6 +265,7 @@ CREATE TABLE erp_ast_disposal(
   REMARK VARCHAR2(1000)  ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  NOP_FLOW_ID VARCHAR2(32)  ,
   constraint PK_erp_ast_disposal primary key (ID)
 );
 

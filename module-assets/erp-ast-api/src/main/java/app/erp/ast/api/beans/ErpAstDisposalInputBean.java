@@ -320,4 +320,18 @@
         }
 
 
+        private String _nopFlowId;
+
+    
+        @PropMeta(propId=29)
+    
+        public String getNopFlowId(){
+            return _nopFlowId;
+        }
+
+        public void setNopFlowId(String value){
+            this._nopFlowId = value;
+        }
+
+
     }

@@ -31,6 +31,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
+  "nopFlowId": "",
   "customer": null,
   "currency": null,
   "settlementMethod": null,

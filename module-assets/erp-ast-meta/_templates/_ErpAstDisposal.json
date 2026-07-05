@@ -30,6 +30,7 @@
   "remark": "",
   "amountSource": 0.0,
   "amountFunctional": 0.0,
+  "nopFlowId": "",
   "asset": null,
   "org": null,
   "currency": null

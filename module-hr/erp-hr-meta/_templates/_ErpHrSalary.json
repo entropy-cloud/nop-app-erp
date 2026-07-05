@@ -40,6 +40,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "approvedBy": "",
   "approvedAt": "2000-01-01 14:00:00",
+  "nopFlowId": "",
   "employee": null,
   "org": null,
   "bankFile": null

@@ -138,6 +138,9 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="nopFlowId" propId="30" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="32"/>
+        </prop>
         <prop name="supplier" i18n-en:displayName="Supplier" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="supplierId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" mandatory="true" lazy="true">

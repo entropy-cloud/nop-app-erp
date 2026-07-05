@@ -349,6 +349,20 @@
         }
 
 
+        private String _nopFlowId;
+
+    
+        @PropMeta(propId=30)
+    
+        public String getNopFlowId(){
+            return _nopFlowId;
+        }
+
+        public void setNopFlowId(String value){
+            this._nopFlowId = value;
+        }
+
+
         private List<ErpPurPaymentLineInputBean> _lines;
 
         public List<ErpPurPaymentLineInputBean> getLines(){

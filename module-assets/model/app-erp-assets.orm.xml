@@ -522,7 +522,7 @@
         <!-- 资产处置 -->
         <entity className="app.erp.ast.dao.entity.ErpAstDisposal"
                 displayName="资产处置" ext:icon="trash-2" i18n-en:displayName="Asset Disposal" name="app.erp.ast.dao.entity.ErpAstDisposal"
-                tableName="erp_ast_disposal" tagSet="gid,erp.assets,use-approval" registerShortName="true"
+                tableName="erp_ast_disposal" tagSet="gid,erp.assets,use-approval" useWorkflow="true" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">

@@ -481,6 +481,7 @@ CREATE TABLE erp_hr_salary(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
+  NOP_FLOW_ID VARCHAR2(32)  ,
   constraint PK_erp_hr_salary primary key (ID)
 );
 

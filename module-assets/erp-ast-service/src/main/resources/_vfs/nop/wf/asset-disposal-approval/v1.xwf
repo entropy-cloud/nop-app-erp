@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<workflow x:extends="/nop/wf/base/oa.xwf"
+          x:schema="/nop/schema/wf/wf.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+          xmlns:c="c"
+          wfName="asset-disposal-approval" wfVersion="1" displayName="资产处置审批"
+          bizEntityFlowIdProp="nopFlowId">
+
+    <description>
+        资产处置多级审批（approval-framework.md §按单据类型配置 WORKFLOW）：submit → manager-approval。
+        其余约定同 payment-approval/v1.xwf（actor=all bootstrap 默认、submit 无 assignment、listener 幂等）。
+    </description>
+
+    <start startStepName="submit"/>
+    <end/>
+
+    <steps>
+        <step name="submit" displayName="提交">
+            <transition onAppStates="complete">
+                <to-step stepName="manager-approval"/>
+            </transition>
+        </step>
+
+        <step name="manager-approval" displayName="审批" allowReject="true">
+            <assignment>
+                <actors>
+                    <actor actorModelId="manager" actorType="all"/>
+                </actors>
+            </assignment>
+            <transition onAppStates="agree">
+                <to-end/>
+            </transition>
+        </step>
+    </steps>
+
+    <listeners>
+        <listener id="on-wf-end" eventPattern="*end">
+            <source>
+                <c:script><![CDATA[
+                    let rejected = false;
+                    const allSteps = wfRt.wf.getSteps(true);
+                    for (let i = 0; i < allSteps.size(); i++) {
+                        const s = allSteps.get(i);
+                        if (s.isRejected() || 'disagree' === s.getRecord().getLastAction()) {
+                            rejected = true;
+                            break;
+                        }
+                    }
+                    const actionName = rejected ? 'reject' : 'approve';
+                    const entityBizObj = inject('nopBizObjectManager').getBizObject('ErpAstDisposal');
+                    const entityId = wfRt.wf.bizEntityId;
+                    const existing = entityBizObj.invoke('get', {id: entityId, ignoreUnknown: true}, null, svcCtx);
+                    if (existing != null
+                            && existing.approveStatus !== 'UNSUBMITTED'
+                            && existing.approveStatus !== 'SUBMITTED') {
+                        return;
+                    }
+                    entityBizObj.invoke(actionName, {id: entityId}, null, svcCtx);
+                ]]></c:script>
+            </source>
+        </listener>
+    </listeners>
+</workflow>

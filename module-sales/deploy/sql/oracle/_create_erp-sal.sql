@@ -221,6 +221,7 @@ CREATE TABLE erp_sal_receipt(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
+  NOP_FLOW_ID VARCHAR2(32)  ,
   constraint PK_erp_sal_receipt primary key (ID)
 );
 

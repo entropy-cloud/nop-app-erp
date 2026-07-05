@@ -138,6 +138,9 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
+        <prop name="nopFlowId" propId="30" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="32"/>
+        </prop>
         <prop name="customer" i18n-en:displayName="Customer" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="customerId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" mandatory="true" lazy="true">

@@ -95,6 +95,7 @@
 
                 <!--本位币金额-->
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
+                <col id="nopFlowId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -116,6 +117,7 @@
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
  amountSource[源币种金额] amountFunctional[本位币金额]
+ nopFlowId[null] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产处置" i18n-en:title="Add Asset Disposal">
@@ -130,7 +132,7 @@
  postedAt[过账时间] postedBy[过账人]
  approvedBy[审核人] approvedAt[审核时间]
  remark[备注] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ amountFunctional[本位币金额] nopFlowId[null]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-资产处置" i18n-en:title="Edit Asset Disposal">
@@ -146,6 +148,7 @@
  approvedBy[审核人] approvedAt[审核时间]
  delVersion[逻辑删除版本] remark[备注]
  amountSource[源币种金额] amountFunctional[本位币金额]
+ nopFlowId[null] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

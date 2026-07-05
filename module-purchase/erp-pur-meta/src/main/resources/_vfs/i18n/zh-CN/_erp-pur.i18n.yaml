@@ -186,6 +186,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
+      nopFlowId: null
       org: null
       orgId: 业务组织
       partnerBankAccount: null

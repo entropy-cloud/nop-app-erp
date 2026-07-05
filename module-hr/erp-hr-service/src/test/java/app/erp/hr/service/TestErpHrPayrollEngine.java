@@ -11,6 +11,7 @@ import app.erp.hr.dao.entity.ErpHrTaxConfig;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.context.ContextProvider;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
@@ -23,6 +24,7 @@ import io.nop.graphql.core.ast.GraphQLOperationType;
 import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -53,6 +55,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
+
+    // WORKFLOW 模式下薪酬 submit 会启动 wf 实例，wf 引擎校验 caller 需 resolved 用户。
+    // 用 SYS（id=0）：submit 步骤 owner 解析为 SYS，caller=0 匹配跳过委托校验，避免 NopAuthUser 查询。
+    @BeforeEach
+    public void setUpWfUser() {
+        ContextProvider.getOrCreateContext().setUserId("0");
+        ContextProvider.getOrCreateContext().setUserName("SYS");
+    }
 
     @Inject
     IDaoProvider daoProvider;

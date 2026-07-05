@@ -449,6 +449,7 @@ prop:
       updateTime: Update Time
       approvedBy: Approved By
       approvedAt: Approved At
+      nopFlowId: null
       employee: Employee
       org: Org
       bankFile: Bank File

@@ -1000,7 +1000,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬记录"
                 name="app.erp.hr.dao.entity.ErpHrSalary" registerShortName="true" tableName="erp_hr_salary"
                 tagSet="gid,erp.hr,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="wallet" i18n-en:displayName="Salary Record">
+                useLogicalDelete="true" useWorkflow="true" versionProp="version" ext:icon="wallet"
+                i18n-en:displayName="Salary Record">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1097,6 +1098,8 @@
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="91" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                <column code="NOP_FLOW_ID" name="nopFlowId" precision="32" propId="92" stdDataType="string"
+                        stdSqlType="VARCHAR"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_SALARY_ORG_APPROVE_STATUS" unique="false">

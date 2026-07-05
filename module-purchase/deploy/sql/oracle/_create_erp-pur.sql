@@ -238,6 +238,7 @@ CREATE TABLE erp_pur_payment(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  NOP_FLOW_ID VARCHAR2(32)  ,
   constraint PK_erp_pur_payment primary key (ID)
 );
 

@@ -195,6 +195,7 @@ prop:
       exchangeRate: 汇率
       gainLoss: 损益
       id: ID
+      nopFlowId: null
       org: null
       orgId: 业务组织
       posted: 已过账

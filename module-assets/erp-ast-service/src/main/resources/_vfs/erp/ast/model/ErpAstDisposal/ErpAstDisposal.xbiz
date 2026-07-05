@@ -4,7 +4,15 @@
     <actions>
         <mutation name="submitForApproval">
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstDisposalProcessor').submitForApproval(id, svcCtx);
+                import io.nop.wf.core.support.ApprovalFlowHelper;
+                const entity = inject('app.erp.ast.service.processor.ErpAstDisposalProcessor').submitForApproval(id, svcCtx);
+                const wfName = thisObj.objMeta['wf:wfName'];
+                if (wfName) {
+                    const wfManager = inject('nopWorkflowManager');
+                    const wf = wfManager.newWorkflow(wfName, null);
+                    ApprovalFlowHelper.start(wf, {bizObjName: thisObj.bizObjName, bizObjId: '' + entity.id}, svcCtx);
+                }
+                return entity;
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">

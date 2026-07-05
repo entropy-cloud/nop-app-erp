@@ -137,8 +137,12 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 29;
     
+    /* : NOP_FLOW_ID VARCHAR */
+    public static final String PROP_NAME_nopFlowId = "nopFlowId";
+    public static final int PROP_ID_nopFlowId = 30;
+    
 
-    private static int _PROP_ID_BOUND = 30;
+    private static int _PROP_ID_BOUND = 31;
 
     
     /* relation:  */
@@ -166,7 +170,7 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[30];
+    private static final String[] PROP_ID_TO_NAME = new String[31];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -257,6 +261,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_nopFlowId] = PROP_NAME_nopFlowId;
+          PROP_NAME_TO_ID.put(PROP_NAME_nopFlowId, PROP_ID_nopFlowId);
+      
     }
 
     
@@ -346,6 +353,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* : NOP_FLOW_ID */
+    private java.lang.String _nopFlowId;
     
 
     public _ErpSalReceipt(){
@@ -507,6 +517,9 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_nopFlowId:
+               return getNopFlowId();
         
            default:
               return super.orm_propValue(propId);
@@ -809,6 +822,16 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_nopFlowId:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_nopFlowId));
+               }
+               setNopFlowId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1017,6 +1040,13 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_nopFlowId:{
+               onInitProp(propId);
+               this._nopFlowId = (java.lang.String)value;
                
                break;
             }
@@ -1574,6 +1604,25 @@ public class _ErpSalReceipt extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * : NOP_FLOW_ID
+     */
+    public final java.lang.String getNopFlowId(){
+         onPropGet(PROP_ID_nopFlowId);
+         return _nopFlowId;
+    }
+
+    /**
+     * : NOP_FLOW_ID
+     */
+    public final void setNopFlowId(java.lang.String value){
+        if(onPropSet(PROP_ID_nopFlowId,value)){
+            this._nopFlowId = value;
+            internalClearRefs(PROP_ID_nopFlowId);
             
         }
     }

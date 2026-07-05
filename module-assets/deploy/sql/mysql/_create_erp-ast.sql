@@ -265,6 +265,7 @@ CREATE TABLE erp_ast_disposal(
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
   AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
+  NOP_FLOW_ID VARCHAR(32) NULL    COMMENT 'null',
   constraint PK_erp_ast_disposal primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
