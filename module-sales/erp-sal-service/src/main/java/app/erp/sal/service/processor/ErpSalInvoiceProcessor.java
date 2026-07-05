@@ -208,6 +208,8 @@ public class ErpSalInvoiceProcessor {
             invoice.setPostedBy(null);
         }
         invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
+        invoice.setApprovedBy(null);
+        invoice.setApprovedAt(null);
         invoiceDao().updateEntity(invoice);
     }
 

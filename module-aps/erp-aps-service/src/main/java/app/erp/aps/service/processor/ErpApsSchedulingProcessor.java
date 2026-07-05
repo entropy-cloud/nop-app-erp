@@ -231,6 +231,7 @@ public class ErpApsSchedulingProcessor {
     }
 
     protected ErpApsSchedulingEngine newEngine(int bufferMinutes, LocalDateTime horizonStart, LocalDateTime horizonEnd) {
+        // ErpApsSchedulingEngine 为纯算法 POJO（无 Spring/DB 依赖），非 ORM 实体，不适用 newEntity()
         return new ErpApsSchedulingEngine(bufferMinutes, horizonStart, horizonEnd);
     }
 

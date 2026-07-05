@@ -88,7 +88,7 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
             inspection.setApprovedBy(context.getUserId());
             inspection.setApprovedAt(CoreMetrics.currentDateTime());
         }
-        dao().updateEntity(inspection);
+        updateEntity(inspection, null, context);
 
         // Phase 3：REJECTED 自动生成 NCR（经 NcrLifecycleService，配置门控）
         if (Objects.equals(aggregated, ErpQaConstants.INSPECTION_RESULT_REJECTED)) {

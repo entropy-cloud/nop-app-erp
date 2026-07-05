@@ -118,6 +118,7 @@ public class NcrLifecycleService {
         List<app.erp.qa.dao.entity.ErpQaAction> list = dao.findAllByQuery(q);
         java.util.List<ErpQaActionImpl> result = new java.util.ArrayList<>();
         for (app.erp.qa.dao.entity.ErpQaAction a : list) {
+            // ErpQaActionImpl 为私有内部投影类（非 ORM 实体），不适用 newEntity()
             result.add(new ErpQaActionImpl(a.getId(), a.getStatus(),
                     a.orm_propValueByName("verificationPerson") == null ? null
                             : ((Number) a.orm_propValueByName("verificationPerson")).longValue(),

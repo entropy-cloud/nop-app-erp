@@ -263,7 +263,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
     void writeLog(ErpB2bEdiDoc doc, String direction, String resultCode, String resultMsg,
                   String requestPayload, String responsePayload) {
         IEntityDao<ErpB2bEdiLog> dao = daoProvider().daoFor(ErpB2bEdiLog.class);
-        ErpB2bEdiLog log = new ErpB2bEdiLog();
+        ErpB2bEdiLog log = dao.newEntity();
         log.setEdiDocId(doc.getId());
         log.setOrgId(doc.getOrgId());
         log.setDirection(direction);

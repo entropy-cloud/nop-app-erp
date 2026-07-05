@@ -78,7 +78,7 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
         }
         project = requireEntity(String.valueOf(projectId), null, context);
         project.setStatus(ErpPrjConstants.PROJECT_STATUS_COMPLETED);
-        dao().updateEntity(project);
+        updateEntity(project, null, context);
         return project;
     }
 }

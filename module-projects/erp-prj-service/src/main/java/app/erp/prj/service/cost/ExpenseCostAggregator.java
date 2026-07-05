@@ -100,7 +100,7 @@ public class ExpenseCostAggregator {
             existingHead.setTotalAmount(nz(existingHead.getTotalAmount()).add(addedTotal));
             daoProvider.daoFor(ErpPrjCostCollection.class).updateEntity(existingHead);
         } else {
-            ErpPrjCostCollection newHead = new ErpPrjCostCollection();
+            ErpPrjCostCollection newHead = daoProvider.daoFor(ErpPrjCostCollection.class).newEntity();
             newHead.setCode("CC-" + projectId + "-" + CoreMetrics.currentTimeMillis());
             newHead.setProjectId(projectId);
             newHead.setOrgId(project.getOrgId());
@@ -183,7 +183,7 @@ public class ExpenseCostAggregator {
     private void saveExpenseLine(Long headId, int lineNo, String sourceBillCode, BigDecimal amount,
                                  Long subjectId) {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
-        ErpPrjCostCollectionLine line = new ErpPrjCostCollectionLine();
+        ErpPrjCostCollectionLine line = dao.newEntity();
         line.setCostCollectionId(headId);
         line.setLineNo(lineNo);
         line.setCostCategory(ErpPrjConstants.COST_CATEGORY_EXPENSE);

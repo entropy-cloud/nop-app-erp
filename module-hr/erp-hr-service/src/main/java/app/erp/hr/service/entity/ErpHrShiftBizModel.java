@@ -196,7 +196,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
 
     ErpHrAttendance newAttendance(Long employeeId, LocalDate date, IServiceContext context) {
         IEntityDao<ErpHrAttendance> dao = daoProvider().daoFor(ErpHrAttendance.class);
-        ErpHrAttendance a = new ErpHrAttendance();
+        ErpHrAttendance a = dao.newEntity();
         a.setEmployeeId(employeeId);
         a.setDate(date);
         a.setIsAbsent(false);

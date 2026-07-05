@@ -47,7 +47,7 @@ public class ErpFinCreditFacilityBizModel extends CrudBizModel<ErpFinCreditFacil
         BigDecimal used = nz(facility.getUsedAmount()).add(amt);
         facility.setUsedAmount(used);
         facility.setAvailableAmount(nz(facility.getTotalAmount()).subtract(used));
-        dao().updateEntity(facility);
+        updateEntity(facility, null, context);
         return facility;
     }
 
@@ -64,7 +64,7 @@ public class ErpFinCreditFacilityBizModel extends CrudBizModel<ErpFinCreditFacil
         }
         facility.setUsedAmount(used);
         facility.setAvailableAmount(nz(facility.getTotalAmount()).subtract(used));
-        dao().updateEntity(facility);
+        updateEntity(facility, null, context);
         return facility;
     }
 

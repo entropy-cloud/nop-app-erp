@@ -227,6 +227,8 @@ public class ErpPurRequisitionProcessor {
 
     protected void doReverseApprove(ErpPurRequisition req, IServiceContext context) {
         req.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        req.setApprovedBy(null);
+        req.setApprovedAt(null);
         requisitionDao().updateEntity(req);
     }
 

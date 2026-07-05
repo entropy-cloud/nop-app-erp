@@ -91,7 +91,7 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
 
         // issue-status DRAFT→CONFIRMED
         issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_CONFIRMED);
-        dao().updateEntity(issue);
+        updateEntity(issue, null, context);
 
         // 构造出库移动单请求并生成（业务联动自动 DRAFT→CONFIRMED→DONE，扣减库存；幂等键防重复）
         StockMoveRequest request = stockMoveBuilder.build(issue, lines, context);
@@ -106,7 +106,7 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
         BigDecimal materialCostDelta = aggregateIssueMaterialCost(move, context);
         issue = requireEntity(String.valueOf(issueId), null, context);
         issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_DONE);
-        dao().updateEntity(issue);
+        updateEntity(issue, null, context);
 
         applyMaterialCostToWorkOrder(issue.getWorkOrderId(), materialCostDelta);
         return issue;

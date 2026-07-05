@@ -203,7 +203,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         }
 
         // 创建采购入库草稿（核心零污染：仅弱指针 orderId，不加 asnId 列）
-        ErpPurReceive receive = new ErpPurReceive();
+        ErpPurReceive receive = daoProvider().daoFor(ErpPurReceive.class).newEntity();
         receive.setCode("RCV-FROM-ASN-" + asn.getCode());
         receive.setOrderId(po.getId());
         receive.setSupplierId(po.getSupplierId());
@@ -283,7 +283,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         }
 
         // 建 ASN
-        ErpB2bAsn asn = new ErpB2bAsn();
+        ErpB2bAsn asn = newEntity();
         asn.setCode("ASN-" + CoreMetrics.currentTimeMillis());
         asn.setSourceEdiDocId(ediDoc.getId());
         asn.setPartnerId(profile.getPartnerId());
@@ -300,7 +300,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         IEntityDao<ErpB2bAsnLine> lineDao = daoProvider().daoFor(ErpB2bAsnLine.class);
         int lineNo = 1;
         for (ParsedLine parsedLine : parsed.getLines()) {
-            ErpB2bAsnLine line = new ErpB2bAsnLine();
+            ErpB2bAsnLine line = lineDao.newEntity();
             line.setAsnId(asn.getId());
             line.setLineNo(lineNo++);
             line.setSupplierPartNo(parsedLine.getSupplierPartNo());
@@ -400,7 +400,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
     private void writeEdiLog(ErpB2bEdiDoc doc, String direction, boolean error,
                              String requestPayload, String errorMsg) {
         IEntityDao<ErpB2bEdiLog> dao = daoProvider().daoFor(ErpB2bEdiLog.class);
-        ErpB2bEdiLog log = new ErpB2bEdiLog();
+        ErpB2bEdiLog log = dao.newEntity();
         log.setEdiDocId(doc.getId());
         log.setOrgId(doc.getOrgId());
         log.setDirection(direction);

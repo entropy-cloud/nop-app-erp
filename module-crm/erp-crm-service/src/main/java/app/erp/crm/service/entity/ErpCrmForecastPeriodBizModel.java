@@ -38,7 +38,7 @@ public class ErpCrmForecastPeriodBizModel extends CrudBizModel<ErpCrmForecastPer
         ErpCrmForecastPeriod period = requirePeriod(periodId, context);
         requireOpen(period);
         period.setStatus(ErpCrmConstants.FORECAST_PERIOD_STATUS_FROZEN);
-        dao().updateEntity(period);
+        updateEntity(period, null, context);
         return period;
     }
 
@@ -48,7 +48,7 @@ public class ErpCrmForecastPeriodBizModel extends CrudBizModel<ErpCrmForecastPer
         ErpCrmForecastPeriod period = requirePeriod(periodId, context);
         requireOpen(period);
         period.setStatus(ErpCrmConstants.FORECAST_PERIOD_STATUS_CLOSED);
-        dao().updateEntity(period);
+        updateEntity(period, null, context);
 
         boolean autoCompute = io.nop.api.core.config.AppConfig.var(
                 ErpCrmConstants.CONFIG_FORECAST_ACCURACY_AUTO_COMPUTE, Boolean.TRUE);

@@ -130,7 +130,7 @@ public class TransportManager {
                           TransportResult result, NopException failure,
                           LocalDateTime startTime, long durationMs, int retryCount) {
         IEntityDao<ErpB2bMftLog> dao = daoProvider.daoFor(ErpB2bMftLog.class);
-        ErpB2bMftLog log = new ErpB2bMftLog();
+        ErpB2bMftLog log = dao.newEntity();
         log.setConfigId(config.getId());
         log.setDirection(direction);
         log.setProtocol(config.getProtocol());

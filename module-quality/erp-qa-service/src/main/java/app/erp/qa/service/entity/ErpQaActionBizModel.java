@@ -36,7 +36,7 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
         ErpQaAction action = requireAction(actionId, context);
         requireActionStatus(action, ErpQaConstants.ACTION_STATUS_PENDING, "PENDING");
         action.setStatus(ErpQaConstants.ACTION_STATUS_IN_PROGRESS);
-        dao().updateEntity(action);
+        updateEntity(action, null, context);
         return action;
     }
 
@@ -48,7 +48,7 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
         action.setStatus(ErpQaConstants.ACTION_STATUS_COMPLETED);
         action.setCompletedAt(CoreMetrics.currentDateTime());
         // completedBy 为 Long（职员 ID），IUserContext userId 为 String；此处留空，由前端按职员录入
-        dao().updateEntity(action);
+        updateEntity(action, null, context);
         return action;
     }
 
@@ -71,7 +71,7 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
         }
         action.setVerificationPerson(verificationPerson);
         action.setVerificationDate(verificationDate);
-        dao().updateEntity(action);
+        updateEntity(action, null, context);
         return action;
     }
 

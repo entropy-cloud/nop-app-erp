@@ -93,7 +93,7 @@ public class ReceiptSettler {
                         .param(ErpSalErrors.ARG_RECEIPT_BALANCE, receiptRemaining);
             }
 
-            ErpSalReceiptLine line = new ErpSalReceiptLine();
+            ErpSalReceiptLine line = lineDao.newEntity();
             line.setReceiptId(receipt.getId());
             line.setInvoiceId(alloc.getInvoiceId());
             line.setAmount(amount);
@@ -124,7 +124,7 @@ public class ReceiptSettler {
         }
 
         IEntityDao<ErpSalReceiptLine> lineDao = daoProvider.daoFor(ErpSalReceiptLine.class);
-        ErpSalReceiptLine reversal = new ErpSalReceiptLine();
+        ErpSalReceiptLine reversal = lineDao.newEntity();
         reversal.setReceiptId(receipt.getId());
         reversal.setInvoiceId(invoiceId);
         reversal.setAmount(settled.negate());

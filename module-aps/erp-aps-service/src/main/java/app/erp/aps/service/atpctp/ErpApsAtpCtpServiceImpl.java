@@ -77,6 +77,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         }
         int buffer = AppConfig.var(ErpApsConfigs.CONFIG_BUFFER_MINUTES_BETWEEN_OPS,
                 ErpApsConfigs.DEFAULT_BUFFER_MINUTES_BETWEEN_OPS);
+        // ErpApsSchedulingEngine 为纯算法 POJO，非 ORM 实体，不适用 newEntity()
         ErpApsSchedulingEngine engine = new ErpApsSchedulingEngine(buffer, startDate, null);
         Map<Long, WorkCenterTimeline> timelines = engine.snapshotTimelines(loadMaintenance(), loadPlannedOps());
 
@@ -159,6 +160,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
         }
         int buffer = AppConfig.var(ErpApsConfigs.CONFIG_BUFFER_MINUTES_BETWEEN_OPS,
                 ErpApsConfigs.DEFAULT_BUFFER_MINUTES_BETWEEN_OPS);
+        // ErpApsSchedulingEngine 为纯算法 POJO，非 ORM 实体，不适用 newEntity()
         ErpApsSchedulingEngine engine = new ErpApsSchedulingEngine(buffer, startDate, null);
         Map<Long, WorkCenterTimeline> timelines = engine.snapshotTimelines(loadMaintenance(), loadPlannedOps());
 

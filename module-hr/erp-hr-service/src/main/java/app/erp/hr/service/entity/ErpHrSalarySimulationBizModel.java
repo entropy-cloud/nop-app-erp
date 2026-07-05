@@ -110,7 +110,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         ErpHrSalarySimulationItemAdjustment adj = findAdjustment(simulationId, employeeId, salaryItemCode);
         boolean isNew = adj == null;
         if (isNew) {
-            adj = new ErpHrSalarySimulationItemAdjustment();
+            adj = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class).newEntity();
             adj.setSimulationId(simulationId);
             adj.setEmployeeId(employeeId);
             adj.setSalaryItemCode(salaryItemCode);
@@ -855,7 +855,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         ErpHrSalarySimulationItemAdjustment adj = findAdjustment(simulationId, employeeId, salaryItemCode);
         boolean isNew = adj == null;
         if (isNew) {
-            adj = new ErpHrSalarySimulationItemAdjustment();
+            adj = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class).newEntity();
             adj.setSimulationId(simulationId);
             adj.setEmployeeId(employeeId);
             adj.setSalaryItemCode(salaryItemCode);

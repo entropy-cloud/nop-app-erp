@@ -118,7 +118,7 @@ public class ForecastAggregator {
 
     protected ErpCrmForecast buildForecast(ErpCrmForecastPeriod period, String ownerId, Long teamId,
                                            ForecastTotals totals) {
-        ErpCrmForecast forecast = new ErpCrmForecast();
+        ErpCrmForecast forecast = forecastDao().newEntity();
         forecast.setOrgId(period.getOrgId());
         forecast.setPeriodId(period.getId());
         forecast.setOwnerId(ownerId);
@@ -144,7 +144,7 @@ public class ForecastAggregator {
             String category = classifyCategory(probability, commitThreshold, upsideThreshold);
             boolean inCommit = probability >= commitThreshold;
 
-            ErpCrmForecastLine line = new ErpCrmForecastLine();
+            ErpCrmForecastLine line = lineDao().newEntity();
             line.setForecastId(forecast.getId());
             line.setOrgId(forecast.getOrgId());
             line.setLeadId(opp.getId());
@@ -184,7 +184,7 @@ public class ForecastAggregator {
         BigDecimal upsideAccuracy = accuracyOf(upside, actual);
         BigDecimal deviation = commit.subtract(actual).abs();
 
-        ErpCrmForecastAccuracy accuracy = new ErpCrmForecastAccuracy();
+        ErpCrmForecastAccuracy accuracy = accuracyDao().newEntity();
         accuracy.setForecastId(forecast.getId());
         accuracy.setOrgId(forecast.getOrgId());
         accuracy.setPeriodId(period.getId());

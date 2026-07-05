@@ -57,7 +57,7 @@ public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IE
         ErpCrmEvent event = requireEvent(eventId, context);
         validatePlanned(event, "complete");
         event.setStatus(ErpCrmConstants.EVENT_STATUS_COMPLETED);
-        dao().updateEntity(event);
+        updateEntity(event, null, context);
         // 派生查询需读取本轮 status 变更：显式 flush 使派生查询可见。
         ormTemplate.flushSession();
         deriveLeadFields(event.getRelatedLeadId());
@@ -70,7 +70,7 @@ public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IE
         ErpCrmEvent event = requireEvent(eventId, context);
         validatePlanned(event, "cancel");
         event.setStatus(ErpCrmConstants.EVENT_STATUS_CANCELLED);
-        dao().updateEntity(event);
+        updateEntity(event, null, context);
         ormTemplate.flushSession();
         deriveLeadFields(event.getRelatedLeadId());
         return event;

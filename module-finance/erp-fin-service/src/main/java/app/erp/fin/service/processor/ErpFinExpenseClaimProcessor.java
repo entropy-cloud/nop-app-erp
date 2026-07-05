@@ -242,6 +242,8 @@ public class ErpFinExpenseClaimProcessor {
             claim.setSettleAdvanceId(null);
         }
         claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_REJECTED);
+        claim.setApprovedBy(null);
+        claim.setApprovedAt(null);
         claimDao().updateEntity(claim);
         return claim;
     }

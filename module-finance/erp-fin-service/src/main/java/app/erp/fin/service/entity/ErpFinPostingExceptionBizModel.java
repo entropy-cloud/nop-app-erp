@@ -74,7 +74,7 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
         entity.setResolution(ErpFinConstants.POSTING_EXCEPTION_RESOLUTION_RETRY);
         entity.setResolvedBy(currentUserId());
         entity.setResolvedAt(CoreMetrics.currentDateTime());
-        dao().updateEntity(entity);
+        updateEntity(entity, null, context);
 
         if (!ErpFinConstants.POSTING_TYPE_REVERSAL.equals(entity.getPostingType())) {
             // 正向过账重试：从 eventData 重建 PostingEvent 重新过账。
@@ -96,7 +96,7 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
                 entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
             }
         }
-        dao().updateEntity(entity);
+        updateEntity(entity, null, context);
         return entity;
     }
 
@@ -116,7 +116,7 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
         entity.setResolutionNote(resolutionNote);
         entity.setResolvedBy(currentUserId());
         entity.setResolvedAt(CoreMetrics.currentDateTime());
-        dao().updateEntity(entity);
+        updateEntity(entity, null, context);
         return entity;
     }
 
@@ -138,7 +138,7 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
         entity.setResolutionNote(resolutionNote);
         entity.setResolvedBy(currentUserId());
         entity.setResolvedAt(CoreMetrics.currentDateTime());
-        dao().updateEntity(entity);
+        updateEntity(entity, null, context);
         return entity;
     }
 
@@ -173,6 +173,7 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
         long exceptionCount = countExceptionsSince(since);
         long manualResolutionCount = countManualResolutionsSince(since);
 
+        // 以下 ErpFinPostingMetricsSnapshot / MetricValue 为 finance-dao 跨层契约 DTO（非 ORM 实体），不适用 newEntity()
         ErpFinPostingMetricsSnapshot snapshot = new ErpFinPostingMetricsSnapshot();
         snapshot.setWindowHours(window);
         snapshot.setVoucherCount(voucherCount);

@@ -132,6 +132,6 @@ public class RequisitionToOrderConverter {
     }
 
     private String generateOrderCode(ErpPurRequisition req) {
-        return "PO-FROM-REQ-" + req.getId();
+        return "PO-FROM-REQ-" + req.getId() + "-" + StringHelper.generateUUID();
     }
 }

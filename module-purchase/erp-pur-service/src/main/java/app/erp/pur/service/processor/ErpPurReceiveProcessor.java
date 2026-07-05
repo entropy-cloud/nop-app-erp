@@ -216,6 +216,8 @@ public class ErpPurReceiveProcessor {
 
     protected void doReverseApprove(ErpPurReceive receive, IServiceContext context) {
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        receive.setApprovedBy(null);
+        receive.setApprovedAt(null);
         receiveDao().updateEntity(receive);
     }
 

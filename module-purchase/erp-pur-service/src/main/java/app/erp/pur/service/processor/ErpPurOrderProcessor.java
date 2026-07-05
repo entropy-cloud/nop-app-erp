@@ -179,6 +179,8 @@ public class ErpPurOrderProcessor {
 
     protected void doReverseApprove(ErpPurOrder order, IServiceContext context) {
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        order.setApprovedBy(null);
+        order.setApprovedAt(null);
         orderDao().updateEntity(order);
     }
 

@@ -231,6 +231,8 @@ public class ErpSalQuotationProcessor {
 
     protected void doReverseApprove(ErpSalQuotation quotation, IServiceContext context) {
         quotation.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
+        quotation.setApprovedBy(null);
+        quotation.setApprovedAt(null);
         quotationDao().updateEntity(quotation);
     }
 

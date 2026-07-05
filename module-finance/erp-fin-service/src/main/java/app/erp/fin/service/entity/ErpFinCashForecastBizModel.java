@@ -145,7 +145,7 @@ public class ErpFinCashForecastBizModel extends CrudBizModel<ErpFinCashForecast>
                                           String sourceBillType, String sourceBillCode, String direction,
                                           Long partnerId,
                                           java.math.BigDecimal amountSource, java.math.BigDecimal amountFunctional) {
-        ErpFinCashForecast row = new ErpFinCashForecast();
+        ErpFinCashForecast row = newEntity();
         row.setOrgId(orgId);
         row.setFundAccountId(fundAccountId);
         row.setForecastDate(forecastDate);

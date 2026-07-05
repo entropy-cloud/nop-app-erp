@@ -80,7 +80,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         }
         ticket.setAssignedToId(assignedToId);
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_ASSIGNED);
-        dao().updateEntity(ticket);
+        updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_ASSIGN, from, ErpCsConstants.TICKET_STATUS_ASSIGNED,
                 "分派处理人: " + assignedToId, context);
         return ticket;
@@ -97,7 +97,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         // 计时起点：首次进入 IN_PROGRESS（见 plan Decision：startDateTime=首次 IN_PROGRESS 时间）
         ticket.setStartDateTime(CoreMetrics.currentDateTime());
-        dao().updateEntity(ticket);
+        updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS,
                 "开始处理", context);
         return ticket;
@@ -127,7 +127,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         if (resolution != null) {
             ticket.setRemark(resolution);
         }
-        dao().updateEntity(ticket);
+        updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_RESOLVED,
                 "标记解决: " + (resolution == null ? "" : resolution), context);
 
@@ -155,7 +155,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         }
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_CLOSED);
         ticket.setEndDateTime(CoreMetrics.currentDateTime());
-        dao().updateEntity(ticket);
+        updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_CLOSE, from, ErpCsConstants.TICKET_STATUS_CLOSED,
                 "关闭工单", context);
         return ticket;
@@ -171,7 +171,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         }
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         // 恢复计时：保留原 startDateTime（duration 在下次 resolve 时累加重算，因 startDateTime 不变）
-        dao().updateEntity(ticket);
+        updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS,
                 "驳回重开", context);
 
@@ -198,7 +198,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         if (cancelReason != null) {
             ticket.setRemark(cancelReason);
         }
-        dao().updateEntity(ticket);
+        updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_CANCEL, from, ErpCsConstants.TICKET_STATUS_CANCELLED,
                 "取消工单: " + (cancelReason == null ? "" : cancelReason), context);
         return ticket;
@@ -222,7 +222,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         LocalDateTime deadline = SlaDeadlineCalculator.calculate(CoreMetrics.currentDateTime(), policy);
         ticket.setDeadlineDateTime(deadline);
         // priority 变更重算时保留原 startDateTime（plan Phase 1 item 3）
-        dao().updateEntity(ticket);
+        updateEntity(ticket, null, context);
         return ticket;
     }
 
@@ -239,7 +239,9 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
                 ErpCsConstants.TICKET_STATUS_ASSIGNED, ErpCsConstants.TICKET_STATUS_IN_PROGRESS)));
         q.addFilter(lt("deadlineDateTime", now));
         q.addFilter(eq("isSlaCompleted", Boolean.FALSE));
-        List<ErpCsTicket> overdue = dao().findAllByQuery(q);
+        // deadlineDateTime 的 XMeta 仅允许 eq/in/dateBetween/dateTimeBetween（不支持 lt），
+        // 内部派生查询走 doFindListByQueryDirectly 绕过 meta 限制（同 ErpCrmEventBizModel.findDueReminders 模式）
+        List<ErpCsTicket> overdue = doFindListByQueryDirectly(q, context);
         List<ErpCsTicket> escalated = new ArrayList<>();
         for (ErpCsTicket ticket : overdue) {
             // 创建 ESCALATE 审计 + 通知 escalationUserId（L1，config-gated；通知占位，实际发送属 nop-notification 独立面）

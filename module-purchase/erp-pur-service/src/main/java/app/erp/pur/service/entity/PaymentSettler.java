@@ -93,7 +93,7 @@ public class PaymentSettler {
                         .param(ErpPurErrors.ARG_PAYMENT_BALANCE, paymentRemaining);
             }
 
-            ErpPurPaymentLine line = new ErpPurPaymentLine();
+            ErpPurPaymentLine line = lineDao.newEntity();
             line.setPaymentId(payment.getId());
             line.setInvoiceId(alloc.getInvoiceId());
             line.setAmount(amount);
@@ -124,7 +124,7 @@ public class PaymentSettler {
         }
 
         IEntityDao<ErpPurPaymentLine> lineDao = daoProvider.daoFor(ErpPurPaymentLine.class);
-        ErpPurPaymentLine reversal = new ErpPurPaymentLine();
+        ErpPurPaymentLine reversal = lineDao.newEntity();
         reversal.setPaymentId(payment.getId());
         reversal.setInvoiceId(invoiceId);
         reversal.setAmount(settled.negate());

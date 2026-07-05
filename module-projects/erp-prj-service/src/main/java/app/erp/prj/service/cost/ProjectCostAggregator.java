@@ -55,7 +55,7 @@ public class ProjectCostAggregator {
         Long subjectId = resolveLaborSubjectId(timesheet, project);
 
         ErpPrjCostCollection existingHead = findOpenHead(timesheet.getProjectId());
-        ErpPrjCostCollectionLine line = new ErpPrjCostCollectionLine();
+        ErpPrjCostCollectionLine line = daoProvider.daoFor(ErpPrjCostCollectionLine.class).newEntity();
         line.setCostCategory(ErpPrjConstants.COST_CATEGORY_LABOR);
         line.setSourceBillType(ErpPrjConstants.SOURCE_BILL_TYPE_TIMESHEET);
         line.setSourceBillCode(sourceBillCode);
@@ -70,7 +70,7 @@ public class ProjectCostAggregator {
             existingHead.setTotalAmount(nz(existingHead.getTotalAmount()).add(amount));
             daoProvider.daoFor(ErpPrjCostCollection.class).updateEntity(existingHead);
         } else {
-            ErpPrjCostCollection newHead = new ErpPrjCostCollection();
+            ErpPrjCostCollection newHead = daoProvider.daoFor(ErpPrjCostCollection.class).newEntity();
             newHead.setCode("CC-" + timesheet.getProjectId() + "-" + CoreMetrics.currentTimeMillis());
             newHead.setProjectId(timesheet.getProjectId());
             newHead.setOrgId(timesheet.getOrgId());

@@ -107,7 +107,7 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
     }
 
     ErpHrShiftAssignment newAssignment(IEntityDao<ErpHrShiftAssignment> dao, Long employeeId, Long shiftId, LocalDate date) {
-        ErpHrShiftAssignment a = new ErpHrShiftAssignment();
+        ErpHrShiftAssignment a = dao.newEntity();
         a.setEmployeeId(employeeId);
         a.setShiftId(shiftId);
         a.setAssignmentDate(date);

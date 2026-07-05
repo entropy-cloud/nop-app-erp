@@ -278,6 +278,8 @@ public class ErpMfgWorkOrderProcessor {
 
     protected void doReverseApprove(ErpMfgWorkOrder wo, IServiceContext context) {
         wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_REJECTED);
+        wo.setApprovedBy(null);
+        wo.setApprovedAt(null);
         workOrderDao().updateEntity(wo);
     }
 

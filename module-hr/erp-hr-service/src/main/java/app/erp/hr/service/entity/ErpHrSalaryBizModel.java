@@ -107,7 +107,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
         salary = requireSalary(salaryId, context);
         salary.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
         salary.setPaymentDate(CoreMetrics.today());
-        dao().updateEntity(salary);
+        updateEntity(salary, null, context);
         return salary;
     }
 
@@ -154,7 +154,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
             updateEntity(s, null, context);
         }
 
-        ErpHrPayrollBankFile bankFile = new ErpHrPayrollBankFile();
+        ErpHrPayrollBankFile bankFile = daoProvider().daoFor(ErpHrPayrollBankFile.class).newEntity();
         bankFile.setBatchNo(batchNo);
         bankFile.setPaymentDate(CoreMetrics.today());
         bankFile.setTotalAmount(total);

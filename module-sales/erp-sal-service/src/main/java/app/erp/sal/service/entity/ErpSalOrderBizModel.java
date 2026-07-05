@@ -61,7 +61,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         if (order.getCode() == null) {
             order.setCode("SO-FROM-Q-" + StringHelper.generateUUID());
         }
-        dao().saveEntity(order);
+        saveEntity(order, null, context);
         IEntityDao<ErpSalOrderLine> lineDao = daoFor(ErpSalOrderLine.class);
         for (ErpSalOrderLine line : order.getLines() == null ? new ArrayList<ErpSalOrderLine>() : order.getLines()) {
             line.setOrderId(order.getId());
@@ -100,6 +100,6 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
             return;
         }
         order.setDeliveryStatus(deliveryStatus);
-        dao().updateEntity(order);
+        updateEntity(order, null, context);
     }
 }

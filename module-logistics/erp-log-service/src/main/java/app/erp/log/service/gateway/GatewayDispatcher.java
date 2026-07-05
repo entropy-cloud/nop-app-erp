@@ -225,7 +225,7 @@ public class GatewayDispatcher {
 
     public void writeWebhookLog(ErpLogShipment shipment, String eventType, String payload, boolean advanced) {
         IEntityDao<ErpLogShipmentLog> dao = daoProvider.daoFor(ErpLogShipmentLog.class);
-        ErpLogShipmentLog log = new ErpLogShipmentLog();
+        ErpLogShipmentLog log = dao.newEntity();
         log.setShipmentId(shipment.getId());
         log.setGatewayId(resolveGatewayId(shipment));
         log.setActionType(ErpLogConstants.GATEWAY_ACTION_TRACK);
@@ -327,7 +327,7 @@ public class GatewayDispatcher {
     private void writeLog(ErpLogShipment shipment, String actionType, Object request, Object response,
                           int httpStatus, String errorCode, String errorMessage, boolean success) {
         IEntityDao<ErpLogShipmentLog> dao = daoProvider.daoFor(ErpLogShipmentLog.class);
-        ErpLogShipmentLog log = new ErpLogShipmentLog();
+        ErpLogShipmentLog log = dao.newEntity();
         log.setShipmentId(shipment.getId());
         log.setGatewayId(resolveGatewayId(shipment));
         log.setActionType(actionType);

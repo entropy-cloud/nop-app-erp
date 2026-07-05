@@ -84,7 +84,7 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
         timesheet.setCostAmount(costAmount);
         timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
         runBudgetCheckHook(timesheet, costAmount);
-        dao().updateEntity(timesheet);
+        updateEntity(timesheet, null, context);
         return timesheet;
     }
 
@@ -111,7 +111,7 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
             timesheet.setPostedAt(CoreMetrics.currentDateTime());
             timesheet.setPostedBy(currentUserId());
         }
-        dao().updateEntity(timesheet);
+        updateEntity(timesheet, null, context);
 
         // 归集：工时 APPROVED 同事务生成/追加归集行 + 增量回写 actualCost
         // （cost-collection.md §4.2，归集与过账同事务保证强一致）
@@ -129,7 +129,7 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
             throw illegalTransition(timesheet, status, "SUBMITTED");
         }
         timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
-        dao().updateEntity(timesheet);
+        updateEntity(timesheet, null, context);
         return timesheet;
     }
 
@@ -149,7 +149,7 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
             }
         }
         timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
-        dao().updateEntity(timesheet);
+        updateEntity(timesheet, null, context);
         return timesheet;
     }
 

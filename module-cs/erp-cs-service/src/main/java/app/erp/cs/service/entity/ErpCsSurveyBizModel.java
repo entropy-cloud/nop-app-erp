@@ -60,7 +60,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }
         // 唯一约束：一工单一调查
-        ErpCsSurvey existing = findSurveyByTicket(ticketId);
+        ErpCsSurvey existing = findSurveyByTicket(ticketId, context);
         if (existing != null) {
             throw new NopException(ErpCsErrors.ERR_SURVEY_ALREADY_EXISTS).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }
@@ -87,7 +87,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         if (surveyToken == null || surveyToken.isEmpty()) {
             throw new NopException(ErpCsErrors.ERR_SURVEY_TOKEN_INVALID).param(ErpCsErrors.ARG_SURVEY_TOKEN, surveyToken);
         }
-        ErpCsSurvey survey = findSurveyByToken(surveyToken);
+        ErpCsSurvey survey = findSurveyByToken(surveyToken, context);
         if (survey == null) {
             throw new NopException(ErpCsErrors.ERR_SURVEY_TOKEN_INVALID).param(ErpCsErrors.ARG_SURVEY_TOKEN, surveyToken);
         }
@@ -110,7 +110,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         survey.setComment(comment);
         survey.setRespondedAt(CoreMetrics.currentDateTime());
         // NPS 分类（派生，不持久化——ORM 无分类列）
-        dao().updateEntity(survey);
+        updateEntity(survey, null, context);
         return survey;
     }
 
@@ -141,19 +141,19 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
 
     // ---------- helpers ----------
 
-    private ErpCsSurvey findSurveyByTicket(Long ticketId) {
+    private ErpCsSurvey findSurveyByTicket(Long ticketId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         q.setLimit(1);
-        List<ErpCsSurvey> list = dao().findAllByQuery(q);
+        List<ErpCsSurvey> list = findList(q, null, context);
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpCsSurvey findSurveyByToken(String token) {
+    private ErpCsSurvey findSurveyByToken(String token, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("surveyToken", token));
         q.setLimit(1);
-        List<ErpCsSurvey> list = dao().findAllByQuery(q);
+        List<ErpCsSurvey> list = findList(q, null, context);
         return list.isEmpty() ? null : list.get(0);
     }
 

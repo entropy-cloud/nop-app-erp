@@ -218,6 +218,8 @@ public class ErpSalReceiptProcessor {
             receipt.setPostedBy(null);
         }
         receipt.setApproveStatus(ErpSalConstants.APPROVE_STATUS_REJECTED);
+        receipt.setApprovedBy(null);
+        receipt.setApprovedAt(null);
         receiptDao().updateEntity(receipt);
     }
 

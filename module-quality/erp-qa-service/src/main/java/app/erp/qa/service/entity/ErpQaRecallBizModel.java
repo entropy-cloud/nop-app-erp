@@ -111,7 +111,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
             throw illegalRecallTransition(recall, current, "OPEN 或 APPROVED 或 IN_PROGRESS");
         }
         recall.setStatus(ErpQaConstants.RECALL_STATUS_CANCELLED);
-        dao().updateEntity(recall);
+        updateEntity(recall, null, context);
         return recall;
     }
 
@@ -122,7 +122,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_APPROVED, "APPROVED");
         targetLocator.locate(recall, context);
         recall.setStatus(ErpQaConstants.RECALL_STATUS_IN_PROGRESS);
-        dao().updateEntity(recall);
+        updateEntity(recall, null, context);
         return recall;
     }
 
@@ -138,7 +138,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
             recallTargetBiz.updateEntity(target, null, context);
         }
         recall.setNotifyCustomer(Boolean.TRUE);
-        dao().updateEntity(recall);
+        updateEntity(recall, null, context);
         return recall;
     }
 
@@ -181,7 +181,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
             }
         }
         recall.setStatus(ErpQaConstants.RECALL_STATUS_CLOSED);
-        dao().updateEntity(recall);
+        updateEntity(recall, null, context);
         return recall;
     }
 

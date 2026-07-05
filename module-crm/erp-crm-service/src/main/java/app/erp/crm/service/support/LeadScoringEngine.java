@@ -253,7 +253,7 @@ public class LeadScoringEngine {
     protected ErpCrmLeadScore buildScoreRecord(ErpCrmLead lead, ErpCrmLeadScoreConfig config,
                                                int totalScore, List<LineResult> results,
                                                String triggerEvent, String triggeredAction, boolean autoQualified) {
-        ErpCrmLeadScore score = new ErpCrmLeadScore();
+        ErpCrmLeadScore score = scoreDao().newEntity();
         score.setLeadId(lead.getId());
         score.setOrgId(lead.getOrgId());
         score.setConfigId(config.getId());
@@ -268,7 +268,7 @@ public class LeadScoringEngine {
 
     protected ErpCrmLeadScoreLine buildScoreLine(ErpCrmLeadScore score, LineResult result) {
         ErpCrmLeadScoreConfigLine configLine = result.line;
-        ErpCrmLeadScoreLine line = new ErpCrmLeadScoreLine();
+        ErpCrmLeadScoreLine line = scoreLineDao().newEntity();
         line.setScoreId(score.getId());
         line.setOrgId(score.getOrgId());
         line.setConfigLineId(configLine.getId());

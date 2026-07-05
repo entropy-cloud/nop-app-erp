@@ -143,7 +143,7 @@ public class ErpCrmLeadProcessor {
     }
 
     protected void writeConvLog(ErpCrmLead lead, Long fromStageId, Long toStageId, IServiceContext context) {
-        ErpCrmLeadConvLog log = new ErpCrmLeadConvLog();
+        ErpCrmLeadConvLog log = convLogDao().newEntity();
         log.setLeadId(lead.getId());
         log.setOrgId(lead.getOrgId());
         log.setFromStageId(fromStageId);

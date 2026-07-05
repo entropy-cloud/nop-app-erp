@@ -56,7 +56,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_OPEN, "OPEN");
         ncr.setStatus(ErpQaConstants.NCR_STATUS_IN_REVIEW);
-        dao().updateEntity(ncr);
+        updateEntity(ncr, null, context);
         return ncr;
     }
 
@@ -74,7 +74,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
             ncr.setResolution(resolution);
         }
         ncr.setResolvedAt(CoreMetrics.currentDateTime());
-        dao().updateEntity(ncr);
+        updateEntity(ncr, null, context);
         return ncr;
     }
 
@@ -85,7 +85,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
         requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_IN_REVIEW, "IN_REVIEW");
         // 升级为召回（终态，仅状态迁移占位；不建召回实体。真正建召回用 upgradeToRecall）
         ncr.setStatus(ErpQaConstants.NCR_STATUS_ESCALATED_TO_RECALL);
-        dao().updateEntity(ncr);
+        updateEntity(ncr, null, context);
         return ncr;
     }
 
@@ -96,7 +96,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
         requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_IN_REVIEW, "IN_REVIEW");
         // NCR→ESCALATED_TO_RECALL（字典值已存在），并生成召回事件（继承 NCR 物料/严重程度）
         ncr.setStatus(ErpQaConstants.NCR_STATUS_ESCALATED_TO_RECALL);
-        dao().updateEntity(ncr);
+        updateEntity(ncr, null, context);
 
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("code", "RC-FROM-NCR-" + ncr.getId());
@@ -124,7 +124,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
             throw illegalNcrTransition(ncr, current, "OPEN 或 IN_REVIEW");
         }
         ncr.setStatus(ErpQaConstants.NCR_STATUS_CANCELLED);
-        dao().updateEntity(ncr);
+        updateEntity(ncr, null, context);
         return ncr;
     }
 

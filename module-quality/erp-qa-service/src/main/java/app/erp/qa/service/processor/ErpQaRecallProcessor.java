@@ -146,6 +146,8 @@ public class ErpQaRecallProcessor {
 
     protected void doReverseApprove(ErpQaRecall recall, IServiceContext context) {
         recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_REJECTED);
+        recall.setApprovedBy(null);
+        recall.setApprovedAt(null);
         recallDao().updateEntity(recall);
     }
 

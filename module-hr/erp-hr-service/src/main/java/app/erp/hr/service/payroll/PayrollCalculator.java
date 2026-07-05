@@ -116,7 +116,7 @@ public class PayrollCalculator {
         BigDecimal netSalary = grossSalary.subtract(socialInsuranceEE).subtract(housingFundEE)
                 .subtract(taxAmount).subtract(otherDeductions).setScale(scale, RoundingMode.HALF_UP);
 
-        ErpHrSalary salary = new ErpHrSalary();
+        ErpHrSalary salary = daoProvider.daoFor(ErpHrSalary.class).newEntity();
         salary.setEmployeeId(employeeId);
         salary.setYear(year);
         salary.setMonth(month);

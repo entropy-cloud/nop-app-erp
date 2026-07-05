@@ -57,7 +57,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
                                              @Name("request") ConvertToOrderRequest request,
                                              IServiceContext context) {
         ErpPurOrder order = converter.build(requisition, lines, supplierId, request);
-        dao().saveEntity(order);
+        saveEntity(order, null, context);
         for (ErpPurOrderLine orderLine : converter.buildLines(order, lines, request)) {
             daoFor(ErpPurOrderLine.class).saveEntity(orderLine);
         }
@@ -94,6 +94,6 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
             return;
         }
         order.setReceiveStatus(receiveStatus);
-        dao().updateEntity(order);
+        updateEntity(order, null, context);
     }
 }

@@ -217,6 +217,8 @@ public class ErpPurInvoiceProcessor {
 
     protected void doReverseApprove(ErpPurInvoice invoice, IServiceContext context) {
         invoice.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        invoice.setApprovedBy(null);
+        invoice.setApprovedAt(null);
         invoiceDao().updateEntity(invoice);
     }
 

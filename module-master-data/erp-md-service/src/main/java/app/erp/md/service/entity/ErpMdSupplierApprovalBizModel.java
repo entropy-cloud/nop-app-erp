@@ -44,20 +44,20 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     @Override
     @BizMutation
     public ErpMdSupplierApproval apply(@Name("approvalId") Long approvalId, IServiceContext context) {
-        ErpMdSupplierApproval approval = requireApproval(approvalId);
+        ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         if (status != null && !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_REJECTED)) {
             throw illegalTransition(approval, status, "空 或 REJECTED");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_APPLIED);
-        dao().updateEntity(approval);
+        updateEntity(approval, null, context);
         return approval;
     }
 
     @Override
     @BizMutation
     public ErpMdSupplierApproval approve(@Name("approvalId") Long approvalId, IServiceContext context) {
-        ErpMdSupplierApproval approval = requireApproval(approvalId);
+        ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         if (status == null || (!Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_APPLIED)
                 && !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_PROBATION))) {
@@ -67,28 +67,28 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_APPROVED);
         approval.setApprovedBy(currentUserId());
         approval.setApprovedAt(CoreMetrics.currentDateTime());
-        dao().updateEntity(approval);
+        updateEntity(approval, null, context);
         return approval;
     }
 
     @Override
     @BizMutation
     public ErpMdSupplierApproval probate(@Name("approvalId") Long approvalId, IServiceContext context) {
-        ErpMdSupplierApproval approval = requireApproval(approvalId);
+        ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         if (status == null || !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_APPROVED)) {
             throw illegalTransition(approval, status, "APPROVED");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_PROBATION);
-        dao().updateEntity(approval);
+        updateEntity(approval, null, context);
         return approval;
     }
 
     @Override
     @BizMutation
     public ErpMdSupplierApproval suspend(@Name("approvalId") Long approvalId, IServiceContext context) {
-        ErpMdSupplierApproval approval = requireApproval(approvalId);
-        return doSuspend(approval);
+        ErpMdSupplierApproval approval = requireApproval(approvalId, context);
+        return doSuspend(approval, context);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         }
         List<ErpMdSupplierApproval> active = findActiveByPartner(partnerId);
         for (ErpMdSupplierApproval approval : active) {
-            doSuspend(approval);
+            doSuspend(approval, context);
         }
         return active.size();
     }
@@ -107,7 +107,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     @Override
     @BizMutation
     public ErpMdSupplierApproval reinstate(@Name("approvalId") Long approvalId, IServiceContext context) {
-        ErpMdSupplierApproval approval = requireApproval(approvalId);
+        ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         if (status == null || !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_SUSPENDED)) {
             throw illegalTransition(approval, status, "SUSPENDED");
@@ -115,20 +115,20 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_APPROVED);
         approval.setApprovedBy(currentUserId());
         approval.setApprovedAt(CoreMetrics.currentDateTime());
-        dao().updateEntity(approval);
+        updateEntity(approval, null, context);
         return approval;
     }
 
     @Override
     @BizMutation
     public ErpMdSupplierApproval reject(@Name("approvalId") Long approvalId, IServiceContext context) {
-        ErpMdSupplierApproval approval = requireApproval(approvalId);
+        ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         if (status == null || !Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_APPLIED)) {
             throw illegalTransition(approval, status, "APPLIED");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_REJECTED);
-        dao().updateEntity(approval);
+        updateEntity(approval, null, context);
         return approval;
     }
 
@@ -153,7 +153,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
 
     // ---------- 内部步骤 ----------
 
-    protected ErpMdSupplierApproval doSuspend(ErpMdSupplierApproval approval) {
+    protected ErpMdSupplierApproval doSuspend(ErpMdSupplierApproval approval, IServiceContext context) {
         String status = currentStatus(approval);
         if (status != null && Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_SUSPENDED)) {
             return approval;
@@ -164,7 +164,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
             throw illegalTransition(approval, status, "APPLIED/APPROVED/PROBATION");
         }
         approval.setStatus(ErpMdConstants.APPROVAL_STATUS_SUSPENDED);
-        dao().updateEntity(approval);
+        updateEntity(approval, null, context);
         return approval;
     }
 
@@ -192,8 +192,8 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         return list;
     }
 
-    protected ErpMdSupplierApproval requireApproval(Long approvalId) {
-        ErpMdSupplierApproval approval = dao().getEntityById(approvalId);
+    protected ErpMdSupplierApproval requireApproval(Long approvalId, IServiceContext context) {
+        ErpMdSupplierApproval approval = get(String.valueOf(approvalId), true, context);
         if (approval == null) {
             throw new NopException(ErpMdErrors.ERR_APPROVAL_NOT_FOUND)
                     .param(ErpMdErrors.ARG_APPROVAL_ID, approvalId);

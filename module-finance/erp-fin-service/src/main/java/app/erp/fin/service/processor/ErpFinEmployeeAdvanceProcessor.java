@@ -197,6 +197,8 @@ public class ErpFinEmployeeAdvanceProcessor {
             clearPosted(advance);
         }
         advance.setApproveStatus(ErpFinConstants.APPROVE_STATUS_REJECTED);
+        advance.setApprovedBy(null);
+        advance.setApprovedAt(null);
         advanceDao().updateEntity(advance);
         return advance;
     }

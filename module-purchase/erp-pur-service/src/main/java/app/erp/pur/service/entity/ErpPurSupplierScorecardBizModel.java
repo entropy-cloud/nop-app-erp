@@ -40,7 +40,7 @@ public class ErpPurSupplierScorecardBizModel extends CrudBizModel<ErpPurSupplier
     @Override
     @BizMutation
     public ErpPurSupplierScorecard finalizeScorecard(@Name("scorecardId") Long scorecardId, IServiceContext context) {
-        ErpPurSupplierScorecard scorecard = requireScorecard(scorecardId);
+        ErpPurSupplierScorecard scorecard = requireScorecard(scorecardId, context);
         if (scorecard.getStatus() != null && Objects.equals(scorecard.getStatus(), ErpPurConstants.SCORECARD_STATUS_FINALIZED)) {
             throw new NopException(ErpPurErrors.ERR_SCORECARD_ALREADY_FINALIZED)
                     .param(ErpPurErrors.ARG_SCORECARD_ID, scorecardId);
@@ -48,7 +48,7 @@ public class ErpPurSupplierScorecardBizModel extends CrudBizModel<ErpPurSupplier
 
         scorecardCalculator.calculate(scorecard);
         scorecard.setStatus(ErpPurConstants.SCORECARD_STATUS_FINALIZED);
-        dao().updateEntity(scorecard);
+        updateEntity(scorecard, null, context);
 
         // standing=RED → 跨域 AVL SUSPENDED 联动（Phase 3）。Linker 单事务跟随 @BizMutation。
         if (scorecard.getStanding() != null && Objects.equals(scorecard.getStanding(), ErpPurConstants.STANDING_RED)) {
@@ -57,8 +57,8 @@ public class ErpPurSupplierScorecardBizModel extends CrudBizModel<ErpPurSupplier
         return scorecard;
     }
 
-    protected ErpPurSupplierScorecard requireScorecard(Long scorecardId) {
-        ErpPurSupplierScorecard scorecard = dao().getEntityById(scorecardId);
+    protected ErpPurSupplierScorecard requireScorecard(Long scorecardId, IServiceContext context) {
+        ErpPurSupplierScorecard scorecard = get(String.valueOf(scorecardId), true, context);
         if (scorecard == null) {
             throw new NopException(ErpPurErrors.ERR_SCORECARD_NOT_FOUND)
                     .param(ErpPurErrors.ARG_SCORECARD_ID, scorecardId);

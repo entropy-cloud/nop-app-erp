@@ -220,6 +220,8 @@ public class ErpPurPaymentProcessor {
 
     protected void doReverseApprove(ErpPurPayment payment, IServiceContext context) {
         payment.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        payment.setApprovedBy(null);
+        payment.setApprovedAt(null);
         paymentDao().updateEntity(payment);
     }
 
