@@ -72,15 +72,24 @@
 
 ### 信用额度控制
 
-销售订单审核时检查客户信用额度，按三级可配策略处理：
+销售订单审核（SUBMITTED→APPROVED）时由 `CreditLimitChecker` 检查客户信用额度，按可配策略处理：
 
-| 级别 | 策略 | 行为 |
-|------|------|------|
-| SOFT_WARNING | 软警告 | 超额度时弹窗提示，允许继续提交 |
-| SPECIAL_APPROVAL | 特别审批 | 超额度时需额外审批人审批 |
-| HARD_BLOCK | 硬拦截 | 超额度时直接拒绝提交 |
+| 级别 | 策略 | 行为 | 状态 |
+|------|------|------|------|
+| SOFT_WARNING | 软警告 | 超额度时记录告警并放行审核 | ✅ 已实现（默认） |
+| HARD_BLOCK | 硬拦截 | 超额度时抛 `ERR_CREDIT_LIMIT_EXCEEDED` 拒绝审核 | ✅ 已实现 |
+| SPECIAL_APPROVAL | 特别审批 | 超额度时走多级审批工作流 | ❌ Non-Goal（见下） |
 
-**额度计算**：客户信用额度 − 未结算应收余额（AR_INVOICE 未核销金额）− 未出库订单金额。配置项：`erp-sal.credit-check-level`（默认 SOFT_WARNING），按客户可覆盖。
+**已实现额度计算口径**：`available = 客户信用额度 − outstanding`，其中
+`outstanding = Σ(totalAmountWithTax × exchangeRate) of ErpSalOrder where customerId=该客户 AND approveStatus=APPROVED AND deliveryStatus≠DELIVERED AND docStatus≠CANCELLED`。
+本单含税亦按其 `exchangeRate` 折算为本位币（functional currency）后比较——**支持多币种订单**（外币订单经汇率换算到本位币后纳入 outstanding，与 `creditLimit` 同口径比较）。配置项：`erp-sal.credit-check-level`（默认 SOFT_WARNING）。
+
+**Non-Goals（已登记，触发后纳入）**：
+
+- **AR 未核销余额未纳入 outstanding**：开票后（订单转入 AR 发票）未核销余额当前不计入信用占用，开票后可绕过信用控制的风险已知。纳入需跨域查 finance 应收辅助账（`IErpFinReceivableBiz` 或弱指针），当前 bootstrap 阶段信用控制已有订单级保护（未发货订单金额）。
+  - 触发条件：业财一体端到端验证启动时。
+- **SPECIAL_APPROVAL 审批流未实现**：需 `use-approval` 多级审批工作流迁移，当前二分（HARD_BLOCK / 其他）已满足基本信用控制。
+  - 触发条件：`use-approval` 迁移启动时（见 `docs/plans/2026-07-04-2050-1-use-approval-migration.md`）。
 
 ## 与采购域的对称性
 

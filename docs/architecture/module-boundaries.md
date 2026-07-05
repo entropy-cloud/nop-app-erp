@@ -20,11 +20,12 @@ app-erp-purchase / app-erp-sales（依赖 master-data + inventory）
 app-erp-finance（依赖 master-data + 各业务域的 I*Biz）
 
 扩展域：
-app-erp-assets（依赖 master-data + inventory；被 finance ORM 引用）
-app-erp-projects（依赖 master-data；被 finance ORM 引用 + 被 purchase/sales ORM 只读引用；S 写 finance 凭证）
+app-erp-assets（依赖 master-data + inventory；被 finance ORM 引用；→finance 凭证经 voucherId 弱指针）
+app-erp-projects（依赖 master-data；被 finance ORM 引用 + 被 purchase/sales/hr ORM 只读引用；S 写 finance 凭证）
 app-erp-manufacturing（依赖 master-data + inventory；被 finance ORM 引用；事件触发 quality 检验）
 app-erp-quality（依赖 master-data；被 purchase/sales/manufacturing 事件触发检验，零业务域 ORM 引用）
 app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturing 引用）
+app-erp-hr（依赖 master-data + projects ORM 只读引用：员工项目分配/工时归集）
 ```
 
 ### 核心业务域
@@ -41,11 +42,12 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 
 | 领域工程 | 允许依赖 | 禁止依赖 |
 |----------|----------|----------|
-| `app-erp-assets` | master-data / inventory | finance（finance 引用 assets，不反向） |
+| `app-erp-assets` | master-data / inventory | finance（finance 引用 assets，不反向；assets→finance 凭证经 `voucherId` 弱指针，无 ORM to-one，应用层按需查 `IErpFinVoucherBiz`） |
 | `app-erp-projects` | master-data | finance ORM 引用（finance→projects 单向合法，projects 不反向 ORM 引用 finance）；**S 写 finance 允许**（成本归集过账，见数据矩阵 §4.2）；**purchase/sales ORM 只读引用允许**（项目采购/销售单按 `projectId` 对 `ErpPrjProject` 建 to-one，归集项目成本，机制 B 只读，projects 不反向） |
 | `app-erp-manufacturing` | master-data / inventory | finance / maintenance（ORM + S 写反向）；**quality 仅事件触发检验**（ORM 零引用，manufacturing→quality 单向业务触发允许） |
 | `app-erp-quality` | master-data | 任何业务域 ORM 引用（quality 被业务域事件触发检验，不反向 ORM 依赖） |
 | `app-erp-maintenance` | master-data / inventory / assets | manufacturing / finance（反向） |
+| `app-erp-hr` | master-data / projects（员工项目分配/工时归集，按 `projectId`/`taskId` 对 `ErpPrjProject`/`ErpPrjTask` 建 to-one 只读引用，机制 B，projects 不反向 ORM 引用 hr，无环） | 任何业务域 ORM 反向引用（hr 为叶域，不被业务域 ORM 引用） |
 | `app-erp-all`（聚合） | 所有领域工程的 `-service`/`-web` | — |
 
 > **关于 projects ↔ finance 与 manufacturing → quality 的分层说明**（源自 `data-dependency-matrix.md §2.0` 裁决原则 5）：ORM 层 finance→projects 单向、S 写层 projects→finance 单向，两层各自无环即合法，不构成循环。manufacturing→quality 仅事件/I*Biz 触发检验，ORM 零引用，同样合法。
@@ -55,7 +57,7 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 **规则**（源自 `../nop-entropy/docs-for-ai/02-core-guides/cross-module-entity-reference.md`）：在**共享单库 + 单向 DAG** 前提下，业务域通过 `notGenCode="true"` 外部实体引用建立到 master-data 的 ORM `<to-one>` 关联。
 
 - **允许**：业务域 orm.xml 声明 `<entity notGenCode="true" tableName="erp_md_*">` 引用 master-data 表，建立 `<to-one>`，支持 EQL 点导航与 GraphQL 展开。
-- **允许**：finance → projects/assets（finance 是 DAG 顶，单向合法）；purchase/sales → projects（项目采购/销售单按 `projectId` 建 to-one 只读引用用于成本归集，机制 B 只读，projects 不反向）。
+- **允许**：finance → projects/assets（finance 是 DAG 顶，单向合法）；purchase/sales → projects（项目采购/销售单按 `projectId` 建 to-one 只读引用用于成本归集，机制 B 只读，projects 不反向）；hr → projects（员工项目分配/工时归集，按 `projectId`/`taskId` 建 to-one 只读引用，projects 不反向，无环）。
 - **禁止**：业务域之间的反向或循环引用（如 inventory → purchase/sales、purchase ↔ sales、projects/assets → finance → 反向回 purchase/sales）。这些走纯外键 + 弱指针 + `I*Biz`。
 - **平台依据**：`nop/schema/orm/entity.xdef` 的 `@notGenCode` 注释 + `nop/orm/xlib/orm-gen.xlib:228` 平台代码生成器自身范式。
 - **完整清单**：哪些业务域引用哪些 master-data 表、to-one 命名、DAG 验证，见 `data-dependency-matrix.md §5.6`。
@@ -92,8 +94,8 @@ app-erp-maintenance（依赖 master-data + inventory + assets；被 manufacturin
 | 质量管理域业务规则 | `docs/design/quality/README.md` |
 | 设备维护域业务规则 | `docs/design/maintenance/README.md` |
 | 客户关系域业务规则 | `docs/design/crm/README.md` |
-| 客户服务域业务规则 | `docs/design/cs/`（待补 README） |
-| 人力资源域业务规则 | `docs/design/hr/`（待补 README） |
+| 客户服务域业务规则 | `docs/design/customer-service/README.md` |
+| 人力资源域业务规则 | `docs/design/human-resource/README.md` |
 | 高级排程域业务规则 | `docs/design/aps/README.md` |
 | 合同域业务规则 | `docs/design/contract/README.md` |
 | 分销资源域业务规则 | `docs/design/drp/README.md` |

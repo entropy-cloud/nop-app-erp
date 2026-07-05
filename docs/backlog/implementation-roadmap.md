@@ -8,7 +8,7 @@
 |--------|----------|----------|------|
 | `crud-roadmap.md` | 全部 18 域 CRUD（codegen + 页面 + 菜单） | 无 | 18 域全 `done`（含冒烟测试） |
 | `core-business-roadmap.md` | 进销存+财务 5 域业务逻辑 + 业财一体端到端 | `crud-roadmap.md` 对应域完成 | 部分工作项 `done`（1.0a/1.3/1.5），其余 `todo`（M4 全 `todo`） |
-| `extended-roadmap.md` | 其余 13 域业务逻辑 | `crud-roadmap.md` 对应域完成 | 全 `todo` |
+| `extended-roadmap.md` | 其余 13 域业务逻辑 | `crud-roadmap.md` 对应域完成 | M2（扩展 5 域）全 `done`；M3（新增 8 域）全 `done` |
 
 ## Dependencies
 

@@ -309,9 +309,9 @@ IErpFinAcctDocProvider.createFacts()
 
 | 单据类型 | 初始状态 | 中间状态 | 终态 |
 |----------|----------|----------|------|
-| 工单 | DRAFT | SUBMITTED → APPROVED → RELEASED → IN_PROGRESS | COMPLETED / INSPECTING / REJECTED / CANCELLED / CLOSED |
+| 工单 | DRAFT | SUBMITTED → NOT_STARTED →（STOCK_PARTIAL/STOCK_RESERVED）→ IN_PROCESS（±STOPPED） | COMPLETED / CLOSED / CANCELLED |
 
-> 质检判定（ACCEPTED/CONDITIONAL/REJECTED）影响工单从 INSPECTING 到 COMPLETED 的迁移，详见 `docs/design/quality/state-machine.md` 和 `docs/design/manufacturing/state-machine.md`。
+> 工单状态机共 10 态，权威定义见 `docs/design/manufacturing/state-machine.md`（无 INSPECTING 态——质检判定经 config-gated 钩子在完工入库前阻塞/放行，不引入独立工单状态）。
 
 ---
 
@@ -496,7 +496,7 @@ IErpFinAcctDocProvider.createFacts()
 |------|----------|------------|
 | 单据审核 + 库存变更 | 跨域事务（REQUIRED） | 强一致性 |
 | 单据审核 + 凭证生成 | 异步事件 + 最终一致 | 最终一致性 |
-| 期末结账 | 分布式事务 | 强一致性 |
+| 期末结账 | 单库事务（REQUIRED） | 强一致性 |
 
 ### 6.2 兜底机制
 

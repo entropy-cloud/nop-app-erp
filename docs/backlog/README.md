@@ -8,13 +8,13 @@
 
 ## 工作项
 
-| 优先级 | 工作项 | 路线图 | AI 自主权 |
-|--------|--------|--------|-----------|
-| P0 | CRUD Milestone 3（8 新增域） | `crud-roadmap.md` Milestone 3 | `implement` |
-| P1 | 核心业务循环（进销存+财务） | `core-business-roadmap.md` M1 | `plan-first` |
-| P2 | 扩展 5 域业务逻辑 | `extended-roadmap.md` M2 | `plan-first` |
-| P3 | 新增 8 域业务逻辑 | `extended-roadmap.md` M3 | `plan-first` |
-| P4 | 业财一体端到端 | `core-business-roadmap.md` M4 | `plan-first` |
+| 优先级 | 工作项 | 路线图 | 状态 | AI 自主权 |
+|--------|--------|--------|------|-----------|
+| P0 | CRUD 全 18 域（Milestone 1-3） | `crud-roadmap.md` | ✅ done | `implement` |
+| P1 | 核心业务循环（进销存+财务） | `core-business-roadmap.md` M1 | 🟡 部分 done（1.0a/1.3/1.5 等），其余 todo | `plan-first` |
+| P2 | 扩展 5 域业务逻辑 | `extended-roadmap.md` M2 | ✅ done | `plan-first` |
+| P3 | 新增 8 域业务逻辑 | `extended-roadmap.md` M3 | ✅ done | `plan-first` |
+| P4 | 业财一体端到端 | `core-business-roadmap.md` M4 | ❌ todo（下一就绪项） | `plan-first` |
 
 ## 就绪不变量
 
