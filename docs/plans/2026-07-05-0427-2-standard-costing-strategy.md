@@ -156,6 +156,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 归 1538-1 Deferred「成本调整单」；本期标准成本只读消费 rollup 输出。
 - Successor Required: yes（触发条件：标准成本周期重估/调整单需求落地时）
+- **已收口（plan 2026-07-05-2352-3）**：成本调整单 `STANDARD_REVALUATION` apply 时创建新 `ErpMfgCostRollup`(FIRMED) 行（采购件 newUnitCost），后续 `StandardCostResolver` 读最新 FIRMED。制造件标准成本重估仍归制造域 `rollupCost` successor。
 
 ### BATCH / INDIVIDUAL / 全月一次 / LIFO / 到岸成本 / 多账套 / 存货减值 / 成本报表
 

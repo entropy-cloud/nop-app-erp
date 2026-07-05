@@ -192,6 +192,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 各为独立结果表面（到岸成本单/调整单 + 审批 + 凭证 / nop-report 报表）。
 - Successor Required: yes（触发条件：到岸成本模块 / 成本调整+PPV / 报表需求时）
+- **部分收口（plan 2026-07-05-2352-3）**：成本调整单 + 成本差异凭证已落地（`ErpInvCostAdjust` 头-行实体 + `CostAdjustmentService` 引擎 + `CostAdjustmentAcctDocProvider` 过账 + 审批门控 + `STANDARD_REVALUATION` 发布 FIRMED rollup）。到岸成本分摊算法 + 成本报表仍 Deferred。
 
 ## Closure
 
