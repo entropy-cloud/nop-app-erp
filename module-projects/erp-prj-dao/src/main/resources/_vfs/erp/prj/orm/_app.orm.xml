@@ -185,6 +185,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PRJ_PROJECT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjTask" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="任务"
@@ -386,6 +389,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PRJ_TIMESHEET_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjProjectType" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目类型"
@@ -428,6 +434,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_PRJ_PROJECT_TYPE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjActivityType" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动类型"
@@ -472,6 +481,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_PRJ_ACTIVITY_TYPE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjProjectUser" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成员"
@@ -596,6 +608,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PRJ_BUDGET_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjBudgetLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目预算行"
@@ -753,6 +768,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PRJ_COST_COLLECTION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollectionLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成本归集行"
@@ -871,6 +889,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_PRJ_MILESTONE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjBilling" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目开票"
@@ -976,6 +997,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PRJ_BILLING_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjBillingLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目开票行"

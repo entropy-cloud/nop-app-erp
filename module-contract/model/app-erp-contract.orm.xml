@@ -160,6 +160,9 @@
                 </to-one>
                 
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CT_CONTRACT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 合同行 -->
@@ -293,6 +296,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="12" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_CT_TEMPLATE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
     
         <!-- 审批矩阵 -->
@@ -321,6 +327,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CT_APPROVAL_MATRIX_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 审批记录 -->
@@ -414,6 +423,9 @@
                     <join><on leftProp="partnerId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CT_REBATE_AGREEMENT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 返利阶梯 -->
@@ -571,6 +583,9 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CT_DOCUMENT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->

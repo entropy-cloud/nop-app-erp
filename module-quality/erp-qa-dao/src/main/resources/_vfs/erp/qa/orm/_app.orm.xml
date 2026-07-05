@@ -258,6 +258,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_QA_INSPECTION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaInspectionLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="质检单行"
@@ -367,6 +370,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_QA_INSPECTION_TEMPLATE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="质检模板行"
@@ -515,6 +521,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_QA_NON_CONFORMANCE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaAction" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="纠正预防措施"
@@ -620,6 +629,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_QA_RISK_REGISTER_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaQualityGoal" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="质量目标"
@@ -676,6 +688,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_QA_QUALITY_GOAL_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaReview" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="质量评审"
@@ -740,6 +755,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_QA_REVIEW_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaSamplingPlan" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="抽样方案"
@@ -788,6 +806,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_QA_SAMPLING_PLAN_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaCalibration" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="量具校准"
@@ -866,6 +887,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_QA_CALIBRATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaRecall" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="召回事件"
@@ -948,6 +972,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_QA_RECALL_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.qa.dao.entity.ErpQaRecallTarget" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="召回目标"

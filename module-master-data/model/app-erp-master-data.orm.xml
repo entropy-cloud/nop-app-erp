@@ -218,6 +218,9 @@
                     <join><on leftProp="id" rightProp="materialId"/></join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_MATERIAL_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 物料分类（树形） -->
@@ -249,6 +252,9 @@
                     <join><on leftProp="id" rightProp="parentId"/></join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_MATERIAL_CATEGORY_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 物料 SKU -->
@@ -332,6 +338,9 @@
                     <join><on leftProp="id" rightProp="partnerId"/></join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_PARTNER_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 往来单位地址 -->
@@ -429,6 +438,9 @@
                     <join><on leftProp="id" rightProp="warehouseId"/></join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_WAREHOUSE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 库位 -->
@@ -460,6 +472,9 @@
                     <join><on leftProp="parentId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_LOCATION_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 计量单位 -->
@@ -482,6 +497,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="10" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_MD_UOM_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 单位换算 -->
@@ -539,6 +557,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="12" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_MD_CURRENCY_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 汇率 -->
@@ -598,6 +619,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_MD_TAX_RATE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 结算方式 -->
@@ -622,6 +646,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="12" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_MD_SETTLEMENT_METHOD_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 银行账户 -->
@@ -686,6 +713,9 @@
                     <join><on leftProp="partnerId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_EMPLOYEE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 会计科目 -->
@@ -732,6 +762,9 @@
                     <join><on leftProp="id" rightProp="parentId"/></join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_SUBJECT_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 会计核算表（账套） -->
@@ -770,6 +803,9 @@
                     <join><on leftProp="id" rightProp="acctSchemaId"/></join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_ACCT_SCHEMA_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 账套科目表 -->
@@ -831,6 +867,9 @@
                     <join><on leftProp="id" rightProp="parentId"/></join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_ORGANIZATION_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 成本中心 -->
@@ -871,6 +910,9 @@
                     <join><on leftProp="id" rightProp="parentId"/></join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_COST_CENTER_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 供应商准入资格 AVL（Approved Vendor List）——评分 standing=RED 触发 SUSPENDED 联动入口 -->

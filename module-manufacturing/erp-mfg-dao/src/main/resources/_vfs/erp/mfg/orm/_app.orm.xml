@@ -234,6 +234,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MFG_BOM_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgBomLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="BOM行"
@@ -509,6 +512,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MFG_ROUTING_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgRoutingOperation" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工艺路线工序"
@@ -612,6 +618,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MFG_WORKCENTER_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkcenterCalendar" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工作中心日历"
@@ -977,6 +986,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MFG_WORK_ORDER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单行"
@@ -1139,6 +1151,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MFG_PRODUCTION_VERSION_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgMrpPlan" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MRP计划"
@@ -1198,6 +1213,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MFG_MRP_PLAN_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MRP计划行"
@@ -1405,6 +1423,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MFG_FORECAST_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgForecastLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="需求预测行"
@@ -1584,6 +1605,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MFG_MATERIAL_ISSUE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="领料单行"
@@ -1815,6 +1839,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="委外加工单行"
@@ -1931,6 +1958,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MFG_COST_ROLLUP_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgCostRollupLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="标准成本滚算行"
@@ -2086,6 +2116,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MFG_JOB_CARD_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="作业工时记录"

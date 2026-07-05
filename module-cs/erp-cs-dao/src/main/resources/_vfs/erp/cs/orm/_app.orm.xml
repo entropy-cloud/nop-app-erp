@@ -261,6 +261,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CS_TICKET_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsTicketType" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单类型"
@@ -306,6 +309,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CS_TICKET_TYPE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsSlaPolicy" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="SLA 策略"
@@ -366,6 +372,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CS_SLA_POLICY_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsTeam" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="客服团队"
@@ -399,6 +408,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CS_TEAM_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsTicketAction" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单操作日志"
@@ -492,6 +504,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CS_KNOWLEDGE_BASE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsCannedCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="预设应答分类"
@@ -543,6 +558,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CS_CANNED_CATEGORY_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsCannedResponse" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="预设应答模板"
@@ -611,6 +629,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CS_CANNED_RESPONSE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsSurvey" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="满意度调查"
@@ -778,6 +799,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CS_CONTRACT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsEntitlement" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="服务权益"
@@ -857,6 +881,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CS_ENTITLEMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsCatalogCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="目录分类"
@@ -910,6 +937,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CS_CATALOG_CATEGORY_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsServiceCatalogItem" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="服务目录项"
@@ -999,6 +1029,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CS_SERVICE_CATALOG_ITEM_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsCatalogFulfillment" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="目录项履行映射"
@@ -1057,6 +1090,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CS_CATALOG_FULFILLMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.cs.dao.entity.ErpCsTimeEntry" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单计时条目"

@@ -314,6 +314,9 @@
                 <to-one name="bankAccount" refEntityName="app.erp.md.dao.entity.ErpMdBankAccount" tagSet="pub" i18n-en:displayName='Bank Account'><join><on leftProp="bankAccountId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_EMPLOYEE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 部门 -->
@@ -342,6 +345,9 @@
                 <to-one name="costCenter" refEntityName="app.erp.md.dao.entity.ErpMdCostCenter" tagSet="pub" i18n-en:displayName='Cost Center'><join><on leftProp="costCenterId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_DEPARTMENT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 职位 -->
@@ -368,6 +374,9 @@
                 <to-one name="department" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub" i18n-en:displayName='Department'><join><on leftProp="departmentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_POSITION_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 劳动合同 -->
@@ -407,6 +416,9 @@
                 
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_EMPLOYMENT_CONTRACT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 休假申请 -->
@@ -439,6 +451,9 @@
                 <to-one name="approver" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Approver'><join><on leftProp="approverId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_LEAVE_REQUEST_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 工时表 -->
@@ -467,6 +482,9 @@
                 <to-many name="lines" refEntityName="app.erp.hr.dao.entity.ErpHrTimesheetLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="20"><join><on leftProp="id" rightProp="timesheetId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_TIMESHEET_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 工时表明细 -->
@@ -620,6 +638,9 @@
                 <to-one name="interviewer" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Interviewer'><join><on leftProp="interviewerId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_RECRUITMENT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
     
         <!-- 薪酬模拟 -->
@@ -653,6 +674,9 @@
                 <to-one name="convertedSalary" refEntityName="app.erp.hr.dao.entity.ErpHrSalary" tagSet="pub" i18n-en:displayName='Converted Salary'><join><on leftProp="convertedSalaryId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_SALARY_SIMULATION_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 薪酬模拟调整项（payroll-simulation.md §2.2） -->
@@ -711,6 +735,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_SALARY_ITEM_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 社保配置 -->
@@ -880,6 +907,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_SHIFT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 排班分配 -->
@@ -942,6 +972,9 @@
                 <to-one name="group" ignoreDepends="true" refEntityName="app.erp.hr.dao.entity.ErpHrShiftRotationPattern" tagSet="pub" i18n-en:displayName='Group'><join><on leftProp="groupId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_SHIFT_ROTATION_PATTERN_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 排班调换申请 -->
@@ -974,6 +1007,9 @@
                 <to-one name="targetAssignment" refEntityName="app.erp.hr.dao.entity.ErpHrShiftAssignment" tagSet="pub" i18n-en:displayName='Target Assignment'><join><on leftProp="targetAssignmentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_SHIFT_SWAP_REQUEST_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 问卷模板 -->
@@ -1014,6 +1050,9 @@
                 <to-one name="targetDepartment" refEntityName="app.erp.hr.dao.entity.ErpHrDepartment" tagSet="pub" i18n-en:displayName='Target Department'><join><on leftProp="targetDepartmentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_SURVEY_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 问卷题目 -->
@@ -1152,6 +1191,9 @@
                 <to-one name="parent" ignoreDepends="true" refEntityName="app.erp.hr.dao.entity.ErpHrCompetency" tagSet="pub" i18n-en:displayName='Parent Competency'><join><on leftProp="parentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_COMPETENCY_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 胜任力等级 -->

@@ -91,6 +91,9 @@
                 <to-many name="lines" refEntityName="app.erp.drp.dao.entity.ErpDrpLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="100"><join><on leftProp="id" rightProp="planId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_DRP_PLAN_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- DRP明细行 -->
@@ -201,6 +204,9 @@
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_INV_DRP_SAFETY_STOCK_CALC_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 越库执行记录 -->
@@ -241,6 +247,9 @@
                 <to-one name="outboundMove" refEntityName="app.erp.inv.dao.entity.ErpInvStockMove" i18n-en:displayName='Outbound Move'><join><on leftProp="outboundMoveId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_INV_DRP_CROSS_DOCK_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 月台预约 -->

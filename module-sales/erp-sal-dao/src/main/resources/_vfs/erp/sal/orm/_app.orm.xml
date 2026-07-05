@@ -164,6 +164,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_SAL_QUOTATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.sal.dao.entity.ErpSalQuotationLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售报价单行"
@@ -321,6 +324,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_SAL_CONTRACT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.sal.dao.entity.ErpSalOrder" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售订单"
@@ -467,6 +473,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_SAL_ORDER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.sal.dao.entity.ErpSalOrderLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售订单行"
@@ -691,6 +700,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_SAL_DELIVERY_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.sal.dao.entity.ErpSalDeliveryLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售出库单行"
@@ -893,6 +905,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_SAL_INVOICE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.sal.dao.entity.ErpSalInvoiceLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售发票行"
@@ -1089,6 +1104,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_SAL_RECEIPT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.sal.dao.entity.ErpSalReceiptLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="收款核销行"
@@ -1250,6 +1268,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_SAL_RETURN_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.sal.dao.entity.ErpSalReturnLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售退货单行"

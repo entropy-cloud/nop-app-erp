@@ -88,6 +88,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_APS_OPERATION_ORDER_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 排产方案 -->
@@ -115,6 +118,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_APS_SCHEDULE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 排产约束 -->

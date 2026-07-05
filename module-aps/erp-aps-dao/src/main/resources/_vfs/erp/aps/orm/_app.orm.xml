@@ -141,6 +141,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_APS_OPERATION_ORDER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.aps.dao.entity.ErpApsSchedule" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="排产方案"
@@ -194,6 +197,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_APS_SCHEDULE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.aps.dao.entity.ErpApsConstraint" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="排产约束"

@@ -405,6 +405,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_EMPLOYEE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrDepartment" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="部门"
@@ -470,6 +473,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_DEPARTMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrPosition" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="职位"
@@ -523,6 +529,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_POSITION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrEmploymentContract" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="劳动合同"
@@ -612,6 +621,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_EMPLOYMENT_CONTRACT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrLeaveRequest" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="休假申请"
@@ -684,6 +696,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_LEAVE_REQUEST_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrTimesheet" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时表"
@@ -746,6 +761,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_TIMESHEET_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrTimesheetLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时表明细"
@@ -1100,6 +1118,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_RECRUITMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrSalarySimulation" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬模拟"
@@ -1177,6 +1198,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_SALARY_SIMULATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬模拟调整项"
@@ -1308,6 +1332,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_SALARY_ITEM_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrSocialInsuranceConfig" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="社保配置"
@@ -1660,6 +1687,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_SHIFT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrShiftAssignment" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="排班分配"
@@ -1808,6 +1838,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_SHIFT_ROTATION_PATTERN_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrShiftSwapRequest" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="排班调换申请"
@@ -1887,6 +1920,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_SHIFT_SWAP_REQUEST_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrSurvey" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="问卷模板"
@@ -1980,6 +2016,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_SURVEY_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrSurveyQuestion" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="问卷题目"
@@ -2274,6 +2313,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_HR_COMPETENCY_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrCompetencyLevel" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="胜任力等级"

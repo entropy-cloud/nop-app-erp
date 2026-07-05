@@ -239,6 +239,9 @@
                 <to-many name="activities" refEntityName="app.erp.crm.dao.entity.ErpCrmActivity" tagSet="pub" i18n-en:displayName='Activities' ext:estRows="20"><join><on leftProp="id" rightProp="leadId"/></join></to-many>
                 <to-many name="convLogs" refEntityName="app.erp.crm.dao.entity.ErpCrmLeadConvLog" tagSet="pub" i18n-en:displayName='Conv Logs' ext:estRows="50"><join><on leftProp="id" rightProp="leadId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_LEAD_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 线索状态字典 -->
@@ -259,6 +262,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="11" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_CRM_LEAD_STATUS_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 漏斗阶段表 -->
@@ -286,6 +292,9 @@
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_STAGE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 线索来源 -->
@@ -305,6 +314,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="10" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_CRM_SOURCE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 丢单原因 -->
@@ -324,6 +336,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="10" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_CRM_LOST_REASON_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 销售团队 -->
@@ -347,6 +362,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_TEAM_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 营销活动（UTM 归因） -->
@@ -376,6 +394,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_CAMPAIGN_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 活动/事件（日历排程） -->
@@ -420,6 +441,9 @@
                 <to-one name="eventCategory" refEntityName="app.erp.crm.dao.entity.ErpCrmEventCategory" tagSet="pub" i18n-en:displayName='Event Category'><join><on leftProp="eventCategoryId" rightProp="id"/></join></to-one>
                 <to-one name="contact" refEntityName="app.erp.md.dao.entity.ErpMdPartnerContact" i18n-en:displayName='Contact'><join><on leftProp="contactId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_EVENT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 活动类别字典 -->
@@ -439,6 +463,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="10" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_CRM_EVENT_CATEGORY_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 活动记录（轻量活动日志） -->
@@ -513,6 +540,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="11" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_CRM_QUOTE_TEMPLATE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 评分规则配置头 -->
@@ -540,6 +570,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_LEAD_SCORE_CONFIG_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 评分准则明细行 -->
@@ -657,6 +690,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_FORECAST_PERIOD_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 预测数据行 -->
@@ -797,6 +833,9 @@
                 <to-one name="parent" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Parent'><join><on leftProp="parentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_TERRITORY_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 区域分配规则 -->
@@ -892,6 +931,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_PRODUCT_CONFIGURATOR_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 产品配置规则行 -->
@@ -951,6 +993,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_BUNDLE_PRICING_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 捆绑包明细行 -->
@@ -1026,6 +1071,9 @@
                     <join><on leftProp="currencyId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_PRICE_RULE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- ============================ 销售序列实体 ============================ -->
@@ -1055,6 +1103,9 @@
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_SEQUENCE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 序列步骤 -->

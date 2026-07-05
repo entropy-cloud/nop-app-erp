@@ -139,6 +139,9 @@
                 <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Department'><join><on leftProp="departmentId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurRequisitionLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="requisitionId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PUR_REQUISITION_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 请购单行 -->
@@ -201,6 +204,9 @@
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurRfqLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="rfqId"/></join></to-many>
                 <to-many name="quotations" refEntityName="app.erp.pur.dao.entity.ErpPurQuotation" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Quotations' ext:estRows="10"><join><on leftProp="id" rightProp="rfqId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PUR_RFQ_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 询价单行 -->
@@ -264,6 +270,9 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurQuotationLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="quotationId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PUR_QUOTATION_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 供应商报价单行 -->
@@ -464,6 +473,9 @@
                 <to-one name="quotation" refEntityName="app.erp.pur.dao.entity.ErpPurQuotation" tagSet="pub" i18n-en:displayName='Quotation'><join><on leftProp="quotationId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurOrderLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="orderId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PUR_ORDER_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 采购订单行 -->
@@ -551,6 +563,9 @@
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurReceiveLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="receiveId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PUR_RECEIVE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
         
         <!-- 采购入库单行 -->
@@ -633,6 +648,9 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurInvoiceLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="invoiceId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PUR_INVOICE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
         
         <!-- 采购发票行 -->
@@ -711,6 +729,9 @@
                 <to-one name="partnerBankAccount" refEntityName="app.erp.md.dao.entity.ErpMdBankAccount" tagSet="pub" i18n-en:displayName='Partner Bank Account'><join><on leftProp="partnerBankAccountId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurPaymentLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="10"><join><on leftProp="id" rightProp="paymentId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PUR_PAYMENT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 付款核销行（付款与发票多对多） -->
@@ -778,6 +799,9 @@
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurReturnLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="returnId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PUR_RETURN_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 采购退货单行 -->

@@ -222,6 +222,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_STOCK_MOVE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvStockMoveLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="库存移动单行"
@@ -456,6 +459,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_STOCK_LEDGER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvStockBalance" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="库存余额"
@@ -630,6 +636,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_RESERVATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvReservationLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="库存预留单行"
@@ -909,6 +918,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_TRANSFER_ORDER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvTransferOrderLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="调拨单行"
@@ -1048,6 +1060,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_STOCK_TAKE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvStockTakeLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="盘点单行"
@@ -1208,6 +1223,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_PICKING_ORDER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvPickingOrderLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="拣货单行"
@@ -1449,6 +1467,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="serialNo" name="UK_INV_SERIAL_NUMBER_SERIAL_NO"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvOwnershipTransfer" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="所有权转移单"
@@ -1556,6 +1577,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_OWNERSHIP_TRANSFER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvOwnershipTransferLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="所有权转移单行"

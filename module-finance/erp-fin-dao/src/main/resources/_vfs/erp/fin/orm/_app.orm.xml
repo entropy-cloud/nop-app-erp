@@ -346,6 +346,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_VOUCHER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinVoucherLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="凭证分录行"
@@ -553,6 +556,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_FIN_VOUCHER_TEMPLATE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="凭证模板行"
@@ -718,6 +724,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_ACCOUNTING_PERIOD_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="期间结账状态"
@@ -889,6 +898,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_AR_AP_ITEM_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinReconciliation" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="核销单"
@@ -983,6 +995,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_RECONCILIATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinReconciliationLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="核销单行"
@@ -1319,6 +1334,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_FUND_ACCOUNT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinBankStatement" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="银行对账单"
@@ -1385,6 +1403,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_BANK_STATEMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinBankStatementLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="银行对账单行"
@@ -1541,6 +1562,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_BANK_RECONCILIATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinBankReconciliationLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="银行对账调整行"
@@ -1711,6 +1735,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_EXPENSE_CLAIM_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinExpenseClaimLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="费用报销单行"
@@ -1891,6 +1918,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_EMPLOYEE_ADVANCE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinNotesReceivable" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="应收票据"
@@ -2474,6 +2504,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_FIN_BAD_DEBT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSubject" displayName="会计科目"
                 name="app.erp.md.dao.entity.ErpMdSubject" notGenCode="true" tableName="erp_md_subject"

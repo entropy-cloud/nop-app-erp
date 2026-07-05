@@ -205,6 +205,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_ASSET_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstAssetCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产类别"
@@ -285,6 +288,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_AST_ASSET_CATEGORY_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstDepreciationSchedule" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="折旧计划"
@@ -526,6 +532,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_MOVEMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstValueAdjustment" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产价值调整"
@@ -617,6 +626,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_VALUE_ADJUSTMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstDisposal" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产处置"
@@ -709,6 +721,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_DISPOSAL_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstAssetCapitalization" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产资本化"
@@ -806,6 +821,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_ASSET_CAPITALIZATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstCip" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="在建工程"
@@ -898,6 +916,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_CIP_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstSplit" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产拆分单"
@@ -982,6 +1003,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_SPLIT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstMerge" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产合并单"
@@ -1066,6 +1090,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_MERGE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="组织"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"

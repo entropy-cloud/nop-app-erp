@@ -122,6 +122,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PRJ_PROJECT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 任务 -->
@@ -204,6 +207,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PRJ_TIMESHEET_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 项目类型 -->
@@ -226,6 +232,9 @@
             <relations>
                 <to-one name="defaultSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Default Subject'><join><on leftProp="defaultSubjectId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PRJ_PROJECT_TYPE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 活动类型 -->
@@ -249,6 +258,9 @@
             <relations>
                 <to-one name="subject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Subject'><join><on leftProp="subjectId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PRJ_ACTIVITY_TYPE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 项目成员 -->
@@ -309,6 +321,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PRJ_BUDGET_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 项目预算行 -->
@@ -382,6 +397,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PRJ_COST_COLLECTION_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 项目成本归集行 -->
@@ -440,6 +458,9 @@
             <relations>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PRJ_MILESTONE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 项目开票头 -->
@@ -486,6 +507,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_PRJ_BILLING_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 项目开票行 -->

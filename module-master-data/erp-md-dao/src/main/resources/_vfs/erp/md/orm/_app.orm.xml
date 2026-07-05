@@ -252,6 +252,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_MATERIAL_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdMaterialCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料分类"
@@ -303,6 +306,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_MATERIAL_CATEGORY_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdMaterialSku" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料SKU"
@@ -451,6 +457,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_PARTNER_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartnerAddress" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="往来单位地址"
@@ -613,6 +622,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MD_WAREHOUSE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdLocation" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="库位"
@@ -662,6 +674,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_LOCATION_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdUoM" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="计量单位"
@@ -695,6 +710,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_UOM_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdUoMConversion" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="单位换算"
@@ -787,6 +805,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_CURRENCY_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdExchangeRate" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="汇率"
@@ -883,6 +904,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_TAX_RATE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSettlementMethod" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="结算方式"
@@ -923,6 +947,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_SETTLEMENT_METHOD_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdBankAccount" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="银行账户"
@@ -1027,6 +1054,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MD_EMPLOYEE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSubject" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="会计科目"
@@ -1115,6 +1145,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_SUBJECT_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdAcctSchema" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="会计核算表(账套)"
@@ -1183,6 +1216,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MD_ACCT_SCHEMA_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdAcctSchemaCoa" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="账套科目表"
@@ -1282,6 +1318,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MD_ORGANIZATION_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdCostCenter" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="成本中心"
@@ -1350,6 +1389,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MD_COST_CENTER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSupplierApproval" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="供应商准入资格"

@@ -168,6 +168,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PUR_REQUISITION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurRequisitionLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购请购单行"
@@ -320,6 +323,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PUR_RFQ_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurRfqLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购询价单行"
@@ -469,6 +475,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PUR_QUOTATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurQuotationLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="供应商报价单行"
@@ -932,6 +941,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PUR_ORDER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurOrderLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购订单行"
@@ -1162,6 +1174,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PUR_RECEIVE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurReceiveLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购入库单行"
@@ -1368,6 +1383,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PUR_INVOICE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurInvoiceLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购发票行"
@@ -1564,6 +1582,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PUR_PAYMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurPaymentLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="付款核销行"
@@ -1725,6 +1746,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_PUR_RETURN_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurReturnLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购退货单行"

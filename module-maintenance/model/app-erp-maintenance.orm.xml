@@ -164,6 +164,10 @@
                 <to-many name="sparePartUsages" refEntityName="app.erp.mnt.dao.entity.ErpMntSparePartUsage" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Spare Part Usages' ext:estRows="20"><join><on leftProp="id" rightProp="equipmentId"/></join></to-many>
                 <to-many name="downtimeEntries" refEntityName="app.erp.mnt.dao.entity.ErpMntDowntimeEntry" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Downtime Entries' ext:estRows="20"><join><on leftProp="id" rightProp="equipmentId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MNT_EQUIPMENT_CODE_ORG" columns="code,orgId"/>
+                <unique-key name="UK_MNT_EQUIPMENT_SERIAL_NO" columns="serialNo"/>
+            </unique-keys>
         </entity>
         
         <!-- 设备分类 -->
@@ -186,6 +190,9 @@
             <relations>
                 <to-one name="parent" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub" i18n-en:displayName='Parent'><join><on leftProp="parentId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MNT_EQUIPMENT_CATEGORY_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 维护计划 -->
@@ -216,6 +223,9 @@
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub" i18n-en:displayName='Equipment'><join><on leftProp="equipmentId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MNT_SCHEDULE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 维护访问 -->
@@ -259,6 +269,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MNT_VISIT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
         
         <!-- 维护任务 -->
@@ -314,6 +327,9 @@
             <relations>
                 <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub" i18n-en:displayName='Equipment'><join><on leftProp="equipmentId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MNT_REQUEST_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 停机记录 -->
@@ -370,6 +386,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MNT_MAINTENANCE_TEAM_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 维护团队成员 -->
@@ -437,6 +456,9 @@
                     <join><on leftProp="warehouseId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MNT_SPARE_PART_USAGE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 备件消耗行 -->
@@ -504,6 +526,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MNT_CALIBRATION_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- ============================ 外部实体引用（机制 B：notGenCode，不生成本模块 Entity 类） ============================

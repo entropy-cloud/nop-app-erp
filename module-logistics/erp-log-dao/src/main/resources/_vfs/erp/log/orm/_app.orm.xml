@@ -146,6 +146,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_LOG_CARRIER_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.log.dao.entity.ErpLogCarrierConfig" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="承运商配置"
@@ -360,6 +363,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_LOG_SHIPMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.log.dao.entity.ErpLogShipmentLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="发运明细"

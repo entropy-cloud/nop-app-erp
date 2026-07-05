@@ -337,6 +337,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_LEAD_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmLeadStatus" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="线索状态"
@@ -372,6 +375,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CRM_LEAD_STATUS_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmStage" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="漏斗阶段"
@@ -428,6 +434,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_STAGE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmSource" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="线索来源"
@@ -461,6 +470,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CRM_SOURCE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmLostReason" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="丢单原因"
@@ -494,6 +506,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CRM_LOST_REASON_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmTeam" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售团队"
@@ -537,6 +552,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_TEAM_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmCampaign" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="营销活动"
@@ -595,6 +613,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_CAMPAIGN_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmEvent" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动/事件"
@@ -704,6 +725,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_EVENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmEventCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动类别"
@@ -738,6 +762,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CRM_EVENT_CATEGORY_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmActivity" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动记录"
@@ -894,6 +921,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CRM_QUOTE_TEMPLATE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmLeadScoreConfig" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="评分规则配置"
@@ -947,6 +977,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_LEAD_SCORE_CONFIG_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmLeadScoreConfigLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="评分准则明细"
@@ -1199,6 +1232,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_FORECAST_PERIOD_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmForecast" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="预测数据"
@@ -1512,6 +1548,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_TERRITORY_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="区域分配规则"
@@ -1713,6 +1752,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_PRODUCT_CONFIGURATOR_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmConfigRule" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="配置规则"
@@ -1835,6 +1877,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_BUNDLE_PRICING_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmBundlePricingLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="捆绑包明细"
@@ -1985,6 +2030,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_PRICE_RULE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmSequence" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="销售序列"
@@ -2037,6 +2085,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CRM_SEQUENCE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmSequenceStep" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="序列步骤"

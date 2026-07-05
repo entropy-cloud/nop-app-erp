@@ -199,6 +199,9 @@
                 <to-many name="operations" refEntityName="app.erp.mfg.dao.entity.ErpMfgBomOperation" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Operations' ext:estRows="20"><join><on leftProp="id" rightProp="bomId"/></join></to-many>
                 <to-many name="byproducts" refEntityName="app.erp.mfg.dao.entity.ErpMfgBomByproduct" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Byproducts' ext:estRows="5"><join><on leftProp="id" rightProp="bomId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_BOM_CODE" columns="code"/>
+            </unique-keys>
         </entity>
         
         <!-- BOM 行 -->
@@ -315,6 +318,9 @@
             <relations>
                 <to-many name="operations" refEntityName="app.erp.mfg.dao.entity.ErpMfgRoutingOperation" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Operations' ext:estRows="20"><join><on leftProp="id" rightProp="routingId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_ROUTING_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 工艺路线工序 -->
@@ -367,6 +373,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="14" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="15" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_MFG_WORKCENTER_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 工作中心日历/班次（CRP 产能四要素之一：时钟，出勤时段决定负荷上限） -->
@@ -517,6 +526,9 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="sourceMrpPlan" refEntityName="app.erp.mfg.dao.entity.ErpMfgMrpPlan" tagSet="pub" i18n-en:displayName='Source MRP Plan'><join><on leftProp="sourceMrpPlanId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_WORK_ORDER_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 工单行（多产出/多投入，替代单 productId 的弱表达） -->
@@ -583,6 +595,9 @@
                 <to-one name="bom" refEntityName="app.erp.mfg.dao.entity.ErpMfgBom" tagSet="pub" i18n-en:displayName='Bom'><join><on leftProp="bomId" rightProp="id"/></join></to-one>
                 <to-one name="routing" refEntityName="app.erp.mfg.dao.entity.ErpMfgRouting" tagSet="pub" i18n-en:displayName='Routing'><join><on leftProp="routingId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_PRODUCTION_VERSION_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- MRP 计划头 -->
@@ -609,6 +624,9 @@
                 <to-many name="demands" refEntityName="app.erp.mfg.dao.entity.ErpMfgMrpDemand" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Demands' ext:estRows="500"><join><on leftProp="id" rightProp="mrpPlanId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_MRP_PLAN_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- MRP 计划行/计划订单 -->
@@ -699,6 +717,9 @@
                 <to-many name="lines" refEntityName="app.erp.mfg.dao.entity.ErpMfgForecastLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="500"><join><on leftProp="id" rightProp="forecastId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_FORECAST_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 需求预测行（materialId 必填；warehouseId 可选——空=产品级 MRP 消费，填=仓级 DRP 消费） -->
@@ -771,6 +792,9 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_MATERIAL_ISSUE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 领料单行 -->
@@ -857,6 +881,9 @@
                 <to-one name="productionVersion" refEntityName="app.erp.mfg.dao.entity.ErpMfgProductionVersion" tagSet="pub" i18n-en:displayName='Production Version'><join><on leftProp="productionVersionId" rightProp="id"/></join></to-one>
                 <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Product'><join><on leftProp="productId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 委外加工单行 -->
@@ -910,6 +937,9 @@
                 <to-many name="lines" refEntityName="app.erp.mfg.dao.entity.ErpMfgCostRollupLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="100"><join><on leftProp="id" rightProp="costRollupId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_COST_ROLLUP_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 标准成本滚算行（按产品汇总 材料成本+人工+制造费用+委外） -->
@@ -976,6 +1006,9 @@
                 <to-one name="workcenter" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkcenter" tagSet="pub" i18n-en:displayName='Workcenter'><join><on leftProp="workcenterId" rightProp="id"/></join></to-one>
                 <to-one name="operation" refEntityName="app.erp.mfg.dao.entity.ErpMfgBomOperation" tagSet="pub" i18n-en:displayName='Operation'><join><on leftProp="operationId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_MFG_JOB_CARD_CODE" columns="code"/>
+            </unique-keys>
         </entity>
         
         <!-- 作业工时记录（按操作员逐条，state-machine.md 引用） -->

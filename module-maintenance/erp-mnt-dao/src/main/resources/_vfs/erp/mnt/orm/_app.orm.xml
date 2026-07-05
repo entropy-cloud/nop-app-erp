@@ -226,6 +226,10 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MNT_EQUIPMENT_CODE_ORG"/>
+                <unique-key columns="serialNo" name="UK_MNT_EQUIPMENT_SERIAL_NO"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="设备分类"
@@ -268,6 +272,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MNT_EQUIPMENT_CATEGORY_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntSchedule" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护计划"
@@ -327,6 +334,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MNT_SCHEDULE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntVisit" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护访问"
@@ -426,6 +436,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MNT_VISIT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntVisitTask" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护任务"
@@ -535,6 +548,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MNT_REQUEST_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntDowntimeEntry" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="停机记录"
@@ -647,6 +663,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MNT_MAINTENANCE_TEAM_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护团队成员"
@@ -795,6 +814,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MNT_SPARE_PART_USAGE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="备件消耗行"
@@ -939,6 +961,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_MNT_CALIBRATION_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="组织"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"

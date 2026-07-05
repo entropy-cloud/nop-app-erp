@@ -214,6 +214,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CT_CONTRACT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.contract.dao.entity.ErpCtContractLine" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="合同行"
@@ -480,6 +483,9 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
+            <unique-keys>
+                <unique-key columns="code" name="UK_CT_TEMPLATE_CODE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.contract.dao.entity.ErpCtApprovalMatrix" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="审批矩阵"
@@ -534,6 +540,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CT_APPROVAL_MATRIX_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.contract.dao.entity.ErpCtApprovalRecord" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="审批记录"
@@ -733,6 +742,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CT_REBATE_AGREEMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.contract.dao.entity.ErpCtRebateTier" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="返利阶梯"
@@ -1057,6 +1069,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_CT_DOCUMENT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="ErpMdPartner"
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_md_partner"

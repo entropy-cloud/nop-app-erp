@@ -136,6 +136,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_DRP_PLAN_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.drp.dao.entity.ErpDrpLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="DRP明细"
@@ -409,6 +412,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_DRP_SAFETY_STOCK_CALC_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.drp.dao.entity.ErpInvDrpCrossDock" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="越库执行记录"
@@ -509,6 +515,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_DRP_CROSS_DOCK_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.drp.dao.entity.ErpInvDrpDockAppointment" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="月台预约"

@@ -195,6 +195,9 @@
                 <to-many name="lines" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="inspectionId"/></join></to-many>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_QA_INSPECTION_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 质检单行 -->
@@ -250,6 +253,9 @@
                     <join><on leftProp="materialId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_QA_INSPECTION_TEMPLATE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 质检模板行 -->
@@ -323,6 +329,9 @@
                     <join><on leftProp="supplierId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_QA_NON_CONFORMANCE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
         
         <!-- 纠正预防措施 -->
@@ -381,6 +390,9 @@
         
             <relations>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_QA_RISK_REGISTER_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 质量目标 -->
@@ -410,6 +422,9 @@
             <relations>
                 <to-one name="responsiblePerson" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Responsible Person'><join><on leftProp="responsiblePersonId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_QA_QUALITY_GOAL_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 质量评审 -->
@@ -445,6 +460,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_QA_REVIEW_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 抽样方案（AQL） -->
@@ -470,6 +488,9 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
             </columns>
+            <unique-keys>
+                <unique-key name="UK_QA_SAMPLING_PLAN_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 量具/检验设备校准 -->
@@ -508,6 +529,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_QA_CALIBRATION_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 召回事件头（2.11） -->
@@ -544,6 +568,9 @@
                 <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
                 <to-many name="targets" refEntityName="app.erp.qa.dao.entity.ErpQaRecallTarget" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Targets' ext:estRows="50"><join><on leftProp="id" rightProp="recallId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_QA_RECALL_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 召回目标（受影响客户/批次，2.11） -->

@@ -196,6 +196,9 @@
                 <to-one name="catalogItem" refEntityName="app.erp.cs.dao.entity.ErpCsServiceCatalogItem" tagSet="pub" i18n-en:displayName='Catalog Item'><join><on leftProp="catalogItemId" rightProp="id"/></join></to-one>
                 <to-many name="actions" refEntityName="app.erp.cs.dao.entity.ErpCsTicketAction" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Actions' ext:estRows="20"><join><on leftProp="id" rightProp="ticketId"/></join></to-many>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_TICKET_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 工单类型 -->
@@ -223,6 +226,9 @@
                     <join><on leftProp="defaultSlaPolicyId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_TICKET_TYPE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- SLA 策略 -->
@@ -252,6 +258,9 @@
                 <to-one name="ticketType" refEntityName="app.erp.cs.dao.entity.ErpCsTicketType" ignoreDepends="true" tagSet="pub" i18n-en:displayName='Ticket Type'><join><on leftProp="ticketTypeId" rightProp="id"/></join></to-one>
                 <to-one name="team" refEntityName="app.erp.cs.dao.entity.ErpCsTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_SLA_POLICY_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 客服团队 -->
@@ -273,6 +282,9 @@
             </columns>
             <relations>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_TEAM_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 工单操作日志 -->
@@ -324,6 +336,9 @@
                     <join><on leftProp="categoryId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_KNOWLEDGE_BASE_CODE" columns="code"/>
+            </unique-keys>
         </entity>
 
         <!-- 预设应答分类 -->
@@ -351,6 +366,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_CANNED_CATEGORY_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 预设应答模板 -->
@@ -384,6 +402,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_CANNED_RESPONSE_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 满意度调查 -->
@@ -474,6 +495,9 @@
                 </to-one>
                 
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_CONTRACT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 服务权益 -->
@@ -511,6 +535,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_ENTITLEMENT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 目录分类 -->
@@ -539,6 +566,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_CATALOG_CATEGORY_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 服务目录项 -->
@@ -578,6 +608,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_SERVICE_CATALOG_ITEM_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 目录项履行映射 -->
@@ -608,6 +641,9 @@
                     <join><on leftProp="orgId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_CS_CATALOG_FULFILLMENT_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
         </entity>
 
         <!-- 工单计时条目 -->

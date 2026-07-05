@@ -169,6 +169,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_B2B_EDI_FORMAT_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.b2b.dao.entity.ErpB2bEdiDoc" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="EDI 事务"
@@ -239,6 +242,7 @@
             </relations>
             <unique-keys>
                 <unique-key columns="formatId,relatedBillType,relatedBillCode" name="UK_EDI_DOC_FORMAT_BILL"/>
+                <unique-key columns="code,orgId" name="UK_B2B_EDI_DOC_CODE_ORG"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.b2b.dao.entity.ErpB2bAsn" createTimeProp="createTime" createrProp="createdBy"
@@ -314,6 +318,9 @@
                     </join>
                 </to-many>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_B2B_ASN_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.b2b.dao.entity.ErpB2bAsnLine" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="ASN 明细行"
@@ -561,6 +568,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_B2B_PARTNER_PROFILE_CODE_ORG"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.b2b.dao.entity.ErpB2bPartnerCredential" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="伙伴凭证"
@@ -883,6 +893,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="serialNo" name="UK_B2B_MFT_CERTIFICATE_SERIAL_NO"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.b2b.dao.entity.ErpB2bMftLog" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MFT 传输日志"

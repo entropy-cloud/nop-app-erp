@@ -18,6 +18,7 @@
 
     <keys>
         <key name="UK_EDI_DOC_FORMAT_BILL" props="formatId,relatedBillType,relatedBillCode"/>
+        <key name="UK_B2B_EDI_DOC_CODE_ORG" props="code,orgId"/>
     </keys>
 
     <props>
