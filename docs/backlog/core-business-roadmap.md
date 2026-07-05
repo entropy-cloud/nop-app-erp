@@ -49,7 +49,7 @@
 | 1.5 | IErpFinAcctDocProvider 过账 Provider | finance | `finance/posting.md` | ✅ `done` |
 | 1.6 | 采购到付款端到端串联 | purchase/finance | `flow-overview.md` | ✅ `done`（AP 段 done 计划 0300-1；辅助账+核销+账龄 done 计划 0300-3；自动核销+定时+双面兜底 done 计划 0115-1；退货归 1.9 done） |
 | 1.7 | 销售到收款端到端串联 | sales/finance | `flow-overview.md` | ✅ `done`（AR 段 done 计划 0300-2；辅助账+核销+账龄 done 计划 0300-3；自动核销+定时+双面兜底 done 计划 0115-1；汇兑损益由 1000-3 承接 done；退货归 1.10 done） |
-| 1.8 | 费用报销/票据/资金模块业务逻辑 | finance | `expense-claim.md`, `treasury.md`, `finance/bank-reconciliation.md` | ✅ `done`（费用报销+员工借款子面 done 计划 0700-2；票据/资金子面 done 计划 1000-1；**银行对账子面 done 计划 0115-2**：bank-match-status 字典修正 + BANK_RECON_ADJ 业务类型 + 流水导入幂等 + 自动/手工勾对（VoucherLine 按需查询替代物化视图）+ 余额调节表平衡校验 + 未达账项调整凭证（经 IErpFinVoucherBiz.post + BillR 反查）+ reverse 红冲 + 期间 CLOSED 门控） |
+| 1.8 | 费用报销/票据/资金模块业务逻辑 | finance | `expense-claim.md`, `treasury.md`, `finance/bank-reconciliation.md` | ✅ `done`（费用报销+员工借款子面 done 计划 0700-2；票据/资金子面 done 计划 1000-1；**银行对账子面 done 计划 0115-2**：bank-match-status 字典修正 + BANK_RECON_ADJ 业务类型 + 流水导入幂等 + 自动/手工勾对（VoucherLine 按需查询替代物化视图）+ 余额调节表平衡校验 + 未达账项调整凭证（经 IErpFinVoucherBiz.post + BillR 反查）+ reverse 红冲 + 期间 CLOSED 门控；**坏账准备与应收核销 done 计划 0540-1**：`ErpFinBadDebt` 实体 + 4 业务类型 BAD_DEBT_RESERVE/WRITE_OFF/RECOVERY/RELEASE + `ar-ap-status` WRITTEN_OFF 扩展 + 账龄分桶法计提引擎 + 核销/收回审批状态机（经 CloseVoucherWriter 直接持久化凭证，核销不进 P&L）+ 期末 allowance 充足性门控） |
 | 1.9 | 采购退货与退款 | purchase/finance | `purchase/returns.md` | ✅ `done`（计划 0456-1） |
 | 1.10 | 销售退货与退款 | sales/finance | `sales/returns.md` | ✅ `done`（计划 0456-2：三轴审批 + 反向入库 + SALES_RETURN 凭证 + 负 AR 辅助账回减应收 + 反向收款核销） |
 | 1.11 | 批次追溯链逻辑 | inventory | `inventory/trace-chain.md` | ✅ `done`（计划 0700-1：单 uplink 自追溯链 + 四类追溯查询 + 退货透传挂链） |

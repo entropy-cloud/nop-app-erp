@@ -191,6 +191,8 @@
 
 > 账龄分级也是**坏账准备计提**的基础——每级账龄 × 历史损失率 = 必需准备，详见过账与核销展开 `bad-debt.md` §坏账准备计提方法。坏账核销/收回经本文件的 `ErpFinReconciliation` 核销单（`docStatus=REVERSED` 反向结算）+ `ErpFinArApItem.status=WRITTEN_OFF` 表达。
 
+> **状态扩展已落地**（plan `2026-07-05-0540-1`）：`erp-fin/ar-ap-status` 字典新增 `WRITTEN_OFF`（已坏账核销）。`ErpFinArApItemBizModel.findOpenItemsByPartner` 与 `aging` 仍按 OPEN/PARTIAL 取未核销项；坏账核销经 `ErpFinBadDebtBizModel.writeOff` 直接置 `status=WRITTEN_OFF` + `openAmount=0`（设计裁定：不新建独立坏账核销单行子表，核销对象即源 AR 辅助账项）。期末结账前置检查 `findUnsettledArApCodes` 已排除 `WRITTEN_OFF`（已核销项非"未核销"问题）。
+
 ### 账龄计算基准
 
 | 类型 | 计算起点 | 说明 |

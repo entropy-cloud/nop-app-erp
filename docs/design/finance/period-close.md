@@ -39,8 +39,14 @@
         │      └─► 若存在，列出清单
         │
         ├─► 检查本期是否有未核销的应收应付
-        │      ├─► 查询应收应付核销状态
+        │      ├─► 查询应收应付核销状态（status≠SETTLED/CANCELLED/WRITTEN_OFF）
         │      └─► 提示：建议结账前完成核销
+        │
+        ├─► 检查坏账准备充足性（Allowance 门控，已落地 plan 2026-07-05-0540-1）
+        │      ├─► 必需准备（账龄分桶法 Σ openAmount×损失率）vs 当前 Allowance GL 账面
+        │      ├─► 必需 > 账面 → shortfall 阻止结账，提示补提（BAD_DEBT_RESERVE）
+        │      ├─► 必需 < 账面 → excess 提示释放（BAD_DEBT_RELEASE，非阻断）
+        │      └─► 精度内相等 → 通过（config-gated erp-fin.bad-debt-allowance-gate-enabled）
         │
         ├─► 检查本期是否已执行折旧
         │      ├─► 查询本期应折旧但未执行的固定资产

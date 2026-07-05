@@ -156,7 +156,7 @@ NRV 是应收在资产负债表的列报价值（CAS 22"以预期信用损失为
 
 ## businessType 映射（保护区域建议）
 
-> 新增 businessType 属 `erp-fin/business-type` 字典扩展（保护区域），落地须 ORM 计划 + 人工批准。本节为设计建议。
+> **已落地**（plan `2026-07-05-0540-1`）：`BAD_DEBT_RESERVE`/`BAD_DEBT_WRITE_OFF`/`BAD_DEBT_RECOVERY`/`BAD_DEBT_RELEASE` 四码值已加入 `erp-fin/business-type` 字典 + `ErpFinBusinessType` 枚举（340/350/360/370）。凭证经 `CloseVoucherWriter` 直接持久化（与损益结转/汇兑重估同范式：分录来自余额/辅助账聚合，非来源单据，不走 Provider 模型，避免触发 ArApItem 生成）。
 
 | businessType | 步骤 | 借贷方向 | 触发动作 |
 |---|---|---|---|
@@ -183,6 +183,8 @@ Allowance 充足性检查：
 
 此检查接入 `period-close.md §结账前置检查`，与"posted=false 单据检查""未核销 AR/AP 检查"并列。NRV 是应收"#1 审计断言"（准确性/计价），未达标禁止结账。
 
+> **已落地**（plan `2026-07-05-0540-1`）：`ErpFinAccountingPeriodProcessor.preCheck` 新增 `populateAllowanceCheck`，经 `BadDebtProvisionService` 计算必需准备与 Allowance 账面，写入 `PeriodPreCheckReport.allowanceRequired/Balance/Shortfall/Excess`。shortfall > 0 阻断结账（`hasIssues()` 含此项）；excess > 0 仅提示（非阻断）。配置门控 `erp-fin.bad-debt-allowance-gate-enabled`（默认 true），科目未配置时告警跳过不阻塞未启用坏账模块的账套。
+
 ## SOX 控制启示
 
 > 来源：`CONTROLS.md`（ar-close-engine 8 控制）。本项目 `posting-log.md` 异常工作台可借鉴。
@@ -196,7 +198,9 @@ Allowance 充足性检查：
 
 ## 状态含义（应收辅助账扩展）
 
-`ErpFinArApItem.status` 在 `ar-ap-reconciliation.md` 已有 UNRECONCILED/PARTIAL/RECONCILED 基础上，坏账维度新增：
+> **已落地**（plan `2026-07-05-0540-1`）：`WRITTEN_OFF` 已加入 `erp-fin/ar-ap-status` 字典。`IN_COLLECTION`（催收中）属 Follow-up，未落地。
+
+`ErpFinArApItem.status` 在 `ar-ap-reconciliation.md` 已有 OPEN/PARTIAL/SETTLED/CANCELLED 基础上，坏账维度新增：
 
 | status | 含义 | 进入条件 | 退出条件 |
 |---|---|---|---|
