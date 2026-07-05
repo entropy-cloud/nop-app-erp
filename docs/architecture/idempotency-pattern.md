@@ -55,6 +55,7 @@
 - Webhook 入站、消息队列消费等异步路径，**不能只靠业务代码查重**（存在并发窗口）
 - 必须在 DB 层面建 `<unique-key>`，接收事件时先 insert，冲突时 catch 唯一约束异常返回已有结果
 - 参见 `integration-pattern.md`：Webhook 入站幂等处理
+- **全域落地状态（2026-07-05，plan `2026-07-05-1000-1-unique-key-constraints.md`）**：18 域共 154 个 `<unique-key>` 已补齐——所有业务单据/主数据的 `code`（业务自然键）均配 `(code, orgId)` 或 `(code)` 全局唯一约束；单品追踪 `serialNo`（ErpInvSerialNumber/ErpB2bMftCertificate/ErpMntEquipment）配全局唯一。异步入口的 DB 级 UNIQUE 兜底已具备模型层基础（具体异步入口的组合幂等键，如 webhook eventId，仍按本规则在对应入口实体上补建）。
 
 ### 规则 3：同步操作以状态守卫为第一道防线
 

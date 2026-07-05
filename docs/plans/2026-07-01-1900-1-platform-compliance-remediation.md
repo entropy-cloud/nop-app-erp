@@ -164,6 +164,7 @@ Exit Criteria:
 - Classification: `moved to explicit successor ownership`
 - Why Not Blocking Closure: `codegen.sh` 陈旧路径、`validate-page-model=false`、零 `<index>`、dict valueType 不一致，均与服务平台 API 合规不同表面、不阻塞当前业务。
 - Successor Required: yes —— 触发条件：bootstrap 杂项整理计划，或首次性能测试前（索引项）。
+- 进展更新（2026-07-05）：**O2 的"唯一性约束"部分已由 `docs/plans/2026-07-05-1000-1-unique-key-constraints.md` 全域落地**（18 域 154 个 `<unique-key>`，覆盖所有业务单据/主数据 `code` 自然键 + 单品 serialNo）。O2 剩余的"非 code 高频过滤索引"（orgId/delFlag/docStatus/approveStatus 等）仍为独立 successor（待独立"数据库索引设计"计划）。
 
 ### V2 单据状态机按钮页面接线
 
