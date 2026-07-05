@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 成本要素
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 材料
+    value: MATERIAL
+    description: 
+  
+  - label: 人工
+    value: LABOR
+    description: 
+  
+  - label: 制造费用
+    value: OVERHEAD
+    description: 
+  
+  - label: 委外
+    value: SUBCONTRACT
+    description: 
+  

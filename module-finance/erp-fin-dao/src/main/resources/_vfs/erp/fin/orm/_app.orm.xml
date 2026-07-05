@@ -89,6 +89,8 @@
                     i18n-en:label="Profit to Retained Earnings"/>
             <option code="VALUE_ADJUSTMENT" label="资产减值/重估" value="VALUE_ADJUSTMENT"
                     i18n-en:label="Asset Value Adjustment"/>
+            <option code="PRODUCTION_VARIANCE" label="生产差异" value="PRODUCTION_VARIANCE"
+                    i18n-en:label="Production Variance"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>

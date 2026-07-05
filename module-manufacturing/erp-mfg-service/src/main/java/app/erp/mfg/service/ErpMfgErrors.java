@@ -159,4 +159,14 @@ public interface ErpMfgErrors {
             "nop.err.mfg.work-order.status-not-allowed-for-job-card-gen",
             "工单[{workOrderCode}]当前状态[{currentStatus}]不允许由APS排程生成工序卡，期望状态为已审核且非终态(NOT_STARTED/STOCK_RESERVED/STOCK_PARTIAL/IN_PROCESS/STOPPED)",
             ARG_WORK_ORDER_CODE, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_VARIANCE_NO_STANDARD_COST = ErrorCode.define(
+            "nop.err.mfg.variance.no-standard-cost",
+            "产品[{productId}]无已发布(FIRMED)的标准成本卷算，无法计算生产差异，请先卷算并发布标准成本",
+            ARG_PRODUCT_ID);
+
+    ErrorCode ERR_VARIANCE_WORKORDER_NOT_COMPLETED = ErrorCode.define(
+            "nop.err.mfg.variance.workorder-not-completed",
+            "工单[{workOrderCode}]当前状态[{currentStatus}]未完工(COMPLETED)，不允许手动计算生产差异",
+            ARG_WORK_ORDER_CODE, ARG_CURRENT_STATUS);
 }

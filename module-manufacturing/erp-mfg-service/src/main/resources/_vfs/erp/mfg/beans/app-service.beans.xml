@@ -16,6 +16,19 @@
     <bean id="app.erp.mfg.service.costing.CostRollupService"
           class="app.erp.mfg.service.costing.CostRollupService"/>
 
+    <!-- 生产差异计算引擎（plan 2026-07-05-1838-2）：完工触发 / 手动重算 → ErpMfgCostVariance 行 -->
+    <bean id="app.erp.mfg.service.costing.ProductionVarianceCalculator"
+          class="app.erp.mfg.service.costing.ProductionVarianceCalculator"/>
+
+    <!-- 生产差异过账（plan 2026-07-05-1838-2）：差异计算后按要素汇总净差异 → 凭证 → posted 回写。
+          Provider 由 finance ErpFinAcctDocRegistry 跨模块 collect-beans 自动聚合（同 PPV 范式）。 -->
+    <bean id="app.erp.mfg.service.posting.MfgPostingExecutor"
+          class="app.erp.mfg.service.posting.MfgPostingExecutor"/>
+    <bean id="app.erp.mfg.service.posting.ProductionVarianceDispatcher"
+          class="app.erp.mfg.service.posting.ProductionVarianceDispatcher"/>
+    <bean id="app.erp.mfg.service.posting.ProductionVarianceAcctDocProvider"
+          class="app.erp.mfg.service.posting.ProductionVarianceAcctDocProvider"/>
+
     <!-- 工单齐套校验服务（plan 2026-07-02-2237-1 Phase 2）：BOM 展开 × plannedQuantity 对照 inventory 余额可用量 -->
     <bean id="app.erp.mfg.service.workorder.KitAvailabilityChecker"
           class="app.erp.mfg.service.workorder.KitAvailabilityChecker"/>

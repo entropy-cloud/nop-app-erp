@@ -202,7 +202,9 @@ prop:
       workOrderId: Work Order
       lineNo: Line No
       varianceType: Variance Type
+      varianceType_label: null
       costElement: Cost Element
+      costElement_label: null
       materialId: Material
       operationId: Operation
       standardAmount: Standard Amount
@@ -742,6 +744,8 @@ dict:
     erp-mfg/forecast-status: Forecast Status
     erp-mfg/work-date-pattern: Work Date Pattern
     erp-mfg/source-order-type: Work Order Source Type
+    erp-mfg/variance-type: Variance Type
+    erp-mfg/cost-element: Cost Element
 dict.option.label:
   erp-mfg/work-order-status:
     DRAFT: Draft
@@ -832,3 +836,14 @@ dict.option.label:
     FORECAST: Forecast
     MANUAL: Manual
     APS_SCHEDULE: APS Schedule
+  erp-mfg/variance-type:
+    MATERIAL_USAGE: Material Usage
+    LABOR_EFFICIENCY: Labor Efficiency
+    LABOR_RATE: Labor Rate
+    OVERHEAD: Overhead
+    VOLUME: Volume
+  erp-mfg/cost-element:
+    MATERIAL: Material
+    LABOR: Labor
+    OVERHEAD: Overhead
+    SUBCONTRACT: Subcontract

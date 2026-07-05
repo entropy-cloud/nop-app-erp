@@ -37,6 +37,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 生产差异过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
+             IErpFinAcctDocProvider SPI 位于 finance-service）。manufacturing→finance 单向无环
+             （finance 为 DAG 顶，不依赖 manufacturing）。 -->
+        <dependency>
+            <artifactId>app-erp-finance-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <artifactId>app-erp-manufacturing-codegen</artifactId>
             <groupId>io.nop.app</groupId>

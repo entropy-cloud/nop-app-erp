@@ -33,11 +33,11 @@
         </prop>
         <prop name="varianceType" displayName="差异类型" propId="4" i18n-en:displayName="Variance Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-mfg/variance-type"/>
         </prop>
         <prop name="costElement" displayName="成本要素" propId="5" i18n-en:displayName="Cost Element" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-mfg/cost-element"/>
         </prop>
         <prop name="materialId" displayName="物料" propId="6" i18n-en:displayName="Material" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="material">

@@ -203,6 +203,7 @@ prop:
       actualQty: 实际数量
       businessDate: 业务日期
       costElement: 成本要素
+      costElement_label: 成本要素
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -222,6 +223,7 @@ prop:
       varianceAmount: 差异金额
       variancePercent: 差异百分比
       varianceType: 差异类型
+      varianceType_label: 差异类型
       version: 数据版本
       workOrder: null
       workOrderId: 工单

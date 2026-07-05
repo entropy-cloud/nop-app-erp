@@ -127,6 +127,19 @@
             <option code="MANUAL" label="手工录入" value="MANUAL" i18n-en:label="Manual"/>
             <option code="APS_SCHEDULE" label="APS排程生成" value="APS_SCHEDULE" i18n-en:label="APS Schedule"/>
         </dict>
+        <dict label="差异类型" name="erp-mfg/variance-type" valueType="string" i18n-en:label="Variance Type">
+            <option code="MATERIAL_USAGE" label="材料用量差异" value="MATERIAL_USAGE" i18n-en:label="Material Usage"/>
+            <option code="LABOR_EFFICIENCY" label="人工效率差异" value="LABOR_EFFICIENCY" i18n-en:label="Labor Efficiency"/>
+            <option code="LABOR_RATE" label="人工费率差异" value="LABOR_RATE" i18n-en:label="Labor Rate"/>
+            <option code="OVERHEAD" label="制造费用差异" value="OVERHEAD" i18n-en:label="Overhead"/>
+            <option code="VOLUME" label="产量差异" value="VOLUME" i18n-en:label="Volume"/>
+        </dict>
+        <dict label="成本要素" name="erp-mfg/cost-element" valueType="string" i18n-en:label="Cost Element">
+            <option code="MATERIAL" label="材料" value="MATERIAL" i18n-en:label="Material"/>
+            <option code="LABOR" label="人工" value="LABOR" i18n-en:label="Labor"/>
+            <option code="OVERHEAD" label="制造费用" value="OVERHEAD" i18n-en:label="Overhead"/>
+            <option code="SUBCONTRACT" label="委外" value="SUBCONTRACT" i18n-en:label="Subcontract"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -2216,9 +2229,11 @@
                 <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
                 <column code="VARIANCE_TYPE" displayName="差异类型" mandatory="true" name="varianceType" precision="50"
-                        propId="4" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Variance Type"/>
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/variance-type"
+                        i18n-en:displayName="Variance Type"/>
                 <column code="COST_ELEMENT" displayName="成本要素" mandatory="true" name="costElement" precision="50"
-                        propId="5" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Cost Element"/>
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/cost-element"
+                        i18n-en:displayName="Cost Element"/>
                 <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Material"/>
                 <column code="OPERATION_ID" displayName="工序" name="operationId" propId="7" stdDataType="long"

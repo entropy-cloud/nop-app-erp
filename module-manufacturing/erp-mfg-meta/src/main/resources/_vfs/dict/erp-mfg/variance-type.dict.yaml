@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 差异类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 材料用量差异
+    value: MATERIAL_USAGE
+    description: 
+  
+  - label: 人工效率差异
+    value: LABOR_EFFICIENCY
+    description: 
+  
+  - label: 人工费率差异
+    value: LABOR_RATE
+    description: 
+  
+  - label: 制造费用差异
+    value: OVERHEAD
+    description: 
+  
+  - label: 产量差异
+    value: VOLUME
+    description: 
+  

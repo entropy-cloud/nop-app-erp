@@ -140,6 +140,22 @@
             <option code="MANUAL" label="手工录入" value="MANUAL" i18n-en:label='Manual'/>
             <option code="APS_SCHEDULE" label="APS排程生成" value="APS_SCHEDULE" i18n-en:label='APS Schedule'/>
         </dict>
+        <!-- 生产成本差异类型（plan 2026-07-05-1838-2）。范围收窄 Decision：材料段仅算"用量差异"（MATERIAL_USAGE），
+             材料价格差异由 PPV（plan 2026-07-05-0427-2，PURCHASE_PRICE_VARIANCE）在采购入库捕获，避免重复计入。 -->
+        <dict label="差异类型" name="erp-mfg/variance-type" valueType="string" i18n-en:label='Variance Type'>
+            <option code="MATERIAL_USAGE" label="材料用量差异" value="MATERIAL_USAGE" i18n-en:label='Material Usage'/>
+            <option code="LABOR_EFFICIENCY" label="人工效率差异" value="LABOR_EFFICIENCY" i18n-en:label='Labor Efficiency'/>
+            <option code="LABOR_RATE" label="人工费率差异" value="LABOR_RATE" i18n-en:label='Labor Rate'/>
+            <option code="OVERHEAD" label="制造费用差异" value="OVERHEAD" i18n-en:label='Overhead'/>
+            <option code="VOLUME" label="产量差异" value="VOLUME" i18n-en:label='Volume'/>
+        </dict>
+        <!-- 成本要素（plan 2026-07-05-1838-2）。生产差异按四要素分解；要素汇总净差异入账（承接 PPV 范式）。 -->
+        <dict label="成本要素" name="erp-mfg/cost-element" valueType="string" i18n-en:label='Cost Element'>
+            <option code="MATERIAL" label="材料" value="MATERIAL" i18n-en:label='Material'/>
+            <option code="LABOR" label="人工" value="LABOR" i18n-en:label='Labor'/>
+            <option code="OVERHEAD" label="制造费用" value="OVERHEAD" i18n-en:label='Overhead'/>
+            <option code="SUBCONTRACT" label="委外" value="SUBCONTRACT" i18n-en:label='Subcontract'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -1053,8 +1069,8 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="workOrderId" displayName="工单" stdSqlType="BIGINT" mandatory="true" code="WORK_ORDER_ID" propId="2" stdDataType="long" i18n-en:displayName='Work Order' />
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
-                <column name="varianceType" displayName="差异类型" stdSqlType="VARCHAR" precision="50" mandatory="true" code="VARIANCE_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Variance Type' />
-                <column name="costElement" displayName="成本要素" stdSqlType="VARCHAR" precision="50" mandatory="true" code="COST_ELEMENT" propId="5" stdDataType="string" i18n-en:displayName='Cost Element' />
+                <column name="varianceType" displayName="差异类型" ext:dict="erp-mfg/variance-type" stdSqlType="VARCHAR" precision="50" mandatory="true" code="VARIANCE_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Variance Type' />
+                <column name="costElement" displayName="成本要素" ext:dict="erp-mfg/cost-element" stdSqlType="VARCHAR" precision="50" mandatory="true" code="COST_ELEMENT" propId="5" stdDataType="string" i18n-en:displayName='Cost Element' />
                 <column name="materialId" displayName="物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="6" stdDataType="long" i18n-en:displayName='Material' />
                 <column name="operationId" displayName="工序" stdSqlType="BIGINT" code="OPERATION_ID" propId="7" stdDataType="long" i18n-en:displayName='Operation' />
                 <column name="standardAmount" displayName="标准金额" domain="amount" defaultValue="0" code="STANDARD_AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Standard Amount' />

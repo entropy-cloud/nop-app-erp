@@ -857,6 +857,7 @@ dict.option.label:
     BAD_DEBT_RELEASE: Bad Debt Release
     PROFIT_TO_RETAINED_EARNINGS: Profit to Retained Earnings
     VALUE_ADJUSTMENT: Asset Value Adjustment
+    PRODUCTION_VARIANCE: Production Variance
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

@@ -363,4 +363,49 @@ public interface _ErpMfgDaoConstants {
      */
     String SOURCE_ORDER_TYPE_APS_SCHEDULE = "APS_SCHEDULE";
                     
+    /**
+     * 差异类型: 材料用量差异 
+     */
+    String VARIANCE_TYPE_MATERIAL_USAGE = "MATERIAL_USAGE";
+                    
+    /**
+     * 差异类型: 人工效率差异 
+     */
+    String VARIANCE_TYPE_LABOR_EFFICIENCY = "LABOR_EFFICIENCY";
+                    
+    /**
+     * 差异类型: 人工费率差异 
+     */
+    String VARIANCE_TYPE_LABOR_RATE = "LABOR_RATE";
+                    
+    /**
+     * 差异类型: 制造费用差异 
+     */
+    String VARIANCE_TYPE_OVERHEAD = "OVERHEAD";
+                    
+    /**
+     * 差异类型: 产量差异 
+     */
+    String VARIANCE_TYPE_VOLUME = "VOLUME";
+                    
+    /**
+     * 成本要素: 材料 
+     */
+    String COST_ELEMENT_MATERIAL = "MATERIAL";
+                    
+    /**
+     * 成本要素: 人工 
+     */
+    String COST_ELEMENT_LABOR = "LABOR";
+                    
+    /**
+     * 成本要素: 制造费用 
+     */
+    String COST_ELEMENT_OVERHEAD = "OVERHEAD";
+                    
+    /**
+     * 成本要素: 委外 
+     */
+    String COST_ELEMENT_SUBCONTRACT = "SUBCONTRACT";
+                    
 }

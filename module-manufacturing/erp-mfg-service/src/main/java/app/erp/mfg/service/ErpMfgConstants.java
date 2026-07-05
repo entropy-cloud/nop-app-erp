@@ -108,8 +108,7 @@ public interface ErpMfgConstants {
     // MRP 批量与提前期配置（经 AppConfig.var 读取；无 .env/外部服务）
     // default-lot-size: 0=lot-for-lot（净需求即建议量），>0 时按倍数向上取整
     String CONFIG_MRP_DEFAULT_LOT_SIZE = "erp-mfg.default-lot-size";
-    int DEFAULT_MRP_DEFAULT_LOT_SIZE = 0;
-    // 制造件 routing 累计工时换算提前期天数：days = hours × days-per-routing-hour（默认 0.125=8h/天）
+    int DEFAULT_MRP_DEFAULT_LOT_SIZE = 0;    // 制造件 routing 累计工时换算提前期天数：days = hours × days-per-routing-hour（默认 0.125=8h/天）
     String CONFIG_MFG_LEADTIME_DAYS_PER_ROUTING_HOUR = "erp-mfg.mfg-leadtime-days-per-routing-hour";
     double DEFAULT_MFG_LEADTIME_DAYS_PER_ROUTING_HOUR = 0.125;
 
@@ -167,4 +166,21 @@ public interface ErpMfgConstants {
     // MRP 消费预测总开关（plan 2026-07-05-0427-1 §Infrastructure）。默认 true=消费 APPROVED 预测行。
     String CONFIG_MFG_FORECAST_CONSUME_ENABLED = "erp-mfg.forecast-consume-enabled";
     boolean DEFAULT_MFG_FORECAST_CONSUME_ENABLED = true;
+
+    // 生产差异自动计算开关（plan 2026-07-05-1838-2 §Goals）。默认 false=完工不自动触发差异计算，
+    // 需手动经 ErpMfgCostVariance__calculateVariances 入口计算；true=工单完工（willFinish）时自动算。
+    String CONFIG_VARIANCE_AUTO_CALC_ENABLED = "erp-mfg.variance-auto-calc-enabled";
+
+    // 成本差异类型（erp-mfg/variance-type，plan 2026-07-05-1838-2）
+    String VARIANCE_TYPE_MATERIAL_USAGE = "MATERIAL_USAGE";
+    String VARIANCE_TYPE_LABOR_EFFICIENCY = "LABOR_EFFICIENCY";
+    String VARIANCE_TYPE_LABOR_RATE = "LABOR_RATE";
+    String VARIANCE_TYPE_OVERHEAD = "OVERHEAD";
+    String VARIANCE_TYPE_VOLUME = "VOLUME";
+
+    // 成本要素（erp-mfg/cost-element，plan 2026-07-05-1838-2）
+    String COST_ELEMENT_MATERIAL = "MATERIAL";
+    String COST_ELEMENT_LABOR = "LABOR";
+    String COST_ELEMENT_OVERHEAD = "OVERHEAD";
+    String COST_ELEMENT_SUBCONTRACT = "SUBCONTRACT";
 }

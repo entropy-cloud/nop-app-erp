@@ -8,6 +8,8 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.costing.ProductionVarianceCalculator;
+import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
 import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
 import app.erp.md.dao.entity.ErpMdMaterial;
@@ -23,6 +25,8 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 import java.math.BigDecimal;
@@ -46,6 +50,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ErpMfgWorkOrderProcessor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ErpMfgWorkOrderProcessor.class);
+
     @Inject
     IDaoProvider daoProvider;
     @Inject
@@ -54,6 +60,10 @@ public class ErpMfgWorkOrderProcessor {
     IErpInvStockMoveBiz stockMoveBiz;
     @Inject
     IErpQaInspectionBiz inspectionBiz;
+    @Inject
+    ProductionVarianceCalculator productionVarianceCalculator;
+    @Inject
+    ProductionVarianceDispatcher productionVarianceDispatcher;
 
     public ErpMfgWorkOrder submitForApproval(String id, IServiceContext context) {
         ErpMfgWorkOrder wo = requireWorkOrder(id, context);
@@ -196,6 +206,19 @@ public class ErpMfgWorkOrderProcessor {
             wo.setActualEndDate(CoreMetrics.today());
         }
         workOrderDao().updateEntity(wo);
+
+        // 完工达量（willFinish）：config-gated 自动触发生产差异计算 + 过账。失败隔离仅记 ERROR 日志，
+        // 不阻断完工（异常工作台统一接入归 Deferred，见 plan 2026-07-05-1838-2 Deferred「cron 定时批量」）。
+        if (willFinish && isVarianceAutoCalcEnabled()) {
+            try {
+                productionVarianceCalculator.deleteByWorkOrder(workOrderId);
+                productionVarianceCalculator.calculateVariances(workOrderId);
+                productionVarianceDispatcher.dispatchIfApplicable(workOrderId);
+            } catch (Exception e) {
+                LOG.error("工单 {} 完工触发生产差异计算/过账失败（不阻断完工，可经手动 calculateVariances 重算）",
+                        wo.getCode(), e);
+            }
+        }
         return wo;
     }
 
@@ -400,6 +423,13 @@ public class ErpMfgWorkOrderProcessor {
 
     protected boolean isInspectionGateEnabled() {
         return readBoolConfig(ErpMfgConstants.CONFIG_INSPECTION_GATE_ENABLED, false);
+    }
+
+    /**
+     * 生产差异完工自动触发开关（plan 2026-07-05-1838-2）。默认关：完工不自动算差异，需手动入口重算。
+     */
+    protected boolean isVarianceAutoCalcEnabled() {
+        return readBoolConfig(ErpMfgConstants.CONFIG_VARIANCE_AUTO_CALC_ENABLED, false);
     }
 
     protected boolean readBoolConfig(String key, boolean defaultValue) {

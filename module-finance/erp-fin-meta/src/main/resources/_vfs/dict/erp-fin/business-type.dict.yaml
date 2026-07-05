@@ -157,3 +157,7 @@ options:
     value: VALUE_ADJUSTMENT
     description: 
   
+  - label: 生产差异
+    value: PRODUCTION_VARIANCE
+    description: 
+  

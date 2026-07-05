@@ -259,6 +259,11 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_VALUE_ADJUSTMENT = "VALUE_ADJUSTMENT";
                     
     /**
+     * 业务类型: 生产差异 
+     */
+    String BUSINESS_TYPE_PRODUCTION_VARIANCE = "PRODUCTION_VARIANCE";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

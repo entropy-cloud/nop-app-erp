@@ -69,6 +69,18 @@
         }
 
 
+        private String _varianceType_label;
+
+    
+        public String getVarianceType_label(){
+            return _varianceType_label;
+        }
+
+        public void setVarianceType_label(String value){
+            this._varianceType_label = value;
+        }
+
+
         private String _costElement;
 
     
@@ -80,6 +92,18 @@
 
         public void setCostElement(String value){
             this._costElement = value;
+        }
+
+
+        private String _costElement_label;
+
+    
+        public String getCostElement_label(){
+            return _costElement_label;
+        }
+
+        public void setCostElement_label(String value){
+            this._costElement_label = value;
         }
 
 

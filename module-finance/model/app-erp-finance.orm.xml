@@ -92,6 +92,8 @@
             <option code="BAD_DEBT_RELEASE" label="坏账准备释放" value="BAD_DEBT_RELEASE" i18n-en:label='Bad Debt Release'/>
             <option code="PROFIT_TO_RETAINED_EARNINGS" label="本年利润结转未分配利润" value="PROFIT_TO_RETAINED_EARNINGS" i18n-en:label='Profit to Retained Earnings'/>
             <option code="VALUE_ADJUSTMENT" label="资产减值/重估" value="VALUE_ADJUSTMENT" i18n-en:label='Asset Value Adjustment'/>
+            <!-- 生产差异（plan 2026-07-05-1838-2）：工单完工→差异计算→差异入账，承接 PPV 范式按成本要素汇总净差异。 -->
+            <option code="PRODUCTION_VARIANCE" label="生产差异" value="PRODUCTION_VARIANCE" i18n-en:label='Production Variance'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>
