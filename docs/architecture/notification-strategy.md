@@ -31,3 +31,20 @@
 - **通知已读状态**：记录在 `erp_sys_notification_read` 表（`ErpSysNotificationRead`），唯一键 (notificationId, userId) 防重复。
 - **config-gated**：bootstrap 默认仅站内消息通道（`erp-notify.email-enabled`/`sms-enabled` 默认 false），无真实供应商时跳过外发并 WARN，不阻断业务事实。
 - **异步总线（`nop-message`）**：本期不接入（同步派发 + `txn().afterCommit` 即可满足单实例 bootstrap）；触发条件=生产部署/多实例/通知量需削峰时接入 Kafka/Pulsar，归后继。
+
+## 业务消费者接线清单（plan 2026-07-06-0642-1）
+
+6 个域运营事件接入 `notify()` 派发链 + 2 个提醒类 scheduler job：
+
+| 事件类型 | 调用点 | config-gated | 默认接收人 | 备注 |
+|----------|--------|--------------|-----------|------|
+| `cs.sla-overdue` | `ErpCsTicketBizModel.scanOverdueTickets` + `findSlaWarnings` | `erp-cs.sla-notify-enabled` (true) | ROLE 客服主管 | 复用既有 `erp-cs-sla-scan` scheduler job 自动派发 |
+| `fin.posting-exception` | `ErpFinPostingExceptionRecorder.record`（双 REQUIRES_NEW 隔离） | `erp-fin.posting-exception-notify-enabled` (true) | ROLE 财务员 | 异常记录独立事务提交后调 notify，避免主过账回滚吞掉通知 |
+| `sal.credit-over-limit` | `CreditLimitChecker.check` SOFT_WARNING 路径 | `erp-sal.credit-notify-enabled` (true) | ROLE 销售员 | HARD_BLOCK 抛错拒绝不通知；SPECIAL_APPROVAL 持权限放行不通知 |
+| `crm.event-reminder` | `ErpCrmEventReminderJob.execute`（scheduler） | `erp-crm.event-reminder-cron` (空=不调度) | USER_LIST ownerUserId | 设计默认 cron 每 15 分钟；查 PLANNED 状态到期事件 |
+| `cs.csat-reminder` | `ErpCsCsatReminderJob.execute`（scheduler） | `erp-cs.csat-reminder-cron` (空=不调度) | ROLE 客服员 | 设计默认 cron 每日 02:00；查未响应/过期调查 |
+| `mfg.production-variance` | `ProductionVarianceCalculator.calculateVariances`（旁路告警） | `erp-mfg.variance-alert-enabled` (true) + `erp-mfg.variance-alert-threshold` (默认 100) | ROLE 生产主管 | 阈值判定最大净差异行；与过账 Dispatcher 解耦 |
+
+**通知失败降级**：所有消费者在 notify 调用外包 try/catch（warn-and-continue），与通道侧"config-gated 静默跳过不阻断业务"语义一致。
+
+**精确接收人路由**：本期接收人沿用既有 ROLE resolver（角色名→NopAuthUserRole）+ USER_LIST（escalationUserId/ownerUserId），与通道侧 config-gated 语义一致。精确组织层级路由依赖角色基础设施落地（DEFERRED，见 plan 末尾）。

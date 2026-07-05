@@ -166,7 +166,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-crm-event-reminder` | 扫描 PLANNED 活动按 `reminderMinutesBefore` 发提醒 | 默认每小时 | `ErpCrmEventBizModel.findDueReminders()` | 小 | job | WIRED | `erp-crm.event-reminder-cron` | `docs/design/crm/use-cases.md:168`；`plans/2026-07-04-0700-1:155-159` |
+| `erp-crm-event-reminder` | 扫描 PLANNED 活动按 `reminderMinutesBefore` 发提醒 | `0 0/15 * * * ?`（每 15 分钟） | `ErpCrmEventReminderJob.execute()` → `IErpCrmEventBiz.findDueReminders()` → `IErpSysNotificationBiz.notify("crm.event-reminder")` | 小 | job | SCHEDULED | `erp-crm.event-reminder-cron` | `docs/design/crm/use-cases.md:168`；`plans/2026-07-06-0642-1` §Phase 2 |
 | `erp-crm-lead-scoring-recalc` | 每日批量重算线索评分 | `0 2 * * *`（每日 02:00） | `ErpCrmLeadScoringRecalcJob.execute()` → `IErpCrmLeadScoreBiz.recalculateScore()` | 小-中 | job | SCHEDULED | `erp-crm.lead-scoring.schedule-cron` | `docs/design/crm/lead-scoring.md:157`；`plans/2026-07-05-0306-1` |
 | `erp-crm-forecast-recalc` | 每日重算销售预测 | `0 3 * * *`（每日 03:00） | `ErpCrmForecastRecalcJob.execute()` → `IErpCrmForecastBiz.refreshForecast()` | 中 | job | SCHEDULED | `erp-crm.forecast.recalc-cron` | `docs/design/crm/sales-forecast.md:165`；`plans/2026-07-05-0306-1` |
 | `erp-crm-funnel-aggregation` | 漏斗阶段聚合 rollup | `0 0 3 * * ?`（每日 03:00） | （待实现） | 中 | batch-candidate | DESIGN | `erp-crm.funnel.aggregation-cron` | `docs/design/crm/lead-waterfall.md:191` |
@@ -178,7 +178,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 |----------|----------|----------|----------|------|----------|------|--------|------|
 | `erp-cs-sla-scan` | 扫描 `adjustedDeadline < now` 工单，建 ESCALATE 动作 + 通知升级人 | 每分钟 | `ErpCsSlaScanJob.execute()` → `IErpCsTicketBiz.scanOverdueTickets()` | 小 | job | SCHEDULED | `erp-cs.sla-scan-cron` | `docs/design/customer-service/sla.md:281`；`plans/2026-07-04-0700-2:172-176`；`plans/2026-07-05-0306-1` |
 | `erp-cs-sla-warning` | 截止前 1h/30min 向经办人发预警 | 随扫描 | `findSlaWarnings()` | 小 | job | WIRED | `erp-cs.sla-warning-before` | `docs/design/customer-service/sla.md:282` |
-| `erp-cs-csat-reminder` | CSAT 调查提醒 + 过期标记 | 定期 | `findSurveyReminders()`/`findExpiredSurveys()` | 小 | job | WIRED | `erp-cs.survey-reminder-hours` 等 | `docs/design/customer-service/csat.md:188,225` |
+| `erp-cs-csat-reminder` | CSAT 调查提醒 + 过期标记 | `0 0 2 * * ?`（每日 02:00） | `ErpCsCsatReminderJob.execute()` → `findSurveyReminders()`/`findExpiredSurveys()` → `IErpSysNotificationBiz.notify("cs.csat-reminder")` | 小 | job | SCHEDULED | `erp-cs.csat-reminder-cron` | `docs/design/customer-service/csat.md:188,225`；`plans/2026-07-06-0642-1` §Phase 2 |
 | `erp-cs-csat-delayed-send` | `survey-send-delay>0` 时延迟发送调查 | 按延迟 | （待实现） | 小 | job | DESIGN | `erp-cs.survey-send-delay` | `docs/design/customer-service/csat.md:220` |
 | `erp-cs-entitlement-expiry` | 每日扫描 30/60/90 天到期权益，到期自动停用 | 每日 | （待实现） | 小 | job | DESIGN | `erp-cs.entitlement-expiry-warning-days` | `docs/design/customer-service/entitlement.md:87,195` |
 

@@ -78,6 +78,7 @@
 | 5.1 | 会计日志与可观测性（规则命中追溯 / 变更审计 / 异常工作台 / traceId 串联） | finance | `finance/posting-log.md` | ✅ `done`（P0，plan `2026-07-04-1452-1` completed） |
 | 5.2 | 冲销反写闭环（`VoucherReversedEvent` + 域 Provider 监听回退业务单据状态） | finance | `finance/posting.md` §冲销机制方向二 | ✅ `done`（P0，plan `2026-07-04-1452-2` completed） |
 | 5.3 | 运行监控（自动化记账率 / 时延 / 异常率 / 业财闭环成功率 + 告警 SLA） | finance | `finance/posting-log.md` §运行监控指标 | ✅ `done`（P1，plan `2026-07-04-1452-3` completed） |
+| 5.4 | 域运营事件通知消费者接线（CS SLA / 过账异常 / 信用超限 / CRM 活动提醒 / CSAT 调查提醒 / 生产差异阈值告警 → 站内消息派发链 + 2 提醒类 scheduler job） | cs/finance/sales/crm/manufacturing | `architecture/notification-strategy.md` §业务消费者接线清单 | ✅ `done`（plan `2026-07-06-0642-1` completed） |
 
 ## Reference
 
