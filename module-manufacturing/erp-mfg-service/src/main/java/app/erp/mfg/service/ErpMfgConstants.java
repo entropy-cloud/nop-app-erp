@@ -72,6 +72,20 @@ public interface ErpMfgConstants {
     String CONFIG_ALLOW_PARTIAL_KIT_START = "erp-mfg.allow-partial-kit-start";
     String CONFIG_INSPECTION_GATE_ENABLED = "erp-mfg.inspection-gate-enabled";
 
+    // 工单来源单据类型（erp-mfg/source-order-type，plan 2026-07-05-0427-3）
+    String SOURCE_ORDER_TYPE_SALES_ORDER = "SALES_ORDER";
+    String SOURCE_ORDER_TYPE_FORECAST = "FORECAST";
+    String SOURCE_ORDER_TYPE_MANUAL = "MANUAL";
+    String SOURCE_ORDER_TYPE_APS_SCHEDULE = "APS_SCHEDULE";
+
+    // APS 排程→工序卡自动生成配置项（plan 2026-07-05-0427-3 §Infrastructure）。
+    // jobcard-auto-generate-on-schedule：nop-job 批量入口总开关（默认 false=手动触发为主）。
+    // jobcard-incremental-rebuild：重复调用时仅补建缺失工序卡而非抛错（默认 false=严格幂等抛错）。
+    String CONFIG_JOBCARD_AUTO_GENERATE_ON_SCHEDULE = "erp-mfg.jobcard-auto-generate-on-schedule";
+    String CONFIG_JOBCARD_INCREMENTAL_REBUILD = "erp-mfg.jobcard-incremental-rebuild";
+    /** 定时 APS 排程→工序卡批量生成 cron（空=不调度；plan 2026-07-05-0427-3 §Decision）。 */
+    String CONFIG_JOBCARD_AUTO_GENERATE_CRON = "erp-mfg.jobcard-auto-generate-cron";
+
     // MRP 计划状态（erp-mfg/mrp-status）
     String MRP_STATUS_DRAFT = "DRAFT";
     String MRP_STATUS_RUNNING = "RUNNING";

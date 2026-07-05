@@ -71,6 +71,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--APS排程来源(弱参照)-->
+                <col id="sourceScheduleId" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -88,6 +91,7 @@
  code[作业卡编号] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ sourceScheduleId[APS排程来源(弱参照)] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-作业卡" i18n-en:title="Add Job Card">
@@ -98,7 +102,7 @@
  scrappedQuantity[报废数量] status[状态]
  workcenterId[工作中心] actualStartTime[实际开始时间]
  actualEndTime[实际结束时间] remark[备注]
- code[作业卡编号] 
+ code[作业卡编号] sourceScheduleId[APS排程来源(弱参照)]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-作业卡" i18n-en:title="Edit Job Card">
@@ -110,6 +114,7 @@
  workcenterId[工作中心] actualStartTime[实际开始时间]
  actualEndTime[实际结束时间] remark[备注]
  code[作业卡编号] delVersion[逻辑删除版本]
+ sourceScheduleId[APS排程来源(弱参照)] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

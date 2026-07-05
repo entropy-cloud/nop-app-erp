@@ -24,12 +24,21 @@ import java.time.LocalDateTime;
 @DataBean
 public class ApsLoadSlot {
 
+    private Long operationOrderId;
     private Long workOrderId;
     private Integer sequence;
     private Long workcenterId;
     private LocalDateTime plannedStartT;
     private LocalDateTime plannedEndT;
     private BigDecimal setupTime;
+
+    public Long getOperationOrderId() {
+        return operationOrderId;
+    }
+
+    public void setOperationOrderId(Long operationOrderId) {
+        this.operationOrderId = operationOrderId;
+    }
 
     public Long getWorkOrderId() {
         return workOrderId;

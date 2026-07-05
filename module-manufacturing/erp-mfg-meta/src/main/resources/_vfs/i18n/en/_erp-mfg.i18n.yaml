@@ -306,6 +306,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      sourceScheduleId: Source Schedule Id
       workOrder: Work Order
       workcenter: Workcenter
       operation: Operation
@@ -584,6 +585,7 @@ prop:
       productionVersionId: Production Version
       sourceMrpPlanId: Source Mrp Plan
       sourceOrderType: Source Order Type
+      sourceOrderType_label: null
       sourceOrderCode: Source Order Code
       productId: Product
       plannedQuantity: Planned Quantity
@@ -617,6 +619,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      sourceScheduleId: Source Schedule Id
       exchangeRate: Exchange Rate
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
@@ -732,6 +735,7 @@ dict:
     erp-mfg/shift-type: Shift Type
     erp-mfg/forecast-status: Forecast Status
     erp-mfg/work-date-pattern: Work Date Pattern
+    erp-mfg/source-order-type: Work Order Source Type
 dict.option.label:
   erp-mfg/work-order-status:
     DRAFT: Draft
@@ -817,3 +821,8 @@ dict.option.label:
     ALL_WEEK: All Week
     WEEKDAYS: Weekdays
     WEEKEND: Weekend Only
+  erp-mfg/source-order-type:
+    SALES_ORDER: Sales Order
+    FORECAST: Forecast
+    MANUAL: Manual
+    APS_SCHEDULE: APS Schedule

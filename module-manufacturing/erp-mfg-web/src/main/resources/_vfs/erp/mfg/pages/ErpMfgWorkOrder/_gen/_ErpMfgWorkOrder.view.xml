@@ -39,7 +39,7 @@
                 <!--来源 MRP 计划-->
                 <col id="sourceMrpPlanId" ui:number="true" sortable="true"/>
 
-                <!--来源单据类型(SALES_ORDER/FORECAST/MANUAL)-->
+                <!--来源单据类型-->
                 <col id="sourceOrderType" sortable="true"/>
 
                 <!--来源单据号-->
@@ -129,6 +129,9 @@
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
 
+                <!--APS排程来源(弱参照)-->
+                <col id="sourceScheduleId" ui:number="true" sortable="true"/>
+
                 <!--汇率-->
                 <col id="exchangeRate" mandatory="true" sortable="true"/>
 
@@ -148,7 +151,7 @@
  id[ID] code[工单号]
  orgId[业务组织] bomId[BOM]
  routingId[工艺路线] productionVersionId[生产版本]
- sourceMrpPlanId[来源 MRP 计划] sourceOrderType[来源单据类型(SALES_ORDER/FORECAST/MANUAL)]
+ sourceMrpPlanId[来源 MRP 计划] sourceOrderType[来源单据类型]
  sourceOrderCode[来源单据号] productId[产品(主产出)]
  plannedQuantity[计划数量] completedQuantity[完工数量]
  scrappedQuantity[报废数量] businessDate[工单日期]
@@ -163,8 +166,9 @@
  postedBy[过账人] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] exchangeRate[汇率]
- amountSource[源币种金额] amountFunctional[本位币金额]
+ updateTime[修改时间] sourceScheduleId[APS排程来源(弱参照)]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工单" i18n-en:title="Add Work Order">
@@ -172,7 +176,7 @@
  id[ID] code[工单号]
  orgId[业务组织] bomId[BOM]
  routingId[工艺路线] productionVersionId[生产版本]
- sourceMrpPlanId[来源 MRP 计划] sourceOrderType[来源单据类型(SALES_ORDER/FORECAST/MANUAL)]
+ sourceMrpPlanId[来源 MRP 计划] sourceOrderType[来源单据类型]
  sourceOrderCode[来源单据号] productId[产品(主产出)]
  plannedQuantity[计划数量] completedQuantity[完工数量]
  scrappedQuantity[报废数量] businessDate[工单日期]
@@ -185,8 +189,8 @@
  approveStatus[审核状态] priority[优先级]
  posted[已过账] postedAt[过账时间]
  postedBy[过账人] remark[备注]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ sourceScheduleId[APS排程来源(弱参照)] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-工单" i18n-en:title="Edit Work Order">
@@ -194,7 +198,7 @@
  id[ID] code[工单号]
  orgId[业务组织] bomId[BOM]
  routingId[工艺路线] productionVersionId[生产版本]
- sourceMrpPlanId[来源 MRP 计划] sourceOrderType[来源单据类型(SALES_ORDER/FORECAST/MANUAL)]
+ sourceMrpPlanId[来源 MRP 计划] sourceOrderType[来源单据类型]
  sourceOrderCode[来源单据号] productId[产品(主产出)]
  plannedQuantity[计划数量] completedQuantity[完工数量]
  scrappedQuantity[报废数量] businessDate[工单日期]
@@ -207,8 +211,9 @@
  approveStatus[审核状态] priority[优先级]
  posted[已过账] postedAt[过账时间]
  postedBy[过账人] remark[备注]
- delVersion[逻辑删除版本] exchangeRate[汇率]
- amountSource[源币种金额] amountFunctional[本位币金额]
+ delVersion[逻辑删除版本] sourceScheduleId[APS排程来源(弱参照)]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

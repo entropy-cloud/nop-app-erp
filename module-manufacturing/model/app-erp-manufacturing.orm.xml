@@ -132,6 +132,14 @@
             <option code="WEEKDAYS" label="工作日(周一至周五)" value="WEEKDAYS" i18n-en:label='Weekdays'/>
             <option code="WEEKEND" label="仅周末" value="WEEKEND" i18n-en:label='Weekend Only'/>
         </dict>
+        <!-- 工单来源单据类型（plan 2026-07-05-0427-3：原 sourceOrderType 为自由字符串，本计划将其收敛为字典并加性追加 APS_SCHEDULE。
+             加性：既有 SALES_ORDER/FORECAST/MANUAL 取值均收录，不破坏既有数据；APS_SCHEDULE 标识「由 APS 排程生成」。） -->
+        <dict label="工单来源单据类型" name="erp-mfg/source-order-type" valueType="string" i18n-en:label='Work Order Source Type'>
+            <option code="SALES_ORDER" label="销售订单" value="SALES_ORDER" i18n-en:label='Sales Order'/>
+            <option code="FORECAST" label="预测" value="FORECAST" i18n-en:label='Forecast'/>
+            <option code="MANUAL" label="手工录入" value="MANUAL" i18n-en:label='Manual'/>
+            <option code="APS_SCHEDULE" label="APS排程生成" value="APS_SCHEDULE" i18n-en:label='APS Schedule'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -459,7 +467,7 @@
                 <column name="routingId" displayName="工艺路线" stdSqlType="BIGINT" code="ROUTING_ID" propId="5" stdDataType="long" i18n-en:displayName='Routing' />
                 <column name="productionVersionId" displayName="生产版本" stdSqlType="BIGINT" code="PRODUCTION_VERSION_ID" propId="6" stdDataType="long" i18n-en:displayName='Production Version' />
                 <column name="sourceMrpPlanId" displayName="来源 MRP 计划" stdSqlType="BIGINT" code="SOURCE_MRP_PLAN_ID" propId="7" stdDataType="long" i18n-en:displayName='Source Mrp Plan' />
-                <column name="sourceOrderType" displayName="来源单据类型(SALES_ORDER/FORECAST/MANUAL)" stdSqlType="VARCHAR" precision="50" code="SOURCE_ORDER_TYPE" propId="8" stdDataType="string" i18n-en:displayName='Source Order Type' />
+                <column name="sourceOrderType" displayName="来源单据类型" ext:dict="erp-mfg/source-order-type" stdSqlType="VARCHAR" precision="50" code="SOURCE_ORDER_TYPE" propId="8" stdDataType="string" i18n-en:displayName='Source Order Type' />
                 <column name="sourceOrderCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_ORDER_CODE" propId="9" stdDataType="string" i18n-en:displayName='Source Order Code' />
                 <column name="productId" displayName="产品(主产出)" stdSqlType="BIGINT" mandatory="true" code="PRODUCT_ID" propId="10" stdDataType="long" i18n-en:displayName='Product' />
                 <column name="plannedQuantity" displayName="计划数量" domain="quantity" mandatory="true" code="PLANNED_QUANTITY" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Planned Quantity' />
@@ -487,6 +495,8 @@
                 <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1" mandatory="true" stdDataType="string" code="EXCHANGE_RATE" i18n-en:displayName='Exchange Rate' />
                 <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_SOURCE" i18n-en:displayName='Amt (Source)' />
                 <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_FUNCTIONAL" i18n-en:displayName='Amt (Functional)' />
+                <!-- plan 2026-07-05-0427-3：APS 排程来源弱参照（加性可选列）。null=非排程生成；非空=由 APS 排程生成 JobCard 时回写的 OperationOrder 聚合标识。 -->
+                <column name="sourceScheduleId" displayName="APS排程来源(弱参照)" stdSqlType="BIGINT" code="SOURCE_SCHEDULE_ID" propId="39" stdDataType="long" i18n-en:displayName='Source Schedule Id' />
 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="33" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="34" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="35" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -946,6 +956,8 @@
                 <column name="actualEndTime" displayName="实际结束时间" stdSqlType="DATETIME" code="ACTUAL_END_TIME" propId="11" stdDataType="datetime" i18n-en:displayName='Actual End Time' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="code" displayName="作业卡编号" domain="orderCode" code="CODE" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <!-- plan 2026-07-05-0427-3：APS 排程来源弱参照（加性可选列）。null=非排程生成；非空=由 APS 排程生成时回写，溯源至对应 OperationOrder 时段。 -->
+                <column name="sourceScheduleId" displayName="APS排程来源(弱参照)" stdSqlType="BIGINT" code="SOURCE_SCHEDULE_ID" propId="20" stdDataType="long" i18n-en:displayName='Source Schedule Id' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />

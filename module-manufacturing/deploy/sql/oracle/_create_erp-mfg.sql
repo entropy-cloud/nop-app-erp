@@ -447,6 +447,7 @@ CREATE TABLE erp_mfg_work_order(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  SOURCE_SCHEDULE_ID NUMBER(20)  ,
   EXCHANGE_RATE NUMBER(20,8) default 1  NOT NULL ,
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
@@ -569,6 +570,7 @@ CREATE TABLE erp_mfg_job_card(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  SOURCE_SCHEDULE_ID NUMBER(20)  ,
   constraint PK_erp_mfg_job_card primary key (ID)
 );
 
@@ -1307,7 +1309,7 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_work_order.SOURCE_MRP_PLAN_ID IS '来源 MRP 计划';
                     
-      COMMENT ON COLUMN erp_mfg_work_order.SOURCE_ORDER_TYPE IS '来源单据类型(SALES_ORDER/FORECAST/MANUAL)';
+      COMMENT ON COLUMN erp_mfg_work_order.SOURCE_ORDER_TYPE IS '来源单据类型';
                     
       COMMENT ON COLUMN erp_mfg_work_order.SOURCE_ORDER_CODE IS '来源单据号';
                     
@@ -1368,6 +1370,8 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_work_order.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_work_order.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.SOURCE_SCHEDULE_ID IS 'APS排程来源(弱参照)';
                     
       COMMENT ON COLUMN erp_mfg_work_order.EXCHANGE_RATE IS '汇率';
                     
@@ -1582,6 +1586,8 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_job_card.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_job_card.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_mfg_job_card.SOURCE_SCHEDULE_ID IS 'APS排程来源(弱参照)';
                     
       COMMENT ON TABLE erp_mfg_cost_variance IS '成本差异记录';
                 

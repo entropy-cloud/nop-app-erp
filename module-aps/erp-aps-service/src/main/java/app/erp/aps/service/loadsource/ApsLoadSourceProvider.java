@@ -77,6 +77,7 @@ public class ApsLoadSourceProvider implements IErpApsLoadSourceProvider {
                 continue;
             }
             ApsLoadSlot slot = new ApsLoadSlot();
+            slot.setOperationOrderId(op.getId());
             slot.setWorkOrderId(op.getWorkOrderId());
             slot.setSequence(op.getSequence());
             slot.setWorkcenterId(op.getMachineId());

@@ -343,4 +343,24 @@ public interface _ErpMfgDaoConstants {
      */
     String WORK_DATE_PATTERN_WEEKEND = "WEEKEND";
                     
+    /**
+     * 工单来源单据类型: 销售订单 
+     */
+    String SOURCE_ORDER_TYPE_SALES_ORDER = "SALES_ORDER";
+                    
+    /**
+     * 工单来源单据类型: 预测 
+     */
+    String SOURCE_ORDER_TYPE_FORECAST = "FORECAST";
+                    
+    /**
+     * 工单来源单据类型: 手工录入 
+     */
+    String SOURCE_ORDER_TYPE_MANUAL = "MANUAL";
+                    
+    /**
+     * 工单来源单据类型: APS排程生成 
+     */
+    String SOURCE_ORDER_TYPE_APS_SCHEDULE = "APS_SCHEDULE";
+                    
 }

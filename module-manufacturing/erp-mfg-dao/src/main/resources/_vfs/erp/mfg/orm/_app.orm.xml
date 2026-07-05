@@ -120,6 +120,13 @@
             <option code="WEEKDAYS" label="工作日(周一至周五)" value="WEEKDAYS" i18n-en:label="Weekdays"/>
             <option code="WEEKEND" label="仅周末" value="WEEKEND" i18n-en:label="Weekend Only"/>
         </dict>
+        <dict label="工单来源单据类型" name="erp-mfg/source-order-type" valueType="string"
+              i18n-en:label="Work Order Source Type">
+            <option code="SALES_ORDER" label="销售订单" value="SALES_ORDER" i18n-en:label="Sales Order"/>
+            <option code="FORECAST" label="预测" value="FORECAST" i18n-en:label="Forecast"/>
+            <option code="MANUAL" label="手工录入" value="MANUAL" i18n-en:label="Manual"/>
+            <option code="APS_SCHEDULE" label="APS排程生成" value="APS_SCHEDULE" i18n-en:label="APS Schedule"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -819,8 +826,8 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Production Version"/>
                 <column code="SOURCE_MRP_PLAN_ID" displayName="来源 MRP 计划" name="sourceMrpPlanId" propId="7"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Mrp Plan"/>
-                <column code="SOURCE_ORDER_TYPE" displayName="来源单据类型(SALES_ORDER/FORECAST/MANUAL)"
-                        name="sourceOrderType" precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR"
+                <column code="SOURCE_ORDER_TYPE" displayName="来源单据类型" name="sourceOrderType" precision="50" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/source-order-type"
                         i18n-en:displayName="Source Order Type"/>
                 <column code="SOURCE_ORDER_CODE" displayName="来源单据号" name="sourceOrderCode" precision="50" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Order Code"/>
@@ -897,14 +904,16 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="38" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="SOURCE_SCHEDULE_ID" displayName="APS排程来源(弱参照)" name="sourceScheduleId" propId="39"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Schedule Id"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" mandatory="true" name="exchangeRate"
-                        precision="20" propId="39" scale="8" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="40" scale="8" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="40" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        propId="41" scale="4" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="41" scale="4" stdDataType="string" stdSqlType="DECIMAL"
+                        precision="20" propId="42" scale="4" stdDataType="string" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <relations>
@@ -2042,6 +2051,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="SOURCE_SCHEDULE_ID" displayName="APS排程来源(弱参照)" name="sourceScheduleId" propId="20"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Schedule Id"/>
             </columns>
             <relations>
                 <to-one name="workOrder" refEntityName="app.erp.mfg.dao.entity.ErpMfgWorkOrder" tagSet="pub"

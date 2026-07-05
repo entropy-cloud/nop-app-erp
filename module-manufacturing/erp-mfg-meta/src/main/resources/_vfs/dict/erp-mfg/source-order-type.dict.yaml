@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 工单来源单据类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 销售订单
+    value: SALES_ORDER
+    description: 
+  
+  - label: 预测
+    value: FORECAST
+    description: 
+  
+  - label: 手工录入
+    value: MANUAL
+    description: 
+  
+  - label: APS排程生成
+    value: APS_SCHEDULE
+    description: 
+  

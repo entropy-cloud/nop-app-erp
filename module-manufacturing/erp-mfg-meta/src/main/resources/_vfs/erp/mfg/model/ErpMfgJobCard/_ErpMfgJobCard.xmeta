@@ -95,6 +95,10 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="sourceScheduleId" displayName="APS排程来源(弱参照)" propId="20" i18n-en:displayName="Source Schedule Id"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
         <prop name="workOrder" i18n-en:displayName="Work Order" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="workOrderId" ext:joinRightProp="id" insertable="false"
               updatable="false" mandatory="true" lazy="true">

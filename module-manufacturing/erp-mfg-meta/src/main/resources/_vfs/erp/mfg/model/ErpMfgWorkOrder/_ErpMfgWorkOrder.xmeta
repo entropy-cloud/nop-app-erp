@@ -47,10 +47,9 @@
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sourceMrpPlan">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="sourceOrderType" displayName="来源单据类型(SALES_ORDER/FORECAST/MANUAL)" propId="8"
-              i18n-en:displayName="Source Order Type" queryable="true" sortable="true" insertable="true"
-              updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+        <prop name="sourceOrderType" displayName="来源单据类型" propId="8" i18n-en:displayName="Source Order Type"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50" dict="erp-mfg/source-order-type"/>
         </prop>
         <prop name="sourceOrderCode" displayName="来源单据号" propId="9" i18n-en:displayName="Source Order Code"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -172,15 +171,19 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="exchangeRate" displayName="汇率" propId="39" i18n-en:displayName="Exchange Rate" mandatory="true"
+        <prop name="sourceScheduleId" displayName="APS排程来源(弱参照)" propId="39" i18n-en:displayName="Source Schedule Id"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="exchangeRate" displayName="汇率" propId="40" i18n-en:displayName="Exchange Rate" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="1">
             <schema type="java.lang.String" precision="20" scale="8"/>
         </prop>
-        <prop name="amountSource" displayName="源币种金额" propId="40" i18n-en:displayName="Amt (Source)" queryable="true"
+        <prop name="amountSource" displayName="源币种金额" propId="41" i18n-en:displayName="Amt (Source)" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema type="java.lang.String" precision="20" scale="4"/>
         </prop>
-        <prop name="amountFunctional" displayName="本位币金额" propId="41" i18n-en:displayName="Amt (Functional)"
+        <prop name="amountFunctional" displayName="本位币金额" propId="42" i18n-en:displayName="Amt (Functional)"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema type="java.lang.String" precision="20" scale="4"/>
         </prop>

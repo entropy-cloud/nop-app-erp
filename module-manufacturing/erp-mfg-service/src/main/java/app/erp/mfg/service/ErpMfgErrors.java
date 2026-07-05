@@ -37,6 +37,9 @@ public interface ErpMfgErrors {
     String ARG_PERIOD_FROM = "periodFrom";
     String ARG_PERIOD_TO = "periodTo";
 
+    String ARG_SOURCE_SCHEDULE_ID = "sourceScheduleId";
+    String ARG_EXISTING_COUNT = "existingCount";
+
     ErrorCode ERR_BOM_NOT_FOUND = ErrorCode.define(
             "nop.err.mfg.bom.not-found",
             "BOM不存在: {bomId}",
@@ -141,4 +144,19 @@ public interface ErpMfgErrors {
             "nop.err.mfg.forecast.illegal-status-transition",
             "需求预测[{forecastCode}]当前状态[{currentStatus}]不允许此操作，期望状态[{expectedStatus}]",
             ARG_FORECAST_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_JOB_CARDS_ALREADY_GENERATED = ErrorCode.define(
+            "nop.err.mfg.work-order.job-cards-already-generated",
+            "工单[{workOrderCode}]已由APS排程生成[{existingCount}]张工序卡，重复调用被拒绝（如需补建缺失卡，启用配置erp-mfg.jobcard-incremental-rebuild=true）",
+            ARG_WORK_ORDER_CODE, ARG_EXISTING_COUNT);
+
+    ErrorCode ERR_NO_SCHEDULED_OPERATIONS = ErrorCode.define(
+            "nop.err.mfg.work-order.no-scheduled-operations",
+            "工单[{workOrderCode}]在APS排程中无已排程(PLANNED)且时间完整的工序，无法生成工序卡",
+            ARG_WORK_ORDER_CODE);
+
+    ErrorCode ERR_WORK_ORDER_STATUS_NOT_ALLOWED_FOR_JOB_CARD_GEN = ErrorCode.define(
+            "nop.err.mfg.work-order.status-not-allowed-for-job-card-gen",
+            "工单[{workOrderCode}]当前状态[{currentStatus}]不允许由APS排程生成工序卡，期望状态为已审核且非终态(NOT_STARTED/STOCK_RESERVED/STOCK_PARTIAL/IN_PROCESS/STOPPED)",
+            ARG_WORK_ORDER_CODE, ARG_CURRENT_STATUS);
 }

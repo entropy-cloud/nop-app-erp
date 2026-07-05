@@ -54,8 +54,25 @@
     <bean id="app.erp.mfg.service.processor.ErpMfgJobCardProcessor"
           class="app.erp.mfg.service.processor.ErpMfgJobCardProcessor"/>
 
+    <!-- APS 排程→工序卡自动生成 Processor（plan 2026-07-05-0427-3）。经 ioc:collect-beans by-type 跨模块收集
+           aps-service 实现的 IErpApsLoadSourceProvider（同 CRP SPI 范式）；APS 模块缺失时收集到空 list，
+           fetchSlots 返回空、generateJobCardsFromSchedule 抛 ERR_NO_SCHEDULED_OPERATIONS（行为降级）。 -->
+    <bean id="app.erp.mfg.service.processor.ErpMfgScheduleToJobCardProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgScheduleToJobCardProcessor">
+        <property name="apsLoadSourceProviders">
+            <ioc:collect-beans by-type="app.erp.mfg.biz.IErpApsLoadSourceProvider"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
     <!-- 定时 CRP 负荷计算 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
-          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-mfg.crp-run-cron 配置门控。 -->
+           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-mfg.crp-run-cron 配置门控。 -->
     <bean id="erpMfgCrpRunJob"
           class="app.erp.mfg.service.job.ErpMfgCrpRunJob"/>
+
+    <!-- 定时 APS 排程→工序卡自动生成 Job Bean（plan 2026-07-05-0427-3 Phase 3）。双层门控：
+           erp-mfg.jobcard-auto-generate-cron（本 Job cron 空跳过）+ erp-mfg.jobcard-auto-generate-on-schedule
+           （Processor 总开关，默认 false）。参照 0306-1 三件套范式。 -->
+    <bean id="erpMfgJobCardAutoGenJob"
+          class="app.erp.mfg.service.job.ErpMfgJobCardAutoGenJob"/>
 </beans>

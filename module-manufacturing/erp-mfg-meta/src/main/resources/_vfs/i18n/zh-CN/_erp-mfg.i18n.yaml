@@ -300,6 +300,7 @@ prop:
       plannedQuantity: 计划数量
       remark: 备注
       scrappedQuantity: 报废数量
+      sourceScheduleId: APS排程来源(弱参照)
       status: 状态
       status_label: 状态
       updateTime: 修改时间
@@ -622,7 +623,9 @@ prop:
       sourceMrpPlan: null
       sourceMrpPlanId: 来源 MRP 计划
       sourceOrderCode: 来源单据号
-      sourceOrderType: 来源单据类型(SALES_ORDER/FORECAST/MANUAL)
+      sourceOrderType: 来源单据类型
+      sourceOrderType_label: 来源单据类型
+      sourceScheduleId: APS排程来源(弱参照)
       subcontractCost: 委外成本
       totalCost: 总成本
       unitCost: 单位成本

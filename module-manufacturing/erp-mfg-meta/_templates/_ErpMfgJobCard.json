@@ -19,6 +19,7 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
+  "sourceScheduleId": 0,
   "workOrder": null,
   "workcenter": null,
   "operation": null

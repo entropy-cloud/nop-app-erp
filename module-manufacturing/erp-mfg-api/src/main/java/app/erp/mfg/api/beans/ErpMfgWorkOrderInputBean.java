@@ -475,10 +475,24 @@
         }
 
 
-        private String _exchangeRate;
+        private Long _sourceScheduleId;
 
     
         @PropMeta(propId=39)
+    
+        public Long getSourceScheduleId(){
+            return _sourceScheduleId;
+        }
+
+        public void setSourceScheduleId(Long value){
+            this._sourceScheduleId = value;
+        }
+
+
+        private String _exchangeRate;
+
+    
+        @PropMeta(propId=40)
     
         public String getExchangeRate(){
             return _exchangeRate;
@@ -492,7 +506,7 @@
         private String _amountSource;
 
     
-        @PropMeta(propId=40)
+        @PropMeta(propId=41)
     
         public String getAmountSource(){
             return _amountSource;
@@ -506,7 +520,7 @@
         private String _amountFunctional;
 
     
-        @PropMeta(propId=41)
+        @PropMeta(propId=42)
     
         public String getAmountFunctional(){
             return _amountFunctional;

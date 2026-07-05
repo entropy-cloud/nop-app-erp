@@ -49,7 +49,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_sourceMrpPlanId = "sourceMrpPlanId";
     public static final int PROP_ID_sourceMrpPlanId = 7;
     
-    /* 来源单据类型(SALES_ORDER/FORECAST/MANUAL): SOURCE_ORDER_TYPE VARCHAR */
+    /* 来源单据类型: SOURCE_ORDER_TYPE VARCHAR */
     public static final String PROP_NAME_sourceOrderType = "sourceOrderType";
     public static final int PROP_ID_sourceOrderType = 8;
     
@@ -173,20 +173,24 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 38;
     
+    /* APS排程来源(弱参照): SOURCE_SCHEDULE_ID BIGINT */
+    public static final String PROP_NAME_sourceScheduleId = "sourceScheduleId";
+    public static final int PROP_ID_sourceScheduleId = 39;
+    
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 39;
+    public static final int PROP_ID_exchangeRate = 40;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 40;
+    public static final int PROP_ID_amountSource = 41;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 41;
+    public static final int PROP_ID_amountFunctional = 42;
     
 
-    private static int _PROP_ID_BOUND = 42;
+    private static int _PROP_ID_BOUND = 43;
 
     
     /* relation:  */
@@ -220,7 +224,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[42];
+    private static final String[] PROP_ID_TO_NAME = new String[43];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -338,6 +342,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_sourceScheduleId] = PROP_NAME_sourceScheduleId;
+          PROP_NAME_TO_ID.put(PROP_NAME_sourceScheduleId, PROP_ID_sourceScheduleId);
+      
           PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
           PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
       
@@ -371,7 +378,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /* 来源 MRP 计划: SOURCE_MRP_PLAN_ID */
     private java.lang.Long _sourceMrpPlanId;
     
-    /* 来源单据类型(SALES_ORDER/FORECAST/MANUAL): SOURCE_ORDER_TYPE */
+    /* 来源单据类型: SOURCE_ORDER_TYPE */
     private java.lang.String _sourceOrderType;
     
     /* 来源单据号: SOURCE_ORDER_CODE */
@@ -463,6 +470,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* APS排程来源(弱参照): SOURCE_SCHEDULE_ID */
+    private java.lang.Long _sourceScheduleId;
     
     /* 汇率: EXCHANGE_RATE */
     private java.lang.String _exchangeRate;
@@ -660,6 +670,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_sourceScheduleId:
+               return getSourceScheduleId();
         
             case PROP_ID_exchangeRate:
                return getExchangeRate();
@@ -1061,6 +1074,16 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_sourceScheduleId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_sourceScheduleId));
+               }
+               setSourceScheduleId(typedValue);
+               break;
+            }
+        
             case PROP_ID_exchangeRate:{
                java.lang.String typedValue = null;
                if(value != null){
@@ -1366,6 +1389,13 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_sourceScheduleId:{
+               onInitProp(propId);
+               this._sourceScheduleId = (java.lang.Long)value;
+               
+               break;
+            }
+        
             case PROP_ID_exchangeRate:{
                onInitProp(propId);
                this._exchangeRate = (java.lang.String)value;
@@ -1527,7 +1557,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     }
     
     /**
-     * 来源单据类型(SALES_ORDER/FORECAST/MANUAL): SOURCE_ORDER_TYPE
+     * 来源单据类型: SOURCE_ORDER_TYPE
      */
     public final java.lang.String getSourceOrderType(){
          onPropGet(PROP_ID_sourceOrderType);
@@ -1535,7 +1565,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     }
 
     /**
-     * 来源单据类型(SALES_ORDER/FORECAST/MANUAL): SOURCE_ORDER_TYPE
+     * 来源单据类型: SOURCE_ORDER_TYPE
      */
     public final void setSourceOrderType(java.lang.String value){
         if(onPropSet(PROP_ID_sourceOrderType,value)){
@@ -2111,6 +2141,25 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * APS排程来源(弱参照): SOURCE_SCHEDULE_ID
+     */
+    public final java.lang.Long getSourceScheduleId(){
+         onPropGet(PROP_ID_sourceScheduleId);
+         return _sourceScheduleId;
+    }
+
+    /**
+     * APS排程来源(弱参照): SOURCE_SCHEDULE_ID
+     */
+    public final void setSourceScheduleId(java.lang.Long value){
+        if(onPropSet(PROP_ID_sourceScheduleId,value)){
+            this._sourceScheduleId = value;
+            internalClearRefs(PROP_ID_sourceScheduleId);
             
         }
     }

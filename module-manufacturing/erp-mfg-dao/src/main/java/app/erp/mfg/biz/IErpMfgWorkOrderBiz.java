@@ -2,11 +2,15 @@
 package app.erp.mfg.biz;
 
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
+
+import java.util.List;
 
 /**
  * 工单业务接口。除标准 CRUD 外，定义工单 10 态状态机（{@code docs/design/manufacturing/state-machine.md §适用对象一`}）
@@ -59,4 +63,39 @@ public interface IErpMfgWorkOrderBiz extends ICrudBiz<ErpMfgWorkOrder> {
     ErpMfgWorkOrder reportCompletion(@Name("workOrderId") Long workOrderId,
                                      @Name("completedQty") java.math.BigDecimal completedQty,
                                      IServiceContext context);
+
+    /**
+     * 按 APS 排程生成工序卡（plan 2026-07-05-0427-3 §Goals）。
+     *
+     * <p>读取该工单关联的、已排程（{@code ErpApsOperationOrder.status=PLANNED}，{@code plannedStartT/plannedEndT} 非空）
+     * 的工序，按工序生成 JobCard（一工序一卡），JobCard 计划开工/完工时间 = 对应 OperationOrder 排程时间，
+     * 回写 {@code JobCard.sourceScheduleId} + {@code WorkOrder.sourceOrderType=APS_SCHEDULE}。
+     *
+     * <p>幂等：默认重复调用抛 {@code ERR_JOB_CARDS_ALREADY_GENERATED}；
+     * {@code erp-mfg.jobcard-incremental-rebuild=true} 时仅补建缺失工序卡（已存在不重建不删）。
+     * 工单状态门控：须为已审核且非终态（NOT_STARTED/STOCK_RESERVED/STOCK_PARTIAL/IN_PROCESS/STOPPED）。
+     */
+    @BizMutation
+    ErpMfgWorkOrder generateJobCardsFromSchedule(@Name("workOrderId") Long workOrderId, IServiceContext context);
+
+    /**
+     * 查询「已排程但未生成 JobCard」的工单列表（plan 2026-07-05-0427-3 Phase 3，config-gated 自动入口前置查询）。
+     *
+     * <p>返回 APS 已排程（存在 PLANNED 工序）但 JobCard 数为 0 的工单，供 {@link #generatePendingJobCards} 批量建卡。
+     *
+     * @param limit 返回条数上限，null/<=0 时取默认 100。
+     */
+    @BizQuery
+    List<ErpMfgWorkOrder> findWorkOrdersPendingJobCards(@Optional @Name("limit") Integer limit,
+                                                        IServiceContext context);
+
+    /**
+     * 批量为「已排程但未生成 JobCard」的工单生成工序卡（config-gated：{@code erp-mfg.jobcard-auto-generate-on-schedule}）。
+     *
+     * <p>由 nop-job 定时调用（参照 0306-1 三件套范式），单工单失败隔离（继续处理后续工单）。
+     *
+     * @return 成功生成工序卡的工单数。
+     */
+    @BizMutation
+    Integer generatePendingJobCards(IServiceContext context);
 }

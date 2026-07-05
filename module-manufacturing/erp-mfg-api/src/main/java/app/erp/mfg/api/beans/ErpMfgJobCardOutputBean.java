@@ -291,6 +291,20 @@
         }
 
 
+        private Long _sourceScheduleId;
+
+    
+        @PropMeta(propId=20)
+    
+        public Long getSourceScheduleId(){
+            return _sourceScheduleId;
+        }
+
+        public void setSourceScheduleId(Long value){
+            this._sourceScheduleId = value;
+        }
+
+
         private Map<String,Object> _workOrder;
 
         public Map<String,Object> getWorkOrder(){
