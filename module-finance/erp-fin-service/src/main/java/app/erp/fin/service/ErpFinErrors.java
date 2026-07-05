@@ -72,6 +72,14 @@ public interface ErpFinErrors {
     String ARG_UNMATCHED = "unmatched";
     String ARG_SUSPENSE = "suspense";
 
+    // --- 坏账准备作用域参数键 ---
+    String ARG_BAD_DEBT_ID = "badDebtId";
+    String ARG_BAD_DEBT_CODE = "badDebtCode";
+    String ARG_AR_AP_ITEM_ID = "arApItemId";
+    String ARG_REQUIRED_PROVISION = "requiredProvision";
+    String ARG_ALLOWANCE_BALANCE = "allowanceBalance";
+    String ARG_WRITE_OFF_AMOUNT = "writeOffAmount";
+
     ErrorCode ERR_AR_AP_ITEM_PARTNER_MISSING = ErrorCode.define("erp.err.fin.ar-ap.partner-missing",
             "来源单据 {sourceBillCode}（类型 {sourceBillType}）的 billData 缺少 partnerId，无法生成辅助账",
             ARG_SOURCE_BILL_CODE, ARG_SOURCE_BILL_TYPE);
@@ -275,4 +283,30 @@ public interface ErpFinErrors {
     ErrorCode ERR_BANK_RECON_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.fin.bank-recon.illegal-doc-status-transition",
             "余额调节表 {statementCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
             ARG_STATEMENT_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+
+    // --- 坏账准备作用域 ---
+
+    ErrorCode ERR_BAD_DEBT_NOT_FOUND = ErrorCode.define("erp.err.fin.bad-debt.not-found",
+            "坏账单 {badDebtId} 不存在", ARG_BAD_DEBT_ID);
+
+    ErrorCode ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION = ErrorCode.define("erp.err.fin.bad-debt.illegal-approval-transition",
+            "坏账单 {badDebtCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_BAD_DEBT_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_BAD_DEBT_AR_AP_ITEM_NOT_OPEN = ErrorCode.define("erp.err.fin.bad-debt.ar-ap-item-not-open",
+            "应收辅助账项 {arApItemId} 当前状态不可坏账核销（须为 OPEN/PARTIAL）", ARG_AR_AP_ITEM_ID);
+
+    ErrorCode ERR_BAD_DEBT_AR_AP_ITEM_NOT_WRITTEN_OFF = ErrorCode.define("erp.err.fin.bad-debt.ar-ap-item-not-written-off",
+            "应收辅助账项 {arApItemId} 当前状态非 WRITTEN_OFF，不可恢复", ARG_AR_AP_ITEM_ID);
+
+    ErrorCode ERR_BAD_DEBT_AMOUNT_OVER_OPEN = ErrorCode.define("erp.err.fin.bad-debt.amount-over-open",
+            "坏账核销/恢复金额 {writeOffAmount} 超过应收辅助账项未核销余额 {openAmount}",
+            ARG_WRITE_OFF_AMOUNT, ARG_OPEN_AMOUNT);
+
+    ErrorCode ERR_BAD_DEBT_AMOUNT_INVALID = ErrorCode.define("erp.err.fin.bad-debt.amount-invalid",
+            "坏账核销/恢复金额必须大于 0");
+
+    ErrorCode ERR_BAD_DEBT_NRV_NEGATIVE = ErrorCode.define("erp.err.fin.bad-debt.nrv-negative",
+            "应收净额（NRV）为负：应收总额 {openAmount} − 坏账准备 {allowanceBalance} < 0，数据异常或 Allowance 反转",
+            ARG_OPEN_AMOUNT, ARG_ALLOWANCE_BALANCE);
 }

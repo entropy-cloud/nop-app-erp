@@ -3,6 +3,7 @@ entity:
     ErpFinAccountingPeriod: 会计期间
     ErpFinAccountingPeriodStatus: 期间结账状态
     ErpFinArApItem: 应收应付明细账
+    ErpFinBadDebt: 坏账单
     ErpFinBankReconciliation: 银行对账(余额调节表)
     ErpFinBankReconciliationLine: 银行对账调整行
     ErpFinBankStatement: 银行对账单
@@ -111,6 +112,38 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpFinBadDebt:
+      acctSchema: null
+      acctSchemaId: 账套
+      amount: 核销/恢复金额(本位币)
+      approvalStatus: 审核状态
+      approvalStatus_label: 审核状态
+      businessDate: 业务日期
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      docType: 坏账单类型
+      docType_label: 坏账单类型
+      exchangeRate: 汇率
+      id: ID
+      org: null
+      orgId: 组织
+      partner: null
+      partnerId: 客户
+      period: null
+      periodId: 所属期间
+      reason: 核销/恢复原因
+      remark: 备注
+      sourceArApItem: null
+      sourceArApItemId: 源应收辅助账项
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      voucher: null
+      voucherId: 关联凭证ID
     ErpFinBankReconciliation:
       adjustmentLines: null
       bookBalance: 账面余额

@@ -16,6 +16,7 @@ import app.erp.inv.biz.CostingRecloseReport;
 import app.erp.inv.biz.IErpInvCostingBiz;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.baddebt.BadDebtProvisionService;
 import app.erp.fin.service.fx.ExchangeRevaluationService;
 import app.erp.fin.service.profitloss.ProfitLossClosingService;
 import io.nop.api.core.auth.IUserContext;
@@ -76,6 +77,8 @@ public class ErpFinAccountingPeriodProcessor {
     ProfitLossClosingService profitLossClosingService;
     @Inject
     ExchangeRevaluationService exchangeRevaluationService;
+    @Inject
+    BadDebtProvisionService badDebtProvisionService;
 
     public PeriodPreCheckReport preCheck(Long periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = requirePeriod(periodId);
@@ -83,7 +86,34 @@ public class ErpFinAccountingPeriodProcessor {
         report.setUnpostedVoucherCodes(findUnpostedVoucherCodes(period));
         report.setUnsettledArApCodes(findUnsettledArApCodes(period));
         report.setUnresolvedPostingExceptionKeys(findUnresolvedPostingExceptionKeys(period));
+        populateAllowanceCheck(period, report);
         return report;
+    }
+
+    /**
+     * 坏账准备充足性门控（{@code bad-debt.md §期末 allowance 充足性门控}，对标 ar-close-engine C-R1）。
+     * 必需准备（账龄分桶法）vs Allowance 账面：不足→阻止结账（shortfall &gt; 0）；超额→提示释放（excess &gt; 0，非阻断）。
+     * 配置门控 {@code erp-fin.bad-debt-allowance-gate-enabled}（默认 true）。
+     */
+    protected void populateAllowanceCheck(ErpFinAccountingPeriod period, PeriodPreCheckReport report) {
+        if (!isAllowanceGateEnabled()) {
+            return;
+        }
+        try {
+            app.erp.fin.dao.dto.BadDebtProvisionResult result = badDebtProvisionService.calculateRequiredProvision(period);
+            BigDecimal balance = badDebtProvisionService.getAllowanceBalance();
+            report.setAllowanceRequired(result.getRequiredProvision());
+            report.setAllowanceBalance(balance);
+            int cmp = result.getRequiredProvision().compareTo(balance);
+            if (cmp > 0) {
+                report.setAllowanceShortfall(result.getRequiredProvision().subtract(balance));
+            } else if (cmp < 0) {
+                report.setAllowanceExcess(balance.subtract(result.getRequiredProvision()));
+            }
+        } catch (NopException e) {
+            // Allowance/Expense 科目未配置时门控跳过（告警不阻断，避免阻塞未启用坏账模块的账套）。
+            LOG.warn("期末结账：期间 {} 坏账准备充足性门控跳过（{}）", period.getCode(), e.getMessage());
+        }
     }
 
     public ErpFinAccountingPeriod closePeriod(Long periodId, IServiceContext context) {
@@ -397,7 +427,8 @@ public class ErpFinAccountingPeriodProcessor {
         return dao.findAllByQuery(q).stream()
                 .filter(i -> i.getStatus() != null
                         && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_SETTLED)
-                        && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_CANCELLED))
+                        && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_CANCELLED)
+                        && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_WRITTEN_OFF))
                 .map(ErpFinArApItem::getCode)
                 .collect(Collectors.toList());
     }
@@ -507,6 +538,12 @@ public class ErpFinAccountingPeriodProcessor {
 
     protected boolean isReverseCloseApprovalRequired() {
         Boolean flag = AppConfig.var(ErpFinConstants.CONFIG_REVERSE_CLOSE_APPROVAL_REQUIRED, Boolean.TRUE);
+        return !Boolean.FALSE.equals(flag);
+    }
+
+    /** 坏账准备充足性门控开关（{@code erp-fin.bad-debt-allowance-gate-enabled}，默认 true）。 */
+    protected boolean isAllowanceGateEnabled() {
+        Boolean flag = AppConfig.var(ErpFinConstants.CONFIG_BAD_DEBT_ALLOWANCE_GATE_ENABLED, Boolean.TRUE);
         return !Boolean.FALSE.equals(flag);
     }
 

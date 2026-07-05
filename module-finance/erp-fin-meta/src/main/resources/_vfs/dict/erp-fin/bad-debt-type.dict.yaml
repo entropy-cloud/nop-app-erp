@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 坏账单类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 坏账核销
+    value: WRITE_OFF
+    description: 
+  
+  - label: 坏账收回恢复
+    value: RECOVERY
+    description: 
+  

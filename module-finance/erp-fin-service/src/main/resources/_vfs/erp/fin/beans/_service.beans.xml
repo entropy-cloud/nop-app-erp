@@ -170,6 +170,13 @@
         <property name="bizObjName" value="ErpFinReconciliationLine"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinBadDebtBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBadDebt" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBadDebtBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpFinBadDebt"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinBankReconciliationBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinBankReconciliation" class="io.nop.biz.proxy.BizProxyFactoryBean"

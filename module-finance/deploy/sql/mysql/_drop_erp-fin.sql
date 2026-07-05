@@ -31,6 +31,7 @@ drop table  if exists  erp_fin_expense_claim;
 drop table  if exists  erp_fin_voucher_line;
 drop table  if exists  erp_fin_voucher_bill_r;
 drop table  if exists  erp_fin_reconciliation_line;
+drop table  if exists  erp_fin_bad_debt;
 drop table  if exists  erp_fin_bank_reconciliation;
 drop table  if exists  erp_fin_notes_payable;
 drop table  if exists  erp_fin_expense_claim_line;

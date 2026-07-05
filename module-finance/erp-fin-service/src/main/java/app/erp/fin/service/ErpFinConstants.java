@@ -273,4 +273,50 @@ public interface ErpFinConstants {
     String BILL_DATA_BANK_RECON_ADJ_AMOUNT = "BANK_RECON_ADJ_AMOUNT";
     /** PostingEvent.billData 键：资金账户对应科目编码（${SUBJECT_CODE} 占位符填充）。 */
     String BILL_DATA_BANK_SUBJECT_CODE = "SUBJECT_CODE";
+
+    // ---- 坏账准备配置项（bad-debt.md §配置点），经 AppConfig.var 读取 ----
+    /** 坏账计提方法（AGING_BUCKET/HISTORICAL_PERCENT/RISK_CLASS/PARETO），默认 AGING_BUCKET。 */
+    String CONFIG_BAD_DEBT_METHOD = "erp-fin.bad-debt-method";
+    /** 0-30 天历史损失率，默认 0.005。 */
+    String CONFIG_BAD_DEBT_LOSS_RATE_0_30 = "erp-fin.bad-debt-loss-rate-0-30";
+    /** 31-60 天历史损失率，默认 0.02。 */
+    String CONFIG_BAD_DEBT_LOSS_RATE_31_60 = "erp-fin.bad-debt-loss-rate-31-60";
+    /** 61-90 天历史损失率，默认 0.05。 */
+    String CONFIG_BAD_DEBT_LOSS_RATE_61_90 = "erp-fin.bad-debt-loss-rate-61-90";
+    /** 91-180 天历史损失率，默认 0.15。 */
+    String CONFIG_BAD_DEBT_LOSS_RATE_91_180 = "erp-fin.bad-debt-loss-rate-91-180";
+    /** 180 天以上历史损失率，默认 0.40。 */
+    String CONFIG_BAD_DEBT_LOSS_RATE_180_PLUS = "erp-fin.bad-debt-loss-rate-180-plus";
+    /** 坏账核销/恢复是否强制财务主管审批，默认 true。 */
+    String CONFIG_BAD_DEBT_WRITE_OFF_REQUIRE_APPROVAL = "erp-fin.bad-debt-write-off-require-approval";
+    /** 计提基础是否排除争议发票，默认 true。 */
+    String CONFIG_BAD_DEBT_EXCLUDE_DISPUTED = "erp-fin.bad-debt-exclude-disputed";
+    /** 坏账准备（Allowance）科目编码（期末计提/核销/释放必配）。 */
+    String CONFIG_BAD_DEBT_ALLOWANCE_SUBJECT_CODE = "erp-fin.bad-debt-allowance-subject-code";
+    /** 信用减值损失（Bad Debt Expense）科目编码（期末计提/释放必配）。 */
+    String CONFIG_BAD_DEBT_EXPENSE_SUBJECT_CODE = "erp-fin.bad-debt-expense-subject-code";
+    /** 期末 allowance 充足性门控开关，默认 true（不足阻止结账）。 */
+    String CONFIG_BAD_DEBT_ALLOWANCE_GATE_ENABLED = "erp-fin.bad-debt-allowance-gate-enabled";
+
+    /** CONFIG_BAD_DEBT_METHOD 取值：账龄分桶法（默认）。 */
+    String BAD_DEBT_METHOD_AGING_BUCKET = "AGING_BUCKET";
+
+    /** 默认损失率（各账龄区间）。 */
+    java.math.BigDecimal DEFAULT_LOSS_RATE_0_30 = new java.math.BigDecimal("0.005");
+    java.math.BigDecimal DEFAULT_LOSS_RATE_31_60 = new java.math.BigDecimal("0.02");
+    java.math.BigDecimal DEFAULT_LOSS_RATE_61_90 = new java.math.BigDecimal("0.05");
+    java.math.BigDecimal DEFAULT_LOSS_RATE_91_180 = new java.math.BigDecimal("0.15");
+    java.math.BigDecimal DEFAULT_LOSS_RATE_180_PLUS = new java.math.BigDecimal("0.40");
+
+    /** 坏账计提凭证业财回链 billHeadCode 前缀。 */
+    String BAD_DEBT_RESERVE_BILL_CODE_PREFIX = "BAD-DEBT-RESERVE-";
+    /** 坏账准备释放凭证业财回链 billHeadCode 前缀。 */
+    String BAD_DEBT_RELEASE_BILL_CODE_PREFIX = "BAD-DEBT-RELEASE-";
+
+    // ---- bad-debt-type（erp-fin/bad-debt-type） ----
+    String BAD_DEBT_TYPE_WRITE_OFF = "WRITE_OFF";
+    String BAD_DEBT_TYPE_RECOVERY = "RECOVERY";
+
+    // ---- ar-ap-status 坏账维度扩展 ----
+    String AR_AP_STATUS_WRITTEN_OFF = "WRITTEN_OFF";
 }

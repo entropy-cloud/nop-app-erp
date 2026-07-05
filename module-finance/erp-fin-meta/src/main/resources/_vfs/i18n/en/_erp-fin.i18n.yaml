@@ -3,6 +3,7 @@ entity:
     ErpFinAccountingPeriod: Accounting Period
     ErpFinAccountingPeriodStatus: Period Close Status
     ErpFinArApItem: AR/AP Subledger
+    ErpFinBadDebt: Bad Debt
     ErpFinBankReconciliation: Bank Reconciliation
     ErpFinBankReconciliationLine: Bank Reconciliation Line
     ErpFinBankStatement: Bank Statement
@@ -110,6 +111,38 @@ prop:
       acctSchema: Acct Schema
       currency: Currency
       period: null
+      org: null
+    ErpFinBadDebt:
+      id: ID
+      code: Code
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      docType: Bad Debt Type
+      docType_label: null
+      partnerId: Partner
+      sourceArApItemId: Source AR/AP Item
+      amount: Amount
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      businessDate: Business Date
+      reason: Reason
+      approvalStatus: Approval Status
+      approvalStatus_label: null
+      periodId: Period
+      voucherId: Voucher
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      partner: Partner
+      acctSchema: Acct Schema
+      currency: Currency
+      sourceArApItem: Source AR/AP Item
+      period: Period
+      voucher: Voucher
       org: null
     ErpFinBankReconciliation:
       id: ID
@@ -754,6 +787,7 @@ dict:
     erp-fin/reconciliation-status: Reconciliation Status
     erp-fin/module-close-status: Module Close Status
     erp-fin/approve-status: Approval Status
+    erp-fin/bad-debt-type: Bad Debt Type
     erp-fin/expense-payment-mode: Expense Payment Mode
     erp-fin/expense-type: Expense Type
     erp-fin/advance-type: Advance Type
@@ -817,6 +851,10 @@ dict.option.label:
     HOUSING_FUND_ER: Housing Fund ER
     BANK_RECON_ADJ: Bank Recon Adjustment
     PURCHASE_PRICE_VARIANCE: Purchase Price Variance
+    BAD_DEBT_RESERVE: Bad Debt Reserve
+    BAD_DEBT_WRITE_OFF: Bad Debt Write-off
+    BAD_DEBT_RECOVERY: Bad Debt Recovery
+    BAD_DEBT_RELEASE: Bad Debt Release
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing
@@ -840,6 +878,7 @@ dict.option.label:
     PARTIAL: Partially Matched
     SETTLED: Matched
     CANCELLED: Voided
+    WRITTEN_OFF: Written Off
   erp-fin/bank-match-status:
     UNMATCHED: Unmatched
     MATCHED: Auto Matched
@@ -858,6 +897,9 @@ dict.option.label:
     SUBMITTED: Submitted
     APPROVED: Approved
     REJECTED: Rejected
+  erp-fin/bad-debt-type:
+    WRITE_OFF: Write-off
+    RECOVERY: Recovery
   erp-fin/expense-payment-mode:
     OWN_ACCOUNT: Own Account
     COMPANY_ACCOUNT: Company Account

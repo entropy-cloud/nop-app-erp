@@ -633,6 +633,32 @@ CREATE TABLE erp_fin_reconciliation_line(
   constraint PK_erp_fin_reconciliation_line primary key (ID)
 );
 
+CREATE TABLE erp_fin_bad_debt(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  ACCT_SCHEMA_ID NUMBER(20) NOT NULL ,
+  DOC_TYPE VARCHAR2(20) NOT NULL ,
+  PARTNER_ID NUMBER(20) NOT NULL ,
+  SOURCE_AR_AP_ITEM_ID NUMBER(20) NOT NULL ,
+  AMOUNT NUMBER(20,4) NOT NULL ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  BUSINESS_DATE DATE NOT NULL ,
+  REASON VARCHAR2(500)  ,
+  APPROVAL_STATUS VARCHAR2(20) NOT NULL ,
+  PERIOD_ID NUMBER(20)  ,
+  VOUCHER_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_bad_debt primary key (ID)
+);
+
 CREATE TABLE erp_fin_bank_reconciliation(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -1710,6 +1736,52 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
       COMMENT ON COLUMN erp_fin_reconciliation_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_reconciliation_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_bad_debt IS '坏账单';
+                
+      COMMENT ON COLUMN erp_fin_bad_debt.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.ORG_ID IS '组织';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.ACCT_SCHEMA_ID IS '账套';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.DOC_TYPE IS '坏账单类型';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.PARTNER_ID IS '客户';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.SOURCE_AR_AP_ITEM_ID IS '源应收辅助账项';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.AMOUNT IS '核销/恢复金额(本位币)';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.REASON IS '核销/恢复原因';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.APPROVAL_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.PERIOD_ID IS '所属期间';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.VOUCHER_ID IS '关联凭证ID';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_bad_debt.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_fin_bank_reconciliation IS '银行对账(余额调节表)';
                 

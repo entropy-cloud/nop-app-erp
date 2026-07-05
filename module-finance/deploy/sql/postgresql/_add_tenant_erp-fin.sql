@@ -63,6 +63,8 @@ alter table erp_fin_voucher_bill_r add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT
 
 alter table erp_fin_reconciliation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_bad_debt add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_fin_bank_reconciliation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_notes_payable add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -168,6 +170,9 @@ alter table erp_fin_voucher_bill_r add constraint PK_erp_fin_voucher_bill_r prim
 
 alter table erp_fin_reconciliation_line drop constraint PK_erp_fin_reconciliation_line;
 alter table erp_fin_reconciliation_line add constraint PK_erp_fin_reconciliation_line primary key (NOP_TENANT_ID, id);
+
+alter table erp_fin_bad_debt drop constraint PK_erp_fin_bad_debt;
+alter table erp_fin_bad_debt add constraint PK_erp_fin_bad_debt primary key (NOP_TENANT_ID, id);
 
 alter table erp_fin_bank_reconciliation drop constraint PK_erp_fin_bank_reconciliation;
 alter table erp_fin_bank_reconciliation add constraint PK_erp_fin_bank_reconciliation primary key (NOP_TENANT_ID, id);

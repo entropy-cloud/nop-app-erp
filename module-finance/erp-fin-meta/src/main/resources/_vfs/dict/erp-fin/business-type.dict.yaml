@@ -133,3 +133,19 @@ options:
     value: PURCHASE_PRICE_VARIANCE
     description: 
   
+  - label: 坏账准备计提
+    value: BAD_DEBT_RESERVE
+    description: 
+  
+  - label: 坏账核销
+    value: BAD_DEBT_WRITE_OFF
+    description: 
+  
+  - label: 坏账收回恢复
+    value: BAD_DEBT_RECOVERY
+    description: 
+  
+  - label: 坏账准备释放
+    value: BAD_DEBT_RELEASE
+    description: 
+  

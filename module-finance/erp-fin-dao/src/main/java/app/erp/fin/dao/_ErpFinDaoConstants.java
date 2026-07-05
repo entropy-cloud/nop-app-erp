@@ -229,6 +229,26 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_PURCHASE_PRICE_VARIANCE = "PURCHASE_PRICE_VARIANCE";
                     
     /**
+     * 业务类型: 坏账准备计提 
+     */
+    String BUSINESS_TYPE_BAD_DEBT_RESERVE = "BAD_DEBT_RESERVE";
+                    
+    /**
+     * 业务类型: 坏账核销 
+     */
+    String BUSINESS_TYPE_BAD_DEBT_WRITE_OFF = "BAD_DEBT_WRITE_OFF";
+                    
+    /**
+     * 业务类型: 坏账收回恢复 
+     */
+    String BUSINESS_TYPE_BAD_DEBT_RECOVERY = "BAD_DEBT_RECOVERY";
+                    
+    /**
+     * 业务类型: 坏账准备释放 
+     */
+    String BUSINESS_TYPE_BAD_DEBT_RELEASE = "BAD_DEBT_RELEASE";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";
@@ -319,6 +339,11 @@ public interface _ErpFinDaoConstants {
     String AR_AP_STATUS_CANCELLED = "CANCELLED";
                     
     /**
+     * AR/AP 状态: 已坏账核销 
+     */
+    String AR_AP_STATUS_WRITTEN_OFF = "WRITTEN_OFF";
+                    
+    /**
      * 银行勾对状态: 未勾对 
      */
     String BANK_MATCH_STATUS_UNMATCHED = "UNMATCHED";
@@ -387,6 +412,16 @@ public interface _ErpFinDaoConstants {
      * 审核状态: 已驳回 
      */
     String APPROVE_STATUS_REJECTED = "REJECTED";
+                    
+    /**
+     * 坏账单类型: 坏账核销 
+     */
+    String BAD_DEBT_TYPE_WRITE_OFF = "WRITE_OFF";
+                    
+    /**
+     * 坏账单类型: 坏账收回恢复 
+     */
+    String BAD_DEBT_TYPE_RECOVERY = "RECOVERY";
                     
     /**
      * 报销付款方式: 员工垫付 

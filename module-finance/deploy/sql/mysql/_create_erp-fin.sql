@@ -633,6 +633,32 @@ CREATE TABLE erp_fin_reconciliation_line(
   constraint PK_erp_fin_reconciliation_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_bad_debt(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NOT NULL    COMMENT '组织',
+  ACCT_SCHEMA_ID BIGINT NOT NULL    COMMENT '账套',
+  DOC_TYPE VARCHAR(20) NOT NULL    COMMENT '坏账单类型',
+  PARTNER_ID BIGINT NOT NULL    COMMENT '客户',
+  SOURCE_AR_AP_ITEM_ID BIGINT NOT NULL    COMMENT '源应收辅助账项',
+  AMOUNT DECIMAL(20,4) NOT NULL    COMMENT '核销/恢复金额(本位币)',
+  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  REASON VARCHAR(500) NULL    COMMENT '核销/恢复原因',
+  APPROVAL_STATUS VARCHAR(20) NOT NULL    COMMENT '审核状态',
+  PERIOD_ID BIGINT NULL    COMMENT '所属期间',
+  VOUCHER_ID BIGINT NULL    COMMENT '关联凭证ID',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_bad_debt primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_bank_reconciliation(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
@@ -818,6 +844,8 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
    ALTER TABLE erp_fin_voucher_bill_r COMMENT '业财回链';
                 
    ALTER TABLE erp_fin_reconciliation_line COMMENT '核销单行';
+                
+   ALTER TABLE erp_fin_bad_debt COMMENT '坏账单';
                 
    ALTER TABLE erp_fin_bank_reconciliation COMMENT '银行对账(余额调节表)';
                 

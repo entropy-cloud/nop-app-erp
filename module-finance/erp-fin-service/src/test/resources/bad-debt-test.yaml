@@ -1,0 +1,9 @@
+erp-fin:
+  bad-debt-allowance-subject-code: "1231"
+  bad-debt-expense-subject-code: "6701"
+  ar-subject-code: "1122"
+  ap-subject-code: "2202"
+  bad-debt-write-off-require-approval: false
+  bad-debt-allowance-gate-enabled: true
+  auto-depreciation-on-close: false
+  auto-post-on-close: true

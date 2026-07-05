@@ -42,7 +42,11 @@ public enum ErpFinBusinessType {
     HOUSING_FUND_ER(300),
     FREIGHT(310),
     BANK_RECON_ADJ(320),
-    PURCHASE_PRICE_VARIANCE(330);
+    PURCHASE_PRICE_VARIANCE(330),
+    BAD_DEBT_RESERVE(340),
+    BAD_DEBT_WRITE_OFF(350),
+    BAD_DEBT_RECOVERY(360),
+    BAD_DEBT_RELEASE(370);
 
     private final int code;
 

@@ -81,6 +81,10 @@
                     i18n-en:label="Bank Recon Adjustment"/>
             <option code="PURCHASE_PRICE_VARIANCE" label="采购价差" value="PURCHASE_PRICE_VARIANCE"
                     i18n-en:label="Purchase Price Variance"/>
+            <option code="BAD_DEBT_RESERVE" label="坏账准备计提" value="BAD_DEBT_RESERVE" i18n-en:label="Bad Debt Reserve"/>
+            <option code="BAD_DEBT_WRITE_OFF" label="坏账核销" value="BAD_DEBT_WRITE_OFF" i18n-en:label="Bad Debt Write-off"/>
+            <option code="BAD_DEBT_RECOVERY" label="坏账收回恢复" value="BAD_DEBT_RECOVERY" i18n-en:label="Bad Debt Recovery"/>
+            <option code="BAD_DEBT_RELEASE" label="坏账准备释放" value="BAD_DEBT_RELEASE" i18n-en:label="Bad Debt Release"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>
@@ -109,6 +113,7 @@
             <option code="PARTIAL" label="部分核销" value="PARTIAL" i18n-en:label="Partially Matched"/>
             <option code="SETTLED" label="已核销" value="SETTLED" i18n-en:label="Matched"/>
             <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
+            <option code="WRITTEN_OFF" label="已坏账核销" value="WRITTEN_OFF" i18n-en:label="Written Off"/>
         </dict>
         <dict label="银行勾对状态" name="erp-fin/bank-match-status" valueType="string" i18n-en:label="Bank Match Status">
             <option code="UNMATCHED" label="未勾对" value="UNMATCHED" i18n-en:label="Unmatched"/>
@@ -132,6 +137,10 @@
             <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
             <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
             <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
+        </dict>
+        <dict label="坏账单类型" name="erp-fin/bad-debt-type" valueType="string" i18n-en:label="Bad Debt Type">
+            <option code="WRITE_OFF" label="坏账核销" value="WRITE_OFF" i18n-en:label="Write-off"/>
+            <option code="RECOVERY" label="坏账收回恢复" value="RECOVERY" i18n-en:label="Recovery"/>
         </dict>
         <dict label="报销付款方式" name="erp-fin/expense-payment-mode" valueType="string" i18n-en:label="Expense Payment Mode">
             <option code="OWN_ACCOUNT" label="员工垫付" value="OWN_ACCOUNT" i18n-en:label="Own Account"/>
@@ -2359,6 +2368,108 @@
                 <column code="EVENT_DATA" displayName="原始事件数据(JSON)" name="eventData" precision="4000" propId="29"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Event Data"/>
             </columns>
+        </entity>
+        <entity className="app.erp.fin.dao.entity.ErpFinBadDebt" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="坏账单"
+                name="app.erp.fin.dao.entity.ErpFinBadDebt" registerShortName="true" tableName="erp_fin_bad_debt"
+                tagSet="gid,erp.finance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="file-circle-xmark" i18n-en:displayName="Bad Debt">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="单号" domain="voucherCode" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="ORG_ID" displayName="组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="ACCT_SCHEMA_ID" displayName="账套" mandatory="true" name="acctSchemaId" propId="4"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                <column code="DOC_TYPE" displayName="坏账单类型" mandatory="true" name="docType" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/bad-debt-type"
+                        i18n-en:displayName="Bad Debt Type"/>
+                <column code="PARTNER_ID" displayName="客户" mandatory="true" name="partnerId" propId="6"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
+                <column code="SOURCE_AR_AP_ITEM_ID" displayName="源应收辅助账项" mandatory="true" name="sourceArApItemId"
+                        propId="7" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source AR/AP Item"/>
+                <column code="AMOUNT" displayName="核销/恢复金额(本位币)" domain="amount" mandatory="true" name="amount"
+                        precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Amount"/>
+                <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="9"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
+                        precision="20" propId="10" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Exchange Rate"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="11"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                <column code="REASON" displayName="核销/恢复原因" name="reason" precision="500" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
+                <column code="APPROVAL_STATUS" displayName="审核状态" mandatory="true" name="approvalStatus" precision="20"
+                        propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/approve-status"
+                        i18n-en:displayName="Approval Status"/>
+                <column code="PERIOD_ID" displayName="所属期间" name="periodId" propId="14" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                <column code="VOUCHER_ID" displayName="关联凭证ID" name="voucherId" propId="15" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="17" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="18" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="19" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="21" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <relations>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Partner">
+                    <join>
+                        <on leftProp="partnerId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"
+                        i18n-en:displayName="Acct Schema">
+                    <join>
+                        <on leftProp="acctSchemaId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="sourceArApItem" refEntityName="app.erp.fin.dao.entity.ErpFinArApItem" tagSet="pub"
+                        i18n-en:displayName="Source AR/AP Item">
+                    <join>
+                        <on leftProp="sourceArApItemId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"
+                        i18n-en:displayName="Period">
+                    <join>
+                        <on leftProp="periodId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub"
+                        i18n-en:displayName="Voucher">
+                    <join>
+                        <on leftProp="voucherId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSubject" displayName="会计科目"
                 name="app.erp.md.dao.entity.ErpMdSubject" notGenCode="true" tableName="erp_md_subject"

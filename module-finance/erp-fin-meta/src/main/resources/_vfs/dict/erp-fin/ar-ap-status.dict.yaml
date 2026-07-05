@@ -21,3 +21,7 @@ options:
     value: CANCELLED
     description: 
   
+  - label: 已坏账核销
+    value: WRITTEN_OFF
+    description: 
+  
