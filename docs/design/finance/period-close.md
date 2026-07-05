@@ -6,7 +6,7 @@
 
 本文件是 `flow-overview.md` L4 节"期末结算层"的详细展开。
 
-> **实现范围注记（计划 `2026-07-02-1000-3` + `2026-07-02-1538-1`）**：本流程已落地月度结账核心链路——期间状态机（OPEN→CLOSING→CLOSED→CLOSED_FINAL，含反结账）、前置检查、AR/AP/INV/AST/GL 模块按序关账、折旧集成门控、汇兑重估（承接 0300-3 deferred）、损益结转（收入/费用/成本三类）、试算平衡表快照、反结账红冲。**步骤2 存货成本核算已接线**：INV 模块关账经 `closeInvModule` 调 inventory `IErpInvCostingBiz.reclosePeriodCosts`（finance→inventory R，DAG 合法）兜底重算本期 FIFO 成本层/COGS 异常（config-gated `erp-fin.inv-costing-reclose-on-close`，单域无 inv-service 时 try/catch 告警跳过）；正常路径由 inventory 记账器在移动单 DONE 时按物料 costMethod 策略分派（MOVING_AVERAGE/FIFO）维护成本层与流水成本，关账仅兜底。以下子项为已裁定的 Non-Goal（详见计划 Deferred But Adjudicated）：BATCH/INDIVIDUAL/STANDARD/全月一次/LIFO 计价（inventory 域 successor）、费用摊销/待摊费用（步骤4，模块未落地）、年度结转（本年利润→未分配利润+辅助账跨年+次年期间创建）、结账报告渲染（科目余额表/试算平衡表/账龄属 nop-report 报表面；本实现仅 populate TrialBalance 快照数据）。
+> **实现范围注记（计划 `2026-07-02-1000-3` + `2026-07-02-1538-1` + `2026-07-05-0540-2`）**：本流程已落地月度结账核心链路——期间状态机（OPEN→CLOSING→CLOSED→CLOSED_FINAL，含反结账）、前置检查、AR/AP/INV/AST/GL 模块按序关账、折旧集成门控、汇兑重估（承接 0300-3 deferred）、损益结转（收入/费用/成本三类）、试算平衡表快照、反结账红冲。**步骤2 存货成本核算已接线**：INV 模块关账经 `closeInvModule` 调 inventory `IErpInvCostingBiz.reclosePeriodCosts`（finance→inventory R，DAG 合法）兜底重算本期 FIFO 成本层/COGS 异常（config-gated `erp-fin.inv-costing-reclose-on-close`，单域无 inv-service 时 try/catch 告警跳过）；正常路径由 inventory 记账器在移动单 DONE 时按物料 costMethod 策略分派（MOVING_AVERAGE/FIFO）维护成本层与流水成本，关账仅兜底。**年度结转已落地**（plan `2026-07-05-0540-2`）：12 月结账时 `closePeriod` 增年度分支——辅助账跨年对账门控（AR/AP 辅助账合计 vs 总账科目余额，config-gated `erp-fin.auxiliary-recon-gate-enabled`）→ 本年利润→未分配利润结转凭证（新增业务类型 `PROFIT_TO_RETAINED_EARNINGS`，本年利润清零）→ populate 次年 1 月 `ErpFinGlBalance.yearOpeningDebit/Credit` 年初余额 → `generateNextYearPeriods(year+1)` 自动创建次年 12 期间（1 月 OPEN、其余 NEVER_OPENED，config-gated）；反结账覆盖年度结转凭证红冲，次年期间已创建时阻止反结账（须先删次年期间）。**银行存款外币汇兑重估已落地**（plan `2026-07-05-0540-2`）：`ExchangeRevaluationService` 扩展重估外币 `ErpFinFundAccount` 银行存款余额（currentBalance×期末汇率 vs 科目账面本位币聚合），差额生成 EXCHANGE_GAIN_LOSS 凭证（与 AR/AP 重估同业务类型同事务，config-gated `erp-fin.bank-fx-revaluation-enabled`），解除 1000-3 Non-Goal「银行存款外币重估需科目级币种标记」。以下子项为已裁定的 Non-Goal（详见计划 Deferred But Adjudicated）：BATCH/INDIVIDUAL/~~STANDARD~~/全月一次/LIFO 计价（inventory 域 successor）、费用摊销/待摊费用（步骤4，模块未落地）、年度报表渲染（资产负债表/利润表/现金流量表属 nop-report 报表面）、利润分配明细（法定/任意盈余公积、应付股利）、多账套/合并报表年度结转、历史年度追溯结转。
 
 > **坏账准备充足性门控**（2026-07-04 新增设计）：期末结账前置检查新增 Allowance 充足性校验——必需准备（账龄分桶计算）vs 当前 GL Allowance 账面，不足阻止结账（提示补提 BAD_DEBT_RESERVE）、超额提示释放（BAD_DEBT_RELEASE）。NRV 是应收 #1 审计断言，未达标禁止结账。详见 `bad-debt.md` §期末 allowance 充足性门控。
 
@@ -236,6 +236,8 @@
 
 ## 年度结转规则
 
+> **已落地**（plan `2026-07-05-0540-2`）：步骤3（本年利润→未分配利润）、步骤4（辅助账跨年对账门控 + 次年年初余额 populate）、步骤5（次年 12 期间自动创建）均已实现。步骤1（常规期末结账）、步骤2（损益结转）由月度结账链路承载。步骤6（年度报表）属 nop-report 报表面，归 Non-Goal。
+
 年末结账（12 月）在常规期末结账基础上增加以下步骤：
 
 ### 年度结转流程
@@ -285,6 +287,11 @@
 | `erp-fin.auto-depreciation` | true | 结账时自动计提折旧 |
 | `erp-fin.closing-reminder-days` | 3 | 结账提醒提前天数 |
 | `erp-fin.period-close-cron` | `0 0 22 L * ?` | 期末结账定时触发（每月最后一天 22:00）；登记于 `docs/architecture/job-scheduling.md` §3.1 `erp-fin-period-close` 作业，cron 接线归 follow-up |
+| `erp-fin.annual-close-enabled` | true | 年度结转总开关（12 月结账后是否执行本年利润→未分配利润 + 次年期间创建 + 年初余额 populate） |
+| `erp-fin.auto-generate-next-year-periods` | true | 年度结转时是否自动触发次年期间创建 |
+| `erp-fin.period-generate-skip-existing` | false | 次年期间生成幂等策略：已存在同年期间时是否仅补缺失月份（false=抛错） |
+| `erp-fin.auxiliary-recon-gate-enabled` | true | 辅助账跨年对账门控（AR/AP 辅助账合计 vs 总账科目余额不一致阻止年度结账） |
+| `erp-fin.bank-fx-revaluation-enabled` | true | 银行存款外币汇兑重估开关 |
 
 ## 异常处理
 
