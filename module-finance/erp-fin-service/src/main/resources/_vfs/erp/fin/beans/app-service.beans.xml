@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:ioc="ioc"
        xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
@@ -40,9 +41,14 @@
           class="app.erp.fin.service.posting.ErpFinPostingProcessor"/>
 
     <!-- 过账异常记录器（process()/reverse() 抛 NopException 时以 REQUIRES_NEW 写 PENDING 异常记录，
-         独立事务保证不随主过账回滚丢失；被 ErpFinPostingProcessor 调用）。 -->
+         独立事务保证不随主过账回滚丢失；被 ErpFinPostingProcessor 调用）。
+         notificationBiz 注入标记为 optional：单域测试（如 inventory）未引入 notify-service 时降级跳过通知。 -->
     <bean id="app.erp.fin.service.posting.ErpFinPostingExceptionRecorder"
-          class="app.erp.fin.service.posting.ErpFinPostingExceptionRecorder"/>
+          class="app.erp.fin.service.posting.ErpFinPostingExceptionRecorder">
+        <property name="notificationBiz">
+            <ioc:inject type="app.erp.notify.biz.IErpSysNotificationBiz" ioc:optional="true"/>
+        </property>
+    </bean>
 
     <!-- 过账运行监控——进程内时延采样器（posting-log.md §裁决3；P99 时延不可 SQL 衍生，用环形缓冲
          收集最近 N 次过账耗时；被 ErpFinPostingProcessor 成功路径喂样 + ErpFinPostingExceptionBizModel 查询）。 -->

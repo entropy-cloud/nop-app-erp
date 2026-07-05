@@ -5,6 +5,7 @@ import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
@@ -20,7 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -72,6 +75,13 @@ public class CreditLimitChecker {
     @Inject
     IErpFinArApItemBiz arApItemBiz;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    public void setNotificationBiz(IErpSysNotificationBiz notificationBiz) {
+        this.notificationBiz = notificationBiz;
+    }
+
     /**
      * @param customerId             客户 ID
      * @param thisOrderAmount        当前审核订单的含税总额（totalAmountWithTax，原币），null 视为 0
@@ -80,6 +90,18 @@ public class CreditLimitChecker {
      */
     public void check(Long customerId, BigDecimal thisOrderAmount, BigDecimal thisOrderExchangeRate,
                       IServiceContext context) {
+        check(customerId, thisOrderAmount, thisOrderExchangeRate, null, context);
+    }
+
+    /**
+     * @param customerId             客户 ID
+     * @param thisOrderAmount        当前审核订单的含税总额（totalAmountWithTax，原币），null 视为 0
+     * @param thisOrderExchangeRate  当前审核订单折算本位币的汇率（{@code amountFunctional = amountSource × rate}），null 视为 1
+     * @param orderCode              当前审核订单的单号（用于通知上下文，可为 null）
+     * @param context                服务上下文（提供命令式权限检查入口）
+     */
+    public void check(Long customerId, BigDecimal thisOrderAmount, BigDecimal thisOrderExchangeRate,
+                      String orderCode, IServiceContext context) {
         if (customerId == null) {
             return;
         }
@@ -117,7 +139,43 @@ public class CreditLimitChecker {
             }
             LOG.warn("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税(本位币)={}），策略={} 放行审核",
                     customerId, creditLimit, available, orderAmountFunctional, level);
+            // SOFT_WARNING 放行后派发通知（config-gated）：提醒销售员跟进客户超限订单
+            notifyCreditOverLimit(partner, orderCode, orderAmountFunctional, creditLimit, outstanding, available,
+                    context);
         }
+    }
+
+    /**
+     * 派发信用额度超限通知（config-gated by {@code erp-sal.credit-notify-enabled}）。
+     *
+     * <p>仅在 SOFT_WARNING 路径触发（HARD_BLOCK 抛错拒绝无需提醒；SPECIAL_APPROVAL 已通过权限门控反馈）。
+     * 接收人由模板 ROLE resolver 解析（销售员）；上下文含 customerId/customerName/orderNo/orderAmount/
+     * creditLimit/overAmount。模板缺失或 notify 失败时静默降级（不阻断业务）。
+     */
+    private void notifyCreditOverLimit(ErpMdPartner partner, String orderCode, BigDecimal orderAmountFunctional,
+                                       BigDecimal creditLimit, BigDecimal outstanding, BigDecimal available,
+                                       IServiceContext context) {
+        if (!isCreditNotifyEnabled() || notificationBiz == null) {
+            return;
+        }
+        try {
+            Map<String, Object> ctx = new LinkedHashMap<>();
+            ctx.put("customerId", partner.getId());
+            ctx.put("customerName", partner.getName());
+            ctx.put("orderNo", orderCode);
+            ctx.put("orderAmount", orderAmountFunctional);
+            ctx.put("creditLimit", creditLimit);
+            ctx.put("overAmount", orderAmountFunctional.subtract(available));
+            notificationBiz.notify(ErpSalConstants.NOTIFY_EVENT_CREDIT_OVER_LIMIT, ctx, context);
+        } catch (Exception e) {
+            // 通知派发失败不阻断 SOFT_WARNING 放行（config-gated 降级语义）
+            LOG.warn("信用超限 notify 派发失败（降级，主放行流程继续）：customerId={}, reason={}",
+                    partner.getId(), e.getMessage());
+        }
+    }
+
+    private boolean isCreditNotifyEnabled() {
+        return AppConfig.var(ErpSalConstants.CONFIG_CREDIT_NOTIFY_ENABLED, true);
     }
 
     private boolean hasSpecialApprovalPermission(IServiceContext context) {

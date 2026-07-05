@@ -80,3 +80,21 @@ jobs:
     invoker:
       bean: erpCrmLeadScoringRecalcJob
       method: execute
+
+  - jobName: erp-crm-event-reminder
+    displayName: CRM Event Reminder
+    description: 每 15 分钟扫描 PLANNED 状态到期事件（now ≤ startDateTime ≤ now+60min）派发提醒通知；cron 经 erp-crm.event-reminder-cron 配置门控
+    trigger:
+      cronExpr: "0 0/15 * * * ?"
+    invoker:
+      bean: erpCrmEventReminderJob
+      method: execute
+
+  - jobName: erp-cs-csat-reminder
+    displayName: Customer Service CSAT Survey Reminder
+    description: 每日 02:00 扫描未响应/过期 CSAT 调查派发提醒通知；cron 经 erp-cs.csat-reminder-cron 配置门控
+    trigger:
+      cronExpr: "0 0 2 * * ?"
+    invoker:
+      bean: erpCsCsatReminderJob
+      method: execute

@@ -1,4 +1,3 @@
-
 package app.erp.cs.service.entity;
 
 import app.erp.cs.biz.IErpCsSurveyBiz;
@@ -11,6 +10,9 @@ import app.erp.cs.dao.entity.ErpCsTicketAction;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
+import app.erp.md.biz.IErpMdPartnerBiz;
+import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -24,7 +26,9 @@ import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -49,10 +53,16 @@ import io.nop.api.core.time.CoreMetrics;
 @BizModel("ErpCsTicket")
 public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IErpCsTicketBiz {
 
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ErpCsTicketBizModel.class);
+
     @Inject
     IErpCsTicketActionBiz ticketActionBiz;
     @Inject
     IErpCsSurveyBiz surveyBiz;
+    @Inject
+    IErpMdPartnerBiz mdPartnerBiz;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
 
     public ErpCsTicketBizModel() {
         setEntityName(ErpCsTicket.class.getName());
@@ -64,6 +74,14 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     public void setSurveyBiz(IErpCsSurveyBiz surveyBiz) {
         this.surveyBiz = surveyBiz;
+    }
+
+    public void setMdPartnerBiz(IErpMdPartnerBiz mdPartnerBiz) {
+        this.mdPartnerBiz = mdPartnerBiz;
+    }
+
+    public void setNotificationBiz(IErpSysNotificationBiz notificationBiz) {
+        this.notificationBiz = notificationBiz;
     }
 
     // ---------- 状态机 ----------
@@ -247,6 +265,8 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             // 创建 ESCALATE 审计 + 通知 escalationUserId（L1，config-gated；通知占位，实际发送属 nop-notification 独立面）
             writeAction(ticket, ErpCsConstants.ACTION_TYPE_ESCALATE, ticket.getStatus(), ticket.getStatus(),
                     "SLA 超时升级通知 escalationUserId", context);
+            // 通知派发（config-gated）：超时升级时通知客服主管/分派人，复用既有 erp-cs-sla-scan scheduler job 自动派发
+            notifySlaOverdue(ticket, context);
             escalated.add(ticket);
         }
         return escalated;
@@ -264,10 +284,53 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
                 ErpCsConstants.TICKET_STATUS_ASSIGNED, ErpCsConstants.TICKET_STATUS_IN_PROGRESS)));
         q.addFilter(io.nop.api.core.beans.FilterBeans.dateTimeBetween("deadlineDateTime", now, now.plusMinutes(minutes)));
         q.addFilter(eq("isSlaCompleted", Boolean.FALSE));
-        return findList(q, null, context);
+        List<ErpCsTicket> warnings = findList(q, null, context);
+        // 通知派发（config-gated）：临近 SLA 截止时预警通知，避免超期
+        for (ErpCsTicket ticket : warnings) {
+            notifySlaOverdue(ticket, context);
+        }
+        return warnings;
     }
 
     // ---------- helpers ----------
+
+    /**
+     * SLA 通知派发（config-gated by {@link ErpCsConfigs#isSlaNotifyEnabled}）。
+     *
+     * <p>复用既有 {@code cs.sla-overdue} 模板（plan 2026-07-06-0504-1 Phase 4 已种子）。
+     * 接收人由模板 ROLE resolver 解析（客服主管）；上下文含 ticketId/ticketCode/customerName/deadlineDateTime
+     * + escalationUserId（取分派人，模板可选用）。模板缺失或 notify 失败时静默降级（不阻断业务）。
+     */
+    private void notifySlaOverdue(ErpCsTicket ticket, IServiceContext context) {
+        if (!ErpCsConfigs.isSlaNotifyEnabled()) {
+            return;
+        }
+        try {
+            Map<String, Object> ctx = new LinkedHashMap<>();
+            ctx.put("ticketId", ticket.getId());
+            ctx.put("ticketCode", ticket.getCode());
+            ctx.put("customerName", resolveCustomerName(ticket.getCustomerId(), context));
+            ctx.put("escalationUserId", ticket.getAssignedToId());
+            ctx.put("deadlineDateTime", ticket.getDeadlineDateTime());
+            notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_SLA_OVERDUE, ctx, context);
+        } catch (Exception e) {
+            // 通知派发失败不阻断 SLA 升级主流程（config-gated 降级语义）
+            LOG.warn("SLA notify 派发失败（降级，主升级流程继续）：ticketId={}, reason={}",
+                    ticket.getId(), e.getMessage());
+        }
+    }
+
+    private String resolveCustomerName(Long customerId, IServiceContext context) {
+        if (customerId == null) {
+            return null;
+        }
+        try {
+            ErpMdPartner partner = mdPartnerBiz.findById(customerId, context);
+            return partner == null ? null : partner.getName();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     private ErpCsTicket requireTicket(Long ticketId, IServiceContext context) {
         if (ticketId == null) {

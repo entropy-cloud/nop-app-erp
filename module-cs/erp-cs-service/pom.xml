@@ -29,6 +29,20 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: SLA 超期/预警接入通知派发通道（IErpSysNotificationBiz 位于 erp-notify-dao）。
+             cs→notify 单向（cs 触发通知，notify 不依赖 cs），DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-notify-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- compile: SLA 升级通知上下文 customerName 经 IErpMdPartnerBiz 跨域只读查询。
+             cs→md 单向（R），DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-master-data-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>
@@ -80,6 +94,21 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: IErpSysNotificationBiz Bean 实现（ErpSysNotificationBizModel + Dispatcher）注册。
+             app-erp-all 聚合时由 app 层提供；单域测试需引入以使 notify 调用可端到端落 ErpSysNotification。 -->
+        <dependency>
+            <artifactId>app-erp-notify-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: 引入 master-data BizModel Bean 实现（IErpMdPartnerBiz）使 customerName 查询端到端可运行。 -->
+        <dependency>
+            <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

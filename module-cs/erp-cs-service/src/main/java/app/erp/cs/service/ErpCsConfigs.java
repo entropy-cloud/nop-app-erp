@@ -68,6 +68,11 @@ public final class ErpCsConfigs {
         return intVar(ErpCsConstants.CONFIG_SURVEY_EXPIRE_DAYS, 7);
     }
 
+    /** SLA 超期/预警通知派发是否启用（默认 true；plan 2026-07-06-0642-1 §Phase 1）。 */
+    public static boolean isSlaNotifyEnabled() {
+        return boolVar(ErpCsConstants.CONFIG_SLA_NOTIFY_ENABLED, true);
+    }
+
     private static boolean boolVar(String key, boolean defaultValue) {
         String raw = AppConfig.var(key, String.valueOf(defaultValue));
         if (raw == null || raw.trim().isEmpty()) {

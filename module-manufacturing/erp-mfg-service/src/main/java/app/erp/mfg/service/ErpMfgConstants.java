@@ -183,4 +183,16 @@ public interface ErpMfgConstants {
     String COST_ELEMENT_LABOR = "LABOR";
     String COST_ELEMENT_OVERHEAD = "OVERHEAD";
     String COST_ELEMENT_SUBCONTRACT = "SUBCONTRACT";
+
+    /** 生产差异阈值告警开关（默认 true；plan 2026-07-06-0642-1 §Phase 3）。关闭时跳过 notify 调用。 */
+    String CONFIG_VARIANCE_ALERT_ENABLED = "erp-mfg.variance-alert-enabled";
+
+    /** 生产差异告警阈值（本位币净金额绝对值；默认 100；plan 2026-07-06-0642-1 §Phase 3）。超阈值时派发 mfg.production-variance 通知。 */
+    String CONFIG_VARIANCE_ALERT_THRESHOLD = "erp-mfg.variance-alert-threshold";
+
+    /** CONFIG_VARIANCE_ALERT_THRESHOLD 缺省值（本位币）。 */
+    java.math.BigDecimal DEFAULT_VARIANCE_ALERT_THRESHOLD = new java.math.BigDecimal("100");
+
+    /** 通知事件类型：生产差异超阈值告警（对应 erp_sys_notification_template.notification_type；plan 2026-07-06-0642-1 §Phase 3）。 */
+    String NOTIFY_EVENT_PRODUCTION_VARIANCE = "mfg.production-variance";
 }

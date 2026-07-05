@@ -172,6 +172,12 @@ public interface ErpFinConstants {
     /** 监听者派发失败记录的 failedStage 标识（落入 ErpFinPostingException 异常工作台）。 */
     String FAILED_STAGE_NOTIFY_REVERSAL_LISTENER = "notify-reversal-listener";
 
+    /** 过账异常告警通知派发开关（默认 true；plan 2026-07-06-0642-1 §Phase 1）。关闭时跳过 notify 调用。 */
+    String CONFIG_POSTING_EXCEPTION_NOTIFY_ENABLED = "erp-fin.posting-exception-notify-enabled";
+
+    /** 通知事件类型：过账异常告警（对应 erp_sys_notification_template.notification_type）。 */
+    String NOTIFY_EVENT_POSTING_EXCEPTION = "fin.posting-exception";
+
     // ---- 过账异常处置状态（与 erp-fin/posting-exception-status 字典对齐，见 posting-log.md §过账异常处置） ----
     String POSTING_EXCEPTION_STATUS_PENDING = "PENDING";
     String POSTING_EXCEPTION_STATUS_RETRYING = "RETRYING";

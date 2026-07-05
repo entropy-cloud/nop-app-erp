@@ -67,4 +67,16 @@ public interface ErpCsConstants {
     String CONFIG_SURVEY_EXPIRE_DAYS = "erp-cs.survey-expire-days";        // 默认 7
     /** 定时 SLA 超时扫描 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
     String CONFIG_SLA_SCAN_CRON = "erp-cs.sla-scan-cron";
+
+    /** SLA 超期/预警通知派发开关（默认 true；plan 2026-07-06-0642-1 §Phase 1）。关闭时跳过 notify 调用。 */
+    String CONFIG_SLA_NOTIFY_ENABLED = "erp-cs.sla-notify-enabled";
+
+    /** 通知事件类型：SLA 超期/预警（对应 erp_sys_notification_template.notification_type）。 */
+    String NOTIFY_EVENT_SLA_OVERDUE = "cs.sla-overdue";
+
+    /** 定时 CSAT 调查到期提醒 cron（空=不调度；plan 2026-07-06-0642-1 §Phase 2）。 */
+    String CONFIG_CSAT_REMINDER_CRON = "erp-cs.csat-reminder-cron";
+
+    /** 通知事件类型：CSAT 调查到期提醒（对应 erp_sys_notification_template.notification_type；plan 2026-07-06-0642-1 §Phase 2）。 */
+    String NOTIFY_EVENT_CSAT_REMINDER = "cs.csat-reminder";
 }

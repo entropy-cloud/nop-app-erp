@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:ioc="ioc"
        xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
@@ -12,9 +13,14 @@
     <bean id="app.erp.sal.service.entity.DeliveryStockMoveBuilder"
           class="app.erp.sal.service.entity.DeliveryStockMoveBuilder"/>
 
-    <!-- 销售域服务（非 BizModel）：客户信用额度校验器（订单审核时调用） -->
+    <!-- 销售域服务（非 BizModel）：客户信用额度校验器（订单审核时调用）。
+         notificationBiz 注入标记为 optional：单域测试（如 crm 引入 sales-service 但无 notify-service）时降级跳过通知。 -->
     <bean id="app.erp.sal.service.entity.CreditLimitChecker"
-          class="app.erp.sal.service.entity.CreditLimitChecker"/>
+          class="app.erp.sal.service.entity.CreditLimitChecker">
+        <property name="notificationBiz">
+            <ioc:inject type="app.erp.notify.biz.IErpSysNotificationBiz" ioc:optional="true"/>
+        </property>
+    </bean>
 
     <!-- 销售域服务（非 BizModel）：报价→订单域内转化组装器 -->
     <bean id="app.erp.sal.service.entity.QuotationToOrderConverter"

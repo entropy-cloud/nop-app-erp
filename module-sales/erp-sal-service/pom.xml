@@ -57,6 +57,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 信用额度超限告警接入通知派发通道（IErpSysNotificationBiz 位于 erp-notify-dao）。
+             sales→notify 单向（sales 触发通知，notify 不依赖 sales），DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-notify-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- test-only: generateMove Bean 实现使测试可注入运行（app-erp-all 聚合时由 app 层提供）。 -->
         <dependency>
             <artifactId>app-erp-inventory-service</artifactId>
@@ -151,6 +158,14 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: IErpSysNotificationBiz Bean 实现（ErpSysNotificationBizModel + Dispatcher）注册。
+             app-erp-all 聚合时由 app 层提供；单域测试需引入以使 notify 调用可端到端落 ErpSysNotification。 -->
+        <dependency>
+            <artifactId>app-erp-notify-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

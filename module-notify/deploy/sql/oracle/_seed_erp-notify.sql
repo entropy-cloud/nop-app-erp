@@ -1,4 +1,4 @@
--- 通知派发子系统种子模板（plan 2026-07-06-0504-1 Phase 4）
+-- 通知派发子系统种子模板（plan 2026-07-06-0504-1 Phase 4 + 2026-07-06-0642-1 Phase 2/3）
 -- 三类通知各一样例，证明三类频控与通道分支可端到端运行。
 -- 接收人解析：ROLE（角色名 → nop-auth NopAuthUserRole → userId）；角色名取自 docs/design/roles-and-permissions.md。
 -- 角色未落地时 recipientResolver 静默返回空并 WARN（config-gated，不阻断业务）。
@@ -25,4 +25,22 @@ VALUES
    '信用超额度通知: ${customerName}',
    '客户 ${customerName} 信用额度超限 ${overAmount}，订单 ${orderNo} 已挂起',
    'ROLE', '{"roles":["销售员"]}', 0, 'NONE', 'ACTIVE',
-   '系统通知样例（notification-strategy.md 系统通知类）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+   '系统通知样例（notification-strategy.md 系统通知类）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：CRM 活动到期提醒（plan 2026-07-06-0642-1 Phase 2），5 分钟窗口，合并为一条
+  (7104, 'crm.event-reminder', 'CRM活动到期提醒', 'IN_APP',
+   '活动到期提醒: ${title}',
+   '活动 ${title} 即将于 ${dueTime} 到期，负责人 ${ownerUserId}，请跟进',
+   'USER_LIST', '{"userIds":["${ownerUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（CRM 活动到期，ownerUserId 模板字段占位；精确路由待角色基础设施）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：CSAT 调查到期提醒（plan 2026-07-06-0642-1 Phase 2），5 分钟窗口，合并为一条
+  (7105, 'cs.csat-reminder', 'CSAT调查到期提醒', 'IN_APP',
+   'CSAT调查到期提醒: ${ticketCode}',
+   '工单 ${ticketCode} 的满意度调查（state=${state}）请跟进',
+   'ROLE', '{"roles":["客服员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（CSAT 调查未响应/过期提醒）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 异常告警：生产差异超阈值（plan 2026-07-06-0642-1 Phase 3），1 分钟窗口，合并含次数
+  (7106, 'mfg.production-variance', '生产差异超阈值告警', 'IN_APP',
+   '生产差异超阈值告警: ${workOrderCode}',
+   '工单 ${workOrderCode}（产品 ${productCode}）${varianceType} 差异金额 ${varianceAmount} 已超阈值 ${threshold}，请核查',
+   'ROLE', '{"roles":["生产主管"]}', 60, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '异常告警样例（生产差异超阈值，varianceType/varianceAmount/threshold 字段）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);

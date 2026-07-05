@@ -46,6 +46,9 @@
         <!-- compile: 双面对账一致性兜底经 daoFor 只读 ErpSalInvoice.receivedAmount；
              DAG 合法 R：finance→sales 只读依赖，data-dependency-matrix.md）。 -->
         <dependency><artifactId>app-erp-sales-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version></dependency>
+        <!-- compile: 过账异常告警接入通知派发通道（IErpSysNotificationBiz 位于 erp-notify-dao）。
+             finance→notify 单向（finance 触发通知，notify 不依赖 finance），DAG 无环。 -->
+        <dependency><artifactId>app-erp-notify-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version></dependency>
         <dependency><artifactId>app-erp-projects-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
@@ -111,6 +114,9 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- test-only: IErpSysNotificationBiz Bean 实现（ErpSysNotificationBizModel + Dispatcher）注册。
+             app-erp-all 聚合时由 app 层提供；单域测试需引入以使 notify 调用可端到端落 ErpSysNotification。 -->
+        <dependency><artifactId>app-erp-notify-service</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
     </dependencies>
 
     <build>

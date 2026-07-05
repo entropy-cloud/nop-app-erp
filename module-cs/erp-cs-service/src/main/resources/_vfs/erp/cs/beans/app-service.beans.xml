@@ -12,4 +12,9 @@
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-cs.sla-scan-cron 配置门控。 -->
     <bean id="erpCsSlaScanJob"
           class="app.erp.cs.service.job.ErpCsSlaScanJob"/>
+
+    <!-- 定时 CSAT 调查到期提醒 Job Bean（plan 2026-07-06-0642-1 §Phase 2）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-cs.csat-reminder-cron 配置门控。 -->
+    <bean id="erpCsCsatReminderJob"
+          class="app.erp.cs.service.job.ErpCsCsatReminderJob"/>
 </beans>

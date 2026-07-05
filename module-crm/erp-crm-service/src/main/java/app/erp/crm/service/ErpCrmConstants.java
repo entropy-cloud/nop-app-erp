@@ -32,6 +32,12 @@ public interface ErpCrmConstants {
     // ===== 活动提醒（3.2）配置点 =====
     String CONFIG_EVENT_REMINDER_ENABLED = "erp-crm.event-reminder-enabled";
 
+    /** 定时活动到期提醒 cron（空=不调度；plan 2026-07-06-0642-1 §Phase 2）。 */
+    String CONFIG_EVENT_REMINDER_CRON = "erp-crm.event-reminder-cron";
+
+    /** 通知事件类型：活动到期提醒（对应 erp_sys_notification_template.notification_type；plan 2026-07-06-0642-1 §Phase 2）。 */
+    String NOTIFY_EVENT_EVENT_REMINDER = "crm.event-reminder";
+
     // erp-crm/event-status 字典
     String EVENT_STATUS_PLANNED = "PLANNED";
     String EVENT_STATUS_COMPLETED = "COMPLETED";

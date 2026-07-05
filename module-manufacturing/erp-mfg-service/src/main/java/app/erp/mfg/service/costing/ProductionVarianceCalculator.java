@@ -11,20 +11,28 @@ import app.erp.mfg.dao.entity.ErpMfgWorkcenter;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -62,6 +70,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ProductionVarianceCalculator {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ProductionVarianceCalculator.class);
+
     static final BigDecimal SIXTY = new BigDecimal("60");
     static final int SCALE = 4;
     static final RoundingMode RM = RoundingMode.HALF_UP;
@@ -70,6 +80,8 @@ public class ProductionVarianceCalculator {
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -77,6 +89,10 @@ public class ProductionVarianceCalculator {
 
     public void setOrmTemplate(IOrmTemplate ormTemplate) {
         this.ormTemplate = ormTemplate;
+    }
+
+    public void setNotificationBiz(IErpSysNotificationBiz notificationBiz) {
+        this.notificationBiz = notificationBiz;
     }
 
     /**
@@ -176,7 +192,72 @@ public class ProductionVarianceCalculator {
         if (ormTemplate != null) {
             ormTemplate.flushSession();
         }
+        // 差异阈值告警旁路（plan 2026-07-06-0642-1 §Phase 3 Decision）：在差异计算结果落定后按阈值判定，
+        // 超阈值调 notify；与过账 Dispatcher 解耦避免回滚耦合（告警是观察侧职责）。
+        dispatchVarianceAlertIfOverThreshold(wo, lines);
         return lines;
+    }
+
+    /**
+     * 差异阈值告警旁路派发（config-gated by {@code erp-mfg.variance-alert-enabled}）。
+     *
+     * <p>按本位币净差异金额绝对值最大的一行判定，超 {@code erp-mfg.variance-alert-threshold}（默认 100）时
+     * 派发 {@code mfg.production-variance} 通知（接收人=生产主管 ROLE）。阈值可调；config 关闭路径静默跳过。
+     * 通知失败降级（warn）不阻断差异计算结果。
+     */
+    private void dispatchVarianceAlertIfOverThreshold(ErpMfgWorkOrder wo, List<ErpMfgCostVariance> lines) {
+        if (!isVarianceAlertEnabled() || notificationBiz == null || lines.isEmpty()) {
+            return;
+        }
+        BigDecimal threshold = resolveVarianceAlertThreshold();
+        ErpMfgCostVariance topLine = null;
+        BigDecimal topAbs = BigDecimal.ZERO;
+        for (ErpMfgCostVariance line : lines) {
+            BigDecimal v = line.getVarianceAmount();
+            if (v == null) {
+                continue;
+            }
+            BigDecimal abs = v.abs();
+            if (abs.compareTo(topAbs) > 0) {
+                topAbs = abs;
+                topLine = line;
+            }
+        }
+        if (topLine == null || topAbs.compareTo(threshold) < 0) {
+            return;
+        }
+        try {
+            Map<String, Object> ctx = new LinkedHashMap<>();
+            ctx.put("workOrderId", wo.getId());
+            ctx.put("workOrderCode", wo.getCode());
+            ctx.put("productId", wo.getProductId());
+            ctx.put("productCode", String.valueOf(wo.getProductId()));
+            ctx.put("varianceType", topLine.getVarianceType());
+            ctx.put("varianceAmount", topLine.getVarianceAmount());
+            ctx.put("threshold", threshold);
+            IServiceContext serviceCtx = new ServiceContextImpl();
+            notificationBiz.notify(ErpMfgConstants.NOTIFY_EVENT_PRODUCTION_VARIANCE, ctx, serviceCtx);
+        } catch (Exception e) {
+            LOG.warn("生产差异阈值告警派发失败（降级，主计算流程继续）：workOrderId={}, reason={}",
+                    wo.getId(), e.getMessage());
+        }
+    }
+
+    private boolean isVarianceAlertEnabled() {
+        String raw = AppConfig.var(ErpMfgConstants.CONFIG_VARIANCE_ALERT_ENABLED, "true");
+        return !"false".equalsIgnoreCase(raw == null ? "" : raw.trim());
+    }
+
+    private BigDecimal resolveVarianceAlertThreshold() {
+        String raw = AppConfig.var(ErpMfgConstants.CONFIG_VARIANCE_ALERT_THRESHOLD, null);
+        if (raw == null || raw.trim().isEmpty()) {
+            return ErpMfgConstants.DEFAULT_VARIANCE_ALERT_THRESHOLD;
+        }
+        try {
+            return new BigDecimal(raw.trim());
+        } catch (NumberFormatException e) {
+            return ErpMfgConstants.DEFAULT_VARIANCE_ALERT_THRESHOLD;
+        }
     }
 
     /**

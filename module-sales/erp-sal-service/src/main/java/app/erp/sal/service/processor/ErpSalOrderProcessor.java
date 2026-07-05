@@ -155,7 +155,8 @@ public class ErpSalOrderProcessor {
 
     protected void validateBusinessRulesForApprove(ErpSalOrder order, IServiceContext context) {
         requireCustomerActive(order, context);
-        creditLimitChecker.check(order.getCustomerId(), order.getTotalAmountWithTax(), order.getExchangeRate(), context);
+        creditLimitChecker.check(order.getCustomerId(), order.getTotalAmountWithTax(), order.getExchangeRate(),
+                order.getCode(), context);
     }
 
     // ---------- step：执行（状态推进 + 持久化） ----------

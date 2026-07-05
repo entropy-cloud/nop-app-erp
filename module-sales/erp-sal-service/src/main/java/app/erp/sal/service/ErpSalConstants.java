@@ -58,6 +58,12 @@ public interface ErpSalConstants {
     // 超信用额度专项审批权限键（SPECIAL_APPROVAL 级别经权限门控实现）
     String PERM_CREDIT_OVER_LIMIT_APPROVE = "erp-sal:creditOverLimitApprove";
 
+    /** 信用额度超限告警通知派发开关（默认 true；plan 2026-07-06-0642-1 §Phase 1）。关闭时跳过 notify 调用。 */
+    String CONFIG_CREDIT_NOTIFY_ENABLED = "erp-sal.credit-notify-enabled";
+
+    /** 通知事件类型：信用额度超限（对应 erp_sys_notification_template.notification_type）。 */
+    String NOTIFY_EVENT_CREDIT_OVER_LIMIT = "sal.credit-over-limit";
+
     // 退货配置项（returns.md §配置项，缺失走默认，无需 .env）
     String CONFIG_RETURN_REASON_REQUIRED = "erp-sal.return-reason-required";
     String CONFIG_RETURN_APPROVAL_REQUIRED = "erp-sal.return-approval-required";
