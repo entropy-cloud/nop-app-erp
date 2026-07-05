@@ -355,6 +355,8 @@
 
 ### 6.1 设计原则：三轴分离 + use-approval 标准化
 
+> 落地状态（2026-07-06）：本节多级审批链设计已由 `docs/plans/2026-07-06-0315-1-workflow-approval-xwf.md` 实现——`salary-approval/v1.xwf` 三级链 hr-review→finance-review→manager-approval 已落地，submit→三级 agree→approve 闭环 + disagree 驳回 + REJECTED 重提测试全绿（`TestErpHrSalaryWorkflowApproval`）。bootstrap actor 用 `actorType="all"`；§6.3 精确角色（HR 专员/财务主管/部门负责人）路由待角色基础设施落地（Deferred）。
+
 薪酬审批采用与全 ERP 一致的**三轴状态分离**原则（`domain-design-guidelines.md §16`）：
 
 | 轴 | 字段 | 取值 | 管理方 |

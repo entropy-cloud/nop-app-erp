@@ -44,6 +44,7 @@
 所有审批实体**必须**通过 ORM `tagSet="use-approval"` 接入：
 
 - WORKFLOW 模式使用 nop-wf 引擎（xmeta 配 `wf:wfName`）
+  - 落地状态（2026-07-06）：§按单据类型配置表中 WORKFLOW 单据（付款单/收款单/资产处置/HR 薪酬）已全部落地 `.xwf` 流程定义（见 `docs/plans/2026-07-06-0315-1-workflow-approval-xwf.md`）。
 - DIRECT 模式同样标 `use-approval`、不配 `wfName`，codegen 生成标准 approve/reject action，审批状态迁移由平台标准 source 处理
 - nop-wf 完成回调更新业务单据 approveStatus
 - `approveStatus` 只跟踪业务终态，严格限定为**四态**：`UNSUBMITTED`（未提交）/ `SUBMITTED`（已提交待审批）/ `APPROVED`（已批准）/ `REJECTED`（已驳回），不跟踪 wf 内部状态。`SUBMITTED` 表示单据已提交等待审批，审批过程中的场内进度（会签、转审、待阅等）完全由 nop-wf 引擎在 `NopWfStepInstance`/`NopWfWork` 表中管理，不污染业务表。**禁止**使用 `APPROVING`、`PENDING_APPROVAL` 等中间态值。

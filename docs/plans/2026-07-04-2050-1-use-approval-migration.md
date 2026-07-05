@@ -348,15 +348,15 @@ Exit Criteria:
 
 ### WORKFLOW 模式 `.xwf` 流程定义（含 HR 薪酬多级审批）
 
-- Classification: `successor`
+- Classification: `successor` ✅ **已完成（2026-07-06）**——后继计划 `docs/plans/2026-07-06-0315-1-workflow-approval-xwf.md`（Status: completed）。
 - Why Not Blocking Closure: 本计划仅完成 use-approval 标记 + 标准 action 迁移（DIRECT 模式可直接生效）。WORKFLOW 模式需要为 4 实体编写 `.xwf` 流程定义 + xmeta `wf:wfName` 配置 + wf 结束 listener 回调 + `useWorkflow="true"` 标记：
-  - 付款单（ErpPurPayment）
-  - 收款单（ErpSalReceipt）
-  - 资产处置（ErpAstDisposal）
-  - HR 薪酬（ErpHrSalary）——payroll.md §6 设计三级审批（HR→财务→经理），本计划完成后 ErpHrSalary 为 DIRECT 模式（单级审批），多级链丢失，需 `.xwf` 后续计划恢复
-  
-  本计划有意**不加** `useWorkflow="true"`，避免标记后无 `.xwf` 导致的配置悬空。
-- Successor Required: `yes`（触发条件：上述 4 实体 WORKFLOW 多级审批接入需求时）
+  - 付款单（ErpPurPayment）✅
+  - 收款单（ErpSalReceipt）✅
+  - 资产处置（ErpAstDisposal）✅
+  - HR 薪酬（ErpHrSalary）✅——payroll.md §6 设计三级审批（HR→财务→经理），本计划完成后 ErpHrSalary 为 DIRECT 模式（单级审批），多级链丢失，**已由后继计划 `.xwf` 恢复三级链**
+   
+  本计划有意**不加** `useWorkflow="true"`，避免标记后无 `.xwf` 导致的配置悬空。（后继计划已补齐。）
+- Successor Required: `yes`（触发条件：上述 4 实体 WORKFLOW 多级审批接入需求时）——**已触发并由 2026-07-06-0315-1 完成**
 
 ### 前端 view.xml 审批按钮适配
 
