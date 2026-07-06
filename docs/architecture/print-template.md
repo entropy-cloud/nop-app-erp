@@ -41,6 +41,16 @@
 
 **域隔离范式（复用约定）**：新域报表按 `ErpFinReportBizModel` / `ErpMfgReportBizModel` 范式复制——每域一个 `ErpXxxReportBizModel`（`@BizModel("ErpXxxReport")`），模板根 `/nop/main/report/<domain>/`，渲染入口 + 数据集聚合留在本域 service 内（不跨域 import）。
 
+库存域渲染入口：`app.erp.inv.service.report.ErpInvReportBizModel`（`@BizModel("ErpInvReport")`，plan 2026-07-06-1247-1）：
+- 镜像 `ErpMfgReportBizModel` 域隔离范式，模板根 `/nop/main/report/inv/`。
+- 一张库存追溯可视化报表模板：`module-inventory/erp-inv-service/src/main/resources/_vfs/nop/main/report/inv/`（库存追溯链可视化，表格汇总口径）。
+- 数据集聚合：`buildInventoryTraceDataset` 经同域 `IErpInvStockMoveBiz` 的 4 个追溯方法（forwardTrace/backwardTrace/returnTrace/batchTrace，0700-1 落地）聚合批次/物料的移动链路（originMoveId/originReturnedMoveId 上下游 + 批次号 + 退货标记 + 数量），口径对齐 `docs/design/inventory/trace-chain.md §追溯链查询`。交互式树/图可视化归前端 successor。
+
+HR 域渲染入口：`app.erp.hr.service.report.ErpHrReportBizModel`（`@BizModel("ErpHrReport")`，plan 2026-07-06-1247-1）：
+- 镜像域隔离范式，模板根 `/nop/main/report/hr/`。
+- 两张 HR 报表模板：`module-hr/erp-hr-service/src/main/resources/_vfs/nop/main/report/hr/`（员工净余额 / 薪酬模拟对比）。
+- 数据集聚合：员工净余额 `buildEmployeeNetBalanceDataset` 经跨域只读 `IErpFinArApItemBiz.findOpenItems(direction, ctx)` 聚合 finance 辅助账（按 sourceBillType=EMPLOYEE_ADVANCE/EXPENSE_CLAIM 二次过滤出员工项，净额=预支应收−报销应付，口径对齐 `docs/design/finance/expense-claim.md`）；薪酬模拟对比 `buildPayrollSimulationComparisonDataset` 从同域 `ErpHrSalarySimulationItemAdjustment`（2200-3）聚合源 vs 调整三列对比 + 部门小计，对齐 `docs/design/human-resource/payroll-simulation.md`。HR 报表 AMIS 菜单/页面归前端 successor。
+
 ## 单据打印（DETAL/套打，后续计划）
 
 发票/凭证/订单套打是相关但独立的能力面（套打背景图 + 单据维度模板）。本期仅交付财务报表渲染能力；单据打印模板制作归后续计划，复用同一 `NopReportDefinition` + `IReportEngine` 入口（无需新建实体）。
