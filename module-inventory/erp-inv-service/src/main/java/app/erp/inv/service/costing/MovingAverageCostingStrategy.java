@@ -5,9 +5,6 @@ import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.service.ErpInvConstants;
-import io.nop.dao.api.IDaoProvider;
-import io.nop.dao.api.IEntityDao;
-import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,14 +16,14 @@ import java.math.RoundingMode;
  * 逻辑的逐字节抽取——入库重算 {@code avgCost=(旧totalCost+入库cost)/(旧totalQty+入库qty)}，
  * 出库取 {@code unitCost=balance.avgCost}，扣减余额。任何字段顺序/舍入/符号变更都会破坏既有套件门控。
  *
+ * <p>余额更新经 {@link BookingContext#updateBalanceWithRetry} 走乐观锁 + 重试（UC-INV-08 加固，
+ * plan 2026-07-07-0024-2）；策略仅负责纯字段计算（applyDelta 回调），记账行为不变。
+ *
  * <p>权威：{@code docs/design/inventory/cross-domain.md}（余额/流水同事务 + 移动加权平均由流水维护）。
  */
 public class MovingAverageCostingStrategy implements CostingStrategy {
 
     static final int SCALE = 6;
-
-    @Inject
-    IDaoProvider daoProvider;
 
     @Override
     public String costMethod() {
@@ -42,20 +39,20 @@ public class MovingAverageCostingStrategy implements CostingStrategy {
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = unitCost.multiply(qty);
 
-        BigDecimal oldTotal = nz(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = nz(balance.getTotalCost());
-        BigDecimal newTotal = oldTotal.add(qty);
-        BigDecimal newTotalCost = oldTotalCost.add(lineTotalCost);
-        BigDecimal newAvg = newTotal.signum() != 0
-                ? newTotalCost.divide(newTotal, SCALE, RoundingMode.HALF_UP) : BigDecimal.ZERO;
+        ErpInvStockBalance updated = ctx.updateBalanceWithRetry(balance, b -> {
+            BigDecimal oldTotal = nz(b.getTotalQuantity());
+            BigDecimal oldTotalCost = nz(b.getTotalCost());
+            BigDecimal newTotal = oldTotal.add(qty);
+            BigDecimal newTotalCost = oldTotalCost.add(lineTotalCost);
+            BigDecimal newAvg = newTotal.signum() != 0
+                    ? newTotalCost.divide(newTotal, SCALE, RoundingMode.HALF_UP) : BigDecimal.ZERO;
+            b.setTotalQuantity(newTotal);
+            b.setTotalCost(newTotalCost);
+            b.setAvgCost(newAvg);
+            ctx.recomputeAvailable(b);
+        });
 
-        balance.setTotalQuantity(newTotal);
-        balance.setTotalCost(newTotalCost);
-        balance.setAvgCost(newAvg);
-        ctx.recomputeAvailable(balance);
-        daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
-
-        ctx.writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, qty, unitCost, lineTotalCost,
+        ctx.writeLedger(move, line, acctSchemaId, updated, warehouseId, locationId, qty, unitCost, lineTotalCost,
                 ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         return unitCost;
     }
@@ -71,20 +68,20 @@ public class MovingAverageCostingStrategy implements CostingStrategy {
         BigDecimal unitCost = nz(balance.getAvgCost());
         BigDecimal lineTotalCost = unitCost.multiply(qty);
 
-        BigDecimal oldTotal = nz(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = nz(balance.getTotalCost());
-        BigDecimal newTotal = oldTotal.subtract(qty);
-        BigDecimal newTotalCost = oldTotalCost.subtract(lineTotalCost);
-        BigDecimal newAvg = newTotal.signum() != 0
-                ? newTotalCost.divide(newTotal, SCALE, RoundingMode.HALF_UP) : unitCost;
+        ErpInvStockBalance updated = ctx.updateBalanceWithRetry(balance, b -> {
+            BigDecimal oldTotal = nz(b.getTotalQuantity());
+            BigDecimal oldTotalCost = nz(b.getTotalCost());
+            BigDecimal newTotal = oldTotal.subtract(qty);
+            BigDecimal newTotalCost = oldTotalCost.subtract(lineTotalCost);
+            BigDecimal newAvg = newTotal.signum() != 0
+                    ? newTotalCost.divide(newTotal, SCALE, RoundingMode.HALF_UP) : unitCost;
+            b.setTotalQuantity(newTotal);
+            b.setTotalCost(newTotalCost);
+            b.setAvgCost(newAvg);
+            ctx.recomputeAvailable(b);
+        });
 
-        balance.setTotalQuantity(newTotal);
-        balance.setTotalCost(newTotalCost);
-        balance.setAvgCost(newAvg);
-        ctx.recomputeAvailable(balance);
-        daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
-
-        ctx.writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, qty.negate(), unitCost,
+        ctx.writeLedger(move, line, acctSchemaId, updated, warehouseId, locationId, qty.negate(), unitCost,
                 lineTotalCost.negate(), ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
         return unitCost;
     }

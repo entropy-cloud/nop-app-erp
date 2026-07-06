@@ -28,6 +28,8 @@ public interface ErpInvErrors {
     String ARG_ADJUST_ID = "adjustId";
     String ARG_ADJUST_CODE = "adjustCode";
     String ARG_UNIT_COST = "unitCost";
+    String ARG_BALANCE_ID = "balanceId";
+    String ARG_ATTEMPTS = "attempts";
 
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
@@ -40,6 +42,11 @@ public interface ErpInvErrors {
     ErrorCode ERR_AVAILABLE_INSUFFICIENT = ErrorCode.define("erp.err.inv.available-insufficient",
             "可用量不足：物料 {materialId} / 仓库 {warehouseId}，可用={available}，需要={required}",
             ARG_MATERIAL_ID, ARG_WAREHOUSE_ID, ARG_AVAILABLE, ARG_REQUIRED);
+
+    // 并发扣减乐观锁冲突重试耗尽（plan 2026-07-07-0024-2；UC-INV-08；concurrency-and-transactions.md §模式四）
+    ErrorCode ERR_INV_CONCURRENT_DEDUCT_CONFLICT = ErrorCode.define("erp.err.inv.concurrent-deduct-conflict",
+            "库存余额 {balanceId} 并发扣减乐观锁冲突，重试 {attempts} 次后仍失败，请重试或检查并发负载",
+            ARG_BALANCE_ID, ARG_ATTEMPTS);
 
     ErrorCode ERR_MOVE_NOT_FOUND = ErrorCode.define("erp.err.inv.move-not-found",
             "移动单 {moveId} 不存在", ARG_MOVE_ID);

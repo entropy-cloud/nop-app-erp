@@ -5,6 +5,7 @@ import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
+import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.costing.BookingContext;
 import app.erp.inv.service.costing.CostMethodResolver;
 import app.erp.inv.service.costing.CostingStrategy;
@@ -13,12 +14,17 @@ import app.erp.inv.service.costing.MovingAverageCostingStrategy;
 import app.erp.inv.service.costing.StandardCostingStrategy;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.orm.IOrmSession;
 import io.nop.orm.IOrmTemplate;
+import io.nop.orm.OrmEntityState;
+import io.nop.orm.dao.IOrmEntityDao;
 import jakarta.inject.Inject;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -179,6 +185,69 @@ public class StockMoveBookkeeper implements BookingContext {
         BigDecimal reserved = nz(balance.getReservedQuantity());
         BigDecimal locked = nz(balance.getLockedQuantity());
         balance.setAvailableQuantity(total.subtract(reserved).subtract(locked));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>实现要点（plan 2026-07-07-0024-2 / UC-INV-08 / concurrency-and-transactions.md §模式四）：
+     * <ul>
+     *   <li>新实体（TRANSIENT/SAVING，尚未持久化）：直接 {@link IEntityDao#saveEntity} 走 INSERT，无并发冲突可能。</li>
+     *   <li>已 managed 实体：经 {@link io.nop.orm.dao.IOrmEntityDao#tryUpdateWithVersionCheck}
+     *       提交（生成 {@code UPDATE WHERE id=? AND version=?}）。</li>
+     *   <li>冲突（受影响行数=0，平台将实例置 readonly）：evict 旧实例 + {@link IEntityDao#requireEntityById}
+     *       加载新实例（readonly=false），重新执行 {@code applyDelta}，重试。</li>
+     *   <li>重试上限 = {@code erp-inv.concurrent-deduct-max-retry}（默认 5）；耗尽抛
+     *       {@link ErpInvErrors#ERR_INV_CONCURRENT_DEDUCT_CONFLICT}。</li>
+     * </ul>
+     *
+     * <p>注意：平台 {@code OrmEntity.orm_readonly(boolean)} 设置器将 readonly 视为粘性（一旦 true 不可复位），
+     * 故必须 evict 后重新加载新实例，而非 orm_unload+getEntityById 复用同一实例——否则后续 flush 会跳过该实体。
+     */
+    @Override
+    public ErpInvStockBalance updateBalanceWithRetry(ErpInvStockBalance initialBaseline,
+                                                     Consumer<ErpInvStockBalance> applyDelta) {
+        IOrmEntityDao<ErpInvStockBalance> dao = (IOrmEntityDao<ErpInvStockBalance>)
+                daoProvider.daoFor(ErpInvStockBalance.class);
+        int maxRetry = AppConfig.var(ErpInvConstants.CONFIG_CONCURRENT_DEDUCT_MAX_RETRY,
+                ErpInvConstants.CONCURRENT_DEDUCT_MAX_RETRY_DEFAULT);
+
+        ErpInvStockBalance current = initialBaseline;
+        int attempts = 0;
+        while (true) {
+            applyDelta.accept(current);
+
+            OrmEntityState state = current.orm_state();
+            if (state == OrmEntityState.MANAGED) {
+                boolean ok = dao.tryUpdateWithVersionCheck(current);
+                if (ok) {
+                    return current;
+                }
+                // 冲突，进入重试路径（下方）
+            } else if (state == OrmEntityState.TRANSIENT) {
+                // 新余额从未入 session：queue INSERT
+                dao.saveEntity(current);
+                return current;
+            } else {
+                // SAVING（已 queue INSERT）或其他非 MANAGED 态：当前字段值会在 flush 时随 INSERT 落盘
+                return current;
+            }
+
+            attempts++;
+            if (attempts > maxRetry) {
+                throw new NopException(ErpInvErrors.ERR_INV_CONCURRENT_DEDUCT_CONFLICT)
+                        .param(ErpInvErrors.ARG_BALANCE_ID, current.orm_id())
+                        .param(ErpInvErrors.ARG_ATTEMPTS, attempts);
+            }
+
+            // 冲突：evict 当前实例（readonly 粘性，不可复用）+ 重新加载新实例
+            Object balanceId = current.orm_id();
+            IOrmSession session = ormTemplate.currentSession();
+            if (session != null) {
+                session.evict(current);
+            }
+            current = dao.requireEntityById(balanceId);
+        }
     }
 
     @Override

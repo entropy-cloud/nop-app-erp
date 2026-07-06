@@ -65,19 +65,17 @@ public class FifoCostingStrategy implements CostingStrategy {
 
         appendCostLayer(move, line, acctSchemaId, warehouseId, qty, unitCost, lineTotalCost);
 
-        BigDecimal oldTotal = nz(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = nz(balance.getTotalCost());
-        BigDecimal newTotal = oldTotal.add(qty);
-        BigDecimal newTotalCost = oldTotalCost.add(lineTotalCost);
+        ErpInvStockBalance updated = ctx.updateBalanceWithRetry(balance, b -> {
+            BigDecimal oldTotal = nz(b.getTotalQuantity());
+            BigDecimal oldTotalCost = nz(b.getTotalCost());
+            b.setTotalQuantity(oldTotal.add(qty));
+            b.setTotalCost(oldTotalCost.add(lineTotalCost));
+            b.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
+            b.setAvgCost(null);
+            ctx.recomputeAvailable(b);
+        });
 
-        balance.setTotalQuantity(newTotal);
-        balance.setTotalCost(newTotalCost);
-        balance.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
-        balance.setAvgCost(null);
-        ctx.recomputeAvailable(balance);
-        daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
-
-        ctx.writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, qty, unitCost, lineTotalCost,
+        ctx.writeLedger(move, line, acctSchemaId, updated, warehouseId, locationId, qty, unitCost, lineTotalCost,
                 ErpInvConstants.COST_METHOD_FIFO);
         return unitCost;
     }
@@ -130,16 +128,18 @@ public class FifoCostingStrategy implements CostingStrategy {
         line.setUnitCost(weightedUnitCost);
         daoProvider.daoFor(ErpInvStockMoveLine.class).saveOrUpdateEntity(line);
 
-        BigDecimal oldTotal = nz(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = nz(balance.getTotalCost());
-        balance.setTotalQuantity(oldTotal.subtract(qty));
-        balance.setTotalCost(oldTotalCost.subtract(totalCost));
-        balance.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
-        balance.setAvgCost(null);
-        ctx.recomputeAvailable(balance);
-        daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
+        final BigDecimal fifoTotalCost = totalCost;
+        ErpInvStockBalance updated = ctx.updateBalanceWithRetry(balance, b -> {
+            BigDecimal oldTotal = nz(b.getTotalQuantity());
+            BigDecimal oldTotalCost = nz(b.getTotalCost());
+            b.setTotalQuantity(oldTotal.subtract(qty));
+            b.setTotalCost(oldTotalCost.subtract(fifoTotalCost));
+            b.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
+            b.setAvgCost(null);
+            ctx.recomputeAvailable(b);
+        });
 
-        ctx.writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, qty.negate(), weightedUnitCost,
+        ctx.writeLedger(move, line, acctSchemaId, updated, warehouseId, locationId, qty.negate(), weightedUnitCost,
                 totalCost.negate(), ErpInvConstants.COST_METHOD_FIFO);
         return weightedUnitCost;
     }

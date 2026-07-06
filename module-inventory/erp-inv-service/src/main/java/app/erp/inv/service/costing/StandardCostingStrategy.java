@@ -4,8 +4,6 @@ import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
-import io.nop.dao.api.IDaoProvider;
-import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -26,9 +24,6 @@ import java.math.BigDecimal;
 public class StandardCostingStrategy implements CostingStrategy {
 
     @Inject
-    IDaoProvider daoProvider;
-
-    @Inject
     StandardCostResolver standardCostResolver;
 
     @Override
@@ -47,19 +42,17 @@ public class StandardCostingStrategy implements CostingStrategy {
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = standardUnitCost.multiply(qty);
 
-        BigDecimal oldTotal = nz(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = nz(balance.getTotalCost());
-        BigDecimal newTotal = oldTotal.add(qty);
-        BigDecimal newTotalCost = oldTotalCost.add(lineTotalCost);
+        ErpInvStockBalance updated = ctx.updateBalanceWithRetry(balance, b -> {
+            BigDecimal oldTotal = nz(b.getTotalQuantity());
+            BigDecimal oldTotalCost = nz(b.getTotalCost());
+            b.setTotalQuantity(oldTotal.add(qty));
+            b.setTotalCost(oldTotalCost.add(lineTotalCost));
+            b.setCostMethod(ErpInvConstants.COST_METHOD_STANDARD);
+            b.setAvgCost(standardUnitCost);
+            ctx.recomputeAvailable(b);
+        });
 
-        balance.setTotalQuantity(newTotal);
-        balance.setTotalCost(newTotalCost);
-        balance.setCostMethod(ErpInvConstants.COST_METHOD_STANDARD);
-        balance.setAvgCost(standardUnitCost);
-        ctx.recomputeAvailable(balance);
-        daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(balance);
-
-        ctx.writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, qty, standardUnitCost,
+        ctx.writeLedger(move, line, acctSchemaId, updated, warehouseId, locationId, qty, standardUnitCost,
                 lineTotalCost, ErpInvConstants.COST_METHOD_STANDARD);
         return standardUnitCost;
     }
@@ -76,20 +69,17 @@ public class StandardCostingStrategy implements CostingStrategy {
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = standardUnitCost.multiply(qty);
 
-        BigDecimal oldTotal = nz(balance.getTotalQuantity());
-        BigDecimal oldTotalCost = nz(balance.getTotalCost());
-        BigDecimal newTotal = oldTotal.subtract(qty);
-        BigDecimal newTotalCost = oldTotalCost.subtract(lineTotalCost);
+        ErpInvStockBalance updated = ctx.updateBalanceWithRetry(balance, b -> {
+            BigDecimal oldTotal = nz(b.getTotalQuantity());
+            BigDecimal oldTotalCost = nz(b.getTotalCost());
+            b.setTotalQuantity(oldTotal.subtract(qty));
+            b.setTotalCost(oldTotalCost.subtract(lineTotalCost));
+            b.setCostMethod(ErpInvConstants.COST_METHOD_STANDARD);
+            b.setAvgCost(standardUnitCost);
+            ctx.recomputeAvailable(b);
+        });
 
-        balance.setTotalQuantity(newTotal);
-        balance.setTotalCost(newTotalCost);
-        balance.setCostMethod(ErpInvConstants.COST_METHOD_STANDARD);
-        balance.setAvgCost(standardUnitCost);
-        ctx.recomputeAvailable(balance);
-        IEntityDao<ErpInvStockBalance> balanceDao = daoProvider.daoFor(ErpInvStockBalance.class);
-        balanceDao.saveOrUpdateEntity(balance);
-
-        ctx.writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, qty.negate(),
+        ctx.writeLedger(move, line, acctSchemaId, updated, warehouseId, locationId, qty.negate(),
                 standardUnitCost, lineTotalCost.negate(), ErpInvConstants.COST_METHOD_STANDARD);
         return standardUnitCost;
     }

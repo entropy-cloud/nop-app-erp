@@ -8,6 +8,14 @@ public interface ErpInvConstants {
 
     String CONFIG_ALLOW_NEGATIVE_STOCK = "erp-inv.allow-negative-stock";
 
+    // 并发扣减乐观锁重试配置（plan 2026-07-07-0024-2；concurrency-and-transactions.md §模式四 tryLock+orm_unload 重试）
+    // 默认 5 次：覆盖典型并发冲突场景；高冲突场景可经 NopSysVariable 运行时上调
+    String CONFIG_CONCURRENT_DEDUCT_MAX_RETRY = "erp-inv.concurrent-deduct-max-retry";
+    int CONCURRENT_DEDUCT_MAX_RETRY_DEFAULT = 5;
+    // 重试退避（毫秒），默认 0=同步重试（H2 单库场景足够；生产高竞争可配 > 0 减少热点行 CPU 占用）
+    String CONFIG_CONCURRENT_DEDUCT_RETRY_BACKOFF_MS = "erp-inv.concurrent-deduct-retry-backoff-ms";
+    int CONCURRENT_DEDUCT_RETRY_BACKOFF_MS_DEFAULT = 0;
+
     // 追溯链配置项（trace-chain.md §配置项，缺失走默认，无 .env/外部服务）
     String CONFIG_TRACE_CHAIN_ENABLED = "erp-inv.trace-chain-enabled";
     String CONFIG_TRACE_CHAIN_MAX_DEPTH = "erp-inv.trace-chain-max-depth";
