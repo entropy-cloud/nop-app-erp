@@ -13,7 +13,7 @@
 - 1.0b 销售报价单审批→转订单逻辑：`done`
 - 1.1 Purchase Order BizModel：`partial`
 - 1.2 Sales Order BizModel：`partial`（审批/信用额度 + 出库触发段 done；过账/发票/收款仍 todo，归 1.7）
-- 1.3 StockMove BizModel：`partial`（出入库 posted 过账 done；**并发扣减锁 UC-INV-08 / 负库存拦截 UC-INV-09 仍 todo**）
+- 1.3 StockMove BizModel：`done`（出入库 posted 过账 done 计划 0811-2；**并发扣减乐观锁 UC-INV-08 / 负库存拦截 UC-INV-09 done 计划 2026-07-07-0024-2**：updateBalanceWithRetry 通道三策略共享 tryUpdateWithVersionCheck + evict+reload 重试循环 + ERR_INV_CONCURRENT_DEDUCT_CONFLICT + concurrent-deduct-max-retry 配置；4 并发测试（多线程+单线程模拟）+ 4 三量交互测试全绿）
 - 1.4 三单匹配逻辑：`done`
 - 1.5 过账 Provider：`done`
 - 1.6 采购到付款串联：`done`（AP 段 PO→Receive→Invoice→Pay + 三单匹配 + 域级核销 done，计划 0300-1；**财务辅助账 ErpFinArApItem 生成 + 正式核销单 ErpFinReconciliation + 往来余额/账龄 done，计划 0300-3**；**自动核销引擎（三策略 FIFO/BY_AMOUNT/BY_RATIO）+ 定时执行（nop-job-local scheduler.yaml）+ 双面对账一致性兜底 done，计划 0115-1**；退货归 1.9 done）
@@ -47,7 +47,7 @@
 | 1.0b | 销售报价单审批→转订单逻辑 | sales | `sales/quotation.md` | ✅ `done` |
 | 1.1 | Purchase Order BizModel（审批/入库触发/过账） | purchase | `purchase/state-machine.md` | 🔶 `partial` |
 | 1.2 | Sales Order BizModel（审批/出库触发/过账） | sales | `sales/state-machine.md` | 🔶 `partial`（审批+信用额度+出库触发 done；过账归 1.7） |
-| 1.3 | StockMove BizModel（库存移动/流水/余额） | inventory | `inventory/state-machine.md` | 🔶 `partial`（**遗漏：并发扣减锁 UC-INV-08 / 负库存拦截 UC-INV-09**） |
+| 1.3 | StockMove BizModel（库存移动/流水/余额） | inventory | `inventory/state-machine.md` | ✅ `done`（出入库 posted 过账 done 计划 0811-2；**并发扣减乐观锁 UC-INV-08 / 负库存拦截 UC-INV-09 done 计划 2026-07-07-0024-2**：updateBalanceWithRetry 通道三策略共享 tryUpdateWithVersionCheck + evict+reload 重试循环 + ERR_INV_CONCURRENT_DEDUCT_CONFLICT + 4 并发测试 + 4 三量交互测试全绿） |
 | 1.4 | 三单匹配逻辑（PO/Receive/Invoice） | purchase | `purchase/three-way-match.md` | ✅ `done` |
 | 1.5 | IErpFinAcctDocProvider 过账 Provider | finance | `finance/posting.md` | ✅ `done` |
 | 1.6 | 采购到付款端到端串联 | purchase/finance | `flow-overview.md` | ✅ `done`（AP 段 done 计划 0300-1；辅助账+核销+账龄 done 计划 0300-3；自动核销+定时+双面兜底 done 计划 0115-1；退货归 1.9 done） |
