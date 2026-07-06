@@ -235,6 +235,8 @@
 > 
 > **§9 不合格原因 TOP** 字段 `defectType` 在 ORM 未物化，本期以 `ErpQaNonConformance.dispositionType`（处置决定：SCRAP/RETURN/CONCESSION/DOWNGRADE）为聚合维度（语义最接近且为规范枚举）。
 > 
+> **6 域看板前端 AMIS 页面已落地**（plan `2026-07-06-1606-2`）：资产/项目/制造/维护/质量/主数据看板替换 6 个占位 `main.page.yaml`。每页经 `/api/GenericApi` GraphQL 消费 1606-1 已审计 `@BizQuery`，分层布局对齐 §实现约定（form 区间筛选 + service KPI 卡片 + chart 趋势/占比图 + crud 预警列表；主数据看板无趋势图，仅 KPI + 预警，对齐 §说明「指标少且静态」）。6 域复用既有 `*-dashboard` action-auth 菜单组（仅替换占位页内容，不新建菜单组）。页面 `ErpXxxDashboard__*` 调用逐一映射到 1606-1 BizModel 真实 `@BizQuery` 方法（ast 4 / md 3 / prj 4 / mfg 4 / mnt 4 / qa 4）。三处后端 Non-Goal 指标对应前端区块不渲染（项目毛利率卡片 / 制造齐套缺件明细预警列表 / 质量 SPC 失控预警列表）。
+> 
 > **6 域看板前端 AMIS 页面**为独立 successor（plan `2026-07-06-1606-2`，触发条件=本计划后端 API 落地后前端定制启动时）。
 > 报表渲染能力（`nop-report` + `IReportEngine` + `.xpt.*` 模板）已就绪（plan `2026-07-06-0504-2` 报表渲染子系统落地 `ErpFinReportBizModel` + 五张财务种子报表），看板聚合方法经同一 ORM 实体取数。
 
