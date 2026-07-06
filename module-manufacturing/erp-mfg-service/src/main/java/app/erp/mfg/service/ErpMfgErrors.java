@@ -40,6 +40,10 @@ public interface ErpMfgErrors {
     String ARG_SOURCE_SCHEDULE_ID = "sourceScheduleId";
     String ARG_EXISTING_COUNT = "existingCount";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     ErrorCode ERR_BOM_NOT_FOUND = ErrorCode.define(
             "nop.err.mfg.bom.not-found",
             "BOM不存在: {bomId}",
@@ -169,4 +173,16 @@ public interface ErpMfgErrors {
             "nop.err.mfg.variance.workorder-not-completed",
             "工单[{workOrderCode}]当前状态[{currentStatus}]未完工(COMPLETED)，不允许手动计算生产差异",
             ARG_WORK_ORDER_CODE, ARG_CURRENT_STATUS);
+
+    // --- 报表渲染作用域（镜像 ErpFinErrors.ERR_REPORT_*，制造域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(
+            "nop.err.mfg.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define(
+            "nop.err.mfg.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }
