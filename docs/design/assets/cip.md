@@ -8,7 +8,7 @@
 
 - 本模块负责：CIP 资产卡片、建设成本归集、利息资本化、完工转固、部分转固。
 - 本模块不负责：资产类别/折旧方法配置（assets/README.md）；科目表（master-data 域）。
-- ORM 实体见 `model/app-erp-assets.orm.xml`（ErpAstCipAsset、ErpAstCipCostItem、ErpAstCipProgressBilling 等）。
+- ORM 实体见 `model/app-erp-assets.orm.xml`（ErpAstCip、ErpAstCipCostItem、ErpAstCipProgressBilling 等）。
 
 ## 流程
 
@@ -50,7 +50,7 @@ CIP 资产创建（DRAFT）
 
 1. 选择部分 ErpAstCipCostItem → 按选择项汇总转固成本。
 2. 剩余未转固部分继续留在 CIP 卡片中（状态 IN_CONSTRUCTION）。
-3. 全部转固后 CIP 卡片状态 → COMPLETED。
+3. 全部转固后 CIP 卡片状态 → TRANSFERRED。
 
 ## 利息资本化规则
 
@@ -72,5 +72,21 @@ CIP 资产创建（DRAFT）
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| 利息资本化启用 | true | false 时不计算利息资本化 |
+| 利息资本化启用 | false | false 时不计算利息资本化（自动计提引擎落地前默认关闭） |
 | 转固触发方式 | MANUAL | MANUAL（手动转固）/ AUTO（自动检测完工） |
+
+## 实现注记（计划 0930-1）
+
+- **状态字典 Decision**：CIP 三态状态机使用独立字典 `erp-ast/cip-status`（DRAFT/IN_CONSTRUCTION/TRANSFERRED），不复用 `erp-ast/asset-status`（IN_SERVICE/IDLE/SCRAPPED/SOLD 语义错位）。
+- **终态命名 Decision**：使用 `TRANSFERRED`（已完工转固）而非 `COMPLETED`，语义精准——CIP 资产已转出为固定资产，区别于"完工但未转固"。
+- **利息资本化 config 默认值 Decision**：默认 `false`（非设计文档的 `true`）。自动计提引擎落地前关闭，避免业务方在无计算引擎时误用。触发条件：专项借款利息管理需求启动。
+- **转固路径 Decision**：CIP 转固复用既有 `IErpAstAssetCapitalizationBiz` 审批链（sourceType=CIP(20)），由 Capitalization 单审批通过后建卡 + 出 CAPITALIZATION(80) 凭证。CIP 不重复实现建卡/过账逻辑（DRY）。
+
+### Non-Goals（本期未实现，后继承接）
+
+- **采购单据自动归集**：跨域 hook（purchase→assets），本期仅提供显式 `addCostItem` 入口。触发条件：采购单据行 `cipAssetId` 字段落地时。
+- **人工工时自动归集**：工时单关联项目（projects）再分摊到 CIP 属跨域多步编排。触发条件：项目工时分摊到 CIP 业务上线时。
+- **利息资本化自动计算引擎**：资本化期间 + 资本化率 + 累计支出加权平均数 + 上限，属独立金融服务面。触发条件：专项借款利息管理需求启动时。
+- **CIP 与项目（ErpPrjProject）强关联**：本期 CIP 不强引用 projectId（可选弱引用列已加）。触发条件：项目结算转固与 CIP 双通道业务上线时。
+- **AUTO 完工检测**：本期仅 MANUAL，自动检测完工规则归后继。触发条件：自动完工检测规则上线时。
+- **部分红冲（部分 reverseTransfer）**：本期仅支持全部红冲。触发条件：部分红冲业务需求上线时。

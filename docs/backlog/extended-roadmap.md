@@ -9,7 +9,7 @@
 > 状态在工作项上；Milestone 仅为分组。
 
 ### Milestone M2 — 扩展 5 域
-- 2.5：🔶 partial（资产折旧/处置/资本化 BizModel + 业财过账 done；**UC-AST-06 CIP 转固处理仍 todo**，2026-07-02，`docs/plans/2026-07-02-1000-2-assets-depreciation-disposal-capitalization.md`）
+- 2.5：✅ done（资产折旧/处置/资本化 BizModel + 业财过账 done；UC-AST-06 CIP 转固处理 done：CIP 三态状态机 + 成本归集 + 进度付款 + 全部/部分转固 + reverseTransfer + 业财过账复用 Capitalization 链，2026-07-07，`docs/plans/2026-07-07-0930-1-assets-cip-cost-collection-capitalization.md`）
 - 2.1：✅ done（BOM/工艺路线 BizModel：默认 BOM 选择 + 多级展开 phantom/环/深度 + 成本卷算 → ErpMfgCostRollup/Line；含工时/费率列类型修正，2026-07-02，`docs/plans/2026-07-02-1538-2-manufacturing-bom-routing-rollup.md`）
 - 2.2：✅ done（WorkOrder/JobCard 状态机：10 态工单状态机 + 三轴审批 + 齐套校验 + 领料出库/报工/完工入库 + 成本归集 + 完工质检 config-gated 钩子 + UC-MFG-13 生产批次追溯(完工写入基因链 + 前向/反向/全链递归追溯 + recallReport 降级) done；含工时/费率/实领数量列类型修正，2026-07-07，`docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md` + `docs/plans/2026-07-07-0305-3-manufacturing-batch-genealogy-traceability.md`）
 - 2.3：✅ done（MRP 计算引擎：需求整合(销售订单/安全库存/手工)→BOM 多级展开→净需求→按期分单(lot-for-lot/固定批量)→计划订单(WORK_ORDER_REQUEST/PURCHASE_REQUEST)→释放转采购订单/工单，2026-07-03，`docs/plans/2026-07-02-2237-2-manufacturing-mrp-engine.md`）
