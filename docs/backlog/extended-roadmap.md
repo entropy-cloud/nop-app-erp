@@ -1,6 +1,6 @@
 # Extended Domains Business Logic Roadmap
 
-> 最后更新：2026-07-04
+> 最后更新：2026-07-06
 > 本路线图覆盖**核心 5 域之外**的 13 域自定义 BizModel 方法与编排逻辑。
 > 前置条件：`crud-roadmap.md` 中对应域的 CRUD 已完成。
 
@@ -9,9 +9,9 @@
 > 状态在工作项上；Milestone 仅为分组。
 
 ### Milestone M2 — 扩展 5 域
-- 2.5：✅ done（资产折旧/处置/资本化 BizModel + 业财过账，2026-07-02，`docs/plans/2026-07-02-1000-2-assets-depreciation-disposal-capitalization.md`）
+- 2.5：🔶 partial（资产折旧/处置/资本化 BizModel + 业财过账 done；**UC-AST-06 CIP 转固处理仍 todo**，2026-07-02，`docs/plans/2026-07-02-1000-2-assets-depreciation-disposal-capitalization.md`）
 - 2.1：✅ done（BOM/工艺路线 BizModel：默认 BOM 选择 + 多级展开 phantom/环/深度 + 成本卷算 → ErpMfgCostRollup/Line；含工时/费率列类型修正，2026-07-02，`docs/plans/2026-07-02-1538-2-manufacturing-bom-routing-rollup.md`）
-- 2.2：✅ done（WorkOrder/JobCard 状态机：10 态工单状态机 + 三轴审批 + 齐套校验 + 领料出库/报工/完工入库 + 成本归集 + 完工质检 config-gated 钩子；含工时/费率/实领数量列类型修正，2026-07-03，`docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md`）
+- 2.2：🔶 partial（WorkOrder/JobCard 状态机：10 态工单状态机 + 三轴审批 + 齐套校验 + 领料出库/报工/完工入库 + 成本归集 + 完工质检 config-gated 钩子 done；**UC-MFG-13 批次追溯仍 todo**；含工时/费率/实领数量列类型修正，2026-07-03，`docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md`）
 - 2.3：✅ done（MRP 计算引擎：需求整合(销售订单/安全库存/手工)→BOM 多级展开→净需求→按期分单(lot-for-lot/固定批量)→计划订单(WORK_ORDER_REQUEST/PURCHASE_REQUEST)→释放转采购订单/工单，2026-07-03，`docs/plans/2026-07-02-2237-2-manufacturing-mrp-engine.md`）
 - 2.4：✅ done（质检触发 + NCR/CAPA 流程：质检单 4 态状态机(行级评测+结果汇总+posted) + 业务触发(采购入库/销售出库/工单完工 createForBusinessBill+模板匹配+强制质检阻塞 config-gated) + NCR 5 态状态机 + CAPA 生命周期(效果验证门控) + REJECTED 自动生成 NCR，2026-07-03，`docs/plans/2026-07-02-2237-3-quality-inspection-trigger-ncr-capa.md`）
   - 2.4-deferred-1：✅ done（NCR 财务过账引擎 deferred successor：SCRAP 处置→报废损失凭证(NcrScrapAcctDocProvider 借6711/贷1401) + RETURN 处置→编排退货域(IErpPurReturnBiz/IErpSalReturnBiz 登记 returnCode) + CONCESSION/DOWNGRADE 无凭证拒 + resolve 按 erp-qua.ncr-posting-mode(AUTO_POST/MANUAL_POST) config-gated 分派 + postNcr/reverseNcr 人工入口 + posted 三件套防护，2026-07-06，`docs/plans/2026-07-05-2352-2-ncr-financial-posting.md`）
@@ -24,6 +24,17 @@
 - 2.12：✅ done（需求预测实体 + MRP/DRP 预测需求来源：ErpMfgForecast/ErpMfgForecastLine 实体(头-行 cascade-delete, dict forecast-status 4态) + 状态机(DRAFT→APPROVED approve / DRAFT|APPROVED→CANCELLED cancel, ERR_FORECAST_ILLEGAL_STATUS_TRANSITION) + MRP DemandAggregator 接入 FORECAST 来源(status=APPROVED + 区间相交 + 按物料聚合, config-gated erp-mfg.forecast-consume-enabled) + DRP DrpDemandAggregator forecastDemand 填充(materialId+warehouseId 仓级过滤, config-gated erp-drp.forecast-consume-enabled) + drp→mfg-dao 单向 R 跨域依赖 + CRM 销售预测关系说明(本期独立维护, disaggregation 归后继)；承接 2237-2/1115-2 多计划 Deferred，2026-07-05，`docs/plans/2026-07-05-0427-1-demand-forecast-entity-mrp-drp-source.md`）
 - 2.13：✅ done（APS 排程→工单/工序卡自动生成：WorkOrder/JobCard 加性 `sourceScheduleId` 弱参照 + 新字典 `erp-mfg/source-order-type`(含 APS_SCHEDULE) + `generateJobCardsFromSchedule` @BizMutation(一工序一卡, OPEN 入口, sourceScheduleId 回写, WorkOrder sourceOrderType=APS_SCHEDULE, 幂等门控 ERR_JOB_CARDS_ALREADY_GENERATED + incremental 补缺 + 状态门) + 复用 IErpApsLoadSourceProvider SPI 跨域读 APS(0306-2 范式, ApsLoadSlot 加性增 operationOrderId) + findWorkOrdersPendingJobCards/generatePendingJobCards config-gated 批量入口 + nop-job 三件套(ErpMfgJobCardAutoGenJob + scheduler.yaml 双层门控)；承接 0831-1/2237-1 Deferred，2026-07-05，`docs/plans/2026-07-05-0427-3-aps-schedule-to-workorder-jobcard.md`）
 - 2.14：✅ done（资产减值/重估 VALUE_ADJUSTMENT：`ErpAstValueAdjustmentBizModel` 三轴状态机(docStatus/approveStatus/posted, submit/approve/reject/cancel/reverse 五动作, 强制审批 config-gated) + `ErpFinBusinessType.VALUE_ADJUSTMENT`(390) 新增 + `erp-ast/adjustment-type` 字典 REVALUATION→REVALUATION_UP/REVALUATION_DOWN 拆分 + `ValueAdjustmentAcctDocProvider` 按 adjustmentType 分支科目分解(IMPAIRMENT 借6702/贷1604, REVALUATION_UP 借1601/贷4002, REVALUATION_DOWN 借6702/贷1601) + 资产净值/折旧基数联动(减值/重估减值减少、重估增值增加, config-gated revaluation-adjust-depreciation-base) + 反向红冲回退净值与凭证；承接 1000-2 Deferred「资产减值/重估」，2026-07-05，`docs/plans/2026-07-05-0540-3-assets-impairment-revaluation.md`）
+- 2.4b SPC 过程控制（UC-QA-09~11：SPC 统计过程控制 / SPC 规则引擎 / SPC 控制图）：`todo`
+- 2.5b 资产盘点（UC-AST-09：固定资产盘点流程）：`todo`
+- 2.5c 资产维修管理（UC-AST-10：资产维修工单/费用归集）：`todo`
+- 2.5d 资产拆分合并（UC-AST-11：资产拆分/合并处理）：`todo`
+- 2.6b 项目损益/结算/转固（UC-PRJ-05~07：项目损益计算 / 项目结算 / 项目转固）：`todo`
+- 2.6c 任务 DAG 校验（UC-PRJ-08：任务依赖 DAG 环路/完整性校验）：`todo`
+
+> **Non-Goal scope boundary**：以下 UCs 不在 M2 已完工项的原始范围内，非实现遗漏，归后继工作项。
+> - quality（2.4 之外）：UC-QA-09（SPC）、UC-QA-10（SPC 规则引擎）、UC-QA-11（SPC 控制图）→ 已路由至 2.4b
+> - assets（2.5/2.14 之外）：UC-AST-09（盘点）、UC-AST-10（维修）、UC-AST-11（拆分合并）→ 已路由至 2.5b~d
+> - projects（2.6 之外）：UC-PRJ-05（损益）、UC-PRJ-06（结算）、UC-PRJ-07（转固）、UC-PRJ-08（DAG 校验）→ 已路由至 2.6b~c
 
 ### Milestone M3 — 新增 8 域
 - 3.1：✅ done（CRM 线索→商机→报价单转化：Lead docStatus 状态机(NEW→QUALIFIED/LOST/CANCELLED, lostReason 必填) + 漏斗阶段流转(moveStage 允许回退+convLog 全量留痕+probability 默认回填) + 线索查重(companyName/contactEmail/contactPhone, auto-convert-duplicate-lead 默认关仅提示) + 转化闭环(convertToCustomer 经 IErpMdPartnerBiz 建客户+新建 OPPORTUNITY+原 lead CONVERTED 弱指针；convertToQuotation 经 IErpSalQuotationBiz save 建报价单+弱指针+CONVERTED；幂等 ERR_LEAD_ALREADY_CONVERTED)；核心零污染 sales/master-data 实体零字段新增，2026-07-04，`docs/plans/2026-07-04-0549-2-crm-lead-opportunity-quotation-conversion.md`）
@@ -36,6 +47,11 @@
 - 3.8：✅ done（HR 排班管理：班次模板+排班分配(assignSingle 强制一人一天一排班唯一约束 ERR_SHIFT_DUPLICATE_ASSIGNMENT / assignBatch 员工组×日期范围 / copyFromPeriod 上期复制) + 轮换生成(generateRotation patternData JSON 序列+staggerDays 错峰+regenerate 清旧重生成，瞬态入参 Decision 不新增 RotationGroup 实体) + 迟到/早退/缺勤计算(calcAttendance 结果写 ErpHrAttendance 已有列，ShiftAssignment 保持标准输入角色，跨天夜班 endTime 次日基准，休假覆盖不计旷工) + 排班调换审批(submit→PENDING/approve→APPROVED 互换双方 assignment 班次+swapRequestId/replacedByAssignmentId 追溯/reject/cancel 非法迁移 ErrorCode) + 休假联动(onLeaveApproved 标记 ABSENT+LEAVE/onLeaveCancelled 解除，同域跨实体同步调用) + 新增 erp-hr/absence-reason 字典；本期无 ErpHrShiftAssignment 模型变更，2026-07-04，`docs/plans/2026-07-04-0831-3-hr-shift-scheduling.md`）
 - 3.9：✅ done（HR 薪酬模拟 What-If：新增 `ErpHrSalarySimulationItemAdjustment` 加性实体（调整追踪 simulationId/employeeId/salaryItemCode/originalAmount/adjustedAmount/adjustmentReason 字典 erp-hr/adjustment-reason）+ `PayrollCalculator.recalculateWithOverrides` 覆盖重算（Explore 降级方案：克隆源 base→覆盖薪酬项目字段→重算 gross/tax/net，社保/公积金沿用源期间值 master 驱动，0831-2 计算规则零修改）+ createSimulation（冻结源快照经 ItemAdjustment.originalAmount 锚定）+ adjustItem（仅 DRAFT 即时应变）+ getComparison 三列对比 + getDepartmentSummary/getProjectSummary/getCompanySummary 聚合 + applyBatchAdjustment（FIXED/RATIO/ALLOWANCE/LEVEL_MAP jobGrade 映射）+ findAnomalies（NET_PAY_CHANGE/TOTAL_CHANGE/TAX_BRACKET_JUMP config 阈值告警）+ 审批状态机（submitForReview DRAFT→IN_REVIEW 前置 hasAnyAdjustment / approve→APPROVED / reject→REJECTED / convertToFormal APPROVED→CONVERTED 逐员工 PAID/重复冲突检查+创建正式 PENDING 薪酬+回填 convertedSalaryId/convertedAt+部分冲突仅转无冲突）+ findSimulationsByConvertedSalary 反向追溯；核心零污染 ErpHrSalary 不加 convertedFromSimulationId 列（单向追溯）；转正式 DRAFT 冲突简化为拒绝（design §4.2 原为覆盖确认，归前端 Non-Goal），2026-07-04，`docs/plans/2026-07-04-2200-3-hr-payroll-simulation.md`）
 - 3.10–3.21：✅ done（APS 排产引擎+ATP/CTP / 合同版本管理+电子签章+批量折扣 / DRP 净需求+安全库存 / TMS 承运商网关+运费过账 / B2B EDI+ASN+MFT；详见下方 Implementation Order 表 ✅ 标记与对应 plan）
+
+> **Non-Goal scope boundary**：以下 UCs 不在 M3 已完工项的原始范围内，非实现遗漏，归后继工作项。
+> - crm（3.1~3.4 之外）：UC-CRM-05（领地管理）、UC-CRM-06（配额管理）、UC-CRM-07（CPQ 配置定价报价）、UC-CRM-08（序列管理）、UC-CRM-09（CRM 漏斗分析）
+> - customer-service（3.5~3.6 之外）：UC-CS-07（知识库）、UC-CS-08（客户权益）、UC-CS-09（服务目录）、UC-CS-10（客服质量监控）
+> - human-resource（3.7~3.9 之外）：UC-HR-04（休假管理）、UC-HR-05（考勤管理）、UC-HR-06（招聘管理）、UC-HR-07（合同管理）、UC-HR-08（员工调动/胜任力）
 
 ## Implementation Order
 
@@ -56,6 +72,12 @@
 | 2.11 | 批次召回事件 | quality | `quality/recall.md` |
 | 2.12 | ✅ 需求预测实体 + MRP/DRP 预测需求来源 | manufacturing/drp | `manufacturing/mrp.md` |
 | 2.13 | ✅ APS 排程→工单/工序卡自动生成 | manufacturing | `manufacturing/state-machine.md` |
+| 2.4b | ❌ SPC 过程控制（UC-QA-09~11） | quality | `quality/spc.md` |
+| 2.5b | ❌ 资产盘点（UC-AST-09） | assets | `assets/inventory.md` |
+| 2.5c | ❌ 资产维修管理（UC-AST-10） | assets | `assets/maintenance.md` |
+| 2.5d | ❌ 资产拆分合并（UC-AST-11） | assets | `assets/split-merge.md` |
+| 2.6b | ❌ 项目损益/结算/转固（UC-PRJ-05~07） | projects | `projects/pnl-settlement.md` |
+| 2.6c | ❌ 任务 DAG 校验（UC-PRJ-08） | projects | `projects/task-dag.md` |
 
 ### M3 — 新增 8 域
 

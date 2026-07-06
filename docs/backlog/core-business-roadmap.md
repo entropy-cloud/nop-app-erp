@@ -1,6 +1,6 @@
 # Core Business Logic Roadmap
 
-> 最后更新：2026-07-05
+> 最后更新：2026-07-06
 > 本路线图覆盖**进销存+财务** 5 域的自定义 BizModel 方法、跨域编排、业财过账。
 > 前置条件：`crud-roadmap.md` 中对应域的 CRUD 已完成。
 
@@ -13,7 +13,7 @@
 - 1.0b 销售报价单审批→转订单逻辑：`done`
 - 1.1 Purchase Order BizModel：`partial`
 - 1.2 Sales Order BizModel：`partial`（审批/信用额度 + 出库触发段 done；过账/发票/收款仍 todo，归 1.7）
-- 1.3 StockMove BizModel：`done`
+- 1.3 StockMove BizModel：`partial`（出入库 posted 过账 done；**并发扣减锁 UC-INV-08 / 负库存拦截 UC-INV-09 仍 todo**）
 - 1.4 三单匹配逻辑：`done`
 - 1.5 过账 Provider：`done`
 - 1.6 采购到付款串联：`done`（AP 段 PO→Receive→Invoice→Pay + 三单匹配 + 域级核销 done，计划 0300-1；**财务辅助账 ErpFinArApItem 生成 + 正式核销单 ErpFinReconciliation + 往来余额/账龄 done，计划 0300-3**；**自动核销引擎（三策略 FIFO/BY_AMOUNT/BY_RATIO）+ 定时执行（nop-job-local scheduler.yaml）+ 双面对账一致性兜底 done，计划 0115-1**；退货归 1.9 done）
@@ -22,6 +22,9 @@
 - 1.9 采购退货与退款：`done`（计划 0456-1：退货单三轴审批状态机 + 库存反向出库 + PURCHASE_RETURN 红字冲减凭证 + DIRECTION_PAYABLE 负 openAmount 辅助账回减应付；红字发票自动生成/换货/批次退货/现金退款归 Non-Goal）
 - 1.10 销售退货与退款：`done`（计划 0456-2：退货单三轴审批状态机 + 库存反向入库 + SALES_RETURN 反向 SALES_OUTPUT 凭证（借存货/贷成本）+ DIRECTION_RECEIVABLE 负 openAmount 辅助账回减应收 + 已收款退货反向收款核销；红字发票自动生成/退款方式路由/换货/退货质检/批次退货归 Non-Goal）
 - 1.11 批次追溯链：`done`（计划 0700-1：移动单自追溯上链 originMoveId/originReturnedMoveId + 四类追溯查询 forward/backward/return/batch + 退货移动单透传挂链）
+- 1.12 主数据业务服务：`todo`（UC-MD-01~06：SKU 多单位自动转换 / 物料替代建议 / 自动编码生成 / 批次规则校验 / 保质期预警 / 供应商默认货源，设计就绪 `master-data/sku-multi-unit.md`）
+
+> **Non-Goal scope boundary**：以下 UCs 不在 M1 设计范围内，非实现遗漏：UC-SAL-06（客户信用额度增强，含信用评级/额度审批）、UC-SAL-08（价格策略引擎，含阶梯价/促销/客户组价）、UC-SAL-10（销售佣金计算，含佣金规则/结算）。属后继工作项。
 
 ### Milestone M4 — 业财一体端到端
 - 4.3 期末结账全流程：`done`（计划 1000-3；含 4.3 前置「存货成本核算」done 计划 1538-1：记账器策略分派 MOVING_AVERAGE/FIFO + ErpInvCostLayer FIFO 队列 + period-close step2 接线 IErpInvCostingBiz.reclosePeriodCosts）
@@ -44,7 +47,7 @@
 | 1.0b | 销售报价单审批→转订单逻辑 | sales | `sales/quotation.md` | ✅ `done` |
 | 1.1 | Purchase Order BizModel（审批/入库触发/过账） | purchase | `purchase/state-machine.md` | 🔶 `partial` |
 | 1.2 | Sales Order BizModel（审批/出库触发/过账） | sales | `sales/state-machine.md` | 🔶 `partial`（审批+信用额度+出库触发 done；过账归 1.7） |
-| 1.3 | StockMove BizModel（库存移动/流水/余额） | inventory | `inventory/state-machine.md` | ✅ `done` |
+| 1.3 | StockMove BizModel（库存移动/流水/余额） | inventory | `inventory/state-machine.md` | 🔶 `partial`（**遗漏：并发扣减锁 UC-INV-08 / 负库存拦截 UC-INV-09**） |
 | 1.4 | 三单匹配逻辑（PO/Receive/Invoice） | purchase | `purchase/three-way-match.md` | ✅ `done` |
 | 1.5 | IErpFinAcctDocProvider 过账 Provider | finance | `finance/posting.md` | ✅ `done` |
 | 1.6 | 采购到付款端到端串联 | purchase/finance | `flow-overview.md` | ✅ `done`（AP 段 done 计划 0300-1；辅助账+核销+账龄 done 计划 0300-3；自动核销+定时+双面兜底 done 计划 0115-1；退货归 1.9 done） |
@@ -53,6 +56,7 @@
 | 1.9 | 采购退货与退款 | purchase/finance | `purchase/returns.md` | ✅ `done`（计划 0456-1） |
 | 1.10 | 销售退货与退款 | sales/finance | `sales/returns.md` | ✅ `done`（计划 0456-2：三轴审批 + 反向入库 + SALES_RETURN 凭证 + 负 AR 辅助账回减应收 + 反向收款核销） |
 | 1.11 | 批次追溯链逻辑 | inventory | `inventory/trace-chain.md` | ✅ `done`（计划 0700-1：单 uplink 自追溯链 + 四类追溯查询 + 退货透传挂链） |
+| 1.12 | 主数据业务服务（SKU 多单位自动转换/物料替代建议/自动编码/批次规则/保质期预警/供应商默认货源） | master-data | `master-data/sku-multi-unit.md` | ❌ `todo` |
 
 ### M4 — 业财一体端到端
 
@@ -84,6 +88,8 @@
 > **剩余域业务报表后端（库存追溯可视化 + HR 报表，承接 0504-2 Deferred「各域业务报表-inventory/HR 部分」）**：✅ `done` 计划 `2026-07-06-1247-1`——inventory 域 `ErpInvReportBizModel`（`@BizModel("ErpInvReport")`，模板根 `/nop/main/report/inv/`）+ 1 张库存追溯可视化报表（经同域 `IErpInvStockMoveBiz` 4 个追溯方法 forwardTrace/backwardTrace/returnTrace/batchTrace 聚合批次/物料移动链路，对齐 `trace-chain.md`）+ HR 域 `ErpHrReportBizModel`（`@BizModel("ErpHrReport")`，模板根 `/nop/main/report/hr/`）+ 2 张 HR 报表（员工净余额：跨域只读 `IErpFinArApItemBiz.findOpenItems` 按 sourceBillType=EMPLOYEE_ADVANCE/EXPENSE_CLAIM 二次过滤，净额=预支应收−报销应付，对齐 `expense-claim.md`；薪酬模拟对比：同域 `ErpHrSalarySimulationItemAdjustment` 源 vs 调整三列对比 + 部门小计，对齐 `payroll-simulation.md`）+ inventory/HR 域各自 `ERR_REPORT_*` ErrorCode（镜像 mfg 不跨域 import）。端到端测试全绿（`TestErpInvReportRendering` 8 + `TestErpHrReportRendering` 13 = 21 tests，0 failures/0 errors；`mvn clean install -DskipTests` 154 模块全绿 + 全模块 `mvn test` inv 79 + hr 52 无回归）。解除 0504-2/0935-2 Deferred「0700-1 追溯可视化 / 0700-2 员工净余额报表 / 2200-3 薪酬模拟对比报表」。Non-Goal：inventory/HR 报表 AMIS 菜单/页面（前端 successor `2026-07-06-1247-3`）/追溯链交互式树/图可视化（前端能力面）/其他域报表（资产/项目/维护/质量/主数据/CRM/客服，同范式 successor）。
 
 > **域业务报表 AMIS 菜单/页面（制造/库存/HR，承接 0935-2 + 1247-1 + 0504-2 各 Deferred「报表前端」）**：✅ `done` 计划 `2026-07-06-1247-3`——3 域报表 action-auth 菜单组 + 6 个 report page.yaml 落地：制造 `mfg-report`（orderNo 700，3 子资源：crp-load-report/production-variance-report/forecast-variance-report）+ 库存 `inv-report`（orderNo 800，1 子资源：inventory-trace-report）+ HR `hr-report`（orderNo 800，2 子资源：employee-net-balance/payroll-simulation-comparison），各 page.yaml 镜像 0504-2 finance report 范式（参数 `form` + 渲染 `button`（`actionType: ajax` 调 `/api/GenericApi` GraphQL `ErpXxxReport__renderHtml`）+ `button-toolbar` 下载 XLSX/PDF（`actionType: download` + `responseType: blob` 调 `__download`）+ `html` 容器），reportName 与各域后端 `.xpt.xml` 模板名逐一核对一致（6==6），页面参数对齐后端 `buildXxxDataset` 真实签名（mfg workcenterId/workOrderId/materialId + 日期区间；inv batchNo/materialId/warehouseId；hr employee-net-balance 无参 / payroll-simulation-comparison simulationId）。验证全绿（`mvn clean install -DskipTests` 154 模块 + 全 workspace `mvn test` 0 failures/0 errors + 3 action-auth `xmllint --noout` well-formed + 6 page.yaml YAML 可解析 + reportName 集合 ⊆ 后端模板名集合）。解除 0935-2 Non-Goal「制造报表 AMIS 菜单/页面」+ 1247-1 Non-Goal「inventory/HR 报表 AMIS 菜单/页面」+ 0504-2 Deferred「各域业务报表前端面」。Non-Goal：报表运行时浏览器视觉回归（Playwright successor）/其余域报表前端（资产/项目/维护/质量/主数据/CRM/客服，对应后端 successor 落地后再做）/单据打印套打/定时报表批量（独立能力面）。
+
+> **剩余 7 域业务报表后端（assets/projects/maintenance/quality/master-data/crm/customer-service，承接 1247-1 + 0935-2 + 0504-2 各 Deferred「其余域报表」）**：✅ `done` 计划 `2026-07-06-1815-1`——7 域各 1 个 `Erp{Ast|Prj|Mnt|Qa|Md|Crm|Cs}ReportBizModel`（`@BizModel("ErpXxxReport")`，镜像 mfg/hr 域隔离范式，模板根 `/nop/main/report/{ast|prj|mnt|qa|md|crm|cs}/`）+ 13 张种子报表（assets 2：资产折旧明细/资产处置明细；projects 2：项目成本汇总/工时明细；maintenance 2：维护历史/停机统计；quality 2：质检合格率统计/NCR-CAPA 统计；master-data 2：物料价格清单/往来单位清单；crm 2：线索转化漏斗/销售预测准确率；customer-service 1：工单 SLA/CSAT 综合统计）+ 7 域各自 `ERR_REPORT_*` ErrorCode 扩展（镜像 mfg 不跨域 import）+ mnt/qa/md/crm/cs 5 模块 `nop-report-core`/`nop-report-pdf` 接线（ast/prj 经 finance-service 传递依赖已有）。端到端测试全绿（7 域 50 tests：ast 9 + prj 9 + mnt 9 + qa 9 + md 9 + crm 9 + cs 5，0 failures/0 errors；`mvn clean install -DskipTests` 154 模块 + 全 workspace `mvn test` 0 failures/0 errors）。解除 1247-1 Non-Goal「其他域报表（资产/项目/维护/质量/主数据/CRM/客服，同范式 successor）」+ 0935-2/0504-2 Deferred「各域业务报表」剩余域面。Non-Goal：7 域报表 AMIS 菜单/页面（前端 successor `2026-07-06-1815-2`）/项目盈利率实体 `ErpPrjProjectPnl` 物化（1606-1 Deferred，本计划经实时聚合 actualCost/budget 不引入新实体）/每域第 3 张及以后报表（同范式 successor）/单据打印套打·定时报表批量·多账套合并（独立能力面）。
 
 ### M5 — 业财可运维性与闭环
 

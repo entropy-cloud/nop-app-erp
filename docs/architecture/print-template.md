@@ -51,6 +51,16 @@ HR 域渲染入口：`app.erp.hr.service.report.ErpHrReportBizModel`（`@BizMode
 - 两张 HR 报表模板：`module-hr/erp-hr-service/src/main/resources/_vfs/nop/main/report/hr/`（员工净余额 / 薪酬模拟对比）。
 - 数据集聚合：员工净余额 `buildEmployeeNetBalanceDataset` 经跨域只读 `IErpFinArApItemBiz.findOpenItems(direction, ctx)` 聚合 finance 辅助账（按 sourceBillType=EMPLOYEE_ADVANCE/EXPENSE_CLAIM 二次过滤出员工项，净额=预支应收−报销应付，口径对齐 `docs/design/finance/expense-claim.md`）；薪酬模拟对比 `buildPayrollSimulationComparisonDataset` 从同域 `ErpHrSalarySimulationItemAdjustment`（2200-3）聚合源 vs 调整三列对比 + 部门小计，对齐 `docs/design/human-resource/payroll-simulation.md`。前端 AMIS 报表页面已接入（plan 2026-07-06-1247-3：`hr-report` 菜单组 + `employee-net-balance.page.yaml`（无参数，后端聚合全部员工）+ `payroll-simulation-comparison.page.yaml`（参数 simulationId））。
 
+剩余 7 域渲染入口（plan 2026-07-06-1815-1，均镜像域隔离范式，各域 `Erp*Errors` 独立扩展 `ERR_REPORT_*` 不跨域 import）：
+- **assets** `app.erp.ast.service.report.ErpAstReportBizModel`（`@BizModel("ErpAstReport")`，模板根 `/nop/main/report/ast/`）：资产折旧明细（`ErpAstAsset`+`ErpAstDepreciationSchedule` 按资产聚合原值/累计折旧/净值/本期折旧）+ 资产处置明细（`ErpAstDisposal` 处置行+清理损益），对齐 `assets/state-machine.md`。
+- **projects** `app.erp.prj.service.report.ErpPrjReportBizModel`（模板根 `/nop/main/report/prj/`）：项目成本汇总（`ErpPrjProject` actualCost/budget + 预算执行率，实时聚合不引入 `ErpPrjProjectPnl`）+ 工时明细（`ErpPrjTimesheet` 按项目×员工聚合），对齐 `projects/cost-collection.md`。
+- **maintenance** `app.erp.mnt.service.report.ErpMntReportBizModel`（模板根 `/nop/main/report/mnt/`）：维护历史（`ErpMntVisit`⨝`ErpMntVisitTask`+备件消耗单数）+ 停机统计（`ErpMntDowntimeEntry` 按设备×原因聚合停机分钟），对齐 `maintenance/state-machine.md`。
+- **quality** `app.erp.qa.service.report.ErpQaReportBizModel`（模板根 `/nop/main/report/qa/`）：质检合格率统计（`ErpQaInspection` 按物料聚合，ACCEPTED+CONDITIONAL 视为合格）+ NCR-CAPA 统计（`ErpQaNonConformance`+`ErpQaAction` 按严重度聚合），对齐 `quality/state-machine.md`。
+- **master-data** `app.erp.md.service.report.ErpMdReportBizModel`（模板根 `/nop/main/report/md/`）：物料价格清单（`ErpMdMaterial`⨝默认`ErpMdMaterialSku` 四档价格）+ 往来单位清单（`ErpMdPartner` 客户/供应商），对齐 `master-data/README.md`。
+- **crm** `app.erp.crm.service.report.ErpCrmReportBizModel`（模板根 `/nop/main/report/crm/`）：线索转化漏斗（`ErpCrmLead` 按 stage 聚合线索数/期望收入）+ 销售预测准确率（`ErpCrmForecast`+`ErpCrmForecastLine` commit/weighted vs 行加权合计），对齐 `crm/README.md`+`crm/sales-forecast.md`。
+- **customer-service** `app.erp.cs.service.report.ErpCsReportBizModel`（`@BizModel("ErpCsReport")`，模板根 `/nop/main/report/cs/`，包 `app.erp.cs`，模块 `module-cs`）：工单 SLA/CSAT 综合统计（`ErpCsTicket` SLA 命中/超时 + `ErpCsSurvey` csat/nps 均值，按工单类型聚合），对齐 `customer-service/sla.md`+`customer-service/csat.md`。
+- 7 域 AMIS 报表菜单/页面归前端 successor（plan 2026-07-06-1815-2）。
+
 ## 单据打印（DETAL/套打，后续计划）
 
 发票/凭证/订单套打是相关但独立的能力面（套打背景图 + 单据维度模板）。本期仅交付财务报表渲染能力；单据打印模板制作归后续计划，复用同一 `NopReportDefinition` + `IReportEngine` 入口（无需新建实体）。
