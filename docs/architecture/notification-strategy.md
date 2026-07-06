@@ -45,6 +45,18 @@
 | `cs.csat-reminder` | `ErpCsCsatReminderJob.execute`（scheduler） | `erp-cs.csat-reminder-cron` (空=不调度) | ROLE 客服员 | 设计默认 cron 每日 02:00；查未响应/过期调查 |
 | `mfg.production-variance` | `ProductionVarianceCalculator.calculateVariances`（旁路告警） | `erp-mfg.variance-alert-enabled` (true) + `erp-mfg.variance-alert-threshold` (默认 100) | ROLE 生产主管 | 阈值判定最大净差异行；与过账 Dispatcher 解耦 |
 
-**通知失败降级**：所有消费者在 notify 调用外包 try/catch（warn-and-continue），与通道侧"config-gated 静默跳过不阻断业务"语义一致。
+**通知失败降级**：所有消费者在 notify 调用外包 try/catch（warn-and-continue），与通道侧"config-gated 静默跳过不阻断业务"语义一致。审批通知（0642-2）的失败降级由 `ErpSysNotificationBizModel.notify` 内部统一 catch 实现（脚本层无需 try/catch——XLang 不执行 try/catch 语句）。
 
-**精确接收人路由**：本期接收人沿用既有 ROLE resolver（角色名→NopAuthUserRole）+ USER_LIST（escalationUserId/ownerUserId），与通道侧 config-gated 语义一致。精确组织层级路由依赖角色基础设施落地（DEFERRED，见 plan 末尾）。
+**精确接收人路由**：本期接收人沿用既有 ROLE resolver（角色名→NopAuthUserRole）+ USER_LIST（escalationUserId/ownerUserId/submitterUserId），与通道侧 config-gated 语义一致。精确组织层级路由依赖角色基础设施落地（DEFERRED，见 plan 末尾）。
+
+## 审批工作流通知接线（plan 2026-07-06-0642-2）
+
+4 实体 WORKFLOW 审批（付款单/收款单/资产处置/HR 薪酬）三类审批生命周期通知接入 `notify()` 派发链：
+
+| 事件类型 | 调用点 | config-gated | 默认接收人 | 备注 |
+|----------|--------|--------------|-----------|------|
+| `wf.<entity>.result` | `.xwf` on-wf-end listener（approve/reject 后） | 模板存在性 | USER_LIST `${submitterUserId}`（提单人 createdBy） | resultText 区分已通过/已驳回；USER_LIST recipientConfig 支持 `${var}` 从 context 插值（0642-2 增强） |
+| `wf.<entity>.task-assigned` | `.xwf` 审批步骤 `<on-enter>` | 模板存在性 | ROLE 审批人角色（财务员/经理/HR专员等） | 多级链（HR 薪酬三级）每级步骤 onEnter 各自触发 |
+| `wf.<entity>.cc` | `.xwf` cc step（`specialType="cc"`）`<on-enter>` | 模板存在性 | ROLE CC 角色（财务经理/销售经理/资产管理员/HR专员） | cc step 需 confirm 后 wf 结束（标准 OA 抄送语义） |
+
+**关键技术约束**：xbiz `<observes>` 在当前 nop-entropy 版本仅 schema 解析、运行时未触发（dead），故审批通知统一在 wf listener/on-enter 注入。`<entity>` ∈ pur-payment/sal-receipt/ast-disposal/hr-salary。

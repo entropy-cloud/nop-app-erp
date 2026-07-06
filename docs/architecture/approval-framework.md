@@ -39,6 +39,16 @@
 - **责任不转移**：审批结果的最终责任人仍是原审批人
 - 不可委托场景：反审核、反结账、管理员强操作
 
+## 抄送（CC）与审批通知
+
+4 实体 WORKFLOW 审批（付款单/收款单/资产处置/HR 薪酬）经 plan `2026-07-06-0642-2` 接入审批生命周期通知：
+
+- **结果通知（提单人）**：wf `*end` listener 内 approve/reject 后调 `IErpSysNotificationBiz.notify('wf.<entity>.result', {resultText, docNo, submitterUserId, ...})`，接收人=提单人（`createdBy`，USER_LIST `${submitterUserId}` 从 context 插值）。通知失败不阻断业务（`notify` 内部 catch 所有异常）。
+- **抄送（CC）步骤**：各 `.xwf` 审批通过后增 `specialType="cc"` step（付款单→cc-finance、收款单→cc-sales、资产处置→cc-assets、薪酬→cc-hr），cc step 到达时 `<on-enter>` 通知 CC 接收人（ROLE，config-gated 静默跳过）。cc step 需 `confirm` 后 wf 结束（标准 OA 抄送语义）。
+- **任务到达通知（审批人）**：各审批步骤 `<on-enter>` 调 `notify('wf.<entity>.task-assigned', {docNo, stepName})`，接收人=审批人角色（ROLE，config-gated）。多级链（HR 薪酬三级）每级审批人各自收到通知。
+
+> **关键约束**：xbiz `<observes>` 在当前 nop-entropy 版本**仅 schema 解析、运行时未触发**（dead 特性），故审批联动通知统一在 wf listener/on-enter 注入，不使用 `<observes>`。角色基础设施落地前，ROLE 接收人 config-gated 静默跳过（不阻断 wf）。
+
 ## 与 nop-wf 集成
 
 所有审批实体**必须**通过 ORM `tagSet="use-approval"` 接入：
