@@ -32,6 +32,10 @@ public interface ErpHrErrors {
     String ARG_TARGET_PERIOD = "targetPeriod";
     String ARG_REVIEWER_ID = "reviewerId";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     // --- 薪酬核算：配置缺失 ---
     ErrorCode ERR_SOCIAL_INSURANCE_BASE_NOT_FOUND = ErrorCode.define(
             "erp.err.hr.social-insurance-base-not-found",
@@ -133,4 +137,16 @@ public interface ErpHrErrors {
             "erp.err.hr.simulation.source-not-found",
             "源期间 {sourcePeriod} 未找到任何正式薪酬记录，无法创建模拟",
             ARG_SOURCE_PERIOD);
+
+    // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，HR 域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(
+            "erp.err.hr.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define(
+            "erp.err.hr.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }

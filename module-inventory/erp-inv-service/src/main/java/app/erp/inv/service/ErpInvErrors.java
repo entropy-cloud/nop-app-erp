@@ -29,6 +29,10 @@ public interface ErpInvErrors {
     String ARG_ADJUST_CODE = "adjustCode";
     String ARG_UNIT_COST = "unitCost";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.inv.illegal-status-transition",
             "移动单 {moveCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
             ARG_MOVE_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
@@ -105,4 +109,14 @@ public interface ErpInvErrors {
     ErrorCode ERR_COST_ADJUST_NOT_APPLIED = ErrorCode.define("erp.err.inv.cost-adjust-not-applied",
             "成本调整单 {adjustCode} 未过账，不可冲销",
             ARG_ADJUST_CODE);
+
+    // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，库存域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define("erp.err.inv.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define("erp.err.inv.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }

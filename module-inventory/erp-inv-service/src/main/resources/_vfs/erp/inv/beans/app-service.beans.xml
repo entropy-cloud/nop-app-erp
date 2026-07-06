@@ -80,4 +80,9 @@
          经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findWarehouseDistribution/findShortageAlert/
          findSlowMovingAlert/findBatchExpiryAlert。 -->
     <bean id="app.erp.inv.service.dashboard.ErpInvDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- 库存域报表渲染入口（plan 2026-07-06-1247-1）：非实体 BizModel，注入平台 IReportEngine，
+         经 @BizQuery 暴露 renderHtml/download。@BizModel 注解由 bizObject 管理器自动识别。
+         镜像 finance ErpFinReportBizModel / manufacturing ErpMfgReportBizModel（域隔离 /inv/ vs /fin/ vs /mfg/）。 -->
+    <bean id="app.erp.inv.service.report.ErpInvReportBizModel" ioc:type="@bean:id"/>
 </beans>

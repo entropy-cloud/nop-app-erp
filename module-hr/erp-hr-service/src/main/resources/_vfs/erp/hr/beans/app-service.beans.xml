@@ -26,4 +26,10 @@
           class="app.erp.hr.service.posting.SalaryPostingDispatcher"/>
     <bean id="app.erp.hr.service.posting.SalaryPostingProvider"
           class="app.erp.hr.service.posting.SalaryPostingProvider"/>
+
+    <!-- HR 域报表渲染入口（plan 2026-07-06-1247-1）：非实体 BizModel，注入平台 IReportEngine，
+         经 @BizQuery 暴露 renderHtml/download。@BizModel 注解由 bizObject 管理器自动识别。
+         镜像 finance ErpFinReportBizModel / manufacturing ErpMfgReportBizModel / inventory ErpInvReportBizModel
+         （域隔离 /hr/ vs /fin/ vs /mfg/ vs /inv/）。员工净余额跨域只读经 IErpFinArApItemBiz 聚合。 -->
+    <bean id="app.erp.hr.service.report.ErpHrReportBizModel" ioc:type="@bean:id"/>
 </beans>
