@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 测试专用桩 bean：注册 IErpMdSkuReferenceChecker 桩，避免引入下游域形成 reactor 环。
+     仅 md-service 测试使用，由 ErpMdMaterialSkuBizModel.skuReferenceChecker 经 @Nullable @Inject 收集。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <bean id="testStubSkuReferenceChecker"
+          class="app.erp.md.service.TestStubSkuReferenceChecker"/>
+</beans>
