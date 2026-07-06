@@ -223,7 +223,7 @@
 ## 实现状态
 
 > **4 核心业务域后端聚合 API 已落地**（plan `2026-07-06-0935-1`）：销售/采购/库存/财务看板的 `getDashboardKpi`/`getDashboardTrend`/预警查询经 `@BizQuery` 暴露于专用看板 BizModel（`ErpXxxDashboardBizModel`），可独立验证。阈值经 `NopSysVariable` 配置化（`erp-dash.*` 配置键，默认值在代码常量中）。
-> **前端 AMIS 页面**（crud/table + chart + card 组合）为独立 successor（plan `2026-07-06-0504-2` Deferred「经营看板前端实现」，触发条件=看板前端定制启动时）。
+> **4 核心业务域前端 AMIS 页面已落地**（plan `2026-07-06-1247-2`）：财务/销售/库存看板替换占位 `main.page.yaml` + 采购域新建看板页面与 `pur-dashboard` 菜单组。每页经 `/api/GenericApi` GraphQL 消费 0935-1 已审计 `@BizQuery`，分层布局对齐 §实现约定（form 区间筛选 + service KPI 卡片 + chart 趋势/占比图 + crud 预警列表）。
 > **其余 6 域看板**（资产/项目/制造/维护/质量/主数据）为独立 successor（同范式，触发条件=对应域看板需求落地时）。
 > 报表渲染能力（`nop-report` + `IReportEngine` + `.xpt.*` 模板）已就绪（plan `2026-07-06-0504-2` 报表渲染子系统落地 `ErpFinReportBizModel` + 五张财务种子报表），看板聚合方法经同一 ORM 实体取数。
 
