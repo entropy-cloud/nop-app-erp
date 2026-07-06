@@ -59,7 +59,7 @@ HR 域渲染入口：`app.erp.hr.service.report.ErpHrReportBizModel`（`@BizMode
 - **master-data** `app.erp.md.service.report.ErpMdReportBizModel`（模板根 `/nop/main/report/md/`）：物料价格清单（`ErpMdMaterial`⨝默认`ErpMdMaterialSku` 四档价格）+ 往来单位清单（`ErpMdPartner` 客户/供应商），对齐 `master-data/README.md`。
 - **crm** `app.erp.crm.service.report.ErpCrmReportBizModel`（模板根 `/nop/main/report/crm/`）：线索转化漏斗（`ErpCrmLead` 按 stage 聚合线索数/期望收入）+ 销售预测准确率（`ErpCrmForecast`+`ErpCrmForecastLine` commit/weighted vs 行加权合计），对齐 `crm/README.md`+`crm/sales-forecast.md`。
 - **customer-service** `app.erp.cs.service.report.ErpCsReportBizModel`（`@BizModel("ErpCsReport")`，模板根 `/nop/main/report/cs/`，包 `app.erp.cs`，模块 `module-cs`）：工单 SLA/CSAT 综合统计（`ErpCsTicket` SLA 命中/超时 + `ErpCsSurvey` csat/nps 均值，按工单类型聚合），对齐 `customer-service/sla.md`+`customer-service/csat.md`。
-- 7 域 AMIS 报表菜单/页面归前端 successor（plan 2026-07-06-1815-2）。
+- 7 域前端 AMIS 报表页面已接入（plan 2026-07-06-1815-2）：`ast-report`（资产折旧明细 categoryId+区间 / 资产处置明细 区间）、`prj-report`（项目成本汇总 projectId+区间 / 工时明细 projectId+区间）、`mnt-report`（维护历史 equipmentId+区间 / 停机统计 equipmentId+区间）、`qa-report`（质检合格率 materialId+区间 / NCR-CAPA 区间）、`md-report`（物料价格清单 materialCode / 往来单位清单 partnerType）、`crm-report`（线索转化漏斗 **零参** / 销售预测准确率 forecastId）、`cs-report`（工单 SLA/CSAT 综合统计 ticketType）共 7 菜单组 + 13 page.yaml，镜像 0504-2/1247-3 范式（参数 form + 渲染 button 调 `Erp{Ast|Prj|Mnt|Qa|Md|Crm|Cs}Report__renderHtml` + button-toolbar 下载 XLSX/PDF + html 容器）。reportName 与 1815-1 后端模板名逐一核对一致（13==13），参数严格对齐各域 `buildXxxDataset` 真实签名。
 
 ## 单据打印（DETAL/套打，后续计划）
 
