@@ -24,4 +24,8 @@
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-mnt.due-visit-cron 配置门控。 -->
     <bean id="erpMntDueVisitJob"
           class="app.erp.mnt.service.job.ErpMntDueVisitJob"/>
+
+    <!-- 维护看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
+          经 @BizQuery 暴露 getDashboardKpi/getEquipmentStatusDistribution/findEquipmentDowntimeAlert/findMaintenanceOverdueAlert。 -->
+    <bean id="app.erp.mnt.service.dashboard.ErpMntDashboardBizModel" ioc:type="@bean:id"/>
 </beans>

@@ -24,4 +24,9 @@ public interface ErpMntConstants {
 
     boolean DEFAULT_AUTO_GENERATE_DUE_VISITS = true;
     boolean DEFAULT_EQUIPMENT_STATUS_LINK_ENABLED = true;
+
+    // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
+    /** 维护逾期预警窗口天数（Schedule.nextDueDate 早于 today-minus-overdueDays 触发预警）；默认 0=直接 < today 比对。 */
+    String CONFIG_DASH_MNT_MAINTENANCE_OVERDUE_DAYS = "erp-dash.mnt-maintenance-overdue-days";
+    int DEFAULT_DASH_MNT_MAINTENANCE_OVERDUE_DAYS = 0;
 }

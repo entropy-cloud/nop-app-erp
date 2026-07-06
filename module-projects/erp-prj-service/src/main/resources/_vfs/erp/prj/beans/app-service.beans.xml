@@ -31,4 +31,8 @@
     <!-- 费用报销归集聚合器（projects 驱动只读聚合，config-gated） -->
     <bean id="app.erp.prj.service.cost.ExpenseCostAggregator"
           class="app.erp.prj.service.cost.ExpenseCostAggregator"/>
+
+    <!-- 项目看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
+          经 @BizQuery 暴露 getDashboardKpi/getProjectStatusDistribution/findCostOverrunAlert/findDelayedProjectAlert。 -->
+    <bean id="app.erp.prj.service.dashboard.ErpPrjDashboardBizModel" ioc:type="@bean:id"/>
 </beans>

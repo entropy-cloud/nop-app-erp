@@ -120,4 +120,9 @@ public interface ErpQaConstants {
     String SAL_DOC_STATUS_DRAFT = "DRAFT";
     // erp-sal/approve-status：未提交（召回生成的退货单初始审核状态）
     String SAL_APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+
+    // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
+    /** CAPA 逾期预警窗口天数（Action.dueDate 早于 today-minus-overdueDays 触发预警）；默认 0=直接 < today 比对。 */
+    String CONFIG_DASH_QA_CAPA_OVERDUE_DAYS = "erp-dash.qa-capa-overdue-days";
+    int DEFAULT_DASH_QA_CAPA_OVERDUE_DAYS = 0;
 }

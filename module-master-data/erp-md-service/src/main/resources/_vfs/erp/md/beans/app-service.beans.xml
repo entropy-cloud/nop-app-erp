@@ -7,4 +7,8 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- 主数据看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
+          经 @BizQuery 暴露 getDashboardKpi/findMaterialWithoutSkuAlert/findSkuWithoutPriceAlert。 -->
+    <bean id="app.erp.md.service.dashboard.ErpMdDashboardBizModel" ioc:type="@bean:id"/>
 </beans>

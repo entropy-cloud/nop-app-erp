@@ -49,4 +49,8 @@
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-ast.depreciation-cron 配置门控。 -->
     <bean id="erpAstDepreciationJob"
           class="app.erp.ast.service.job.ErpAstDepreciationJob"/>
+
+    <!-- 资产看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
+          经 @BizQuery 暴露 getDashboardKpi/getAssetCategoryDistribution/getDashboardTrend/findDepreciationMissingAlert。 -->
+    <bean id="app.erp.ast.service.dashboard.ErpAstDashboardBizModel" ioc:type="@bean:id"/>
 </beans>
