@@ -222,8 +222,10 @@
 
 ## 实现状态
 
-> 看板的前端实现与 report-backed KPI 接线归**独立后续计划**（看板是 AMIS 页面定制面，非报表渲染引擎面）。
-> 报表渲染能力（`nop-report` + `IReportEngine` + `.xpt.*` 模板）已就绪（plan `2026-07-06-0504-2` 报表渲染子系统落地 `ErpFinReportBizModel` + 五张财务种子报表），看板聚合方法可经同一 ORM 实体取数，前端接线待启动。
+> **4 核心业务域后端聚合 API 已落地**（plan `2026-07-06-0935-1`）：销售/采购/库存/财务看板的 `getDashboardKpi`/`getDashboardTrend`/预警查询经 `@BizQuery` 暴露于专用看板 BizModel（`ErpXxxDashboardBizModel`），可独立验证。阈值经 `NopSysVariable` 配置化（`erp-dash.*` 配置键，默认值在代码常量中）。
+> **前端 AMIS 页面**（crud/table + chart + card 组合）为独立 successor（plan `2026-07-06-0504-2` Deferred「经营看板前端实现」，触发条件=看板前端定制启动时）。
+> **其余 6 域看板**（资产/项目/制造/维护/质量/主数据）为独立 successor（同范式，触发条件=对应域看板需求落地时）。
+> 报表渲染能力（`nop-report` + `IReportEngine` + `.xpt.*` 模板）已就绪（plan `2026-07-06-0504-2` 报表渲染子系统落地 `ErpFinReportBizModel` + 五张财务种子报表），看板聚合方法经同一 ORM 实体取数。
 
 ## 参考机制文档
 
