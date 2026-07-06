@@ -132,3 +132,4 @@
 - **CRP 可视化页面（AMIS 甘特/热力图）为 Non-Goal**：本期交付 GraphQL 负荷报表查询（`ErpMfgCrpLoad__getLoadReport`）；AMIS 可视化为独立前端面（successor）。
 - **CRP 定时运行 cron 已接线**：`erp-mfg.crp-run-cron`（取代旧 `erp-mfg.crp-run-schedule`）经 `ErpMfgCrpRunJob` 三件套接线（plan 2026-07-05-0306-1，SCHEDULED）。负荷计算业务语义不变（仍按需 `@BizMutation calculateLoad`，job 仅做入参派生=当月窗口 + 全工作中心 + 委托）。
 - **APS OperationOrder 排程时间作为负荷来源已接线**：plan 2026-07-05-0306-2 落地 SPI `IErpApsLoadSourceProvider` + config `erp-mfg.crp-load-source` 双源门控（见 §负荷来源双源）。
+- **CRP 负荷报表渲染（`.xpt.xml`）已接线**：plan 2026-07-06-0935-2 落地 `ErpMfgReportBizModel.renderHtml`/`download`（`crp-load-report.xpt.xml`，模板根 `/nop/main/report/mfg/`）。数据集经 `IErpMfgCrpLoadBiz.getLoadReport` 聚合（workcenter×date / loadHours / setupHours / capacityHours / loadRate / overloaded），口径与本设计 §负载报表 一致。AMIS 报表菜单/页面仍为前端 successor。

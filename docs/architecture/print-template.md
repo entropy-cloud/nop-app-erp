@@ -34,6 +34,13 @@
 - 五张财务种子报表模板：`module-finance/erp-fin-service/src/main/resources/_vfs/nop/main/report/fin/`（资产负债表/利润表/现金流量表/AR-AP 账龄/期末结账报告）。
 - 报表口径以 `docs/design/finance/` 为业务真相，数据集经 `IEvalScope` 注入模板。
 
+制造域渲染入口：`app.erp.mfg.service.report.ErpMfgReportBizModel`（`@BizModel("ErpMfgReport")`）：
+- 镜像 `ErpFinReportBizModel` 域隔离范式，模板根 `/nop/main/report/mfg/`（与 `/fin/` 隔离，避免跨域 R 依赖）。
+- 三张制造运营报表模板：`module-manufacturing/erp-mfg-service/src/main/resources/_vfs/nop/main/report/mfg/`（CRP 负荷报表 / 生产差异报表 / 预测差异报表）。
+- 数据集聚合：CRP 负荷委托 `IErpMfgCrpLoadBiz.getLoadReport`（复用 1707-1 已审计的负荷/产能/超负荷计算）；生产差异从 `ErpMfgCostVariance`（1838-2 产物）聚合；预测差异从 `ErpMfgForecast`/`ErpMfgForecastLine`（0427-1，APPROVED）vs `ErpMfgWorkOrder` 完工数量对比。各报表口径以对应 owner doc 为业务真相。
+
+**域隔离范式（复用约定）**：新域报表按 `ErpFinReportBizModel` / `ErpMfgReportBizModel` 范式复制——每域一个 `ErpXxxReportBizModel`（`@BizModel("ErpXxxReport")`），模板根 `/nop/main/report/<domain>/`，渲染入口 + 数据集聚合留在本域 service 内（不跨域 import）。
+
 ## 单据打印（DETAL/套打，后续计划）
 
 发票/凭证/订单套打是相关但独立的能力面（套打背景图 + 单据维度模板）。本期仅交付财务报表渲染能力；单据打印模板制作归后续计划，复用同一 `NopReportDefinition` + `IReportEngine` 入口（无需新建实体）。

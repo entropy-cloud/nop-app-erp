@@ -174,7 +174,7 @@ Exit Criteria:
 
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 渲染能力就绪后各域按 owner doc 口径独立接线；本期仅交付财务种子集证明能力。
-- Successor Required: `yes`（触发条件：各域报表需求落地时）
+- Successor Required: `partial done`（制造部分 ✅ `done` 计划 `2026-07-06-0935-2`——`ErpMfgReportBizModel` + 3 张制造运营报表 CRP 负荷/生产差异/预测差异，模板根 `/nop/main/report/mfg/`；其余域 inventory/HR 报表触发条件仍为各域报表需求落地时）
 
 ### 单据打印/套打（发票/凭证/订单 DETAIL/FORM/LIST，print-template.md）
 
