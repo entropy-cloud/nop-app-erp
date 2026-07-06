@@ -109,5 +109,35 @@ WHERE input_lot_id = :inputLotId;
 - `state-machine.md` — 工单状态触发批次记录
 - `bom-and-routing.md` — 生产版本与BOM路由
 - `material-reservation.md` — 领料与批次消耗
-- `../inventory/lot-management.md` — 库存批次管理（lot master）
+- `../inventory/trace-chain.md` — 库存批次追溯（lot 主数据实体 `ErpInvBatch`，本计划基因链 FK `inputLot`/`outputLot` 指向它）
 - `../quality/inspection-integration.md` — 质检与批次隔离
+
+## 实施决策记录（plan 2026-07-07-0305-3）
+
+### Decision 1：写入时机 —— 完工时一次性写入
+
+选择在 `reportCompletion`（完工入库）时一次性按本次完工消耗写入 input→output 基因行，而非领料时 progressive 累积。
+
+- **选择理由**：与 2237-1 完工聚合点一致、避免领料-完工时序耦合。
+- **替代方案**：领料时 progressive 累积（被否决：领料与完工时序解耦困难，部分完工时分摊逻辑复杂）。
+- **残留风险**：部分完工时 inputQty 按 `completedQty/plannedQuantity` 比例分摊（近似）。
+
+### Decision 2：产出批次获取 —— 完工时自动创建 `ErpInvBatch`
+
+`generateCompletionMove` 当前未设 batchNo，完工时不创建产出批次。选择完工时自动创建 `ErpInvBatch`（batchNo=`FG-{woCode}` 派生，状态 OPEN）。
+
+- **选择理由**：outputLotId 为 mandatory，必须有产出批次；自动建批最简且无前置依赖。
+- **替代方案**：由工单/产品行派生既有批次（被否决：当前无既有批次来源）。
+- **残留风险**：自动建批可能与既有库存批次管理策略冲突，由 config-gated + protected `ensureOutputLot` 可覆盖缓解。
+
+### Decision 3：失败语义 —— best-effort
+
+基因链写入失败不回滚完工入库（best-effort）：try/catch 记日志、不阻断主流程。config 键 `erp-mfg.genealogy-write-enabled`（默认 true）。
+
+- **选择理由**：追溯辅助数据不应拖垮核心完工事务。
+- **替代方案**：强一致（失败传播回滚完工入库，被否决：追溯缺口可容忍，完工不可中断）。
+- **残留风险**：best-effort 下可能产生基因链缺口（部分完工无追溯行），由 config 开关 + 日志可观测性兜底。
+
+## recallReport 降级说明（plan 2026-07-07-0305-3 §Phase 2）
+
+当前 `IErpInvStockBalanceBiz`/`IErpInvBatchBiz` 仅暴露 CRUD（无按批次的当前库存位置/已售去向查询方法集），故 `recallReport` 降级为仅返回受影响成品批次集合（`RecallReport.degraded=true`）。位置/去向查询归 inventory successor（触发条件=inventory 暴露按批次的位置/去向查询方法集时）。
