@@ -22,7 +22,7 @@
 - 1.9 采购退货与退款：`done`（计划 0456-1：退货单三轴审批状态机 + 库存反向出库 + PURCHASE_RETURN 红字冲减凭证 + DIRECTION_PAYABLE 负 openAmount 辅助账回减应付；红字发票自动生成/换货/批次退货/现金退款归 Non-Goal）
 - 1.10 销售退货与退款：`done`（计划 0456-2：退货单三轴审批状态机 + 库存反向入库 + SALES_RETURN 反向 SALES_OUTPUT 凭证（借存货/贷成本）+ DIRECTION_RECEIVABLE 负 openAmount 辅助账回减应收 + 已收款退货反向收款核销；红字发票自动生成/退款方式路由/换货/退货质检/批次退货归 Non-Goal）
 - 1.11 批次追溯链：`done`（计划 0700-1：移动单自追溯上链 originMoveId/originReturnedMoveId + 四类追溯查询 forward/backward/return/batch + 退货移动单透传挂链）
-- 1.12 主数据业务服务：`todo`（UC-MD-01~06：SKU 多单位自动转换 / 物料替代建议 / 自动编码生成 / 批次规则校验 / 保质期预警 / 供应商默认货源，设计就绪 `master-data/sku-multi-unit.md`）
+- 1.12 主数据业务服务：`done`（计划 `2026-07-07-0024-1`：UC-MD-01~06 六大用例 BizModel 服务方法全落地——findSkuByBarcode/resolveSku/findDefaultSku/convertQty/resolvePrice/validatePrice/validateSkuDeactivation。3 Phase 21 tests 全绿（含 barcode 应用层唯一性 + 换算物料级/通用 fallback + 默认 SKU 兜底 + 价格三级优先级手工价>SPI>默认档 + OFF/WARN/HARD 校验分派 + 默认 SKU 唯一性守卫 + 物料停用联动 + 删除引用校验）。跨域经 SPI 解耦（IErpMdSupplierPriceResolver/IErpMdSkuReferenceChecker，避免 master→下游依赖环）。G1~G5 模型缺口以应用层校验 + Deferred successor 承接）
 
 > **Non-Goal scope boundary**：以下 UCs 不在 M1 设计范围内，非实现遗漏：UC-SAL-06（客户信用额度增强，含信用评级/额度审批）、UC-SAL-08（价格策略引擎，含阶梯价/促销/客户组价）、UC-SAL-10（销售佣金计算，含佣金规则/结算）。属后继工作项。
 
@@ -56,7 +56,7 @@
 | 1.9 | 采购退货与退款 | purchase/finance | `purchase/returns.md` | ✅ `done`（计划 0456-1） |
 | 1.10 | 销售退货与退款 | sales/finance | `sales/returns.md` | ✅ `done`（计划 0456-2：三轴审批 + 反向入库 + SALES_RETURN 凭证 + 负 AR 辅助账回减应收 + 反向收款核销） |
 | 1.11 | 批次追溯链逻辑 | inventory | `inventory/trace-chain.md` | ✅ `done`（计划 0700-1：单 uplink 自追溯链 + 四类追溯查询 + 退货透传挂链） |
-| 1.12 | 主数据业务服务（SKU 多单位自动转换/物料替代建议/自动编码/批次规则/保质期预警/供应商默认货源） | master-data | `master-data/sku-multi-unit.md` | ❌ `todo` |
+| 1.12 | 主数据业务服务（SKU 扫码/换算/取价/校验/兜底/状态约束 UC-MD-01~06） | master-data | `master-data/sku-multi-unit.md` | ✅ `done` |
 
 ### M4 — 业财一体端到端
 
