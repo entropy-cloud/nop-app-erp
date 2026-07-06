@@ -195,4 +195,29 @@ public interface ErpMfgConstants {
 
     /** 通知事件类型：生产差异超阈值告警（对应 erp_sys_notification_template.notification_type；plan 2026-07-06-0642-1 §Phase 3）。 */
     String NOTIFY_EVENT_PRODUCTION_VARIANCE = "mfg.production-variance";
+
+    // ---- 生产批次基因链追溯（plan 2026-07-07-0305-3；权威：docs/design/manufacturing/batch-genealogy.md） ----
+
+    /** 完工写入基因链总开关（默认 true=完工时写入 input→output 消耗行；plan 2026-07-07-0305-3 §Phase 1 Decision 失败语义）。 */
+    String CONFIG_GENEALOGY_WRITE_ENABLED = "erp-mfg.genealogy-write-enabled";
+    /** 基因链递归追溯深度上限（默认 50，防环路/爆炸；plan 2026-07-07-0305-3 §Infrastructure）。 */
+    String CONFIG_GENEALOGY_MAX_TRACE_DEPTH = "erp-mfg.genealogy-max-trace-depth";
+    /** CONFIG_GENEALOGY_MAX_TRACE_DEPTH 缺省值。 */
+    int DEFAULT_GENEALOGY_MAX_TRACE_DEPTH = 50;
+
+    /** 基因链批次状态（自由字符串，对齐设计 batch-genealogy.md 数据模型 lotStatus 字段）。 */
+    String LOT_STATUS_RELEASED = "RELEASED";
+    String LOT_STATUS_QUARANTINE = "QUARANTINE";
+    String LOT_STATUS_ACTIVE = "ACTIVE";
+    String LOT_STATUS_REJECTED = "REJECTED";
+
+    /** 基因链追溯方向（traceChain 入参 direction 自由字符串）。 */
+    String TRACE_DIRECTION_FORWARD = "FORWARD";   // 成品 → 原料（用 output_lot 找 input 再向上游递归）
+    String TRACE_DIRECTION_BACKWARD = "BACKWARD"; // 原料 → 成品（用 input 找 output 再向下游递归）
+
+    /** 库存批次状态（对齐 erp-inv/batch-status，避免跨 service 模块依赖）。 */
+    String INV_BATCH_STATUS_OPEN = "OPEN";
+
+    /** 产出批次 batchNo 派生前缀（工单 code + 序号）。 */
+    String GENEALOGY_OUTPUT_BATCH_PREFIX = "FG";
 }

@@ -9,6 +9,7 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.costing.ProductionVarianceCalculator;
+import app.erp.mfg.service.genealogy.BatchGenealogyWriter;
 import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
 import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
@@ -64,6 +65,8 @@ public class ErpMfgWorkOrderProcessor {
     ProductionVarianceCalculator productionVarianceCalculator;
     @Inject
     ProductionVarianceDispatcher productionVarianceDispatcher;
+    @Inject
+    BatchGenealogyWriter batchGenealogyWriter;
 
     public ErpMfgWorkOrder submitForApproval(String id, IServiceContext context) {
         ErpMfgWorkOrder wo = requireWorkOrder(id, context);
@@ -200,6 +203,11 @@ public class ErpMfgWorkOrderProcessor {
         recomputeTotals(wo);
 
         generateCompletionMove(wo, completedQty, context);
+
+        // 完工入库成功后写入生产批次基因链（inputLot→outputLot 消耗行）。
+        // best-effort（BatchGenealogyWriter 内部 try/catch，不阻断完工入库）；
+        // config-gated erp-mfg.genealogy-write-enabled。作为 protected step，下游派生 Processor 可覆盖跳过/增强。
+        writeBatchGenealogy(wo, completedQty, context);
 
         if (willFinish) {
             wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED);
@@ -367,6 +375,17 @@ public class ErpMfgWorkOrderProcessor {
         lines.add(line);
         request.setLines(lines);
         stockMoveBiz.generateMove(request, context);
+    }
+
+    /**
+     * 完工入库后写入生产批次基因链（inputLot→outputLot 消耗行）。
+     *
+     * <p>plan 2026-07-07-0305-3 §Phase 1。best-effort（{@link BatchGenealogyWriter#writeOnCompletion}
+     * 内部 try/catch，不阻断完工入库）；config-gated {@code erp-mfg.genealogy-write-enabled}。
+     * 作为 protected step，下游派生 Processor 可覆盖以跳过或增强。
+     */
+    protected void writeBatchGenealogy(ErpMfgWorkOrder wo, BigDecimal completedQty, IServiceContext context) {
+        batchGenealogyWriter.writeOnCompletion(wo, completedQty, context);
     }
 
     protected boolean isInspectionGated(ErpMfgWorkOrder wo) {

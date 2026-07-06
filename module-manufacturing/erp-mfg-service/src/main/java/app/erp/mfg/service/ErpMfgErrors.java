@@ -185,4 +185,27 @@ public interface ErpMfgErrors {
             "nop.err.mfg.report.render-type-invalid",
             "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    // --- 生产批次基因链追溯（plan 2026-07-07-0305-3；权威：docs/design/manufacturing/batch-genealogy.md） ---
+
+    String ARG_LOT_ID = "lotId";
+    String ARG_OUTPUT_LOT_ID = "outputLotId";
+    String ARG_INPUT_LOT_ID = "inputLotId";
+    String ARG_DIRECTION = "direction";
+    String ARG_MAX_DEPTH = "maxDepth";
+
+    ErrorCode ERR_MFG_GENEALOGY_LOT_NOT_FOUND = ErrorCode.define(
+            "nop.err.mfg.genealogy.lot-not-found",
+            "批次不存在: {lotId}",
+            ARG_LOT_ID);
+
+    ErrorCode ERR_MFG_GENEALOGY_MAX_DEPTH_EXCEEDED = ErrorCode.define(
+            "nop.err.mfg.genealogy.max-depth-exceeded",
+            "批次基因链追溯深度超过上限{depth}（疑似环路或层级过深）",
+            ARG_DEPTH);
+
+    ErrorCode ERR_MFG_GENEALOGY_INVALID_DIRECTION = ErrorCode.define(
+            "nop.err.mfg.genealogy.invalid-direction",
+            "追溯方向[{direction}]非法（仅允许 FORWARD/BACKWARD）",
+            ARG_DIRECTION);
 }

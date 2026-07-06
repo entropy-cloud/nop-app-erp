@@ -67,6 +67,14 @@
     <bean id="app.erp.mfg.service.processor.ErpMfgJobCardProcessor"
           class="app.erp.mfg.service.processor.ErpMfgJobCardProcessor"/>
 
+    <!-- 生产批次基因链追溯（plan 2026-07-07-0305-3）：完工写入 + 前向/反向/全链追溯查询。
+          BatchGenealogyWriter 经 ErpMfgWorkOrderProcessor 完工钩子调用（best-effort + config-gated）；
+          BatchGenealogyTracer 经 ErpMfgBatchGenealogyBizModel 追溯查询调用。 -->
+    <bean id="app.erp.mfg.service.genealogy.BatchGenealogyWriter"
+          class="app.erp.mfg.service.genealogy.BatchGenealogyWriter"/>
+    <bean id="app.erp.mfg.service.genealogy.BatchGenealogyTracer"
+          class="app.erp.mfg.service.genealogy.BatchGenealogyTracer"/>
+
     <!-- APS 排程→工序卡自动生成 Processor（plan 2026-07-05-0427-3）。经 ioc:collect-beans by-type 跨模块收集
            aps-service 实现的 IErpApsLoadSourceProvider（同 CRP SPI 范式）；APS 模块缺失时收集到空 list，
            fetchSlots 返回空、generateJobCardsFromSchedule 抛 ERR_NO_SCHEDULED_OPERATIONS（行为降级）。 -->
