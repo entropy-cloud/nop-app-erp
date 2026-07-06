@@ -27,7 +27,7 @@
 - 2.4b SPC 过程控制（UC-QA-09~11：SPC 统计过程控制 / SPC 规则引擎 / SPC 控制图）：`done`（三实体 `ErpQaSpcChart`/`ErpQaSpcSample`/`ErpQaSpcCapability` + 3 字典物化经 model→codegen；`SpcSamplingService` 增量聚合 APPROVED 质检行（VARCHAR→数值解析幂等）+ `SpcControlLimitCalculator` d2/D3/D4 系数表（子组≥20 触发重算）+ `SpcRuleEngine` Western Electric 规则 1~4（纯函数可单测）+ `SpcOutOfControlHandler` post-commit `txn().afterCommit` 级联 NCR(sourceType=SPC)+CAPA（config-gated）+ `SpcCapabilityCalculator` Cp/Cpk/Pp/Ppk/Cpm + capabilityLevel 4 档分档 + INADEQUATE 回写 QualityGoal + 登记 RiskRegister + 双层门控 nop-job（erpQaSpcSamplingJob/erpQaSpcCapabilityJob）；32 测试全绿，2026-07-07，`docs/plans/2026-07-07-0305-2-quality-spc-process-control.md`）
 - 2.5b 资产盘点（UC-AST-09：固定资产盘点流程）：`todo`
 - 2.5c 资产维修管理（UC-AST-10：资产维修工单/费用归集）：`todo`
-- 2.5d 资产拆分合并（UC-AST-11：资产拆分/合并处理）：`todo`
+- 2.5d 资产拆分合并（UC-AST-11：资产拆分/合并处理）：`done`
 - 2.6b 项目损益/结算/转固（UC-PRJ-06~08：项目损益汇总 / 竣工结算 / 结算转固）：`done`
 - 2.6c 任务 DAG 校验（UC-PRJ-05：任务依赖 DAG 环路/完整性校验）：`todo`
 
@@ -75,7 +75,7 @@
 | 2.4b | ✅ SPC 过程控制（UC-QA-09~11） | quality | `quality/spc.md` |
 | 2.5b | ❌ 资产盘点（UC-AST-09） | assets | `assets/inventory.md` |
 | 2.5c | ❌ 资产维修管理（UC-AST-10） | assets | `assets/maintenance.md` |
-| 2.5d | ❌ 资产拆分合并（UC-AST-11） | assets | `assets/split-merge.md` |
+| 2.5d | ✅ 资产拆分合并（UC-AST-11） | assets | `assets/split-merge.md` |
 | 2.6b | ✅ 项目损益/结算/转固（UC-PRJ-06~08） | projects | `projects/profitability.md` |
 | 2.6c | ❌ 任务 DAG 校验（UC-PRJ-05） | projects | `projects/task-dag.md` |
 
