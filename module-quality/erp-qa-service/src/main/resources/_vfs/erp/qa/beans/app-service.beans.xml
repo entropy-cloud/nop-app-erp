@@ -37,4 +37,8 @@
     <!-- 质量看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
           经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findDefectTopN/findCapaOverdueAlert。 -->
     <bean id="app.erp.qa.service.dashboard.ErpQaDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- 质量域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
+          经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /qa/）。 -->
+    <bean id="app.erp.qa.service.report.ErpQaReportBizModel" ioc:type="@bean:id"/>
 </beans>

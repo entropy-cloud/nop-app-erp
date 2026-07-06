@@ -25,6 +25,10 @@ public interface ErpPrjErrors {
     String ARG_SUBJECT_CODE = "subjectCode";
     String ARG_SOURCE_BILL_CODE = "sourceBillCode";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     // --- 工时状态机 ---
     ErrorCode ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.prj.timesheet.illegal-status-transition",
@@ -70,4 +74,16 @@ public interface ErpPrjErrors {
             "erp.err.prj.project-not-closable",
             "项目 {projectId} 当前状态={currentStatus}，不允许关闭（须为 OPEN）",
             ARG_PROJECT_ID, ARG_CURRENT_STATUS);
+
+    // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，项目域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(
+            "erp.err.prj.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define(
+            "erp.err.prj.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }

@@ -50,4 +50,8 @@
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.event-reminder-cron 配置门控。 -->
     <bean id="erpCrmEventReminderJob"
           class="app.erp.crm.service.job.ErpCrmEventReminderJob"/>
+
+    <!-- CRM 域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
+          经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /crm/）。 -->
+    <bean id="app.erp.crm.service.report.ErpCrmReportBizModel" ioc:type="@bean:id"/>
 </beans>

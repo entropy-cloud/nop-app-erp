@@ -23,6 +23,10 @@ public interface ErpMntErrors {
     String ARG_VISIT_DATE = "visitDate";
     String ARG_CONFLICT_VISIT_CODE = "conflictVisitCode";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     ErrorCode ERR_VISIT_NOT_FOUND = ErrorCode.define("erp.err.mnt.visit-not-found",
             "维护访问 {visitId} 不存在", ARG_VISIT_ID);
 
@@ -70,4 +74,16 @@ public interface ErpMntErrors {
 
     ErrorCode ERR_EQUIPMENT_NOT_FOUND = ErrorCode.define("erp.err.mnt.equipment-not-found",
             "设备 {equipmentId} 不存在", ARG_EQUIPMENT_ID);
+
+    // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，维护域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(
+            "erp.err.mnt.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define(
+            "erp.err.mnt.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }

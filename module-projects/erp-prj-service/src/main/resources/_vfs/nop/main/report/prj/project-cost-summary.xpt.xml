@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 项目成本汇总报表（种子报表）。数据集 ds 由 ErpPrjReportBizModel.buildProjectCostSummaryDataset 注入，
+     每行 {projectId, projectCode, projectName, status, budget, committedCost, actualCost, billedAmount,
+     executionRate}。口径对齐 docs/design/projects/cost-collection.md：actualCost 实时聚合 + 预算执行率。 -->
+<workbook x:schema="/nop/schema/excel/workbook.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <sheets>
+        <sheet name="project-cost-summary" defaultColumnWidth="60.0" defaultRowHeight="16.0">
+            <model/>
+            <table>
+                <cols>
+                    <col width="90.0"/>
+                    <col width="100.0"/>
+                    <col width="140.0"/>
+                    <col width="70.0"/>
+                    <col width="90.0"/>
+                    <col width="90.0"/>
+                    <col width="90.0"/>
+                    <col width="90.0"/>
+                    <col width="90.0"/>
+                </cols>
+                <rows>
+                    <row height="24.0">
+                        <cells>
+                            <cell mergeAcross="8" styleId="title"><model/><value>项目成本汇总表</value></cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="18.0">
+                        <cells>
+                            <cell styleId="header"><model/><value>项目ID</value></cell>
+                            <cell styleId="header"><model/><value>项目编码</value></cell>
+                            <cell styleId="header"><model/><value>项目名称</value></cell>
+                            <cell styleId="header"><model/><value>状态</value></cell>
+                            <cell styleId="header"><model/><value>预算</value></cell>
+                            <cell styleId="header"><model/><value>承诺成本</value></cell>
+                            <cell styleId="header"><model/><value>实际成本</value></cell>
+                            <cell styleId="header"><model/><value>已开票</value></cell>
+                            <cell styleId="header"><model/><value>预算执行率</value></cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="16.0">
+                        <cells>
+                            <cell styleId="num">
+                                <model ds="ds" expandType="r" field="projectId"/>
+                                <value>*=^ds!projectId</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=projectCode</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=projectName</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=status</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
+                                <value>*=budget</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
+                                <value>*=committedCost</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
+                                <value>*=actualCost</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
+                                <value>*=billedAmount</value>
+                            </cell>
+                            <cell styleId="alert">
+                                <model rowParent="A3"/>
+                                <value>*=executionRate</value>
+                            </cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="18.0">
+                        <cells>
+                            <cell mergeAcross="3" styleId="total"><model/><value>合计</value></cell>
+                            <cell styleId="num">
+                                <model><valueExpr>SUM(E3)</valueExpr></model>
+                            </cell>
+                            <cell styleId="num">
+                                <model><valueExpr>SUM(F3)</valueExpr></model>
+                            </cell>
+                            <cell styleId="num">
+                                <model><valueExpr>SUM(G3)</valueExpr></model>
+                            </cell>
+                            <cell styleId="num">
+                                <model><valueExpr>SUM(H3)</valueExpr></model>
+                            </cell>
+                            <cell styleId="cell"/>
+                        </cells>
+                        <model/>
+                    </row>
+                </rows>
+            </table>
+        </sheet>
+    </sheets>
+
+    <styles>
+        <style id="title" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="14.0" bold="true"/>
+            <numberFormat>General</numberFormat>
+        </style>
+        <style id="header" fillPattern="solid" fillBgColor="FFECEFF4" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0" bold="true"/>
+            <numberFormat>General</numberFormat>
+            <topBorder type="thin" weight="1"/>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="cell" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0"/>
+            <numberFormat>General</numberFormat>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="num" horizontalAlign="right" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0"/>
+            <numberFormat>#,##0.00</numberFormat>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="alert" fillPattern="solid" fillBgColor="FFFFF9C4" horizontalAlign="right" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0" bold="true"/>
+            <numberFormat>0.00%</numberFormat>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="total" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0" bold="true"/>
+            <numberFormat>General</numberFormat>
+            <topBorder type="thin" weight="1"/>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+    </styles>
+</workbook>

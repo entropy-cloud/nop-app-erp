@@ -28,6 +28,10 @@ public interface ErpAstErrors {
     String ARG_ADJUSTMENT_ID = "adjustmentId";
     String ARG_ADJUSTMENT_TYPE = "adjustmentType";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     // --- 资本化 ---
     ErrorCode ERR_CAPITALIZATION_NOT_FOUND = ErrorCode.define(
             "erp.err.ast.capitalization.not-found",
@@ -139,4 +143,16 @@ public interface ErpAstErrors {
             "erp.err.ast.adjustment.approval-required",
             "价值调整单 {adjustmentCode} 配置强制审批，须先审核通过再生效",
             ARG_ADJUSTMENT_CODE);
+
+    // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，资产域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(
+            "erp.err.ast.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define(
+            "erp.err.ast.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }

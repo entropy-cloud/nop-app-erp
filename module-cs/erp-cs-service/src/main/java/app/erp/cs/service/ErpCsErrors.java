@@ -22,6 +22,10 @@ public interface ErpCsErrors {
     String ARG_MIN = "min";
     String ARG_MAX = "max";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     ErrorCode ERR_TICKET_NOT_FOUND = ErrorCode.define(
             "nop.err.cs.ticket.not-found",
             "客服工单不存在: {ticketId}",
@@ -61,4 +65,16 @@ public interface ErpCsErrors {
             "nop.err.cs.survey.already-responded",
             "调查[{surveyId}]已被客户提交，禁止重复提交",
             ARG_SURVEY_ID);
+
+    // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，客服域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(
+            "erp.err.cs.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define(
+            "erp.err.cs.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }

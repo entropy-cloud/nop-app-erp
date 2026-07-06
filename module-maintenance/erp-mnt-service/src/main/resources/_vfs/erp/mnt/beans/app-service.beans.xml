@@ -28,4 +28,8 @@
     <!-- 维护看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
           经 @BizQuery 暴露 getDashboardKpi/getEquipmentStatusDistribution/findEquipmentDowntimeAlert/findMaintenanceOverdueAlert。 -->
     <bean id="app.erp.mnt.service.dashboard.ErpMntDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- 维护域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
+          经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /mnt/）。 -->
+    <bean id="app.erp.mnt.service.report.ErpMntReportBizModel" ioc:type="@bean:id"/>
 </beans>

@@ -35,4 +35,8 @@
     <!-- 项目看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
           经 @BizQuery 暴露 getDashboardKpi/getProjectStatusDistribution/findCostOverrunAlert/findDelayedProjectAlert。 -->
     <bean id="app.erp.prj.service.dashboard.ErpPrjDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- 项目域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
+          经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /prj/）。 -->
+    <bean id="app.erp.prj.service.report.ErpPrjReportBizModel" ioc:type="@bean:id"/>
 </beans>

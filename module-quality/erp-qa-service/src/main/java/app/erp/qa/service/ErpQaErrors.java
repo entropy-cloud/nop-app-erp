@@ -25,6 +25,10 @@ public interface ErpQaErrors {
     String ARG_BATCH_NO = "batchNo";
     String ARG_DISPOSITION_TYPE = "dispositionType";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     ErrorCode ERR_INSPECTION_NOT_FOUND = ErrorCode.define(
             "nop.err.qa.inspection.not-found",
             "质检单不存在: {inspectionId}",
@@ -138,4 +142,16 @@ public interface ErpQaErrors {
             "nop.err.qa.ncr.disposition-not-postable",
             "NCR[{ncrCode}]处置方式[{dispositionType}]无财务影响（CONCESSION/DOWNGRADE），不需过账",
             ARG_NCR_CODE, ARG_DISPOSITION_TYPE);
+
+    // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，质量域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(
+            "erp.err.qa.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define(
+            "erp.err.qa.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }

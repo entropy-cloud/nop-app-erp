@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 维护历史报表（种子报表）。数据集 ds 由 ErpMntReportBizModel.buildMaintenanceHistoryDataset 注入，
+     每行 {visitId, visitCode, equipmentId, equipmentName, visitDate, visitType, status, totalMinutes,
+     taskCount, sparePartUsageCount}。口径对齐 docs/design/maintenance/state-machine.md：
+     按访问×设备维度汇总任务数与备件消耗单数。 -->
+<workbook x:schema="/nop/schema/excel/workbook.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <sheets>
+        <sheet name="maintenance-history" defaultColumnWidth="60.0" defaultRowHeight="16.0">
+            <model/>
+            <table>
+                <cols>
+                    <col width="80.0"/>
+                    <col width="100.0"/>
+                    <col width="80.0"/>
+                    <col width="120.0"/>
+                    <col width="80.0"/>
+                    <col width="80.0"/>
+                    <col width="70.0"/>
+                    <col width="80.0"/>
+                    <col width="70.0"/>
+                    <col width="90.0"/>
+                </cols>
+                <rows>
+                    <row height="24.0">
+                        <cells>
+                            <cell mergeAcross="9" styleId="title"><model/><value>维护历史表</value></cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="18.0">
+                        <cells>
+                            <cell styleId="header"><model/><value>访问ID</value></cell>
+                            <cell styleId="header"><model/><value>访问编码</value></cell>
+                            <cell styleId="header"><model/><value>设备ID</value></cell>
+                            <cell styleId="header"><model/><value>设备名称</value></cell>
+                            <cell styleId="header"><model/><value>访问日期</value></cell>
+                            <cell styleId="header"><model/><value>访问类型</value></cell>
+                            <cell styleId="header"><model/><value>状态</value></cell>
+                            <cell styleId="header"><model/><value>总耗时(分)</value></cell>
+                            <cell styleId="header"><model/><value>任务数</value></cell>
+                            <cell styleId="header"><model/><value>备件消耗单数</value></cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="16.0">
+                        <cells>
+                            <cell styleId="num">
+                                <model ds="ds" expandType="r" field="visitId"/>
+                                <value>*=^ds!visitId</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=visitCode</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
+                                <value>*=equipmentId</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=equipmentName</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=visitDate</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=visitType</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A3"/>
+                                <value>*=status</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
+                                <value>*=totalMinutes</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
+                                <value>*=taskCount</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
+                                <value>*=sparePartUsageCount</value>
+                            </cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="18.0">
+                        <cells>
+                            <cell mergeAcross="6" styleId="total"><model/><value>合计</value></cell>
+                            <cell styleId="num">
+                                <model><valueExpr>SUM(H3)</valueExpr></model>
+                            </cell>
+                            <cell styleId="num">
+                                <model><valueExpr>SUM(I3)</valueExpr></model>
+                            </cell>
+                            <cell styleId="num">
+                                <model><valueExpr>SUM(J3)</valueExpr></model>
+                            </cell>
+                        </cells>
+                        <model/>
+                    </row>
+                </rows>
+            </table>
+        </sheet>
+    </sheets>
+
+    <styles>
+        <style id="title" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="14.0" bold="true"/>
+            <numberFormat>General</numberFormat>
+        </style>
+        <style id="header" fillPattern="solid" fillBgColor="FFECEFF4" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0" bold="true"/>
+            <numberFormat>General</numberFormat>
+            <topBorder type="thin" weight="1"/>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="cell" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0"/>
+            <numberFormat>General</numberFormat>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="num" horizontalAlign="right" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0"/>
+            <numberFormat>#,##0.00</numberFormat>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="total" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0" bold="true"/>
+            <numberFormat>General</numberFormat>
+            <topBorder type="thin" weight="1"/>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+    </styles>
+</workbook>

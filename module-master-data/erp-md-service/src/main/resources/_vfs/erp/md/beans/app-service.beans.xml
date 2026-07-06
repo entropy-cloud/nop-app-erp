@@ -11,4 +11,8 @@
     <!-- 主数据看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
           经 @BizQuery 暴露 getDashboardKpi/findMaterialWithoutSkuAlert/findSkuWithoutPriceAlert。 -->
     <bean id="app.erp.md.service.dashboard.ErpMdDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- 主数据域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
+          经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /md/）。 -->
+    <bean id="app.erp.md.service.report.ErpMdReportBizModel" ioc:type="@bean:id"/>
 </beans>

@@ -24,6 +24,10 @@ public interface ErpCrmErrors {
     String ARG_CONFIG_ID = "configId";
     String ARG_ACTIVE_COUNT = "activeCount";
 
+    // --- 报表渲染作用域参数键 ---
+    String ARG_REPORT_NAME = "reportName";
+    String ARG_RENDER_TYPE = "renderType";
+
     ErrorCode ERR_LEAD_NOT_FOUND = ErrorCode.define("erp.err.crm.lead-not-found",
             "线索/商机 {leadId} 不存在", ARG_LEAD_ID);
 
@@ -70,4 +74,16 @@ public interface ErpCrmErrors {
     ErrorCode ERR_FORECAST_PERIOD_NOT_OPEN = ErrorCode.define("erp.err.crm.forecast-period-not-open",
             "预测期间 {periodId} 当前状态={currentStatus}，仅 OPEN 期间可刷新预测（期望状态={expectedStatus}）",
             ARG_PERIOD_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，CRM 域独立错误码，不跨域 import） ---
+
+    ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(
+            "erp.err.crm.report.name-invalid",
+            "报表名[{reportName}]非法（含路径注入字符或不合规段），拒绝渲染",
+            ARG_REPORT_NAME);
+
+    ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define(
+            "erp.err.crm.report.render-type-invalid",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
+            ARG_RENDER_TYPE);
 }
