@@ -224,7 +224,18 @@
 
 > **4 核心业务域后端聚合 API 已落地**（plan `2026-07-06-0935-1`）：销售/采购/库存/财务看板的 `getDashboardKpi`/`getDashboardTrend`/预警查询经 `@BizQuery` 暴露于专用看板 BizModel（`ErpXxxDashboardBizModel`），可独立验证。阈值经 `NopSysVariable` 配置化（`erp-dash.*` 配置键，默认值在代码常量中）。
 > **4 核心业务域前端 AMIS 页面已落地**（plan `2026-07-06-1247-2`）：财务/销售/库存看板替换占位 `main.page.yaml` + 采购域新建看板页面与 `pur-dashboard` 菜单组。每页经 `/api/GenericApi` GraphQL 消费 0935-1 已审计 `@BizQuery`，分层布局对齐 §实现约定（form 区间筛选 + service KPI 卡片 + chart 趋势/占比图 + crud 预警列表）。
-> **其余 6 域看板**（资产/项目/制造/维护/质量/主数据）为独立 successor（同范式，触发条件=对应域看板需求落地时）。
+> **其余 6 域后端聚合 API 已落地**（plan `2026-07-06-1606-1`）：资产/项目/制造/维护/质量/主数据看板的 `getDashboardKpi`/`getDashboardTrend`/预警查询经 `@BizQuery` 暴露于各域专用看板 BizModel（`ErpAstDashboardBizModel`/`ErpPrjDashboardBizModel`/`ErpMfgDashboardBizModel`/`ErpMntDashboardBizModel`/`ErpQaDashboardBizModel`/`ErpMdDashboardBizModel`），镜像 0935-1 范式（`IDaoProvider`/`IOrmTemplate` + `QueryBean` + `ormTemplate.runInSession` 聚合）。阈值经 `NopSysVariable` 配置化（`erp-dash.mnt-maintenance-overdue-days`/`erp-dash.qa-capa-overdue-days`，默认 0=直接 `< today`）。
+> 
+> **三处设计文档指标因数据源实体未物化裁定为 Non-Goal**（plan 1606-1 Phase 1 Decision）：
+> - §6 项目毛利率 → `ErpPrjProjectPnl` 未物化（触发条件：项目盈利分析落地时）；
+> - §7 齐套不足缺件明细 → `ErpMfgMaterialReservation` 未物化，本期以 `STOCK_PARTIAL` 状态计数替代 KPI（触发条件：物料预留实体落地时）；
+> - §9 SPC 失控预警 → `ErpQaSpcSample` 未物化（触发条件：SPC 模块落地时）。
+> 
+> **§8 维护 OEE 精确计算为 Non-Goal**（设计文档引用 `equipment-integration §六` OEE 可用率×性能×质量；精确性能/质量分量需设备采集数据未落地，本期仅交付可得子集：设备计数/状态分布/停机预警；触发条件：设备 OEE 采集数据落地时）。
+> 
+> **§9 不合格原因 TOP** 字段 `defectType` 在 ORM 未物化，本期以 `ErpQaNonConformance.dispositionType`（处置决定：SCRAP/RETURN/CONCESSION/DOWNGRADE）为聚合维度（语义最接近且为规范枚举）。
+> 
+> **6 域看板前端 AMIS 页面**为独立 successor（plan `2026-07-06-1606-2`，触发条件=本计划后端 API 落地后前端定制启动时）。
 > 报表渲染能力（`nop-report` + `IReportEngine` + `.xpt.*` 模板）已就绪（plan `2026-07-06-0504-2` 报表渲染子系统落地 `ErpFinReportBizModel` + 五张财务种子报表），看板聚合方法经同一 ORM 实体取数。
 
 ## 参考机制文档
