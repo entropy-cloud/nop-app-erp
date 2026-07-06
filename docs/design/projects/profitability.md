@@ -102,6 +102,11 @@
 
 projects 域「盈利分析」分组:项目损益汇总、项目结算单。
 
+## 命名与编号收敛（plan 2026-07-07-0305-1 Phase 1 Decision）
+
+- **文件名**：本文件保留 `projects/profitability.md`（15+ 处仓库引用：use-cases/dashboards/analysis/audits/job-scheduling/logs）。`extended-roadmap.md` 既有目标路径 `projects/pnl-settlement.md` 反向修正为 `projects/profitability.md`（残留风险：零——pnl-settlement.md 从未存在）。
+- **UC 编号口径**：以本域 `projects/use-cases.md` 为权威源——UC-PRJ-05=任务 DAG 校验、UC-PRJ-06=项目损益汇总、UC-PRJ-07=竣工结算与质保金、UC-PRJ-08=项目结算转固。`extended-roadmap.md` 原标注「2.6b=UC-PRJ-05~07、2.6c=UC-PRJ-08」修正为「2.6b=UC-PRJ-06~08（损益/结算/转固）、2.6c=UC-PRJ-05（DAG 校验）」。
+
 ## 参考
 
 - `docs/analysis/erp-survey/2026-06-22-0000-odoo.md`(sale_project/sale_timesheet)

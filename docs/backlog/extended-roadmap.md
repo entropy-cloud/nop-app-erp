@@ -28,13 +28,13 @@
 - 2.5b 资产盘点（UC-AST-09：固定资产盘点流程）：`todo`
 - 2.5c 资产维修管理（UC-AST-10：资产维修工单/费用归集）：`todo`
 - 2.5d 资产拆分合并（UC-AST-11：资产拆分/合并处理）：`todo`
-- 2.6b 项目损益/结算/转固（UC-PRJ-05~07：项目损益计算 / 项目结算 / 项目转固）：`todo`
-- 2.6c 任务 DAG 校验（UC-PRJ-08：任务依赖 DAG 环路/完整性校验）：`todo`
+- 2.6b 项目损益/结算/转固（UC-PRJ-06~08：项目损益汇总 / 竣工结算 / 结算转固）：`done`
+- 2.6c 任务 DAG 校验（UC-PRJ-05：任务依赖 DAG 环路/完整性校验）：`todo`
 
 > **Non-Goal scope boundary**：以下 UCs 不在 M2 已完工项的原始范围内，非实现遗漏，归后继工作项。
 > - quality（2.4 之外）：UC-QA-09（SPC）、UC-QA-10（SPC 规则引擎）、UC-QA-11（SPC 控制图）→ 已路由至 2.4b
 > - assets（2.5/2.14 之外）：UC-AST-09（盘点）、UC-AST-10（维修）、UC-AST-11（拆分合并）→ 已路由至 2.5b~d
-> - projects（2.6 之外）：UC-PRJ-05（损益）、UC-PRJ-06（结算）、UC-PRJ-07（转固）、UC-PRJ-08（DAG 校验）→ 已路由至 2.6b~c
+> - projects（2.6 之外）：UC-PRJ-06（损益汇总）、UC-PRJ-07（竣工结算）、UC-PRJ-08（结算转固）、UC-PRJ-05（DAG 校验）→ 已路由至 2.6b~c（UC 编号口径以 `projects/use-cases.md` 为权威源）
 
 ### Milestone M3 — 新增 8 域
 - 3.1：✅ done（CRM 线索→商机→报价单转化：Lead docStatus 状态机(NEW→QUALIFIED/LOST/CANCELLED, lostReason 必填) + 漏斗阶段流转(moveStage 允许回退+convLog 全量留痕+probability 默认回填) + 线索查重(companyName/contactEmail/contactPhone, auto-convert-duplicate-lead 默认关仅提示) + 转化闭环(convertToCustomer 经 IErpMdPartnerBiz 建客户+新建 OPPORTUNITY+原 lead CONVERTED 弱指针；convertToQuotation 经 IErpSalQuotationBiz save 建报价单+弱指针+CONVERTED；幂等 ERR_LEAD_ALREADY_CONVERTED)；核心零污染 sales/master-data 实体零字段新增，2026-07-04，`docs/plans/2026-07-04-0549-2-crm-lead-opportunity-quotation-conversion.md`）
@@ -76,8 +76,8 @@
 | 2.5b | ❌ 资产盘点（UC-AST-09） | assets | `assets/inventory.md` |
 | 2.5c | ❌ 资产维修管理（UC-AST-10） | assets | `assets/maintenance.md` |
 | 2.5d | ❌ 资产拆分合并（UC-AST-11） | assets | `assets/split-merge.md` |
-| 2.6b | ❌ 项目损益/结算/转固（UC-PRJ-05~07） | projects | `projects/pnl-settlement.md` |
-| 2.6c | ❌ 任务 DAG 校验（UC-PRJ-08） | projects | `projects/task-dag.md` |
+| 2.6b | ✅ 项目损益/结算/转固（UC-PRJ-06~08） | projects | `projects/profitability.md` |
+| 2.6c | ❌ 任务 DAG 校验（UC-PRJ-05） | projects | `projects/task-dag.md` |
 
 ### M3 — 新增 8 域
 
