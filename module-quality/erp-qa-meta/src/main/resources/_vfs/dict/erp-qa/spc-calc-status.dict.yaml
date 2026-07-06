@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: SPC 控制限计算状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 待计算
+    value: PENDING
+    description: 
+  
+  - label: 已计算
+    value: CALCULATED
+    description: 
+  
+  - label: 需重算
+    value: STALE
+    description: 
+  

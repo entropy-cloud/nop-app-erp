@@ -308,4 +308,89 @@ public interface _ErpQaDaoConstants {
      */
     String RECALL_TARGET_RETURN_STATUS_RETURNED = "RETURNED";
                     
+    /**
+     * SPC 控制图类型: 均值-极差图(X̄-R) 
+     */
+    String SPC_CHART_TYPE_X_BAR_R = "X_BAR_R";
+                    
+    /**
+     * SPC 控制图类型: 均值-标准差图(X̄-s) 
+     */
+    String SPC_CHART_TYPE_X_BAR_S = "X_BAR_S";
+                    
+    /**
+     * SPC 控制图类型: 单值-移动极差图(I-MR) 
+     */
+    String SPC_CHART_TYPE_X_MR = "X_MR";
+                    
+    /**
+     * SPC 控制图类型: 不合格品率图(P) 
+     */
+    String SPC_CHART_TYPE_P = "P";
+                    
+    /**
+     * SPC 控制图类型: 不合格品数图(NP) 
+     */
+    String SPC_CHART_TYPE_NP = "NP";
+                    
+    /**
+     * SPC 控制图类型: 缺陷数图(C) 
+     */
+    String SPC_CHART_TYPE_C = "C";
+                    
+    /**
+     * SPC 控制图类型: 单位缺陷数图(U) 
+     */
+    String SPC_CHART_TYPE_U = "U";
+                    
+    /**
+     * SPC 控制限计算状态: 待计算 
+     */
+    String SPC_CALC_STATUS_PENDING = "PENDING";
+                    
+    /**
+     * SPC 控制限计算状态: 已计算 
+     */
+    String SPC_CALC_STATUS_CALCULATED = "CALCULATED";
+                    
+    /**
+     * SPC 控制限计算状态: 需重算 
+     */
+    String SPC_CALC_STATUS_STALE = "STALE";
+                    
+    /**
+     * SPC 过程能力等级: 不足(Cpk<1.0) 
+     */
+    String SPC_CAPABILITY_INADEQUATE = "INADEQUATE";
+                    
+    /**
+     * SPC 过程能力等级: 可接受(1.0≤Cpk<1.33) 
+     */
+    String SPC_CAPABILITY_ACCEPTABLE = "ACCEPTABLE";
+                    
+    /**
+     * SPC 过程能力等级: 充分(1.33≤Cpk<1.67) 
+     */
+    String SPC_CAPABILITY_CAPABLE = "CAPABLE";
+                    
+    /**
+     * SPC 过程能力等级: 优秀(Cpk≥1.67) 
+     */
+    String SPC_CAPABILITY_EXCELLENT = "EXCELLENT";
+                    
+    /**
+     * SPC 中心线计算方式: 数据驱动 
+     */
+    String SPC_CL_CENTER_TYPE_AUTO_FROM_DATA = "AUTO_FROM_DATA";
+                    
+    /**
+     * SPC 中心线计算方式: 手工录入 
+     */
+    String SPC_CL_CENTER_TYPE_MANUAL = "MANUAL";
+                    
+    /**
+     * SPC 中心线计算方式: 目标值 
+     */
+    String SPC_CL_CENTER_TYPE_TARGET = "TARGET";
+                    
 }

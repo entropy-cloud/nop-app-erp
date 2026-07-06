@@ -25,9 +25,15 @@ alter table erp_qa_inspection add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL
 
 alter table erp_qa_inspection_template_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_qa_spc_chart add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_qa_inspection_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_qa_non_conformance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_qa_spc_sample add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_qa_spc_capability add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_qa_action add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -74,11 +80,20 @@ alter table erp_qa_inspection add primary key (NOP_TENANT_ID, ID);
 alter table erp_qa_inspection_template_line drop primary key;
 alter table erp_qa_inspection_template_line add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_qa_spc_chart drop primary key;
+alter table erp_qa_spc_chart add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_qa_inspection_line drop primary key;
 alter table erp_qa_inspection_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_qa_non_conformance drop primary key;
 alter table erp_qa_non_conformance add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_qa_spc_sample drop primary key;
+alter table erp_qa_spc_sample add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_qa_spc_capability drop primary key;
+alter table erp_qa_spc_capability add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_qa_action drop primary key;
 alter table erp_qa_action add primary key (NOP_TENANT_ID, ID);

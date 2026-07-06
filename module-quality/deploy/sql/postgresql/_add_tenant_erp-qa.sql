@@ -25,9 +25,15 @@ alter table erp_qa_inspection add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL
 
 alter table erp_qa_inspection_template_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_qa_spc_chart add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_qa_inspection_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_qa_non_conformance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_qa_spc_sample add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_qa_spc_capability add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_qa_action add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -74,11 +80,20 @@ alter table erp_qa_inspection add constraint PK_erp_qa_inspection primary key (N
 alter table erp_qa_inspection_template_line drop constraint PK_erp_qa_inspection_template_line;
 alter table erp_qa_inspection_template_line add constraint PK_erp_qa_inspection_template_line primary key (NOP_TENANT_ID, id);
 
+alter table erp_qa_spc_chart drop constraint PK_erp_qa_spc_chart;
+alter table erp_qa_spc_chart add constraint PK_erp_qa_spc_chart primary key (NOP_TENANT_ID, id);
+
 alter table erp_qa_inspection_line drop constraint PK_erp_qa_inspection_line;
 alter table erp_qa_inspection_line add constraint PK_erp_qa_inspection_line primary key (NOP_TENANT_ID, id);
 
 alter table erp_qa_non_conformance drop constraint PK_erp_qa_non_conformance;
 alter table erp_qa_non_conformance add constraint PK_erp_qa_non_conformance primary key (NOP_TENANT_ID, id);
+
+alter table erp_qa_spc_sample drop constraint PK_erp_qa_spc_sample;
+alter table erp_qa_spc_sample add constraint PK_erp_qa_spc_sample primary key (NOP_TENANT_ID, id);
+
+alter table erp_qa_spc_capability drop constraint PK_erp_qa_spc_capability;
+alter table erp_qa_spc_capability add constraint PK_erp_qa_spc_capability primary key (NOP_TENANT_ID, id);
 
 alter table erp_qa_action drop constraint PK_erp_qa_action;
 alter table erp_qa_action add constraint PK_erp_qa_action primary key (NOP_TENANT_ID, id);

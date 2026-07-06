@@ -238,6 +238,39 @@ CREATE TABLE erp_qa_inspection_template_line(
   constraint PK_erp_qa_inspection_template_line primary key (id)
 );
 
+CREATE TABLE erp_qa_spc_chart(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  org_id INT8  ,
+  chart_type VARCHAR(20) NOT NULL ,
+  material_id INT8  ,
+  inspection_type_id INT8  ,
+  parameter_id INT8 NOT NULL ,
+  spec_min NUMERIC(20,6)  ,
+  spec_max NUMERIC(20,6)  ,
+  subgroup_size INT4 default 5   ,
+  sampling_frequency VARCHAR(100)  ,
+  cl_center_type VARCHAR(20) default 'AUTO_FROM_DATA'  NOT NULL ,
+  rule_set VARCHAR(100) default '1,2,3,4'   ,
+  alarm_threshold INT4 default 1   ,
+  ucl NUMERIC(20,6)  ,
+  lcl NUMERIC(20,6)  ,
+  cl NUMERIC(20,6)  ,
+  calc_status VARCHAR(20) default 'PENDING'  NOT NULL ,
+  is_active BOOLEAN default true   ,
+  doc_status VARCHAR(20) NOT NULL ,
+  approve_status VARCHAR(20) NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_qa_spc_chart primary key (id)
+);
+
 CREATE TABLE erp_qa_inspection_line(
   id INT8 NOT NULL ,
   inspection_id INT8 NOT NULL ,
@@ -293,6 +326,62 @@ CREATE TABLE erp_qa_non_conformance(
   posted_by VARCHAR(36)  ,
   return_code VARCHAR(50)  ,
   constraint PK_erp_qa_non_conformance primary key (id)
+);
+
+CREATE TABLE erp_qa_spc_sample(
+  id INT8 NOT NULL ,
+  chart_id INT8 NOT NULL ,
+  org_id INT8  ,
+  subgroup_no INT4 NOT NULL ,
+  sample_time TIMESTAMP NOT NULL ,
+  measured_values VARCHAR(2000)  ,
+  mean NUMERIC(20,6)  ,
+  range NUMERIC(20,6)  ,
+  std_dev NUMERIC(20,6)  ,
+  source_bill_type VARCHAR(50)  ,
+  source_code VARCHAR(50)  ,
+  source_line_code VARCHAR(50)  ,
+  inspector_id INT8  ,
+  violated_rules VARCHAR(100)  ,
+  is_out_of_control BOOLEAN default false   ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_qa_spc_sample primary key (id)
+);
+
+CREATE TABLE erp_qa_spc_capability(
+  id INT8 NOT NULL ,
+  chart_id INT8 NOT NULL ,
+  org_id INT8  ,
+  period_from DATE NOT NULL ,
+  period_to DATE NOT NULL ,
+  sample_count INT4  ,
+  total_observations INT4  ,
+  grand_mean NUMERIC(20,6)  ,
+  overall_std_dev NUMERIC(20,6)  ,
+  within_std_dev NUMERIC(20,6)  ,
+  cp NUMERIC(20,6)  ,
+  cpk NUMERIC(20,6)  ,
+  pp NUMERIC(20,6)  ,
+  ppk NUMERIC(20,6)  ,
+  cpm NUMERIC(20,6)  ,
+  capability_level VARCHAR(20)  ,
+  is_stable BOOLEAN  ,
+  calculated_by VARCHAR(36)  ,
+  calculated_at TIMESTAMP  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_qa_spc_capability primary key (id)
 );
 
 CREATE TABLE erp_qa_action(
@@ -711,6 +800,66 @@ CREATE TABLE erp_qa_recall_target(
                     
       COMMENT ON COLUMN erp_qa_inspection_template_line.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_qa_spc_chart IS 'SPC 控制图配置';
+                
+      COMMENT ON COLUMN erp_qa_spc_chart.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.name IS '名称';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.chart_type IS '图类型';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.inspection_type_id IS '质检模板';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.parameter_id IS '关键检验参数';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.spec_min IS '规格下限';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.spec_max IS '规格上限';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.subgroup_size IS '子组样本量 n';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.sampling_frequency IS '采样频率';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.cl_center_type IS '中心线计算方式';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.rule_set IS '判异规则集(逗号分隔)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.alarm_threshold IS '预警阈值(违规次数)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.ucl IS '控制上限(UCL)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.lcl IS '控制下限(LCL)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.cl IS '中心线(CL)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.calc_status IS '计算状态';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.is_active IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.doc_status IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.approve_status IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_qa_spc_chart.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_qa_inspection_line IS '质检单行';
                 
       COMMENT ON COLUMN erp_qa_inspection_line.id IS 'ID';
@@ -812,6 +961,106 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_non_conformance.posted_by IS '过账人';
                     
       COMMENT ON COLUMN erp_qa_non_conformance.return_code IS '关联退货单号(RETURN 处置编排退货域后登记)';
+                    
+      COMMENT ON TABLE erp_qa_spc_sample IS 'SPC 样本数据';
+                
+      COMMENT ON COLUMN erp_qa_spc_sample.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.chart_id IS '控制图ID';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.subgroup_no IS '子组序号';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.sample_time IS '采样时间';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.measured_values IS '子组实测值(JSON 数组)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.mean IS '子组均值 X̄';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.range IS '子组极差 R';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.std_dev IS '子组标准差 s';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.source_bill_type IS '数据来源单据类型';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.source_code IS '数据来源单号';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.source_line_code IS '数据来源行号';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.inspector_id IS '检验员';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.violated_rules IS '违反的判异规则(逗号分隔)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.is_out_of_control IS '是否失控';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_qa_spc_capability IS 'SPC 过程能力分析';
+                
+      COMMENT ON COLUMN erp_qa_spc_capability.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.chart_id IS '控制图ID';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.period_from IS '分析周期起';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.period_to IS '分析周期止';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.sample_count IS '样本数(子组数)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.total_observations IS '总观测点数';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.grand_mean IS '总均值 X̄̄';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.overall_std_dev IS '总体标准差(用于 Pp/Ppk)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.within_std_dev IS '组内标准差 σ̂=R̄/d2(用于 Cp/Cpk)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.cp IS '过程能力指数 Cp';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.cpk IS '过程能力指数 Cpk';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.pp IS '过程性能指数 Pp';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.ppk IS '过程性能指数 Ppk';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.cpm IS '偏度修正 Cpm';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.capability_level IS '能力等级评定';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.is_stable IS '过程是否统计受控';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.calculated_by IS '计算人';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.calculated_at IS '计算时间';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_qa_spc_capability.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_qa_action IS '纠正预防措施';
                 

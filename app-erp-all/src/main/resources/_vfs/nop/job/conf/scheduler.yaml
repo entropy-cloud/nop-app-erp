@@ -107,3 +107,21 @@ jobs:
     invoker:
       bean: erpPrjPnlCalcJob
       method: execute
+
+  - jobName: erp-qa-spc-sampling
+    displayName: Quality SPC Sampling
+    description: 每小时扫描 active 控制图批量采集子组样本（ErpQaInspectionLine.measuredValue → ErpQaSpcSample）并重算控制限；双层门控——cron 经 erp-qa.spc-sampling-cron 配置 + 总开关 erp-qa.spc-enabled（默认 false）
+    trigger:
+      cronExpr: "0 0 * * * ?"
+    invoker:
+      bean: erpQaSpcSamplingJob
+      method: execute
+
+  - jobName: erp-qa-spc-capability
+    displayName: Quality SPC Capability Analysis
+    description: 每日 02:00 批量计算控制图过程能力指数（Cp/Cpk/Pp/Ppk → ErpQaSpcCapability），等级<ACCEPTABLE 回写 QualityGoal + 登记 RiskRegister；cron 经 erp-qa.spc-capability-cron 配置门控（受总开关 erp-qa.spc-enabled 二次约束）
+    trigger:
+      cronExpr: "0 0 2 * * ?"
+    invoker:
+      bean: erpQaSpcCapabilityJob
+      method: execute

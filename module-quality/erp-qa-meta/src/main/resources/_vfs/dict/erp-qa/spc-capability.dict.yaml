@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: SPC 过程能力等级
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 不足(Cpk<1.0)
+    value: INADEQUATE
+    description: 
+  
+  - label: 可接受(1.0≤Cpk<1.33)
+    value: ACCEPTABLE
+    description: 
+  
+  - label: 充分(1.33≤Cpk<1.67)
+    value: CAPABLE
+    description: 
+  
+  - label: 优秀(Cpk≥1.67)
+    value: EXCELLENT
+    description: 
+  

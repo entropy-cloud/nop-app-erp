@@ -93,6 +93,33 @@ public final class ErpQaConfigs {
         return Boolean.parseBoolean(raw.trim());
     }
 
+    // ---- SPC（2.4b，spc.md）----
+
+    /** SPC 采样 cron 表达式；空=不采样（双层门控第一层）。 */
+    public static String getSpcSamplingCron() {
+        return AppConfig.var(ErpQaConstants.CONFIG_SPC_SAMPLING_CRON, "");
+    }
+
+    /** SPC 过程能力分析 cron 表达式；空=不计算（门控第一层）。 */
+    public static String getSpcCapabilityCron() {
+        return AppConfig.var(ErpQaConstants.CONFIG_SPC_CAPABILITY_CRON, "");
+    }
+
+    /** SPC 总开关；默认 false。 */
+    public static boolean isSpcEnabled() {
+        Boolean flag = AppConfig.var(ErpQaConstants.CONFIG_SPC_ENABLED, Boolean.FALSE);
+        return flag != null && flag;
+    }
+
+    /** 失控样本自动建 NCR 开关；默认 true。 */
+    public static boolean isSpcAutoNcrEnabled() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_SPC_AUTO_NCR_ENABLED, "true");
+        if (raw == null || raw.trim().isEmpty()) {
+            return true;
+        }
+        return Boolean.parseBoolean(raw.trim());
+    }
+
     private static List<String> parseCsv(String raw) {
         List<String> result = new ArrayList<>();
         if (raw == null || raw.trim().isEmpty()) {

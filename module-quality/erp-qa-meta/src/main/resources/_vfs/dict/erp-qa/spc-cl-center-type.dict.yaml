@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: SPC 中心线计算方式
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 数据驱动
+    value: AUTO_FROM_DATA
+    description: 
+  
+  - label: 手工录入
+    value: MANUAL
+    description: 
+  
+  - label: 目标值
+    value: TARGET
+    description: 
+  

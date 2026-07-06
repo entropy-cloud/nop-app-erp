@@ -41,4 +41,26 @@
     <!-- 质量域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /qa/）。 -->
     <bean id="app.erp.qa.service.report.ErpQaReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- SPC 统计过程控制（plan 2026-07-07-0305-2）：采样引擎 + 控制限计算 + 规则引擎 + 能力分析 + 定时 Job -->
+    <bean id="app.erp.qa.service.spc.SpcSamplingService"
+          class="app.erp.qa.service.spc.SpcSamplingService"/>
+
+    <bean id="app.erp.qa.service.spc.SpcControlLimitCalculator"
+          class="app.erp.qa.service.spc.SpcControlLimitCalculator"/>
+
+    <bean id="app.erp.qa.service.spc.SpcRuleEngine"
+          class="app.erp.qa.service.spc.SpcRuleEngine"/>
+
+    <bean id="app.erp.qa.service.spc.SpcOutOfControlHandler"
+          class="app.erp.qa.service.spc.SpcOutOfControlHandler"/>
+
+    <bean id="app.erp.qa.service.spc.SpcCapabilityCalculator"
+          class="app.erp.qa.service.spc.SpcCapabilityCalculator"/>
+
+    <bean id="erpQaSpcSamplingJob"
+          class="app.erp.qa.service.spc.ErpQaSpcSamplingJob"/>
+
+    <bean id="erpQaSpcCapabilityJob"
+          class="app.erp.qa.service.spc.ErpQaSpcCapabilityJob"/>
 </beans>

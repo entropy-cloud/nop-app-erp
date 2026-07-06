@@ -110,6 +110,31 @@
             <option code="NOTIFIED" label="已通知" value="NOTIFIED" i18n-en:label="Notified"/>
             <option code="RETURNED" label="已退货" value="RETURNED" i18n-en:label="Returned"/>
         </dict>
+        <dict label="SPC 控制图类型" name="erp-qa/spc-chart-type" valueType="string" i18n-en:label="SPC Chart Type">
+            <option code="X_BAR_R" label="均值-极差图(X̄-R)" value="X_BAR_R" i18n-en:label="X-bar R"/>
+            <option code="X_BAR_S" label="均值-标准差图(X̄-s)" value="X_BAR_S" i18n-en:label="X-bar s"/>
+            <option code="X_MR" label="单值-移动极差图(I-MR)" value="X_MR" i18n-en:label="I-MR"/>
+            <option code="P" label="不合格品率图(P)" value="P" i18n-en:label="P Chart"/>
+            <option code="NP" label="不合格品数图(NP)" value="NP" i18n-en:label="NP Chart"/>
+            <option code="C" label="缺陷数图(C)" value="C" i18n-en:label="C Chart"/>
+            <option code="U" label="单位缺陷数图(U)" value="U" i18n-en:label="U Chart"/>
+        </dict>
+        <dict label="SPC 控制限计算状态" name="erp-qa/spc-calc-status" valueType="string" i18n-en:label="SPC Calc Status">
+            <option code="PENDING" label="待计算" value="PENDING" i18n-en:label="Pending"/>
+            <option code="CALCULATED" label="已计算" value="CALCULATED" i18n-en:label="Calculated"/>
+            <option code="STALE" label="需重算" value="STALE" i18n-en:label="Stale"/>
+        </dict>
+        <dict label="SPC 过程能力等级" name="erp-qa/spc-capability" valueType="string" i18n-en:label="SPC Capability Level">
+            <option code="INADEQUATE" label="不足(Cpk&lt;1.0)" value="INADEQUATE" i18n-en:label="Inadequate"/>
+            <option code="ACCEPTABLE" label="可接受(1.0≤Cpk&lt;1.33)" value="ACCEPTABLE" i18n-en:label="Acceptable"/>
+            <option code="CAPABLE" label="充分(1.33≤Cpk&lt;1.67)" value="CAPABLE" i18n-en:label="Capable"/>
+            <option code="EXCELLENT" label="优秀(Cpk≥1.67)" value="EXCELLENT" i18n-en:label="Excellent"/>
+        </dict>
+        <dict label="SPC 中心线计算方式" name="erp-qa/spc-cl-center-type" valueType="string" i18n-en:label="SPC CL Center Type">
+            <option code="AUTO_FROM_DATA" label="数据驱动" value="AUTO_FROM_DATA" i18n-en:label="Auto From Data"/>
+            <option code="MANUAL" label="手工录入" value="MANUAL" i18n-en:label="Manual"/>
+            <option code="TARGET" label="目标值" value="TARGET" i18n-en:label="Target"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -1171,6 +1196,305 @@
                         i18n-en:displayName="Affected Customer">
                     <join>
                         <on leftProp="partnerId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.qa.dao.entity.ErpQaSpcChart" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="SPC 控制图配置"
+                name="app.erp.qa.dao.entity.ErpQaSpcChart" registerShortName="true" tableName="erp_qa_spc_chart"
+                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="activity" i18n-en:displayName="SPC Chart">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="编码" domain="orderCode" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="名称" mandatory="true" name="name" precision="200" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="CHART_TYPE" displayName="图类型" mandatory="true" name="chartType" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/spc-chart-type"
+                        i18n-en:displayName="Chart Type"/>
+                <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="6" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                <column code="INSPECTION_TYPE_ID" displayName="质检模板" name="inspectionTypeId" propId="7"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Inspection Template"/>
+                <column code="PARAMETER_ID" displayName="关键检验参数" mandatory="true" name="parameterId" propId="8"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Parameter"/>
+                <column code="SPEC_MIN" displayName="规格下限" domain="specLimit" name="specMin" precision="20" propId="9"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Spec Min"/>
+                <column code="SPEC_MAX" displayName="规格上限" domain="specLimit" name="specMax" precision="20" propId="10"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Spec Max"/>
+                <column code="SUBGROUP_SIZE" defaultValue="5" displayName="子组样本量 n" name="subgroupSize" propId="11"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Subgroup Size"/>
+                <column code="SAMPLING_FREQUENCY" displayName="采样频率" name="samplingFrequency" precision="100"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Sampling Frequency"/>
+                <column code="CL_CENTER_TYPE" defaultValue="AUTO_FROM_DATA" displayName="中心线计算方式" mandatory="true"
+                        name="clCenterType" precision="20" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-qa/spc-cl-center-type" i18n-en:displayName="CL Center Type"/>
+                <column code="RULE_SET" defaultValue="1,2,3,4" displayName="判异规则集(逗号分隔)" name="ruleSet" precision="100"
+                        propId="14" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Rule Set"/>
+                <column code="ALARM_THRESHOLD" defaultValue="1" displayName="预警阈值(违规次数)" name="alarmThreshold"
+                        propId="15" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Alarm Threshold"/>
+                <column code="UCL" displayName="控制上限(UCL)" domain="specLimit" name="ucl" precision="20" propId="16"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="UCL"/>
+                <column code="LCL" displayName="控制下限(LCL)" domain="specLimit" name="lcl" precision="20" propId="17"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="LCL"/>
+                <column code="CL" displayName="中心线(CL)" domain="specLimit" name="cl" precision="20" propId="18"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="CL"/>
+                <column code="CALC_STATUS" defaultValue="PENDING" displayName="计算状态" mandatory="true" name="calcStatus"
+                        precision="20" propId="19" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-qa/spc-calc-status" i18n-en:displayName="Calc Status"/>
+                <column code="IS_ACTIVE" defaultValue="true" displayName="是否启用" name="isActive" propId="20"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Active"/>
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/doc-status"
+                        i18n-en:displayName="Doc Status"/>
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="22" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
+                        i18n-en:displayName="Approve Status"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="23"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="24" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="25" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="26" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="28" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="29" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_QA_SPC_CHART_ORG_DOC_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="docStatus"/>
+                </index>
+                <index name="IDX_QA_SPC_CHART_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_QA_SPC_CHART_PARAMETER_ID" unique="false">
+                    <column name="parameterId"/>
+                </index>
+                <index name="IDX_QA_SPC_CHART_IS_ACTIVE" unique="false">
+                    <column name="isActive"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="inspectionType" refEntityName="app.erp.qa.dao.entity.ErpQaInspectionTemplate" tagSet="pub"
+                        i18n-en:displayName="Inspection Template">
+                    <join>
+                        <on leftProp="inspectionTypeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many cascadeDelete="true" name="samples" refEntityName="app.erp.qa.dao.entity.ErpQaSpcSample"
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Samples"
+                         ext:estRows="200">
+                    <join>
+                        <on leftProp="id" rightProp="chartId"/>
+                    </join>
+                </to-many>
+            </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_QA_SPC_CHART_CODE_ORG"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.qa.dao.entity.ErpQaSpcSample" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="SPC 样本数据"
+                name="app.erp.qa.dao.entity.ErpQaSpcSample" registerShortName="true" tableName="erp_qa_spc_sample"
+                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="list" i18n-en:displayName="SPC Sample">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CHART_ID" displayName="控制图ID" mandatory="true" name="chartId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="SPC Chart"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="SUBGROUP_NO" displayName="子组序号" mandatory="true" name="subgroupNo" propId="4"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Subgroup No"/>
+                <column code="SAMPLE_TIME" displayName="采样时间" mandatory="true" name="sampleTime" propId="5"
+                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Sample Time"/>
+                <column code="MEASURED_VALUES" displayName="子组实测值(JSON 数组)" name="measuredValues" precision="2000"
+                        propId="6" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Measured Values"/>
+                <column code="MEAN" displayName="子组均值 X̄" domain="specLimit" name="mean" precision="20" propId="7"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Mean"/>
+                <column code="RANGE" displayName="子组极差 R" domain="specLimit" name="range" precision="20" propId="8"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Range"/>
+                <column code="STD_DEV" displayName="子组标准差 s" domain="specLimit" name="stdDev" precision="20" propId="9"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Std Dev"/>
+                <column code="SOURCE_BILL_TYPE" displayName="数据来源单据类型" name="sourceBillType" precision="50" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
+                <column code="SOURCE_CODE" displayName="数据来源单号" name="sourceCode" precision="50" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Code"/>
+                <column code="SOURCE_LINE_CODE" displayName="数据来源行号" name="sourceLineCode" precision="50" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Line Code"/>
+                <column code="INSPECTOR_ID" displayName="检验员" name="inspectorId" propId="13" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Inspector"/>
+                <column code="VIOLATED_RULES" displayName="违反的判异规则(逗号分隔)" name="violatedRules" precision="100"
+                        propId="14" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Violated Rules"/>
+                <column code="IS_OUT_OF_CONTROL" defaultValue="false" displayName="是否失控" name="isOutOfControl"
+                        propId="15" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Out Of Control"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="17" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="18" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="19" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="21" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_QA_SPC_SAMPLE_CHART_ID" unique="false">
+                    <column name="chartId"/>
+                </index>
+                <index name="IDX_QA_SPC_SAMPLE_SAMPLE_TIME" unique="false">
+                    <column name="sampleTime"/>
+                </index>
+                <index name="IDX_QA_SPC_SAMPLE_IS_OUT_OF_CONTROL" unique="false">
+                    <column name="isOutOfControl"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="chart" refEntityName="app.erp.qa.dao.entity.ErpQaSpcChart" tagSet="pub"
+                        i18n-en:displayName="Chart">
+                    <join>
+                        <on leftProp="chartId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="inspector" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub"
+                        i18n-en:displayName="Inspector">
+                    <join>
+                        <on leftProp="inspectorId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="chartId,subgroupNo" name="UK_QA_SPC_SAMPLE_CHART_SUBGROUP"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.qa.dao.entity.ErpQaSpcCapability" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="SPC 过程能力分析"
+                name="app.erp.qa.dao.entity.ErpQaSpcCapability" registerShortName="true"
+                tableName="erp_qa_spc_capability" tagSet="gid,erp.quality" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="bar-chart-3"
+                i18n-en:displayName="SPC Capability">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CHART_ID" displayName="控制图ID" mandatory="true" name="chartId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="SPC Chart"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="PERIOD_FROM" displayName="分析周期起" mandatory="true" name="periodFrom" propId="4"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period From"/>
+                <column code="PERIOD_TO" displayName="分析周期止" mandatory="true" name="periodTo" propId="5"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Period To"/>
+                <column code="SAMPLE_COUNT" displayName="样本数(子组数)" name="sampleCount" propId="6" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Sample Count"/>
+                <column code="TOTAL_OBSERVATIONS" displayName="总观测点数" name="totalObservations" propId="7"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Total Observations"/>
+                <column code="GRAND_MEAN" displayName="总均值 X̄̄" domain="specLimit" name="grandMean" precision="20"
+                        propId="8" scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Grand Mean"/>
+                <column code="OVERALL_STD_DEV" displayName="总体标准差(用于 Pp/Ppk)" domain="specLimit" name="overallStdDev"
+                        precision="20" propId="9" scale="6" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Overall Std Dev"/>
+                <column code="WITHIN_STD_DEV" displayName="组内标准差 σ̂=R̄/d2(用于 Cp/Cpk)" domain="specLimit"
+                        name="withinStdDev" precision="20" propId="10" scale="6" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Within Std Dev"/>
+                <column code="CP" displayName="过程能力指数 Cp" name="cp" precision="20" propId="11" scale="6"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Cp"/>
+                <column code="CPK" displayName="过程能力指数 Cpk" name="cpk" precision="20" propId="12" scale="6"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Cpk"/>
+                <column code="PP" displayName="过程性能指数 Pp" name="pp" precision="20" propId="13" scale="6"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Pp"/>
+                <column code="PPK" displayName="过程性能指数 Ppk" name="ppk" precision="20" propId="14" scale="6"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Ppk"/>
+                <column code="CPM" displayName="偏度修正 Cpm" name="cpm" precision="20" propId="15" scale="6"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Cpm"/>
+                <column code="CAPABILITY_LEVEL" displayName="能力等级评定" name="capabilityLevel" precision="20" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/spc-capability"
+                        i18n-en:displayName="Capability Level"/>
+                <column code="IS_STABLE" displayName="过程是否统计受控" name="isStable" propId="17" stdDataType="boolean"
+                        stdSqlType="BOOLEAN" i18n-en:displayName="Is Stable"/>
+                <column code="CALCULATED_BY" displayName="计算人" name="calculatedBy" precision="36" propId="18"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Calculated By"/>
+                <column code="CALCULATED_AT" displayName="计算时间" name="calculatedAt" propId="19" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Calculated At"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="20"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="21" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="22" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="23" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="25" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_QA_SPC_CAPABILITY_CHART_ID" unique="false">
+                    <column name="chartId"/>
+                </index>
+                <index name="IDX_QA_SPC_CAPABILITY_PERIOD" unique="false">
+                    <column name="chartId"/>
+                    <column name="periodFrom"/>
+                    <column name="periodTo"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="chart" refEntityName="app.erp.qa.dao.entity.ErpQaSpcChart" tagSet="pub"
+                        i18n-en:displayName="Chart">
+                    <join>
+                        <on leftProp="chartId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>

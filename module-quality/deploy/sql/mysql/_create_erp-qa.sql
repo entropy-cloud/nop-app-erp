@@ -238,6 +238,39 @@ CREATE TABLE erp_qa_inspection_template_line(
   constraint PK_erp_qa_inspection_template_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_qa_spc_chart(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  CHART_TYPE VARCHAR(20) NOT NULL    COMMENT '图类型',
+  MATERIAL_ID BIGINT NULL    COMMENT '物料',
+  INSPECTION_TYPE_ID BIGINT NULL    COMMENT '质检模板',
+  PARAMETER_ID BIGINT NOT NULL    COMMENT '关键检验参数',
+  SPEC_MIN DECIMAL(20,6) NULL    COMMENT '规格下限',
+  SPEC_MAX DECIMAL(20,6) NULL    COMMENT '规格上限',
+  SUBGROUP_SIZE INTEGER default 5  NULL    COMMENT '子组样本量 n',
+  SAMPLING_FREQUENCY VARCHAR(100) NULL    COMMENT '采样频率',
+  CL_CENTER_TYPE VARCHAR(20) default 'AUTO_FROM_DATA'  NOT NULL    COMMENT '中心线计算方式',
+  RULE_SET VARCHAR(100) default '1,2,3,4'  NULL    COMMENT '判异规则集(逗号分隔)',
+  ALARM_THRESHOLD INTEGER default 1  NULL    COMMENT '预警阈值(违规次数)',
+  UCL DECIMAL(20,6) NULL    COMMENT '控制上限(UCL)',
+  LCL DECIMAL(20,6) NULL    COMMENT '控制下限(LCL)',
+  CL DECIMAL(20,6) NULL    COMMENT '中心线(CL)',
+  CALC_STATUS VARCHAR(20) default 'PENDING'  NOT NULL    COMMENT '计算状态',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '是否启用',
+  DOC_STATUS VARCHAR(20) NOT NULL    COMMENT '单据状态',
+  APPROVE_STATUS VARCHAR(20) NOT NULL    COMMENT '审核状态',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_qa_spc_chart primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_qa_inspection_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   INSPECTION_ID BIGINT NOT NULL    COMMENT '质检单ID',
@@ -293,6 +326,62 @@ CREATE TABLE erp_qa_non_conformance(
   POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   RETURN_CODE VARCHAR(50) NULL    COMMENT '关联退货单号(RETURN 处置编排退货域后登记)',
   constraint PK_erp_qa_non_conformance primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_qa_spc_sample(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CHART_ID BIGINT NOT NULL    COMMENT '控制图ID',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  SUBGROUP_NO INTEGER NOT NULL    COMMENT '子组序号',
+  SAMPLE_TIME DATETIME NOT NULL    COMMENT '采样时间',
+  MEASURED_VALUES VARCHAR(2000) NULL    COMMENT '子组实测值(JSON 数组)',
+  MEAN DECIMAL(20,6) NULL    COMMENT '子组均值 X̄',
+  `RANGE` DECIMAL(20,6) NULL    COMMENT '子组极差 R',
+  STD_DEV DECIMAL(20,6) NULL    COMMENT '子组标准差 s',
+  SOURCE_BILL_TYPE VARCHAR(50) NULL    COMMENT '数据来源单据类型',
+  SOURCE_CODE VARCHAR(50) NULL    COMMENT '数据来源单号',
+  SOURCE_LINE_CODE VARCHAR(50) NULL    COMMENT '数据来源行号',
+  INSPECTOR_ID BIGINT NULL    COMMENT '检验员',
+  VIOLATED_RULES VARCHAR(100) NULL    COMMENT '违反的判异规则(逗号分隔)',
+  IS_OUT_OF_CONTROL BOOLEAN default 0  NULL    COMMENT '是否失控',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_qa_spc_sample primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_qa_spc_capability(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CHART_ID BIGINT NOT NULL    COMMENT '控制图ID',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  PERIOD_FROM DATE NOT NULL    COMMENT '分析周期起',
+  PERIOD_TO DATE NOT NULL    COMMENT '分析周期止',
+  SAMPLE_COUNT INTEGER NULL    COMMENT '样本数(子组数)',
+  TOTAL_OBSERVATIONS INTEGER NULL    COMMENT '总观测点数',
+  GRAND_MEAN DECIMAL(20,6) NULL    COMMENT '总均值 X̄̄',
+  OVERALL_STD_DEV DECIMAL(20,6) NULL    COMMENT '总体标准差(用于 Pp/Ppk)',
+  WITHIN_STD_DEV DECIMAL(20,6) NULL    COMMENT '组内标准差 σ̂=R̄/d2(用于 Cp/Cpk)',
+  CP DECIMAL(20,6) NULL    COMMENT '过程能力指数 Cp',
+  CPK DECIMAL(20,6) NULL    COMMENT '过程能力指数 Cpk',
+  PP DECIMAL(20,6) NULL    COMMENT '过程性能指数 Pp',
+  PPK DECIMAL(20,6) NULL    COMMENT '过程性能指数 Ppk',
+  CPM DECIMAL(20,6) NULL    COMMENT '偏度修正 Cpm',
+  CAPABILITY_LEVEL VARCHAR(20) NULL    COMMENT '能力等级评定',
+  IS_STABLE BOOLEAN NULL    COMMENT '过程是否统计受控',
+  CALCULATED_BY VARCHAR(36) NULL    COMMENT '计算人',
+  CALCULATED_AT DATETIME NULL    COMMENT '计算时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_qa_spc_capability primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_qa_action(
@@ -393,9 +482,15 @@ CREATE TABLE erp_qa_recall_target(
                 
    ALTER TABLE erp_qa_inspection_template_line COMMENT '质检模板行';
                 
+   ALTER TABLE erp_qa_spc_chart COMMENT 'SPC 控制图配置';
+                
    ALTER TABLE erp_qa_inspection_line COMMENT '质检单行';
                 
    ALTER TABLE erp_qa_non_conformance COMMENT '不合格品报告';
+                
+   ALTER TABLE erp_qa_spc_sample COMMENT 'SPC 样本数据';
+                
+   ALTER TABLE erp_qa_spc_capability COMMENT 'SPC 过程能力分析';
                 
    ALTER TABLE erp_qa_action COMMENT '纠正预防措施';
                 

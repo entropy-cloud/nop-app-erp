@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpQaSpcChart" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/qa/model/ErpQaSpcChart/ErpQaSpcChart.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--编码-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--名称-->
+                <col id="name" mandatory="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--图类型-->
+                <col id="chartType" mandatory="true" sortable="true"/>
+
+                <!--物料-->
+                <col id="materialId" ui:number="true" sortable="true"/>
+
+                <!--质检模板-->
+                <col id="inspectionTypeId" ui:number="true" sortable="true"/>
+
+                <!--关键检验参数-->
+                <col id="parameterId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--规格下限-->
+                <col id="specMin" ui:number="true" sortable="true"/>
+
+                <!--规格上限-->
+                <col id="specMax" ui:number="true" sortable="true"/>
+
+                <!--子组样本量 n-->
+                <col id="subgroupSize" ui:number="true" sortable="true"/>
+
+                <!--采样频率-->
+                <col id="samplingFrequency" sortable="true"/>
+
+                <!--中心线计算方式-->
+                <col id="clCenterType" mandatory="true" sortable="true"/>
+
+                <!--判异规则集(逗号分隔)-->
+                <col id="ruleSet" sortable="true"/>
+
+                <!--预警阈值(违规次数)-->
+                <col id="alarmThreshold" ui:number="true" sortable="true"/>
+
+                <!--控制上限(UCL)-->
+                <col id="ucl" ui:number="true" sortable="true"/>
+
+                <!--控制下限(LCL)-->
+                <col id="lcl" ui:number="true" sortable="true"/>
+
+                <!--中心线(CL)-->
+                <col id="cl" ui:number="true" sortable="true"/>
+
+                <!--计算状态-->
+                <col id="calcStatus" mandatory="true" sortable="true"/>
+
+                <!--是否启用-->
+                <col id="isActive" sortable="true"/>
+
+                <!--单据状态-->
+                <col id="docStatus" mandatory="true" sortable="true"/>
+
+                <!--审核状态-->
+                <col id="approveStatus" mandatory="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-SPC 控制图配置" i18n-en:title="View SPC Chart">
+            <layout>
+ id[ID] code[编码]
+ name[名称] orgId[业务组织]
+ chartType[图类型] materialId[物料]
+ inspectionTypeId[质检模板] parameterId[关键检验参数]
+ specMin[规格下限] specMax[规格上限]
+ subgroupSize[子组样本量 n] samplingFrequency[采样频率]
+ clCenterType[中心线计算方式] ruleSet[判异规则集(逗号分隔)]
+ alarmThreshold[预警阈值(违规次数)] ucl[控制上限(UCL)]
+ lcl[控制下限(LCL)] cl[中心线(CL)]
+ calcStatus[计算状态] isActive[是否启用]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-SPC 控制图配置" i18n-en:title="Add SPC Chart">
+            <layout>
+ id[ID] code[编码]
+ name[名称] orgId[业务组织]
+ chartType[图类型] materialId[物料]
+ inspectionTypeId[质检模板] parameterId[关键检验参数]
+ specMin[规格下限] specMax[规格上限]
+ subgroupSize[子组样本量 n] samplingFrequency[采样频率]
+ clCenterType[中心线计算方式] ruleSet[判异规则集(逗号分隔)]
+ alarmThreshold[预警阈值(违规次数)] ucl[控制上限(UCL)]
+ lcl[控制下限(LCL)] cl[中心线(CL)]
+ calcStatus[计算状态] isActive[是否启用]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-SPC 控制图配置" i18n-en:title="Edit SPC Chart">
+            <layout>
+ id[ID] code[编码]
+ name[名称] orgId[业务组织]
+ chartType[图类型] materialId[物料]
+ inspectionTypeId[质检模板] parameterId[关键检验参数]
+ specMin[规格下限] specMax[规格上限]
+ subgroupSize[子组样本量 n] samplingFrequency[采样频率]
+ clCenterType[中心线计算方式] ruleSet[判异规则集(逗号分隔)]
+ alarmThreshold[预警阈值(违规次数)] ucl[控制上限(UCL)]
+ lcl[控制下限(LCL)] cl[中心线(CL)]
+ calcStatus[计算状态] isActive[是否启用]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注] delVersion[逻辑删除版本]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-SPC 控制图配置" i18n-en:title="Update SPC Chart"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpQaSpcChart__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpQaSpcChart__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpQaSpcChart__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpQaSpcChart__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpQaSpcChart__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpQaSpcChart__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpQaSpcChart__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpQaSpcChart__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpQaSpcChart__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpQaSpcChart__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

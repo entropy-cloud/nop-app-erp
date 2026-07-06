@@ -1,0 +1,35 @@
+# __XGEN_FORCE_OVERRIDE__
+label: SPC 控制图类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 均值-极差图(X̄-R)
+    value: X_BAR_R
+    description: 
+  
+  - label: 均值-标准差图(X̄-s)
+    value: X_BAR_S
+    description: 
+  
+  - label: 单值-移动极差图(I-MR)
+    value: X_MR
+    description: 
+  
+  - label: 不合格品率图(P)
+    value: P
+    description: 
+  
+  - label: 不合格品数图(NP)
+    value: NP
+    description: 
+  
+  - label: 缺陷数图(C)
+    value: C
+    description: 
+  
+  - label: 单位缺陷数图(U)
+    value: U
+    description: 
+  

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="activity" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="SPC 控制图配置" i18n-en:displayName="SPC Chart" tagSet="gid,erp.quality,use-approval"
+      xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.qa.dao.entity.ErpQaSpcChart</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_QA_SPC_CHART_CODE_ORG" props="code,orgId"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="orderCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="chartType" displayName="图类型" propId="5" i18n-en:displayName="Chart Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-qa/spc-chart-type"/>
+        </prop>
+        <prop name="materialId" displayName="物料" propId="6" i18n-en:displayName="Material" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="material">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="inspectionTypeId" displayName="质检模板" propId="7" i18n-en:displayName="Inspection Template"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="inspectionType">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="parameterId" displayName="关键检验参数" propId="8" i18n-en:displayName="Parameter" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="specMin" displayName="规格下限" propId="9" i18n-en:displayName="Spec Min" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="specLimit" type="java.math.BigDecimal" precision="20" scale="6"/>
+        </prop>
+        <prop name="specMax" displayName="规格上限" propId="10" i18n-en:displayName="Spec Max" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="specLimit" type="java.math.BigDecimal" precision="20" scale="6"/>
+        </prop>
+        <prop name="subgroupSize" displayName="子组样本量 n" propId="11" i18n-en:displayName="Subgroup Size" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="5">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="samplingFrequency" displayName="采样频率" propId="12" i18n-en:displayName="Sampling Frequency"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="clCenterType" displayName="中心线计算方式" propId="13" i18n-en:displayName="CL Center Type"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
+              defaultValue="AUTO_FROM_DATA">
+            <schema type="java.lang.String" precision="20" dict="erp-qa/spc-cl-center-type"/>
+        </prop>
+        <prop name="ruleSet" displayName="判异规则集(逗号分隔)" propId="14" i18n-en:displayName="Rule Set" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="1,2,3,4">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
+        <prop name="alarmThreshold" displayName="预警阈值(违规次数)" propId="15" i18n-en:displayName="Alarm Threshold"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="1">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="ucl" displayName="控制上限(UCL)" propId="16" i18n-en:displayName="UCL" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="specLimit" type="java.math.BigDecimal" precision="20" scale="6"/>
+        </prop>
+        <prop name="lcl" displayName="控制下限(LCL)" propId="17" i18n-en:displayName="LCL" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="specLimit" type="java.math.BigDecimal" precision="20" scale="6"/>
+        </prop>
+        <prop name="cl" displayName="中心线(CL)" propId="18" i18n-en:displayName="CL" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="specLimit" type="java.math.BigDecimal" precision="20" scale="6"/>
+        </prop>
+        <prop name="calcStatus" displayName="计算状态" propId="19" i18n-en:displayName="Calc Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="PENDING">
+            <schema type="java.lang.String" precision="20" dict="erp-qa/spc-calc-status"/>
+        </prop>
+        <prop name="isActive" displayName="是否启用" propId="20" i18n-en:displayName="Active" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="docStatus" displayName="单据状态" propId="21" i18n-en:displayName="Doc Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-qa/doc-status"/>
+        </prop>
+        <prop name="approveStatus" displayName="审核状态" propId="22" i18n-en:displayName="Approve Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="23" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="24" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="25" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="26" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="27" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="28" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="29" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="inspectionType" i18n-en:displayName="Inspection Template" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="inspectionTypeId" ext:joinRightProp="id"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpQaInspectionTemplate"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="samples" i18n-en:displayName="Samples" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="chartId" insertable="true"
+              updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpQaSpcSample"/>
+            </schema>
+        </prop>
+    </props>
+</meta>

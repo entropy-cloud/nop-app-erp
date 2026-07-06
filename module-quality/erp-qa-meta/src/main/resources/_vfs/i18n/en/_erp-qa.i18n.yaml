@@ -13,6 +13,9 @@ entity:
     ErpQaReview: Quality Review
     ErpQaRiskRegister: Risk Register
     ErpQaSamplingPlan: Sampling Plan
+    ErpQaSpcCapability: SPC Capability
+    ErpQaSpcChart: SPC Chart
+    ErpQaSpcSample: SPC Sample
 prop:
   label:
     ErpQaAction:
@@ -344,6 +347,101 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+    ErpQaSpcCapability:
+      id: ID
+      chartId: SPC Chart
+      orgId: Organization
+      periodFrom: Period From
+      periodTo: Period To
+      sampleCount: Sample Count
+      totalObservations: Total Observations
+      grandMean: Grand Mean
+      overallStdDev: Overall Std Dev
+      withinStdDev: Within Std Dev
+      cp: Cp
+      cpk: Cpk
+      pp: Pp
+      ppk: Ppk
+      cpm: Cpm
+      capabilityLevel: Capability Level
+      capabilityLevel_label: null
+      isStable: Is Stable
+      calculatedBy: Calculated By
+      calculatedAt: Calculated At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      chart: Chart
+      org: Org
+    ErpQaSpcChart:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      chartType: Chart Type
+      chartType_label: null
+      materialId: Material
+      inspectionTypeId: Inspection Template
+      parameterId: Parameter
+      specMin: Spec Min
+      specMax: Spec Max
+      subgroupSize: Subgroup Size
+      samplingFrequency: Sampling Frequency
+      clCenterType: CL Center Type
+      clCenterType_label: null
+      ruleSet: Rule Set
+      alarmThreshold: Alarm Threshold
+      ucl: UCL
+      lcl: LCL
+      cl: CL
+      calcStatus: Calc Status
+      calcStatus_label: null
+      isActive: Active
+      docStatus: Doc Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      material: Material
+      inspectionType: Inspection Template
+      org: Org
+      samples: Samples
+    ErpQaSpcSample:
+      id: ID
+      chartId: SPC Chart
+      orgId: Organization
+      subgroupNo: Subgroup No
+      sampleTime: Sample Time
+      measuredValues: Measured Values
+      mean: Mean
+      range: Range
+      stdDev: Std Dev
+      sourceBillType: Source Bill Type
+      sourceCode: Source Code
+      sourceLineCode: Source Line Code
+      inspectorId: Inspector
+      violatedRules: Violated Rules
+      isOutOfControl: Is Out Of Control
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      chart: Chart
+      inspector: Inspector
+      org: Org
 dict:
   label:
     erp-qa/inspection-type: Inspection Type
@@ -362,6 +460,10 @@ dict:
     erp-qa/recall-severity: Recall Severity
     erp-qa/recall-status: Recall Status
     erp-qa/recall-target-return-status: Recall Target Return Status
+    erp-qa/spc-chart-type: SPC Chart Type
+    erp-qa/spc-calc-status: SPC Calc Status
+    erp-qa/spc-capability: SPC Capability Level
+    erp-qa/spc-cl-center-type: SPC CL Center Type
 dict.option.label:
   erp-qa/inspection-type:
     INCOMING: Incoming Inspection
@@ -440,3 +542,24 @@ dict.option.label:
     PENDING: Pending
     NOTIFIED: Notified
     RETURNED: Returned
+  erp-qa/spc-chart-type:
+    X_BAR_R: X-bar R
+    X_BAR_S: X-bar s
+    X_MR: I-MR
+    P: P Chart
+    NP: NP Chart
+    C: C Chart
+    U: U Chart
+  erp-qa/spc-calc-status:
+    PENDING: Pending
+    CALCULATED: Calculated
+    STALE: Stale
+  erp-qa/spc-capability:
+    INADEQUATE: Inadequate
+    ACCEPTABLE: Acceptable
+    CAPABLE: Capable
+    EXCELLENT: Excellent
+  erp-qa/spc-cl-center-type:
+    AUTO_FROM_DATA: Auto From Data
+    MANUAL: Manual
+    TARGET: Target

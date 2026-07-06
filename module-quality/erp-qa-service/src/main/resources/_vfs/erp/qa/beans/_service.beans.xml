@@ -63,6 +63,13 @@
         <property name="bizObjName" value="ErpQaInspectionTemplateLine"/>
     </bean>
 
+    <bean id="app.erp.qa.service.entity.ErpQaSpcChartBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaSpcChart" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaSpcChartBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaSpcChart"/>
+    </bean>
+
     <bean id="app.erp.qa.service.entity.ErpQaInspectionLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpQaInspectionLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -77,6 +84,21 @@
           ioc:type="app.erp.qa.biz.IErpQaNonConformanceBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpQaNonConformance"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaSpcSampleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaSpcSample" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaSpcSampleBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpQaSpcSample"/>
+    </bean>
+
+    <bean id="app.erp.qa.service.entity.ErpQaSpcCapabilityBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpQaSpcCapability" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.qa.biz.IErpQaSpcCapabilityBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpQaSpcCapability"/>
     </bean>
 
     <bean id="app.erp.qa.service.entity.ErpQaActionBizModel" ioc:type="@bean:id" ioc:default="true"/>

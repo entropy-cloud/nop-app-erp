@@ -190,6 +190,48 @@
                         </resource>
                     </children>
                 </resource>
+                <resource id="ErpQaSpcCapability-main" displayName="SPC 过程能力分析" orderNo="10040"
+                          i18n-en:displayName="SPC Capability" icon="bar-chart-3" component="AMIS" resourceType="SUBM"
+                          url="/erp/qa/pages/ErpQaSpcCapability/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpQaSpcCapability:query" displayName="查询SPC 过程能力分析"
+                                  i18n-en:displayName="Query SPC Capability" orderNo="10041" resourceType="FNPT">
+                            <permissions>ErpQaSpcCapability:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpQaSpcCapability:mutation" displayName="修改SPC 过程能力分析"
+                                  i18n-en:displayName="Modify SPC Capability" orderNo="10042" resourceType="FNPT">
+                            <permissions>ErpQaSpcCapability:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpQaSpcChart-main" displayName="SPC 控制图配置" orderNo="10043"
+                          i18n-en:displayName="SPC Chart" icon="activity" component="AMIS" resourceType="SUBM"
+                          url="/erp/qa/pages/ErpQaSpcChart/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpQaSpcChart:query" displayName="查询SPC 控制图配置"
+                                  i18n-en:displayName="Query SPC Chart" orderNo="10044" resourceType="FNPT">
+                            <permissions>ErpQaSpcChart:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpQaSpcChart:mutation" displayName="修改SPC 控制图配置"
+                                  i18n-en:displayName="Modify SPC Chart" orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpQaSpcChart:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpQaSpcSample-main" displayName="SPC 样本数据" orderNo="10046"
+                          i18n-en:displayName="SPC Sample" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/qa/pages/ErpQaSpcSample/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpQaSpcSample:query" displayName="查询SPC 样本数据"
+                                  i18n-en:displayName="Query SPC Sample" orderNo="10047" resourceType="FNPT">
+                            <permissions>ErpQaSpcSample:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpQaSpcSample:mutation" displayName="修改SPC 样本数据"
+                                  i18n-en:displayName="Modify SPC Sample" orderNo="10048" resourceType="FNPT">
+                            <permissions>ErpQaSpcSample:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

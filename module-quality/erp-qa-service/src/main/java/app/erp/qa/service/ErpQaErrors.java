@@ -154,4 +154,36 @@ public interface ErpQaErrors {
             "erp.err.qa.report.render-type-invalid",
             "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    // ---- SPC 统计过程控制（2.4b，spc.md）----
+
+    String ARG_CHART_ID = "chartId";
+    String ARG_CHART_CODE = "chartCode";
+    String ARG_SUBGROUP_NO = "subgroupNo";
+    String ARG_PARAMETER_ID = "parameterId";
+
+    ErrorCode ERR_QA_SPC_CHART_NOT_FOUND = ErrorCode.define(
+            "nop.err.qa.spc.chart-not-found",
+            "SPC 控制图不存在: {chartId}",
+            ARG_CHART_ID);
+
+    ErrorCode ERR_QA_SPC_PARAMETER_NOT_FOUND = ErrorCode.define(
+            "nop.err.qa.spc.parameter-not-found",
+            "SPC 控制图[{chartCode}]未关联关键检验参数(parameterId)，无法采样",
+            ARG_CHART_CODE, ARG_PARAMETER_ID);
+
+    ErrorCode ERR_QA_SPC_INSUFFICIENT_SAMPLES = ErrorCode.define(
+            "nop.err.qa.spc.insufficient-samples",
+            "SPC 控制图[{chartCode}]子组样本量 subgroupSize={subgroupNo}<2，无法计算控制限",
+            ARG_CHART_CODE, ARG_SUBGROUP_NO);
+
+    ErrorCode ERR_QA_SPC_MEASURED_VALUE_INVALID = ErrorCode.define(
+            "nop.err.qa.spc.measured-value-invalid",
+            "SPC 采样：实测值非数值或为空，跳过该样本点（chartId={chartId}, parameterId={parameterId}）",
+            ARG_CHART_ID, ARG_PARAMETER_ID);
+
+    ErrorCode ERR_QA_SPC_SUBGROUP_SIZE_INVALID = ErrorCode.define(
+            "nop.err.qa.spc.subgroup-size-invalid",
+            "SPC 控制图[{chartCode}]subgroupSize<2，无法聚合子组",
+            ARG_CHART_CODE);
 }

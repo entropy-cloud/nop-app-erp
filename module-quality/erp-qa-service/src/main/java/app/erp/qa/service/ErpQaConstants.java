@@ -125,4 +125,52 @@ public interface ErpQaConstants {
     /** CAPA 逾期预警窗口天数（Action.dueDate 早于 today-minus-overdueDays 触发预警）；默认 0=直接 < today 比对。 */
     String CONFIG_DASH_QA_CAPA_OVERDUE_DAYS = "erp-dash.qa-capa-overdue-days";
     int DEFAULT_DASH_QA_CAPA_OVERDUE_DAYS = 0;
+
+    // ---- SPC 统计过程控制（2.4b，spc.md）----
+    // SPC 控制图类型（erp-qa/spc-chart-type）
+    String SPC_CHART_TYPE_X_BAR_R = "X_BAR_R";
+    String SPC_CHART_TYPE_X_BAR_S = "X_BAR_S";
+    String SPC_CHART_TYPE_X_MR = "X_MR";
+    String SPC_CHART_TYPE_P = "P";
+    String SPC_CHART_TYPE_NP = "NP";
+    String SPC_CHART_TYPE_C = "C";
+    String SPC_CHART_TYPE_U = "U";
+
+    // SPC 控制限计算状态（erp-qa/spc-calc-status）
+    String SPC_CALC_STATUS_PENDING = "PENDING";
+    String SPC_CALC_STATUS_CALCULATED = "CALCULATED";
+    String SPC_CALC_STATUS_STALE = "STALE";
+
+    // SPC 过程能力等级（erp-qa/spc-capability）
+    String SPC_CAPABILITY_INADEQUATE = "INADEQUATE";
+    String SPC_CAPABILITY_ACCEPTABLE = "ACCEPTABLE";
+    String SPC_CAPABILITY_CAPABLE = "CAPABLE";
+    String SPC_CAPABILITY_EXCELLENT = "EXCELLENT";
+
+    // SPC 中心线计算方式（erp-qa/spc-cl-center-type）
+    String SPC_CL_CENTER_AUTO_FROM_DATA = "AUTO_FROM_DATA";
+    String SPC_CL_CENTER_MANUAL = "MANUAL";
+    String SPC_CL_CENTER_TARGET = "TARGET";
+
+    // NCR 来源类型：SPC 失控预警（自由字符串，写入 ErpQaNonConformance.sourceType）
+    String NCR_SOURCE_TYPE_SPC = "SPC";
+
+    // 业务单据类型：质检单（自由字符串，SPC sample 反查来源用，对齐 ErpQaInspection 实体名）
+    String SPC_SOURCE_BILL_TYPE_INSPECTION = "ERP_QA_INSPECTION";
+
+    // SPC 配置项（spc.md §关键流程；经 AppConfig.var 读取，无 .env/外部服务）
+    /** SPC 采样 cron 表达式；空=不采样（双层门控第一层）。默认 "0 0 * * * ?"（每小时整点）。 */
+    String CONFIG_SPC_SAMPLING_CRON = "erp-qa.spc-sampling-cron";
+    /** SPC 过程能力分析 cron 表达式；空=不计算（门控第一层）。默认 "0 0 2 * * ?"（每日 02:00）。 */
+    String CONFIG_SPC_CAPABILITY_CRON = "erp-qa.spc-capability-cron";
+    /** SPC 总开关；false=所有 SPC 定时任务跳过（双层门控第二层）。默认 false。 */
+    String CONFIG_SPC_ENABLED = "erp-qa.spc-enabled";
+    /** 失控样本自动建 NCR 开关；false=仅标记 isOutOfControl 不建 NCR/CAPA。默认 true。 */
+    String CONFIG_SPC_AUTO_NCR_ENABLED = "erp-qa.spc-auto-ncr-enabled";
+
+    // 默认值常量
+    int DEFAULT_SPC_SUBGROUP_SIZE = 5;
+    int DEFAULT_SPC_ALARM_THRESHOLD = 1;
+    int SPC_MIN_SUBGROUPS_FOR_CONTROL_LIMIT = 20;
+    String DEFAULT_RULE_SET = "1,2,3,4";
 }

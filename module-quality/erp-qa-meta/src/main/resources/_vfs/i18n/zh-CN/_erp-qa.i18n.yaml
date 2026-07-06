@@ -13,6 +13,9 @@ entity:
     ErpQaReview: 质量评审
     ErpQaRiskRegister: 风险登记
     ErpQaSamplingPlan: 抽样方案
+    ErpQaSpcCapability: SPC 过程能力分析
+    ErpQaSpcChart: SPC 控制图配置
+    ErpQaSpcSample: SPC 样本数据
 prop:
   label:
     ErpQaAction:
@@ -344,3 +347,98 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpQaSpcCapability:
+      calculatedAt: 计算时间
+      calculatedBy: 计算人
+      capabilityLevel: 能力等级评定
+      capabilityLevel_label: 能力等级评定
+      chart: null
+      chartId: 控制图ID
+      cp: 过程能力指数 Cp
+      cpk: 过程能力指数 Cpk
+      cpm: 偏度修正 Cpm
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      grandMean: 总均值 X̄̄
+      id: ID
+      isStable: 过程是否统计受控
+      org: null
+      orgId: 业务组织
+      overallStdDev: 总体标准差(用于 Pp/Ppk)
+      periodFrom: 分析周期起
+      periodTo: 分析周期止
+      pp: 过程性能指数 Pp
+      ppk: 过程性能指数 Ppk
+      remark: 备注
+      sampleCount: 样本数(子组数)
+      totalObservations: 总观测点数
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      withinStdDev: 组内标准差 σ̂=R̄/d2(用于 Cp/Cpk)
+    ErpQaSpcChart:
+      alarmThreshold: 预警阈值(违规次数)
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      calcStatus: 计算状态
+      calcStatus_label: 计算状态
+      chartType: 图类型
+      chartType_label: 图类型
+      cl: 中心线(CL)
+      clCenterType: 中心线计算方式
+      clCenterType_label: 中心线计算方式
+      code: 编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      docStatus: 单据状态
+      docStatus_label: 单据状态
+      id: ID
+      inspectionType: null
+      inspectionTypeId: 质检模板
+      isActive: 是否启用
+      lcl: 控制下限(LCL)
+      material: null
+      materialId: 物料
+      name: 名称
+      org: null
+      orgId: 业务组织
+      parameterId: 关键检验参数
+      remark: 备注
+      ruleSet: 判异规则集(逗号分隔)
+      samples: null
+      samplingFrequency: 采样频率
+      specMax: 规格上限
+      specMin: 规格下限
+      subgroupSize: 子组样本量 n
+      ucl: 控制上限(UCL)
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpQaSpcSample:
+      chart: null
+      chartId: 控制图ID
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      inspector: null
+      inspectorId: 检验员
+      isOutOfControl: 是否失控
+      mean: 子组均值 X̄
+      measuredValues: 子组实测值(JSON 数组)
+      org: null
+      orgId: 业务组织
+      range: 子组极差 R
+      remark: 备注
+      sampleTime: 采样时间
+      sourceBillType: 数据来源单据类型
+      sourceCode: 数据来源单号
+      sourceLineCode: 数据来源行号
+      stdDev: 子组标准差 s
+      subgroupNo: 子组序号
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      violatedRules: 违反的判异规则(逗号分隔)
