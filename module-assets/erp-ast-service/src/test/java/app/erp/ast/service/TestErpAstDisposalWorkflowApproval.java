@@ -83,11 +83,13 @@ public class TestErpAstDisposalWorkflowApproval extends JunitAutoTestCase {
             IServiceContext ctx = newContext();
             IWorkflow wf = workflowManager.getWorkflow(reload(disposalId).getNopFlowId());
             invokeStep(wf, "manager-approval", "agree", ctx);
+            // cc-assets 步骤（plan 2026-07-06-0642-2 Phase 2）在 agree 后激活，需 confirm 后 wf 结束
+            invokeStep(wf, "cc-assets", "confirm", ctx);
         });
 
         reloaded = reload(disposalId);
         assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, reloaded.getApproveStatus(),
-                "manager-approval agree 后 wf 结束回调 approve → APPROVED");
+                "manager-approval agree + cc confirm 后 wf 结束回调 approve → APPROVED");
         assertTrue(Boolean.TRUE.equals(reloaded.getPosted()), "处置过账 posted=true");
 
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]);

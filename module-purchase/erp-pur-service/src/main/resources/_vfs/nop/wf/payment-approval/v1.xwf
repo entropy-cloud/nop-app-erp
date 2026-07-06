@@ -6,11 +6,15 @@
           bizEntityFlowIdProp="nopFlowId">
 
     <description>
-        付款单多级审批（approval-framework.md §按单据类型配置 WORKFLOW）：submit → finance-approval。
+        付款单多级审批（approval-framework.md §按单据类型配置 WORKFLOW）：submit → finance-approval → cc-finance。
         审批人在 wf 内 agree/disagree，wf 结束经 listener 回调业务 approve/reject action（Processor 实现）。
         bootstrap actor 用 actorType="all"；精确角色路由待角色基础设施落地（Deferred）。
         submit 起始步骤无 assignment（由 ApprovalFlowHelper.start 自动 complete，sysUser 兜底）。
         listener 幂等：*end 在 before-end/after-end 双触发，已终态时跳过。
+        cc-finance 步骤（specialType="cc"）：审批通过后抄送财务知会，需 confirm 确认后 wf 结束（plan 2026-07-06-0642-2 Phase 2）。
+        on-enter 通知：finance-approval 到达→任务到达通知（Phase 3）；cc-finance 到达→抄送通知（Phase 2）。
+        listener 内结果通知提单人（Phase 1）：approve/reject 后 notify('wf.pur-payment.result')。
+        notify 内部 catch 所有异常（best-effort），通知失败不阻断 wf；XLang 不支持 try/catch 执行，故脚本内无 try。
     </description>
 
     <start startStepName="submit"/>
@@ -29,7 +33,45 @@
                     <actor actorModelId="finance" actorType="all"/>
                 </actors>
             </assignment>
+            <on-enter>
+                <c:script><![CDATA[
+                    // 任务到达通知候选审批人（plan 2026-07-06-0642-2 Phase 3）。
+                    // bootstrap actorType=all，接收人为 ROLE 模板（财务员），角色未落地 config-gated 静默跳过。
+                    const entityId = wfRt.wf.bizEntityId;
+                    const entityBizObj = inject('nopBizObjectManager').getBizObject('ErpPurPayment');
+                    const entity = entityBizObj.invoke('get', {id: entityId, ignoreUnknown: true}, null, svcCtx);
+                    const notifyBiz = inject('nopBizObjectManager').getBizObject('ErpSysNotification');
+                    notifyBiz.invoke('notify', {
+                        eventType: 'wf.pur-payment.task-assigned',
+                        context: {docNo: entity.code, entityId: entityId, stepName: '财务审批'}
+                    }, null, svcCtx);
+                ]]></c:script>
+            </on-enter>
             <transition onAppStates="agree">
+                <to-step stepName="cc-finance"/>
+            </transition>
+        </step>
+
+        <step name="cc-finance" displayName="抄送财务" specialType="cc">
+            <assignment>
+                <actors>
+                    <actor actorModelId="cc-finance" actorType="all"/>
+                </actors>
+            </assignment>
+            <on-enter>
+                <c:script><![CDATA[
+                    // 抄送通知（plan 2026-07-06-0642-2 Phase 2）：审批通过后 cc step 到达，通知 CC 接收人知会。
+                    const entityId = wfRt.wf.bizEntityId;
+                    const entityBizObj = inject('nopBizObjectManager').getBizObject('ErpPurPayment');
+                    const entity = entityBizObj.invoke('get', {id: entityId, ignoreUnknown: true}, null, svcCtx);
+                    const notifyBiz = inject('nopBizObjectManager').getBizObject('ErpSysNotification');
+                    notifyBiz.invoke('notify', {
+                        eventType: 'wf.pur-payment.cc',
+                        context: {docNo: entity.code, entityId: entityId}
+                    }, null, svcCtx);
+                ]]></c:script>
+            </on-enter>
+            <transition onAppStates="confirm">
                 <to-end/>
             </transition>
         </step>
@@ -58,6 +100,24 @@
                         return;
                     }
                     entityBizObj.invoke(actionName, {id: entityId}, null, svcCtx);
+
+                    // 审批结果通知提单人（plan 2026-07-06-0642-2 Phase 1）：
+                    // xbiz <observes> 在当前 nop-entropy 版本未被引擎触发（dead），故在 wf end listener 内
+                    // 统一注入。接收人=createdBy（USER_LIST 模板 ${submitterUserId}）。
+                    // notify 内部 catch 所有异常，通知失败不阻断业务事实。
+                    const result = entityBizObj.invoke('get', {id: entityId, ignoreUnknown: true}, null, svcCtx);
+                    if (result != null) {
+                        const notifyBiz = inject('nopBizObjectManager').getBizObject('ErpSysNotification');
+                        const resultCtx = {
+                            resultText: rejected ? '已驳回' : '已通过',
+                            docNo: result.code,
+                            submitterUserId: result.createdBy,
+                            approverUserId: svcCtx.getUserId(),
+                            entityId: entityId
+                        };
+                        notifyBiz.invoke('notify',
+                                {eventType: 'wf.pur-payment.result', context: resultCtx}, null, svcCtx);
+                    }
                 ]]></c:script>
             </source>
         </listener>

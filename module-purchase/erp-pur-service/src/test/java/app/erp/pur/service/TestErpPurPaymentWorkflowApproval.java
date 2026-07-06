@@ -78,11 +78,13 @@ public class TestErpPurPaymentWorkflowApproval extends JunitAutoTestCase {
             IServiceContext ctx = newContext();
             IWorkflow wf = workflowManager.getWorkflow(reload(payment).getNopFlowId());
             invokeStep(wf, "finance-approval", "agree", ctx);
+            // cc-finance 步骤（plan 2026-07-06-0642-2 Phase 2）在 agree 后激活，需 confirm 后 wf 结束
+            invokeStep(wf, "cc-finance", "confirm", ctx);
         });
 
         reloaded = reload(payment);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, reloaded.getApproveStatus(),
-                "finance-approval agree 后 wf 结束回调 approve → APPROVED");
+                "finance-approval agree + cc confirm 后 wf 结束回调 approve → APPROVED");
         assertTrue(Boolean.TRUE.equals(reloaded.getPosted()), "PAYMENT 审核应过账 posted=true");
         // approvedBy 经 Processor.currentUserId() 读 IUserContext 线程局部，wf 回调上下文未填充该线程局部，
         // 故 wf 回调路径下 approvedBy 可能为 null（DIRECT 模式由 GraphQL 请求填充则非空）。此为既有 Processor 模式限制，非本计划引入。

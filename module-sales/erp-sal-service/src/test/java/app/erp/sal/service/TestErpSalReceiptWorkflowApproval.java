@@ -77,11 +77,13 @@ public class TestErpSalReceiptWorkflowApproval extends JunitAutoTestCase {
             IServiceContext ctx = newContext();
             IWorkflow wf = workflowManager.getWorkflow(reload(receipt).getNopFlowId());
             invokeStep(wf, "manager-approval", "agree", ctx);
+            // cc-sales 步骤（plan 2026-07-06-0642-2 Phase 2）在 agree 后激活，需 confirm 后 wf 结束
+            invokeStep(wf, "cc-sales", "confirm", ctx);
         });
 
         reloaded = reload(receipt);
         assertEquals(ErpSalConstants.APPROVE_STATUS_APPROVED, reloaded.getApproveStatus(),
-                "manager-approval agree 后 wf 结束回调 approve → APPROVED");
+                "manager-approval agree + cc confirm 后 wf 结束回调 approve → APPROVED");
         assertTrue(Boolean.TRUE.equals(reloaded.getPosted()), "RECEIPT 审核应过账 posted=true");
     }
 

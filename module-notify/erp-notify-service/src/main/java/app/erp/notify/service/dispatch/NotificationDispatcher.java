@@ -74,7 +74,7 @@ public class NotificationDispatcher {
         String subject = renderTemplate(template.getId(), template.getSubjectTpl(), context);
         String body = renderTemplate(template.getId(), template.getBodyTpl(), context);
 
-        Set<String> recipients = recipientResolver.resolve(template);
+        Set<String> recipients = recipientResolver.resolve(template, context);
         if (recipients.isEmpty()) {
             LOG.warn("notify.dispatch: 模板[{}] notificationType={} 解析接收人为空，config-gated 跳过",
                     template.getId(), template.getNotificationType());

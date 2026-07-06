@@ -59,15 +59,32 @@ public class NotificationRecipientResolver {
         this.ormTemplate = ormTemplate;
     }
 
+    private static final java.util.regex.Pattern CFG_VAR_PATTERN =
+            java.util.regex.Pattern.compile("\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)\\}");
+
+    /**
+     * 解析接收人 userId 集合（无上下文插值，向后兼容）。
+     */
+    public Set<String> resolve(ErpSysNotificationTemplate template) {
+        return resolve(template, null);
+    }
+
     /**
      * 解析接收人 userId 集合。
      *
+     * <p>当传入 {@code context} 时，先对 {@code recipientConfig} 中的 {@code ${var}} 占位符按 context 插值，
+     * 再解析。这使得 USER_LIST 可接收动态接收人（如提单人 submitterUserId），与模板渲染的占位符语义对齐。
+     * 无 context 或无占位符时行为不变（向后兼容）。
+     *
      * @param template   模板（持有 recipientResolver 与 recipientConfig）
+     * @param context    业务上下文（用于 recipientConfig 占位符插值；可为 null）
      * @return userId 集合（String，对齐 stdDomain userId）；config-gated 无匹配时返回空集
      */
-    public Set<String> resolve(ErpSysNotificationTemplate template) {
+    public Set<String> resolve(ErpSysNotificationTemplate template, Map<String, Object> context) {
         String resolver = template.getRecipientResolver();
-        Map<String, Object> cfg = parseConfig(template.getRecipientConfig());
+        String rawConfig = template.getRecipientConfig();
+        String interpolated = interpolateConfig(rawConfig, context);
+        Map<String, Object> cfg = parseConfig(interpolated);
 
         switch (StringHelper.toString(resolver, ErpNotifyConstants.RESOLVER_ROLE)) {
             case ErpNotifyConstants.RESOLVER_USER_LIST:
@@ -181,6 +198,32 @@ public class NotificationRecipientResolver {
                     .param(ErpNotifyErrors.ARG_REASON, "recipientConfig 非合法 JSON: " + e.getMessage());
         }
         return Collections.emptyMap();
+    }
+
+    /**
+     * 对 recipientConfig 中的 {@code ${var}} 占位符按 context 插值。无 context / 无占位符时原样返回。
+     */
+    private String interpolateConfig(String recipientConfig, Map<String, Object> context) {
+        if (StringHelper.isBlank(recipientConfig) || context == null || context.isEmpty()
+                || recipientConfig.indexOf('$') < 0) {
+            return recipientConfig;
+        }
+        try {
+            java.util.regex.Matcher m = CFG_VAR_PATTERN.matcher(recipientConfig);
+            StringBuffer sb = new StringBuffer();
+            while (m.find()) {
+                String key = m.group(1);
+                Object val = context.get(key);
+                String replacement = val == null ? "" : val.toString();
+                m.appendReplacement(sb, java.util.regex.Matcher.quoteReplacement(replacement));
+            }
+            m.appendTail(sb);
+            return sb.toString();
+        } catch (Exception e) {
+            throw new NopException(ErpNotifyErrors.ERR_NOTIFY_RECIPIENT_RESOLVE_FAILED, e)
+                    .param(ErpNotifyErrors.ARG_RESOLVER, "interpolateConfig")
+                    .param(ErpNotifyErrors.ARG_REASON, "recipientConfig 占位符插值失败: " + e.getMessage());
+        }
     }
 
     // 兼容：标记当前时间，供 merge 判定引用

@@ -65,11 +65,13 @@ public class TestErpHrSalaryWorkflowApproval extends JunitAutoTestCase {
             invokeStep(wf, "hr-review", "agree", ctx);
             invokeStep(wf, "finance-review", "agree", ctx);
             invokeStep(wf, "manager-approval", "agree", ctx);
+            // cc-hr 步骤（plan 2026-07-06-0642-2 Phase 2）在 manager-approval agree 后激活，需 confirm 后 wf 结束
+            invokeStep(wf, "cc-hr", "confirm", ctx);
         });
 
         ErpHrSalary reloaded = reload(salary);
         assertEquals(ErpHrConstants.APPROVE_STATUS_APPROVED, reloaded.getApproveStatus(),
-                "三级 agree 后 wf 结束回调 approve → APPROVED");
+                "三级 agree + cc confirm 后 wf 结束回调 approve → APPROVED");
         assertNotNull(reloaded.getApprovedBy(), "approvedBy 应由 approve action 写入");
         assertNotNull(reloaded.getApprovedAt(), "approvedAt 应由 approve action 写入");
     }

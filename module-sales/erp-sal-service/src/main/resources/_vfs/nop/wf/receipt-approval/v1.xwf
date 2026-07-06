@@ -6,8 +6,11 @@
           bizEntityFlowIdProp="nopFlowId">
 
     <description>
-        收款单多级审批（approval-framework.md §按单据类型配置 WORKFLOW）：submit → manager-approval。
+        收款单多级审批（approval-framework.md §按单据类型配置 WORKFLOW）：submit → manager-approval → cc-sales。
         其余约定同 payment-approval/v1.xwf（actor=all bootstrap 默认、submit 无 assignment、listener 幂等）。
+        cc-sales 步骤（specialType="cc"）：审批通过后抄送销售/财务知会（plan 2026-07-06-0642-2 Phase 2）。
+        on-enter 通知：manager-approval 到达→任务到达通知（Phase 3）；cc-sales 到达→抄送通知（Phase 2）。
+        listener 内结果通知提单人（Phase 1）。notify 内部 catch 所有异常，通知失败不阻断 wf。
     </description>
 
     <start startStepName="submit"/>
@@ -26,7 +29,42 @@
                     <actor actorModelId="manager" actorType="all"/>
                 </actors>
             </assignment>
+            <on-enter>
+                <c:script><![CDATA[
+                    const entityId = wfRt.wf.bizEntityId;
+                    const entityBizObj = inject('nopBizObjectManager').getBizObject('ErpSalReceipt');
+                    const entity = entityBizObj.invoke('get', {id: entityId, ignoreUnknown: true}, null, svcCtx);
+                    const notifyBiz = inject('nopBizObjectManager').getBizObject('ErpSysNotification');
+                    notifyBiz.invoke('notify', {
+                        eventType: 'wf.sal-receipt.task-assigned',
+                        context: {docNo: entity.code, entityId: entityId, stepName: '审批'}
+                    }, null, svcCtx);
+                ]]></c:script>
+            </on-enter>
             <transition onAppStates="agree">
+                <to-step stepName="cc-sales"/>
+            </transition>
+        </step>
+
+        <step name="cc-sales" displayName="抄送销售" specialType="cc">
+            <assignment>
+                <actors>
+                    <actor actorModelId="cc-sales" actorType="all"/>
+                </actors>
+            </assignment>
+            <on-enter>
+                <c:script><![CDATA[
+                    const entityId = wfRt.wf.bizEntityId;
+                    const entityBizObj = inject('nopBizObjectManager').getBizObject('ErpSalReceipt');
+                    const entity = entityBizObj.invoke('get', {id: entityId, ignoreUnknown: true}, null, svcCtx);
+                    const notifyBiz = inject('nopBizObjectManager').getBizObject('ErpSysNotification');
+                    notifyBiz.invoke('notify', {
+                        eventType: 'wf.sal-receipt.cc',
+                        context: {docNo: entity.code, entityId: entityId}
+                    }, null, svcCtx);
+                ]]></c:script>
+            </on-enter>
+            <transition onAppStates="confirm">
                 <to-end/>
             </transition>
         </step>
@@ -55,6 +93,20 @@
                         return;
                     }
                     entityBizObj.invoke(actionName, {id: entityId}, null, svcCtx);
+
+                    const result = entityBizObj.invoke('get', {id: entityId, ignoreUnknown: true}, null, svcCtx);
+                    if (result != null) {
+                        const notifyBiz = inject('nopBizObjectManager').getBizObject('ErpSysNotification');
+                        const resultCtx = {
+                            resultText: rejected ? '已驳回' : '已通过',
+                            docNo: result.code,
+                            submitterUserId: result.createdBy,
+                            approverUserId: svcCtx.getUserId(),
+                            entityId: entityId
+                        };
+                        notifyBiz.invoke('notify',
+                                {eventType: 'wf.sal-receipt.result', context: resultCtx}, null, svcCtx);
+                    }
                 ]]></c:script>
             </source>
         </listener>

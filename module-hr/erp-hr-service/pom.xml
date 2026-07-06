@@ -93,6 +93,15 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- test-only: IErpSysNotificationBiz Bean 实现（ErpSysNotificationBizModel + Dispatcher）注册。
+             审批结果/CC/任务到达通知经 wf listener 调 notify。app-erp-all 聚合时由 app 层提供；
+             单域测试需引入以使 notify 调用可端到端落 ErpSysNotification。 -->
+        <dependency>
+            <artifactId>app-erp-notify-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
