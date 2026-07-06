@@ -67,4 +67,12 @@ public interface ErpSalConstants {
     // 退货配置项（returns.md §配置项，缺失走默认，无需 .env）
     String CONFIG_RETURN_REASON_REQUIRED = "erp-sal.return-reason-required";
     String CONFIG_RETURN_APPROVAL_REQUIRED = "erp-sal.return-approval-required";
+
+    // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
+    /** 应收超期预警天数（账龄 > 此值触发）；默认 0=关闭预警。 */
+    String CONFIG_DASH_SAL_AR_OVERDUE_DAYS = "erp-dash.sal-ar-overdue-days";
+    int DEFAULT_DASH_SAL_AR_OVERDUE_DAYS = 0;
+    /** 应收超期预警金额（openAmount > 此值触发）；默认 0=关闭预警。 */
+    String CONFIG_DASH_SAL_AR_OVERDUE_AMOUNT = "erp-dash.sal-ar-overdue-amount";
+    java.math.BigDecimal DEFAULT_DASH_SAL_AR_OVERDUE_AMOUNT = java.math.BigDecimal.ZERO;
 }

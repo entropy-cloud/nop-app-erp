@@ -103,4 +103,12 @@ public interface ErpInvConstants {
 
     // 成本调整流水 moveId 哨兵：成本调整为纯成本变更（无 StockMove），流水 moveId/moveLineId 置 0 标识非移动单来源
     long LEDGER_MOVE_ID_COST_ADJUST = 0L;
+
+    // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
+    /** 滞销库存阈值天数（最后出库日期 > 此值 且 qty > 0）；默认 0=关闭预警。 */
+    String CONFIG_DASH_INV_SLOW_MOVING_DAYS = "erp-dash.inv-slow-moving-days";
+    int DEFAULT_DASH_INV_SLOW_MOVING_DAYS = 0;
+    /** 批次效期预警阈值天数（expiryDate - today < 此值）；默认 0=关闭预警。 */
+    String CONFIG_DASH_INV_BATCH_EXPIRY_DAYS = "erp-dash.inv-batch-expiry-days";
+    int DEFAULT_DASH_INV_BATCH_EXPIRY_DAYS = 0;
 }

@@ -75,4 +75,9 @@
     <!-- 库存移动单状态机/跨域契约编排 Processor（processor-extension-pattern Facade + Processor） -->
     <bean id="app.erp.inv.service.processor.ErpInvStockMoveProcessor"
           class="app.erp.inv.service.processor.ErpInvStockMoveProcessor"/>
+
+    <!-- 库存看板聚合入口（plan 2026-07-06-0935-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
+         经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findWarehouseDistribution/findShortageAlert/
+         findSlowMovingAlert/findBatchExpiryAlert。 -->
+    <bean id="app.erp.inv.service.dashboard.ErpInvDashboardBizModel" ioc:type="@bean:id"/>
 </beans>

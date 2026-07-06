@@ -49,6 +49,18 @@ public class ErpFinArApItemBizModel extends CrudBizModel<ErpFinArApItem> impleme
 
     @Override
     @BizQuery
+    public List<ErpFinArApItem> findOpenItems(@Name("direction") String direction,
+                                              IServiceContext context) {
+        QueryBean query = new QueryBean();
+        query.addFilter(eq("direction", direction));
+        query.addFilter(in("status", Arrays.asList(
+                ErpFinConstants.AR_AP_STATUS_OPEN, ErpFinConstants.AR_AP_STATUS_PARTIAL)));
+        query.addOrderField("businessDate", false);
+        return findList(query, null, context);
+    }
+
+    @Override
+    @BizQuery
     public List<ArApAgingRow> aging(@Name("direction") String direction,
                                     @Name("asOfDate") LocalDate asOfDate,
                                     IServiceContext context) {

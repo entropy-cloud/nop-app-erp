@@ -337,4 +337,9 @@ public interface ErpFinConstants {
 
     // ---- ar-ap-status 坏账维度扩展 ----
     String AR_AP_STATUS_WRITTEN_OFF = "WRITTEN_OFF";
+
+    // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
+    /** 现金流预警阈值（银行余额下限）；默认 0=关闭预警。 */
+    String CONFIG_DASH_FIN_CASH_FLOW_THRESHOLD = "erp-dash.fin-cash-flow-threshold";
+    java.math.BigDecimal DEFAULT_DASH_FIN_CASH_FLOW_THRESHOLD = java.math.BigDecimal.ZERO;
 }

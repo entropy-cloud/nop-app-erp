@@ -82,4 +82,8 @@
     <!-- 供应商询价/报价准入资格校验器（AVL 准入状态 + 评分 standing 三档联动 prevent/warn/allow） -->
     <bean id="app.erp.pur.service.SupplierEligibilityChecker"
           class="app.erp.pur.service.SupplierEligibilityChecker"/>
+
+    <!-- 采购看板聚合入口（plan 2026-07-06-0935-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate/IErpFinArApItemBiz，
+         经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findVendorTopN/findThreeWayMatchDiffAlert/findApOverdueAlert。 -->
+    <bean id="app.erp.pur.service.dashboard.ErpPurDashboardBizModel" ioc:type="@bean:id"/>
 </beans>

@@ -71,4 +71,9 @@ public interface ErpPurConstants {
     // 评分卡配置项（supplier-evaluation.md §配置点，缺失走默认，无需 .env）
     String CONFIG_SCORECARD_PREVENT_ON_RED = "erp-pur.scorecard-prevent-on-red";
     String CONFIG_SCORECARD_EVALUATION_CRON = "erp-pur.scorecard-evaluation-cron";
+
+    // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
+    /** 应付超期预警天数（账龄 > 此值触发）；默认 0=关闭预警。 */
+    String CONFIG_DASH_PUR_AP_OVERDUE_DAYS = "erp-dash.pur-ap-overdue-days";
+    int DEFAULT_DASH_PUR_AP_OVERDUE_DAYS = 0;
 }

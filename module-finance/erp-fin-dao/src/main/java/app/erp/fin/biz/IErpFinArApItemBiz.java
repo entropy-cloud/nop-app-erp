@@ -38,4 +38,16 @@ public interface IErpFinArApItemBiz extends ICrudBiz<ErpFinArApItem>{
     List<ArApAgingRow> aging(@Name("direction") String direction,
                              @Name("asOfDate") LocalDate asOfDate,
                              IServiceContext context);
+
+    /**
+     * 查询指定方向（RECEIVABLE/PAYABLE）下全部未核销辅助账项（status≠SETTLED/CANCELLED），
+     * 供跨域看板聚合（销售/采购看板的 AR/AP 余额 KPI）使用。按业务日期升序返回。
+     *
+     * <p>与 {@link #findOpenItemsByPartner} 的差异：不限定 partnerId，返回全量未核销项。
+     *
+     * @param direction  方向（RECEIVABLE/PAYABLE）
+     */
+    @BizQuery
+    List<ErpFinArApItem> findOpenItems(@Name("direction") String direction,
+                                       IServiceContext context);
 }

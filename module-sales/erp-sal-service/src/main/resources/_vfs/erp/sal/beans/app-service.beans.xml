@@ -80,4 +80,8 @@
           class="app.erp.sal.service.processor.ErpSalInvoiceProcessor"/>
     <bean id="app.erp.sal.service.processor.ErpSalReceiptProcessor"
           class="app.erp.sal.service.processor.ErpSalReceiptProcessor"/>
+
+    <!-- 销售看板聚合入口（plan 2026-07-06-0935-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate/IErpFinArApItemBiz，
+         经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findCustomerTopN/findArOverdueAlert。 -->
+    <bean id="app.erp.sal.service.dashboard.ErpSalDashboardBizModel" ioc:type="@bean:id"/>
 </beans>
