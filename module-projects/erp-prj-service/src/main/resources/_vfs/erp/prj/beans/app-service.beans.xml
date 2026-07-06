@@ -16,6 +16,12 @@
     <bean id="app.erp.prj.service.posting.ProjectCostCollectionProvider"
           class="app.erp.prj.service.posting.ProjectCostCollectionProvider"/>
 
+    <!-- 项目结算过账：PROJECT_SETTLEMENT(430) 派发器 + Provider（plan 2026-07-07-0305-1 Phase 3） -->
+    <bean id="app.erp.prj.service.posting.ProjectSettlementPostingDispatcher"
+          class="app.erp.prj.service.posting.ProjectSettlementPostingDispatcher"/>
+    <bean id="app.erp.prj.service.posting.ProjectSettlementAcctDocProvider"
+          class="app.erp.prj.service.posting.ProjectSettlementAcctDocProvider"/>
+
     <!-- 工时成本率解析器 -->
     <bean id="app.erp.prj.service.cost.CostRateResolver"
           class="app.erp.prj.service.cost.CostRateResolver"/>
@@ -39,4 +45,18 @@
     <!-- 项目域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /prj/）。 -->
     <bean id="app.erp.prj.service.report.ErpPrjReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- 项目损益汇总计算引擎（plan 2026-07-07-0305-1 Phase 2）：聚合 Billing 收入 + CostCollection 四类成本 → ErpPrjProjectPnl -->
+    <bean id="app.erp.prj.service.pnl.ProjectPnlCalculator"
+          class="app.erp.prj.service.pnl.ProjectPnlCalculator"/>
+
+    <!-- 项目结算单编排 Processor（plan 2026-07-07-0305-1 Phase 3）：三轴状态机 + CLOSE 转固 + 过账委托 -->
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor"/>
+
+    <!-- 定时批量损益汇总 Job Bean（plan 2026-07-07-0305-1 Phase 2）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。双层门控：cron 经 erp-prj.pnl-calc-cron 配置 + 总开关
+          erp-prj.pnl-auto-calc-enabled（默认 false）。 -->
+    <bean id="erpPrjPnlCalcJob"
+          class="app.erp.prj.service.job.ErpPrjPnlCalcJob"/>
 </beans>

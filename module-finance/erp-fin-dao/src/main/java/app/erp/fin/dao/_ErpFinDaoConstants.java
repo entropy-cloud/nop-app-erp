@@ -274,6 +274,11 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_COST_ADJUSTMENT = "COST_ADJUSTMENT";
                     
     /**
+     * 业务类型: 项目结算 
+     */
+    String BUSINESS_TYPE_PROJECT_SETTLEMENT = "PROJECT_SETTLEMENT";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

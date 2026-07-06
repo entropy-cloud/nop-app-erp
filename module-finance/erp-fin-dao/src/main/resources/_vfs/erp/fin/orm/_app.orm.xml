@@ -93,6 +93,7 @@
                     i18n-en:label="Production Variance"/>
             <option code="NCR_SCRAP" label="NCR报废损失" value="NCR_SCRAP" i18n-en:label="NCR Scrap Loss"/>
             <option code="COST_ADJUSTMENT" label="成本调整" value="COST_ADJUSTMENT" i18n-en:label="Cost Adjustment"/>
+            <option code="PROJECT_SETTLEMENT" label="项目结算" value="PROJECT_SETTLEMENT" i18n-en:label="Project Settlement"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>

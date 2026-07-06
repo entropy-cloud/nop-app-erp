@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="chart-line" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="项目损益汇总" i18n-en:displayName="Project PnL"
+      tagSet="gid,erp.projects" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.prj.dao.entity.ErpPrjProjectPnl</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_PRJ_PROJECT_PNL_CODE_ORG" props="code,orgId"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="projectCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="projectId" displayName="项目" propId="3" i18n-en:displayName="Project" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="project">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="periodFrom" displayName="汇总期间起" propId="5" i18n-en:displayName="Period From" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="periodTo" displayName="汇总期间止" propId="6" i18n-en:displayName="Period To" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="currencyId" displayName="币种" propId="7" i18n-en:displayName="Currency" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="currency">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="exchangeRate" displayName="汇率" propId="8" i18n-en:displayName="Exchange Rate" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="1">
+            <schema domain="exchangeRate" type="java.math.BigDecimal" precision="20" scale="8"/>
+        </prop>
+        <prop name="amountSource" displayName="源币种金额" propId="9" i18n-en:displayName="Amt (Source)" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="amountFunctional" displayName="本位币金额" propId="10" i18n-en:displayName="Amt (Functional)"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="revenueAmount" displayName="收入合计" propId="11" i18n-en:displayName="Revenue" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="costLabor" displayName="人工成本" propId="12" i18n-en:displayName="Cost Labor" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="costMaterial" displayName="物料成本" propId="13" i18n-en:displayName="Cost Material" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="costExpense" displayName="费用成本" propId="14" i18n-en:displayName="Cost Expense" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="costSubcontract" displayName="分包成本" propId="15" i18n-en:displayName="Cost Subcontract"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="totalCost" displayName="成本合计" propId="16" i18n-en:displayName="Total Cost" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="grossProfit" displayName="毛利" propId="17" i18n-en:displayName="Gross Profit" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="grossMarginPct" displayName="毛利率%" propId="18" i18n-en:displayName="Gross Margin %" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.String" precision="10" scale="4"/>
+        </prop>
+        <prop name="committedCost" displayName="已承诺成本" propId="19" i18n-en:displayName="Committed Cost" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="budgetAmount" displayName="预算" propId="20" i18n-en:displayName="Budget Amount" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="forecastCompleteCost" displayName="完工预测成本(EAC)" propId="21"
+              i18n-en:displayName="Forecast Complete Cost" queryable="true" sortable="true" insertable="true"
+              updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="calcStatus" displayName="计算状态" propId="22" i18n-en:displayName="Calc Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-prj/pnl-calc-status"/>
+        </prop>
+        <prop name="docStatus" displayName="单据状态" propId="23" i18n-en:displayName="Doc Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-prj/project-status"/>
+        </prop>
+        <prop name="approveStatus" displayName="审核状态" propId="24" i18n-en:displayName="Approve Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
+        </prop>
+        <prop name="posted" displayName="已过账" propId="25" i18n-en:displayName="Posted" queryable="true" sortable="true"
+              insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="postedAt" displayName="过账时间" propId="26" i18n-en:displayName="Posted At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="postedBy" displayName="过账人" propId="27" i18n-en:displayName="Posted By" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="28" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="29" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="30" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="31" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="32" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="33" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="34" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="project" i18n-en:displayName="Project" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpPrjProject"/>
+        </prop>
+        <prop name="currency" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

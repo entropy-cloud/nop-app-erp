@@ -25,6 +25,8 @@ alter table erp_prj_cost_collection add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NO
 
 alter table erp_prj_milestone add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_prj_project_pnl add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_prj_timesheet add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_prj_budget_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -33,7 +35,11 @@ alter table erp_prj_cost_collection_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '
 
 alter table erp_prj_billing add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_prj_project_settlement add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_prj_billing_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_prj_project_settlement_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_employee drop constraint PK_erp_md_employee;
 alter table erp_md_employee add constraint PK_erp_md_employee primary key (NOP_TENANT_ID, id);
@@ -74,6 +80,9 @@ alter table erp_prj_cost_collection add constraint PK_erp_prj_cost_collection pr
 alter table erp_prj_milestone drop constraint PK_erp_prj_milestone;
 alter table erp_prj_milestone add constraint PK_erp_prj_milestone primary key (NOP_TENANT_ID, id);
 
+alter table erp_prj_project_pnl drop constraint PK_erp_prj_project_pnl;
+alter table erp_prj_project_pnl add constraint PK_erp_prj_project_pnl primary key (NOP_TENANT_ID, id);
+
 alter table erp_prj_timesheet drop constraint PK_erp_prj_timesheet;
 alter table erp_prj_timesheet add constraint PK_erp_prj_timesheet primary key (NOP_TENANT_ID, id);
 
@@ -86,7 +95,13 @@ alter table erp_prj_cost_collection_line add constraint PK_erp_prj_cost_collecti
 alter table erp_prj_billing drop constraint PK_erp_prj_billing;
 alter table erp_prj_billing add constraint PK_erp_prj_billing primary key (NOP_TENANT_ID, id);
 
+alter table erp_prj_project_settlement drop constraint PK_erp_prj_project_settlement;
+alter table erp_prj_project_settlement add constraint PK_erp_prj_project_settlement primary key (NOP_TENANT_ID, id);
+
 alter table erp_prj_billing_line drop constraint PK_erp_prj_billing_line;
 alter table erp_prj_billing_line add constraint PK_erp_prj_billing_line primary key (NOP_TENANT_ID, id);
+
+alter table erp_prj_project_settlement_line drop constraint PK_erp_prj_project_settlement_line;
+alter table erp_prj_project_settlement_line add constraint PK_erp_prj_project_settlement_line primary key (NOP_TENANT_ID, id);
 
 

@@ -860,6 +860,7 @@ dict.option.label:
     PRODUCTION_VARIANCE: Production Variance
     NCR_SCRAP: NCR Scrap Loss
     COST_ADJUSTMENT: Cost Adjustment
+    PROJECT_SETTLEMENT: Project Settlement
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

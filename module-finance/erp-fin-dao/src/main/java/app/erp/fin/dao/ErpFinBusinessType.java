@@ -51,7 +51,8 @@ public enum ErpFinBusinessType {
     VALUE_ADJUSTMENT(390),
     PRODUCTION_VARIANCE(400),
     NCR_SCRAP(410),
-    COST_ADJUSTMENT(420);
+    COST_ADJUSTMENT(420),
+    PROJECT_SETTLEMENT(430);
 
     private final int code;
 

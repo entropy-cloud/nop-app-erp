@@ -218,6 +218,44 @@ CREATE TABLE erp_prj_milestone(
   constraint PK_erp_prj_milestone primary key (ID)
 );
 
+CREATE TABLE erp_prj_project_pnl(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  PROJECT_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  PERIOD_FROM DATE NOT NULL ,
+  PERIOD_TO DATE NOT NULL ,
+  CURRENCY_ID NUMBER(20)  ,
+  EXCHANGE_RATE NUMBER(20,8) default 1  NOT NULL ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  REVENUE_AMOUNT NUMBER(20,4) default 0   ,
+  COST_LABOR NUMBER(20,4) default 0   ,
+  COST_MATERIAL NUMBER(20,4) default 0   ,
+  COST_EXPENSE NUMBER(20,4) default 0   ,
+  COST_SUBCONTRACT NUMBER(20,4) default 0   ,
+  TOTAL_COST NUMBER(20,4) default 0   ,
+  GROSS_PROFIT NUMBER(20,4) default 0   ,
+  GROSS_MARGIN_PCT NUMBER(10,4) default 0   ,
+  COMMITTED_COST NUMBER(20,4) default 0   ,
+  BUDGET_AMOUNT NUMBER(20,4) default 0   ,
+  FORECAST_COMPLETE_COST NUMBER(20,4) default 0   ,
+  CALC_STATUS VARCHAR2(20) NOT NULL ,
+  DOC_STATUS VARCHAR2(20) NOT NULL ,
+  APPROVE_STATUS VARCHAR2(20) NOT NULL ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_prj_project_pnl primary key (ID)
+);
+
 CREATE TABLE erp_prj_timesheet(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -317,6 +355,44 @@ CREATE TABLE erp_prj_billing(
   constraint PK_erp_prj_billing primary key (ID)
 );
 
+CREATE TABLE erp_prj_project_settlement(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  PROJECT_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  CUSTOMER_ID NUMBER(20)  ,
+  BUSINESS_DATE DATE NOT NULL ,
+  SETTLEMENT_TYPE VARCHAR2(20) NOT NULL ,
+  PNL_SNAPSHOT_ID NUMBER(20)  ,
+  CURRENCY_ID NUMBER(20)  ,
+  EXCHANGE_RATE NUMBER(20,8) default 1  NOT NULL ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  FINAL_REVENUE NUMBER(20,4) default 0   ,
+  FINAL_COST NUMBER(20,4) default 0   ,
+  FINAL_PROFIT NUMBER(20,4) default 0   ,
+  RETENTION_AMOUNT NUMBER(20,4) default 0   ,
+  RETENTION_DUE_DATE DATE  ,
+  TRANSFER_TO_ASSET CHAR(1) default 0   ,
+  ASSET_CARD_ID NUMBER(20)  ,
+  SETTLEMENT_VOUCHER_CODE VARCHAR2(50)  ,
+  DOC_STATUS VARCHAR2(20) NOT NULL ,
+  APPROVE_STATUS VARCHAR2(20) NOT NULL ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
+  constraint PK_erp_prj_project_settlement primary key (ID)
+);
+
 CREATE TABLE erp_prj_billing_line(
   ID NUMBER(20) NOT NULL ,
   BILLING_ID NUMBER(20) NOT NULL ,
@@ -333,6 +409,25 @@ CREATE TABLE erp_prj_billing_line(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_prj_billing_line primary key (ID)
+);
+
+CREATE TABLE erp_prj_project_settlement_line(
+  ID NUMBER(20) NOT NULL ,
+  SETTLEMENT_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  LINE_TYPE VARCHAR2(50) NOT NULL ,
+  SOURCE_BILL_TYPE VARCHAR2(50)  ,
+  SOURCE_BILL_CODE VARCHAR2(50)  ,
+  SUBJECT_ID NUMBER(20)  ,
+  AMOUNT NUMBER(20,4) NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_prj_project_settlement_line primary key (ID)
 );
 
 
@@ -638,6 +733,76 @@ CREATE TABLE erp_prj_billing_line(
                     
       COMMENT ON COLUMN erp_prj_milestone.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_prj_project_pnl IS '项目损益汇总';
+                
+      COMMENT ON COLUMN erp_prj_project_pnl.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.PROJECT_ID IS '项目';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.PERIOD_FROM IS '汇总期间起';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.PERIOD_TO IS '汇总期间止';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.REVENUE_AMOUNT IS '收入合计';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.COST_LABOR IS '人工成本';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.COST_MATERIAL IS '物料成本';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.COST_EXPENSE IS '费用成本';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.COST_SUBCONTRACT IS '分包成本';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.TOTAL_COST IS '成本合计';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.GROSS_PROFIT IS '毛利';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.GROSS_MARGIN_PCT IS '毛利率%';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.COMMITTED_COST IS '已承诺成本';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.BUDGET_AMOUNT IS '预算';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.FORECAST_COMPLETE_COST IS '完工预测成本(EAC)';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.CALC_STATUS IS '计算状态';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.DOC_STATUS IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.APPROVE_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.POSTED IS '已过账';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_prj_project_pnl.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_prj_timesheet IS '工时记录';
                 
       COMMENT ON COLUMN erp_prj_timesheet.ID IS 'ID';
@@ -812,6 +977,76 @@ CREATE TABLE erp_prj_billing_line(
                     
       COMMENT ON COLUMN erp_prj_billing.AMOUNT_FUNCTIONAL IS '本位币金额';
                     
+      COMMENT ON TABLE erp_prj_project_settlement IS '项目结算单';
+                
+      COMMENT ON COLUMN erp_prj_project_settlement.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.PROJECT_ID IS '项目';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.CUSTOMER_ID IS '客户';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.BUSINESS_DATE IS '结算日期';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.SETTLEMENT_TYPE IS '结算类型';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.PNL_SNAPSHOT_ID IS '关联损益汇总';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.FINAL_REVENUE IS '最终结算收入';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.FINAL_COST IS '最终结算成本';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.FINAL_PROFIT IS '最终损益';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.RETENTION_AMOUNT IS '质保金/保留款';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.RETENTION_DUE_DATE IS '质保金到期';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.TRANSFER_TO_ASSET IS '是否转固定资产';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.ASSET_CARD_ID IS '转固资产卡片';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.SETTLEMENT_VOUCHER_CODE IS '结算凭证号';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.DOC_STATUS IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.APPROVE_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.POSTED IS '已过账';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.APPROVED_AT IS '审核时间';
+                    
       COMMENT ON TABLE erp_prj_billing_line IS '项目开票行';
                 
       COMMENT ON COLUMN erp_prj_billing_line.ID IS 'ID';
@@ -841,4 +1076,36 @@ CREATE TABLE erp_prj_billing_line(
       COMMENT ON COLUMN erp_prj_billing_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_billing_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_prj_project_settlement_line IS '项目结算明细';
+                
+      COMMENT ON COLUMN erp_prj_project_settlement_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.SETTLEMENT_ID IS '结算单ID';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.LINE_TYPE IS '行类型(INCOME/COST)';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.SOURCE_BILL_TYPE IS '来源单据类型(BILLING/COST_COLLECTION)';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.SOURCE_BILL_CODE IS '来源单据号';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.SUBJECT_ID IS '科目';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.AMOUNT IS '金额';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement_line.UPDATE_TIME IS '修改时间';
                     

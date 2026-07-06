@@ -83,4 +83,29 @@ public interface _ErpPrjDaoConstants {
      */
     String PRIORITY_URGENT = "URGENT";
                     
+    /**
+     * 损益计算状态: 待计算 
+     */
+    String PNL_CALC_STATUS_PENDING = "PENDING";
+                    
+    /**
+     * 损益计算状态: 已计算 
+     */
+    String PNL_CALC_STATUS_CALCULATED = "CALCULATED";
+                    
+    /**
+     * 结算类型: 竣工结算 
+     */
+    String SETTLEMENT_TYPE_FINAL = "FINAL";
+                    
+    /**
+     * 结算类型: 阶段结算 
+     */
+    String SETTLEMENT_TYPE_INTERIM = "INTERIM";
+                    
+    /**
+     * 结算类型: 关闭转固 
+     */
+    String SETTLEMENT_TYPE_CLOSE = "CLOSE";
+                    
 }

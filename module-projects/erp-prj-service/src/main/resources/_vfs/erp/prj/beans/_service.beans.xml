@@ -65,6 +65,13 @@
         <property name="bizObjName" value="ErpPrjMilestone"/>
     </bean>
 
+    <bean id="app.erp.prj.service.entity.ErpPrjProjectPnlBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjProjectPnl" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjProjectPnlBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjProjectPnl"/>
+    </bean>
+
     <bean id="app.erp.prj.service.entity.ErpPrjTimesheetBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpPrjTimesheet" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -94,11 +101,27 @@
         <property name="bizObjName" value="ErpPrjBilling"/>
     </bean>
 
+    <bean id="app.erp.prj.service.entity.ErpPrjProjectSettlementBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjProjectSettlement" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjProjectSettlementBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPrjProjectSettlement"/>
+    </bean>
+
     <bean id="app.erp.prj.service.entity.ErpPrjBillingLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpPrjBillingLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.prj.biz.IErpPrjBillingLineBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpPrjBillingLine"/>
+    </bean>
+
+    <bean id="app.erp.prj.service.entity.ErpPrjProjectSettlementLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjProjectSettlementLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.prj.biz.IErpPrjProjectSettlementLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpPrjProjectSettlementLine"/>
     </bean>
 </beans>

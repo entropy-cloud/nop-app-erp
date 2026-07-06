@@ -98,3 +98,12 @@ jobs:
     invoker:
       bean: erpCsCsatReminderJob
       method: execute
+
+  - jobName: erp-prj-pnl-calc
+    displayName: Projects PnL Aggregation
+    description: 每日凌晨扫描活跃项目批量汇总损益（Billing 收入 + CostCollection 四类成本 → ErpPrjProjectPnl）；双层门控——cron 经 erp-prj.pnl-calc-cron 配置 + 总开关 erp-prj.pnl-auto-calc-enabled（默认 false）
+    trigger:
+      cronExpr: "0 0 1 * * ?"
+    invoker:
+      bean: erpPrjPnlCalcJob
+      method: execute

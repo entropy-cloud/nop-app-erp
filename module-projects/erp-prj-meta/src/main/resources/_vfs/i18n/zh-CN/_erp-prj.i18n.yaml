@@ -9,6 +9,9 @@ entity:
     ErpPrjCostCollectionLine: 项目成本归集行
     ErpPrjMilestone: 项目里程碑
     ErpPrjProject: 项目
+    ErpPrjProjectPnl: 项目损益汇总
+    ErpPrjProjectSettlement: 项目结算单
+    ErpPrjProjectSettlementLine: 项目结算明细
     ErpPrjProjectType: 项目类型
     ErpPrjProjectUser: 项目成员
     ErpPrjTask: 任务
@@ -228,6 +231,109 @@ prop:
       status_label: 状态
       tasks: null
       timesheets: null
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpPrjProjectPnl:
+      amountFunctional: 本位币金额
+      amountSource: 源币种金额
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      budgetAmount: 预算
+      calcStatus: 计算状态
+      calcStatus_label: 计算状态
+      code: 单号
+      committedCost: 已承诺成本
+      costExpense: 费用成本
+      costLabor: 人工成本
+      costMaterial: 物料成本
+      costSubcontract: 分包成本
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      docStatus: 单据状态
+      docStatus_label: 单据状态
+      exchangeRate: 汇率
+      forecastCompleteCost: 完工预测成本(EAC)
+      grossMarginPct: 毛利率%
+      grossProfit: 毛利
+      id: ID
+      org: null
+      orgId: 业务组织
+      periodFrom: 汇总期间起
+      periodTo: 汇总期间止
+      posted: 已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      project: null
+      projectId: 项目
+      remark: 备注
+      revenueAmount: 收入合计
+      totalCost: 成本合计
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpPrjProjectSettlement:
+      amountFunctional: 本位币金额
+      amountSource: 源币种金额
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
+      assetCardId: 转固资产卡片
+      businessDate: 结算日期
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      customer: null
+      customerId: 客户
+      delVersion: 逻辑删除版本
+      docStatus: 单据状态
+      docStatus_label: 单据状态
+      exchangeRate: 汇率
+      finalCost: 最终结算成本
+      finalProfit: 最终损益
+      finalRevenue: 最终结算收入
+      id: ID
+      lines: null
+      org: null
+      orgId: 业务组织
+      pnlSnapshot: null
+      pnlSnapshotId: 关联损益汇总
+      posted: 已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      project: null
+      projectId: 项目
+      remark: 备注
+      retentionAmount: 质保金/保留款
+      retentionDueDate: 质保金到期
+      settlementType: 结算类型
+      settlementType_label: 结算类型
+      settlementVoucherCode: 结算凭证号
+      transferToAsset: 是否转固定资产
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpPrjProjectSettlementLine:
+      amount: 金额
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      lineType: 行类型(INCOME/COST)
+      remark: 备注
+      settlement: null
+      settlementId: 结算单ID
+      sourceBillCode: 来源单据号
+      sourceBillType: 来源单据类型(BILLING/COST_COLLECTION)
+      subject: null
+      subjectId: 科目
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

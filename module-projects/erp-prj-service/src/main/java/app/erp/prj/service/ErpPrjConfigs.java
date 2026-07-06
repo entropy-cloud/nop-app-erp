@@ -12,6 +12,12 @@ public interface ErpPrjConfigs {
     /** 费用报销归集默认启用。 */
     boolean DEFAULT_EXPENSE_AGGREGATION_ENABLED = true;
 
+    /** 损益汇总自动计算默认关闭（双层门控第二层，需显式开启）。 */
+    boolean DEFAULT_PNL_AUTO_CALC_ENABLED = false;
+
+    /** 项目结算强制审批默认启用。 */
+    boolean DEFAULT_SETTLEMENT_REQUIRE_APPROVAL = true;
+
     static String budgetControlMode() {
         String mode = io.nop.api.core.config.AppConfig.var(
                 ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, DEFAULT_BUDGET_CONTROL_MODE);
@@ -47,5 +53,21 @@ public interface ErpPrjConfigs {
         Boolean flag = io.nop.api.core.config.AppConfig.var(
                 ErpPrjConstants.CONFIG_EXPENSE_AGGREGATION_ENABLED, DEFAULT_EXPENSE_AGGREGATION_ENABLED);
         return flag == null || flag;
+    }
+
+    static boolean pnlAutoCalcEnabled() {
+        Boolean flag = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_PNL_AUTO_CALC_ENABLED, DEFAULT_PNL_AUTO_CALC_ENABLED);
+        return flag != null && flag;
+    }
+
+    static boolean settlementRequireApproval() {
+        Boolean flag = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_SETTLEMENT_REQUIRE_APPROVAL, DEFAULT_SETTLEMENT_REQUIRE_APPROVAL);
+        return flag == null || flag;
+    }
+
+    static String pnlCalcCron() {
+        return io.nop.api.core.config.AppConfig.var(ErpPrjConstants.CONFIG_PNL_CALC_CRON, "");
     }
 }

@@ -25,6 +25,15 @@ public interface ErpPrjErrors {
     String ARG_SUBJECT_CODE = "subjectCode";
     String ARG_SOURCE_BILL_CODE = "sourceBillCode";
 
+    // --- 损益汇总/结算作用域参数键 ---
+    String ARG_PNL_CODE = "pnlCode";
+    String ARG_SETTLEMENT_CODE = "settlementCode";
+    String ARG_SETTLEMENT_ID = "settlementId";
+    String ARG_PERIOD_FROM = "periodFrom";
+    String ARG_PERIOD_TO = "periodTo";
+    String ARG_SETTLEMENT_TYPE = "settlementType";
+    String ARG_ASSET_CARD_CODE = "assetCardCode";
+
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
@@ -86,4 +95,32 @@ public interface ErpPrjErrors {
             "erp.err.prj.report.render-type-invalid",
             "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    // --- 损益汇总（plan 2026-07-07-0305-1 Phase 2） ---
+    ErrorCode ERR_PRJ_PNL_PERIOD_INVALID = ErrorCode.define(
+            "erp.err.prj.pnl.period-invalid",
+            "损益汇总期间非法：periodFrom={periodFrom} 晚于 periodTo={periodTo}",
+            ARG_PERIOD_FROM, ARG_PERIOD_TO);
+    ErrorCode ERR_PRJ_PNL_RECALC_FROZEN = ErrorCode.define(
+            "erp.err.prj.pnl.recalc-frozen",
+            "损益汇总 {pnlCode} 已过账（posted=true），不允许重算",
+            ARG_PNL_CODE);
+
+    // --- 结算单状态机（plan 2026-07-07-0305-1 Phase 3） ---
+    ErrorCode ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.prj.settlement.illegal-status-transition",
+            "结算单 {settlementCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_SETTLEMENT_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_SETTLEMENT_PNL_SNAPSHOT_MISSING = ErrorCode.define(
+            "erp.err.prj.settlement.pnl-snapshot-missing",
+            "项目 {projectId} 无已计算的损益汇总快照，无法创建结算单",
+            ARG_PROJECT_ID);
+    ErrorCode ERR_SETTLEMENT_CAPITALIZATION_FAILED = ErrorCode.define(
+            "erp.err.prj.settlement.capitalization-failed",
+            "结算单 {settlementCode} 转固失败：资产卡片创建异常",
+            ARG_SETTLEMENT_CODE);
+    ErrorCode ERR_SETTLEMENT_SETTLEMENT_TYPE_NOT_CLOSE = ErrorCode.define(
+            "erp.err.prj.settlement.type-not-close",
+            "结算单 {settlementCode} 类型={settlementType}，非 CLOSE 不允许转固",
+            ARG_SETTLEMENT_CODE, ARG_SETTLEMENT_TYPE);
 }

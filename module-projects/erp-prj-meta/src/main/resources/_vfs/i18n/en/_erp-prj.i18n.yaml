@@ -9,6 +9,9 @@ entity:
     ErpPrjCostCollectionLine: Project Cost Collection Line
     ErpPrjMilestone: Project Milestone
     ErpPrjProject: Project
+    ErpPrjProjectPnl: Project PnL
+    ErpPrjProjectSettlement: Project Settlement
+    ErpPrjProjectSettlementLine: Project Settlement Line
     ErpPrjProjectType: Project Type
     ErpPrjProjectUser: Project Member
     ErpPrjTask: Task
@@ -231,6 +234,109 @@ prop:
       milestones: Milestones
       customer: null
       org: null
+    ErpPrjProjectPnl:
+      id: ID
+      code: Code
+      projectId: Project
+      orgId: Organization
+      periodFrom: Period From
+      periodTo: Period To
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      revenueAmount: Revenue
+      costLabor: Cost Labor
+      costMaterial: Cost Material
+      costExpense: Cost Expense
+      costSubcontract: Cost Subcontract
+      totalCost: Total Cost
+      grossProfit: Gross Profit
+      grossMarginPct: Gross Margin %
+      committedCost: Committed Cost
+      budgetAmount: Budget Amount
+      forecastCompleteCost: Forecast Complete Cost
+      calcStatus: Calc Status
+      calcStatus_label: null
+      docStatus: Doc Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      project: Project
+      currency: null
+      org: null
+    ErpPrjProjectSettlement:
+      id: ID
+      code: Code
+      projectId: Project
+      orgId: Organization
+      customerId: Customer
+      businessDate: Business Date
+      settlementType: Settlement Type
+      settlementType_label: null
+      pnlSnapshotId: PnL Snapshot
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      finalRevenue: Final Revenue
+      finalCost: Final Cost
+      finalProfit: Final Profit
+      retentionAmount: Retention Amount
+      retentionDueDate: Retention Due Date
+      transferToAsset: Transfer To Asset
+      assetCardId: Asset Card
+      settlementVoucherCode: Settlement Voucher Code
+      docStatus: Doc Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      approvedBy: Approved By
+      approvedAt: Approved At
+      project: Project
+      customer: Customer
+      pnlSnapshot: PnL Snapshot
+      lines: Lines
+      currency: null
+      org: null
+    ErpPrjProjectSettlementLine:
+      id: ID
+      settlementId: Settlement
+      lineNo: Line No
+      lineType: Line Type
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      subjectId: Subject
+      amount: Amount
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      settlement: Settlement
+      subject: Subject
     ErpPrjProjectType:
       id: ID
       code: Code
@@ -330,6 +436,8 @@ dict:
     erp-prj/task-status: Task Status
     erp-prj/timesheet-status: Timesheet Status
     erp-prj/priority: Priority
+    erp-prj/pnl-calc-status: PnL Calc Status
+    erp-prj/settlement-type: Settlement Type
 dict.option.label:
   erp-prj/project-status:
     DRAFT: Draft
@@ -351,3 +459,10 @@ dict.option.label:
     NORMAL: General
     HIGH: High
     URGENT: Urgent
+  erp-prj/pnl-calc-status:
+    PENDING: Pending
+    CALCULATED: Calculated
+  erp-prj/settlement-type:
+    FINAL: Final
+    INTERIM: Interim
+    CLOSE: Close

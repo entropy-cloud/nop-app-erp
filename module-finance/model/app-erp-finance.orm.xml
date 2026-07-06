@@ -98,6 +98,8 @@
             <option code="NCR_SCRAP" label="NCR报废损失" value="NCR_SCRAP" i18n-en:label='NCR Scrap Loss'/>
             <!-- 成本调整过账（plan 2026-07-05-2352-3）：成本调整 apply→调整凭证，方向相关 借存货/贷成本差异 或相反。 -->
             <option code="COST_ADJUSTMENT" label="成本调整" value="COST_ADJUSTMENT" i18n-en:label='Cost Adjustment'/>
+            <!-- 项目结算转固过账（plan 2026-07-07-0305-1）：项目结算 approve→结转凭证（CLOSE 额外转固），方向相关 借固定资产/贷在建工程或项目成本结转。 -->
+            <option code="PROJECT_SETTLEMENT" label="项目结算" value="PROJECT_SETTLEMENT" i18n-en:label='Project Settlement'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>
