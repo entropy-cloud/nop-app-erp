@@ -1,5 +1,5 @@
 type: page
-title: "销售概览"
+title: "采购概览"
 body:
   - type: form
     name: filterForm
@@ -24,7 +24,7 @@ body:
         label: "刷新"
         icon: "refresh-cw"
         actionType: reload
-        target: "kpiService,trendChart,topNCustomerChart,arOverdueCrud"
+        target: "kpiService,trendChart,topNVendorChart,threeWayMatchCrud,apOverdueCrud"
 
   - type: service
     name: kpiService
@@ -33,14 +33,14 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query($startDate:String,$endDate:String){ ErpSalDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate){ salesAmount orderCount invoiceCount conversionRate arBalance } }"
+        query: "query($startDate:String,$endDate:String){ ErpPurDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate){ purchaseAmount orderCount apBalance onTimeRate } }"
         variables:
           startDate: "${startDate || null}"
           endDate: "${endDate || null}"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
-        const kpi = gql.ErpSalDashboard__getDashboardKpi || {};
+        const kpi = gql.ErpPurDashboard__getDashboardKpi || {};
         return { status: 0, msg: '', data: kpi };
     body:
       - type: grid
@@ -51,9 +51,9 @@ body:
             className: "border rounded p-3"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>本期销售额</div>"
+                tpl: "<div class='text-muted'>本期采购额</div>"
               - type: tpl
-                tpl: "<span class='h3 text-success'>¥${salesAmount | round:2}</span>"
+                tpl: "<span class='h3 text-primary'>¥${purchaseAmount | round:2}</span>"
           - type: wrapper
             className: "border rounded p-3"
             body:
@@ -65,16 +65,16 @@ body:
             className: "border rounded p-3"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>订单→开票转化率</div>"
+                tpl: "<div class='text-muted'>应付余额</div>"
               - type: tpl
-                tpl: "<span class='h3 text-primary'>${conversionRate | round:2}</span>"
+                tpl: "<span class='h3 text-warning'>¥${apBalance | round:2}</span>"
           - type: wrapper
             className: "border rounded p-3"
             body:
               - type: tpl
-                tpl: "<div class='text-muted'>应收余额</div>"
+                tpl: "<div class='text-muted'>到货及时率</div>"
               - type: tpl
-                tpl: "<span class='h3 text-warning'>¥${arBalance | round:2}</span>"
+                tpl: "<span class='h3 text-success'>${onTimeRate | round:2}</span>"
 
   - type: chart
     name: trendChart
@@ -84,65 +84,65 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query($months:Int){ ErpSalDashboard__getDashboardTrend(months:$months){ month salesAmount } }"
+        query: "query($months:Int){ ErpPurDashboard__getDashboardTrend(months:$months){ month purchaseAmount } }"
         variables:
           months: 12
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
-        const rows = gql.ErpSalDashboard__getDashboardTrend || [];
+        const rows = gql.ErpPurDashboard__getDashboardTrend || [];
         return {
           status: 0,
           msg: '',
           data: {
-            title: { text: '销售趋势（近12月）' },
+            title: { text: '采购趋势（近12月）' },
             tooltip: { trigger: 'axis' },
-            legend: { data: ['销售额'] },
+            legend: { data: ['采购额'] },
             xAxis: { type: 'category', data: rows.map(function(r){return r.month;}) },
             yAxis: { type: 'value' },
             series: [
-              { name: '销售额', type: 'line', data: rows.map(function(r){return r.salesAmount;}) }
+              { name: '采购额', type: 'line', data: rows.map(function(r){return r.purchaseAmount;}) }
             ]
           }
         };
 
   - type: chart
-    name: topNCustomerChart
+    name: topNVendorChart
     className: m-3
     api:
       url: /api/GenericApi
       method: post
       dataType: raw
       data:
-        query: "query($limit:Int){ ErpSalDashboard__findCustomerTopN(limit:$limit){ customerId salesAmount } }"
+        query: "query($limit:Int){ ErpPurDashboard__findVendorTopN(limit:$limit){ supplierId purchaseAmount } }"
         variables:
           limit: 10
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
-        const rows = gql.ErpSalDashboard__findCustomerTopN || [];
+        const rows = gql.ErpPurDashboard__findVendorTopN || [];
         return {
           status: 0,
           msg: '',
           data: {
-            title: { text: '客户 TOP10 销售占比' },
+            title: { text: '供应商 TOP10 采购占比' },
             tooltip: { trigger: 'item' },
             legend: { orient: 'vertical', left: 'right' },
             series: [
               {
-                name: '销售额',
+                name: '采购额',
                 type: 'pie',
                 radius: ['40%', '70%'],
-                data: rows.map(function(r){return {name: '客户#' + r.customerId, value: r.salesAmount};})
+                data: rows.map(function(r){return {name: '供应商#' + r.supplierId, value: r.purchaseAmount};})
               }
             ]
           }
         };
 
   - type: crud
-    name: arOverdueCrud
+    name: threeWayMatchCrud
     className: m-3
-    title: "应收超期预警（阈值经 erp-dash.sal-ar-overdue-days / sal-ar-overdue-amount 配置）"
+    title: "三单匹配价格差异预警（阈值经 erp-pur.match-price-tolerance 配置）"
     syncLocation: false
     headerToolbar: []
     footerToolbar: []
@@ -151,15 +151,43 @@ body:
       method: post
       dataType: raw
       data:
-        query: "{ ErpSalDashboard__findArOverdueAlert { partnerId sourceBillCode openAmount ageDays } }"
+        query: "{ ErpPurDashboard__findThreeWayMatchDiffAlert { invoiceId invoiceCode supplierId varianceType } }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
-        const rows = gql.ErpSalDashboard__findArOverdueAlert || [];
+        const rows = gql.ErpPurDashboard__findThreeWayMatchDiffAlert || [];
+        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+    columns:
+      - name: invoiceId
+        label: "发票ID"
+      - name: invoiceCode
+        label: "发票号"
+      - name: supplierId
+        label: "供应商ID"
+      - name: varianceType
+        label: "差异类型"
+
+  - type: crud
+    name: apOverdueCrud
+    className: m-3
+    title: "应付超期预警（阈值经 erp-dash.pur-ap-overdue-days 配置）"
+    syncLocation: false
+    headerToolbar: []
+    footerToolbar: []
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpPurDashboard__findApOverdueAlert { partnerId sourceBillCode openAmount ageDays } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpPurDashboard__findApOverdueAlert || [];
         return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
       - name: partnerId
-        label: "客户ID"
+        label: "供应商ID"
       - name: sourceBillCode
         label: "单据号"
       - name: openAmount

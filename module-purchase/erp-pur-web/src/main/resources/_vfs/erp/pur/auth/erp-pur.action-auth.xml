@@ -81,6 +81,16 @@
                                   url="/erp/pur/pages/ErpPurReturn/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 报表看板 -->
+                <resource id="pur-dashboard" displayName="采购概览" i18n-en:displayName="Purchase Overview"
+                          icon="pie-chart" resourceType="SUBM" orderNo="999">
+                    <children>
+                        <resource id="pur-dashboard-main" app:useCases="UC-PUR-09" displayName="采购概览"
+                                  i18n-en:displayName="Purchase Overview" icon="pie-chart"
+                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  url="/erp/pur/pages/dashboard/main.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

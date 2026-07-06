@@ -1,7 +1,143 @@
 type: page
 title: "财务概览"
 body:
-  - type: alert
-    body: "Finance Overview — 待实现占位页面"
-    level: info
+  - type: form
+    name: filterForm
+    title: ""
+    mode: inline
+    wrapWithPanel: false
     className: m-3
+    body:
+      - type: input-number
+        name: periodId
+        label: "会计期间ID"
+        placeholder: "留空=全部期间"
+        clearable: true
+      - type: button
+        label: "刷新"
+        icon: "refresh-cw"
+        actionType: reload
+        target: "kpiService,trendChart,cashFlowCrud"
+
+  - type: service
+    name: kpiService
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "query($periodId:Long){ ErpFinDashboard__getDashboardKpi(periodId:$periodId){ revenue expense netProfit bankBalance arBalance apBalance } }"
+        variables:
+          periodId: "${periodId || null}"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const kpi = gql.ErpFinDashboard__getDashboardKpi || {};
+        return { status: 0, msg: '', data: kpi };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>本期收入</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-success'>¥${revenue | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>本期支出</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-danger'>¥${expense | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>本期净利润</div>"
+              - type: tpl
+                tpl: "<span class='h3 font-bold'>¥${netProfit | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>银行存款余额</div>"
+              - type: tpl
+                tpl: "<span class='h3'>¥${bankBalance | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>应收余额</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-primary'>¥${arBalance | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>应付余额</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-warning'>¥${apBalance | round:2}</span>"
+
+  - type: chart
+    name: trendChart
+    className: m-3
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "query($months:Int){ ErpFinDashboard__getDashboardTrend(months:$months){ month revenue expense netProfit } }"
+        variables:
+          months: 12
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpFinDashboard__getDashboardTrend || [];
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            title: { text: '收支与利润趋势（近12月）' },
+            tooltip: { trigger: 'axis' },
+            legend: { data: ['收入', '支出', '净利润'] },
+            xAxis: { type: 'category', data: rows.map(function(r){return r.month;}) },
+            yAxis: { type: 'value' },
+            series: [
+              { name: '收入', type: 'line', data: rows.map(function(r){return r.revenue;}) },
+              { name: '支出', type: 'line', data: rows.map(function(r){return r.expense;}) },
+              { name: '净利润', type: 'line', data: rows.map(function(r){return r.netProfit;}) }
+            ]
+          }
+        };
+
+  - type: crud
+    name: cashFlowCrud
+    className: m-3
+    title: "现金流预警"
+    syncLocation: false
+    headerToolbar: []
+    footerToolbar: []
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpFinDashboard__findCashFlowAlert { alertType bankBalance threshold shortfall } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpFinDashboard__findCashFlowAlert || [];
+        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+    columns:
+      - name: alertType
+        label: "预警类型"
+      - name: bankBalance
+        label: "银行余额"
+      - name: threshold
+        label: "阈值"
+      - name: shortfall
+        label: "缺口"

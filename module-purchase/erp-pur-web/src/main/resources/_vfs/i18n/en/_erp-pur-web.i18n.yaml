@@ -30,3 +30,7 @@ site:
       displayName: Return
     erp-pur-sourcing:
       displayName: Sourcing
+    pur-dashboard:
+      displayName: Purchase Overview
+    pur-dashboard-main:
+      displayName: Purchase Overview
