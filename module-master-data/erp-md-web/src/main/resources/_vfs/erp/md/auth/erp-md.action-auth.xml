@@ -127,6 +127,20 @@
                                   url="/erp/md/pages/ErpMdEmployee/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 主数据报表 -->
+                <resource id="md-report" displayName="主数据报表" i18n-en:displayName="Master Data Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="800">
+                    <children>
+                        <resource id="material-price-list" app:useCases="UC-MD-06,UC-MD-07" displayName="物料价格清单"
+                                  i18n-en:displayName="Material Price List" icon="dollar-sign"
+                                  component="AMIS" resourceType="SUBM" orderNo="8010"
+                                  url="/erp/md/pages/report/material-price-list.page.yaml"/>
+                        <resource id="partner-list" app:useCases="UC-MD-07" displayName="往来单位清单"
+                                  i18n-en:displayName="Partner List" icon="users"
+                                  component="AMIS" resourceType="SUBM" orderNo="8020"
+                                  url="/erp/md/pages/report/partner-list.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="md-dashboard" displayName="主数据概览" i18n-en:displayName="Master Data Overview"
                           icon="layout-dashboard" resourceType="SUBM" orderNo="999">

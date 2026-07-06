@@ -1,0 +1,50 @@
+type: page
+title: "NCR-CAPA 统计表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-date
+        name: startDate
+        label: "开始日期"
+      - type: input-date
+        name: endDate
+        label: "结束日期"
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$startDate:String,$endDate:String){ ErpQaReport__renderHtml(reportName:$reportName,data:{startDate:$startDate,endDate:$endDate}) }"
+            variables: { reportName: "ncr-capa-summary", startDate: "${startDate}", endDate: "${endDate}" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$startDate:String,$endDate:String){ ErpQaReport__download(reportName:$reportName,renderType:$renderType,data:{startDate:$startDate,endDate:$endDate}){ fileName } }"
+                variables: { reportName: "ncr-capa-summary", renderType: "xlsx", startDate: "${startDate}", endDate: "${endDate}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$startDate:String,$endDate:String){ ErpQaReport__download(reportName:$reportName,renderType:$renderType,data:{startDate:$startDate,endDate:$endDate}){ fileName } }"
+                variables: { reportName: "ncr-capa-summary", renderType: "pdf", startDate: "${startDate}", endDate: "${endDate}" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

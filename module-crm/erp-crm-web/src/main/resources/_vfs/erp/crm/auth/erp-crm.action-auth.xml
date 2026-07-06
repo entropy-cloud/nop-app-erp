@@ -122,6 +122,20 @@
                                   url="/erp/crm/pages/ErpCrmTeam/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- CRM 报表 -->
+                <resource id="crm-report" displayName="CRM 报表" i18n-en:displayName="CRM Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="1000">
+                    <children>
+                        <resource id="lead-conversion-funnel" app:useCases="UC-CRM-06,UC-CRM-15" displayName="线索转化漏斗表"
+                                  i18n-en:displayName="Lead Conversion Funnel" icon="filter"
+                                  component="AMIS" resourceType="SUBM" orderNo="10010"
+                                  url="/erp/crm/pages/report/lead-conversion-funnel.page.yaml"/>
+                        <resource id="forecast-accuracy" app:useCases="UC-CRM-10" displayName="销售预测准确率表"
+                                  i18n-en:displayName="Forecast Accuracy" icon="trending-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="10020"
+                                  url="/erp/crm/pages/report/forecast-accuracy.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

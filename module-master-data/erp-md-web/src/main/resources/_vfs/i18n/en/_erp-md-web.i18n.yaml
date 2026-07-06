@@ -44,6 +44,8 @@ site:
       displayName: Cost Center
     erp-md:
       displayName: Master Data
+    material-price-list:
+      displayName: Material Price List
     md-account:
       displayName: Accounting Subject
     md-cost-center:
@@ -60,5 +62,9 @@ site:
       displayName: Warehouse & Org
     md-partner:
       displayName: Business Partner
+    md-report:
+      displayName: Master Data Reports
     md-uom:
       displayName: UoM & Pricing
+    partner-list:
+      displayName: Partner List

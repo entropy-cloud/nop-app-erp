@@ -20,6 +20,10 @@ site:
       displayName: Sampling Plan
     erp-qa:
       displayName: Quality
+    inspection-summary:
+      displayName: Inspection Summary
+    ncr-capa-summary:
+      displayName: NCR-CAPA Summary
     ncr-disposal:
       displayName: NCR Disposal
     qa-capa:
@@ -34,6 +38,8 @@ site:
       displayName: Inspection
     qa-ncr:
       displayName: Non-Conformance
+    qa-report:
+      displayName: Quality Reports
     qa-spc:
       displayName: SPC
     qa-standard:

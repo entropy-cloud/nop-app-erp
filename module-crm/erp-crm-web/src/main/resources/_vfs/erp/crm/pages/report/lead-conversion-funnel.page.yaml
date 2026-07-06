@@ -1,0 +1,44 @@
+type: page
+title: "线索转化漏斗表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!){ ErpCrmReport__renderHtml(reportName:$reportName,data:{}) }"
+            variables: { reportName: "lead-conversion-funnel" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!){ ErpCrmReport__download(reportName:$reportName,renderType:$renderType,data:{}){ fileName } }"
+                variables: { reportName: "lead-conversion-funnel", renderType: "xlsx" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!){ ErpCrmReport__download(reportName:$reportName,renderType:$renderType,data:{}){ fileName } }"
+                variables: { reportName: "lead-conversion-funnel", renderType: "pdf" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

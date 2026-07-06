@@ -89,6 +89,20 @@
                                   url="/erp/ast/pages/asset-stocktake/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 资产报表 -->
+                <resource id="ast-report" displayName="资产报表" i18n-en:displayName="Assets Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="asset-depreciation-detail" app:useCases="UC-AST-02,UC-AST-07,UC-AST-12" displayName="资产折旧明细表"
+                                  i18n-en:displayName="Asset Depreciation Detail" icon="trending-down"
+                                  component="AMIS" resourceType="SUBM" orderNo="7010"
+                                  url="/erp/ast/pages/report/asset-depreciation-detail.page.yaml"/>
+                        <resource id="asset-disposal-detail" app:useCases="UC-AST-04,UC-AST-12" displayName="资产处置明细表"
+                                  i18n-en:displayName="Asset Disposal Detail" icon="trash-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="7020"
+                                  url="/erp/ast/pages/report/asset-disposal-detail.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="ast-dashboard" displayName="资产概览" i18n-en:displayName="Assets Overview"
                           icon="truck" resourceType="SUBM" orderNo="999">

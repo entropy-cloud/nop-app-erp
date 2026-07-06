@@ -20,6 +20,10 @@ site:
       displayName: Asset Split
     ErpAstValueAdjustment-main:
       displayName: Asset Value Adjustment
+    asset-depreciation-detail:
+      displayName: Asset Depreciation Detail
+    asset-disposal-detail:
+      displayName: Asset Disposal Detail
     asset-repair:
       displayName: Asset Repair
     asset-stocktake:
@@ -36,6 +40,8 @@ site:
       displayName: Asset Ledger
     ast-movement:
       displayName: Asset Movement
+    ast-report:
+      displayName: Assets Reports
     ast-stocktake:
       displayName: Asset Stocktake
     erp-ast:

@@ -1,0 +1,48 @@
+type: page
+title: "工单 SLA/CSAT 综合统计表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-text
+        name: ticketType
+        label: "工单类型"
+        placeholder: "按工单类型过滤（留空查全部）"
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$ticketType:String){ ErpCsReport__renderHtml(reportName:$reportName,data:{ticketType:$ticketType}) }"
+            variables: { reportName: "ticket-sla-csat-summary", ticketType: "${ticketType}" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$ticketType:String){ ErpCsReport__download(reportName:$reportName,renderType:$renderType,data:{ticketType:$ticketType}){ fileName } }"
+                variables: { reportName: "ticket-sla-csat-summary", renderType: "xlsx", ticketType: "${ticketType}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$ticketType:String){ ErpCsReport__download(reportName:$reportName,renderType:$renderType,data:{ticketType:$ticketType}){ fileName } }"
+                variables: { reportName: "ticket-sla-csat-summary", renderType: "pdf", ticketType: "${ticketType}" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

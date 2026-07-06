@@ -1,0 +1,54 @@
+type: page
+title: "质检合格率统计表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-number
+        name: materialId
+        label: "物料ID"
+        placeholder: "留空查询全部物料"
+      - type: input-date
+        name: startDate
+        label: "开始日期"
+      - type: input-date
+        name: endDate
+        label: "结束日期"
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$materialId:BigDecimal,$startDate:String,$endDate:String){ ErpQaReport__renderHtml(reportName:$reportName,data:{materialId:$materialId,startDate:$startDate,endDate:$endDate}) }"
+            variables: { reportName: "inspection-summary", materialId: "${materialId}", startDate: "${startDate}", endDate: "${endDate}" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$materialId:BigDecimal,$startDate:String,$endDate:String){ ErpQaReport__download(reportName:$reportName,renderType:$renderType,data:{materialId:$materialId,startDate:$startDate,endDate:$endDate}){ fileName } }"
+                variables: { reportName: "inspection-summary", renderType: "xlsx", materialId: "${materialId}", startDate: "${startDate}", endDate: "${endDate}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$materialId:BigDecimal,$startDate:String,$endDate:String){ ErpQaReport__download(reportName:$reportName,renderType:$renderType,data:{materialId:$materialId,startDate:$startDate,endDate:$endDate}){ fileName } }"
+                variables: { reportName: "inspection-summary", renderType: "pdf", materialId: "${materialId}", startDate: "${startDate}", endDate: "${endDate}" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

@@ -1,0 +1,54 @@
+type: page
+title: "项目成本汇总表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-number
+        name: projectId
+        label: "项目ID"
+        placeholder: "留空查询全部项目"
+      - type: input-date
+        name: startDate
+        label: "开始日期"
+      - type: input-date
+        name: endDate
+        label: "结束日期"
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$projectId:BigDecimal,$startDate:String,$endDate:String){ ErpPrjReport__renderHtml(reportName:$reportName,data:{projectId:$projectId,startDate:$startDate,endDate:$endDate}) }"
+            variables: { reportName: "project-cost-summary", projectId: "${projectId}", startDate: "${startDate}", endDate: "${endDate}" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$projectId:BigDecimal,$startDate:String,$endDate:String){ ErpPrjReport__download(reportName:$reportName,renderType:$renderType,data:{projectId:$projectId,startDate:$startDate,endDate:$endDate}){ fileName } }"
+                variables: { reportName: "project-cost-summary", renderType: "xlsx", projectId: "${projectId}", startDate: "${startDate}", endDate: "${endDate}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$projectId:BigDecimal,$startDate:String,$endDate:String){ ErpPrjReport__download(reportName:$reportName,renderType:$renderType,data:{projectId:$projectId,startDate:$startDate,endDate:$endDate}){ fileName } }"
+                variables: { reportName: "project-cost-summary", renderType: "pdf", projectId: "${projectId}", startDate: "${startDate}", endDate: "${endDate}" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

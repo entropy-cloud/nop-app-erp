@@ -18,14 +18,20 @@ site:
       displayName: Spare Part Usage
     ErpMntVisit-main:
       displayName: Maintenance Visit
+    downtime-summary:
+      displayName: Downtime Summary
     erp-mnt:
       displayName: Maintenance
+    maintenance-history:
+      displayName: Maintenance History
     mnt-dashboard:
       displayName: Maintenance Overview
     mnt-dashboard-main:
       displayName: Maintenance Overview
     mnt-equipment:
       displayName: Equipment
+    mnt-report:
+      displayName: Maintenance Reports
     mnt-schedule:
       displayName: Schedule
     mnt-spare:

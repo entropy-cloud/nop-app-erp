@@ -81,6 +81,20 @@
                                   url="/erp/qa/pages/ErpQaCalibration/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 质量报表 -->
+                <resource id="qa-report" displayName="质量报表" i18n-en:displayName="Quality Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="inspection-summary" app:useCases="UC-QA-01,UC-QA-03,UC-QA-12" displayName="质检合格率统计表"
+                                  i18n-en:displayName="Inspection Summary" icon="clipboard-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="6010"
+                                  url="/erp/qa/pages/report/inspection-summary.page.yaml"/>
+                        <resource id="ncr-capa-summary" app:useCases="UC-QA-05,UC-QA-09,UC-QA-12" displayName="NCR-CAPA 统计表"
+                                  i18n-en:displayName="NCR-CAPA Summary" icon="shield-alert"
+                                  component="AMIS" resourceType="SUBM" orderNo="6020"
+                                  url="/erp/qa/pages/report/ncr-capa-summary.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="qa-dashboard" displayName="质量概览" i18n-en:displayName="Quality Overview"
                           icon="bar-chart-3" resourceType="SUBM" orderNo="999">

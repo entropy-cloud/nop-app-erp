@@ -52,7 +52,13 @@ site:
       displayName: Lead Analytics
     crm-lead:
       displayName: Leads & Opportunities
+    crm-report:
+      displayName: CRM Reports
     crm-sequence:
       displayName: Sales Sequence
     erp-crm:
       displayName: Customer Relationship
+    forecast-accuracy:
+      displayName: Forecast Accuracy
+    lead-conversion-funnel:
+      displayName: Lead Conversion Funnel

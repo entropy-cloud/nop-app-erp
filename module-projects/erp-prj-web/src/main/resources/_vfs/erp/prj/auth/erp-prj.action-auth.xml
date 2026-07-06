@@ -81,6 +81,20 @@
                                   url="/erp/prj/pages/ErpPrjBilling/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 项目报表 -->
+                <resource id="prj-report" displayName="项目报表" i18n-en:displayName="Projects Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="project-cost-summary" app:useCases="UC-PRJ-03,UC-PRJ-06,UC-PRJ-10" displayName="项目成本汇总表"
+                                  i18n-en:displayName="Project Cost Summary" icon="coins"
+                                  component="AMIS" resourceType="SUBM" orderNo="6010"
+                                  url="/erp/prj/pages/report/project-cost-summary.page.yaml"/>
+                        <resource id="timesheet-detail" app:useCases="UC-PRJ-02,UC-PRJ-10" displayName="工时明细表"
+                                  i18n-en:displayName="Timesheet Detail" icon="clock"
+                                  component="AMIS" resourceType="SUBM" orderNo="6020"
+                                  url="/erp/prj/pages/report/timesheet-detail.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="prj-dashboard" displayName="项目概览" i18n-en:displayName="Projects Overview"
                           icon="kanban" resourceType="SUBM" orderNo="999">

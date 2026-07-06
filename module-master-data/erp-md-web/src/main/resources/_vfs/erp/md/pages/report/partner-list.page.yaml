@@ -1,0 +1,48 @@
+type: page
+title: "往来单位清单"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-text
+        name: partnerType
+        label: "往来单位类型"
+        placeholder: "CUSTOMER=客户 / SUPPLIER=供应商（留空查全部）"
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$partnerType:String){ ErpMdReport__renderHtml(reportName:$reportName,data:{partnerType:$partnerType}) }"
+            variables: { reportName: "partner-list", partnerType: "${partnerType}" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$partnerType:String){ ErpMdReport__download(reportName:$reportName,renderType:$renderType,data:{partnerType:$partnerType}){ fileName } }"
+                variables: { reportName: "partner-list", renderType: "xlsx", partnerType: "${partnerType}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$partnerType:String){ ErpMdReport__download(reportName:$reportName,renderType:$renderType,data:{partnerType:$partnerType}){ fileName } }"
+                variables: { reportName: "partner-list", renderType: "pdf", partnerType: "${partnerType}" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

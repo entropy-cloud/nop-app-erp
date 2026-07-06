@@ -77,6 +77,20 @@
                                   url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 维护报表 -->
+                <resource id="mnt-report" displayName="维护报表" i18n-en:displayName="Maintenance Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="600">
+                    <children>
+                        <resource id="maintenance-history" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-11" displayName="维护历史表"
+                                  i18n-en:displayName="Maintenance History" icon="clipboard-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="6010"
+                                  url="/erp/mnt/pages/report/maintenance-history.page.yaml"/>
+                        <resource id="downtime-summary" app:useCases="UC-MAIN-06,UC-MAIN-10,UC-MAIN-11" displayName="停机统计表"
+                                  i18n-en:displayName="Downtime Summary" icon="timer-off"
+                                  component="AMIS" resourceType="SUBM" orderNo="6020"
+                                  url="/erp/mnt/pages/report/downtime-summary.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="mnt-dashboard" displayName="维护概览" i18n-en:displayName="Maintenance Overview"
                           icon="gauge" resourceType="SUBM" orderNo="999">

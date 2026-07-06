@@ -36,9 +36,15 @@ site:
       displayName: Profitability
     prj-project:
       displayName: Project
+    prj-report:
+      displayName: Projects Reports
     prj-task:
       displayName: Task & Timesheet
+    project-cost-summary:
+      displayName: Project Cost Summary
     project-pnl:
       displayName: Project P&L
     project-settlement:
       displayName: Project Settlement
+    timesheet-detail:
+      displayName: Timesheet Detail

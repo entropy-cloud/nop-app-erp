@@ -38,6 +38,8 @@ site:
       displayName: Configuration
     cs-entitlement:
       displayName: Entitlements
+    cs-report:
+      displayName: Customer Service Reports
     cs-service-catalog:
       displayName: Service Catalog
     cs-survey:
@@ -48,3 +50,5 @@ site:
       displayName: Time Tracking
     erp-cs:
       displayName: Customer Service
+    ticket-sla-csat-summary:
+      displayName: Ticket SLA/CSAT Summary

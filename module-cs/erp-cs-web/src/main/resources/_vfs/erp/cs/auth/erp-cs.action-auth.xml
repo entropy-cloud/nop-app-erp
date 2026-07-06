@@ -105,6 +105,16 @@
                                   url="/erp/cs/pages/ErpCsKnowledgeBase/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 客服报表 -->
+                <resource id="cs-report" displayName="客服报表" i18n-en:displayName="Customer Service Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="1000">
+                    <children>
+                        <resource id="ticket-sla-csat-summary" app:useCases="UC-CS-04,UC-CS-08" displayName="工单 SLA/CSAT 综合统计表"
+                                  i18n-en:displayName="Ticket SLA/CSAT Summary" icon="bar-chart-3"
+                                  component="AMIS" resourceType="SUBM" orderNo="10010"
+                                  url="/erp/cs/pages/report/ticket-sla-csat-summary.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>
