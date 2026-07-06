@@ -52,7 +52,9 @@ public enum ErpFinBusinessType {
     PRODUCTION_VARIANCE(400),
     NCR_SCRAP(410),
     COST_ADJUSTMENT(420),
-    PROJECT_SETTLEMENT(430);
+    PROJECT_SETTLEMENT(430),
+    ASSET_SPLIT(440),
+    ASSET_MERGE(450);
 
     private final int code;
 

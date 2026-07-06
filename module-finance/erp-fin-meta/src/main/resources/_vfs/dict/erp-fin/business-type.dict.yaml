@@ -173,3 +173,11 @@ options:
     value: PROJECT_SETTLEMENT
     description: 
   
+  - label: 资产拆分
+    value: ASSET_SPLIT
+    description: 
+  
+  - label: 资产合并
+    value: ASSET_MERGE
+    description: 
+  

@@ -35,6 +35,10 @@ alter table erp_ast_cip_cost_item add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT 
 
 alter table erp_ast_cip_progress_billing add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_ast_split_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_merge_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_organization drop constraint PK_erp_md_organization;
 alter table erp_md_organization add constraint PK_erp_md_organization primary key (NOP_TENANT_ID, id);
 
@@ -88,5 +92,11 @@ alter table erp_ast_cip_cost_item add constraint PK_erp_ast_cip_cost_item primar
 
 alter table erp_ast_cip_progress_billing drop constraint PK_erp_ast_cip_progress_billing;
 alter table erp_ast_cip_progress_billing add constraint PK_erp_ast_cip_progress_billing primary key (NOP_TENANT_ID, id);
+
+alter table erp_ast_split_line drop constraint PK_erp_ast_split_line;
+alter table erp_ast_split_line add constraint PK_erp_ast_split_line primary key (NOP_TENANT_ID, id);
+
+alter table erp_ast_merge_line drop constraint PK_erp_ast_merge_line;
+alter table erp_ast_merge_line add constraint PK_erp_ast_merge_line primary key (NOP_TENANT_ID, id);
 
 

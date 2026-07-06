@@ -100,6 +100,10 @@
             <option code="COST_ADJUSTMENT" label="成本调整" value="COST_ADJUSTMENT" i18n-en:label='Cost Adjustment'/>
             <!-- 项目结算转固过账（plan 2026-07-07-0305-1）：项目结算 approve→结转凭证（CLOSE 额外转固），方向相关 借固定资产/贷在建工程或项目成本结转。 -->
             <option code="PROJECT_SETTLEMENT" label="项目结算" value="PROJECT_SETTLEMENT" i18n-en:label='Project Settlement'/>
+            <!-- 资产拆分过账（plan 2026-07-07-0930-2）：拆分 approve→Dr 固定资产-新卡片合计 / Cr 固定资产-源卡片原值。 -->
+            <option code="ASSET_SPLIT" label="资产拆分" value="ASSET_SPLIT" i18n-en:label='Asset Split'/>
+            <!-- 资产合并过账（plan 2026-07-07-0930-2）：合并 approve→Dr 固定资产-新卡片合计 / Cr 固定资产-各源卡片合计。 -->
+            <option code="ASSET_MERGE" label="资产合并" value="ASSET_MERGE" i18n-en:label='Asset Merge'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>

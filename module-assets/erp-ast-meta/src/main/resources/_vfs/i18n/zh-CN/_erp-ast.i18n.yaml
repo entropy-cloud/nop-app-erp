@@ -9,8 +9,10 @@ entity:
     ErpAstDepreciationSchedule: 折旧计划
     ErpAstDisposal: 资产处置
     ErpAstMerge: 资产合并单
+    ErpAstMergeLine: 资产合并行
     ErpAstMovement: 资产移动
     ErpAstSplit: 资产拆分单
+    ErpAstSplitLine: 资产拆分行
     ErpAstValueAdjustment: 资产价值调整
 prop:
   label:
@@ -290,6 +292,26 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpAstMergeLine:
+      accumulatedDepreciationAmount: 累计折旧金额
+      contributionProportion: 贡献比例
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      merge: null
+      mergeId: 合并单
+      netBookValue: 账面净值
+      org: null
+      orgId: 所属组织
+      originalCostAmount: 原值金额
+      remark: 备注
+      sourceAsset: null
+      sourceAssetId: 源资产
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpAstMovement:
       amountFunctional: 本位币金额
       amountSource: 源币种金额
@@ -363,6 +385,32 @@ prop:
       sourceAsset: null
       sourceAssetId: 被拆分资产
       splitReason: 拆分原因
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpAstSplitLine:
+      accumulatedDepreciationAmount: 累计折旧金额
+      allocationMethod: 分摊方式
+      allocationMethod_label: 分摊方式
+      category: null
+      categoryId: 目标资产类别
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      netBookValue: 账面净值
+      org: null
+      orgId: 所属组织
+      originalCostAmount: 原值金额
+      proportion: 比例
+      remark: 备注
+      split: null
+      splitId: 拆分单
+      targetAsset: null
+      targetAssetCode: 目标资产编码
+      targetAssetId: 目标资产
+      targetAssetName: 目标资产名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

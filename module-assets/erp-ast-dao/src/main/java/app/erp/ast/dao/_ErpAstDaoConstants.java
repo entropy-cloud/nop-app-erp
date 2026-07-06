@@ -29,6 +29,21 @@ public interface _ErpAstDaoConstants {
     String ASSET_STATUS_SOLD = "SOLD";
                     
     /**
+     * 资产状态: 已内部处置 
+     */
+    String ASSET_STATUS_DISPOSED = "DISPOSED";
+                    
+    /**
+     * 拆分分摊方式: 按比例 
+     */
+    String ALLOCATION_METHOD_PROPORTIONAL = "PROPORTIONAL";
+                    
+    /**
+     * 拆分分摊方式: 按固定金额 
+     */
+    String ALLOCATION_METHOD_FIXED_AMOUNT = "FIXED_AMOUNT";
+                    
+    /**
      * 折旧方法: 直线法 
      */
     String DEPRECIATION_METHOD_STRAIGHT_LINE = "STRAIGHT_LINE";

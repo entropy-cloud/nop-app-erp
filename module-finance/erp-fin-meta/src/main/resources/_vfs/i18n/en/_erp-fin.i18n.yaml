@@ -861,6 +861,8 @@ dict.option.label:
     NCR_SCRAP: NCR Scrap Loss
     COST_ADJUSTMENT: Cost Adjustment
     PROJECT_SETTLEMENT: Project Settlement
+    ASSET_SPLIT: Asset Split
+    ASSET_MERGE: Asset Merge
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

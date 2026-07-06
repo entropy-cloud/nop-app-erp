@@ -28,7 +28,7 @@
                 <col id="orgId" ui:number="true" sortable="true"/>
 
                 <!--合并目标资产-->
-                <col id="targetAssetId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="targetAssetId" ui:number="true" sortable="true"/>
 
                 <!--合并日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>

@@ -25,3 +25,7 @@ options:
     value: SOLD
     description: 
   
+  - label: 已内部处置
+    value: DISPOSED
+    description: 
+  

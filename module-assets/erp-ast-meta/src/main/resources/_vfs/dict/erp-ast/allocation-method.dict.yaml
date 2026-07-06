@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 拆分分摊方式
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 按比例
+    value: PROPORTIONAL
+    description: 
+  
+  - label: 按固定金额
+    value: FIXED_AMOUNT
+    description: 
+  

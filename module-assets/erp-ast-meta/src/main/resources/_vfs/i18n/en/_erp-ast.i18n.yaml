@@ -9,8 +9,10 @@ entity:
     ErpAstDepreciationSchedule: Depreciation Schedule
     ErpAstDisposal: Asset Disposal
     ErpAstMerge: Asset Merge
+    ErpAstMergeLine: Asset Merge Line
     ErpAstMovement: Asset Movement
     ErpAstSplit: Asset Split
+    ErpAstSplitLine: Asset Split Line
     ErpAstValueAdjustment: Asset Value Adjustment
 prop:
   label:
@@ -290,6 +292,26 @@ prop:
       targetAsset: Target Asset
       org: Org
       currency: Currency
+    ErpAstMergeLine:
+      id: ID
+      mergeId: Merge
+      orgId: Organization
+      lineNo: Line No
+      sourceAssetId: Source Asset
+      contributionProportion: Contribution Proportion
+      originalCostAmount: Original Cost Amount
+      accumulatedDepreciationAmount: Accumulated Depreciation Amount
+      netBookValue: Net Book Value
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      merge: Merge
+      org: Org
+      sourceAsset: Source Asset
     ErpAstMovement:
       id: ID
       code: Code
@@ -366,6 +388,32 @@ prop:
       sourceAsset: Source Asset
       org: Org
       currency: Currency
+    ErpAstSplitLine:
+      id: ID
+      splitId: Split
+      orgId: Organization
+      lineNo: Line No
+      targetAssetCode: Target Asset Code
+      targetAssetName: Target Asset Name
+      categoryId: Category
+      allocationMethod: Allocation Method
+      allocationMethod_label: null
+      proportion: Proportion
+      originalCostAmount: Original Cost Amount
+      accumulatedDepreciationAmount: Accumulated Depreciation Amount
+      netBookValue: Net Book Value
+      targetAssetId: Target Asset
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      split: Split
+      org: Org
+      category: Category
+      targetAsset: Target Asset
     ErpAstValueAdjustment:
       id: ID
       code: Code
@@ -402,6 +450,7 @@ prop:
 dict:
   label:
     erp-ast/asset-status: Asset Status
+    erp-ast/allocation-method: Allocation Method
     erp-ast/depreciation-method: Depreciation Method
     erp-ast/depreciation-schedule-status: Depreciation Schedule Status
     erp-ast/adjustment-type: Adjustment Type
@@ -419,6 +468,10 @@ dict.option.label:
     IDLE: Idle
     SCRAPPED: Scrapped
     SOLD: Sold
+    DISPOSED: Disposed
+  erp-ast/allocation-method:
+    PROPORTIONAL: Proportional
+    FIXED_AMOUNT: Fixed Amount
   erp-ast/depreciation-method:
     STRAIGHT_LINE: Straight-Line
     DECLINING: Double Declining Balance

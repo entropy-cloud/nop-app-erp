@@ -22,6 +22,16 @@ public interface ErpAstConstants {
     /** 减值/重估是否强制审批（默认 true）。 */
     String CONFIG_VALUE_ADJUSTMENT_REQUIRE_APPROVAL = "erp-ast.value-adjustment-require-approval";
 
+    // ---- 拆分/合并 配置项（split-merge.md §配置 + plan 0930-2） ----
+    /** 拆分价值舍入策略：DOWN_UP（最大项补差，默认）/ ROUND_ALL（全部四舍五入）。 */
+    String CONFIG_SPLIT_ROUNDING_MODE = "erp-ast.split-rounding-mode";
+    /** 合并折旧方法继承：WEIGHTED（按净值加权，默认）/ MAX（取最大价值项）。 */
+    String CONFIG_MERGE_DEPRECIATION_INHERIT = "erp-ast.merge-depreciation-inherit";
+    /** 拆分/合并是否强制审批（默认 true）。 */
+    String CONFIG_SPLIT_MERGE_REQUIRE_APPROVAL = "erp-ast.split-merge-require-approval";
+    /** 拆分/合并是否允许跨资产类别（默认 false，本期 Non-Goal 锁定）。 */
+    String CONFIG_SPLIT_MERGE_ALLOW_CROSS_CATEGORY = "erp-ast.split-merge-allow-cross-category";
+
     // ---- CIP 配置项（cip.md §配置 + plan 0930-1） ----
     /** 利息资本化是否启用（默认 false；自动计提引擎落地前关闭，避免业务方误用）。 */
     String CONFIG_CIP_INTEREST_CAPITALIZATION_ENABLED = "erp-ast.cip-interest-capitalization-enabled";
@@ -36,6 +46,20 @@ public interface ErpAstConstants {
     String ASSET_STATUS_IDLE = "IDLE";
     String ASSET_STATUS_SCRAPPED = "SCRAPPED";
     String ASSET_STATUS_SOLD = "SOLD";
+    /** 已内部处置：拆分/合并处置后账面净值归零的终态（与 SCRAPPED/SOLD 对外有损处置相对）。 */
+    String ASSET_STATUS_DISPOSED = "DISPOSED";
+
+    // ---- allocation-method（拆分分摊方式） ----
+    String ALLOCATION_METHOD_PROPORTIONAL = "PROPORTIONAL";
+    String ALLOCATION_METHOD_FIXED_AMOUNT = "FIXED_AMOUNT";
+
+    // ---- 拆分/合并舍入策略 ----
+    String SPLIT_ROUNDING_MODE_DOWN_UP = "DOWN_UP";
+    String SPLIT_ROUNDING_MODE_ROUND_ALL = "ROUND_ALL";
+
+    // ---- 合并折旧方法继承 ----
+    String MERGE_DEPRECIATION_INHERIT_WEIGHTED = "WEIGHTED";
+    String MERGE_DEPRECIATION_INHERIT_MAX = "MAX";
 
     // ---- depreciation-method ----
     String DEPRECIATION_METHOD_STRAIGHT_LINE = "STRAIGHT_LINE";
@@ -119,4 +143,18 @@ public interface ErpAstConstants {
     String BILL_DATA_IMPAIRMENT_PROVISION_SUBJECT_CODE = "IMPAIRMENT_PROVISION_SUBJECT_CODE";
     /** 资本公积科目编码（贷方，重估增值）。 */
     String BILL_DATA_CAPITAL_RESERVE_SUBJECT_CODE = "CAPITAL_RESERVE_SUBJECT_CODE";
+
+    // ---- PostingEvent.billData 键（拆分/合并过账专用） ----
+    /** 借方明细行列表（每行 {subjectCode, subjectName, amount, memo}）。 */
+    String BILL_DATA_DEBIT_LINES = "DEBIT_LINES";
+    /** 贷方明细行列表（每行 {subjectCode, subjectName, amount, memo}）。 */
+    String BILL_DATA_CREDIT_LINES = "CREDIT_LINES";
+    /** 行内科目编码键。 */
+    String BILL_DATA_LINE_SUBJECT_CODE = "subjectCode";
+    /** 行内科目名称键。 */
+    String BILL_DATA_LINE_SUBJECT_NAME = "subjectName";
+    /** 行内金额键。 */
+    String BILL_DATA_LINE_AMOUNT = "amount";
+    /** 行内摘要键。 */
+    String BILL_DATA_LINE_MEMO = "memo";
 }

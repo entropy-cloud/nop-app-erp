@@ -279,6 +279,16 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_PROJECT_SETTLEMENT = "PROJECT_SETTLEMENT";
                     
     /**
+     * 业务类型: 资产拆分 
+     */
+    String BUSINESS_TYPE_ASSET_SPLIT = "ASSET_SPLIT";
+                    
+    /**
+     * 业务类型: 资产合并 
+     */
+    String BUSINESS_TYPE_ASSET_MERGE = "ASSET_MERGE";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

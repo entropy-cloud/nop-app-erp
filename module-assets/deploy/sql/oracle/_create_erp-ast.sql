@@ -332,7 +332,7 @@ CREATE TABLE erp_ast_merge(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
   ORG_ID NUMBER(20)  ,
-  TARGET_ASSET_ID NUMBER(20) NOT NULL ,
+  TARGET_ASSET_ID NUMBER(20)  ,
   BUSINESS_DATE DATE NOT NULL ,
   CURRENCY_ID NUMBER(20)  ,
   MERGE_REASON VARCHAR2(500)  ,
@@ -402,6 +402,50 @@ CREATE TABLE erp_ast_cip_progress_billing(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
   constraint PK_erp_ast_cip_progress_billing primary key (ID)
+);
+
+CREATE TABLE erp_ast_split_line(
+  ID NUMBER(20) NOT NULL ,
+  SPLIT_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  LINE_NO INTEGER  ,
+  TARGET_ASSET_CODE VARCHAR2(50) NOT NULL ,
+  TARGET_ASSET_NAME VARCHAR2(200)  ,
+  CATEGORY_ID NUMBER(20)  ,
+  ALLOCATION_METHOD VARCHAR2(20)  ,
+  PROPORTION NUMBER(8,6) default 0   ,
+  ORIGINAL_COST_AMOUNT NUMBER(20,4) default 0  NOT NULL ,
+  ACCUMULATED_DEPRECIATION_AMOUNT NUMBER(20,4) default 0   ,
+  NET_BOOK_VALUE NUMBER(20,4) default 0   ,
+  TARGET_ASSET_ID NUMBER(20)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_ast_split_line primary key (ID)
+);
+
+CREATE TABLE erp_ast_merge_line(
+  ID NUMBER(20) NOT NULL ,
+  MERGE_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  LINE_NO INTEGER  ,
+  SOURCE_ASSET_ID NUMBER(20) NOT NULL ,
+  CONTRIBUTION_PROPORTION NUMBER(8,6) default 0   ,
+  ORIGINAL_COST_AMOUNT NUMBER(20,4) default 0  NOT NULL ,
+  ACCUMULATED_DEPRECIATION_AMOUNT NUMBER(20,4) default 0   ,
+  NET_BOOK_VALUE NUMBER(20,4) default 0   ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_ast_merge_line primary key (ID)
 );
 
 
@@ -1040,4 +1084,80 @@ CREATE TABLE erp_ast_cip_progress_billing(
       COMMENT ON COLUMN erp_ast_cip_progress_billing.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_cip_progress_billing.REMARK IS '备注';
+                    
+      COMMENT ON TABLE erp_ast_split_line IS '资产拆分行';
+                
+      COMMENT ON COLUMN erp_ast_split_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.SPLIT_ID IS '拆分单';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.ORG_ID IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.TARGET_ASSET_CODE IS '目标资产编码';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.TARGET_ASSET_NAME IS '目标资产名称';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.CATEGORY_ID IS '目标资产类别';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.ALLOCATION_METHOD IS '分摊方式';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.PROPORTION IS '比例';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.ORIGINAL_COST_AMOUNT IS '原值金额';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.ACCUMULATED_DEPRECIATION_AMOUNT IS '累计折旧金额';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.NET_BOOK_VALUE IS '账面净值';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.TARGET_ASSET_ID IS '目标资产';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_split_line.REMARK IS '备注';
+                    
+      COMMENT ON TABLE erp_ast_merge_line IS '资产合并行';
+                
+      COMMENT ON COLUMN erp_ast_merge_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.MERGE_ID IS '合并单';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.ORG_ID IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.SOURCE_ASSET_ID IS '源资产';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.CONTRIBUTION_PROPORTION IS '贡献比例';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.ORIGINAL_COST_AMOUNT IS '原值金额';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.ACCUMULATED_DEPRECIATION_AMOUNT IS '累计折旧金额';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.NET_BOOK_VALUE IS '账面净值';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_merge_line.REMARK IS '备注';
                     

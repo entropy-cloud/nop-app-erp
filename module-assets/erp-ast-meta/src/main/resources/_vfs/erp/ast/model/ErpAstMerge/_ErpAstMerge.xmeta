@@ -33,8 +33,8 @@
               sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="targetAssetId" displayName="合并目标资产" propId="4" i18n-en:displayName="Target Asset" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="targetAsset">
+        <prop name="targetAssetId" displayName="合并目标资产" propId="4" i18n-en:displayName="Target Asset" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="targetAsset">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="businessDate" displayName="合并日期" propId="5" i18n-en:displayName="Business Date" mandatory="true"
@@ -119,7 +119,7 @@
         </prop>
         <prop name="targetAsset" i18n-en:displayName="Target Asset" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="targetAssetId" ext:joinRightProp="id" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+              updatable="false" lazy="true">
             <schema bizObjName="ErpAstAsset"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"

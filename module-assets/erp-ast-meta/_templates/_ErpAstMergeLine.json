@@ -1,0 +1,21 @@
+{
+  "id": 0,
+  "mergeId": 0,
+  "orgId": 0,
+  "lineNo": 0,
+  "sourceAssetId": 0,
+  "contributionProportion": 0.0,
+  "originalCostAmount": 0.0,
+  "accumulatedDepreciationAmount": 0.0,
+  "netBookValue": 0.0,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "remark": "",
+  "merge": null,
+  "org": null,
+  "sourceAsset": null
+}

@@ -21,6 +21,11 @@
             <option code="IDLE" label="闲置" value="IDLE" i18n-en:label="Idle"/>
             <option code="SCRAPPED" label="已报废" value="SCRAPPED" i18n-en:label="Scrapped"/>
             <option code="SOLD" label="已出售" value="SOLD" i18n-en:label="Sold"/>
+            <option code="DISPOSED" label="已内部处置" value="DISPOSED" i18n-en:label="Disposed"/>
+        </dict>
+        <dict label="拆分分摊方式" name="erp-ast/allocation-method" valueType="string" i18n-en:label="Allocation Method">
+            <option code="PROPORTIONAL" label="按比例" value="PROPORTIONAL" i18n-en:label="Proportional"/>
+            <option code="FIXED_AMOUNT" label="按固定金额" value="FIXED_AMOUNT" i18n-en:label="Fixed Amount"/>
         </dict>
         <dict label="折旧方法" name="erp-ast/depreciation-method" valueType="string" i18n-en:label="Depreciation Method">
             <option code="STRAIGHT_LINE" label="直线法" value="STRAIGHT_LINE" i18n-en:label="Straight-Line"/>
@@ -1385,8 +1390,8 @@
                         propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
-                <column code="TARGET_ASSET_ID" displayName="合并目标资产" mandatory="true" name="targetAssetId" propId="4"
-                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Target Asset"/>
+                <column code="TARGET_ASSET_ID" displayName="合并目标资产" name="targetAssetId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Target Asset"/>
                 <column code="BUSINESS_DATE" displayName="合并日期" mandatory="true" name="businessDate" propId="5"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
@@ -1475,6 +1480,175 @@
             <unique-keys>
                 <unique-key columns="code,orgId" name="UK_AST_MERGE_CODE_ORG"/>
             </unique-keys>
+        </entity>
+        <entity className="app.erp.ast.dao.entity.ErpAstSplitLine" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产拆分行"
+                name="app.erp.ast.dao.entity.ErpAstSplitLine" registerShortName="true" tableName="erp_ast_split_line"
+                tagSet="gid,erp.assets" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="list" i18n-en:displayName="Asset Split Line">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="SPLIT_ID" displayName="拆分单" mandatory="true" name="splitId" propId="2" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Split"/>
+                <column code="ORG_ID" displayName="所属组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="LINE_NO" displayName="行号" name="lineNo" propId="4" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Line No"/>
+                <column code="TARGET_ASSET_CODE" displayName="目标资产编码" domain="assetCode" mandatory="true"
+                        name="targetAssetCode" precision="50" propId="5" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Target Asset Code"/>
+                <column code="TARGET_ASSET_NAME" displayName="目标资产名称" domain="name" name="targetAssetName"
+                        precision="200" propId="6" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Target Asset Name"/>
+                <column code="CATEGORY_ID" displayName="目标资产类别" name="categoryId" propId="7" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Category"/>
+                <column code="ALLOCATION_METHOD" displayName="分摊方式" name="allocationMethod" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/allocation-method"
+                        i18n-en:displayName="Allocation Method"/>
+                <column code="PROPORTION" defaultValue="0" displayName="比例" name="proportion" precision="8" propId="9"
+                        scale="6" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Proportion"/>
+                <column code="ORIGINAL_COST_AMOUNT" defaultValue="0" displayName="原值金额" mandatory="true"
+                        name="originalCostAmount" precision="20" propId="10" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Original Cost Amount"/>
+                <column code="ACCUMULATED_DEPRECIATION_AMOUNT" defaultValue="0" displayName="累计折旧金额"
+                        name="accumulatedDepreciationAmount" precision="20" propId="11" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Accumulated Depreciation Amount"/>
+                <column code="NET_BOOK_VALUE" defaultValue="0" displayName="账面净值" name="netBookValue" precision="20"
+                        propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Net Book Value"/>
+                <column code="TARGET_ASSET_ID" displayName="目标资产" name="targetAssetId" propId="13" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Target Asset"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="14" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="15" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="16" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="20"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_AST_SPLIT_LINE_SPLIT_ID" unique="false">
+                    <column name="splitId"/>
+                </index>
+                <index name="IDX_AST_SPLIT_LINE_TARGET_ASSET_ID" unique="false">
+                    <column name="targetAssetId"/>
+                </index>
+                <index name="IDX_AST_SPLIT_LINE_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="split" refEntityName="app.erp.ast.dao.entity.ErpAstSplit" tagSet="pub"
+                        i18n-en:displayName="Split">
+                    <join>
+                        <on leftProp="splitId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub"
+                        i18n-en:displayName="Category">
+                    <join>
+                        <on leftProp="categoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="targetAsset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
+                        i18n-en:displayName="Target Asset">
+                    <join>
+                        <on leftProp="targetAssetId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.ast.dao.entity.ErpAstMergeLine" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产合并行"
+                name="app.erp.ast.dao.entity.ErpAstMergeLine" registerShortName="true" tableName="erp_ast_merge_line"
+                tagSet="gid,erp.assets" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="list" i18n-en:displayName="Asset Merge Line">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="MERGE_ID" displayName="合并单" mandatory="true" name="mergeId" propId="2" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Merge"/>
+                <column code="ORG_ID" displayName="所属组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="LINE_NO" displayName="行号" name="lineNo" propId="4" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Line No"/>
+                <column code="SOURCE_ASSET_ID" displayName="源资产" mandatory="true" name="sourceAssetId" propId="5"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Asset"/>
+                <column code="CONTRIBUTION_PROPORTION" defaultValue="0" displayName="贡献比例" name="contributionProportion"
+                        precision="8" propId="6" scale="6" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Contribution Proportion"/>
+                <column code="ORIGINAL_COST_AMOUNT" defaultValue="0" displayName="原值金额" mandatory="true"
+                        name="originalCostAmount" precision="20" propId="7" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Original Cost Amount"/>
+                <column code="ACCUMULATED_DEPRECIATION_AMOUNT" defaultValue="0" displayName="累计折旧金额"
+                        name="accumulatedDepreciationAmount" precision="20" propId="8" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Accumulated Depreciation Amount"/>
+                <column code="NET_BOOK_VALUE" defaultValue="0" displayName="账面净值" name="netBookValue" precision="20"
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Net Book Value"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="10" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="11" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="12" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="14" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="16"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_AST_MERGE_LINE_MERGE_ID" unique="false">
+                    <column name="mergeId"/>
+                </index>
+                <index name="IDX_AST_MERGE_LINE_SOURCE_ASSET_ID" unique="false">
+                    <column name="sourceAssetId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="merge" refEntityName="app.erp.ast.dao.entity.ErpAstMerge" tagSet="pub"
+                        i18n-en:displayName="Merge">
+                    <join>
+                        <on leftProp="mergeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="sourceAsset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
+                        i18n-en:displayName="Source Asset">
+                    <join>
+                        <on leftProp="sourceAssetId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="组织"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"

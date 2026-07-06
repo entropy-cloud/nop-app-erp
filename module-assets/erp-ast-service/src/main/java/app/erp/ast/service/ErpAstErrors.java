@@ -38,6 +38,14 @@ public interface ErpAstErrors {
     String ARG_TARGET_STATUS = "targetStatus";
     String ARG_COST_TYPE = "costType";
 
+    // --- 拆分/合并 作用域参数键 ---
+    String ARG_SPLIT_CODE = "splitCode";
+    String ARG_SPLIT_ID = "splitId";
+    String ARG_MERGE_CODE = "mergeCode";
+    String ARG_MERGE_ID = "mergeId";
+    String ARG_ACTUAL = "actual";
+    String ARG_EXPECTED = "expected";
+
     // --- 资本化 ---
     ErrorCode ERR_CAPITALIZATION_NOT_FOUND = ErrorCode.define(
             "erp.err.ast.capitalization.not-found",
@@ -207,4 +215,92 @@ public interface ErpAstErrors {
             "erp.err.ast.cip.cost-type-invalid",
             "在建工程 {cipCode} 成本类型={costType} 无效",
             ARG_CIP_CODE, ARG_COST_TYPE);
+
+    // --- 资产拆分 ---
+    ErrorCode ERR_AST_SPLIT_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.split.not-found",
+            "资产拆分单 {splitId} 不存在",
+            ARG_SPLIT_ID);
+    ErrorCode ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.ast.split.illegal-status-transition",
+            "资产拆分单 {splitCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_SPLIT_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_AST_SPLIT_ILLEGAL_DOC_TRANSITION = ErrorCode.define(
+            "erp.err.ast.split.illegal-doc-transition",
+            "资产拆分单 {splitCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_SPLIT_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+    ErrorCode ERR_AST_SPLIT_SOURCE_NOT_IN_SERVICE = ErrorCode.define(
+            "erp.err.ast.split.source-not-in-service",
+            "资产拆分单 {splitCode} 源资产 {assetCode} 非使用中状态，不允许拆分",
+            ARG_SPLIT_CODE, ARG_ASSET_CODE);
+    ErrorCode ERR_AST_SPLIT_PROPORTION_NOT_BALANCED = ErrorCode.define(
+            "erp.err.ast.split.proportion-not-balanced",
+            "资产拆分单 {splitCode} 比例合计 {actual} 不等于 1（期望 {expected}，容差 0.000001）",
+            ARG_SPLIT_CODE, ARG_ACTUAL, ARG_EXPECTED);
+    ErrorCode ERR_AST_SPLIT_AMOUNT_NOT_BALANCED = ErrorCode.define(
+            "erp.err.ast.split.amount-not-balanced",
+            "资产拆分单 {splitCode} 固定金额合计 {actual} 不等于源资产原值 {expected}（容差 0.01）",
+            ARG_SPLIT_CODE, ARG_ACTUAL, ARG_EXPECTED);
+    ErrorCode ERR_AST_SPLIT_CROSS_CATEGORY_NOT_ALLOWED = ErrorCode.define(
+            "erp.err.ast.split.cross-category-not-allowed",
+            "资产拆分单 {splitCode} 配置不允许跨资产类别拆分（erp-ast.split-merge-allow-cross-category=false）",
+            ARG_SPLIT_CODE);
+    ErrorCode ERR_AST_SPLIT_ALREADY_POSTED = ErrorCode.define(
+            "erp.err.ast.split.already-posted",
+            "资产拆分单 {splitCode} 已执行过账，不允许重复执行",
+            ARG_SPLIT_CODE);
+    ErrorCode ERR_AST_SPLIT_TARGET_ASSET_CODE_DUPLICATE = ErrorCode.define(
+            "erp.err.ast.split.target-asset-code-duplicate",
+            "资产拆分单 {splitCode} 目标资产编码 {assetCode} 重复",
+            ARG_SPLIT_CODE, ARG_ASSET_CODE);
+    ErrorCode ERR_AST_SPLIT_INSUFFICIENT_NET_VALUE = ErrorCode.define(
+            "erp.err.ast.split.insufficient-net-value",
+            "资产拆分单 {splitCode} 源资产账面净值 {amount} 不大于零，不允许拆分",
+            ARG_SPLIT_CODE, ARG_AMOUNT);
+    ErrorCode ERR_AST_SPLIT_NO_LINES = ErrorCode.define(
+            "erp.err.ast.split.no-lines",
+            "资产拆分单 {splitCode} 没有拆分行",
+            ARG_SPLIT_CODE);
+    ErrorCode ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED = ErrorCode.define(
+            "erp.err.ast.split.reverse-not-supported",
+            "资产拆分单 {splitCode} 执行后不可撤销（owner doc split-merge.md §关键业务规则 5），错误更正请走资产处置 + 新建流程",
+            ARG_SPLIT_CODE);
+
+    // --- 资产合并 ---
+    ErrorCode ERR_AST_MERGE_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.merge.not-found",
+            "资产合并单 {mergeId} 不存在",
+            ARG_MERGE_ID);
+    ErrorCode ERR_AST_MERGE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.ast.merge.illegal-status-transition",
+            "资产合并单 {mergeCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_MERGE_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_AST_MERGE_ILLEGAL_DOC_TRANSITION = ErrorCode.define(
+            "erp.err.ast.merge.illegal-doc-transition",
+            "资产合并单 {mergeCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_MERGE_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+    ErrorCode ERR_AST_MERGE_SOURCE_NOT_IN_SERVICE = ErrorCode.define(
+            "erp.err.ast.merge.source-not-in-service",
+            "资产合并单 {mergeCode} 源资产 {assetCode} 非使用中状态，不允许合并",
+            ARG_MERGE_CODE, ARG_ASSET_CODE);
+    ErrorCode ERR_AST_MERGE_CROSS_CATEGORY_NOT_ALLOWED = ErrorCode.define(
+            "erp.err.ast.merge.cross-category-not-allowed",
+            "资产合并单 {mergeCode} 配置不允许跨资产类别合并（erp-ast.split-merge-allow-cross-category=false）",
+            ARG_MERGE_CODE);
+    ErrorCode ERR_AST_MERGE_CROSS_CURRENCY_NOT_ALLOWED = ErrorCode.define(
+            "erp.err.ast.merge.cross-currency-not-allowed",
+            "资产合并单 {mergeCode} 源资产币种不一致，不允许合并",
+            ARG_MERGE_CODE);
+    ErrorCode ERR_AST_MERGE_NO_SOURCES = ErrorCode.define(
+            "erp.err.ast.merge.no-sources",
+            "资产合并单 {mergeCode} 没有源资产行",
+            ARG_MERGE_CODE);
+    ErrorCode ERR_AST_MERGE_ALREADY_POSTED = ErrorCode.define(
+            "erp.err.ast.merge.already-posted",
+            "资产合并单 {mergeCode} 已执行过账，不允许重复执行",
+            ARG_MERGE_CODE);
+    ErrorCode ERR_AST_MERGE_REVERSE_NOT_SUPPORTED = ErrorCode.define(
+            "erp.err.ast.merge.reverse-not-supported",
+            "资产合并单 {mergeCode} 执行后不可撤销（owner doc split-merge.md §关键业务规则 5），错误更正请走资产处置 + 新建流程",
+            ARG_MERGE_CODE);
 }

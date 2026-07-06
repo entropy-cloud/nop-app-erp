@@ -94,4 +94,18 @@
           primary="true">
         <property name="bizObjName" value="ErpAstCipProgressBilling"/>
     </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstSplitLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstSplitLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstSplitLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstSplitLine"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstMergeLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstMergeLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstMergeLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstMergeLine"/>
+    </bean>
 </beans>

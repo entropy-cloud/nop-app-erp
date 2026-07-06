@@ -34,6 +34,18 @@
     <bean id="app.erp.ast.service.posting.ValueAdjustmentAcctDocProvider"
           class="app.erp.ast.service.posting.ValueAdjustmentAcctDocProvider"/>
 
+    <!-- 资产拆分业财过账：派发器 + Provider（复用 AssetPostingExecutor；仅 post 路径，无 reverse——遵守 owner doc 不可逆契约） -->
+    <bean id="app.erp.ast.service.posting.AssetSplitPostingDispatcher"
+          class="app.erp.ast.service.posting.AssetSplitPostingDispatcher"/>
+    <bean id="app.erp.ast.service.posting.AssetSplitAcctDocProvider"
+          class="app.erp.ast.service.posting.AssetSplitAcctDocProvider"/>
+
+    <!-- 资产合并业财过账：派发器 + Provider（复用 AssetPostingExecutor；仅 post 路径，无 reverse——遵守 owner doc 不可逆契约） -->
+    <bean id="app.erp.ast.service.posting.AssetMergePostingDispatcher"
+          class="app.erp.ast.service.posting.AssetMergePostingDispatcher"/>
+    <bean id="app.erp.ast.service.posting.AssetMergeAcctDocProvider"
+          class="app.erp.ast.service.posting.AssetMergeAcctDocProvider"/>
+
     <!-- assets 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。
          各 Facade BizModel 仅负责入口/事务/委托，编排委托对应 Processor。 -->
     <bean id="app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor"
@@ -46,6 +58,10 @@
           class="app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstCipProcessor"
           class="app.erp.ast.service.processor.ErpAstCipProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstSplitProcessor"
+          class="app.erp.ast.service.processor.ErpAstSplitProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstMergeProcessor"
+          class="app.erp.ast.service.processor.ErpAstMergeProcessor"/>
 
     <!-- 定时批量折旧 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-ast.depreciation-cron 配置门控。 -->
