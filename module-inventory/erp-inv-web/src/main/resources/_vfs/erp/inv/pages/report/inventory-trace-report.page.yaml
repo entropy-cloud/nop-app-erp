@@ -1,0 +1,56 @@
+type: page
+title: "库存追溯可视化报表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-text
+        name: batchNo
+        label: "批次号"
+        placeholder: "按批次追溯（优先）"
+      - type: input-number
+        name: materialId
+        label: "物料ID"
+        placeholder: "按物料过滤"
+      - type: input-number
+        name: warehouseId
+        label: "仓库ID"
+        placeholder: "按仓库过滤"
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__renderHtml(reportName:$reportName,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}) }"
+            variables: { reportName: "inventory-trace-report", batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__download(reportName:$reportName,renderType:$renderType,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}){ fileName } }"
+                variables: { reportName: "inventory-trace-report", renderType: "xlsx", batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__download(reportName:$reportName,renderType:$renderType,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}){ fileName } }"
+                variables: { reportName: "inventory-trace-report", renderType: "pdf", batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

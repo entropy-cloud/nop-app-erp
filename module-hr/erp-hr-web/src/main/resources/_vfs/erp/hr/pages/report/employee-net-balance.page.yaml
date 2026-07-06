@@ -1,0 +1,44 @@
+type: page
+title: "员工净余额报表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!){ ErpHrReport__renderHtml(reportName:$reportName,data:{}) }"
+            variables: { reportName: "employee-net-balance" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!){ ErpHrReport__download(reportName:$reportName,renderType:$renderType,data:{}){ fileName } }"
+                variables: { reportName: "employee-net-balance", renderType: "xlsx" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!){ ErpHrReport__download(reportName:$reportName,renderType:$renderType,data:{}){ fileName } }"
+                variables: { reportName: "employee-net-balance", renderType: "pdf" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

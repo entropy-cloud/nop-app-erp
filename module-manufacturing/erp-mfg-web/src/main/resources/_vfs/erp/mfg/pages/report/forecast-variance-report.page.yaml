@@ -1,0 +1,54 @@
+type: page
+title: "预测差异报表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-number
+        name: materialId
+        label: "物料ID"
+        placeholder: "留空查询全部物料"
+      - type: input-date
+        name: periodStart
+        label: "区间起"
+      - type: input-date
+        name: periodEnd
+        label: "区间止"
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$materialId:BigDecimal,$periodStart:String,$periodEnd:String){ ErpMfgReport__renderHtml(reportName:$reportName,data:{materialId:$materialId,periodStart:$periodStart,periodEnd:$periodEnd}) }"
+            variables: { reportName: "forecast-variance-report", materialId: "${materialId}", periodStart: "${periodStart}", periodEnd: "${periodEnd}" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$materialId:BigDecimal,$periodStart:String,$periodEnd:String){ ErpMfgReport__download(reportName:$reportName,renderType:$renderType,data:{materialId:$materialId,periodStart:$periodStart,periodEnd:$periodEnd}){ fileName } }"
+                variables: { reportName: "forecast-variance-report", renderType: "xlsx", materialId: "${materialId}", periodStart: "${periodStart}", periodEnd: "${periodEnd}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$materialId:BigDecimal,$periodStart:String,$periodEnd:String){ ErpMfgReport__download(reportName:$reportName,renderType:$renderType,data:{materialId:$materialId,periodStart:$periodStart,periodEnd:$periodEnd}){ fileName } }"
+                variables: { reportName: "forecast-variance-report", renderType: "pdf", materialId: "${materialId}", periodStart: "${periodStart}", periodEnd: "${periodEnd}" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

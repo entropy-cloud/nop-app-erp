@@ -26,8 +26,12 @@ site:
       displayName: Work Order
     ErpMfgWorkcenter-main:
       displayName: Work Center
+    crp-load-report:
+      displayName: CRP Load Report
     erp-mfg:
       displayName: Manufacturing
+    forecast-variance-report:
+      displayName: Forecast Variance Report
     mfg-cost:
       displayName: Cost
     mfg-dashboard:
@@ -40,7 +44,11 @@ site:
       displayName: Master Data
     mfg-mrp:
       displayName: MRP
+    mfg-report:
+      displayName: Manufacturing Reports
     mfg-subcontract:
       displayName: Subcontract
     mfg-trace:
       displayName: Traceability
+    production-variance-report:
+      displayName: Production Variance Report

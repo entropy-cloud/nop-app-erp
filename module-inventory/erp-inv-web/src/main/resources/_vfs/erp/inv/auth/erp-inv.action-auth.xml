@@ -93,6 +93,16 @@
                                   url="/erp/inv/pages/ErpInvCostLayer/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 库存报表 -->
+                <resource id="inv-report" displayName="库存报表" i18n-en:displayName="Inventory Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="800">
+                    <children>
+                        <resource id="inventory-trace-report" app:useCases="UC-INV-06,UC-INV-11" displayName="库存追溯可视化"
+                                  i18n-en:displayName="Inventory Trace Report" icon="git-commit"
+                                  component="AMIS" resourceType="SUBM" orderNo="8010"
+                                  url="/erp/inv/pages/report/inventory-trace-report.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="inv-dashboard" displayName="库存概览" i18n-en:displayName="Inventory Overview"
                           icon="boxes" resourceType="SUBM" orderNo="999">

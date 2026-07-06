@@ -42,6 +42,8 @@ site:
       displayName: Timesheet
     ErpHrTimesheetLine-main:
       displayName: Timesheet Line
+    employee-net-balance:
+      displayName: Employee Net Balance
     erp-hr:
       displayName: Human Resources
     hr-attendance:
@@ -56,9 +58,13 @@ site:
       displayName: Organization
     hr-recruit:
       displayName: Recruitment
+    hr-report:
+      displayName: HR Reports
     hr-salary:
       displayName: Payroll
     hr-shift-scheduling:
       displayName: Shift Scheduling
     hr-survey:
       displayName: Employee Survey
+    payroll-simulation-comparison:
+      displayName: Payroll Simulation Comparison

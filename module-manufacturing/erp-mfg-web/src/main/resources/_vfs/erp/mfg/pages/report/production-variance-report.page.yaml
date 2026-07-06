@@ -1,0 +1,54 @@
+type: page
+title: "生产差异报表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: input-number
+        name: workOrderId
+        label: "工单ID"
+        placeholder: "留空查询全部工单"
+      - type: input-date
+        name: startDate
+        label: "开始日期"
+      - type: input-date
+        name: endDate
+        label: "结束日期"
+      - type: button
+        label: "渲染报表"
+        actionType: ajax
+        api:
+          url: /api/GenericApi
+          method: post
+          dataType: raw
+          data:
+            query: "query($reportName:String!,$workOrderId:BigDecimal,$startDate:String,$endDate:String){ ErpMfgReport__renderHtml(reportName:$reportName,data:{workOrderId:$workOrderId,startDate:$startDate,endDate:$endDate}) }"
+            variables: { reportName: "production-variance-report", workOrderId: "${workOrderId}", startDate: "${startDate}", endDate: "${endDate}" }
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$workOrderId:BigDecimal,$startDate:String,$endDate:String){ ErpMfgReport__download(reportName:$reportName,renderType:$renderType,data:{workOrderId:$workOrderId,startDate:$startDate,endDate:$endDate}){ fileName } }"
+                variables: { reportName: "production-variance-report", renderType: "xlsx", workOrderId: "${workOrderId}", startDate: "${startDate}", endDate: "${endDate}" }
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /api/GenericApi
+              method: post
+              responseType: blob
+              data:
+                query: "query($reportName:String!,$renderType:String!,$workOrderId:BigDecimal,$startDate:String,$endDate:String){ ErpMfgReport__download(reportName:$reportName,renderType:$renderType,data:{workOrderId:$workOrderId,startDate:$startDate,endDate:$endDate}){ fileName } }"
+                variables: { reportName: "production-variance-report", renderType: "pdf", workOrderId: "${workOrderId}", startDate: "${startDate}", endDate: "${endDate}" }
+  - type: html
+    id: reportContainer
+    html: ""
+    className: m-3

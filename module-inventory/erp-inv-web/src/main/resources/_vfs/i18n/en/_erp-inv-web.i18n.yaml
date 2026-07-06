@@ -34,9 +34,13 @@ site:
       displayName: Ledger & Balance
     inv-move:
       displayName: Stock Operation
+    inv-report:
+      displayName: Inventory Reports
     inv-reservation:
       displayName: Reservation
     inv-take:
       displayName: Stock Take
     inv-transfer:
       displayName: Transfer
+    inventory-trace-report:
+      displayName: Inventory Trace Report

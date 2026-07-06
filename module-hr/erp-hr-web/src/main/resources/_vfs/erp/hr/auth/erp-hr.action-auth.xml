@@ -135,6 +135,19 @@
                                   url="/erp/hr/pages/ErpHrRecruitment/main.page.yaml"/>
                     </children>
                 </resource>
+                <resource id="hr-report" displayName="人力资源报表" i18n-en:displayName="HR Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="800">
+                    <children>
+                        <resource id="employee-net-balance" app:useCases="UC-HR-04,UC-FIN-16" displayName="员工净余额"
+                                  i18n-en:displayName="Employee Net Balance" icon="scale"
+                                  component="AMIS" resourceType="SUBM" orderNo="8010"
+                                  url="/erp/hr/pages/report/employee-net-balance.page.yaml"/>
+                        <resource id="payroll-simulation-comparison" app:useCases="UC-HR-10" displayName="薪酬模拟对比"
+                                  i18n-en:displayName="Payroll Simulation Comparison" icon="calculator"
+                                  component="AMIS" resourceType="SUBM" orderNo="8020"
+                                  url="/erp/hr/pages/report/payroll-simulation-comparison.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

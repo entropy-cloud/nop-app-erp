@@ -99,6 +99,24 @@
                                   url="/erp/mfg/pages/ErpMfgBatchGenealogy/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- 制造报表 -->
+                <resource id="mfg-report" displayName="制造报表" i18n-en:displayName="Manufacturing Reports"
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="700">
+                    <children>
+                        <resource id="crp-load-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="CRP 负荷报表"
+                                  i18n-en:displayName="CRP Load Report" icon="gauge"
+                                  component="AMIS" resourceType="SUBM" orderNo="7010"
+                                  url="/erp/mfg/pages/report/crp-load-report.page.yaml"/>
+                        <resource id="production-variance-report" app:useCases="UC-MFG-12" displayName="生产差异报表"
+                                  i18n-en:displayName="Production Variance Report" icon="bar-chart-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="7020"
+                                  url="/erp/mfg/pages/report/production-variance-report.page.yaml"/>
+                        <resource id="forecast-variance-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="预测差异报表"
+                                  i18n-en:displayName="Forecast Variance Report" icon="trending-down"
+                                  component="AMIS" resourceType="SUBM" orderNo="7030"
+                                  url="/erp/mfg/pages/report/forecast-variance-report.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 报表看板 -->
                 <resource id="mfg-dashboard" displayName="制造概览" i18n-en:displayName="Manufacturing Overview"
                           icon="activity" resourceType="SUBM" orderNo="999">
