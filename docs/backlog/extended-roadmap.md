@@ -24,7 +24,7 @@
 - 2.12：✅ done（需求预测实体 + MRP/DRP 预测需求来源：ErpMfgForecast/ErpMfgForecastLine 实体(头-行 cascade-delete, dict forecast-status 4态) + 状态机(DRAFT→APPROVED approve / DRAFT|APPROVED→CANCELLED cancel, ERR_FORECAST_ILLEGAL_STATUS_TRANSITION) + MRP DemandAggregator 接入 FORECAST 来源(status=APPROVED + 区间相交 + 按物料聚合, config-gated erp-mfg.forecast-consume-enabled) + DRP DrpDemandAggregator forecastDemand 填充(materialId+warehouseId 仓级过滤, config-gated erp-drp.forecast-consume-enabled) + drp→mfg-dao 单向 R 跨域依赖 + CRM 销售预测关系说明(本期独立维护, disaggregation 归后继)；承接 2237-2/1115-2 多计划 Deferred，2026-07-05，`docs/plans/2026-07-05-0427-1-demand-forecast-entity-mrp-drp-source.md`）
 - 2.13：✅ done（APS 排程→工单/工序卡自动生成：WorkOrder/JobCard 加性 `sourceScheduleId` 弱参照 + 新字典 `erp-mfg/source-order-type`(含 APS_SCHEDULE) + `generateJobCardsFromSchedule` @BizMutation(一工序一卡, OPEN 入口, sourceScheduleId 回写, WorkOrder sourceOrderType=APS_SCHEDULE, 幂等门控 ERR_JOB_CARDS_ALREADY_GENERATED + incremental 补缺 + 状态门) + 复用 IErpApsLoadSourceProvider SPI 跨域读 APS(0306-2 范式, ApsLoadSlot 加性增 operationOrderId) + findWorkOrdersPendingJobCards/generatePendingJobCards config-gated 批量入口 + nop-job 三件套(ErpMfgJobCardAutoGenJob + scheduler.yaml 双层门控)；承接 0831-1/2237-1 Deferred，2026-07-05，`docs/plans/2026-07-05-0427-3-aps-schedule-to-workorder-jobcard.md`）
 - 2.14：✅ done（资产减值/重估 VALUE_ADJUSTMENT：`ErpAstValueAdjustmentBizModel` 三轴状态机(docStatus/approveStatus/posted, submit/approve/reject/cancel/reverse 五动作, 强制审批 config-gated) + `ErpFinBusinessType.VALUE_ADJUSTMENT`(390) 新增 + `erp-ast/adjustment-type` 字典 REVALUATION→REVALUATION_UP/REVALUATION_DOWN 拆分 + `ValueAdjustmentAcctDocProvider` 按 adjustmentType 分支科目分解(IMPAIRMENT 借6702/贷1604, REVALUATION_UP 借1601/贷4002, REVALUATION_DOWN 借6702/贷1601) + 资产净值/折旧基数联动(减值/重估减值减少、重估增值增加, config-gated revaluation-adjust-depreciation-base) + 反向红冲回退净值与凭证；承接 1000-2 Deferred「资产减值/重估」，2026-07-05，`docs/plans/2026-07-05-0540-3-assets-impairment-revaluation.md`）
-- 2.4b SPC 过程控制（UC-QA-09~11：SPC 统计过程控制 / SPC 规则引擎 / SPC 控制图）：`todo`
+- 2.4b SPC 过程控制（UC-QA-09~11：SPC 统计过程控制 / SPC 规则引擎 / SPC 控制图）：`done`（三实体 `ErpQaSpcChart`/`ErpQaSpcSample`/`ErpQaSpcCapability` + 3 字典物化经 model→codegen；`SpcSamplingService` 增量聚合 APPROVED 质检行（VARCHAR→数值解析幂等）+ `SpcControlLimitCalculator` d2/D3/D4 系数表（子组≥20 触发重算）+ `SpcRuleEngine` Western Electric 规则 1~4（纯函数可单测）+ `SpcOutOfControlHandler` post-commit `txn().afterCommit` 级联 NCR(sourceType=SPC)+CAPA（config-gated）+ `SpcCapabilityCalculator` Cp/Cpk/Pp/Ppk/Cpm + capabilityLevel 4 档分档 + INADEQUATE 回写 QualityGoal + 登记 RiskRegister + 双层门控 nop-job（erpQaSpcSamplingJob/erpQaSpcCapabilityJob）；32 测试全绿，2026-07-07，`docs/plans/2026-07-07-0305-2-quality-spc-process-control.md`）
 - 2.5b 资产盘点（UC-AST-09：固定资产盘点流程）：`todo`
 - 2.5c 资产维修管理（UC-AST-10：资产维修工单/费用归集）：`todo`
 - 2.5d 资产拆分合并（UC-AST-11：资产拆分/合并处理）：`todo`
@@ -72,7 +72,7 @@
 | 2.11 | 批次召回事件 | quality | `quality/recall.md` |
 | 2.12 | ✅ 需求预测实体 + MRP/DRP 预测需求来源 | manufacturing/drp | `manufacturing/mrp.md` |
 | 2.13 | ✅ APS 排程→工单/工序卡自动生成 | manufacturing | `manufacturing/state-machine.md` |
-| 2.4b | ❌ SPC 过程控制（UC-QA-09~11） | quality | `quality/spc.md` |
+| 2.4b | ✅ SPC 过程控制（UC-QA-09~11） | quality | `quality/spc.md` |
 | 2.5b | ❌ 资产盘点（UC-AST-09） | assets | `assets/inventory.md` |
 | 2.5c | ❌ 资产维修管理（UC-AST-10） | assets | `assets/maintenance.md` |
 | 2.5d | ❌ 资产拆分合并（UC-AST-11） | assets | `assets/split-merge.md` |
