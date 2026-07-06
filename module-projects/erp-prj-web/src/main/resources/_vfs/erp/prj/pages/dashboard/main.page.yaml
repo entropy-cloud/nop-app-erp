@@ -1,7 +1,147 @@
 type: page
 title: "项目概览"
 body:
-  - type: alert
-    body: "Projects Overview — 待实现占位页面"
-    level: info
+  - type: button
+    label: "刷新"
+    icon: "refresh-cw"
+    actionType: reload
+    target: "kpiService,statusChart,costOverrunCrud,delayedProjectCrud"
     className: m-3
+
+  - type: service
+    name: kpiService
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpPrjDashboard__getDashboardKpi { openProjectCount totalBudget incurredCost executionRate } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const kpi = gql.ErpPrjDashboard__getDashboardKpi || {};
+        return { status: 0, msg: '', data: kpi };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>在手项目数</div>"
+              - type: tpl
+                tpl: "<span class='h3 font-bold'>${openProjectCount}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>项目总预算</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-primary'>¥${totalBudget | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>已发生成本</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-danger'>¥${incurredCost | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>预算执行率</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-warning'>${executionRate | round:2}</span>"
+
+  - type: chart
+    name: statusChart
+    className: m-3
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpPrjDashboard__getProjectStatusDistribution { status count } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpPrjDashboard__getProjectStatusDistribution || [];
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            title: { text: '项目状态分布' },
+            tooltip: { trigger: 'item' },
+            legend: { orient: 'vertical', left: 'right' },
+            series: [
+              {
+                name: '项目数',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                data: rows.map(function(r){return {name: r.status, value: r.count};})
+              }
+            ]
+          }
+        };
+
+  - type: crud
+    name: costOverrunCrud
+    className: m-3
+    title: "成本超支项目预警"
+    syncLocation: false
+    headerToolbar: []
+    footerToolbar: []
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpPrjDashboard__findCostOverrunAlert { projectId projectCode projectName budget incurredCost overrunAmount } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpPrjDashboard__findCostOverrunAlert || [];
+        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+    columns:
+      - name: projectCode
+        label: "项目编码"
+      - name: projectName
+        label: "项目名称"
+      - name: budget
+        label: "预算"
+      - name: incurredCost
+        label: "已发生成本"
+      - name: overrunAmount
+        label: "超支金额"
+
+  - type: crud
+    name: delayedProjectCrud
+    className: m-3
+    title: "项目延期预警（计划完成日 < 今天 且 未 COMPLETED）"
+    syncLocation: false
+    headerToolbar: []
+    footerToolbar: []
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpPrjDashboard__findDelayedProjectAlert { projectId projectCode projectName endDate status overdueDays } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpPrjDashboard__findDelayedProjectAlert || [];
+        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+    columns:
+      - name: projectCode
+        label: "项目编码"
+      - name: projectName
+        label: "项目名称"
+      - name: endDate
+        label: "计划完成日"
+      - name: status
+        label: "状态"
+      - name: overdueDays
+        label: "逾期(天)"

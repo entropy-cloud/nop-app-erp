@@ -1,7 +1,113 @@
 type: page
 title: "主数据概览"
 body:
-  - type: alert
-    body: "Master Data Overview — 待实现占位页面"
-    level: info
+  - type: button
+    label: "刷新"
+    icon: "refresh-cw"
+    actionType: reload
+    target: "kpiService,materialWithoutSkuCrud,skuWithoutPriceCrud"
     className: m-3
+
+  - type: service
+    name: kpiService
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpMdDashboard__getDashboardKpi { materialCount customerCount vendorCount inactiveMaterialCount inactivePartnerCount } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const kpi = gql.ErpMdDashboard__getDashboardKpi || {};
+        return { status: 0, msg: '', data: kpi };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>物料总数</div>"
+              - type: tpl
+                tpl: "<span class='h3 font-bold'>${materialCount}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>客户数</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-primary'>${customerCount}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>供应商数</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-success'>${vendorCount}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>停用物料数</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-warning'>${inactiveMaterialCount}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>停用往来单位数</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-danger'>${inactivePartnerCount}</span>"
+
+  - type: crud
+    name: materialWithoutSkuCrud
+    className: m-3
+    title: "无 SKU 物料预警（数据质量）"
+    syncLocation: false
+    headerToolbar: []
+    footerToolbar: []
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpMdDashboard__findMaterialWithoutSkuAlert { materialId materialCode materialName status } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpMdDashboard__findMaterialWithoutSkuAlert || [];
+        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+    columns:
+      - name: materialCode
+        label: "物料编码"
+      - name: materialName
+        label: "物料名称"
+      - name: status
+        label: "状态"
+
+  - type: crud
+    name: skuWithoutPriceCrud
+    className: m-3
+    title: "无价格 SKU 预警（数据质量）"
+    syncLocation: false
+    headerToolbar: []
+    footerToolbar: []
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpMdDashboard__findSkuWithoutPriceAlert { skuId skuCode materialId } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpMdDashboard__findSkuWithoutPriceAlert || [];
+        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+    columns:
+      - name: skuCode
+        label: "SKU 编码"
+      - name: materialId
+        label: "物料ID"
