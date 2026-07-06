@@ -32,6 +32,12 @@ public interface ErpAstErrors {
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
 
+    // --- CIP 作用域参数键 ---
+    String ARG_CIP_CODE = "cipCode";
+    String ARG_CIP_ID = "cipId";
+    String ARG_TARGET_STATUS = "targetStatus";
+    String ARG_COST_TYPE = "costType";
+
     // --- 资本化 ---
     ErrorCode ERR_CAPITALIZATION_NOT_FOUND = ErrorCode.define(
             "erp.err.ast.capitalization.not-found",
@@ -155,4 +161,50 @@ public interface ErpAstErrors {
             "erp.err.ast.report.render-type-invalid",
             "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    // --- 在建工程（CIP） ---
+    ErrorCode ERR_CIP_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.cip.not-found",
+            "在建工程 {cipId} 不存在",
+            ARG_CIP_ID);
+    ErrorCode ERR_CIP_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.ast.cip.illegal-status-transition",
+            "在建工程 {cipCode} 当前状态={currentStatus}，不允许迁移到目标状态={targetStatus}",
+            ARG_CIP_CODE, ARG_CURRENT_STATUS, ARG_TARGET_STATUS);
+    ErrorCode ERR_CIP_NOT_IN_CONSTRUCTION = ErrorCode.define(
+            "erp.err.ast.cip.not-in-construction",
+            "在建工程 {cipCode} 当前状态={currentStatus}，仅建设中(IN_CONSTRUCTION)状态允许此操作",
+            ARG_CIP_CODE, ARG_CURRENT_STATUS);
+    ErrorCode ERR_CIP_INTEREST_CAPITALIZATION_DISABLED = ErrorCode.define(
+            "erp.err.ast.cip.interest-capitalization-disabled",
+            "在建工程 {cipCode} 利息资本化功能未启用（配置 erp-ast.cip-interest-capitalization-enabled=false）",
+            ARG_CIP_CODE);
+    ErrorCode ERR_CIP_COST_ITEM_ALREADY_TRANSFERRED = ErrorCode.define(
+            "erp.err.ast.cip.cost-item-already-transferred",
+            "在建工程 {cipCode} 选中的成本归集行已转固，不允许重复转固",
+            ARG_CIP_CODE);
+    ErrorCode ERR_CIP_NO_COST_TO_TRANSFER = ErrorCode.define(
+            "erp.err.ast.cip.no-cost-to-transfer",
+            "在建工程 {cipCode} 没有可转固的成本归集行",
+            ARG_CIP_CODE);
+    ErrorCode ERR_CIP_ALREADY_COMPLETED = ErrorCode.define(
+            "erp.err.ast.cip.already-completed",
+            "在建工程 {cipCode} 已完工转固（终态），不允许再次转固",
+            ARG_CIP_CODE);
+    ErrorCode ERR_CIP_PARTIAL_TRANSFER_NOT_ALLOWED = ErrorCode.define(
+            "erp.err.ast.cip.partial-transfer-not-allowed",
+            "在建工程 {cipCode} 配置不允许部分转固，必须选择全部成本归集行",
+            ARG_CIP_CODE);
+    ErrorCode ERR_CIP_PARTIAL_REVERSE_NOT_SUPPORTED = ErrorCode.define(
+            "erp.err.ast.cip.partial-reverse-not-supported",
+            "在建工程 {cipCode} 不支持部分红冲（本期 Non-Goal，仅支持全部红冲）",
+            ARG_CIP_CODE);
+    ErrorCode ERR_CIP_AMOUNT_INVALID = ErrorCode.define(
+            "erp.err.ast.cip.amount-invalid",
+            "在建工程 {cipCode} 金额无效（须为正数）",
+            ARG_CIP_CODE, ARG_AMOUNT);
+    ErrorCode ERR_CIP_COST_TYPE_INVALID = ErrorCode.define(
+            "erp.err.ast.cip.cost-type-invalid",
+            "在建工程 {cipCode} 成本类型={costType} 无效",
+            ARG_CIP_CODE, ARG_COST_TYPE);
 }

@@ -163,4 +163,44 @@ public interface _ErpAstDaoConstants {
      */
     String DISPOSAL_REASON_OTHER = "OTHER";
                     
+    /**
+     * 在建工程状态: 草稿 
+     */
+    String CIP_STATUS_DRAFT = "DRAFT";
+                    
+    /**
+     * 在建工程状态: 建设中 
+     */
+    String CIP_STATUS_IN_CONSTRUCTION = "IN_CONSTRUCTION";
+                    
+    /**
+     * 在建工程状态: 已完工转固 
+     */
+    String CIP_STATUS_TRANSFERRED = "TRANSFERRED";
+                    
+    /**
+     * CIP成本类型: 采购 
+     */
+    String CIP_COST_TYPE_PURCHASE = "PURCHASE";
+                    
+    /**
+     * CIP成本类型: 服务 
+     */
+    String CIP_COST_TYPE_SERVICE = "SERVICE";
+                    
+    /**
+     * CIP成本类型: 人工 
+     */
+    String CIP_COST_TYPE_LABOR = "LABOR";
+                    
+    /**
+     * CIP成本类型: 利息资本化 
+     */
+    String CIP_COST_TYPE_INTEREST_CAPITALIZATION = "INTEREST_CAPITALIZATION";
+                    
+    /**
+     * CIP成本类型: 其他 
+     */
+    String CIP_COST_TYPE_OTHER = "OTHER";
+                    
 }

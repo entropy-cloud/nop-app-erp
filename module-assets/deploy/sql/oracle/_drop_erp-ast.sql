@@ -15,4 +15,6 @@ drop table erp_ast_disposal;
 drop table erp_ast_cip;
 drop table erp_ast_split;
 drop table erp_ast_merge;
+drop table erp_ast_cip_cost_item;
+drop table erp_ast_cip_progress_billing;
 

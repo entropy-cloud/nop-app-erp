@@ -22,6 +22,14 @@ public interface ErpAstConstants {
     /** 减值/重估是否强制审批（默认 true）。 */
     String CONFIG_VALUE_ADJUSTMENT_REQUIRE_APPROVAL = "erp-ast.value-adjustment-require-approval";
 
+    // ---- CIP 配置项（cip.md §配置 + plan 0930-1） ----
+    /** 利息资本化是否启用（默认 false；自动计提引擎落地前关闭，避免业务方误用）。 */
+    String CONFIG_CIP_INTEREST_CAPITALIZATION_ENABLED = "erp-ast.cip-interest-capitalization-enabled";
+    /** CIP 转固是否强制审批（默认 true）。 */
+    String CONFIG_CIP_REQUIRE_APPROVAL = "erp-ast.cip-require-approval";
+    /** CIP 是否允许部分转固（默认 true）。 */
+    String CONFIG_CIP_PARTIAL_TRANSFER_ALLOWED = "erp-ast.cip-partial-transfer-allowed";
+
     // ---- asset-status ----
     String ASSET_STATUS_DRAFT = "DRAFT";
     String ASSET_STATUS_IN_SERVICE = "IN_SERVICE";
@@ -64,6 +72,18 @@ public interface ErpAstConstants {
     String SOURCE_TYPE_INVENTORY = "INVENTORY";
     String SOURCE_TYPE_CIP = "CIP";
     String SOURCE_TYPE_DIRECT_PURCHASE = "DIRECT_PURCHASE";
+
+    // ---- cip-status（CIP 三态状态机） ----
+    String CIP_STATUS_DRAFT = "DRAFT";
+    String CIP_STATUS_IN_CONSTRUCTION = "IN_CONSTRUCTION";
+    String CIP_STATUS_TRANSFERRED = "TRANSFERRED";
+
+    // ---- cip-cost-type（CIP 成本归集行类型） ----
+    String CIP_COST_TYPE_PURCHASE = "PURCHASE";
+    String CIP_COST_TYPE_SERVICE = "SERVICE";
+    String CIP_COST_TYPE_LABOR = "LABOR";
+    String CIP_COST_TYPE_INTEREST_CAPITALIZATION = "INTEREST_CAPITALIZATION";
+    String CIP_COST_TYPE_OTHER = "OTHER";
 
     // ---- erp-fin/period-status（折旧期间控制引用） ----
     String PERIOD_STATUS_OPEN = "OPEN";

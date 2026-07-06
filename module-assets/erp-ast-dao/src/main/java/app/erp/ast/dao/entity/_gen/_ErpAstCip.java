@@ -97,32 +97,40 @@ public class _ErpAstCip extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 19;
     
+    /* 关联项目(可空): PROJECT_ID BIGINT */
+    public static final String PROP_NAME_projectId = "projectId";
+    public static final int PROP_ID_projectId = 20;
+    
+    /* 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT VARCHAR */
+    public static final String PROP_NAME_cipAssetCategorySnapshot = "cipAssetCategorySnapshot";
+    public static final int PROP_ID_cipAssetCategorySnapshot = 21;
+    
     /* 是否已过账: POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 20;
+    public static final int PROP_ID_posted = 22;
     
     /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 21;
+    public static final int PROP_ID_postedAt = 23;
     
     /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 22;
+    public static final int PROP_ID_postedBy = 24;
     
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 23;
+    public static final int PROP_ID_exchangeRate = 25;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 24;
+    public static final int PROP_ID_amountSource = 26;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 25;
+    public static final int PROP_ID_amountFunctional = 27;
     
 
-    private static int _PROP_ID_BOUND = 26;
+    private static int _PROP_ID_BOUND = 28;
 
     
     /* relation:  */
@@ -141,7 +149,7 @@ public class _ErpAstCip extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[26];
+    private static final String[] PROP_ID_TO_NAME = new String[28];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -201,6 +209,12 @@ public class _ErpAstCip extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_projectId] = PROP_NAME_projectId;
+          PROP_NAME_TO_ID.put(PROP_NAME_projectId, PROP_ID_projectId);
+      
+          PROP_ID_TO_NAME[PROP_ID_cipAssetCategorySnapshot] = PROP_NAME_cipAssetCategorySnapshot;
+          PROP_NAME_TO_ID.put(PROP_NAME_cipAssetCategorySnapshot, PROP_ID_cipAssetCategorySnapshot);
       
           PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
           PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
@@ -279,6 +293,12 @@ public class _ErpAstCip extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 关联项目(可空): PROJECT_ID */
+    private java.lang.Long _projectId;
+    
+    /* 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT */
+    private java.lang.String _cipAssetCategorySnapshot;
     
     /* 是否已过账: POSTED */
     private java.lang.Boolean _posted;
@@ -428,6 +448,12 @@ public class _ErpAstCip extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_projectId:
+               return getProjectId();
+        
+            case PROP_ID_cipAssetCategorySnapshot:
+               return getCipAssetCategorySnapshot();
         
             case PROP_ID_posted:
                return getPosted();
@@ -648,6 +674,26 @@ public class _ErpAstCip extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_projectId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_projectId));
+               }
+               setProjectId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_cipAssetCategorySnapshot:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_cipAssetCategorySnapshot));
+               }
+               setCipAssetCategorySnapshot(typedValue);
+               break;
+            }
+        
             case PROP_ID_posted:{
                java.lang.Boolean typedValue = null;
                if(value != null){
@@ -846,6 +892,20 @@ public class _ErpAstCip extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_projectId:{
+               onInitProp(propId);
+               this._projectId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_cipAssetCategorySnapshot:{
+               onInitProp(propId);
+               this._cipAssetCategorySnapshot = (java.lang.String)value;
                
                break;
             }
@@ -1255,6 +1315,44 @@ public class _ErpAstCip extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 关联项目(可空): PROJECT_ID
+     */
+    public final java.lang.Long getProjectId(){
+         onPropGet(PROP_ID_projectId);
+         return _projectId;
+    }
+
+    /**
+     * 关联项目(可空): PROJECT_ID
+     */
+    public final void setProjectId(java.lang.Long value){
+        if(onPropSet(PROP_ID_projectId,value)){
+            this._projectId = value;
+            internalClearRefs(PROP_ID_projectId);
+            
+        }
+    }
+    
+    /**
+     * 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT
+     */
+    public final java.lang.String getCipAssetCategorySnapshot(){
+         onPropGet(PROP_ID_cipAssetCategorySnapshot);
+         return _cipAssetCategorySnapshot;
+    }
+
+    /**
+     * 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT
+     */
+    public final void setCipAssetCategorySnapshot(java.lang.String value){
+        if(onPropSet(PROP_ID_cipAssetCategorySnapshot,value)){
+            this._cipAssetCategorySnapshot = value;
+            internalClearRefs(PROP_ID_cipAssetCategorySnapshot);
             
         }
     }

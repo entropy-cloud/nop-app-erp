@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: CIP成本类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 采购
+    value: PURCHASE
+    description: 
+  
+  - label: 服务
+    value: SERVICE
+    description: 
+  
+  - label: 人工
+    value: LABOR
+    description: 
+  
+  - label: 利息资本化
+    value: INTEREST_CAPITALIZATION
+    description: 
+  
+  - label: 其他
+    value: OTHER
+    description: 
+  

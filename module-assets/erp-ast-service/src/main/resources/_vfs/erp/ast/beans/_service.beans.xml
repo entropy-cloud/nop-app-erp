@@ -78,4 +78,20 @@
           ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpAstMerge"/>
     </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstCipCostItemBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstCipCostItem" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstCipCostItemBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstCipCostItem"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstCipProgressBillingBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstCipProgressBilling" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstCipProgressBillingBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstCipProgressBilling"/>
+    </bean>
 </beans>

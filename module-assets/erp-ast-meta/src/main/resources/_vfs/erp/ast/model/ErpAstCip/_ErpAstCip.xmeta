@@ -67,7 +67,7 @@
         </prop>
         <prop name="status" displayName="状态" propId="12" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-ast/asset-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp-ast/cip-status"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
@@ -97,27 +97,36 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="posted" displayName="是否已过账" propId="20" i18n-en:displayName="Posted" queryable="true"
+        <prop name="projectId" displayName="关联项目(可空)" propId="20" i18n-en:displayName="Project" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="cipAssetCategorySnapshot" displayName="转固时类别快照" propId="21"
+              i18n-en:displayName="CIP Category Snapshot" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="posted" displayName="是否已过账" propId="22" i18n-en:displayName="Posted" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="postedAt" displayName="过账时间" propId="21" i18n-en:displayName="Posted At" queryable="true"
+        <prop name="postedAt" displayName="过账时间" propId="23" i18n-en:displayName="Posted At" queryable="true"
               sortable="true" insertable="true" updatable="true">
             <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="postedBy" displayName="过账人" propId="22" i18n-en:displayName="Posted By" queryable="true"
+        <prop name="postedBy" displayName="过账人" propId="24" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="true" updatable="true">
             <schema stdDomain="userId" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="exchangeRate" displayName="汇率" propId="23" i18n-en:displayName="Exchange Rate" mandatory="true"
+        <prop name="exchangeRate" displayName="汇率" propId="25" i18n-en:displayName="Exchange Rate" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.math.BigDecimal" precision="20" scale="8"/>
         </prop>
-        <prop name="amountSource" displayName="源币种金额" propId="24" i18n-en:displayName="Amt (Source)" queryable="true"
+        <prop name="amountSource" displayName="源币种金额" propId="26" i18n-en:displayName="Amt (Source)" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
-        <prop name="amountFunctional" displayName="本位币金额" propId="25" i18n-en:displayName="Amt (Functional)"
+        <prop name="amountFunctional" displayName="本位币金额" propId="27" i18n-en:displayName="Amt (Functional)"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>

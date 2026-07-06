@@ -67,6 +67,19 @@
             <option code="STOLEN" label="被盗" value="STOLEN" i18n-en:label="Stolen"/>
             <option code="OTHER" label="其他" value="OTHER" i18n-en:label="Other"/>
         </dict>
+        <dict label="在建工程状态" name="erp-ast/cip-status" valueType="string" i18n-en:label="CIP Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="IN_CONSTRUCTION" label="建设中" value="IN_CONSTRUCTION" i18n-en:label="In Construction"/>
+            <option code="TRANSFERRED" label="已完工转固" value="TRANSFERRED" i18n-en:label="Transferred"/>
+        </dict>
+        <dict label="CIP成本类型" name="erp-ast/cip-cost-type" valueType="string" i18n-en:label="CIP Cost Type">
+            <option code="PURCHASE" label="采购" value="PURCHASE" i18n-en:label="Purchase"/>
+            <option code="SERVICE" label="服务" value="SERVICE" i18n-en:label="Service"/>
+            <option code="LABOR" label="人工" value="LABOR" i18n-en:label="Labor"/>
+            <option code="INTEREST_CAPITALIZATION" label="利息资本化" value="INTEREST_CAPITALIZATION"
+                    i18n-en:label="Interest Capitalization"/>
+            <option code="OTHER" label="其他" value="OTHER" i18n-en:label="Other"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -997,7 +1010,7 @@
                 <column code="COMPLETED_ASSET_ID" displayName="完工转出资产" name="completedAssetId" propId="11"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Completed Asset"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="12"
-                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/asset-status"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/cip-status"
                         i18n-en:displayName="Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
@@ -1016,20 +1029,25 @@
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="19"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
-                <column code="POSTED" defaultValue="false" displayName="是否已过账" name="posted" propId="20"
+                <column code="PROJECT_ID" displayName="关联项目(可空)" name="projectId" propId="20" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Project"/>
+                <column code="CIP_ASSET_CATEGORY_SNAPSHOT" displayName="转固时类别快照" name="cipAssetCategorySnapshot"
+                        precision="500" propId="21" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="CIP Category Snapshot"/>
+                <column code="POSTED" defaultValue="false" displayName="是否已过账" name="posted" propId="22"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
-                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="21" stdDataType="timestamp"
+                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="23" stdDataType="timestamp"
                         stdSqlType="TIMESTAMP" i18n-en:displayName="Posted At"/>
-                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="50" propId="22"
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="50" propId="24"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
                 <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
-                        propId="23" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
+                        propId="25" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="24" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        propId="26" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="25" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="20" propId="27" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
             </columns>
             <indexes>
@@ -1080,6 +1098,177 @@
             <unique-keys>
                 <unique-key columns="code,orgId" name="UK_AST_CIP_CODE_ORG"/>
             </unique-keys>
+        </entity>
+        <entity className="app.erp.ast.dao.entity.ErpAstCipCostItem" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="CIP成本归集行"
+                name="app.erp.ast.dao.entity.ErpAstCipCostItem" registerShortName="true"
+                tableName="erp_ast_cip_cost_item" tagSet="gid,erp.assets" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="coins"
+                i18n-en:displayName="CIP Cost Item">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CIP_ID" displayName="在建工程" mandatory="true" name="cipId" propId="2" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="CIP"/>
+                <column code="ORG_ID" displayName="所属组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="LINE_NO" displayName="行号" name="lineNo" propId="4" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Line No"/>
+                <column code="COST_TYPE" displayName="成本类型" mandatory="true" name="costType" precision="30" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/cip-cost-type"
+                        i18n-en:displayName="Cost Type"/>
+                <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
+                        propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Amt (Source)"/>
+                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" mandatory="true" name="exchangeRate"
+                        precision="20" propId="7" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Exchange Rate"/>
+                <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" mandatory="true"
+                        name="amountFunctional" precision="20" propId="8" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Amt (Functional)"/>
+                <column code="SOURCE_BILL_TYPE" displayName="来源单据类型" name="sourceBillType" precision="30" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Type"/>
+                <column code="SOURCE_BILL_CODE" displayName="来源单据号" name="sourceBillCode" precision="50" propId="10"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Code"/>
+                <column code="POSTED_TRANSFER_FLAG" defaultValue="false" displayName="已转固标记" name="postedTransferFlag"
+                        propId="11" stdDataType="boolean" stdSqlType="BOOLEAN"
+                        i18n-en:displayName="Posted Transfer Flag"/>
+                <column code="CAPITALIZATION_ID" displayName="转固资本化单" name="capitalizationId" propId="12"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Capitalization"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="13" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="14" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="15" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="16" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="17" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="19" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="21"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_AST_CIP_COST_ITEM_CIP_ID" unique="false">
+                    <column name="cipId"/>
+                </index>
+                <index name="IDX_AST_CIP_COST_ITEM_CAPITALIZATION_ID" unique="false">
+                    <column name="capitalizationId"/>
+                </index>
+                <index name="IDX_AST_CIP_COST_ITEM_COST_TYPE" unique="false">
+                    <column name="costType"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="cip" refEntityName="app.erp.ast.dao.entity.ErpAstCip" tagSet="pub"
+                        i18n-en:displayName="CIP">
+                    <join>
+                        <on leftProp="cipId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.ast.dao.entity.ErpAstCipProgressBilling" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="CIP进度付款"
+                name="app.erp.ast.dao.entity.ErpAstCipProgressBilling" registerShortName="true"
+                tableName="erp_ast_cip_progress_billing" tagSet="gid,erp.assets" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="credit-card"
+                i18n-en:displayName="CIP Progress Billing">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CIP_ID" displayName="在建工程" mandatory="true" name="cipId" propId="2" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="CIP"/>
+                <column code="ORG_ID" displayName="所属组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="LINE_NO" displayName="行号" name="lineNo" propId="4" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Line No"/>
+                <column code="BILLING_DATE" displayName="付款日期" mandatory="true" name="billingDate" propId="5"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Billing Date"/>
+                <column code="BILLING_MILESTONE" displayName="里程碑" name="billingMilestone" precision="200" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Billing Milestone"/>
+                <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
+                        propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Amt (Source)"/>
+                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" mandatory="true" name="exchangeRate"
+                        precision="20" propId="8" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Exchange Rate"/>
+                <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" mandatory="true"
+                        name="amountFunctional" precision="20" propId="9" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Amt (Functional)"/>
+                <column code="PAYMENT_VOUCHER_CODE" displayName="付款凭证号" name="paymentVoucherCode" precision="50"
+                        propId="10" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Payment Voucher Code"/>
+                <column code="PAID_FLAG" defaultValue="false" displayName="已付标记" name="paidFlag" propId="11"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Paid Flag"/>
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="12" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="14" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="15" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="17" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_AST_CIP_PROGRESS_BILLING_CIP_ID" unique="false">
+                    <column name="cipId"/>
+                </index>
+                <index name="IDX_AST_CIP_PROGRESS_BILLING_DATE" unique="false">
+                    <column name="billingDate"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="cip" refEntityName="app.erp.ast.dao.entity.ErpAstCip" tagSet="pub"
+                        i18n-en:displayName="CIP">
+                    <join>
+                        <on leftProp="cipId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstSplit" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产拆分单"

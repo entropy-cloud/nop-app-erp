@@ -61,86 +61,114 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpAstDepreciationSchedule-main" displayName="折旧计划" orderNo="10013"
+                <resource id="ErpAstCipCostItem-main" displayName="CIP成本归集行" orderNo="10013"
+                          i18n-en:displayName="CIP Cost Item" icon="coins" component="AMIS" resourceType="SUBM"
+                          url="/erp/ast/pages/ErpAstCipCostItem/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpAstCipCostItem:query" displayName="查询CIP成本归集行"
+                                  i18n-en:displayName="Query CIP Cost Item" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpAstCipCostItem:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpAstCipCostItem:mutation" displayName="修改CIP成本归集行"
+                                  i18n-en:displayName="Modify CIP Cost Item" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpAstCipCostItem:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpAstCipProgressBilling-main" displayName="CIP进度付款" orderNo="10016"
+                          i18n-en:displayName="CIP Progress Billing" icon="credit-card" component="AMIS"
+                          resourceType="SUBM" url="/erp/ast/pages/ErpAstCipProgressBilling/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpAstCipProgressBilling:query" displayName="查询CIP进度付款"
+                                  i18n-en:displayName="Query CIP Progress Billing" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpAstCipProgressBilling:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpAstCipProgressBilling:mutation" displayName="修改CIP进度付款"
+                                  i18n-en:displayName="Modify CIP Progress Billing" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpAstCipProgressBilling:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpAstDepreciationSchedule-main" displayName="折旧计划" orderNo="10019"
                           i18n-en:displayName="Depreciation Schedule" icon="trending-down" component="AMIS"
                           resourceType="SUBM" url="/erp/ast/pages/ErpAstDepreciationSchedule/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstDepreciationSchedule:query" displayName="查询折旧计划"
-                                  i18n-en:displayName="Query Depreciation Schedule" orderNo="10014" resourceType="FNPT">
+                                  i18n-en:displayName="Query Depreciation Schedule" orderNo="10020" resourceType="FNPT">
                             <permissions>ErpAstDepreciationSchedule:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpAstDepreciationSchedule:mutation" displayName="修改折旧计划"
-                                  i18n-en:displayName="Modify Depreciation Schedule" orderNo="10015" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Depreciation Schedule" orderNo="10021" resourceType="FNPT">
                             <permissions>ErpAstDepreciationSchedule:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpAstDisposal-main" displayName="资产处置" orderNo="10016"
+                <resource id="ErpAstDisposal-main" displayName="资产处置" orderNo="10022"
                           i18n-en:displayName="Asset Disposal" icon="trash-2" component="AMIS" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstDisposal/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstDisposal:query" displayName="查询资产处置"
-                                  i18n-en:displayName="Query Asset Disposal" orderNo="10017" resourceType="FNPT">
+                                  i18n-en:displayName="Query Asset Disposal" orderNo="10023" resourceType="FNPT">
                             <permissions>ErpAstDisposal:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpAstDisposal:mutation" displayName="修改资产处置"
-                                  i18n-en:displayName="Modify Asset Disposal" orderNo="10018" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Asset Disposal" orderNo="10024" resourceType="FNPT">
                             <permissions>ErpAstDisposal:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpAstMerge-main" displayName="资产合并单" orderNo="10019" i18n-en:displayName="Asset Merge"
+                <resource id="ErpAstMerge-main" displayName="资产合并单" orderNo="10025" i18n-en:displayName="Asset Merge"
                           icon="git-merge" component="AMIS" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstMerge/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstMerge:query" displayName="查询资产合并单"
-                                  i18n-en:displayName="Query Asset Merge" orderNo="10020" resourceType="FNPT">
+                                  i18n-en:displayName="Query Asset Merge" orderNo="10026" resourceType="FNPT">
                             <permissions>ErpAstMerge:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpAstMerge:mutation" displayName="修改资产合并单"
-                                  i18n-en:displayName="Modify Asset Merge" orderNo="10021" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Asset Merge" orderNo="10027" resourceType="FNPT">
                             <permissions>ErpAstMerge:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpAstMovement-main" displayName="资产移动" orderNo="10022"
+                <resource id="ErpAstMovement-main" displayName="资产移动" orderNo="10028"
                           i18n-en:displayName="Asset Movement" icon="move" component="AMIS" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstMovement/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstMovement:query" displayName="查询资产移动"
-                                  i18n-en:displayName="Query Asset Movement" orderNo="10023" resourceType="FNPT">
+                                  i18n-en:displayName="Query Asset Movement" orderNo="10029" resourceType="FNPT">
                             <permissions>ErpAstMovement:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpAstMovement:mutation" displayName="修改资产移动"
-                                  i18n-en:displayName="Modify Asset Movement" orderNo="10024" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Asset Movement" orderNo="10030" resourceType="FNPT">
                             <permissions>ErpAstMovement:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpAstSplit-main" displayName="资产拆分单" orderNo="10025" i18n-en:displayName="Asset Split"
+                <resource id="ErpAstSplit-main" displayName="资产拆分单" orderNo="10031" i18n-en:displayName="Asset Split"
                           icon="split" component="AMIS" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstSplit/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstSplit:query" displayName="查询资产拆分单"
-                                  i18n-en:displayName="Query Asset Split" orderNo="10026" resourceType="FNPT">
+                                  i18n-en:displayName="Query Asset Split" orderNo="10032" resourceType="FNPT">
                             <permissions>ErpAstSplit:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpAstSplit:mutation" displayName="修改资产拆分单"
-                                  i18n-en:displayName="Modify Asset Split" orderNo="10027" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Asset Split" orderNo="10033" resourceType="FNPT">
                             <permissions>ErpAstSplit:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpAstValueAdjustment-main" displayName="资产价值调整" orderNo="10028"
+                <resource id="ErpAstValueAdjustment-main" displayName="资产价值调整" orderNo="10034"
                           i18n-en:displayName="Asset Value Adjustment" icon="sliders-horizontal" component="AMIS"
                           resourceType="SUBM" url="/erp/ast/pages/ErpAstValueAdjustment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstValueAdjustment:query" displayName="查询资产价值调整"
-                                  i18n-en:displayName="Query Asset Value Adjustment" orderNo="10029" resourceType="FNPT">
+                                  i18n-en:displayName="Query Asset Value Adjustment" orderNo="10035" resourceType="FNPT">
                             <permissions>ErpAstValueAdjustment:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpAstValueAdjustment:mutation" displayName="修改资产价值调整"
-                                  i18n-en:displayName="Modify Asset Value Adjustment" orderNo="10030"
+                                  i18n-en:displayName="Modify Asset Value Adjustment" orderNo="10036"
                                   resourceType="FNPT">
                             <permissions>ErpAstValueAdjustment:mutation</permissions>
                         </resource>

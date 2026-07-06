@@ -15,4 +15,6 @@ drop table  if exists  erp_ast_disposal;
 drop table  if exists  erp_ast_cip;
 drop table  if exists  erp_ast_split;
 drop table  if exists  erp_ast_merge;
+drop table  if exists  erp_ast_cip_cost_item;
+drop table  if exists  erp_ast_cip_progress_billing;
 

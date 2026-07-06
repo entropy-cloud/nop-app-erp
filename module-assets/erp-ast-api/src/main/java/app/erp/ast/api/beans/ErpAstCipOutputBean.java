@@ -291,10 +291,38 @@
         }
 
 
-        private Boolean _posted;
+        private Long _projectId;
 
     
         @PropMeta(propId=20)
+    
+        public Long getProjectId(){
+            return _projectId;
+        }
+
+        public void setProjectId(Long value){
+            this._projectId = value;
+        }
+
+
+        private String _cipAssetCategorySnapshot;
+
+    
+        @PropMeta(propId=21)
+    
+        public String getCipAssetCategorySnapshot(){
+            return _cipAssetCategorySnapshot;
+        }
+
+        public void setCipAssetCategorySnapshot(String value){
+            this._cipAssetCategorySnapshot = value;
+        }
+
+
+        private Boolean _posted;
+
+    
+        @PropMeta(propId=22)
     
         public Boolean getPosted(){
             return _posted;
@@ -308,7 +336,7 @@
         private java.sql.Timestamp _postedAt;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=23)
     
         public java.sql.Timestamp getPostedAt(){
             return _postedAt;
@@ -322,7 +350,7 @@
         private String _postedBy;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=24)
     
         public String getPostedBy(){
             return _postedBy;
@@ -336,7 +364,7 @@
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=25)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -350,7 +378,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=26)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -364,7 +392,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=27)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;

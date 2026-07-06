@@ -289,6 +289,8 @@ CREATE TABLE erp_ast_cip(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  project_id INT8  ,
+  cip_asset_category_snapshot VARCHAR(500)  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(50)  ,
@@ -352,6 +354,54 @@ CREATE TABLE erp_ast_merge(
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_merge primary key (id)
+);
+
+CREATE TABLE erp_ast_cip_cost_item(
+  id INT8 NOT NULL ,
+  cip_id INT8 NOT NULL ,
+  org_id INT8  ,
+  line_no INT4  ,
+  cost_type VARCHAR(30) NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
+  amount_functional NUMERIC(20,4) default 0  NOT NULL ,
+  source_bill_type VARCHAR(30)  ,
+  source_bill_code VARCHAR(50)  ,
+  posted_transfer_flag BOOLEAN default false   ,
+  capitalization_id INT8  ,
+  business_date DATE  ,
+  currency_id INT8  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_ast_cip_cost_item primary key (id)
+);
+
+CREATE TABLE erp_ast_cip_progress_billing(
+  id INT8 NOT NULL ,
+  cip_id INT8 NOT NULL ,
+  org_id INT8  ,
+  line_no INT4  ,
+  billing_date DATE NOT NULL ,
+  billing_milestone VARCHAR(200)  ,
+  amount_source NUMERIC(20,4) default 0   ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
+  amount_functional NUMERIC(20,4) default 0  NOT NULL ,
+  payment_voucher_code VARCHAR(50)  ,
+  paid_flag BOOLEAN default false   ,
+  currency_id INT8  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_ast_cip_progress_billing primary key (id)
 );
 
 
@@ -791,6 +841,10 @@ CREATE TABLE erp_ast_merge(
                     
       COMMENT ON COLUMN erp_ast_cip.remark IS '备注';
                     
+      COMMENT ON COLUMN erp_ast_cip.project_id IS '关联项目(可空)';
+                    
+      COMMENT ON COLUMN erp_ast_cip.cip_asset_category_snapshot IS '转固时类别快照';
+                    
       COMMENT ON COLUMN erp_ast_cip.posted IS '是否已过账';
                     
       COMMENT ON COLUMN erp_ast_cip.posted_at IS '过账时间';
@@ -902,4 +956,88 @@ CREATE TABLE erp_ast_merge(
       COMMENT ON COLUMN erp_ast_merge.amount_source IS '源币种金额';
                     
       COMMENT ON COLUMN erp_ast_merge.amount_functional IS '本位币金额';
+                    
+      COMMENT ON TABLE erp_ast_cip_cost_item IS 'CIP成本归集行';
+                
+      COMMENT ON COLUMN erp_ast_cip_cost_item.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.cip_id IS '在建工程';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.org_id IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.cost_type IS '成本类型';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.amount_functional IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.source_bill_type IS '来源单据类型';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.source_bill_code IS '来源单据号';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.posted_transfer_flag IS '已转固标记';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.capitalization_id IS '转固资本化单';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip_cost_item.remark IS '备注';
+                    
+      COMMENT ON TABLE erp_ast_cip_progress_billing IS 'CIP进度付款';
+                
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.cip_id IS '在建工程';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.org_id IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.line_no IS '行号';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.billing_date IS '付款日期';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.billing_milestone IS '里程碑';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.amount_functional IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.payment_voucher_code IS '付款凭证号';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.paid_flag IS '已付标记';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip_progress_billing.remark IS '备注';
                     

@@ -4,6 +4,8 @@ entity:
     ErpAstAssetCapitalization: Asset Capitalization
     ErpAstAssetCategory: Asset Category
     ErpAstCip: CIP
+    ErpAstCipCostItem: CIP Cost Item
+    ErpAstCipProgressBilling: CIP Progress Billing
     ErpAstDepreciationSchedule: Depreciation Schedule
     ErpAstDisposal: Asset Disposal
     ErpAstMerge: Asset Merge
@@ -131,6 +133,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      projectId: Project
+      cipAssetCategorySnapshot: CIP Category Snapshot
       posted: Posted
       postedAt: Posted At
       postedBy: Posted By
@@ -141,6 +145,55 @@ prop:
       currency: Currency
       org: Org
       completedAsset: Completed Asset
+    ErpAstCipCostItem:
+      id: ID
+      cipId: CIP
+      orgId: Organization
+      lineNo: Line No
+      costType: Cost Type
+      costType_label: null
+      amountSource: Amt (Source)
+      exchangeRate: Exchange Rate
+      amountFunctional: Amt (Functional)
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      postedTransferFlag: Posted Transfer Flag
+      capitalizationId: Capitalization
+      businessDate: Business Date
+      currencyId: Currency
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      cip: CIP
+      org: Org
+      currency: Currency
+    ErpAstCipProgressBilling:
+      id: ID
+      cipId: CIP
+      orgId: Organization
+      lineNo: Line No
+      billingDate: Billing Date
+      billingMilestone: Billing Milestone
+      amountSource: Amt (Source)
+      exchangeRate: Exchange Rate
+      amountFunctional: Amt (Functional)
+      paymentVoucherCode: Payment Voucher Code
+      paidFlag: Paid Flag
+      currencyId: Currency
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      cip: CIP
+      org: Org
+      currency: Currency
     ErpAstDepreciationSchedule:
       id: ID
       assetId: Asset
@@ -357,6 +410,8 @@ dict:
     erp-ast/approve-status: Approve Status
     erp-ast/capitalization-source-type: Capitalization Source Type
     erp-ast/disposal-reason: Disposal Reason
+    erp-ast/cip-status: CIP Status
+    erp-ast/cip-cost-type: CIP Cost Type
 dict.option.label:
   erp-ast/asset-status:
     DRAFT: Draft
@@ -398,4 +453,14 @@ dict.option.label:
     SOLD: Sale
     DONATED: Donation
     STOLEN: Stolen
+    OTHER: Other
+  erp-ast/cip-status:
+    DRAFT: Draft
+    IN_CONSTRUCTION: In Construction
+    TRANSFERRED: Transferred
+  erp-ast/cip-cost-type:
+    PURCHASE: Purchase
+    SERVICE: Service
+    LABOR: Labor
+    INTEREST_CAPITALIZATION: Interest Capitalization
     OTHER: Other
