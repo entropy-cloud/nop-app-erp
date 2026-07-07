@@ -90,6 +90,24 @@ jobs:
       bean: erpCrmEventReminderJob
       method: execute
 
+  - jobName: erp-crm-sequence-overdue
+    displayName: CRM Sequence Overdue Scan
+    description: 每日 06:00 扫描连续逾期 ≥ max-overdue-steps 的序列进度派发提醒通知；cron 经 erp-crm.sequence.overdue-check-cron 配置门控
+    trigger:
+      cronExpr: "0 0 6 * * ?"
+    invoker:
+      bean: erpCrmSequenceOverdueJob
+      method: execute
+
+  - jobName: erp-crm-funnel-aggregation
+    displayName: CRM Funnel Aggregation
+    description: 每日 03:30 全量刷新漏斗快照（LeadFunnel 头 + FunnelStageMetrics 阶段明细）；cron 经 erp-crm.funnel.aggregation-cron 配置门控
+    trigger:
+      cronExpr: "0 30 3 * * ?"
+    invoker:
+      bean: erpCrmFunnelAggregationJob
+      method: execute
+
   - jobName: erp-cs-csat-reminder
     displayName: Customer Service CSAT Survey Reminder
     description: 每日 02:00 扫描未响应/过期 CSAT 调查派发提醒通知；cron 经 erp-cs.csat-reminder-cron 配置门控

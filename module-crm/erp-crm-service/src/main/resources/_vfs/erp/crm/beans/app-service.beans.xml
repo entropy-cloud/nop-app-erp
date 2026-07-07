@@ -62,4 +62,38 @@
     <!-- CRM 域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /crm/）。 -->
     <bean id="app.erp.crm.service.report.ErpCrmReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- CPQ 配置规则引擎（plan 2026-07-07-1430-2 §Phase 1）：纯函数式 evaluate(selectedFeatures, rules) -->
+    <bean id="app.erp.crm.service.support.ProductConfigRuleEngine"
+          class="app.erp.crm.service.support.ProductConfigRuleEngine"/>
+
+    <!-- CPQ 价格规则引擎（plan 2026-07-07-1430-2 §Phase 2）：CUSTOMER_SPECIFIC > PROMOTIONAL > VOLUME + priority + 期间 + 数量区间 -->
+    <bean id="app.erp.crm.service.support.PriceRuleEngine"
+          class="app.erp.crm.service.support.PriceRuleEngine"/>
+
+    <!-- CPQ 捆绑定价计算器（plan 2026-07-07-1430-2 §Phase 2）：subtotal → PERCENTAGE/FIXED 折扣 或 bundleAmount 覆盖 -->
+    <bean id="app.erp.crm.service.support.BundlePricingCalculator"
+          class="app.erp.crm.service.support.BundlePricingCalculator"/>
+
+    <!-- 销售序列自动分配引擎（plan 2026-07-07-1430-3 §Phase 1）：纯函数式 + 四 conditionType 匹配 + default 兜底 -->
+    <bean id="app.erp.crm.service.support.SequenceAssignmentEngine"
+          class="app.erp.crm.service.support.SequenceAssignmentEngine"/>
+
+    <!-- 销售序列步骤推进引擎（plan 2026-07-07-1430-3 §Phase 1）：纯函数式 + completionCondition 匹配 + autoCreateEvent -->
+    <bean id="app.erp.crm.service.support.SequenceStepAdvancer"
+          class="app.erp.crm.service.support.SequenceStepAdvancer"/>
+
+    <!-- 定时序列逾期检查 Job Bean（plan 2026-07-07-1430-3 §Phase 1）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.sequence.overdue-check-cron 配置门控。 -->
+    <bean id="erpCrmSequenceOverdueJob"
+          class="app.erp.crm.service.job.ErpCrmSequenceOverdueJob"/>
+
+    <!-- 漏斗聚合引擎（plan 2026-07-07-1430-3 §Phase 2）：纯函数式 + 头度量 + 阶段明细 + 丢失原因 TOP N -->
+    <bean id="app.erp.crm.service.support.FunnelAggregationEngine"
+          class="app.erp.crm.service.support.FunnelAggregationEngine"/>
+
+    <!-- 定时漏斗聚合 Job Bean（plan 2026-07-07-1430-3 §Phase 2）。由 nop-job-local scheduler.yaml
+          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.funnel.aggregation-cron 配置门控。 -->
+    <bean id="erpCrmFunnelAggregationJob"
+          class="app.erp.crm.service.job.ErpCrmFunnelAggregationJob"/>
 </beans>

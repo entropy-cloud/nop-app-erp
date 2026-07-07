@@ -116,4 +116,72 @@ public interface ErpCrmConstants {
     String QUOTA_PERIOD_ANNUAL = "ANNUAL";
     String QUOTA_PERIOD_QUARTERLY = "QUARTERLY";
     String QUOTA_PERIOD_MONTHLY = "MONTHLY";
+
+    // ===== CPQ 配置-定价-报价（plan 2026-07-07-1430-2）配置点 =====
+    /** 单个配置器允许的最大规则数（默认 100）。 */
+    String CONFIG_CPQ_MAX_RULES_PER_CONFIGURATOR = "erp-crm.cpq.max-rules-per-configurator";
+    /** 是否启用引导式向导（false=单页配置，默认 true）。 */
+    String CONFIG_CPQ_ENABLE_WIZARD = "erp-crm.cpq.enable-wizard";
+    /** 定价默认币种（默认 CNY）。 */
+    String CONFIG_CPQ_DEFAULT_CURRENCY = "erp-crm.cpq.default-currency";
+
+    // erp-crm/config-rule-type 字典
+    String CONFIG_RULE_TYPE_REQUIRED = "REQUIRED";
+    String CONFIG_RULE_TYPE_OPTIONAL = "OPTIONAL";
+    String CONFIG_RULE_TYPE_EXCLUDED = "EXCLUDED";
+    String CONFIG_RULE_TYPE_RECOMMENDED = "RECOMMENDED";
+
+    // erp-crm/bundle-discount-type 字典
+    String BUNDLE_DISCOUNT_TYPE_PERCENTAGE = "PERCENTAGE";
+    String BUNDLE_DISCOUNT_TYPE_FIXED = "FIXED";
+
+    // erp-crm/price-rule-type 字典
+    String PRICE_RULE_TYPE_CUSTOMER_SPECIFIC = "CUSTOMER_SPECIFIC";
+    String PRICE_RULE_TYPE_PROMOTIONAL = "PROMOTIONAL";
+    String PRICE_RULE_TYPE_VOLUME = "VOLUME";
+
+    // ===== 销售序列 + 漏斗分析（plan 2026-07-07-1430-3）配置点 =====
+    /** Lead 进入 QUALIFIED 时是否自动分配序列（默认 true）。 */
+    String CONFIG_SEQUENCE_AUTO_ASSIGN_ON_QUALIFY = "erp-crm.sequence.auto-assign-on-qualify";
+    /** 步骤逾期宽限期天数（超过 dueDays + grace 视为逾期，默认 2）。 */
+    String CONFIG_SEQUENCE_GRACE_PERIOD_DAYS = "erp-crm.sequence.grace-period-days";
+    /** 连续逾期步骤上限，超过则提醒（默认 3）。 */
+    String CONFIG_SEQUENCE_MAX_OVERDUE_STEPS = "erp-crm.sequence.max-overdue-steps";
+    /** 定时序列逾期检查 cron（空=不调度；设计默认每日 06:00）。 */
+    String CONFIG_SEQUENCE_OVERDUE_CHECK_CRON = "erp-crm.sequence.overdue-check-cron";
+    /** 无匹配规则时的默认序列模板类型（默认 NEW_LEAD）。 */
+    String CONFIG_SEQUENCE_DEFAULT_TEMPLATE = "erp-crm.sequence.default-template";
+    /** 漏斗聚合定时 cron（空=不调度；设计默认每日 03:00）。 */
+    String CONFIG_FUNNEL_AGGREGATION_CRON = "erp-crm.funnel.aggregation-cron";
+    /** 漏斗快照保留月数（默认 24）。 */
+    String CONFIG_FUNNEL_RETENTION_PERIOD_MONTHS = "erp-crm.funnel.retention-period-months";
+    /** 漏斗每阶段丢失原因 TOP N（默认 5）。 */
+    String CONFIG_FUNNEL_TOP_LOST_REASONS = "erp-crm.funnel.top-lost-reasons";
+
+    // erp-crm/sequence-template-type 字典
+    String SEQUENCE_TEMPLATE_NEW_LEAD = "NEW_LEAD";
+    String SEQUENCE_TEMPLATE_QUALIFICATION = "QUALIFICATION";
+    String SEQUENCE_TEMPLATE_NEGOTIATION = "NEGOTIATION";
+    String SEQUENCE_TEMPLATE_RE_ENGAGEMENT = "RE_ENGAGEMENT";
+
+    // erp-crm/step-completion-condition 字典
+    String STEP_COMPLETION_CALL_COMPLETED = "CALL_COMPLETED";
+    String STEP_COMPLETION_EMAIL_OPENED = "EMAIL_OPENED";
+    String STEP_COMPLETION_EMAIL_REPLIED = "EMAIL_REPLIED";
+    String STEP_COMPLETION_MEETING_HELD = "MEETING_HELD";
+    String STEP_COMPLETION_TASK_DONE = "TASK_DONE";
+
+    // erp-crm/sequence-progress-status 字典
+    String SEQUENCE_PROGRESS_IN_PROGRESS = "IN_PROGRESS";
+    String SEQUENCE_PROGRESS_COMPLETED = "COMPLETED";
+    String SEQUENCE_PROGRESS_SKIPPED = "SKIPPED";
+
+    // erp-crm/seq-assignment-condition-type 字典
+    String SEQ_ASSIGNMENT_CONDITION_LEAD_SOURCE = "LEAD_SOURCE";
+    String SEQ_ASSIGNMENT_CONDITION_TERRITORY = "TERRITORY";
+    String SEQ_ASSIGNMENT_CONDITION_PRODUCT_LINE = "PRODUCT_LINE";
+    String SEQ_ASSIGNMENT_CONDITION_CUSTOM_FIELD = "CUSTOM_FIELD";
+
+    // 通知事件类型：序列逾期提醒（对应 erp_sys_notification_template.notification_type）。
+    String NOTIFY_EVENT_SEQUENCE_OVERDUE = "crm.sequence-overdue";
 }

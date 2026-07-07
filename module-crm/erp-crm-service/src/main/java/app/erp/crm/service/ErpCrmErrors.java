@@ -40,6 +40,28 @@ public interface ErpCrmErrors {
     String ARG_PERIOD_LABEL = "periodLabel";
     String ARG_CONDITION_TYPE = "conditionType";
 
+    // --- CPQ 参数键 ---
+    String ARG_CONFIGURATOR_ID = "configuratorId";
+    String ARG_RULE_COUNT = "ruleCount";
+    String ARG_MAX_RULES = "maxRules";
+    String ARG_DISCOUNT_TYPE = "discountType";
+    String ARG_PRODUCT_ID = "productId";
+    String ARG_CUSTOMER_ID = "customerId";
+    String ARG_QUANTITY = "quantity";
+    String ARG_MIN_QTY = "minQuantity";
+    String ARG_MAX_QTY = "maxQuantity";
+    String ARG_EFFECTIVE_FROM = "effectiveFrom";
+    String ARG_EFFECTIVE_TO = "effectiveTo";
+
+    // --- 序列 / 漏斗 参数键（plan 2026-07-07-1430-3） ---
+    String ARG_SEQUENCE_ID = "sequenceId";
+    String ARG_PROGRESS_ID = "progressId";
+    String ARG_STEP_INDEX = "stepIndex";
+    String ARG_TEMPLATE_TYPE = "templateType";
+    String ARG_PERIOD_START = "periodStart";
+    String ARG_PERIOD_END = "periodEnd";
+    String ARG_FUNNEL_ID = "funnelId";
+
     ErrorCode ERR_LEAD_NOT_FOUND = ErrorCode.define("erp.err.crm.lead-not-found",
             "线索/商机 {leadId} 不存在", ARG_LEAD_ID);
 
@@ -132,4 +154,63 @@ public interface ErpCrmErrors {
             "erp.err.crm.quota.no-match",
             "未找到匹配的配额行（territoryId={territoryId}, periodType={periodType}, periodLabel={periodLabel}）",
             ARG_TERRITORY_ID, ARG_PERIOD_TYPE, ARG_PERIOD_LABEL);
+
+    // --- CPQ（plan 2026-07-07-1430-2） ---
+
+    ErrorCode ERR_CPQ_RULE_LIMIT_EXCEEDED = ErrorCode.define(
+            "erp.err.crm.cpq.rule-limit-exceeded",
+            "配置器 {configuratorId} 的规则数 {ruleCount} 超过上限 {maxRules}",
+            ARG_CONFIGURATOR_ID, ARG_RULE_COUNT, ARG_MAX_RULES);
+
+    ErrorCode ERR_CPQ_CONFIGURATOR_INACTIVE = ErrorCode.define(
+            "erp.err.crm.cpq.configurator-inactive",
+            "产品配置器 {configuratorId} 未启用或不在生效期间内",
+            ARG_CONFIGURATOR_ID);
+
+    ErrorCode ERR_CPQ_DISCOUNT_INCONSISTENT = ErrorCode.define(
+            "erp.err.crm.cpq.discount-inconsistent",
+            "折扣类型 {discountType} 与折扣值不一致（PERCENTAGE 须 0-100；FIXED 须非负）",
+            ARG_DISCOUNT_TYPE);
+
+    ErrorCode ERR_CPQ_QTY_RANGE_INVALID = ErrorCode.define(
+            "erp.err.crm.cpq.qty-range-invalid",
+            "数量区间非法（minQuantity={minQuantity} 大于 maxQuantity={maxQuantity}）",
+            ARG_MIN_QTY, ARG_MAX_QTY);
+
+    ErrorCode ERR_CPQ_EFFECTIVE_DATE_INVALID = ErrorCode.define(
+            "erp.err.crm.cpq.effective-date-invalid",
+            "生效期间非法（effectiveFrom={effectiveFrom} 晚于 effectiveTo={effectiveTo}）",
+            ARG_EFFECTIVE_FROM, ARG_EFFECTIVE_TO);
+
+    ErrorCode ERR_CPQ_NO_PRICE_MATCHED = ErrorCode.define(
+            "erp.err.crm.cpq.no-price-matched",
+            "未匹配到价格规则（productId={productId}, customerId={customerId}, quantity={quantity}）",
+            ARG_PRODUCT_ID, ARG_CUSTOMER_ID, ARG_QUANTITY);
+
+    // --- 序列管理（plan 2026-07-07-1430-3） ---
+
+    ErrorCode ERR_SEQUENCE_NO_MATCH = ErrorCode.define(
+            "erp.err.crm.sequence.no-match",
+            "线索/商机 {leadId} 未匹配到任何启用的序列分配规则（也无 default 序列）",
+            ARG_LEAD_ID);
+
+    ErrorCode ERR_SEQUENCE_STEP_NOT_DUE = ErrorCode.define(
+            "erp.err.crm.sequence.step-not-due",
+            "序列进度 {progressId} 当前步骤 stepIndex={stepIndex} 未达完成条件（活动类型/事件状态不匹配）",
+            ARG_PROGRESS_ID, ARG_STEP_INDEX);
+
+    ErrorCode ERR_SEQUENCE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.crm.sequence.illegal-status-transition",
+            "序列进度 {progressId} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_PROGRESS_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_SEQUENCE_ALREADY_ASSIGNED = ErrorCode.define(
+            "erp.err.crm.sequence.already-assigned",
+            "线索/商机 {leadId} 已存在活跃序列进度（progressId={progressId}），须先 switchSequence 切换",
+            ARG_LEAD_ID, ARG_PROGRESS_ID);
+
+    ErrorCode ERR_FUNNEL_PERIOD_INVALID = ErrorCode.define(
+            "erp.err.crm.funnel.period-invalid",
+            "漏斗期间非法（periodStart={periodStart} 晚于 periodEnd={periodEnd}）",
+            ARG_PERIOD_START, ARG_PERIOD_END);
 }
