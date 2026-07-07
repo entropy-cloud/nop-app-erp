@@ -3,6 +3,7 @@ package app.erp.prj.service.dashboard;
 import app.erp.prj.dao.entity.ErpPrjBudget;
 import app.erp.prj.dao.entity.ErpPrjCostCollection;
 import app.erp.prj.dao.entity.ErpPrjProject;
+import app.erp.prj.dao.entity.ErpPrjProjectPnl;
 import app.erp.prj.service.ErpPrjConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -40,7 +41,9 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  * 已发生成本取自 {@link ErpPrjCostCollection}（OPEN 项目 Σ totalAmount）；
  * 预算执行率 = 已发生成本 / 项目总预算。
  *
- * <p>项目毛利率指标 Non-Goal（{@code ErpPrjProjectPnl} 未物化，见 plan 2026-07-06-1606-1 Phase 1 Decision）。
+ * <p>项目毛利率指标（{@link #getProjectGrossMargin}）：聚合 {@link ErpPrjProjectPnl}
+ * （由 ProjectPnlCalculator 周期物化），整体毛利率 = Σ grossProfit / Σ revenueAmount
+ * （两列均为 DECIMAL 直接可加，避免 grossMarginPct 字符串加权语义歧义）。
  */
 @BizModel("ErpPrjDashboard")
 public class ErpPrjDashboardBizModel {
@@ -146,6 +149,48 @@ public class ErpPrjDashboardBizModel {
                 }
             }
             return rows;
+        });
+    }
+
+    /**
+     * 项目毛利率 KPI 摘要（{@code dashboards.md §6}）。聚合 {@link ErpPrjProjectPnl}：
+     * Σ revenueAmount、Σ totalCost、Σ grossProfit；整体毛利率 = Σ grossProfit / Σ revenueAmount
+     * （两列均 DECIMAL 直接可加，避免 grossMarginPct 字符串列加权歧义）。
+     *
+     * @param projectId 可选项目过滤；为空时聚合全部 PnL 汇总记录
+     */
+    @BizQuery
+    public Map<String, Object> getProjectGrossMargin(@Optional @Name("projectId") Long projectId,
+                                                      IServiceContext context) {
+        return ormTemplate.runInSession(session -> {
+            IEntityDao<ErpPrjProjectPnl> dao = daoProvider.daoFor(ErpPrjProjectPnl.class);
+            QueryBean q = new QueryBean();
+            if (projectId != null) {
+                q.addFilter(eq("projectId", projectId));
+            }
+            List<ErpPrjProjectPnl> rows = dao.findAllByQuery(q);
+
+            BigDecimal totalRevenue = BigDecimal.ZERO;
+            BigDecimal totalCost = BigDecimal.ZERO;
+            BigDecimal totalGrossProfit = BigDecimal.ZERO;
+            Set<Long> projectIds = new HashSet<>();
+            for (ErpPrjProjectPnl p : rows) {
+                totalRevenue = totalRevenue.add(nz(p.getRevenueAmount()));
+                totalCost = totalCost.add(nz(p.getTotalCost()));
+                totalGrossProfit = totalGrossProfit.add(nz(p.getGrossProfit()));
+                if (p.getProjectId() != null) projectIds.add(p.getProjectId());
+            }
+            BigDecimal grossMarginPct = totalRevenue.signum() > 0
+                    ? totalGrossProfit.divide(totalRevenue, 4, BigDecimal.ROUND_HALF_UP)
+                    : BigDecimal.ZERO;
+
+            Map<String, Object> kpi = new LinkedHashMap<>();
+            kpi.put("projectCount", (long) projectIds.size());
+            kpi.put("totalRevenue", totalRevenue);
+            kpi.put("totalCost", totalCost);
+            kpi.put("totalGrossProfit", totalGrossProfit);
+            kpi.put("grossMarginPct", grossMarginPct);
+            return kpi;
         });
     }
 

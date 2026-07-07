@@ -5,7 +5,7 @@ body:
     label: "刷新"
     icon: "refresh-cw"
     actionType: reload
-    target: "kpiService,statusChart,costOverrunCrud,delayedProjectCrud"
+    target: "kpiService,grossMarginService,statusChart,costOverrunCrud,delayedProjectCrud"
     className: m-3
 
   - type: service
@@ -54,6 +54,55 @@ body:
                 tpl: "<div class='text-muted'>预算执行率</div>"
               - type: tpl
                 tpl: "<span class='h3 text-warning'>${executionRate | round:2}</span>"
+
+  - type: service
+    name: grossMarginService
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "query($projectId:Long){ ErpPrjDashboard__getProjectGrossMargin(projectId:$projectId){ projectCount totalRevenue totalCost totalGrossProfit grossMarginPct } }"
+        variables:
+          projectId: "${projectId || null}"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const kpi = gql.ErpPrjDashboard__getProjectGrossMargin || {};
+        return { status: 0, msg: '', data: kpi };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>项目损益汇总数</div>"
+              - type: tpl
+                tpl: "<span class='h3 font-bold'>${projectCount}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>收入合计</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-primary'>¥${totalRevenue | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>成本合计</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-danger'>¥${totalCost | round:2}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>整体毛利率</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-success'>${grossMarginPct | round:4}</span>"
 
   - type: chart
     name: statusChart
