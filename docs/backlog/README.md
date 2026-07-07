@@ -11,10 +11,11 @@
 | 优先级 | 工作项 | 路线图 | 状态 | AI 自主权 |
 |--------|--------|--------|------|-----------|
 | P0 | CRUD 全 18 域（Milestone 1-3） | `crud-roadmap.md` | ✅ done | `implement` |
-| P1 | 核心业务循环（进销存+财务） | `core-business-roadmap.md` M1 | 🟡 部分 done（1.0a/1.3/1.5 等），其余 todo | `plan-first` |
+| P1 | 核心业务循环（进销存+财务） | `core-business-roadmap.md` M1 | ✅ done | `plan-first` |
 | P2 | 扩展 5 域业务逻辑 | `extended-roadmap.md` M2 | ✅ done | `plan-first` |
 | P3 | 新增 8 域业务逻辑 | `extended-roadmap.md` M3 | ✅ done | `plan-first` |
-| P4 | 业财一体端到端 | `core-business-roadmap.md` M4 | ❌ todo（下一就绪项） | `plan-first` |
+| P4 | 业财一体端到端 | `core-business-roadmap.md` M4 | ✅ done | `plan-first` |
+| P5 | 7 扩展域 posted/businessDate 标准字段补充（cs/hr/logistics/b2b/contract/drp/aps） | `2026-07-07-1915-1` Deferred | ⛔ blocked（触发条件：`2026-07-07-1915-1` 关闭后） | `ask-first`（ORM 保护区域） |
 
 ## 就绪不变量
 

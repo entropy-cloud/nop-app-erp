@@ -11,8 +11,8 @@
 ### Milestone M1 — 核心业务循环
 - 1.0a 采购申请审批→转订单逻辑：`done`
 - 1.0b 销售报价单审批→转订单逻辑：`done`
-- 1.1 Purchase Order BizModel：`partial`
-- 1.2 Sales Order BizModel：`partial`（审批/信用额度 + 出库触发段 done；过账/发票/收款仍 todo，归 1.7）
+- 1.1 Purchase Order BizModel：`done`（审批经 use-approval 迁移 plan `2026-07-04-2050-1`→`2026-07-06-0315-1` xwf 接线；入库触发经 plan `2026-07-01-1132-1`；过账经 1.5 IErpFinAcctDocProvider + 1.6 采购到付款 done。ErpPurOrderBizModel 已落地 cancel/createFromRequisition/existsActiveByRequisition/updateReceiveStatus）
+- 1.2 Sales Order BizModel：`done`（审批经 use-approval 迁移 plan `2026-07-04-2050-1`→`2026-07-06-0315-1`；出库触发经 plan `2026-07-01-1132-2`；过账经 1.5 + 1.7 销售到收款 done；信用控制含 AR 未核销余额纳入 outstanding 经 plan `2026-07-05-1838-1` CreditLimitChecker Javadoc :35-41。ErpSalOrderBizModel 已落地 cancel/createFromQuotation/existsActiveByQuotation/updateDeliveryStatus）
 - 1.3 StockMove BizModel：`done`（出入库 posted 过账 done 计划 0811-2；**并发扣减乐观锁 UC-INV-08 / 负库存拦截 UC-INV-09 done 计划 2026-07-07-0024-2**：updateBalanceWithRetry 通道三策略共享 tryUpdateWithVersionCheck + evict+reload 重试循环 + ERR_INV_CONCURRENT_DEDUCT_CONFLICT + concurrent-deduct-max-retry 配置；4 并发测试（多线程+单线程模拟）+ 4 三量交互测试全绿）
 - 1.4 三单匹配逻辑：`done`
 - 1.5 过账 Provider：`done`
@@ -45,8 +45,8 @@
 |---|--------|-----|---------|------|
 | 1.0a | 采购申请审批→转订单逻辑 | purchase | `purchase/requisition.md` | ✅ `done` |
 | 1.0b | 销售报价单审批→转订单逻辑 | sales | `sales/quotation.md` | ✅ `done` |
-| 1.1 | Purchase Order BizModel（审批/入库触发/过账） | purchase | `purchase/state-machine.md` | 🔶 `partial` |
-| 1.2 | Sales Order BizModel（审批/出库触发/过账） | sales | `sales/state-machine.md` | 🔶 `partial`（审批+信用额度+出库触发 done；过账归 1.7） |
+| 1.1 | Purchase Order BizModel（审批/入库触发/过账） | purchase | `purchase/state-machine.md` | ✅ `done`（审批经 use-approval 迁移 plan `2026-07-04-2050-1`→`2026-07-06-0315-1`；入库触发经 plan `2026-07-01-1132-1`；过账经 1.5/1.6） |
+| 1.2 | Sales Order BizModel（审批/出库触发/过账） | sales | `sales/state-machine.md` | ✅ `done`（审批经 use-approval 迁移 plan `2026-07-04-2050-1`→`2026-07-06-0315-1`；出库触发经 plan `2026-07-01-1132-2`；过账经 1.5/1.7；信用控制含 AR 段经 plan `2026-07-05-1838-1`） |
 | 1.3 | StockMove BizModel（库存移动/流水/余额） | inventory | `inventory/state-machine.md` | ✅ `done`（出入库 posted 过账 done 计划 0811-2；**并发扣减乐观锁 UC-INV-08 / 负库存拦截 UC-INV-09 done 计划 2026-07-07-0024-2**：updateBalanceWithRetry 通道三策略共享 tryUpdateWithVersionCheck + evict+reload 重试循环 + ERR_INV_CONCURRENT_DEDUCT_CONFLICT + 4 并发测试 + 4 三量交互测试全绿） |
 | 1.4 | 三单匹配逻辑（PO/Receive/Invoice） | purchase | `purchase/three-way-match.md` | ✅ `done` |
 | 1.5 | IErpFinAcctDocProvider 过账 Provider | finance | `finance/posting.md` | ✅ `done` |

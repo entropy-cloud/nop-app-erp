@@ -74,7 +74,7 @@
 
 ## 当前项目阶段
 
-`nop-app-erp` 处于 **codegen 已完成、待 BizModel 业务逻辑深化阶段**。18 业务域 + 1 跨域通知派发子系统（共 19 个 `module-*/`）的 ORM 模型已设计完成（279 实体 + 3 通知实体），Maven 多模块结构已由 `nop-cli gen` 从 `<domain>/model/*.orm.xml` 生成（1730+ Java 文件）。`app-erp-all` 聚合 app 构建通过（154 reactor 模块）。当前重点：按 roadmap 依次深化 BizModel → ErrorCode → 页面定制 → 端到端验证。
+`nop-app-erp` 处于 **业务逻辑深化与运营成熟度收尾阶段**。18 业务域 + 1 跨域通知派发子系统（共 19 个 `module-*/`）的 ORM 模型已设计完成（279 实体 + 3 通知实体），Maven 多模块结构已由 `nop-cli gen` 从 `<domain>/model/*.orm.xml` 生成（1730+ Java 文件）。`app-erp-all` 聚合 app 构建通过（154 reactor 模块）。**已落地能力**：CRUD 全 18 域（`crud-roadmap.md` 全 done，含冒烟测试 18/18）；核心业务逻辑（`core-business-roadmap.md` M1 全 done，含 1.1 采购订单 BizModel/1.2 销售订单 BizModel 审批-触发-过账三段）；扩展 13 域业务逻辑（`extended-roadmap.md` M2/M3 全 done）；业财一体端到端（M4 全 done：采购到付款/销售到收款/期末结账/成本核算/年度结转/坏账准备）；运营成熟度（M5 全 done：会计日志与可观测性/冲销反写闭环/运行监控/通知派发/审批抄送）；报表子系统（nop-report 接线 + 全 10 域种子报表 + 全 10 域 AMIS 菜单/页面）；看板子系统（全 10 域后端聚合 API + AMIS 前端）。当前重点：剩余扩展域标准字段补齐（7 域 posted/businessDate，`ask-first` blocked）、看板运行时视觉/浏览器回归、各域细化端到端验证。
 
 完整 18+1 域列表（物理目录 ↔ 逻辑工程名映射详见 `docs/architecture/domain-module-split-analysis.md §2.0`）：
 

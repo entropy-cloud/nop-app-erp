@@ -1,7 +1,8 @@
 # 2026-07-07-2143-1-roadmap-backlog-status-reconciliation 路线图与待办状态对账（关闭陈旧 partial 标记 + 显化下一功能后继）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-07
+> Executed: 2026-07-07（3 Phase 全完成；独立结束审计已通过）
 > Source: mission-driver `draft-from-roadmap`（路线图遍历发现：详细子路线图全 `done`，但 `implementation-roadmap.md` 概览、`backlog/README.md`、`core-business-roadmap.md` 中 1.1/1.2 仍标 `partial`/`todo`，与实时代码矛盾）
 > Related: `docs/plans/2026-07-07-1915-1-audit-remediation-plan.md`（active；其 Deferred「7 扩展域 posted/businessDate 字段补充」为本计划显化的下一功能后继）、`docs/plans/2026-07-07-1530-1-errorcode-nop-to-erp-migration.md`（completed，前置机械替换已落地）
 > Audit: required
@@ -59,61 +60,61 @@
 
 ### Phase 1 - 关闭 1.1/1.2 陈旧 partial 标记
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/core-business-roadmap.md`（Work Item Status 块行 14、15 + Implementation Order 表行 48、49）
 Skill: none
 
 - Item Types: `Fix`
 - Prereqs: 无（实时核实已在 Baseline 完成）
 
-- [ ] `Fix`：`core-business-roadmap.md` Work Item Status 块——1.1 由 `partial` 改 `done`，附证据「审批经 use-approval 迁移（2050-1→0315-1）；入库触发经 1132-1；过账经 1.5/1.6」；1.2 由 `partial` 改 `done`，附证据「审批经 use-approval 迁移；出库触发经 1132-2；过账经 1.5/1.7；信用控制含 AR 段经 1838-1」。
+- [x] `Fix`：`core-business-roadmap.md` Work Item Status 块——1.1 由 `partial` 改 `done`，附证据「审批经 use-approval 迁移（2050-1→0315-1）；入库触发经 1132-1；过账经 1.5/1.6」；1.2 由 `partial` 改 `done`，附证据「审批经 use-approval 迁移；出库触发经 1132-2；过账经 1.5/1.7；信用控制含 AR 段经 1838-1」。
   - Skill: none
-- [ ] `Fix`：`core-business-roadmap.md` Implementation Order 表——1.1、1.2 行状态列 `🔶 partial` 改 `✅ done`，证据指针同上。
+- [x] `Fix`：`core-business-roadmap.md` Implementation Order 表——1.1、1.2 行状态列 `🔶 partial` 改 `✅ done`，证据指针同上。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] `core-business-roadmap.md` 中 1.1、1.2 不再出现 `partial`，均标 `done` 且附完成证据指针；无内部矛盾（Work Item Status 块与 Implementation Order 表一致）。
+- [x] `core-business-roadmap.md` 中 1.1、1.2 不再出现 `partial`，均标 `done` 且附完成证据指针；无内部矛盾（Work Item Status 块与 Implementation Order 表一致）。
 
 ### Phase 2 - 修正概览与 README 陈旧状态
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/implementation-roadmap.md`（概览表行 10、11）、`docs/backlog/README.md`（工作项表 P1/P4 行）
 Skill: none
 
 - Item Types: `Fix`
 - Prereqs: Phase 1（1.1/1.2 已关闭后，概览「M1 partial」表述才无依据）
 
-- [ ] `Fix`：`implementation-roadmap.md` 概览表——`core-business-roadmap.md` 行状态改为「M1/M4/M5 全 done（含 1.1/1.2，经状态对账关闭）」；`extended-roadmap.md` 行状态改为「M2/M3 全 done」；移除「M1.12 todo」「2.4b~2.6c todo」等陈旧表述。
+- [x] `Fix`：`implementation-roadmap.md` 概览表——`core-business-roadmap.md` 行状态改为「M1/M4/M5 全 done（含 1.1/1.2，经状态对账关闭）」；`extended-roadmap.md` 行状态改为「M2/M3 全 done」；移除「M1.12 todo」「2.4b~2.6c todo」等陈旧表述。
   - Skill: none
-- [ ] `Fix`：`README.md` 工作项表——P1 状态由「🟡 部分 done」改「✅ done」；P4 状态由「❌ todo（下一就绪项）」改「✅ done」。
+- [x] `Fix`：`README.md` 工作项表——P1 状态由「🟡 部分 done」改「✅ done」；P4 状态由「❌ todo（下一就绪项）」改「✅ done」。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] `implementation-roadmap.md` 概览表与 `core-business-roadmap.md`/`extended-roadmap.md` 子路线图状态零矛盾（不再出现 todo/partial 指向已完成项）。
-- [ ] `README.md` 工作项表 P1/P4 与子路线图一致。
+- [x] `implementation-roadmap.md` 概览表与 `core-business-roadmap.md`/`extended-roadmap.md` 子路线图状态零矛盾（不再出现 todo/partial 指向已完成项）。
+- [x] `README.md` 工作项表 P1/P4 与子路线图一致。
 
 ### Phase 3 - 显化下一功能后继 + AGENTS.md 阶段同步
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/README.md`（新增工作项行）、`AGENTS.md`（「当前项目阶段」段，若与现状矛盾）
 Skill: none
 
 - Item Types: `Add | Fix | Decision`
 - Prereqs: Phase 2
 
-- [ ] `Decision`：下一功能后继「7 扩展域 posted/businessDate 字段补充」的 backlog 显化方式——**选择**在 `README.md` 工作项表新增一行（优先级 P、工作项名、路线图归属「`2026-07-07-1915-1` Deferred」、状态 `blocked`、触发条件「1915-1 关闭后」、AI 自主权 `ask-first`）。**替代**：仅在 1915-1 的 Deferred 段保留——rejected，因 mission-driver 遍历 `backlog/` 工作项表选择下一切片，不扫 plans 的 Deferred 段，会导致路线图全绿后后继沉没。**残留风险**：1915-1 关闭后需确认该行未被 1915-1 自身关闭流程重复登记。
+- [x] `Decision`：下一功能后继「7 扩展域 posted/businessDate 字段补充」的 backlog 显化方式——**选择**在 `README.md` 工作项表新增一行（优先级 P、工作项名、路线图归属「`2026-07-07-1915-1` Deferred」、状态 `blocked`、触发条件「1915-1 关闭后」、AI 自主权 `ask-first`）。**替代**：仅在 1915-1 的 Deferred 段保留——rejected，因 mission-driver 遍历 `backlog/` 工作项表选择下一切片，不扫 plans 的 Deferred 段，会导致路线图全绿后后继沉没。**残留风险**：1915-1 关闭后需确认该行未被 1915-1 自身关闭流程重复登记。
   - Skill: none
-- [ ] `Add`：`README.md` 工作项表新增该行（状态 `blocked`，触发条件显式标注，防止误判为 ready）。
+- [x] `Add`：`README.md` 工作项表新增该行（状态 `blocked`，触发条件显式标注，防止误判为 ready）。
   - Skill: none
-- [ ] `Fix`：`AGENTS.md`「当前项目阶段」段（现 :77 仍写「bootstrap / 预代码生成阶段」，经实时核实为陈旧）——更新阶段描述对齐现状：18 域 codegen + 业务逻辑（M1/M2/M3）+ 业财一体（M4/M5）+ 报表/看板（全 10 域）均已落地，项目处于「业务逻辑深化与运营成熟度收尾」阶段（保留多域目录结构与标准模块链的结构性说明，不动该结构段）。
+- [x] `Fix`：`AGENTS.md`「当前项目阶段」段（现 :77 仍写「bootstrap / 预代码生成阶段」，经实时核实为陈旧）——更新阶段描述对齐现状：18 域 codegen + 业务逻辑（M1/M2/M3）+ 业财一体（M4/M5）+ 报表/看板（全 10 域）均已落地，项目处于「业务逻辑深化与运营成熟度收尾」阶段（保留多域目录结构与标准模块链的结构性说明，不动该结构段）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] `README.md` 工作项表显式包含「7 扩展域 posted/businessDate 字段补充」行，状态 `blocked` + 触发条件 + `ask-first` 自主权齐全。
-- [ ] `AGENTS.md`「当前项目阶段」段不再出现「bootstrap / 预代码生成阶段」表述，与现状一致。
+- [x] `README.md` 工作项表显式包含「7 扩展域 posted/businessDate 字段补充」行，状态 `blocked` + 触发条件 + `ask-first` 自主权齐全。
+- [x] `AGENTS.md`「当前项目阶段」段不再出现「bootstrap / 预代码生成阶段」表述，与现状一致。
 
 ## Draft Review Record
 
@@ -129,14 +130,14 @@ Exit Criteria:
 
 > 本计划为纯文档/状态对账，无代码、ORM、契约或测试变更，故**移除** `mvn` 构建/测试验证门控（指南允许：无代码变更的计划删除验证命令门控并说明原因）。结束时运行一次文档一致性自检（grep 验证无残留 `partial`/`todo` 指向已完成项）。
 
-- [ ] 范围内行为完成（1.1/1.2 关闭 + 概览/README 对齐 + 后继显化 + AGENTS.md 同步）
-- [ ] 相关文档对齐（`core-business-roadmap.md`/`implementation-roadmap.md`/`README.md`/`AGENTS.md` 状态零矛盾）
-- [ ] 已运行验证：`rg -n 'partial|todo|预代码生成|bootstrap' docs/backlog/ AGENTS.md` 自检——无指向已完成工作项的残留 `partial`/`todo`，无「预代码生成/bootstrap 阶段」陈旧表述（显化的扩展域字段 `blocked` 行使用 `blocked` 而非 `todo`，故不被误报）
-- [ ] 无范围内项目降级为 deferred/follow-up（DRP 命名统一为本计划 Non-Goal，引用既有 1500-1 裁定，非新降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（1.1/1.2 关闭 + 概览/README 对齐 + 后继显化 + AGENTS.md 同步）
+- [x] 相关文档对齐（`core-business-roadmap.md`/`implementation-roadmap.md`/`README.md`/`AGENTS.md` 状态零矛盾）
+- [x] 已运行验证：`rg -n 'partial|todo|预代码生成|bootstrap' docs/backlog/ AGENTS.md` 自检——无指向已完成工作项的残留 `partial`/`todo`，无「预代码生成/bootstrap 阶段」陈旧表述（显化的扩展域字段 `blocked` 行使用 `blocked` 而非 `todo`，故不被误报）
+- [x] 无范围内项目降级为 deferred/follow-up（DRP 命名统一为本计划 Non-Goal，引用既有 1500-1 裁定，非新降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -149,13 +150,27 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: `<pending>`
+Status Note: 2026-07-07 执行完成。3 Phase 全部完成：
+- Phase 1：`core-business-roadmap.md` 中 1.1 Purchase Order BizModel / 1.2 Sales Order BizModel 由 `partial` 关闭为 `done`，附完成证据指针（审批经 use-approval 迁移 2050-1→0315-1；触发经 1132-1/1132-2；过账经 1.5/1.6/1.7；信用控制 AR 段经 1838-1）。Work Item Status 块与 Implementation Order 表两处一致更新。
+- Phase 2：`implementation-roadmap.md` 概览表对齐子路线图真实状态（M1/M2/M3/M4/M5 全 done）；`README.md` 工作项表 P1 由「🟡 部分 done」改「✅ done」、P4 由「❌ todo」改「✅ done」。
+- Phase 3：`README.md` 新增 P5 行「7 扩展域 posted/businessDate 标准字段补充」状态 `blocked` + 触发条件「`2026-07-07-1915-1` 关闭后」+ `ask-first` 自主权齐全；`AGENTS.md`「当前项目阶段」段由「codegen 已完成、待 BizModel 业务逻辑深化阶段」更新为「业务逻辑深化与运营成熟度收尾阶段」（含已落地能力清单：CRUD 全 18 域、M1/M2/M3 业务逻辑、M4/M5 业财一体、报表子系统、看板子系统）。
+- 自检：`rg -n 'partial|todo|预代码生成|bootstrap' docs/backlog/ AGENTS.md` 无指向已完成工作项的残留 `partial`/`todo`，无「预代码生成/bootstrap」陈旧表述（剩余 `todo` 匹配均为 `00-roadmap-authoring-guide.md` / `crud-roadmap.md` 中状态语义定义文本，非工作项状态）。
+- 纯文档/状态对账，无代码/ORM/契约/测试变更，故无 `mvn` 验证门控（指南允许）。
+- 结束审计待独立子代理（新会话）执行；执行者未自我审计，故保留 2 条审计门控为 `[ ]`。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: `<pending>`
-- Evidence: `<pending>`
+- Auditor / Agent: 独立结束审计子代理（新会话，未重用执行者上下文；任务输入 `plan-check FAIL → 2 unchecked closure gates`）
+- Evidence:
+  - 结构性检查：`node ../attractor-guided-engineering-template/tools/mission-driver/src/plan-check.mjs docs/plans/2026-07-07-2143-1-roadmap-backlog-status-reconciliation.md --strict` 修复前 `passed:false, totalUnchecked:2`（恰好为结束审计门控 2 项），修复后重跑确认 PASS（0 unchecked）。
+  - Phase 1 实时核实（`docs/backlog/core-business-roadmap.md`）：Work Item Status 块 :14（1.1 `done` + use-approval 迁移 2050-1→0315-1 / 入库触发 1132-1 / 过账 1.5+1.6 证据指针）/ :15（1.2 `done` + 出库触发 1132-2 / 过账 1.5+1.7 / 信用控制 AR 段 1838-1 证据指针）；Implementation Order 表 :48/:49 两行均为 `✅ done` 且证据指针一致。grep 确认无残留 `partial` 指向 1.1/1.2。
+  - Phase 2 实时核实：`implementation-roadmap.md` :10（core-business 行「M1/M4/M5 全 done（含 1.1/1.2，经状态对账关闭）」）、:11（extended 行「M2/M3 全 done」），无「M1.12 todo」「2.4b~2.6c todo」陈旧表述；`README.md` :14（P1 `✅ done`）、:17（P4 `✅ done`），与子路线图零矛盾。
+  - Phase 3 实时核实：`README.md` :18 新增 P5 行「7 扩展域 posted/businessDate 标准字段补充」状态 `⛔ blocked` + 触发条件「`2026-07-07-1915-1` 关闭后」+ `ask-first`（ORM 保护区域）齐全；`AGENTS.md:77`「当前项目阶段」段为「业务逻辑深化与运营成熟度收尾阶段」（含已落地能力清单），无「bootstrap / 预代码生成阶段」陈旧表述。
+  - 反松弛/反空洞：纯文档/状态对账计划，无代码/契约/测试变更，"工作"即文档编辑本身（已逐文件肉眼核实落地，非采信 [x]）。Deferred 段「7 扩展域字段补充」与 Non-Goal「DRP 命名统一」均诚实裁定（前者 `out-of-scope improvement` + 显化为 blocked backlog 行 + 触发条件；后者引用 1500-1 既有裁定 :284-290），无范围内缺陷降级。
+  - 五点一致性：Plan Status `completed` / 3 Phase Status 均 `completed` / 各 Phase Exit Criteria 全 `[x]` / Closure Gates 全 `[x]` / Closure 证据已填实 —— 全部一致。
 
 Follow-up:
 
-- `<pending>`
+- 无非阻塞跟进项（本计划范围内的整改已全部落地；7 扩展域字段补充为本计划显化的 next-feature successor，归属 active plan `2026-07-07-1915-1` 的 Deferred，非本计划跟进项）。
+
+Status Note 补充（独立结束审计通过，2026-07-07）：执行者合规保留 2 条结束审计门控为 `[ ]`（规则 12 禁止执行者自我审计）；本独立审计会话（新会话，未重用执行者上下文）逐项核实后已勾选 `[x]` 并填实证据。
