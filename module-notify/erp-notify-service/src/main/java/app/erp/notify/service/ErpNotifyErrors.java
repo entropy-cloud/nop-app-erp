@@ -18,22 +18,22 @@ public interface ErpNotifyErrors {
     String ARG_REASON = "reason";
 
     ErrorCode ERR_NOTIFY_TEMPLATE_NOT_ACTIVE = ErrorCode.define(
-            "nop.err.notify.template.not-active",
+            "erp.err.notify.template.not-active",
             "通知类型[{notificationType}]无启用(ACTIVE)模板，config-gated 静默跳过",
             ARG_NOTIFICATION_TYPE);
 
     ErrorCode ERR_NOTIFY_RECIPIENT_RESOLVE_FAILED = ErrorCode.define(
-            "nop.err.notify.recipient.resolve-failed",
+            "erp.err.notify.recipient.resolve-failed",
             "通知类型[{notificationType}]接收人解析失败：解析器[{resolver}]，原因[{reason}]",
             ARG_NOTIFICATION_TYPE, ARG_RESOLVER, ARG_REASON);
 
     ErrorCode ERR_NOTIFY_CHANNEL_DISABLED = ErrorCode.define(
-            "nop.err.notify.channel.disabled",
+            "erp.err.notify.channel.disabled",
             "通知渠道[{channel}]未启用(erp-notify.{channel}-enabled=false)，跳过派发",
             ARG_CHANNEL);
 
     ErrorCode ERR_NOTIFY_RENDER_FAILED = ErrorCode.define(
-            "nop.err.notify.render.failed",
+            "erp.err.notify.render.failed",
             "通知模板[{templateId}]渲染失败：原因[{reason}]",
             ARG_TEMPLATE_ID, ARG_REASON);
 }

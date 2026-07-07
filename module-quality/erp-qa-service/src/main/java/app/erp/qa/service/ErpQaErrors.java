@@ -30,116 +30,116 @@ public interface ErpQaErrors {
     String ARG_RENDER_TYPE = "renderType";
 
     ErrorCode ERR_INSPECTION_NOT_FOUND = ErrorCode.define(
-            "nop.err.qa.inspection.not-found",
+            "erp.err.qa.inspection.not-found",
             "质检单不存在: {inspectionId}",
             ARG_INSPECTION_ID);
 
     ErrorCode ERR_INVALID_INSPECTION_STATUS_TRANSITION = ErrorCode.define(
-            "nop.err.qa.inspection.illegal-status-transition",
+            "erp.err.qa.inspection.illegal-status-transition",
             "质检单[{inspectionCode}]当前结果[{currentStatus}]不允许此操作，期望[{expectedStatus}]",
             ARG_INSPECTION_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 
     ErrorCode ERR_INSPECTION_LINES_EMPTY = ErrorCode.define(
-            "nop.err.qa.inspection.lines-empty",
+            "erp.err.qa.inspection.lines-empty",
             "质检单[{inspectionCode}]无质检行，无法汇总结果，请先补录检验项",
             ARG_INSPECTION_CODE);
 
     ErrorCode ERR_INSPECTION_MANDATORY_BLOCKED = ErrorCode.define(
-            "nop.err.qa.inspection.mandatory-blocked",
+            "erp.err.qa.inspection.mandatory-blocked",
             "业务单据[{billType}:{billCode}]属强制质检类型，关联质检单未得出合格/让步结论，禁止流转",
             ARG_BILL_TYPE, ARG_BILL_CODE);
 
     ErrorCode ERR_NCR_NOT_FOUND = ErrorCode.define(
-            "nop.err.qa.ncr.not-found",
+            "erp.err.qa.ncr.not-found",
             "不符合项报告不存在: {ncrId}",
             ARG_NCR_ID);
 
     ErrorCode ERR_INVALID_NCR_STATUS_TRANSITION = ErrorCode.define(
-            "nop.err.qa.ncr.illegal-status-transition",
+            "erp.err.qa.ncr.illegal-status-transition",
             "NCR[{ncrCode}]当前状态[{currentStatus}]不允许此操作，期望[{expectedStatus}]",
             ARG_NCR_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 
     ErrorCode ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED = ErrorCode.define(
-            "nop.err.qa.ncr.resolve-capa-not-completed",
+            "erp.err.qa.ncr.resolve-capa-not-completed",
             "NCR[{ncrCode}]存在未完成（含 PENDING/IN_PROGRESS）或未验证（缺验证人/验证日期）的 CAPA 措施，禁止解决",
             ARG_NCR_CODE);
 
     ErrorCode ERR_ACTION_NOT_FOUND = ErrorCode.define(
-            "nop.err.qa.action.not-found",
+            "erp.err.qa.action.not-found",
             "纠正措施不存在: {actionId}",
             ARG_ACTION_ID);
 
     ErrorCode ERR_INVALID_ACTION_STATUS_TRANSITION = ErrorCode.define(
-            "nop.err.qa.action.illegal-status-transition",
+            "erp.err.qa.action.illegal-status-transition",
             "纠正措施[{actionId}]当前状态[{currentStatus}]不允许此操作，期望[{expectedStatus}]",
             ARG_ACTION_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 
     ErrorCode ERR_ACTION_VERIFY_REQUIRES_COMPLETED = ErrorCode.define(
-            "nop.err.qa.action.verify-requires-completed",
+            "erp.err.qa.action.verify-requires-completed",
             "纠正措施[{actionId}]须先完成（COMPLETED）才能录入效果验证",
             ARG_ACTION_ID);
 
     ErrorCode ERR_ACTION_VERIFY_MISSING_FIELDS = ErrorCode.define(
-            "nop.err.qa.action.verify-missing-fields",
+            "erp.err.qa.action.verify-missing-fields",
             "纠正措施[{actionId}]效果验证须同时填写验证人与验证日期",
             ARG_ACTION_ID);
 
     // ---- 召回事件（2.11）----
 
     ErrorCode ERR_RECALL_NOT_FOUND = ErrorCode.define(
-            "nop.err.qa.recall.not-found",
+            "erp.err.qa.recall.not-found",
             "召回事件不存在: {recallId}",
             ARG_RECALL_ID);
 
     ErrorCode ERR_INVALID_RECALL_STATUS_TRANSITION = ErrorCode.define(
-            "nop.err.qa.recall.illegal-status-transition",
+            "erp.err.qa.recall.illegal-status-transition",
             "召回事件[{recallCode}]当前状态[{currentStatus}]不允许此操作，期望[{expectedStatus}]",
             ARG_RECALL_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 
     ErrorCode ERR_RECALL_APPROVAL_REQUIRED = ErrorCode.define(
-            "nop.err.qa.recall.approval-required",
+            "erp.err.qa.recall.approval-required",
             "召回事件[{recallCode}]配置强制审批（erp-qua.recall-require-approval=true），须先 submit 再 approve",
             ARG_RECALL_CODE);
 
     ErrorCode ERR_TRACE_CHAIN_DISABLED = ErrorCode.define(
-            "nop.err.qa.recall.trace-chain-disabled",
+            "erp.err.qa.recall.trace-chain-disabled",
             "库存追溯链未启用（erp-inv.trace-chain-enabled=false），召回目标定位不可用",
             ARG_RECALL_CODE, ARG_BATCH_NO);
 
     ErrorCode ERR_RECALL_LOCATE_NO_BATCH = ErrorCode.define(
-            "nop.err.qa.recall.locate-no-batch",
+            "erp.err.qa.recall.locate-no-batch",
             "召回事件[{recallCode}]未指定召回批次（batchId/batchNo），无法定位销售出库目标",
             ARG_RECALL_CODE);
 
     ErrorCode ERR_RECALL_NOTIFY_INCOMPLETE = ErrorCode.define(
-            "nop.err.qa.recall.notify-incomplete",
+            "erp.err.qa.recall.notify-incomplete",
             "召回事件[{recallCode}]存在未通知目标或未标记客户通知，禁止关闭（erp-qua.recall-notify-required-to-close=true）",
             ARG_RECALL_CODE);
 
     // ---- NCR 财务过账（plan 2026-07-05-2352-2）----
 
     ErrorCode ERR_NCR_ALREADY_POSTED = ErrorCode.define(
-            "nop.err.qa.ncr.already-posted",
+            "erp.err.qa.ncr.already-posted",
             "NCR[{ncrCode}]已过账，禁止重复过账",
             ARG_NCR_CODE);
 
     ErrorCode ERR_NCR_NOT_RESOLVED = ErrorCode.define(
-            "nop.err.qa.ncr.not-resolved",
+            "erp.err.qa.ncr.not-resolved",
             "NCR[{ncrCode}]当前状态[{currentStatus}]未解决（RESOLVED），禁止过账",
             ARG_NCR_CODE, ARG_CURRENT_STATUS);
 
     ErrorCode ERR_NCR_NOT_POSTED = ErrorCode.define(
-            "nop.err.qa.ncr.not-posted",
+            "erp.err.qa.ncr.not-posted",
             "NCR[{ncrCode}]未过账，禁止红冲",
             ARG_NCR_CODE);
 
     ErrorCode ERR_NCR_NO_QUANTITY = ErrorCode.define(
-            "nop.err.qa.ncr.no-quantity",
+            "erp.err.qa.ncr.no-quantity",
             "NCR[{ncrCode}]不合格数量为空或为零，无法过账",
             ARG_NCR_CODE);
 
     ErrorCode ERR_NCR_DISPOSITION_NOT_POSTABLE = ErrorCode.define(
-            "nop.err.qa.ncr.disposition-not-postable",
+            "erp.err.qa.ncr.disposition-not-postable",
             "NCR[{ncrCode}]处置方式[{dispositionType}]无财务影响（CONCESSION/DOWNGRADE），不需过账",
             ARG_NCR_CODE, ARG_DISPOSITION_TYPE);
 
@@ -163,27 +163,27 @@ public interface ErpQaErrors {
     String ARG_PARAMETER_ID = "parameterId";
 
     ErrorCode ERR_QA_SPC_CHART_NOT_FOUND = ErrorCode.define(
-            "nop.err.qa.spc.chart-not-found",
+            "erp.err.qa.spc.chart-not-found",
             "SPC 控制图不存在: {chartId}",
             ARG_CHART_ID);
 
     ErrorCode ERR_QA_SPC_PARAMETER_NOT_FOUND = ErrorCode.define(
-            "nop.err.qa.spc.parameter-not-found",
+            "erp.err.qa.spc.parameter-not-found",
             "SPC 控制图[{chartCode}]未关联关键检验参数(parameterId)，无法采样",
             ARG_CHART_CODE, ARG_PARAMETER_ID);
 
     ErrorCode ERR_QA_SPC_INSUFFICIENT_SAMPLES = ErrorCode.define(
-            "nop.err.qa.spc.insufficient-samples",
+            "erp.err.qa.spc.insufficient-samples",
             "SPC 控制图[{chartCode}]子组样本量 subgroupSize={subgroupNo}<2，无法计算控制限",
             ARG_CHART_CODE, ARG_SUBGROUP_NO);
 
     ErrorCode ERR_QA_SPC_MEASURED_VALUE_INVALID = ErrorCode.define(
-            "nop.err.qa.spc.measured-value-invalid",
+            "erp.err.qa.spc.measured-value-invalid",
             "SPC 采样：实测值非数值或为空，跳过该样本点（chartId={chartId}, parameterId={parameterId}）",
             ARG_CHART_ID, ARG_PARAMETER_ID);
 
     ErrorCode ERR_QA_SPC_SUBGROUP_SIZE_INVALID = ErrorCode.define(
-            "nop.err.qa.spc.subgroup-size-invalid",
+            "erp.err.qa.spc.subgroup-size-invalid",
             "SPC 控制图[{chartCode}]subgroupSize<2，无法聚合子组",
             ARG_CHART_CODE);
 }
