@@ -200,3 +200,29 @@
 - `docs/design/human-resource/README.md`（HR 域 README）
 - 🟢 SAP SuccessFactors Competency Management 产品文档
 - 🟢 Cornerstone OnDemand 产品文档
+
+## 实现注记（plan 2026-07-07-1100-2）
+
+### 缺类型重归一化 Decision
+
+design §360 评估流程 聚合规则未明确"某 assessmentType 在该胜任力下无任何记录"的边界。本期实现采用**重归一化**策略：当 SELF/MANAGER/PEER/SUBORDINATE 中某类型在该胜任力下无 detail 记录时，该类型权重置零，其余类型权重之和作为分母重归一化（而非抛错）。仅当全部类型都无记录时抛 `ERR_ASSESSMENT_NO_DETAILS`。
+
+理由：现实 360 评估中并非所有员工都有下级（如基层员工）或同级评估人；强制要求四类型齐全会阻断合理场景。重归一化保留已有类型的加权贡献，符合 SuccessFactors 默认行为。
+
+### completeAssessment 直传聚合 levels
+
+`ErpHrEmployeeAssessmentBizModel.completeAssessment` 在同一 `@SingleSession` 内：先 `aggregateAndWriteBack` 写回各 detail.actualLevel 并构建 `Map<competencyId, aggregatedLevel>`，再调用 `IErpHrGapAnalysisBiz.refreshGapAnalysisWithLevels` 直传该 map。**不**通过 `refreshGapAnalysis` 二次查询 latest COMPLETED assessment——因为 assessment.status 刚置 COMPLETED 在同一事务内可能未 flush，导致 `findLatestCompletedAssessment` 返回 null、actualLevel 误算为 0。
+
+### 跨实体访问
+
+- `IErpHrEmployeeAssessmentBiz` 注入 `IErpHrAssessmentDetailBiz`（明细）、`IErpHrGapAnalysisBiz`（差距刷新）。
+- `IErpHrGapAnalysisBiz` 注入 `IErpHrRoleCompetencyBiz`（岗位要求）、`IErpHrEmployeeAssessmentBiz`（latest 评估）、`IErpHrAssessmentDetailBiz`（评估明细）；员工 → positionId 经 `daoProvider().daoFor(ErpHrEmployee.class)`（仅取外键字段，本域主数据直接 dao 即可）。
+- `IErpHrDevelopmentPlanBiz` 注入 `IErpHrGapAnalysisBiz`（差距源）、`IErpHrDevelopmentPlanItemBiz`（计划项）。
+
+### CRUD 钩子经 biz.save/update(Map) 触发
+
+`defaultPrepareSave`/`defaultPrepareUpdate` 钩子（competency parentId 成环 + roleCompetency requiredLevel 范围）仅在走 GraphQL `save`/`update` mutation 或 `biz.save(Map, ctx)`/`biz.update(Map, ctx)` 时触发。`saveEntity(entity, ...)`/`updateEntity(entity, ...)` 是底层持久化不进钩子管道，绕过校验。前端录入与测试均应走 Map 管道。
+
+### 新增 ERR_COMPETENCY_PARENT_CYCLE
+
+计划 Goals 仅列 5 ErrorCode，本期实现额外新增 `ERR_COMPETENCY_PARENT_CYCLE`（competency parentId 自引用或祖先链回环）。理由：字典成环校验需独立可观察 ErrorCode（与状态机迁移、requiredLevel 范围区分），对齐 projects 0930-3 `ERR_TASK_SELF_DEPENDENCY` 范式。
