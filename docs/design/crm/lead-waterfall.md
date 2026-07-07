@@ -230,3 +230,11 @@ Stage N 流失率 =
 - `README.md` §ErpCrmLeadConvLog §ErpCrmStage（核心依赖实体）
 - `use-cases.md` §UC-CRM-15（漏斗分析用例）
 - `../../analysis/erp-survey/` — Salesforce/Marketo 漏斗分析机制
+
+## 实现注记（plan 2026-07-07-1430-3）
+
+- **聚合刷新策略（清旧重建）**：`refreshFunnel` 采用清旧重建范式（对齐 0700-1 forecast），按 periodStart/periodEnd + 维度（territoryId/teamId/sourceId）精确匹配既有 LeadFunnel + FunnelStageMetrics 删除后重建。
+- **增量实时更新归 successor**：本期用定时 Job 全量刷新 + 手动 refresh，不实时更新度量子（design 标注为高阶方案 ⚪）。触发条件：实时漏斗监控业务需求上线时。
+- **stageName 快照**：FunnelStageMetrics.stageName 在聚合时刻取 ErpCrmStage.stageName 快照，防阶段定义后续变更致历史错误。
+- **丢失原因 TOP N**：每阶段丢失原因按 lostReasonId 聚合计数降序取 TOP N（配置键 `erp-crm.funnel.top-lost-reasons`，默认 5），以 JSON 字符串存入 FunnelStageMetrics.lostReasonTop。
+- **漏斗 AMIS 可视化前端归 successor**：本期后端聚合 + getFunnelView 查询就绪；前端漏斗图归 successor（触发条件：CRM 前端可视化套件建立时）。
