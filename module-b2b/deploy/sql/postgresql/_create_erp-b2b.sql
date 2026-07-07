@@ -4,14 +4,14 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (id)
 );
 
-CREATE TABLE erp_md_md_partner(
+CREATE TABLE erp_md_partner(
   id INT8 NOT NULL ,
-  constraint PK_erp_md_md_partner primary key (id)
+  constraint PK_erp_md_partner primary key (id)
 );
 
-CREATE TABLE erp_md_md_material(
+CREATE TABLE erp_md_material(
   id INT8 NOT NULL ,
-  constraint PK_erp_md_md_material primary key (id)
+  constraint PK_erp_md_material primary key (id)
 );
 
 CREATE TABLE erp_b2b_edi_format(
@@ -321,9 +321,9 @@ CREATE TABLE erp_b2b_asn_line(
 
       COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
-      COMMENT ON TABLE erp_md_md_partner IS 'ErpMdPartner';
+      COMMENT ON TABLE erp_md_partner IS 'ErpMdPartner';
                 
-      COMMENT ON TABLE erp_md_md_material IS 'ErpMdMaterial';
+      COMMENT ON TABLE erp_md_material IS 'ErpMdMaterial';
                 
       COMMENT ON TABLE erp_b2b_edi_format IS 'EDI 格式配置';
                 

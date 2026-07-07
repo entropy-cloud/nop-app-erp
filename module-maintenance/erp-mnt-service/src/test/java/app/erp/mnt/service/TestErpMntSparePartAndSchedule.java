@@ -94,7 +94,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
 
         ErpMntSparePartUsage usage = loadUsage(usageId);
         assertEquals(ErpMntDaoConstants.DOC_STATUS_ACTIVE, usage.getDocStatus(), "docStatus→ACTIVE");
-        assertEquals(ErpMntDaoConstants.APPROVE_STATUS_APPROVED, usage.getApproveStatus(), "approveStatus→APPROVED");
+        assertEquals(ErpMntConstants.APPROVE_STATUS_APPROVED, usage.getApproveStatus(), "approveStatus→APPROVED");
         assertTrue(usage.getPosted(), "posted=true（库存已出库）");
         assertEquals(0, usage.getTotalAmount().compareTo(new BigDecimal("50")),
                 "totalAmount 聚合 = 10×5=50");
@@ -307,7 +307,7 @@ public class TestErpMntSparePartAndSchedule extends JunitAutoTestCase {
         usage.setOrgId(ORG_ID);
         usage.setBusinessDate(LocalDate.of(2026, 7, 1));
         usage.setDocStatus(ErpMntDaoConstants.DOC_STATUS_DRAFT);
-        usage.setApproveStatus(ErpMntDaoConstants.APPROVE_STATUS_UNSUBMITTED);
+        usage.setApproveStatus(ErpMntConstants.APPROVE_STATUS_UNSUBMITTED);
         usage.setPosted(false);
         dao.saveEntity(usage);
     }

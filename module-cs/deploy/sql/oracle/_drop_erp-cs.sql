@@ -1,5 +1,5 @@
 
-drop table erp_md_md_partner;
+drop table erp_md_partner;
 drop table erp_md_organization;
 drop table erp_cs_team;
 drop table erp_cs_canned_category;

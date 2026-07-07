@@ -428,7 +428,6 @@ prop:
 dict:
   label:
     erp-sal/doc-status: Doc Status
-    erp-sal/approve-status: Approve Status
     erp-sal/received-status: Received Status
     erp-sal/delivery-status: Delivery Status
     erp-sal/biz-type: Sales Doc Type
@@ -438,11 +437,6 @@ dict.option.label:
     DRAFT: Draft
     ACTIVE: Effective
     CANCELLED: Voided
-  erp-sal/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-sal/received-status:
     UNRECEIVED: Unreceived
     PARTIAL: Partially Received

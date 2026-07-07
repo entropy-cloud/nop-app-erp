@@ -145,8 +145,9 @@
               insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
         </prop>
-        <prop name="project" i18n-en:displayName="Project" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj" lazy="true" published="false">
+        <prop name="project" i18n-en:displayName="Project" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpPrjProject"/>
         </prop>
     </props>

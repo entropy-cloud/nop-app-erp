@@ -298,7 +298,6 @@ dict:
     erp-mnt/priority: Priority
     erp-mnt/visit-task-status: Maintenance Task Status
     erp-mnt/doc-status: Doc Status
-    erp-mnt/approve-status: Approve Status
     erp-mnt/calibration-result: Calibration Result
     erp-mnt/visit-type: Maintenance Type
     erp-mnt/visit-result: Execution Result
@@ -346,11 +345,6 @@ dict.option.label:
     DRAFT: Draft
     ACTIVE: Effective
     CANCELLED: Voided
-  erp-mnt/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-mnt/calibration-result:
     PASS: Conforming
     FAIL: Non-conforming

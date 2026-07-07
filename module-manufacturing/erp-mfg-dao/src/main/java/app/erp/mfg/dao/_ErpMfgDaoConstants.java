@@ -119,26 +119,6 @@ public interface _ErpMfgDaoConstants {
     String CONSUMPTION_STRICT = "STRICT";
                     
     /**
-     * 审核状态: 未提交 
-     */
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-                    
-    /**
-     * 审核状态: 已提交 
-     */
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-                    
-    /**
-     * 审核状态: 已审核 
-     */
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-                    
-    /**
-     * 审核状态: 已驳回 
-     */
-    String APPROVE_STATUS_REJECTED = "REJECTED";
-                    
-    /**
      * 工单优先级: 低 
      */
     String PRIORITY_LOW = "LOW";

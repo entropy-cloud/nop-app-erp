@@ -449,7 +449,6 @@ dict:
     erp-qa/ncr-status: NCR Status
     erp-qa/action-type: Corrective Action Type
     erp-qa/doc-status: Doc Status
-    erp-qa/approve-status: Approve Status
     erp-qa/severity: Non-conformance Severity
     erp-qa/action-status: Corrective Action Status
     erp-qa/risk-status: Risk Status
@@ -489,11 +488,6 @@ dict.option.label:
     DRAFT: Draft
     ACTIVE: Effective
     CANCELLED: Voided
-  erp-qa/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-qa/severity:
     LOW: Low
     NORMAL: General

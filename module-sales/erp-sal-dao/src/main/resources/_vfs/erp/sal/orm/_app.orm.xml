@@ -20,12 +20,6 @@
             <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
             <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
         </dict>
-        <dict label="审核状态" name="erp-sal/approve-status" valueType="string" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
-        </dict>
         <dict label="收款进度" name="erp-sal/received-status" valueType="string" i18n-en:label="Received Status">
             <option code="UNRECEIVED" label="未收款" value="UNRECEIVED" i18n-en:label="Unreceived"/>
             <option code="PARTIAL" label="部分收款" value="PARTIAL" i18n-en:label="Partially Received"/>
@@ -673,7 +667,7 @@
                         <on leftProp="warehouseId" rightProp="id"/>
                     </join>
                 </to-one>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject"
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
                         i18n-en:displayName="Project">
                     <join>
                         <on leftProp="projectId" rightProp="id"/>

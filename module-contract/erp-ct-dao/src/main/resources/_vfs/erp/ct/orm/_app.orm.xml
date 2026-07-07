@@ -1194,7 +1194,7 @@
             </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="ErpMdPartner"
-                name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_md_partner"
+                name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
                 biz:moduleId="erp/md">
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"

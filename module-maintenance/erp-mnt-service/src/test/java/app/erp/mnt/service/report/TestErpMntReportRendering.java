@@ -6,6 +6,7 @@ import app.erp.mnt.dao.entity.ErpMntEquipment;
 import app.erp.mnt.dao.entity.ErpMntSparePartUsage;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.dao.entity.ErpMntVisitTask;
+import app.erp.mnt.service.ErpMntConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.WebContentBean;
@@ -231,7 +232,7 @@ public class TestErpMntReportRendering extends JunitAutoTestCase {
         u.setWarehouseId(9001L);
         u.setBusinessDate(LocalDate.of(2026, 7, 10));
         u.orm_propValueByName("docStatus", ErpMntDaoConstants.DOC_STATUS_ACTIVE);
-        u.orm_propValueByName("approveStatus", ErpMntDaoConstants.APPROVE_STATUS_APPROVED);
+        u.orm_propValueByName("approveStatus", ErpMntConstants.APPROVE_STATUS_APPROVED);
         dao.saveEntity(u);
     }
 

@@ -86,7 +86,7 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
     protected void applyIssueResult(ErpMntSparePartUsage usage, java.util.List<ErpMntSparePartUsageLine> lines,
                                     ErpInvStockMove move, IServiceContext context) {
         usage.setDocStatus(ErpMntDaoConstants.DOC_STATUS_ACTIVE);
-        usage.setApproveStatus(ErpMntDaoConstants.APPROVE_STATUS_APPROVED);
+        usage.setApproveStatus(ErpMntConstants.APPROVE_STATUS_APPROVED);
         usage.setPosted(isStockIssued(move));
         if (Boolean.TRUE.equals(usage.getPosted())) {
             usage.setPostedAt(CoreMetrics.currentDateTime());

@@ -1,5 +1,5 @@
 
-drop table erp_md_md_partner;
+drop table erp_md_partner;
 drop table erp_ct_template;
 drop table erp_md_organization;
 drop table erp_md_currency;

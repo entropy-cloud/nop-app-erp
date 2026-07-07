@@ -391,7 +391,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         usage.setOrgId(ORG_ID);
         usage.setBusinessDate(LocalDate.of(2026, 7, 1));
         usage.setDocStatus(ErpMntDaoConstants.DOC_STATUS_DRAFT);
-        usage.setApproveStatus(ErpMntDaoConstants.APPROVE_STATUS_UNSUBMITTED);
+        usage.setApproveStatus(ErpMntConstants.APPROVE_STATUS_UNSUBMITTED);
         usage.setPosted(false);
         dao.saveEntity(usage);
     }

@@ -4,14 +4,14 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_md_partner(
+CREATE TABLE erp_md_partner(
   ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_md_partner primary key (ID)
+  constraint PK_erp_md_partner primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_md_material(
+CREATE TABLE erp_md_material(
   ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_md_material primary key (ID)
+  constraint PK_erp_md_material primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_b2b_edi_format(
@@ -321,9 +321,9 @@ CREATE TABLE erp_b2b_asn_line(
 
    ALTER TABLE erp_md_organization COMMENT 'ErpMdOrganization';
                 
-   ALTER TABLE erp_md_md_partner COMMENT 'ErpMdPartner';
+   ALTER TABLE erp_md_partner COMMENT 'ErpMdPartner';
                 
-   ALTER TABLE erp_md_md_material COMMENT 'ErpMdMaterial';
+   ALTER TABLE erp_md_material COMMENT 'ErpMdMaterial';
                 
    ALTER TABLE erp_b2b_edi_format COMMENT 'EDI 格式配置';
                 

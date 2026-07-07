@@ -786,7 +786,6 @@ dict:
     erp-fin/bank-match-status: Bank Match Status
     erp-fin/reconciliation-status: Reconciliation Status
     erp-fin/module-close-status: Module Close Status
-    erp-fin/approve-status: Approval Status
     erp-fin/bad-debt-type: Bad Debt Type
     erp-fin/expense-payment-mode: Expense Payment Mode
     erp-fin/expense-type: Expense Type
@@ -903,11 +902,6 @@ dict.option.label:
     OPEN: Unsettled
     CLOSING: Closing
     CLOSED: Settled
-  erp-fin/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-fin/bad-debt-type:
     WRITE_OFF: Write-off
     RECOVERY: Recovery

@@ -74,12 +74,6 @@
             <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label='Effective'/>
             <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
         </dict>
-        <dict label="审核状态" name="erp-cs/approve-status" valueType="string" i18n-en:label='Approve Status'>
-            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label='Unsubmitted'/>
-            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label='Submitted'/>
-            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label='Approved'/>
-            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
-        </dict>
         <dict label="调查发送渠道" name="erp-cs/survey-channel" valueType="string" i18n-en:label='Survey Channel'>
             <option code="EMAIL" label="邮件" value="EMAIL" i18n-en:label='Email'/>
             <option code="PHONE" label="电话" value="PHONE" i18n-en:label='Phone'/>
@@ -833,7 +827,7 @@
     
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
         <entity displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
-                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_md_partner">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
             </columns>

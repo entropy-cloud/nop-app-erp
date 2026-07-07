@@ -1,7 +1,7 @@
 
-CREATE TABLE erp_md_md_partner(
+CREATE TABLE erp_md_partner(
   ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_md_partner primary key (ID)
+  constraint PK_erp_md_partner primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_organization(
@@ -9,9 +9,9 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_md_employee(
+CREATE TABLE erp_md_employee(
   ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_md_employee primary key (ID)
+  constraint PK_erp_md_employee primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_currency(
@@ -21,9 +21,9 @@ CREATE TABLE erp_md_currency(
   constraint PK_erp_md_currency primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_md_material(
+CREATE TABLE erp_md_material(
   ID BIGINT NOT NULL    COMMENT 'null',
-  constraint PK_erp_md_md_material primary key (ID)
+  constraint PK_erp_md_material primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_log_carrier(
@@ -202,15 +202,15 @@ CREATE TABLE erp_log_shipment_log(
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 
-   ALTER TABLE erp_md_md_partner COMMENT 'ErpMdPartner';
+   ALTER TABLE erp_md_partner COMMENT 'ErpMdPartner';
                 
    ALTER TABLE erp_md_organization COMMENT 'ErpMdOrganization';
                 
-   ALTER TABLE erp_md_md_employee COMMENT 'ErpMdEmployee';
+   ALTER TABLE erp_md_employee COMMENT 'ErpMdEmployee';
                 
    ALTER TABLE erp_md_currency COMMENT '币种';
                 
-   ALTER TABLE erp_md_md_material COMMENT 'ErpMdMaterial';
+   ALTER TABLE erp_md_material COMMENT 'ErpMdMaterial';
                 
    ALTER TABLE erp_log_carrier COMMENT '承运商';
                 

@@ -1,7 +1,7 @@
 
-CREATE TABLE erp_md_md_partner(
+CREATE TABLE erp_md_partner(
   ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_md_md_partner primary key (ID)
+  constraint PK_erp_md_partner primary key (ID)
 );
 
 CREATE TABLE erp_md_organization(
@@ -9,9 +9,9 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (ID)
 );
 
-CREATE TABLE erp_md_md_employee(
+CREATE TABLE erp_md_employee(
   ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_md_md_employee primary key (ID)
+  constraint PK_erp_md_employee primary key (ID)
 );
 
 CREATE TABLE erp_md_currency(
@@ -21,9 +21,9 @@ CREATE TABLE erp_md_currency(
   constraint PK_erp_md_currency primary key (ID)
 );
 
-CREATE TABLE erp_md_md_material(
+CREATE TABLE erp_md_material(
   ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_md_md_material primary key (ID)
+  constraint PK_erp_md_material primary key (ID)
 );
 
 CREATE TABLE erp_log_carrier(
@@ -202,15 +202,15 @@ CREATE TABLE erp_log_shipment_log(
 );
 
 
-      COMMENT ON TABLE erp_md_md_partner IS 'ErpMdPartner';
+      COMMENT ON TABLE erp_md_partner IS 'ErpMdPartner';
                 
       COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
-      COMMENT ON TABLE erp_md_md_employee IS 'ErpMdEmployee';
+      COMMENT ON TABLE erp_md_employee IS 'ErpMdEmployee';
                 
       COMMENT ON TABLE erp_md_currency IS '币种';
                 
-      COMMENT ON TABLE erp_md_md_material IS 'ErpMdMaterial';
+      COMMENT ON TABLE erp_md_material IS 'ErpMdMaterial';
                 
       COMMENT ON TABLE erp_log_carrier IS '承运商';
                 

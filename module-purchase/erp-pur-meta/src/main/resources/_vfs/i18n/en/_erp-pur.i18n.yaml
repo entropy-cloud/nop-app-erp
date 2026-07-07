@@ -571,7 +571,6 @@ prop:
 dict:
   label:
     erp-pur/doc-status: Doc Status
-    erp-pur/approve-status: Approve Status
     erp-pur/paid-status: Payment Status
     erp-pur/receive-status: Receive Status
     erp-pur/biz-type: Purchase Doc Type
@@ -585,11 +584,6 @@ dict.option.label:
     DRAFT: Draft
     ACTIVE: Effective
     CANCELLED: Voided
-  erp-pur/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-pur/paid-status:
     UNPAID: Unpaid
     PARTIAL: Partially Paid

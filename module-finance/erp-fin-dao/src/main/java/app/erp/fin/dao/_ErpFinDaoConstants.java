@@ -449,26 +449,6 @@ public interface _ErpFinDaoConstants {
     String MODULE_CLOSE_STATUS_CLOSED = "CLOSED";
                     
     /**
-     * 审核状态: 未提交 
-     */
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-                    
-    /**
-     * 审核状态: 已提交 
-     */
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-                    
-    /**
-     * 审核状态: 已审核 
-     */
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-                    
-    /**
-     * 审核状态: 已驳回 
-     */
-    String APPROVE_STATUS_REJECTED = "REJECTED";
-                    
-    /**
      * 坏账单类型: 坏账核销 
      */
     String BAD_DEBT_TYPE_WRITE_OFF = "WRITE_OFF";

@@ -8,7 +8,7 @@
 
   类型规则（遵循 docs-for-ai/02-core-guides/orm-model-design.md + code-style.md）：
     - 所有 column 显式声明 code(UPPER_SNAKE_CASE) + propId(从1连续) + stdSqlType
-    - 字典字段用 ext:dict="erp-md/<dict>"，dict valueType=int，option value 10/20/30 递增
+    - 字典字段用 ext:dict="erp-md/<dict>"，dict valueType="string"，option value 按域语义命名（如 MATERIAL/FINISHED/SCRAP）
     - 通用字段走 domain 复用：delVersion/version/createdBy/createTime/updatedBy/updateTime/remark
     - 实体配 useLogicalDelete + deleteFlagProp/deleteVersionProp 指向 delVersion
     - 关系：to-one 用 tagSet="pub"，to-many 用 tagSet="pub,cascade-delete,insertable,updatable"

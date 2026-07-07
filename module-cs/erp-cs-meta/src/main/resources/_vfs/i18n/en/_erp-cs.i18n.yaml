@@ -374,7 +374,6 @@ dict:
     erp-cs/sla-policy: SLA Policy
     erp-cs/action-type: Action Type
     erp-cs/doc-status: Doc Status
-    erp-cs/approve-status: Approve Status
     erp-cs/survey-channel: Survey Channel
     erp-cs/service-type: Service Type
     erp-cs/contract-type: Contract Type
@@ -424,11 +423,6 @@ dict.option.label:
     DRAFT: Draft
     ACTIVE: Effective
     CANCELLED: Voided
-  erp-cs/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-cs/survey-channel:
     EMAIL: Email
     PHONE: Phone

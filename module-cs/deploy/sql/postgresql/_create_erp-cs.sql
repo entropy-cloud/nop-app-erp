@@ -1,7 +1,7 @@
 
-CREATE TABLE erp_md_md_partner(
+CREATE TABLE erp_md_partner(
   id INT8 NOT NULL ,
-  constraint PK_erp_md_md_partner primary key (id)
+  constraint PK_erp_md_partner primary key (id)
 );
 
 CREATE TABLE erp_md_organization(
@@ -347,7 +347,7 @@ CREATE TABLE erp_cs_time_entry(
 );
 
 
-      COMMENT ON TABLE erp_md_md_partner IS 'ErpMdPartner';
+      COMMENT ON TABLE erp_md_partner IS 'ErpMdPartner';
                 
       COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 

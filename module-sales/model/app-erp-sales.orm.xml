@@ -12,7 +12,7 @@
 
   类型规则（遵循 docs-for-ai/02-core-guides/orm-model-design.md + code-style.md）：
     - 所有 column 显式声明 code(UPPER_SNAKE_CASE) + propId(从1连续) + stdSqlType + stdDataType
-    - 字典字段用 ext:dict="erp-sal/<dict>"，dict valueType=int，option value 10/20/30 递增
+    - 字典字段用 ext:dict="erp-sal/<dict>"，dict valueType="string"，option value 按域语义命名
     - 通用字段走 domain 复用：delVersion/version/createdBy/createTime/updatedBy/updateTime/remark
     - 实体配 useLogicalDelete + deleteFlagProp/deleteVersionProp 指向 delVersion
     - 关系：to-one 用 tagSet="pub"，to-many 用 tagSet="pub,cascade-delete,insertable,updatable"
@@ -59,12 +59,6 @@
             <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
             <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label='Effective'/>
             <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
-        </dict>
-        <dict label="审核状态" name="erp-sal/approve-status" valueType="string" i18n-en:label='Approve Status'>
-            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label='Unsubmitted'/>
-            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label='Submitted'/>
-            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label='Approved'/>
-            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
         </dict>
         <dict label="收款进度" name="erp-sal/received-status" valueType="string" i18n-en:label='Received Status'>
             <option code="UNRECEIVED" label="未收款" value="UNRECEIVED" i18n-en:label='Unreceived'/>
@@ -420,7 +414,7 @@
                 </to-one>
                 <to-one name="taxRateMd" refEntityName="app.erp.md.dao.entity.ErpMdTaxRate" tagSet="pub" i18n-en:displayName='Tax Rate Md'><join><on leftProp="taxRateId" rightProp="id"/></join></to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
-                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
             </relations>
             <indexes>
                 <index name="IDX_SAL_ORDER_LINE_ORDER_ID" unique="false">

@@ -156,12 +156,6 @@
             <option code="CLOSING" label="结账中" value="CLOSING" i18n-en:label='Closing'/>
             <option code="CLOSED" label="已结" value="CLOSED" i18n-en:label='Settled'/>
         </dict>
-        <dict label="审核状态" name="erp-fin/approve-status" valueType="string" i18n-en:label='Approval Status'>
-            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label='Unsubmitted'/>
-            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label='Submitted'/>
-            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label='Approved'/>
-            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
-        </dict>
         <dict label="坏账单类型" name="erp-fin/bad-debt-type" valueType="string" i18n-en:label='Bad Debt Type'>
             <option code="WRITE_OFF" label="坏账核销" value="WRITE_OFF" i18n-en:label='Write-off'/>
             <option code="RECOVERY" label="坏账收回恢复" value="RECOVERY" i18n-en:label='Recovery'/>

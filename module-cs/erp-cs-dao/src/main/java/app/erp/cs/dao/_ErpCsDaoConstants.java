@@ -169,26 +169,6 @@ public interface _ErpCsDaoConstants {
     String DOC_STATUS_CANCELLED = "CANCELLED";
                     
     /**
-     * 审核状态: 未提交 
-     */
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-                    
-    /**
-     * 审核状态: 已提交 
-     */
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-                    
-    /**
-     * 审核状态: 已审核 
-     */
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-                    
-    /**
-     * 审核状态: 已驳回 
-     */
-    String APPROVE_STATUS_REJECTED = "REJECTED";
-                    
-    /**
      * 调查发送渠道: 邮件 
      */
     String SURVEY_CHANNEL_EMAIL = "EMAIL";

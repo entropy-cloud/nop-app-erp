@@ -391,7 +391,7 @@
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
         <entity displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
-                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_md_partner">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
             </columns>
@@ -403,13 +403,13 @@
             </columns>
         </entity>
         <entity displayName="ErpMdEmployee" name="app.erp.md.dao.entity.ErpMdEmployee"
-                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_md_employee">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
             </columns>
         </entity>
         <entity displayName="ErpMdMaterial" name="app.erp.md.dao.entity.ErpMdMaterial"
-                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_md_material">
+                notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
             </columns>

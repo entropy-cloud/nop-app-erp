@@ -415,4 +415,15 @@
         }
 
 
+        private Map<String,Object> _project;
+
+        public Map<String,Object> getProject(){
+            return _project;
+        }
+
+        public void setProject(Map<String,Object> value){
+            this._project = value;
+        }
+
+
     }

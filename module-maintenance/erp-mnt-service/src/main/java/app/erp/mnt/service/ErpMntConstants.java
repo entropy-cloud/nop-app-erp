@@ -4,8 +4,18 @@ package app.erp.mnt.service;
  * 维护域服务层常量。状态码权威值来自 {@code app.erp.mnt.dao._ErpMntDaoConstants}（生成）。
  *
  * <p>本接口补充跨域联动标识、库存作业类型调用方副本、配置键等。
+ *
+ * <p>审核轴常量（{@code wf/approve-status} 四态）由本接口显式声明——维护域 orm.xml 不再
+ * 定义 {@code erp-mnt/approve-status} 域字典（plan 2026-07-07-1915-1 M-1 删除冗余字典），
+ * 故 {@code _ErpMntDaoConstants} 不再生成这些常量。
  */
 public interface ErpMntConstants {
+
+    // 审核轴 wf/approve-status（四态，与 nop-wf 平台字典对齐；显式声明避免依赖生成的 DaoConstants）
+    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
+    String APPROVE_STATUS_APPROVED = "APPROVED";
+    String APPROVE_STATUS_REJECTED = "REJECTED";
 
     // 库存作业类型（对齐 erp-inv/operation-type，调用方侧副本避免 main 代码依赖 inventory-service）
     String MOVE_TYPE_OUTGOING = "OUTGOING";

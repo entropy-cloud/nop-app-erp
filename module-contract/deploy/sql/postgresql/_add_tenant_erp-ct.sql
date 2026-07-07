@@ -1,5 +1,5 @@
 
-    alter table erp_md_md_partner add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+    alter table erp_md_partner add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ct_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -37,8 +37,8 @@ alter table erp_ct_rebate_accrual add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT 
 
 alter table erp_ct_rebate_settlement add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
-alter table erp_md_md_partner drop constraint PK_erp_md_md_partner;
-alter table erp_md_md_partner add constraint PK_erp_md_md_partner primary key (NOP_TENANT_ID, id);
+alter table erp_md_partner drop constraint PK_erp_md_partner;
+alter table erp_md_partner add constraint PK_erp_md_partner primary key (NOP_TENANT_ID, id);
 
 alter table erp_ct_template drop constraint PK_erp_ct_template;
 alter table erp_ct_template add constraint PK_erp_ct_template primary key (NOP_TENANT_ID, id);

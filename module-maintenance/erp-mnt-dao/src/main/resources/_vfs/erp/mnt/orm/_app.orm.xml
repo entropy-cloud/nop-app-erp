@@ -66,12 +66,6 @@
             <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
             <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
         </dict>
-        <dict label="审核状态" name="erp-mnt/approve-status" valueType="string" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
-        </dict>
         <dict label="校准结果" name="erp-mnt/calibration-result" valueType="string" i18n-en:label="Calibration Result">
             <option code="PASS" label="合格" value="PASS" i18n-en:label="Conforming"/>
             <option code="FAIL" label="不合格" value="FAIL" i18n-en:label="Non-conforming"/>

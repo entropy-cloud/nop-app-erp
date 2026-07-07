@@ -731,7 +731,6 @@ dict:
     erp-mfg/job-card-status: Job Card Status
     erp-mfg/bom-type: BOM Type
     erp-mfg/consumption: Consumption Control
-    erp-mfg/approve-status: Approve Status
     erp-mfg/priority: Work Order Priority
     erp-mfg/mrp-status: MRP Plan Status
     erp-mfg/mrp-order-type: MRP Plan Order Type
@@ -774,11 +773,6 @@ dict.option.label:
     FLEXIBLE: Allow Overconsumption
     WARNING: Overconsumption Warning
     STRICT: Strict BOM
-  erp-mfg/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-mfg/priority:
     LOW: Low
     NORMAL: General

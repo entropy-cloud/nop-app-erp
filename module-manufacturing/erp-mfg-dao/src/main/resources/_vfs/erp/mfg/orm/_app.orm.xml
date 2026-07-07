@@ -47,12 +47,6 @@
             <option code="WARNING" label="超耗警告" value="WARNING" i18n-en:label="Overconsumption Warning"/>
             <option code="STRICT" label="严格按 BOM" value="STRICT" i18n-en:label="Strict BOM"/>
         </dict>
-        <dict label="审核状态" name="erp-mfg/approve-status" valueType="string" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
-        </dict>
         <dict label="工单优先级" name="erp-mfg/priority" valueType="string" i18n-en:label="Work Order Priority">
             <option code="LOW" label="低" value="LOW" i18n-en:label="Low"/>
             <option code="NORMAL" label="普通" value="NORMAL" i18n-en:label="General"/>

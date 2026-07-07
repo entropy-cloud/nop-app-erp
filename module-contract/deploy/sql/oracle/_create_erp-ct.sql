@@ -1,7 +1,7 @@
 
-CREATE TABLE erp_md_md_partner(
+CREATE TABLE erp_md_partner(
   ID NUMBER(20) NOT NULL ,
-  constraint PK_erp_md_md_partner primary key (ID)
+  constraint PK_erp_md_partner primary key (ID)
 );
 
 CREATE TABLE erp_ct_template(
@@ -344,7 +344,7 @@ CREATE TABLE erp_ct_rebate_settlement(
 );
 
 
-      COMMENT ON TABLE erp_md_md_partner IS 'ErpMdPartner';
+      COMMENT ON TABLE erp_md_partner IS 'ErpMdPartner';
                 
       COMMENT ON TABLE erp_ct_template IS '合同模板';
                 
