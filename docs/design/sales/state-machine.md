@@ -90,7 +90,7 @@
 | 提交 | 销售员 | 采购员→销售员 |
 | 审核通过 | 审核人/管理员 | 同 |
 | 驳回 | 审核人/管理员 | 同 |
-| 反审核 | 管理员（需冲销前置；目标态 REJECTED 非 UNSUBMITTED，见 `../domain-design-guidelines.md` §11.4） | 同 |
+| 反审核 | 管理员（需冲销前置；目标态 REJECTED 非 UNSUBMITTED，见 `../domain-design-guidelines.md` §16.4） | 同 |
 | 作废 | 销售员（草稿阶段）/ 管理员（已审核后） | 同 |
 
 职责分离：销售员与审核人建议不可为同一人。角色名见 `roles-and-permissions.md`。

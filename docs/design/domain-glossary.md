@@ -86,14 +86,14 @@
 
 ## 通用单据状态词汇
 
-> **取值归属**：下表只统一**跨域通用的业务状态语义**。各域 `docStatus`/`approveStatus` 的具体取值集合因域而异（如 purchase/sales 初始态用 DRAFT、inventory 用 CONFIRMED、finance 凭证用 POSTED、assets 用 IN_SERVICE/SCRAPPED 等），以 `domain-design-guidelines.md` §11.2/§11.3 为准；状态码的持久化值（字典 option code/value）归各域 `model/app-erp-<domain>.orm.xml` 的字典定义。本表不重复这些域专属状态，避免与 §11 及 orm.xml 形成第二个真相源。
+> **取值归属**：下表只统一**跨域通用的业务状态语义**。各域 `docStatus`/`approveStatus` 的具体取值集合因域而异（如 purchase/sales 初始态用 DRAFT、inventory 用 CONFIRMED、finance 凭证用 POSTED、assets 用 IN_SERVICE/SCRAPPED 等），以 `domain-design-guidelines.md` §16.2/§16.3 为准；状态码的持久化值（字典 option code/value）归各域 `model/app-erp-<domain>.orm.xml` 的字典定义。本表不重复这些域专属状态，避免与 §16 及 orm.xml 形成第二个真相源。
 
 | 英文 | 中文标准译法 | 说明 |
 |------|--------------|------|
 | DRAFT | 草稿 | 单据已创建但未生效（多域通用初始态） |
 | SUBMITTED | 已提交 | 单据已提交审核 |
 | APPROVED | 已审核 | 单据已审核通过 |
-| REJECTED | 已驳回 | 单据审核被驳回；**反审核的目标态也是 REJECTED**（见 `domain-design-guidelines.md` §11.4，非初始态 UNSUBMITTED） |
+| REJECTED | 已驳回 | 单据审核被驳回；**反审核的目标态也是 REJECTED**（见 `domain-design-guidelines.md` §16.4，非初始态 UNSUBMITTED） |
 | CANCELLED | 已作废 | 单据作废（多域通用作废态） |
 | DONE | 已完成 | 单据已执行完成（如 inventory 移动单终态） |
 | OPEN | 待处理/待开始 | 等待处理或开始（如项目进行中、维护请求待受理） |

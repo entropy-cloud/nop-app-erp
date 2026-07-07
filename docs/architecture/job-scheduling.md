@@ -16,7 +16,7 @@
 |---|------|------|----------|----------|
 | D1 | **nop-job vs nop-batch 选择判据** | 按"单次预估处理量 + 事务边界需求 + 断点续跑需求 + 失败重试粒度"四维裁决：单次处理量 ≥ 1万记录、或全表/大批量扫描、或需断点续跑/记录级幂等/记录级重试 → **nop-job（触发）+ nop-batch（执行）双层配合**；小数据量、定点查询少量记录、整作业一个事务可接受 → **nop-job 直接调 BizModel** | ① 全部用 nop-job + BizModel 内部分页循环（`non-bizmodel-orm-access.md:134-186` 纯 Java 方案）——无法满足断点续跑/记录级幂等/独立事务，失败需整体重跑，对折旧批量/对账等长作业不可接受，rejected；② 全部用 nop-batch（小作业如 CSAT 提醒也走分片，过度工程，rejected） | 阈值"1万"为推断（平台 docs-for-ai 未成文），实际应结合单记录处理耗时动态判断——审计需复核每个 nop-batch candidate 的量级标注有证据支撑 |
 | D2 | **DAG 归属漂移修正** | 删除原"DAG 依赖"章节，改为"作业逻辑前置关系"（§4）：(1) 期末结账的 AR→AP→INV→AST→GL 模块顺序已由 `ErpFinAccountingPeriodBizModel.closePeriod` 内部编排承载（计划 `2026-07-02-1000-3` Phase 1 已实现），**不依赖跨作业 DAG**；(2) 真正的跨作业 DAG 编排（如归档→对账→报表链）若未来需要，引入 **nop-task `<graph>`**，而非 nop-job | ① 引入 nop-task 重构期末结账为跨作业 DAG（已实现的 BizModel 内部编排工作良好，无需重构，rejected）；② 保留 nop-job DAG 说法（与平台契约冲突，属漂移不可保留，rejected） | nop-task 引入门槛（运维需理解第三模块），但当前无真实跨作业 DAG 需求，仅登记演进路径 |
-| D3 | **nop-job-local vs nop-job-service 演进路径** | 当前维持 **nop-job-local**（单机、作业定义内存态、适合 bootstrap 阶段；已接入 `app-erp-all`，见 `docs/logs/2026/06-23.md:14-17`）；迁移触发条件：多实例部署 / 作业需持久化与 AMIS 管理 / 需 misfire 补偿与阻塞策略时 → 引入 `nop-job-service` | 立即迁移 nop-job-service：`RpcJobInvoker` 单机 RPC 配置复杂（`docs/logs/2026/06-23.md:15` 已验证单机启动困难），bootstrap 阶段无必要，rejected | nop-job-local 重启丢失作业定义——本文登记的所有作业 cron 需在 `scheduler.yaml` 声明以保证重启重建（属各域 follow-up 接线工作，见 §8） |
+| D3 | **nop-job-local vs nop-job-service 演进路径** | 当前维持 **nop-job-local**（单机、作业定义内存态、适合当前单实例部署阶段；已接入 `app-erp-all`，见 `docs/logs/2026/06-23.md:14-17`）；迁移触发条件：多实例部署 / 作业需持久化与 AMIS 管理 / 需 misfire 补偿与阻塞策略时 → 引入 `nop-job-service` | 立即迁移 nop-job-service：`RpcJobInvoker` 单机 RPC 配置复杂（`docs/logs/2026/06-23.md:15` 已验证单机启动困难），当前阶段无必要，rejected | nop-job-local 重启丢失作业定义——本文登记的所有作业 cron 需在 `scheduler.yaml` 声明以保证重启重建（属各域 follow-up 接线工作，见 §8） |
 
 ---
 
@@ -49,7 +49,7 @@
 
 | 阶段 | 模式 | 适用 | 迁移触发条件（任一满足即考虑迁移） |
 |------|------|------|------------------------------------|
-| 当前（bootstrap） | `nop-job-local` | 单实例、作业定义可丢失（重启从 `scheduler.yaml` 重建） | — |
+| 当前（单实例部署） | `nop-job-local` | 单实例、作业定义可丢失（重启从 `scheduler.yaml` 重建） | — |
 | 未来 | `nop-job-service` | 多实例、需持久化与 AMIS 管理、需 misfire 补偿/阻塞策略/超时控制/分片 | ① 多实例部署；② 作业需持久化与 AMIS 管理；③ 需 misfire 补偿与阻塞策略 |
 
 ---
@@ -340,7 +340,7 @@ erp-fin-period-close（单个作业）
 
 ## 8. 实施状态与接线 follow-up
 
-**当前（bootstrap）**：`nop-job-local` 框架已接入，**8 个作业已完成三件套接线**（job bean + 域 `app-service.beans.xml` `<bean>` 注册 + `scheduler.yaml` 条目，见 `app-erp-all/src/main/resources/_vfs/nop/job/conf/scheduler.yaml`）：`erp-fin-ar-ap-auto-recon`（plan 0115-1）、`erp-ast-depreciation`/`erp-mnt-due-visit-generation`/`erp-cs-sla-scan`/`erp-fin-cash-forecast-refresh`/`erp-mfg-crp-run`/`erp-crm-forecast-recalc`/`erp-crm-lead-scoring-recalc`（plan 0306-1）。所有接线作业 cron 配置键默认空字符串=不自动执行（"已注册可发现、默认不执行、运维按部署启用"双层门控，见 §3 SCHEDULED 定义）。其余各域 BizModel 入口已交付（§3"调用入口"列），cron 实际注册归各域 follow-up。
+**当前（单实例部署）**：`nop-job-local` 框架已接入，**8 个作业已完成三件套接线**（job bean + 域 `app-service.beans.xml` `<bean>` 注册 + `scheduler.yaml` 条目，见 `app-erp-all/src/main/resources/_vfs/nop/job/conf/scheduler.yaml`）：`erp-fin-ar-ap-auto-recon`（plan 0115-1）、`erp-ast-depreciation`/`erp-mnt-due-visit-generation`/`erp-cs-sla-scan`/`erp-fin-cash-forecast-refresh`/`erp-mfg-crp-run`/`erp-crm-forecast-recalc`/`erp-crm-lead-scoring-recalc`（plan 0306-1）。所有接线作业 cron 配置键默认空字符串=不自动执行（"已注册可发现、默认不执行、运维按部署启用"双层门控，见 §3 SCHEDULED 定义）。其余各域 BizModel 入口已交付（§3"调用入口"列），cron 实际注册归各域 follow-up。
 
 **Deferred 接线汇总（约 20 个计划 Deferred 段，对应 §3 的 DEFERRED 状态作业）**：
 

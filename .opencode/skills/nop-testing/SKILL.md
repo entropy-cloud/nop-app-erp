@@ -5,6 +5,10 @@ description: Nop平台测试开发（JunitAutoTestCase / IGraphQLEngine / 快照
 
 # Nop 测试开发
 
+
+> **项目定制化层（nop-app-erp）**：使用本技能前必须先读 `AGENTS.md` 与 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。
+
+
 ## 什么时候用我
 
 | 场景 | 触发关键词 |

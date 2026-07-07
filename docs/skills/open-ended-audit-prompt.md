@@ -1,5 +1,9 @@
 # 开放式审计提示
 
+
+> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。本提示的通用默认值在本仓库不充分。
+
+
 当结构化审计检查清单可能遗漏隐藏问题且审查者应积极搜索未知未知数时使用此提示。
 
 这是通用默认提示。复制模板后，根据项目的真实失败历史、保护区域、命名约定和误报容忍度进行调整。

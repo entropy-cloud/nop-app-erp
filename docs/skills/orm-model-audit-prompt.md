@@ -1,5 +1,9 @@
 # ORM 模型审计提示
 
+
+> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。本提示的通用默认值在本仓库不充分。
+
+
 在将 `<domain>/model/*.orm.xml` 作为持久化模型真相源进行规范与完整性审计时使用此提示。
 
 在 ORM 模型首次建立后、跨模块引用变更后、字段批量补齐后或 codegen 前最终核对时使用。不要将其用作需求综合、设计文档审计或计划审计的替代品。

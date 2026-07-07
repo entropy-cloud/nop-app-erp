@@ -812,12 +812,14 @@ quotation → order → delivery → invoice → receipt
 
 ### 7.3 L2 待演进部分（codegen 后补充）
 
+> **更新（2026-07-08）**：codegen 已完成，以下 4 项均已落地，不再待办。
+
 本文档的 §3.2 / §4.3 涉及 `I*Biz` 接口清单，当前是**预期签名**。codegen 生成实际接口后，需在此补充：
 
-- [ ] 各 `IErpXxxBiz` 的具体只读方法签名（§3.2）
-- [ ] `IErpFinAcctDocProvider` 的 `AcctDocContext` 结构定型（§4.3）
-- [ ] 各业务域 Provider Bean 的注册清单（§4.3）
-- [ ] 弱指针反查的 `I*Biz` 方法统一命名规范
+- [x] 各 `IErpXxxBiz` 的具体只读方法签名（§3.2）— 已生成 332 个 `IErp*Biz` 接口，各域已按业务逻辑扩展只读/变更方法
+- [x] `IErpFinAcctDocProvider` 的 `AcctDocContext` 结构定型（§4.3）— 已落地于 `module-finance/erp-fin-service/.../posting/IErpFinAcctDocProvider.java` + `AcctDocContext.java`
+- [x] 各业务域 Provider Bean 的注册清单（§4.3）— 业财过账 Provider 已在各域 `app-service.beans.xml` 注册（plan 1132-1/1.5-1.7）
+- [x] 弱指针反查的 `I*Biz` 方法统一命名规范 — 各域统一使用 `findList(QueryBean, null, context)` + `relatedBillType`/`sourceBillType` 过滤模式
 
 ## 8. 相关文档
 

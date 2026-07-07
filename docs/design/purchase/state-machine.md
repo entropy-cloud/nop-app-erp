@@ -80,7 +80,7 @@
 
 - **终态**：`已审核（APPROVED）`（审核轴终态）、`已作废（docStatus=CANCELLED）`。
 - **已审核的纠错路径**：
-  - **反审核**：需先冲销所有已生成结果（库存冲销、财务红字凭证），才能 APPROVED → REJECTED（非回 UNSUBMITTED）。这是强约束，防止已入账数据被篡改。反审核目标态是 `REJECTED` 而非初始态 `UNSUBMITTED`，详见 `../domain-design-guidelines.md` §11.4。
+  - **反审核**：需先冲销所有已生成结果（库存冲销、财务红字凭证），才能 APPROVED → REJECTED（非回 UNSUBMITTED）。这是强约束，防止已入账数据被篡改。反审核目标态是 `REJECTED` 而非初始态 `UNSUBMITTED`，详见 `../domain-design-guidelines.md` §16.4。
   - **红冲单据**：不修改原已审核单据，而是生成红字退货单/红字发票冲销。这是更安全的纠错方式（保留审计轨迹）。
 - **已作废不可恢复**：作废是终态，需重新创建单据。
 - **已驳回可恢复**：修改后重新提交。
@@ -115,7 +115,7 @@
 | 提交（UNSUBMITTED→SUBMITTED） | 采购员（单据创建人） |
 | 审核通过（SUBMITTED→APPROVED） | 审核人/管理员（按单据类型配置审批流） |
 | 驳回（SUBMITTED→REJECTED） | 审核人/管理员 |
-| 反审核（APPROVED→REJECTED） | 管理员（高权限，因需冲销已入账数据；目标态 REJECTED 非 UNSUBMITTED，见 §11.4） |
+| 反审核（APPROVED→REJECTED） | 管理员（高权限，因需冲销已入账数据；目标态 REJECTED 非 UNSUBMITTED，见 §16.4） |
 | 作废 | 采购员（草稿/未提交阶段）/ 管理员（已审核后作废需高权限） |
 
 危险操作控制：
@@ -203,6 +203,6 @@
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
 - 三轴状态分离是否真正独立（付款状态是否被误当作工作流状态）。
-- 反审核的冲销前置是否覆盖所有已生成结果（库存、凭证、核销）；反审核目标态是否为 REJECTED（不是 UNSUBMITTED，见 `../domain-design-guidelines.md` §11.4）。
+- 反审核的冲销前置是否覆盖所有已生成结果（库存、凭证、核销）；反审核目标态是否为 REJECTED（不是 UNSUBMITTED，见 `../domain-design-guidelines.md` §16.4）。
 - 角色职责分离（采购员 vs 审核人 vs 管理员）是否落实。
 - 三单匹配失败路径是否在发票审核时拦截。

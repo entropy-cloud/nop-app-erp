@@ -1,5 +1,9 @@
 # 配置审计提示(Configuration Audit)
 
+
+> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。本提示的通用默认值在本仓库不充分。
+
+
 审计 ERP 配置设计的**归类合理性**与**落地完整性**:每个配置项是否放在了正确的位置(技术运维/系统开关/业务规则/用户偏好),业务规则配置是否作为业务表字段携带了正确粒度(组织/产品/单据),以及配置在 ORM 模型与设计文档中是否一致落地。
 
 在以下场景使用:配置项批量定义后、ORM 字段补齐后、多组织/多租户能力设计时、codegen 前核对配置字段完整性时。不要用作需求审计或状态机审计的替代品。

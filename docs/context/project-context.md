@@ -54,13 +54,13 @@
 
 仅标记此项目实际维护的可选层。
 
-- [ ] `docs/discussions/`
-- [ ] `docs/audits/`
-- [ ] `docs/testing/`
-- [ ] `docs/skills/`
-- [ ] `docs/analysis/`
-- [ ] `docs/retrospectives/`
-- [ ] `docs/lessons/`
+- [x] `docs/discussions/`（维护：需求澄清对话记录）
+- [x] `docs/audits/`（维护：综合审计、合规审计、专业审计记录）
+- [x] `docs/testing/`（维护：手动测试记录与已知良好基线）
+- [x] `docs/skills/`（维护：19 个审查/审计方法技能 + README 项目定制化层）
+- [x] `docs/analysis/`（维护：调研笔记、权衡分析、自动化路线图）
+- [x] `docs/retrospectives/`（维护：实现差距分析与流程改进回顾）
+- [x] `docs/lessons/`（维护：从 Bug/审计/回顾提取的持久工程经验）
 
 ## AI 阻塞条件
 

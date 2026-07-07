@@ -41,7 +41,7 @@ nop-app-erp 借鉴平台层"每领域独立工程"的模式应用到应用层：
 
 ### 2.0 工程命名映射表（唯一规范）
 
-> **规则**：以 Maven artifactId 前缀 `app-erp-<domain>` 作为"逻辑工程名"的**唯一规范**，物理目录 `module-<domain>/` 是 bootstrap 期物理别名。所有 design/architecture 文档统一引用逻辑名，物理目录供构建脚本与 IDE 识别。`app-erp-all` 是最终聚合启动工程的物理目录与逻辑名（一致），不再使用旧名 `app-erp-app`。
+> **规则**：以 Maven artifactId 前缀 `app-erp-<domain>` 作为"逻辑工程名"的**唯一规范**，物理目录 `module-<domain>/` 是 codegen 期物理别名。所有 design/architecture 文档统一引用逻辑名，物理目录供构建脚本与 IDE 识别。`app-erp-all` 是最终聚合启动工程的物理目录与逻辑名（一致），不再使用旧名 `app-erp-app`。
 
 | 业务域 | 逻辑工程名（artifactId 前缀） | 顶层目录 | 子模块前缀 | appName（orm.xml `ext:appName`） | VFS moduleId | 二级简称 | 实体类名前缀 | 表前缀 |
 |---|---|---|---|---|---|---|---|---|
@@ -101,7 +101,7 @@ nop-app-erp/                          （聚合根，pom packaging=pom）
 └── docs/                             设计/架构/上下文文档
 ```
 
-> **当前阶段说明**：18 域 `module-<domain>/model/app-erp-<domain>.orm.xml` 均在各 `module-<domain>/model/` 目录下作为权威源模型，codegen 骨架已生成（1721 个 Java 文件）。`module-<domain>/` 物理目录名是 bootstrap 期产物，与逻辑工程名 `app-erp-<domain>` 的映射见 §2.0——后续重构可对齐，但当前无需重命名。
+> **当前阶段说明**：18 域 `module-<domain>/model/app-erp-<domain>.orm.xml` 均在各 `module-<domain>/model/` 目录下作为权威源模型，codegen 骨架已生成（1721 个 Java 文件）。`module-<domain>/` 物理目录名是 codegen 期产物，与逻辑工程名 `app-erp-<domain>` 的映射见 §2.0——后续重构可对齐，但当前无需重命名。
 
 ### 2.2 领域工程内部结构（由 nop-cli gen 自动生成，不手写）
 
@@ -119,7 +119,7 @@ app-erp-<domain>/
 └── pom.xml
 ```
 
-**不手写 pom.xml 或 Java 模块目录**——这些由 `nop-cli gen` 生成。bootstrap 阶段只维护 `<domain>/model/*.orm.xml` 源模型与设计文档。
+**不手写 pom.xml 或 Java 模块目录**——这些由 `nop-cli gen` 生成。源模型与设计文档维护期只更新 `<domain>/model/*.orm.xml` 与 `docs/` 下设计文档。
 
 ## 3. 命名与前缀方案
 
@@ -243,10 +243,11 @@ finance 工程定义凭证生成接口与注册中心，各业务工程（purcha
 
 | 阶段 | 触发条件 | 做什么 |
 |---|---|---|
-| **阶段 0（当前）** | bootstrap | 5 份 orm.xml 骨架暂存 `model/`；设计文档立项；本文定稿 |
-| **阶段 1** | 首个域（建议 master-data）实体设计完成 | 跑 `nop-cli gen` 生成 master-data 工程；验证生成链路；将 `module-master-data/model/app-erp-master-data.orm.xml` 移入工程目录 |
-| **阶段 2** | 第二个域实体设计完成 | 生成第二个领域工程；验证跨工程 `I*Biz` 调用 |
-| **阶段 3** | 全部域工程就位 | `app-erp-all` 聚合启动；端到端联调业财打通 |
+| **阶段 0（已完成）** | 项目立项 | 5 份 orm.xml 骨架暂存 `model/`；设计文档立项；本文定稿 |
+| **阶段 1（已完成）** | 首个域（master-data）实体设计完成 | 跑 `nop-cli gen` 生成 master-data 工程；验证生成链路；将 `module-master-data/model/app-erp-master-data.orm.xml` 移入工程目录 |
+| **阶段 2（已完成）** | 全部 18 域实体设计完成 | 逐个生成领域工程；验证跨工程 `I*Biz` 调用 |
+| **阶段 3（已完成）** | 全部域工程就位 | `app-erp-all` 聚合启动；端到端联调业财打通 |
+| **阶段 4（当前）** | codegen 完成 | BizModel 业务逻辑深化、ErrorCode 完善、页面定制、端到端验证 |
 
 ## 7. 相关文档
 

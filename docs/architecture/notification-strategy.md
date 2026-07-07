@@ -29,8 +29,8 @@
 - **通知模板**：存储在 `erp_sys_notification_template` 表（`ErpSysNotificationTemplate` 实体），`subjectTpl`/`bodyTpl` 为 `${var}` 插值模板，按业务事件键 `notificationType` 查找 ACTIVE 模板。
 - **接收人配置**：按角色/组织/用户列表配置（`recipientResolver` = ROLE/ORG/PARTNER/USER_LIST），ROLE 复用平台 `nop-auth`（角色名 → `NopAuthUserRole` → userId）。
 - **通知已读状态**：记录在 `erp_sys_notification_read` 表（`ErpSysNotificationRead`），唯一键 (notificationId, userId) 防重复。
-- **config-gated**：bootstrap 默认仅站内消息通道（`erp-notify.email-enabled`/`sms-enabled` 默认 false），无真实供应商时跳过外发并 WARN，不阻断业务事实。
-- **异步总线（`nop-message`）**：本期不接入（同步派发 + `txn().afterCommit` 即可满足单实例 bootstrap）；触发条件=生产部署/多实例/通知量需削峰时接入 Kafka/Pulsar，归后继。
+- **config-gated**：当前默认仅站内消息通道（`erp-notify.email-enabled`/`sms-enabled` 默认 false），无真实供应商时跳过外发并 WARN，不阻断业务事实。
+- **异步总线（`nop-message`）**：本期不接入（同步派发 + `txn().afterCommit` 即可满足单实例部署）；触发条件=生产部署/多实例/通知量需削峰时接入 Kafka/Pulsar，归后继。
 
 ## 业务消费者接线清单（plan 2026-07-06-0642-1）
 

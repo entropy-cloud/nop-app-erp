@@ -252,6 +252,14 @@ ErrorCode 遵循 Nop 平台惯例 `nop.err.<module>.<name>`，应用层以 `erp.
 | maintenance | `erp.err.mnt.*` | `erp.err.mnt.equipment-not-found` |
 | quality | `erp.err.qa.*` | `erp.err.qa.ncr-already-resolved` |
 | master-data | `erp.err.md.*` | `erp.err.md.sku-duplicate` |
+| crm | `erp.err.crm.*` | `erp.err.crm.lead-not-found` |
+| cs | `erp.err.cs.*` | `erp.err.cs.ticket.not-found` |
+| hr | `erp.err.hr.*` | `erp.err.hr.social-insurance-base-not-found` |
+| logistics | `erp.err.log.*` | `erp.err.log.gateway-not-registered` |
+| b2b | `erp.err.b2b.*` | `erp.err.b2b.edi-format-not-registered` |
+| contract | `erp.err.ct.*` | `erp.err.ct.illegal-status-transition` |
+| drp | `erp.err.drp.*` | `erp.err.drp.plan.illegal-transition` |
+| aps | `erp.err.aps.*` | `erp.err.aps.no-available-slot` |
 
 ### 7.2 编码规则
 
@@ -541,10 +549,18 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | finance | 凭证 | `DRAFT` / `POSTED` / `CANCELLED` | 凭证特殊：无 SUBMITTED，DRAFT 直接过账到 POSTED |
 | finance | 会计期间 | `NOT_OPENED` / `OPEN` / `CLOSING` / `CLOSED` | 时间窗口状态机（见 §十） |
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
-| manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `RELEASED` / `IN_PROCESS` / `COMPLETED` / `STOPPED` / `REJECTED` / `CANCELLED` / `CLOSED` | 制造执行链（与 `manufacturing/state-machine.md` `erp-mfg/work-order-status` 10 态字典一致；质检门控经 config-gated 钩子，不加 INSPECTING 字典态，见 plan 2237-1） |
+| manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `NOT_STARTED` / `STOCK_PARTIAL` / `STOCK_RESERVED` / `IN_PROCESS` / `COMPLETED` / `STOPPED` / `CLOSED` / `CANCELLED` | 制造执行链（与 `manufacturing/state-machine.md` `erp-mfg/work-order-status` 10 态字典一致；质检门控经 config-gated 钩子，不加 INSPECTING 字典态，见 plan 2237-1） |
 | projects | 项目/任务 | `DRAFT` / `OPEN` / `ON_HOLD` / `COMPLETED` / `CANCELLED` | 项目生命周期。`ON_HOLD` 为项目独有暂停态（可恢复），见 `projects/state-machine.md` |
 | quality | 质检/NCR/CAPA | `DRAFT` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程 |
 | maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |
+| crm | 线索 | `NEW` / `QUALIFIED` / `CONVERTED` / `LOST` / `CANCELLED` | 线索生命周期（与 `crm/state-machine.md` `erp-crm/lead-status` 一致；不含工单状态轴） |
+| cs | 工单 | `NEW` / `ASSIGNED` / `IN_PROGRESS` / `RESOLVED` / `CLOSED` / `CANCELLED` | 客服工单流程（与 `customer-service/README.md` `erp-cs/ticket-status` 一致；SLA 从 NEW 计时到 RESOLVED） |
+| hr | 请假/工时单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `REJECTED` / `CANCELLED` | HR 审批类单据（与 `human-resource/README.md` 一致；招聘工单另用 `OPEN`/`SCREENING`/`INTERVIEW`/`OFFERED`/`HIRED`/`REJECTED`/`CLOSED`，员工在职状态 `employmentStatus` 用 `ACTIVE`/`PROBATION`/`RESIGNED`/`TERMINATED`/`RETIRED`，二者均非 docStatus） |
+| logistics | 发运单 | `DRAFT` / `CONFIRMED` / `IN_TRANSIT` / `DELIVERED` / `CANCELLED` | 物流发运流程（与 `logistics/state-machine.md` 一致） |
+| b2b | EDI 事务 | `TO_SEND` / `SENT` / `ACKNOWLEDGED` / `RECEIVED` / `ARCHIVED` / `TO_CANCEL` / `CANCELLED` | EDI 报文生命周期（与 `b2b/state-machine.md` 一致；出/入站共用 docStatus） |
+| contract | 合同 | `DRAFT` / `NEGOTIATION` / `ACTIVE` / `SUSPENDED` / `EXPIRED` / `TERMINATED` | 合同全生命周期（与 `contract/state-machine.md` 一致；版本状态 `isCurrent`/`FINALIZED`/`SIGNED` 单独管理） |
+| drp | DRP 计划 | `DRAFT` / `COMPUTED` / `APPROVED` | 分销需求计划（与 `drp/state-machine.md` 一致；明细行 `SUGGESTED`/`CONFIRMED` 是行级状态，非 docStatus） |
+| aps | 工序订单 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 排产执行（与 `aps/state-machine.md` `erp-aps/operation-order-status` 一致） |
 
 ### 16.3 approveStatus 取值约定（仅带审批的单据）
 
@@ -710,7 +726,34 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> {
 // ⛔ 不推荐：在 Java 中手写简单的字段计算
 ```
 
-## 十九、总结
+## 十九、命名规范附录
+
+### 19.1 通用命名规则
+
+- 实体类前缀：`Erp<DomainShort>`（如 `ErpMdMaterial`、`ErpInvStockMove`、`ErpPurOrder`）
+- 表前缀：`erp_<short>_*`（如 `erp_md_`、`erp_inv_`、`erp_pur_`）
+- 字典命名空间：`erp-<short>/<dict-name>`（如 `erp-md/material-type`、`erp-fin/voucher-type`）
+- 完整物理目录 ↔ 逻辑工程名 ↔ appName ↔ 表前缀映射见 `docs/architecture/domain-module-split-analysis.md §2.0`
+
+### 19.2 命名异常登记
+
+某些前缀因业务概念跨域性质，不归属任何单一业务域，登记如下：
+
+| 前缀 | 来源概念 | 涉及实体 | 异常原因 |
+|------|---------|---------|---------|
+| `erp-ct` | Contract | `ErpCt*` / `erp_ct_*` | 源自英文 Contract，避免与 `cs`（Customer Service）和 `crm`（Customer Relationship）混淆；详见 §19.3 |
+| `ErpSys*` / `erp_sys_*` | 跨域系统配置与通知派发 | `ErpSysConfig`、`ErpSysNotification`、`ErpSysNotificationRecipient`、`ErpSysNotificationTemplate`、`ErpSysNotificationLog`、`ErpSysNotificationRead`、`ErpSysDocNumberRule` | 这些实体的业务语义跨多个域（配置归 master-data 维护、通知派发归 notify 子系统、单据号规则归 master-data），统一用 `Sys` 前缀表达"系统级跨域"性质，不强制归属某一域。`module-notify` 的通知实体命名为 `ErpSysNotification*` 而非 `ErpNotifyNotification*` 是有意为之——避免在已稳定的 `ErpSys*` 命名族中引入第二套前缀造成分裂 |
+
+### 19.3 `erp-ct` 前缀来源（Contract）
+
+`erp-ct` 是 Contract 域的简称。选择 `ct` 而非 `contract` 或 `ctr`：
+- `contract` 全拼过长，不符合项目其他域的 3 字母简称惯例（`pur/sal/inv/fin/ast/mfg/qa/mnt/crm/cs/hr/aps/log/drp`）
+- `ctr` 与 `crm`/`cs` 视觉上易混淆
+- `ct` 是 Contract 的常见缩写（法律/商务语境），且与相邻前缀区分度高
+
+此裁定登记于 `docs/plans/2026-07-07-2200-1-multi-dim-audit-supplement.md`（L-8）。
+
+## 二十、总结
 
 本指南定义了 nop-app-erp 的核心设计原则与约束，各域设计时必须遵守：
 

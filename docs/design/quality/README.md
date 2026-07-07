@@ -67,11 +67,13 @@
 
 | 质检判定 | 对工单状态的影响 | 约束声明位置 |
 |----------|------------------|------------|
-| ACCEPTED（合格） | 工单可从 INSPECTING → COMPLETED | 本文 + `manufacturing/state-machine.md` |
-| CONDITIONAL（让步接收） | 工单可从 INSPECTING → COMPLETED（附让步记录） | 本文 + `manufacturing/state-machine.md` |
-| REJECTED（不合格） | 工单停留在 INSPECTING，触发返工工单 | 本文 + `manufacturing/state-machine.md` |
+| ACCEPTED（合格） | 工单保持在 `IN_PROCESS`，允许完工入库达量后 → `COMPLETED` | 本文 + `manufacturing/state-machine.md` |
+| CONDITIONAL（让步接收） | 工单保持在 `IN_PROCESS`，允许完工入库（附让步记录） | 本文 + `manufacturing/state-machine.md` |
+| REJECTED（不合格） | 工单保持在 `IN_PROCESS`（阻塞完工入库），触发返工工单 | 本文 + `manufacturing/state-machine.md` |
 
 > 双方文档都显式声明此约束，确保两个域的读者都能看到质检对工单状态的影响。
+>
+> **状态机对齐说明**：制造工单**不引入独立的 `INSPECTING` 状态**——质检判定经 config-gated 钩子在完工入库前阻塞/放行，工单状态仍停留在 `IN_PROCESS`。`manufacturing/state-machine.md` 的 10 态字典（`erp-mfg/work-order-status`）和 `domain-design-guidelines.md §16.2` manufacturing 行均已对齐。详见 plan 2237-1 偏离补注。
 
 ## 关键业务规则
 

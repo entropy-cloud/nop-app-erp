@@ -1,5 +1,9 @@
 # 设计完整性扫描提示
 
+
+> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。本提示的通用默认值在本仓库不充分。
+
+
 使用此提示主动扫描 `docs/design/`，查找目标产品范围内缺失的域、文档和功能点，并生成优先级差距列表，驱动增量设计文档添加。
 
 在产品增长时定期使用，在里程碑范围锁定前使用，或在考虑新业务域时使用。不要将其用作需求综合、设计文档审计（验证现有文档）、状态机审查或计划审计的替代品。它是 `design-doc-audit-prompt.md` 的前瞻性对应：该提示审计存在的内容；此提示查找缺失的内容。

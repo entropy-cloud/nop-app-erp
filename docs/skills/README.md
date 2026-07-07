@@ -76,3 +76,51 @@
 - 无论技能物理位置如何，都通过 `AGENTS.md`、`docs/index.md` 和 owner docs 进行路由；技能选择工作方法，不替代 owner-doc 路由
 
 模板本身保持工具中立，不假设任何特定的 AI 工具。
+
+## 项目定制化层（nop-app-erp）
+
+> 此节是本仓库对各技能模板的项目特定覆盖。任何技能在被使用前，必须将下面这些项目事实注入到提示上下文中——技能模板的通用默认值在本仓库不充分。
+
+### 保护区域（ask-first，未经人工批准不得修改）
+
+- **ORM 模型**：`module-<domain>/model/app-erp-<domain>.orm.xml` 是代码生成的真相源，**禁止在无人批准下修改**。修改后必须用 `mvn clean install -DskipTests` 触发增量重新生成（不要重跑 `nop-cli gen`）。
+- **API 契约**：`module-<domain>/model/app-erp-<domain>.api.xml` 同上。
+- **会计/财务/数据删除**：财务凭证、过账、期末结账、坏账、成本核算等代码区域是 ERP 保护区域，无 owner doc 不实现。
+- **生成产物**：`_gen/` 目录、`_` 前缀文件、`_app.orm.xml`、`_service.beans.xml` 永不手写。
+- 完整规则见 `docs/context/ai-autonomy-policy.md` 与 `docs/context/project-context.md §AI 阻塞条件`。
+
+### 验证命令（按场景）
+
+| 场景 | 命令 |
+|------|------|
+| 全项目构建（绿色基线） | `mvn clean install -DskipTests` |
+| 类型/编译检查（快速反馈） | `mvn compile -DskipTests` |
+| 单元测试 | `mvn test` |
+| XML well-formed | `xmllint --noout module-<domain>/model/app-erp-<domain>.orm.xml` |
+| 合规性检查 | `bash docs/audits/nop-compliance-checker.sh` |
+| 本地运行 | `java -Dfile.encoding=UTF8 -Dquarkus.profile=dev -jar app-erp-all/target/app-erp-all-1.0-SNAPSHOT-runner.jar` |
+
+### 命名约定（与本仓库已有产物对齐）
+
+- 实体类前缀：`Erp<Domain>`（如 `ErpMdMaterial`、`ErpInvStockMove`、`ErpSysNotification`）
+- 表前缀：`erp_<short>_*`（如 `erp_md_`、`erp_inv_`、`erp_sys_`）
+- 字典命名空间：`erp-<short>/<dict-name>`（如 `erp-md/material-type`）
+- BizModel 包：`io.github.nop.app.erp.<domain>.service`（如 `io.github.nop.app.erp.purchase.service`）
+- ErrorCode 命名空间前缀：`erp.err.<short>`（如 `erp.err.pur`、`erp.err.sal`、`erp.err.mfg`；详见 `docs/design/domain-design-guidelines.md §7.1`）
+- 字典 `valueType` 统一为 `string`（语义编码），option `value` 与 `code` 合一（详见 `system-baseline.md §字段与类型约定` D1）
+- 服务层模型：双轨编排（task.xml 用于拓扑可变流程；Processor + 派生 bean 用于拓扑稳定但单步可覆盖）见 `service-layer-orchestration.md`、`processor-extension-pattern.md`
+
+### 已知失败模式（必须在审计/审查中针对性检查）
+
+1. **跨模块外部实体引用表前缀双重拼接**：`notGenCode="true"` 外部实体引用必须验证表名前缀不被双重拼接（参见 `docs/lessons/01-orm-cross-module-table-prefix-validation.md`）。
+2. **章节重编号后的残留引用**：章节重编号后必须全文搜索所有域文档的残留引用（参见 `docs/lessons/02-cross-ref-renumber-scan.md`）。
+3. **`dao().updateEntity()` 越权访问**：跨实体访问应通过 `I*Biz` 接口；直接 `IDaoProvider`/`IOrmTemplate` 调用须在注释中说明原因。
+4. **`System.currentTimeMillis()` / `LocalDateTime.now()` 在生产代码**：必须替换为 `CoreMetrics.currentTimeMillis()` 以支持时间可控测试。
+5. **业务异常未扩展 `NopException`**：禁止 `extends RuntimeException`；公共错误必须用 `ErrorCode` + 中文描述。
+6. **`@Inject private`**：Nop IoC 中 `@Inject` 字段不能是 `private`。
+7. **字符串比较用 `==`/`!=`**：字典 String 比较一律 `Objects.equals()` / `.equals()`。
+8. **propId 编号断续**：orm.xml 列定义 `propId` 必须连续（gap 会触发平台校验失败）。
+
+### 与平台文档的关系
+
+技能不替代平台文档阅读。涉及 Nop 平台 API/代码生成/BizModel 模式/页面定制/delta/测试时，先读 `../nop-entropy/docs-for-ai/INDEX.md` 路由表，再回到本目录选用合适的审查/审计方法。

@@ -258,7 +258,7 @@ APPROVED → SUBMITTED（reverseApprove，需配置门控）
 
 - 状态定义见 `payroll.md §五/§六`。
 - 状态码归 `wf/approve-status` 标准字典（nop-wf 模块统一定义），`ErpHrSalary.approveStatus` 字段引用 `ext:dict="wf/approve-status"`。
-- 业务覆盖：`docs/design/hr/payroll.md`
+- 业务覆盖：`docs/design/human-resource/payroll.md`
 
 ## 审查提示
 
