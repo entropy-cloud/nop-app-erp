@@ -22,6 +22,19 @@ public interface ErpCsErrors {
     String ARG_MIN = "min";
     String ARG_MAX = "max";
 
+    // --- 权益/目录参数键（plan 2026-07-07-1430-1） ---
+    String ARG_ENTITLEMENT_ID = "entitlementId";
+    String ARG_ENTITLEMENT_CODE = "entitlementCode";
+    String ARG_PARTNER_ID = "partnerId";
+    String ARG_USED_TICKETS = "usedTickets";
+    String ARG_MAX_TICKETS = "maxTickets";
+    String ARG_CATEGORY_ID = "categoryId";
+    String ARG_CATEGORY_NAME = "categoryName";
+    String ARG_CURRENT_DEPTH = "currentDepth";
+    String ARG_MAX_DEPTH = "maxDepth";
+    String ARG_CATALOG_ITEM_ID = "catalogItemId";
+    String ARG_CATALOG_ITEM_NAME = "catalogItemName";
+
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
@@ -77,4 +90,51 @@ public interface ErpCsErrors {
             "erp.err.cs.report.render-type-invalid",
             "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    // --- 权益/目录错误码（plan 2026-07-07-1430-1 §Phase 1/2） ---
+
+    ErrorCode ERR_ENTITLEMENT_EXHAUSTED = ErrorCode.define(
+            "nop.err.cs.entitlement.exhausted",
+            "服务权益[{entitlementCode}]按次计费余量已耗尽（已用 {usedTickets}/{maxTickets}），禁止新建工单",
+            ARG_ENTITLEMENT_CODE, ARG_USED_TICKETS, ARG_MAX_TICKETS);
+
+    ErrorCode ERR_ENTITLEMENT_NONE_ACTIVE = ErrorCode.define(
+            "nop.err.cs.entitlement.none-active",
+            "客户[{partnerId}]无有效服务权益，且 erp-cs.entitlement-allow-no-entitlement=false，禁止新建工单",
+            ARG_PARTNER_ID);
+
+    ErrorCode ERR_ENTITLEMENT_EXPIRED = ErrorCode.define(
+            "nop.err.cs.entitlement.expired",
+            "服务权益[{entitlementCode}]已过期或未激活，禁止扣减",
+            ARG_ENTITLEMENT_CODE);
+
+    ErrorCode ERR_ENTITLEMENT_NOT_FOUND = ErrorCode.define(
+            "nop.err.cs.entitlement.not-found",
+            "服务权益不存在: {entitlementId}",
+            ARG_ENTITLEMENT_ID);
+
+    ErrorCode ERR_CATALOG_CATEGORY_MAX_DEPTH_EXCEEDED = ErrorCode.define(
+            "nop.err.cs.catalog-category.max-depth-exceeded",
+            "目录分类[{categoryName}]层级深度[{currentDepth}]超过最大深度[{maxDepth}]",
+            ARG_CATEGORY_NAME, ARG_CURRENT_DEPTH, ARG_MAX_DEPTH);
+
+    ErrorCode ERR_CATALOG_CATEGORY_CYCLE = ErrorCode.define(
+            "nop.err.cs.catalog-category.cycle",
+            "目录分类[{categoryId}]设置 parentId 将形成环路，禁止操作",
+            ARG_CATEGORY_ID);
+
+    ErrorCode ERR_CATALOG_CATEGORY_HAS_CHILDREN = ErrorCode.define(
+            "nop.err.cs.catalog-category.has-children",
+            "目录分类[{categoryId}]存在子节点，禁止删除",
+            ARG_CATEGORY_ID);
+
+    ErrorCode ERR_CATALOG_ITEM_INACTIVE = ErrorCode.define(
+            "nop.err.cs.catalog-item.inactive",
+            "服务目录项[{catalogItemName}]未上架（isActive=false），禁止建单",
+            ARG_CATALOG_ITEM_NAME);
+
+    ErrorCode ERR_CATALOG_ITEM_NOT_FOUND = ErrorCode.define(
+            "nop.err.cs.catalog-item.not-found",
+            "服务目录项不存在: {catalogItemId}",
+            ARG_CATALOG_ITEM_ID);
 }

@@ -14,9 +14,14 @@
           class="app.erp.cs.service.job.ErpCsSlaScanJob"/>
 
     <!-- 定时 CSAT 调查到期提醒 Job Bean（plan 2026-07-06-0642-1 §Phase 2）。由 nop-job-local scheduler.yaml
-          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-cs.csat-reminder-cron 配置门控。 -->
+           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-cs.csat-reminder-cron 配置门控。 -->
     <bean id="erpCsCsatReminderJob"
           class="app.erp.cs.service.job.ErpCsCsatReminderJob"/>
+
+    <!-- 定时服务权益到期扫描 Job Bean（plan 2026-07-07-1430-1 §Phase 1）。由 nop-job-local scheduler.yaml
+           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-cs.entitlement-expiry-cron 配置门控。 -->
+    <bean id="erpCsEntitlementExpiryJob"
+          class="app.erp.cs.service.job.ErpCsEntitlementExpiryJob"/>
 
     <!-- 客服域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /cs/）。 -->

@@ -79,4 +79,41 @@ public interface ErpCsConstants {
 
     /** 通知事件类型：CSAT 调查到期提醒（对应 erp_sys_notification_template.notification_type；plan 2026-07-06-0642-1 §Phase 2）。 */
     String NOTIFY_EVENT_CSAT_REMINDER = "cs.csat-reminder";
+
+    // === 客户服务权益 / 服务目录（plan 2026-07-07-1430-1）===
+
+    // 权益 serviceType 字典（erp-cs/service-type；权威：app-erp-cs.orm.xml）
+    String SERVICE_TYPE_WARRANTY = "WARRANTY";
+    String SERVICE_TYPE_SUPPORT_CONTRACT = "SUPPORT_CONTRACT";
+    String SERVICE_TYPE_PAY_PER_TICKET = "PAY_PER_TICKET";
+
+    // 履行动作类型字典（erp-cs/fulfillment-action-type；权威：service-catalog.md §3.1）
+    String FULFILLMENT_ACTION_CREATE_TICKET = "CREATE_TICKET";
+    String FULFILLMENT_ACTION_ASSIGN_TEAM = "ASSIGN_TEAM";
+    String FULFILLMENT_ACTION_ASSIGN_AGENT = "ASSIGN_AGENT";
+    String FULFILLMENT_ACTION_REQUEST_APPROVAL = "REQUEST_APPROVAL";
+    String FULFILLMENT_ACTION_NOTIFY_CUSTOMER = "NOTIFY_CUSTOMER";
+    String FULFILLMENT_ACTION_UPDATE_STATUS = "UPDATE_STATUS";
+    String FULFILLMENT_ACTION_CREATE_CHILD_TICKET = "CREATE_CHILD_TICKET";
+    String FULFILLMENT_ACTION_INVOKE_WORKFLOW = "INVOKE_WORKFLOW";
+    String FULFILLMENT_ACTION_CLOSE_TICKET = "CLOSE_TICKET";
+
+    // 履行执行结果（ErpCsTicketAction 审计 content 派生标识；不持久化枚举）
+    String FULFILLMENT_RESULT_DONE = "DONE";
+    String FULFILLMENT_RESULT_SKIPPED = "SKIPPED";
+
+    // 权益配置项（经 AppConfig.var 读取；权威：entitlement.md §五 + plan Infrastructure）
+    String CONFIG_ENTITLEMENT_CHECK_ENABLED = "erp-cs.entitlement-check-enabled";
+    String CONFIG_ENTITLEMENT_ALLOW_NO_ENTITLEMENT = "erp-cs.entitlement-allow-no-entitlement";
+    String CONFIG_ENTITLEMENT_EXPIRY_WARNING_DAYS = "erp-cs.entitlement-expiry-warning-days";
+    String CONFIG_ENTITLEMENT_AUTO_WARRANTY = "erp-cs.entitlement-auto-warranty";
+    String CONFIG_ENTITLEMENT_EXPIRY_CRON = "erp-cs.entitlement-expiry-cron";
+
+    // 服务目录配置项（权威：service-catalog.md §六 + plan Infrastructure）
+    String CONFIG_SERVICE_CATALOG_ENABLED = "erp-cs.service-catalog-enabled";
+    String CONFIG_SERVICE_CATALOG_SELF_SERVICE = "erp-cs.service-catalog-self-service";
+    String CONFIG_CATALOG_CATEGORY_MAX_DEPTH = "erp-cs.catalog-category-max-depth";
+
+    /** 通知事件类型：服务权益到期预警（对应 erp_sys_notification_template.notification_type）。 */
+    String NOTIFY_EVENT_ENTITLEMENT_EXPIRY = "cs.entitlement-expiry";
 }
