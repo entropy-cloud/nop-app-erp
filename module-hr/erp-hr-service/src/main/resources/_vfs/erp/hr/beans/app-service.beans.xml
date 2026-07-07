@@ -27,6 +27,13 @@
     <bean id="app.erp.hr.service.posting.SalaryPostingProvider"
           class="app.erp.hr.service.posting.SalaryPostingProvider"/>
 
+    <!-- HR 胜任力管理引擎组件（competency-management.md §评估流程/§差距分析）。
+         纯函数式 + 注入加载函数便于单测；BizModel 经 @Inject 引用。 -->
+    <bean id="app.erp.hr.service.competency.AssessmentAggregator"
+          class="app.erp.hr.service.competency.AssessmentAggregator"/>
+    <bean id="app.erp.hr.service.competency.GapAnalysisCalculator"
+          class="app.erp.hr.service.competency.GapAnalysisCalculator"/>
+
     <!-- HR 域报表渲染入口（plan 2026-07-06-1247-1）：非实体 BizModel，注入平台 IReportEngine，
          经 @BizQuery 暴露 renderHtml/download。@BizModel 注解由 bizObject 管理器自动识别。
          镜像 finance ErpFinReportBizModel / manufacturing ErpMfgReportBizModel / inventory ErpInvReportBizModel

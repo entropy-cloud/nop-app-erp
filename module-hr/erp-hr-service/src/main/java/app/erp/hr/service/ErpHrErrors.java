@@ -32,6 +32,15 @@ public interface ErpHrErrors {
     String ARG_TARGET_PERIOD = "targetPeriod";
     String ARG_REVIEWER_ID = "reviewerId";
 
+    // --- 胜任力管理作用域参数键 ---
+    String ARG_ASSESSMENT_ID = "assessmentId";
+    String ARG_COMPETENCY_ID = "competencyId";
+    String ARG_DEV_PLAN_ID = "devPlanId";
+    String ARG_DEV_PLAN_ITEM_ID = "devPlanItemId";
+    String ARG_POSITION_ID = "positionId";
+    String ARG_REQUIRED_LEVEL = "requiredLevel";
+    String ARG_TARGET_STATUS = "targetStatus";
+
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
@@ -149,4 +158,30 @@ public interface ErpHrErrors {
             "erp.err.hr.report.render-type-invalid",
             "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    // --- 胜任力管理（competency-management.md §评估流程/§差距分析/§发展计划） ---
+    ErrorCode ERR_ASSESSMENT_NO_DETAILS = ErrorCode.define(
+            "erp.err.hr.assessment-no-details",
+            "评估 {assessmentId} 未包含任何评估明细（AssessmentDetail），禁止提交",
+            ARG_ASSESSMENT_ID);
+    ErrorCode ERR_ASSESSMENT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.hr.assessment-illegal-status-transition",
+            "评估 {assessmentId} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_ASSESSMENT_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_GAP_NO_ROLE_REQUIREMENT = ErrorCode.define(
+            "erp.err.hr.gap-no-role-requirement",
+            "员工 {employeeId} 无岗位（ErpHrPosition）或岗位未配置胜任力要求（ErpHrRoleCompetency），无法计算差距",
+            ARG_EMPLOYEE_ID);
+    ErrorCode ERR_ROLE_COMPETENCY_INVALID_LEVEL = ErrorCode.define(
+            "erp.err.hr.role-competency-invalid-level",
+            "岗位胜任力要求的等级 {requiredLevel} 超出有效范围（须为 1-5）",
+            ARG_REQUIRED_LEVEL);
+    ErrorCode ERR_DEV_PLAN_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.hr.dev-plan-illegal-status-transition",
+            "发展计划项 {devPlanItemId} 当前状态={currentStatus}，不允许执行该操作（期望状态={targetStatus}）",
+            ARG_DEV_PLAN_ITEM_ID, ARG_CURRENT_STATUS, ARG_TARGET_STATUS);
+    ErrorCode ERR_COMPETENCY_PARENT_CYCLE = ErrorCode.define(
+            "erp.err.hr.competency-parent-cycle",
+            "胜任力 {competencyId} 设置上级 {parentId} 会形成环路（含自引用），禁止保存",
+            ARG_COMPETENCY_ID);
 }

@@ -29,6 +29,17 @@ public interface ErpHrConfigs {
     /** 模拟自动转正式默认关闭（手动触发）。 */
     boolean DEFAULT_SIM_AUTO_CONVERT_ENABLED = false;
 
+    /** 360 评估自评默认权重（competency-management.md §配置点）。 */
+    BigDecimal DEFAULT_ASSESSMENT_SELF_WEIGHT = new BigDecimal("0.15");
+    /** 360 评估上级默认权重。 */
+    BigDecimal DEFAULT_ASSESSMENT_MANAGER_WEIGHT = new BigDecimal("0.50");
+    /** 360 评估同级默认权重。 */
+    BigDecimal DEFAULT_ASSESSMENT_PEER_WEIGHT = new BigDecimal("0.25");
+    /** 360 评估下级默认权重。 */
+    BigDecimal DEFAULT_ASSESSMENT_SUBORDINATE_WEIGHT = new BigDecimal("0.10");
+    /** 严重差距默认阈值（gapValue ≥ 此值视为 CRITICAL）。 */
+    int DEFAULT_GAP_CRITICAL_THRESHOLD = 3;
+
     static String defaultSocialInsuranceBaseCity() {
         String city = io.nop.api.core.config.AppConfig.var(
                 ErpHrConstants.CONFIG_DEFAULT_SOCIAL_INSURANCE_BASE_CITY, "");
@@ -105,5 +116,35 @@ public interface ErpHrConfigs {
         Boolean v = io.nop.api.core.config.AppConfig.var(
                 ErpHrConstants.CONFIG_SIM_AUTO_CONVERT_ENABLED, DEFAULT_SIM_AUTO_CONVERT_ENABLED);
         return v == null ? DEFAULT_SIM_AUTO_CONVERT_ENABLED : v;
+    }
+
+    static BigDecimal assessmentSelfWeight() {
+        BigDecimal v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_ASSESSMENT_SELF_WEIGHT, DEFAULT_ASSESSMENT_SELF_WEIGHT);
+        return v == null ? DEFAULT_ASSESSMENT_SELF_WEIGHT : v;
+    }
+
+    static BigDecimal assessmentManagerWeight() {
+        BigDecimal v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_ASSESSMENT_MANAGER_WEIGHT, DEFAULT_ASSESSMENT_MANAGER_WEIGHT);
+        return v == null ? DEFAULT_ASSESSMENT_MANAGER_WEIGHT : v;
+    }
+
+    static BigDecimal assessmentPeerWeight() {
+        BigDecimal v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_ASSESSMENT_PEER_WEIGHT, DEFAULT_ASSESSMENT_PEER_WEIGHT);
+        return v == null ? DEFAULT_ASSESSMENT_PEER_WEIGHT : v;
+    }
+
+    static BigDecimal assessmentSubordinateWeight() {
+        BigDecimal v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_ASSESSMENT_SUBORDINATE_WEIGHT, DEFAULT_ASSESSMENT_SUBORDINATE_WEIGHT);
+        return v == null ? DEFAULT_ASSESSMENT_SUBORDINATE_WEIGHT : v;
+    }
+
+    static int gapCriticalThreshold() {
+        Integer v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_GAP_CRITICAL_THRESHOLD, DEFAULT_GAP_CRITICAL_THRESHOLD);
+        return v == null ? DEFAULT_GAP_CRITICAL_THRESHOLD : v;
     }
 }

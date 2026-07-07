@@ -150,4 +150,50 @@ public interface ErpHrConstants {
     String ANOMALY_TOTAL_CHANGE = "TOTAL_CHANGE";
     String ANOMALY_TAX_BRACKET_JUMP = "TAX_BRACKET_JUMP";
     String ANOMALY_SOCIAL_BASE_OUT_OF_RANGE = "SOCIAL_BASE_OUT_OF_RANGE";
+
+    // ---- 胜任力管理配置项（competency-management.md §配置点）----
+    /** 360 评估自评权重（默认 0.15）。 */
+    String CONFIG_ASSESSMENT_SELF_WEIGHT = "erp-hr.assessment-self-weight";
+    /** 360 评估上级权重（默认 0.50）。 */
+    String CONFIG_ASSESSMENT_MANAGER_WEIGHT = "erp-hr.assessment-manager-weight";
+    /** 360 评估同级权重（默认 0.25）。 */
+    String CONFIG_ASSESSMENT_PEER_WEIGHT = "erp-hr.assessment-peer-weight";
+    /** 360 评估下级权重（默认 0.10）。 */
+    String CONFIG_ASSESSMENT_SUBORDINATE_WEIGHT = "erp-hr.assessment-subordinate-weight";
+    /** 严重差距阈值（gapValue ≥ 此值视为 CRITICAL，默认 3）。 */
+    String CONFIG_GAP_CRITICAL_THRESHOLD = "erp-hr.gap-critical-threshold";
+
+    // ---- erp-hr/assessment-type（competency-management.md §评估类型） ----
+    String ASSESSMENT_TYPE_SELF = "SELF";
+    String ASSESSMENT_TYPE_MANAGER = "MANAGER";
+    String ASSESSMENT_TYPE_PEER = "PEER";
+    String ASSESSMENT_TYPE_SUBORDINATE = "SUBORDINATE";
+    String ASSESSMENT_TYPE_360 = "360";
+
+    // ---- erp-hr/assessment-status（competency-management.md §评估流程） ----
+    String ASSESSMENT_STATUS_DRAFT = "DRAFT";
+    String ASSESSMENT_STATUS_SUBMITTED = "SUBMITTED";
+    String ASSESSMENT_STATUS_COMPLETED = "COMPLETED";
+
+    // ---- erp-hr/gap-severity（competency-management.md §差距严重程度规则） ----
+    String GAP_SEVERITY_NONE = "NONE";
+    String GAP_SEVERITY_MINOR = "MINOR";
+    String GAP_SEVERITY_MODERATE = "MODERATE";
+    String GAP_SEVERITY_CRITICAL = "CRITICAL";
+
+    // ---- erp-hr/devplan-status（competency-management.md §发展计划） ----
+    String DEV_PLAN_STATUS_DRAFT = "DRAFT";
+    String DEV_PLAN_STATUS_IN_PROGRESS = "IN_PROGRESS";
+    String DEV_PLAN_STATUS_COMPLETED = "COMPLETED";
+    String DEV_PLAN_STATUS_CANCELLED = "CANCELLED";
+
+    // ---- erp-hr/plan-item-status（competency-management.md §发展计划项） ----
+    String PLAN_ITEM_STATUS_NOT_STARTED = "NOT_STARTED";
+    String PLAN_ITEM_STATUS_IN_PROGRESS = "IN_PROGRESS";
+    String PLAN_ITEM_STATUS_ACHIEVED = "ACHIEVED";
+    String PLAN_ITEM_STATUS_OVERDUE = "OVERDUE";
+
+    // ---- 胜任力等级范围（competency-management.md §CompetencyLevel 1-5 量表） ----
+    int COMPETENCY_LEVEL_MIN = 1;
+    int COMPETENCY_LEVEL_MAX = 5;
 }
