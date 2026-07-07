@@ -10,6 +10,8 @@ entity:
     ErpAstDisposal: Asset Disposal
     ErpAstInventory: Asset Inventory
     ErpAstInventoryLine: Asset Inventory Line
+    ErpAstMaintenance: Asset Maintenance
+    ErpAstMaintenanceCost: Maintenance Cost Line
     ErpAstMerge: Asset Merge
     ErpAstMergeLine: Asset Merge Line
     ErpAstMovement: Asset Movement
@@ -341,6 +343,62 @@ prop:
       newAsset: New Asset
       capitalization: Capitalization
       disposal: Disposal
+    ErpAstMaintenance:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      assetId: Asset
+      maintenanceVisitId: Maintenance Visit
+      status: Status
+      status_label: null
+      treatment: Treatment
+      treatment_label: null
+      capitalizedAmount: Capitalized Amount
+      totalCostAmount: Total Cost Amount
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      reason: Reason
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      reversed: Reversed
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      asset: Asset
+      org: Org
+      currency: Currency
+      costLines: Cost Lines
+    ErpAstMaintenanceCost:
+      id: ID
+      maintenanceId: Maintenance
+      orgId: Organization
+      lineNo: Line No
+      costType: Cost Type
+      costType_label: null
+      amount: Amount
+      businessDate: Business Date
+      currencyId: Currency
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      maintenance: Maintenance
+      org: Org
+      currency: Currency
     ErpAstMerge:
       id: ID
       code: Code
@@ -543,6 +601,9 @@ dict:
     erp-ast/inventory-status: Inventory Status
     erp-ast/variance-type: Variance Type
     erp-ast/inventory-line-disposition: Inventory Line Disposition
+    erp-ast/maintenance-status: Maintenance Status
+    erp-ast/maintenance-treatment: Maintenance Treatment
+    erp-ast/maintenance-cost-type: Maintenance Cost Type
 dict.option.label:
   erp-ast/asset-status:
     DRAFT: Draft
@@ -614,3 +675,17 @@ dict.option.label:
     NEW_CARD: New Card
     DISPOSAL: Disposal
     INVESTIGATE: Investigate
+  erp-ast/maintenance-status:
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    IN_PROGRESS: In Progress
+    COMPLETED: Completed
+    POSTED: Posted
+    CANCELLED: Cancelled
+  erp-ast/maintenance-treatment:
+    CAPITALIZE: Capitalize
+    EXPENSE: Expense
+  erp-ast/maintenance-cost-type:
+    LABOR: Labor
+    SPARE_PART: Spare Part
+    SUBCONTRACT: Subcontract

@@ -185,3 +185,11 @@ options:
     value: ASSET_INVENTORY_ADJUSTMENT
     description: 
   
+  - label: 维修费用化
+    value: MAINTENANCE_EXPENSE
+    description: 
+  
+  - label: 维修资本化
+    value: MAINTENANCE_CAPITALIZATION
+    description: 
+  

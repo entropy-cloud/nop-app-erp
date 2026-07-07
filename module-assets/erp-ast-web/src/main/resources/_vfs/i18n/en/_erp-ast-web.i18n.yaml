@@ -12,6 +12,10 @@ site:
       displayName: Depreciation Schedule
     ErpAstDisposal-main:
       displayName: Asset Disposal
+    ErpAstMaintenance-main:
+      displayName: Asset Maintenance
+    ErpAstMaintenanceCost-main:
+      displayName: Maintenance Cost Line
     ErpAstMerge-main:
       displayName: Asset Merge
     ErpAstMovement-main:
@@ -24,8 +28,6 @@ site:
       displayName: Asset Depreciation Detail
     asset-disposal-detail:
       displayName: Asset Disposal Detail
-    asset-repair:
-      displayName: Asset Repair
     asset-stocktake:
       displayName: Asset Stocktake
     ast-dashboard:

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpAstMaintenance" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/ast/model/ErpAstMaintenance/ErpAstMaintenance.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--维修单号-->
+                <col id="code" mandatory="true" sortable="true"/>
+
+                <!--维修名称-->
+                <col id="name" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--资产卡片-->
+                <col id="assetId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--维护工单(弱关联)-->
+                <col id="maintenanceVisitId" ui:number="true" sortable="true"/>
+
+                <!--维修状态-->
+                <col id="status" mandatory="true" sortable="true"/>
+
+                <!--处置裁决-->
+                <col id="treatment" sortable="true"/>
+
+                <!--资本化金额-->
+                <col id="capitalizedAmount" ui:number="true" sortable="true"/>
+
+                <!--费用合计-->
+                <col id="totalCostAmount" ui:number="true" sortable="true"/>
+
+                <!--维修日期-->
+                <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--币种-->
+                <col id="currencyId" ui:number="true" sortable="true"/>
+
+                <!--汇率-->
+                <col id="exchangeRate" ui:number="true" sortable="true"/>
+
+                <!--维修原因-->
+                <col id="reason" sortable="true"/>
+
+                <!--已过账-->
+                <col id="posted" sortable="true"/>
+
+                <!--过账时间-->
+                <col id="postedAt" sortable="true"/>
+
+                <!--过账人-->
+                <col id="postedBy" sortable="true"/>
+
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
+                <!--已红冲-->
+                <col id="reversed" sortable="true"/>
+
+                <!--源币种金额-->
+                <col id="amountSource" ui:number="true" sortable="true"/>
+
+                <!--本位币金额-->
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-资产维修工单" i18n-en:title="View Asset Maintenance">
+            <layout>
+ id[ID] code[维修单号]
+ name[维修名称] orgId[业务组织]
+ assetId[资产卡片] maintenanceVisitId[维护工单(弱关联)]
+ status[维修状态] treatment[处置裁决]
+ capitalizedAmount[资本化金额] totalCostAmount[费用合计]
+ businessDate[维修日期] currencyId[币种]
+ exchangeRate[汇率] reason[维修原因]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] reversed[已红冲]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] remark[备注]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-资产维修工单" i18n-en:title="Add Asset Maintenance">
+            <layout>
+ id[ID] code[维修单号]
+ name[维修名称] orgId[业务组织]
+ assetId[资产卡片] maintenanceVisitId[维护工单(弱关联)]
+ status[维修状态] treatment[处置裁决]
+ capitalizedAmount[资本化金额] totalCostAmount[费用合计]
+ businessDate[维修日期] currencyId[币种]
+ exchangeRate[汇率] reason[维修原因]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] reversed[已红冲]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="edit" editMode="edit" title="编辑-资产维修工单" i18n-en:title="Edit Asset Maintenance">
+            <layout>
+ id[ID] code[维修单号]
+ name[维修名称] orgId[业务组织]
+ assetId[资产卡片] maintenanceVisitId[维护工单(弱关联)]
+ status[维修状态] treatment[处置裁决]
+ capitalizedAmount[资本化金额] totalCostAmount[费用合计]
+ businessDate[维修日期] currencyId[币种]
+ exchangeRate[汇率] reason[维修原因]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] reversed[已红冲]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ delVersion[逻辑删除版本] remark[备注]
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-资产维修工单"
+              i18n-en:title="Update Asset Maintenance"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpAstMaintenance__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpAstMaintenance__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpAstMaintenance__batchDelete?ids=$ids"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpAstMaintenance__delete?id=$id"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpAstMaintenance__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpAstMaintenance__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpAstMaintenance__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpAstMaintenance__get?id=$id" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpAstMaintenance__get?id=$id" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpAstMaintenance__update/id?id=$id" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

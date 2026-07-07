@@ -56,10 +56,14 @@
                                   component="AMIS" resourceType="SUBM" orderNo="330"
                                   url="/erp/ast/pages/ErpAstMerge/main.page.yaml"/>
                     
-                        <resource id="asset-repair" app:useCases="UC-AST-10" displayName="资产维修"
-                                  i18n-en:displayName="Asset Repair" icon="wrench"
+                        <resource id="ErpAstMaintenance-main" app:useCases="UC-AST-10" displayName="资产维修工单"
+                                  i18n-en:displayName="Asset Maintenance" icon="wrench"
                                   component="AMIS" resourceType="SUBM" orderNo="350"
-                                  url="/erp/ast/pages/asset-repair/main.page.yaml"/></children>
+                                  url="/erp/ast/pages/ErpAstMaintenance/main.page.yaml"/>
+                        <resource id="ErpAstMaintenanceCost-main" app:useCases="UC-AST-10" displayName="维修费用行"
+                                  i18n-en:displayName="Maintenance Cost Line" icon="coins"
+                                  component="AMIS" resourceType="SUBM" orderNo="360"
+                                  url="/erp/ast/pages/ErpAstMaintenanceCost/main.page.yaml"/></children>
                 </resource>
                 <!-- 处置资本化 -->
                 <resource id="ast-disposal" displayName="处置资本化" i18n-en:displayName="Disposal &amp; Capitalization"

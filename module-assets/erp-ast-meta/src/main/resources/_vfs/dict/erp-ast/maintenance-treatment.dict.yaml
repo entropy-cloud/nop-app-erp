@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 维修处置
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 资本化
+    value: CAPITALIZE
+    description: 
+  
+  - label: 费用化
+    value: EXPENSE
+    description: 
+  

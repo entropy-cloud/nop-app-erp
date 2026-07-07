@@ -391,6 +391,39 @@ CREATE TABLE erp_ast_merge(
   constraint PK_erp_ast_merge primary key (ID)
 );
 
+CREATE TABLE erp_ast_maintenance(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200)  ,
+  ORG_ID NUMBER(20)  ,
+  ASSET_ID NUMBER(20) NOT NULL ,
+  MAINTENANCE_VISIT_ID NUMBER(20)  ,
+  STATUS VARCHAR2(20) NOT NULL ,
+  TREATMENT VARCHAR2(20)  ,
+  CAPITALIZED_AMOUNT NUMBER(20,4) default 0   ,
+  TOTAL_COST_AMOUNT NUMBER(20,4) default 0   ,
+  BUSINESS_DATE DATE NOT NULL ,
+  CURRENCY_ID NUMBER(20)  ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  REASON VARCHAR2(500)  ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
+  REVERSED CHAR(1) default 0   ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_ast_maintenance primary key (ID)
+);
+
 CREATE TABLE erp_ast_inventory_line(
   ID NUMBER(20) NOT NULL ,
   INVENTORY_ID NUMBER(20) NOT NULL ,
@@ -512,6 +545,25 @@ CREATE TABLE erp_ast_merge_line(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
   constraint PK_erp_ast_merge_line primary key (ID)
+);
+
+CREATE TABLE erp_ast_maintenance_cost(
+  ID NUMBER(20) NOT NULL ,
+  MAINTENANCE_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  LINE_NO INTEGER  ,
+  COST_TYPE VARCHAR2(20) NOT NULL ,
+  AMOUNT NUMBER(20,4) default 0   ,
+  BUSINESS_DATE DATE  ,
+  CURRENCY_ID NUMBER(20)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_ast_maintenance_cost primary key (ID)
 );
 
 
@@ -1131,6 +1183,66 @@ CREATE TABLE erp_ast_merge_line(
                     
       COMMENT ON COLUMN erp_ast_merge.AMOUNT_FUNCTIONAL IS '本位币金额';
                     
+      COMMENT ON TABLE erp_ast_maintenance IS '资产维修工单';
+                
+      COMMENT ON COLUMN erp_ast_maintenance.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.CODE IS '维修单号';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.NAME IS '维修名称';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.ASSET_ID IS '资产卡片';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.MAINTENANCE_VISIT_ID IS '维护工单(弱关联)';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.STATUS IS '维修状态';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.TREATMENT IS '处置裁决';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.CAPITALIZED_AMOUNT IS '资本化金额';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.TOTAL_COST_AMOUNT IS '费用合计';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.BUSINESS_DATE IS '维修日期';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.REASON IS '维修原因';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.POSTED IS '已过账';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.APPROVED_AT IS '审核时间';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.REVERSED IS '已红冲';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance.REMARK IS '备注';
+                    
       COMMENT ON TABLE erp_ast_inventory_line IS '资产盘点行';
                 
       COMMENT ON COLUMN erp_ast_inventory_line.ID IS 'ID';
@@ -1346,4 +1458,36 @@ CREATE TABLE erp_ast_merge_line(
       COMMENT ON COLUMN erp_ast_merge_line.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_merge_line.REMARK IS '备注';
+                    
+      COMMENT ON TABLE erp_ast_maintenance_cost IS '维修费用行';
+                
+      COMMENT ON COLUMN erp_ast_maintenance_cost.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.MAINTENANCE_ID IS '维修工单';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.ORG_ID IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.COST_TYPE IS '费用类型';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.AMOUNT IS '金额';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_maintenance_cost.REMARK IS '备注';
                     

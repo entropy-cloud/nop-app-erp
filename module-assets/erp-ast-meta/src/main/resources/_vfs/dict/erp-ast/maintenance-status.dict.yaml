@@ -1,0 +1,31 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 维修工单状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 草稿
+    value: DRAFT
+    description: 
+  
+  - label: 已提交
+    value: SUBMITTED
+    description: 
+  
+  - label: 维修中
+    value: IN_PROGRESS
+    description: 
+  
+  - label: 已完工
+    value: COMPLETED
+    description: 
+  
+  - label: 已过账
+    value: POSTED
+    description: 
+  
+  - label: 已作废
+    value: CANCELLED
+    description: 
+  

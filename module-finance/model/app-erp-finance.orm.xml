@@ -106,6 +106,10 @@
             <option code="ASSET_MERGE" label="资产合并" value="ASSET_MERGE" i18n-en:label='Asset Merge'/>
             <!-- 资产盘点差异过账（plan 2026-07-07-0842-1）：盘点 post→盘盈 Dr 固定资产/Cr 营业外收入，盘亏 Dr 营业外支出/Cr 固定资产。 -->
             <option code="ASSET_INVENTORY_ADJUSTMENT" label="资产盘点差异" value="ASSET_INVENTORY_ADJUSTMENT" i18n-en:label='Asset Inventory Adjustment'/>
+            <!-- 资产维修费用化过账（plan 2026-07-07-0842-2）：维修 post→借维修费用/制造费用，贷存货/银行/维修中转科目（按 maintenanceVisitId 分支防双重扣减）。 -->
+            <option code="MAINTENANCE_EXPENSE" label="维修费用化" value="MAINTENANCE_EXPENSE" i18n-en:label='Maintenance Expense'/>
+            <!-- 资产维修资本化过账（plan 2026-07-07-0842-2）：维修 post→借固定资产(原值增量)/贷在建工程或银行存款/存货。区别于 CAPITALIZATION(80) 新建资本化。 -->
+            <option code="MAINTENANCE_CAPITALIZATION" label="维修资本化" value="MAINTENANCE_CAPITALIZATION" i18n-en:label='Maintenance Capitalization'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>

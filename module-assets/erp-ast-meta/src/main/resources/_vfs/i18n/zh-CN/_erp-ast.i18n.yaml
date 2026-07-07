@@ -10,6 +10,8 @@ entity:
     ErpAstDisposal: 资产处置
     ErpAstInventory: 资产盘点单
     ErpAstInventoryLine: 资产盘点行
+    ErpAstMaintenance: 资产维修工单
+    ErpAstMaintenanceCost: 维修费用行
     ErpAstMerge: 资产合并单
     ErpAstMergeLine: 资产合并行
     ErpAstMovement: 资产移动
@@ -340,6 +342,62 @@ prop:
       varianceQuantity: 差异数量
       varianceType: 差异类型
       varianceType_label: 差异类型
+      version: 数据版本
+    ErpAstMaintenance:
+      amountFunctional: 本位币金额
+      amountSource: 源币种金额
+      approvedAt: 审核时间
+      approvedBy: 审核人
+      asset: null
+      assetId: 资产卡片
+      businessDate: 维修日期
+      capitalizedAmount: 资本化金额
+      code: 维修单号
+      costLines: null
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      exchangeRate: 汇率
+      id: ID
+      maintenanceVisitId: 维护工单(弱关联)
+      name: 维修名称
+      org: null
+      orgId: 业务组织
+      posted: 已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      reason: 维修原因
+      remark: 备注
+      reversed: 已红冲
+      status: 维修状态
+      status_label: 维修状态
+      totalCostAmount: 费用合计
+      treatment: 处置裁决
+      treatment_label: 处置裁决
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpAstMaintenanceCost:
+      amount: 金额
+      businessDate: 业务日期
+      costType: 费用类型
+      costType_label: 费用类型
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      maintenance: null
+      maintenanceId: 维修工单
+      org: null
+      orgId: 所属组织
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
       version: 数据版本
     ErpAstMerge:
       amountFunctional: 本位币金额

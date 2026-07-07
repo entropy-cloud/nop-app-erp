@@ -864,6 +864,8 @@ dict.option.label:
     ASSET_SPLIT: Asset Split
     ASSET_MERGE: Asset Merge
     ASSET_INVENTORY_ADJUSTMENT: Asset Inventory Adjustment
+    MAINTENANCE_EXPENSE: Maintenance Expense
+    MAINTENANCE_CAPITALIZATION: Maintenance Capitalization
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

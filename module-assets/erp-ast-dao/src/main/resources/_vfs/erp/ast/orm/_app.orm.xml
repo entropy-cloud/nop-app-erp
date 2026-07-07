@@ -104,6 +104,24 @@
             <option code="DISPOSAL" label="盘亏触发处置" value="DISPOSAL" i18n-en:label="Disposal"/>
             <option code="INVESTIGATE" label="标记调查" value="INVESTIGATE" i18n-en:label="Investigate"/>
         </dict>
+        <dict label="维修工单状态" name="erp-ast/maintenance-status" valueType="string" i18n-en:label="Maintenance Status">
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
+            <option code="IN_PROGRESS" label="维修中" value="IN_PROGRESS" i18n-en:label="In Progress"/>
+            <option code="COMPLETED" label="已完工" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="POSTED" label="已过账" value="POSTED" i18n-en:label="Posted"/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Cancelled"/>
+        </dict>
+        <dict label="维修处置" name="erp-ast/maintenance-treatment" valueType="string" i18n-en:label="Maintenance Treatment">
+            <option code="CAPITALIZE" label="资本化" value="CAPITALIZE" i18n-en:label="Capitalize"/>
+            <option code="EXPENSE" label="费用化" value="EXPENSE" i18n-en:label="Expense"/>
+        </dict>
+        <dict label="维修费用类型" name="erp-ast/maintenance-cost-type" valueType="string"
+              i18n-en:label="Maintenance Cost Type">
+            <option code="LABOR" label="人工" value="LABOR" i18n-en:label="Labor"/>
+            <option code="SPARE_PART" label="备件" value="SPARE_PART" i18n-en:label="Spare Part"/>
+            <option code="SUBCONTRACT" label="外协" value="SUBCONTRACT" i18n-en:label="Subcontract"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -1936,6 +1954,199 @@
                         i18n-en:displayName="Disposal">
                     <join>
                         <on leftProp="disposalId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.ast.dao.entity.ErpAstMaintenance" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产维修工单"
+                name="app.erp.ast.dao.entity.ErpAstMaintenance" registerShortName="true" tableName="erp_ast_maintenance"
+                tagSet="gid,erp.assets" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="wrench" i18n-en:displayName="Asset Maintenance">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="维修单号" domain="assetCode" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="维修名称" domain="name" name="name" precision="200" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="ASSET_ID" displayName="资产卡片" mandatory="true" name="assetId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Asset"/>
+                <column code="MAINTENANCE_VISIT_ID" displayName="维护工单(弱关联)" name="maintenanceVisitId" propId="6"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Maintenance Visit"/>
+                <column code="STATUS" displayName="维修状态" mandatory="true" name="status" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/maintenance-status"
+                        i18n-en:displayName="Status"/>
+                <column code="TREATMENT" displayName="处置裁决" name="treatment" precision="20" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/maintenance-treatment"
+                        i18n-en:displayName="Treatment"/>
+                <column code="CAPITALIZED_AMOUNT" defaultValue="0" displayName="资本化金额" domain="amount"
+                        name="capitalizedAmount" precision="20" propId="9" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Capitalized Amount"/>
+                <column code="TOTAL_COST_AMOUNT" defaultValue="0" displayName="费用合计" domain="amount"
+                        name="totalCostAmount" precision="20" propId="10" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Total Cost Amount"/>
+                <column code="BUSINESS_DATE" displayName="维修日期" mandatory="true" name="businessDate" propId="11"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="12" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
+                        precision="20" propId="13" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Exchange Rate"/>
+                <column code="REASON" displayName="维修原因" name="reason" precision="500" propId="14" stdDataType="string"
+                        stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
+                <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="15"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="16" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="17"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="18"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="19" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                <column code="REVERSED" defaultValue="false" displayName="已红冲" name="reversed" propId="20"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Reversed"/>
+                <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
+                        propId="21" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Amt (Source)"/>
+                <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
+                        precision="20" propId="22" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Amt (Functional)"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="23" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="24" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="25" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="27" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="28" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="29"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_AST_MAINTENANCE_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_AST_MAINTENANCE_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_MAINTENANCE_VISIT_ID" unique="false">
+                    <column name="maintenanceVisitId"/>
+                </index>
+                <index name="IDX_AST_MAINTENANCE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub"
+                        i18n-en:displayName="Asset">
+                    <join>
+                        <on leftProp="assetId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many cascadeDelete="true" name="costLines"
+                         refEntityName="app.erp.ast.dao.entity.ErpAstMaintenanceCost"
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Cost Lines">
+                    <join>
+                        <on leftProp="id" rightProp="maintenanceId"/>
+                    </join>
+                </to-many>
+            </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_AST_MAINTENANCE_CODE_ORG"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.ast.dao.entity.ErpAstMaintenanceCost" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维修费用行"
+                name="app.erp.ast.dao.entity.ErpAstMaintenanceCost" registerShortName="true"
+                tableName="erp_ast_maintenance_cost" tagSet="gid,erp.assets" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="coins"
+                i18n-en:displayName="Maintenance Cost Line">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="MAINTENANCE_ID" displayName="维修工单" mandatory="true" name="maintenanceId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Maintenance"/>
+                <column code="ORG_ID" displayName="所属组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="LINE_NO" displayName="行号" name="lineNo" propId="4" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Line No"/>
+                <column code="COST_TYPE" displayName="费用类型" mandatory="true" name="costType" precision="20" propId="5"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/maintenance-cost-type"
+                        i18n-en:displayName="Cost Type"/>
+                <column code="AMOUNT" defaultValue="0" displayName="金额" domain="amount" name="amount" precision="20"
+                        propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="7" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="8" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="15"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_AST_MAINTENANCE_COST_MAINTENANCE_ID" unique="false">
+                    <column name="maintenanceId"/>
+                </index>
+                <index name="IDX_AST_MAINTENANCE_COST_COST_TYPE" unique="false">
+                    <column name="costType"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="maintenance" refEntityName="app.erp.ast.dao.entity.ErpAstMaintenance" tagSet="pub"
+                        i18n-en:displayName="Maintenance">
+                    <join>
+                        <on leftProp="maintenanceId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>

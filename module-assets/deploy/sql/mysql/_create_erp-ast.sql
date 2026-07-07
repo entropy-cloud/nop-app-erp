@@ -391,6 +391,39 @@ CREATE TABLE erp_ast_merge(
   constraint PK_erp_ast_merge primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_ast_maintenance(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '维修单号',
+  NAME VARCHAR(200) NULL    COMMENT '维修名称',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  ASSET_ID BIGINT NOT NULL    COMMENT '资产卡片',
+  MAINTENANCE_VISIT_ID BIGINT NULL    COMMENT '维护工单(弱关联)',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '维修状态',
+  TREATMENT VARCHAR(20) NULL    COMMENT '处置裁决',
+  CAPITALIZED_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '资本化金额',
+  TOTAL_COST_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '费用合计',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '维修日期',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  REASON VARCHAR(500) NULL    COMMENT '维修原因',
+  POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
+  APPROVED_AT DATETIME NULL    COMMENT '审核时间',
+  REVERSED BOOLEAN default 0  NULL    COMMENT '已红冲',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '源币种金额',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '本位币金额',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_ast_maintenance primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_ast_inventory_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   INVENTORY_ID BIGINT NOT NULL    COMMENT '盘点单',
@@ -514,6 +547,25 @@ CREATE TABLE erp_ast_merge_line(
   constraint PK_erp_ast_merge_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_ast_maintenance_cost(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  MAINTENANCE_ID BIGINT NOT NULL    COMMENT '维修工单',
+  ORG_ID BIGINT NULL    COMMENT '所属组织',
+  LINE_NO INTEGER NULL    COMMENT '行号',
+  COST_TYPE VARCHAR(20) NOT NULL    COMMENT '费用类型',
+  AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '金额',
+  BUSINESS_DATE DATE NULL    COMMENT '业务日期',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_ast_maintenance_cost primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 
    ALTER TABLE erp_md_organization COMMENT '组织';
                 
@@ -549,6 +601,8 @@ CREATE TABLE erp_ast_merge_line(
                 
    ALTER TABLE erp_ast_merge COMMENT '资产合并单';
                 
+   ALTER TABLE erp_ast_maintenance COMMENT '资产维修工单';
+                
    ALTER TABLE erp_ast_inventory_line COMMENT '资产盘点行';
                 
    ALTER TABLE erp_ast_cip_cost_item COMMENT 'CIP成本归集行';
@@ -558,4 +612,6 @@ CREATE TABLE erp_ast_merge_line(
    ALTER TABLE erp_ast_split_line COMMENT '资产拆分行';
                 
    ALTER TABLE erp_ast_merge_line COMMENT '资产合并行';
+                
+   ALTER TABLE erp_ast_maintenance_cost COMMENT '维修费用行';
                 

@@ -46,6 +46,16 @@ public interface ErpAstConstants {
     /** 盘亏是否阻塞 post 待调查（true=所有盘亏须先 INVESTIGATE；默认 false=允许盘亏直接触发处置）。 */
     String CONFIG_INVENTORY_NEGATIVE_SHORTAGE_BLOCKS = "erp-ast.inventory-negative-shortage-blocks";
 
+    // ---- 维修 配置项（maintenance.md §七 + plan 0842-2） ----
+    /** 维修过账是否强制审批（默认 true）。 */
+    String CONFIG_MAINTENANCE_REQUIRE_APPROVAL = "erp-ast.maintenance-require-approval";
+    /** 资本化金额阈值，低于则强制费用化（0=不设阈值按 treatment 字段判定）。 */
+    String CONFIG_MAINTENANCE_CAPITALIZE_THRESHOLD = "erp-ast.maintenance-capitalize-threshold";
+    /** 资本化是否重算折旧基数（默认 true）。 */
+    String CONFIG_MAINTENANCE_CAP_ADJUST_DEPRECIATION_BASE = "erp-ast.maintenance-cap-adjust-depreciation-base";
+    /** 关联维护工单时贷中转科目防双重扣减（默认 true）。 */
+    String CONFIG_MAINTENANCE_LINKED_CREDIT_CLEARING = "erp-ast.maintenance-linked-credit-clearing";
+
     // ---- asset-status ----
     String ASSET_STATUS_DRAFT = "DRAFT";
     String ASSET_STATUS_IN_SERVICE = "IN_SERVICE";
@@ -191,4 +201,39 @@ public interface ErpAstConstants {
     String BILL_DATA_NON_OPERATING_INCOME_SUBJECT_CODE = "NON_OPERATING_INCOME_SUBJECT_CODE";
     /** 营业外支出科目编码（借方，盘亏）。 */
     String BILL_DATA_NON_OPERATING_EXPENSE_SUBJECT_CODE = "NON_OPERATING_EXPENSE_SUBJECT_CODE";
+
+    // ---- maintenance-status（维修工单状态机，maintenance.md §一） ----
+    String MAINTENANCE_STATUS_DRAFT = "DRAFT";
+    String MAINTENANCE_STATUS_SUBMITTED = "SUBMITTED";
+    String MAINTENANCE_STATUS_IN_PROGRESS = "IN_PROGRESS";
+    String MAINTENANCE_STATUS_COMPLETED = "COMPLETED";
+    String MAINTENANCE_STATUS_POSTED = "POSTED";
+    String MAINTENANCE_STATUS_CANCELLED = "CANCELLED";
+
+    // ---- maintenance-treatment（维修处置裁决） ----
+    String MAINTENANCE_TREATMENT_CAPITALIZE = "CAPITALIZE";
+    String MAINTENANCE_TREATMENT_EXPENSE = "EXPENSE";
+
+    // ---- maintenance-cost-type（维修费用行类型） ----
+    String MAINTENANCE_COST_TYPE_LABOR = "LABOR";
+    String MAINTENANCE_COST_TYPE_SPARE_PART = "SPARE_PART";
+    String MAINTENANCE_COST_TYPE_SUBCONTRACT = "SUBCONTRACT";
+
+    // ---- PostingEvent.billData 键（维修过账专用） ----
+    /** 维修处置裁决（CAPITALIZE/EXPENSE）。 */
+    String BILL_DATA_MAINTENANCE_TREATMENT = "MAINTENANCE_TREATMENT";
+    /** 维修资本化金额（正数）。 */
+    String BILL_DATA_MAINTENANCE_CAPITALIZED_AMOUNT = "MAINTENANCE_CAPITALIZED_AMOUNT";
+    /** 维修费用合计（正数）。 */
+    String BILL_DATA_MAINTENANCE_TOTAL_COST = "MAINTENANCE_TOTAL_COST";
+    /** 是否关联维护工单（true=贷中转科目防双重扣减）。 */
+    String BILL_DATA_MAINTENANCE_LINKED_VISIT = "MAINTENANCE_LINKED_VISIT";
+    /** 维修费用科目编码（借方，费用化路径）。 */
+    String BILL_DATA_MAINTENANCE_EXPENSE_SUBJECT_CODE = "MAINTENANCE_EXPENSE_SUBJECT_CODE";
+    /** 维修中转清算科目编码（贷方，关联维护工单时）。 */
+    String BILL_DATA_MAINTENANCE_CLEARING_SUBJECT_CODE = "MAINTENANCE_CLEARING_SUBJECT_CODE";
+    /** 银行存款科目编码（贷方，外协/人工）。 */
+    String BILL_DATA_MAINTENANCE_BANK_SUBJECT_CODE = "MAINTENANCE_BANK_SUBJECT_CODE";
+    /** 存货科目编码（贷方，备件消耗，独立维修时）。 */
+    String BILL_DATA_MAINTENANCE_INVENTORY_SUBJECT_CODE = "MAINTENANCE_INVENTORY_SUBJECT_CODE";
 }

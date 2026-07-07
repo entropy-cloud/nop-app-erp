@@ -86,6 +86,14 @@
         <property name="bizObjName" value="ErpAstMerge"/>
     </bean>
 
+    <bean id="app.erp.ast.service.entity.ErpAstMaintenanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstMaintenance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstMaintenanceBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstMaintenance"/>
+    </bean>
+
     <bean id="app.erp.ast.service.entity.ErpAstInventoryLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpAstInventoryLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -122,5 +130,13 @@
     <bean id="biz_ErpAstMergeLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.ast.biz.IErpAstMergeLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpAstMergeLine"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstMaintenanceCostBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstMaintenanceCost" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstMaintenanceCostBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstMaintenanceCost"/>
     </bean>
 </beans>

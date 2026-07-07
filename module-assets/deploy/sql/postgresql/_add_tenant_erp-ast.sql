@@ -33,6 +33,8 @@ alter table erp_ast_split add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_merge add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_ast_maintenance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_ast_inventory_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_cip_cost_item add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -42,6 +44,8 @@ alter table erp_ast_cip_progress_billing add NOP_TENANT_ID VARCHAR(32) DEFAULT '
 alter table erp_ast_split_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_merge_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_maintenance_cost add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_organization drop constraint PK_erp_md_organization;
 alter table erp_md_organization add constraint PK_erp_md_organization primary key (NOP_TENANT_ID, id);
@@ -94,6 +98,9 @@ alter table erp_ast_split add constraint PK_erp_ast_split primary key (NOP_TENAN
 alter table erp_ast_merge drop constraint PK_erp_ast_merge;
 alter table erp_ast_merge add constraint PK_erp_ast_merge primary key (NOP_TENANT_ID, id);
 
+alter table erp_ast_maintenance drop constraint PK_erp_ast_maintenance;
+alter table erp_ast_maintenance add constraint PK_erp_ast_maintenance primary key (NOP_TENANT_ID, id);
+
 alter table erp_ast_inventory_line drop constraint PK_erp_ast_inventory_line;
 alter table erp_ast_inventory_line add constraint PK_erp_ast_inventory_line primary key (NOP_TENANT_ID, id);
 
@@ -108,5 +115,8 @@ alter table erp_ast_split_line add constraint PK_erp_ast_split_line primary key 
 
 alter table erp_ast_merge_line drop constraint PK_erp_ast_merge_line;
 alter table erp_ast_merge_line add constraint PK_erp_ast_merge_line primary key (NOP_TENANT_ID, id);
+
+alter table erp_ast_maintenance_cost drop constraint PK_erp_ast_maintenance_cost;
+alter table erp_ast_maintenance_cost add constraint PK_erp_ast_maintenance_cost primary key (NOP_TENANT_ID, id);
 
 

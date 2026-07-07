@@ -294,6 +294,16 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_ASSET_INVENTORY_ADJUSTMENT = "ASSET_INVENTORY_ADJUSTMENT";
                     
     /**
+     * 业务类型: 维修费用化 
+     */
+    String BUSINESS_TYPE_MAINTENANCE_EXPENSE = "MAINTENANCE_EXPENSE";
+                    
+    /**
+     * 业务类型: 维修资本化 
+     */
+    String BUSINESS_TYPE_MAINTENANCE_CAPITALIZATION = "MAINTENANCE_CAPITALIZATION";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

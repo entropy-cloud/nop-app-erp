@@ -34,4 +34,17 @@ public interface IErpAstDepreciationScheduleBiz extends ICrudBiz<ErpAstDepreciat
     @BizMutation
     ErpAstDepreciationSchedule reverseDepreciation(@Name("assetId") Long assetId, @Name("period") String period,
                                                    IServiceContext context);
+
+    /**
+     * 资本化维修折旧计划重算（加性扩展，非破坏性）。删除未执行（PENDING）折旧计划条目，
+     * 按剩余使用年限重新摊销（原值+增量 − 已计提累计折旧 − 残值）/ 剩余月数，残值约束保留。
+     * 供资产维修资本化路径（UC-AST-10）调用。config-gated {@code erp-ast.maintenance-cap-adjust-depreciation-base}。
+     *
+     * @param assetId  资产卡片 ID
+     * @param increment 资本化增量金额（资产原值已 += increment）
+     */
+    @BizMutation
+    int recalculateForCapitalizationMaintenance(@Name("assetId") Long assetId,
+                                                @Name("increment") java.math.BigDecimal increment,
+                                                IServiceContext context);
 }

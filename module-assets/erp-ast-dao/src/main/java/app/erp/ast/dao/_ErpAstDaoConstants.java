@@ -278,4 +278,59 @@ public interface _ErpAstDaoConstants {
      */
     String INVENTORY_LINE_DISPOSITION_INVESTIGATE = "INVESTIGATE";
                     
+    /**
+     * 维修工单状态: 草稿 
+     */
+    String MAINTENANCE_STATUS_DRAFT = "DRAFT";
+                    
+    /**
+     * 维修工单状态: 已提交 
+     */
+    String MAINTENANCE_STATUS_SUBMITTED = "SUBMITTED";
+                    
+    /**
+     * 维修工单状态: 维修中 
+     */
+    String MAINTENANCE_STATUS_IN_PROGRESS = "IN_PROGRESS";
+                    
+    /**
+     * 维修工单状态: 已完工 
+     */
+    String MAINTENANCE_STATUS_COMPLETED = "COMPLETED";
+                    
+    /**
+     * 维修工单状态: 已过账 
+     */
+    String MAINTENANCE_STATUS_POSTED = "POSTED";
+                    
+    /**
+     * 维修工单状态: 已作废 
+     */
+    String MAINTENANCE_STATUS_CANCELLED = "CANCELLED";
+                    
+    /**
+     * 维修处置: 资本化 
+     */
+    String MAINTENANCE_TREATMENT_CAPITALIZE = "CAPITALIZE";
+                    
+    /**
+     * 维修处置: 费用化 
+     */
+    String MAINTENANCE_TREATMENT_EXPENSE = "EXPENSE";
+                    
+    /**
+     * 维修费用类型: 人工 
+     */
+    String MAINTENANCE_COST_TYPE_LABOR = "LABOR";
+                    
+    /**
+     * 维修费用类型: 备件 
+     */
+    String MAINTENANCE_COST_TYPE_SPARE_PART = "SPARE_PART";
+                    
+    /**
+     * 维修费用类型: 外协 
+     */
+    String MAINTENANCE_COST_TYPE_SUBCONTRACT = "SUBCONTRACT";
+                    
 }

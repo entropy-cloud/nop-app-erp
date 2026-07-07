@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 维修费用类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 人工
+    value: LABOR
+    description: 
+  
+  - label: 备件
+    value: SPARE_PART
+    description: 
+  
+  - label: 外协
+    value: SUBCONTRACT
+    description: 
+  

@@ -98,6 +98,10 @@
             <option code="ASSET_MERGE" label="资产合并" value="ASSET_MERGE" i18n-en:label="Asset Merge"/>
             <option code="ASSET_INVENTORY_ADJUSTMENT" label="资产盘点差异" value="ASSET_INVENTORY_ADJUSTMENT"
                     i18n-en:label="Asset Inventory Adjustment"/>
+            <option code="MAINTENANCE_EXPENSE" label="维修费用化" value="MAINTENANCE_EXPENSE"
+                    i18n-en:label="Maintenance Expense"/>
+            <option code="MAINTENANCE_CAPITALIZATION" label="维修资本化" value="MAINTENANCE_CAPITALIZATION"
+                    i18n-en:label="Maintenance Capitalization"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>

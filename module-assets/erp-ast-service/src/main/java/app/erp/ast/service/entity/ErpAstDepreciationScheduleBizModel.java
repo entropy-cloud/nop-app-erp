@@ -12,6 +12,8 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
+import java.math.BigDecimal;
+
 /**
  * 折旧计划 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。
  * 单资产/批量折旧计提 + 反折旧 + DEPRECIATION 业财过账编排委托
@@ -53,5 +55,14 @@ public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepre
                                                            @Name("period") String period,
                                                            IServiceContext context) {
         return depreciationProcessor.reverseDepreciation(assetId, period, context);
+    }
+
+    @Override
+    @BizMutation
+    @SingleSession
+    public int recalculateForCapitalizationMaintenance(@Name("assetId") Long assetId,
+                                                       @Name("increment") BigDecimal increment,
+                                                       IServiceContext context) {
+        return depreciationProcessor.recalculateForCapitalizationMaintenance(assetId, increment, context);
     }
 }

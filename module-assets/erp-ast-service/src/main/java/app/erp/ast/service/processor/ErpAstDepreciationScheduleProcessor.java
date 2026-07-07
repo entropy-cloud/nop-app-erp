@@ -177,6 +177,83 @@ public class ErpAstDepreciationScheduleProcessor {
         return schedule;
     }
 
+    /**
+     * 资本化维修折旧计划重算（加性扩展，UC-AST-10）。删除未执行（PENDING）条目，按剩余使用年限重新摊销
+     * （原值+增量 − 已计提累计折旧 − 残值）/ 剩余月数，残值约束保留。详见 maintenance.md §三。
+     */
+    public int recalculateForCapitalizationMaintenance(Long assetId, BigDecimal increment, IServiceContext context) {
+        ErpAstAsset asset = requireAsset(assetId);
+        BigDecimal original = nz(asset.getOriginalValue());
+        BigDecimal residual = nz(asset.getResidualValue());
+        BigDecimal accumulated = nz(asset.getAccumulatedDepreciation());
+
+        ErpAstAssetCategory category = asset.getCategoryId() == null ? null
+                : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
+        int totalMonths = asset.getUsefulLifeMonths() != null ? asset.getUsefulLifeMonths()
+                : (category != null && category.getUsefulLifeMonths() != null ? category.getUsefulLifeMonths() : 0);
+
+        int executedMonths = countExecuted(assetId);
+        int remainingMonths = totalMonths - executedMonths;
+
+        IEntityDao<ErpAstDepreciationSchedule> scheduleDao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
+
+        // 删除所有未执行（PENDING）条目
+        QueryBean pendingQ = new QueryBean();
+        pendingQ.addFilter(and(eq("assetId", assetId), eq("status", ErpAstConstants.SCHEDULE_STATUS_PENDING)));
+        for (ErpAstDepreciationSchedule s : scheduleDao.findAllByQuery(pendingQ)) {
+            scheduleDao.deleteEntity(s);
+        }
+
+        int regenerated = 0;
+        if (remainingMonths > 0) {
+            // 新可折旧基数 = （原值 + 增量）− 残值 − 已计提累计折旧
+            BigDecimal depreciableBase = original.add(nz(increment)).subtract(residual).subtract(accumulated);
+            if (depreciableBase.signum() < 0) {
+                depreciableBase = BigDecimal.ZERO;
+            }
+            BigDecimal monthly = depreciableBase.divide(BigDecimal.valueOf(remainingMonths), 4,
+                    java.math.RoundingMode.HALF_UP);
+
+            // 找到已执行的最大期间作为重建起点
+            String lastExecutedPeriod = findLastExecutedPeriod(assetId);
+            java.time.YearMonth baseMonth = lastExecutedPeriod != null
+                    ? java.time.YearMonth.parse(lastExecutedPeriod).plusMonths(1)
+                    : java.time.YearMonth.now();
+
+            for (int i = 0; i < remainingMonths; i++) {
+                java.time.YearMonth periodMonth = baseMonth.plusMonths(i);
+                String period = periodMonth.toString();
+                BigDecimal planned = (i == remainingMonths - 1)
+                        ? depreciableBase.subtract(monthly.multiply(BigDecimal.valueOf(remainingMonths - 1)))
+                        : monthly;
+
+                ErpAstDepreciationSchedule schedule = scheduleDao.newEntity();
+                schedule.setAssetId(assetId);
+                schedule.setOrgId(asset.getOrgId());
+                schedule.setPeriod(period);
+                schedule.setPlannedAmount(planned);
+                schedule.setActualAmount(BigDecimal.ZERO);
+                schedule.setAccumulatedDepreciation(BigDecimal.ZERO);
+                schedule.setNetBookValue(original.add(nz(increment)).subtract(accumulated));
+                schedule.setStatus(ErpAstConstants.SCHEDULE_STATUS_PENDING);
+                schedule.setBusinessDate(periodMonth.atDay(1));
+                scheduleDao.saveEntity(schedule);
+                regenerated++;
+            }
+        }
+        return regenerated;
+    }
+
+    protected String findLastExecutedPeriod(Long assetId) {
+        IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("assetId", assetId), eq("status", ErpAstConstants.SCHEDULE_STATUS_EXECUTED)));
+        q.addOrderField("period", true);
+        q.setLimit(1);
+        List<ErpAstDepreciationSchedule> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0).getPeriod();
+    }
+
     // ---------- step：业务规则校验（protected，下游可逐个覆盖） ----------
 
     protected void validateAssetInService(ErpAstAsset asset, IServiceContext context) {

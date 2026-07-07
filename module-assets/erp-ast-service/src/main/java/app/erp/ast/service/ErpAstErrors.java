@@ -51,6 +51,11 @@ public interface ErpAstErrors {
     String ARG_INVENTORY_ID = "inventoryId";
     String ARG_LINE_NO = "lineNo";
 
+    // --- 维修 作用域参数键 ---
+    String ARG_MAINTENANCE_CODE = "maintenanceCode";
+    String ARG_MAINTENANCE_ID = "maintenanceId";
+    String ARG_TREATMENT = "treatment";
+    String ARG_THRESHOLD = "threshold";
     // --- 资本化 ---
     ErrorCode ERR_CAPITALIZATION_NOT_FOUND = ErrorCode.define(
             "erp.err.ast.capitalization.not-found",
@@ -342,4 +347,38 @@ public interface ErpAstErrors {
             "erp.err.ast.inventory.already-posted",
             "盘点单 {inventoryCode} 已过账（POSTED 终态），纠错请走 reverse",
             ARG_INVENTORY_CODE);
+
+    // --- 资产维修（UC-AST-10） ---
+    ErrorCode ERR_AST_MAINTENANCE_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.maintenance.not-found",
+            "维修工单 {maintenanceId} 不存在",
+            ARG_MAINTENANCE_ID);
+    ErrorCode ERR_AST_MAINTENANCE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.ast.maintenance.illegal-status-transition",
+            "维修工单 {maintenanceCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_MAINTENANCE_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_AST_MAINTENANCE_ASSET_TERMINAL = ErrorCode.define(
+            "erp.err.ast.maintenance.asset-terminal",
+            "资产 {assetCode} 已处置（终态不可维修，需通过冲销恢复后操作）",
+            ARG_ASSET_CODE);
+    ErrorCode ERR_AST_MAINTENANCE_NO_COST = ErrorCode.define(
+            "erp.err.ast.maintenance.no-cost",
+            "维修工单 {maintenanceCode} 没有费用行，不允许过账",
+            ARG_MAINTENANCE_CODE);
+    ErrorCode ERR_AST_MAINTENANCE_TREATMENT_NOT_DECIDED = ErrorCode.define(
+            "erp.err.ast.maintenance.treatment-not-decided",
+            "维修工单 {maintenanceCode} 未裁决处置方式（须先 decideTreatment 再过账）",
+            ARG_MAINTENANCE_CODE);
+    ErrorCode ERR_AST_MAINTENANCE_CAPITALIZE_BELOW_THRESHOLD = ErrorCode.define(
+            "erp.err.ast.maintenance.capitalize-below-threshold",
+            "维修工单 {maintenanceCode} 资本化金额 {amount} 低于阈值 {threshold}，不允许资本化（须费用化）",
+            ARG_MAINTENANCE_CODE, ARG_AMOUNT, ARG_THRESHOLD);
+    ErrorCode ERR_AST_MAINTENANCE_ALREADY_POSTED = ErrorCode.define(
+            "erp.err.ast.maintenance.already-posted",
+            "维修工单 {maintenanceCode} 已过账（POSTED 终态），纠错请走 reverse",
+            ARG_MAINTENANCE_CODE);
+    ErrorCode ERR_AST_MAINTENANCE_ALREADY_REVERSED = ErrorCode.define(
+            "erp.err.ast.maintenance.already-reversed",
+            "维修工单 {maintenanceCode} 已红冲，不允许二次红冲",
+            ARG_MAINTENANCE_CODE);
 }
