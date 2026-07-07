@@ -13,6 +13,7 @@ import app.erp.sal.dao.entity.ErpSalInvoiceLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -69,7 +70,7 @@ public class TestErpSalFinanceReversalWriteback extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
             invoice.setPosted(true);
-            invoice.setPostedAt(java.time.LocalDateTime.now());
+            invoice.setPostedAt(CoreMetrics.currentDateTime());
             invoice.setPostedBy("test-user");
             saveInvoiceWithLine(invoice);
         });
@@ -152,7 +153,7 @@ public class TestErpSalFinanceReversalWriteback extends JunitAutoTestCase {
             voucher.setTotalCredit(total);
             voucher.setIsReversed(false);
             voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
-            voucher.setPostedAt(java.time.LocalDateTime.now());
+            voucher.setPostedAt(CoreMetrics.currentDateTime());
             vDao.saveEntity(voucher);
 
             ErpFinVoucherBillR billR = new ErpFinVoucherBillR();

@@ -8,6 +8,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -121,7 +122,7 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
     @Test
     public void testFindDueReminders() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = CoreMetrics.currentDateTime();
         ormTemplate.runInSession(() -> {
             // 窗口内（now+10min）
             seedEvent(3501L, "EVT-DUE-001", ErpCrmConstants.EVENT_STATUS_PLANNED,

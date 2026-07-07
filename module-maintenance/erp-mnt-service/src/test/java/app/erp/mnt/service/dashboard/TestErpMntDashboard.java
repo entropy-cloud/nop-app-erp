@@ -10,6 +10,7 @@ import app.erp.mnt.service.ErpMntConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -102,7 +103,7 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
             seedDowntimeEntry(201L, 121L, null);
             // DOWN 设备 + 已恢复停机 → 不触发
             seedEquipment(122L, "DOWN-B", ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
-            seedDowntimeEntry(202L, 122L, LocalDateTime.now().minusHours(1));
+            seedDowntimeEntry(202L, 122L, CoreMetrics.currentDateTime().minusHours(1));
             // RUNNING 设备 → 不触发（非 DOWN）
             seedEquipment(123L, "RUN-C", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedDowntimeEntry(203L, 123L, null);
@@ -185,7 +186,7 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
         ErpMntDowntimeEntry d = dao.newEntity();
         d.orm_propValue(1, id);
         d.setEquipmentId(equipmentId);
-        d.setStartTime(LocalDateTime.now().minusHours(2));
+        d.setStartTime(CoreMetrics.currentDateTime().minusHours(2));
         d.setEndTime(endTime);
         dao.saveEntity(d);
     }

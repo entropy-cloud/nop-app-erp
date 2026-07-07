@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -417,7 +418,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
             r.setSigners("[{\"name\":\"张三\",\"email\":\"zhang@ex.com\"}]");
             r.setSigningDeadline(LocalDate.now().plusDays(15));
             if (ErpCtConstants.SIGNATURE_STATUS_FULLY.equals(status)) {
-                r.setCompletedAt(java.time.LocalDateTime.now());
+                r.setCompletedAt(CoreMetrics.currentDateTime());
             }
             daoProvider.daoFor(ErpCtSignatureRequest.class).saveEntity(r);
             return r;

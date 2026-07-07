@@ -10,6 +10,7 @@ import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -65,7 +66,7 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
         seedCustomer(CUSTOMER_ID, "ACME Corp");
         seedSlaNotifyTemplate(7001L, RECIPIENT);
         Long ticketId = seedTicket("TK-NOTIFY-OVERDUE", ErpCsConstants.TICKET_STATUS_ASSIGNED,
-                LocalDateTime.now().minusHours(2));
+                CoreMetrics.currentDateTime().minusHours(2));
         int before = countNotifications(NOTIFY_EVENT);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());
@@ -84,7 +85,7 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
         seedSlaNotifyTemplate(7002L, RECIPIENT);
         // deadline 在 now 到 now+60min 之间 → 命中预警
         seedTicket("TK-NOTIFY-WARN", ErpCsConstants.TICKET_STATUS_ASSIGNED,
-                LocalDateTime.now().plusMinutes(30));
+                CoreMetrics.currentDateTime().plusMinutes(30));
         int before = countNotifications(NOTIFY_EVENT);
 
         ApiResponse<?> resp = rpc(query, "ErpCsTicket__findSlaWarnings",
@@ -104,7 +105,7 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
             seedCustomer(CUSTOMER_ID, "ACME Corp");
             seedSlaNotifyTemplate(7003L, RECIPIENT);
             seedTicket("TK-NOTIFY-DISABLED", ErpCsConstants.TICKET_STATUS_ASSIGNED,
-                    LocalDateTime.now().minusHours(2));
+                    CoreMetrics.currentDateTime().minusHours(2));
             int before = countNotifications(NOTIFY_EVENT);
 
             ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());

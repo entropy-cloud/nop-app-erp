@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -17,7 +18,6 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -106,7 +106,7 @@ public class TestErpSysNotificationDispatch extends JunitAutoTestCase {
         assertNotNull(first);
         ormTemplate.runInSession(() -> {
             ErpSysNotification attached = daoProvider.daoFor(ErpSysNotification.class).getEntityById(first.getId());
-            attached.setCreateTime(Timestamp.valueOf(LocalDateTime.now().minusHours(2)));
+            attached.setCreateTime(Timestamp.valueOf(CoreMetrics.currentDateTime().minusHours(2)));
             daoProvider.daoFor(ErpSysNotification.class).updateEntity(attached);
         });
 

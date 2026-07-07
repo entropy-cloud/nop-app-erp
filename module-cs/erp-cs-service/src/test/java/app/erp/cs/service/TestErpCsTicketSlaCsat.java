@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -62,7 +63,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     @Test
     public void testTicketFullLifecycleAndIllegalTransitions() {
         Long ticketId = seedTicket("TK-LIFE", ErpCsConstants.TICKET_STATUS_NEW,
-                LocalDateTime.now().plusHours(8));
+                CoreMetrics.currentDateTime().plusHours(8));
 
         // assign NEW→ASSIGNED
         rpcOk(mutation, "ErpCsTicket__assign", args("ticketId", ticketId, "assignedToId", ASSIGNEE));
@@ -113,7 +114,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         seedSlaPolicy("SLA-CAL", TICKET_TYPE_ID, 8, null, false);
         Long ticketId = seedTicket("TK-SLA-CAL", ErpCsConstants.TICKET_STATUS_NEW, null);
 
-        LocalDateTime before = LocalDateTime.now();
+        LocalDateTime before = CoreMetrics.currentDateTime();
         rpcOk(mutation, "ErpCsTicket__matchAndAttachSla", args("ticketId", ticketId));
         ErpCsTicket t = reload(ticketId);
         assertNotNull(t.getSlaPolicyId(), "匹配到 SLA 策略");
@@ -133,14 +134,14 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         ErpCsTicket t = reload(ticketId);
         assertNotNull(t.getDeadlineDateTime(), "工作日模式计算 deadline");
         // deadline 不应为 null，且应在 now 之后
-        assertTrue(t.getDeadlineDateTime().isAfter(LocalDateTime.now()));
+        assertTrue(t.getDeadlineDateTime().isAfter(CoreMetrics.currentDateTime()));
     }
 
     @Test
     public void testScanOverdueTicketsCreatesEscalateAction() {
         // 已超时工单：deadline 在过去，isSlaCompleted=false，status=ASSIGNED
         Long ticketId = seedTicket("TK-OVERDUE", ErpCsConstants.TICKET_STATUS_ASSIGNED,
-                LocalDateTime.now().minusHours(2));
+                CoreMetrics.currentDateTime().minusHours(2));
         int actionsBefore = countActions(ticketId);
 
         ApiResponse<?> resp = rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());
@@ -155,7 +156,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     @Test
     public void testSurveyCreatedOnResolveAndSubmitted() {
         Long ticketId = seedTicket("TK-CSAT", ErpCsConstants.TICKET_STATUS_NEW,
-                LocalDateTime.now().plusHours(8));
+                CoreMetrics.currentDateTime().plusHours(8));
         rpcOk(mutation, "ErpCsTicket__assign", args("ticketId", ticketId, "assignedToId", ASSIGNEE));
         rpcOk(mutation, "ErpCsTicket__start", args("ticketId", ticketId));
         rpcOk(mutation, "ErpCsTicket__resolve",
@@ -184,7 +185,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     @Test
     public void testSurveyDuplicateCreateRejected() {
         Long ticketId = seedTicket("TK-DUP", ErpCsConstants.TICKET_STATUS_NEW,
-                LocalDateTime.now().plusHours(8));
+                CoreMetrics.currentDateTime().plusHours(8));
         rpcOk(mutation, "ErpCsSurvey__createSurvey", args("ticketId", ticketId));
         // 重复创建 → ERR_SURVEY_ALREADY_EXISTS
         ApiResponse<?> resp = rpc(mutation, "ErpCsSurvey__createSurvey", args("ticketId", ticketId));
@@ -203,7 +204,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     @Test
     public void testReopenCancelsUnrespondedSurvey() {
         Long ticketId = seedTicket("TK-REOPEN", ErpCsConstants.TICKET_STATUS_NEW,
-                LocalDateTime.now().plusHours(8));
+                CoreMetrics.currentDateTime().plusHours(8));
         rpcOk(mutation, "ErpCsTicket__assign", args("ticketId", ticketId, "assignedToId", ASSIGNEE));
         rpcOk(mutation, "ErpCsTicket__start", args("ticketId", ticketId));
         rpcOk(mutation, "ErpCsTicket__resolve",
@@ -267,7 +268,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     public void testFindSlaWarnings() {
         // deadline 在 now 到 now+60min 之间 → 命中预警
         Long ticketId = seedTicket("TK-WARN", ErpCsConstants.TICKET_STATUS_ASSIGNED,
-                LocalDateTime.now().plusMinutes(30));
+                CoreMetrics.currentDateTime().plusMinutes(30));
         ApiResponse<?> resp = rpc(query, "ErpCsTicket__findSlaWarnings",
                 args("beforeMinutes", 60));
         assertEquals(0, resp.getStatus(), "findSlaWarnings 应成功: " + resp);

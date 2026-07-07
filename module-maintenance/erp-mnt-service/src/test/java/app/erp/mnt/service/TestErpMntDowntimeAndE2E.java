@@ -20,6 +20,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -83,7 +84,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
     @Test
     public void testDowntimeRecordSetsDownAndCompleteRestores() {
         Long downtimeId = nextId();
-        LocalDateTime startedAt = LocalDateTime.now();
+        LocalDateTime startedAt = CoreMetrics.currentDateTime();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
             seedDowntime(downtimeId, EQUIPMENT_ID, startedAt, 9001L, "DT-DOWN-001");
@@ -116,7 +117,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
     @Test
     public void testDowntimeTotalMinutesReflectsDuration() {
         Long downtimeId = nextId();
-        LocalDateTime startedAt = LocalDateTime.now().minusHours(2);
+        LocalDateTime startedAt = CoreMetrics.currentDateTime().minusHours(2);
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
             seedDowntime(downtimeId, EQUIPMENT_ID, startedAt, 9002L, "DT-DUR-001");

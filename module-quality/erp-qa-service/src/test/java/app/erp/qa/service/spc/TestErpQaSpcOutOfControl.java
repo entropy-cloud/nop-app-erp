@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -200,7 +201,7 @@ public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
             sample.orm_propValueByName("id", id);
             sample.setChartId(chartId);
             sample.setSubgroupNo(subgroupNo);
-            sample.setSampleTime(java.time.LocalDateTime.now());
+            sample.setSampleTime(CoreMetrics.currentDateTime());
             sample.setMeasuredValues("[" + mean.toPlainString() + "]");
             sample.setMean(mean);
             sample.setRange(BigDecimal.ZERO);

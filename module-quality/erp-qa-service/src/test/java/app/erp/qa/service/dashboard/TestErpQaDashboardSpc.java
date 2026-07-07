@@ -7,6 +7,7 @@ import app.erp.qa.service.ErpQaConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -135,7 +136,7 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
         s.orm_propValueByName("id", id);
         s.setChartId(chartId);
         s.setSubgroupNo(subgroupNo);
-        s.setSampleTime(java.time.LocalDateTime.now());
+        s.setSampleTime(CoreMetrics.currentDateTime());
         s.setMeasuredValues("[10]");
         s.setMean(BigDecimal.TEN);
         s.setRange(BigDecimal.ZERO);
