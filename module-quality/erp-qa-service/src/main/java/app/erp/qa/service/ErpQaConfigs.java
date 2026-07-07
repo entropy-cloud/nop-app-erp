@@ -120,6 +120,26 @@ public final class ErpQaConfigs {
         return Boolean.parseBoolean(raw.trim());
     }
 
+    // ---- 看板 SPC 失控预警纳入开关（dashboards.md §9）----
+
+    /** SPC 失控预警看板是否纳入 INADEQUATE 能力图数（默认 true）。 */
+    public static boolean isDashQaSpcIncludeInadequate() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_DASH_QA_SPC_INCLUDE_INADEQUATE, "true");
+        if (raw == null || raw.trim().isEmpty()) {
+            return true;
+        }
+        return Boolean.parseBoolean(raw.trim());
+    }
+
+    /** SPC 失控预警看板是否纳入待处置 SPC NCR 计数（默认 true）。 */
+    public static boolean isDashQaSpcIncludeNcr() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_DASH_QA_SPC_INCLUDE_NCR, "true");
+        if (raw == null || raw.trim().isEmpty()) {
+            return true;
+        }
+        return Boolean.parseBoolean(raw.trim());
+    }
+
     private static List<String> parseCsv(String raw) {
         List<String> result = new ArrayList<>();
         if (raw == null || raw.trim().isEmpty()) {

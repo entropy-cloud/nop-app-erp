@@ -24,7 +24,7 @@ body:
         label: "刷新"
         icon: "refresh-cw"
         actionType: reload
-        target: "kpiService,trendChart,defectChart,capaOverdueCrud"
+        target: "kpiService,trendChart,defectChart,spcWarningService,capaOverdueCrud"
 
   - type: service
     name: kpiService
@@ -138,6 +138,46 @@ body:
             ]
           }
         };
+
+  - type: service
+    name: spcWarningService
+    api:
+      url: /api/GenericApi
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpQaDashboard__getSpcOutOfControlWarning { outOfControlChartCount inadequateCapabilityCount openSpcNcrCount includeInadequate includeNcr } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const w = gql.ErpQaDashboard__getSpcOutOfControlWarning || {};
+        return { status: 0, msg: '', data: w };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>SPC 失控图数</div>"
+              - type: tpl
+                tpl: "<span class='h3 text-danger'>${outOfControlChartCount}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>能力不足(INADEQUATE)图数</div>"
+              - type: tpl
+                tpl: "<span class='h3 ${includeInadequate ? 'text-warning' : 'text-muted'}'>${inadequateCapabilityCount}</span>"
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - type: tpl
+                tpl: "<div class='text-muted'>待处置 SPC NCR 数</div>"
+              - type: tpl
+                tpl: "<span class='h3 ${includeNcr ? 'text-warning' : 'text-muted'}'>${openSpcNcrCount}</span>"
 
   - type: crud
     name: capaOverdueCrud

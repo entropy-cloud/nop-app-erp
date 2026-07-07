@@ -3,6 +3,9 @@ package app.erp.qa.service.dashboard;
 import app.erp.qa.dao.entity.ErpQaAction;
 import app.erp.qa.dao.entity.ErpQaInspection;
 import app.erp.qa.dao.entity.ErpQaNonConformance;
+import app.erp.qa.dao.entity.ErpQaSpcCapability;
+import app.erp.qa.dao.entity.ErpQaSpcSample;
+import app.erp.qa.service.ErpQaConfigs;
 import app.erp.qa.service.ErpQaConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -20,10 +23,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
@@ -38,7 +44,11 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  * 合格率 = count(result=ACCEPTED) / count(总数)；不合格数 = count(result=REJECTED)；
  * 开放 NCR 数取自 {@link ErpQaNonConformance}（count status IN [OPEN, IN_REVIEW]）。
  *
- * <p>SPC 失控预警 Non-Goal（{@code ErpQaSpcSample} 未物化，见 plan 2026-07-06-1606-1 Phase 1 Decision）。
+ * <p>SPC 失控预警（{@link #getSpcOutOfControlWarning}）：失控图数取自 {@link ErpQaSpcSample}
+ * （distinct chartId where isOutOfControl=true，失控状态已由 SpcRuleEngine 物化为样本列）；
+ * INADEQUATE 能力图数取自 {@link ErpQaSpcCapability}（distinct chartId where capabilityLevel=INADEQUATE）；
+ * 待处置 SPC NCR 数取自 {@link ErpQaNonConformance}（sourceType=SPC 且 status IN [OPEN, IN_REVIEW]）。
+ * 后两段纳入经 config-gated（{@code erp-dash.qa-spc-include-inadequate} / {@code erp-dash.qa-spc-include-ncr}，默认 true）。
  *
  * <p>设计文档 §9「不合格原因 TOP」字段 {@code defectType} 在 ORM 未物化，本期以 {@code dispositionType}
  * （不合格处置决定：SCRAP/RETURN/CONCESSION/DOWNGRADE）为聚合维度——语义最接近且为规范枚举。
@@ -178,7 +188,70 @@ public class ErpQaDashboardBizModel {
         });
     }
 
+    /**
+     * SPC 失控预警摘要（{@code dashboards.md §9}）。
+     *
+     * <p>聚合三段：
+     * <ul>
+     *   <li>失控图数：distinct {@code ErpQaSpcSample.chartId} where {@code isOutOfControl=true}；</li>
+     *   <li>INADEQUATE 能力图数：distinct {@code ErpQaSpcCapability.chartId} where
+     *       {@code capabilityLevel=INADEQUATE}（config-gated {@code erp-dash.qa-spc-include-inadequate}）；</li>
+     *   <li>待处置 SPC NCR 数：{@code ErpQaNonConformance} where {@code sourceType=SPC} 且
+     *       status IN [OPEN, IN_REVIEW]（config-gated {@code erp-dash.qa-spc-include-ncr}）。</li>
+     * </ul>
+     */
+    @BizQuery
+    public Map<String, Object> getSpcOutOfControlWarning(IServiceContext context) {
+        boolean includeInadequate = ErpQaConfigs.isDashQaSpcIncludeInadequate();
+        boolean includeNcr = ErpQaConfigs.isDashQaSpcIncludeNcr();
+        return ormTemplate.runInSession(session -> {
+            long outOfControlChartCount = countOutOfControlCharts();
+            long inadequateCapabilityCount = includeInadequate ? countInadequateCapabilityCharts() : 0L;
+            long openSpcNcrCount = includeNcr ? countOpenSpcNcrs() : 0L;
+
+            Map<String, Object> warning = new LinkedHashMap<>();
+            warning.put("outOfControlChartCount", outOfControlChartCount);
+            warning.put("inadequateCapabilityCount", inadequateCapabilityCount);
+            warning.put("openSpcNcrCount", openSpcNcrCount);
+            warning.put("includeInadequate", includeInadequate);
+            warning.put("includeNcr", includeNcr);
+            return warning;
+        });
+    }
+
     // ===================== helpers =====================
+
+    private long countOutOfControlCharts() {
+        IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("isOutOfControl", Boolean.TRUE));
+        Set<Long> chartIds = new HashSet<>();
+        for (ErpQaSpcSample s : dao.findAllByQuery(q)) {
+            if (s.getChartId() != null) chartIds.add(s.getChartId());
+        }
+        return chartIds.size();
+    }
+
+    private long countInadequateCapabilityCharts() {
+        IEntityDao<ErpQaSpcCapability> dao = daoProvider.daoFor(ErpQaSpcCapability.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("capabilityLevel", ErpQaConstants.SPC_CAPABILITY_INADEQUATE));
+        Set<Long> chartIds = new HashSet<>();
+        for (ErpQaSpcCapability c : dao.findAllByQuery(q)) {
+            if (c.getChartId() != null) chartIds.add(c.getChartId());
+        }
+        return chartIds.size();
+    }
+
+    private long countOpenSpcNcrs() {
+        IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("sourceType", ErpQaConstants.NCR_SOURCE_TYPE_SPC));
+        q.addFilter(in("status", Arrays.asList(
+                ErpQaConstants.NCR_STATUS_OPEN,
+                ErpQaConstants.NCR_STATUS_IN_REVIEW)));
+        return dao.findAllByQuery(q).size();
+    }
 
     private List<ErpQaInspection> loadInspectionsInRange(LocalDate from, LocalDate to) {
         IEntityDao<ErpQaInspection> dao = daoProvider.daoFor(ErpQaInspection.class);

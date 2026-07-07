@@ -125,6 +125,10 @@ public interface ErpQaConstants {
     /** CAPA 逾期预警窗口天数（Action.dueDate 早于 today-minus-overdueDays 触发预警）；默认 0=直接 < today 比对。 */
     String CONFIG_DASH_QA_CAPA_OVERDUE_DAYS = "erp-dash.qa-capa-overdue-days";
     int DEFAULT_DASH_QA_CAPA_OVERDUE_DAYS = 0;
+    /** SPC 失控预警看板是否纳入 INADEQUATE 能力图数（默认 true）。 */
+    String CONFIG_DASH_QA_SPC_INCLUDE_INADEQUATE = "erp-dash.qa-spc-include-inadequate";
+    /** SPC 失控预警看板是否纳入待处置 SPC NCR 计数（默认 true）。 */
+    String CONFIG_DASH_QA_SPC_INCLUDE_NCR = "erp-dash.qa-spc-include-ncr";
 
     // ---- SPC 统计过程控制（2.4b，spc.md）----
     // SPC 控制图类型（erp-qa/spc-chart-type）
