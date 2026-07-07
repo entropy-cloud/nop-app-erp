@@ -1,6 +1,6 @@
 # 2026-07-08-0056-2-cs-knowledge-base-search-suggestion CS 知识库搜索与建议（UC-CS-05）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: erp
 > Work Item: CS 知识库搜索与建议（UC-CS-05）
 > Last Reviewed: 2026-07-08（迭代 2 修订后）
@@ -56,64 +56,64 @@
 
 ### Phase 1 - 知识库搜索/建议后端服务
 
-Status: planned
+Status: completed
 Targets: `module-cs/erp-cs-service/.../entity/ErpCsKnowledgeBaseBizModel.java`、`IErpCsKnowledgeBaseBiz`、`ErpCsErrors`、`ErpCsConstants`/`ErpCsConfigs`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision`
 - Prereqs: 无
 
-- [ ] `Decision`：关键词匹配口径——对齐 ui-patterns.md :245 既有 `title LIKE '%关键词%'`，扩展为 `title OR content LIKE`（§知识库管理 :233「title + content」）；相关性排序用「title 命中优先 > content 命中 > 创建时间倒序」的简单确定性规则（非 TF-IDF/全文评分，归 Non-Goal 全文引擎）。记录选择与残留风险（LIKE 前缀通配无法走索引，文章量大时性能下降→全文引擎后继触发条件）。
+- [x] `Decision`：关键词匹配口径——对齐 ui-patterns.md :245 既有 `title LIKE '%关键词%'`，扩展为 `title OR content LIKE`（§知识库管理 :233「title + content」）；相关性排序用「title 命中优先 > content 命中 > 创建时间倒序」的简单确定性规则（非 TF-IDF/全文评分，归 Non-Goal 全文引擎）。记录选择与残留风险（LIKE 前缀通配无法走索引，文章量大时性能下降→全文引擎后继触发条件）。
       - Skill: `nop-backend-dev`
-- [ ] `Add`：`ErpCsConstants`/`ErpCsConfigs` 增 config 键 `erp-cs.knowledge-search-default-limit`（默认 5）+ `knowledge-search-max-limit`（默认 20，防滥用）；`ErpCsErrors` 增 `ERR_KNOWLEDGE_SEARCH_KEYWORD_TOO_LONG`/`ERR_KNOWLEDGE_SEARCH_LIMIT_EXCEEDED`（镜像域内 ErrorCode 范式，不跨域 import）。
+- [x] `Add`：`ErpCsConstants`/`ErpCsConfigs` 增 config 键 `erp-cs.knowledge-search-default-limit`（默认 5）+ `knowledge-search-max-limit`（默认 20，防滥用）；`ErpCsErrors` 增 `ERR_KNOWLEDGE_SEARCH_KEYWORD_TOO_LONG`/`ERR_KNOWLEDGE_SEARCH_LIMIT_EXCEEDED`（镜像域内 ErrorCode 范式，不跨域 import）。
       - Skill: `nop-backend-dev`
-- [ ] `Add`：`searchKnowledge(@BizQuery String keyword, @BizQuery String categoryId, @BizQuery Integer limit)` —— 构造 `QueryBean` 过滤 `isPublished=true` + `(title LIKE %keyword% OR content LIKE %keyword%)` + 可选 `categoryId` 等值；`limit` 缺省取 config 默认、钳制 max；返回 `title`+`content` 摘要（截断）+ `id`+`code`；经 `dao().findList`。
+- [x] `Add`：`searchKnowledge(@BizQuery String keyword, @BizQuery String categoryId, @BizQuery Integer limit)` —— 构造 `QueryBean` 过滤 `isPublished=true` + `(title LIKE %keyword% OR content LIKE %keyword%)` + 可选 `categoryId` 等值；`limit` 缺省取 config 默认、钳制 max；返回 `title`+`content` 摘要（截断）+ `id`+`code`；经 `dao().findList`。
       - Skill: `nop-backend-dev`
-- [ ] `Add`：`suggestForTicket(@BizQuery String subject, @BizQuery Integer limit)` —— subject 空白/过短守门（< 2 字符返回空列表，不报错）；解析关键词（按空格/标点切分取首个有效词或整体 LIKE）；复用 `searchKnowledge` 逻辑返回 Top 5（对齐 UC-CS-05）。
+- [x] `Add`：`suggestForTicket(@BizQuery String subject, @BizQuery Integer limit)` —— subject 空白/过短守门（< 2 字符返回空列表，不报错）；解析关键词（按空格/标点切分取首个有效词或整体 LIKE）；复用 `searchKnowledge` 逻辑返回 Top 5（对齐 UC-CS-05）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] `searchKnowledge`/`suggestForTicket` 经 GraphQL 可调用，对已发布文章按关键词命中返回结果（未发布文章 excluded）；`isPublished=false` 文章不出现在结果（单元测试断言）。
-- [ ] `limit` 缺省/钳制 config 生效；空/过短 keyword 守门不报错返回空集。
+- [x] `searchKnowledge`/`suggestForTicket` 经 GraphQL 可调用，对已发布文章按关键词命中返回结果（未发布文章 excluded）；`isPublished=false` 文章不出现在结果（单元测试断言）。
+- [x] `limit` 缺省/钳制 config 生效；空/过短 keyword 守门不报错返回空集。
 
 ### Phase 2 - 工单创建/编辑表单实时建议挂接（AMIS）
 
-Status: planned
+Status: completed
 Targets: `module-cs/erp-cs-web/...` 工单 view.xml（create/edit 表单 subject 字段）
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add`
 - Prereqs: Phase 1 后端 `@BizQuery` 可用
 
-- [ ] `Add`：工单 create/edit 表单 `subject` 字段挂接 `suggestForTicket`——经 AMIS `service`（`api: /api/GenericApi` GraphQL `ErpCsKnowledgeBase__suggestForTicket`，`watch` subject 变化 + debounce）+ 下方 `list`/`cards` 展示 Top 5 推荐文章（标题 + 摘要 + 查看链接）；对齐 `ui-patterns.md §知识库嵌入工单创建` ASCII 布局。
+- [x] `Add`：工单 create/edit 表单 `subject` 字段挂接 `suggestForTicket`——经 AMIS `service`（`api: /api/GenericApi` GraphQL `ErpCsKnowledgeBase__suggestForTicket`，`watch` subject 变化 + debounce）+ 下方 `list`/`cards` 展示 Top 5 推荐文章（标题 + 摘要 + 查看链接）；对齐 `ui-patterns.md §知识库嵌入工单创建` ASCII 布局。
       - Skill: `nop-frontend-dev`
-- [ ] `Add`：采纳入口——「采纳并参考」按钮调工单既有 `ErpCsTicketBizModel` 记 `TicketAction`（`actionType` 复用既有 `NOTE` 字典值，对齐 0700-2 先例，**不新增字典值**），`remark`/扩展字段登记 `knowledgeBaseId` 引用（无新列）。
+- [x] `Add`：采纳入口——「采纳并参考」按钮调工单既有 `ErpCsTicketBizModel` 记 `TicketAction`（`actionType` 复用既有 `NOTE` 字典值，对齐 0700-2 先例，**不新增字典值**），`remark`/扩展字段登记 `knowledgeBaseId` 引用（无新列）。
       - Skill: `nop-backend-dev | nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] 工单创建表单输入 subject 时，下方实时展示匹配的已发布知识库文章 Top 5（对齐设计 §嵌入工单创建）；无匹配时不阻断表单提交。
-- [ ] 采纳登记写入 TicketAction 审计 `actionType=NOTE` + `knowledgeBaseId` 引用（`grep`/测试验证：无新字典值、无新持久化列引入）。
+- [x] 工单创建表单输入 subject 时，下方实时展示匹配的已发布知识库文章 Top 5（对齐设计 §嵌入工单创建）；无匹配时不阻断表单提交。
+- [x] 采纳登记写入 TicketAction 审计 `actionType=NOTE` + `knowledgeBaseId` 引用（`grep`/测试验证：无新字典值、无新持久化列引入）。
 
 ### Phase 3 - 测试与 owner-doc 对齐
 
-Status: planned
+Status: completed
 Targets: `module-cs/erp-cs-service/src/test/...`、`docs/design/customer-service/README.md`、`docs/design/customer-service/use-cases.md`
 Skill: `nop-testing`
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 1/2 落地
 
-- [ ] `Proof`：`JunitAutoTestCase` + GraphQL `request.json5` 覆盖——`searchKnowledge` 命中已发布/排除未发布/`categoryId` 过滤/`limit` 钳制/空关键词守门；`suggestForTicket` subject 解析/Top 5；采纳登记 TicketAction `actionType=NOTE`。指定测试策略与命令 `mvn test -pl module-cs -am`。
+- [x] `Proof`：`JunitAutoTestCase` + GraphQL `request.json5` 覆盖——`searchKnowledge` 命中已发布/排除未发布/`categoryId` 过滤/`limit` 钳制/空关键词守门；`suggestForTicket` subject 解析/Top 5；采纳登记 TicketAction `actionType=NOTE`。指定测试策略与命令 `mvn test -pl module-cs -am`。
       - Skill: `nop-testing`
-- [ ] `Add`：`docs/design/customer-service/README.md` §ErpCsKnowledgeBase——(a) 标注搜索/建议已实现（从「可选深化项」更新为已落地能力，附 `@BizQuery` 方法名）；(b) 勘误既有漂移（删除实体不存在的 `orgId`/`tags` 字段描述，对齐 orm.xml 实际列 id/code/title/content/categoryId/isPublished/remark）。`use-cases.md` UC-CS-05 末尾标注「实现：LIKE 关键词匹配（全文引擎 Deferred）」。`ui-patterns.md` 无需改动（实现即对齐其 ASCII 布局）。
+- [x] `Add`：`docs/design/customer-service/README.md` §ErpCsKnowledgeBase——(a) 标注搜索/建议已实现（从「可选深化项」更新为已落地能力，附 `@BizQuery` 方法名）；(b) 勘误既有漂移（删除实体不存在的 `orgId`/`tags` 字段描述，对齐 orm.xml 实际列 id/code/title/content/categoryId/isPublished/remark）。`use-cases.md` UC-CS-05 末尾标注「实现：LIKE 关键词匹配（全文引擎 Deferred）」。`ui-patterns.md` 无需改动（实现即对齐其 ASCII 布局）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] `mvn test -pl module-cs -am` 新增测试 0 failures/0 errors，既有 CS 测试无回归。
-- [ ] owner doc 标注与实现一致（无样板填充；仅改 §ErpCsKnowledgeBase/UC-CS-05 状态描述）。
+- [x] `mvn test -pl module-cs -am` 新增测试 0 failures/0 errors，既有 CS 测试无回归。
+- [x] owner doc 标注与实现一致（无样板填充；仅改 §ErpCsKnowledgeBase/UC-CS-05 状态描述）。
 
 ## Draft Review Record
 
@@ -130,14 +130,14 @@ Exit Criteria:
 
 > 本计划为纯服务层 + view（零 ORM/契约变更），结束前运行一次完整仓库验证。
 
-- [ ] 范围内行为完成（搜索/建议后端 + 工单表单挂接 + 采纳审计登记）
-- [ ] 相关文档对齐（`README.md` §ErpCsKnowledgeBase + use-cases.md UC-CS-05 状态）
-- [ ] 已运行验证：`mvn clean install -DskipTests`（154 模块）+ `mvn test -pl module-cs -am`（CS 域无回归）+ 工单 view.xml well-formed
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（搜索/建议后端 + 工单表单挂接 + 采纳审计登记）
+- [x] 相关文档对齐（`README.md` §ErpCsKnowledgeBase + use-cases.md UC-CS-05 状态）
+- [x] 已运行验证：`mvn clean install -DskipTests`（154 模块）+ `mvn test -pl module-cs -am`（CS 域无回归）+ 工单 view.xml well-formed
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -163,12 +163,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 全部 3 个 Phase 已执行完成。`searchKnowledge`/`suggestForTicket` `@BizQuery` 落地（LIKE 关键词匹配 title+content，isPublished=true 过滤，title 命中优先排序，config-gated limit 钳制）；`adoptKnowledge` `@BizMutation` 采纳登记 TicketAction actionType=NOTE + knowledgeBaseId 引用（零 ORM/零字典变更）；AMIS 工单 add/edit 表单 gen-control service 挂接 sendOn subject + Top 5 list 展示 + 采纳按钮。验证：154 模块 `mvn clean install -DskipTests` BUILD SUCCESS + CS 域 75 tests 0 failures/0 errors（含新增 7 cases）。owner docs 已对齐（README §ErpCsKnowledgeBase 勘误 + UC-CS-05 标注 LIKE 降标）。独立结束审计已由独立子代理（新会话）执行并通过，证据见下。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计填写>
-- Evidence: <待填写>
+- Auditor / Agent: 独立结束审计子代理（新会话，不重用执行者上下文）
+- Evidence: 逐项语义核实实时仓库（grep/read，非采信 [x] 标记）：(1) `ErpCsKnowledgeBaseBizModel.java:37/84` `searchKnowledge`/`suggestForTicket` `@BizQuery` 实体方法体非空壳——QueryBean 构造 `isPublished=true` + `title/content LIKE` + 可选 `categoryId` 等值、limit config 钳制、title 命中优先排序、空/过短 keyword 守门返回空集；(2) `ErpCsTicketBizModel.java:237` `adoptKnowledge` `@BizMutation` 记 `writeAction(ACTION_TYPE_NOTE, ...)` + content 记 `knowledgeBaseId`——复用既有 NOTE 字典值（`grep SUGGESTION_ADOPTED` 活动范围 0 命中，零字典/零 ORM 变更）；(3) `ErpCsTicket.view.xml:37/102`（add/edit 双表单）AMIS `service` 挂接 `suggestForTicket` + `:57/:122` `adoptKnowledge` mutation——前端可达，非注册未用；(4) `ErpCsConstants.java:123/126` config 键 + `ErpCsErrors.java:148/153` ErrorCode 已定义；(5) `TestErpCsKnowledgeBaseSearch.java` 7 cases 覆盖搜索/建议/采纳；(6) owner-doc 对齐：`README.md:109-121` §ErpCsKnowledgeBase 字段表已勘误（无 orgId/tags 漂移，列 id/code/title/content/categoryId/isPublished/remark）+ 标注已落地能力；`use-cases.md:101` UC-CS-05 标注 LIKE 降标；(7) `docs/logs/2026/07-08.md` 日志已记 3 Phase 完成 + 验证状态。Closure Gates 全 [x]，Deferred 项均带触发条件无活缺陷降级。
 
 Follow-up:
 

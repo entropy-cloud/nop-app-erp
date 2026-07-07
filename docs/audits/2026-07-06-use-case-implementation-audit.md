@@ -195,7 +195,7 @@
 | UC | 状态 | 核心证据 | 差距 |
 |----|-------|---------|------|
 | UC-CS-01~04,08 | ✅ | `ErpCsTicketBizModel` + `ErpCsSlaScanJob` + `ErpCsSurveyBizModel` + `TestErpCsTicketSlaCsat` + `TestErpCsSlaScanJob` + `TestErpCsCsatReminderJob` | — |
-| UC-CS-05 知识库搜索 | 🔶 | `ErpCsKnowledgeBaseBizModel`(CRUD) | **全文搜索服务未实现** |
+| UC-CS-05 知识库搜索 | ✅ | `ErpCsKnowledgeBaseBizModel` searchKnowledge/suggestForTicket `@BizQuery` + `ErpCsTicketBizModel.adoptKnowledge` + AMIS 工单表单挂接 + `TestErpCsKnowledgeBaseSearch` 7 cases | — (LIKE 关键词匹配，全文引擎归 Deferred) |
 | UC-CS-06→NCR | 🔶 | 无跨域 `IErpQaNonConformanceBiz` 调用 | **升级未实现** |
 | UC-CS-07 预设应答 | 🔶 | `ErpCsCannedResponseBizModel` + `ErpCsCannedCategoryBizModel`(CRUD) | **变量渲染引擎未实现** |
 | UC-CS-09 权益校验 | 🔶 | `ErpCsEntitlementBizModel`(CRUD) | **工单创建自动接线未实现** |

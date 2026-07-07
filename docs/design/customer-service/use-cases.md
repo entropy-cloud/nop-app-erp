@@ -98,6 +98,8 @@
 
 **异常** 无匹配文章 → 提示客服创建新知识库条目（工单解决后自动推送建议）。
 
+> **实现状态**：已落地 `searchKnowledge`/`suggestForTicket` `@BizQuery`，采用 `LIKE` 关键词匹配（title + content，对齐 ui-patterns.md 既有口径），非全文引擎。采纳登记经 `ErpCsTicketAction` 审计（`actionType=NOTE` + `knowledgeBaseId` 引用）。全文搜索引擎（Elasticsearch/DB FULLTEXT）归 Deferred（触发条件：文章量超万级或 LIKE 搜索时延/相关性质量不满足时）。
+
 ---
 
 ## UC-CS-06 工单升级为质量事件（Escalation to Quality NCR）
