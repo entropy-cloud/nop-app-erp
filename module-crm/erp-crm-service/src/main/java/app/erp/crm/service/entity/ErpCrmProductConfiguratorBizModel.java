@@ -245,7 +245,7 @@ public class ErpCrmProductConfiguratorBizModel extends CrudBizModel<ErpCrmProduc
                                                      String pricingSource,
                                                      Map<String, Object> priceRuleContext) {
         Map<String, Object> data = new LinkedHashMap<>();
-        data.put("code", "CPQ-" + configurator.getId() + "-" + System.currentTimeMillis());
+        data.put("code", "CPQ-" + configurator.getId() + "-" + CoreMetrics.currentTimeMillis());
         data.put("orgId", leadOrgId != null ? leadOrgId : configurator.getOrgId());
         if (leadCustomerId != null) {
             data.put("customerId", leadCustomerId);

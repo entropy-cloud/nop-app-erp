@@ -12,7 +12,7 @@
 
   类型规则（遵循 docs-for-ai/02-core-guides/orm-model-design.md + code-style.md）：
     - 所有 column 显式声明 code(UPPER_SNAKE_CASE) + propId(从1连续) + stdSqlType + stdDataType
-    - 字典字段用 ext:dict="erp-sal/<dict>"，dict valueType="string"，option value 按域语义命名
+    - 字典字段用 ext:dict="erp-sal/<dict-name>"（域专属字典）或 ext:dict="wf/approve-status"（平台标准审核状态字典），dict valueType="string"，option value 与 code 合一（语义编码）
     - 通用字段走 domain 复用：delVersion/version/createdBy/createTime/updatedBy/updateTime/remark
     - 实体配 useLogicalDelete + deleteFlagProp/deleteVersionProp 指向 delVersion
     - 关系：to-one 用 tagSet="pub"，to-many 用 tagSet="pub,cascade-delete,insertable,updatable"

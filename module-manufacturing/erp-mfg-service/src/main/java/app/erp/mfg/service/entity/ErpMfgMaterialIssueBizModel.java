@@ -5,6 +5,8 @@ import app.erp.inv.biz.IErpInvStockMoveBiz;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.biz.IErpMfgMaterialIssueBiz;
+import app.erp.mfg.biz.IErpMfgWorkOrderBiz;
+import app.erp.mfg.biz.IErpMfgWorkOrderLineBiz;
 import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
 import app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
@@ -58,6 +60,10 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
     IErpInvStockLedgerBiz stockLedgerBiz;
     @Inject
     MaterialIssueStockMoveBuilder stockMoveBuilder;
+    @Inject
+    IErpMfgWorkOrderBiz workOrderBiz;
+    @Inject
+    IErpMfgWorkOrderLineBiz workOrderLineBiz;
 
     public ErpMfgMaterialIssueBizModel() {
         setEntityName(ErpMfgMaterialIssue.class.getName());
@@ -100,7 +106,7 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
         orm().flushSession();
 
         // 回写 WorkOrderLine.actualQuantity（按领料行 workOrderLineId 匹配）
-        writebackWorkOrderLineActualQty(lines);
+        writebackWorkOrderLineActualQty(lines, context);
 
         // issue-status CONFIRMED→DONE（已出库）；汇总领料出库流水 totalCost → WorkOrder.materialCost
         BigDecimal materialCostDelta = aggregateIssueMaterialCost(move, context);
@@ -108,11 +114,11 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
         issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_DONE);
         updateEntity(issue, null, context);
 
-        applyMaterialCostToWorkOrder(issue.getWorkOrderId(), materialCostDelta);
+        applyMaterialCostToWorkOrder(issue.getWorkOrderId(), materialCostDelta, context);
         return issue;
     }
 
-    private void writebackWorkOrderLineActualQty(List<ErpMfgMaterialIssueLine> lines) {
+    private void writebackWorkOrderLineActualQty(List<ErpMfgMaterialIssueLine> lines, IServiceContext context) {
         Map<Long, BigDecimal> byWorkOrderLine = new HashMap<>();
         for (ErpMfgMaterialIssueLine line : lines) {
             if (line.getWorkOrderLineId() == null) {
@@ -124,14 +130,13 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
         if (byWorkOrderLine.isEmpty()) {
             return;
         }
-        IEntityDao<ErpMfgWorkOrderLine> dao = daoFor(ErpMfgWorkOrderLine.class);
         for (Map.Entry<Long, BigDecimal> e : byWorkOrderLine.entrySet()) {
-            ErpMfgWorkOrderLine wol = dao.getEntityById(e.getKey());
+            ErpMfgWorkOrderLine wol = workOrderLineBiz.get(String.valueOf(e.getKey()), false, context);
             if (wol == null) {
                 continue;
             }
             wol.setActualQuantity(nz(wol.getActualQuantity()).add(e.getValue()));
-            dao.updateEntity(wol);
+            workOrderLineBiz.updateEntity(wol, null, context);
         }
     }
 
@@ -149,18 +154,17 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
         return sum.abs();
     }
 
-    private void applyMaterialCostToWorkOrder(Long workOrderId, BigDecimal materialCostDelta) {
+    private void applyMaterialCostToWorkOrder(Long workOrderId, BigDecimal materialCostDelta, IServiceContext context) {
         if (workOrderId == null || materialCostDelta == null || materialCostDelta.signum() == 0) {
             return;
         }
-        IEntityDao<ErpMfgWorkOrder> dao = daoFor(ErpMfgWorkOrder.class);
-        ErpMfgWorkOrder wo = dao.getEntityById(workOrderId);
+        ErpMfgWorkOrder wo = workOrderBiz.get(String.valueOf(workOrderId), false, context);
         if (wo == null) {
             return;
         }
         wo.setMaterialCost(nz(wo.getMaterialCost()).add(materialCostDelta));
         recomputeTotals(wo);
-        dao.updateEntity(wo);
+        workOrderBiz.updateEntity(wo, null, context);
     }
 
     static void recomputeTotals(ErpMfgWorkOrder wo) {

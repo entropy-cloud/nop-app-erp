@@ -195,7 +195,7 @@ public class ErpPrjProjectSettlementProcessor {
         settlement.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
         settlement.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
         settlement.setApprovedBy(resolveUserId(context));
-        settlement.setApprovedAt(LocalDateTime.now());
+        settlement.setApprovedAt(CoreMetrics.currentDateTime());
     }
 
     protected void doReject(ErpPrjProjectSettlement settlement, IServiceContext context) {
@@ -210,7 +210,7 @@ public class ErpPrjProjectSettlementProcessor {
         boolean posted = postingDispatcher.tryPost(settlement);
         if (posted) {
             settlement.setPosted(true);
-            settlement.setPostedAt(LocalDateTime.now());
+            settlement.setPostedAt(CoreMetrics.currentDateTime());
             settlement.setPostedBy(resolveUserId(context));
         }
     }

@@ -4,6 +4,7 @@ import app.erp.hr.dao.entity.ErpHrGapAnalysis;
 import app.erp.hr.dao.entity.ErpHrRoleCompetency;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -46,7 +47,7 @@ public class GapAnalysisCalculator {
         if (roleCompetencies == null) return result;
 
         int criticalThreshold = ErpHrConfigs.gapCriticalThreshold();
-        LocalDateTime analysisDate = LocalDateTime.now();
+        LocalDateTime analysisDate = CoreMetrics.currentDateTime();
 
         for (ErpHrRoleCompetency rc : roleCompetencies) {
             if (rc.getCompetencyId() == null || rc.getRequiredLevel() == null) continue;

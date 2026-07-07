@@ -593,7 +593,6 @@ dict:
     erp-ast/adjustment-type: Adjustment Type
     erp-ast/disposal-type: Disposal Type
     erp-ast/doc-status: Doc Status
-    erp-ast/approve-status: Approve Status
     erp-ast/capitalization-source-type: Capitalization Source Type
     erp-ast/disposal-reason: Disposal Reason
     erp-ast/cip-status: CIP Status
@@ -635,11 +634,6 @@ dict.option.label:
     DRAFT: Draft
     ACTIVE: Effective
     CANCELLED: Voided
-  erp-ast/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-ast/capitalization-source-type:
     INVENTORY: Inventory
     CIP: CIP
