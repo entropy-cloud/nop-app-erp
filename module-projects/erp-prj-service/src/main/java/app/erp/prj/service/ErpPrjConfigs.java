@@ -18,6 +18,12 @@ public interface ErpPrjConfigs {
     /** 项目结算强制审批默认启用。 */
     boolean DEFAULT_SETTLEMENT_REQUIRE_APPROVAL = true;
 
+    /** 任务依赖上行链深度上限默认 100（对齐 task-dag.md §2.3，防恶意长链耗尽栈/堆）。 */
+    int DEFAULT_TASK_DEPENDENCY_MAX_DEPTH = 100;
+
+    /** 任务 startTask 前置任务完成强校验默认启用（STRICT 模式；对齐 task-dag.md §4.3）。 */
+    boolean DEFAULT_TASK_STRICT_PREDECESSOR_CHECK = true;
+
     static String budgetControlMode() {
         String mode = io.nop.api.core.config.AppConfig.var(
                 ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, DEFAULT_BUDGET_CONTROL_MODE);
@@ -69,5 +75,22 @@ public interface ErpPrjConfigs {
 
     static String pnlCalcCron() {
         return io.nop.api.core.config.AppConfig.var(ErpPrjConstants.CONFIG_PNL_CALC_CRON, "");
+    }
+
+    static int taskDependencyMaxDepth() {
+        Integer depth = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_TASK_DEPENDENCY_MAX_DEPTH,
+                ErpPrjConfigs.DEFAULT_TASK_DEPENDENCY_MAX_DEPTH);
+        if (depth == null || depth <= 0) {
+            return ErpPrjConfigs.DEFAULT_TASK_DEPENDENCY_MAX_DEPTH;
+        }
+        return depth;
+    }
+
+    static boolean taskStrictPredecessorCheck() {
+        Boolean flag = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_TASK_STRICT_PREDECESSOR_CHECK,
+                ErpPrjConfigs.DEFAULT_TASK_STRICT_PREDECESSOR_CHECK);
+        return flag == null || flag;
     }
 }

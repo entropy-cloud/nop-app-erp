@@ -23,6 +23,11 @@ public interface ErpPrjConstants {
     /** 项目结算强制审批开关（默认 true；关闭时 approve 跳过 SUBMITTED 直接审批）。 */
     String CONFIG_SETTLEMENT_REQUIRE_APPROVAL = "erp-prj.settlement-require-approval";
 
+    /** 任务依赖上行链深度上限（默认 100，防恶意长链耗尽栈/堆；对齐 task-dag.md §2.3）。 */
+    String CONFIG_TASK_DEPENDENCY_MAX_DEPTH = "erp-prj.task-dependency-max-depth";
+    /** 任务 startTask 前置任务完成强校验（默认 true=STRICT 拦截；false=仅 WARN 放行；对齐 task-dag.md §4.3）。 */
+    String CONFIG_TASK_STRICT_PREDECESSOR_CHECK = "erp-prj.task-strict-predecessor-check";
+
     /** 预算控制模式取值。 */
     String BUDGET_MODE_WARNING = "WARNING";
     String BUDGET_MODE_STRICT = "STRICT";

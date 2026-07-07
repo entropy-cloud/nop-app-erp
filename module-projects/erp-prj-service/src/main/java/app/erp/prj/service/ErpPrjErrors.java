@@ -38,6 +38,17 @@ public interface ErpPrjErrors {
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
 
+    // --- 任务依赖/状态机作用域参数键（task-dag.md §7） ---
+    String ARG_DEPENDS_ON_TASK_ID = "dependsOnTaskId";
+    String ARG_DEPENDS_ON_TASK_STATUS = "dependsOnTaskStatus";
+    String ARG_CHAIN = "chain";
+    String ARG_MAX_DEPTH = "maxDepth";
+    String ARG_ACTUAL_DEPTH = "actualDepth";
+    String ARG_TARGET_STATUS = "targetStatus";
+    String ARG_BLOCK_REASON = "blockReason";
+    String ARG_TASK_PROJECT_ID = "taskProjectId";
+    String ARG_DEPENDS_ON_PROJECT_ID = "dependsOnProjectId";
+
     // --- 工时状态机 ---
     ErrorCode ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.prj.timesheet.illegal-status-transition",
@@ -123,4 +134,34 @@ public interface ErpPrjErrors {
             "erp.err.prj.settlement.type-not-close",
             "结算单 {settlementCode} 类型={settlementType}，非 CLOSE 不允许转固",
             ARG_SETTLEMENT_CODE, ARG_SETTLEMENT_TYPE);
+
+    // --- 任务依赖与状态机（plan 2026-07-07-0930-3 / task-dag.md §7） ---
+    ErrorCode ERR_TASK_SELF_DEPENDENCY = ErrorCode.define(
+            "erp.err.prj.task.self-dependency",
+            "任务 {taskId} 不允许自依赖（dependsOnId 指向自身）",
+            ARG_TASK_ID);
+    ErrorCode ERR_TASK_DEPENDENCY_CYCLE = ErrorCode.define(
+            "erp.err.prj.task.dependency-cycle",
+            "任务 {taskId} 的依赖链存在环路：{chain}",
+            ARG_TASK_ID, ARG_CHAIN);
+    ErrorCode ERR_TASK_DEPENDENCY_DEPTH_EXCEEDED = ErrorCode.define(
+            "erp.err.prj.task.dependency-depth-exceeded",
+            "任务 {taskId} 的依赖链深度 {actualDepth} 超过上限 {maxDepth}（疑似恶意长链或数据异常）",
+            ARG_TASK_ID, ARG_MAX_DEPTH, ARG_ACTUAL_DEPTH);
+    ErrorCode ERR_TASK_DEPENDENCY_CROSS_PROJECT = ErrorCode.define(
+            "erp.err.prj.task.dependency-cross-project",
+            "任务 {taskId}（项目 {taskProjectId}）不允许依赖跨项目任务 {dependsOnTaskId}（项目 {dependsOnProjectId}）",
+            ARG_TASK_ID, ARG_TASK_PROJECT_ID, ARG_DEPENDS_ON_TASK_ID, ARG_DEPENDS_ON_PROJECT_ID);
+    ErrorCode ERR_TASK_PREDECESSOR_NOT_DONE = ErrorCode.define(
+            "erp.err.prj.task.predecessor-not-done",
+            "任务 {taskId} 的前置任务 {dependsOnTaskId} 当前状态={dependsOnTaskStatus}，未完成不可启动",
+            ARG_TASK_ID, ARG_DEPENDS_ON_TASK_ID, ARG_DEPENDS_ON_TASK_STATUS);
+    ErrorCode ERR_TASK_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.prj.task.illegal-status-transition",
+            "任务 {taskId} 当前状态={currentStatus}，不允许迁移至 {targetStatus}",
+            ARG_TASK_ID, ARG_CURRENT_STATUS, ARG_TARGET_STATUS);
+    ErrorCode ERR_TASK_BLOCK_REASON_REQUIRED = ErrorCode.define(
+            "erp.err.prj.task.block-reason-required",
+            "任务 {taskId} 阻塞须填写 blockReason",
+            ARG_TASK_ID);
 }
