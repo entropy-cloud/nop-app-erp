@@ -49,7 +49,7 @@
 - 3.10–3.21：✅ done（APS 排产引擎+ATP/CTP / 合同版本管理+电子签章+批量折扣 / DRP 净需求+安全库存 / TMS 承运商网关+运费过账 / B2B EDI+ASN+MFT；详见下方 Implementation Order 表 ✅ 标记与对应 plan）
 
 > **Non-Goal scope boundary**：以下 UCs 不在 M3 已完工项的原始范围内，非实现遗漏，归后继工作项。
-> - crm（3.1~3.4 之外）：UC-CRM-05（领地管理）、UC-CRM-06（配额管理）、UC-CRM-07（CPQ 配置定价报价）、UC-CRM-08（序列管理）、UC-CRM-09（CRM 漏斗分析）
+> - crm（3.1~3.4 之外）：UC-CRM-05（领地管理）、UC-CRM-06（配额管理）✅ done（plan `2026-07-07-1100-1-crm-territory-quota`：ErpCrmLead 加 territoryId 加性列 + TerritoryAssignmentEngine 四 conditionType 匹配 + MANUAL 降级（团队成员表缺失触发条件）+ 区域树维护 createChild/moveTerritory/有子节点禁删 + QuotaRollupCalculator 显式值优先层级聚合 + 定稿/解冻 + 年度均分 + getTerritoryPipeline 三段对比入口）；UC-CRM-07（CPQ 配置定价报价）、UC-CRM-08（序列管理）、UC-CRM-09（CRM 漏斗分析）
 > - customer-service（3.5~3.6 之外）：UC-CS-07（知识库）、UC-CS-08（客户权益）、UC-CS-09（服务目录）、UC-CS-10（客服质量监控）
 > - human-resource（3.7~3.9 之外）：UC-HR-04（休假管理）、UC-HR-05（考勤管理）、UC-HR-06（招聘管理）、UC-HR-07（合同管理）、UC-HR-08（员工调动/胜任力）
 

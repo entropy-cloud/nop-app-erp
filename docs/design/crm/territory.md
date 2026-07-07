@@ -211,3 +211,31 @@
 - `state-machine.md` §Lead（分配不影响状态机）
 - `use-cases.md` §UC-CRM-01（线索创建与分配衔接）
 - `docs/analysis/erp-survey/` — Salesforce/Odoo territory 机制分析
+
+## 实现注记（plan 2026-07-07-1100-1 落地结论）
+
+> 本节为 plan `2026-07-07-1100-1-crm-territory-quota` 实施后回写的实现注记。当 plan 与设计 §分配执行流程 / 业务规则 2 出现偏离时，本节为权威。
+
+### 1. Lead 加性列 `territoryId`
+
+- 经 Phase 1 Decision 落地：`ErpCrmLead` 新增可空 `territoryId`(propId 41, BIGINT, stdDataType=long) + to-one `territory` + 索引 `IDX_CRM_LEAD_TERRITORY_ID`。改动为加性可空列（无数据回填、无破坏性变更），经 codegen 重生成 `erp-crm-dao` + `erp-crm-meta`。替代方案「不新增列，分配仅回写 teamId/ownerId」被拒绝：区域维度在 Lead 上丢失，管道报表无法按 Lead 区域下钻。
+- 分配规则匹配出 territoryId 后回写 `lead.territoryId`；管理员可经 `reassignLead` 手动覆盖。
+
+### 2. 团队成员模型缺失 → 分配方法降级
+
+- **Phase 1 Explore 结论**：`ErpCrmTeamMember` 实体不存在（全仓 0 源码命中）。`ErpCrmTeam`（orm:380）仅含 `teamLeaderId`，无成员子实体；成员关系当前经 `ownerId`/用户角色隐式表达。
+- **范围收窄**：本期实现 `assignmentMethod=MANUAL` —— 引擎匹配后仅回写 `lead.territoryId` + `lead.teamId`，`lead.ownerId` 留空标记"待分配"。设计 §业务规则 2 / §分配执行流程 中关于 `ROUND_ROBIN`（轮询挑人）/ `LOAD_BALANCED`（按负载挑人）的完整实现归 successor，**触发条件**：团队成员表（`ErpCrmTeamMember` 或等价模型）落地时。
+- `assignmentMethod` 字段仍按 `erp-crm/assignment-method` 字典（含 ROUND_ROBIN/LOAD_BALANCED/MANUAL 全部枚举值）持久化，引擎遇到非 MANUAL 方法时按 MANUAL 语义降级处理（仅写 territory/team，不挑人）。
+
+### 3. 自动分配触发点
+
+- `defaultPrepareSave` 钩子：新建 Lead 且 `ownerId`/`teamId` 均空时，若 config-gated `erp-crm.territory.auto-assign-on-create=true`（默认 true），调用 `TerritoryAssignmentEngine` 进行规则匹配并回写。
+- `assignLead(leadId, ctx)` @BizMutation 提供手动触发入口；`reassignLead(leadId, territoryId, teamId, ownerId, ctx)` @BizMutation 提供覆盖入口（管理员手动指定）。
+
+### 4. 配额层级聚合（显式值优先）
+
+- `QuotaRollupCalculator.getQuotaRollup(territoryId, periodType, fiscalYear, periodLabel)`：
+  - `territoryId=null` → 公司级（聚合所有 `territoryId/teamId/ownerId` 维度的配额行）；
+  - `territoryId≠null` 且 `teamId/ownerId=null` → 区域级（聚合该区域子树所有团队/个人配额行）；
+  - 三段（目标/预测/实际）同屏聚合通过 `getTerritoryPipeline` @BizQuery 入口暴露。
+- **显式值优先规则**：若该层级已直接配置配额行（非空 `quotaAmount`），优先返回该显式值；否则向下聚合子节点配额行求和。
