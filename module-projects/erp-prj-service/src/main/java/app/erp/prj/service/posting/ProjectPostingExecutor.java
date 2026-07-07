@@ -3,21 +3,9 @@ package app.erp.prj.service.posting;
 import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
-import app.erp.fin.dao.entity.ErpFinVoucher;
-import app.erp.fin.dao.entity.ErpFinVoucherBillR;
-import app.erp.fin.service.ErpFinConstants;
-import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
-import io.nop.dao.api.IDaoProvider;
-import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
-
-import java.util.List;
-import java.util.Objects;
-
-import static io.nop.api.core.beans.FilterBeans.and;
-import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 项目过账执行器：跨域经凭证聚合根 Facade {@link IErpFinVoucherBiz} 调用财务过账引擎
@@ -27,17 +15,13 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 承接。本执行器不带 {@code @Transactional}，对齐 {@code AssetPostingExecutor}/{@code SalPostingExecutor}。
  * 调用方（各 Dispatcher）以 try/catch 包裹。
  *
- * <p>对齐资产域 reverse 语义：补标原正常凭证 isReversed=true，使账簿反映原凭证已被红冲、允许幂等重过账。
+ * <p>O-8：{@code markOriginalVoucherReversed} 已上提到引擎公共流程（{@code ErpFinPostingProcessor.reverseProcess()}），
+ * 本执行器 {@code reverse()} 仅透传 Facade 调用，不再重复补标原凭证。
  */
 public class ProjectPostingExecutor {
 
-    private static final String VOUCHER_STATUS_POSTED = ErpFinConstants.VOUCHER_STATUS_POSTED;
-    private static final String POSTING_TYPE_NORMAL = "NORMAL";
-
     @Inject
     IErpFinVoucherBiz voucherBiz;
-    @Inject
-    IDaoProvider daoProvider;
 
     public Long postEvent(PostingEvent event) {
         IServiceContext context = IServiceContext.getCtx();
@@ -52,24 +36,7 @@ public class ProjectPostingExecutor {
         if (context == null) {
             context = new ServiceContextImpl();
         }
+        // O-8：原正常凭证 isReversed 补标由引擎公共流程统一处理（ErpFinPostingProcessor.reverseProcess）
         voucherBiz.reverse(billHeadCode, businessType, context);
-        markOriginalVoucherReversed(billHeadCode, businessType);
-    }
-
-    private void markOriginalVoucherReversed(String billHeadCode, ErpFinBusinessType businessType) {
-        IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", businessType.name())));
-        List<ErpFinVoucherBillR> links = linkDao.findAllByQuery(q);
-        IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
-        for (ErpFinVoucherBillR link : links) {
-            ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
-            if (voucher != null && Objects.equals(voucher.getDocStatus(), VOUCHER_STATUS_POSTED)
-                    && !Boolean.TRUE.equals(voucher.getIsReversed())
-                    && (voucher.getPostingType() == null || Objects.equals(voucher.getPostingType(), POSTING_TYPE_NORMAL))) {
-                voucher.setIsReversed(true);
-                voucherDao.updateEntity(voucher);
-            }
-        }
     }
 }

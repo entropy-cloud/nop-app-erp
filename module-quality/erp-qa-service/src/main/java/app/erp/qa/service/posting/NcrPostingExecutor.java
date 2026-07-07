@@ -30,11 +30,16 @@ public class NcrPostingExecutor {
         return voucherBiz.post(event, context);
     }
 
-    public Long reverse(String billHeadCode, ErpFinBusinessType businessType) {
+    /**
+     * O-15：对齐其他域执行器（{@code AssetPostingExecutor}/{@code ProjectPostingExecutor}/{@code InvPostingExecutor}）
+     * 的返回类型 {@code void}。原返回 {@code Long}（voucherId）与其他域不一致，且调用方不消费该返回值。
+     * voucherId 已由引擎写入执行上下文（凭证回链表 + 红冲凭证实体），无需经返回值传递。
+     */
+    public void reverse(String billHeadCode, ErpFinBusinessType businessType) {
         IServiceContext context = IServiceContext.getCtx();
         if (context == null) {
             context = new ServiceContextImpl();
         }
-        return voucherBiz.reverse(billHeadCode, businessType, context);
+        voucherBiz.reverse(billHeadCode, businessType, context);
     }
 }

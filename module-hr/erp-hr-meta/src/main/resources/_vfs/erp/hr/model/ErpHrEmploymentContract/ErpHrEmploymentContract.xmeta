@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpHrEmploymentContract.xmeta">
 
-    <props/>
+    <!-- 安全：合同薪资相关金额字段对 GraphQL/REST 默认隐藏（internal=true），
+         防止合同薪资数据通过开放 API 泄露。完整 @DataAuth 体系见 deferred 项。请勿删除此屏蔽。 -->
+    <props>
+        <prop name="annualSalary" internal="true" x:override="merge"/>
+        <prop name="monthlySalary" internal="true" x:override="merge"/>
+        <prop name="socialInsuranceBase" internal="true" x:override="merge"/>
+        <prop name="housingFundBase" internal="true" x:override="merge"/>
+    </props>
 </meta>

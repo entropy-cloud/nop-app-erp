@@ -34,7 +34,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 无供应商结算，不派发过账事件。
  *
  * <p>过账失败不阻塞转移单终态（对齐 {@link InvPostingDispatcher} 语义）：以 try/catch 包裹，成功置
- * {@code posted=true}，失败吞异常记日志、保持 {@code posted=false}（由 Deferred 兜底扫描重试）。
+ * {@code posted=true}，失败吞异常记日志、保持 {@code posted=false}（由 DeferredPostingSweepJob（app.erp.fin.service.job）兜底扫描重试）。
  */
 public class OwnershipTransferPostingDispatcher {
 

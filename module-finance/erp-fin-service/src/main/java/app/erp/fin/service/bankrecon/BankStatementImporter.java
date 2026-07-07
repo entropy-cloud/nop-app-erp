@@ -199,6 +199,8 @@ public class BankStatementImporter {
         IEntityDao<ErpFinBankStatement> dao = daoProvider.daoFor(ErpFinBankStatement.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("fundAccountId", fundAccountId));
+        // O-5：追加 statementDate DESC 确保确定性（取最近一条流水单）
+        q.addOrderField("statementDate", true);
         q.setLimit(1);
         ErpFinBankStatement s = dao.findFirstByQuery(q);
         return s != null ? s.getId() : null;

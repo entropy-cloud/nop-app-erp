@@ -21,6 +21,12 @@ public interface ErpB2bErrors {
     String ARG_PARTNER_ID = "partnerId";
     String ARG_CONFIG_ID = "configId";
     String ARG_EVENT_ID = "eventId";
+    // O-11 扩展参数键
+    String ARG_FIELD_NAME = "fieldName";
+    String ARG_REASON = "reason";
+    String ARG_PAYLOAD_SIZE = "payloadSize";
+    String ARG_MAX_SIZE = "maxSize";
+    String ARG_CREDENTIAL_ID = "credentialId";
 
     ErrorCode ERR_B2B_EDI_FORMAT_NOT_REGISTERED = ErrorCode.define("erp.err.b2b.edi-format-not-registered",
             "EDI 格式 {ediFormatCode} 未注册任何 Provider", ARG_EDI_FORMAT_CODE);
@@ -54,4 +60,42 @@ public interface ErpB2bErrors {
 
     ErrorCode ERR_B2B_MFT_ADAPTER_NOT_REGISTERED = ErrorCode.define("erp.err.b2b.mft-adapter-not-registered",
             "协议 {protocol} 未注册任何传输适配器", ARG_PROTOCOL);
+
+    // ---------- O-11 扩展：解析/传输/凭证/伙伴等细粒度错误码 ----------
+
+    ErrorCode ERR_B2B_EDI_DOC_NOT_FOUND = ErrorCode.define("erp.err.b2b.edi-doc-not-found",
+            "EDI 事务 {ediDocCode} 不存在", ARG_EDI_DOC_CODE);
+
+    ErrorCode ERR_B2B_EDI_FIELD_REQUIRED = ErrorCode.define("erp.err.b2b.edi-field-required",
+            "EDI 报文必填字段 {fieldName} 缺失（{relatedBillType}/{relatedBillCode}）",
+            ARG_FIELD_NAME, ARG_RELATED_BILL_TYPE, ARG_RELATED_BILL_CODE);
+
+    ErrorCode ERR_B2B_EDI_PAYLOAD_TOO_LARGE = ErrorCode.define("erp.err.b2b.edi-payload-too-large",
+            "EDI 报文大小 {payloadSize} 超过最大允许 {maxSize}",
+            ARG_PAYLOAD_SIZE, ARG_MAX_SIZE);
+
+    ErrorCode ERR_B2B_EDI_GENERATE_FAILED = ErrorCode.define("erp.err.b2b.edi-generate-failed",
+            "EDI 报文生成失败：{relatedBillType}/{relatedBillCode}，原因 {reason}",
+            ARG_RELATED_BILL_TYPE, ARG_RELATED_BILL_CODE, ARG_REASON);
+
+    ErrorCode ERR_B2B_ASN_NOT_FOUND = ErrorCode.define("erp.err.b2b.asn-not-found",
+            "ASN {asnCode} 不存在", ARG_ASN_CODE);
+
+    ErrorCode ERR_B2B_ASN_LINE_QUANTITY_MISMATCH = ErrorCode.define("erp.err.b2b.asn-line-quantity-mismatch",
+            "ASN {asnCode} 行数量与采购单行数量不匹配", ARG_ASN_CODE);
+
+    ErrorCode ERR_B2B_PARTNER_NOT_FOUND = ErrorCode.define("erp.err.b2b.partner-not-found",
+            "伙伴 {partnerCode} 不存在", ARG_PARTNER_CODE);
+
+    ErrorCode ERR_B2B_PARTNER_CREDENTIAL_INVALID = ErrorCode.define("erp.err.b2b.partner-credential-invalid",
+            "伙伴 {partnerCode} 凭证 {credentialId} 无效或已过期",
+            ARG_PARTNER_CODE, ARG_CREDENTIAL_ID);
+
+    ErrorCode ERR_B2B_MFT_TRANSFER_FAILED = ErrorCode.define("erp.err.b2b.mft-transfer-failed",
+            "MFT 传输失败：伙伴 {partnerId} / 协议 {protocol} / 原因 {reason}",
+            ARG_PARTNER_ID, ARG_PROTOCOL, ARG_REASON);
+
+    ErrorCode ERR_B2B_CODE_MAPPING_NOT_FOUND = ErrorCode.define("erp.err.b2b.code-mapping-not-found",
+            "代码映射不存在：格式 {ediFormatCode} / 代码 {relatedBillCode}",
+            ARG_EDI_FORMAT_CODE, ARG_RELATED_BILL_CODE);
 }

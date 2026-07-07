@@ -210,6 +210,8 @@ public class GatewayDispatcher {
         IEntityDao<ErpLogCarrier> dao = daoProvider.daoFor(ErpLogCarrier.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", carrierCode));
+        // O-5：追加 code 排序确保确定性
+        q.addOrderField("code", false);
         return dao.findFirstByQuery(q);
     }
 
@@ -220,6 +222,8 @@ public class GatewayDispatcher {
         IEntityDao<ErpLogShipment> dao = daoProvider.daoFor(ErpLogShipment.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("trackingNo", trackingNo));
+        // O-5：追加 trackingNo 排序确保确定性
+        q.addOrderField("trackingNo", false);
         return dao.findFirstByQuery(q);
     }
 

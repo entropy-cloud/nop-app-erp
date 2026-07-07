@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpFinArApItem.xmeta">
 
-    <props/>
+    <!-- 安全：应收应付金额字段对 GraphQL/REST 默认隐藏（internal=true），
+         仅服务端内部代码可访问。完整 @DataAuth 体系见 deferred 项。请勿删除此屏蔽。 -->
+    <props>
+        <prop name="amountSource" internal="true" x:override="merge"/>
+        <prop name="amountFunctional" internal="true" x:override="merge"/>
+        <prop name="settledAmountSource" internal="true" x:override="merge"/>
+        <prop name="settledAmountFunctional" internal="true" x:override="merge"/>
+        <prop name="openAmountSource" internal="true" x:override="merge"/>
+        <prop name="openAmountFunctional" internal="true" x:override="merge"/>
+    </props>
 </meta>

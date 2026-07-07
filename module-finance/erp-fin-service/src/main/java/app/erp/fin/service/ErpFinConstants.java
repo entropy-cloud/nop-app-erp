@@ -178,6 +178,9 @@ public interface ErpFinConstants {
     /** 通知事件类型：过账异常告警（对应 erp_sys_notification_template.notification_type）。 */
     String NOTIFY_EVENT_POSTING_EXCEPTION = "fin.posting-exception";
 
+    /** O-2：兜底扫描重试 Job 的 cron 配置（空=不调度；非空时按 cronExpr 触发 DeferredPostingSweepJob）。 */
+    String CONFIG_DEFERRED_POSTING_SWEEP_CRON = "erp-fin.deferred-posting-sweep-cron";
+
     // ---- 过账异常处置状态（与 erp-fin/posting-exception-status 字典对齐，见 posting-log.md §过账异常处置） ----
     String POSTING_EXCEPTION_STATUS_PENDING = "PENDING";
     String POSTING_EXCEPTION_STATUS_RETRYING = "RETRYING";

@@ -35,6 +35,9 @@ public interface ErpInvErrors {
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
 
+    /** O-23：moveLineId 参数键命名常量（替代字符串字面量）。 */
+    String ARG_MOVE_LINE_ID = "moveLineId";
+
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.inv.illegal-status-transition",
             "移动单 {moveCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
             ARG_MOVE_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
@@ -57,7 +60,7 @@ public interface ErpInvErrors {
 
     ErrorCode ERR_LEDGER_ALREADY_EXISTS = ErrorCode.define("erp.err.inv.ledger-already-exists",
             "移动单行 {moveLineId} 已存在库存流水，流水不可变",
-            "moveLineId");
+            ARG_MOVE_LINE_ID);
 
     ErrorCode ERR_COST_NOT_AVAILABLE = ErrorCode.define("erp.err.inv.cost-not-available",
             "物料 {materialId} / 仓库 {warehouseId} 无可用成本层，请先入库后再出库",

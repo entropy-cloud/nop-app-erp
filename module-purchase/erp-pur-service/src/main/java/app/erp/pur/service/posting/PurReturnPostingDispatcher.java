@@ -23,7 +23,7 @@ import java.util.Map;
  * 生成红字冲减凭证（反向 PURCHASE_INPUT：借暂估应付 / 贷存货，{@code posting.md}）。
  *
  * <p>对齐 {@code PurInvoicePostingDispatcher} 的失败语义：过账失败吞异常记日志、保持 APPROVED+{@code posted=false}
- * （由 Deferred 兜底扫描重试），不阻塞终态。本类为 Facade 编排层，**不持久化源单据**——源单据 {@code posted}
+ * （由 DeferredPostingSweepJob（app.erp.fin.service.job）兜底扫描重试），不阻塞终态。本类为 Facade 编排层，**不持久化源单据**——源单据 {@code posted}
  * 标志由调用方 BizModel 在主事务内统一持久化。
  *
  * <p>billData 契约（供 PurAcctDocProvider + ErpFinArApItemGenerator 消费）：

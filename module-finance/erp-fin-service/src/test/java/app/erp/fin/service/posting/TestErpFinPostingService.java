@@ -191,7 +191,9 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         assertEquals(true, red.getIsReversed(), "红字凭证 isReversed=true");
         assertEquals(originalId, red.getReversalOfVoucherId(), "红字凭证关联原凭证");
         assertEquals(VOUCHER_STATUS_POSTED, red.getDocStatus(), "红字凭证走正常 DRAFT→POSTED");
-        assertEquals(false, original.getIsReversed(), "原凭证保留（审计轨迹），非红字");
+        // O-8：原正常凭证经引擎公共流程 markOriginalVoucherReversed 统一补标 isReversed=true，
+        // 使账簿反映原凭证已被红冲、并允许幂等重过账（同 billCode 再过账时 alreadyPosted 不再命中已冲销凭证）。
+        assertEquals(true, original.getIsReversed(), "原凭证已被红冲，isReversed=true（O-8 统一行为）");
 
         BigDecimal redDebit = red.getTotalDebit();
         BigDecimal redCredit = red.getTotalCredit();

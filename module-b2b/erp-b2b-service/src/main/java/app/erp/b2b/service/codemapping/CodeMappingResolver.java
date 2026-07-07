@@ -79,6 +79,8 @@ public class CodeMappingResolver {
         if (partnerId != null) {
             q.addFilter(eq("partnerId", partnerId));
         }
+        // O-5：追加 internalCode 排序确保确定性（ErpB2bCodeMapping 无 mappingCode 字段，用 internalCode）
+        q.addOrderField(byInternal ? "internalCode" : "externalCode", false);
         return dao.findFirstByQuery(q);
     }
 }

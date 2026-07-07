@@ -208,6 +208,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         receive.setOrderId(po.getId());
         receive.setSupplierId(po.getSupplierId());
         receive.setWarehouseId(po.getWarehouseId());
+        receive.setCurrencyId(po.getCurrencyId());
         receive.setBusinessDate(CoreMetrics.today());
         receive.setDocStatus("UNSUBMITTED");
         receive.setApproveStatus("UNSUBMITTED");
@@ -337,12 +338,16 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
     private ErpB2bPartnerProfile findPartnerProfileByCode(String code) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", code));
+        // O-5：追加 id DESC 确保确定性
+        q.addOrderField("id", true);
         return daoProvider().daoFor(ErpB2bPartnerProfile.class).findFirstByQuery(q);
     }
 
     private boolean isDuplicateEvent(String eventId, String formatCode) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("remark", "WEBHOOK eventId=" + eventId + " formatCode=" + formatCode));
+        // O-5：追加 id DESC 确保确定性
+        q.addOrderField("id", true);
         return daoProvider().daoFor(ErpB2bEdiDoc.class).findFirstByQuery(q) != null;
     }
 
@@ -359,6 +364,8 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         }
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", code));
+        // O-5：追加 id DESC 确保确定性
+        q.addOrderField("id", true);
         return daoProvider().daoFor(ErpPurOrder.class).findFirstByQuery(q);
     }
 

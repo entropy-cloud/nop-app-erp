@@ -121,6 +121,8 @@ public class MrpReleaseService {
         order.setDeliveryDate(line.getPlannedDate());
         order.setDocStatus(PUR_DOC_STATUS_DRAFT);
         order.setApproveStatus(PUR_APPROVE_STATUS_UNSUBMITTED);
+        // O-4 架构豁免：MRP 自动释放不走人工审批管道，跨模块直接持久化采购单骨架草稿（单价/金额 0 待采购员补录）。
+        // 理由/风险/补偿见 docs/architecture/posting-exemptions.md §MrpReleaseService
         orderDao.saveEntity(order);
 
         IEntityDao<ErpPurOrderLine> lineDao = daoProvider.daoFor(ErpPurOrderLine.class);

@@ -88,4 +88,56 @@ public interface ErpMdErrors {
             "erp.err.md.sku.referenced-by-bill",
             "SKU[{skuId}]被未完成业务单据引用，不可删除（请改停用）",
             ARG_SKU_ID);
+
+    // ---------- O-11 扩展：主数据/物料/单位/价格/伙伴等细粒度错误码 ----------
+
+    ErrorCode ERR_MATERIAL_NOT_FOUND = ErrorCode.define(
+            "erp.err.md.material.not-found",
+            "物料[{materialId}]不存在",
+            ARG_MATERIAL_ID);
+
+    ErrorCode ERR_MATERIAL_CODE_DUPLICATE = ErrorCode.define(
+            "erp.err.md.material.code-duplicate",
+            "物料编码[{materialCode}]已存在",
+            "materialCode");
+
+    ErrorCode ERR_MATERIAL_STATUS_INVALID = ErrorCode.define(
+            "erp.err.md.material.status-invalid",
+            "物料[{materialId}]当前状态不允许该操作（status={currentStatus}）",
+            ARG_MATERIAL_ID, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_PARTNER_NOT_FOUND = ErrorCode.define(
+            "erp.err.md.partner.not-found",
+            "往来单位[{partnerId}]不存在",
+            ARG_PARTNER_ID);
+
+    ErrorCode ERR_PARTNER_CODE_DUPLICATE = ErrorCode.define(
+            "erp.err.md.partner.code-duplicate",
+            "往来单位编码[{partnerCode}]已存在",
+            "partnerCode");
+
+    ErrorCode ERR_SUBJECT_NOT_FOUND = ErrorCode.define(
+            "erp.err.md.subject.not-found",
+            "会计科目编码[{subjectCode}]不存在",
+            "subjectCode");
+
+    ErrorCode ERR_SUBJECT_INACTIVE = ErrorCode.define(
+            "erp.err.md.subject.inactive",
+            "会计科目[{subjectCode}]已停用，不可用于过账",
+            "subjectCode");
+
+    ErrorCode ERR_UOM_NOT_FOUND = ErrorCode.define(
+            "erp.err.md.uom.not-found",
+            "计量单位[{uomId}]不存在",
+            "uomId");
+
+    ErrorCode ERR_CURRENCY_NOT_FOUND = ErrorCode.define(
+            "erp.err.md.currency.not-found",
+            "币种[{currencyId}]不存在",
+            "currencyId");
+
+    ErrorCode ERR_ORG_NOT_FOUND = ErrorCode.define(
+            "erp.err.md.org.not-found",
+            "组织[{orgId}]不存在",
+            "orgId");
 }

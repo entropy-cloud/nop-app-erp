@@ -85,13 +85,15 @@ public class NcrPostingDispatcher {
     /**
      * 红冲 SCRAP 凭证。按 NCR.code 反查原已过账凭证，生成红字冲销。
      * 成功后清除 posted 三件套。
+     *
+     * <p>O-15：对齐 NcrPostingExecutor.reverse() 的 void 返回类型。voucherId 已由引擎写入凭证回链表，
+     * 调用方不消费该返回值。
      */
-    public Long reverseScrap(ErpQaNonConformance ncr) {
-        Long voucherId = executor.reverse(ncr.getCode(), ErpFinBusinessType.NCR_SCRAP);
+    public void reverseScrap(ErpQaNonConformance ncr) {
+        executor.reverse(ncr.getCode(), ErpFinBusinessType.NCR_SCRAP);
         ncr.setPosted(Boolean.FALSE);
         ncr.setPostedAt(null);
         ncr.setPostedBy(null);
-        return voucherId;
     }
 
     private PostingEvent buildScrapEvent(ErpQaNonConformance ncr, BigDecimal scrapAmount, Long currencyId, Long warehouseId, Long orgId) {

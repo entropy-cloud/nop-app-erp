@@ -107,6 +107,8 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
     }
 
     // ---------- 贷项凭证生成（负额发票，经 IDaoProvider 直接持久化） ----------
+    // O-4 架构豁免：返利结算生成的贷项凭证（负额发票）跨模块直接持久化，不走采购/销售域审批管道。
+    // 理由/风险/补偿见 docs/architecture/posting-exemptions.md §ErpCtRebateSettlementBizModel
 
     protected void createNegativeApInvoice(String code, ErpCtRebateAgreement agreement,
                                            Long currencyId, Long materialId, Long uomId, BigDecimal negativeAmount) {

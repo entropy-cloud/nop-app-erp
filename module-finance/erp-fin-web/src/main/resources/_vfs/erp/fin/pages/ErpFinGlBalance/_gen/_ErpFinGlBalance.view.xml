@@ -36,30 +36,6 @@
                 <!--币种-->
                 <col id="currencyId" mandatory="true" ui:number="true" sortable="true"/>
 
-                <!--期初借方(本位币)-->
-                <col id="openingDebit" ui:number="true" sortable="true"/>
-
-                <!--期初贷方(本位币)-->
-                <col id="openingCredit" ui:number="true" sortable="true"/>
-
-                <!--本期借方发生(本位币)-->
-                <col id="periodDebit" ui:number="true" sortable="true"/>
-
-                <!--本期贷方发生(本位币)-->
-                <col id="periodCredit" ui:number="true" sortable="true"/>
-
-                <!--期末借方(本位币)-->
-                <col id="closingDebit" ui:number="true" sortable="true"/>
-
-                <!--期末贷方(本位币)-->
-                <col id="closingCredit" ui:number="true" sortable="true"/>
-
-                <!--年初借方-->
-                <col id="yearOpeningDebit" ui:number="true" sortable="true"/>
-
-                <!--年初贷方-->
-                <col id="yearOpeningCredit" ui:number="true" sortable="true"/>
-
                 <!--辅助-往来单位-->
                 <col id="partnerId" ui:number="true" sortable="true"/>
 
@@ -97,10 +73,6 @@
  id[ID] orgId[组织]
  acctSchemaId[账套] periodId[期间]
  subjectId[科目] currencyId[币种]
- openingDebit[期初借方(本位币)] openingCredit[期初贷方(本位币)]
- periodDebit[本期借方发生(本位币)] periodCredit[本期贷方发生(本位币)]
- closingDebit[期末借方(本位币)] closingCredit[期末贷方(本位币)]
- yearOpeningDebit[年初借方] yearOpeningCredit[年初贷方]
  partnerId[辅助-往来单位] departmentId[辅助-部门]
  projectId[辅助-项目] warehouseId[辅助-仓库]
  delVersion[逻辑删除版本] createdBy[创建人]
@@ -113,10 +85,6 @@
  id[ID] orgId[组织]
  acctSchemaId[账套] periodId[期间]
  subjectId[科目] currencyId[币种]
- openingDebit[期初借方(本位币)] openingCredit[期初贷方(本位币)]
- periodDebit[本期借方发生(本位币)] periodCredit[本期贷方发生(本位币)]
- closingDebit[期末借方(本位币)] closingCredit[期末贷方(本位币)]
- yearOpeningDebit[年初借方] yearOpeningCredit[年初贷方]
  partnerId[辅助-往来单位] departmentId[辅助-部门]
  projectId[辅助-项目] warehouseId[辅助-仓库]
 </layout>
@@ -126,10 +94,6 @@
  id[ID] orgId[组织]
  acctSchemaId[账套] periodId[期间]
  subjectId[科目] currencyId[币种]
- openingDebit[期初借方(本位币)] openingCredit[期初贷方(本位币)]
- periodDebit[本期借方发生(本位币)] periodCredit[本期贷方发生(本位币)]
- closingDebit[期末借方(本位币)] closingCredit[期末贷方(本位币)]
- yearOpeningDebit[年初借方] yearOpeningCredit[年初贷方]
  partnerId[辅助-往来单位] departmentId[辅助-部门]
  projectId[辅助-项目] warehouseId[辅助-仓库]
  delVersion[逻辑删除版本] 

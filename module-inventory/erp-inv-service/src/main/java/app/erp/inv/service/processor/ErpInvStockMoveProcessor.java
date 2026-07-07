@@ -156,10 +156,11 @@ public class ErpInvStockMoveProcessor {
         if (relatedBillType == null || relatedBillCode == null) {
             return null;
         }
-        ErpInvStockMove example = moveDao().newEntity();
-        example.setRelatedBillType(relatedBillType);
-        example.setRelatedBillCode(relatedBillCode);
-        return moveDao().findFirstByExample(example);
+        // O-5：改 findFirstByExample 为 findFirstByQuery + id DESC，确保确定性（findFirstByExample 无 ORDER BY 支持）
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("relatedBillType", relatedBillType), eq("relatedBillCode", relatedBillCode)));
+        q.addOrderField("id", true);
+        return moveDao().findFirstByQuery(q);
     }
 
     public TraceChainResult forwardTrace(Long moveId, IServiceContext context) {
@@ -321,6 +322,8 @@ public class ErpInvStockMoveProcessor {
     protected ErpInvStockMove findExisting(String relatedBillType, String relatedBillCode, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("relatedBillType", relatedBillType), eq("relatedBillCode", relatedBillCode)));
+        // O-5：追加 id DESC 确保确定性结果
+        q.addOrderField("id", true);
         return moveDao().findFirstByQuery(q);
     }
 

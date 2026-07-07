@@ -74,4 +74,15 @@ public interface ErpFinPostingErrors {
     ErrorCode ERR_REVERSAL_LISTENER_FAILED = ErrorCode.define("erp.err.fin.posting.reversal-listener-failed",
             "凭证红冲监听者 {listener} 回退业务单据 {billHeadCode} 失败（业务类型 {businessType}）",
             ARG_LISTENER, ARG_BILL_HEAD_CODE, ARG_BUSINESS_TYPE);
+
+    // ===================== 兜底扫描与未知异常（O-2/O-6/O-16） =====================
+
+    /** 非 NopException 的未知异常统一记录到过账异常工作台（O-6：recordPostFailure 不再丢弃非 NopException）。 */
+    ErrorCode ERR_POSTING_UNEXPECTED_FAILURE = ErrorCode.define("erp.err.fin.posting.unexpected-failure",
+            "过账过程抛出非业务异常（未预期失败），stage={failedStage}，message={errorMessage}",
+            "failedStage", "errorMessage");
+
+    /** 红冲监听者注册中心启动期校验失败：未注册任何监听者（O-19）。 */
+    ErrorCode ERR_POSTING_NO_LISTENERS_REGISTERED = ErrorCode.define("erp.err.fin.posting.no-listeners-registered",
+            "凭证红冲监听者注册中心启动时未发现任何监听者实现，红冲反写闭环不可用");
 }

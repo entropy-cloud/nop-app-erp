@@ -152,3 +152,12 @@ jobs:
     invoker:
       bean: erpQaSpcCapabilityJob
       method: execute
+
+  - jobName: erp-fin-deferred-posting-sweep
+    displayName: Finance Deferred Posting Sweep
+    description: 每 5 分钟扫描 ErpFinPostingException PENDING 记录（retryCount<3，最近 24h）重建 PostingEvent 重试过账；cron 经 erp-fin.deferred-posting-sweep-cron 配置门控（O-2 兜底扫描重试）
+    trigger:
+      cronExpr: "0 0/5 * * * ?"
+    invoker:
+      bean: erpFinDeferredPostingSweepJob
+      method: execute

@@ -106,6 +106,8 @@ public class TransportManager {
         QueryBean q = new QueryBean();
         q.addFilter(eq("partnerId", partnerId));
         q.addFilter(eq("active", true));
+        // O-5：追加 mftId 排序确保确定性
+        q.addOrderField("id", false);
         return daoProvider.daoFor(ErpB2bMftConfig.class).findFirstByQuery(q);
     }
 

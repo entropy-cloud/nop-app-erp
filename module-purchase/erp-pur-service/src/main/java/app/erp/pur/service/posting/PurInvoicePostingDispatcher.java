@@ -22,7 +22,7 @@ import java.util.Map;
  * （独立新事务由 Facade {@code IErpFinVoucherBiz.post()} 的 {@code REQUIRES_NEW} 承接）调用财务过账引擎。
  *
  * <p>对齐 {@code InvPostingDispatcher} 的失败语义：过账失败吞异常记日志、保持 APPROVED+{@code posted=false}
- * （由 Deferred 兜底扫描重试），不阻塞终态。本类为 Facade 编排层，**不持久化源单据**——源单据 {@code posted}
+ * （由 DeferredPostingSweepJob（app.erp.fin.service.job）兜底扫描重试），不阻塞终态。本类为 Facade 编排层，**不持久化源单据**——源单据 {@code posted}
  * 标志由调用方 BizModel 在主事务内统一持久化（避免跨 REQUIRES_NEW 边界操作被挂起事务的托管实体）。
  */
 public class PurInvoicePostingDispatcher {

@@ -2,5 +2,21 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:wf="wf"
       x:extends="_ErpHrSalary.xmeta" wf:wfName="salary-approval">
 
-    <props/>
+    <!-- 安全：薪资明细金额字段对 GraphQL/REST 默认隐藏（internal=true），
+         仅服务端内部代码可访问。完整 @DataAuth 体系见 deferred 项。请勿删除此屏蔽。 -->
+    <props>
+        <prop name="basicSalary" internal="true" x:override="merge"/>
+        <prop name="positionAllowance" internal="true" x:override="merge"/>
+        <prop name="performanceBonus" internal="true" x:override="merge"/>
+        <prop name="overtimePay" internal="true" x:override="merge"/>
+        <prop name="mealAllowance" internal="true" x:override="merge"/>
+        <prop name="transportAllowance" internal="true" x:override="merge"/>
+        <prop name="otherAllowance" internal="true" x:override="merge"/>
+        <prop name="grossSalary" internal="true" x:override="merge"/>
+        <prop name="socialInsurance" internal="true" x:override="merge"/>
+        <prop name="housingFund" internal="true" x:override="merge"/>
+        <prop name="taxAmount" internal="true" x:override="merge"/>
+        <prop name="otherDeductions" internal="true" x:override="merge"/>
+        <prop name="netSalary" internal="true" x:override="merge"/>
+    </props>
 </meta>

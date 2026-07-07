@@ -66,6 +66,15 @@ public class ErpFinReversalListenerRegistry {
 
     @PostConstruct
     public void init() {
+        // O-19：启动期校验——若未注册任何红冲监听者，红冲反写闭环（业务单据回退）不可用，属配置缺陷。
+        // 单域测试（仅 finance）无监听者实现时不阻断启动（降级为 warn），但生产聚合 app（app-erp-all）
+        // 必须注册至少一个监听者——此 warn 在生产日志中会暴露配置遗漏，避免运行期静默跳过监听者派发
+        // 导致业务单据状态与凭证不一致。
+        if (listeners.isEmpty()) {
+            LOG.warn("凭证红冲监听者注册中心启动时未发现任何 IErpFinVoucherReversedListener 实现（errorCode={}）；"
+                    + "红冲反写闭环不可用。生产环境（app-erp-all）必须注册至少一个监听者。",
+                    ErpFinPostingErrors.ERR_POSTING_NO_LISTENERS_REGISTERED.getErrorCode());
+        }
         listeners = Collections.unmodifiableList(listeners);
     }
 

@@ -53,6 +53,8 @@ public class UblInvoiceEdiProvider implements IErpB2bEdiProvider {
         IEntityDao<?> invoiceDao = daoProvider.dao("app.erp.sal.dao.entity.ErpSalInvoice");
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", relatedBillCode));
+        // O-5：追加 invoiceDate DESC 确保确定性
+        q.addOrderField("invoiceDate", true);
         Object invoice = invoiceDao.findFirstByQuery(q);
         if (invoice == null) {
             throw new NopException(ErpB2bErrors.ERR_B2B_EDI_PARSE_FAILED)

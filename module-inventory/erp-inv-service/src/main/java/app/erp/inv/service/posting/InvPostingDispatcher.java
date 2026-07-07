@@ -32,7 +32,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 同法人内部调拨不发事件。
  *
  * <p>过账失败不阻塞移动单终态（cross-domain §与财务域协作 + state-machine §7）：以 try/catch 包裹，
- * 成功置 {@code posted=true}，失败吞异常记日志、保持 {@code posted=false}（由 Deferred 兜底扫描重试）。
+ * 成功置 {@code posted=true}，失败吞异常记日志、保持 {@code posted=false}（由 DeferredPostingSweepJob（app.erp.fin.service.job）兜底扫描重试）。
  */
 public class InvPostingDispatcher {
 
@@ -126,10 +126,13 @@ public class InvPostingDispatcher {
             try {
                 executor.postEvent(ppvEvent);
             } catch (Exception e) {
+                // 安全（O-22）：PPV 金额属于敏感采购成本数据，错误日志中必须脱敏（仅保留量级，隐藏末尾精度）
+                String maskedAmount = maskAmount(ppvAmount);
                 if (e instanceof NopException) {
-                    LOG.warn("采购价差过账失败，移动单 {} 行 {}：{}", move.getCode(), line.getId(), e.getMessage());
+                    LOG.warn("采购价差过账失败，移动单 {} 行 {} 金额(脱敏){}：{}",
+                            move.getCode(), line.getId(), maskedAmount, sanitizeMessage(e.getMessage()));
                 } else {
-                    LOG.error("采购价差过账异常，移动单 {} 行 {}", move.getCode(), line.getId(), e);
+                    LOG.error("采购价差过账异常，移动单 {} 行 {} 金额(脱敏){}", move.getCode(), line.getId(), maskedAmount, e);
                 }
             }
         }
@@ -245,5 +248,27 @@ public class InvPostingDispatcher {
 
     private static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /**
+     * 金额脱敏：仅保留高位量级，末尾精度归零，避免敏感采购成本数据在日志中明文泄露（O-22）。
+     * 例：1234.5678 → 1200.0000
+     */
+    private static String maskAmount(BigDecimal amount) {
+        if (amount == null) {
+            return "null";
+        }
+        BigDecimal masked = amount.setScale(-2, java.math.RoundingMode.HALF_UP).setScale(amount.scale());
+        return masked.toPlainString();
+    }
+
+    /**
+     * 异常消息脱敏（O-22）：将消息中可能内嵌的数字金额模式替换为占位符，避免 PPV 等敏感金额随异常消息写入日志。
+     */
+    private static String sanitizeMessage(String message) {
+        if (message == null) {
+            return "";
+        }
+        return message.replaceAll("\\d+\\.\\d{2,}", "[MASKED_AMOUNT]");
     }
 }

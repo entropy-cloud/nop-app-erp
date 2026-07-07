@@ -1,12 +1,15 @@
-
+ 
 nop:
   debug: true
   auth:
     jwt:
-      enc-key: 3b0ff92c103f4e2faf4d1e7d3efa3ea9
+      # 安全：生产部署必须通过环境变量 JWT_ENC_KEY 注入唯一密钥，禁止使用占位默认值
+      enc-key: ${JWT_ENC_KEY:3b0ff92c103f4e2faf4d1e7d3efa3ea9}
 
     login:
-      allow-create-default-user: true # 如果用户表为空，则自动创建缺省账户nop, 密码123
+      # 安全：默认管理员账户不再自动创建。首次部署请通过初始化脚本或运维流程手动创建管理员，
+      # 避免默认账户 nop/123 在生产环境被未授权访问。
+      allow-create-default-user: false
 
     site-map:
       static-config-path: /nop/main/auth/app.action-auth.xml
@@ -14,7 +17,8 @@ nop:
       support-debug: true
 
   web:
-    validate-page-model: false # 聚合 app 暂跳过页面校验，避免跨域页面引用在集成期阻塞启动
+    # 启用页面模型校验，防止破损或被注入的页面模型进入运行时
+    validate-page-model: true
 
   orm:
     init-database-schema: true
@@ -25,10 +29,10 @@ nop:
     username: sa
     password:
 
-# 支持graphql __schema查询，
+  # 生产环境关闭 GraphQL Schema introspection，避免泄露内部结构供攻击者侦察
   graphql:
     schema-introspection:
-      enabled: true
+      enabled: false
 
 # devservices 会启用testcontainers来管理测试数据库
 quarkus:

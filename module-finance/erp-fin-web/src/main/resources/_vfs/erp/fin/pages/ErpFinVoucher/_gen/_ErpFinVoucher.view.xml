@@ -45,12 +45,6 @@
                 <!--会计期间-->
                 <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
 
-                <!--借方合计(本位币)-->
-                <col id="totalDebit" ui:number="true" sortable="true"/>
-
-                <!--贷方合计(本位币)-->
-                <col id="totalCredit" ui:number="true" sortable="true"/>
-
                 <!--是否红字冲销凭证-->
                 <col id="isReversed" sortable="true"/>
 
@@ -95,8 +89,7 @@
  voucherType[凭证字] postingType[过账类型]
  voucherDate[凭证日期] voucherNo[凭证编号]
  orgId[核算组织] acctSchemaId[账套]
- periodId[会计期间] totalDebit[借方合计(本位币)]
- totalCredit[贷方合计(本位币)] isReversed[是否红字冲销凭证]
+ periodId[会计期间] isReversed[是否红字冲销凭证]
  reversalOfVoucherId[原冲销凭证ID] docStatus[凭证状态]
  postedBy[过账人] postedAt[过账时间]
  remark[备注] delVersion[逻辑删除版本]
@@ -110,8 +103,7 @@
  voucherType[凭证字] postingType[过账类型]
  voucherDate[凭证日期] voucherNo[凭证编号]
  orgId[核算组织] acctSchemaId[账套]
- periodId[会计期间] totalDebit[借方合计(本位币)]
- totalCredit[贷方合计(本位币)] isReversed[是否红字冲销凭证]
+ periodId[会计期间] isReversed[是否红字冲销凭证]
  reversalOfVoucherId[原冲销凭证ID] docStatus[凭证状态]
  postedBy[过账人] postedAt[过账时间]
  remark[备注] 
@@ -123,8 +115,7 @@
  voucherType[凭证字] postingType[过账类型]
  voucherDate[凭证日期] voucherNo[凭证编号]
  orgId[核算组织] acctSchemaId[账套]
- periodId[会计期间] totalDebit[借方合计(本位币)]
- totalCredit[贷方合计(本位币)] isReversed[是否红字冲销凭证]
+ periodId[会计期间] isReversed[是否红字冲销凭证]
  reversalOfVoucherId[原冲销凭证ID] docStatus[凭证状态]
  postedBy[过账人] postedAt[过账时间]
  remark[备注] delVersion[逻辑删除版本]

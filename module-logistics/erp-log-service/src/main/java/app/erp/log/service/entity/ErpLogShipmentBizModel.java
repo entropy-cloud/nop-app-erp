@@ -209,6 +209,8 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
                 daoProvider().daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));
+        // O-5：追加 code 排序确保确定性
+        q.addOrderField("code", false);
         app.erp.md.dao.entity.ErpMdAcctSchema schema = dao.findFirstByQuery(q);
         return schema != null ? schema.getId() : null;
     }

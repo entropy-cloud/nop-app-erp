@@ -187,6 +187,10 @@ public class ErpFinPostingProcessor {
             // 红冲凭证落库后、同事务内取消原辅助账项（对齐冲销语义）。
             timeStageVoid("cancelArApOnReverse", run,
                     () -> arApItemGenerator.cancelOnReverse(billHeadCode, businessType, context));
+            // O-8：原正常凭证补标 isReversed=true 统一由引擎公共流程处理（原由 Asset/ProjectPostingExecutor 各自重复实现）。
+            // 使账簿反映原凭证已被红冲、并允许幂等重过账（同 billCode 再过账时 alreadyPosted 不再命中已冲销凭证）。
+            timeStageVoid("markOriginalVoucherReversed", run,
+                    () -> markOriginalVoucherReversed(billHeadCode, businessType, context));
             // 业财闭环方向二（冲销反写）：红字凭证+回链+辅助账落库后，构造 VoucherReversedEvent 派发给
             // 各域监听者回退源单状态。默认 SYNC 同事务同步通知（posting.md §实现策略 裁决3）。
             timeStageVoid("notifyReversalListeners", run,
@@ -243,15 +247,25 @@ public class ErpFinPostingProcessor {
                 run.traceId, run.billHeadCode, run.businessType, run.currentStage, code, e.getMessage());
     }
 
-    /** 失败先落异常记录再抛（posting-log.md §失败不静默丢弃）：仅对 NopException 落 PENDING 记录，独立事务保证不随回滚丢失。 */
+    /**
+     * 失败先落异常记录再抛（posting-log.md §失败不静默丢弃）。
+     * <p>O-6：对 {@link NopException} 记录其 ErrorCode/Description；对其他 RuntimeException 使用
+     * {@link ErpFinPostingErrors#ERR_POSTING_UNEXPECTED_FAILURE} 泛化错误码统一记录，
+     * 避免未预期异常（如 NPE/IllegalState）丢失于 posted=false 且无异常记录的盲区。
+     */
     private void recordPostFailure(PostingRun run, PostingEvent event, RuntimeException e) {
-        if (!(e instanceof NopException)) {
-            return;
-        }
-        String errorCode = ((NopException) e).getErrorCode();
-        String errorMessage = ((NopException) e).getDescription();
-        if (errorMessage == null) {
-            errorMessage = e.getMessage();
+        String errorCode;
+        String errorMessage;
+        if (e instanceof NopException) {
+            errorCode = ((NopException) e).getErrorCode();
+            errorMessage = ((NopException) e).getDescription();
+            if (errorMessage == null) {
+                errorMessage = e.getMessage();
+            }
+        } else {
+            // O-6：非 NopException 统一记录为未预期失败，保证异常工作台可发现
+            errorCode = ErpFinPostingErrors.ERR_POSTING_UNEXPECTED_FAILURE.getErrorCode();
+            errorMessage = e.getClass().getSimpleName() + ": " + String.valueOf(e.getMessage());
         }
         LocalDate voucherDate = event != null ? event.getVoucherDate() : null;
         Long orgId = event != null ? event.getOrgId() : null;
@@ -266,13 +280,18 @@ public class ErpFinPostingProcessor {
     }
 
     private void recordReverseFailure(PostingRun run, RuntimeException e) {
-        if (!(e instanceof NopException)) {
-            return;
-        }
-        String errorCode = ((NopException) e).getErrorCode();
-        String errorMessage = ((NopException) e).getDescription();
-        if (errorMessage == null) {
-            errorMessage = e.getMessage();
+        String errorCode;
+        String errorMessage;
+        if (e instanceof NopException) {
+            errorCode = ((NopException) e).getErrorCode();
+            errorMessage = ((NopException) e).getDescription();
+            if (errorMessage == null) {
+                errorMessage = e.getMessage();
+            }
+        } else {
+            // O-6：对齐 recordPostFailure 的非 NopException 处理
+            errorCode = ErpFinPostingErrors.ERR_POSTING_UNEXPECTED_FAILURE.getErrorCode();
+            errorMessage = e.getClass().getSimpleName() + ": " + String.valueOf(e.getMessage());
         }
         // 红冲无完整 PostingEvent 快照（按回链反查），eventData 留空；重试经 reverse() 重建。
         exceptionRecorder.record(run.traceId, run.billHeadCode, run.businessType, POSTING_TYPE_REVERSAL,
@@ -393,6 +412,16 @@ public class ErpFinPostingProcessor {
 
     // ---------- 步骤（protected + IServiceContext 末参，供派生覆盖） ----------
 
+    /**
+     * 幂等前置：按业财回链反查已过账凭证。
+     *
+     * <p>O-16 补偿语义：REQUIRES_NEW 事务已提交（凭证已落库）但调用方在 {@code posted=true} 设置前失败的场景下，
+     * 源单据仍为 {@code posted=false}。下次兜底扫描重试调用 {@code process()} 时，本方法返回 {@code true}，
+     * {@code process()} 返回 {@code null}（幂等命中，跳过重试）——这正确表达了"凭证已存在，无需重建"的语义。
+     * 调用方（{@link DeferredPostingSweepJob}）据返回值将异常记录标记为已重试成功，完成补偿闭环。
+     *
+     * <p>已冲销凭证（{@code isReversed=true}）不视为幂等命中——允许同 billCode 重新过账生成新正常凭证。
+     */
     protected boolean alreadyPosted(PostingEvent event, IServiceContext context) {
         List<ErpFinVoucherBillR> links = findBillLinks(event.getBillHeadCode(), event.getBusinessType(), context);
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
@@ -678,6 +707,30 @@ public class ErpFinPostingProcessor {
         List<ErpFinVoucherLine> lines = new ArrayList<>(dao.findAllByQuery(q));
         lines.sort(Comparator.comparingInt(l -> l.getLineNo() == null ? Integer.MAX_VALUE : l.getLineNo()));
         return lines;
+    }
+
+    /**
+     * O-8：红冲后补标原正常凭证 isReversed=true（公共流程统一处理，原由 Asset/ProjectPostingExecutor 各自重复实现）。
+     *
+     * <p>引擎 {@code persistVoucher} 只把新建的红字凭证置 {@code isReversed=true}，未标记原正常凭证已冲销。
+     * 此处补标原正常凭证，使账簿反映原凭证已被红冲、并允许幂等重过账（同 billCode 再过账时 alreadyPublished 不再命中已冲销凭证）。
+     *
+     * <p>标记规则：仅标记 NORMAL 过账类型 + 已过账 + 未冲销的凭证；REVERSAL 红字凭证跳过。
+     */
+    protected void markOriginalVoucherReversed(String billHeadCode, ErpFinBusinessType businessType,
+                                                IServiceContext context) {
+        List<ErpFinVoucherBillR> links = findBillLinks(billHeadCode, businessType, context);
+        IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
+        for (ErpFinVoucherBillR link : links) {
+            ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
+            if (voucher != null && Objects.equals(voucher.getDocStatus(), VOUCHER_STATUS_POSTED)
+                    && !Boolean.TRUE.equals(voucher.getIsReversed())
+                    && (voucher.getPostingType() == null
+                        || Objects.equals(voucher.getPostingType(), POSTING_TYPE_NORMAL))) {
+                voucher.setIsReversed(true);
+                voucherDao.updateEntity(voucher);
+            }
+        }
     }
 
     protected String buildVoucherCode(ErpFinBusinessType type, boolean reversal, IServiceContext context) {

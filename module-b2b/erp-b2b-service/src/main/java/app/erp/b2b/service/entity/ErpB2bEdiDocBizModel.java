@@ -239,6 +239,8 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
                 eq("formatId", formatId),
                 eq("relatedBillType", relatedBillType),
                 eq("relatedBillCode", relatedBillCode)));
+        // O-5：追加 id DESC 确保确定性
+        q.addOrderField("id", true);
         ErpB2bEdiDoc existing = daoProvider().daoFor(ErpB2bEdiDoc.class).findFirstByQuery(q);
         if (existing != null) {
             throw new NopException(ErpB2bErrors.ERR_B2B_EDI_DOC_ALREADY_PROCESSED)
@@ -250,6 +252,8 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
     private ErpB2bEdiFormat findFormatByCode(String code) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("code", code));
+        // O-5：追加 code 排序确保确定性
+        q.addOrderField("code", false);
         return daoProvider().daoFor(ErpB2bEdiFormat.class).findFirstByQuery(q);
     }
 

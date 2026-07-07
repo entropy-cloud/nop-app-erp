@@ -1,6 +1,8 @@
 
 package app.erp.fin.service.entity;
 
+import io.nop.api.core.annotations.biz.AuditType;
+import io.nop.api.core.annotations.biz.BizAudit;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.core.Name;
@@ -27,6 +29,12 @@ import jakarta.inject.Inject;
  * ORM Session 由编排层 {@link ErpFinPostingProcessor} 的 {@code @SingleSession} 承接（@SingleSession 原位于
  * 重构前的过账入口方法、现迁移至编排方法），使 Session 作用域精确覆盖 ORM 工作、在编排方法返回时刷新——
  * 这样跨域调用方（{@code InvPostingDispatcher}）的 try/catch 能稳定捕获过账异常（事务/Session 边界不自洽问题见 plan 闭合记录）。
+ *
+ * <p>O-7：{@link #reverse} 对齐 {@link #post} 叠加 {@link Transactional}(REQUIRES_NEW)，使红冲凭证的写操作
+ * 同样以独立事务承接，避免红冲异常污染调用方主事务（与过账一致的事务边界语义）。
+ *
+ * <p>O-17：{@link #post} 叠加 {@link BizAudit}(AUDIT_SUCCESS)，过账操作经平台审计日志机制记录操作人/时间/事件键，
+ * 满足会计凭证过账的可追溯性要求。
  */
 @BizModel("ErpFinVoucher")
 public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implements IErpFinVoucherBiz {
@@ -39,6 +47,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
 
     @Override
     @BizMutation
+    @BizAudit(auditType = AuditType.AUDIT_SUCCESS)
     @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
     public Long post(@Name("event") PostingEvent event, IServiceContext context) {
         return postingProcessor.process(event, context);
@@ -46,6 +55,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
 
     @Override
     @BizMutation
+    @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
     public Long reverse(@Name("billHeadCode") String billHeadCode,
                         @Name("businessType") ErpFinBusinessType businessType,
                         IServiceContext context) {
