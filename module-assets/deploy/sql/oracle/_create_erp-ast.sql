@@ -141,6 +141,41 @@ CREATE TABLE erp_ast_asset_capitalization(
   constraint PK_erp_ast_asset_capitalization primary key (ID)
 );
 
+CREATE TABLE erp_ast_inventory(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200)  ,
+  ORG_ID NUMBER(20)  ,
+  STATUS VARCHAR2(20) NOT NULL ,
+  RANGE_DEPARTMENT_ID NUMBER(20)  ,
+  RANGE_CATEGORY_ID NUMBER(20)  ,
+  RANGE_LOCATION_ID NUMBER(20)  ,
+  RESPONSIBLE_BY_ID NUMBER(20)  ,
+  BUSINESS_DATE DATE NOT NULL ,
+  CURRENCY_ID NUMBER(20)  ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  SURPLUS_COUNT INTEGER default 0   ,
+  SHORTAGE_COUNT INTEGER default 0   ,
+  MATCHED_COUNT INTEGER default 0   ,
+  SURPLUS_AMOUNT NUMBER(20,4) default 0   ,
+  SHORTAGE_AMOUNT NUMBER(20,4) default 0   ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_ast_inventory primary key (ID)
+);
+
 CREATE TABLE erp_ast_depreciation_schedule(
   ID NUMBER(20) NOT NULL ,
   ASSET_ID NUMBER(20) NOT NULL ,
@@ -354,6 +389,37 @@ CREATE TABLE erp_ast_merge(
   AMOUNT_SOURCE NUMBER(20,4) default 0   ,
   AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
   constraint PK_erp_ast_merge primary key (ID)
+);
+
+CREATE TABLE erp_ast_inventory_line(
+  ID NUMBER(20) NOT NULL ,
+  INVENTORY_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  LINE_NO INTEGER  ,
+  ASSET_ID NUMBER(20)  ,
+  ASSET_CODE_SNAPSHOT VARCHAR2(50)  ,
+  ASSET_NAME_SNAPSHOT VARCHAR2(200)  ,
+  CATEGORY_ID NUMBER(20)  ,
+  BOOK_QUANTITY INTEGER default 0   ,
+  ACTUAL_QUANTITY INTEGER  ,
+  VARIANCE_QUANTITY INTEGER default 0   ,
+  VARIANCE_TYPE VARCHAR2(20)  ,
+  BOOK_VALUE NUMBER(20,4) default 0   ,
+  ASSESSED_VALUE NUMBER(20,4) default 0   ,
+  VARIANCE_AMOUNT NUMBER(20,4) default 0   ,
+  DISPOSITION VARCHAR2(20)  ,
+  NEW_ASSET_ID NUMBER(20)  ,
+  CAPITALIZATION_ID NUMBER(20)  ,
+  DISPOSAL_ID NUMBER(20)  ,
+  INVESTIGATED_REMARK VARCHAR2(500)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_ast_inventory_line primary key (ID)
 );
 
 CREATE TABLE erp_ast_cip_cost_item(
@@ -614,6 +680,70 @@ CREATE TABLE erp_ast_merge_line(
       COMMENT ON COLUMN erp_ast_asset_capitalization.AMOUNT_SOURCE IS '源币种金额';
                     
       COMMENT ON COLUMN erp_ast_asset_capitalization.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON TABLE erp_ast_inventory IS '资产盘点单';
+                
+      COMMENT ON COLUMN erp_ast_inventory.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.CODE IS '盘点单号';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.NAME IS '盘点名称';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.STATUS IS '盘点状态';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.RANGE_DEPARTMENT_ID IS '范围-部门';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.RANGE_CATEGORY_ID IS '范围-资产类别';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.RANGE_LOCATION_ID IS '范围-地点';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.RESPONSIBLE_BY_ID IS '盘点负责人';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.BUSINESS_DATE IS '盘点基准日';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.SURPLUS_COUNT IS '盘盈行数';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.SHORTAGE_COUNT IS '盘亏行数';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.MATCHED_COUNT IS '一致行数';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.SURPLUS_AMOUNT IS '盘盈金额';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.SHORTAGE_AMOUNT IS '盘亏金额';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.POSTED IS '已过账';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.APPROVED_BY IS '复核人';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.APPROVED_AT IS '复核时间';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.AMOUNT_SOURCE IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_inventory.REMARK IS '备注';
                     
       COMMENT ON TABLE erp_ast_depreciation_schedule IS '折旧计划';
                 
@@ -1000,6 +1130,62 @@ CREATE TABLE erp_ast_merge_line(
       COMMENT ON COLUMN erp_ast_merge.AMOUNT_SOURCE IS '源币种金额';
                     
       COMMENT ON COLUMN erp_ast_merge.AMOUNT_FUNCTIONAL IS '本位币金额';
+                    
+      COMMENT ON TABLE erp_ast_inventory_line IS '资产盘点行';
+                
+      COMMENT ON COLUMN erp_ast_inventory_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.INVENTORY_ID IS '盘点单';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.ORG_ID IS '所属组织';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.ASSET_ID IS '账面资产';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.ASSET_CODE_SNAPSHOT IS '资产编码快照';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.ASSET_NAME_SNAPSHOT IS '资产名称快照';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.CATEGORY_ID IS '资产类别';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.BOOK_QUANTITY IS '账面数量';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.ACTUAL_QUANTITY IS '实盘数量';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.VARIANCE_QUANTITY IS '差异数量';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.VARIANCE_TYPE IS '差异类型';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.BOOK_VALUE IS '账面价值';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.ASSESSED_VALUE IS '评估价值';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.VARIANCE_AMOUNT IS '差异金额';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.DISPOSITION IS '差异处置';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.NEW_ASSET_ID IS '盘盈新建资产';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.CAPITALIZATION_ID IS '盘盈资本化单';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.DISPOSAL_ID IS '盘亏处置单';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.INVESTIGATED_REMARK IS '调查备注';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ast_inventory_line.REMARK IS '备注';
                     
       COMMENT ON TABLE erp_ast_cip_cost_item IS 'CIP成本归集行';
                 

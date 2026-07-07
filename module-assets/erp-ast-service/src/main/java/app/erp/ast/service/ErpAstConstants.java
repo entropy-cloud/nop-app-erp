@@ -40,6 +40,12 @@ public interface ErpAstConstants {
     /** CIP 是否允许部分转固（默认 true）。 */
     String CONFIG_CIP_PARTIAL_TRANSFER_ALLOWED = "erp-ast.cip-partial-transfer-allowed";
 
+    // ---- 盘点 配置项（inventory.md §六 + plan 0842-1） ----
+    /** 盘点过账是否强制先 approve 复核（默认 true）。 */
+    String CONFIG_INVENTORY_REQUIRE_APPROVAL = "erp-ast.inventory-require-approval";
+    /** 盘亏是否阻塞 post 待调查（true=所有盘亏须先 INVESTIGATE；默认 false=允许盘亏直接触发处置）。 */
+    String CONFIG_INVENTORY_NEGATIVE_SHORTAGE_BLOCKS = "erp-ast.inventory-negative-shortage-blocks";
+
     // ---- asset-status ----
     String ASSET_STATUS_DRAFT = "DRAFT";
     String ASSET_STATUS_IN_SERVICE = "IN_SERVICE";
@@ -109,6 +115,24 @@ public interface ErpAstConstants {
     String CIP_COST_TYPE_INTEREST_CAPITALIZATION = "INTEREST_CAPITALIZATION";
     String CIP_COST_TYPE_OTHER = "OTHER";
 
+    // ---- inventory-status（盘点单状态机，inventory.md §一） ----
+    String INVENTORY_STATUS_DRAFT = "DRAFT";
+    String INVENTORY_STATUS_COUNTING = "COUNTING";
+    String INVENTORY_STATUS_RECONCILING = "RECONCILING";
+    String INVENTORY_STATUS_POSTED = "POSTED";
+    String INVENTORY_STATUS_CANCELLED = "CANCELLED";
+
+    // ---- variance-type（盘点差异类型） ----
+    String VARIANCE_TYPE_SURPLUS = "SURPLUS";
+    String VARIANCE_TYPE_SHORTAGE = "SHORTAGE";
+    String VARIANCE_TYPE_MATCHED = "MATCHED";
+
+    // ---- inventory-line-disposition（盘点差异处置） ----
+    String INVENTORY_DISPOSITION_NONE = "NONE";
+    String INVENTORY_DISPOSITION_NEW_CARD = "NEW_CARD";
+    String INVENTORY_DISPOSITION_DISPOSAL = "DISPOSAL";
+    String INVENTORY_DISPOSITION_INVESTIGATE = "INVESTIGATE";
+
     // ---- erp-fin/period-status（折旧期间控制引用） ----
     String PERIOD_STATUS_OPEN = "OPEN";
     String PERIOD_STATUS_CLOSED = "CLOSED";
@@ -157,4 +181,14 @@ public interface ErpAstConstants {
     String BILL_DATA_LINE_AMOUNT = "amount";
     /** 行内摘要键。 */
     String BILL_DATA_LINE_MEMO = "memo";
+
+    // ---- PostingEvent.billData 键（盘点差异过账专用） ----
+    /** 盘盈合计金额（正数）。 */
+    String BILL_DATA_INVENTORY_SURPLUS_AMOUNT = "INVENTORY_SURPLUS_AMOUNT";
+    /** 盘亏合计金额（正数）。 */
+    String BILL_DATA_INVENTORY_SHORTAGE_AMOUNT = "INVENTORY_SHORTAGE_AMOUNT";
+    /** 营业外收入科目编码（贷方，盘盈）。 */
+    String BILL_DATA_NON_OPERATING_INCOME_SUBJECT_CODE = "NON_OPERATING_INCOME_SUBJECT_CODE";
+    /** 营业外支出科目编码（借方，盘亏）。 */
+    String BILL_DATA_NON_OPERATING_EXPENSE_SUBJECT_CODE = "NON_OPERATING_EXPENSE_SUBJECT_CODE";
 }

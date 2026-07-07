@@ -46,6 +46,12 @@
     <bean id="app.erp.ast.service.posting.AssetMergeAcctDocProvider"
           class="app.erp.ast.service.posting.AssetMergeAcctDocProvider"/>
 
+    <!-- 资产盘点业财过账（UC-AST-09）：派发器 + Provider（复用 AssetPostingExecutor；post + reverse） -->
+    <bean id="app.erp.ast.service.posting.AssetInventoryPostingDispatcher"
+          class="app.erp.ast.service.posting.AssetInventoryPostingDispatcher"/>
+    <bean id="app.erp.ast.service.posting.AssetInventoryAcctDocProvider"
+          class="app.erp.ast.service.posting.AssetInventoryAcctDocProvider"/>
+
     <!-- assets 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。
          各 Facade BizModel 仅负责入口/事务/委托，编排委托对应 Processor。 -->
     <bean id="app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor"
@@ -62,6 +68,8 @@
           class="app.erp.ast.service.processor.ErpAstSplitProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstMergeProcessor"
           class="app.erp.ast.service.processor.ErpAstMergeProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstInventoryProcessor"
+          class="app.erp.ast.service.processor.ErpAstInventoryProcessor"/>
 
     <!-- 定时批量折旧 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-ast.depreciation-cron 配置门控。 -->

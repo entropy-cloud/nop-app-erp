@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 盘点差异类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 盘盈
+    value: SURPLUS
+    description: 
+  
+  - label: 盘亏
+    value: SHORTAGE
+    description: 
+  
+  - label: 一致
+    value: MATCHED
+    description: 
+  

@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 盘点单状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 草稿
+    value: DRAFT
+    description: 
+  
+  - label: 盘点中
+    value: COUNTING
+    description: 
+  
+  - label: 差异复核
+    value: RECONCILING
+    description: 
+  
+  - label: 已过账
+    value: POSTED
+    description: 
+  
+  - label: 已作废
+    value: CANCELLED
+    description: 
+  

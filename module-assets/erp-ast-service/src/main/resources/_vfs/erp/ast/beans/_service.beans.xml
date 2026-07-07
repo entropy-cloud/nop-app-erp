@@ -28,6 +28,13 @@
         <property name="bizObjName" value="ErpAstAssetCapitalization"/>
     </bean>
 
+    <bean id="app.erp.ast.service.entity.ErpAstInventoryBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstInventory" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstInventoryBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpAstInventory"/>
+    </bean>
+
     <bean id="app.erp.ast.service.entity.ErpAstDepreciationScheduleBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpAstDepreciationSchedule" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -77,6 +84,14 @@
     <bean id="biz_ErpAstMerge" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.ast.biz.IErpAstMergeBiz"
           ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpAstMerge"/>
+    </bean>
+
+    <bean id="app.erp.ast.service.entity.ErpAstInventoryLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpAstInventoryLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.ast.biz.IErpAstInventoryLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpAstInventoryLine"/>
     </bean>
 
     <bean id="app.erp.ast.service.entity.ErpAstCipCostItemBizModel" ioc:type="@bean:id" ioc:default="true"/>

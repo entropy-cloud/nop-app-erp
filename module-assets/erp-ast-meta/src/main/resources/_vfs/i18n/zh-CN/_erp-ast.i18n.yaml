@@ -8,6 +8,8 @@ entity:
     ErpAstCipProgressBilling: CIP进度付款
     ErpAstDepreciationSchedule: 折旧计划
     ErpAstDisposal: 资产处置
+    ErpAstInventory: 资产盘点单
+    ErpAstInventoryLine: 资产盘点行
     ErpAstMerge: 资产合并单
     ErpAstMergeLine: 资产合并行
     ErpAstMovement: 资产移动
@@ -261,6 +263,83 @@ prop:
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
+      version: 数据版本
+    ErpAstInventory:
+      amountFunctional: 本位币金额
+      amountSource: 源币种金额
+      approvedAt: 复核时间
+      approvedBy: 复核人
+      businessDate: 盘点基准日
+      code: 盘点单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      exchangeRate: 汇率
+      id: ID
+      lines: null
+      matchedCount: 一致行数
+      name: 盘点名称
+      org: null
+      orgId: 业务组织
+      posted: 已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      rangeCategory: null
+      rangeCategoryId: 范围-资产类别
+      rangeDepartment: null
+      rangeDepartmentId: 范围-部门
+      rangeLocation: null
+      rangeLocationId: 范围-地点
+      remark: 备注
+      responsibleBy: null
+      responsibleById: 盘点负责人
+      shortageAmount: 盘亏金额
+      shortageCount: 盘亏行数
+      status: 盘点状态
+      status_label: 盘点状态
+      surplusAmount: 盘盈金额
+      surplusCount: 盘盈行数
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpAstInventoryLine:
+      actualQuantity: 实盘数量
+      assessedValue: 评估价值
+      asset: null
+      assetCodeSnapshot: 资产编码快照
+      assetId: 账面资产
+      assetNameSnapshot: 资产名称快照
+      bookQuantity: 账面数量
+      bookValue: 账面价值
+      capitalization: null
+      capitalizationId: 盘盈资本化单
+      category: null
+      categoryId: 资产类别
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      disposal: null
+      disposalId: 盘亏处置单
+      disposition: 差异处置
+      disposition_label: 差异处置
+      id: ID
+      inventory: null
+      inventoryId: 盘点单
+      investigatedRemark: 调查备注
+      lineNo: 行号
+      newAsset: null
+      newAssetId: 盘盈新建资产
+      org: null
+      orgId: 所属组织
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      varianceAmount: 差异金额
+      varianceQuantity: 差异数量
+      varianceType: 差异类型
+      varianceType_label: 差异类型
       version: 数据版本
     ErpAstMerge:
       amountFunctional: 本位币金额

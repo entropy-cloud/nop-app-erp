@@ -46,6 +46,11 @@ public interface ErpAstErrors {
     String ARG_ACTUAL = "actual";
     String ARG_EXPECTED = "expected";
 
+    // --- 盘点 作用域参数键 ---
+    String ARG_INVENTORY_CODE = "inventoryCode";
+    String ARG_INVENTORY_ID = "inventoryId";
+    String ARG_LINE_NO = "lineNo";
+
     // --- 资本化 ---
     ErrorCode ERR_CAPITALIZATION_NOT_FOUND = ErrorCode.define(
             "erp.err.ast.capitalization.not-found",
@@ -303,4 +308,38 @@ public interface ErpAstErrors {
             "erp.err.ast.merge.reverse-not-supported",
             "资产合并单 {mergeCode} 执行后不可撤销（owner doc split-merge.md §关键业务规则 5），错误更正请走资产处置 + 新建流程",
             ARG_MERGE_CODE);
+
+    // --- 资产盘点（UC-AST-09） ---
+    ErrorCode ERR_AST_INVENTORY_NOT_FOUND = ErrorCode.define(
+            "erp.err.ast.inventory.not-found",
+            "盘点单 {inventoryId} 不存在",
+            ARG_INVENTORY_ID);
+    ErrorCode ERR_AST_INVENTORY_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.ast.inventory.illegal-status-transition",
+            "盘点单 {inventoryCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_INVENTORY_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_AST_INVENTORY_LINE_ASSET_DUPLICATE = ErrorCode.define(
+            "erp.err.ast.inventory.line-asset-duplicate",
+            "盘点单 {inventoryCode} 资产 {assetCode} 在同一盘点单内重复",
+            ARG_INVENTORY_CODE, ARG_ASSET_CODE);
+    ErrorCode ERR_AST_INVENTORY_RANGE_EMPTY = ErrorCode.define(
+            "erp.err.ast.inventory.range-empty",
+            "盘点单 {inventoryCode} 范围内无可盘点的在用/闲置资产",
+            ARG_INVENTORY_CODE);
+    ErrorCode ERR_AST_INVENTORY_NOT_RECONCILED = ErrorCode.define(
+            "erp.err.ast.inventory.not-reconciled",
+            "盘点单 {inventoryCode} 当前状态={currentStatus}，仅差异复核(RECONCILING)状态允许此操作",
+            ARG_INVENTORY_CODE, ARG_CURRENT_STATUS);
+    ErrorCode ERR_AST_INVENTORY_VARIANCE_NOT_PROCESSED = ErrorCode.define(
+            "erp.err.ast.inventory.variance-not-processed",
+            "盘点单 {inventoryCode} 仍有差异行未处置（盘盈/盘亏须先 processVariance）",
+            ARG_INVENTORY_CODE);
+    ErrorCode ERR_AST_INVENTORY_SHORTAGE_BLOCKS = ErrorCode.define(
+            "erp.err.ast.inventory.shortage-blocks",
+            "盘点单 {inventoryCode} 存在未调查的盘亏，配置 erp-ast.inventory-negative-shortage-blocks=true 阻塞过账",
+            ARG_INVENTORY_CODE);
+    ErrorCode ERR_AST_INVENTORY_ALREADY_POSTED = ErrorCode.define(
+            "erp.err.ast.inventory.already-posted",
+            "盘点单 {inventoryCode} 已过账（POSTED 终态），纠错请走 reverse",
+            ARG_INVENTORY_CODE);
 }

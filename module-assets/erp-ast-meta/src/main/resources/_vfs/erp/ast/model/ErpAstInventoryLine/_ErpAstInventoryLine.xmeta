@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="list" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="资产盘点行" i18n-en:displayName="Asset Inventory Line" tagSet="gid,erp.assets"
+      xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.ast.dao.entity.ErpAstInventoryLine</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="inventoryId" displayName="盘点单" propId="2" i18n-en:displayName="Inventory" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="inventory">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="所属组织" propId="3" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="lineNo" displayName="行号" propId="4" i18n-en:displayName="Line No" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="assetId" displayName="账面资产" propId="5" i18n-en:displayName="Asset" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="asset">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="assetCodeSnapshot" displayName="资产编码快照" propId="6" i18n-en:displayName="Asset Code Snapshot"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="assetNameSnapshot" displayName="资产名称快照" propId="7" i18n-en:displayName="Asset Name Snapshot"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="categoryId" displayName="资产类别" propId="8" i18n-en:displayName="Category" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="category">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="bookQuantity" displayName="账面数量" propId="9" i18n-en:displayName="Book Quantity" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="actualQuantity" displayName="实盘数量" propId="10" i18n-en:displayName="Actual Quantity"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="varianceQuantity" displayName="差异数量" propId="11" i18n-en:displayName="Variance Quantity"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="varianceType" displayName="差异类型" propId="12" i18n-en:displayName="Variance Type" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-ast/variance-type"/>
+        </prop>
+        <prop name="bookValue" displayName="账面价值" propId="13" i18n-en:displayName="Book Value" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="assessedValue" displayName="评估价值" propId="14" i18n-en:displayName="Assessed Value" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="varianceAmount" displayName="差异金额" propId="15" i18n-en:displayName="Variance Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="disposition" displayName="差异处置" propId="16" i18n-en:displayName="Disposition" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-ast/inventory-line-disposition"/>
+        </prop>
+        <prop name="newAssetId" displayName="盘盈新建资产" propId="17" i18n-en:displayName="New Asset" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="newAsset">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="capitalizationId" displayName="盘盈资本化单" propId="18" i18n-en:displayName="Capitalization"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="capitalization">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="disposalId" displayName="盘亏处置单" propId="19" i18n-en:displayName="Disposal" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="disposal">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="investigatedRemark" displayName="调查备注" propId="20" i18n-en:displayName="Investigated Remark"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="21" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="22" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="23" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="24" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="25" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="26" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="27" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="inventory" i18n-en:displayName="Inventory" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="inventoryId" ext:joinRightProp="id" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpAstInventory"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="asset" i18n-en:displayName="Asset" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="assetId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpAstAsset"/>
+        </prop>
+        <prop name="category" i18n-en:displayName="Category" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="categoryId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpAstAssetCategory"/>
+        </prop>
+        <prop name="newAsset" i18n-en:displayName="New Asset" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="newAssetId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpAstAsset"/>
+        </prop>
+        <prop name="capitalization" i18n-en:displayName="Capitalization" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="capitalizationId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpAstAssetCapitalization"/>
+        </prop>
+        <prop name="disposal" i18n-en:displayName="Disposal" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="disposalId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpAstDisposal"/>
+        </prop>
+    </props>
+</meta>

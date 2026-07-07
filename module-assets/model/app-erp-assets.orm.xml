@@ -133,6 +133,27 @@
             <option code="INTEREST_CAPITALIZATION" label="利息资本化" value="INTEREST_CAPITALIZATION" i18n-en:label='Interest Capitalization'/>
             <option code="OTHER" label="其他" value="OTHER" i18n-en:label='Other'/>
         </dict>
+        <!-- 盘点单状态机：DRAFT 草稿 / COUNTING 盘点中 / RECONCILING 差异复核(冻结) / POSTED 已过账(终态) / CANCELLED 已作废(终态) -->
+        <dict label="盘点单状态" name="erp-ast/inventory-status" valueType="string" i18n-en:label='Inventory Status'>
+            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
+            <option code="COUNTING" label="盘点中" value="COUNTING" i18n-en:label='Counting'/>
+            <option code="RECONCILING" label="差异复核" value="RECONCILING" i18n-en:label='Reconciling'/>
+            <option code="POSTED" label="已过账" value="POSTED" i18n-en:label='Posted'/>
+            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Cancelled'/>
+        </dict>
+        <!-- 盘点差异类型：SURPLUS 盘盈(实盘>账面) / SHORTAGE 盘亏(实盘<账面) / MATCHED 一致 -->
+        <dict label="盘点差异类型" name="erp-ast/variance-type" valueType="string" i18n-en:label='Variance Type'>
+            <option code="SURPLUS" label="盘盈" value="SURPLUS" i18n-en:label='Surplus'/>
+            <option code="SHORTAGE" label="盘亏" value="SHORTAGE" i18n-en:label='Shortage'/>
+            <option code="MATCHED" label="一致" value="MATCHED" i18n-en:label='Matched'/>
+        </dict>
+        <!-- 盘点差异处置：NEW_CARD 盘盈建新卡 / DISPOSAL 盘亏触发处置 / INVESTIGATE 标记调查 / NONE 无需处置(一致) -->
+        <dict label="盘点差异处置" name="erp-ast/inventory-line-disposition" valueType="string" i18n-en:label='Inventory Line Disposition'>
+            <option code="NONE" label="无需处置" value="NONE" i18n-en:label='None'/>
+            <option code="NEW_CARD" label="盘盈建新卡" value="NEW_CARD" i18n-en:label='New Card'/>
+            <option code="DISPOSAL" label="盘亏触发处置" value="DISPOSAL" i18n-en:label='Disposal'/>
+            <option code="INVESTIGATE" label="标记调查" value="INVESTIGATE" i18n-en:label='Investigate'/>
+        </dict>
     </dicts>
 
     <entities>
@@ -1085,6 +1106,168 @@
                 </index>
                 <index name="IDX_AST_MERGE_LINE_SOURCE_ASSET_ID" unique="false">
                     <column name="sourceAssetId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 资产盘点单头（UC-AST-09）：范围(部门/类别/地点) → 录入实盘 → 差异复核 → 过账 -->
+        <entity className="app.erp.ast.dao.entity.ErpAstInventory"
+                displayName="资产盘点单" ext:icon="clipboard-list" i18n-en:displayName="Asset Inventory" name="app.erp.ast.dao.entity.ErpAstInventory"
+                tableName="erp_ast_inventory" tagSet="gid,erp.assets" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" displayName="盘点单号" propId="2" domain="assetCode" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Code' />
+                <column name="name" code="NAME" displayName="盘点名称" propId="3" domain="name" stdSqlType="VARCHAR" precision="200" i18n-en:displayName='Name' />
+                <column name="orgId" code="ORG_ID" displayName="业务组织" propId="4" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="status" code="STATUS" displayName="盘点状态" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/inventory-status" i18n-en:displayName='Status' />
+                <column name="rangeDepartmentId" code="RANGE_DEPARTMENT_ID" displayName="范围-部门" propId="6" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Range Department' />
+                <column name="rangeCategoryId" code="RANGE_CATEGORY_ID" displayName="范围-资产类别" propId="7" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Range Category' />
+                <column name="rangeLocationId" code="RANGE_LOCATION_ID" displayName="范围-地点" propId="8" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Range Location' />
+                <column name="responsibleById" code="RESPONSIBLE_BY_ID" displayName="盘点负责人" propId="9" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Responsible By' />
+                <column name="businessDate" code="BUSINESS_DATE" displayName="盘点基准日" propId="10" stdSqlType="DATE" stdDataType="date" mandatory="true" i18n-en:displayName='Business Date' />
+                <column name="currencyId" code="CURRENCY_ID" displayName="币种" propId="11" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="exchangeRate" code="EXCHANGE_RATE" displayName="汇率" propId="12" domain="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1" i18n-en:displayName='Exchange Rate' />
+                <column name="surplusCount" code="SURPLUS_COUNT" displayName="盘盈行数" propId="13" stdSqlType="INTEGER" stdDataType="int" defaultValue="0" i18n-en:displayName='Surplus Count' />
+                <column name="shortageCount" code="SHORTAGE_COUNT" displayName="盘亏行数" propId="14" stdSqlType="INTEGER" stdDataType="int" defaultValue="0" i18n-en:displayName='Shortage Count' />
+                <column name="matchedCount" code="MATCHED_COUNT" displayName="一致行数" propId="15" stdSqlType="INTEGER" stdDataType="int" defaultValue="0" i18n-en:displayName='Matched Count' />
+                <column name="surplusAmount" code="SURPLUS_AMOUNT" displayName="盘盈金额" propId="16" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Surplus Amount' />
+                <column name="shortageAmount" code="SHORTAGE_AMOUNT" displayName="盘亏金额" propId="17" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Shortage Amount' />
+                <column name="posted" code="POSTED" displayName="已过账" propId="18" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted' />
+                <column name="postedAt" code="POSTED_AT" displayName="过账时间" propId="19" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Posted At' />
+                <column name="postedBy" stdDomain="userId" code="POSTED_BY" displayName="过账人" propId="20" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Posted By' />
+                <column name="approvedBy" stdDomain="userId" code="APPROVED_BY" displayName="复核人" propId="21" stdSqlType="VARCHAR" precision="36" stdDataType="string" i18n-en:displayName='Approved By' />
+                <column name="approvedAt" code="APPROVED_AT" displayName="复核时间" propId="22" stdSqlType="DATETIME" stdDataType="datetime" i18n-en:displayName='Approved At' />
+                <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" code="AMOUNT_SOURCE" propId="23" i18n-en:displayName='Amt (Source)' />
+                <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" code="AMOUNT_FUNCTIONAL" propId="24" i18n-en:displayName='Amt (Functional)' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="25" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="26" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="27" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="28" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="29" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="30" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="remark" code="REMARK" displayName="备注" propId="31" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+            </columns>
+            <relations>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'>
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="rangeDepartment" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Range Department'>
+                    <join><on leftProp="rangeDepartmentId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="rangeCategory" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub" i18n-en:displayName='Range Category'>
+                    <join><on leftProp="rangeCategoryId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="rangeLocation" refEntityName="app.erp.md.dao.entity.ErpMdLocation" tagSet="pub" i18n-en:displayName='Range Location'>
+                    <join><on leftProp="rangeLocationId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="responsibleBy" refEntityName="app.erp.md.dao.entity.ErpMdEmployee" tagSet="pub" i18n-en:displayName='Responsible By'>
+                    <join><on leftProp="responsibleById" rightProp="id"/></join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'>
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
+                <!-- 盘点头→行（cascade-delete：作废/删除头时联动清理行） -->
+                <to-many name="lines" refEntityName="app.erp.ast.dao.entity.ErpAstInventoryLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines'>
+                    <join><on leftProp="id" rightProp="inventoryId"/></join>
+                </to-many>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_AST_INVENTORY_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_AST_INVENTORY_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_AST_INVENTORY_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+                <index name="IDX_AST_INVENTORY_RANGE_DEPARTMENT_ID" unique="false">
+                    <column name="rangeDepartmentId"/>
+                </index>
+                <index name="IDX_AST_INVENTORY_RANGE_CATEGORY_ID" unique="false">
+                    <column name="rangeCategoryId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 资产盘点行（每行一个资产或一条盘盈新增项；账面/实盘/差异/处置） -->
+        <entity className="app.erp.ast.dao.entity.ErpAstInventoryLine"
+                displayName="资产盘点行" ext:icon="list" i18n-en:displayName="Asset Inventory Line" name="app.erp.ast.dao.entity.ErpAstInventoryLine"
+                tableName="erp_ast_inventory_line" tagSet="gid,erp.assets" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="inventoryId" code="INVENTORY_ID" displayName="盘点单" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true" i18n-en:displayName='Inventory' />
+                <column name="orgId" code="ORG_ID" displayName="所属组织" propId="3" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="lineNo" code="LINE_NO" displayName="行号" propId="4" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Line No' />
+                <!-- assetId 可空：盘盈行无对应账面卡片 -->
+                <column name="assetId" code="ASSET_ID" displayName="账面资产" propId="5" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Asset' />
+                <column name="assetCodeSnapshot" code="ASSET_CODE_SNAPSHOT" displayName="资产编码快照" propId="6" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Asset Code Snapshot' />
+                <column name="assetNameSnapshot" code="ASSET_NAME_SNAPSHOT" displayName="资产名称快照" propId="7" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Asset Name Snapshot' />
+                <column name="categoryId" code="CATEGORY_ID" displayName="资产类别" propId="8" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Category' />
+                <column name="bookQuantity" code="BOOK_QUANTITY" displayName="账面数量" propId="9" stdSqlType="INTEGER" stdDataType="int" defaultValue="0" i18n-en:displayName='Book Quantity' />
+                <column name="actualQuantity" code="ACTUAL_QUANTITY" displayName="实盘数量" propId="10" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Actual Quantity' />
+                <column name="varianceQuantity" code="VARIANCE_QUANTITY" displayName="差异数量" propId="11" stdSqlType="INTEGER" stdDataType="int" defaultValue="0" i18n-en:displayName='Variance Quantity' />
+                <column name="varianceType" code="VARIANCE_TYPE" displayName="差异类型" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" ext:dict="erp-ast/variance-type" i18n-en:displayName='Variance Type' />
+                <column name="bookValue" code="BOOK_VALUE" displayName="账面价值" propId="13" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Book Value' />
+                <column name="assessedValue" code="ASSESSED_VALUE" displayName="评估价值" propId="14" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Assessed Value' />
+                <column name="varianceAmount" code="VARIANCE_AMOUNT" displayName="差异金额" propId="15" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Variance Amount' />
+                <column name="disposition" code="DISPOSITION" displayName="差异处置" propId="16" stdSqlType="VARCHAR" precision="20" stdDataType="string" ext:dict="erp-ast/inventory-line-disposition" i18n-en:displayName='Disposition' />
+                <!-- 盘盈建新卡的产物（资本化单 + 新资产），盘亏触发处置的产物（处置单） -->
+                <column name="newAssetId" code="NEW_ASSET_ID" displayName="盘盈新建资产" propId="17" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='New Asset' />
+                <column name="capitalizationId" code="CAPITALIZATION_ID" displayName="盘盈资本化单" propId="18" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Capitalization' />
+                <column name="disposalId" code="DISPOSAL_ID" displayName="盘亏处置单" propId="19" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Disposal' />
+                <column name="investigatedRemark" code="INVESTIGATED_REMARK" displayName="调查备注" propId="20" stdSqlType="VARCHAR" precision="500" stdDataType="string" i18n-en:displayName='Investigated Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="21" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="22" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="23" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="24" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="25" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="26" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="remark" code="REMARK" displayName="备注" propId="27" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+            </columns>
+            <relations>
+                <to-one name="inventory" refEntityName="app.erp.ast.dao.entity.ErpAstInventory" tagSet="pub" i18n-en:displayName='Inventory'>
+                    <join><on leftProp="inventoryId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'>
+                    <join><on leftProp="orgId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="asset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub" i18n-en:displayName='Asset'>
+                    <join><on leftProp="assetId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="category" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCategory" tagSet="pub" i18n-en:displayName='Category'>
+                    <join><on leftProp="categoryId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="newAsset" refEntityName="app.erp.ast.dao.entity.ErpAstAsset" tagSet="pub" i18n-en:displayName='New Asset'>
+                    <join><on leftProp="newAssetId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="capitalization" refEntityName="app.erp.ast.dao.entity.ErpAstAssetCapitalization" tagSet="pub" i18n-en:displayName='Capitalization'>
+                    <join><on leftProp="capitalizationId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="disposal" refEntityName="app.erp.ast.dao.entity.ErpAstDisposal" tagSet="pub" i18n-en:displayName='Disposal'>
+                    <join><on leftProp="disposalId" rightProp="id"/></join>
+                </to-one>
+            </relations>
+            <indexes>
+                <index name="IDX_AST_INVENTORY_LINE_INVENTORY_ID" unique="false">
+                    <column name="inventoryId"/>
+                </index>
+                <index name="IDX_AST_INVENTORY_LINE_ASSET_ID" unique="false">
+                    <column name="assetId"/>
+                </index>
+                <index name="IDX_AST_INVENTORY_LINE_CATEGORY_ID" unique="false">
+                    <column name="categoryId"/>
+                </index>
+                <index name="IDX_AST_INVENTORY_LINE_VARIANCE_TYPE" unique="false">
+                    <column name="varianceType"/>
                 </index>
             </indexes>
         </entity>

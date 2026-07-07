@@ -54,7 +54,8 @@ public enum ErpFinBusinessType {
     COST_ADJUSTMENT(420),
     PROJECT_SETTLEMENT(430),
     ASSET_SPLIT(440),
-    ASSET_MERGE(450);
+    ASSET_MERGE(450),
+    ASSET_INVENTORY_ADJUSTMENT(460);
 
     private final int code;
 

@@ -289,6 +289,11 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_ASSET_MERGE = "ASSET_MERGE";
                     
     /**
+     * 业务类型: 资产盘点差异 
+     */
+    String BUSINESS_TYPE_ASSET_INVENTORY_ADJUSTMENT = "ASSET_INVENTORY_ADJUSTMENT";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

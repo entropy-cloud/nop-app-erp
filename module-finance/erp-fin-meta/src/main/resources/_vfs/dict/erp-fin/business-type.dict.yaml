@@ -181,3 +181,7 @@ options:
     value: ASSET_MERGE
     description: 
   
+  - label: 资产盘点差异
+    value: ASSET_INVENTORY_ADJUSTMENT
+    description: 
+  

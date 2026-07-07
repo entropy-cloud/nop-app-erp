@@ -8,6 +8,8 @@ entity:
     ErpAstCipProgressBilling: CIP Progress Billing
     ErpAstDepreciationSchedule: Depreciation Schedule
     ErpAstDisposal: Asset Disposal
+    ErpAstInventory: Asset Inventory
+    ErpAstInventoryLine: Asset Inventory Line
     ErpAstMerge: Asset Merge
     ErpAstMergeLine: Asset Merge Line
     ErpAstMovement: Asset Movement
@@ -262,6 +264,83 @@ prop:
       asset: Asset
       org: Org
       currency: Currency
+    ErpAstInventory:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      status: Status
+      status_label: null
+      rangeDepartmentId: Range Department
+      rangeCategoryId: Range Category
+      rangeLocationId: Range Location
+      responsibleById: Responsible By
+      businessDate: Business Date
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      surplusCount: Surplus Count
+      shortageCount: Shortage Count
+      matchedCount: Matched Count
+      surplusAmount: Surplus Amount
+      shortageAmount: Shortage Amount
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      org: Org
+      rangeDepartment: Range Department
+      rangeCategory: Range Category
+      rangeLocation: Range Location
+      responsibleBy: Responsible By
+      currency: Currency
+      lines: Lines
+    ErpAstInventoryLine:
+      id: ID
+      inventoryId: Inventory
+      orgId: Organization
+      lineNo: Line No
+      assetId: Asset
+      assetCodeSnapshot: Asset Code Snapshot
+      assetNameSnapshot: Asset Name Snapshot
+      categoryId: Category
+      bookQuantity: Book Quantity
+      actualQuantity: Actual Quantity
+      varianceQuantity: Variance Quantity
+      varianceType: Variance Type
+      varianceType_label: null
+      bookValue: Book Value
+      assessedValue: Assessed Value
+      varianceAmount: Variance Amount
+      disposition: Disposition
+      disposition_label: null
+      newAssetId: New Asset
+      capitalizationId: Capitalization
+      disposalId: Disposal
+      investigatedRemark: Investigated Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      inventory: Inventory
+      org: Org
+      asset: Asset
+      category: Category
+      newAsset: New Asset
+      capitalization: Capitalization
+      disposal: Disposal
     ErpAstMerge:
       id: ID
       code: Code
@@ -461,6 +540,9 @@ dict:
     erp-ast/disposal-reason: Disposal Reason
     erp-ast/cip-status: CIP Status
     erp-ast/cip-cost-type: CIP Cost Type
+    erp-ast/inventory-status: Inventory Status
+    erp-ast/variance-type: Variance Type
+    erp-ast/inventory-line-disposition: Inventory Line Disposition
 dict.option.label:
   erp-ast/asset-status:
     DRAFT: Draft
@@ -517,3 +599,18 @@ dict.option.label:
     LABOR: Labor
     INTEREST_CAPITALIZATION: Interest Capitalization
     OTHER: Other
+  erp-ast/inventory-status:
+    DRAFT: Draft
+    COUNTING: Counting
+    RECONCILING: Reconciling
+    POSTED: Posted
+    CANCELLED: Cancelled
+  erp-ast/variance-type:
+    SURPLUS: Surplus
+    SHORTAGE: Shortage
+    MATCHED: Matched
+  erp-ast/inventory-line-disposition:
+    NONE: None
+    NEW_CARD: New Card
+    DISPOSAL: Disposal
+    INVESTIGATE: Investigate

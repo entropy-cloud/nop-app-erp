@@ -863,6 +863,7 @@ dict.option.label:
     PROJECT_SETTLEMENT: Project Settlement
     ASSET_SPLIT: Asset Split
     ASSET_MERGE: Asset Merge
+    ASSET_INVENTORY_ADJUSTMENT: Asset Inventory Adjustment
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

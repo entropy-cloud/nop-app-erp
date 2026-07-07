@@ -17,6 +17,8 @@ alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_asset_capitalization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_ast_inventory add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_ast_depreciation_schedule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_movement add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -30,6 +32,8 @@ alter table erp_ast_cip add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 alter table erp_ast_split add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_merge add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_ast_inventory_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_ast_cip_cost_item add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -66,6 +70,9 @@ alter table erp_ast_asset add constraint PK_erp_ast_asset primary key (NOP_TENAN
 alter table erp_ast_asset_capitalization drop constraint PK_erp_ast_asset_capitalization;
 alter table erp_ast_asset_capitalization add constraint PK_erp_ast_asset_capitalization primary key (NOP_TENANT_ID, id);
 
+alter table erp_ast_inventory drop constraint PK_erp_ast_inventory;
+alter table erp_ast_inventory add constraint PK_erp_ast_inventory primary key (NOP_TENANT_ID, id);
+
 alter table erp_ast_depreciation_schedule drop constraint PK_erp_ast_depreciation_schedule;
 alter table erp_ast_depreciation_schedule add constraint PK_erp_ast_depreciation_schedule primary key (NOP_TENANT_ID, id);
 
@@ -86,6 +93,9 @@ alter table erp_ast_split add constraint PK_erp_ast_split primary key (NOP_TENAN
 
 alter table erp_ast_merge drop constraint PK_erp_ast_merge;
 alter table erp_ast_merge add constraint PK_erp_ast_merge primary key (NOP_TENANT_ID, id);
+
+alter table erp_ast_inventory_line drop constraint PK_erp_ast_inventory_line;
+alter table erp_ast_inventory_line add constraint PK_erp_ast_inventory_line primary key (NOP_TENANT_ID, id);
 
 alter table erp_ast_cip_cost_item drop constraint PK_erp_ast_cip_cost_item;
 alter table erp_ast_cip_cost_item add constraint PK_erp_ast_cip_cost_item primary key (NOP_TENANT_ID, id);

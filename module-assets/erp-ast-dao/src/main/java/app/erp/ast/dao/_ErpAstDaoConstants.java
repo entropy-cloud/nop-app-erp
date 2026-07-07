@@ -218,4 +218,64 @@ public interface _ErpAstDaoConstants {
      */
     String CIP_COST_TYPE_OTHER = "OTHER";
                     
+    /**
+     * 盘点单状态: 草稿 
+     */
+    String INVENTORY_STATUS_DRAFT = "DRAFT";
+                    
+    /**
+     * 盘点单状态: 盘点中 
+     */
+    String INVENTORY_STATUS_COUNTING = "COUNTING";
+                    
+    /**
+     * 盘点单状态: 差异复核 
+     */
+    String INVENTORY_STATUS_RECONCILING = "RECONCILING";
+                    
+    /**
+     * 盘点单状态: 已过账 
+     */
+    String INVENTORY_STATUS_POSTED = "POSTED";
+                    
+    /**
+     * 盘点单状态: 已作废 
+     */
+    String INVENTORY_STATUS_CANCELLED = "CANCELLED";
+                    
+    /**
+     * 盘点差异类型: 盘盈 
+     */
+    String VARIANCE_TYPE_SURPLUS = "SURPLUS";
+                    
+    /**
+     * 盘点差异类型: 盘亏 
+     */
+    String VARIANCE_TYPE_SHORTAGE = "SHORTAGE";
+                    
+    /**
+     * 盘点差异类型: 一致 
+     */
+    String VARIANCE_TYPE_MATCHED = "MATCHED";
+                    
+    /**
+     * 盘点差异处置: 无需处置 
+     */
+    String INVENTORY_LINE_DISPOSITION_NONE = "NONE";
+                    
+    /**
+     * 盘点差异处置: 盘盈建新卡 
+     */
+    String INVENTORY_LINE_DISPOSITION_NEW_CARD = "NEW_CARD";
+                    
+    /**
+     * 盘点差异处置: 盘亏触发处置 
+     */
+    String INVENTORY_LINE_DISPOSITION_DISPOSAL = "DISPOSAL";
+                    
+    /**
+     * 盘点差异处置: 标记调查 
+     */
+    String INVENTORY_LINE_DISPOSITION_INVESTIGATE = "INVESTIGATE";
+                    
 }
