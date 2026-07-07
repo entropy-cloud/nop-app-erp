@@ -211,6 +211,7 @@
                 <column name="utmSource" displayName="UTM Source" stdSqlType="VARCHAR" precision="100" code="UTM_SOURCE" propId="24" stdDataType="string" i18n-en:displayName='UTM Source' />
                 <column name="ownerId" stdDomain="userId" displayName="负责人" stdSqlType="VARCHAR" precision="36" code="OWNER_ID" propId="25" stdDataType="string" i18n-en:displayName='Owner' />
                 <column name="teamId" displayName="销售团队" stdSqlType="BIGINT" code="TEAM_ID" propId="26" stdDataType="long" i18n-en:displayName='Team' />
+                <column name="territoryId" displayName="销售区域" stdSqlType="BIGINT" code="TERRITORY_ID" propId="41" stdDataType="long" i18n-en:displayName='Territory' />
                 <column name="lostReasonId" displayName="丢单原因" stdSqlType="BIGINT" code="LOST_REASON_ID" propId="27" stdDataType="long" i18n-en:displayName='Lost Reason' />
                 <column name="lostReasonDesc" displayName="丢单描述" stdSqlType="VARCHAR" precision="500" code="LOST_REASON_DESC" propId="28" stdDataType="string" i18n-en:displayName='Lost Reason Description' />
                 <column name="lastContactDate" displayName="最后联系日期" stdSqlType="DATETIME" code="LAST_CONTACT_DATE" propId="29" stdDataType="datetime" i18n-en:displayName='Last Contact Date' />
@@ -233,6 +234,7 @@
                 <to-one name="stage" refEntityName="app.erp.crm.dao.entity.ErpCrmStage" tagSet="pub" i18n-en:displayName='Stage'><join><on leftProp="stageId" rightProp="id"/></join></to-one>
                 <to-one name="campaign" refEntityName="app.erp.crm.dao.entity.ErpCrmCampaign" tagSet="pub" i18n-en:displayName='Campaign'><join><on leftProp="campaignId" rightProp="id"/></join></to-one>
                 <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
+                <to-one name="territory" refEntityName="app.erp.crm.dao.entity.ErpCrmTerritory" tagSet="pub" i18n-en:displayName='Territory'><join><on leftProp="territoryId" rightProp="id"/></join></to-one>
                 <to-one name="lostReason" refEntityName="app.erp.crm.dao.entity.ErpCrmLostReason" tagSet="pub" i18n-en:displayName='Lost Reason'><join><on leftProp="lostReasonId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-many name="events" refEntityName="app.erp.crm.dao.entity.ErpCrmEvent" tagSet="pub" i18n-en:displayName='Events' ext:estRows="20"><join><on leftProp="id" rightProp="relatedLeadId"/></join></to-many>
@@ -267,6 +269,9 @@
                 </index>
                 <index name="IDX_CRM_LEAD_TEAM_ID" unique="false">
                     <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_LEAD_TERRITORY_ID" unique="false">
+                    <column name="territoryId"/>
                 </index>
                 <index name="IDX_CRM_LEAD_LOST_REASON_ID" unique="false">
                     <column name="lostReasonId"/>

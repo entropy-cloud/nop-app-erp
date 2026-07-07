@@ -181,6 +181,10 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="territoryId" displayName="销售区域" propId="41" i18n-en:displayName="Territory" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="territory">
+            <schema type="java.lang.Long"/>
+        </prop>
         <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">
@@ -207,6 +211,11 @@
         <prop name="team" i18n-en:displayName="Team" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="teamId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpCrmTeam"/>
+        </prop>
+        <prop name="territory" i18n-en:displayName="Territory" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="territoryId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpCrmTerritory"/>
         </prop>
         <prop name="lostReason" i18n-en:displayName="Lost Reason" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="lostReasonId" ext:joinRightProp="id" insertable="false"

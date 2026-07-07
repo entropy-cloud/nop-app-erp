@@ -28,6 +28,18 @@ public interface ErpCrmErrors {
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
 
+    // --- 区域管理 / 配额 参数键 ---
+    String ARG_TERRITORY_ID = "territoryId";
+    String ARG_TERRITORY_CODE = "territoryCode";
+    String ARG_PARENT_ID = "parentId";
+    String ARG_NEW_PARENT_ID = "newParentId";
+    String ARG_CURRENT_LEVEL = "currentLevel";
+    String ARG_MAX_LEVEL = "maxLevel";
+    String ARG_QUOTA_ID = "quotaId";
+    String ARG_PERIOD_TYPE = "periodType";
+    String ARG_PERIOD_LABEL = "periodLabel";
+    String ARG_CONDITION_TYPE = "conditionType";
+
     ErrorCode ERR_LEAD_NOT_FOUND = ErrorCode.define("erp.err.crm.lead-not-found",
             "线索/商机 {leadId} 不存在", ARG_LEAD_ID);
 
@@ -86,4 +98,38 @@ public interface ErpCrmErrors {
             "erp.err.crm.report.render-type-invalid",
             "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    // --- 区域树维护 ---
+
+    ErrorCode ERR_TERRITORY_MAX_DEPTH_EXCEEDED = ErrorCode.define(
+            "erp.err.crm.territory.max-depth-exceeded",
+            "销售区域层级深度超限（当前 level={currentLevel}，最大允许={maxLevel}）",
+            ARG_CURRENT_LEVEL, ARG_MAX_LEVEL);
+
+    ErrorCode ERR_TERRITORY_CYCLE = ErrorCode.define(
+            "erp.err.crm.territory.cycle",
+            "销售区域 parentId 成环（territoryId={territoryId}，attempted parentId={parentId}）",
+            ARG_TERRITORY_ID, ARG_PARENT_ID);
+
+    ErrorCode ERR_TERRITORY_HAS_CHILDREN = ErrorCode.define(
+            "erp.err.crm.territory.has-children",
+            "销售区域 {territoryId} 存在子节点，禁止删除（须先迁移或删除子节点）",
+            ARG_TERRITORY_ID);
+
+    ErrorCode ERR_TERRITORY_NOT_ACTIVE = ErrorCode.define(
+            "erp.err.crm.territory.not-active",
+            "销售区域 {territoryId} 已停用，不参与分配匹配",
+            ARG_TERRITORY_ID);
+
+    // --- 配额管理 ---
+
+    ErrorCode ERR_QUOTA_FINALIZED = ErrorCode.define(
+            "erp.err.crm.quota.finalized",
+            "销售配额 {quotaId} 已定稿，不可修改（须先 unfinalizeQuota 解冻）",
+            ARG_QUOTA_ID);
+
+    ErrorCode ERR_QUOTA_NO_MATCH = ErrorCode.define(
+            "erp.err.crm.quota.no-match",
+            "未找到匹配的配额行（territoryId={territoryId}, periodType={periodType}, periodLabel={periodLabel}）",
+            ARG_TERRITORY_ID, ARG_PERIOD_TYPE, ARG_PERIOD_LABEL);
 }

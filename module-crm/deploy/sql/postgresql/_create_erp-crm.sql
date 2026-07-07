@@ -576,6 +576,7 @@ CREATE TABLE erp_crm_lead(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  territory_id INT8  ,
   constraint PK_erp_crm_lead primary key (id)
 );
 
@@ -1715,6 +1716,8 @@ CREATE TABLE erp_crm_lead_score_line(
       COMMENT ON COLUMN erp_crm_lead.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_crm_lead.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_crm_lead.territory_id IS '销售区域';
                     
       COMMENT ON TABLE erp_crm_forecast_accuracy IS '预测准确率';
                 

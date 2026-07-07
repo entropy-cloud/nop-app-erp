@@ -36,6 +36,14 @@
     <bean id="app.erp.crm.service.support.ForecastAggregator"
           class="app.erp.crm.service.support.ForecastAggregator"/>
 
+    <!-- CRM 区域分配引擎（按 priority 遍历 active 规则 + conditionType 匹配 + 回写 lead.territoryId/teamId；本期 MANUAL 降级） -->
+    <bean id="app.erp.crm.service.support.TerritoryAssignmentEngine"
+          class="app.erp.crm.service.support.TerritoryAssignmentEngine"/>
+
+    <!-- CRM 配额层级聚合计算器（公司/区域/团队/个人 Σ + 显式值优先 + 定稿锁定 + 年度均分 + 区域管道对比三段聚合） -->
+    <bean id="app.erp.crm.service.support.QuotaRollupCalculator"
+          class="app.erp.crm.service.support.QuotaRollupCalculator"/>
+
     <!-- 定时销售预测重算 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.forecast.recalc-cron 配置门控。 -->
     <bean id="erpCrmForecastRecalcJob"

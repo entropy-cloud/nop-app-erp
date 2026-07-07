@@ -47,4 +47,23 @@ public interface IErpCrmLeadBiz extends ICrudBiz<ErpCrmLead>, IErpCrmConversionB
      */
     @BizQuery
     List<ErpCrmLead> findDuplicates(@Name("leadId") Long leadId, IServiceContext context);
+
+    /**
+     * 触发区域分配引擎：加载 active 规则 + default 规则，按 priority 匹配 conditionType，回写 lead.territoryId/teamId/ownerId。
+     * 配置 {@code erp-crm.territory.auto-assign-on-create=true}（默认）时由 defaultPrepareSave 自动调用；
+     * 此方法提供手动触发入口（重算分配）。无匹配规则返回原 lead 不修改。
+     */
+    @BizMutation
+    ErpCrmLead assignLead(@Name("leadId") Long leadId, IServiceContext context);
+
+    /**
+     * 手动覆盖区域分配结果：直接设置 lead.territoryId/teamId/ownerId。
+     * 用于管理员调整分配引擎结果或重分配。
+     */
+    @BizMutation
+    ErpCrmLead reassignLead(@Name("leadId") Long leadId,
+                             @Optional @Name("territoryId") Long territoryId,
+                             @Optional @Name("teamId") Long teamId,
+                             @Optional @Name("ownerId") String ownerId,
+                             IServiceContext context);
 }

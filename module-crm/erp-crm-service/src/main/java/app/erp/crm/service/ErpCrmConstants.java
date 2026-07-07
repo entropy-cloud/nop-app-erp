@@ -84,4 +84,36 @@ public interface ErpCrmConstants {
     String FORECAST_CATEGORY_COMMIT = "COMMIT";
     String FORECAST_CATEGORY_UPSIDE = "UPSIDE";
     String FORECAST_CATEGORY_BEST_CASE = "BEST_CASE";
+
+    // ===== 区域管理 / 配额（plan 2026-07-07-1100-1）配置点 =====
+    /** 线索创建时是否自动分配区域（默认 true）。 */
+    String CONFIG_TERRITORY_AUTO_ASSIGN_ON_CREATE = "erp-crm.territory.auto-assign-on-create";
+    /** 无匹配规则时的默认团队（可空）。 */
+    String CONFIG_TERRITORY_DEFAULT_TEAM_ID = "erp-crm.territory.default-team-id";
+    /** 区域树最大层级（默认 4：REGION → AREA → BRANCH → TEAM）。 */
+    String CONFIG_TERRITORY_MAX_DEPTH = "erp-crm.territory.max-depth";
+    /** 年度配额均分时是否按月（true=12 月均分，false=4 季均分）。 */
+    String CONFIG_QUOTA_DISTRIBUTE_MONTHLY = "erp-crm.quota.distribute-monthly";
+
+    // erp-crm/territory-type 字典
+    String TERRITORY_TYPE_REGION = "REGION";
+    String TERRITORY_TYPE_AREA = "AREA";
+    String TERRITORY_TYPE_BRANCH = "BRANCH";
+    String TERRITORY_TYPE_TEAM = "TEAM";
+
+    // erp-crm/assignment-condition-type 字典
+    String ASSIGNMENT_CONDITION_GEOGRAPHY = "GEOGRAPHY";
+    String ASSIGNMENT_CONDITION_INDUSTRY = "INDUSTRY";
+    String ASSIGNMENT_CONDITION_CUSTOMER_SIZE = "CUSTOMER_SIZE";
+    String ASSIGNMENT_CONDITION_CUSTOM_FIELD = "CUSTOM_FIELD";
+
+    // erp-crm/assignment-method 字典
+    String ASSIGNMENT_METHOD_ROUND_ROBIN = "ROUND_ROBIN";
+    String ASSIGNMENT_METHOD_LOAD_BALANCED = "LOAD_BALANCED";
+    String ASSIGNMENT_METHOD_MANUAL = "MANUAL";
+
+    // erp-crm/quota-period-type 字典
+    String QUOTA_PERIOD_ANNUAL = "ANNUAL";
+    String QUOTA_PERIOD_QUARTERLY = "QUARTERLY";
+    String QUOTA_PERIOD_MONTHLY = "MONTHLY";
 }

@@ -350,12 +350,14 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      territoryId: Territory
       partner: Partner
       source: Source
       leadStatus: Lead Status
       stage: Stage
       campaign: Campaign
       team: Team
+      territory: Territory
       lostReason: Lost Reason
       org: Org
       events: Events

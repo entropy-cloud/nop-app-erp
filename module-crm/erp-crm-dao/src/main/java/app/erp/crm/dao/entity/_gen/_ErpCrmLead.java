@@ -181,8 +181,12 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 40;
     
+    /* 销售区域: TERRITORY_ID BIGINT */
+    public static final String PROP_NAME_territoryId = "territoryId";
+    public static final int PROP_ID_territoryId = 41;
+    
 
-    private static int _PROP_ID_BOUND = 41;
+    private static int _PROP_ID_BOUND = 42;
 
     
     /* relation:  */
@@ -204,6 +208,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     public static final String PROP_NAME_team = "team";
     
     /* relation:  */
+    public static final String PROP_NAME_territory = "territory";
+    
+    /* relation:  */
     public static final String PROP_NAME_lostReason = "lostReason";
     
     /* relation:  */
@@ -222,7 +229,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[41];
+    private static final String[] PROP_ID_TO_NAME = new String[42];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -346,6 +353,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_territoryId] = PROP_NAME_territoryId;
+          PROP_NAME_TO_ID.put(PROP_NAME_territoryId, PROP_ID_territoryId);
+      
     }
 
     
@@ -468,6 +478,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 销售区域: TERRITORY_ID */
+    private java.lang.Long _territoryId;
     
 
     public _ErpCrmLead(){
@@ -662,6 +675,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_territoryId:
+               return getTerritoryId();
         
            default:
               return super.orm_propValue(propId);
@@ -1074,6 +1090,16 @@ public class _ErpCrmLead extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_territoryId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_territoryId));
+               }
+               setTerritoryId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1359,6 +1385,13 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_territoryId:{
+               onInitProp(propId);
+               this._territoryId = (java.lang.Long)value;
                
                break;
             }
@@ -2130,6 +2163,25 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     }
     
     /**
+     * 销售区域: TERRITORY_ID
+     */
+    public final java.lang.Long getTerritoryId(){
+         onPropGet(PROP_ID_territoryId);
+         return _territoryId;
+    }
+
+    /**
+     * 销售区域: TERRITORY_ID
+     */
+    public final void setTerritoryId(java.lang.Long value){
+        if(onPropSet(PROP_ID_territoryId,value)){
+            this._territoryId = value;
+            internalClearRefs(PROP_ID_territoryId);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.md.dao.entity.ErpMdPartner getPartner(){
@@ -2261,6 +2313,29 @@ public class _ErpCrmLead extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_team, refEntity,()->{
            
                            this.setTeamId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.crm.dao.entity.ErpCrmTerritory getTerritory(){
+       return (app.erp.crm.dao.entity.ErpCrmTerritory)internalGetRefEntity(PROP_NAME_territory);
+    }
+
+    public final void setTerritory(app.erp.crm.dao.entity.ErpCrmTerritory refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setTerritoryId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_territory, refEntity,()->{
+           
+                           this.setTerritoryId(refEntity.getId());
                        
            });
            }

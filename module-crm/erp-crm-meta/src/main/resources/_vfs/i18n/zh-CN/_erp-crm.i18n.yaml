@@ -355,6 +355,8 @@ prop:
       stageId: 漏斗阶段
       team: null
       teamId: 销售团队
+      territory: null
+      territoryId: 销售区域
       updateTime: 修改时间
       updatedBy: 修改人
       utmMedium: UTM Medium
