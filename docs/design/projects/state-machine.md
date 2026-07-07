@@ -129,6 +129,8 @@
 
 任务状态机的其他维度（异常/角色/TODO）与项目类似，不重复展开；审查时同样使用提示词。
 
+> **详细机制**：依赖模型（单前置 vs 多前置 Decision）、成环检测算法（上行链 + HashSet + maxDepth）、状态迁移完整链（startTask/completeTask/blockTask/unblockTask）、配置点、错误码、Non-Goal 见 `task-dag.md`。
+
 ## 审查提示
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：

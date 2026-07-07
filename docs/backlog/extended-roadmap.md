@@ -29,7 +29,7 @@
 - 2.5c 资产维修管理（UC-AST-10：资产维修工单/费用归集）：`todo`
 - 2.5d 资产拆分合并（UC-AST-11：资产拆分/合并处理）：`done`
 - 2.6b 项目损益/结算/转固（UC-PRJ-06~08：项目损益汇总 / 竣工结算 / 结算转固）：`done`
-- 2.6c 任务 DAG 校验（UC-PRJ-05：任务依赖 DAG 环路/完整性校验）：`todo`
+- 2.6c 任务 DAG 校验（UC-PRJ-05：任务依赖 DAG 环路/完整性校验）：`done`（owner 设计收敛 `docs/design/projects/task-dag.md`（依赖模型 Decision 单前置 + 上行链成环检测 + 状态迁移完整链 + 7 ErrorCode + 配置点 + Non-Goals）+ `IErpPrjTaskBiz` 扩展 7 方法（startTask/completeTask/blockTask/unblockTask 4 态状态机 + findPredecessors/findSuccessors/getDependencyChain 查询）+ `ErpPrjTaskBizModel` 覆盖 defaultPrepareSave/Update 钩子做自环/跨项目/成环/深度校验 + `TaskDependencyValidator` 纯函数式工具（注入 loader 便于单测）+ `ErpPrjErrors` +7 ErrorCode + `ErpPrjConstants`/`ErpPrjConfigs` +2 配置（task-dependency-max-depth=100 + task-strict-predecessor-check=true）+ 18 测试全绿（6 单元 + 12 集成），2026-07-07，`docs/plans/2026-07-07-0930-3-projects-task-dependency-dag-cycle-validation.md`）
 
 > **Non-Goal scope boundary**：以下 UCs 不在 M2 已完工项的原始范围内，非实现遗漏，归后继工作项。
 > - quality（2.4 之外）：UC-QA-09（SPC）、UC-QA-10（SPC 规则引擎）、UC-QA-11（SPC 控制图）→ 已路由至 2.4b
@@ -77,7 +77,7 @@
 | 2.5c | ❌ 资产维修管理（UC-AST-10） | assets | `assets/maintenance.md` |
 | 2.5d | ✅ 资产拆分合并（UC-AST-11） | assets | `assets/split-merge.md` |
 | 2.6b | ✅ 项目损益/结算/转固（UC-PRJ-06~08） | projects | `projects/profitability.md` |
-| 2.6c | ❌ 任务 DAG 校验（UC-PRJ-05） | projects | `projects/task-dag.md` |
+| 2.6c | ✅ 任务 DAG 校验（UC-PRJ-05） | projects | `projects/task-dag.md` |
 
 ### M3 — 新增 8 域
 
