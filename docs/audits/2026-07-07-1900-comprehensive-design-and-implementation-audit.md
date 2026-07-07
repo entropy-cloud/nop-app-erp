@@ -103,13 +103,17 @@ nop-app-erp 是一个**质量极高的 AGE 工作流项目**。18 个业务域 +
 
 ### 2.1 [严重] 事务语义矛盾：REQUIRES_NEW vs SYNC
 
+> **审查修正（2026-07-07）**：本节原判断为误判。`ErpFinVoucherBizModel.post()` 实际叠加 `@Transactional(REQUIRES_NEW)`，所有 posting executor JavaDoc 引用独立事务（证据：`docs/analysis/2026-07-05-1300-platform-best-practices-extended-audit.md:231`、`docs/design/finance/posting.md:380`）。`flow-overview.md §6.1` 的 REQUIRES_NEW 描述与实现一致。整改方向：修正 `data-dependency-matrix.md §4.1/§4.4`，使其与 `flow-overview.md` 对齐（详见 `docs/plans/2026-07-07-1915-1-audit-remediation-plan.md` C-2）。
+
+原审计观察（保留作历史记录）：
+
 | 文档 | 表述 | 影响 |
 |------|------|------|
-| `docs/design/flow-overview.md §6.1 (L497-498)` | 单据审核+凭证生成 = **REQUIRES_NEW** 独立事务隔离 | 实现者会使用独立事务 |
-| `docs/architecture/data-dependency-matrix.md §4.1 (L168-198)` | 默认 **SYNC**，业务+库存+凭证同事务强一致 | 实现者会使用同事务 |
-| `docs/architecture/data-dependency-matrix.md §4.4 (L249)` | "本工程默认 SYNC" | 明确同事务 |
+| `docs/design/flow-overview.md §6.1 (L497-498)` | 单据审核+凭证生成 = **REQUIRES_NEW** 独立事务隔离 | ✅ 与实现一致 |
+| `docs/architecture/data-dependency-matrix.md §4.1 (L168-198)` | 默认 **SYNC 同事务** | ❌ 误描述，需改为"同步调用（独立事务 REQUIRES_NEW）" |
+| `docs/architecture/data-dependency-matrix.md §4.4 (L249)` | "本工程默认 SYNC"（隐含同事务） | ❌ 误描述，需澄清为"同步调用（独立事务 REQUIRES_NEW）" |
 
-> **裁决**：`data-dependency-matrix.md` 是数据层权威文档，`flow-overview.md` 需修正。实际大多数域设计文档（inventory, assets, finance）使用"事件驱动/异步"的描述，与"SYNC 默认"亦不一致。
+> **修正后裁决**：REQUIRES_NEW 是有意架构决策（凭证失败不回滚业务+库存主事务，跨域失败经 `posted` 标志 + 兜底扫描保证最终一致）。`flow-overview.md` 描述正确，`data-dependency-matrix.md` §4.1/§4.4 已修正。
 
 ### 2.2 [严重] DAG 层级矛盾
 

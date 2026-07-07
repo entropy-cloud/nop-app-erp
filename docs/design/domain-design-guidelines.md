@@ -33,7 +33,9 @@
 ### 1.2 松耦合原则
 
 - **跨域调用只通过接口**：使用 `I*Biz` 接口，不直接调用实现类
-- **避免循环依赖**：按 DAG 顺序组织（master-data → inventory/purchase/sales → manufacturing/finance → assets/projects/maintenance/quality）
+- **避免循环依赖**：按 DAG 顺序组织，与 `data-dependency-matrix.md §2.1` 对齐：
+  - `master-data → inventory → purchase/sales → finance（L3 顶）`
+  - `assets/projects/manufacturing/quality/maintenance（L2 扩展）`
 - **事件驱动解耦**：非关键路径使用事件异步通知，避免同步阻塞
 
 ### 1.3 幂等性原则
@@ -398,13 +400,13 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 
 ## 十三、版本演进策略
 
-### 12.1 向后兼容
+### 13.1 向后兼容
 
 - 新增字段非空时提供默认值
 - 删除字段前标记为 deprecated（保留至少一个版本）
 - API 变更使用版本号控制
 
-### 12.2 数据迁移
+### 13.2 数据迁移
 
 - 使用 nop-db-migration 管理 schema 变更
 - 迁移脚本按版本顺序执行
@@ -539,7 +541,7 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | finance | 凭证 | `DRAFT` / `POSTED` / `CANCELLED` | 凭证特殊：无 SUBMITTED，DRAFT 直接过账到 POSTED |
 | finance | 会计期间 | `NOT_OPENED` / `OPEN` / `CLOSING` / `CLOSED` | 时间窗口状态机（见 §十） |
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
-| manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `RELEASED` / `IN_PROGRESS` / `COMPLETED` / `INSPECTING` / `REJECTED` / `CANCELLED` / `CLOSED` | 制造执行链 |
+| manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `RELEASED` / `IN_PROCESS` / `COMPLETED` / `STOPPED` / `REJECTED` / `CANCELLED` / `CLOSED` | 制造执行链（与 `manufacturing/state-machine.md` `erp-mfg/work-order-status` 10 态字典一致；质检门控经 config-gated 钩子，不加 INSPECTING 字典态，见 plan 2237-1） |
 | projects | 项目/任务 | `DRAFT` / `OPEN` / `ON_HOLD` / `COMPLETED` / `CANCELLED` | 项目生命周期。`ON_HOLD` 为项目独有暂停态（可恢复），见 `projects/state-machine.md` |
 | quality | 质检/NCR/CAPA | `DRAFT` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程 |
 | maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |

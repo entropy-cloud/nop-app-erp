@@ -2,7 +2,7 @@
 
 > Plan Status: completed
 > Last Reviewed: 2026-07-05
-> Source: `docs/design/sales/README.md` §信用额度控制 Non-Goals（行 87-92）+ `docs/plans/2026-07-05-1500-1-cross-review-remediation.md` Deferred（C-2 AR 余额 + SPECIAL_APPROVAL）
+> Source: `docs/design/sales/README.md` §信用额度控制 Non-Goals（行 87-92）+ `docs/plans/2026-07-05-1500-2-cross-review-remediation.md` Deferred（C-2 AR 余额 + SPECIAL_APPROVAL）
 > Related: `docs/plans/2026-07-04-2050-1-use-approval-migration.md`（use-approval 迁移已完成，解除 SPECIAL_APPROVAL 触发条件）；`docs/plans/2026-07-03-1018-1-m4-business-finance-e2e-tests.md`（业财一体 E2E 已完成，解除 AR 余额触发条件）；`docs/plans/2026-07-02-0300-3-ar-ap-settlement-subledger.md`（ErpFinArApItem 辅助账 + openAmount 已落地）
 > Audit: required
 

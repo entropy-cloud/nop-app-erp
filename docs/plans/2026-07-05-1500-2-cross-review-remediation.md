@@ -1,4 +1,4 @@
-# 2026-07-05-1500-1-cross-review-remediation 跨审查发现整改计划
+# 2026-07-05-1500-2-cross-review-remediation 跨审查发现整改计划
 
 > Plan Status: completed
 > Last Reviewed: 2026-07-05

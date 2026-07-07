@@ -21,28 +21,31 @@
 
 | 状态轴 | 字段 | 语义 | 状态值 |
 |--------|------|------|--------|
-| 业务状态 | `docStatus` | 单据业务生命周期 | DRAFT / PREPARED / COMPLETED / CLOSED / CANCELLED / VOIDED / REVERSED |
-| 审批状态 | `approveStatus` | 审批流程结果（四态，见 `approval-framework.md`） | UNSUBMITTED / SUBMITTED / APPROVED / REJECTED |
+| 业务状态 | `docStatus` | 单据业务生命周期（草稿/已生效/已关闭/已取消/已作废/已冲销等概念族） | **概念框架，具体取值归各域** `docs/design/<domain>/state-machine.md`（如 inventory=`DRAFT/CONFIRMED/DONE/CANCELLED`，finance voucher=`DRAFT/POSTED/CANCELLED`，purchase/sales=`DRAFT/SUBMITTED/APPROVED/...` 等） |
+| 审批状态 | `approveStatus` | 审批流程结果（**全工程统一四态**，见 `approval-framework.md`） | UNSUBMITTED / SUBMITTED / APPROVED / REJECTED |
 | 财务状态 | `postedStatus` / `posted` | 过账与收付款核销 | UNPOSTED/POSTED；UNPAID/PARTIAL_PAID/PAID |
+
+> **docStatus 取值规范**：本表列出的是跨域共享的概念族（草稿→已生效→已关闭 + 异常分支 已取消/已作废/已冲销），**具体状态名由各域 `state-machine.md` 裁定**。各域可能用 `CONFIRMED`/`DONE`/`COMPLETED`/`POSTED` 等不同词表达"已生效"。新增域时按域内业务语义命名，并归档到该域 `state-machine.md`，不强求与上表字面一致。
 
 ### 三轴关系
 
 ```
-业务轴：    DRAFT → PREPARED → COMPLETED → CLOSED
-                     ↓            ↓           ↓
-                  CANCELLED     VOIDED     REVERSED
+业务轴（概念，具体状态名归各域 state-machine.md）：
+  草稿 → 已生效 → 已关闭
+     ↓        ↓         ↓
+  已取消   已作废    已冲销
 
-审批轴（与业务轴正交）：UNSUBMITTED → SUBMITTED → APPROVED
-                                            ↓
-                                         REJECTED →（修改后重提交）
+审批轴（全工程统一四态，与业务轴正交）：UNSUBMITTED → SUBMITTED → APPROVED
+                                                          ↓
+                                                       REJECTED →（修改后重提交）
 
 财务轴（与业务轴正交）：UNPOSTED → POSTED
                        UNPAID → PARTIAL_PAID → PAID
 ```
 
 关键约束（由编排层 task 保证，非引擎内置）：
-- 业务进入 COMPLETED 要求 `approveStatus = APPROVED`。
-- 过账要求 `docStatus = COMPLETED`。
+- 业务进入"已生效"态要求 `approveStatus = APPROVED`（具体态名见各域 state-machine，如 inventory=`CONFIRMED`、sales=`APPROVED`、finance voucher=`POSTED`）。
+- 过账要求业务轴处于"已生效"态。
 - 冲销要求 `postedStatus = POSTED`。
 
 > 状态值字典与字段集归 `<domain>/model/*.orm.xml` 为权威源；approveStatus 四态语义归 `approval-framework.md`；具体单据的状态迁移图归 `docs/design/<domain>/state-machine.md`。

@@ -48,6 +48,7 @@
 | 首次生成单域模块骨架（仅首次） | `nop-cli gen module-<domain>/model/app-erp-<domain>.orm.xml -t=/nop/templates/orm` |
 | 增量重新生成（模型变更后） | `mvn clean install -DskipTests`（触发 gen-orm.xgen 增量链） |
 | XML well-formed 校验 | `xmllint --noout module-<domain>/model/app-erp-<domain>.orm.xml` |
+| 合规性检查 | `bash docs/audits/nop-compliance-checker.sh` |
 
 ## 当前使用的可选层
 

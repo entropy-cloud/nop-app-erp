@@ -74,7 +74,13 @@
 
 ## 当前项目阶段
 
-`nop-app-erp` 处于 **bootstrap / 预代码生成阶段**。AGE 文档结构和 ORM 模型骨架已存在。Maven 多模块结构将在每个域的 ORM 模型设计完成后，由 `nop-cli` 从 `<domain>/model/*.orm.xml` 生成。
+`nop-app-erp` 处于 **codegen 已完成、待 BizModel 业务逻辑深化阶段**。18 业务域 + 1 跨域通知派发子系统（共 19 个 `module-*/`）的 ORM 模型已设计完成（279 实体 + 3 通知实体），Maven 多模块结构已由 `nop-cli gen` 从 `<domain>/model/*.orm.xml` 生成（1730+ Java 文件）。`app-erp-all` 聚合 app 构建通过（154 reactor 模块）。当前重点：按 roadmap 依次深化 BizModel → ErrorCode → 页面定制 → 端到端验证。
+
+完整 18+1 域列表（物理目录 ↔ 逻辑工程名映射详见 `docs/architecture/domain-module-split-analysis.md §2.0`）：
+
+- **核心域（11）**：master-data, inventory, purchase, sales, finance, assets, projects, manufacturing, quality, maintenance, notify（跨域通知派发子系统，3 实体）
+- **第一批扩展域（5）**：crm, cs, hr, aps, logistics
+- **第二批扩展域（4）**：b2b, contract, drp, contract（含外部实体 notGenCode 引用 master-data）
 
 ### 多域目录结构
 
@@ -112,6 +118,15 @@ nop-app-erp/
 ├── module-quality/
 │   └── model/
 │       └── app-erp-quality.orm.xml
+├── module-notify/                          # 跨域通知派发子系统
+├── module-crm/
+├── module-cs/
+├── module-hr/
+├── module-aps/
+├── module-logistics/
+├── module-b2b/
+├── module-contract/
+├── module-drp/
 └── docs/...
 ```
 
@@ -132,11 +147,12 @@ model → codegen → dao → meta → service → web → app → api
 - `{domain}-app/` — 应用打包与启动
 - `{domain}-api/` — 外部 RPC 接口契约
 
-在 ORM 模型和生成模块存在之前：
+codegen 后阶段规则：
 
-- 不要假设 Java 模块路径、包名或视图路径已存在
-- 设计和讨论工作应集中在 `<domain>/model/*.orm.xml` 以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
-- `docs/context/project-context.md` 中的验证命令尚不可执行；首次代码生成通过后才生效
+- Java 模块路径、包名、视图路径均已存在（`module-<domain>/erp-<short>-{dao,meta,service,web,app,api}/`）
+- ORM 模型变更后用 `mvn clean install -DskipTests` 触发增量重新生成（不要重跑 `nop-cli gen`）
+- 设计与讨论工作仍应集中在 `<domain>/model/*.orm.xml`（权威源）以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
+- `docs/context/project-context.md` 中的验证命令已可执行（154 reactor 模块全绿基线见 `docs/testing/known-good-baselines.md`）
 
 ## Nop Platform 特定规则
 
