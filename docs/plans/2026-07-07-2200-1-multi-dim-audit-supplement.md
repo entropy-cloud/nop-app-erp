@@ -317,6 +317,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 测试文件的不可控性不影响生产行为，核心业务功能已有 247 个测试文件覆盖。
 - Successor Required: `yes`
 - Trigger Condition: 当本计划 Phase 4 M-5 生产代码修复完成后，下一轮计划化周期自动承接测试代码修复；或当某个测试文件因 LocalDateTime.now() 导致 CI 不稳定时立即修复。
+- **状态：已承接并完成**（2026-07-08）——由 `docs/plans/2026-07-08-0517-1-test-code-localdatetime-now-cleanup.md` 承接，14 文件 32 处已全部替换为 `CoreMetrics.currentDateTime()`，`LocalDateTime.now()` 测试代码归零。
 
 ## Closure
 
@@ -348,4 +349,4 @@ Closure Audit Evidence:
 Follow-up:
 
 - `dao().updateEntity()` 剩余 9 域 ~28 处修复（Deferred But Adjudicated，触发条件见下）
-- 测试代码 LocalDateTime.now() 32 处修复（Deferred But Adjudicated）
+- ~~测试代码 LocalDateTime.now() 32 处修复（Deferred But Adjudicated）~~ → **已完成**（plan 2026-07-08-0517-1，2026-07-08）

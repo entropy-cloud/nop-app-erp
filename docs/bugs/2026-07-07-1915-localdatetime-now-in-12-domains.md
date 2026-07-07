@@ -3,6 +3,8 @@
 > 来源审计：`docs/audits/2026-07-07-1900-comprehensive-design-and-implementation-audit.md`（C-5 测试不可控性）
 > 关联计划：`docs/plans/2026-07-07-1915-1-audit-remediation-plan.md` H-2
 
+> 状态（2026-07-08 更新）：生产代码 `LocalDateTime.now()` 已由 1915-1 H-2 全部修复（实时 grep 0 命中）；测试代码 32 处已由 `docs/plans/2026-07-08-0517-1-test-code-localdatetime-now-cleanup.md` 全部修复（实时 grep 0 命中）。本 bug 文档请求的 `docs/context/conventions.md`「时间 API 使用约定」已增补。仅余 `LocalDate.now()` 残留（生产 4 + 测试 ~96 处），由独立计划 `docs/plans/2026-07-08-0637-2-localdate-now-cleanup.md` 承接（平行问题）。
+
 ## 问题
 
 - 12 个业务域的 BizModel / Processor / Executor 中直接调用 `java.time.LocalDateTime.now()`（或 `Clock.systemDefaultZone()`）获取当前时间，未通过平台统一 `CoreClock` 或注入式 `ITimeService`
