@@ -174,6 +174,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 设计文档 §6 数据源实体未物化（projects 业务逻辑 2.6 未建此实体）；看板聚合不引入新实体。
 - Successor Required: `yes`（触发条件：项目盈利分析 `profitability.md` 落地物化 `ErpPrjProjectPnl` 时）
+- **✅ 已解除**：`ErpPrjProjectPnl` 已由 plan `2026-07-07-0305-1` 物化；看板后端接线 `ErpPrjDashboard__getProjectGrossMargin` + AMIS 卡片已由 plan `2026-07-07-1100-3` 交付。
 
 ### 制造齐套不足预警缺件明细（ErpMfgMaterialReservation 未物化）
 
@@ -186,6 +187,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 设计文档 §9 数据源实体未物化（SPC 模块未实现）。
 - Successor Required: `yes`（触发条件：SPC 统计过程控制模块落地时）
+- **✅ 已解除（部分）**：`ErpQaSpcSample`（含 `isOutOfControl`/`violatedRules` 样本列）已由 plan `2026-07-07-0305-2` 物化；看板后端接线 `ErpQaDashboard__getSpcOutOfControlWarning` + AMIS 预警卡片已由 plan `2026-07-07-1100-3` 交付。交互式 echarts 控制图完整可视化仍为 successor。
 
 ### 维护 OEE 精确计算
 
@@ -215,5 +217,5 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- 6 域看板 AMIS 前端页面（独立前端 successor，触发条件=本计划后端 API 落地）
-- 项目毛利率 / 制造齐套缺件明细 / 质量 SPC / 维护 OEE（各自 successor，见 Deferred But Adjudicated 触发条件）
+- 6 域看板 AMIS 前端页面（独立前端 successor，触发条件=本计划后端 API 落地）—— ✅ 已由 plan 1606-2 交付
+- 项目毛利率（✅ 已由 plan 0305-1 + 1100-3 交付）/ 制造齐套缺件明细 / 质量 SPC（✅ 预警 KPI 已由 plan 0305-2 + 1100-3 交付，控制图可视化仍 successor）/ 维护 OEE（各自 successor，见 Deferred But Adjudicated 触发条件）

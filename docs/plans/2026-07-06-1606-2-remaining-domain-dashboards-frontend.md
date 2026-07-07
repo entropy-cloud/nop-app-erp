@@ -148,6 +148,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 项目毛利率 / 制造齐套缺件明细 / 质量 SPC 失控预警的后端数据源实体未物化（1606-1 裁定）；前端不渲染对应区块。
 - Successor Required: `yes`（触发条件：对应后端 successor 落地时——见 1606-1 Deferred But Adjudicated）
+- **✅ 部分已解除**：项目毛利率卡片 + 质量 SPC 失控预警卡片（KPI 数字部分）已由 plan `2026-07-07-1100-3` 交付（消费 0305-1/0305-2 物化的数据源 + 1100-3 新增 `@BizQuery`）。制造齐套缺件明细预警列表 + SPC 交互式控制图可视化仍为 successor。
 
 ## Closure
 
@@ -168,4 +169,4 @@ Follow-up:
 
 - 看板运行时视觉/浏览器回归（Playwright successor，触发条件=看板 e2e 套件建立时）
 - 定时刷新/WebSocket 实时推送/物化视图缓存（optimization candidate，触发条件=实时性/性能需求落地时）
-- 三处后端 Non-Goal 指标对应前端区块（触发条件=对应后端 successor 落地时，见 1606-1）
+- 三处后端 Non-Goal 指标对应前端区块（触发条件=对应后端 successor 落地时，见 1606-1）—— 项目毛利率卡片 + 质量 SPC 预警卡片 ✅ 已由 plan 1100-3 交付；制造齐套缺件明细 + SPC 控制图可视化仍 successor

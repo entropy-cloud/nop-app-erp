@@ -154,6 +154,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 属 dashboard 结果面（1606-1/1606-2 owner）+ 前端控制图渲染面，非本计划「SPC 引擎」结果面。本计划落地 `ErpQaSpcSample` 即解除数据源阻塞。
 - Successor Required: yes —— 触发条件=本计划 completed；successor 在 `ErpQaDashboardBizModel` 补失控预警 `@BizQuery` + AMIS 控制图卡片。
+- **✅ 已解除（部分）**：plan `2026-07-07-1100-3` 已交付 SPC 失控预警 `@BizQuery`（`ErpQaDashboard__getSpcOutOfControlWarning`）+ AMIS 预警卡片（KPI 数字）；交互式 echarts 控制图完整可视化（UCL/LCL 线 + 违规点高亮）仍为该 plan Deferred successor（触发条件=报表/看板 e2e 可视化套件建立时）。
 
 ### 计数型控制图（P/NP/C/U）计算引擎
 
@@ -184,4 +185,4 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- SPC 看板接线（见 Deferred successor）。
+- SPC 看板接线（见 Deferred successor）—— ✅ 预警 KPI 部分已由 plan 1100-3 交付；交互式控制图可视化仍为 successor。

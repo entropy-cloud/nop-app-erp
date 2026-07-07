@@ -159,6 +159,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 属 dashboard 结果面（1606-1/1247-2/1606-2 owner），非本计划「projects PnL/settlement/转固」结果面。本计划落地 `ErpPrjProjectPnl` 实体与计算即解除数据源阻塞。
 - Successor Required: yes —— 触发条件=本计划 completed；successor 在 `ErpPrjDashboardBizModel` 补 `getProjectGrossMargin` `@BizQuery` 读 `ErpPrjProjectPnl` + AMIS 卡片。
+- **✅ 已解除**：plan `2026-07-07-1100-3` 已交付 `ErpPrjDashboard__getProjectGrossMargin` `@BizQuery` + AMIS KPI 卡片（Σ grossProfit/Σ revenueAmount 整体毛利率 + 可选 projectId 过滤）。
 
 ### retention 质保金 AR/AP 辅助账核销
 
@@ -180,4 +181,4 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- 项目毛利率看板接线（见 Deferred successor）。
+- 项目毛利率看板接线（见 Deferred successor）—— ✅ 已由 plan 1100-3 交付。
