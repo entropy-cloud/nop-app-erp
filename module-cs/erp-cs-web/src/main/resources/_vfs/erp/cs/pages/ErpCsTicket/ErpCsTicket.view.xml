@@ -8,8 +8,136 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="add">
+            <layout>
+ id[ID] code[单号]
+ orgId[业务组织] subject[工单主题]
+ description[问题描述] customerId[客户]
+ contactId[联系人] ticketTypeId[工单类型]
+ priority[优先级] source[来源]
+ assignedToId[分配处理人] slaPolicyId[SLA 策略]
+ deadlineDateTime[SLA 截止时间] isSlaCompleted[SLA 是否完成]
+ startDateTime[开始处理时间] endDateTime[关闭时间]
+ duration[处理时长(分钟)] progress[进度(%)]
+ status[工单状态] docStatus[单据状态]
+ approveStatus[审核状态] remark[备注]
+ catalogItemId[服务目录项] approvedBy[审核人]
+ approvedAt[审核时间]
+ =__kbSuggestion[相关知识库文章]
+</layout>
+            <cells>
+                <cell id="__kbSuggestion" custom="true" notSubmit="true">
+                    <gen-control>
+                        <wrapper className="m-t-sm">
+                            <body j:list="true">
+                                <service name="kbSuggestion">
+                                    <api method="post" url="/api/GenericApi" dataType="raw"
+                                         sendOn="${'$'}{subject &amp;&amp; subject.length >= 2}">
+                                        <data>
+                                            <query><![CDATA[query($subject:String,$limit:Int){ ErpCsKnowledgeBase__suggestForTicket(subject:$subject,limit:$limit){ id code title contentSummary categoryId } }]]></query>
+                                            <variables>
+                                                <subject>${'$'}{subject}</subject>
+                                                <limit>5</limit>
+                                            </variables>
+                                        </data>
+                                        <adaptor><![CDATA[var d=payload.data||{};var g=d.data?d.data:d;var it=(g.ErpCsKnowledgeBase__suggestForTicket||[]).map(function(i){return{kbId:i.id,code:i.code,title:i.title,contentSummary:i.contentSummary};});return{status:0,msg:'',data:{items:it}};]]></adaptor>
+                                    </api>
+                                    <body j:list="true">
+                                        <list source="${'$'}{items}" placeholder="输入工单主题后将显示相关知识库文章">
+                                            <listItem>
+                                                <body j:list="true">
+                                                    <tpl tpl="&lt;strong&gt;${'$'}{title}&lt;/strong&gt;&lt;br/&gt;&lt;span class='text-muted text-sm'&gt;${'$'}{contentSummary}&lt;/span&gt;"/>
+                                                </body>
+                                                <actions j:list="true">
+                                                    <button label="采纳并参考" level="primary" size="sm" actionType="ajax"
+                                                            visibleOn="${'$'}{!!id}"
+                                                            confirmText="确认采纳此知识库文章作为工单处理参考？">
+                                                        <api method="post" url="/api/GenericApi" dataType="raw">
+                                                            <data>
+                                                                <query><![CDATA[mutation($ticketId:BigDecimal,$knowledgeBaseId:BigDecimal){ ErpCsTicket__adoptKnowledge(ticketId:$ticketId,knowledgeBaseId:$knowledgeBaseId){ id } }]]></query>
+                                                                <variables>
+                                                                    <ticketId>${'$'}{id}</ticketId>
+                                                                    <knowledgeBaseId>${'$'}{kbId}</knowledgeBaseId>
+                                                                </variables>
+                                                            </data>
+                                                        </api>
+                                                    </button>
+                                                </actions>
+                                            </listItem>
+                                        </list>
+                                    </body>
+                                </service>
+                            </body>
+                        </wrapper>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
+        <form id="edit">
+            <layout>
+ id[ID] code[单号]
+ orgId[业务组织] subject[工单主题]
+ description[问题描述] customerId[客户]
+ contactId[联系人] ticketTypeId[工单类型]
+ priority[优先级] source[来源]
+ assignedToId[分配处理人] slaPolicyId[SLA 策略]
+ deadlineDateTime[SLA 截止时间] isSlaCompleted[SLA 是否完成]
+ startDateTime[开始处理时间] endDateTime[关闭时间]
+ duration[处理时长(分钟)] progress[进度(%)]
+ status[工单状态] docStatus[单据状态]
+ approveStatus[审核状态] remark[备注]
+ catalogItemId[服务目录项] delVersion[逻辑删除版本]
+ approvedBy[审核人] approvedAt[审核时间]
+ =__kbSuggestion[相关知识库文章]
+</layout>
+            <cells>
+                <cell id="__kbSuggestion" custom="true" notSubmit="true">
+                    <gen-control>
+                        <wrapper className="m-t-sm">
+                            <body j:list="true">
+                                <service name="kbSuggestion">
+                                    <api method="post" url="/api/GenericApi" dataType="raw"
+                                         sendOn="${'$'}{subject &amp;&amp; subject.length >= 2}">
+                                        <data>
+                                            <query><![CDATA[query($subject:String,$limit:Int){ ErpCsKnowledgeBase__suggestForTicket(subject:$subject,limit:$limit){ id code title contentSummary categoryId } }]]></query>
+                                            <variables>
+                                                <subject>${'$'}{subject}</subject>
+                                                <limit>5</limit>
+                                            </variables>
+                                        </data>
+                                        <adaptor><![CDATA[var d=payload.data||{};var g=d.data?d.data:d;var it=(g.ErpCsKnowledgeBase__suggestForTicket||[]).map(function(i){return{kbId:i.id,code:i.code,title:i.title,contentSummary:i.contentSummary};});return{status:0,msg:'',data:{items:it}};]]></adaptor>
+                                    </api>
+                                    <body j:list="true">
+                                        <list source="${'$'}{items}" placeholder="输入工单主题后将显示相关知识库文章">
+                                            <listItem>
+                                                <body j:list="true">
+                                                    <tpl tpl="&lt;strong&gt;${'$'}{title}&lt;/strong&gt;&lt;br/&gt;&lt;span class='text-muted text-sm'&gt;${'$'}{contentSummary}&lt;/span&gt;"/>
+                                                </body>
+                                                <actions j:list="true">
+                                                    <button label="采纳并参考" level="primary" size="sm" actionType="ajax"
+                                                            visibleOn="${'$'}{!!id}"
+                                                            confirmText="确认采纳此知识库文章作为工单处理参考？">
+                                                        <api method="post" url="/api/GenericApi" dataType="raw">
+                                                            <data>
+                                                                <query><![CDATA[mutation($ticketId:BigDecimal,$knowledgeBaseId:BigDecimal){ ErpCsTicket__adoptKnowledge(ticketId:$ticketId,knowledgeBaseId:$knowledgeBaseId){ id } }]]></query>
+                                                                <variables>
+                                                                    <ticketId>${'$'}{id}</ticketId>
+                                                                    <knowledgeBaseId>${'$'}{kbId}</knowledgeBaseId>
+                                                                </variables>
+                                                            </data>
+                                                        </api>
+                                                    </button>
+                                                </actions>
+                                            </listItem>
+                                        </list>
+                                    </body>
+                                </service>
+                            </body>
+                        </wrapper>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>

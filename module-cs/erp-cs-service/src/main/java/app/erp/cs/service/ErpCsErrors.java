@@ -39,6 +39,11 @@ public interface ErpCsErrors {
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
 
+    // --- 知识库搜索参数键（plan 2026-07-08-0056-2） ---
+    String ARG_KEYWORD = "keyword";
+    String ARG_LIMIT = "limit";
+    String ARG_MAX_LIMIT = "maxLimit";
+
     ErrorCode ERR_TICKET_NOT_FOUND = ErrorCode.define(
             "erp.err.cs.ticket.not-found",
             "客服工单不存在: {ticketId}",
@@ -137,4 +142,16 @@ public interface ErpCsErrors {
             "erp.err.cs.catalog-item.not-found",
             "服务目录项不存在: {catalogItemId}",
             ARG_CATALOG_ITEM_ID);
+
+    // --- 知识库搜索错误码（plan 2026-07-08-0056-2） ---
+
+    ErrorCode ERR_KNOWLEDGE_SEARCH_KEYWORD_TOO_LONG = ErrorCode.define(
+            "erp.err.cs.knowledge-search.keyword-too-long",
+            "知识库搜索关键词过长（最大 {maxLimit} 字符）",
+            ARG_KEYWORD, ARG_MAX_LIMIT);
+
+    ErrorCode ERR_KNOWLEDGE_SEARCH_LIMIT_EXCEEDED = ErrorCode.define(
+            "erp.err.cs.knowledge-search.limit-exceeded",
+            "知识库搜索 limit[{limit}]超过最大值[{maxLimit}]",
+            ARG_LIMIT, ARG_MAX_LIMIT);
 }

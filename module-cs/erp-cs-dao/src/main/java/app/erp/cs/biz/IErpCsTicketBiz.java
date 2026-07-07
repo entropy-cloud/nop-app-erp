@@ -47,4 +47,9 @@ public interface IErpCsTicketBiz extends ICrudBiz<ErpCsTicket>, IApprovableBiz<E
     @BizQuery
     List<ErpCsTicket> findSlaWarnings(@Optional @Name("beforeMinutes") Integer beforeMinutes,
                                       IServiceContext context);
+
+    @BizMutation
+    ErpCsTicket adoptKnowledge(@Name("ticketId") Long ticketId,
+                               @Name("knowledgeBaseId") Long knowledgeBaseId,
+                               IServiceContext context);
 }

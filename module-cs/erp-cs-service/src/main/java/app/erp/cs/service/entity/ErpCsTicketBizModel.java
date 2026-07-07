@@ -234,6 +234,18 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     @Override
     @BizMutation
+    public ErpCsTicket adoptKnowledge(@Name("ticketId") Long ticketId,
+                                      @Name("knowledgeBaseId") Long knowledgeBaseId,
+                                      IServiceContext context) {
+        ErpCsTicket ticket = requireTicket(ticketId, context);
+        String current = ticket.getStatus();
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, current, current,
+                "采纳知识库文章参考: knowledgeBaseId=" + knowledgeBaseId, context);
+        return ticket;
+    }
+
+    @Override
+    @BizMutation
     public ErpCsTicket matchAndAttachSla(@Name("ticketId") Long ticketId, IServiceContext context) {
         if (!ErpCsConfigs.isSlaEnabled()) {
             return requireTicket(ticketId, context);

@@ -116,4 +116,21 @@ public interface ErpCsConstants {
 
     /** 通知事件类型：服务权益到期预警（对应 erp_sys_notification_template.notification_type）。 */
     String NOTIFY_EVENT_ENTITLEMENT_EXPIRY = "cs.entitlement-expiry";
+
+    // === 知识库搜索/建议（plan 2026-07-08-0056-2）===
+
+    /** 知识库搜索默认返回条数（默认 5）。 */
+    String CONFIG_KNOWLEDGE_SEARCH_DEFAULT_LIMIT = "erp-cs.knowledge-search-default-limit";
+
+    /** 知识库搜索最大返回条数（默认 20，防滥用）。 */
+    String CONFIG_KNOWLEDGE_SEARCH_MAX_LIMIT = "erp-cs.knowledge-search-max-limit";
+
+    /** 知识库搜索关键词最大长度（对齐 title 字段 precision=200）。 */
+    int KNOWLEDGE_SEARCH_KEYWORD_MAX_LENGTH = 200;
+
+    /** 知识库内容摘要截断长度。 */
+    int KNOWLEDGE_CONTENT_SUMMARY_LENGTH = 200;
+
+    /** 工单主题建议最小有效长度（< 2 字符返回空集）。 */
+    int SUGGEST_SUBJECT_MIN_LENGTH = 2;
 }

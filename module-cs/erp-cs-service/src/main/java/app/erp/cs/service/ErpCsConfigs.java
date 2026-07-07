@@ -110,6 +110,18 @@ public final class ErpCsConfigs {
         return intVar(ErpCsConstants.CONFIG_CATALOG_CATEGORY_MAX_DEPTH, 3);
     }
 
+    // === 知识库搜索/建议（plan 2026-07-08-0056-2）===
+
+    /** 知识库搜索默认返回条数（默认 5；UC-CS-05 Top 5）。 */
+    public static int getKnowledgeSearchDefaultLimit() {
+        return intVar(ErpCsConstants.CONFIG_KNOWLEDGE_SEARCH_DEFAULT_LIMIT, 5);
+    }
+
+    /** 知识库搜索最大返回条数（默认 20，防滥用）。 */
+    public static int getKnowledgeSearchMaxLimit() {
+        return intVar(ErpCsConstants.CONFIG_KNOWLEDGE_SEARCH_MAX_LIMIT, 20);
+    }
+
     private static boolean boolVar(String key, boolean defaultValue) {
         String raw = AppConfig.var(key, String.valueOf(defaultValue));
         if (raw == null || raw.trim().isEmpty()) {
