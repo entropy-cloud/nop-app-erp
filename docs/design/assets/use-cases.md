@@ -178,6 +178,8 @@ IN_SERVICE → SOLD(出售)
 
 **涉及机制**:depreciation-and-posting.md §二(资本化)/§四、../maintenance
 
+> **实现落位**（2026-07-07，plan 2026-07-07-0842-2）：全流程已落地。维修工单头/费用行实体 `ErpAstMaintenance`/`ErpAstMaintenanceCost` + 六态状态机（DRAFT/SUBMITTED/IN_PROGRESS/COMPLETED/POSTED + CANCELLED）+ `ErpAstMaintenanceProcessor`（费用归集 + CAPITALIZE/EXPENSE 裁决 + 资本化原值增量/折旧重算 + 费用化防双重扣减分支）+ `MAINTENANCE_EXPENSE(470)`/`MAINTENANCE_CAPITALIZATION(480)` 过账 Provider + reverse 红冲。资本化路径经 `IErpAstDepreciationScheduleBiz.recalculateForCapitalizationMaintenance` 加性扩展重算折旧计划。详见 owner doc `maintenance.md`。
+
 ---
 
 ## UC-AST-11 资产拆分与合并

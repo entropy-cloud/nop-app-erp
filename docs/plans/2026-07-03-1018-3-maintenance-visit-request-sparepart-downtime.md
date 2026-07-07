@@ -164,6 +164,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 备件消耗本期仅触发 inventory 出库；finance 维修费用凭证（MAINTENANCE_ISSUE）属业财一体面。
 - Successor Required: yes（触发条件：维修费用业财一体过账需求时）
+- **互补边界注记（2026-07-07，plan 2026-07-07-0842-2）**：本项属 **maintenance 域实物侧**（维护工单 ErpMntVisit/ErpMntSparePartUsage 备件出库/工时的费用化凭证 MAINTENANCE_ISSUE），仍 **open**。assets 域 plan 0842-2 已承接 **价值侧**（资产维修工单 ErpAstMaintenance 的资本化/费用化会计处理，MAINTENANCE_EXPENSE(470)/MAINTENANCE_CAPITALIZATION(480)），两域**互补共存不闭合**（不同实体/不同价值视角/不同结果表面）。详见 `docs/design/assets/maintenance.md` §五（与 maintenance 域边界）。
 
 ### 预测性维护（IoT）/ 校准管理全流程 / 设备-资产价值联动 / 多级审批
 
