@@ -50,7 +50,7 @@
 
 > **Non-Goal scope boundary**：以下 UCs 不在 M3 已完工项的原始范围内，非实现遗漏，归后继工作项。
 > - crm（3.1~3.4 之外）：UC-CRM-05（领地管理）、UC-CRM-06（配额管理）✅ done（plan `2026-07-07-1100-1-crm-territory-quota`：ErpCrmLead 加 territoryId 加性列 + TerritoryAssignmentEngine 四 conditionType 匹配 + MANUAL 降级（团队成员表缺失触发条件）+ 区域树维护 createChild/moveTerritory/有子节点禁删 + QuotaRollupCalculator 显式值优先层级聚合 + 定稿/解冻 + 年度均分 + getTerritoryPipeline 三段对比入口）；UC-CRM-07（CPQ 配置定价报价）、UC-CRM-08（序列管理）、UC-CRM-09（CRM 漏斗分析）
-> - customer-service（3.5~3.6 之外）：UC-CS-07（知识库）、UC-CS-08（客户权益）、UC-CS-09（服务目录）、UC-CS-10（客服质量监控）
+> - customer-service（3.5~3.6 之外）：UC-CS-07（知识库）、UC-CS-10（客服质量监控）；UC-CS-09（客户权益）+ UC-CS-10（服务目录）+ UC-CS-12（履行首步）✅ done（plan `2026-07-07-1430-1-cs-entitlement-service-catalog`：EntitlementMatcher 纯函数式匹配引擎 + consume/release/scanExpiring/getUsage + 工单建单权益集成（matchAndAttachSla 内 matchAndConsumeEntitlement，config-gated）+ nop-job 到期扫描自动停用 + 目录分类树维护（成环/深度/禁删）+ createFromCatalog 目录驱动建单（ticketType/slaPolicy 自动填充 + catalogItemId 回写 + formData 字段映射 urgency→priority）+ 履行首步 CREATE_TICKET 落地（ASSIGN_TEAM/NOTIFY_CUSTOMER 占位登记，INVOKE_WORKFLOW/CREATE_CHILD_TICKET SKIPPED 归 successor））。**UC 编号口径以权威源 `docs/design/customer-service/use-cases.md` 为准（UC-CS-09=权益/UC-CS-10=目录/UC-CS-12=履行）；本行历史 UC-CS-08/09 编号待人工勘误。**
 > - human-resource（3.7~3.9 之外）：UC-HR-04（休假管理）、UC-HR-05（考勤管理）、UC-HR-06（招聘管理）、UC-HR-07（合同管理）、UC-HR-08（员工调动/胜任力）✅ done 胜任力段（plan `2026-07-07-1100-2-hr-competency-management`：七 BizModel 扩展 + AssessmentAggregator 360 多源加权聚合（缺类型重归一化）+ GapAnalysisCalculator 差距严重程度映射 + 字典/矩阵 CRUD 钩子（parentId 成环 + requiredLevel 1-5）+ completeAssessment 触发差距快照清旧重建 + generateDevelopmentPlan 针对 CRITICAL/MODERATE 排序生成 + 计划项状态机；调动段归 successor）；员工调动段归 successor
 
 ## Implementation Order

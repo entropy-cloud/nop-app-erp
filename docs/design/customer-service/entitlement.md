@@ -14,7 +14,7 @@
 |------|------|------|
 | id/code/orgId | 标准 | |
 | partnerId | 客户（→ErpMdPartner） | 权益归属客户 |
-| contractId | 支持合同（→ErpContContract） | 可选：关联正式合同 |
+| contractId | 支持合同（→ErpCsContract，CS 域内轻量合同） | 可选：关联 CS 域内 ErpCsContract（见 §1.3）；正式 contract 域合同存在时通过弱指针关联，不强依赖 contract 域 |
 | slaPolicyId | SLA 策略（→ErpCsSlaPolicy） | 该权益适用的 SLA |
 | serviceType | 服务类型（dict） | WARRANTY/SUPPORT_CONTRACT/PAY_PER_TICKET |
 | startDate | 生效日期 | |
@@ -210,6 +210,33 @@ ORDER BY usageRate DESC
 | 对端 | 协作方式 |
 |------|---------|
 | master-data（ErpMdPartner） | 客户/联系人主数据 |
-| contract（ErpContContract） | 合同弱指针关联 |
+| contract（ErpContContract） | 正式合同弱指针关联（可选；默认绑定 CS 域内 ErpCsContract） |
 | sales（出库单） | 出库审核时触发保修权益自动创建（可选） |
 | inventory（批次管理） | 保修期按出库日期 + 产品保修周期自动计算 |
+
+## 八、实现注记（plan `2026-07-07-1430-1`）
+
+> 本节为本期实现范围、关键 Decision 与漂移修正的稳定注记，非迁移历史。后续 successor 接线时更新。
+
+### 8.1 工单建单权益集成钩子点 Decision
+
+权益匹配 + 扣减集成点选择在 `ErpCsTicketBizModel.matchAndAttachSla`（既有 SLA 建单路径，0700-2 产物）旁扩展 `matchAndConsumeEntitlement`，**而非**新增 `defaultPrepareSave` 钩子：
+
+- 语义对齐：权益匹配与 SLA 匹配同属建单时「为工单装配服务级别」，应同点装配避免双触发；
+- `matchAndAttachSla` 为显式 `@BizMutation` 入口（仅在工单创建后由调用方一次性触发），状态迁移方法（assign/start/resolve/close）不调用，故权益扣减单次触发，无重复扣减风险；
+- config-gated `erp-cs.entitlement-check-enabled`；无权益按 `erp-cs.entitlement-allow-no-entitlement` 放行或抛 `ERR_ENTITLEMENT_NONE_ACTIVE`。
+
+**目录驱动建单（`ErpCsServiceCatalogItemBizModel.createFromCatalog`）例外**：不调 `matchAndAttachSla`——`ticketBiz.save()` 后实体处于 SAVING 状态，`matchAndAttachSla` 内 `updateEntity` 会触发 `update-entity-not-managed`。改为建单前 `applyEntitlementToTicketData` 把权益级 `slaPolicyId` 覆盖写入 ticketData，save 一次性落地（避免 save→update 同事务冲突）。
+
+### 8.2 字段名桥接
+
+`ErpCsTicket.customerId` 与 `ErpCsEntitlement.partnerId` 均外键到 `ErpMdPartner` 但列名不同。`EntitlementMatcher` 以工单 `customerId` 作为 `partnerId` 查权益（对齐 §2.1 SQL `WHERE partnerId = customerId`）。
+
+### 8.3 owner-doc 漂移修正（§1.1）
+
+§1.1 `contractId` FK 原指向 `ErpContContract`（contract 域），与 ORM 实现（`ErpCsContract`，CS 域内轻量合同）漂移；本期已修正为 `ErpCsContract`（CS-local），保留 §1.3「不依赖 contract 域时独立管理」边界说明。
+
+### 8.4 本期范围 / successor
+
+- 本期落地：`EntitlementMatcher` 纯函数式引擎、`consumeEntitlement`/`releaseEntitlement`/`scanExpiringEntitlements`/`getEntitlementUsage`、nop-job 到期扫描自动停用（`ErpCsEntitlementExpiryJob`）+ 通知派发提醒。
+- successor：保修权益按出库自动创建（`erp-cs.entitlement-auto-warranty` 默认 false）、权益报表 AMIS 前端（后端聚合查询已就绪）。 |
