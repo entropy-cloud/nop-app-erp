@@ -1,6 +1,6 @@
 # 2026-07-09-1045-2-crm-cs-hr-report-value-assertions CRM/客服/人力域报表数据驱动数值断言
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-09
 > Source: deferred 项承接 `docs/plans/2026-07-09-0930-3-manufacturing-maintenance-quality-value-assertions.md` Deferred「其他扩展域看板/报表数值断言（CRM/CS/HR/logistics/b2b/contract/drp/aps/master-data）」中 **CRM/CS/HR 子集**（Successor Required: yes，触发条件「当对应扩展域交易种子 seed（N=1 Deferred 后续批次）后，按域逐批补数值断言」——**已满足**：N=1 `2026-07-09-1045-1` CRM/CS/HR 域种子固化三域交易种子）；AGENTS.md 当前重点「各域细化端到端验证」
 > Related: `docs/plans/2026-07-09-0930-3-manufacturing-maintenance-quality-value-assertions.md`（completed，数值断言范式 + helper，本计划复用）、`docs/plans/2026-07-09-1045-1-crm-cs-hr-transaction-seeds.md`（同批 N=1，本计划 CRM/CS/HR 数据层前置）
@@ -57,55 +57,55 @@
 
 ### Phase 1 - 期望值派生 + 断言范式确认（Proof + Decision）
 
-Status: planned
+Status: completed
 Targets: N=1 seed 行、`docs/design/{crm,customer-service,human-resource}/*`、`docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`
 Skill: `nop-testing`
 
 - Item Types: `Proof | Decision`
 - Prereqs: N=1 CRM/CS/HR 域种子落地（fresh-DB 5 报表非空）
 
-- [ ] `Proof`：逐报表 token 派生期望值——读 N=1 seed 行（lead/stage/forecast/forecast_line；ticket_type/ticket/survey；department/employee/salary_simulation/simulation_item_adj；ar_ap_item EMPLOYEE_ADVANCE/EXPENSE_CLAIM + 员工 partner），按各 `buildXxxDataset` 聚合口径手算每报表期望 token（如 lead-conversion-funnel 含某 stageName + leadCount 数值；ticket-sla-csat 含 ticketTypeName + slaCompletedCount + avgCsat；employee-net-balance 含 partnerName + advanceBalance + netBalance；payroll-simulation-comparison 含 employeeName + salaryItemCode + originalAmount/adjustedAmount + DEPT_SUBTOTAL 行，需传范围内 simulationId）。产出期望值表分析文档（每 token 标注期望值 + 派生公式 + N=1 seed 行依据）。
+- [x] `Proof`：逐报表 token 派生期望值——读 N=1 seed 行（lead/stage/forecast/forecast_line；ticket_type/ticket/survey；department/employee/salary_simulation/simulation_item_adj；ar_ap_item EMPLOYEE_ADVANCE/EXPENSE_CLAIM + 员工 partner），按各 `buildXxxDataset` 聚合口径手算每报表期望 token（如 lead-conversion-funnel 含某 stageName + leadCount 数值；ticket-sla-csat 含 ticketTypeName + slaCompletedCount + avgCsat；employee-net-balance 含 partnerName + advanceBalance + netBalance；payroll-simulation-comparison 含 employeeName + salaryItemCode + originalAmount/adjustedAmount + DEPT_SUBTOTAL 行，需传范围内 simulationId）。产出期望值表分析文档（每 token 标注期望值 + 派生公式 + N=1 seed 行依据）。
       - Skill: `nop-testing`
-- [ ] `Decision`：variables 选择 + 确定性裁决——(a) CRM lead-conversion-funnel 零参 `findAll()`，无需 variables；CRM forecast-accuracy 可选传 forecastId（传范围内 forecast id 锁定单 forecast，避免多 forecast 干扰）；CS ticket-sla-csat-summary 可选 ticketType（**Decision：传范围内 ticket_type id 锁定单类型** vs 留空聚合「(全部)」桶——选传 id 使 ticketTypeName 确定性非「(全部)」）；HR employee-net-balance 零参（聚合全 OPEN/PARTIAL ar_ap_item）；HR payroll-simulation-comparison **强制 simulationId**（传范围内 simulation id，否则空集）。(b) 日期漂移裁决：三域报表 `buildXxxDataset` **均无日期区间过滤**（区别于 mfg/mnt/qa 看板），故 spec **无需传 startDate/endDate**，断言天然不依赖运行时日期（确定性来自 seed 行本身）。本项为约束记录（镜像 0930-3 范式），记录每 spec 的 variables 选择依据。
+- [x] `Decision`：variables 选择 + 确定性裁决——(a) CRM lead-conversion-funnel 零参 `findAll()`，无需 variables；CRM forecast-accuracy 可选传 forecastId（传范围内 forecast id 锁定单 forecast，避免多 forecast 干扰）；CS ticket-sla-csat-summary 可选 ticketType（**Decision：传范围内 ticket_type id 锁定单类型** vs 留空聚合「(全部)」桶——选传 id 使 ticketTypeName 确定性非「(全部)」）；HR employee-net-balance 零参（聚合全 OPEN/PARTIAL ar_ap_item）；HR payroll-simulation-comparison **强制 simulationId**（传范围内 simulation id，否则空集）。(b) 日期漂移裁决：三域报表 `buildXxxDataset` **均无日期区间过滤**（区别于 mfg/mnt/qa 看板），故 spec **无需传 startDate/endDate**，断言天然不依赖运行时日期（确定性来自 seed 行本身）。本项为约束记录（镜像 0930-3 范式），记录每 spec 的 variables 选择依据。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 期望值表分析文档落盘（`docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`），每 token 标注期望值 + 派生公式 + seed 行依据 + variables 选择。
+- [x] 期望值表分析文档落盘（`docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`），每 token 标注期望值 + 派生公式 + seed 行依据 + variables 选择。
 
 ### Phase 2 - 三域 5 报表渲染数值断言 spec（Add + Proof）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/reports/{crm-lead-conversion-funnel,crm-forecast-accuracy,cs-ticket-sla-csat,hr-employee-net-balance,hr-payroll-simulation-comparison}.value.spec.ts`
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 期望值表
 
-- [ ] `Add`：新增 5 报表数值断言 spec，各调 `assertReportRenderedWithValue` 传入 `Erp{Crm,Cs,Hr}Report__renderHtml` query + variables（Phase 1 裁决）+ expectedTokens（Phase 1 派生的 seed 数值 token）。responseKey 对齐真实 query 名。reportLabel 含 `report` 模板名（lead-conversion-funnel/forecast-accuracy/ticket-sla-csat-summary/employee-net-balance/payroll-simulation-comparison）。
+- [x] `Add`：新增 5 报表数值断言 spec，各调 `assertReportRenderedWithValue` 传入 `Erp{Crm,Cs,Hr}Report__renderHtml` query + variables（Phase 1 裁决）+ expectedTokens（Phase 1 派生的 seed 数值 token）。responseKey 对齐真实 query 名。reportLabel 含 `report` 模板名（lead-conversion-funnel/forecast-accuracy/ticket-sla-csat-summary/employee-net-balance/payroll-simulation-comparison）。
       - Skill: `nop-testing`
-- [ ] `Proof`：`npx playwright test tests/e2e/reports/{crm-lead-conversion-funnel,crm-forecast-accuracy,cs-ticket-sla-csat,hr-employee-net-balance,hr-payroll-simulation-comparison}.value.spec.ts --workers=1` 全绿（渲染 HTML 含期望数值 token，剥离千分位后匹配）。
+- [x] `Proof`：`npx playwright test tests/e2e/reports/{crm-lead-conversion-funnel,crm-forecast-accuracy,cs-ticket-sla-csat,hr-employee-net-balance,hr-payroll-simulation-comparison}.value.spec.ts --workers=1` 全绿（渲染 HTML 含期望数值 token，剥离千分位后匹配）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 三域 5 报表数值断言 spec 全绿（HTML 含 seed 派生数值 token，剥离千分位后匹配）。
+- [x] 三域 5 报表数值断言 spec 全绿（HTML 含 seed 派生数值 token，剥离千分位后匹配）。
 
 ### Phase 3 - 文档对齐 + Deferred 解除登记（Add）
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`、`docs/testing/known-good-baselines.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 2 全绿
 
-- [ ] `Add`：`docs/testing/e2e-runbook.md` 数值断言层段补三域（CRM/CS/HR 报表，**纯报表无看板**口径）+ 套件总数更新 + 文件结构补新 spec；`docs/testing/known-good-baselines.md` 增三域报表数值断言基线行；0930-3 Deferred「其他扩展域看板/报表数值断言（CRM/CS/HR 子集）」登记解除（本计划 Closure 段登记）。
+- [x] `Add`：`docs/testing/e2e-runbook.md` 数值断言层段补三域（CRM/CS/HR 报表，**纯报表无看板**口径）+ 套件总数更新 + 文件结构补新 spec；`docs/testing/known-good-baselines.md` 增三域报表数值断言基线行；0930-3 Deferred「其他扩展域看板/报表数值断言（CRM/CS/HR 子集）」登记解除（本计划 Closure 段登记）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] e2e-runbook 数值断言层含三域报表 + 套件总数/文件结构同步；known-good-baselines 含三域报表数值断言基线行；0930-3 Deferred CRM/CS/HR 子集登记解除（本计划 Closure 段登记）。
+- [x] e2e-runbook 数值断言层含三域报表 + 套件总数/文件结构同步；known-good-baselines 含三域报表数值断言基线行；0930-3 Deferred CRM/CS/HR 子集登记解除（本计划 Closure 段登记）。
 
 ## Draft Review Record
 
@@ -116,14 +116,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。本计划纯测试 spec + 文档新增，零生产代码变更；验证门控以全套件 fresh-DB seed E2E 全绿为主。
 
-- [ ] 范围内行为完成（三域 5 报表数值断言 spec + 期望值表）
-- [ ] 相关文档对齐（e2e-runbook + known-good-baselines）
-- [ ] 已运行验证：`npx playwright test`（全套件 fresh-DB seed：既有 + 新增三域报表数值断言全绿 0 回归）+ `mvn clean install -DskipTests`（154 模块，确认无后端污染——纯 tests/ 新增）
-- [ ] 无范围内项目降级为 deferred/follow-up（其他扩展域断言/像素回归/CRUD 写操作/看板断言(不存在)/GL 串联数值均为计划内 Non-Goal 附触发条件）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（三域 5 报表数值断言 spec + 期望值表）
+- [x] 相关文档对齐（e2e-runbook + known-good-baselines）
+- [x] 已运行验证：`npx playwright test`（全套件 fresh-DB seed：既有 + 新增三域报表数值断言全绿 0 回归）+ `mvn clean install -DskipTests`（154 模块，确认无后端污染——纯 tests/ 新增）
+- [x] 无范围内项目降级为 deferred/follow-up（其他扩展域断言/像素回归/CRUD 写操作/看板断言(不存在)/GL 串联数值均为计划内 Non-Goal 附触发条件）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -150,13 +150,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <关闭时填写>
+Status Note: 执行完成（2026-07-09，3 Phase 全绿，独立结束审计 PASS）。在 1045-1 固化的 CRM/CS/HR 域种子基线上叠加**数据驱动报表渲染数值断言层**：新增 5 个 `*.value.spec.ts`（reports/{crm-lead-conversion-funnel,crm-forecast-accuracy,cs-ticket-sla-csat,hr-employee-net-balance,hr-payroll-simulation-comparison}），spec 文件总数 72→77（测试 74→79）。三域为**纯报表域（无看板 BizModel）**，故仅产出报表渲染数值断言（区别于 0930-3 各域含看板 KPI 断言）。报表 `renderHtml` HTML 含确定性 seed 派生 token（剥离千分位后匹配）：CRM lead-funnel 验证/报价/50000.00/80000.00、CRM forecast-accuracy（forecastId=1）50000.00/45000.00/80000.00/63000.00、CS ticket-sla-csat（ticketType=1 投诉桶）投诉/5.00/9.00、HR employee-net-balance 张三员工往来/员工欠公司/1000.00/700.00、HR payroll-sim（simulationId=1）赵明/钱华/部门小计/BASE_SALARY/10000.00/11000.00。关键裁决：三域报表 `buildXxxDataset` 均无日期区间过滤 → spec 无需传 startDate/endDate，确定性来自 seed 行本身；CRM forecast-accuracy/CS ticketType/HR simulationId 经 `data:{xxx}` 内联 map 传入锁定单记录（镜像 fin-income-statement periodId 范式）。期望值表落盘 `docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`（每 token 标注期望值 + 派生公式 + N=1 seed 行依据 + variables 选择）。验证全绿：`mvn clean install -DskipTests`（154 模块 exit 0）确认纯 tests/ 新增无后端污染；`npx playwright test` 全套件 fresh-DB seed **79 passed (11.2m) 0 回归**（74 既有 + 5 新增）。文档对齐：e2e-runbook 数值断言层 + 期望值表 + 文件结构 + 套件总数（72→77 文件/74→79 测试）补 CRM/CS/HR、known-good-baselines 增 1045-2 基线行。**零 ORM/xbiz/page/view/xpt/Java/CSV 变更**（git diff 证实仅 tests/ + docs/）。Deferred 解除登记：0930-3 Deferred「其他扩展域看板/报表数值断言（CRM/CS/HR/logistics/b2b/contract/drp/aps/master-data）」**CRM/CS/HR 子集 RELEASED**——本计划交付三域 5 报表渲染数值断言。其余扩展域（logistics/b2b/contract/drp/aps 无看板无报表；master-data 归独立 successor）数值断言仍按域逐批 successor。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理，新会话>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理 `ses_0bc8e3809ffeajvtaBz1njbeeG`（general，新会话冷重播无执行者上下文，纯文件证据审计未重跑 mvn/playwright）
+- Evidence: VERDICT: PASS。(A) 5 新 spec 存在 + responseKey 正确 + 分析文档 174 行 + runbook/baselines 更新；(B) 5 报表期望 token **独立再派生 5/5 匹配**（逐 token 核 seed CSV + BizModel 聚合 + NumberFormat `#,##0.00` 去逗号）；(C) variables/query 正确（forecastId/ticketType/simulationId 经 `data:{}` 内联 map + `$xxx:BigDecimal`，id 均存在；零参报表仅 reportName）；(D) `git status --porcelain` 仅 tests/ + docs/，**零** orm/xbiz/page/view/beans/api/xpt/java 变更 + **零** CSV 编辑（CSV 为 1045-1 前置）；(E) 验证状态可信（spec 语法/内部一致/计数 19→24·72→77·74→79 自洽）；(F) 计划内部一致（3 Phase 全 completed + 全项 [x] + Plan Status completed + Gates 1-6 [x] + Deferred 附触发条件无范围蔓延）。1 MINOR（缺每日日志条目）已修复（本计划 Closure 前补 `docs/logs/2026/07-09.md` 1045-2 条目，镜像 0930-3 风格）。无 BLOCKER/MAJOR。
 
 Follow-up:
 
-- <仅非阻塞跟进项；已确认缺陷不得出现于此>
+- 无非阻塞跟进项（logistics/b2b/contract/drp/aps 无看板无报表；master-data 数值断言归独立 successor；像素级视觉回归/报表下载 diff/跨浏览器矩阵 = 0637-1 Deferred；三域 GL 凭证串联数值断言 = N=1 Non-Goal 附触发条件——均已在计划内 Non-Goals/Deferred 段登记触发条件）。
