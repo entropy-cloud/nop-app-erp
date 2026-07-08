@@ -24,6 +24,7 @@
 | — | 运营域（库存/资产/项目）看板 KPI + 报表渲染数据驱动精确数值浏览器 E2E 断言（依赖 2210-1 种子，解除 1445-2 扩展域数值断言 Deferred） | `2026-07-08-2210-2` | ✅ done | `plan-first` |
 | — | 制造域业务交易单据部署期种子（最小连通集 4 表：work_order/cost_variance/forecast/forecast_line；解除 2210-1 Deferred「其他扩展域交易种子（manufacturing）」子集；使制造域看板 4 KPI + production-variance/forecast-variance 报表数值非空；crp_load 因 workcenter 配置链依赖归 Deferred） | `2026-07-09-0930-1` | ✅ done | `plan-first` |
 | — | 维护+质量域业务交易单据部署期种子（最小连通集 11 表：维护 8 表 equipment_category/equipment/schedule/request/downtime_entry/visit/visit_task/spare_part_usage + 质量 3 表 inspection/non_conformance/action；解除 2210-1 Deferred「其他扩展域交易种子（maintenance/quality）」子集；使维护+质量域看板 getDashboardKpi + 4 报表 + 3 预警数值非空；SPC 三表因 spc_chart.parameterId 配置链依赖归 Deferred） | `2026-07-09-0930-2` | ✅ done | `plan-first` |
+| — | 制造/维护/质量域看板 KPI + 报表渲染数据驱动精确数值浏览器 E2E 断言（依赖 0930-1/0930-2 种子，7 `*.value.spec.ts`：3 看板 getDashboardKpi + qa getSpcOutOfControlWarning 确定性 0 + 4 报表 production-variance/forecast-variance/maintenance-history/inspection-summary；解除 2210-2 Deferred「其他扩展域看板/报表数值断言（manufacturing/quality/maintenance 子集）」） | `2026-07-09-0930-3` | ✅ done | `plan-first` |
 
 ## 就绪不变量
 

@@ -1,6 +1,6 @@
 # 2026-07-09-0930-3-manufacturing-maintenance-quality-value-assertions 制造/维护/质量域看板+报表数据驱动数值断言
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-09
 > Source: deferred 项承接 `docs/plans/2026-07-08-2210-2-operational-domain-value-assertions.md` Deferred「其他扩展域看板/报表数值断言（manufacturing/quality/maintenance/...）」（Successor Required: yes，触发条件「当对应扩展域交易种子 seed（N=1 Deferred 后续批次）后，按域逐批补数值断言」——**已满足**：N=1 `2026-07-09-0930-1` 制造域种子 + N=2 `2026-07-09-0930-2` 维护/质量域种子固化三域交易种子）；AGENTS.md 当前重点「各域细化端到端验证」
 > Related: `docs/plans/2026-07-08-2210-2-operational-domain-value-assertions.md`（completed，数值断言范式 + helper，本计划复用）、`docs/plans/2026-07-09-0930-1-manufacturing-transaction-seeds.md`（同批 N=1，本计划制造域数据层前置）、`docs/plans/2026-07-09-0930-2-maintenance-quality-transaction-seeds.md`（同批 N=2，本计划维护/质量域数据层前置）
@@ -55,73 +55,73 @@
 
 ### Phase 1 - 期望值派生 + 断言范式确认（Proof + Decision）
 
-Status: planned
+Status: completed
 Targets: N=1/N=2 seed 行、`docs/design/dashboards.md` §7/§8/§9、`docs/analysis/2026-07-08-2210-2-operational-kpi-expected-values.md`
 Skill: `nop-frontend-dev`
 
 - Item Types: `Proof | Decision`
 - Prereqs: N=1 制造域 + N=2 维护/质量域种子落地（fresh-DB 三域 KPI 非空）
 
-- [ ] `Proof`：逐 KPI 派生期望值——读 N=1/N=2 seed 行（work_order/equipment/visit/inspection/non_conformance 等），按 `dashboards.md` 口径手算每域 getDashboardKpi 各字段期望值（如制造在制数=count(work_order IN [IN_PROCESS,STOCK_RESERVED])、维护设备总数=count(equipment 非 DECOMMISSIONED)、质量检验合格率=count(inspection ACCEPTED)/total）。逐报表 token 派生（如 mfg production-variance 报表含某差异金额数值；qa inspection-summary 含检验数 token）。产出期望值表分析文档（每项标注期望值 + 派生公式 + N=1/N=2 seed 行依据）。
+- [x] `Proof`：逐 KPI 派生期望值——读 N=1/N=2 seed 行（work_order/equipment/visit/inspection/non_conformance 等），按 `dashboards.md` 口径手算每域 getDashboardKpi 各字段期望值（如制造在制数=count(work_order IN [IN_PROCESS,STOCK_RESERVED])、维护设备总数=count(equipment 非 DECOMMISSIONED)、质量检验合格率=count(inspection ACCEPTED)/total）。逐报表 token 派生（如 mfg production-variance 报表含某差异金额数值；qa inspection-summary 含检验数 token）。产出期望值表分析文档（每项标注期望值 + 派生公式 + N=1/N=2 seed 行依据）。
       - Skill: `nop-frontend-dev`
-- [ ] `Decision`：日期漂移防护裁决——制造/维护/质量看板本期 KPI 依赖业务日期区间，spec 显式传 startDate/endDate 覆盖 N=1/N=2 种子区间；制造看板 getDashboardKpi(startDate,endDate,context) 传区间；维护/质量同理。SPC 预警（getSpcOutOfControlWarning）config-gated 默认开，若 N=2 未 seed SPC 则该预警返回 outOfControlChartCount=0——本计划对该方法断言确定性 0（非跳过），以覆盖该 `@BizQuery` 的可观测性。本项为约束记录（镜像 2210-2 范式），记录每 spec 的 variables 选择依据。
+- [x] `Decision`：日期漂移防护裁决——制造/维护/质量看板本期 KPI 依赖业务日期区间，spec 显式传 startDate/endDate 覆盖 N=1/N=2 种子区间；制造看板 getDashboardKpi(startDate,endDate,context) 传区间；维护/质量同理。SPC 预警（getSpcOutOfControlWarning）config-gated 默认开，若 N=2 未 seed SPC 则该预警返回 outOfControlChartCount=0——本计划对该方法断言确定性 0（非跳过），以覆盖该 `@BizQuery` 的可观测性。本项为约束记录（镜像 2210-2 范式），记录每 spec 的 variables 选择依据。
       - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] 期望值表分析文档落盘（`docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`），每 KPI/token 标注期望值 + 派生公式 + seed 行依据 + variables 选择。
+- [x] 期望值表分析文档落盘（`docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`），每 KPI/token 标注期望值 + 派生公式 + seed 行依据 + variables 选择。
 
 ### Phase 2 - 三域看板 KPI 数值断言 spec（Add + Proof）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/dashboards/{manufacturing,maintenance,quality}.value.spec.ts`
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 期望值表
 
-- [ ] `Add`：新增 `manufacturing.value.spec.ts` / `maintenance.value.spec.ts` / `quality.value.spec.ts`，各调 `assertDashboardKpiValues` 传入该域 `getDashboardKpi` query + variables（Phase 1 裁决）+ expected（Phase 1 派生）。responseKey 对齐真实方法名（`ErpMfgDashboard__getDashboardKpi` / `ErpMntDashboard__getDashboardKpi` / `ErpQaDashboard__getDashboardKpi`）。
+- [x] `Add`：新增 `manufacturing.value.spec.ts` / `maintenance.value.spec.ts` / `quality.value.spec.ts`，各调 `assertDashboardKpiValues` 传入该域 `getDashboardKpi` query + variables（Phase 1 裁决）+ expected（Phase 1 派生）。responseKey 对齐真实方法名（`ErpMfgDashboard__getDashboardKpi` / `ErpMntDashboard__getDashboardKpi` / `ErpQaDashboard__getDashboardKpi`）。
       - Skill: `nop-frontend-dev`
-- [ ] `Proof`：`npx playwright test tests/e2e/dashboards/{manufacturing,maintenance,quality}.value.spec.ts --workers=1` 全绿（KPI 原始值 = 期望值）。
+- [x] `Proof`：`npx playwright test tests/e2e/dashboards/{manufacturing,maintenance,quality}.value.spec.ts --workers=1` 全绿（KPI 原始值 = 期望值）。
       - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] 三域看板数值断言 spec 全绿（KPI 原始值精确匹配期望值，非「DOM 存在」冒烟级）。
+- [x] 三域看板数值断言 spec 全绿（KPI 原始值精确匹配期望值，非「DOM 存在」冒烟级）。
 
 ### Phase 3 - 三域报表渲染数值断言 spec（Add + Proof）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/reports/{mfg-production-variance,mfg-forecast-variance,mnt-maintenance-history,qa-inspection-summary}.value.spec.ts`
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 期望值表
 
-- [ ] `Add`：新增至少 4 三域报表数值断言 spec（mfg production-variance / mfg forecast-variance / mnt maintenance-history / qa inspection-summary），各调 `assertReportRenderedWithValue` 传入 `Erp{Mfg,Mnt,Qa}Report__renderHtml` query + variables + expectedTokens（Phase 1 派生的 seed 数值 token）。（mfg crp-load 归 Deferred——N=1 未 seed crp_load。）
+- [x] `Add`：新增至少 4 三域报表数值断言 spec（mfg production-variance / mfg forecast-variance / mnt maintenance-history / qa inspection-summary），各调 `assertReportRenderedWithValue` 传入 `Erp{Mfg,Mnt,Qa}Report__renderHtml` query + variables + expectedTokens（Phase 1 派生的 seed 数值 token）。（mfg crp-load 归 Deferred——N=1 未 seed crp_load。）
       - Skill: `nop-frontend-dev`
-- [ ] `Proof`：`npx playwright test tests/e2e/reports/{mfg-production-variance,mfg-forecast-variance,mnt-maintenance-history,qa-inspection-summary}.value.spec.ts --workers=1` 全绿（渲染 HTML 含期望数值 token）。
+- [x] `Proof`：`npx playwright test tests/e2e/reports/{mfg-production-variance,mfg-forecast-variance,mnt-maintenance-history,qa-inspection-summary}.value.spec.ts --workers=1` 全绿（渲染 HTML 含期望数值 token）。
       - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] 三域报表数值断言 spec 全绿（HTML 含 seed 派生数值 token，剥离千分位后匹配）。
+- [x] 三域报表数值断言 spec 全绿（HTML 含 seed 派生数值 token，剥离千分位后匹配）。
 
 ### Phase 4 - 文档对齐 + Deferred 解除登记（Add）
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`、`docs/testing/known-good-baselines.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 2 + Phase 3 全绿
 
-- [ ] `Add`：`docs/testing/e2e-runbook.md` 数值断言层段补三域（manufacturing/maintenance/quality 看板 + 报表）+ 套件总数更新 + 文件结构补新 spec；`docs/testing/known-good-baselines.md` 增三域数值断言基线行；2210-2 Deferred「其他扩展域看板/报表数值断言（manufacturing/quality/maintenance 子集）」登记解除（本计划 Closure 段登记）。
+- [x] `Add`：`docs/testing/e2e-runbook.md` 数值断言层段补三域（manufacturing/maintenance/quality 看板 + 报表）+ 套件总数更新 + 文件结构补新 spec；`docs/testing/known-good-baselines.md` 增三域数值断言基线行；2210-2 Deferred「其他扩展域看板/报表数值断言（manufacturing/quality/maintenance 子集）」登记解除（本计划 Closure 段登记）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] e2e-runbook 数值断言层含三域 + 套件总数/文件结构同步；known-good-baselines 含三域数值断言基线行；2210-2 Deferred mfg/mnt/qa 子集登记解除（本计划 Closure 段登记）。
+- [x] e2e-runbook 数值断言层含三域 + 套件总数/文件结构同步；known-good-baselines 含三域数值断言基线行；2210-2 Deferred mfg/mnt/qa 子集登记解除（本计划 Closure 段登记）。
 
 ## Draft Review Record
 
@@ -131,14 +131,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。本计划纯测试 spec + 文档新增，零生产代码变更；验证门控以全套件 fresh-DB seed E2E 全绿为主。
 
-- [ ] 范围内行为完成（三域看板 + 报表数值断言 spec + 期望值表）
-- [ ] 相关文档对齐（e2e-runbook + known-good-baselines）
-- [ ] 已运行验证：`npx playwright test`（全套件 fresh-DB seed：既有 + 新增三域数值断言全绿 0 回归）+ `mvn clean install -DskipTests`（154 模块，确认无后端污染——纯 tests/ 新增）
-- [ ] 无范围内项目降级为 deferred/follow-up（其他扩展域断言/像素回归/CRUD 写操作/GL 串联数值/SPC 可选均为计划内 Non-Goal 附触发条件）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（三域看板 + 报表数值断言 spec + 期望值表）
+- [x] 相关文档对齐（e2e-runbook + known-good-baselines）
+- [x] 已运行验证：`npx playwright test`（全套件 fresh-DB seed：既有 + 新增三域数值断言全绿 0 回归）+ `mvn clean install -DskipTests`（154 模块，确认无后端污染——纯 tests/ 新增）
+- [x] 无范围内项目降级为 deferred/follow-up（其他扩展域断言/像素回归/CRUD 写操作/GL 串联数值/SPC 可选均为计划内 Non-Goal 附触发条件）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -172,11 +172,21 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <计划关闭时填写>
+Status Note: 计划已完成并通过独立结束审计（2026-07-09）。三域（manufacturing/maintenance/quality）看板 KPI + 4 报表数据驱动数值断言层落地（7 新 `*.value.spec.ts`），期望值表派生自 0930-1/0930-2 固化种子并经独立审计逐项核对 BizModel 聚合口径与 seed CSV 行算术一致。纯测试 + 文档新增，零生产代码变更（git status 11 文件，无 `*.orm.xml`/`*.java`/CSV 等）。验证全绿：`mvn clean install -DskipTests`（154 模块，1:32）BUILD SUCCESS；`npx playwright test` 全套件 fresh-DB seed 0 回归（74 测试，10.5m，含 4 看板 KPI 断言 + 4 报表渲染断言）。质量看板 `getSpcOutOfControlWarning` 确定性 0 三段断言覆盖该 `@BizQuery` 可观测性（SPC 三表 0930-2 Deferred 未 seed）。
+
+Deferred Release:
+- `docs/plans/2026-07-08-2210-2-operational-domain-value-assertions.md` Deferred「其他扩展域看板/报表数值断言（manufacturing/quality/maintenance 子集）」— **RELEASED**。触发条件已满足：0930-1 制造域 + 0930-2 维护/质量域交易种子固化（N=1/N=2）。本计划交付 3 看板 KPI 断言（mfg/mnt/qa `getDashboardKpi` + qa `getSpcOutOfControlWarning`）+ 4 报表渲染数值断言（mfg production-variance/forecast-variance + mnt maintenance-history + qa inspection-summary）。其余扩展域（CRM/CS/HR/logistics/b2b/contract/drp/aps/master-data）数值断言仍按域逐批 successor（触发条件：对应域交易种子 seed 后）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理>
+- Auditor / Agent: 独立结束审计子代理 `ses_0bcf33929ffeKmJ1ZvwMPbY0B4`（general，新会话冷重播无执行者上下文，2026-07-09，逐项核实 LIVE 仓库非采信执行者自述）。VERDICT: **PASS**（0 BLOCKER / 0 MAJOR 修复后 / 1 MINOR 非阻塞）。
+  - Task A（7 spec 存在性 + 期望值算术，CRITICAL）：7/7 spec 存在且含 required keys；`quality.value.spec.ts` 含两 describe（getDashboardKpi + getSpcOutOfControlWarning）；逐 KPI/token 对照 seed CSV + `Erp{Mfg,Mnt,Qa}DashboardBizModel` + `Erp{Mfg,Mnt,Qa}ReportBizModel` 聚合逻辑算术核验一致（mfg inProcessCount=1/periodCompletedQty=180=100+80/onTimeRate=0.5=1÷2；mnt equipmentTotal=3/runningCount=2/periodVisitCount=1；qa inspectionCount=3/passRate=2÷3/rejectedCount=1/openNcrCount=2/SPC 全 0；4 报表 token WO-2026-001/6000.00/6300.00/300.00、200.00/180.00/-20.00、VIS-2026-001/120.00/90.00、产品甲/100.00%/50.00% 均 seed 派生确定）。
+  - Task B（保护区域）：`git status --porcelain` 11 文件（7 spec + 分析文档 + plan + e2e-runbook + known-good-baselines），**零** orm.xml/xbiz.xml/page.yaml/view.xml/.java/.beans.xml/sql-lib.xml/.xpt.xml/CSV 变更（镜像 2210-2）。
+  - Task C（分析文档）：`docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md` 每 KPI/token 标注期望值 + 派生公式 + seed 行依据 + variables 选择，与 spec + seed 三方一致。
+  - Task D（文档同步）：e2e-runbook 概览「19 数值断言 spec（共 72 spec）」/ 全套件「74 测试 10.5m」计数自洽；数值断言层段含三域；期望值表含 mfg/mnt/qa/SPC 行；文件结构列 7 新 spec；known-good-baselines 含 2026-07-09 0930-3 基线行（passing 命令 + 0 回归）。
+  - Task E（计划一致性）：4/4 Phase `Status: completed`、所有项目 `[x]`、`Plan Status: completed`；Deferred 段（其他扩展域/像素回归/GL 串联/crp-load+downtime-summary+ncr-capa-summary）均附触发条件。
+  - Task F（2210-2 release 登记）：本 Closure 段「Deferred Release」已登记（修复审计 MAJOR）。
+  - MINOR（非阻塞，已修复）：e2e-runbook seed-drift-sync step 2 括注原漏列 0930-3 文档 → 执行者已补列，与期望值表清单对齐。
 
 Follow-up:
 
