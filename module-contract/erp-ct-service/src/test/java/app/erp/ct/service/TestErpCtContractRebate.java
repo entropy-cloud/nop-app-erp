@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.graphql.core.ast.GraphQLOperationType;
@@ -231,7 +232,7 @@ public class TestErpCtContractRebate extends JunitAutoTestCase {
         // 预置已过账 AP 发票（800K）→ 累计 800K，0% 档，返利 0
         createPostedApInvoice("REB-PI-1", partnerId, currencyId, new BigDecimal("800000"));
         executeRpc(GraphQLOperationType.mutation, "ErpCtRebateAgreement__runAccrual",
-                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", LocalDate.now().toString())));
+                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", CoreMetrics.currentDate().toString())));
         ErpCtRebateAgreement ag = daoProvider.daoFor(ErpCtRebateAgreement.class).getEntityById(agreementId);
         assertEquals(0, new BigDecimal("800000").compareTo(ag.getTotalAccumulatedAmount()),
                 "累计金额=800K");
@@ -241,7 +242,7 @@ public class TestErpCtContractRebate extends JunitAutoTestCase {
         // 新增已过账 AP 发票（400K）→ 累计 1.2M，跨入 2% 档，追溯补差 → 返利 24000
         createPostedApInvoice("REB-PI-2", partnerId, currencyId, new BigDecimal("400000"));
         executeRpc(GraphQLOperationType.mutation, "ErpCtRebateAgreement__runAccrual",
-                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", LocalDate.now().toString())));
+                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", CoreMetrics.currentDate().toString())));
         ag = daoProvider.daoFor(ErpCtRebateAgreement.class).getEntityById(agreementId);
         assertEquals(0, new BigDecimal("1200000").compareTo(ag.getTotalAccumulatedAmount()),
                 "累计金额=1.2M");
@@ -482,7 +483,7 @@ public class TestErpCtContractRebate extends JunitAutoTestCase {
     private long createSettlement(long agreementId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("rebateAgreementId", agreementId);
-        data.put("settlementDate", LocalDate.now().toString());
+        data.put("settlementDate", CoreMetrics.currentDate().toString());
         data.put("status", "DRAFT");
         Map<?, ?> r = (Map<?, ?>) executeRpc(GraphQLOperationType.mutation, "ErpCtRebateSettlement__save",
                 ApiRequest.build(Map.of("data", data))).getData();

@@ -6,6 +6,7 @@ import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.service.ErpAstConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -34,7 +35,7 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
     private static final String CURRENT_PERIOD =
-            LocalDate.now().getYear() + "-" + String.format("%02d", LocalDate.now().getMonthValue());
+            CoreMetrics.currentDate().getYear() + "-" + String.format("%02d", CoreMetrics.currentDate().getMonthValue());
 
     @Inject
     IDaoProvider daoProvider;
@@ -188,7 +189,7 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
         s.setAccumulatedDepreciation(actualAmount);
         s.setNetBookValue(actualAmount);
         s.setStatus(status);
-        s.setBusinessDate(LocalDate.now());
+        s.setBusinessDate(CoreMetrics.currentDate());
         dao.saveEntity(s);
     }
 
@@ -212,7 +213,7 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
     }
 
     private static String minusMonthsPeriod(int monthsAgo) {
-        LocalDate d = LocalDate.now().minusMonths(monthsAgo);
+        LocalDate d = CoreMetrics.currentDate().minusMonths(monthsAgo);
         return d.getYear() + "-" + String.format("%02d", d.getMonthValue());
     }
 }

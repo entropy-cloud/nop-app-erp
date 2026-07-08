@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -68,7 +69,7 @@ public class ErpPurDashboardBizModel {
                                                 @Optional @Name("endDate") LocalDate endDate,
                                                 IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            LocalDate today = LocalDate.now();
+            LocalDate today = CoreMetrics.currentDate();
             LocalDate from = startDate != null ? startDate : today.withDayOfMonth(1);
             LocalDate to = endDate != null ? endDate : today;
 
@@ -101,7 +102,7 @@ public class ErpPurDashboardBizModel {
     public List<Map<String, Object>> getDashboardTrend(@Optional @Name("months") Integer months,
                                                         IServiceContext context) {
         int n = months == null || months <= 0 ? 12 : months;
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         LocalDate from = today.minusMonths(n - 1L).withDayOfMonth(1);
         return ormTemplate.runInSession(session -> {
             List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(from, today);
@@ -191,7 +192,7 @@ public class ErpPurDashboardBizModel {
         if (daysThreshold <= 0) {
             return Collections.emptyList();
         }
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         List<ErpFinArApItem> items = arApItemBiz.findOpenItems(
                 ErpFinConstants.DIRECTION_PAYABLE, context);
         List<Map<String, Object>> rows = new ArrayList<>();

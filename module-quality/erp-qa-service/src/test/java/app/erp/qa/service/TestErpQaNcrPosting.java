@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -190,7 +191,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
         Map<String, Object> verifyArgs = new LinkedHashMap<>();
         verifyArgs.put("actionId", actionId);
         verifyArgs.put("verificationPerson", VERIFICATION_PERSON);
-        verifyArgs.put("verificationDate", LocalDate.now().toString());
+        verifyArgs.put("verificationDate", CoreMetrics.currentDate().toString());
         rpcOk(mutation, "ErpQaAction__verifyAction", verifyArgs);
         rpcOk(mutation, "ErpQaNonConformance__resolve",
                 Map.of("ncrId", ncrId, "resolution", "CAPA 验证通过，关闭+过账"));
@@ -219,7 +220,7 @@ public class TestErpQaNcrPosting extends JunitAutoTestCase {
             ErpQaNonConformance ncr = new ErpQaNonConformance();
             ncr.orm_propValueByName("id", id);
             ncr.setCode(code);
-            ncr.setNcrDate(LocalDate.now());
+            ncr.setNcrDate(CoreMetrics.currentDate());
             ncr.setMaterialId(MATERIAL_ID);
             ncr.setQuantity(quantity);
             ncr.setDispositionType(disposition);

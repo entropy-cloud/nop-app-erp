@@ -13,6 +13,7 @@ import app.erp.pur.service.ErpPurConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -62,13 +63,13 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedSupplier(501L, "S-A");
             seedSupplier(502L, "S-B");
-            seedInvoice(601L, 501L, new BigDecimal("100"), LocalDate.now());
-            seedInvoice(602L, 502L, new BigDecimal("200"), LocalDate.now());
+            seedInvoice(601L, 501L, new BigDecimal("100"), CoreMetrics.currentDate());
+            seedInvoice(602L, 502L, new BigDecimal("200"), CoreMetrics.currentDate());
             // 订单 502 是 ACTIVE
-            seedOrder(701L, 501L, ErpPurConstants.DOC_STATUS_ACTIVE, LocalDate.now().plusDays(7));
-            seedOrder(702L, 502L, ErpPurConstants.DOC_STATUS_ACTIVE, LocalDate.now().plusDays(7));
+            seedOrder(701L, 501L, ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(7));
+            seedOrder(702L, 502L, ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(7));
             // 1 笔到货：onTime (receiveDate ≤ deliveryDate) / 1 total → onTimeRate=1.0
-            seedReceive(801L, 701L, 501L, LocalDate.now().plusDays(5));
+            seedReceive(801L, 701L, 501L, CoreMetrics.currentDate().plusDays(5));
             // 应付余额 600（PAYABLE + OPEN）
             seedArApItem(901L, 501L, new BigDecimal("600"));
         });
@@ -84,11 +85,11 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     public void testOnTimeRateLateDelivery() {
         ormTemplate.runInSession(() -> {
             seedSupplier(511L, "S-LATE");
-            seedOrder(711L, 511L, ErpPurConstants.DOC_STATUS_ACTIVE, LocalDate.now().plusDays(3));
-            seedOrder(712L, 511L, ErpPurConstants.DOC_STATUS_ACTIVE, LocalDate.now().plusDays(3));
+            seedOrder(711L, 511L, ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(3));
+            seedOrder(712L, 511L, ErpPurConstants.DOC_STATUS_ACTIVE, CoreMetrics.currentDate().plusDays(3));
             // 第一笔提前（onTime），第二笔迟到（晚于 deliveryDate）→ onTimeRate=0.5
-            seedReceive(811L, 711L, 511L, LocalDate.now().plusDays(1));
-            seedReceive(812L, 712L, 511L, LocalDate.now().plusDays(10));
+            seedReceive(811L, 711L, 511L, CoreMetrics.currentDate().plusDays(1));
+            seedReceive(812L, 712L, 511L, CoreMetrics.currentDate().plusDays(10));
         });
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
         assertEquals(0.5, (double) kpi.get("onTimeRate"), 0.001, "一早一晚 → 0.5");
@@ -98,8 +99,8 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     public void testTrendMonthlySeries() {
         ormTemplate.runInSession(() -> {
             seedSupplier(521L, "S-C");
-            seedInvoice(621L, 521L, new BigDecimal("150"), LocalDate.now().minusMonths(1));
-            seedInvoice(622L, 521L, new BigDecimal("250"), LocalDate.now());
+            seedInvoice(621L, 521L, new BigDecimal("150"), CoreMetrics.currentDate().minusMonths(1));
+            seedInvoice(622L, 521L, new BigDecimal("250"), CoreMetrics.currentDate());
         });
         List<Map<String, Object>> trend = dashboardBiz.getDashboardTrend(2, CTX);
         assertEquals(2, trend.size());
@@ -115,9 +116,9 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedSupplier(531L, "S-TOP1");
             seedSupplier(532L, "S-TOP2");
-            seedInvoice(631L, 531L, new BigDecimal("300"), LocalDate.now());
-            seedInvoice(632L, 532L, new BigDecimal("100"), LocalDate.now());
-            seedInvoice(633L, 531L, new BigDecimal("50"), LocalDate.now());
+            seedInvoice(631L, 531L, new BigDecimal("300"), CoreMetrics.currentDate());
+            seedInvoice(632L, 532L, new BigDecimal("100"), CoreMetrics.currentDate());
+            seedInvoice(633L, 531L, new BigDecimal("50"), CoreMetrics.currentDate());
         });
         List<Map<String, Object>> top = dashboardBiz.findVendorTopN(10, CTX);
         assertEquals(2, top.size());
@@ -129,7 +130,7 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     public void testThreeWayMatchPriceVariance() {
         ormTemplate.runInSession(() -> {
             seedSupplier(541L, "S-PV");
-            seedInvoice(641L, 541L, new BigDecimal("1000"), LocalDate.now());
+            seedInvoice(641L, 541L, new BigDecimal("1000"), CoreMetrics.currentDate());
             // 发票行单价 110，关联 receiveLine 901 → orderLine 801 单价 100 → 差异 10% > 5% 阈值
             seedOrderLine(801L, 701L, new BigDecimal("100"));
             seedReceiveLine(901L, 801L, 801L);
@@ -159,7 +160,7 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedSupplier(561L, "S-OVD2");
             seedArApItemWithDue(961L, 561L, new BigDecimal("800"),
-                    LocalDate.now().minusDays(100), LocalDate.now().minusDays(100));
+                    CoreMetrics.currentDate().minusDays(100), CoreMetrics.currentDate().minusDays(100));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpPurConstants.CONFIG_DASH_PUR_AP_OVERDUE_DAYS, "90");
@@ -214,7 +215,7 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         o.setCode("PO-" + id);
         o.setOrgId(1L);
         o.setSupplierId(supplierId);
-        o.setBusinessDate(LocalDate.now());
+        o.setBusinessDate(CoreMetrics.currentDate());
         o.setDeliveryDate(deliveryDate);
         o.setCurrencyId(1L);
         o.setExchangeRate(BigDecimal.ONE);
@@ -283,7 +284,7 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
     }
 
     private void seedArApItem(long id, long partnerId, BigDecimal openAmount) {
-        seedArApItemWithDue(id, partnerId, openAmount, LocalDate.now(), LocalDate.now());
+        seedArApItemWithDue(id, partnerId, openAmount, CoreMetrics.currentDate(), CoreMetrics.currentDate());
     }
 
     private void seedArApItemWithDue(long id, long partnerId, BigDecimal openAmount,

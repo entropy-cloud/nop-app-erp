@@ -57,7 +57,7 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
 
     @Test
     public void testKpiCounts() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // 3 设备：RUNNING + DOWN + DECOMMISSIONED（不计入总数）
             seedEquipment(101L, "RUN-1", ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
@@ -115,14 +115,14 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
 
     @Test
     public void testMaintenanceOverdueAlertTriggersAndNot() {
-        LocalDate past = LocalDate.now().minusDays(10);
-        LocalDate future = LocalDate.now().plusDays(10);
+        LocalDate past = CoreMetrics.currentDate().minusDays(10);
+        LocalDate future = CoreMetrics.currentDate().plusDays(10);
         ormTemplate.runInSession(() -> {
             // 计划 A: nextDueDate 过去, active, 无 Visit → 触发
             seedSchedule(301L, "SCH-A", 401L, past, 1);
             // 计划 B: nextDueDate 过去, active, 有 Visit → 不触发
             seedSchedule(302L, "SCH-B", 402L, past, 1);
-            seedVisitForSchedule(311L, 402L, 302L, LocalDate.now(), ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
+            seedVisitForSchedule(311L, 402L, 302L, CoreMetrics.currentDate(), ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
             // 计划 C: nextDueDate 未来 → 不触发（未到期）
             seedSchedule(303L, "SCH-C", 403L, future, 1);
             // 计划 D: nextDueDate 过去, inactive → 不触发
@@ -155,7 +155,7 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
         r.orm_propValue(1, id);
         r.setCode("REQ-" + id);
         r.setEquipmentId(equipmentId);
-        r.setRequestDate(LocalDate.now());
+        r.setRequestDate(CoreMetrics.currentDate());
         r.setDescription("维护请求-" + id);
         r.setPriority(ErpMntDaoConstants.PRIORITY_NORMAL);
         r.setStatus(status);

@@ -18,6 +18,7 @@ import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -207,7 +208,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             delivery.setCustomerId(CUSTOMER_ID);
             delivery.setWarehouseId(WAREHOUSE_ID);
             delivery.setCurrencyId(CURRENCY_ID);
-            delivery.setBusinessDate(LocalDate.now());
+            delivery.setBusinessDate(CoreMetrics.currentDate());
             delivery.setDocStatus("ACTIVE"); // erp-sal/doc-status ACTIVE
             delivery.setApproveStatus("APPROVED"); // erp-sal/approve-status APPROVED
             delivery.setPosted(Boolean.FALSE);
@@ -229,7 +230,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             move.orm_propValueByName("id", MOVE_PK);
             move.setCode("MV-" + DELIVERY_CODE);
             move.setMoveType("OUTGOING"); // erp-inv/operation-type OUTGOING
-            move.setBusinessDate(LocalDate.now());
+            move.setBusinessDate(CoreMetrics.currentDate());
             move.setDocStatus("DONE"); // erp-inv/move-status DONE
             move.setApproveStatus("APPROVED"); // APPROVED
             move.setRelatedBillType(ErpQaConstants.RELATED_BILL_TYPE_SAL_DELIVERY_INV);
@@ -259,7 +260,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
         data.put("recallName", "召回-" + code);
         data.put("triggerType", ErpQaConstants.RECALL_TRIGGER_MANUAL);
         data.put("severityLevel", ErpQaConstants.RECALL_SEVERITY_HIGH);
-        data.put("businessDate", LocalDate.now().toString());
+        data.put("businessDate", CoreMetrics.currentDate().toString());
         data.put("materialId", MATERIAL_ID);
         data.put("batchId", BATCH_PK);
         rpcOk(mutation, "ErpQaRecall__register", Map.of("data", data));

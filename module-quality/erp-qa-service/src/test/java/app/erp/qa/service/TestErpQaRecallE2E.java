@@ -18,6 +18,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -163,7 +164,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
             move.orm_propValueByName("id", MOVE_PK);
             move.setCode("MV-" + DELIVERY_CODE);
             move.setMoveType("OUTGOING");
-            move.setBusinessDate(LocalDate.now());
+            move.setBusinessDate(CoreMetrics.currentDate());
             move.setDocStatus("DONE");
             move.setApproveStatus("APPROVED");
             move.setRelatedBillType(ErpQaConstants.RELATED_BILL_TYPE_SAL_DELIVERY_INV);
@@ -235,7 +236,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         delivery.setCustomerId(CUSTOMER_ID);
         delivery.setWarehouseId(WAREHOUSE_ID);
         delivery.setCurrencyId(CURRENCY_ID);
-        delivery.setBusinessDate(LocalDate.now());
+        delivery.setBusinessDate(CoreMetrics.currentDate());
         delivery.setDocStatus("ACTIVE");
         delivery.setApproveStatus("APPROVED");
         delivery.setPosted(Boolean.FALSE);
@@ -259,7 +260,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
             ErpQaNonConformance ncr = new ErpQaNonConformance();
             ncr.orm_propValueByName("id", id);
             ncr.setCode(code);
-            ncr.setNcrDate(LocalDate.now());
+            ncr.setNcrDate(CoreMetrics.currentDate());
             ncr.setMaterialId(MATERIAL_ID);
             ncr.setSeverity(severity);
             ncr.setStatus(ErpQaConstants.NCR_STATUS_IN_REVIEW);
@@ -290,7 +291,7 @@ public class TestErpQaRecallE2E extends JunitAutoTestCase {
         data.put("recallName", "召回-" + code);
         data.put("triggerType", ErpQaConstants.RECALL_TRIGGER_MANUAL);
         data.put("severityLevel", severity);
-        data.put("businessDate", LocalDate.now().toString());
+        data.put("businessDate", CoreMetrics.currentDate().toString());
         data.put("materialId", MATERIAL_ID);
         data.put("batchId", BATCH_PK);
         rpcOk(mutation, "ErpQaRecall__register", Map.of("data", data));

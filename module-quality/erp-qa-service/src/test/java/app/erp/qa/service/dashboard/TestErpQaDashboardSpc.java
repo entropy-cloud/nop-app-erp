@@ -94,7 +94,7 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
 
     @Test
     public void testSpcNcrStatusInclusion() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // SPC 来源：2 OPEN + 1 IN_REVIEW + 1 RESOLVED → 开放 3
             seedSpcNcr(5001L, today, ErpQaConstants.NCR_STATUS_OPEN);
@@ -111,7 +111,7 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
 
     @Test
     public void testConfigGatedClosesInclusionSegments() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             seedCapability(8611L, 611L, LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 31),
                     ErpQaConstants.SPC_CAPABILITY_INADEQUATE);

@@ -3,6 +3,7 @@ package app.erp.qa.service.spc;
 import app.erp.qa.dao.entity.ErpQaSpcChart;
 import app.erp.qa.service.ErpQaConfigs;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -61,7 +62,7 @@ public class ErpQaSpcCapabilityJob {
         }
 
         IServiceContext ctx = new ServiceContextImpl();
-        LocalDate periodTo = LocalDate.now();
+        LocalDate periodTo = CoreMetrics.currentDate();
         LocalDate periodFrom = periodTo.minusDays(DEFAULT_PERIOD_DAYS);
         int processed = 0;
         int failed = 0;

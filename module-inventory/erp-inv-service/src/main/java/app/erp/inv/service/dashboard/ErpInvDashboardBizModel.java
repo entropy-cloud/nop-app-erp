@@ -14,6 +14,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -63,7 +64,7 @@ public class ErpInvDashboardBizModel {
                                                 @Optional @Name("endDate") LocalDate endDate,
                                                 IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            LocalDate today = LocalDate.now();
+            LocalDate today = CoreMetrics.currentDate();
             LocalDate from = startDate != null ? startDate : today.withDayOfMonth(1);
             LocalDate to = endDate != null ? endDate : today;
 
@@ -99,7 +100,7 @@ public class ErpInvDashboardBizModel {
     public List<Map<String, Object>> getDashboardTrend(@Optional @Name("months") Integer months,
                                                         IServiceContext context) {
         int n = months == null || months <= 0 ? 12 : months;
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         LocalDate from = today.minusMonths(n - 1L).withDayOfMonth(1);
         return ormTemplate.runInSession(session -> {
             // 月度库存价值趋势：以 StockLedger 月度净变动成本近似（incoming 正 / outgoing 负）
@@ -186,7 +187,7 @@ public class ErpInvDashboardBizModel {
         if (days <= 0) {
             return Collections.emptyList();
         }
-        LocalDate cutoff = LocalDate.now().minusDays(days);
+        LocalDate cutoff = CoreMetrics.currentDate().minusDays(days);
         return ormTemplate.runInSession(session -> {
             List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAll();
             Map<Long, LocalDate> lastOutByMaterial = loadLastOutgoingDates(cutoff);
@@ -219,7 +220,7 @@ public class ErpInvDashboardBizModel {
         if (days <= 0) {
             return Collections.emptyList();
         }
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         LocalDate horizon = today.plusDays(days);
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpInvBatch> dao = daoProvider.daoFor(ErpInvBatch.class);

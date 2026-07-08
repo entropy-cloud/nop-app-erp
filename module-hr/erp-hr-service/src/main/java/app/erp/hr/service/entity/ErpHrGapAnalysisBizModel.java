@@ -19,6 +19,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -153,7 +154,7 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
 
     LocalDate latestAssessmentDate(Long employeeId, IServiceContext context) {
         ErpHrEmployeeAssessment latest = findLatestCompletedAssessment(employeeId, context);
-        return latest != null ? latest.getAssessmentDate() : LocalDate.now();
+        return latest != null ? latest.getAssessmentDate() : CoreMetrics.currentDate();
     }
 
     void deleteExistingGaps(Long employeeId, IServiceContext context) {

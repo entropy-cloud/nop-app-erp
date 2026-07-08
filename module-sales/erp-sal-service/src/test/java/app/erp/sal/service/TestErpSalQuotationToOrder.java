@@ -141,7 +141,7 @@ public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
     @Test
     public void testConvertExpiredRejected() {
         ErpSalQuotation expired = newQuotation("SQ-EXPIRED-001", CUSTOMER_ID, "100",
-                LocalDate.of(2026, 7, 1), LocalDate.now().minusDays(1));
+                LocalDate.of(2026, 7, 1), CoreMetrics.currentDate().minusDays(1));
         expired.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         expired.setIsAccepted(true);
         ormTemplate.runInSession(() -> {

@@ -6,6 +6,7 @@ import app.erp.prj.dao.entity.ErpPrjProject;
 import app.erp.prj.service.ErpPrjConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -112,8 +113,8 @@ public class TestErpPrjDashboard extends JunitAutoTestCase {
 
     @Test
     public void testDelayedProjectAlertTriggersAndNot() {
-        LocalDate past = LocalDate.now().minusDays(10);
-        LocalDate future = LocalDate.now().plusDays(10);
+        LocalDate past = CoreMetrics.currentDate().minusDays(10);
+        LocalDate future = CoreMetrics.currentDate().plusDays(10);
         ormTemplate.runInSession(() -> {
             // P1: endDate 过去, status=OPEN → 触发
             seedProject(131L, "LATE", ErpPrjConstants.PROJECT_STATUS_OPEN, past);
@@ -151,7 +152,7 @@ public class TestErpPrjDashboard extends JunitAutoTestCase {
         b.setCode("BUD-" + id);
         b.setProjectId(projectId);
         b.setOrgId(1L);
-        b.setBusinessDate(LocalDate.now());
+        b.setBusinessDate(CoreMetrics.currentDate());
         b.setCurrencyId(1L);
         b.setTotalAmount(totalAmount);
         b.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
@@ -166,7 +167,7 @@ public class TestErpPrjDashboard extends JunitAutoTestCase {
         c.setCode("COST-" + id);
         c.setProjectId(projectId);
         c.setOrgId(1L);
-        c.setBusinessDate(LocalDate.now());
+        c.setBusinessDate(CoreMetrics.currentDate());
         c.setCurrencyId(1L);
         c.setTotalAmount(totalAmount);
         c.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);

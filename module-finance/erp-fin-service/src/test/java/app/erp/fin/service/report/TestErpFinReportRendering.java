@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.WebContentBean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -83,7 +84,7 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         Long voucherId = seedPostedVoucherWithCashLine();
 
         // AR/AP 账龄：一笔 100 天前的开口应收 → 90+ 桶
-        seedOpenArAp(LocalDate.now().minusDays(100), new BigDecimal("250"));
+        seedOpenArAp(CoreMetrics.currentDate().minusDays(100), new BigDecimal("250"));
 
         // 期末结账报告：模块状态 + 损益结转业财回链
         seedPeriodStatus();
@@ -169,7 +170,7 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
     @Test
     public void testArApAgingBuckets() {
         seed();
-        List<Map<String, Object>> ds = reportBiz.buildArApAgingDataset(LocalDate.now());
+        List<Map<String, Object>> ds = reportBiz.buildArApAgingDataset(CoreMetrics.currentDate());
         assertFalse(ds.isEmpty(), "账龄数据集非空");
         BigDecimal bucketTotal = BigDecimal.ZERO;
         BigDecimal openSum = BigDecimal.ZERO;

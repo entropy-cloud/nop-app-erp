@@ -4,6 +4,7 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -50,7 +51,7 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
 
     @Test
     public void testKpiAggregationAndOnTimeRate() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // 在制工单 2 个（IN_PROCESS + STOCK_RESERVED）
             seedWorkOrder(101L, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, null);
@@ -98,7 +99,7 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
 
     @Test
     public void testTrendMonthlySeries() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             seedWorkOrder(121L, ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED,
                     new BigDecimal("50"), today, today.minusDays(1));
@@ -116,8 +117,8 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
 
     @Test
     public void testDelayedWorkOrderAlertTriggersAndNot() {
-        LocalDate past = LocalDate.now().minusDays(10);
-        LocalDate future = LocalDate.now().plusDays(10);
+        LocalDate past = CoreMetrics.currentDate().minusDays(10);
+        LocalDate future = CoreMetrics.currentDate().plusDays(10);
         ormTemplate.runInSession(() -> {
             // W1: plannedEndDate 过去, IN_PROCESS → 触发
             seedWorkOrder(131L, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, null, null, past);

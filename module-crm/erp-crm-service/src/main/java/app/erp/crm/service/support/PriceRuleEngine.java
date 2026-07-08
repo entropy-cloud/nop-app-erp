@@ -3,6 +3,7 @@ package app.erp.crm.service.support;
 import app.erp.crm.dao.entity.ErpCrmPriceRule;
 import app.erp.crm.service.ErpCrmConstants;
 
+import io.nop.api.core.time.CoreMetrics;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -44,7 +45,7 @@ public class PriceRuleEngine {
     public PriceResult resolvePrice(Long productId, Long customerId, BigDecimal quantity,
                                     Long currencyId, LocalDate now,
                                     BigDecimal basePrice, List<ErpCrmPriceRule> activeRules) {
-        LocalDate today = now != null ? now : LocalDate.now();
+        LocalDate today = now != null ? now : CoreMetrics.currentDate();
         BigDecimal qty = quantity != null ? quantity : BigDecimal.ONE;
 
         if (activeRules == null || activeRules.isEmpty()) {

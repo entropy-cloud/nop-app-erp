@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -127,7 +128,7 @@ public class ErpPrjDashboardBizModel {
     /** 项目延期预警（endDate < today 且 status != COMPLETED）。 */
     @BizQuery
     public List<Map<String, Object>> findDelayedProjectAlert(IServiceContext context) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         return ormTemplate.runInSession(session -> {
             IEntityDao<ErpPrjProject> dao = daoProvider.daoFor(ErpPrjProject.class);
             QueryBean q = new QueryBean();

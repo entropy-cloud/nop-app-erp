@@ -324,14 +324,14 @@ public class TestErpCtESignature extends JunitAutoTestCase {
     @Test
     public void testFindExpiringRequests() {
         // 已过期 + 非终态 → 命中
-        seedRequestWithDeadline(ErpCtConstants.SIGNATURE_STATUS_PENDING, LocalDate.now().minusDays(1));
+        seedRequestWithDeadline(ErpCtConstants.SIGNATURE_STATUS_PENDING, CoreMetrics.currentDate().minusDays(1));
         // 未来 + 非终态 → 不命中
-        seedRequestWithDeadline(ErpCtConstants.SIGNATURE_STATUS_PENDING, LocalDate.now().plusDays(10));
+        seedRequestWithDeadline(ErpCtConstants.SIGNATURE_STATUS_PENDING, CoreMetrics.currentDate().plusDays(10));
         // 已过期 + 终态 → 不命中
-        seedRequestWithDeadline(ErpCtConstants.SIGNATURE_STATUS_FULLY, LocalDate.now().minusDays(2));
+        seedRequestWithDeadline(ErpCtConstants.SIGNATURE_STATUS_FULLY, CoreMetrics.currentDate().minusDays(2));
 
         List<ErpCtSignatureRequest> expiring =
-                signatureRequestBiz.findExpiringRequests(LocalDate.now(), CTX);
+                signatureRequestBiz.findExpiringRequests(CoreMetrics.currentDate(), CTX);
         assertEquals(1, expiring.size(), "仅 过期+非终态 的请求应命中");
     }
 
@@ -398,7 +398,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
             r.setStatus(ErpCtConstants.SIGNATURE_STATUS_PENDING);
             r.setProviderRequestId("MOCK-REQ-SEED-" + System.nanoTime());
             r.setSigners("[{\"name\":\"张三\",\"email\":\"zhang@ex.com\"},{\"name\":\"李四\",\"email\":\"li@ex.com\"}]");
-            r.setSigningDeadline(LocalDate.now().plusDays(15));
+            r.setSigningDeadline(CoreMetrics.currentDate().plusDays(15));
             daoProvider.daoFor(ErpCtSignatureRequest.class).saveEntity(r);
             return r;
         });
@@ -416,7 +416,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
             r.setStatus(status);
             r.setProviderRequestId("MOCK-REQ-SEED-" + System.nanoTime());
             r.setSigners("[{\"name\":\"张三\",\"email\":\"zhang@ex.com\"}]");
-            r.setSigningDeadline(LocalDate.now().plusDays(15));
+            r.setSigningDeadline(CoreMetrics.currentDate().plusDays(15));
             if (ErpCtConstants.SIGNATURE_STATUS_FULLY.equals(status)) {
                 r.setCompletedAt(CoreMetrics.currentDateTime());
             }

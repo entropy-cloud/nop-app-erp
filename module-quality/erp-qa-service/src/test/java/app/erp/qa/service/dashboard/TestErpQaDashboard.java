@@ -7,6 +7,7 @@ import app.erp.qa.service.ErpQaConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -51,7 +52,7 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
 
     @Test
     public void testKpiPassRateArithmetic() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // 本期 4 质检：2 ACCEPTED + 1 REJECTED + 1 CONDITIONAL → 合格率 2/4=0.5
             seedInspection(101L, today, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
@@ -75,7 +76,7 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
 
     @Test
     public void testTrendMonthlyPassRate() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // 本月 2 质检：1 ACCEPTED + 1 REJECTED → 合格率 0.5
             seedInspection(111L, today, ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
@@ -98,7 +99,7 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
 
     @Test
     public void testDefectTopN() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         ormTemplate.runInSession(() -> {
             // SCRAP 3 + RETURN 1
             seedNcr(221L, today, ErpQaConstants.NCR_STATUS_OPEN, ErpQaConstants.DISPOSITION_TYPE_SCRAP);
@@ -115,8 +116,8 @@ public class TestErpQaDashboard extends JunitAutoTestCase {
 
     @Test
     public void testCapaOverdueAlertTriggersAndNot() {
-        LocalDate past = LocalDate.now().minusDays(10);
-        LocalDate future = LocalDate.now().plusDays(10);
+        LocalDate past = CoreMetrics.currentDate().minusDays(10);
+        LocalDate future = CoreMetrics.currentDate().plusDays(10);
         ormTemplate.runInSession(() -> {
             // Action A: dueDate 过去, PENDING → 触发
             seedAction(301L, past, ErpQaConstants.ACTION_STATUS_PENDING);

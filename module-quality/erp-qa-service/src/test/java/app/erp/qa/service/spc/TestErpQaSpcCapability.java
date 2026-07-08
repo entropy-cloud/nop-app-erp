@@ -64,7 +64,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
         }
 
         ErpQaSpcCapability cap = ormTemplate.runInSession(s -> spcCapabilityCalculator.calculateCapability(
-                chartId, LocalDate.now().minusDays(30), LocalDate.now(), null));
+                chartId, CoreMetrics.currentDate().minusDays(30), CoreMetrics.currentDate(), null));
         assertNotNull(cap);
         assertEquals(ErpQaConstants.SPC_CAPABILITY_EXCELLENT, cap.getCapabilityLevel(),
                 "Cpk 高应判定 EXCELLENT，实际 cpk=" + cap.getCpk());
@@ -94,7 +94,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
         seedSample(chartId, 5, "0", "10");
 
         ErpQaSpcCapability cap = ormTemplate.runInSession(s -> spcCapabilityCalculator.calculateCapability(
-                chartId, LocalDate.now().minusDays(30), LocalDate.now(), null));
+                chartId, CoreMetrics.currentDate().minusDays(30), CoreMetrics.currentDate(), null));
         assertNotNull(cap);
         assertEquals(ErpQaConstants.SPC_CAPABILITY_INADEQUATE, cap.getCapabilityLevel(),
                 "Cpk 低应判定 INADEQUATE，实际 cpk=" + cap.getCpk());
@@ -118,7 +118,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
         Long chartId = seedChart("CHART-CAP-EMPTY",
                 new BigDecimal("0"), new BigDecimal("100"));
         ErpQaSpcCapability cap = ormTemplate.runInSession(s -> spcCapabilityCalculator.calculateCapability(
-                chartId, LocalDate.now().minusDays(30), LocalDate.now(), null));
+                chartId, CoreMetrics.currentDate().minusDays(30), CoreMetrics.currentDate(), null));
         assertNull(cap, "无样本不创建 Capability");
     }
 

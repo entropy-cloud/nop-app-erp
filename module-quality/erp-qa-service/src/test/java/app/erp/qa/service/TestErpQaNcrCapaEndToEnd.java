@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -94,7 +95,7 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
         Map<String, Object> verifyArgs = new LinkedHashMap<>();
         verifyArgs.put("actionId", actionId);
         verifyArgs.put("verificationPerson", VERIFICATION_PERSON);
-        verifyArgs.put("verificationDate", LocalDate.now().toString());
+        verifyArgs.put("verificationDate", CoreMetrics.currentDate().toString());
         rpcOk(mutation, "ErpQaAction__verifyAction", verifyArgs);
 
         // 6. NCR resolve IN_REVIEW→RESOLVED（门控通过）
@@ -197,8 +198,8 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
             ins.setDocStatus(ErpQaConstants.DOC_STATUS_ACTIVE);
             ins.setApproveStatus(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED);
             ins.setPosted(Boolean.FALSE);
-            ins.setInspectionDate(LocalDate.now());
-            ins.setBusinessDate(LocalDate.now());
+            ins.setInspectionDate(CoreMetrics.currentDate());
+            ins.setBusinessDate(CoreMetrics.currentDate());
             ins.setRelatedBillType("ERP_PUR_RECEIPT");
             ins.setRelatedBillCode("BILL-" + code);
             dao.saveEntity(ins);

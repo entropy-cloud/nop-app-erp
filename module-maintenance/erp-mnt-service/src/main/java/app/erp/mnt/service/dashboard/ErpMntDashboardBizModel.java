@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -59,7 +60,7 @@ public class ErpMntDashboardBizModel {
                                                 @Optional @Name("endDate") LocalDate endDate,
                                                 IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            LocalDate today = LocalDate.now();
+            LocalDate today = CoreMetrics.currentDate();
             LocalDate from = startDate != null ? startDate : today.withDayOfMonth(1);
             LocalDate to = endDate != null ? endDate : today;
 
@@ -136,7 +137,7 @@ public class ErpMntDashboardBizModel {
         int overdueDays = AppConfig.var(
                 ErpMntConstants.CONFIG_DASH_MNT_MAINTENANCE_OVERDUE_DAYS,
                 ErpMntConstants.DEFAULT_DASH_MNT_MAINTENANCE_OVERDUE_DAYS);
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         LocalDate cutoff = today.minusDays(overdueDays);
         return ormTemplate.runInSession(session -> {
             List<ErpMntSchedule> schedules = loadActiveSchedules();

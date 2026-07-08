@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.graphql.core.IGraphQLExecutionContext;
@@ -95,7 +96,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
 
         createPostedArInvoice("SREB-SI-1", partnerId, currencyId, new BigDecimal("1200000"));
         executeRpc(mutation, "ErpCtRebateAgreement__runAccrual",
-                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", LocalDate.now().toString())));
+                ApiRequest.build(Map.of("agreementId", agreementId, "asOfDate", CoreMetrics.currentDate().toString())));
 
         long settlementId = createSettlement(agreementId);
         return new long[]{agreementId, settlementId};
@@ -254,7 +255,7 @@ public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
     private long createSettlement(long agreementId) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("rebateAgreementId", agreementId);
-        data.put("settlementDate", LocalDate.now().toString());
+        data.put("settlementDate", CoreMetrics.currentDate().toString());
         data.put("status", "DRAFT");
         Map<?, ?> r = (Map<?, ?>) executeRpc(mutation, "ErpCtRebateSettlement__save",
                 ApiRequest.build(Map.of("data", data))).getData();

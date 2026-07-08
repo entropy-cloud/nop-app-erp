@@ -6,6 +6,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.graphql.core.IGraphQLExecutionContext;
@@ -128,7 +129,7 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
         data.put("recallName", "召回-" + code);
         data.put("triggerType", ErpQaConstants.RECALL_TRIGGER_MANUAL);
         data.put("severityLevel", severity);
-        data.put("businessDate", LocalDate.now().toString());
+        data.put("businessDate", CoreMetrics.currentDate().toString());
         data.put("materialId", MATERIAL_ID);
         data.put("batchId", BATCH_ID);
         ApiResponse<?> resp = rpc(mutation, "ErpQaRecall__register", Map.of("data", data));

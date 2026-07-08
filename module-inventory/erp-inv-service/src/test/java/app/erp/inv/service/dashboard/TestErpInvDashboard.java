@@ -9,6 +9,7 @@ import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -60,10 +61,10 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
             // 余额 totalCost=1000
             seedBalance(201L, 101L, 1L, new BigDecimal("100"), new BigDecimal("1000"));
             // 出库移动：DONE + OUTGOING，行 totalCost=200
-            ErpInvStockMove m = seedMove(301L, ErpInvConstants.MOVE_TYPE_OUTGOING, ErpInvConstants.DOC_STATUS_DONE, LocalDate.now());
+            ErpInvStockMove m = seedMove(301L, ErpInvConstants.MOVE_TYPE_OUTGOING, ErpInvConstants.DOC_STATUS_DONE, CoreMetrics.currentDate());
             seedMoveLine(401L, 301L, 101L, new BigDecimal("-10"), new BigDecimal("200"));
             // 入库移动：DONE + INCOMING，行 quantity=50
-            ErpInvStockMove m2 = seedMove(302L, ErpInvConstants.MOVE_TYPE_INCOMING, ErpInvConstants.DOC_STATUS_DONE, LocalDate.now());
+            ErpInvStockMove m2 = seedMove(302L, ErpInvConstants.MOVE_TYPE_INCOMING, ErpInvConstants.DOC_STATUS_DONE, CoreMetrics.currentDate());
             seedMoveLine(402L, 302L, 101L, new BigDecimal("50"), new BigDecimal("500"));
         });
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(null, null, CTX);
@@ -138,7 +139,7 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
     public void testBatchExpiryAlertDisabledByDefault() {
         ormTemplate.runInSession(() -> {
             seedMaterial(151L, BigDecimal.ZERO);
-            seedBatch(251L, "BAT-SOON", 151L, 1L, LocalDate.now().plusDays(5));
+            seedBatch(251L, "BAT-SOON", 151L, 1L, CoreMetrics.currentDate().plusDays(5));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpInvConstants.CONFIG_DASH_INV_BATCH_EXPIRY_DAYS,
@@ -152,9 +153,9 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedMaterial(161L, BigDecimal.ZERO);
             // 7 天后过期 < 阈值 30 天 → 触发
-            seedBatch(261L, "BAT-7D", 161L, 1L, LocalDate.now().plusDays(7));
+            seedBatch(261L, "BAT-7D", 161L, 1L, CoreMetrics.currentDate().plusDays(7));
             // 100 天后过期 > 阈值 30 天 → 不触发
-            seedBatch(262L, "BAT-100D", 161L, 1L, LocalDate.now().plusDays(100));
+            seedBatch(262L, "BAT-100D", 161L, 1L, CoreMetrics.currentDate().plusDays(100));
         });
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpInvConstants.CONFIG_DASH_INV_BATCH_EXPIRY_DAYS, "30");
@@ -241,7 +242,7 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         b.setWarehouseId(warehouseId);
         b.setTotalQuantity(BigDecimal.TEN);
         b.setAvailableQuantity(BigDecimal.TEN);
-        b.setProductionDate(LocalDate.now().minusDays(30));
+        b.setProductionDate(CoreMetrics.currentDate().minusDays(30));
         b.setExpiryDate(expiry);
         b.setStatus("ACTIVE");
         dao.saveEntity(b);

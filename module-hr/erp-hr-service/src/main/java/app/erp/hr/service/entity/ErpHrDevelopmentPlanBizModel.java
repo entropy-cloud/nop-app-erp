@@ -170,8 +170,8 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
         item.setDevelopmentAction("针对胜任力差距 (gap=" + nz(gap.getGapValue())
                 + ",severity=" + gap.getGapSeverity() + ") 的建议发展行动");
         item.setStatus(ErpHrConstants.PLAN_ITEM_STATUS_NOT_STARTED);
-        item.setStartDate(LocalDate.now());
-        item.setEndDate(LocalDate.now().plusMonths(3));
+        item.setStartDate(CoreMetrics.currentDate());
+        item.setEndDate(CoreMetrics.currentDate().plusMonths(3));
         return item;
     }
 

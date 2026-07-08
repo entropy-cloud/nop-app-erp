@@ -9,6 +9,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -103,7 +104,7 @@ public class ErpAstDashboardBizModel {
     public List<Map<String, Object>> getDashboardTrend(@Optional @Name("months") Integer months,
                                                         IServiceContext context) {
         int n = months == null || months <= 0 ? 12 : months;
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         LocalDate from = today.minusMonths(n - 1L).withDayOfMonth(1);
         return ormTemplate.runInSession(session -> {
             List<ErpAstDepreciationSchedule> schedules = loadExecutedSchedulesInRange(from, today);
@@ -203,7 +204,7 @@ public class ErpAstDashboardBizModel {
     }
 
     private static String currentPeriod() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.currentDate();
         return today.getYear() + "-" + String.format("%02d", today.getMonthValue());
     }
 

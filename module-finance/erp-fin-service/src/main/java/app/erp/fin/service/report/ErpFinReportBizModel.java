@@ -18,6 +18,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.WebContentBean;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.concurrent.executor.GlobalExecutors;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
@@ -293,7 +294,7 @@ public class ErpFinReportBizModel {
 
     List<Map<String, Object>> buildArApAgingDataset(LocalDate asOfDate) {
         return ormTemplate.runInSession(session -> {
-            LocalDate today = asOfDate != null ? asOfDate : LocalDate.now();
+            LocalDate today = asOfDate != null ? asOfDate : CoreMetrics.currentDate();
             IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
             List<ErpFinArApItem> items = dao.findAllByQuery(openItemsQuery());
             List<Map<String, Object>> rows = new ArrayList<>();

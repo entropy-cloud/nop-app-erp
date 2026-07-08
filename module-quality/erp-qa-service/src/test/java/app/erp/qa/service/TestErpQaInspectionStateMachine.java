@@ -6,6 +6,7 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -195,8 +196,8 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
             ins.setDocStatus(ErpQaConstants.DOC_STATUS_ACTIVE);
             ins.setApproveStatus(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED);
             ins.setPosted(Boolean.FALSE);
-            ins.setInspectionDate(java.time.LocalDate.now());
-            ins.setBusinessDate(java.time.LocalDate.now());
+            ins.setInspectionDate(CoreMetrics.currentDate());
+            ins.setBusinessDate(CoreMetrics.currentDate());
             ins.setRelatedBillType("ERP_PUR_RECEIPT");
             ins.setRelatedBillCode("BILL-" + code.replace("INS-", ""));
             dao.saveEntity(ins);
