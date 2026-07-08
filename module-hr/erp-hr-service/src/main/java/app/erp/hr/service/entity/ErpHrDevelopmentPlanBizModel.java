@@ -30,6 +30,7 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 发展计划聚合根 BizModel（competency-management.md §发展计划生成）。CRUD 之上承载：
@@ -56,6 +57,16 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
     }
 
     @Override
+    protected void defaultPrepareSave(EntityData<ErpHrDevelopmentPlan> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpHrDevelopmentPlan entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
+
+    @Override
     @BizMutation
     @SingleSession
     public ErpHrDevelopmentPlan generateDevelopmentPlan(@Name("employeeId") Long employeeId,
@@ -66,6 +77,8 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
         }
 
         ErpHrDevelopmentPlan plan = newEntity();
+
+        plan.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         plan.setEmployeeId(employeeId);
         plan.setPlanName("发展计划-" + employeeId + "-" + CoreMetrics.currentDate());
         plan.setTargetDate(CoreMetrics.currentDate().plusMonths(3));

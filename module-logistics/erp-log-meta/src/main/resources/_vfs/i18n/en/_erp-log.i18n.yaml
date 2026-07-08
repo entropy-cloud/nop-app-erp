@@ -120,6 +120,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
+      posted: Posted
       carrier: Carrier
       carrierConfig: Carrier Config
       org: Org

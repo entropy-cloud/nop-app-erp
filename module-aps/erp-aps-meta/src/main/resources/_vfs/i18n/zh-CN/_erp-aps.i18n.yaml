@@ -98,6 +98,7 @@ prop:
       version: 数据版本
     ErpApsOperationOrder:
       assignedToId: 操作工
+      businessDate: 业务日期
       code: 编号
       createTime: 创建时间
       createdBy: 创建人
@@ -128,6 +129,7 @@ prop:
       version: 数据版本
       workOrderId: 主工单
     ErpApsSchedule:
+      businessDate: 业务日期
       code: 编号
       createTime: 创建时间
       createdBy: 创建人

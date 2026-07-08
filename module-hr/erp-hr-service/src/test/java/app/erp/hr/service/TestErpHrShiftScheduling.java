@@ -464,6 +464,8 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
                                 LocalDateTime clockIn, LocalDateTime clockOut) {
         IEntityDao<ErpHrAttendance> dao = daoProvider.daoFor(ErpHrAttendance.class);
         ErpHrAttendance a = new ErpHrAttendance();
+        a.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        a.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         a.setEmployeeId(employeeId);
         a.setDate(date);
         a.setClockIn(clockIn);
@@ -477,6 +479,8 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
     private Long seedLeaveRequest(Long employeeId, LocalDate startDate, LocalDate endDate) {
         IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
         ErpHrLeaveRequest l = new ErpHrLeaveRequest();
+        l.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        l.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         l.setCode("LV-" + employeeId + "-" + startDate.toString());
         l.setEmployeeId(employeeId);
         l.setLeaveType("ANNUAL");

@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 返利结算单 BizModel。结算过账 + 贷项凭证生成
@@ -49,6 +50,16 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
     public ErpCtRebateSettlementBizModel() {
         setEntityName(ErpCtRebateSettlement.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpCtRebateSettlement> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpCtRebateSettlement entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation

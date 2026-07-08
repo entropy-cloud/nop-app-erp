@@ -29,6 +29,7 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 薪酬记录聚合根 BizModel（payroll.md §五/§六/§七）。继承 {@link CrudBizModel} 标准 CRUD，
@@ -53,6 +54,16 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
     public ErpHrSalaryBizModel() {
         setEntityName(ErpHrSalary.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpHrSalary> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpHrSalary entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation

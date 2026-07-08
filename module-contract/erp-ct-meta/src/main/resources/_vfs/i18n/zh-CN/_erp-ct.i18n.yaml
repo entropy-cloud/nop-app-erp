@@ -78,6 +78,7 @@ prop:
     ErpCtContract:
       attachmentFileId: 合同附件
       attachmentFileIdComponentFileStatus: null
+      businessDate: 业务日期
       code: 合同编号
       contractDirection: 合同方向
       contractDirection_label: 合同方向
@@ -224,6 +225,7 @@ prop:
       accrualMethod: 计提方法
       accrualMethod_label: 计提方法
       agreementDate: 签订日期
+      businessDate: 业务日期
       code: 协议编号
       contract: null
       contractId: 关联合同
@@ -248,6 +250,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpCtRebateSettlement:
+      businessDate: 业务日期
       createTime: 创建时间
       createdBy: 创建人
       creditMemoBillCode: 信用单号
@@ -256,6 +259,7 @@ prop:
       id: ID
       org: null
       orgId: 业务组织
+      posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
       rebateAgreement: null

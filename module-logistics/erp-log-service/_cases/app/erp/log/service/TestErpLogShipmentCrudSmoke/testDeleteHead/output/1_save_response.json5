@@ -41,7 +41,9 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpLogShipment@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpLogShipment@createTime"
+    "updateTime": "@var:ErpLogShipment@createTime",
+    "businessDate": "*",
+    "posted": false
   },
   "status": 0
 }

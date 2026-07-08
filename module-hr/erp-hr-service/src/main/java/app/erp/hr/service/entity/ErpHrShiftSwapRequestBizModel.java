@@ -18,6 +18,7 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 排班调换审批 BizModel（shift-scheduling.md §五）。继承 {@link CrudBizModel} 标准 CRUD，
@@ -33,6 +34,16 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
     public ErpHrShiftSwapRequestBizModel() {
         setEntityName(ErpHrShiftSwapRequest.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpHrShiftSwapRequest> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpHrShiftSwapRequest entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation
@@ -51,6 +62,7 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
                     .param(ErpHrErrors.ARG_ASSIGNMENT_DATE, source.getAssignmentDate());
         }
         ErpHrShiftSwapRequest req = newEntity();
+        req.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         req.setCode("SWAP-" + source.getId() + "-" + CoreMetrics.nanoTime());
         req.setRequesterId(source.getEmployeeId());
         req.setTargetEmployeeId(target.getEmployeeId());

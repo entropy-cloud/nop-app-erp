@@ -97,8 +97,12 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 19;
     
+    /* 业务日期: BUSINESS_DATE DATE */
+    public static final String PROP_NAME_businessDate = "businessDate";
+    public static final int PROP_ID_businessDate = 20;
+    
 
-    private static int _PROP_ID_BOUND = 20;
+    private static int _PROP_ID_BOUND = 21;
 
     
     /* relation:  */
@@ -123,7 +127,7 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[20];
+    private static final String[] PROP_ID_TO_NAME = new String[21];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -184,6 +188,9 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
+          PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
+      
     }
 
     
@@ -243,6 +250,9 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 业务日期: BUSINESS_DATE */
+    private java.time.LocalDate _businessDate;
     
 
     public _ErpHrShiftAssignment(){
@@ -374,6 +384,9 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_businessDate:
+               return getBusinessDate();
         
            default:
               return super.orm_propValue(propId);
@@ -576,6 +589,16 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_businessDate:{
+               java.time.LocalDate typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDate(value,
+                       err-> newTypeConversionError(PROP_NAME_businessDate));
+               }
+               setBusinessDate(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -714,6 +737,13 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               onInitProp(propId);
+               this._businessDate = (java.time.LocalDate)value;
                
                break;
             }
@@ -1081,6 +1111,25 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final java.time.LocalDate getBusinessDate(){
+         onPropGet(PROP_ID_businessDate);
+         return _businessDate;
+    }
+
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final void setBusinessDate(java.time.LocalDate value){
+        if(onPropSet(PROP_ID_businessDate,value)){
+            this._businessDate = value;
+            internalClearRefs(PROP_ID_businessDate);
             
         }
     }

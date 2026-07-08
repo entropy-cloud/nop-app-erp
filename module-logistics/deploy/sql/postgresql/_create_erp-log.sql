@@ -135,6 +135,8 @@ CREATE TABLE erp_log_shipment(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
+  posted BOOLEAN default false   ,
   constraint PK_erp_log_shipment primary key (id)
 );
 
@@ -411,6 +413,10 @@ CREATE TABLE erp_log_shipment_log(
       COMMENT ON COLUMN erp_log_shipment.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_log_shipment.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_log_shipment.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_log_shipment.posted IS '已过账';
                     
       COMMENT ON TABLE erp_log_shipment_line IS '发运明细';
                 

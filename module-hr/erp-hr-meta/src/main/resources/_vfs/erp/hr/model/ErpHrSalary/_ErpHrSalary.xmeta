@@ -175,7 +175,15 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDateTime"/>
         </prop>
-        <prop name="nopFlowId" propId="92" queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="businessDate" displayName="业务日期" propId="92" i18n-en:displayName="Business Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="posted" displayName="已过账" propId="93" i18n-en:displayName="Posted" queryable="true" sortable="true"
+              insertable="true" updatable="true" defaultValue="false">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="nopFlowId" propId="94" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="32"/>
         </prop>
         <prop name="employee" i18n-en:displayName="Employee" tagSet="pub" ext:kind="to-one" internal="true"

@@ -71,6 +71,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--业务日期-->
+                <col id="businessDate" mandatory="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -88,6 +91,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-考勤记录" i18n-en:title="Add Attendance">
@@ -98,7 +102,7 @@
  lateMinutes[迟到分钟数] earlyLeaveMinutes[早退分钟数]
  isAbsent[是否旷工] source[来源]
  leaveRequestId[关联休假] orgId[业务组织]
- remark[备注] 
+ remark[备注] businessDate[业务日期]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-考勤记录" i18n-en:title="Edit Attendance">
@@ -110,6 +114,7 @@
  isAbsent[是否旷工] source[来源]
  leaveRequestId[关联休假] orgId[业务组织]
  remark[备注] delVersion[逻辑删除版本]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

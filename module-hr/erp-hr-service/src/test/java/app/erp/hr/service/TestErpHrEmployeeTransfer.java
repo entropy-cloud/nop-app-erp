@@ -301,6 +301,8 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
                               String contractType) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
+        c.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        c.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         c.setCode(code);
         c.setEmployeeId(employeeId);
         c.setContractType(contractType);
@@ -315,6 +317,8 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
     private Long seedApprovedLeave(Long employeeId, LocalDate startDate, LocalDate endDate) {
         IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
         ErpHrLeaveRequest l = new ErpHrLeaveRequest();
+        l.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        l.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         l.setCode("LV-" + employeeId + "-" + startDate.toString());
         l.setEmployeeId(employeeId);
         l.setLeaveType("ANNUAL");

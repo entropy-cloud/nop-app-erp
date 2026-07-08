@@ -36,6 +36,7 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 薪酬模拟聚合根 BizModel（payroll-simulation.md §一/§二/§三/§四/§五）。继承 {@link CrudBizModel} 标准 CRUD，
@@ -58,6 +59,16 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
     }
 
     @Override
+    protected void defaultPrepareSave(EntityData<ErpHrSalarySimulation> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpHrSalarySimulation entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
+
+    @Override
     @BizMutation
     @SingleSession
     public ErpHrSalarySimulation createSimulation(@Name("sourceYear") int sourceYear,
@@ -74,6 +85,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         }
 
         ErpHrSalarySimulation simulation = newEntity();
+
+        simulation.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         simulation.setCode(buildSimulationCode(simulationPeriodYear, simulationPeriodMonth));
         simulation.setSourceSalaryId(sourceSalaries.get(0).getId());
         simulation.setSimulationPeriodYear(simulationPeriodYear);
@@ -470,6 +483,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
             }
 
             ErpHrSalary formal = salaryBiz.newEntity();
+
+            formal.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
             formal.setEmployeeId(simulated.getEmployeeId());
             formal.setYear(targetYear);
             formal.setMonth(targetMonth);

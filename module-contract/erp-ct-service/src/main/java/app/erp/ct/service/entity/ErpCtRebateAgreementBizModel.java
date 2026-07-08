@@ -30,6 +30,7 @@ import java.util.Set;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 返利协议 BizModel。返利计提引擎驱动
@@ -51,6 +52,16 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
     public ErpCtRebateAgreementBizModel() {
         setEntityName(ErpCtRebateAgreement.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpCtRebateAgreement> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpCtRebateAgreement entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation

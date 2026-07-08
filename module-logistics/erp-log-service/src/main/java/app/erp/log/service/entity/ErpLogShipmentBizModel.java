@@ -37,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 发运单聚合根 Biz。CRUD 之外承载运单状态机与网关集成动作（advise/completeShipment/cancelShipment/
@@ -56,6 +57,16 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
     public ErpLogShipmentBizModel() {
         setEntityName(ErpLogShipment.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpLogShipment> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpLogShipment entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Inject
     GatewayDispatcher gatewayDispatcher;

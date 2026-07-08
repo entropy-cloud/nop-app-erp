@@ -14,6 +14,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import java.util.Objects;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 排产方案状态机（{@code scheduling.md §九}）：DRAFT→PUBLISHED→ARCHIVED。
@@ -27,6 +28,16 @@ public class ErpApsScheduleBizModel extends CrudBizModel<ErpApsSchedule> impleme
     public ErpApsScheduleBizModel() {
         setEntityName(ErpApsSchedule.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpApsSchedule> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpApsSchedule entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation

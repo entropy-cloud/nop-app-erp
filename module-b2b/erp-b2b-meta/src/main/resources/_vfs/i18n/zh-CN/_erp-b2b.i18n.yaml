@@ -16,6 +16,7 @@ entity:
 prop:
   label:
     ErpB2bAsn:
+      businessDate: 业务日期
       code: ASN 编码
       createTime: 创建时间
       createdBy: 创建人
@@ -97,6 +98,7 @@ prop:
       attachmentFileIdComponentFileStatus: null
       blockingLevel: 阻断级别
       blockingLevel_label: 阻断级别
+      businessDate: 业务日期
       code: 事务编码
       createTime: 创建时间
       createdBy: 创建人

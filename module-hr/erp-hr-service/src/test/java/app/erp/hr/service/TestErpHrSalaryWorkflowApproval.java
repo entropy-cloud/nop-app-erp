@@ -163,6 +163,8 @@ public class TestErpHrSalaryWorkflowApproval extends JunitAutoTestCase {
 
     private ErpHrSalary salaryOf() {
         ErpHrSalary salary = new ErpHrSalary();
+        salary.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        salary.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         salary.setEmployeeId(EMPLOYEE_ID);
         salary.setYear(2026);
         salary.setMonth(7);

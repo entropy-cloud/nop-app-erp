@@ -35,6 +35,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       sourceEdiDoc: Source EDI Document
       partner: Partner
       org: Org
@@ -114,6 +115,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       format: Format
       org: Org
       attachmentFileIdComponentFileStatus: null

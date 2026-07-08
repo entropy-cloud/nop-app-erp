@@ -54,6 +54,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpHrAttendance:
+      businessDate: 业务日期
       clockIn: 签到时间
       clockOut: 签退时间
       createTime: 创建时间
@@ -132,6 +133,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpHrDevelopmentPlan:
+      businessDate: 业务日期
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -228,6 +230,7 @@ prop:
       assessmentType_label: 评估类型
       assessor: null
       assessorId: 评估人
+      businessDate: 业务日期
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -248,6 +251,7 @@ prop:
       annualSalary: 年薪(税前)
       attachmentFileId: 合同文件
       attachmentFileIdComponentFileStatus: null
+      businessDate: 业务日期
       code: 合同编号
       contractType: 合同类型
       contractType_label: 合同类型
@@ -299,6 +303,7 @@ prop:
       approvedAt: 审批时间
       approver: null
       approverId: 审批人
+      businessDate: 业务日期
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
@@ -360,6 +365,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpHrRecruitment:
+      businessDate: 业务日期
       candidateEmail: 电子邮箱
       candidateName: 应聘者姓名
       candidatePhone: 联系电话
@@ -416,6 +422,7 @@ prop:
       bankFile: null
       bankFileId: 银行文件
       basicSalary: 基本工资
+      businessDate: 业务日期
       createTime: 创建时间
       createdBy: 创建人
       cumulativeData: 累计个税数据
@@ -441,6 +448,7 @@ prop:
       performanceBonus: 绩效奖金
       performanceFactor: 绩效系数
       positionAllowance: 岗位津贴
+      posted: 已过账
       remark: 备注
       requiredWorkDays: 应出勤日
       reviewNote: 审核备注
@@ -478,6 +486,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpHrSalarySimulation:
+      businessDate: 业务日期
       code: 编号
       convertedAt: 转正式时间
       convertedSalary: null
@@ -556,6 +565,7 @@ prop:
       actualEndTime: 实际签退时间
       actualStartTime: 实际签到时间
       assignmentDate: 排班日期
+      businessDate: 业务日期
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -597,6 +607,7 @@ prop:
       version: 数据版本
     ErpHrShiftSwapRequest:
       approvedById: 审批人
+      businessDate: 业务日期
       code: 编号
       createTime: 创建时间
       createdBy: 创建人
@@ -802,6 +813,7 @@ prop:
       version: 数据版本
       year: 年份
     ErpHrTimesheet:
+      businessDate: 业务日期
       code: 单号
       createTime: 创建时间
       createdBy: 创建人

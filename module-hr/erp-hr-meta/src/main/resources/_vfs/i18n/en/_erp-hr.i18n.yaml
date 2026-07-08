@@ -74,6 +74,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       employee: Employee
       leaveRequest: Leave Request
       org: Org
@@ -146,6 +147,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       employee: Employee
       items: Items
       org: Org
@@ -240,6 +242,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       employee: Employee
       assessor: Assessor
       details: Details
@@ -272,6 +275,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       employee: Employee
       salaryCurrency: Salary Currency
       org: Org
@@ -317,6 +321,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       employee: Employee
       approver: Approver
       org: Org
@@ -386,6 +391,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       position: Position
       department: Department
       employee: Employee
@@ -449,6 +455,8 @@ prop:
       updateTime: Update Time
       approvedBy: Approved By
       approvedAt: Approved At
+      businessDate: Business Date
+      posted: Posted
       nopFlowId: null
       employee: Employee
       org: Org
@@ -498,6 +506,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       sourceSalary: Source Salary
       reviewer: Reviewer
       convertedSalary: Converted Salary
@@ -571,6 +580,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       employee: Employee
       shift: Shift
       leaveRequest: Leave Request
@@ -614,6 +624,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       requester: Requester
       targetEmployee: Target Employee
       sourceAssignment: Source Assignment
@@ -818,6 +829,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       employee: Employee
       lines: Lines
       org: Org

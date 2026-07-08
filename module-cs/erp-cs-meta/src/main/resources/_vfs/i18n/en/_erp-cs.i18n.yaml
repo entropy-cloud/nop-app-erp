@@ -132,6 +132,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       partner: Partner
       org: null
       attachmentFileIdComponentFileStatus: null
@@ -296,6 +297,7 @@ prop:
       updateTime: Update Time
       approvedBy: Approved By
       approvedAt: Approved At
+      businessDate: Business Date
       customer: Customer
       contact: Contact
       ticketType: Ticket Type

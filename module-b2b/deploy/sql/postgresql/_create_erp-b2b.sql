@@ -126,6 +126,7 @@ CREATE TABLE erp_b2b_edi_doc(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_b2b_edi_doc primary key (id)
 );
 
@@ -244,6 +245,7 @@ CREATE TABLE erp_b2b_asn(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_b2b_asn primary key (id)
 );
 
@@ -525,6 +527,8 @@ CREATE TABLE erp_b2b_asn_line(
                     
       COMMENT ON COLUMN erp_b2b_edi_doc.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_b2b_edi_doc.business_date IS '业务日期';
+                    
       COMMENT ON TABLE erp_b2b_partner_credential IS '伙伴凭证';
                 
       COMMENT ON COLUMN erp_b2b_partner_credential.id IS 'ID';
@@ -730,6 +734,8 @@ CREATE TABLE erp_b2b_asn_line(
       COMMENT ON COLUMN erp_b2b_asn.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_b2b_asn.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_b2b_asn.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_b2b_edi_log IS 'EDI 交互日志';
                 

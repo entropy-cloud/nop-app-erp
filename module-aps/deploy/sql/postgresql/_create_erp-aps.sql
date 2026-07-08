@@ -33,6 +33,7 @@ CREATE TABLE erp_aps_operation_order(
   update_time TIMESTAMP NOT NULL ,
   earliest_start_date_t TIMESTAMP  ,
   latest_end_date_t TIMESTAMP  ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_aps_operation_order primary key (id)
 );
 
@@ -53,6 +54,7 @@ CREATE TABLE erp_aps_schedule(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_aps_schedule primary key (id)
 );
 
@@ -210,6 +212,8 @@ CREATE TABLE erp_aps_dispatch_log(
                     
       COMMENT ON COLUMN erp_aps_operation_order.latest_end_date_t IS '最晚完工时间';
                     
+      COMMENT ON COLUMN erp_aps_operation_order.business_date IS '业务日期';
+                    
       COMMENT ON TABLE erp_aps_schedule IS '排产方案';
                 
       COMMENT ON COLUMN erp_aps_schedule.id IS 'ID';
@@ -243,6 +247,8 @@ CREATE TABLE erp_aps_dispatch_log(
       COMMENT ON COLUMN erp_aps_schedule.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_aps_schedule.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_aps_schedule.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_aps_constraint IS '排产约束';
                 

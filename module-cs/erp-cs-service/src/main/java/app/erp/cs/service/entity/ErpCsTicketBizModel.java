@@ -37,6 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.lt;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 客服工单 BizModel。权威：{@code docs/design/customer-service/state-machine.md}、
@@ -71,6 +72,16 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     public ErpCsTicketBizModel() {
         setEntityName(ErpCsTicket.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpCsTicket> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpCsTicket entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     public void setTicketActionBiz(IErpCsTicketActionBiz ticketActionBiz) {
         this.ticketActionBiz = ticketActionBiz;

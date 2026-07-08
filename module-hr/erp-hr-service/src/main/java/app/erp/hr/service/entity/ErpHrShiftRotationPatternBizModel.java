@@ -108,6 +108,7 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
 
     ErpHrShiftAssignment newAssignment(IEntityDao<ErpHrShiftAssignment> dao, Long employeeId, Long shiftId, LocalDate date) {
         ErpHrShiftAssignment a = dao.newEntity();
+        a.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         a.setEmployeeId(employeeId);
         a.setShiftId(shiftId);
         a.setAssignmentDate(date);

@@ -507,6 +507,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     Long seedAssessmentOn(Long employeeId, String assessmentType, String status, LocalDate date) {
         IEntityDao<ErpHrEmployeeAssessment> dao = daoProvider.daoFor(ErpHrEmployeeAssessment.class);
         ErpHrEmployeeAssessment a = new ErpHrEmployeeAssessment();
+        a.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        a.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         a.setEmployeeId(employeeId);
         a.setAssessmentType(assessmentType);
         a.setStatus(status);

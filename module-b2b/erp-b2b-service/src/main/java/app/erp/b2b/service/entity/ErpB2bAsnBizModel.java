@@ -46,6 +46,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.le;
+import io.nop.biz.crud.EntityData;
 
 /**
  * ASN 入站处理聚合根 Biz。承载 ASN 入站全流程（{@code asn-processing.md}）：
@@ -73,6 +74,16 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
     public ErpB2bAsnBizModel() {
         setEntityName(ErpB2bAsn.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpB2bAsn> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpB2bAsn entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation
@@ -285,6 +296,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
 
         // 建 ASN
         ErpB2bAsn asn = newEntity();
+        asn.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         asn.setCode("ASN-" + CoreMetrics.currentTimeMillis());
         asn.setSourceEdiDocId(ediDoc.getId());
         asn.setPartnerId(profile.getPartnerId());

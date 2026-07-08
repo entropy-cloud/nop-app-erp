@@ -138,6 +138,8 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
 
     private ErpB2bEdiDoc createDoc(Long formatId, String relatedBillType, String relatedBillCode, String state) {
         ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
+        doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         doc.setCode("EDI-" + System.nanoTime());
         doc.setFormatId(formatId);
         doc.setRelatedBillType(relatedBillType);

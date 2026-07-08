@@ -77,6 +77,7 @@ CREATE TABLE erp_cs_contract(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  BUSINESS_DATE DATE NOT NULL ,
   constraint PK_erp_cs_contract primary key (ID)
 );
 
@@ -258,6 +259,7 @@ CREATE TABLE erp_cs_ticket(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   APPROVED_BY VARCHAR2(36)  ,
   APPROVED_AT DATE  ,
+  BUSINESS_DATE DATE NOT NULL ,
   constraint PK_erp_cs_ticket primary key (ID)
 );
 
@@ -468,6 +470,8 @@ CREATE TABLE erp_cs_time_entry(
       COMMENT ON COLUMN erp_cs_contract.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_contract.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_cs_contract.BUSINESS_DATE IS '业务日期';
                     
       COMMENT ON TABLE erp_cs_catalog_category IS '目录分类';
                 
@@ -782,6 +786,8 @@ CREATE TABLE erp_cs_time_entry(
       COMMENT ON COLUMN erp_cs_ticket.APPROVED_BY IS '审核人';
                     
       COMMENT ON COLUMN erp_cs_ticket.APPROVED_AT IS '审核时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket.BUSINESS_DATE IS '业务日期';
                     
       COMMENT ON TABLE erp_cs_catalog_fulfillment IS '目录项履行映射';
                 

@@ -29,6 +29,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.and;
+import io.nop.biz.crud.EntityData;
 
 /**
  * EDI 事务信封聚合根 Biz。承载 EDI 信封状态机（{@code edi-formats.md §七}）：
@@ -54,6 +55,16 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
     }
 
     @Override
+    protected void defaultPrepareSave(EntityData<ErpB2bEdiDoc> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpB2bEdiDoc entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
+
+    @Override
     @BizMutation
     @SingleSession
     public ErpB2bEdiDoc createOutbound(@Name("relatedBillType") String relatedBillType,
@@ -77,6 +88,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
         String payload = provider.generatePayload(relatedBillType, relatedBillCode);
 
         ErpB2bEdiDoc doc = newEntity();
+        doc.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         doc.setCode("EDI-OUT-" + CoreMetrics.currentTimeMillis());
         doc.setFormatId(format.getId());
         doc.setRelatedBillType(relatedBillType);
@@ -192,6 +204,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
         }
 
         ErpB2bEdiDoc doc = newEntity();
+        doc.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         doc.setCode("EDI-IN-" + CoreMetrics.currentTimeMillis());
         doc.setFormatId(format != null ? format.getId() : null);
         doc.setRelatedBillType(relatedBillType);

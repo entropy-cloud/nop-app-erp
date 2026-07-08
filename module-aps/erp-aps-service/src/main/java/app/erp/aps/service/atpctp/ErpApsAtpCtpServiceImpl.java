@@ -214,6 +214,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
                 continue;
             }
             ErpApsOperationOrder shadow = apsDao.newEntity();
+            shadow.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
             shadow.setMachineId(bo.getWorkcenterId());
             shadow.setOperationName("工序-" + bo.getLineNo());
             shadow.setSequence(seq);

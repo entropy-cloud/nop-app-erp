@@ -103,6 +103,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       partner: Partner
       template: Template
       parentContract: Parent Contract
@@ -244,6 +245,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       contract: Contract
       org: Org
       partner: null
@@ -266,6 +268,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
+      posted: Posted
       rebateAgreement: Rebate Agreement
       org: Org
     ErpCtRebateTier:

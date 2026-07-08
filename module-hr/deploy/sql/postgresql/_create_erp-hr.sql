@@ -396,6 +396,7 @@ CREATE TABLE erp_hr_employment_contract(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_employment_contract primary key (id)
 );
 
@@ -419,6 +420,7 @@ CREATE TABLE erp_hr_leave_request(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_leave_request primary key (id)
 );
 
@@ -438,6 +440,7 @@ CREATE TABLE erp_hr_timesheet(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_timesheet primary key (id)
 );
 
@@ -481,6 +484,8 @@ CREATE TABLE erp_hr_salary(
   update_time TIMESTAMP NOT NULL ,
   approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
+  business_date DATE NOT NULL ,
+  posted BOOLEAN default false   ,
   nop_flow_id VARCHAR(32)  ,
   constraint PK_erp_hr_salary primary key (id)
 );
@@ -510,6 +515,7 @@ CREATE TABLE erp_hr_recruitment(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_recruitment primary key (id)
 );
 
@@ -585,6 +591,7 @@ CREATE TABLE erp_hr_employee_assessment(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_employee_assessment primary key (id)
 );
 
@@ -621,6 +628,7 @@ CREATE TABLE erp_hr_development_plan(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_development_plan primary key (id)
 );
 
@@ -644,6 +652,7 @@ CREATE TABLE erp_hr_attendance(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_attendance primary key (id)
 );
 
@@ -667,6 +676,7 @@ CREATE TABLE erp_hr_shift_assignment(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_shift_assignment primary key (id)
 );
 
@@ -709,6 +719,7 @@ CREATE TABLE erp_hr_salary_simulation(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_salary_simulation primary key (id)
 );
 
@@ -783,6 +794,7 @@ CREATE TABLE erp_hr_shift_swap_request(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_hr_shift_swap_request primary key (id)
 );
 
@@ -1444,6 +1456,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                     
       COMMENT ON COLUMN erp_hr_employment_contract.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_hr_employment_contract.business_date IS '业务日期';
+                    
       COMMENT ON TABLE erp_hr_leave_request IS '休假申请';
                 
       COMMENT ON COLUMN erp_hr_leave_request.id IS 'ID';
@@ -1484,6 +1498,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                     
       COMMENT ON COLUMN erp_hr_leave_request.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_hr_leave_request.business_date IS '业务日期';
+                    
       COMMENT ON TABLE erp_hr_timesheet IS '工时表';
                 
       COMMENT ON COLUMN erp_hr_timesheet.id IS 'ID';
@@ -1515,6 +1531,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
       COMMENT ON COLUMN erp_hr_timesheet.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_timesheet.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_hr_timesheet.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_hr_salary IS '薪酬记录';
                 
@@ -1596,6 +1614,10 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                     
       COMMENT ON COLUMN erp_hr_salary.approved_at IS '审核时间';
                     
+      COMMENT ON COLUMN erp_hr_salary.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_hr_salary.posted IS '已过账';
+                    
       COMMENT ON TABLE erp_hr_recruitment IS '招聘记录';
                 
       COMMENT ON COLUMN erp_hr_recruitment.id IS 'ID';
@@ -1645,6 +1667,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
       COMMENT ON COLUMN erp_hr_recruitment.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_recruitment.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_hr_recruitment.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_hr_social_insurance_base IS '员工社保基数';
                 
@@ -1772,6 +1796,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                     
       COMMENT ON COLUMN erp_hr_employee_assessment.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_hr_employee_assessment.business_date IS '业务日期';
+                    
       COMMENT ON TABLE erp_hr_gap_analysis IS '差距分析';
                 
       COMMENT ON COLUMN erp_hr_gap_analysis.id IS 'ID';
@@ -1832,6 +1858,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                     
       COMMENT ON COLUMN erp_hr_development_plan.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_hr_development_plan.business_date IS '业务日期';
+                    
       COMMENT ON TABLE erp_hr_attendance IS '考勤记录';
                 
       COMMENT ON COLUMN erp_hr_attendance.id IS 'ID';
@@ -1872,6 +1900,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                     
       COMMENT ON COLUMN erp_hr_attendance.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_hr_attendance.business_date IS '业务日期';
+                    
       COMMENT ON TABLE erp_hr_shift_assignment IS '排班分配';
                 
       COMMENT ON COLUMN erp_hr_shift_assignment.id IS 'ID';
@@ -1911,6 +1941,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
       COMMENT ON COLUMN erp_hr_shift_assignment.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_shift_assignment.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift_assignment.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_hr_timesheet_line IS '工时表明细';
                 
@@ -1983,6 +2015,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
       COMMENT ON COLUMN erp_hr_salary_simulation.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_salary_simulation.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_hr_salary_simulation.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_hr_survey_answer IS '回答明细';
                 
@@ -2107,6 +2141,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
       COMMENT ON COLUMN erp_hr_shift_swap_request.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_hr_shift_swap_request.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_hr_shift_swap_request.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_hr_salary_simulation_item_adj IS '薪酬模拟调整项';
                 

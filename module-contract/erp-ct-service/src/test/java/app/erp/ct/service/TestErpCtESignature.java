@@ -343,6 +343,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
             IEntityDao<app.erp.contract.dao.entity.ErpCtContract> dao =
                     daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtContract.class);
             app.erp.contract.dao.entity.ErpCtContract c = new app.erp.contract.dao.entity.ErpCtContract();
+            c.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             c.setCode("CT-SIG-" + System.nanoTime());
             c.setContractName("签章测试合同");
             c.setContractType(ErpCtConstants.CONTRACT_TYPE_PURCHASE);

@@ -41,6 +41,8 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
+  "businessDate": "2000-01-01",
+  "posted": false,
   "carrier": null,
   "carrierConfig": null,
   "org": null,

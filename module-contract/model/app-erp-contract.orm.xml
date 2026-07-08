@@ -147,6 +147,7 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="22" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="23" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="24" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="25" stdDataType="date" i18n-en:displayName='Business Date' />
             </columns>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
@@ -182,6 +183,10 @@
                 </index>
                 <index name="IDX_CT_CONTRACT_ATTACHMENT_FILE_ID" unique="false">
                     <column name="attachmentFileId"/>
+                </index>
+                <index name="IDX_CT_CONTRACT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
         </entity>
@@ -481,6 +486,7 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="18" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="19" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="21" stdDataType="date" i18n-en:displayName='Business Date' />
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub" i18n-en:displayName='Contract'><join><on leftProp="contractId" rightProp="id"/></join></to-one>
@@ -502,6 +508,10 @@
                 </index>
                 <index name="IDX_CT_REBATE_AGREEMENT_PARTNER_ID" unique="false">
                     <column name="partnerId"/>
+                </index>
+                <index name="IDX_CT_REBATE_AGREEMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
         </entity>
@@ -591,6 +601,8 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="18" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="19" stdDataType="boolean" i18n-en:displayName='Posted' />
             </columns>
             <relations>
                 <to-one name="rebateAgreement" refEntityName="app.erp.contract.dao.entity.ErpCtRebateAgreement" tagSet="pub" i18n-en:displayName='Rebate Agreement'><join><on leftProp="rebateAgreementId" rightProp="id"/></join></to-one>
@@ -603,6 +615,10 @@
                 </index>
                 <index name="IDX_CT_REBATE_SETTLEMENT_REBATE_AGREEMENT_ID" unique="false">
                     <column name="rebateAgreementId"/>
+                </index>
+                <index name="IDX_CT_REBATE_SETTLEMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
         </entity>

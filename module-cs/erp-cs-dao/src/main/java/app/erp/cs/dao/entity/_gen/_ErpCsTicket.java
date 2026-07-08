@@ -145,8 +145,12 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 201;
     
+    /* 业务日期: BUSINESS_DATE DATE */
+    public static final String PROP_NAME_businessDate = "businessDate";
+    public static final int PROP_ID_businessDate = 202;
+    
 
-    private static int _PROP_ID_BOUND = 202;
+    private static int _PROP_ID_BOUND = 203;
 
     
     /* relation:  */
@@ -174,7 +178,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[202];
+    private static final String[] PROP_ID_TO_NAME = new String[203];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -271,6 +275,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
           PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
       
+          PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
+          PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
+      
     }
 
     
@@ -366,6 +373,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     
     /* 审核时间: APPROVED_AT */
     private java.time.LocalDateTime _approvedAt;
+    
+    /* 业务日期: BUSINESS_DATE */
+    private java.time.LocalDate _businessDate;
     
 
     public _ErpCsTicket(){
@@ -533,6 +543,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_approvedAt:
                return getApprovedAt();
+        
+            case PROP_ID_businessDate:
+               return getBusinessDate();
         
            default:
               return super.orm_propValue(propId);
@@ -855,6 +868,16 @@ public class _ErpCsTicket extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_businessDate:{
+               java.time.LocalDate typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDate(value,
+                       err-> newTypeConversionError(PROP_NAME_businessDate));
+               }
+               setBusinessDate(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1077,6 +1100,13 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             case PROP_ID_approvedAt:{
                onInitProp(propId);
                this._approvedAt = (java.time.LocalDateTime)value;
+               
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               onInitProp(propId);
+               this._businessDate = (java.time.LocalDate)value;
                
                break;
             }
@@ -1672,6 +1702,25 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_approvedAt,value)){
             this._approvedAt = value;
             internalClearRefs(PROP_ID_approvedAt);
+            
+        }
+    }
+    
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final java.time.LocalDate getBusinessDate(){
+         onPropGet(PROP_ID_businessDate);
+         return _businessDate;
+    }
+
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final void setBusinessDate(java.time.LocalDate value){
+        if(onPropSet(PROP_ID_businessDate,value)){
+            this._businessDate = value;
+            internalClearRefs(PROP_ID_businessDate);
             
         }
     }

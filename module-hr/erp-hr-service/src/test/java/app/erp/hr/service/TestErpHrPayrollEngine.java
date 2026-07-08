@@ -300,6 +300,8 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
     private void seedContract(Long employeeId, String monthlySalary) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
+        c.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        c.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         c.setCode("C-" + employeeId);
         c.setEmployeeId(employeeId);
         c.setContractType("OPEN_ENDED");

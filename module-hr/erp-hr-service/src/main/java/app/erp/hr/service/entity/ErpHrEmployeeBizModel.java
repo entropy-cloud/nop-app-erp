@@ -223,6 +223,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
     ErpHrEmploymentContract newContractFrom(ErpHrEmploymentContract active, ErpHrEmployee employee,
                                             LocalDate effectiveDate) {
         ErpHrEmploymentContract c = employmentContractBiz.newEntity();
+        c.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         c.setCode(buildSuccessorCode(employee, active, effectiveDate));
         c.setEmployeeId(employee.getId());
         c.setContractType(active != null && active.getContractType() != null

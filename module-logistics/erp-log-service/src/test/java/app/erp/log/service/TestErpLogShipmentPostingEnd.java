@@ -140,6 +140,8 @@ public class TestErpLogShipmentPostingEnd extends JunitAutoTestCase {
     private Long seedShipment(String code, Long carrierId, String status, String relatedBillType,
                               String freightTerms, BigDecimal freightAmount, String settlementStatus) {
         ErpLogShipment s = new ErpLogShipment();
+        s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         s.setCode(code);
         s.setOrgId(1L);
         s.setCarrierId(carrierId);

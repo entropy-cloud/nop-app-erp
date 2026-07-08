@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 合同头 BizModel。合同全生命周期状态机 + 版本修订编排
@@ -42,6 +43,16 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     public ErpCtContractBizModel() {
         setEntityName(ErpCtContract.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpCtContract> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpCtContract entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation

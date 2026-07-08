@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 员工评估聚合根 BizModel（competency-management.md §评估流程/§360 评估流程）。CRUD 之上承载
@@ -46,6 +47,16 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
     public ErpHrEmployeeAssessmentBizModel() {
         setEntityName(ErpHrEmployeeAssessment.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpHrEmployeeAssessment> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpHrEmployeeAssessment entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation

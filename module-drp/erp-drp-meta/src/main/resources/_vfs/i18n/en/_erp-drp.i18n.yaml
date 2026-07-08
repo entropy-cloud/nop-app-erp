@@ -89,6 +89,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       lines: Lines
       org: Org
     ErpInvDrpCrossDock:

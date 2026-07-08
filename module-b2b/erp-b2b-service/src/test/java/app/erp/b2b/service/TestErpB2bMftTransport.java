@@ -70,6 +70,8 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
         Long formatId = seedFormat("UBL_INVOICE", "UBL");
         Long ediDocId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
+            doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+            doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             doc.setCode("EDI-MFT-1-" + System.nanoTime());
             doc.setFormatId(formatId);
             doc.setRelatedBillType("AR_INVOICE");
@@ -109,6 +111,8 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
         Long formatId = seedFormat("UBL_INVOICE", "UBL");
         Long ediDocId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
+            doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+            doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             doc.setCode("EDI-MFT-2-" + System.nanoTime());
             doc.setFormatId(formatId);
             doc.setRelatedBillType("AR_INVOICE");
@@ -137,6 +141,8 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
         Long formatId = seedFormat("UBL_INVOICE", "UBL");
         Long ediDocId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
+            doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+            doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             doc.setCode("EDI-MFT-3-" + System.nanoTime());
             doc.setFormatId(formatId);
             doc.setRelatedBillType("AR_INVOICE");

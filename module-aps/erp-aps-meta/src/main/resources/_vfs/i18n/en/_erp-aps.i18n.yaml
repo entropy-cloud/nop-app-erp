@@ -126,6 +126,7 @@ prop:
       updateTime: Update Time
       earliestStartDateT: Earliest Start Date
       latestEndDateT: Latest End Date
+      businessDate: Business Date
       org: Org
     ErpApsSchedule:
       id: ID
@@ -146,6 +147,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      businessDate: Business Date
       org: Org
 dict:
   label:

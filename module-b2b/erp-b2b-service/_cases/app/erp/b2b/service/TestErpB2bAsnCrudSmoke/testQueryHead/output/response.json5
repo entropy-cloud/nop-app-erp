@@ -23,7 +23,8 @@
         "createdBy": "autotest-ref",
         "createTime": "@var:ErpB2bAsn@updateTime",
         "updatedBy": "autotest-ref",
-        "updateTime": "@var:ErpB2bAsn@updateTime"
+        "updateTime": "@var:ErpB2bAsn@updateTime",
+        "businessDate": "*"
       }
     ],
     "limit": 10,

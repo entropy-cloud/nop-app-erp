@@ -71,6 +71,7 @@ prop:
       warehouse: null
       warehouseId: 仓库
     ErpDrpPlan:
+      businessDate: 业务日期
       code: 编号
       createTime: 创建时间
       createdBy: 创建人

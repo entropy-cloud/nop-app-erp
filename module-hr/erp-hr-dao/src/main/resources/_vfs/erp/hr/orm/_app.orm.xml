@@ -636,6 +636,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="26"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_EMPLOYMENT_CONTRACT_ORG_STATUS" unique="false">
@@ -650,6 +652,10 @@
                 </index>
                 <index name="IDX_HR_EMPLOYMENT_CONTRACT_ATTACHMENT_FILE_ID" unique="false">
                     <column name="attachmentFileId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYMENT_CONTRACT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -726,6 +732,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="20"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_LEAVE_REQUEST_ORG_STATUS" unique="false">
@@ -737,6 +745,10 @@
                 </index>
                 <index name="IDX_HR_LEAVE_REQUEST_APPROVER_ID" unique="false">
                     <column name="approverId"/>
+                </index>
+                <index name="IDX_HR_LEAVE_REQUEST_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -803,6 +815,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="16"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_TIMESHEET_ORG_STATUS" unique="false">
@@ -811,6 +825,10 @@
                 </index>
                 <index name="IDX_HR_TIMESHEET_EMPLOYEE_ID" unique="false">
                     <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_TIMESHEET_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -966,6 +984,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="20"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_ATTENDANCE_EMPLOYEE_ID" unique="false">
@@ -973,6 +993,10 @@
                 </index>
                 <index name="IDX_HR_ATTENDANCE_LEAVE_REQUEST_ID" unique="false">
                     <column name="leaveRequestId"/>
+                </index>
+                <index name="IDX_HR_ATTENDANCE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -1098,7 +1122,11 @@
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="91" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
-                <column code="NOP_FLOW_ID" name="nopFlowId" precision="32" propId="92" stdDataType="string"
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="92"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="93"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                <column code="NOP_FLOW_ID" name="nopFlowId" precision="32" propId="94" stdDataType="string"
                         stdSqlType="VARCHAR"/>
             </columns>
             <indexes>
@@ -1111,6 +1139,10 @@
                 </index>
                 <index name="IDX_HR_SALARY_BANK_FILE_ID" unique="false">
                     <column name="bankFileId"/>
+                </index>
+                <index name="IDX_HR_SALARY_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -1194,6 +1226,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="25"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_RECRUITMENT_ORG_STATUS" unique="false">
@@ -1214,6 +1248,10 @@
                 </index>
                 <index name="IDX_HR_RECRUITMENT_EMPLOYEE_ID" unique="false">
                     <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_RECRUITMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -1301,6 +1339,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="20"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_SALARY_SIMULATION_ORG_STATUS" unique="false">
@@ -1315,6 +1355,10 @@
                 </index>
                 <index name="IDX_HR_SALARY_SIMULATION_CONVERTED_SALARY_ID" unique="false">
                     <column name="convertedSalaryId"/>
+                </index>
+                <index name="IDX_HR_SALARY_SIMULATION_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -1912,6 +1956,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="20"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_SHIFT_ASSIGNMENT_ORG_STATUS" unique="false">
@@ -1932,6 +1978,10 @@
                 </index>
                 <index name="IDX_HR_SHIFT_ASSIGNMENT_REPLACED_BY_ASSIGNMENT_ID" unique="false">
                     <column name="replacedByAssignmentId"/>
+                </index>
+                <index name="IDX_HR_SHIFT_ASSIGNMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -2085,6 +2135,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="18"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_SHIFT_SWAP_REQUEST_ORG_STATUS" unique="false">
@@ -2105,6 +2157,10 @@
                 </index>
                 <index name="IDX_HR_SHIFT_SWAP_REQUEST_APPROVED_BY_ID" unique="false">
                     <column name="approvedById"/>
+                </index>
+                <index name="IDX_HR_SHIFT_SWAP_REQUEST_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -2728,6 +2784,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="16"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_EMPLOYEE_ASSESSMENT_ORG_STATUS" unique="false">
@@ -2739,6 +2797,10 @@
                 </index>
                 <index name="IDX_HR_EMPLOYEE_ASSESSMENT_ASSESSOR_ID" unique="false">
                     <column name="assessorId"/>
+                </index>
+                <index name="IDX_HR_EMPLOYEE_ASSESSMENT_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>
@@ -2928,6 +2990,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="14"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_HR_DEVELOPMENT_PLAN_ORG_STATUS" unique="false">
@@ -2936,6 +3000,10 @@
                 </index>
                 <index name="IDX_HR_DEVELOPMENT_PLAN_EMPLOYEE_ID" unique="false">
                     <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_DEVELOPMENT_PLAN_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
                 </index>
             </indexes>
             <relations>

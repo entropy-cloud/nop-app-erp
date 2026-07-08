@@ -26,7 +26,8 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpCtContract@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCtContract@updateTime_1"
+    "updateTime": "@var:ErpCtContract@updateTime_1",
+    "businessDate": "*"
   },
   "status": 0
 }

@@ -27,6 +27,7 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.dateBetween;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import io.nop.biz.crud.EntityData;
 
 /**
  * 排班分配聚合根 BizModel（shift-scheduling.md §二/§九）。继承 {@link CrudBizModel} 标准 CRUD，
@@ -45,6 +46,16 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
     public ErpHrShiftAssignmentBizModel() {
         setEntityName(ErpHrShiftAssignment.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpHrShiftAssignment> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpHrShiftAssignment entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation
@@ -125,6 +136,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
     ErpHrShiftAssignment doCreateAssignment(Long employeeId, Long shiftId, LocalDate date,
                                             IServiceContext context) {
         ErpHrShiftAssignment assignment = newEntity();
+        assignment.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         assignment.setEmployeeId(employeeId);
         assignment.setShiftId(shiftId);
         assignment.setAssignmentDate(date);

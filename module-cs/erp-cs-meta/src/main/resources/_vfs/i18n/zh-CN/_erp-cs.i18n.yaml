@@ -115,6 +115,7 @@ prop:
       attachmentFileIdComponentFileStatus: null
       billingCycle: 计费周期
       billingCycle_label: 计费周期
+      businessDate: 业务日期
       code: 编码
       contractType: 合同类型
       contractType_label: 合同类型
@@ -266,6 +267,7 @@ prop:
       approvedAt: 审核时间
       approvedBy: 审核人
       assignedToId: 分配处理人
+      businessDate: 业务日期
       catalogItem: null
       catalogItemId: 服务目录项
       code: 单号

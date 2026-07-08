@@ -79,6 +79,7 @@ prop:
       weekday: 星期
     ErpLogShipment:
       actualDeliveryDate: 实际送达日期
+      businessDate: 业务日期
       carrier: null
       carrierConfig: null
       carrierConfigId: 承运商配置ID
@@ -102,6 +103,7 @@ prop:
       org: null
       orgId: 业务组织
       parcels: null
+      posted: 已过账
       receiverAddress: 收货地址
       receiverCity: 城市
       receiverCountry: 国家

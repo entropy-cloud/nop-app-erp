@@ -320,6 +320,8 @@ public class TestErpDrpEngine extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpDrpPlan> dao = daoProvider.daoFor(ErpDrpPlan.class);
             ErpDrpPlan plan = new ErpDrpPlan();
+            plan.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+            plan.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             plan.orm_propValueByName("id", id);
             plan.setCode(code);
             plan.setPlanName("DRP-" + code);

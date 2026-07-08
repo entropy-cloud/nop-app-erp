@@ -203,6 +203,8 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
     private Long seedShipment(String code, Long carrierId, String status, String relatedBillType,
                               String settlementStatus) {
         ErpLogShipment s = new ErpLogShipment();
+        s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         s.setCode(code);
         s.setCarrierId(carrierId);
         s.setStatus(status);

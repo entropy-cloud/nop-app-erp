@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.biz.crud.EntityData;
 
 /**
  * DRP 计划 BizModel。薄委派层：{@link #runDrp}/{@link #resetToDraft}/{@link #approvePlan} 委派给
@@ -38,6 +39,16 @@ public class ErpDrpPlanBizModel extends CrudBizModel<ErpDrpPlan> implements IErp
     public ErpDrpPlanBizModel() {
         setEntityName(ErpDrpPlan.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpDrpPlan> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpDrpPlan entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     public void setDrpEngine(DrpEngine drpEngine) {
         this.drpEngine = drpEngine;

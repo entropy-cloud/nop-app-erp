@@ -71,6 +71,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--业务日期-->
+                <col id="businessDate" mandatory="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -88,6 +91,7 @@
  status[状态] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-排班分配" i18n-en:title="Add Shift Assignment">
@@ -98,7 +102,7 @@
  actualEndTime[实际签退时间] isAbsent[是否缺勤]
  absenceReason[缺勤原因] leaveRequestId[关联休假]
  swapRequestId[关联调换] replacedByAssignmentId[被替换排班]
- status[状态] 
+ status[状态] businessDate[业务日期]
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-排班分配" i18n-en:title="Edit Shift Assignment">
@@ -110,6 +114,7 @@
  absenceReason[缺勤原因] leaveRequestId[关联休假]
  swapRequestId[关联调换] replacedByAssignmentId[被替换排班]
  status[状态] delVersion[逻辑删除版本]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

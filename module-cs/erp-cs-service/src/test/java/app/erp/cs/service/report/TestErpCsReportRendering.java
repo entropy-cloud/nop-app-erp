@@ -130,6 +130,8 @@ public class TestErpCsReportRendering extends JunitAutoTestCase {
     private Long seedTicket(Long id, String code, Boolean isSlaCompleted) {
         IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
         ErpCsTicket t = new ErpCsTicket();
+        t.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        t.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         t.orm_propValueByName("id", id);
         t.setCode(code);
         t.setOrgId(ORG_ID);

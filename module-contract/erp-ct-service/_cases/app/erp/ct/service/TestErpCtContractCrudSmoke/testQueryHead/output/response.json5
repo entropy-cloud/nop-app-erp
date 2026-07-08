@@ -31,7 +31,8 @@
         "createdBy": "autotest-ref",
         "createTime": "@var:ErpCtContract@updateTime",
         "updatedBy": "autotest-ref",
-        "updateTime": "@var:ErpCtContract@updateTime"
+        "updateTime": "@var:ErpCtContract@updateTime",
+        "businessDate": "*"
       }
     ],
     "limit": 10,

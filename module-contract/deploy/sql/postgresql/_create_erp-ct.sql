@@ -86,6 +86,7 @@ CREATE TABLE erp_ct_contract(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_ct_contract primary key (id)
 );
 
@@ -171,6 +172,7 @@ CREATE TABLE erp_ct_rebate_agreement(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
   constraint PK_erp_ct_rebate_agreement primary key (id)
 );
 
@@ -340,6 +342,8 @@ CREATE TABLE erp_ct_rebate_settlement(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
+  posted BOOLEAN default false   ,
   constraint PK_erp_ct_rebate_settlement primary key (id)
 );
 
@@ -465,6 +469,8 @@ CREATE TABLE erp_ct_rebate_settlement(
       COMMENT ON COLUMN erp_ct_contract.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_ct_contract.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ct_contract.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_ct_contract_line IS '合同行';
                 
@@ -611,6 +617,8 @@ CREATE TABLE erp_ct_rebate_settlement(
       COMMENT ON COLUMN erp_ct_rebate_agreement.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_ct_rebate_agreement.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_agreement.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_ct_document IS '合同文档';
                 
@@ -901,4 +909,8 @@ CREATE TABLE erp_ct_rebate_settlement(
       COMMENT ON COLUMN erp_ct_rebate_settlement.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_ct_rebate_settlement.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_ct_rebate_settlement.posted IS '已过账';
                     

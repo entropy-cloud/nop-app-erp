@@ -18,6 +18,7 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import io.nop.biz.crud.EntityData;
 
 @BizModel("ErpApsOperationOrder")
 public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOrder> implements IErpApsOperationOrderBiz {
@@ -31,6 +32,16 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     public ErpApsOperationOrderBizModel() {
         setEntityName(ErpApsOperationOrder.class.getName());
     }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpApsOperationOrder> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        ErpApsOperationOrder entity = entityData.getEntity();
+        if (entity.getBusinessDate() == null) {
+            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        }
+    }
+
 
     @Override
     @BizMutation

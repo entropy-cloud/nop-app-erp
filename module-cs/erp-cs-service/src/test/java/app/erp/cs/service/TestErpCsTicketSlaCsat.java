@@ -318,6 +318,8 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpCsTicket> dao = daoProvider.daoFor(ErpCsTicket.class);
             ErpCsTicket t = new ErpCsTicket();
+            t.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+            t.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             t.orm_propValueByName("id", id);
             t.setCode(code);
             t.setSubject("工单-" + code);

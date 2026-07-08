@@ -177,8 +177,16 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 39;
     
+    /* 业务日期: BUSINESS_DATE DATE */
+    public static final String PROP_NAME_businessDate = "businessDate";
+    public static final int PROP_ID_businessDate = 40;
+    
+    /* 已过账: POSTED BOOLEAN */
+    public static final String PROP_NAME_posted = "posted";
+    public static final int PROP_ID_posted = 41;
+    
 
-    private static int _PROP_ID_BOUND = 40;
+    private static int _PROP_ID_BOUND = 42;
 
     
     /* relation:  */
@@ -209,7 +217,7 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[40];
+    private static final String[] PROP_ID_TO_NAME = new String[42];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -330,6 +338,12 @@ public class _ErpLogShipment extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
+          PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
+      
+          PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
+          PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
+      
     }
 
     
@@ -449,6 +463,12 @@ public class _ErpLogShipment extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 业务日期: BUSINESS_DATE */
+    private java.time.LocalDate _businessDate;
+    
+    /* 已过账: POSTED */
+    private java.lang.Boolean _posted;
     
 
     public _ErpLogShipment(){
@@ -640,6 +660,12 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_businessDate:
+               return getBusinessDate();
+        
+            case PROP_ID_posted:
+               return getPosted();
         
            default:
               return super.orm_propValue(propId);
@@ -1042,6 +1068,26 @@ public class _ErpLogShipment extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_businessDate:{
+               java.time.LocalDate typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDate(value,
+                       err-> newTypeConversionError(PROP_NAME_businessDate));
+               }
+               setBusinessDate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_posted:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_posted));
+               }
+               setPosted(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1320,6 +1366,20 @@ public class _ErpLogShipment extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               onInitProp(propId);
+               this._businessDate = (java.time.LocalDate)value;
+               
+               break;
+            }
+        
+            case PROP_ID_posted:{
+               onInitProp(propId);
+               this._posted = (java.lang.Boolean)value;
                
                break;
             }
@@ -2067,6 +2127,44 @@ public class _ErpLogShipment extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final java.time.LocalDate getBusinessDate(){
+         onPropGet(PROP_ID_businessDate);
+         return _businessDate;
+    }
+
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final void setBusinessDate(java.time.LocalDate value){
+        if(onPropSet(PROP_ID_businessDate,value)){
+            this._businessDate = value;
+            internalClearRefs(PROP_ID_businessDate);
+            
+        }
+    }
+    
+    /**
+     * 已过账: POSTED
+     */
+    public final java.lang.Boolean getPosted(){
+         onPropGet(PROP_ID_posted);
+         return _posted;
+    }
+
+    /**
+     * 已过账: POSTED
+     */
+    public final void setPosted(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_posted,value)){
+            this._posted = value;
+            internalClearRefs(PROP_ID_posted);
             
         }
     }

@@ -105,6 +105,8 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
 
     private Long seedShipmentWithTracking(String code, Long carrierId, String trackingNo) {
         ErpLogShipment s = new ErpLogShipment();
+        s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         s.setCode(code);
         s.setCarrierId(carrierId);
         s.setStatus(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED);
@@ -118,6 +120,8 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
     private Long seedShipment(String code, Long carrierId, String status, String relatedBillType,
                               String settlementStatus) {
         ErpLogShipment s = new ErpLogShipment();
+        s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
+        s.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         s.setCode(code);
         s.setCarrierId(carrierId);
         s.setStatus(status);

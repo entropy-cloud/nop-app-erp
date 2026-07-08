@@ -56,6 +56,7 @@ CREATE TABLE erp_drp_plan(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  BUSINESS_DATE DATE NOT NULL ,
   constraint PK_erp_drp_plan primary key (ID)
 );
 
@@ -258,6 +259,8 @@ CREATE TABLE erp_inv_drp_dock_appointment(
       COMMENT ON COLUMN erp_drp_plan.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_drp_plan.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_drp_plan.BUSINESS_DATE IS '业务日期';
                     
       COMMENT ON TABLE erp_inv_drp_safety_stock_calc IS '安全库存计算';
                 

@@ -26,7 +26,10 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpApsOperationOrder@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpApsOperationOrder@updateTime_1"
+    "updateTime": "@var:ErpApsOperationOrder@updateTime_1",
+    "earliestStartDateT": null,
+    "latestEndDateT": null,
+    "businessDate": "*"
   },
   "status": 0
 }

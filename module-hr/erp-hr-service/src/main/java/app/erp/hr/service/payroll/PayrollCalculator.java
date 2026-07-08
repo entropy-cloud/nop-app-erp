@@ -117,6 +117,8 @@ public class PayrollCalculator {
                 .subtract(taxAmount).subtract(otherDeductions).setScale(scale, RoundingMode.HALF_UP);
 
         ErpHrSalary salary = daoProvider.daoFor(ErpHrSalary.class).newEntity();
+
+        salary.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         salary.setEmployeeId(employeeId);
         salary.setYear(year);
         salary.setMonth(month);
