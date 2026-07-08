@@ -39,6 +39,10 @@ public interface ErpHrConfigs {
     BigDecimal DEFAULT_ASSESSMENT_SUBORDINATE_WEIGHT = new BigDecimal("0.10");
     /** 严重差距默认阈值（gapValue ≥ 此值视为 CRITICAL）。 */
     int DEFAULT_GAP_CRITICAL_THRESHOLD = 3;
+    /** 调动时默认自动处理合同（原合同 TERMINATED + 新建 ACTIVE）。 */
+    boolean DEFAULT_TRANSFER_AUTO_HANDLE_CONTRACT = true;
+    /** 调动生效日期与 APPROVED 休假冲突时默认告警（不阻塞）。 */
+    boolean DEFAULT_TRANSFER_LEAVE_CONFLICT_WARN = true;
 
     static String defaultSocialInsuranceBaseCity() {
         String city = io.nop.api.core.config.AppConfig.var(
@@ -146,5 +150,17 @@ public interface ErpHrConfigs {
         Integer v = io.nop.api.core.config.AppConfig.var(
                 ErpHrConstants.CONFIG_GAP_CRITICAL_THRESHOLD, DEFAULT_GAP_CRITICAL_THRESHOLD);
         return v == null ? DEFAULT_GAP_CRITICAL_THRESHOLD : v;
+    }
+
+    static boolean transferAutoHandleContract() {
+        Boolean v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_TRANSFER_AUTO_HANDLE_CONTRACT, DEFAULT_TRANSFER_AUTO_HANDLE_CONTRACT);
+        return v == null ? DEFAULT_TRANSFER_AUTO_HANDLE_CONTRACT : v;
+    }
+
+    static boolean transferLeaveConflictWarn() {
+        Boolean v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_TRANSFER_LEAVE_CONFLICT_WARN, DEFAULT_TRANSFER_LEAVE_CONFLICT_WARN);
+        return v == null ? DEFAULT_TRANSFER_LEAVE_CONFLICT_WARN : v;
     }
 }

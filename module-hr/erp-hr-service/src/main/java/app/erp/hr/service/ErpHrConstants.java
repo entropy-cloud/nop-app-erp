@@ -196,4 +196,27 @@ public interface ErpHrConstants {
     // ---- 胜任力等级范围（competency-management.md §CompetencyLevel 1-5 量表） ----
     int COMPETENCY_LEVEL_MIN = 1;
     int COMPETENCY_LEVEL_MAX = 5;
+
+    // ---- 员工调动配置项（use-cases.md UC-HR-08）----
+    /** 调动时是否自动处理合同（原合同 TERMINATED + 新建 ACTIVE），默认 true。 */
+    String CONFIG_TRANSFER_AUTO_HANDLE_CONTRACT = "erp-hr.transfer-auto-handle-contract";
+    /** 调动生效日期与已有 APPROVED 休假冲突时是否告警（不阻塞），默认 true。 */
+    String CONFIG_TRANSFER_LEAVE_CONFLICT_WARN = "erp-hr.transfer-leave-conflict-warn";
+
+    // ---- 员工调动合同处理三态（handleContract 参数）----
+    /** AUTO：按 config；存在 ACTIVE 合同则处理。 */
+    String TRANSFER_HANDLE_CONTRACT_AUTO = "AUTO";
+    /** YES：强制处理（无 ACTIVE 合同时也新建）。 */
+    String TRANSFER_HANDLE_CONTRACT_YES = "YES";
+    /** NO：跳过合同处理仅更新部门。 */
+    String TRANSFER_HANDLE_CONTRACT_NO = "NO";
+
+    // ---- 不可调动雇佣状态（employment-status 中）----
+    String EMPLOYMENT_RESIGNED = "RESIGNED";
+    String EMPLOYMENT_TERMINATED = "TERMINATED";
+    String EMPLOYMENT_RETIRED = "RETIRED";
+
+    // ---- 合同状态（erp-hr/contract-status）----
+    String CONTRACT_STATUS_ACTIVE = "ACTIVE";
+    String CONTRACT_STATUS_TERMINATED = "TERMINATED";
 }

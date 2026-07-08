@@ -45,6 +45,11 @@ public interface ErpHrErrors {
     String ARG_REPORT_NAME = "reportName";
     String ARG_RENDER_TYPE = "renderType";
 
+    // --- 员工调动作用域参数键 ---
+    String ARG_TARGET_DEPARTMENT_ID = "targetDepartmentId";
+    String ARG_TARGET_POSITION_ID = "targetPositionId";
+    String ARG_EFFECTIVE_DATE = "effectiveDate";
+
     // --- 薪酬核算：配置缺失 ---
     ErrorCode ERR_SOCIAL_INSURANCE_BASE_NOT_FOUND = ErrorCode.define(
             "erp.err.hr.social-insurance-base-not-found",
@@ -184,4 +189,18 @@ public interface ErpHrErrors {
             "erp.err.hr.competency-parent-cycle",
             "胜任力 {competencyId} 设置上级 {parentId} 会形成环路（含自引用），禁止保存",
             ARG_COMPETENCY_ID);
+
+    // --- 员工调动（use-cases.md UC-HR-08）---
+    ErrorCode ERR_EMPLOYEE_NOT_TRANSFERABLE = ErrorCode.define(
+            "erp.err.hr.employee-not-transferable",
+            "员工 {employeeId} 当前雇佣状态={currentStatus}，不可调动（仅 ACTIVE/PROBATION 允许调动）",
+            ARG_EMPLOYEE_ID, ARG_CURRENT_STATUS);
+    ErrorCode ERR_TRANSFER_TARGET_DEPT_NOT_FOUND = ErrorCode.define(
+            "erp.err.hr.transfer-target-dept-not-found",
+            "调动目标部门 {targetDepartmentId} 不存在",
+            ARG_TARGET_DEPARTMENT_ID);
+    ErrorCode ERR_TRANSFER_TARGET_POSITION_NOT_FOUND = ErrorCode.define(
+            "erp.err.hr.transfer-target-position-not-found",
+            "调动目标职位 {targetPositionId} 不存在或不归属目标部门 {targetDepartmentId}",
+            ARG_TARGET_POSITION_ID, ARG_TARGET_DEPARTMENT_ID);
 }

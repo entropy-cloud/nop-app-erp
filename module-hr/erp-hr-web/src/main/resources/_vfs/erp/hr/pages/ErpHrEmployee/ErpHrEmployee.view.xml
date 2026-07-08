@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpHrEmployee.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view x:extends="_gen/_ErpHrEmployee.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
     <grids>
         <grid id="list"/>
@@ -10,10 +10,83 @@
         <form id="view"/>
         <form id="edit"/>
         <form id="add"/>
+
+        <!-- UC-HR-08 部门调动表单（自定义参数，非实体属性。cell id 与 transferEmployee 入参一致） -->
+        <form id="transfer" editMode="add" title="部门调动" i18n-en:title="Transfer Employee">
+            <layout>
+  employeeId[员工ID] targetDepartmentId[目标部门]
+  targetPositionId[目标职位] targetSuperiorId[直接上级]
+  effectiveDate[生效日期] handleContract[合同处理]
+</layout>
+            <cells>
+                <cell id="employeeId" label="员工ID" domain="long" custom="true" visible="false">
+                    <gen-control>
+                        <input-number/>
+                    </gen-control>
+                </cell>
+                <cell id="targetDepartmentId" label="目标部门" domain="long" custom="true">
+                    <gen-control>
+                        <input-number placeholder="目标部门ID（必填）"/>
+                    </gen-control>
+                </cell>
+                <cell id="targetPositionId" label="目标职位" domain="long" custom="true">
+                    <gen-control>
+                        <input-number placeholder="目标职位ID（可空）"/>
+                    </gen-control>
+                </cell>
+                <cell id="targetSuperiorId" label="直接上级" domain="long" custom="true">
+                    <gen-control>
+                        <input-number placeholder="直接上级员工ID（可空）"/>
+                    </gen-control>
+                </cell>
+                <cell id="effectiveDate" label="生效日期" domain="date" custom="true">
+                    <gen-control>
+                        <input-date format="YYYY-MM-DD" placeholder="调动生效日期"/>
+                    </gen-control>
+                </cell>
+                <cell id="handleContract" label="合同处理" domain="string" custom="true">
+                    <gen-control>
+                        <select>
+                            <option value="AUTO">AUTO（按配置，存在生效合同时处理）</option>
+                            <option value="YES">YES（强制处理：终止原合同+新建）</option>
+                            <option value="NO">NO（跳过合同处理）</option>
+                        </select>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-transfer-button" label="调动" level="primary" icon="fa fa-exchange"
+                        actionType="drawer">
+                    <dialog page="transfer" size="lg">
+                        <data>
+                            <employeeId>$id</employeeId>
+                        </data>
+                    </dialog>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
+
+        <!-- 调动页面：表单提交调 transferEmployee mutation，employeeId 由 dialog data 预填 -->
+        <simple name="transfer" form="transfer" useFormActions="true">
+            <api url="@mutation:ErpHrEmployee__transferEmployee" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" actionType="cancel"/>
+                <action id="confirm" label="确认调动" actionType="submit" level="primary">
+                    <messages>
+                        <success>员工调动已提交</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+
         <picker name="picker"/>
     </pages>
 </view>
