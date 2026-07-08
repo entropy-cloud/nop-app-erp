@@ -13,7 +13,7 @@
   - **制造看板**「本期完工量」依赖 actualEndDate 区间（默认 `today.withDayOfMonth(1)`→`today`）。种子 COMPLETED 工单 actualEndDate 跨 2026-06（WO-1=06-28）/2026-07（WO-2=07-08）。spec **显式传 `startDate=2026-06-01` / `endDate=2026-07-31`** 覆盖种子两月区间，锁定 periodCompletedQty=100+80=180。`onTimeRate`（COMPLETED 全量）/ `inProcessCount`/`stockPartialCount`（status 聚合，不依赖日期）随之确定性。
   - **维护看板**「本期维护访问数」依赖 businessDate 区间。种子 visit 1 businessDate=2026-07-03（本期）/ visit 2=2026-06-20（历史月）。spec **显式传 `startDate=2026-07-01` / `endDate=2026-07-31`** 锁定本期，periodVisitCount=1（仅 visit 1）。`equipmentTotal`/`runningCount`/`openRequestCount` 不依赖日期。
   - **质量看板**「本期质检数」依赖 inspectionDate 区间。种子 3 条检验 inspectionDate 全在 2026-07（07-02/04/06）。spec **显式传 `startDate=2026-07-01` / `endDate=2026-07-31`** 锁定本期，inspectionCount=3。`openNcrCount` 不依赖日期。
-- **SPC 预警 `getSpcOutOfControlWarning` 裁决**（Phase 1 Decision）：config-gated 默认开（`erp-dash.qa-spc-include-inadequate`/`erp-dash.qa-spc-include-ncr` 默认 true），但 N=2 未 seed SPC 三表（`spc_chart.parameterId` 配置链依赖，0930-2 Deferred）。故该方法三段计数确定性为 0（`outOfControlChartCount`=0 / `inadequateCapabilityCount`=0 / `openSpcNcrCount`=0），`includeInadequate`/`includeNcr`=true。spec **断言确定性 0（非跳过）**，以覆盖该 `@BizQuery` 的可观测性（镜像 2210-2 范式，约束记录）。
+- **SPC 预警 `getSpcOutOfControlWarning` 裁决**（Phase 1 Decision）：config-gated 默认开（`erp-dash.qa-spc-include-inadequate`/`erp-dash.qa-spc-include-ncr` 默认 true）。本表落盘时（0930-3）未 seed SPC 三表（`spc_chart.parameterId` 配置链依赖，0930-2 Deferred），三段计数确定性为 0，spec 断言确定性 0 覆盖该 `@BizQuery` 可观测性。**此状态已于 `2026-07-09-1145-2` supersede**：SPC 三表已 seed（Strategy C，parameterId=0 占位软引用），三段计数转非空（1/1/1），quality.value.spec.ts 断言已更新。下方 §2.3/§2.4 的 openNcrCount=2 与 SPC=0 行为 **0930-3 时点历史值**，**当前生效值见 `docs/analysis/2026-07-09-1145-2-quality-spc-seed-table-map.md` §3.5（openNcrCount=3、SPC=1/1/1）**。本表其余 KPI/token（制造/维护全量 + 质量 inspectionCount/passRate/rejectedCount + 报表 token）不受 1145-2 影响，仍为权威。
 - **seed 漂移同步机制**：若 0930-1/0930-2 三域 seed CSV 变更（行增减/金额改动/业务日期改动），本表期望值须同步更新，对应 `*.value.spec.ts` 的 `expected`/`expectedTokens` 亦须同步（与 1445-2/2210-2 同机制）。
 
 ## 1. 种子数据关键行（期望值派生依据）
@@ -96,7 +96,7 @@
 | `inspectionCount` | **3** | INS-1/2/3 全在 2026-07 |
 | `passRate` | **0.6666666666666666** | ACCEPTED=2(INS-1,INS-3) / total=3 → `(double)2/(double)3`（IEEE754 双精度全精度，spec 写 `0.6666666666666666` 与 Java 双精/JS number 位级一致；非 0.6667 截断） |
 | `rejectedCount` | **1** | INS-2 REJECTED |
-| `openNcrCount` | **2** | NCR-1 OPEN + NCR-2 IN_REVIEW |
+| `openNcrCount` | **2**（0930-3 时点）/ **3**（1145-2 起） | 0930-3：NCR-1 OPEN + NCR-2 IN_REVIEW。1145-2 追加 NCR-3 SPC·OPEN → +1（见 `2026-07-09-1145-2-quality-spc-seed-table-map.md` §3.5） |
 
 ### 2.4 质量看板 SPC 预警 `ErpQaDashboard__getSpcOutOfControlWarning`
 
@@ -104,11 +104,11 @@
 
 | 字段 | 期望值 | 派生 |
 |------|--------|------|
-| `outOfControlChartCount` | **0** | SPC 三表未 seed（0930-2 Deferred） |
-| `inadequateCapabilityCount` | **0** | 同上（config-gated 开但无数据） |
-| `openSpcNcrCount` | **0** | 2 条 NCR sourceType=INSPECTION 非 SPC |
+| `outOfControlChartCount` | **0**（0930-3 时点）/ **1**（1145-2 起） | 0930-3：SPC 三表未 seed。1145-2：spc_sample 1 行 isOutOfControl=true → distinct chartId=1 |
+| `inadequateCapabilityCount` | **0**（0930-3 时点）/ **1**（1145-2 起） | 0930-3：同上。1145-2：spc_capability 1 行 INADEQUATE → distinct chartId=1 |
+| `openSpcNcrCount` | **0**（0930-3 时点）/ **1**（1145-2 起） | 0930-3：2 条 NCR sourceType=INSPECTION 非 SPC。1145-2：追加 NCR-3 sourceType=SPC·OPEN |
 
-> 确定性 0 断言（非跳过），覆盖该 `@BizQuery` 可观测性。`includeInadequate`/`includeNcr` 为布尔 true（非数值，spec 不纳入断言）。
+> **1145-2 supersede**：当前生效值为 1/1/1（spec 已更新断言）。本表 0/0/0 为 0930-3 时点历史值，保留以记录裁决演进。`includeInadequate`/`includeNcr` 为布尔 true（非数值，spec 不纳入断言）。当前权威派生见 `docs/analysis/2026-07-09-1145-2-quality-spc-seed-table-map.md` §3.5。
 
 ## 3. 报表渲染数值 token 期望值（GraphQL `__renderHtml`）
 
@@ -172,7 +172,7 @@
 | manufacturing.value（KPI） | `{startDate:'2026-06-01', endDate:'2026-07-31'}` | 覆盖 COMPLETED 工单 actualEndDate 两月区间，锁定 periodCompletedQty=180 |
 | maintenance.value（KPI） | `{startDate:'2026-07-01', endDate:'2026-07-31'}` | 锁定本期 visit，periodVisitCount=1（visit 2 历史月不计） |
 | quality.value（KPI） | `{startDate:'2026-07-01', endDate:'2026-07-31'}` | 锁定本期检验，inspectionCount=3 |
-| quality.value（SPC） | `{}` | getSpcOutOfControlWarning 无参数，确定性返回 0 |
+| quality.value（SPC） | `{}` | getSpcOutOfControlWarning 无参数。0930-3 时点确定性 0；1145-2 起确定性 1/1/1（见 `2026-07-09-1145-2-quality-spc-seed-table-map.md`） |
 | mfg-production-variance / mfg-forecast-variance / mnt-maintenance-history / qa-inspection-summary（报表） | `{reportName:'<name>'}` | 报表仅 reportName，数据集聚合全量（无区间过滤），确定性 |
 
 ## 5. 非范围（Deferred，期望值不派生）

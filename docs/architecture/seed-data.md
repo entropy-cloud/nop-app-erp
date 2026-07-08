@@ -13,6 +13,8 @@
 > **维护+质量域交易单据种子已落地**（2026-07-09，plan `2026-07-09-0930-2`）——在 61 张 CSV 之上新增 **11 张维护+质量域表 CSV**（共 72 张）：维护域 8 表（equipment_category/equipment/schedule/request/downtime_entry/visit/visit_task/spare_part_usage）+ 质量域 3 表（inspection/non_conformance/action）。使维护域看板 `getDashboardKpi`（equipmentTotal/runningCount/openRequestCount/periodVisitCount）+ 3 预警（findEquipmentDowntimeAlert/findMaintenanceOverdueAlert + 质量域 findCapaOverdueAlert）+ 2 报表（maintenance-history/downtime-summary）+ 质量域看板 `getDashboardKpi`（inspectionCount/passRate/rejectedCount/openNcrCount）+ 2 报表（inspection-summary/ncr-capa-summary）数值转非空可观测。SPC 三表因 spc_chart.parameterId 配置链依赖归 Deferred。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-0930-2-maintenance-quality-seed-table-map.md`。
 >
 > **CRM/客服/人力域交易单据种子已落地**（2026-07-09，plan `2026-07-09-1045-1`）——在 72 张 CSV 之上新增 **12 张 CRM/CS/HR 域表 CSV**（共 84 张）+ **2 处既有 CSV 加性追加**（erp_md_partner +1 行 EMPLOYEE 类型 / erp_fin_ar_ap_item +2 行 EMPLOYEE_ADVANCE/EXPENSE_CLAIM·OPEN）：CRM 5 表（stage/lead/forecast_period/forecast/forecast_line）+ CS 3 表（ticket_type/ticket/survey）+ HR 4 表（department/employee/salary_simulation/salary_simulation_item_adj）。使三域 **5 张报表**（CRM lead-conversion-funnel/forecast-accuracy、CS ticket-sla-csat-summary、HR payroll-simulation-comparison/employee-net-balance）数值转非空可观测。HR employee-net-balance 经跨域 finance/master-data 扩展（追加员工型 partner + ar_ap_item OPEN 行）驱动。三域为纯报表域（无看板 BizModel）。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-1045-1-crm-cs-hr-seed-table-map.md`。
+>
+> **质量域 SPC 种子已落地**（2026-07-09，plan `2026-07-09-1145-2`）——在 84 张 CSV 之上新增 **3 张质量域 SPC 表 CSV**（共 87 张）+ **1 处既有 CSV 加性追加**（erp_qa_non_conformance +1 行 sourceType=SPC·status=OPEN）：spc_chart（1 行，parameterId=0 占位软引用）+ spc_sample（1 行 isOutOfControl=true）+ spc_capability（1 行 capabilityLevel=INADEQUATE）。使质量看板 `getSpcOutOfControlWarning` 三计数器（outOfControlChartCount/inadequateCapabilityCount/openSpcNcrCount）由确定性 0 转非空可观测（解除 0930-2 Deferred「SPC 三表 seed」+ 0930-3「确定性 0」状态）。Strategy C 完整参照完整性（sample/capability.chartId 指向真实 chart 行）；SPC 引擎双层门控默认关，seed 静态结果行不被重算覆盖。列映射/拓扑序/范围裁决/期望值派生见 `docs/analysis/2026-07-09-1145-2-quality-spc-seed-table-map.md`。
 
 ## 目的
 
@@ -219,9 +221,9 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 2. 1234-1 seed 的科目表无维护费用/备件消耗/质量损失/报废处置专用科目，seed GL 凭证徒增参照复杂度；
 3. 两域过账 → GL 凭证 seed 归后续（Deferred）。
 
-### SPC 三表移出范围（Deferred）
+### SPC 三表移出范围（Deferred → 已于 1145-2 落地）
 
-`getSpcOutOfControlWarning` 读 `ErpQaSpcSample`（isOutOfControl）+ `ErpQaSpcCapability`（capabilityLevel=INADEQUATE），二者 chartId mandatory FK→`ErpQaSpcChart`，而 spc_chart.parameterId 是 mandatory FK 但 quality ORM 无独立 ErpQaParameter 实体（检验参数仅以 inspection_template_line.parameterName 自由文本存在），seed spc_chart 缺 FK 上游——与制造域 crp_load 因 workcenter 配置链依赖归 Deferred 同构。不 seed 则该预警返回 outOfControlChartCount=0 属预期非缺陷（核心 KPI inspection/passRate/openNcrCount 仍非空）。触发条件：SPC 配置链（检验参数实体/template_line 物化为 parameterId）seed 落地后承接。
+`getSpcOutOfControlWarning` 读 `ErpQaSpcSample`（isOutOfControl）+ `ErpQaSpcCapability`（capabilityLevel=INADEQUATE），二者 chartId mandatory FK→`ErpQaSpcChart`。0930-2 阶段 spc_chart.parameterId 是 mandatory BIGINT 但 quality ORM 无独立 ErpQaParameter 实体（检验参数仅以 inspection_template_line.parameterName 自由文本存在），曾据此将 SPC 三表移出范围（Deferred）。**此阻塞已于 `2026-07-09-1145-2` 解除**：经核实 parameterId 为自由 BIGINT 软引用（ORM 无 `<to-one>` 无目标实体，可填占位值 0），SPC 引擎双层门控默认关闭（seed 静态结果行安全），采用 Strategy C 完整参照完整性 seed spc_chart(1) + spc_sample(1 isOutOfControl=true) + spc_capability(1 INADEQUATE) + non_conformance 追加 SPC 行，使该预警三计数器由 0 转非空。详见下方「质量域 SPC 种子」段。
 
 ### 域内金额/计数自洽约束
 
@@ -234,7 +236,7 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 
 - 维护/质量域 GL 凭证/业财一体 seed（维护费用/备件消耗/质量损失/报废处置过账凭证）——看板/报表读域表非 GL，种子科目表无两域专用科目；触发条件：维护/质量域业财一体端到端数值回归需 GL 串联时。
 - 维护域 calibration / 质量域 risk_register/quality_goal/review/calibration/recall(+target)/sampling_plan/inspection_template(+line) seed——这些表不被看板/报表 `QueryBean` 直接读，inspection.templateId 非强制可留 null；触发条件：对应域配置/执行链端到端回归需这些数据时。
-- 质量域 SPC 三表 seed（spc_chart/spc_sample/spc_capability）——spc_chart.parameterId 配置链依赖；触发条件：SPC 配置链 seed 落地后（见上方「SPC 三表移出范围」）。
+- ~~质量域 SPC 三表 seed（spc_chart/spc_sample/spc_capability）——spc_chart.parameterId 配置链依赖；触发条件：SPC 配置链 seed 落地后（见上方「SPC 三表移出范围」）。~~ **已于 2026-07-09-1145-2 落地**（见下方「质量域 SPC 种子」段；parameterId 为自由 BIGINT 软引用，占位值 0 即可加载，阻塞解除）。
 - 备件消耗行 `erp_mnt_spare_part_usage_line` seed——看板/报表仅按 spare_part_usage 头计数，不读行；触发条件：备件消耗明细端到端回归需行数据时（注意 UoM 列名 `UO_M_ID` 陷阱）。
 - 精确维护/质量域 KPI/报表数值断言——本计划解除「维护/质量域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-09-0930-3` 承接。
 - 其他扩展域交易种子（CRM/CS/HR 已于 2026-07-09-1045-1 落地，见下方「CRM/客服/人力域交易单据种子」段；logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。
@@ -293,3 +295,66 @@ CRM/CS/HR 三域为**纯报表域（无看板 BizModel）**，各 1 个 `ErpXxxR
 - CRM/CS/HR 域配置/执行链 seed（CRM product_config_rule/price_rule/bundle_pricing/territory/team/campaign；CS knowledge_base/sla_policy/entitlement/catalog；HR salary/salary_item/leave/attendance/shift/competency/social_insurance）——这些表不被范围内 5 报表 `QueryBean` 直接读（lead/ticket/simulation 的配置 FK 非强制可留 null）；触发条件：对应域配置/执行链端到端回归需这些数据时。
 - 精确 CRM/CS/HR 域报表数值断言——本计划解除「数据存在」阻塞（报表非空可观测）；精确断言由 `2026-07-09-1045-2-crm-cs-hr-report-value-assertions.md` 承接。
 - 其他扩展域交易种子（logistics/b2b/contract/drp/aps 后续批次）——无看板无报表（seed 不解除额外阻塞）；触发条件：对应域端到端数值回归需交易数据时。
+
+## 质量域 SPC 种子（已落地）
+
+### 核心范式：域表「直 seed」+ 完整参照完整性（Strategy C）
+
+承接 0930-2 Deferred「SPC 三表 seed」。质量看板 `getSpcOutOfControlWarning` 三计数器**读 SPC 域表而非 GL 凭证**（经 `ErpQaDashboardBizModel.getSpcOutOfControlWarning` + 3 helper 核实）：
+
+- **outOfControlChartCount**：distinct `ErpQaSpcSample.chartId` where `isOutOfControl=true`。
+- **inadequateCapabilityCount**：distinct `ErpQaSpcCapability.chartId` where `capabilityLevel=INADEQUATE`（config-gated `erp-dash.qa-spc-include-inadequate`，默认 true）。
+- **openSpcNcrCount**：count `ErpQaNonConformance` where `sourceType=SPC` AND `status IN [OPEN, IN_REVIEW]`（config-gated `erp-dash.qa-spc-include-ncr`，默认 true）。
+
+三 helper 仅迭代 sample/capability/non_conformance 表收集 distinct `chartId` 或行数，**从不 join 或 load `erp_qa_spc_chart`**（Nop ORM `<to-one>` 为逻辑 join 非 DB 物理外键）。故 seed 域表即令该预警三计数器**非空**，**无需 seed GL 凭证**（与运营域/制造域/维护+质量域范式一致，复杂度减负）。
+
+### Strategy C 完整参照完整性裁决（vs Strategy B）
+
+- **Strategy C（selected）**：seed spc_chart（1 行，parameterId=0 占位）+ spc_sample（1 行 isOutOfControl=true，chartId 引用已 seed chart）+ spc_capability（1 行 INADEQUATE，chartId 引用同 chart）+ non_conformance 追加 SPC 行。sample/capability.chartId 指向真实 chart 行（完整参照），与 0930-2 范式一致。
+- **Strategy B（rejected）**：仅 sample+capability 不建 chart，chartId 悬空指向不存在的行（种子数据完整性差，虽看板不读 chart）。
+
+### parameterId=0 占位软引用文档化
+
+`spc_chart.parameterId` 是 mandatory BIGINT **但 ORM 无 `<to-one>` 无目标实体**（仓库无 `ErpQaParameter`/`ErpQaInspectionParameter`，检验参数仅以 `inspection_template_line.parameterName` 自由文本存在）。本批 `parameterId=0` 为占位软引用：
+- 加载层：BIGINT 列接受任意值（无 FK 约束 / 无 dict 校验），0 安全。
+- 看板层：`getSpcOutOfControlWarning` 三 helper 不读 chart 表，0 不影响预警计数。
+- 物化 `ErpQaParameter` 实体属 schema 扩展（ask-first），超出 seed 范畴 → Deferred（触发条件：SPC 控制图需绑定真实检验参数维度时）。
+
+### SPC 引擎重算覆盖防护
+
+SPC 引擎双层门控默认关闭：`erp-qa.spc-enabled` 默认 `false`（`ErpQaConfigs.isSpcEnabled`）+ `ErpQaSpcSamplingJob`/`ErpQaSpcCapabilityJob` cron 表达式默认空（`getSpcSamplingCron`/`getSpcCapabilityCron`）。fresh-DB 启动（`init-database-data=true`）不触发重算，seed 静态结果行（isOutOfControl=true / capabilityLevel=INADEQUATE）安全不被覆盖。SPC 引擎重算链端到端回归属 Deferred。
+
+### 加载拓扑序（跨域）
+
+```
+[1234-1/2210-1 主数据(已 seed)] md_organization(2) / md_material(1) / md_employee(1)
+  → [SPC 配置头] qa_spc_chart                          （orgId/materialId 逻辑 to-one，非强制）
+      → [SPC 结果行]
+        qa_spc_sample                                   （chartId mandatory 逻辑 to-one→chart）
+        qa_spc_capability                               （chartId mandatory 逻辑 to-one→chart）
+  → [既有 quality 单据加性追加] qa_non_conformance +1 行 （materialId FK→md_material=1；inspectionId 留空）
+```
+
+### posted 一致性裁决（三表无 posted 列；non_conformance 追加行 posted=false）
+
+镜像 0930-2 裁决。SPC 三表（spc_chart/spc_sample/spc_capability）ORM 均**无 `posted` 列**（逐表 ORM 核实），看板读域表非 GL，CSV 不含 posted；non_conformance 追加行 `posted=false`（镜像 0930-2 既有 2 行）。
+
+### getDashboardKpi.openNcrCount 联动裁决
+
+`getDashboardKpi.openNcrCount` 经 `countOpenNcrs` 计数**所有** NCR status IN [OPEN, IN_REVIEW]（不按 sourceType 过滤）。追加 SPC NCR（id=3, status=OPEN）→ openNcrCount 由 2 → 3。须同步更新 `quality.value.spec.ts` 的 getDashboardKpi 断言（已落），其余 getDashboardKpi 字段（inspectionCount/passRate/rejectedCount）不受影响（本批不 seed inspection）。
+
+### 域内计数自洽约束（期望值派生）
+
+config 门控两段默认 true（`ErpQaConfigs.isDashQaSpcIncludeInadequate`/`isDashQaSpcIncludeNcr`）→ 三计数器全计入：
+
+- `outOfControlChartCount=1`：spc_sample 1 行（chartId=1, isOutOfControl=true）→ distinct chartId={1} → size=1。
+- `inadequateCapabilityCount=1`：spc_capability 1 行（chartId=1, capabilityLevel=INADEQUATE）→ distinct chartId={1} → size=1。
+- `openSpcNcrCount=1`：non_conformance 追加 1 行（id=3, sourceType=SPC, status=OPEN）→ count=1。
+
+### Non-Goals（归后续批次）
+
+- 质量域 SPC GL 凭证/业财一体 seed——SPC 预警读域表非 GL，种子科目表无 SPC 专用科目；触发条件：SPC 业财一体端到端数值回归需 GL 串联时。
+- SPC 控制图完整可视化（echarts UCL/LCL + 违规点高亮）——0930-3 既定 Deferred（前端可视化面）；触发条件：前端 SPC 控制图可视化需求时。
+- ErpQaParameter 实体物化 / 检验参数 seed——parameterId 为自由 BIGINT 软引用，占位值 0 即可；触发条件：SPC 控制图需绑定真实检验参数维度时。
+- SPC 引擎重算链 seed / rule engine 触发——本批 seed 静态结果行令看板可观测，不触发 SpcRuleEngine/SpcControlLimitCalculator/SpcCapabilityCalculator 重算；触发条件：需验证 SPC 引擎端到端计算正确性时。
+- 质量域其他配置表 seed（risk_register/quality_goal/review/calibration/recall/sampling_plan/inspection_template）——0930-2 既定 Deferred，触发条件不变。
