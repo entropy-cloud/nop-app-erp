@@ -23,7 +23,7 @@
  approveStatus[审核状态] remark[备注]
  catalogItemId[服务目录项] approvedBy[审核人]
  approvedAt[审核时间]
- =__kbSuggestion[相关知识库文章]
+ __kbSuggestion[相关知识库文章]
 </layout>
             <cells>
                 <cell id="__kbSuggestion" custom="true" notSubmit="true">
@@ -31,10 +31,10 @@
                         <wrapper className="m-t-sm">
                             <body j:list="true">
                                 <service name="kbSuggestion">
-                                    <api method="post" url="/api/GenericApi" dataType="raw"
+                                    <api method="post" url="/graphql" dataType="raw"
                                          sendOn="${'$'}{subject &amp;&amp; subject.length >= 2}">
                                         <data>
-                                            <query><![CDATA[query($subject:String,$limit:Int){ ErpCsKnowledgeBase__suggestForTicket(subject:$subject,limit:$limit){ id code title contentSummary categoryId } }]]></query>
+                                            <query><![CDATA[query($subject:String,$limit:Int){ ErpCsKnowledgeBase__suggestForTicket(subject:$subject,limit:$limit) }]]></query>
                                             <variables>
                                                 <subject>${'$'}{subject}</subject>
                                                 <limit>5</limit>
@@ -52,9 +52,9 @@
                                                     <button label="采纳并参考" level="primary" size="sm" actionType="ajax"
                                                             visibleOn="${'$'}{!!id}"
                                                             confirmText="确认采纳此知识库文章作为工单处理参考？">
-                                                        <api method="post" url="/api/GenericApi" dataType="raw">
+                                                        <api method="post" url="/graphql" dataType="raw">
                                                             <data>
-                                                                <query><![CDATA[mutation($ticketId:BigDecimal,$knowledgeBaseId:BigDecimal){ ErpCsTicket__adoptKnowledge(ticketId:$ticketId,knowledgeBaseId:$knowledgeBaseId){ id } }]]></query>
+                                                                <query><![CDATA[mutation($ticketId:BigDecimal,$knowledgeBaseId:BigDecimal){ ErpCsTicket__adoptKnowledge(ticketId:$ticketId,knowledgeBaseId:$knowledgeBaseId) }]]></query>
                                                                 <variables>
                                                                     <ticketId>${'$'}{id}</ticketId>
                                                                     <knowledgeBaseId>${'$'}{kbId}</knowledgeBaseId>
@@ -88,7 +88,7 @@
  approveStatus[审核状态] remark[备注]
  catalogItemId[服务目录项] delVersion[逻辑删除版本]
  approvedBy[审核人] approvedAt[审核时间]
- =__kbSuggestion[相关知识库文章]
+ __kbSuggestion[相关知识库文章]
 </layout>
             <cells>
                 <cell id="__kbSuggestion" custom="true" notSubmit="true">
@@ -96,10 +96,10 @@
                         <wrapper className="m-t-sm">
                             <body j:list="true">
                                 <service name="kbSuggestion">
-                                    <api method="post" url="/api/GenericApi" dataType="raw"
+                                    <api method="post" url="/graphql" dataType="raw"
                                          sendOn="${'$'}{subject &amp;&amp; subject.length >= 2}">
                                         <data>
-                                            <query><![CDATA[query($subject:String,$limit:Int){ ErpCsKnowledgeBase__suggestForTicket(subject:$subject,limit:$limit){ id code title contentSummary categoryId } }]]></query>
+                                            <query><![CDATA[query($subject:String,$limit:Int){ ErpCsKnowledgeBase__suggestForTicket(subject:$subject,limit:$limit) }]]></query>
                                             <variables>
                                                 <subject>${'$'}{subject}</subject>
                                                 <limit>5</limit>
@@ -117,9 +117,9 @@
                                                     <button label="采纳并参考" level="primary" size="sm" actionType="ajax"
                                                             visibleOn="${'$'}{!!id}"
                                                             confirmText="确认采纳此知识库文章作为工单处理参考？">
-                                                        <api method="post" url="/api/GenericApi" dataType="raw">
+                                                        <api method="post" url="/graphql" dataType="raw">
                                                             <data>
-                                                                <query><![CDATA[mutation($ticketId:BigDecimal,$knowledgeBaseId:BigDecimal){ ErpCsTicket__adoptKnowledge(ticketId:$ticketId,knowledgeBaseId:$knowledgeBaseId){ id } }]]></query>
+                                                                <query><![CDATA[mutation($ticketId:BigDecimal,$knowledgeBaseId:BigDecimal){ ErpCsTicket__adoptKnowledge(ticketId:$ticketId,knowledgeBaseId:$knowledgeBaseId) }]]></query>
                                                                 <variables>
                                                                     <ticketId>${'$'}{id}</ticketId>
                                                                     <knowledgeBaseId>${'$'}{kbId}</knowledgeBaseId>

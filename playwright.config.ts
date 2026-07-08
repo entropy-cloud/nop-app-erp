@@ -15,7 +15,7 @@ const useChromeChannel = !fs.existsSync(
 );
 
 const webServerConfig = skipWebServer ? undefined : {
-  command: `java -Dfile.encoding=UTF8 -Dnop.auth.service-public=true -Dnop.auth.login.allow-create-default-user=true -Dnop.web.validate-page-model=false -jar "${runnerJar}"`,
+  command: `java -Dfile.encoding=UTF8 -Dnop.auth.service-public=true -Dnop.auth.login.allow-create-default-user=true -jar "${runnerJar}"`,
   url: effectiveBaseUrl,
   reuseExistingServer: true,
   timeout: 120_000,

@@ -19,9 +19,9 @@
   effectiveDate[生效日期] handleContract[合同处理]
 </layout>
             <cells>
-                <cell id="employeeId" label="员工ID" domain="long" custom="true" visible="false">
+                <cell id="employeeId" label="员工ID" domain="long" custom="true">
                     <gen-control>
-                        <input-number/>
+                        <input-number hidden="true"/>
                     </gen-control>
                 </cell>
                 <cell id="targetDepartmentId" label="目标部门" domain="long" custom="true">
@@ -47,9 +47,11 @@
                 <cell id="handleContract" label="合同处理" domain="string" custom="true">
                     <gen-control>
                         <select>
-                            <option value="AUTO">AUTO（按配置，存在生效合同时处理）</option>
-                            <option value="YES">YES（强制处理：终止原合同+新建）</option>
-                            <option value="NO">NO（跳过合同处理）</option>
+                            <options j:list="true">
+                                <_ label="AUTO（按配置，存在生效合同时处理）" value="AUTO"/>
+                                <_ label="YES（强制处理：终止原合同+新建）" value="YES"/>
+                                <_ label="NO（跳过合同处理）" value="NO"/>
+                            </options>
                         </select>
                     </gen-control>
                 </cell>
