@@ -1,0 +1,124 @@
+# Playwright E2E 冒烟回归运行手册
+
+## 概述
+
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面（共 34 spec）。
+
+测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归、非数据驱动断言。
+
+## 前置条件
+
+1. **JDK 17+**（项目使用 Java 25）
+2. **Maven 3.9+**
+3. **Node.js 18+**（项目使用 Node 25）
+4. **Google Chrome**（系统安装，Playwright `channel: 'chrome'`）
+   - 若已安装 Playwright bundled chromium，config 会自动检测并优先使用
+5. **预构建 runner jar**：`mvn clean install -DskipTests` 产出 `app-erp-all/target/quarkus-app/quarkus-run.jar`
+
+## 安装依赖
+
+```bash
+# 根目录执行一次
+npm install
+```
+
+## 启动方式
+
+### 方式 A：自动启动（推荐首次）
+
+Playwright `webServer` 自动启动 Quarkus 应用：
+
+```bash
+npx playwright test
+```
+
+webServer 命令含测试专用 JVM 参数：
+- `-Dnop.auth.service-public=true` — 服务端认证旁路（sys 用户上下文）
+- `-Dnop.auth.login.allow-create-default-user=true` — 自动创建测试用户 `nop`/`123`
+- `-Dnop.web.validate-page-model=false` — 绕过预存 ErpCsTicket.view.xml layout 校验 bug
+
+### 方式 B：复用已运行实例（开发调试推荐）
+
+先手动启动应用：
+
+```bash
+lsof -ti :8080 | xargs kill -9 2>/dev/null  # 清理端口
+java -Dfile.encoding=UTF8 \
+     -Dnop.auth.service-public=true \
+     -Dnop.auth.login.allow-create-default-user=true \
+     -Dnop.web.validate-page-model=false \
+     -jar app-erp-all/target/quarkus-app/quarkus-run.jar
+```
+
+然后运行测试（跳过 webServer）：
+
+```bash
+SKIP_WEBSERVER=1 npx playwright test
+```
+
+## 分层运行
+
+| 级别 | 命令 | 用途 |
+| --- | --- | --- |
+| 单文件 | `npx playwright test tests/e2e/dashboards/finance.smoke.spec.ts --workers=1` | 调试单个页面 |
+| 看板套件 | `npx playwright test tests/e2e/dashboards/ --workers=1` | 看板回归 |
+| 报表套件 | `npx playwright test tests/e2e/reports/ --workers=1` | 报表回归 |
+| 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
+
+全套件运行时间：~5.4 分钟（34 spec × ~10s/spec，含每测试 UI 登录）。
+
+## 认证机制
+
+- 每个测试通过 UI 登录（`nop`/`123`）获取会话
+- storageState 方案不适用（SPA 路由守卫在 context 初始化时拒绝预注入 token）
+- 测试用户由 `allow-create-default-user=true` JVM 属性创建（非生产配置变更）
+
+## 诊断
+
+遵循 `docs/references/playwright-e2e-guide.md` 决策树：
+
+1. **应用未启动？** → 检查端口 8080、runner jar 是否存在
+2. **页面空白？** → 检查 console error、SPA 是否加载、hash 路由是否正确
+3. **GraphQL 非 200？** → 检查 `/graphql` 端点（非 `/api/GenericApi`）、查询语法
+4. **登录失败？** → 确认 `allow-create-default-user=true`、H2 DB 是否已初始化
+
+失败时查看 trace：
+
+```bash
+npx playwright show-trace test-results/<test-name>/trace.zip
+```
+
+## 已知限制
+
+- **空库冒烟**：H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。不断言具体业务数值。
+- **单浏览器**：仅 chromium（Chrome channel），不支持 Firefox/WebKit/移动视口。
+- **冒烟级**：不断言像素级视觉一致性、不验证报表渲染内容正确性、不断言下载产物。
+- **页面验证禁用**：`validate-page-model=false` 绕过预存 ErpCsTicket.view.xml layout bug（CRUD 页面，非看板/报表范围）。
+- **page.yaml 已修复**：全部 34 page.yaml 已修复 API URL（`/api/GenericApi`→`/graphql`）+ GraphQL Map 字段选择移除。原始 page.yaml 存在系统性 bug（从未运行时测试过）。
+- **下载功能**：报表下载 button（XLSX/PDF）的后端 `ErpXxxReport__download` 有 DataBean 序列化限制，E2E 降级为 button 存在性检查。
+
+## 文件结构
+
+```
+package.json                          # @playwright/test 依赖 + scripts
+playwright.config.ts                  # 配置（端口/webServer/testDir/channel）
+tests/e2e/
+├── auth.ts                           # 登录 helper（performLogin + loginAndNavigate）
+├── fixtures.ts                       # test 扩展（console error 检查器）
+├── global-setup.ts                   # globalSetup（保留，当前未使用——storageState 不适用）
+├── dashboards/
+│   ├── _helper.ts                    # runDashboardSmoke 共享函数
+│   ├── finance.smoke.spec.ts         # 独立 spec（含 KPI 文本断言）
+│   ├── sales.smoke.spec.ts           # 使用 _helper
+│   ├── purchase.smoke.spec.ts
+│   ├── inventory.smoke.spec.ts
+│   ├── assets.smoke.spec.ts
+│   ├── projects.smoke.spec.ts
+│   ├── manufacturing.smoke.spec.ts
+│   ├── maintenance.smoke.spec.ts
+│   ├── quality.smoke.spec.ts
+│   └── master-data.smoke.spec.ts
+└── reports/
+    ├── _helper.ts                    # runReportSmoke 共享函数
+    └── *.smoke.spec.ts               # 24 个报表 spec
+```

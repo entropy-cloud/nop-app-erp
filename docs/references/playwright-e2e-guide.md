@@ -263,9 +263,35 @@ If Playwright shows no output for a long time, the most common cause is that the
 
 After copying this template, customize:
 
-- [ ] Port number in `playwright.config.ts` and all scripts
-- [ ] Dev server start command in `webServer.command`
-- [ ] `testDir` path
-- [ ] Add project-specific runtime inspection hooks (debugger API, state dumps)
-- [ ] Add project-specific failure patterns to the Common Failure Patterns section
-- [ ] Add project-specific test files and their known issues to a local appendix
+- [x] Port number in `playwright.config.ts` and all scripts — 8080 (Quarkus default)
+- [x] Dev server start command in `webServer.command` — `java -jar app-erp-all/target/quarkus-app/quarkus-run.jar` with test JVM params
+- [x] `testDir` path — `./tests/e2e`
+- [x] Add project-specific runtime inspection hooks (debugger API, state dumps) — console error collector in `fixtures.ts`
+- [x] Add project-specific failure patterns to the Common Failure Patterns section — see below
+- [x] Add project-specific test files and their known issues to a local appendix — see `docs/testing/e2e-runbook.md`
+
+## Project-Specific Failure Patterns (nop-app-erp)
+
+### SPA Auth Guard Rejects storageState
+
+**Symptoms**: Tests redirect to `/#/auth/login` even though token is in localStorage + cookie.
+
+**Root cause**: NOP Chaos Console SPA validates auth at initialization and rejects pre-injected tokens from `storageState`.
+
+**Fix**: Use per-test UI login (`loginAndNavigate` helper in `tests/e2e/fixtures.ts`). Do NOT use `globalSetup` + `storageState`.
+
+### Page Language Defaults to English
+
+**Symptoms**: Button text mismatch — login button says "Sign in" not "登录".
+
+**Root cause**: Fresh Playwright contexts default to `en-US` locale.
+
+**Fix**: Use regex selectors: `getByRole('button', { name: /Sign in|登录/ })`.
+
+### GraphQL Map Type Field Selection
+
+**Symptoms**: GraphQL queries fail with `[Map]不是对象类型，不支持字段选择`.
+
+**Root cause**: Nop BizModel methods returning `Map<String,Object>` are treated as scalar by the GraphQL engine — field selection not allowed.
+
+**Fix**: Omit field selection: `{ ErpXxx__method(args) }` not `{ ErpXxx__method(args){ field1 field2 } }`.
