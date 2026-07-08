@@ -11,6 +11,8 @@
 > **制造域交易单据种子已落地**（2026-07-09，plan `2026-07-09-0930-1`）——在 57 张 CSV 之上新增 **4 张制造域表 CSV**（共 61 张）：work_order（4 行覆盖 IN_PROCESS/STOCK_PARTIAL/COMPLETED 三态）+ cost_variance（1 行）+ forecast（1 行 APPROVED）+ forecast_line（1 行）。使制造域看板 4 `@BizQuery`（getDashboardKpi/getWorkOrderStatusDistribution/getDashboardTrend/findDelayedWorkOrderAlert）+ 2 报表（production-variance/forecast-variance）数值转非空可观测。crp_load + crp-load 报表因 mandatory workcenterId FK + workcenter/calendar/capacity 配置链依赖归 Deferred。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-0930-1-manufacturing-seed-table-map.md`。
 >
 > **维护+质量域交易单据种子已落地**（2026-07-09，plan `2026-07-09-0930-2`）——在 61 张 CSV 之上新增 **11 张维护+质量域表 CSV**（共 72 张）：维护域 8 表（equipment_category/equipment/schedule/request/downtime_entry/visit/visit_task/spare_part_usage）+ 质量域 3 表（inspection/non_conformance/action）。使维护域看板 `getDashboardKpi`（equipmentTotal/runningCount/openRequestCount/periodVisitCount）+ 3 预警（findEquipmentDowntimeAlert/findMaintenanceOverdueAlert + 质量域 findCapaOverdueAlert）+ 2 报表（maintenance-history/downtime-summary）+ 质量域看板 `getDashboardKpi`（inspectionCount/passRate/rejectedCount/openNcrCount）+ 2 报表（inspection-summary/ncr-capa-summary）数值转非空可观测。SPC 三表因 spc_chart.parameterId 配置链依赖归 Deferred。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-0930-2-maintenance-quality-seed-table-map.md`。
+>
+> **CRM/客服/人力域交易单据种子已落地**（2026-07-09，plan `2026-07-09-1045-1`）——在 72 张 CSV 之上新增 **12 张 CRM/CS/HR 域表 CSV**（共 84 张）+ **2 处既有 CSV 加性追加**（erp_md_partner +1 行 EMPLOYEE 类型 / erp_fin_ar_ap_item +2 行 EMPLOYEE_ADVANCE/EXPENSE_CLAIM·OPEN）：CRM 5 表（stage/lead/forecast_period/forecast/forecast_line）+ CS 3 表（ticket_type/ticket/survey）+ HR 4 表（department/employee/salary_simulation/salary_simulation_item_adj）。使三域 **5 张报表**（CRM lead-conversion-funnel/forecast-accuracy、CS ticket-sla-csat-summary、HR payroll-simulation-comparison/employee-net-balance）数值转非空可观测。HR employee-net-balance 经跨域 finance/master-data 扩展（追加员工型 partner + ar_ap_item OPEN 行）驱动。三域为纯报表域（无看板 BizModel）。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-1045-1-crm-cs-hr-seed-table-map.md`。
 
 ## 目的
 
@@ -87,7 +89,7 @@ accounting_period → accounting_period_status
 
 ### Non-Goals（归后续批次）
 
-- 扩展域交易单据（manufacturing/HR/quality/maintenance/CRM/CS/logistics/b2b/contract/drp/aps）——按域逐批补充（1234-1/1445-1 Deferred 既定策略）。**inventory/assets/projects 已于 2210-1 落地**；**manufacturing 已于 2026-07-09-0930-1 落地**；**maintenance/quality 已于 2026-07-09-0930-2 落地**（见下方「维护+质量域交易单据种子」段）。
+- 扩展域交易单据（manufacturing/HR/quality/maintenance/CRM/CS/logistics/b2b/contract/drp/aps）——按域逐批补充（1234-1/1445-1 Deferred 既定策略）。**inventory/assets/projects 已于 2210-1 落地**；**manufacturing 已于 2026-07-09-0930-1 落地**；**maintenance/quality 已于 2026-07-09-0930-2 落地**；**CRM/CS/HR 已于 2026-07-09-1045-1 落地**（见下方「CRM/客服/人力域交易单据种子」段）。
 - 运营域 GL 凭证/业财一体 seed（库存估值凭证/资产取得+折旧凭证/项目成本凭证）——三域看板读域表非 GL，且种子科目表无运营域专用科目；触发条件：运营域业财一体端到端数值回归需 GL 串联时。
 - 退货链（采购/销售退货 + 红字凭证 + 反向辅助账）
 - 核销单文档 `erp_fin_reconciliation`(+line)——本批 ar_ap_item 直表达 SETTLED 态，核销单文档归后续
@@ -181,7 +183,7 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 - crp_load + crp-load 报表 seed——mandatory workcenterId FK + workcenter/calendar/capacity 配置链依赖；触发条件：workcenter 配置链 seed 落地后。
 - 制造域配置/执行链 seed（BOM/Routing/Workcenter/MRP/JobCard/MaterialIssue/Subcontract/CostRollup/BatchGenealogy/work_order_line）——这些表不被看板/报表 `QueryBean` 直接读，work_order.bomId/routingId 非强制可留 null；触发条件：制造域配置/执行链端到端回归需这些数据时。
 - 精确制造域 KPI/报表数值断言——本计划解除「制造域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-09-0930-3` 承接。
-- 其他扩展域交易种子（maintenance/quality 同批 N=2；CRM/CS/HR/logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。**maintenance/quality 已于 2026-07-09-0930-2 落地（见下方「维护+质量域交易单据种子」段）**。
+- 其他扩展域交易种子（maintenance/quality 同批 N=2；CRM/CS/HR/logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。**maintenance/quality 已于 2026-07-09-0930-2 落地（见下方「维护+质量域交易单据种子」段）**；**CRM/CS/HR 已于 2026-07-09-1045-1 落地（见下方「CRM/客服/人力域交易单据种子」段）**。
 
 ## 维护+质量域交易单据种子（已落地）
 
@@ -235,4 +237,59 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 - 质量域 SPC 三表 seed（spc_chart/spc_sample/spc_capability）——spc_chart.parameterId 配置链依赖；触发条件：SPC 配置链 seed 落地后（见上方「SPC 三表移出范围」）。
 - 备件消耗行 `erp_mnt_spare_part_usage_line` seed——看板/报表仅按 spare_part_usage 头计数，不读行；触发条件：备件消耗明细端到端回归需行数据时（注意 UoM 列名 `UO_M_ID` 陷阱）。
 - 精确维护/质量域 KPI/报表数值断言——本计划解除「维护/质量域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-09-0930-3` 承接。
-- 其他扩展域交易种子（CRM/CS/HR/logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。
+- 其他扩展域交易种子（CRM/CS/HR 已于 2026-07-09-1045-1 落地，见下方「CRM/客服/人力域交易单据种子」段；logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。
+
+## CRM/客服/人力域交易单据种子（已落地）
+
+### 核心范式：域表「直 seed」+ 跨域加性追加（镜像运营/制造/维护+质量域范式）
+
+CRM/CS/HR 三域为**纯报表域（无看板 BizModel）**，各 1 个 `ErpXxxReportBizModel` 共 5 张报表，**读域表而非 GL 凭证**（逐方法 `findAll`/`findAllByQuery` 核实）：
+
+- **CRM 线索转化漏斗**（`buildLeadConversionFunnelDataset`）：读 `ErpCrmLead`（按 stageId 非 null 聚合 leadCount/expectedRevenue）+ `ErpCrmStage`（解析 stageName）。
+- **CRM 销售预测准确率**（`buildForecastAccuracyDataset`）：读 `ErpCrmForecast`（periodId mandatory FK→forecast_period）+ `ErpCrmForecastLine`（forecastId+leadId mandatory FK，按 forecastId 聚合 lineCount/lineWeightedRevenue）。
+- **CS 工单 SLA/CSAT**（`buildTicketSlaCsatSummaryDataset`）：读 `ErpCsTicket`（ticketTypeId mandatory FK、isSlaCompleted 布尔列内存派生）+ `ErpCsSurvey`（ticketId mandatory FK，csatScore/npsScore 经 `orm_propValueByName` 读取）+ `ErpCsTicketType`（解析 ticketTypeName）。
+- **HR 薪酬模拟对比**（`buildPayrollSimulationComparisonDataset`）：simulationId 为强制入参；读 `ErpHrSalarySimulationItemAdjustment`（simulationId+employeeId mandatory FK，employee.departmentId 驱动 DEPT_SUBTOTAL 小计行）+ `ErpHrEmployee`。
+- **HR 员工净余额**（`buildEmployeeNetBalanceDataset`）：**唯一跨域读取**——经注入 biz `IErpFinArApItemBiz.findOpenItems(direction)`（过滤 direction + status IN [OPEN,PARTIAL]）读 finance `erp_fin_ar_ap_item`，再内存按 sourceBillType 二次过滤（预支余额=RECEIVABLE+EMPLOYEE_ADVANCE、报销余额=PAYABLE+EXPENSE_CLAIM），按 partnerId 汇总 openAmountFunctional；再 `findAllByQuery` 读 `erp_md_partner` 解析姓名。
+
+故 seed 域表 + HR 跨域 finance/master-data 加性追加即令 5 报表 KPI **非空**，**无需 seed GL 凭证**。
+
+### 加载拓扑序（跨域）
+
+```
+[1234-1 主数据(已 seed)] md_organization(2) / md_currency(1) / md_partner(1-4)
+  → [本批跨域追加] md_partner +1 行(id=5 EMPLOYEE 类型)              ← 早于 fin_ar_ap_item 追加行
+[CRM 域] stage → lead(stageId) ; forecast_period → forecast(periodId) → forecast_line(forecastId+leadId)
+[CS 域]  ticket_type → ticket(ticketTypeId+customerId) → survey(ticketId)
+[HR 域]  department → employee(departmentId) ; salary_simulation → simulation_item_adj(simulationId+employeeId)
+[HR 跨域 finance 扩展] erp_fin_ar_ap_item +2 行(partnerId=5；引用 1234-1 已 seed org=2/acctSchema=1/currency=1/period=1)
+```
+
+> `md_partner` 追加行（id=5）属 1234-1 主数据批，先于 finance `fin_ar_ap_item`（1445-1 批）加载，FK 天然满足。
+
+### posted 一致性裁决（统一无 posted 列）
+
+本批 CRM/CS/HR 新增域表 + 跨域追加表（fin_ar_ap_item / md_partner）实体**本身均无 `posted` 列**（逐表 ORM 核实），CSV 不含 posted。依据（镜像前序批次裁决）：
+1. 三域 5 报表读域表/状态列非 posted（lead.stageId / forecast·forecast_line / ticket.isSlaCompleted / ar_ap_item.status·sourceBillType·direction / simulation_item_adj），`posted` 非任何报表过滤列；
+2. 1234-1 seed 的科目表无 CRM/CS/HR 域专用科目，seed GL 凭证徒增参照复杂度；
+3. 三域过账 → GL 凭证 seed 归后续（Deferred）。
+
+### HR 跨域 finance/master-data 扩展裁决（方案 A）
+
+`buildEmployeeNetBalanceDataset` 需 `erp_fin_ar_ap_item` 含 EMPLOYEE_ADVANCE(RECEIVABLE)/EXPENSE_CLAIM(PAYABLE)+status=OPEN 行。选择**加性追加**（方案 A）：`erp_md_partner` 追加 1 行 PARTNER_TYPE=EMPLOYEE（对齐 `docs/design/finance/expense-claim.md` 员工-as-partner 设计）+ `erp_fin_ar_ap_item` 追加 2 行 OPEN（partnerId 指向员工型 partner）。
+
+**对既有 finance 报表/看板无回归核证**：(1) finance 看板 `getDashboardKpi` 的 revenue/netProfit/expense 读 GL，arBalance/apBalance 虽读 ar_ap_item open 但非 `finance.value.spec.ts` 断言字段；(2) `fin-ar-ap-aging.value.spec.ts` 仅断言报表标题 + 合计行标签 token 存在，不断言具体数值；(3) `findOpenItems` 仅取 status IN [OPEN,PARTIAL]，既有 4 行全 SETTLED 不被取。E2E 全套 74 spec 0 回归实证。
+
+### 域内金额/计数自洽约束
+
+- CRM funnel：lead 按 stageId 聚合 leadCount + ΣexpectedRevenue（每 stage ≥1 行）。
+- CRM forecast-accuracy：forecast_line.weightedRevenue = expectedRevenue × probability/100（行自洽）；forecast.commitAmount/lineCount/lineWeightedRevenue 跨表可观测。
+- CS ticket-sla-csat：ticket 按 ticketTypeId 聚合 totalTickets/slaCompleted(isSlaCompleted=true)/slaBreached(false)；survey 按 ticketId 摊回 ticketType 桶驱动 avgCsat/avgNps。
+- HR payroll-sim：difference = adjustedAmount − originalAmount；DEPT_SUBTOTAL = Σ difference by departmentId。
+- HR employee-net-balance：OPEN 态 openAmountFunctional = amount（全额未核销）；netBalance = advanceBalance(ΣRECEIVABLE·EMPLOYEE_ADVANCE) − expenseBalance(ΣPAYABLE·EXPENSE_CLAIM)。
+
+### Non-Goals（归后续批次）
+
+- CRM/CS/HR 域 GL 凭证/业财一体 seed（凭证↔源单据↔辅助账串联）——三域报表读域表/ar_ap_item 状态列非 GL；HR ar_ap_item 追加行作为可观测独立行（无凭证回链）；触发条件：三域业财一体端到端数值回归需 GL 串联时。
+- CRM/CS/HR 域配置/执行链 seed（CRM product_config_rule/price_rule/bundle_pricing/territory/team/campaign；CS knowledge_base/sla_policy/entitlement/catalog；HR salary/salary_item/leave/attendance/shift/competency/social_insurance）——这些表不被范围内 5 报表 `QueryBean` 直接读（lead/ticket/simulation 的配置 FK 非强制可留 null）；触发条件：对应域配置/执行链端到端回归需这些数据时。
+- 精确 CRM/CS/HR 域报表数值断言——本计划解除「数据存在」阻塞（报表非空可观测）；精确断言由 `2026-07-09-1045-2-crm-cs-hr-report-value-assertions.md` 承接。
+- 其他扩展域交易种子（logistics/b2b/contract/drp/aps 后续批次）——无看板无报表（seed 不解除额外阻塞）；触发条件：对应域端到端数值回归需交易数据时。

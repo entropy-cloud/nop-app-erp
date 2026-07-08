@@ -171,7 +171,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 本计划仅覆盖 inventory/assets/projects 三域（tractability 最高的运营域）。其余扩展域按域逐批是 1445-1 Deferred 既定策略；manufacturing 因 BOM/routing/work-order 链复杂度单独 successor。
 - Successor Required: `yes`
 - Trigger Condition: 当对应扩展域看板/报表端到端数值回归需交易数据时，按域逐批补 seed。
-- **Resolved (subset)**: manufacturing 子集已于 `2026-07-09-0930-1` 落地；**maintenance/quality 子集已于 `2026-07-09-0930-2` 落地**。剩余 CRM/CS/HR/logistics/b2b/contract/drp/aps 仍 open。
+- **Resolved (subset)**: manufacturing 子集已于 `2026-07-09-0930-1` 落地；**maintenance/quality 子集已于 `2026-07-09-0930-2` 落地**；**CRM/CS/HR 子集已于 `2026-07-09-1045-1` 落地**。剩余 logistics/b2b/contract/drp/aps 仍 open（无看板无报表，seed 不解除额外阻塞）。
 
 ### 精确运营域 KPI/报表数值断言
 
