@@ -166,7 +166,7 @@ public class TestErpMdReportRendering extends JunitAutoTestCase {
     private void seedPartnerBaseline() {
         ormTemplate.runInSession(() -> {
             seedPartner(8201L, "P-MD-RPT", "客户报表", "CUSTOMER", "ACTIVE");
-            seedPartner(8202L, "V-MD-RPT", "供应商报表", "VENDOR", "ACTIVE");
+            seedPartner(8202L, "V-MD-RPT", "供应商报表", "SUPPLIER", "ACTIVE");
         });
     }
 

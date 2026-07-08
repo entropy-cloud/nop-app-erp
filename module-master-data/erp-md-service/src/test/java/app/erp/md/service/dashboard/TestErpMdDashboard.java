@@ -58,8 +58,8 @@ public class TestErpMdDashboard extends JunitAutoTestCase {
             // 4 往来单位：2 客户（1 启用 + 1 停用）+ 2 供应商（均启用）
             seedPartner(201L, "P-CUST-1", "CUSTOMER", "ACTIVE");
             seedPartner(202L, "P-CUST-2", "CUSTOMER", "INACTIVE");
-            seedPartner(203L, "P-VEND-1", "VENDOR", "ACTIVE");
-            seedPartner(204L, "P-VEND-2", "VENDOR", "ACTIVE");
+            seedPartner(203L, "P-VEND-1", "SUPPLIER", "ACTIVE");
+            seedPartner(204L, "P-VEND-2", "SUPPLIER", "ACTIVE");
         });
 
         Map<String, Object> kpi = dashboardBiz.getDashboardKpi(CTX);

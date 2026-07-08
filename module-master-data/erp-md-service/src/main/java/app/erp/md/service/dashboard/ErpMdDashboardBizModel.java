@@ -33,7 +33,7 @@ public class ErpMdDashboardBizModel {
 
     private static final String STATUS_INACTIVE = "INACTIVE";
     private static final String PARTNER_TYPE_CUSTOMER = "CUSTOMER";
-    private static final String PARTNER_TYPE_VENDOR = "VENDOR";
+    private static final String PARTNER_TYPE_VENDOR = "SUPPLIER";
 
     @Inject
     IDaoProvider daoProvider;
