@@ -29,11 +29,11 @@ body:
   - type: service
     name: kpiService
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($startDate:String,$endDate:String){ ErpInvDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate){ totalValue incomingQty outgoingQty turnoverRate } }"
+        query: "query($startDate:String,$endDate:String){ ErpInvDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate) }"
         variables:
           startDate: "${startDate || null}"
           endDate: "${endDate || null}"
@@ -80,11 +80,11 @@ body:
     name: trendChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($months:Int){ ErpInvDashboard__getDashboardTrend(months:$months){ month netValueChange } }"
+        query: "query($months:Int){ ErpInvDashboard__getDashboardTrend(months:$months) }"
         variables:
           months: 12
       adaptor: |
@@ -110,11 +110,11 @@ body:
     name: warehouseChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpInvDashboard__findWarehouseDistribution { warehouseId totalValue } }"
+        query: "{ ErpInvDashboard__findWarehouseDistribution }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -145,11 +145,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpInvDashboard__findShortageAlert { materialId warehouseId availableQuantity safetyStock } }"
+        query: "{ ErpInvDashboard__findShortageAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -173,11 +173,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpInvDashboard__findSlowMovingAlert { materialId warehouseId totalQuantity lastOutDate } }"
+        query: "{ ErpInvDashboard__findSlowMovingAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -201,11 +201,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpInvDashboard__findBatchExpiryAlert { batchNo materialId warehouseId expiryDate remainingDays availableQuantity } }"
+        query: "{ ErpInvDashboard__findBatchExpiryAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;

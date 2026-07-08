@@ -29,11 +29,11 @@ body:
   - type: service
     name: kpiService
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($startDate:String,$endDate:String){ ErpQaDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate){ inspectionCount passRate rejectedCount openNcrCount } }"
+        query: "query($startDate:String,$endDate:String){ ErpQaDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate) }"
         variables:
           startDate: "${startDate || null}"
           endDate: "${endDate || null}"
@@ -80,11 +80,11 @@ body:
     name: trendChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($months:Int){ ErpQaDashboard__getDashboardTrend(months:$months){ month passRate } }"
+        query: "query($months:Int){ ErpQaDashboard__getDashboardTrend(months:$months) }"
         variables:
           months: 12
       adaptor: |
@@ -110,11 +110,11 @@ body:
     name: defectChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($limit:Int){ ErpQaDashboard__findDefectTopN(limit:$limit){ dispositionType count } }"
+        query: "query($limit:Int){ ErpQaDashboard__findDefectTopN(limit:$limit) }"
         variables:
           limit: 10
       adaptor: |
@@ -142,11 +142,11 @@ body:
   - type: service
     name: spcWarningService
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpQaDashboard__getSpcOutOfControlWarning { outOfControlChartCount inadequateCapabilityCount openSpcNcrCount includeInadequate includeNcr } }"
+        query: "{ ErpQaDashboard__getSpcOutOfControlWarning }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -187,11 +187,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpQaDashboard__findCapaOverdueAlert { actionId actionType dueDate status overdueDays } }"
+        query: "{ ErpQaDashboard__findCapaOverdueAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;

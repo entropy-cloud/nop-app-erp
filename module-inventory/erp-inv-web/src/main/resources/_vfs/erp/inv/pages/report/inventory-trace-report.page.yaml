@@ -22,7 +22,7 @@ body:
         label: "渲染报表"
         actionType: ajax
         api:
-          url: /api/GenericApi
+          url: /graphql
           method: post
           dataType: raw
           data:
@@ -34,21 +34,21 @@ body:
             label: "下载 XLSX"
             actionType: download
             api:
-              url: /api/GenericApi
+              url: /graphql
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__download(reportName:$reportName,renderType:$renderType,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}){ fileName } }"
+                query: "query($reportName:String!,$renderType:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__download(reportName:$reportName,renderType:$renderType,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}) }"
                 variables: { reportName: "inventory-trace-report", renderType: "xlsx", batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
           - type: button
             label: "下载 PDF"
             actionType: download
             api:
-              url: /api/GenericApi
+              url: /graphql
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__download(reportName:$reportName,renderType:$renderType,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}){ fileName } }"
+                query: "query($reportName:String!,$renderType:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__download(reportName:$reportName,renderType:$renderType,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}) }"
                 variables: { reportName: "inventory-trace-report", renderType: "pdf", batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
   - type: html
     id: reportContainer

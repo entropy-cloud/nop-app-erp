@@ -20,7 +20,7 @@ body:
         label: "渲染报表"
         actionType: ajax
         api:
-          url: /api/GenericApi
+          url: /graphql
           method: post
           dataType: raw
           data:
@@ -32,21 +32,21 @@ body:
             label: "下载 XLSX"
             actionType: download
             api:
-              url: /api/GenericApi
+              url: /graphql
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$workOrderId:BigDecimal,$startDate:String,$endDate:String){ ErpMfgReport__download(reportName:$reportName,renderType:$renderType,data:{workOrderId:$workOrderId,startDate:$startDate,endDate:$endDate}){ fileName } }"
+                query: "query($reportName:String!,$renderType:String!,$workOrderId:BigDecimal,$startDate:String,$endDate:String){ ErpMfgReport__download(reportName:$reportName,renderType:$renderType,data:{workOrderId:$workOrderId,startDate:$startDate,endDate:$endDate}) }"
                 variables: { reportName: "production-variance-report", renderType: "xlsx", workOrderId: "${workOrderId}", startDate: "${startDate}", endDate: "${endDate}" }
           - type: button
             label: "下载 PDF"
             actionType: download
             api:
-              url: /api/GenericApi
+              url: /graphql
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$workOrderId:BigDecimal,$startDate:String,$endDate:String){ ErpMfgReport__download(reportName:$reportName,renderType:$renderType,data:{workOrderId:$workOrderId,startDate:$startDate,endDate:$endDate}){ fileName } }"
+                query: "query($reportName:String!,$renderType:String!,$workOrderId:BigDecimal,$startDate:String,$endDate:String){ ErpMfgReport__download(reportName:$reportName,renderType:$renderType,data:{workOrderId:$workOrderId,startDate:$startDate,endDate:$endDate}) }"
                 variables: { reportName: "production-variance-report", renderType: "pdf", workOrderId: "${workOrderId}", startDate: "${startDate}", endDate: "${endDate}" }
   - type: html
     id: reportContainer

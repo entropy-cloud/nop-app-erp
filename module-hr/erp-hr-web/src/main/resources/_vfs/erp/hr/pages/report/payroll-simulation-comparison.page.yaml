@@ -15,7 +15,7 @@ body:
         label: "渲染报表"
         actionType: ajax
         api:
-          url: /api/GenericApi
+          url: /graphql
           method: post
           dataType: raw
           data:
@@ -27,21 +27,21 @@ body:
             label: "下载 XLSX"
             actionType: download
             api:
-              url: /api/GenericApi
+              url: /graphql
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$simulationId:BigDecimal){ ErpHrReport__download(reportName:$reportName,renderType:$renderType,data:{simulationId:$simulationId}){ fileName } }"
+                query: "query($reportName:String!,$renderType:String!,$simulationId:BigDecimal){ ErpHrReport__download(reportName:$reportName,renderType:$renderType,data:{simulationId:$simulationId}) }"
                 variables: { reportName: "payroll-simulation-comparison", renderType: "xlsx", simulationId: "${simulationId}" }
           - type: button
             label: "下载 PDF"
             actionType: download
             api:
-              url: /api/GenericApi
+              url: /graphql
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$simulationId:BigDecimal){ ErpHrReport__download(reportName:$reportName,renderType:$renderType,data:{simulationId:$simulationId}){ fileName } }"
+                query: "query($reportName:String!,$renderType:String!,$simulationId:BigDecimal){ ErpHrReport__download(reportName:$reportName,renderType:$renderType,data:{simulationId:$simulationId}) }"
                 variables: { reportName: "payroll-simulation-comparison", renderType: "pdf", simulationId: "${simulationId}" }
   - type: html
     id: reportContainer

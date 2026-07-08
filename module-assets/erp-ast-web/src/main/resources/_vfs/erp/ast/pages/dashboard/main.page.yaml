@@ -22,11 +22,11 @@ body:
   - type: service
     name: kpiService
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($periodId:String){ ErpAstDashboard__getDashboardKpi(periodId:$periodId){ originalValue accumulatedDepreciation netBookValue periodDepreciation cipBalance } }"
+        query: "query($periodId:String){ ErpAstDashboard__getDashboardKpi(periodId:$periodId) }"
         variables:
           periodId: "${periodId || null}"
       adaptor: |
@@ -79,11 +79,11 @@ body:
     name: categoryChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpAstDashboard__getAssetCategoryDistribution { categoryId netBookValue } }"
+        query: "{ ErpAstDashboard__getAssetCategoryDistribution }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -110,11 +110,11 @@ body:
     name: trendChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($months:Int){ ErpAstDashboard__getDashboardTrend(months:$months){ period depreciationAmount } }"
+        query: "query($months:Int){ ErpAstDashboard__getDashboardTrend(months:$months) }"
         variables:
           months: 12
       adaptor: |
@@ -144,11 +144,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpAstDashboard__findDepreciationMissingAlert { assetId assetCode assetName period originalValue } }"
+        query: "{ ErpAstDashboard__findDepreciationMissingAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;

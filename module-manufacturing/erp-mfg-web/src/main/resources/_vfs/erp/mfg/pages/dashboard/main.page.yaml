@@ -29,11 +29,11 @@ body:
   - type: service
     name: kpiService
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($startDate:String,$endDate:String){ ErpMfgDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate){ inProcessCount periodCompletedQty stockPartialCount onTimeRate } }"
+        query: "query($startDate:String,$endDate:String){ ErpMfgDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate) }"
         variables:
           startDate: "${startDate || null}"
           endDate: "${endDate || null}"
@@ -80,11 +80,11 @@ body:
     name: statusChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpMfgDashboard__getWorkOrderStatusDistribution { status count } }"
+        query: "{ ErpMfgDashboard__getWorkOrderStatusDistribution }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -111,11 +111,11 @@ body:
     name: trendChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($months:Int){ ErpMfgDashboard__getDashboardTrend(months:$months){ month completedQty } }"
+        query: "query($months:Int){ ErpMfgDashboard__getDashboardTrend(months:$months) }"
         variables:
           months: 12
       adaptor: |
@@ -145,11 +145,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpMfgDashboard__findDelayedWorkOrderAlert { workOrderId workOrderCode plannedEndDate docStatus overdueDays } }"
+        query: "{ ErpMfgDashboard__findDelayedWorkOrderAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;

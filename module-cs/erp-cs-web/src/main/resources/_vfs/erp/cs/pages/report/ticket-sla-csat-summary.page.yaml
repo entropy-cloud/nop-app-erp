@@ -14,7 +14,7 @@ body:
         label: "渲染报表"
         actionType: ajax
         api:
-          url: /api/GenericApi
+          url: /graphql
           method: post
           dataType: raw
           data:
@@ -26,21 +26,21 @@ body:
             label: "下载 XLSX"
             actionType: download
             api:
-              url: /api/GenericApi
+              url: /graphql
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$ticketType:String){ ErpCsReport__download(reportName:$reportName,renderType:$renderType,data:{ticketType:$ticketType}){ fileName } }"
+                query: "query($reportName:String!,$renderType:String!,$ticketType:String){ ErpCsReport__download(reportName:$reportName,renderType:$renderType,data:{ticketType:$ticketType}) }"
                 variables: { reportName: "ticket-sla-csat-summary", renderType: "xlsx", ticketType: "${ticketType}" }
           - type: button
             label: "下载 PDF"
             actionType: download
             api:
-              url: /api/GenericApi
+              url: /graphql
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$ticketType:String){ ErpCsReport__download(reportName:$reportName,renderType:$renderType,data:{ticketType:$ticketType}){ fileName } }"
+                query: "query($reportName:String!,$renderType:String!,$ticketType:String){ ErpCsReport__download(reportName:$reportName,renderType:$renderType,data:{ticketType:$ticketType}) }"
                 variables: { reportName: "ticket-sla-csat-summary", renderType: "pdf", ticketType: "${ticketType}" }
   - type: html
     id: reportContainer

@@ -20,6 +20,11 @@ _dump/
 # Node.js (tools directory only)
 node_modules/
 
+# Playwright E2E test artifacts
+test-results/
+playwright-report/
+_tmp/
+
 # OS files
 .DS_Store
 

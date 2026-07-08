@@ -1,0 +1,15 @@
+{
+  "name": "nop-app-erp-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright E2E smoke regression suite for nop-app-erp dashboards and reports",
+  "scripts": {
+    "e2e": "playwright test",
+    "e2e:dashboards": "playwright test tests/e2e/dashboards/",
+    "e2e:reports": "playwright test tests/e2e/reports/",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

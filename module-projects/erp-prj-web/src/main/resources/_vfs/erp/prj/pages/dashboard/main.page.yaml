@@ -11,11 +11,11 @@ body:
   - type: service
     name: kpiService
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpPrjDashboard__getDashboardKpi { openProjectCount totalBudget incurredCost executionRate } }"
+        query: "{ ErpPrjDashboard__getDashboardKpi }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -58,11 +58,11 @@ body:
   - type: service
     name: grossMarginService
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($projectId:Long){ ErpPrjDashboard__getProjectGrossMargin(projectId:$projectId){ projectCount totalRevenue totalCost totalGrossProfit grossMarginPct } }"
+        query: "query($projectId:Long){ ErpPrjDashboard__getProjectGrossMargin(projectId:$projectId) }"
         variables:
           projectId: "${projectId || null}"
       adaptor: |
@@ -108,11 +108,11 @@ body:
     name: statusChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpPrjDashboard__getProjectStatusDistribution { status count } }"
+        query: "{ ErpPrjDashboard__getProjectStatusDistribution }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -143,11 +143,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpPrjDashboard__findCostOverrunAlert { projectId projectCode projectName budget incurredCost overrunAmount } }"
+        query: "{ ErpPrjDashboard__findCostOverrunAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
@@ -173,11 +173,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpPrjDashboard__findDelayedProjectAlert { projectId projectCode projectName endDate status overdueDays } }"
+        query: "{ ErpPrjDashboard__findDelayedProjectAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;

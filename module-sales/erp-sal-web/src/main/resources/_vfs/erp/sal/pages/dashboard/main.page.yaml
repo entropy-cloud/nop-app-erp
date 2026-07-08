@@ -29,11 +29,11 @@ body:
   - type: service
     name: kpiService
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($startDate:String,$endDate:String){ ErpSalDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate){ salesAmount orderCount invoiceCount conversionRate arBalance } }"
+        query: "query($startDate:String,$endDate:String){ ErpSalDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate) }"
         variables:
           startDate: "${startDate || null}"
           endDate: "${endDate || null}"
@@ -80,11 +80,11 @@ body:
     name: trendChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($months:Int){ ErpSalDashboard__getDashboardTrend(months:$months){ month salesAmount } }"
+        query: "query($months:Int){ ErpSalDashboard__getDashboardTrend(months:$months) }"
         variables:
           months: 12
       adaptor: |
@@ -110,11 +110,11 @@ body:
     name: topNCustomerChart
     className: m-3
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "query($limit:Int){ ErpSalDashboard__findCustomerTopN(limit:$limit){ customerId salesAmount } }"
+        query: "query($limit:Int){ ErpSalDashboard__findCustomerTopN(limit:$limit) }"
         variables:
           limit: 10
       adaptor: |
@@ -147,11 +147,11 @@ body:
     headerToolbar: []
     footerToolbar: []
     api:
-      url: /api/GenericApi
+      url: /graphql
       method: post
       dataType: raw
       data:
-        query: "{ ErpSalDashboard__findArOverdueAlert { partnerId sourceBillCode openAmount ageDays } }"
+        query: "{ ErpSalDashboard__findArOverdueAlert }"
       adaptor: |
         const d = payload.data || {};
         const gql = d.data ? d.data : d;
