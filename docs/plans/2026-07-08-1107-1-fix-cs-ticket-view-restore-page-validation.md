@@ -178,6 +178,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 本计划仅加 1 个针对所修缺陷（KB suggestion）的定向冒烟 spec 作为运行时证明。18 域 CRUD 表单/列表的完整浏览器回归是独立结果表面（0637-1 Deferred「CRUD 页面 E2E」，触发条件=CRUD 页面需浏览器回归时）。
 - Successor Required: `yes`
 - Trigger Condition: 当 CRUD 页面批量定制后需视觉/交互回归，或按域推进 CRUD e2e 覆盖时。
+- **Resolved**: 由 `docs/plans/2026-07-08-1234-2-crud-page-e2e-smoke.md` 落地（18 域 CRUD 列表/表单冒烟 spec + `runCrudListSmoke` helper，spec 35→53 全绿），触发条件已满足。
 
 ## Closure
 

@@ -233,6 +233,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 4 计划 Deferred 显式限定为「看板/报表」e2e（1247-2/1606-2/1247-3/1815-2）。CRUD 页面 E2E 是更广的覆盖面，独立结果表面。
 - Successor Required: `yes`
 - Trigger Condition: 当 CRUD 页面需浏览器回归（如批量页面定制后视觉验证）时。
+- **Resolved**: 由 `docs/plans/2026-07-08-1234-2-crud-page-e2e-smoke.md` 落地（18 域 CRUD 列表/表单冒烟 spec + `runCrudListSmoke` helper，spec 35→53 全绿），触发条件已满足。
 
 ## Closure
 

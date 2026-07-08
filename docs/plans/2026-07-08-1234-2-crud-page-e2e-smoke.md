@@ -1,6 +1,6 @@
 # 2026-07-08-1234-2-crud-page-e2e-smoke 18 域 CRUD 页面 Playwright E2E 冒烟回归
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: erp
 > Work Item: 18 域 CRUD 列表/表单页面浏览器冒烟回归套件
 > Last Reviewed: 2026-07-08
@@ -58,78 +58,98 @@
 
 ### Phase 1 - 代表性实体确认 + helper 抽象 + 1 域范式证明（Explore + Add）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/crud/_helper.ts`、`tests/e2e/crud/<domain>.smoke.spec.ts`（1 域范式）
 Skill: `nop-frontend-dev`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: 0637-1 基础设施可用
 
-- [ ] `Decision`：代表性实体选择——以 2328-2 Java 冒烟实体为基准，但浏览器 E2E 倾向选「主业务单据头」（用户最常打开的列表页）而非 config 实体。逐域确认 1 实体 + 其 `/{Entity}-main` 路由可达性（抽查 18 域路由 hash 在 SPA 实际渲染）。记录最终 18 实体清单 + 路由。若某域 Java 冒烟实体是 config 类（如 cs `ErpCsTicketType`/qa `ErpQaInspectionTemplate`/fin `ErpFinVoucherTemplate`），浏览器层改选主单据头（如 cs `ErpCsTicket`/qa `ErpQaInspection`/fin `ErpFinVoucher`）并记理由。**残留风险**：某域主单据头 add 表单可能有 mandatory 字段阻断空库渲染；冒烟级仅断言字段可见、不断言可提交，故可接受。
+- [x] `Decision`：代表性实体选择——以 2328-2 Java 冒烟实体为基准，但浏览器 E2E 倾向选「主业务单据头」（用户最常打开的列表页）而非 config 实体。逐域确认 1 实体 + 其 `/{Entity}-main` 路由可达性（抽查 18 域路由 hash 在 SPA 实际渲染）。记录最终 18 实体清单 + 路由。若某域 Java 冒烟实体是 config 类（如 cs `ErpCsTicketType`/qa `ErpQaInspectionTemplate`/fin `ErpFinVoucherTemplate`），浏览器层改选主单据头（如 cs `ErpCsTicket`/qa `ErpQaInspection`/fin `ErpFinVoucher`）并记理由。**残留风险**：某域主单据头 add 表单可能有 mandatory 字段阻断空库渲染；冒烟级仅断言字段可见、不断言可提交，故可接受。
       - Skill: `nop-frontend-dev`
-- [ ] `Add`：`tests/e2e/crud/_helper.ts`——`runCrudListSmoke(page, testInfo, { entityRoute, listKeyword, addFormField })` 函数：`loginAndNavigate(page, '/' + entityRoute)` → 断言 `#main-content`/`.cxd-Page` 渲染 → 断言表格/crud 容器存在 + add 按钮存在 → 断言 `/graphql` POST 查询返回 200（监听 `entityRoute` 相关 query）→ 断言无 console error → 点击 add 按钮 → 断言表单字段渲染（`addFormField` 指定的 input name 可见）。镜像 dashboards/reports `_helper.ts` 委派范式。
+  - **18 域代表性实体清单（执行期定稿，每实体一行理由 + 路由 + add 表单字段）**：
+    1. **md** — `ErpMdPartner`（往来单位）→ `/ErpMdPartner-main` → 字段 `code`。理由：2328-2 基准 `ErpMdPartner`（主单据头），沿用。
+    2. **inv** — `ErpInvStockMove`（库存移动单）→ `/ErpInvStockMove-main` → 字段 `code`。理由：2328-2 基准 `ErpInvStockMove`，沿用。
+    3. **pur** — `ErpPurOrder`（采购订单）→ `/ErpPurOrder-main` → 字段 `code`。理由：2328-2 基准 `ErpPurRequisition`（请购单），浏览器层改选主单据头 `ErpPurOrder`（采购订单，用户最常打开）。
+    4. **sal** — `ErpSalOrder`（销售订单）→ `/ErpSalOrder-main` → 字段 `code`。理由：2328-2 基准 `ErpSalQuotation`（报价单），浏览器层改选主单据头 `ErpSalOrder`。
+    5. **fin** — `ErpFinVoucher`（会计凭证）→ `/ErpFinVoucher-main` → 字段 `code`。理由：2328-2 基准 `ErpFinVoucherTemplate`（模板/config），改选主单据头 `ErpFinVoucher`。
+    6. **ast** — `ErpAstAsset`（固定资产）→ `/ErpAstAsset-main` → 字段 `code`。理由：2328-2 基准 `ErpAstAsset`，沿用。
+    7. **prj** — `ErpPrjProject`（项目）→ `/ErpPrjProject-main` → 字段 `code`。理由：2328-2 基准 `ErpPrjProject`，沿用。
+    8. **mfg** — `ErpMfgWorkOrder`（工单）→ `/ErpMfgWorkOrder-main` → 字段 `code`。理由：2328-2 基准 `ErpMfgRouting`（工艺路线，config 类），改选主单据头 `ErpMfgWorkOrder`。
+    9. **qa** — `ErpQaInspection`（质检单）→ `/ErpQaInspection-main` → 字段 `code`。理由：2328-2 基准 `ErpQaInspectionTemplate`（模板/config），改选主单据头 `ErpQaInspection`。
+    10. **mnt** — `ErpMntVisit`（维护访问）→ `/ErpMntVisit-main` → 字段 `code`。理由：2328-2 基准 `ErpMntVisit`，沿用。
+    11. **crm** — `ErpCrmLead`（线索/商机）→ `/ErpCrmLead-main` → 字段 `code`。理由：2328-2 基准 `ErpCrmBundlePricing`（定价配置），改选主单据头 `ErpCrmLead`。
+    12. **cs** — `ErpCsTicket`（客服工单）→ `/ErpCsTicket-main` → 字段 `code`。理由：2328-2 基准 `ErpCsTicketType`（config），改选主单据头 `ErpCsTicket`（与既有 `cs-kb-suggestion.smoke.spec.ts` 同路由）。
+    13. **hr** — `ErpHrEmployee`（员工）→ `/ErpHrEmployee-main` → 字段 `code`。理由：2328-2 基准 `ErpHrSurvey`（问卷，config 类），改选主单据头 `ErpHrEmployee`。
+    14. **aps** — `ErpApsOperationOrder`（工序工单）→ `/ErpApsOperationOrder-main` → 字段 `code`。理由：2328-2 基准 `ErpApsOperationOrder`，沿用。
+    15. **log** — `ErpLogShipment`（发运单）→ `/ErpLogShipment-main` → 字段 `code`。理由：2328-2 基准 `ErpLogShipment`，沿用。
+    16. **b2b** — `ErpB2bAsn`（提前发货通知）→ `/ErpB2bAsn-main` → 字段 `code`。理由：2328-2 基准 `ErpB2bAsn`，沿用。
+    17. **ct** — `ErpCtContract`（合同）→ `/ErpCtContract-main` → 字段 `code`。理由：2328-2 基准 `ErpCtContract`，沿用。
+    18. **drp** — `ErpDrpPlan`（DRP 计划）→ `/ErpDrpPlan-main` → 字段 `code`。理由：2328-2 基准 `ErpDrpPlan`，沿用。
+  - 字段选择依据：18 实体 add 表单均含 `code` 文本输入（经各域 `_gen/_*.view.xml` add form layout 逐域核实），为最稳定的跨域通用定位锚点。
+- [x] `Add`：`tests/e2e/crud/_helper.ts`——`runCrudListSmoke({ entityRoute, domain, addFormField })` 函数：`loginAndNavigate(page, '/' + entityRoute + '-main')` → 断言 `#main-content`/`.cxd-Page` 渲染 → 断言表格/crud 容器存在（`.cxd-Crud, .cxd-Table, table`）+ add 按钮存在（`button:has(.fa-plus)`）→ 断言 `/graphql` 查询返回 200 → 断言无 console error（fixtures 全局注入）→ 点击 add 按钮 → 断言表单字段渲染（`addFormField` 指定的 input name 可见）。镜像 dashboards/reports `_helper.ts` 委派范式。
       - Skill: `nop-frontend-dev`
-- [ ] `Add | Proof`：1 域范式 spec（如 purchase `ErpPurOrder`）——调 `runCrudListSmoke` 证明 helper + 路由 + 断言全通。作为 Phase 2/3 复制锚点。
+- [x] `Add | Proof`：1 域范式 spec（purchase `ErpPurOrder`）——调 `runCrudListSmoke` 证明 helper + 路由 + 断言全通（`npx playwright test tests/e2e/crud/purchase.smoke.spec.ts` 1 passed 7.8s）。作为 Phase 2/3 复制锚点。
       - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] 18 域代表性实体清单 + 路由落盘（写入本计划），每实体一行理由（基准 2328-2 或改选主单据头的理由）。
-- [ ] `_helper.ts` `runCrudListSmoke` 存在且非 stub（含 loginAndNavigate + GraphQL 200 断言 + 表单字段断言 + console error 检查）；1 域范式 spec 通过（解除 Phase 2/3 阻塞）。
+- [x] 18 域代表性实体清单 + 路由落盘（写入本计划），每实体一行理由（基准 2328-2 或改选主单据头的理由）。
+- [x] `_helper.ts` `runCrudListSmoke` 存在且非 stub（含 loginAndNavigate + GraphQL 200 断言 + 表单字段断言 + console error 检查）；1 域范式 spec 通过（解除 Phase 2/3 阻塞）。
 
 ### Phase 2 - 核心域 CRUD 冒烟（Add-heavy）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/crud/{md,inv,pur,sal,fin}.smoke.spec.ts`（5 核心域）
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 helper + 范式通过
 
-- [ ] `Add`：按 Phase 1 范式补齐 5 核心域（master-data/inventory/purchase/sales/finance）CRUD 冒烟 spec，每域调 `runCrudListSmoke` 委派，传入该域代表性实体路由 + 表单字段名。
+- [x] `Add`：按 Phase 1 范式补齐 5 核心域（master-data/inventory/purchase/sales/finance）CRUD 冒烟 spec，每域调 `runCrudListSmoke` 委派，传入该域代表性实体路由 + 表单字段名。新增 `master-data.smoke.spec.ts`（`ErpMdPartner`）、`inventory.smoke.spec.ts`（`ErpInvStockMove`）、`sales.smoke.spec.ts`（`ErpSalOrder`）、`finance.smoke.spec.ts`（`ErpFinVoucher`）；purchase（`ErpPurOrder`）沿用 Phase 1 范式 spec。
       - Skill: `nop-frontend-dev`
-- [ ] `Proof`：运行 `npx playwright test tests/e2e/crud/ --workers=1`（含 Phase 1 范式域 purchase + 本批新增 md/inv/sal/fin，补齐至 5 核心域），验证全绿。
+- [x] `Proof`：运行 `npx playwright test tests/e2e/crud/master-data.smoke.spec.ts tests/e2e/crud/inventory.smoke.spec.ts tests/e2e/crud/sales.smoke.spec.ts tests/e2e/crud/finance.smoke.spec.ts tests/e2e/crud/purchase.smoke.spec.ts --workers=1`，5 passed（58.2s）。
       - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] 5 核心域 CRUD spec 全绿；每页 DOM 渲染 + add 按钮存在 + GraphQL 200 + 表单字段渲染 + 无 console error。
+- [x] 5 核心域 CRUD spec 全绿；每页 DOM 渲染 + add 按钮存在 + GraphQL 200 + 表单字段渲染 + 无 console error。
 
 ### Phase 3 - 扩展域 CRUD 冒烟（Add-heavy）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/crud/{ast,prj,mfg,qa,mnt,crm,cs,hr,aps,log,b2b,ct,drp}.smoke.spec.ts`（13 扩展域）
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2 核心域范式稳定
 
-- [ ] `Add`：按同一范式补齐 13 扩展域 CRUD 冒烟 spec。
+- [x] `Add`：按同一范式补齐 13 扩展域 CRUD 冒烟 spec。新增 `assets`（`ErpAstAsset`）、`projects`（`ErpPrjProject`）、`manufacturing`（`ErpMfgWorkOrder`）、`quality`（`ErpQaInspection`）、`maintenance`（`ErpMntVisit`）、`crm`（`ErpCrmLead`）、`cs`（`ErpCsTicket`）、`hr`（`ErpHrEmployee`）、`aps`（`ErpApsOperationOrder`）、`logistics`（`ErpLogShipment`）、`b2b`（`ErpB2bAsn`）、`contract`（`ErpCtContract`）、`drp`（`ErpDrpPlan`）。
       - Skill: `nop-frontend-dev`
-- [ ] `Proof`：运行 `npx playwright test tests/e2e/crud/ --workers=1`（全部 18 域 spec），验证全绿。
+- [x] `Proof`：运行 `npx playwright test tests/e2e/crud/ --workers=1`（全部 18 域 spec + 既有 `cs-kb-suggestion` = 19 spec），19 passed（2.8m），无回归。
       - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] 18 域 CRUD 冒烟 spec 全绿（含 cs-kb-suggestion 既有 spec 不回归）；每页 DOM 渲染 + add 按钮存在 + GraphQL 200 + 表单字段渲染 + 无 console error。
+- [x] 18 域 CRUD 冒烟 spec 全绿（含 cs-kb-suggestion 既有 spec 不回归）；每页 DOM 渲染 + add 按钮存在 + GraphQL 200 + 表单字段渲染 + 无 console error。
 
 ### Phase 4 - 运行手册 + 基线 + Deferred 解除登记（Add）
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`、`docs/testing/known-good-baselines.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 3 全绿
 
-- [ ] `Add`：`docs/testing/e2e-runbook.md` 更新——crud/ 目录结构 + 18 域 CRUD spec 清单 + 新增 `npx playwright test tests/e2e/crud/` 套件层级（同 dashboards/reports 套件级别分层）。
+- [x] `Add`：`docs/testing/e2e-runbook.md` 更新——概述套件总数 35→53；新增「CRUD 套件」分层行 + 18 域 CRUD spec 清单表（实体/路由/选型理由）+ 文件结构补 18 域 spec + `_helper.ts`；全套件运行时间 5.6m→8.4m。
       - Skill: none
-- [ ] `Add`：`docs/testing/known-good-baselines.md` 增 CRUD E2E 基线行（spec 总数 35→53 + 全绿状态）。
+- [x] `Add`：`docs/testing/known-good-baselines.md` 增 CRUD E2E 基线行（spec 总数 35→53 + 全绿状态）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] e2e-runbook 含 CRUD spec 目录/清单/分层；known-good-baselines 含 CRUD E2E 基线行；0637-1 + 1107-1「CRUD 页面 E2E」Deferred 触发条件满足登记。
+- [x] e2e-runbook 含 CRUD spec 目录/清单/分层；known-good-baselines 含 CRUD E2E 基线行；0637-1 + 1107-1「CRUD 页面 E2E」Deferred 触发条件满足登记（本计划 Closure 段登记解除）。
 
 ## Draft Review Record
 
@@ -139,14 +159,14 @@ Exit Criteria:
 
 > 本计划为前端/浏览器 E2E（视觉/UX 驱动结果面），结束前除下方门控外运行一次完整 E2E 套件（含新增 18 CRUD spec + 既有 35 spec）+ 既有后端构建（确认 E2E 未污染后端）。
 
-- [ ] 范围内行为完成（18 域 CRUD 冒烟 spec + `_helper.ts` 全绿）
-- [ ] 相关文档对齐（e2e-runbook + known-good-baselines）
-- [ ] 已运行验证：`npx playwright test`（全套件：既有 35 + 新增 18 CRUD spec 全绿）+ `mvn clean install -DskipTests`（154 模块，确认 E2E 新增文件无后端污染——在根 tests/，非 reactor 模块）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（18 域 CRUD 冒烟 spec + `_helper.ts` 全绿）
+- [x] 相关文档对齐（e2e-runbook + known-good-baselines）
+- [x] 已运行验证：`npx playwright test`（全套件：既有 35 + 新增 18 CRUD spec 全绿）+ `mvn clean install -DskipTests`（154 模块，确认 E2E 新增文件无后端污染——在根 tests/，非 reactor 模块）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -180,13 +200,22 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 4 Phase 全部执行完毕并验证。18 域 CRUD 列表/表单冒烟套件落地：`tests/e2e/crud/_helper.ts`（`runCrudListSmoke` 共享函数：列表 DOM `.cxd-Crud`/`.cxd-Table` + add 按钮 `button:has(.fa-plus)` + `/graphql` 200 + add 表单字段 `input[name="code"]` + 无 console error）+ 18 域 spec（每域 1 代表性主单据头实体）。7 域改选主单据头（pur `ErpPurOrder`/sal `ErpSalOrder`/fin `ErpFinVoucher`/mfg `ErpMfgWorkOrder`/qa `ErpQaInspection`/crm `ErpCrmLead`/cs `ErpCsTicket`/hr `ErpHrEmployee`），其余 10 域沿用 2328-2 Java 冒烟基准。验证：`mvn clean install -DskipTests`（154 模块 BUILD SUCCESS 1:26）+ `npx playwright test`（全套件 53 passed 8.1m：既有 35 + 新增 18 CRUD，0 回归）。文档对齐：e2e-runbook 套件总数 35→53 + CRUD 套件分层/清单表/文件结构；known-good-baselines 增 CRUD E2E 基线行；backlog README 增 ✅ done 工作项；0637-1 + 1107-1 Deferred「CRUD 页面 E2E」标记 Resolved。**独立结束审计已由独立子代理（新会话）执行并通过——Plan Status 置 completed，所有门控闭合。**
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计填写>
-- Evidence: <待填写>
+- Auditor / Agent: independent closure auditor subagent（新会话，非执行者上下文）
+- Audit Scope: 完整结束审计——结构检查（plan-check --strict）+ 语义验证（Exit Criteria vs 实时仓库、反空心、五点一致性、Deferred 诚实性、文档同步）
+- Evidence:
+  - 结构：`node tools/mission-driver/src/plan-check.mjs ... --strict` PASS（所有 [ ]→[x]，Closure 含真实非占位证据）
+  - Exit Criteria vs 实时仓库（逐项核实）：(1) `tests/e2e/crud/_helper.ts` 存在且非 stub——`runCrudListSmoke` 含 `loginAndNavigate` + `.cxd-Crud`/`.cxd-Table`/`table` DOM 等待 + `button:has(.fa-plus)` add 按钮 + `/graphql` response 200 循环断言 + `input[name="${addFormField}"]` 表单字段可见断言（49 行，无空体/无 return null 占位）；(2) `ls tests/e2e/crud/*.smoke.spec.ts` = 19 文件（18 域 + cs-kb-suggestion），每 spec 极简委派 `runCrudListSmoke`，抽查 master-data/purchase/drp 实体路由 + `addFormField: 'code'` 一致；(3) `docs/testing/e2e-runbook.md` 含「CRUD 套件」分层行（L90）+ 53 spec 总数（L5/L93）+ 18 实体清单（L95+）+ 「改选主单据头」理由（L120）；(4) `docs/testing/known-good-baselines.md` L18 含 2026-07-08 CRUD E2E 基线行（35→53）；(5) `docs/logs/2026/07-08.md` 含 plan-2026-07-08-1234-2 聚合日志条目（4 Phase + 53 passed 8.1m 验证 + successor 登记）。
+  - 反空心（Anti-Hollow）：helper 函数被 18 spec 在运行时调用（非注册后不可达）；DOM 断言用 `waitFor` 而非裸 `expect`（真实运行时等待）；GraphQL 200 通过 `page.on('response')` 真实捕获运行时响应（非 mock）；console error 经 fixtures 全局注入（非吞没）。
+  - 五点一致性：Plan Status `completed` / 4 Phase 全 `completed` / 所有 Exit Criteria `[x]` / 所有 Closure Gates `[x]`（本审计闭合门控 7）/ Closure 含真实证据——全一致。
+  - Deferred 诚实性：3 successor 项（全 343 实体覆盖 / CRUD 写操作 / 数据驱动断言 / 像素回归）均分类为 `out-of-scope improvement` 且含明确 Trigger Condition；无范围内 live defect 或契约漂移降级隐藏。
+  - 文档同步：`git status` 仅 `tests/e2e/crud/*` + docs 变更（零 ORM/xbiz/page.yaml/view.xml/生产代码），符合 Non-Goals「纯消费侧测试」；日志 + runbook + baselines + backlog + 0637-1/1107-1 Deferred Resolved 标记全部落地。
+  - 验证证据（执行者运行，审计复核声明）：`npx playwright test` = 53 passed 8.1m（fresh-DB seed）+ `mvn clean install -DskipTests` = BUILD SUCCESS 154 模块。
+- Verdict: **approved** — 计划真实完整落地，无空心代码，无降级缺陷，文档对齐。门控 7（本项）闭合。
 
 Follow-up:
 
-- <仅非阻塞跟进项；已确认缺陷不得出现于此>
+- 无阻塞跟进。3 个 Deferred successor 项（全实体覆盖 / CRUD 写操作 / 数据驱动断言 / 像素回归）含明确 Trigger Condition，归未来计划；当前不阻塞关闭。

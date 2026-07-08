@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 1 KB 建议定向冒烟（共 35 spec）。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟（共 53 spec）。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归、非数据驱动断言。
 
@@ -87,9 +87,37 @@ java -Dfile.encoding=UTF8 \
 | 单文件 | `npx playwright test tests/e2e/dashboards/finance.smoke.spec.ts --workers=1` | 调试单个页面 |
 | 看板套件 | `npx playwright test tests/e2e/dashboards/ --workers=1` | 看板回归 |
 | 报表套件 | `npx playwright test tests/e2e/reports/ --workers=1` | 报表回归 |
+| CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：~5.6 分钟（35 spec × ~10s/spec，含每测试 UI 登录）。
+全套件运行时间：~8.4 分钟（53 spec × ~9.5s/spec，含每测试 UI 登录）。
+
+## CRUD 套件（18 域列表/表单冒烟）
+
+`tests/e2e/crud/` 下每域 1 个代表性「主单据头」实体 spec（共 18 spec），调 `_helper.ts` 的 `runCrudListSmoke({ domain, entityRoute, addFormField })` 委派。每 spec 断言：列表页 DOM 渲染（`.cxd-Crud`/`.cxd-Table`）+ add 按钮（`button:has(.fa-plus)`）+ `/graphql` 查询 200 + 无 console error + add 表单打开后字段渲染（`input[name="code"]`）。
+
+| 域 | 实体 | 路由 | 选型理由 |
+| --- | --- | --- | --- |
+| master-data | `ErpMdPartner`（往来单位） | `/ErpMdPartner-main` | 2328-2 基准沿用 |
+| inventory | `ErpInvStockMove`（库存移动单） | `/ErpInvStockMove-main` | 2328-2 基准沿用 |
+| purchase | `ErpPurOrder`（采购订单） | `/ErpPurOrder-main` | 改选主单据头（基准 `ErpPurRequisition`） |
+| sales | `ErpSalOrder`（销售订单） | `/ErpSalOrder-main` | 改选主单据头（基准 `ErpSalQuotation`） |
+| finance | `ErpFinVoucher`（会计凭证） | `/ErpFinVoucher-main` | 改选主单据头（基准 `ErpFinVoucherTemplate`） |
+| assets | `ErpAstAsset`（固定资产） | `/ErpAstAsset-main` | 2328-2 基准沿用 |
+| projects | `ErpPrjProject`（项目） | `/ErpPrjProject-main` | 2328-2 基准沿用 |
+| manufacturing | `ErpMfgWorkOrder`（工单） | `/ErpMfgWorkOrder-main` | 改选主单据头（基准 `ErpMfgRouting`） |
+| quality | `ErpQaInspection`（质检单） | `/ErpQaInspection-main` | 改选主单据头（基准 `ErpQaInspectionTemplate`） |
+| maintenance | `ErpMntVisit`（维护访问） | `/ErpMntVisit-main` | 2328-2 基准沿用 |
+| crm | `ErpCrmLead`（线索/商机） | `/ErpCrmLead-main` | 改选主单据头（基准 `ErpCrmBundlePricing`） |
+| cs | `ErpCsTicket`（客服工单） | `/ErpCsTicket-main` | 改选主单据头（基准 `ErpCsTicketType`） |
+| hr | `ErpHrEmployee`（员工） | `/ErpHrEmployee-main` | 改选主单据头（基准 `ErpHrSurvey`） |
+| aps | `ErpApsOperationOrder`（工序工单） | `/ErpApsOperationOrder-main` | 2328-2 基准沿用 |
+| logistics | `ErpLogShipment`（发运单） | `/ErpLogShipment-main` | 2328-2 基准沿用 |
+| b2b | `ErpB2bAsn`（提前发货通知） | `/ErpB2bAsn-main` | 2328-2 基准沿用 |
+| contract | `ErpCtContract`（合同） | `/ErpCtContract-main` | 2328-2 基准沿用 |
+| drp | `ErpDrpPlan`（DRP 计划） | `/ErpDrpPlan-main` | 2328-2 基准沿用 |
+
+「改选主单据头」理由：浏览器 E2E 倾向用户最常打开的列表页（业务单据头）而非 config/模板实体。冒烟级仅断言列表 DOM + add 表单字段可见（不持久化），故主单据头 mandatory 字段不阻断。全 343 实体覆盖 + CRUD 写操作 + 数据驱动断言为 successor（触发条件见 `docs/plans/2026-07-08-1234-2-crud-page-e2e-smoke.md` Deferred）。
 
 ## 认证机制
 
@@ -143,7 +171,26 @@ tests/e2e/
 │   ├── quality.smoke.spec.ts
 │   └── master-data.smoke.spec.ts
 ├── crud/
-│   └── cs-kb-suggestion.smoke.spec.ts  # KB 建议定向冒烟（suggestForTicket GraphQL 200）
+│   ├── _helper.ts                    # runCrudListSmoke 共享函数
+│   ├── cs-kb-suggestion.smoke.spec.ts  # KB 建议定向冒烟（suggestForTicket GraphQL 200）
+│   ├── master-data.smoke.spec.ts     # ErpMdPartner
+│   ├── inventory.smoke.spec.ts       # ErpInvStockMove
+│   ├── purchase.smoke.spec.ts        # ErpPurOrder
+│   ├── sales.smoke.spec.ts           # ErpSalOrder
+│   ├── finance.smoke.spec.ts         # ErpFinVoucher
+│   ├── assets.smoke.spec.ts          # ErpAstAsset
+│   ├── projects.smoke.spec.ts        # ErpPrjProject
+│   ├── manufacturing.smoke.spec.ts   # ErpMfgWorkOrder
+│   ├── quality.smoke.spec.ts         # ErpQaInspection
+│   ├── maintenance.smoke.spec.ts     # ErpMntVisit
+│   ├── crm.smoke.spec.ts             # ErpCrmLead
+│   ├── cs.smoke.spec.ts              # ErpCsTicket
+│   ├── hr.smoke.spec.ts              # ErpHrEmployee
+│   ├── aps.smoke.spec.ts             # ErpApsOperationOrder
+│   ├── logistics.smoke.spec.ts       # ErpLogShipment
+│   ├── b2b.smoke.spec.ts             # ErpB2bAsn
+│   ├── contract.smoke.spec.ts        # ErpCtContract
+│   └── drp.smoke.spec.ts             # ErpDrpPlan
 └── reports/
     ├── _helper.ts                    # runReportSmoke 共享函数
     └── *.smoke.spec.ts               # 24 个报表 spec
