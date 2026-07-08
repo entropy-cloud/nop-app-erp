@@ -1,0 +1,2 @@
+ID,NCR_ID,ACTION_TYPE,DESCRIPTION,RESPONSIBLE_PERSON,DUE_DATE,STATUS,REMARK
+1,1,CAPA,供应商整改+进料复检加强+作业指导书更新,1,2026-07-01,IN_PROGRESS,NCR-2026-001 纠正预防措施（dueDate 早于 today + status 非 COMPLETED 驱动 findCapaOverdueAlert）

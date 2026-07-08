@@ -1,0 +1,2 @@
+ID,VISIT_ID,LINE_NO,TASK_DESCRIPTION,STATUS,COMPLETED_BY,REMARK
+1,1,1,更换主轴润滑油并检查主轴回转精度,COMPLETED,2,visit 1 任务（maintenance-history 报表 taskCount=1）
