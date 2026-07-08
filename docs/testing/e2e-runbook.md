@@ -2,9 +2,11 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟（共 53 spec）。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 6 核心域数据驱动数值断言（共 59 spec）。
 
-测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归、非数据驱动断言。
+测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
+
+在冒烟级之上，核心域（finance/sales/purchase）已叠加**数据驱动数值断言层**（`*.value.spec.ts`）：直接经 GraphQL query 取后端聚合原始值，断言匹配确定性期望值。详见下方「数据驱动数值断言层」。
 
 ## 前置条件
 
@@ -92,7 +94,39 @@ java -Dfile.encoding=UTF8 \
 | CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：~8.4 分钟（53 spec × ~9.5s/spec，含每测试 UI 登录）。
+全套件运行时间：~8.4 分钟（53 冒烟 spec × ~9.5s/spec，含每测试 UI 登录）。数值断言层（6 spec）约 +1.5 分钟。
+
+## 数据驱动数值断言层
+
+冒烟套件（`*.smoke.spec.ts`）仅验证渲染存在性。在 1445-1 固化交易种子基线上，核心域叠加了**数据驱动数值断言层**（`*.value.spec.ts`，6 spec：dashboards/finance/sales/purchase + reports/fin-balance-sheet/income-statement/ar-ap-aging），验证「seed → 聚合 → GraphQL → 断言」端到端数值链。
+
+### 断言范式
+
+- **看板 KPI**：spec 内 `page.request.post('/graphql', { query, variables })`（复用 UI 登录会话 cookie）取后端 `ErpXxxDashboard__getDashboardKpi` 原始返回 Map，与期望值表逐字段 `expect(Number(field)).toBe(expected)` 比对。
+  - **日期漂移防护**：销售/采购看板 KPI 默认区间依赖服务端当前日期。spec **显式传 `startDate=2026-07-01` / `endDate=2026-07-31`** 覆盖种子日期区间，使断言确定性不依赖运行时日期。财务看板传 `periodId=1` 锁定种子期间。
+- **报表渲染**：`page.request.post` 取 `ErpFinReport__renderHtml` 返回 HTML 字符串，断言含期望数值 token（剥离千分位逗号后匹配，规避 AMIS 渲染层 DOM 抖动）。
+
+### 期望值表（确定性派生）
+
+期望值派生自 1445-1 固化 seed CSV 的确定性聚合，落盘于 `docs/analysis/2026-07-08-1445-2-kpi-expected-values.md`（每 KPI 标注期望值 + 派生公式 + seed 行依据）。当前基线值：
+
+| 域 / 报表 | 断言字段 | 期望值 |
+| --- | --- | --- |
+| finance 看板 | revenue / netProfit | 1130 / 1130 |
+| sales 看板 | salesAmount / orderCount | 1000 / 1 |
+| purchase 看板 | purchaseAmount / orderCount | 850 / 1 |
+| 利润表 | 主营业务收入 token | 1,130.00 |
+| 资产负债表 | 银行存款 token | 169.50 |
+| AR-AP 账龄 | 全结算态（空明细） | title 渲染 + 合计行存在 |
+
+### seed 漂移同步机制（强制）
+
+**期望值表依赖 1445-1 seed CSV 内容**。若 1445-1 seed 变更（行增减 / 金额改动 / 业务日期改动）：
+1. 重新派生期望值（手算或 GraphQL 抽样导出）。
+2. 同步更新 `docs/analysis/2026-07-08-1445-2-kpi-expected-values.md`。
+3. 同步更新对应 `*.value.spec.ts` 的 `expected` / `expectedTokens`。
+
+不更新则数值断言会失败（这是设计预期——暴露 seed 漂移，非测试脆弱）。扩展域数值断言归后续批次（触发条件：对应域交易种子 seed 后）。
 
 ## CRUD 套件（18 域列表/表单冒烟）
 
@@ -144,7 +178,7 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 
 ## 已知限制
 
-- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 44 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据）。核心域（finance/sales/purchase）看板 KPI 与报表数值经交易数据驱动**非空可观测**（采购额/销售额/收入/净利润）。扩展域交易单据未 seed（Non-Goal，按域逐批补充）。不新增精确数值断言（归 `2026-07-08-1445-2` 数据驱动 successor）。
+- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 44 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据）。核心域（finance/sales/purchase）看板 KPI 与报表数值经交易数据驱动**非空可观测**（采购额/销售额/收入/净利润）。核心域已叠加**数据驱动数值断言层**（6 `*.value.spec.ts`，见上方「数据驱动数值断言层」）。扩展域交易单据未 seed（Non-Goal，按域逐批补充），其数值断言归后续批次。
 - **单浏览器**：仅 chromium（Chrome channel），不支持 Firefox/WebKit/移动视口。
 - **冒烟级**：不断言像素级视觉一致性、不验证报表渲染内容正确性、不断言下载产物。
 - **页面验证已恢复**：`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面模型校验（`validate-page-model=true`）已恢复全绿，不再使用 `-Dnop.web.validate-page-model=false` 绕过。
@@ -161,10 +195,13 @@ tests/e2e/
 ├── fixtures.ts                       # test 扩展（console error 检查器）
 ├── global-setup.ts                   # globalSetup（保留，当前未使用——storageState 不适用）
 ├── dashboards/
-│   ├── _helper.ts                    # runDashboardSmoke 共享函数
+│   ├── _helper.ts                    # runDashboardSmoke + assertDashboardKpiValues 共享函数
 │   ├── finance.smoke.spec.ts         # 独立 spec（含 KPI 文本断言）
+│   ├── finance.value.spec.ts         # 数值断言层（GraphQL getDashboardKpi 取值）
 │   ├── sales.smoke.spec.ts           # 使用 _helper
+│   ├── sales.value.spec.ts           # 数值断言层
 │   ├── purchase.smoke.spec.ts
+│   ├── purchase.value.spec.ts        # 数值断言层
 │   ├── inventory.smoke.spec.ts
 │   ├── assets.smoke.spec.ts
 │   ├── projects.smoke.spec.ts
@@ -194,6 +231,9 @@ tests/e2e/
 │   ├── contract.smoke.spec.ts        # ErpCtContract
 │   └── drp.smoke.spec.ts             # ErpDrpPlan
 └── reports/
-    ├── _helper.ts                    # runReportSmoke 共享函数
+    ├── _helper.ts                    # runReportSmoke + assertReportRenderedWithValue 共享函数
+    ├── fin-balance-sheet.value.spec.ts   # 数值断言层
+    ├── fin-income-statement.value.spec.ts # 数值断言层
+    ├── fin-ar-ap-aging.value.spec.ts     # 数值断言层
     └── *.smoke.spec.ts               # 24 个报表 spec
 ```

@@ -56,16 +56,16 @@
 
 ### Phase 1 - 期望值派生 + 断言范式确立（Proof + Decision）
 
-Status: planned
+Status: completed
 Targets: `docs/analysis/2026-07-08-1445-1-transaction-seed-table-map.md`（seed 行数）、看板/报表后端聚合口径
 Skill: `nop-testing`
 
 - Item Types: `Proof | Decision`
 - Prereqs: **1445-1 完成**（交易种子 CSV 落地 + fresh-DB 启动验证 + GraphQL 抽样可见）
 
-- [ ] `Proof`：基于 1445-1 固化 seed CSV，手算/导出核心域看板 KPI 的**确定性期望值**（如 finance 现金流本期支出 = Σ seed 采购付款金额；sales AR 未核销余额 = Σ seed 销售收款 - 核销；purchase AP 余额 = Σ seed 采购发票 - 付款核销），落盘「KPI 期望值表」（KPI 名 → 期望值 → 派生公式 → seed 行依据）。同时导出核心报表的关键聚合值（如 AR-AP 账龄报表的应收/应付总额）。
+- [x] `Proof`：基于 1445-1 固化 seed CSV，手算/导出核心域看板 KPI 的**确定性期望值**（如 finance 现金流本期支出 = Σ seed 采购付款金额；sales AR 未核销余额 = Σ seed 销售收款 - 核销；purchase AP 余额 = Σ seed 采购发票 - 付款核销），落盘「KPI 期望值表」（KPI 名 → 期望值 → 派生公式 → seed 行依据）。同时导出核心报表的关键聚合值（如 AR-AP 账龄报表的应收/应付总额）。
       - Skill: `nop-testing`
-- [ ] `Decision`：数值断言范式——
+- [x] `Decision`：数值断言范式——
       - 选择：**直接 GraphQL query 取值断言**（spec 内 `page.evaluate` / `request.post('/graphql', {...ErpXxxDashboard__getDashboardKpi...})` 取后端聚合原始值，与期望值表比对），辅以 AMIS DOM 文本「数值非空 + 含期望数值字符串」弱断言兜底。
       - 替代 (a) 仅 AMIS DOM 文本解析（rejected——AMIS 渲染层数值格式化/千分位/币种符号致 DOM 文本抖动，断言脆弱）。
       - 替代 (b) 后端 Java 测试覆盖（rejected——0935-1/1606-1 已覆盖聚合口径，但不验证「seed → GraphQL → 浏览器」端到端数值链，本计划价值正是该链）。
@@ -74,48 +74,48 @@ Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] KPI 期望值表落盘（写入 `docs/analysis/2026-07-08-1445-2-kpi-expected-values.md` 或本计划），每 KPI 标注期望值 + 派生公式 + seed 行依据；解除 Phase 2/3 断言编写阻塞。
-- [ ] 断言范式 Decision 记录选择 + 替代方案 + 残留风险（seed 漂移同步机制）。
+- [x] KPI 期望值表落盘（写入 `docs/analysis/2026-07-08-1445-2-kpi-expected-values.md`），每 KPI 标注期望值 + 派生公式 + seed 行依据；解除 Phase 2/3 断言编写阻塞。
+- [x] 断言范式 Decision 记录选择 + 替代方案 + 残留风险（seed 漂移同步机制）。
 
 ### Phase 2 - 看板 KPI 数值断言 spec（finance/sales/purchase 核心 3 域）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/dashboards/*.value.spec.ts`（fin/sal/pur，扩展既有 `*.smoke.spec.ts` 为数值层）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 期望值表 + 断言范式
 
-- [ ] `Add`：扩展 `dashboards/_helper.ts` 增 `assertDashboardKpiValues({ domain, expected })`——UI 登录后直接经 GraphQL query 取 `getDashboardKpi` 原始返回值，与期望值表逐字段断言（非零 + 等于期望值）；保留既有 `runDashboardSmoke` 冒烟断言不动。
+- [x] `Add`：扩展 `dashboards/_helper.ts` 增 `assertDashboardKpiValues({ domain, expected })`——UI 登录后直接经 GraphQL query 取 `getDashboardKpi` 原始返回值，与期望值表逐字段断言（非零 + 等于期望值）；保留既有 `runDashboardSmoke` 冒烟断言不动。
       - Skill: `nop-testing`
-- [ ] `Add`：为 finance/sales/purchase 3 域各新增数值断言（独立 spec 或扩展 smoke spec），断言核心 KPI 匹配 Phase 1 期望值表。
+- [x] `Add`：为 finance/sales/purchase 3 域各新增数值断言（独立 spec 或扩展 smoke spec），断言核心 KPI 匹配 Phase 1 期望值表。
       - Skill: `nop-testing`
-- [ ] `Proof`：运行 `npx playwright test tests/e2e/dashboards/ --workers=1`，核心 3 域数值断言全绿（既有 10 域冒烟不回归）。
+- [x] `Proof`：运行 `npx playwright test tests/e2e/dashboards/ --workers=1`，核心 3 域数值断言全绿（既有 10 域冒烟不回归）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] finance/sales/purchase 看板 KPI 数值断言全绿，KPI 非零且匹配期望值表；既有 10 域冒烟 0 回归。
+- [x] finance/sales/purchase 看板 KPI 数值断言全绿，KPI 非零且匹配期望值表；既有 10 域冒烟 0 回归。
 
 ### Phase 3 - 报表渲染内容数值断言（核心域报表）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/reports/*.value.spec.ts`（finance 资产负债/利润表/AR-AP 账龄 等，扩展既有 `*.smoke.spec.ts`）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 期望值表
 
-- [ ] `Add`：扩展 `reports/_helper.ts` 增 `assertReportRenderedWithValue({ domain, reportName, expectedTokens })`——点击渲染 button 触发 `renderHtml`，断言响应 HTML 含期望数值 token（如 AR-AP 账龄报表 HTML 含应收/应付总额数值；资产负债表含资产合计），在 0637-1「渲染 200 + 响应非空」之上提升为「含具体数值」。
+- [x] `Add`：扩展 `reports/_helper.ts` 增 `assertReportRenderedWithValue({ domain, reportName, expectedTokens })`——点击渲染 button 触发 `renderHtml`，断言响应 HTML 含期望数值 token（如 AR-AP 账龄报表 HTML 含应收/应付总额数值；资产负债表含资产合计），在 0637-1「渲染 200 + 响应非空」之上提升为「含具体数值」。
       - Skill: `nop-testing`
-- [ ] `Add`：为 finance 核心报表（至少资产负债表/利润表/AR-AP 账龄 3 张）新增渲染内容数值断言。
+- [x] `Add`：为 finance 核心报表（至少资产负债表/利润表/AR-AP 账龄 3 张）新增渲染内容数值断言。
       - Skill: `nop-testing`
-- [ ] `Proof`：运行 `npx playwright test tests/e2e/reports/ --workers=1`，核心报表数值断言全绿（既有 24 报表冒烟 0 回归）。
+- [x] `Proof`：运行 `npx playwright test tests/e2e/reports/ --workers=1`，核心报表数值断言全绿（既有 24 报表冒烟 0 回归）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] finance 核心报表渲染内容含具体数值 token 断言全绿；既有 24 报表冒烟 0 回归。
+- [x] finance 核心报表渲染内容含具体数值 token 断言全绿；既有 24 报表冒烟 0 回归。
 
 ### Phase 4 - 文档对齐（Add）
 
