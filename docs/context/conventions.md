@@ -48,4 +48,4 @@
 - 生产代码与测试代码**禁止**直接调用 `java.time.LocalDateTime.now()` / `java.time.LocalDate.now()` / `java.time.Clock.systemDefaultZone()`。
 - 统一经平台时间 API：`io.nop.api.core.time.CoreMetrics.currentDateTime()`（`LocalDateTime`）、`CoreMetrics.currentDate()`（`LocalDate`）、`CoreMetrics.currentTimeMillis()`（`long`）。权威参考：`../nop-entropy/docs-for-ai/04-reference/common-java-helpers.md`。
 - 理由：测试与生产共享同一 `CoreClock` 时间源，保证语义一致；并为未来 `CoreClock` mock 可注入（固定时刻断言）留出统一收口点。
-- **附注（已知残留，非隐藏违规）**：截至 2026-07-08，`LocalDate.now()` 仍有残留（生产 4 处 + 测试 ~96 处），归独立 Deferred 清理（见 `docs/plans/2026-07-08-0517-1-test-code-localdatetime-now-cleanup.md` Deferred 段）。`LocalDateTime.now()` 已在本次清理中归零。
+- 截至 2026-07-08，生产与测试代码中 `LocalDate.now()` 与 `LocalDateTime.now()` 均已归零（生产 LocalDate 14 文件/28 处 + 测试 23 文件/106 处见 `docs/plans/2026-07-08-0637-2-localdate-now-cleanup.md`；LocalDateTime 见 `docs/plans/2026-07-08-0517-1-test-code-localdatetime-now-cleanup.md`）。

@@ -3,7 +3,7 @@
 > 来源审计：`docs/audits/2026-07-07-1900-comprehensive-design-and-implementation-audit.md`（C-5 测试不可控性）
 > 关联计划：`docs/plans/2026-07-07-1915-1-audit-remediation-plan.md` H-2
 
-> 状态（2026-07-08 更新）：生产代码 `LocalDateTime.now()` 已由 1915-1 H-2 全部修复（实时 grep 0 命中）；测试代码 32 处已由 `docs/plans/2026-07-08-0517-1-test-code-localdatetime-now-cleanup.md` 全部修复（实时 grep 0 命中）。本 bug 文档请求的 `docs/context/conventions.md`「时间 API 使用约定」已增补。仅余 `LocalDate.now()` 残留（生产 4 + 测试 ~96 处），由独立计划 `docs/plans/2026-07-08-0637-2-localdate-now-cleanup.md` 承接（平行问题）。
+> 状态（2026-07-08 更新，✅ 已全部修复）：生产代码 `LocalDateTime.now()` 已由 1915-1 H-2 全部修复（实时 grep 0 命中）；测试代码 32 处已由 `docs/plans/2026-07-08-0517-1-test-code-localdatetime-now-cleanup.md` 全部修复（实时 grep 0 命中）。`LocalDate.now()` 残留（生产 14 文件/28 处 + 测试 23 文件/106 处，修正原「生产 4 + 测试 ~96」低估）已由 `docs/plans/2026-07-08-0637-2-localdate-now-cleanup.md` 全部修复（实时 grep `LocalDate\.now\(\)` / `LocalDateTime\.now\(\)` 跨 `**/src/**/*.java` 均 0 命中）。本 bug 文档请求的 `docs/context/conventions.md`「时间 API 使用约定」已增补（含 LocalDate.now() + LocalDateTime.now() 双重禁令，残留附注已移除）。本 bug 闭环。
 
 ## 问题
 
