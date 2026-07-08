@@ -1,6 +1,6 @@
 # 2026-07-08-1445-2-data-driven-e2e-value-assertions 数据驱动看板/报表精确数值 E2E 断言
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: erp
 > Work Item: 看板 KPI + 报表渲染数据驱动精确数值浏览器 E2E 断言（finance/sales/purchase 核心域）
 > Last Reviewed: 2026-07-08
@@ -119,21 +119,21 @@ Exit Criteria:
 
 ### Phase 4 - 文档对齐（Add）
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`、`docs/testing/known-good-baselines.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 2/3 全绿
 
-- [ ] `Add`：`docs/testing/e2e-runbook.md` 增「数值断言层」说明——fresh-DB seed 确定性 → 期望值表派生 → GraphQL 取值断言范式 + seed 漂移同步机制（seed 变更须更新期望值表）。
+- [x] `Add`：`docs/testing/e2e-runbook.md` 增「数值断言层」说明——fresh-DB seed 确定性 → 期望值表派生 → GraphQL 取值断言范式 + seed 漂移同步机制（seed 变更须更新期望值表）。
       - Skill: none
-- [ ] `Add`：`docs/testing/known-good-baselines.md` 增数值断言基线行（断言 spec 数 + 全套件状态）。
+- [x] `Add`：`docs/testing/known-good-baselines.md` 增数值断言基线行（断言 spec 数 + 全套件状态）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] e2e-runbook 含数值断言层说明；known-good-baselines 含数值断言基线行。
+- [x] e2e-runbook 含数值断言层说明；known-good-baselines 含数值断言基线行。
 
 ## Draft Review Record
 
@@ -143,14 +143,14 @@ Exit Criteria:
 
 > 本计划为前端/浏览器 E2E 数值断言（数据驱动结果面），结束前除下方门控外运行一次完整 E2E 套件（含新增数值断言）+ 后端构建（确认无后端污染）。
 
-- [ ] 范围内行为完成（核心域看板 KPI + 报表渲染内容数值断言 spec 全绿）
-- [ ] 相关文档对齐（e2e-runbook 数值断言层 + known-good-baselines）
-- [ ] 已运行验证：`npx playwright test`（全套件含数值断言全绿）+ `mvn clean install -DskipTests`（154 模块，确认 spec 新增无后端污染）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（核心域看板 KPI + 报表渲染内容数值断言 spec 全绿）
+- [x] 相关文档对齐（e2e-runbook 数值断言层 + known-good-baselines）
+- [x] 已运行验证：`npx playwright test`（全套件含数值断言全绿）+ `mvn clean install -DskipTests`（154 模块，确认 spec 新增无后端污染）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -170,12 +170,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 全 4 Phase 完成。Phase 1（期望值表 + 断言范式 Decision 落盘 `docs/analysis/2026-07-08-1445-2-kpi-expected-values.md`）、Phase 2（3 看板 KPI 数值断言 spec + `assertDashboardKpiValues` helper 扩展）、Phase 3（3 核心报表数值断言 spec + `assertReportRenderedWithValue` helper 扩展）、Phase 4（e2e-runbook 数值断言层说明 + known-good-baselines 基线行）。验证：`mvn install -DskipTests` BUILD SUCCESS（154 模块，无后端污染）+ `npx playwright test --workers=1` 59 passed（8.6m，含 6 数值断言全绿 + 53 冒烟 0 回归）。纯测试 spec + helper + 文档新增，零 ORM/契约/生产代码变更。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计填写>
-- Evidence: <待填写>
+- Auditor / Agent: 独立结束审计 ses_0be04affcffedb1N9cgCLZvB5H（general 新会话，非执行者）
+- Verdict: PASS（无 BLOCKER / 无 MAJOR）
+- Evidence: 全 7 项核对经实时仓库核实通过——(1) Phase 1-4 全 `Status: completed` + 全项 `[x]` 无遗留；(2) Phase 1 期望值表 `docs/analysis/2026-07-08-1445-2-kpi-expected-values.md` 非平凡（fin revenue/netProfit=1130、sal salesAmount=1000、pur purchaseAmount=850 + 派生公式 + seed 行依据 + Decision）；(3) Phase 2 `dashboards/_helper.ts:40 assertDashboardKpiValues` + 3 value spec 真实数值断言；(4) Phase 3 `reports/_helper.ts:58 assertReportRenderedWithValue` + 3 value spec HTML token 断言；(5) Phase 4 e2e-runbook「数据驱动数值断言层」+「seed 漂移同步机制」段 + known-good-baselines:20 数值断言基线行（53→59）；(6) Non-Goals 合规：feat commit `993444ad` 恰 8 文件全在 `tests/e2e/`（2 helper + 6 spec，+129/-0），doc commit `6519e543` 仅 analysis/runbook/plan，**零** `*.orm.xml`/`*.xbiz.xml`/`*.page.yaml`/`*.view.xml`/Java 生产代码变更；(7) 验证证据自洽（6 数值 + 53 冒烟 = 59）。MINOR M1/M2/M3（Plan Status 翻 completed + 提交 + 填本证据）已据此执行。
 
 Follow-up:
 
