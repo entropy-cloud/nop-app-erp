@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面（共 34 spec）。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 1 KB 建议定向冒烟（共 35 spec）。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归、非数据驱动断言。
 
@@ -35,7 +35,7 @@ npx playwright test
 webServer 命令含测试专用 JVM 参数：
 - `-Dnop.auth.service-public=true` — 服务端认证旁路（sys 用户上下文）
 - `-Dnop.auth.login.allow-create-default-user=true` — 自动创建测试用户 `nop`/`123`
-- `-Dnop.web.validate-page-model=false` — 绕过预存 ErpCsTicket.view.xml layout 校验 bug
+- 页面模型校验保持默认开启（`nop.web.validate-page-model=true`，application.yaml 默认值）——`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面校验安全网已恢复
 
 ### 方式 B：复用已运行实例（开发调试推荐）
 
@@ -46,7 +46,6 @@ lsof -ti :8080 | xargs kill -9 2>/dev/null  # 清理端口
 java -Dfile.encoding=UTF8 \
      -Dnop.auth.service-public=true \
      -Dnop.auth.login.allow-create-default-user=true \
-     -Dnop.web.validate-page-model=false \
      -jar app-erp-all/target/quarkus-app/quarkus-run.jar
 ```
 
@@ -65,7 +64,7 @@ SKIP_WEBSERVER=1 npx playwright test
 | 报表套件 | `npx playwright test tests/e2e/reports/ --workers=1` | 报表回归 |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：~5.4 分钟（34 spec × ~10s/spec，含每测试 UI 登录）。
+全套件运行时间：~5.6 分钟（35 spec × ~10s/spec，含每测试 UI 登录）。
 
 ## 认证机制
 
@@ -93,7 +92,7 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 - **空库冒烟**：H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。不断言具体业务数值。
 - **单浏览器**：仅 chromium（Chrome channel），不支持 Firefox/WebKit/移动视口。
 - **冒烟级**：不断言像素级视觉一致性、不验证报表渲染内容正确性、不断言下载产物。
-- **页面验证禁用**：`validate-page-model=false` 绕过预存 ErpCsTicket.view.xml layout bug（CRUD 页面，非看板/报表范围）。
+- **页面验证已恢复**：`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面模型校验（`validate-page-model=true`）已恢复全绿，不再使用 `-Dnop.web.validate-page-model=false` 绕过。
 - **page.yaml 已修复**：全部 34 page.yaml 已修复 API URL（`/api/GenericApi`→`/graphql`）+ GraphQL Map 字段选择移除。原始 page.yaml 存在系统性 bug（从未运行时测试过）。
 - **下载功能**：报表下载 button（XLSX/PDF）的后端 `ErpXxxReport__download` 有 DataBean 序列化限制，E2E 降级为 button 存在性检查。
 
@@ -118,6 +117,8 @@ tests/e2e/
 │   ├── maintenance.smoke.spec.ts
 │   ├── quality.smoke.spec.ts
 │   └── master-data.smoke.spec.ts
+├── crud/
+│   └── cs-kb-suggestion.smoke.spec.ts  # KB 建议定向冒烟（suggestForTicket GraphQL 200）
 └── reports/
     ├── _helper.ts                    # runReportSmoke 共享函数
     └── *.smoke.spec.ts               # 24 个报表 spec
