@@ -3,7 +3,7 @@
 > Plan Status: draft
 > Mission: erp
 > Work Item: 7 扩展域 posted/businessDate 标准字段补充
-> Last Reviewed: 2026-07-08（迭代 2 修订后）
+> Last Reviewed: 2026-07-08（迭代 3 mission-driver 复审：无 Blocker/Major；激活因 ORM ask-first 保护区域 ai-autonomy-policy.md §保护区域 model/*.orm.xml=ask first 延后至人工批准）
 > Source: deferred 项承接 `docs/plans/2026-07-07-1915-1-audit-remediation-plan.md` Deferred「7 个扩展域补充 posted/businessDate 标准字段」+ `docs/plans/2026-07-07-2143-1-roadmap-backlog-status-reconciliation.md` 显化的 backlog P5 行；`docs/backlog/README.md` P5（触发条件「1915-1 关闭后」**已满足**——1915-1 Plan Status=completed）
 > Related: `docs/plans/2026-07-07-1915-1-audit-remediation-plan.md`（completed，其 Deferred 本计划承接）、`docs/plans/2026-07-07-2143-1-roadmap-backlog-status-reconciliation.md`（completed，显化本后继）
 > Audit: required
@@ -154,6 +154,13 @@ Exit Criteria:
   - N4：`ErpCtRebateAccrual` A 档标注不准（计提实体无独立 posted 迁移，结算经 ErpCtRebateSettlement 过账）——已软化，A/B 档交 Phase 1 裁决。
   - N5：drp 模块 `ErpInvDrp*` 计算/记录实体未枚举——baseline 已补注（预期 C 档，Phase 1 复核）。
   - 正面确认（无需变更）：ORM ask-first 门控正确（保持 draft，Phase 2 Prereqs 须人工批准，未自我激活）；Phase 1 A/B/C 分类框架可执行非藏范围；propId 连续性正确；posted 置位接线 Deferred 诚实（无活体缺陷藏匿）；命名/单结果面/技能标注合规。
+- Independent draft review iteration 3 (mission-driver forEach 复审, ses_GLM52): `acceptable-as-is`，无 Blocker/Major。
+  - 格式合规：必需段（Current Baseline/Goals/Non-Goals/Task Route/Infrastructure/Execution Plan/Draft Review Record/Closure Gates/Deferred But Adjudicated/Closure）齐备；各 Phase 结构含 Status/Targets/Skill/Item Types/Prereqs/Exit Criteria；Item Types 取自合法集（Fix/Add/Decision/Proof/Follow-up）。
+  - 完整性：各阶段 Exit Criteria 可判定（Phase 1 分类表 + 下游展示基线核查落盘；Phase 2 grep 计数 + xmllint；Phase 3 7 dao 链 BUILD SUCCESS + 抽样；Phase 4 默认赋值/view 对齐/guidelines 一致）；Closure Gates 与 Closure 占位符定义了完成证据。
+  - 范围：单一结果面（7 扩展域事务头标准字段补齐），Non-Goals 显式排除新增实体/置位接线/master-data/DRP 命名统一/BizModel 深化，无 "and also" 蔓延；符合规则 4/14（同结果面聚合，不碎片化）。
+  - 闭环证据：Closure Gates 含行为完成/文档对齐/验证（154 模块 install + 7 域 test + xmllint）/无降级/草案审查/文本一致性/独立结束审计/结束证据；Deferred 项含分类 + 理由 + successor。
+  - Minor（不阻塞，留结束/深审计）：Deferred 第 2 项「codegen 后业务逻辑深化」`Successor Required: no` 未命名重开触发事件——因其判定永久出范围、无 successor 重开，规则 91 的「命名重开事件」对其不强制适用；如结束审计要求可补注。
+  - **激活裁决（关键）**：本复审确认草案审查已收敛（迭代 2 acceptable-as-is），按计划指南状态流定义技术上已达 `active` 条件；**但**本计划触及 `model/*.orm.xml` ask-first 保护区域（`ai-autonomy-policy.md` §保护区域：ask first = 规划或实施前需人工批准；§9：AI 不得在无人工确认下移除阻塞/放宽自主权）。计划自身与迭代 2 已明确：Phase 2 ORM 修改实施前须人工批准。为不违反保护区域规则，`Plan Status` 维持 `draft`，激活（→ active）连同 Phase 2 实施一并延后至人工批准。此为受保护区域强制的刻意保守选择，非计划缺陷。
 - Independent draft review iteration 2: `acceptable-as-is` (ses_0c26a2690ffeBcPJa0DvLwR9ZC) — 全部 B1/N1~N5 经实时仓库复核确认已修复，无新增 BLOCKER（`composite-keys` 0 命中核实、`IDX_*_ORG_BUSINESS_DATE` 索引范式 :598-601 属实、Phase 3 收敛为 7 dao 链、biz:grid 项已删、条件性项转确定式、drp ErpInvDrp* 实体核实存在 :214/259/323/369）。迭代 2 残留非阻塞 NOTE 已采纳：Phase 1 Exit 增「下游展示基线核查结论落盘」+ postedAt/postedBy 子串匹配提示。**草案审查已收敛**——但本计划触及 ORM `ask-first` 保护区域，依 `ai-autonomy-policy.md`（`model/*.orm.xml` = ask first = 规划或实施前需人工批准），**激活（→ active）须待人工批准**；故 `Plan Status` 保持 `draft`，Phase 2 ORM 修改实施前须获人工批准。
 
 ## Closure Gates
