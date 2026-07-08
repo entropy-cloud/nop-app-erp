@@ -45,3 +45,38 @@ export function runReportSmoke(domain: string, route: string): void {
     });
   });
 }
+
+export interface ReportValueAssertion {
+  reportLabel: string;
+  route: string;
+  query: string;
+  variables: Record<string, unknown>;
+  responseKey: string;
+  expectedTokens: string[];
+}
+
+export function assertReportRenderedWithValue(cfg: ReportValueAssertion): void {
+  test.describe(`${cfg.reportLabel} report render values`, () => {
+    test('renderHtml returns HTML containing deterministic seed values', async ({ page }) => {
+      await loginAndNavigate(page, cfg.route);
+
+      const resp = await page.request.post('/graphql', {
+        data: { query: cfg.query, variables: cfg.variables },
+      });
+      expect(resp.status(), 'renderHtml GraphQL should return 200').toBe(200);
+
+      const json = await resp.json();
+      const html: string = json?.data?.[cfg.responseKey] ?? '';
+      expect(html.length, 'rendered HTML should be non-empty').toBeGreaterThan(0);
+
+      const normalized = html.replace(/,/g, '');
+      for (const token of cfg.expectedTokens) {
+        const normToken = token.replace(/,/g, '');
+        expect(
+          normalized.includes(normToken),
+          `rendered HTML should contain token "${token}"`,
+        ).toBe(true);
+      }
+    });
+  });
+}

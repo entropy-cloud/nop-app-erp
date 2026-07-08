@@ -27,3 +27,37 @@ export function runDashboardSmoke(domain: string, route: string, kpiKeywords: st
     });
   });
 }
+
+export interface DashboardKpiAssertion {
+  domain: string;
+  route: string;
+  query: string;
+  variables: Record<string, unknown>;
+  responseKey: string;
+  expected: Record<string, number>;
+}
+
+export function assertDashboardKpiValues(cfg: DashboardKpiAssertion): void {
+  test.describe(`${cfg.domain} dashboard KPI values`, () => {
+    test(`getDashboardKpi returns deterministic seed-driven values`, async ({ page }) => {
+      await loginAndNavigate(page, cfg.route);
+
+      const resp = await page.request.post('/graphql', {
+        data: { query: cfg.query, variables: cfg.variables },
+      });
+      expect(resp.status(), 'GraphQL getDashboardKpi should return 200').toBe(200);
+
+      const json = await resp.json();
+      const kpi = json?.data?.[cfg.responseKey];
+      expect(kpi, `KPI map should be present at data.${cfg.responseKey}`).toBeTruthy();
+
+      for (const [field, expected] of Object.entries(cfg.expected)) {
+        const actual = Number(kpi[field]);
+        expect(
+          !Number.isNaN(actual) && actual === expected,
+          `${cfg.domain}.${field} expected ${expected} but got ${kpi[field]} (raw)`,
+        ).toBe(true);
+      }
+    });
+  });
+}
