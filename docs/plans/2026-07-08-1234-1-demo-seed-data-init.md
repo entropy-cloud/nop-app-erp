@@ -187,7 +187,7 @@ Exit Criteria:
 
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 业务单据涉复杂状态机/过账/跨域参照，属域级深化。本期 bootstrap 主数据已解除「空库」阻断（看板/报表/CRUD 列表有主数据可观测）。交易数据是端到端业务数值验证的更深层。
-- Successor Required: `yes`
+- Successor Required: `yes` — **已交付**（计划 `2026-07-08-1445-1`）：P2P+O2C 最小连通集（源单据头/行 + 已过账财务产物：凭证/凭证行/业财回链/AR-AP 辅助账/GL 余额/期间 OPEN，共 23 张交易 CSV 落地 `_vfs/_init-data/`，fresh-DB 启动 0 冲突 + GraphQL FK 一致 + 53 spec E2E 0 回归 + 核心 KPI 数值转非空）。扩展域交易单据按域逐批仍为后续 successor。
 - Trigger Condition: 当各域端到端业务数值回归（如断言采购订单全链路凭证金额）需交易数据时，按域逐批补充交易单据 seed。
 
 ### 数据驱动 KPI 精确数值断言
