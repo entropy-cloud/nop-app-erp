@@ -1,0 +1,5 @@
+ID,PARTNER_ID,ADDRESS_TYPE,ADDRESS,CONTACT_PERSON,PHONE,IS_DEFAULT
+1,1,BILLING,上海市浦东新区张江高科技园区博云路 2 号,赵敏,13800000001,true
+2,1,SHIPPING,上海市浦东新区张江高科技园区物流中心,赵敏,13800000001,false
+3,3,BILLING,北京市朝阳区建国路 88 号,孙伟,13700000003,true
+4,4,BILLING,南京市江宁经济技术开发区将军大道 100 号,李强,13600000004,true

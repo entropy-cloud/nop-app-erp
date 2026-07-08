@@ -1,0 +1,4 @@
+ID,PARTNER_ID,CONTACT_PERSON,POSITION,PHONE,EMAIL,IS_DEFAULT
+1,1,赵敏,采购总监,13800000001,zhaomin@huadong.example,true
+2,3,孙伟,区域销售经理,13700000003,sunwei@beifang.example,true
+3,4,李强,大客户经理,13600000004,liqiang@dongfang.example,true

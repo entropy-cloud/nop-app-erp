@@ -1,0 +1,3 @@
+ID,WAREHOUSE_ID,CODE,NAME,IS_ACTIVE
+1,1,LOC-A1,主仓库 A 区,true
+2,2,LOC-B1,原料仓 B 区,true

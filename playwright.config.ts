@@ -15,7 +15,7 @@ const useChromeChannel = !fs.existsSync(
 );
 
 const webServerConfig = skipWebServer ? undefined : {
-  command: `java -Dfile.encoding=UTF8 -Dnop.auth.service-public=true -Dnop.auth.login.allow-create-default-user=true -jar "${runnerJar}"`,
+  command: `rm -f db/erp.mv.db db/erp.trace.db && java -Dfile.encoding=UTF8 -Dnop.auth.service-public=true -Dnop.auth.login.allow-create-default-user=true -Dnop.orm.init-database-data=true -jar "${runnerJar}"`,
   url: effectiveBaseUrl,
   reuseExistingServer: true,
   timeout: 120_000,

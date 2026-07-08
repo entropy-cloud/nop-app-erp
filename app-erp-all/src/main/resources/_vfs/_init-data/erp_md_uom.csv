@@ -1,0 +1,5 @@
+ID,CODE,NAME,UOM_GROUP,IS_BASE
+1,PCS,个,COUNT,true
+2,KG,千克,WEIGHT,true
+3,M,米,LENGTH,true
+4,BOX,箱,COUNT,false

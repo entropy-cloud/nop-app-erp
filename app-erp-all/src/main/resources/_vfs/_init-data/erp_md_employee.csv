@@ -1,0 +1,4 @@
+ID,CODE,NAME,STATUS,ORG_ID,POSITION,PHONE,EMAIL
+1,EMP-001,张三,ACTIVE,2,采购经理,13500000001,zhangsan@erp.example
+2,EMP-002,李四,ACTIVE,2,销售经理,13500000002,lisi@erp.example
+3,EMP-003,王五,ACTIVE,2,仓库主管,13500000003,wangwu@erp.example

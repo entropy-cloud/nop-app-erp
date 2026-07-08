@@ -1,0 +1,3 @@
+ID,CODE,NAME,SYMBOL,DECIMAL_PLACES,IS_FUNCTIONAL,IS_ACTIVE
+1,CNY,人民币,¥,2,true,true
+2,USD,美元,$,2,false,true
