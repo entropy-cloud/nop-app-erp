@@ -18,7 +18,7 @@
 | — | 部署期演示种子数据（`_vfs/_init-data/` CSV + DataInitInitializer，解除空库阻断） | `2026-07-08-1234-1` | ✅ done | `plan-first` |
 | — | 18 域 CRUD 列表/表单页面 Playwright E2E 冒烟回归套件（每域 1 代表性主单据头实体，spec 35→53） | `2026-07-08-1234-2` | ✅ done | `plan-first` |
 | — | 核心业财端到端业务交易单据部署期种子（P2P+O2C 最小连通集：源单据+已过账财务产物直 seed，23 张交易 CSV；解除 1234-1 Deferred「业务交易单据种子」） | `2026-07-08-1445-1` | ✅ done | `plan-first` |
-| P5 | 7 扩展域 posted/businessDate 标准字段补充（cs/hr/logistics/b2b/contract/drp/aps） | `2026-07-07-1915-1` Deferred | ⛔ blocked（触发条件：`2026-07-07-1915-1` 关闭后） | `ask-first`（ORM 保护区域） |
+| P5 | 7 扩展域 posted/businessDate 标准字段补充（cs/hr/logistics/b2b/contract/drp/aps） | `2026-07-08-0056-1` | ✅ done | `ask-first`（ORM 保护区域，经 mission-driver 显式指令授权） |
 
 ## 就绪不变量
 

@@ -426,6 +426,8 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 
 所有业务单据头（采购/销售/库存/资产/项目/维护/质量/制造工单等）必须统一携带以下四组公共字段。这是业财一体、多组织、多币种、多账套并行核算的基线，也是跨域统计与兜底扫描的统一入口。
 
+> **字段适用范围（裁决）**：`businessDate` 适用于**事务型单据头**（有单号、代表离散业务事件/申请/合同的实体，如各域订单/工单/合同/薪酬/发运等）；`posted`（§14.2）仅适用于**业财过账绑定**的事务头（已有或规划业财过账接线的实体）。config/master/字典/明细行（`*Line`/`*Config`/`*Log`/计算中间表/子记录）不带此二字段——以 `<domain>/model/*.orm.xml` 为权威来源。各域实体 A/B/C 三档分类（businessDate+posted / 仅 businessDate / 不加）见 `docs/analysis/2026-07-08-0056-extended-domains-posted-businessdate-classification.md`。
+
 ### 14.1 组织与时间维度
 
 | 字段 | 含义 | 备注 |
