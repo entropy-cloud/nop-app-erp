@@ -138,9 +138,10 @@ Exit Criteria:
 
 ## Deferred But Adjudicated
 
-### crp_load 表 + crp-load 报表 seed
+### crp_load 表 + crp-load 报表 seed（RELEASED — 于 2026-07-09-0628-1 落地）
 
 - Classification: `out-of-scope improvement`
+- Status: **RELEASED**（successor plan `2026-07-09-0628-1-manufacturing-crp-load-seed-value-assertion.md` 已落地：seed 完整工作中心配置链 workcenter/workcenter_calendar/workcenter_capacity + crp_load，使 crp-load 报表由空转非空可观测，叠加 mfg-crp-load.value.spec.ts 数值断言）
 - Why Not Blocking Closure: `erp_mfg_crp_load.workcenterId` 是 mandatory FK→ErpMfgWorkcenter（orm:546），且 crp-load 报表经 `CrpLoadCalculator.getLoadReport` 内部 resolveReportWorkcenters 取 workcenterCode + 从 WorkcenterCalendar/WorkcenterCapacity 算 capacityHours/loadRate——依赖整条 workcenter 配置链（workcenter/calendar/capacity 均未 seed）。seed crp_load 需先 seed 配置链，超出「域表直 seed」范式且与制造域看板（仅查 work_order）非空无关。本计划范围内 production-variance/forecast-variance 两报表 + 看板已达成非空核心 Goal。
 - Successor Required: `yes`
 - Trigger Condition: 当 workcenter/workcenter_calendar/workcenter_capacity 配置链 seed 落地后，由独立 successor 或本计划扩展承接 crp_load + crp-load 报表 seed。

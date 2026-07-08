@@ -15,6 +15,8 @@
 > **CRM/客服/人力域交易单据种子已落地**（2026-07-09，plan `2026-07-09-1045-1`）——在 72 张 CSV 之上新增 **12 张 CRM/CS/HR 域表 CSV**（共 84 张）+ **2 处既有 CSV 加性追加**（erp_md_partner +1 行 EMPLOYEE 类型 / erp_fin_ar_ap_item +2 行 EMPLOYEE_ADVANCE/EXPENSE_CLAIM·OPEN）：CRM 5 表（stage/lead/forecast_period/forecast/forecast_line）+ CS 3 表（ticket_type/ticket/survey）+ HR 4 表（department/employee/salary_simulation/salary_simulation_item_adj）。使三域 **5 张报表**（CRM lead-conversion-funnel/forecast-accuracy、CS ticket-sla-csat-summary、HR payroll-simulation-comparison/employee-net-balance）数值转非空可观测。HR employee-net-balance 经跨域 finance/master-data 扩展（追加员工型 partner + ar_ap_item OPEN 行）驱动。三域为纯报表域（无看板 BizModel）。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-1045-1-crm-cs-hr-seed-table-map.md`。
 >
 > **质量域 SPC 种子已落地**（2026-07-09，plan `2026-07-09-1145-2`）——在 84 张 CSV 之上新增 **3 张质量域 SPC 表 CSV**（共 87 张）+ **1 处既有 CSV 加性追加**（erp_qa_non_conformance +1 行 sourceType=SPC·status=OPEN）：spc_chart（1 行，parameterId=0 占位软引用）+ spc_sample（1 行 isOutOfControl=true）+ spc_capability（1 行 capabilityLevel=INADEQUATE）。使质量看板 `getSpcOutOfControlWarning` 三计数器（outOfControlChartCount/inadequateCapabilityCount/openSpcNcrCount）由确定性 0 转非空可观测（解除 0930-2 Deferred「SPC 三表 seed」+ 0930-3「确定性 0」状态）。Strategy C 完整参照完整性（sample/capability.chartId 指向真实 chart 行）；SPC 引擎双层门控默认关，seed 静态结果行不被重算覆盖。列映射/拓扑序/范围裁决/期望值派生见 `docs/analysis/2026-07-09-1145-2-quality-spc-seed-table-map.md`。
+>
+> **制造域工作中心配置链 + crp_load 种子已落地**（2026-07-09，plan `2026-07-09-0628-1`）——在 87 张 CSV 之上新增 **4 张制造域工作中心配置链 + crp_load 表 CSV**（共 91 张）：workcenter（1 行 WC-001 主装配线）+ workcenter_calendar（1 行 单班 08:00~16:00 ALL_WEEK）+ workcenter_capacity（1 行 efficiencyFactor=1）+ crp_load（1 行 loadDate=2026-07-15 loadHours=4）。使 CRP 负荷报表（crp-load-report）经 `CrpLoadCalculator.getLoadReport` 由空转非空可观测（capacityHours=8.00 / loadRate=0.50 确定性派生），叠加 `mfg-crp-load.value.spec.ts` 数据驱动数值断言，完成全报表域数值断言覆盖里程碑（crp-load 为最后一个缺口）。解除 0930-1 Deferred「crp_load 表 + crp-load 报表 seed」。Strategy C 完整参照完整性（calendar/capacity/crp_load.workcenterId 指向真实 workcenter 行）；CRP 重算链经 nop-job 双层门控默认关，seed 静态 crp_load 行不被重算覆盖。列映射/拓扑序/范围裁决/期望值派生见 `docs/analysis/2026-07-09-0628-1-crp-load-seed-table-map.md`。
 
 ## 目的
 
@@ -169,9 +171,9 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 2. 1234-1 seed 的科目表无制造费用/差异/在产品专用科目，seed GL 凭证徒增参照复杂度；
 3. 制造域过账 → GL 凭证 seed 归后续（Deferred）。
 
-### crp_load 移出范围（Deferred）
+### crp_load 移出范围（Deferred → 已于 0628-1 落地）
 
-`erp_mfg_crp_load.workcenterId` 是 mandatory FK→ErpMfgWorkcenter，且 crp-load 报表经 `CrpLoadCalculator` 依赖 workcenter/workcenter_calendar/workcenter_capacity 配置链（均未 seed）算 capacityHours/loadRate。seed crp_load 需先 seed 整条配置链，超出「域表直 seed」范式。触发条件：workcenter 配置链 seed 落地后，由独立 successor 承接 crp_load + crp-load 报表。
+`erp_mfg_crp_load.workcenterId` 是 mandatory FK→ErpMfgWorkcenter，且 crp-load 报表经 `CrpLoadCalculator` 依赖 workcenter/workcenter_calendar/workcenter_capacity 配置链（均未 seed）算 capacityHours/loadRate。seed crp_load 需先 seed 整条配置链，超出「域表直 seed」范式。0930-1 据此将 crp_load + crp-load 报表移出范围（Deferred，触发条件「workcenter 配置链 seed 落地后」）。**此阻塞已于 `2026-07-09-0628-1` 解除**：seed 完整工作中心配置链（workcenter 1 行 + workcenter_calendar 1 行 单班 08:00~16:00 ALL_WEEK + workcenter_capacity 1 行 efficiencyFactor=1）+ crp_load 1 行（loadDate=2026-07-15 loadHours=4），使 crp-load 报表经 `CrpLoadCalculator.getLoadReport` 由空转非空可观测（capacityHours=8.00 / loadRate=0.50 确定性派生），叠加 `mfg-crp-load.value.spec.ts` 数据驱动数值断言。详见下方「制造域工作中心配置链 + crp_load 种子」段。
 
 ### 域内金额自洽约束
 
@@ -182,7 +184,7 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 ### Non-Goals（归后续批次）
 
 - 制造域 GL 凭证/业财一体 seed（制造费用/差异过账凭证）——看板/报表读域表非 GL，种子科目表无制造域专用科目；触发条件：制造域业财一体端到端数值回归需 GL 串联时。
-- crp_load + crp-load 报表 seed——mandatory workcenterId FK + workcenter/calendar/capacity 配置链依赖；触发条件：workcenter 配置链 seed 落地后。
+- ~~crp_load + crp-load 报表 seed——mandatory workcenterId FK + workcenter/calendar/capacity 配置链依赖；触发条件：workcenter 配置链 seed 落地后。~~ **已于 2026-07-09-0628-1 落地**（见下方「制造域工作中心配置链 + crp_load 种子」段；workcenter 配置链 seed 后 crp_load + crp-load 报表 seed 阻塞解除）。
 - 制造域配置/执行链 seed（BOM/Routing/Workcenter/MRP/JobCard/MaterialIssue/Subcontract/CostRollup/BatchGenealogy/work_order_line）——这些表不被看板/报表 `QueryBean` 直接读，work_order.bomId/routingId 非强制可留 null；触发条件：制造域配置/执行链端到端回归需这些数据时。
 - 精确制造域 KPI/报表数值断言——本计划解除「制造域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-09-0930-3` 承接。
 - 其他扩展域交易种子（maintenance/quality 同批 N=2；CRM/CS/HR/logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。**maintenance/quality 已于 2026-07-09-0930-2 落地（见下方「维护+质量域交易单据种子」段）**；**CRM/CS/HR 已于 2026-07-09-1045-1 落地（见下方「CRM/客服/人力域交易单据种子」段）**。
@@ -358,3 +360,68 @@ config 门控两段默认 true（`ErpQaConfigs.isDashQaSpcIncludeInadequate`/`is
 - ErpQaParameter 实体物化 / 检验参数 seed——parameterId 为自由 BIGINT 软引用，占位值 0 即可；触发条件：SPC 控制图需绑定真实检验参数维度时。
 - SPC 引擎重算链 seed / rule engine 触发——本批 seed 静态结果行令看板可观测，不触发 SpcRuleEngine/SpcControlLimitCalculator/SpcCapabilityCalculator 重算；触发条件：需验证 SPC 引擎端到端计算正确性时。
 - 质量域其他配置表 seed（risk_register/quality_goal/review/calibration/recall/sampling_plan/inspection_template）——0930-2 既定 Deferred，触发条件不变。
+
+## 制造域工作中心配置链 + crp_load 种子（已落地）
+
+### 核心范式：域表「直 seed」+ 完整参照完整性（Strategy C，镜像 SPC 范式）
+
+承接 0930-1 Deferred「crp_load 表 + crp-load 报表 seed」。CRP 负荷报表（crp-load-report）**读 crp_load + workcenter 配置链而非 GL 凭证**（经 `ErpMfgReportBizModel.buildCrpLoadDataset` → `CrpLoadCalculator.getLoadReport` 核实）：
+
+- **resolveReportWorkcenters**：workcenterIds（若提供）否则区间内有 CrpLoad 行或有 Calendar 的工作中心。
+- **indexLoads**：聚合 `erp_mfg_crp_load` 行 → workcenter×date 累加 loadHours/setupHours（驱动 loadHours）。
+- **efficiencyByWorkcenter**：读 `erp_mfg_workcenter_capacity.efficiencyFactor`（isActive=true，缺省回退 1）。
+- **calendarsByWorkcenter**：读 `erp_mfg_workcenter_calendar`（isActive=true）→ `availableHours(calendars, date)` = Σ shiftHours(startTime,endTime)（受 effectiveFrom/effectiveTo 边界 + workDatePattern 周几模式过滤）。
+- **capacityHours** = availableHours × efficiency；**loadRate** = loadHours / capacityHours；**overloaded** = loadRate > erp-mfg.crp-overload-threshold（默认 1.0）。
+
+**关键**：报表非空需 crp_load 行（驱动 loadHours）+ workcenter（驱动 code）+ workcenter_calendar（驱动 capacityHours）。workcenter_capacity 提供 efficiencyFactor（缺省 1 仍可工作，但 seed 一行保证参照完整）。故 seed 4 表完整配置链（镜像 1145-2 Strategy C），**无需 seed GL 凭证**。
+
+### Strategy C 完整参照完整性裁决
+
+- **Strategy C（selected）**：seed workcenter（1 行）+ workcenter_calendar（1 行 IS_ACTIVE=true）+ workcenter_capacity（1 行 EFFICIENCY_FACTOR=1）+ crp_load（1 行 LOAD_HOURS=4），以一致 workcenterId=1 串联；calendar/capacity/crp_load.workcenterId 指向真实 workcenter 行（完整参照）。
+- **Strategy B（rejected）**：仅 seed workcenter + crp_load（不 seed calendar/capacity）——`getLoadReport` 需 calendar 算 capacityHours（缺 calendar 则 availableHours=0 → capacityHours=0 → loadRate 除零兜底 9999），报表数值不可观测/不稳定。
+
+### capacityHours 口径（确定性派生）
+
+seed workcenter_calendar: START_TIME=`08:00`/END_TIME=`16:00`/WORK_DATE_PATTERN=`ALL_WEEK`/EFFECTIVE=`2026-07-01~2026-07-31`/IS_ACTIVE=true；crp_load.LOAD_DATE=`2026-07-15`（周三，ALL_WEEK 恒命中）：
+- `shiftHours("08:00","16:00")` = Duration 480 min / 60 = 8.0000（SCALE=4）
+- capacityHours = 8.0000 × efficiencyFactor(1.0000) = **8.0000**（渲染 `8.00`）
+- loadRate = loadHours(4.00) / capacityHours(8.0000) = **0.5000**（渲染 `0.50`）
+- overloaded = 0.5 ≤ 1.0 → false（50% 负荷，业务合理）
+
+### CRP 重算覆盖防护
+
+CRP 重算链经 nop-job 双层门控默认关：`erp-mfg.crp-run-cron` 默认空（`ErpMfgCrpRunJob` 不调度）+ `erp-mfg.crp-load-source`（默认 WORK_ORDER）不影响 `getLoadReport` 读既有行。fresh-DB 启动（`init-database-data=true`）不触发 `CrpLoadCalculator.calculateLoad` 重算，seed 静态 crp_load 行安全不被覆盖。重算链端到端回归属 Deferred。
+
+### 加载拓扑序（跨域）
+
+```
+[1234-1 主数据(已 seed)] md_organization(2) / md_material(1)
+[0930-1 制造域(已 seed)] erp_mfg_work_order(1 = WO-2026-001)
+  → [工作中心配置头] erp_mfg_workcenter                            （无 mandatory FK，独立）
+      → [工作中心配置行]
+        erp_mfg_workcenter_calendar                                （workcenterId mandatory FK→workcenter）
+        erp_mfg_workcenter_capacity                                （workcenterId mandatory FK + materialId FK→md_material=1）
+      → [CRP 负荷快照行]
+        erp_mfg_crp_load                                           （workcenterId mandatory FK→workcenter + workOrderId 弱指针→work_order=1）
+```
+
+### posted 一致性裁决（四表无 posted 列）
+
+镜像 0930-1 裁决。四表（workcenter/workcenter_calendar/workcenter_capacity/crp_load）ORM 均**无 `posted` 列**（逐表 ORM 核实），crp_load 为负荷快照非 GL，看板/报表读域表，CSV 不含 posted。
+
+### 域内数值自洽约束（期望值派生）
+
+| token | 期望渲染值 | seed 行依据 |
+|-------|-----------|------------|
+| workcenterCode | `WC-001` | workcenter.CODE |
+| loadDate | `2026-07-15` | crp_load.LOAD_DATE |
+| loadHours | `4.00` | crp_load.LOAD_HOURS=4 |
+| capacityHours | `8.00` | calendar 08:00~16:00 × efficiency 1 = 8.0000 |
+| loadRate | `0.50` | 4.00 / 8.0000 = 0.5000 |
+
+### Non-Goals（归后续批次）
+
+- 制造域 GL 凭证/业财一体 seed（制造费用/差异过账凭证）——看板/报表读域表非 GL，种子科目表无制造域专用科目；触发条件：制造域业财一体端到端数值回归需 GL 串联时。（镜像 0930-1 既定 Deferred。）
+- CRP 负荷前端可视化增强（echarts 负荷/产能对比图、超负荷高亮）——本计划使 crp-load 报表数值可观测（HTML token 断言），不做 echarts 可视化增强（前端能力面）；触发条件：产品要求 CRP 负荷看板可视化时。
+- crp_load 重算链 seed / calculateLoad 端到端——本计划 seed 静态 crp_load 行令报表可观测，不触发 `CrpLoadCalculator.calculateLoad` 重算（重算会清区间写新行覆盖 seed）；触发条件：需在部署期种子上验证 calculateLoad 从 WorkOrder 重算到 crp_load 快照的端到端正确性时。
+- 制造域配置/执行链其他表 seed（BOM/Routing/MRP/JobCard/MaterialIssue/Subcontract/CostRollup/BatchGenealogy/work_order_line）——0930-1 既定 Deferred，crp-load 报表 `getLoadReport` 不读这些表；触发条件不变。

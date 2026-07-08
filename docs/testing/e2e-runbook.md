@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 27 个数据驱动数值断言 spec（共 80 spec）。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec（共 81 spec）。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
@@ -37,7 +37,7 @@ npx playwright test
 webServer 命令含测试专用 JVM 参数：
 - `-Dnop.auth.service-public=true` — 服务端认证旁路（sys 用户上下文）
 - `-Dnop.auth.login.allow-create-default-user=true` — 自动创建测试用户 `nop`/`123`
-- `-Dnop.orm.init-database-data=true` — 部署期种子数据初始化（21 张主数据表 + 23 张交易单据表 + 13 张运营域表 + 4 张制造域表 + 11 张维护+质量域表 + 12 张 CRM/CS/HR 域表 + 3 张质量域 SPC 表，详见下方「种子库启动」）
+- `-Dnop.orm.init-database-data=true` — 部署期种子数据初始化（21 张主数据表 + 23 张交易单据表 + 13 张运营域表 + 4 张制造域表 + 11 张维护+质量域表 + 12 张 CRM/CS/HR 域表 + 3 张质量域 SPC 表 + 4 张制造域工作中心配置链+crp_load 表，详见下方「种子库启动」）
 - `rm -f db/erp.mv.db` — fresh-DB 重置（seed 非幂等，每次启动前清库）
 - 页面模型校验保持默认开启（`nop.web.validate-page-model=true`，application.yaml 默认值）——`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面校验安全网已恢复
 
@@ -63,7 +63,7 @@ SKIP_WEBSERVER=1 npx playwright test
 
 默认 webServer 命令（方式 A）已含 **部署期种子数据初始化**：
 
-- `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化），从 `_vfs/_init-data/*.csv` 按拓扑序插入 **87 张 CSV**：
+- `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化），从 `_vfs/_init-data/*.csv` 按拓扑序插入 **91 张 CSV**：
   - **21 张核心主数据表**（1234-1）：组织/币种/计量单位/物料/SKU/往来单位/仓库/员工/科目体系/税率/结算方式等
   - **23 张业务交易单据表**（1445-1）：P2P（PO/Receive/Invoice/Payment 头+行）+ O2C（SO/Delivery/Invoice/Receipt 头+行）+ 已过账财务产物（凭证/凭证行/凭证回链/AR-AP 辅助账/GL 余额/会计期间 OPEN）
   - **13 张运营域表**（2210-1）：库存（stock_move+line/stock_balance/cost_layer）+ 资产（asset_category/asset/depreciation_schedule）+ 项目（project_type/project/cost_collection/timesheet/budget/project_pnl）；三域看板读域表非 GL，posted 统一 false
@@ -71,6 +71,7 @@ SKIP_WEBSERVER=1 npx playwright test
   - **11 张维护+质量域表**（2026-07-09-0930-2）：维护域 8 表（equipment_category/equipment/schedule/request/downtime_entry/visit/visit_task/spare_part_usage）+ 质量域 3 表（inspection/non_conformance/action）；看板 `getDashboardKpi` + 3 预警（findEquipmentDowntimeAlert/findMaintenanceOverdueAlert/findCapaOverdueAlert）+ 4 报表（maintenance-history/downtime-summary/inspection-summary/ncr-capa-summary）读域表非 GL，posted 统一 false；SPC 三表曾因 spc_chart.parameterId 配置链依赖归 Deferred，**已于 2026-07-09-1145-2 落地**（见下方 1145-2 行）
   - **12 张 CRM/CS/HR 域表 + 2 处既有 CSV 加性追加**（2026-07-09-1045-1）：CRM 5 表（stage/lead/forecast_period/forecast/forecast_line）+ CS 3 表（ticket_type/ticket/survey）+ HR 4 表（department/employee/salary_simulation/salary_simulation_item_adj）+ `erp_md_partner` 追加 1 行 EMPLOYEE 类型 + `erp_fin_ar_ap_item` 追加 2 行 EMPLOYEE_ADVANCE/EXPENSE_CLAIM·OPEN；三域为纯报表域（无看板 BizModel），5 报表（CRM lead-conversion-funnel/forecast-accuracy、CS ticket-sla-csat-summary、HR payroll-simulation-comparison/employee-net-balance）读域表非 GL，无 posted 列；HR employee-net-balance 经跨域 finance/master-data 加性追加驱动；CRM/CS/HR 配置表 + GL 凭证归 Deferred
   - **3 张质量域 SPC 表 + 1 处既有 CSV 加性追加**（2026-07-09-1145-2）：spc_chart（1 行，parameterId=0 占位软引用）+ spc_sample（1 行 isOutOfControl=true）+ spc_capability（1 行 capabilityLevel=INADEQUATE）+ `erp_qa_non_conformance` 追加 1 行 sourceType=SPC·status=OPEN；质量看板 `getSpcOutOfControlWarning` 三计数器（outOfControlChartCount/inadequateCapabilityCount/openSpcNcrCount）读 SPC 域表非 GL，由确定性 0 转非空可观测（解除 0930-2/0930-3 SPC Deferred）；Strategy C 完整参照完整性（sample/capability.chartId 指向真实 chart 行）；SPC 引擎双层门控默认关，seed 静态结果行不被重算覆盖；SPC 控制图可视化/ErpQaParameter 物化/SPC 引擎重算链归 Deferred
+  - **4 张制造域工作中心配置链 + crp_load 表**（2026-07-09-0628-1）：workcenter（1 行 WC-001 主装配线）+ workcenter_calendar（1 行 单班 08:00~16:00 ALL_WEEK IS_ACTIVE=true）+ workcenter_capacity（1 行 efficiencyFactor=1 IS_ACTIVE=true）+ crp_load（1 行 loadDate=2026-07-15 loadHours=4 workOrderId→0930-1 WO-1）；CRP 负荷报表（crp-load-report）经 `CrpLoadCalculator.getLoadReport` 读 crp_load+workcenter+calendar+capacity 非空可观测（capacityHours=8.00 / loadRate=0.50 确定性派生，解除 0930-1 crp_load Deferred）；Strategy C 完整参照完整性（calendar/capacity/crp_load.workcenterId 指向真实 workcenter 行）；CRP 重算链经 nop-job 双层门控默认关，seed 静态 crp_load 行不被重算覆盖；CRP 前端可视化/crp_load 重算链归 Deferred
 - `rm -f db/erp.mv.db db/erp.trace.db` — **fresh-DB 重置**。`DataInitInitializer` 非幂等（无存在性检查），持久 H2 文件库重复启动会主键冲突；故每次 webServer 启动前删除 db 文件，确保 seed 在空表上插入。交易种子加入后该行为不变（仅 CSV 增多，webServer JVM 参数与重置逻辑无改动）。
 
 手动启动种子库（方式 B）：
@@ -86,8 +87,8 @@ java -Dfile.encoding=UTF8 \
 ```
 
 - **生产安全**：生产 `application.yaml` 保持 `init-database-data` 缺省（`false`）；seed 仅经上述 JVM 属性 / webServer 触发。
-- **种子范围**：核心主数据（bootstrap）+ P2P/O2C 最小连通交易单据集（含已过账财务产物）+ 运营域（库存/资产/项目）最小连通集 + 制造域最小连通集（work_order/cost_variance/forecast/forecast_line）+ 维护+质量域最小连通集（equipment/schedule/request/downtime_entry/visit/visit_task/spare_part_usage/inspection/non_conformance/action）+ CRM/CS/HR 最小连通集（stage/lead/forecast·line/ticket_type/ticket/survey/department/employee/salary_simulation·item_adj + 员工型 partner 追加 + ar_ap_item EMPLOYEE_ADVANCE/EXPENSE_CLAIM 追加）。核心域看板/报表/CRUD 列表经 GraphQL 证实数据非空；交易数据已使 finance/sales/purchase 域 KPI 数值非空（采购额/销售额/收入/净利润可观测）；运营域数据已使 inventory/assets/projects 域 KPI 非空（库存总值/资产原值+折旧/项目数+已发生成本+毛利率可观测）；制造域数据已使 manufacturing 域看板 4 KPI + production-variance/forecast-variance 报表非空（在制工单数/完工量/齐套待产/准时率/状态分布/产出趋势/工单延期预警可观测）；维护+质量域数据已使 maintenance/quality 域看板 `getDashboardKpi` + 4 报表 + 3 预警非空（设备总数/运行数/待处理请求/本期维护访问/质检数/合格率/不合格数/开放 NCR/停机预警/维护逾期/CAPA 逾期可观测）；质量域 SPC 数据已使 quality 域看板 `getSpcOutOfControlWarning` 三计数器（outOfControlChartCount/inadequateCapabilityCount/openSpcNcrCount）非空（SPC 失控图/能力不足图/待处置 SPC NCR 可观测，解除 0930-2/0930-3 SPC Deferred）；CRM/CS/HR 域数据已使三域 5 报表非空（线索漏斗 leadCount/expectedRevenue、预测准确率 commitAmount/lineCount、工单 SLA/CSAT 命中率与均分、薪酬模拟差异+部门小计、员工净余额可观测）。其余扩展域交易单据未 seed（logistics/b2b/contract/drp/aps，Non-Goal，按域逐批补充）。
-- 机制详情（主数据门控/非幂等/列映射/平台 bug 修复 见 `docs/analysis/2026-07-08-1234-1-seed-data-table-column-map.md`；交易单据表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-08-1445-1-transaction-seed-table-map.md`；运营域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-08-2210-1-operational-domain-seed-table-map.md`；制造域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-09-0930-1-manufacturing-seed-table-map.md`；维护+质量域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-09-0930-2-maintenance-quality-seed-table-map.md`；CRM/CS/HR 域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-09-1045-1-crm-cs-hr-seed-table-map.md`）。
+- **种子范围**：核心主数据（bootstrap）+ P2P/O2C 最小连通交易单据集（含已过账财务产物）+ 运营域（库存/资产/项目）最小连通集 + 制造域最小连通集（work_order/cost_variance/forecast/forecast_line）+ 维护+质量域最小连通集（equipment/schedule/request/downtime_entry/visit/visit_task/spare_part_usage/inspection/non_conformance/action）+ CRM/CS/HR 最小连通集（stage/lead/forecast·line/ticket_type/ticket/survey/department/employee/salary_simulation·item_adj + 员工型 partner 追加 + ar_ap_item EMPLOYEE_ADVANCE/EXPENSE_CLAIM 追加）+ 质量域 SPC 最小连通集（spc_chart/spc_sample/spc_capability + non_conformance SPC 追加）+ 制造域工作中心配置链+crp_load 最小连通集（workcenter/workcenter_calendar/workcenter_capacity/crp_load）。核心域看板/报表/CRUD 列表经 GraphQL 证实数据非空；交易数据已使 finance/sales/purchase 域 KPI 数值非空（采购额/销售额/收入/净利润可观测）；运营域数据已使 inventory/assets/projects 域 KPI 非空（库存总值/资产原值+折旧/项目数+已发生成本+毛利率可观测）；制造域数据已使 manufacturing 域看板 4 KPI + production-variance/forecast-variance 报表 + crp-load 负荷报表非空（在制工单数/完工量/齐套待产/准时率/状态分布/产出趋势/工单延期预警 + 工作中心负荷/产能/负荷率可观测，crp-load 由 0628-1 解除空集）；维护+质量域数据已使 maintenance/quality 域看板 `getDashboardKpi` + 4 报表 + 3 预警非空（设备总数/运行数/待处理请求/本期维护访问/质检数/合格率/不合格数/开放 NCR/停机预警/维护逾期/CAPA 逾期可观测）；质量域 SPC 数据已使 quality 域看板 `getSpcOutOfControlWarning` 三计数器（outOfControlChartCount/inadequateCapabilityCount/openSpcNcrCount）非空（SPC 失控图/能力不足图/待处置 SPC NCR 可观测，解除 0930-2/0930-3 SPC Deferred）；CRM/CS/HR 域数据已使三域 5 报表非空（线索漏斗 leadCount/expectedRevenue、预测准确率 commitAmount/lineCount、工单 SLA/CSAT 命中率与均分、薪酬模拟差异+部门小计、员工净余额可观测）。其余扩展域交易单据未 seed（logistics/b2b/contract/drp/aps，Non-Goal，按域逐批补充）。
+- 机制详情（主数据门控/非幂等/列映射/平台 bug 修复 见 `docs/analysis/2026-07-08-1234-1-seed-data-table-column-map.md`；交易单据表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-08-1445-1-transaction-seed-table-map.md`；运营域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-08-2210-1-operational-domain-seed-table-map.md`；制造域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-09-0930-1-manufacturing-seed-table-map.md`；维护+质量域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-09-0930-2-maintenance-quality-seed-table-map.md`；CRM/CS/HR 域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-09-1045-1-crm-cs-hr-seed-table-map.md`；制造域工作中心配置链+crp_load 表清单/列映射/拓扑序/范围裁决/期望值派生 见 `docs/analysis/2026-07-09-0628-1-crp-load-seed-table-map.md`）。
 
 ## 分层运行
 
@@ -99,11 +100,11 @@ java -Dfile.encoding=UTF8 \
 | CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 13 分钟（84 测试：53 冒烟 spec × ~10s/spec + 27 数值断言 spec 文件产 31 测试 × ~7.5s/spec，含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 12 分钟（85 测试：53 冒烟 spec × ~10s/spec + 28 数值断言 spec 文件产 32 测试 × ~7.5s/spec，含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
-冒烟套件（`*.smoke.spec.ts`）仅验证渲染存在性。在 1234-1 主数据 + 1445-1 P2P/O2C 交易 + 2210-1 运营域交易 + 0930-1 制造域 + 0930-2 维护+质量域 + 1045-1 CRM/CS/HR 域种子基线上，核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）+ 扩展域 CRM/客服/人力（纯报表域，无看板）+ 主数据域（master-data，看板 KPI + 2 预警 + 2 报表）叠加了**数据驱动数值断言层**（`*.value.spec.ts`，27 spec：dashboards/{finance,sales,purchase,inventory,assets,projects,manufacturing,maintenance,quality,master-data}.value + reports/fin-{balance-sheet,income-statement,ar-ap-aging}.value + reports/{ast-depreciation,inv-inventory-trace,prj-cost-summary,mfg-production-variance,mfg-forecast-variance,mnt-maintenance-history,qa-inspection-summary}.value + reports/{crm-lead-conversion-funnel,crm-forecast-accuracy,cs-ticket-sla-csat,hr-employee-net-balance,hr-payroll-simulation-comparison}.value + reports/{md-material-price-list,md-partner-list}.value），验证「seed → 聚合 → GraphQL → 断言」端到端数值链。
+冒烟套件（`*.smoke.spec.ts`）仅验证渲染存在性。在 1234-1 主数据 + 1445-1 P2P/O2C 交易 + 2210-1 运营域交易 + 0930-1 制造域 + 0930-2 维护+质量域 + 1045-1 CRM/CS/HR 域 + 1145-2 质量域 SPC + 0628-1 制造域工作中心配置链+crp_load 种子基线上，核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）+ 扩展域 CRM/客服/人力（纯报表域，无看板）+ 主数据域（master-data，看板 KPI + 2 预警 + 2 报表）叠加了**数据驱动数值断言层**（`*.value.spec.ts`，28 spec：dashboards/{finance,sales,purchase,inventory,assets,projects,manufacturing,maintenance,quality,master-data}.value + reports/fin-{balance-sheet,income-statement,ar-ap-aging}.value + reports/{ast-depreciation,inv-inventory-trace,prj-cost-summary,mfg-production-variance,mfg-forecast-variance,mfg-crp-load,mnt-maintenance-history,qa-inspection-summary}.value + reports/{crm-lead-conversion-funnel,crm-forecast-accuracy,cs-ticket-sla-csat,hr-employee-net-balance,hr-payroll-simulation-comparison}.value + reports/{md-material-price-list,md-partner-list}.value），验证「seed → 聚合 → GraphQL → 断言」端到端数值链。
 
 ### 断言范式
 
@@ -121,6 +122,7 @@ java -Dfile.encoding=UTF8 \
 - `docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`（CRM/客服/人力域 5 报表，纯报表域无看板）
 - `docs/analysis/2026-07-09-1145-1-master-data-expected-values.md`（主数据域看板 KPI + 2 预警 + 2 报表）
 - `docs/analysis/2026-07-09-1145-2-quality-spc-seed-table-map.md`（质量域 SPC 三表种子表映射 + Strategy C 裁决 + getSpcOutOfControlWarning 期望值派生；supersede 0930-3 的 SPC=0 + openNcrCount=2 行）
+- `docs/analysis/2026-07-09-0628-1-crp-load-seed-table-map.md`（制造域工作中心配置链+crp_load 种子表映射 + capacityHours 口径 + Strategy C 裁决 + crp-load-report 期望值派生；解除 0930-1 crp_load Deferred）
 
 当前基线值：
 
@@ -134,6 +136,7 @@ java -Dfile.encoding=UTF8 \
 | projects 看板 | openProjectCount / totalBudget / incurredCost / executionRate | 1 / 50000 / 30000 / 0.6 |
 | projects 毛利率 | totalRevenue / totalGrossProfit / grossMarginPct | 50000 / 20000 / 0.4 |
 | manufacturing 看板 | inProcessCount / periodCompletedQty / stockPartialCount / onTimeRate | 1 / 180 / 1 / 0.5 |
+| CRP 负荷报表 | workcenterCode + loadDate + loadHours/capacityHours/loadRate token | WC-001 / 2026-07-15 / 4.00 / 8.00 / 0.50 |
 | maintenance 看板 | equipmentTotal / runningCount / openRequestCount / periodVisitCount | 3 / 2 / 1 / 1 |
 | quality 看板 | inspectionCount / passRate / rejectedCount / openNcrCount | 3 / 0.6666666666666666 / 1 / 3 |
 | quality SPC 预警 | outOfControlChartCount / inadequateCapabilityCount / openSpcNcrCount | 1 / 1 / 1 |
@@ -160,7 +163,7 @@ java -Dfile.encoding=UTF8 \
 2. 同步更新对应分析文档（核心域 `2026-07-08-1445-2-kpi-expected-values.md` / 运营域 `2026-07-08-2210-2-operational-kpi-expected-values.md` / 制造+维护+质量域 `2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md` / CRM+CS+HR 域 `2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`）。
 3. 同步更新对应 `*.value.spec.ts` 的 `expected` / `expectedTokens`。
 
-不更新则数值断言会失败（这是设计预期——暴露 seed 漂移，非测试脆弱）。manufacturing/maintenance/quality 域数值断言层已落地（0930-3，期望值表 `docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`）；CRM/客服/人力域报表数值断言层已落地（1045-2，期望值表 `docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`）；主数据域看板/报表数值断言层已落地（1145-1，期望值表 `docs/analysis/2026-07-09-1145-1-master-data-expected-values.md`，含 vendorCount 字典值漂移修复）；其余扩展域（logistics/b2b/contract/drp/aps，无看板无报表）数值断言归后续批次（触发条件：对应域有可断言看板/报表时）。
+不更新则数值断言会失败（这是设计预期——暴露 seed 漂移，非测试脆弱）。manufacturing/maintenance/quality 域数值断言层已落地（0930-3，期望值表 `docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`）；CRM/客服/人力域报表数值断言层已落地（1045-2，期望值表 `docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`）；主数据域看板/报表数值断言层已落地（1145-1，期望值表 `docs/analysis/2026-07-09-1145-1-master-data-expected-values.md`，含 vendorCount 字典值漂移修复）；制造域 CRP 负荷报表数值断言层已落地（0628-1，期望值表 + capacityHours 口径 `docs/analysis/2026-07-09-0628-1-crp-load-seed-table-map.md`，完成全报表域数值断言覆盖里程碑）；其余扩展域（logistics/b2b/contract/drp/aps，无看板无报表）数值断言归后续批次（触发条件：对应域有可断言看板/报表时）。
 
 ## CRUD 套件（18 域列表/表单冒烟）
 
@@ -212,7 +215,7 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 
 ## 已知限制
 
-- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 87 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据 + 13 运营域表 + 4 制造域表 + 11 维护+质量域表 + 12 CRM/CS/HR 域表 + 3 质量域 SPC 表 + 3 处加性追加）。核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）看板 KPI 与报表数值经交易数据驱动**非空可观测**（含质量域 SPC 失控预警三计数器非空）；CRM/CS/HR 三域 5 报表经种子数据驱动**非空可观测**（三域无看板）。核心域 + 运营域 + 扩展域（manufacturing/maintenance/quality）+ 扩展域（CRM/CS/HR 纯报表域）+ 主数据域（master-data 看板/2 报表）均已叠加**数据驱动数值断言层**（27 `*.value.spec.ts`，见上方「数据驱动数值断言层」）；其余扩展域（logistics/b2b/contract/drp/aps）无看板无报表未 seed。
+- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 91 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据 + 13 运营域表 + 4 制造域表 + 11 维护+质量域表 + 12 CRM/CS/HR 域表 + 3 质量域 SPC 表 + 4 制造域工作中心配置链+crp_load 表 + 3 处加性追加）。核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）看板 KPI 与报表数值经交易数据驱动**非空可观测**（含质量域 SPC 失控预警三计数器非空 + 制造域 CRP 负荷报表非空）；CRM/CS/HR 三域 5 报表经种子数据驱动**非空可观测**（三域无看板）。核心域 + 运营域 + 扩展域（manufacturing/maintenance/quality）+ 扩展域（CRM/CS/HR 纯报表域）+ 主数据域（master-data 看板/2 报表）均已叠加**数据驱动数值断言层**（28 `*.value.spec.ts`，见上方「数据驱动数值断言层」）；其余扩展域（logistics/b2b/contract/drp/aps）无看板无报表未 seed。
 - **单浏览器**：仅 chromium（Chrome channel），不支持 Firefox/WebKit/移动视口。
 - **冒烟级**：不断言像素级视觉一致性、不验证报表渲染内容正确性、不断言下载产物。
 - **页面验证已恢复**：`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面模型校验（`validate-page-model=true`）已恢复全绿，不再使用 `-Dnop.web.validate-page-model=false` 绕过。
@@ -281,6 +284,7 @@ tests/e2e/
     ├── prj-cost-summary.value.spec.ts     # 数值断言层（运营域）
     ├── mfg-production-variance.value.spec.ts  # 数值断言层（扩展域）
     ├── mfg-forecast-variance.value.spec.ts    # 数值断言层（扩展域）
+    ├── mfg-crp-load.value.spec.ts             # 数值断言层（扩展域，工作中心负荷报表）
     ├── mnt-maintenance-history.value.spec.ts  # 数值断言层（扩展域）
     ├── qa-inspection-summary.value.spec.ts    # 数值断言层（扩展域）
     ├── crm-lead-conversion-funnel.value.spec.ts   # 数值断言层（扩展域 CRM，纯报表域无看板）
