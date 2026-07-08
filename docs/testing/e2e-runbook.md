@@ -35,6 +35,8 @@ npx playwright test
 webServer 命令含测试专用 JVM 参数：
 - `-Dnop.auth.service-public=true` — 服务端认证旁路（sys 用户上下文）
 - `-Dnop.auth.login.allow-create-default-user=true` — 自动创建测试用户 `nop`/`123`
+- `-Dnop.orm.init-database-data=true` — 部署期种子数据初始化（21 张主数据表，详见下方「种子库启动」）
+- `rm -f db/erp.mv.db` — fresh-DB 重置（seed 非幂等，每次启动前清库）
 - 页面模型校验保持默认开启（`nop.web.validate-page-model=true`，application.yaml 默认值）——`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面校验安全网已恢复
 
 ### 方式 B：复用已运行实例（开发调试推荐）
@@ -54,6 +56,29 @@ java -Dfile.encoding=UTF8 \
 ```bash
 SKIP_WEBSERVER=1 npx playwright test
 ```
+
+### 种子库启动（演示 / 数据可见性）
+
+默认 webServer 命令（方式 A）已含 **部署期种子数据初始化**：
+
+- `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化），从 `_vfs/_init-data/*.csv` 按拓扑序插入 21 张核心主数据表（组织/币种/计量单位/物料/SKU/往来单位/仓库/员工/科目体系/税率/结算方式等）。
+- `rm -f db/erp.mv.db db/erp.trace.db` — **fresh-DB 重置**。`DataInitInitializer` 非幂等（无存在性检查），持久 H2 文件库重复启动会主键冲突；故每次 webServer 启动前删除 db 文件，确保 seed 在空表上插入。
+
+手动启动种子库（方式 B）：
+
+```bash
+lsof -ti :8080 | xargs kill -9 2>/dev/null
+rm -f db/erp.mv.db db/erp.trace.db   # 必需：非幂等，须 fresh-DB
+java -Dfile.encoding=UTF8 \
+     -Dnop.auth.service-public=true \
+     -Dnop.auth.login.allow-create-default-user=true \
+     -Dnop.orm.init-database-data=true \
+     -jar app-erp-all/target/quarkus-app/quarkus-run.jar
+```
+
+- **生产安全**：生产 `application.yaml` 保持 `init-database-data` 缺省（`false`）；seed 仅经上述 JVM 属性 / webServer 触发。
+- **种子范围**：仅核心主数据（bootstrap）。业务交易单据（采购/销售/凭证/工单）未 seed，相关 KPI 仍为 0；主数据域看板/报表（如物料价目表、往来单位清单）经 GraphQL 证实数据非空。
+- 机制详情（门控/非幂等/列映射/平台 bug 修复）见 `docs/analysis/2026-07-08-1234-1-seed-data-table-column-map.md`。
 
 ## 分层运行
 
@@ -89,7 +114,7 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 
 ## 已知限制
 
-- **空库冒烟**：H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。不断言具体业务数值。
+- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 21 张主数据 seed），主数据域看板/报表数值非空可观测。业务交易单据未 seed（Non-Goal，触发条件见 `docs/plans/2026-07-08-1234-1-demo-seed-data-init.md` Deferred）。不断言具体业务数值。
 - **单浏览器**：仅 chromium（Chrome channel），不支持 Firefox/WebKit/移动视口。
 - **冒烟级**：不断言像素级视觉一致性、不验证报表渲染内容正确性、不断言下载产物。
 - **页面验证已恢复**：`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面模型校验（`validate-page-model=true`）已恢复全绿，不再使用 `-Dnop.web.validate-page-model=false` 绕过。

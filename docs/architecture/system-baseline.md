@@ -14,6 +14,7 @@
 - 测试栈：JUnit 5 + nop-autotest（已就绪）
 - 构建和打包工具：Maven 多模块，父项目 `io.github.entropy-cloud:nop-entropy`
 - 部署形态：JVM uber-jar；开发环境使用 H2，生产环境使用 MySQL/Oracle/PostgreSQL（可通过 `application.yaml` 配置）
+- 数据初始化（部署期 seed）：`nop.orm.init-database-data`（默认 `false`，`application.yaml` 不设）。启用时经平台 `DataInitInitializer`（`DataBaseSchemaInitializer` 之后的条件 bean）从 `_vfs/_init-data/*.csv` 按拓扑序插入、`*.sql` 按文件名排序执行。**非幂等**（无存在性检查），持久库重复启动会主键冲突；E2E/演示经 JVM 属性 `-Dnop.orm.init-database-data=true` + fresh-DB 重置（删 `db/erp.mv.db`）触发，生产保持默认关闭。当前 seed 覆盖 21 张核心主数据表（机制/列映射见 `docs/analysis/2026-07-08-1234-1-seed-data-table-column-map.md`）。
 - 此应用必须集成的外部平台或企业系统：`<待在选择业务域时定义>`
 
 ## 模块结构（codegen 已完成）

@@ -15,6 +15,7 @@
 | P2 | 扩展 5 域业务逻辑 | `extended-roadmap.md` M2 | ✅ done | `plan-first` |
 | P3 | 新增 8 域业务逻辑 | `extended-roadmap.md` M3 | ✅ done | `plan-first` |
 | P4 | 业财一体端到端 | `core-business-roadmap.md` M4 | ✅ done | `plan-first` |
+| — | 部署期演示种子数据（`_vfs/_init-data/` CSV + DataInitInitializer，解除空库阻断） | `2026-07-08-1234-1` | ✅ done | `plan-first` |
 | P5 | 7 扩展域 posted/businessDate 标准字段补充（cs/hr/logistics/b2b/contract/drp/aps） | `2026-07-07-1915-1` Deferred | ⛔ blocked（触发条件：`2026-07-07-1915-1` 关闭后） | `ask-first`（ORM 保护区域） |
 
 ## 就绪不变量
