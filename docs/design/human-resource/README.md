@@ -228,7 +228,7 @@ HR 域的薪资凭证通过 `IErpFinAcctDocProvider` 注册 `SALARY/SALARY_PAYME
 
 新增 hr 域 TOPM「人力资源管理」，分组：
 - 组织管理：部门、职位
-- 员工管理：员工主数据、劳动合同
+- 员工管理：员工主数据、劳动合同、部门调动（`ErpHrEmployeeBizModel.transferEmployee` 已落地，UC-HR-08）
 - 考勤工时：考勤记录、工时表
 - 薪酬管理：薪酬核算、薪酬记录
 - 休假管理：休假申请、假期余额

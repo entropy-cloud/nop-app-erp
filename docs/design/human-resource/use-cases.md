@@ -96,6 +96,8 @@
 | **异常** | 调动日期与已有休假冲突时告警 |
 | **跨域协作** | 成本中心变更可能影响项目工时归集 |
 
+> **实现状态**：已落地 `ErpHrEmployeeBizModel.transferEmployee` `@BizMutation`（单步直接更新，无审批；经 `IErpHrDepartmentBiz`/`IErpHrPositionBiz`/`IErpHrEmploymentContractBiz`/`IErpHrLeaveRequestBiz` 跨实体校验/联动；合同处理三态 `handleContract` AUTO/YES/NO + config-gated；休假冲突告警不阻塞；AMIS 员工页「调动」drawer 入口）。调动单实体 + 审批工作流归 Deferred（触发条件=调动需人工审批留痕或批量调动报表时，经独立 ORM ask-first 计划承接）。详见 `docs/plans/2026-07-08-0517-2-hr-employee-transfer-uc-hr-08.md`。
+
 ## UC-HR-09 排班管理
 
 | 项目 | 内容 |
