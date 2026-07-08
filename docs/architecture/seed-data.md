@@ -7,6 +7,8 @@
 > **交易单据种子（P2P+O2C）已落地**（2026-07-08，plan `2026-07-08-1445-1`）——在 21 张主数据 CSV 之上新增 **23 张交易单据 CSV**（共 44 张），覆盖采购到付款（PO→Receive→Invoice→Payment）+ 销售到收款（SO→Delivery→Invoice→Receipt）各 1 条端到端最小连通链，含对应**已过账财务产物**（凭证/凭证行/业财回链/AR-AP 辅助账/GL 余额/会计期间 OPEN）。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-08-1445-1-transaction-seed-table-map.md`。
 >
 > **运营域交易单据种子（库存/资产/项目）已落地**（2026-07-08，plan `2026-07-08-2210-1`）——在 44 张 CSV 之上新增 **13 张运营域表 CSV**（共 57 张），覆盖库存（stock_move+line/stock_balance/cost_layer）+ 资产（asset_category/asset/depreciation_schedule）+ 项目（project_type/project/cost_collection/timesheet/budget/project_pnl）三域最小连通集。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-08-2210-1-operational-domain-seed-table-map.md`。
+>
+> **制造域交易单据种子已落地**（2026-07-09，plan `2026-07-09-0930-1`）——在 57 张 CSV 之上新增 **4 张制造域表 CSV**（共 61 张）：work_order（4 行覆盖 IN_PROCESS/STOCK_PARTIAL/COMPLETED 三态）+ cost_variance（1 行）+ forecast（1 行 APPROVED）+ forecast_line（1 行）。使制造域看板 4 `@BizQuery`（getDashboardKpi/getWorkOrderStatusDistribution/getDashboardTrend/findDelayedWorkOrderAlert）+ 2 报表（production-variance/forecast-variance）数值转非空可观测。crp_load + crp-load 报表因 mandatory workcenterId FK + workcenter/calendar/capacity 配置链依赖归 Deferred。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-0930-1-manufacturing-seed-table-map.md`。
 
 ## 目的
 
@@ -83,7 +85,7 @@ accounting_period → accounting_period_status
 
 ### Non-Goals（归后续批次）
 
-- 扩展域交易单据（manufacturing/HR/quality/maintenance/CRM/CS/logistics/b2b/contract/drp/aps）——按域逐批补充（1234-1/1445-1 Deferred 既定策略）。**inventory/assets/projects 已于 2210-1 落地**（见上方「运营域交易单据种子」段）。
+- 扩展域交易单据（manufacturing/HR/quality/maintenance/CRM/CS/logistics/b2b/contract/drp/aps）——按域逐批补充（1234-1/1445-1 Deferred 既定策略）。**inventory/assets/projects 已于 2210-1 落地**；**manufacturing 已于 2026-07-09-0930-1 落地**（见下方「制造域交易单据种子」段）。
 - 运营域 GL 凭证/业财一体 seed（库存估值凭证/资产取得+折旧凭证/项目成本凭证）——三域看板读域表非 GL，且种子科目表无运营域专用科目；触发条件：运营域业财一体端到端数值回归需 GL 串联时。
 - 退货链（采购/销售退货 + 红字凭证 + 反向辅助账）
 - 核销单文档 `erp_fin_reconciliation`(+line)——本批 ar_ap_item 直表达 SETTLED 态，核销单文档归后续
@@ -131,5 +133,50 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 ### Non-Goals（归后续批次）
 
 - 运营域 GL 凭证/业财一体 seed（库存估值凭证/资产取得+折旧凭证/项目成本凭证）——三域看板读域表非 GL；触发条件：运营域业财一体端到端数值回归需 GL 串联时。
-- 其他扩展域交易种子（manufacturing/quality/maintenance/CRM/CS/HR/logistics/b2b/contract/drp/aps）——按域逐批补充（1445-1 Deferred 既定策略）。
+- 其他扩展域交易种子（manufacturing/quality/maintenance/CRM/CS/HR/logistics/b2b/contract/drp/aps）——按域逐批补充（1445-1 Deferred 既定策略）。**manufacturing 已于 2026-07-09-0930-1 落地（见下方「制造域交易单据种子」段）**。
 - 精确运营域 KPI/报表数值断言——本计划解除「运营域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-08-2210-2` 承接。
+
+## 制造域交易单据种子（已落地）
+
+### 核心范式：域表「直 seed」（镜像运营域范式）
+
+制造域看板/报表**读域表而非 GL 凭证**（经 `ErpMfgDashboardBizModel`/`ErpMfgReportBizModel` 核实）：
+
+- **制造看板**（`ErpMfgDashboardBizModel`，4 `@BizQuery` 均查 `ErpMfgWorkOrder`）：在制工单数 = count(docStatus IN [IN_PROCESS, STOCK_RESERVED])；本期完工量 = Σ completedQuantity（COMPLETED 期内 actualEndDate）；齐套待产 = count(STOCK_PARTIAL)；工单准时率 = count(COMPLETED 且 actualEndDate ≤ plannedEndDate) / count(COMPLETED)。
+- **生产差异报表**（`buildProductionVarianceDataset`）：读 `ErpMfgCostVariance`（workOrderId FK→work_order）。
+- **预测差异报表**（`buildForecastVarianceDataset`）：读 `ErpMfgForecast`(APPROVED) + `ErpMfgForecastLine` + `ErpMfgWorkOrder`(COMPLETED 实际量，按 productId 聚合、区间重叠用 plannedStartDate/plannedEndDate)。
+
+故 seed 4 表（work_order/cost_variance/forecast/forecast_line）即令看板 + 2 报表 KPI **非空**，**无需 seed GL 凭证**（与运营域范式一致，复杂度减负）。
+
+### 加载拓扑序（跨域）
+
+```
+[1234-1 主数据] → [域头] erp_mfg_work_order / erp_mfg_forecast
+                    → [域行/计算产物] erp_mfg_cost_variance（workOrderId→work_order）
+                                    / erp_mfg_forecast_line（forecastId→forecast）
+```
+
+### posted 一致性裁决（统一 posted=false）
+
+本批所有制造域源单据/计算产物统一 `posted=false`。依据（镜像运营域裁决）：
+1. 看板/报表读**域表**非 GL，`posted` 标志不被消费；
+2. 1234-1 seed 的科目表无制造费用/差异/在产品专用科目，seed GL 凭证徒增参照复杂度；
+3. 制造域过账 → GL 凭证 seed 归后续（Deferred）。
+
+### crp_load 移出范围（Deferred）
+
+`erp_mfg_crp_load.workcenterId` 是 mandatory FK→ErpMfgWorkcenter，且 crp-load 报表经 `CrpLoadCalculator` 依赖 workcenter/workcenter_calendar/workcenter_capacity 配置链（均未 seed）算 capacityHours/loadRate。seed crp_load 需先 seed 整条配置链，超出「域表直 seed」范式。触发条件：workcenter 配置链 seed 落地后，由独立 successor 承接 crp_load + crp-load 报表。
+
+### 域内金额自洽约束
+
+- `cost_variance.standardAmount` ↔ `work_order.materialCost`（同工单材料成本标准）
+- `cost_variance`：`varianceAmount = actualAmount − standardAmount`、`variancePercent = varianceAmount / standardAmount`（MATERIAL_USAGE：standardPrice = actualPrice，差异纯由用量差驱动）
+- `forecast_line.materialId` 对齐 `work_order.productId`（forecast-vs-actual 对比有意义）
+
+### Non-Goals（归后续批次）
+
+- 制造域 GL 凭证/业财一体 seed（制造费用/差异过账凭证）——看板/报表读域表非 GL，种子科目表无制造域专用科目；触发条件：制造域业财一体端到端数值回归需 GL 串联时。
+- crp_load + crp-load 报表 seed——mandatory workcenterId FK + workcenter/calendar/capacity 配置链依赖；触发条件：workcenter 配置链 seed 落地后。
+- 制造域配置/执行链 seed（BOM/Routing/Workcenter/MRP/JobCard/MaterialIssue/Subcontract/CostRollup/BatchGenealogy/work_order_line）——这些表不被看板/报表 `QueryBean` 直接读，work_order.bomId/routingId 非强制可留 null；触发条件：制造域配置/执行链端到端回归需这些数据时。
+- 精确制造域 KPI/报表数值断言——本计划解除「制造域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-09-0930-3` 承接。
+- 其他扩展域交易种子（maintenance/quality 同批 N=2；CRM/CS/HR/logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。
