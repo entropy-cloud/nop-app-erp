@@ -130,9 +130,9 @@ Exit Criteria:
 ### 其他扩展域看板/报表数值断言（logistics/b2b/contract/drp/aps/master-data）
 
 - Classification: `out-of-scope improvement`
-- Why Not Blocking Closure: logistics/b2b/contract/drp/aps **无看板无报表**（数值断言无对象）；master-data 看板/报表读源已由 1234-1 主数据 seed（值已非空，归独立 successor，触发条件：master-data 数值断言需独立期望值派生时）。本计划确立的范式（helper + 期望值表）可供 successor 复用。
+- Why Not Blocking Closure: logistics/b2b/contract/drp/aps **无看板无报表**（数值断言无对象）；~~master-data 看板/报表读源已由 1234-1 主数据 seed（值已非空，归独立 successor，触发条件：master-data 数值断言需独立期望值派生时）~~。本计划确立的范式（helper + 期望值表）可供 successor 复用。
 - Successor Required: `yes`
-- Trigger Condition: 当对应域报表数值断言需交易数据 seed 后（logistics/b2b/contract/drp/aps 需先有报表，master-data 需独立期望值派生）。
+- Trigger Condition: 当对应域报表数值断言需交易数据 seed 后（logistics/b2b/contract/drp/aps 需先有报表）。**master-data 子集已 RELEASED**——由 successor plan `2026-07-09-1145-1-master-data-value-assertions.md` 交付（看板 KPI 5 字段 + 2 预警 + 物料价格清单/往来单位清单 2 报表数值断言，含 vendorCount 字典值漂移修复）。剩余 logistics/b2b/contract/drp/aps 无看板无报表，仍 open。
 
 ### 像素级视觉回归 + 报表下载产物 diff + 跨浏览器矩阵
 

@@ -2,11 +2,11 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 24 个数据驱动数值断言 spec（共 77 spec）。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 27 个数据驱动数值断言 spec（共 80 spec）。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
-在冒烟级之上，核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）+ 扩展域 CRM/客服/人力（纯报表域，无看板）已叠加**数据驱动数值断言层**（`*.value.spec.ts`）：直接经 GraphQL query 取后端聚合原始值，断言匹配确定性期望值。详见下方「数据驱动数值断言层」。
+在冒烟级之上，核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）+ 扩展域 CRM/客服/人力（纯报表域，无看板）+ 主数据域（master-data，看板 KPI + 预警 + 2 报表）已叠加**数据驱动数值断言层**（`*.value.spec.ts`）：直接经 GraphQL query 取后端聚合原始值，断言匹配确定性期望值。详见下方「数据驱动数值断言层」。
 
 ## 前置条件
 
@@ -98,17 +98,18 @@ java -Dfile.encoding=UTF8 \
 | CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 12 分钟（79 测试：53 冒烟 spec × ~10s/spec + 24 数值断言 spec 文件产 26 测试 × ~7.5s/spec，含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 13 分钟（84 测试：53 冒烟 spec × ~10s/spec + 27 数值断言 spec 文件产 31 测试 × ~7.5s/spec，含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
-冒烟套件（`*.smoke.spec.ts`）仅验证渲染存在性。在 1234-1 主数据 + 1445-1 P2P/O2C 交易 + 2210-1 运营域交易 + 0930-1 制造域 + 0930-2 维护+质量域 + 1045-1 CRM/CS/HR 域种子基线上，核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）+ 扩展域 CRM/客服/人力（纯报表域，无看板）叠加了**数据驱动数值断言层**（`*.value.spec.ts`，24 spec：dashboards/{finance,sales,purchase,inventory,assets,projects,manufacturing,maintenance,quality}.value + reports/fin-{balance-sheet,income-statement,ar-ap-aging}.value + reports/{ast-depreciation,inv-inventory-trace,prj-cost-summary,mfg-production-variance,mfg-forecast-variance,mnt-maintenance-history,qa-inspection-summary}.value + reports/{crm-lead-conversion-funnel,crm-forecast-accuracy,cs-ticket-sla-csat,hr-employee-net-balance,hr-payroll-simulation-comparison}.value），验证「seed → 聚合 → GraphQL → 断言」端到端数值链。
+冒烟套件（`*.smoke.spec.ts`）仅验证渲染存在性。在 1234-1 主数据 + 1445-1 P2P/O2C 交易 + 2210-1 运营域交易 + 0930-1 制造域 + 0930-2 维护+质量域 + 1045-1 CRM/CS/HR 域种子基线上，核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）+ 扩展域 CRM/客服/人力（纯报表域，无看板）+ 主数据域（master-data，看板 KPI + 2 预警 + 2 报表）叠加了**数据驱动数值断言层**（`*.value.spec.ts`，27 spec：dashboards/{finance,sales,purchase,inventory,assets,projects,manufacturing,maintenance,quality,master-data}.value + reports/fin-{balance-sheet,income-statement,ar-ap-aging}.value + reports/{ast-depreciation,inv-inventory-trace,prj-cost-summary,mfg-production-variance,mfg-forecast-variance,mnt-maintenance-history,qa-inspection-summary}.value + reports/{crm-lead-conversion-funnel,crm-forecast-accuracy,cs-ticket-sla-csat,hr-employee-net-balance,hr-payroll-simulation-comparison}.value + reports/{md-material-price-list,md-partner-list}.value），验证「seed → 聚合 → GraphQL → 断言」端到端数值链。
 
 ### 断言范式
 
 - **看板 KPI**：spec 内 `page.request.post('/graphql', { query, variables })`（复用 UI 登录会话 cookie）取后端 `ErpXxxDashboard__getDashboardKpi` 原始返回 Map，与期望值表逐字段 `expect(Number(field)).toBe(expected)` 比对。
   - **日期漂移防护**：销售/采购/库存/维护/质量看板 KPI 默认区间依赖服务端当前日期。spec **显式传 `startDate=2026-07-01` / `endDate=2026-07-31`** 覆盖种子日期区间（制造看板传 `2026-06-01`/`2026-07-31` 覆盖跨 6/7 月 COMPLETED 工单），使断言确定性不依赖运行时日期。财务看板传 `periodId=1` 锁定种子期间；资产看板传 `periodId="2026-07"` 锁定种子折旧期间；项目看板 `getDashboardKpi()`/`getProjectGrossMargin()` 无日期参数，聚合域表全量。质量看板 `getSpcOutOfControlWarning`（无参数）确定性断言 0（SPC 三表未 seed）。
-- **报表渲染**：`page.request.post` 取 `Erp{Fin,Ast,Inv,Prj,Mfg,Mnt,Qa,Crm,Cs,Hr}Report__renderHtml` 返回 HTML 字符串，断言含期望数值 token（剥离千分位逗号后匹配，规避 AMIS 渲染层 DOM 抖动）。CRM/CS/HR 三域为**纯报表域（无看板）**，故仅有报表渲染断言；可选入参经 `data:{forecastId|ticketType|simulationId:...}` 内联 map 传入（镜像 fin-income-statement `data:{periodId}` 范式）。
+- **报表渲染**：`page.request.post` 取 `Erp{Fin,Ast,Inv,Prj,Mfg,Mnt,Qa,Crm,Cs,Hr,Md}Report__renderHtml` 返回 HTML 字符串，断言含期望数值 token（剥离千分位逗号后匹配，规避 AMIS 渲染层 DOM 抖动）。CRM/CS/HR 三域为**纯报表域（无看板）**，故仅有报表渲染断言；可选入参经 `data:{forecastId|ticketType|simulationId:...}` 内联 map 传入（镜像 fin-income-statement `data:{periodId}` 范式）。master-data 两报表（物料价格清单/往来单位清单）零参全量渲染，token 含 materialCode/partnerCode + dict code（materialType/partnerType 经 `orm_propValueByName` 取原始值）+ 数值（NumberFormat `#,##0.00` 剥离千分位）。
+- **主数据域看板/预警**：master-data `ErpMdDashboard__getDashboardKpi` 零参全表内存聚合（materialCount/customerCount/vendorCount/inactiveMaterialCount/inactivePartnerCount），无 trend（设计权威 `dashboards.md` 明示「主数据看板无趋势图」）；2 预警（`findMaterialWithoutSkuAlert`/`findSkuWithoutPriceAlert`）断言空集（种子真实态：4 material 全有 SKU、4 SKU 全有 purchasePrice>0）。vendorCount 经 1145-1 修复（常量 `"VENDOR"`→`"SUPPLIER"` 对齐权威字典 `erp-md/partner-type`）后返回真实供应商计数 2。
 
 ### 期望值表（确定性派生）
 
@@ -117,6 +118,7 @@ java -Dfile.encoding=UTF8 \
 - `docs/analysis/2026-07-08-2210-2-operational-kpi-expected-values.md`（运营域 inventory/assets/projects 看板 + 运营域报表）
 - `docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`（制造/维护/质量域看板 + 报表）
 - `docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`（CRM/客服/人力域 5 报表，纯报表域无看板）
+- `docs/analysis/2026-07-09-1145-1-master-data-expected-values.md`（主数据域看板 KPI + 2 预警 + 2 报表）
 
 当前基线值：
 
@@ -144,6 +146,10 @@ java -Dfile.encoding=UTF8 \
 | CS 工单 SLA/CSAT 综合 | ticketTypeName + avgCsat/avgNps token（ticketType=1 投诉桶） | 投诉 / 5.00 / 9.00 |
 | HR 员工净余额 | partnerName + advance/expense/netBalance token | 张三员工往来 / 1000.00 / 700.00 / 员工欠公司 |
 | HR 薪酬模拟对比 | employeeName + salaryItemCode + original/adjusted + 部门小计 token（simulationId=1） | 赵明 / 钱华 / BASE_SALARY / 10000.00 / 11000.00 / 部门小计 |
+| master-data 看板 | materialCount / customerCount / vendorCount / inactiveMaterialCount / inactivePartnerCount | 4 / 2 / 2（修复后）/ 0 / 0 |
+| master-data 预警 | findMaterialWithoutSkuAlert / findSkuWithoutPriceAlert 行数 | 0 / 0（种子全有 SKU、全有 purchase 价） |
+| 物料价格清单报表 | materialCode + materialType code + 采购/销售/零售价 token | MAT-001 / MAT-002 / FINISHED_PRODUCT / 120.00 / 200.00 / 280.00 / 300.00 / 500.00 / 680.00 |
+| 往来单位清单报表 | partnerCode + partnerType code + creditLimit token | CUST-001 / CUST-002 / SUP-001 / SUP-002 / CUSTOMER / SUPPLIER / 500000.00 / 300000.00 |
 
 ### seed 漂移同步机制（强制）
 
@@ -152,7 +158,7 @@ java -Dfile.encoding=UTF8 \
 2. 同步更新对应分析文档（核心域 `2026-07-08-1445-2-kpi-expected-values.md` / 运营域 `2026-07-08-2210-2-operational-kpi-expected-values.md` / 制造+维护+质量域 `2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md` / CRM+CS+HR 域 `2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`）。
 3. 同步更新对应 `*.value.spec.ts` 的 `expected` / `expectedTokens`。
 
-不更新则数值断言会失败（这是设计预期——暴露 seed 漂移，非测试脆弱）。manufacturing/maintenance/quality 域数值断言层已落地（0930-3，期望值表 `docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`）；CRM/客服/人力域报表数值断言层已落地（1045-2，期望值表 `docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`）；其余扩展域（logistics/b2b/contract/drp/aps/master-data）数值断言归后续批次（触发条件：对应域交易种子 seed 后/有可断言报表时）。
+不更新则数值断言会失败（这是设计预期——暴露 seed 漂移，非测试脆弱）。manufacturing/maintenance/quality 域数值断言层已落地（0930-3，期望值表 `docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`）；CRM/客服/人力域报表数值断言层已落地（1045-2，期望值表 `docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`）；主数据域看板/报表数值断言层已落地（1145-1，期望值表 `docs/analysis/2026-07-09-1145-1-master-data-expected-values.md`，含 vendorCount 字典值漂移修复）；其余扩展域（logistics/b2b/contract/drp/aps，无看板无报表）数值断言归后续批次（触发条件：对应域有可断言看板/报表时）。
 
 ## CRUD 套件（18 域列表/表单冒烟）
 
@@ -204,7 +210,7 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 
 ## 已知限制
 
-- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 84 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据 + 13 运营域表 + 4 制造域表 + 11 维护+质量域表 + 12 CRM/CS/HR 域表 + 2 处加性追加）。核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）看板 KPI 与报表数值经交易数据驱动**非空可观测**；CRM/CS/HR 三域 5 报表经种子数据驱动**非空可观测**（三域无看板）。核心域 + 运营域 + 扩展域（manufacturing/maintenance/quality）+ 扩展域（CRM/CS/HR 纯报表域）均已叠加**数据驱动数值断言层**（24 `*.value.spec.ts`，见上方「数据驱动数值断言层」）；其余扩展域（logistics/b2b/contract/drp/aps）无看板无报表未 seed，master-data 数值断言归独立 successor。
+- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 84 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据 + 13 运营域表 + 4 制造域表 + 11 维护+质量域表 + 12 CRM/CS/HR 域表 + 2 处加性追加）。核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）看板 KPI 与报表数值经交易数据驱动**非空可观测**；CRM/CS/HR 三域 5 报表经种子数据驱动**非空可观测**（三域无看板）。核心域 + 运营域 + 扩展域（manufacturing/maintenance/quality）+ 扩展域（CRM/CS/HR 纯报表域）+ 主数据域（master-data 看板/2 报表）均已叠加**数据驱动数值断言层**（27 `*.value.spec.ts`，见上方「数据驱动数值断言层」）；其余扩展域（logistics/b2b/contract/drp/aps）无看板无报表未 seed。
 - **单浏览器**：仅 chromium（Chrome channel），不支持 Firefox/WebKit/移动视口。
 - **冒烟级**：不断言像素级视觉一致性、不验证报表渲染内容正确性、不断言下载产物。
 - **页面验证已恢复**：`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面模型校验（`validate-page-model=true`）已恢复全绿，不再使用 `-Dnop.web.validate-page-model=false` 绕过。
@@ -240,7 +246,8 @@ tests/e2e/
 │   ├── maintenance.value.spec.ts     # 数值断言层（扩展域）
 │   ├── quality.smoke.spec.ts
 │   ├── quality.value.spec.ts         # 数值断言层（扩展域：getDashboardKpi + getSpcOutOfControlWarning）
-│   └── master-data.smoke.spec.ts
+│   ├── master-data.smoke.spec.ts
+│   └── master-data.value.spec.ts     # 数值断言层（主数据域：getDashboardKpi 5 字段 + 2 预警空集）
 ├── crud/
 │   ├── _helper.ts                    # runCrudListSmoke 共享函数
 │   ├── cs-kb-suggestion.smoke.spec.ts  # KB 建议定向冒烟（suggestForTicket GraphQL 200）
@@ -279,5 +286,7 @@ tests/e2e/
     ├── cs-ticket-sla-csat.value.spec.ts           # 数值断言层（扩展域 CS）
     ├── hr-employee-net-balance.value.spec.ts      # 数值断言层（扩展域 HR）
     ├── hr-payroll-simulation-comparison.value.spec.ts  # 数值断言层（扩展域 HR）
+    ├── md-material-price-list.value.spec.ts       # 数值断言层（主数据域，物料价格清单）
+    ├── md-partner-list.value.spec.ts              # 数值断言层（主数据域，往来单位清单）
     └── *.smoke.spec.ts               # 24 个报表 spec
 ```
