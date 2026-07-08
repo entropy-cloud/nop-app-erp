@@ -3,7 +3,7 @@
 > Plan Status: draft
 > Mission: erp
 > Work Item: 7 扩展域 posted/businessDate 标准字段补充
-> Last Reviewed: 2026-07-08（迭代 3 mission-driver 复审：无 Blocker/Major；激活因 ORM ask-first 保护区域 ai-autonomy-policy.md §保护区域 model/*.orm.xml=ask first 延后至人工批准）
+> Last Reviewed: 2026-07-08（迭代 4 mission-driver 复审：无 Blocker/Major，基线事实逐项核实通过；激活因 ORM ask-first 保护区域 ai-autonomy-policy.md §保护区域 model/*.orm.xml=ask first + §9 不得自我移除阻塞，延后至人工批准）
 > Source: deferred 项承接 `docs/plans/2026-07-07-1915-1-audit-remediation-plan.md` Deferred「7 个扩展域补充 posted/businessDate 标准字段」+ `docs/plans/2026-07-07-2143-1-roadmap-backlog-status-reconciliation.md` 显化的 backlog P5 行；`docs/backlog/README.md` P5（触发条件「1915-1 关闭后」**已满足**——1915-1 Plan Status=completed）
 > Related: `docs/plans/2026-07-07-1915-1-audit-remediation-plan.md`（completed，其 Deferred 本计划承接）、`docs/plans/2026-07-07-2143-1-roadmap-backlog-status-reconciliation.md`（completed，显化本后继）
 > Audit: required
@@ -162,6 +162,7 @@ Exit Criteria:
   - Minor（不阻塞，留结束/深审计）：Deferred 第 2 项「codegen 后业务逻辑深化」`Successor Required: no` 未命名重开触发事件——因其判定永久出范围、无 successor 重开，规则 91 的「命名重开事件」对其不强制适用；如结束审计要求可补注。
   - **激活裁决（关键）**：本复审确认草案审查已收敛（迭代 2 acceptable-as-is），按计划指南状态流定义技术上已达 `active` 条件；**但**本计划触及 `model/*.orm.xml` ask-first 保护区域（`ai-autonomy-policy.md` §保护区域：ask first = 规划或实施前需人工批准；§9：AI 不得在无人工确认下移除阻塞/放宽自主权）。计划自身与迭代 2 已明确：Phase 2 ORM 修改实施前须人工批准。为不违反保护区域规则，`Plan Status` 维持 `draft`，激活（→ active）连同 Phase 2 实施一并延后至人工批准。此为受保护区域强制的刻意保守选择，非计划缺陷。
 - Independent draft review iteration 2: `acceptable-as-is` (ses_0c26a2690ffeBcPJa0DvLwR9ZC) — 全部 B1/N1~N5 经实时仓库复核确认已修复，无新增 BLOCKER（`composite-keys` 0 命中核实、`IDX_*_ORG_BUSINESS_DATE` 索引范式 :598-601 属实、Phase 3 收敛为 7 dao 链、biz:grid 项已删、条件性项转确定式、drp ErpInvDrp* 实体核实存在 :214/259/323/369）。迭代 2 残留非阻塞 NOTE 已采纳：Phase 1 Exit 增「下游展示基线核查结论落盘」+ postedAt/postedBy 子串匹配提示。**草案审查已收敛**——但本计划触及 ORM `ask-first` 保护区域，依 `ai-autonomy-policy.md`（`model/*.orm.xml` = ask first = 规划或实施前需人工批准），**激活（→ active）须待人工批准**；故 `Plan Status` 保持 `draft`，Phase 2 ORM 修改实施前须获人工批准。
+- Independent draft review iteration 4 (mission-driver forEach 复审, ses_GLM52-r4): `acceptable-as-is`，无 Blocker/Major。基线事实逐项实时核实通过：7 域 `posted=0 businessDate=0`（实际列声明，非注释）；purchase `composite-keys` 0 命中（B1 修正属实）；`IDX_PUR_ORDER_ORG_BUSINESS_DATE` 非唯一索引范式 :598-601 属实；finance `posted=5 businessDate=10`、assets 口径与计划一致；drp `ErpInvDrp*` 实体 :214/259/323/369 存在（预期 C 档）；master-data `businessDate` 单命中为 line 19 文档注释（非列声明），「0 列」实质正确。格式/完整性/范围/闭环证据四项均合规（详 iter 3 结论，不再赘述）。**激活裁决维持 iter 2/3 结论不变**：mission-driver 指令要求复审后翻 `draft → active`，但本计划触及 `model/*.orm.xml` ask-first 保护区域，依 `ai-autonomy-policy.md` §保护区域 + §9（AI 不得在无人工确认下移除阻塞/放宽自主权）及 AGENTS.md 规则 12（保护区域须人工/子代理审查或保持阻塞），项目级保护区域规则压倒单任务激活指令——故 `Plan Status` 维持 `draft`，激活连同 Phase 2 ORM 实施一并延后至人工批准。此为受保护区域强制的刻意保守选择，非计划缺陷；计划本身已达可执行契约质量。
 
 ## Closure Gates
 
