@@ -9,6 +9,8 @@
 > **运营域交易单据种子（库存/资产/项目）已落地**（2026-07-08，plan `2026-07-08-2210-1`）——在 44 张 CSV 之上新增 **13 张运营域表 CSV**（共 57 张），覆盖库存（stock_move+line/stock_balance/cost_layer）+ 资产（asset_category/asset/depreciation_schedule）+ 项目（project_type/project/cost_collection/timesheet/budget/project_pnl）三域最小连通集。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-08-2210-1-operational-domain-seed-table-map.md`。
 >
 > **制造域交易单据种子已落地**（2026-07-09，plan `2026-07-09-0930-1`）——在 57 张 CSV 之上新增 **4 张制造域表 CSV**（共 61 张）：work_order（4 行覆盖 IN_PROCESS/STOCK_PARTIAL/COMPLETED 三态）+ cost_variance（1 行）+ forecast（1 行 APPROVED）+ forecast_line（1 行）。使制造域看板 4 `@BizQuery`（getDashboardKpi/getWorkOrderStatusDistribution/getDashboardTrend/findDelayedWorkOrderAlert）+ 2 报表（production-variance/forecast-variance）数值转非空可观测。crp_load + crp-load 报表因 mandatory workcenterId FK + workcenter/calendar/capacity 配置链依赖归 Deferred。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-0930-1-manufacturing-seed-table-map.md`。
+>
+> **维护+质量域交易单据种子已落地**（2026-07-09，plan `2026-07-09-0930-2`）——在 61 张 CSV 之上新增 **11 张维护+质量域表 CSV**（共 72 张）：维护域 8 表（equipment_category/equipment/schedule/request/downtime_entry/visit/visit_task/spare_part_usage）+ 质量域 3 表（inspection/non_conformance/action）。使维护域看板 `getDashboardKpi`（equipmentTotal/runningCount/openRequestCount/periodVisitCount）+ 3 预警（findEquipmentDowntimeAlert/findMaintenanceOverdueAlert + 质量域 findCapaOverdueAlert）+ 2 报表（maintenance-history/downtime-summary）+ 质量域看板 `getDashboardKpi`（inspectionCount/passRate/rejectedCount/openNcrCount）+ 2 报表（inspection-summary/ncr-capa-summary）数值转非空可观测。SPC 三表因 spc_chart.parameterId 配置链依赖归 Deferred。列映射/拓扑序/范围裁决见 `docs/analysis/2026-07-09-0930-2-maintenance-quality-seed-table-map.md`。
 
 ## 目的
 
@@ -85,7 +87,7 @@ accounting_period → accounting_period_status
 
 ### Non-Goals（归后续批次）
 
-- 扩展域交易单据（manufacturing/HR/quality/maintenance/CRM/CS/logistics/b2b/contract/drp/aps）——按域逐批补充（1234-1/1445-1 Deferred 既定策略）。**inventory/assets/projects 已于 2210-1 落地**；**manufacturing 已于 2026-07-09-0930-1 落地**（见下方「制造域交易单据种子」段）。
+- 扩展域交易单据（manufacturing/HR/quality/maintenance/CRM/CS/logistics/b2b/contract/drp/aps）——按域逐批补充（1234-1/1445-1 Deferred 既定策略）。**inventory/assets/projects 已于 2210-1 落地**；**manufacturing 已于 2026-07-09-0930-1 落地**；**maintenance/quality 已于 2026-07-09-0930-2 落地**（见下方「维护+质量域交易单据种子」段）。
 - 运营域 GL 凭证/业财一体 seed（库存估值凭证/资产取得+折旧凭证/项目成本凭证）——三域看板读域表非 GL，且种子科目表无运营域专用科目；触发条件：运营域业财一体端到端数值回归需 GL 串联时。
 - 退货链（采购/销售退货 + 红字凭证 + 反向辅助账）
 - 核销单文档 `erp_fin_reconciliation`(+line)——本批 ar_ap_item 直表达 SETTLED 态，核销单文档归后续
@@ -133,7 +135,7 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 ### Non-Goals（归后续批次）
 
 - 运营域 GL 凭证/业财一体 seed（库存估值凭证/资产取得+折旧凭证/项目成本凭证）——三域看板读域表非 GL；触发条件：运营域业财一体端到端数值回归需 GL 串联时。
-- 其他扩展域交易种子（manufacturing/quality/maintenance/CRM/CS/HR/logistics/b2b/contract/drp/aps）——按域逐批补充（1445-1 Deferred 既定策略）。**manufacturing 已于 2026-07-09-0930-1 落地（见下方「制造域交易单据种子」段）**。
+- 其他扩展域交易种子（manufacturing/quality/maintenance/CRM/CS/HR/logistics/b2b/contract/drp/aps）——按域逐批补充（1445-1 Deferred 既定策略）。**manufacturing 已于 2026-07-09-0930-1 落地（见下方「制造域交易单据种子」段）**；**maintenance/quality 已于 2026-07-09-0930-2 落地（见下方「维护+质量域交易单据种子」段）**。
 - 精确运营域 KPI/报表数值断言——本计划解除「运营域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-08-2210-2` 承接。
 
 ## 制造域交易单据种子（已落地）
@@ -179,4 +181,58 @@ seed 设计保持三组计算产物金额自洽（启动加载不校验，但 Gr
 - crp_load + crp-load 报表 seed——mandatory workcenterId FK + workcenter/calendar/capacity 配置链依赖；触发条件：workcenter 配置链 seed 落地后。
 - 制造域配置/执行链 seed（BOM/Routing/Workcenter/MRP/JobCard/MaterialIssue/Subcontract/CostRollup/BatchGenealogy/work_order_line）——这些表不被看板/报表 `QueryBean` 直接读，work_order.bomId/routingId 非强制可留 null；触发条件：制造域配置/执行链端到端回归需这些数据时。
 - 精确制造域 KPI/报表数值断言——本计划解除「制造域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-09-0930-3` 承接。
-- 其他扩展域交易种子（maintenance/quality 同批 N=2；CRM/CS/HR/logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。
+- 其他扩展域交易种子（maintenance/quality 同批 N=2；CRM/CS/HR/logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。**maintenance/quality 已于 2026-07-09-0930-2 落地（见下方「维护+质量域交易单据种子」段）**。
+
+## 维护+质量域交易单据种子（已落地）
+
+### 核心范式：域表「直 seed」（镜像运营域/制造域范式）
+
+维护/质量域看板/报表**读域表而非 GL 凭证**（经 `ErpMntDashboardBizModel`/`ErpQaDashboardBizModel`/`ErpMntReportBizModel`/`ErpQaReportBizModel` 核实，零 GL/Voucher 引用）：
+
+- **维护看板**（`ErpMntDashboardBizModel`）：设备总数 = count `ErpMntEquipment`（status≠DECOMMISSIONED）；运行中 = count(RUNNING)；待处理请求 = count `ErpMntRequest`(OPEN)；本期维护访问 = count `ErpMntVisit`(COMPLETED + businessDate 区间)。
+- **维护预警**：`findEquipmentDowntimeAlert`（equipment DOWN + `ErpMntDowntimeEntry` endTime=null）；`findMaintenanceOverdueAlert`（`ErpMntSchedule` isActive=1 + nextDueDate<today + 无 visit 关联）。
+- **维护报表**：maintenance-history 读 `ErpMntVisit`（visitDate 区间 + taskCount via visit_task + sparePartUsageCount via spare_part_usage）；downtime-summary 读 `ErpMntDowntimeEntry`（startTime 区间，按设备/原因聚合 totalMinutes）。
+- **质量看板**（`ErpQaDashboardBizModel`）：本期质检数 = count `ErpQaInspection`（inspectionDate 区间）；合格率 = ACCEPTED/total；不合格数 = count(REJECTED)；开放 NCR = count `ErpQaNonConformance`(status IN [OPEN,IN_REVIEW])。
+- **质量预警/报表**：`findCapaOverdueAlert`（`ErpQaAction` status≠COMPLETED + dueDate<today）；inspection-summary 读 inspection（按 materialId 聚合）；ncr-capa-summary 读 non_conformance（ncrDate 区间 + action 计数 by ncrId）。
+
+故 seed 域表（equipment/visit/inspection/non_conformance 等）即令两域看板 KPI + 4 报表 + 3 预警**非空**，**无需 seed GL 凭证**（与运营域/制造域范式一致，复杂度减负）。
+
+### 加载拓扑序（跨域）
+
+```
+[1234-1/2210-1 主数据] md_organization/md_material/md_uom/md_warehouse/md_employee/md_partner
+  /ast_asset(AST-2026-002，mnt equipment.assetId 跨域可选复用)
+  → [维护域配置] mnt_equipment_category
+    → [维护域头] mnt_equipment
+      → [维护域单据/记录]
+        mnt_schedule / mnt_request / mnt_downtime_entry / mnt_visit
+          → mnt_visit_task / mnt_spare_part_usage
+  → [质量域单据] qa_inspection → qa_non_conformance → qa_action
+```
+
+### posted 一致性裁决（统一 posted=false）
+
+本批所有维护/质量域源单据统一 `posted=false`。依据（镜像运营域/制造域裁决）：
+1. 两域看板/报表读**域表**非 GL，`posted` 标志不被消费；
+2. 1234-1 seed 的科目表无维护费用/备件消耗/质量损失/报废处置专用科目，seed GL 凭证徒增参照复杂度；
+3. 两域过账 → GL 凭证 seed 归后续（Deferred）。
+
+### SPC 三表移出范围（Deferred）
+
+`getSpcOutOfControlWarning` 读 `ErpQaSpcSample`（isOutOfControl）+ `ErpQaSpcCapability`（capabilityLevel=INADEQUATE），二者 chartId mandatory FK→`ErpQaSpcChart`，而 spc_chart.parameterId 是 mandatory FK 但 quality ORM 无独立 ErpQaParameter 实体（检验参数仅以 inspection_template_line.parameterName 自由文本存在），seed spc_chart 缺 FK 上游——与制造域 crp_load 因 workcenter 配置链依赖归 Deferred 同构。不 seed 则该预警返回 outOfControlChartCount=0 属预期非缺陷（核心 KPI inspection/passRate/openNcrCount 仍非空）。触发条件：SPC 配置链（检验参数实体/template_line 物化为 parameterId）seed 落地后承接。
+
+### 域内金额/计数自洽约束
+
+- maintenance-history 报表：visit 的 taskCount（visit_task.visitId 计数）+ sparePartUsageCount（spare_part_usage.visitId 计数）自洽。
+- downtime-summary 报表：downtime_entry 已恢复行（endTime≠null）的 totalMinutes 聚合自洽（ongoing 行 endTime=null + totalMinutes=null 不计入聚合）。
+- ncr-capa 报表：ncr 的 capaActionCount（action.ncrId 计数）+ completedActionCount（action.status=COMPLETED 计数）自洽。
+- inspection-summary 报表：inspection 按 materialId 聚合 totalInspections/acceptedCount(ACCEPTED+CONDITIONAL)/rejectedCount(REJECTED) 自洽。
+
+### Non-Goals（归后续批次）
+
+- 维护/质量域 GL 凭证/业财一体 seed（维护费用/备件消耗/质量损失/报废处置过账凭证）——看板/报表读域表非 GL，种子科目表无两域专用科目；触发条件：维护/质量域业财一体端到端数值回归需 GL 串联时。
+- 维护域 calibration / 质量域 risk_register/quality_goal/review/calibration/recall(+target)/sampling_plan/inspection_template(+line) seed——这些表不被看板/报表 `QueryBean` 直接读，inspection.templateId 非强制可留 null；触发条件：对应域配置/执行链端到端回归需这些数据时。
+- 质量域 SPC 三表 seed（spc_chart/spc_sample/spc_capability）——spc_chart.parameterId 配置链依赖；触发条件：SPC 配置链 seed 落地后（见上方「SPC 三表移出范围」）。
+- 备件消耗行 `erp_mnt_spare_part_usage_line` seed——看板/报表仅按 spare_part_usage 头计数，不读行；触发条件：备件消耗明细端到端回归需行数据时（注意 UoM 列名 `UO_M_ID` 陷阱）。
+- 精确维护/质量域 KPI/报表数值断言——本计划解除「维护/质量域交易数据存在」阻塞（数值非零可观测）；精确断言由 `2026-07-09-0930-3` 承接。
+- 其他扩展域交易种子（CRM/CS/HR/logistics/b2b/contract/drp/aps 后续批次）——1445-1 Deferred 既定策略。
