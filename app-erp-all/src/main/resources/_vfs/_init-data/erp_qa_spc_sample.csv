@@ -1,0 +1,2 @@
+ID,CHART_ID,ORG_ID,SUBGROUP_NO,SAMPLE_TIME,INSPECTOR_ID,IS_OUT_OF_CONTROL,VIOLATED_RULES,REMARK
+1,1,2,1,2026-07-08 10:00:00,1,true,1,SPC 失控样本（chartId=1 引用 spc_chart=1，违反判异规则 1 → 驱动 getSpcOutOfControlWarning.outOfControlChartCount=1）

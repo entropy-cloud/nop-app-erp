@@ -1,0 +1,2 @@
+ID,CHART_ID,ORG_ID,PERIOD_FROM,PERIOD_TO,CAPABILITY_LEVEL,IS_STABLE,REMARK
+1,1,2,2026-07-01,2026-07-31,INADEQUATE,false,SPC 过程能力分析（chartId=1 引用 spc_chart=1，能力不足 Cpk<1.0 → 驱动 getSpcOutOfControlWarning.inadequateCapabilityCount=1）

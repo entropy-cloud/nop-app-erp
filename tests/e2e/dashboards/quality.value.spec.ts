@@ -10,7 +10,7 @@ assertDashboardKpiValues({
     inspectionCount: 3,
     passRate: 0.6666666666666666,
     rejectedCount: 1,
-    openNcrCount: 2,
+    openNcrCount: 3,
   },
 });
 
@@ -20,5 +20,5 @@ assertDashboardKpiValues({
   query: 'query{ ErpQaDashboard__getSpcOutOfControlWarning }',
   variables: {},
   responseKey: 'ErpQaDashboard__getSpcOutOfControlWarning',
-  expected: { outOfControlChartCount: 0, inadequateCapabilityCount: 0, openSpcNcrCount: 0 },
+  expected: { outOfControlChartCount: 1, inadequateCapabilityCount: 1, openSpcNcrCount: 1 },
 });
