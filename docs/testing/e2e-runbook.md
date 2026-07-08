@@ -37,7 +37,7 @@ npx playwright test
 webServer 命令含测试专用 JVM 参数：
 - `-Dnop.auth.service-public=true` — 服务端认证旁路（sys 用户上下文）
 - `-Dnop.auth.login.allow-create-default-user=true` — 自动创建测试用户 `nop`/`123`
-- `-Dnop.orm.init-database-data=true` — 部署期种子数据初始化（21 张主数据表 + 23 张交易单据表，详见下方「种子库启动」）
+- `-Dnop.orm.init-database-data=true` — 部署期种子数据初始化（21 张主数据表 + 23 张交易单据表 + 13 张运营域表，详见下方「种子库启动」）
 - `rm -f db/erp.mv.db` — fresh-DB 重置（seed 非幂等，每次启动前清库）
 - 页面模型校验保持默认开启（`nop.web.validate-page-model=true`，application.yaml 默认值）——`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面校验安全网已恢复
 
@@ -63,9 +63,10 @@ SKIP_WEBSERVER=1 npx playwright test
 
 默认 webServer 命令（方式 A）已含 **部署期种子数据初始化**：
 
-- `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化），从 `_vfs/_init-data/*.csv` 按拓扑序插入 **44 张 CSV**：
+- `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化），从 `_vfs/_init-data/*.csv` 按拓扑序插入 **57 张 CSV**：
   - **21 张核心主数据表**（1234-1）：组织/币种/计量单位/物料/SKU/往来单位/仓库/员工/科目体系/税率/结算方式等
   - **23 张业务交易单据表**（1445-1）：P2P（PO/Receive/Invoice/Payment 头+行）+ O2C（SO/Delivery/Invoice/Receipt 头+行）+ 已过账财务产物（凭证/凭证行/业财回链/AR-AP 辅助账/GL 余额/会计期间 OPEN）
+  - **13 张运营域表**（2210-1）：库存（stock_move+line/stock_balance/cost_layer）+ 资产（asset_category/asset/depreciation_schedule）+ 项目（project_type/project/cost_collection/timesheet/budget/project_pnl）；三域看板读域表非 GL，posted 统一 false
 - `rm -f db/erp.mv.db db/erp.trace.db` — **fresh-DB 重置**。`DataInitInitializer` 非幂等（无存在性检查），持久 H2 文件库重复启动会主键冲突；故每次 webServer 启动前删除 db 文件，确保 seed 在空表上插入。交易种子加入后该行为不变（仅 CSV 增多，webServer JVM 参数与重置逻辑无改动）。
 
 手动启动种子库（方式 B）：
@@ -81,8 +82,8 @@ java -Dfile.encoding=UTF8 \
 ```
 
 - **生产安全**：生产 `application.yaml` 保持 `init-database-data` 缺省（`false`）；seed 仅经上述 JVM 属性 / webServer 触发。
-- **种子范围**：核心主数据（bootstrap）+ P2P/O2C 最小连通交易单据集（含已过账财务产物）。核心域看板/报表/CRUD 列表经 GraphQL 证实数据非空；交易数据已使 finance/sales/purchase 域 KPI 数值非空（采购额/销售额/收入/净利润可观测）。扩展域交易单据未 seed（Non-Goal，按域逐批补充）。
-- 机制详情（主数据门控/非幂等/列映射/平台 bug 修复 见 `docs/analysis/2026-07-08-1234-1-seed-data-table-column-map.md`；交易单据表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-08-1445-1-transaction-seed-table-map.md`）。
+- **种子范围**：核心主数据（bootstrap）+ P2P/O2C 最小连通交易单据集（含已过账财务产物）+ 运营域（库存/资产/项目）最小连通集。核心域看板/报表/CRUD 列表经 GraphQL 证实数据非空；交易数据已使 finance/sales/purchase 域 KPI 数值非空（采购额/销售额/收入/净利润可观测）；运营域数据已使 inventory/assets/projects 域 KPI 非空（库存总值/资产原值+折旧/项目数+已发生成本+毛利率可观测）。其余扩展域交易单据未 seed（Non-Goal，按域逐批补充）。
+- 机制详情（主数据门控/非幂等/列映射/平台 bug 修复 见 `docs/analysis/2026-07-08-1234-1-seed-data-table-column-map.md`；交易单据表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-08-1445-1-transaction-seed-table-map.md`；运营域表清单/列映射/拓扑序/范围裁决 见 `docs/analysis/2026-07-08-2210-1-operational-domain-seed-table-map.md`）。
 
 ## 分层运行
 
@@ -178,7 +179,7 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 
 ## 已知限制
 
-- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 44 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据）。核心域（finance/sales/purchase）看板 KPI 与报表数值经交易数据驱动**非空可观测**（采购额/销售额/收入/净利润）。核心域已叠加**数据驱动数值断言层**（6 `*.value.spec.ts`，见上方「数据驱动数值断言层」）。扩展域交易单据未 seed（Non-Goal，按域逐批补充），其数值断言归后续批次。
+- **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 57 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据 + 13 运营域表）。核心域（finance/sales/purchase）看板 KPI 与报表数值经交易数据驱动**非空可观测**（采购额/销售额/收入/净利润）。运营域（inventory/assets/projects）看板 KPI 经域表数据驱动**非空可观测**（库存总值/资产原值+折旧/项目数+已发生成本+毛利率）。核心域已叠加**数据驱动数值断言层**（6 `*.value.spec.ts`，见上方「数据驱动数值断言层」）。运营域数值断言由 successor `2026-07-08-2210-2` 承接。其余扩展域交易单据未 seed（Non-Goal，按域逐批补充）。
 - **单浏览器**：仅 chromium（Chrome channel），不支持 Firefox/WebKit/移动视口。
 - **冒烟级**：不断言像素级视觉一致性、不验证报表渲染内容正确性、不断言下载产物。
 - **页面验证已恢复**：`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面模型校验（`validate-page-model=true`）已恢复全绿，不再使用 `-Dnop.web.validate-page-model=false` 绕过。

@@ -20,6 +20,8 @@
 | — | 核心业财端到端业务交易单据部署期种子（P2P+O2C 最小连通集：源单据+已过账财务产物直 seed，23 张交易 CSV；解除 1234-1 Deferred「业务交易单据种子」） | `2026-07-08-1445-1` | ✅ done | `plan-first` |
 | — | 核心域（finance/sales/purchase）看板 KPI + 报表渲染数据驱动精确数值浏览器 E2E 断言（`*.value.spec.ts` 6 spec，GraphQL 取值断言 + 期望值表派生；解除 0637-1 + 1234-1 Deferred「数据驱动 KPI 精确数值断言」，spec 53→59） | `2026-07-08-1445-2` | ✅ done | `plan-first` |
 | P5 | 7 扩展域 posted/businessDate 标准字段补充（cs/hr/logistics/b2b/contract/drp/aps） | `2026-07-08-0056-1` | ✅ done | `ask-first`（ORM 保护区域，经 mission-driver 显式指令授权） |
+| — | 运营域（库存/资产/项目）业务交易单据 + 计算产物部署期种子（最小连通集，解除 1445-1 扩展域种子 Deferred + 为运营域数值断言提供数据基线） | `2026-07-08-2210-1` | ✅ done | `plan-first` |
+| — | 运营域（库存/资产/项目）看板 KPI + 报表渲染数据驱动精确数值浏览器 E2E 断言（依赖 2210-1 种子，解除 1445-2 扩展域数值断言 Deferred） | `2026-07-08-2210-2` | ⏳ active（gated on 2210-1） | `plan-first` |
 
 ## 就绪不变量
 
