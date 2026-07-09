@@ -28,7 +28,7 @@
 | 选择下一个工作项 | `docs/backlog/README.md` | 相关需求和 owner docs |
 | 实现一个功能 | 相关需求或待办项 | `docs/design/`、`docs/architecture/`、`<domain>/model/*.orm.xml`，如需触发则参考计划指南 |
 | 更改持久化模型或 API 契约 | `<domain>/model/*.orm.xml`、`<domain>/model/*.api.xml` | `../nop-entropy/docs-for-ai/` 下的 Nop 文档 |
-| 更改页面或视图 | 相关设计 owner doc | `app-erp-web` 下的 AMIS `.view.xml` 文件（代码生成设置后） |
+| 更改页面或视图 | 相关设计 owner doc | 各域 `erp-*-web` 下的 AMIS `.view.xml` 文件 |
 | 审查已计划或已完成的切片 | `docs/plans/` 下的相关计划 | 计划/结束审计提示；普通审计证据保留在计划中 |
 | 运行或验证项目 | `docs/context/project-context.md` | `docs/context/codebase-map.md` |
 | 起草、执行或审计 `docs/plans/` 下的计划 | `docs/plans/00-plan-authoring-and-execution-guide.md` | `docs/logs/00-log-writing-guide.md` |
@@ -74,13 +74,13 @@
 
 ## 当前项目阶段
 
-`nop-app-erp` 处于 **业务逻辑深化与运营成熟度收尾阶段**。18 业务域 + 1 跨域通知派发子系统（共 19 个 `module-*/`）的 ORM 模型已设计完成（279 实体 + 3 通知实体），Maven 多模块结构已由 `nop-cli gen` 从 `<domain>/model/*.orm.xml` 生成（1730+ Java 文件）。`app-erp-all` 聚合 app 构建通过（154 reactor 模块）。**已落地能力**：CRUD 全 18 域（`crud-roadmap.md` 全 done，含冒烟测试 18/18）；核心业务逻辑（`core-business-roadmap.md` M1 全 done，含 1.1 采购订单 BizModel/1.2 销售订单 BizModel 审批-触发-过账三段）；扩展 13 域业务逻辑（`extended-roadmap.md` M2/M3 全 done）；业财一体端到端（M4 全 done：采购到付款/销售到收款/期末结账/成本核算/年度结转/坏账准备）；运营成熟度（M5 全 done：会计日志与可观测性/冲销反写闭环/运行监控/通知派发/审批抄送）；报表子系统（nop-report 接线 + 全 10 域种子报表 + 全 10 域 AMIS 菜单/页面）；看板子系统（全 10 域后端聚合 API + AMIS 前端）。当前重点：剩余扩展域标准字段补齐（7 域 posted/businessDate，`ask-first` blocked）、看板运行时视觉/浏览器回归、各域细化端到端验证。
+`nop-app-erp` 处于 **业务逻辑深化与运营成熟度收尾阶段**。18 业务域 + 1 跨域通知派发子系统（共 19 个 `module-*/`）的 ORM 模型已设计完成，Maven 多模块结构已由 `nop-cli gen` 从 `<domain>/model/*.orm.xml` 生成。`app-erp-all` 聚合 app 构建通过。**已落地能力**：CRUD 全 18 域（`crud-roadmap.md` 全 done，含冒烟测试）；核心业务逻辑（`core-business-roadmap.md` M1 全 done，含采购订单 BizModel/销售订单 BizModel 审批-触发-过账三段）；扩展 13 域业务逻辑（`extended-roadmap.md` M2/M3 全 done）；业财一体端到端（M4 全 done：采购到付款/销售到收款/期末结账/成本核算/年度结转/坏账准备）；运营成熟度（M5 全 done：会计日志与可观测性/冲销反写闭环/运行监控/通知派发/审批抄送）；报表子系统（nop-report 接线 + 各域种子报表 + AMIS 菜单/页面）；看板子系统（各域后端聚合 API + AMIS 前端）。当前重点：看板运行时视觉/浏览器回归、各域细化端到端验证。
 
 完整 18+1 域列表（物理目录 ↔ 逻辑工程名映射详见 `docs/architecture/domain-module-split-analysis.md §2.0`）：
 
-- **核心域（11）**：master-data, inventory, purchase, sales, finance, assets, projects, manufacturing, quality, maintenance, notify（跨域通知派发子系统，3 实体）
+- **核心域（11）**：master-data, inventory, purchase, sales, finance, assets, projects, manufacturing, quality, maintenance, notify（跨域通知派发子系统）
 - **第一批扩展域（5）**：crm, cs, hr, aps, logistics
-- **第二批扩展域（4）**：b2b, contract, drp, contract（含外部实体 notGenCode 引用 master-data）
+- **第二批扩展域（3）**：b2b, contract, drp（含外部实体 notGenCode 引用 master-data）
 
 ### 多域目录结构
 

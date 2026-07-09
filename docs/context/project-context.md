@@ -11,7 +11,7 @@
 - 项目名称：nop-app-erp
 - 产品类型：基于 Nop Platform 构建的企业资源规划（ERP）应用骨架
 - 主要用户：ERP 系统操作员/管理员以及从现实业务领域应用学习 Nop Platform 的开发人员
-- 文档新鲜度：`fresh`（18 域 ORM 模型已设计完成，279 实体；设计文档经多次审计验证）
+- 文档新鲜度：`fresh`（18 域 ORM 模型已设计完成；设计文档经多次审计验证）
 
 **新鲜度控制：**
 
@@ -27,24 +27,23 @@
 
 ## 当前项目阶段
 
-`nop-app-erp` 处于 **codegen 已完成、待 BizModel 业务逻辑深化阶段**。18 域 ORM 模型（279 实体）+ 跨域 sys 通知派发子系统（`module-notify`，3 实体）已设计完成并经审计验证。所有域的 `nop-cli gen` 骨架已生成（1730+ 个 Java 文件），包含实体类、DAO、I*Biz 接口、BizModel、XMeta、view.xml 骨架。`app-erp-all` 聚合 app 已构建通过（154 reactor 模块 / 18 域 + notify 子系统）。
+`nop-app-erp` 处于 **业务逻辑深化与运营成熟度收尾阶段**。18 域 ORM 模型 + 跨域 sys 通知派发子系统已设计完成并经审计验证。所有域 codegen 骨架已生成，`app-erp-all` 聚合 app 已构建通过。
 
-- codegen 产物是标准 CRUD 空壳（`CrudBizModel<T>` + 空 `I*Biz`），需深化业务逻辑
 - 后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`
 - **工程命名映射**：物理目录 `module-<domain>/` ↔ 逻辑工程名 `app-erp-<domain>` ↔ appName `erp-<简称>` ↔ moduleId `erp/<简称>` 的完整映射见 `docs/architecture/domain-module-split-analysis.md §2.0`
-- 当前重点：按 roadmap 依次深化 BizModel → ErrorCode → 页面定制 → 端到端验证
-- 详见 `docs/analysis/2026-06-25-1649-ai-automation-roadmap.md`
+- 当前重点：各域细化端到端验证、看板运行时视觉/浏览器回归
+- 已落地能力见 `AGENTS.md §当前项目阶段`
 
 ## 验证命令
 
-> **当前状态**：根 pom 和 `app-erp-all` 已可构建（`mvn clean install -DskipTests` 全绿，154 reactor 模块 / 18 域 + notify 子系统）。所有域 codegen 骨架已就绪。
+> **当前状态**：`mvn clean install -DskipTests` 全绿，所有域 codegen 骨架已就绪，业务逻辑已深化至运营成熟度阶段。
 
 | 目的 | 命令 |
 |------|------|
 | 构建全项目 | `mvn clean install -DskipTests` |
 | 本地运行应用 | `java -Dfile.encoding=UTF8 -Dquarkus.profile=dev -jar app-erp-all/target/app-erp-all-1.0-SNAPSHOT-runner.jar` |
 | 类型检查/编译检查 | `mvn compile -DskipTests` |
-| 单元测试 | `mvn test`（随 BizModel 实现逐步补充） |
+| 单元测试 | `mvn test` |
 | 首次生成单域模块骨架（仅首次） | `nop-cli gen module-<domain>/model/app-erp-<domain>.orm.xml -t=/nop/templates/orm` |
 | 增量重新生成（模型变更后） | `mvn clean install -DskipTests`（触发 gen-orm.xgen 增量链） |
 | XML well-formed 校验 | `xmllint --noout module-<domain>/model/app-erp-<domain>.orm.xml` |

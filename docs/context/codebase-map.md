@@ -12,44 +12,44 @@
 
 > **物理目录 ↔ 逻辑工程名 ↔ appName ↔ moduleId 映射**：完整 19 行映射表见 `docs/architecture/domain-module-split-analysis.md §2.0`（唯一规范）。物理目录 `module-<domain>/` 是 bootstrap 期别名，逻辑工程名为 `app-erp-<domain>`，聚合启动工程逻辑名 = 物理名 = `app-erp-all`。`module-notify`（逻辑工程名 `app-erp-notify`，appName `erp-notify`，moduleId `erp/notify`）为跨域 sys 子系统，与 18 业务域并列。
 
-所有域 codegen 骨架已生成（含 notify 子系统共 1730+ 个 Java 文件），含实体类、DAO、I*Biz 接口、BizModel、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
+所有域 codegen 骨架已生成，含实体类、DAO、I*Biz 接口、BizModel、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
 
 ## 入口点
 
-| 区域 | 路径 | 说明 | 最后验证 | 置信度 |
-|------|------|------|----------|--------|
-| ORM 模型（真相）×18 | `module-<domain>/model/app-erp-<domain>.orm.xml` | 18 域权威模型，共 279 实体 | 2026-07-01 | high |
-| ORM 模型（通知子系统） | `module-notify/model/app-erp-notify.orm.xml` | 跨域 sys 通知派发（3 实体：模板/通知实例/已读），字典空间 `erp-notify/*` | 2026-07-06 | high |
-| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖（含 notify）+ `nop-integration-api`（邮件/短信 SPI）；`app.action-auth.xml` 合并 18 域 + 系统管理菜单 | 2026-07-06 | high |
-| 根 POM | `pom.xml` | 聚合 20 个模块（18 module-* + module-notify + app-erp-all） | 2026-07-06 | high |
-| 设计文档（全局） | `docs/design/*.md` | 7 份全局 owner doc（app-overview/flow-overview/domain-design-guidelines 等） | 2026-06-23 | high |
-| 设计文档（域） | `docs/design/<domain>/` | 18 域目录，含 README + state-machine + use-cases + ui-patterns 等 | 2026-07-01 | high |
-| 架构文档 | `docs/architecture/*.md` | 9 份技术基线文档 | 2026-06-23 | high |
-| 文档路由器 | `docs/index.md` | 顶层导航 | 2026-06-25 | high |
-| 待办事项 | `docs/backlog/README.md` | 工作项选择 | 2026-06-25 | high |
+| 区域 | 路径 | 说明 | 置信度 |
+|------|------|------|--------|
+| ORM 模型（真相） | `module-<domain>/model/app-erp-<domain>.orm.xml` | 各域权威模型（18 业务域 + notify 通知派发子系统） | high |
+| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖（含 notify）+ `nop-integration-api`（邮件/短信 SPI）；`app.action-auth.xml` 合并各域 + 系统管理菜单 | high |
+| 根 POM | `pom.xml` | 聚合 20 个模块 | high |
+| 设计文档（全局） | `docs/design/*.md` | 多份全局 owner doc（app-overview/flow-overview/domain-design-guidelines 等） | high |
+| 设计文档（域） | `docs/design/<domain>/` | 各域目录，含 README + state-machine + use-cases + ui-patterns 等 | high |
+| 架构文档 | `docs/architecture/*.md` | 多份技术基线文档 | high |
+| 文档路由器 | `docs/index.md` | 顶层导航 | high |
+| 待办事项 | `docs/backlog/README.md` | 工作项选择 | high |
 
-## ORM 模型清单（18 域 × 279 实体）
+## ORM 模型清单
 
-| 域 | 路径 | 实体数 | 字典命名空间 | 最后验证 |
-|----|------|--------|-------------|----------|
-| master-data | `module-master-data/model/app-erp-master-data.orm.xml` | 22 | `erp-md/*` | 2026-07-01 |
-| inventory | `module-inventory/model/app-erp-inventory.orm.xml` | 15 | `erp-inv/*` | 2026-07-01 |
-| purchase | `module-purchase/model/app-erp-purchase.orm.xml` | 17 | `erp-pur/*` | 2026-07-01 |
-| sales | `module-sales/model/app-erp-sales.orm.xml` | 13 | `erp-sal/*` | 2026-07-01 |
-| finance | `module-finance/model/app-erp-finance.orm.xml` | 17 | `erp-fin/*` | 2026-07-01 |
-| assets | `module-assets/model/app-erp-assets.orm.xml` | 10 | `erp-ast/*` | 2026-07-01 |
-| projects | `module-projects/model/app-erp-projects.orm.xml` | 13 | `erp-prj/*` | 2026-07-01 |
-| manufacturing | `module-manufacturing/model/app-erp-manufacturing.orm.xml` | 23 | `erp-mfg/*` | 2026-07-01 |
-| quality | `module-quality/model/app-erp-quality.orm.xml` | 11 | `erp-qa/*` | 2026-07-01 |
-| maintenance | `module-maintenance/model/app-erp-maintenance.orm.xml` | 12 | `erp-mnt/*` | 2026-07-01 |
-| crm | `module-crm/model/app-erp-crm.orm.xml` | 34 | `erp-crm/*` | 2026-07-01 |
-| customer-service | `module-cs/model/app-erp-cs.orm.xml` | 16 | `erp-cs/*` | 2026-07-01 |
-| human-resource | `module-hr/model/app-erp-hr.orm.xml` | 28 | `erp-hr/*` | 2026-07-01 |
-| aps | `module-aps/model/app-erp-aps.orm.xml` | 6 | `erp-aps/*` | 2026-07-01 |
-| contract | `module-contract/model/app-erp-contract.orm.xml` | 15 | `erp-ct/*` | 2026-07-01 |
-| drp | `module-drp/model/app-erp-drp.orm.xml` | 7 | `erp-drp/*` | 2026-07-01 |
-| logistics | `module-logistics/model/app-erp-logistics.orm.xml` | 7 | `erp-log/*` | 2026-07-01 |
-| b2b | `module-b2b/model/app-erp-b2b.orm.xml` | 13 | `erp-b2b/*` | 2026-07-01 |
+| 域 | 路径 | 字典命名空间 |
+|----|------|-------------|
+| master-data | `module-master-data/model/app-erp-master-data.orm.xml` | `erp-md/*` |
+| inventory | `module-inventory/model/app-erp-inventory.orm.xml` | `erp-inv/*` |
+| purchase | `module-purchase/model/app-erp-purchase.orm.xml` | `erp-pur/*` |
+| sales | `module-sales/model/app-erp-sales.orm.xml` | `erp-sal/*` |
+| finance | `module-finance/model/app-erp-finance.orm.xml` | `erp-fin/*` |
+| assets | `module-assets/model/app-erp-assets.orm.xml` | `erp-ast/*` |
+| projects | `module-projects/model/app-erp-projects.orm.xml` | `erp-prj/*` |
+| manufacturing | `module-manufacturing/model/app-erp-manufacturing.orm.xml` | `erp-mfg/*` |
+| quality | `module-quality/model/app-erp-quality.orm.xml` | `erp-qa/*` |
+| maintenance | `module-maintenance/model/app-erp-maintenance.orm.xml` | `erp-mnt/*` |
+| crm | `module-crm/model/app-erp-crm.orm.xml` | `erp-crm/*` |
+| customer-service | `module-cs/model/app-erp-cs.orm.xml` | `erp-cs/*` |
+| human-resource | `module-hr/model/app-erp-hr.orm.xml` | `erp-hr/*` |
+| aps | `module-aps/model/app-erp-aps.orm.xml` | `erp-aps/*` |
+| contract | `module-contract/model/app-erp-contract.orm.xml` | `erp-ct/*` |
+| drp | `module-drp/model/app-erp-drp.orm.xml` | `erp-drp/*` |
+| logistics | `module-logistics/model/app-erp-logistics.orm.xml` | `erp-log/*` |
+| b2b | `module-b2b/model/app-erp-b2b.orm.xml` | `erp-b2b/*` |
+| notify | `module-notify/model/app-erp-notify.orm.xml` | `erp-notify/*` |
 
 ## 常见变更路由
 
