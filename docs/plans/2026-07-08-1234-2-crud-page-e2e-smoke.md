@@ -180,6 +180,7 @@ Exit Criteria:
 ### CRUD 写操作 E2E（create/update/delete 真实持久化）
 
 - Classification: `out-of-scope improvement`
+- **Status: RELEASED** — 由 `docs/plans/2026-07-09-0628-2-crud-write-path-list-value-assertions.md` 承接并落地（master-data ErpMdPartner create/update/delete 持久化经 GraphQL mutation + 序列 warm-up 重试验证；AMIS 表单按钮路径因序列碰撞 defer 至后续）。
 - Why Not Blocking Closure: 冒烟级不持久化（避免测试间状态污染 + 需 mandatory 字段/业务规则知识）。完整 CRUD 写操作需种子数据 + 字段知识 + 状态清理，是更深层端到端验证。
 - Successor Required: `yes`
 - Trigger Condition: 当种子库（同批 #1 plan）落地 + 需验证 CRUD 写操作端到端时。
@@ -187,6 +188,7 @@ Exit Criteria:
 ### 数据驱动 CRUD 列表断言（列表有 N 行 / 字段值）
 
 - Classification: `out-of-scope improvement`
+- **Status: RELEASED** — 由 `docs/plans/2026-07-09-0628-2-crud-write-path-list-value-assertions.md` 承接并落地（13 域代表性实体 `*.list-value.spec.ts` 经 GraphQL findPage 断言 seed 行数 + token）。
 - Why Not Blocking Closure: 空库冒烟断言「列表 DOM 存在 + GraphQL 200」，非「列表有 N 行」。数据断言需种子库（同批 #1 plan）。
 - Successor Required: `yes`
 - Trigger Condition: 当种子库落地 + 需 CRUD 列表数据驱动回归时。

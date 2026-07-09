@@ -2,11 +2,13 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec（共 81 spec）。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 1 域 CRUD 写路径 spec（共 99 测试）。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
 在冒烟级之上，核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）+ 扩展域 CRM/客服/人力（纯报表域，无看板）+ 主数据域（master-data，看板 KPI + 预警 + 2 报表）已叠加**数据驱动数值断言层**（`*.value.spec.ts`）：直接经 GraphQL query 取后端聚合原始值，断言匹配确定性期望值。详见下方「数据驱动数值断言层」。
+
+在数值断言层之上，13 域代表性实体（有 seed 行的）叠加了**CRUD 数据驱动列表断言层**（`*.list-value.spec.ts`）：经 GraphQL `ErpXxx__findPage` 查询断言列表返回 seed 行（行数 ≥ seed + 关键字段 token）。master-data ErpMdPartner 额外叠加**CRUD 写路径验证**（`master-data.write.spec.ts`）：create→get 验证→update→get 验证→delete→get 验证全链，断言写操作持久化。详见下方「CRUD 数据驱动列表断言层 + 写路径验证」。
 
 ## 前置条件
 
@@ -97,10 +99,12 @@ java -Dfile.encoding=UTF8 \
 | 单文件 | `npx playwright test tests/e2e/dashboards/finance.smoke.spec.ts --workers=1` | 调试单个页面 |
 | 看板套件 | `npx playwright test tests/e2e/dashboards/ --workers=1` | 看板回归 |
 | 报表套件 | `npx playwright test tests/e2e/reports/ --workers=1` | 报表回归 |
-| CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 |
+| CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 + 13 域列表断言 + 写路径 |
+| 列表断言套件 | `npx playwright test tests/e2e/crud/*.list-value.spec.ts --workers=1` | 13 域 findPage seed 行断言 |
+| 写路径套件 | `npx playwright test tests/e2e/crud/*.write.spec.ts --workers=1` | CRUD 写持久化验证（create/update/delete） |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 12 分钟（85 测试：53 冒烟 spec × ~10s/spec + 28 数值断言 spec 文件产 32 测试 × ~7.5s/spec，含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 14 分钟（99 测试：冒烟 + 数值断言 + CRUD 列表断言 + 写路径 spec，含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -164,6 +168,41 @@ java -Dfile.encoding=UTF8 \
 3. 同步更新对应 `*.value.spec.ts` 的 `expected` / `expectedTokens`。
 
 不更新则数值断言会失败（这是设计预期——暴露 seed 漂移，非测试脆弱）。manufacturing/maintenance/quality 域数值断言层已落地（0930-3，期望值表 `docs/analysis/2026-07-09-0930-3-mfg-mnt-qa-kpi-expected-values.md`）；CRM/客服/人力域报表数值断言层已落地（1045-2，期望值表 `docs/analysis/2026-07-09-1045-2-crm-cs-hr-report-expected-values.md`）；主数据域看板/报表数值断言层已落地（1145-1，期望值表 `docs/analysis/2026-07-09-1145-1-master-data-expected-values.md`，含 vendorCount 字典值漂移修复）；制造域 CRP 负荷报表数值断言层已落地（0628-1，期望值表 + capacityHours 口径 `docs/analysis/2026-07-09-0628-1-crp-load-seed-table-map.md`，完成全报表域数值断言覆盖里程碑）；其余扩展域（logistics/b2b/contract/drp/aps，无看板无报表）数值断言归后续批次（触发条件：对应域有可断言看板/报表时）。
+
+## CRUD 数据驱动列表断言层 + 写路径验证
+
+在数值断言层与 CRUD 冒烟层之上，0628-2 叠加了 CRUD 读写两面的数据驱动验证（解除 1234-2 两项 Deferred）：
+
+### 列表断言层（`*.list-value.spec.ts`，13 域）
+
+13 域代表性实体（有 seed 行的）经 GraphQL `ErpXxx__findPage(query:{offset:0,limit:200})` 查询，断言列表返回 seed 行（`items.length >= seed 行数` + JSON body 含关键字段 token）。调 `_helper.ts` 的 `assertCrudListValues({ entityName, route, expectedCount, expectedTokens, fields })` 委派，镜像 dashboards/reports helper 委派范式。
+
+| 域 | 实体 | seed 行数 | token 依据 |
+| --- | --- | --- | --- |
+| master-data | ErpMdPartner | 5 | CUST-001/SUP-001/CUSTOMER/SUPPLIER |
+| inventory | ErpInvStockMove | 1 | MV-2026-001/INCOMING |
+| purchase | ErpPurOrder | 1 | PO-2026-001 |
+| sales | ErpSalOrder | 1 | SO-2026-001 |
+| finance | ErpFinVoucher | 4 | PZ-2026-001/TRANSFER |
+| assets | ErpAstAsset | 3 | AST-2026-001/AST-2026-002 |
+| projects | ErpPrjProject | 1 | PRJ-2026-001 |
+| manufacturing | ErpMfgWorkOrder | 4 | WO-2026-001/COMPLETED/IN_PROCESS |
+| quality | ErpQaInspection | 3 | INS-2026-001/ACCEPTED/REJECTED |
+| maintenance | ErpMntVisit | 2 | VIS-2026-001/PLANNED |
+| crm | ErpCrmLead | 2 | LEAD-2026-001/OPPORTUNITY |
+| cs | ErpCsTicket | 2 | TKT-2026-001/HIGH |
+| hr | ErpHrEmployee | 2 | HR-EMP-001/HR-EMP-002 |
+
+### 写路径验证（`*.write.spec.ts`，master-data 代表）
+
+master-data ErpMdPartner（mandatory 字段最简：code/name/partnerType/status 共 4 业务字段，文本/dict 无 FK）经 `runCrudWriteCycle({ entityName, route, fields, editField })` 委派完成 create→get 验证→update→get 验证→delete→get 验证（not-found）全链。
+
+**写机制说明（关键发现）**：
+- 写持久化经 GraphQL mutation（`page.request.post('/graphql')`，复用 UI 登录会话 cookie）调用平台标准 `ErpXxx__save`/`ErpXxx__update`/`ErpXxx__delete`（同一 `CrudBizModel` 方法，AMIS 表单按钮提交经 `/graphql` 走相同 mutation）。
+- **序列 warm-up 重试**：平台 `SysSequenceGenerator` 默认序列 `nextValue` 初始化为 1（`addDefaultSequence`），但种子库已显式插入 id=1~5，导致前几次 create 主键冲突（`nop.err.dao.sql.duplicate-key`）。`runCrudWriteCycle` 的 create 步骤带序列 warm-up 重试（最多 30 次，每次唯一 code 后缀），序列内存缓存每次 attempt 自增，约 max-seed-id 次后越过种子 id 区间即成功。此为种子加载（`DataInitInitializer` 显式 id 插入）未推进序列计数器的已知交互，不影响读路径。
+- `update` mutation 支持部分字段更新（仅需 id + 待改字段）；`delete` 为逻辑删除（`delVersion`），删除后 `get` 返回 not-found。
+- **状态隔离**：fresh-DB 每次启动重置（webServer 默认 `rm -f db/erp.mv.db`）+ 同运行内唯一 code（`E2E-{entityName}-{ts}`）+ 序列 warm-up 每次唯一后缀。
+- **AMIS 表单按钮/dict 下拉/行操作选择器**未在浏览器中验证：因序列碰撞使 AMIS 表单首几次 create 必失败（错误 Toast）而不可靠，故写持久化经 mutation 验证。AMIS 按钮交互层 + dict 下拉选择器归 successor（触发条件：`DataInitInitializer` 序列推进修复后）。
 
 ## CRUD 套件（18 域列表/表单冒烟）
 
@@ -254,7 +293,7 @@ tests/e2e/
 │   ├── master-data.smoke.spec.ts
 │   └── master-data.value.spec.ts     # 数值断言层（主数据域：getDashboardKpi 5 字段 + 2 预警空集）
 ├── crud/
-│   ├── _helper.ts                    # runCrudListSmoke 共享函数
+│   ├── _helper.ts                    # runCrudListSmoke + assertCrudListValues + runCrudWriteCycle 共享函数
 │   ├── cs-kb-suggestion.smoke.spec.ts  # KB 建议定向冒烟（suggestForTicket GraphQL 200）
 │   ├── master-data.smoke.spec.ts     # ErpMdPartner
 │   ├── inventory.smoke.spec.ts       # ErpInvStockMove
@@ -273,7 +312,9 @@ tests/e2e/
 │   ├── logistics.smoke.spec.ts       # ErpLogShipment
 │   ├── b2b.smoke.spec.ts             # ErpB2bAsn
 │   ├── contract.smoke.spec.ts        # ErpCtContract
-│   └── drp.smoke.spec.ts             # ErpDrpPlan
+│   ├── drp.smoke.spec.ts             # ErpDrpPlan
+│   ├── *.list-value.spec.ts          # 13 域 CRUD 数据驱动列表断言（findPage seed 行 + token）
+│   └── master-data.write.spec.ts     # master-data CRUD 写路径（create/update/delete 持久化）
 └── reports/
     ├── _helper.ts                    # runReportSmoke + assertReportRenderedWithValue 共享函数
     ├── fin-balance-sheet.value.spec.ts   # 数值断言层
