@@ -2,13 +2,13 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 1 域 CRUD 写路径 spec（共 99 测试）。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层，共 102 测试）。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
 在冒烟级之上，核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）+ 扩展域 CRM/客服/人力（纯报表域，无看板）+ 主数据域（master-data，看板 KPI + 预警 + 2 报表）已叠加**数据驱动数值断言层**（`*.value.spec.ts`）：直接经 GraphQL query 取后端聚合原始值，断言匹配确定性期望值。详见下方「数据驱动数值断言层」。
 
-在数值断言层之上，13 域代表性实体（有 seed 行的）叠加了**CRUD 数据驱动列表断言层**（`*.list-value.spec.ts`）：经 GraphQL `ErpXxx__findPage` 查询断言列表返回 seed 行（行数 ≥ seed + 关键字段 token）。master-data ErpMdPartner 额外叠加**CRUD 写路径验证**（`master-data.write.spec.ts`）：create→get 验证→update→get 验证→delete→get 验证全链，断言写操作持久化。详见下方「CRUD 数据驱动列表断言层 + 写路径验证」。
+在数值断言层之上，13 域代表性实体（有 seed 行的）叠加了**CRUD 数据驱动列表断言层**（`*.list-value.spec.ts`）：经 GraphQL `ErpXxx__findPage` 查询断言列表返回 seed 行（行数 ≥ seed + 关键字段 token）。master-data ErpMdPartner 额外叠加**CRUD 写路径验证**（GraphQL 层 `master-data.write.spec.ts` + AMIS 表单层 `master-data.write.amis.spec.ts`）：create→get 验证→update→get 验证→delete→get 验证全链，断言写操作持久化。quality `ErpQaRiskRegister` + maintenance `ErpMntEquipmentCategory` 叠加 GraphQL 层写路径（`quality.write.spec.ts` / `maintenance.write.spec.ts`）。详见下方「CRUD 数据驱动列表断言层 + 写路径验证」。
 
 ## 前置条件
 
@@ -75,6 +75,7 @@ SKIP_WEBSERVER=1 npx playwright test
   - **3 张质量域 SPC 表 + 1 处既有 CSV 加性追加**（2026-07-09-1145-2）：spc_chart（1 行，parameterId=0 占位软引用）+ spc_sample（1 行 isOutOfControl=true）+ spc_capability（1 行 capabilityLevel=INADEQUATE）+ `erp_qa_non_conformance` 追加 1 行 sourceType=SPC·status=OPEN；质量看板 `getSpcOutOfControlWarning` 三计数器（outOfControlChartCount/inadequateCapabilityCount/openSpcNcrCount）读 SPC 域表非 GL，由确定性 0 转非空可观测（解除 0930-2/0930-3 SPC Deferred）；Strategy C 完整参照完整性（sample/capability.chartId 指向真实 chart 行）；SPC 引擎双层门控默认关，seed 静态结果行不被重算覆盖；SPC 控制图可视化/ErpQaParameter 物化/SPC 引擎重算链归 Deferred
   - **4 张制造域工作中心配置链 + crp_load 表**（2026-07-09-0628-1）：workcenter（1 行 WC-001 主装配线）+ workcenter_calendar（1 行 单班 08:00~16:00 ALL_WEEK IS_ACTIVE=true）+ workcenter_capacity（1 行 efficiencyFactor=1 IS_ACTIVE=true）+ crp_load（1 行 loadDate=2026-07-15 loadHours=4 workOrderId→0930-1 WO-1）；CRP 负荷报表（crp-load-report）经 `CrpLoadCalculator.getLoadReport` 读 crp_load+workcenter+calendar+capacity 非空可观测（capacityHours=8.00 / loadRate=0.50 确定性派生，解除 0930-1 crp_load Deferred）；Strategy C 完整参照完整性（calendar/capacity/crp_load.workcenterId 指向真实 workcenter 行）；CRP 重算链经 nop-job 双层门控默认关，seed 静态 crp_load 行不被重算覆盖；CRP 前端可视化/crp_load 重算链归 Deferred
 - `rm -f db/erp.mv.db db/erp.trace.db` — **fresh-DB 重置**。`DataInitInitializer` 非幂等（无存在性检查），持久 H2 文件库重复启动会主键冲突；故每次 webServer 启动前删除 db 文件，确保 seed 在空表上插入。交易种子加入后该行为不变（仅 CSV 增多，webServer JVM 参数与重置逻辑无改动）。
+- **序列推进（0814-1）**：`_init-data/zz-sequence-advance.sql` 在所有 CSV 加载后执行（按文件名排序），`MERGE INTO NOP_SYS_SEQUENCE` 创建 default 序列行 `NEXT_VALUE=100000`（> 种子显式 id 上限 8）。因 `SysSequenceGenerator.lazyInit()` 是 delay-method（所有 bean 启动后才运行），`.sql` 执行时表为空，MERGE 创建行后 `addDefaultSequence()` 的 `if(!exists)` 守卫跳过，advanced 值保留。消除 GraphQL/AMIS 表单 create 首次主键碰撞（首 save id≥100000）。详见 `docs/architecture/seed-data.md`「部署期序列推进修复」。
 
 手动启动种子库（方式 B）：
 
@@ -104,7 +105,7 @@ java -Dfile.encoding=UTF8 \
 | 写路径套件 | `npx playwright test tests/e2e/crud/*.write.spec.ts --workers=1` | CRUD 写持久化验证（create/update/delete） |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 14 分钟（99 测试：冒烟 + 数值断言 + CRUD 列表断言 + 写路径 spec，含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 14 分钟（102 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance），含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -193,16 +194,17 @@ java -Dfile.encoding=UTF8 \
 | cs | ErpCsTicket | 2 | TKT-2026-001/HIGH |
 | hr | ErpHrEmployee | 2 | HR-EMP-001/HR-EMP-002 |
 
-### 写路径验证（`*.write.spec.ts`，master-data 代表）
+### 写路径验证（`*.write.spec.ts`，master-data GraphQL + master-data AMIS + quality/maintenance GraphQL）
 
-master-data ErpMdPartner（mandatory 字段最简：code/name/partnerType/status 共 4 业务字段，文本/dict 无 FK）经 `runCrudWriteCycle({ entityName, route, fields, editField })` 委派完成 create→get 验证→update→get 验证→delete→get 验证（not-found）全链。
+master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormWrite`（AMIS 表单层）完成 create→get 验证→update→get 验证→delete→get 验证（not-found）全链；quality `ErpQaRiskRegister`（含 dict `status`）+ maintenance `ErpMntEquipmentCategory` 经 `runCrudWriteCycle` 补非 master-data 域覆盖。
 
-**写机制说明（关键发现）**：
+**写机制说明（关键发现 + 0814-1 修复）**：
 - 写持久化经 GraphQL mutation（`page.request.post('/graphql')`，复用 UI 登录会话 cookie）调用平台标准 `ErpXxx__save`/`ErpXxx__update`/`ErpXxx__delete`（同一 `CrudBizModel` 方法，AMIS 表单按钮提交经 `/graphql` 走相同 mutation）。
-- **序列 warm-up 重试**：平台 `SysSequenceGenerator` 默认序列 `nextValue` 初始化为 1（`addDefaultSequence`），但种子库已显式插入 id=1~5，导致前几次 create 主键冲突（`nop.err.dao.sql.duplicate-key`）。`runCrudWriteCycle` 的 create 步骤带序列 warm-up 重试（最多 30 次，每次唯一 code 后缀），序列内存缓存每次 attempt 自增，约 max-seed-id 次后越过种子 id 区间即成功。此为种子加载（`DataInitInitializer` 显式 id 插入）未推进序列计数器的已知交互，不影响读路径。
-- `update` mutation 支持部分字段更新（仅需 id + 待改字段）；`delete` 为逻辑删除（`delVersion`），删除后 `get` 返回 not-found。
-- **状态隔离**：fresh-DB 每次启动重置（webServer 默认 `rm -f db/erp.mv.db`）+ 同运行内唯一 code（`E2E-{entityName}-{ts}`）+ 序列 warm-up 每次唯一后缀。
-- **AMIS 表单按钮/dict 下拉/行操作选择器**未在浏览器中验证：因序列碰撞使 AMIS 表单首几次 create 必失败（错误 Toast）而不可靠，故写持久化经 mutation 验证。AMIS 按钮交互层 + dict 下拉选择器归 successor（触发条件：`DataInitInitializer` 序列推进修复后）。
+- **序列碰撞已修复（0814-1）**：平台 `SysSequenceGenerator` 默认序列 `nextValue` 初始化为 1（`addDefaultSequence`），但种子 CSV 显式插入 id=1~8，导致 create 主键冲突。`_init-data/zz-sequence-advance.sql`（0814-1 新增）在种子 CSV 加载后 `MERGE` 创建 default 序列行 `NEXT_VALUE=100000`（> 种子 id 上限 8）；因 `SysSequenceGenerator.lazyInit()` 是 `ioc:delay-method`（所有 bean 启动后才运行），`.sql` 执行时表为空，`MERGE` 创建行后 `addDefaultSequence()` 的 `if(!exists)` 守卫跳过，advanced 值保留。**效果**：首 GraphQL/AMIS save 即返回 id≥100000，无主键碰撞。
+- **warm-up 重试已简化（0814-1）**：0628-2 helper 的 `MAX_SEQ_RETRIES=30` warm-up 重试循环（序列碰撞时逐次消费 id 直到越过种子区间）经 0814-1 序列修复后不再需要，简化为**单次容错**（最多 1 次重试，仅防御并发/唯一 code 瞬态冲突）。
+- `update` mutation 支持部分字段更新（仅需 id + 待改字段）；`delete` 为逻辑删除（`delVersion`），删除后 `__get` 返回 not-found。
+- **状态隔离**：fresh-DB 每次启动重置（webServer 默认 `rm -f db/erp.mv.db`）+ 同运行内唯一 code（`E2E-{entityName}-{ts}`）。
+- **AMIS 表单写路径（0814-1 新增）**：`runAmisFormWrite` 经浏览器 UI 点「新增」→填表单（文本 + dict 下拉）→「确认」→列表/GraphQL 验证→行操作「编辑」→验证更新→（delete）。dict 下拉经 DOM evaluate 定位（label/option 多 locale 变体 + dict value code 匹配，规避 zh/en locale 漂移）。**已知限制**：AMIS action-group dropdown 的 Delete action（gated by confirmText）在 Playwright 下不触发其 confirm/API（Edit action 直接开 dialog 正常）→ AMIS spec 的 delete 改用同一 GraphQL `__delete` mutation（UI 按钮调用的同一端点），delete 机制本身由 GraphQL 层写 spec 独立证明。seq-default id 字段在 add 表单被标 mandatory（ORM 仍服务端生成实际 id，表单值仅满足客户端校验）。
 
 ## CRUD 套件（18 域列表/表单冒烟）
 
@@ -314,7 +316,10 @@ tests/e2e/
 │   ├── contract.smoke.spec.ts        # ErpCtContract
 │   ├── drp.smoke.spec.ts             # ErpDrpPlan
 │   ├── *.list-value.spec.ts          # 13 域 CRUD 数据驱动列表断言（findPage seed 行 + token）
-│   └── master-data.write.spec.ts     # master-data CRUD 写路径（create/update/delete 持久化）
+│   ├── master-data.write.spec.ts     # master-data CRUD 写路径 GraphQL 层（create/update/delete 持久化）
+│   ├── master-data.write.amis.spec.ts # master-data CRUD 写路径 AMIS 表单层（UI 新增/编辑/删除，0814-1）
+│   ├── quality.write.spec.ts         # quality ErpQaRiskRegister CRUD 写路径 GraphQL 层（0814-1，含 dict status）
+│   └── maintenance.write.spec.ts     # maintenance ErpMntEquipmentCategory CRUD 写路径 GraphQL 层（0814-1）
 └── reports/
     ├── _helper.ts                    # runReportSmoke + assertReportRenderedWithValue 共享函数
     ├── fin-balance-sheet.value.spec.ts   # 数值断言层
