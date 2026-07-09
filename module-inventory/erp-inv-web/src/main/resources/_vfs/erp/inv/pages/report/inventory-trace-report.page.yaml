@@ -20,14 +20,8 @@ body:
         placeholder: "按仓库过滤"
       - type: button
         label: "渲染报表"
-        actionType: ajax
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query($reportName:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__renderHtml(reportName:$reportName,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}) }"
-            variables: { reportName: "inventory-trace-report", batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
+        actionType: reload
+        target: "reportService"
       - type: button-toolbar
         buttons:
           - type: button
@@ -38,7 +32,7 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__download(reportName:$reportName,renderType:$renderType,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}batchNo:String,${'$'}materialId:BigDecimal,${'$'}warehouseId:BigDecimal){ ErpInvReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{batchNo:${'$'}batchNo,materialId:${'$'}materialId,warehouseId:${'$'}warehouseId}) }"
                 variables: { reportName: "inventory-trace-report", renderType: "xlsx", batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
           - type: button
             label: "下载 PDF"
@@ -48,9 +42,27 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$batchNo:String,$materialId:BigDecimal,$warehouseId:BigDecimal){ ErpInvReport__download(reportName:$reportName,renderType:$renderType,data:{batchNo:$batchNo,materialId:$materialId,warehouseId:$warehouseId}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}batchNo:String,${'$'}materialId:BigDecimal,${'$'}warehouseId:BigDecimal){ ErpInvReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{batchNo:${'$'}batchNo,materialId:${'$'}materialId,warehouseId:${'$'}warehouseId}) }"
                 variables: { reportName: "inventory-trace-report", renderType: "pdf", batchNo: "${batchNo}", materialId: "${materialId}", warehouseId: "${warehouseId}" }
-  - type: html
-    id: reportContainer
-    html: ""
-    className: m-3
+      - type: service
+        name: reportService
+        id: reportContainer
+        initFetch: false
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}reportName:String!,${'$'}batchNo:String,${'$'}materialId:BigDecimal,${'$'}warehouseId:BigDecimal){ ErpInvReport__renderHtml(reportName:${'$'}reportName,data:{batchNo:${'$'}batchNo,materialId:${'$'}materialId,warehouseId:${'$'}warehouseId}) }"
+            variables:
+              reportName: "inventory-trace-report"
+              batchNo: "${batchNo}"
+              materialId: "${materialId}"
+              warehouseId: "${warehouseId}"
+          adaptor: |
+            const d = payload.data || {};
+            const html = (d.data ? d.data : d).ErpInvReport__renderHtml || '';
+            return { status: 0, msg: '', data: { reportHtml: html } };
+        body:
+          - type: html
+            html: "${reportHtml}"

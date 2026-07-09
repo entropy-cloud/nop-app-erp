@@ -13,14 +13,8 @@ body:
         value: 1
       - type: button
         label: "渲染报表"
-        actionType: ajax
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query($reportName:String!,$simulationId:BigDecimal){ ErpHrReport__renderHtml(reportName:$reportName,data:{simulationId:$simulationId}) }"
-            variables: { reportName: "payroll-simulation-comparison", simulationId: "${simulationId}" }
+        actionType: reload
+        target: "reportService"
       - type: button-toolbar
         buttons:
           - type: button
@@ -31,7 +25,7 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$simulationId:BigDecimal){ ErpHrReport__download(reportName:$reportName,renderType:$renderType,data:{simulationId:$simulationId}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}simulationId:BigDecimal){ ErpHrReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{simulationId:${'$'}simulationId}) }"
                 variables: { reportName: "payroll-simulation-comparison", renderType: "xlsx", simulationId: "${simulationId}" }
           - type: button
             label: "下载 PDF"
@@ -41,9 +35,25 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$simulationId:BigDecimal){ ErpHrReport__download(reportName:$reportName,renderType:$renderType,data:{simulationId:$simulationId}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}simulationId:BigDecimal){ ErpHrReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{simulationId:${'$'}simulationId}) }"
                 variables: { reportName: "payroll-simulation-comparison", renderType: "pdf", simulationId: "${simulationId}" }
-  - type: html
-    id: reportContainer
-    html: ""
-    className: m-3
+      - type: service
+        name: reportService
+        id: reportContainer
+        initFetch: false
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}reportName:String!,${'$'}simulationId:BigDecimal){ ErpHrReport__renderHtml(reportName:${'$'}reportName,data:{simulationId:${'$'}simulationId}) }"
+            variables:
+              reportName: "payroll-simulation-comparison"
+              simulationId: "${simulationId}"
+          adaptor: |
+            const d = payload.data || {};
+            const html = (d.data ? d.data : d).ErpHrReport__renderHtml || '';
+            return { status: 0, msg: '', data: { reportHtml: html } };
+        body:
+          - type: html
+            html: "${reportHtml}"

@@ -62,7 +62,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query($projectId:Long){ ErpPrjDashboard__getProjectGrossMargin(projectId:$projectId) }"
+        query: "query(${'$'}projectId:Long){ ErpPrjDashboard__getProjectGrossMargin(projectId:${'$'}projectId) }"
         variables:
           projectId: "${projectId || null}"
       adaptor: |

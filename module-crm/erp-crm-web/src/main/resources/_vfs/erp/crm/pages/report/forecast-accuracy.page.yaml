@@ -12,14 +12,8 @@ body:
         placeholder: "输入预测方案ID（留空聚合全部）"
       - type: button
         label: "渲染报表"
-        actionType: ajax
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query($reportName:String!,$forecastId:BigDecimal){ ErpCrmReport__renderHtml(reportName:$reportName,data:{forecastId:$forecastId}) }"
-            variables: { reportName: "forecast-accuracy", forecastId: "${forecastId}" }
+        actionType: reload
+        target: "reportService"
       - type: button-toolbar
         buttons:
           - type: button
@@ -30,7 +24,7 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$forecastId:BigDecimal){ ErpCrmReport__download(reportName:$reportName,renderType:$renderType,data:{forecastId:$forecastId}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}forecastId:BigDecimal){ ErpCrmReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{forecastId:${'$'}forecastId}) }"
                 variables: { reportName: "forecast-accuracy", renderType: "xlsx", forecastId: "${forecastId}" }
           - type: button
             label: "下载 PDF"
@@ -40,9 +34,25 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$forecastId:BigDecimal){ ErpCrmReport__download(reportName:$reportName,renderType:$renderType,data:{forecastId:$forecastId}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}forecastId:BigDecimal){ ErpCrmReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{forecastId:${'$'}forecastId}) }"
                 variables: { reportName: "forecast-accuracy", renderType: "pdf", forecastId: "${forecastId}" }
-  - type: html
-    id: reportContainer
-    html: ""
-    className: m-3
+      - type: service
+        name: reportService
+        id: reportContainer
+        initFetch: false
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}reportName:String!,${'$'}forecastId:BigDecimal){ ErpCrmReport__renderHtml(reportName:${'$'}reportName,data:{forecastId:${'$'}forecastId}) }"
+            variables:
+              reportName: "forecast-accuracy"
+              forecastId: "${forecastId}"
+          adaptor: |
+            const d = payload.data || {};
+            const html = (d.data ? d.data : d).ErpCrmReport__renderHtml || '';
+            return { status: 0, msg: '', data: { reportHtml: html } };
+        body:
+          - type: html
+            html: "${reportHtml}"

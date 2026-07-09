@@ -1,4 +1,5 @@
-import { test, expect, loginAndNavigate, type Page } from '../fixtures';
+import { test, expect, loginAndNavigate } from '../fixtures';
+import type { Page } from '@playwright/test';
 
 export interface DashboardVisualAssertion {
   domain: string;
@@ -6,6 +7,13 @@ export interface DashboardVisualAssertion {
   expectedKpiTokens?: string[];
   hasChart: boolean;
   alertTable: boolean;
+  /** Form field values to fill before reloading, locking deterministic seed
+   * values (aligned with the value-spec layer). Without these, date/period
+   * KPIs would drift with the server clock. */
+  filterValues?: Record<string, string>;
+  /** GraphQL action name whose response marks the post-reload KPI ready.
+   * Defaults to `getDashboardKpi`. */
+  kpiAction?: string;
 }
 
 async function kpiSpanTexts(page: Page): Promise<string[]> {
@@ -15,19 +23,41 @@ async function kpiSpanTexts(page: Page): Promise<string[]> {
 export function assertDashboardRendered(cfg: DashboardVisualAssertion): void {
   test.describe(`${cfg.domain} dashboard AMIS render`, () => {
     test('renders KPI cards + echarts canvas + alert table via AMIS GraphQL pipeline', async ({ page }) => {
-      const kpiResponsePromise = page.waitForResponse(
+      const kpiAction = cfg.kpiAction ?? 'getDashboardKpi';
+
+      // Initial load (default/empty filters) — captures the AMIS GraphQL
+      // pipeline integrity. Defect A (mangled `$var`) still returns HTTP 200
+      // here, so this alone does not prove values; the token assertions below do.
+      const initialResponsePromise = page.waitForResponse(
         (resp) => {
           if (!resp.url().includes('/graphql')) return false;
           const body = resp.request().postData() || '';
-          return body.includes('getDashboardKpi');
+          return body.includes(kpiAction);
         },
         { timeout: 30_000 },
       );
 
       await loginAndNavigate(page, cfg.route);
+      await initialResponsePromise;
 
-      const kpiResponse = await kpiResponsePromise;
-      expect(kpiResponse.status(), `${cfg.domain} KPI GraphQL should return 200`).toBe(200);
+      // Deterministic filtered reload: fill the filter form, then click the
+      // "刷新" reload button, then wait for the post-reload KPI response. This
+      // locks date/period ranges to seed values (same caliber as value specs).
+      if (cfg.filterValues && Object.keys(cfg.filterValues).length > 0) {
+        for (const [name, value] of Object.entries(cfg.filterValues)) {
+          await page.locator(`input[name="${name}"]`).first().fill(value);
+        }
+        const reloadResponsePromise = page.waitForResponse(
+          (resp) => {
+            if (!resp.url().includes('/graphql')) return false;
+            const body = resp.request().postData() || '';
+            return body.includes(kpiAction);
+          },
+          { timeout: 30_000 },
+        );
+        await page.getByRole('button', { name: /刷新|Refresh/ }).first().click();
+        await reloadResponsePromise;
+      }
 
       const kpiCards = page.locator('.border.rounded.p-3');
       await expect(
@@ -43,7 +73,7 @@ export function assertDashboardRendered(cfg: DashboardVisualAssertion): void {
         for (const tok of cfg.expectedKpiTokens) {
           await expect.poll(
             async () => (await kpiSpanTexts(page)).join('||'),
-            { timeout: 15_000, message: `${cfg.domain} KPI span.h3 should render token "${tok}"` },
+            { timeout: 20_000, message: `${cfg.domain} KPI span.h3 should render token "${tok}"` },
           ).toContain(tok);
         }
       }

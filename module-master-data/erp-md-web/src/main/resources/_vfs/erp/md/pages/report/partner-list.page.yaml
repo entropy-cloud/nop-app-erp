@@ -12,14 +12,8 @@ body:
         placeholder: "CUSTOMER=客户 / SUPPLIER=供应商（留空查全部）"
       - type: button
         label: "渲染报表"
-        actionType: ajax
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query($reportName:String!,$partnerType:String){ ErpMdReport__renderHtml(reportName:$reportName,data:{partnerType:$partnerType}) }"
-            variables: { reportName: "partner-list", partnerType: "${partnerType}" }
+        actionType: reload
+        target: "reportService"
       - type: button-toolbar
         buttons:
           - type: button
@@ -30,7 +24,7 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$partnerType:String){ ErpMdReport__download(reportName:$reportName,renderType:$renderType,data:{partnerType:$partnerType}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}partnerType:String){ ErpMdReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{partnerType:${'$'}partnerType}) }"
                 variables: { reportName: "partner-list", renderType: "xlsx", partnerType: "${partnerType}" }
           - type: button
             label: "下载 PDF"
@@ -40,9 +34,25 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$partnerType:String){ ErpMdReport__download(reportName:$reportName,renderType:$renderType,data:{partnerType:$partnerType}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}partnerType:String){ ErpMdReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{partnerType:${'$'}partnerType}) }"
                 variables: { reportName: "partner-list", renderType: "pdf", partnerType: "${partnerType}" }
-  - type: html
-    id: reportContainer
-    html: ""
-    className: m-3
+      - type: service
+        name: reportService
+        id: reportContainer
+        initFetch: false
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}reportName:String!,${'$'}partnerType:String){ ErpMdReport__renderHtml(reportName:${'$'}reportName,data:{partnerType:${'$'}partnerType}) }"
+            variables:
+              reportName: "partner-list"
+              partnerType: "${partnerType}"
+          adaptor: |
+            const d = payload.data || {};
+            const html = (d.data ? d.data : d).ErpMdReport__renderHtml || '';
+            return { status: 0, msg: '', data: { reportHtml: html } };
+        body:
+          - type: html
+            html: "${reportHtml}"

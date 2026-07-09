@@ -26,7 +26,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query($periodId:String){ ErpAstDashboard__getDashboardKpi(periodId:$periodId) }"
+        query: "query(${'$'}periodId:String){ ErpAstDashboard__getDashboardKpi(periodId:${'$'}periodId) }"
         variables:
           periodId: "${periodId || null}"
       adaptor: |
@@ -114,7 +114,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query($months:Int){ ErpAstDashboard__getDashboardTrend(months:$months) }"
+        query: "query(${'$'}months:Int){ ErpAstDashboard__getDashboardTrend(months:${'$'}months) }"
         variables:
           months: 12
       adaptor: |

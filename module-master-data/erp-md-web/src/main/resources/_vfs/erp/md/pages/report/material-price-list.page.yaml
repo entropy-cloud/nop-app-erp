@@ -12,14 +12,8 @@ body:
         placeholder: "按物料编码精确过滤（留空查全部）"
       - type: button
         label: "渲染报表"
-        actionType: ajax
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query($reportName:String!,$materialCode:String){ ErpMdReport__renderHtml(reportName:$reportName,data:{materialCode:$materialCode}) }"
-            variables: { reportName: "material-price-list", materialCode: "${materialCode}" }
+        actionType: reload
+        target: "reportService"
       - type: button-toolbar
         buttons:
           - type: button
@@ -30,7 +24,7 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$materialCode:String){ ErpMdReport__download(reportName:$reportName,renderType:$renderType,data:{materialCode:$materialCode}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}materialCode:String){ ErpMdReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{materialCode:${'$'}materialCode}) }"
                 variables: { reportName: "material-price-list", renderType: "xlsx", materialCode: "${materialCode}" }
           - type: button
             label: "下载 PDF"
@@ -40,9 +34,25 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$materialCode:String){ ErpMdReport__download(reportName:$reportName,renderType:$renderType,data:{materialCode:$materialCode}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}materialCode:String){ ErpMdReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{materialCode:${'$'}materialCode}) }"
                 variables: { reportName: "material-price-list", renderType: "pdf", materialCode: "${materialCode}" }
-  - type: html
-    id: reportContainer
-    html: ""
-    className: m-3
+      - type: service
+        name: reportService
+        id: reportContainer
+        initFetch: false
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}reportName:String!,${'$'}materialCode:String){ ErpMdReport__renderHtml(reportName:${'$'}reportName,data:{materialCode:${'$'}materialCode}) }"
+            variables:
+              reportName: "material-price-list"
+              materialCode: "${materialCode}"
+          adaptor: |
+            const d = payload.data || {};
+            const html = (d.data ? d.data : d).ErpMdReport__renderHtml || '';
+            return { status: 0, msg: '', data: { reportHtml: html } };
+        body:
+          - type: html
+            html: "${reportHtml}"

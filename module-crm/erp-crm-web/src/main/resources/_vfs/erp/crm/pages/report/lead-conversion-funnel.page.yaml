@@ -8,14 +8,8 @@ body:
     body:
       - type: button
         label: "渲染报表"
-        actionType: ajax
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query($reportName:String!){ ErpCrmReport__renderHtml(reportName:$reportName,data:{}) }"
-            variables: { reportName: "lead-conversion-funnel" }
+        actionType: reload
+        target: "reportService"
       - type: button-toolbar
         buttons:
           - type: button
@@ -26,7 +20,7 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!){ ErpCrmReport__download(reportName:$reportName,renderType:$renderType,data:{}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!){ ErpCrmReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{}) }"
                 variables: { reportName: "lead-conversion-funnel", renderType: "xlsx" }
           - type: button
             label: "下载 PDF"
@@ -36,9 +30,24 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!){ ErpCrmReport__download(reportName:$reportName,renderType:$renderType,data:{}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!){ ErpCrmReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{}) }"
                 variables: { reportName: "lead-conversion-funnel", renderType: "pdf" }
-  - type: html
-    id: reportContainer
-    html: ""
-    className: m-3
+      - type: service
+        name: reportService
+        id: reportContainer
+        initFetch: false
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}reportName:String!){ ErpCrmReport__renderHtml(reportName:${'$'}reportName,data:{}) }"
+            variables:
+              reportName: "lead-conversion-funnel"
+          adaptor: |
+            const d = payload.data || {};
+            const html = (d.data ? d.data : d).ErpCrmReport__renderHtml || '';
+            return { status: 0, msg: '', data: { reportHtml: html } };
+        body:
+          - type: html
+            html: "${reportHtml}"

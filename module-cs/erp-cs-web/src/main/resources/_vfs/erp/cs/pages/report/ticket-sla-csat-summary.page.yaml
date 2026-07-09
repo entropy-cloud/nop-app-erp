@@ -12,14 +12,8 @@ body:
         placeholder: "按工单类型过滤（留空查全部）"
       - type: button
         label: "渲染报表"
-        actionType: ajax
-        api:
-          url: /graphql
-          method: post
-          dataType: raw
-          data:
-            query: "query($reportName:String!,$ticketType:String){ ErpCsReport__renderHtml(reportName:$reportName,data:{ticketType:$ticketType}) }"
-            variables: { reportName: "ticket-sla-csat-summary", ticketType: "${ticketType}" }
+        actionType: reload
+        target: "reportService"
       - type: button-toolbar
         buttons:
           - type: button
@@ -30,7 +24,7 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$ticketType:String){ ErpCsReport__download(reportName:$reportName,renderType:$renderType,data:{ticketType:$ticketType}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}ticketType:String){ ErpCsReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{ticketType:${'$'}ticketType}) }"
                 variables: { reportName: "ticket-sla-csat-summary", renderType: "xlsx", ticketType: "${ticketType}" }
           - type: button
             label: "下载 PDF"
@@ -40,9 +34,25 @@ body:
               method: post
               responseType: blob
               data:
-                query: "query($reportName:String!,$renderType:String!,$ticketType:String){ ErpCsReport__download(reportName:$reportName,renderType:$renderType,data:{ticketType:$ticketType}) }"
+                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}ticketType:String){ ErpCsReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{ticketType:${'$'}ticketType}) }"
                 variables: { reportName: "ticket-sla-csat-summary", renderType: "pdf", ticketType: "${ticketType}" }
-  - type: html
-    id: reportContainer
-    html: ""
-    className: m-3
+      - type: service
+        name: reportService
+        id: reportContainer
+        initFetch: false
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}reportName:String!,${'$'}ticketType:String){ ErpCsReport__renderHtml(reportName:${'$'}reportName,data:{ticketType:${'$'}ticketType}) }"
+            variables:
+              reportName: "ticket-sla-csat-summary"
+              ticketType: "${ticketType}"
+          adaptor: |
+            const d = payload.data || {};
+            const html = (d.data ? d.data : d).ErpCsReport__renderHtml || '';
+            return { status: 0, msg: '', data: { reportHtml: html } };
+        body:
+          - type: html
+            html: "${reportHtml}"

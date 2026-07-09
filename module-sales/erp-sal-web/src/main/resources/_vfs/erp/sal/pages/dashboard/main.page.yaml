@@ -33,7 +33,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query($startDate:String,$endDate:String){ ErpSalDashboard__getDashboardKpi(startDate:$startDate,endDate:$endDate) }"
+        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpSalDashboard__getDashboardKpi(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
         variables:
           startDate: "${startDate || null}"
           endDate: "${endDate || null}"
@@ -84,7 +84,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query($months:Int){ ErpSalDashboard__getDashboardTrend(months:$months) }"
+        query: "query(${'$'}months:Int){ ErpSalDashboard__getDashboardTrend(months:${'$'}months) }"
         variables:
           months: 12
       adaptor: |
@@ -114,7 +114,7 @@ body:
       method: post
       dataType: raw
       data:
-        query: "query($limit:Int){ ErpSalDashboard__findCustomerTopN(limit:$limit) }"
+        query: "query(${'$'}limit:Int){ ErpSalDashboard__findCustomerTopN(limit:${'$'}limit) }"
         variables:
           limit: 10
       adaptor: |
