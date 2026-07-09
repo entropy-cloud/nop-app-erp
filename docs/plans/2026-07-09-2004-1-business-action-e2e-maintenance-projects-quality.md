@@ -133,6 +133,7 @@ Exit Criteria:
 - Why Not Blocking Closure: manufacturing WorkOrder / assets Disposal / purchase-sales Return / quality Recall 核心路径审批门控（approval-support.xbiz 或 useWorkflow xwf），非 DIRECT 状态机。本计划覆盖 DIRECT 域。
 - Successor Required: `yes`
 - Trigger Condition: 当 xwf 浏览器层审批 API 验证可行 / nop 用户 wf 委托配置落地 / wf 步骤参与者配置放宽时（同 `2026-07-09-1249-1` Payment/Receipt xwf 裁决）。
+- **经 plan `2026-07-09-2330-1` 权威裁决细化**：(a) **useWorkflow 子集（assets Disposal）不可行**——sysUser(0) seq PK 物化失败 / 无浏览器层身份映射 / .xwf 放宽属生产变更（重评触发：平台支持浏览器层身份映射时）；(b) **useApproval DIRECT 子集（WorkOrder/Return/Recall）** 经 2330-1 ORM 核实非 `useWorkflow="true"`，属 DIRECT 审批轴（submit→approve 浏览器层 1249-1 已证可达），其核心路径审批门控归独立 DIRECT 覆盖 successor（触发：按域推进 DIRECT useApproval 业务动作浏览器层覆盖时）。
 
 ### 全 18 域全业务动作覆盖（DIRECT 域剩余）
 

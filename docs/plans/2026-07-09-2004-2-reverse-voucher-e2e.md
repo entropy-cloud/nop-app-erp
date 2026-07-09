@@ -151,6 +151,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 1249-1 Deferred「反向冲销（reverseApprove 红字凭证）浏览器层 E2E」覆盖的是**域审批轴** `ErpXxx__reverseApprove`（需 APPROVED 前置、approval-pattern），与本计划的**财务侧 DIRECT 红冲** `ErpFinVoucher__reverse`（无审批依赖）是不同机制。本计划不解除该 Deferred。
 - Successor Required: `yes`
 - Trigger Condition: 当 xwf 浏览器层审批 API 验证可行 / approval-pattern 域浏览器层反向验证需求时（归 0814-2 approval-pattern successor）。
+- **useWorkflow 子集（Payment/Receipt/Disposal/Salary reverseApprove）经 plan `2026-07-09-2330-1` 权威裁决：不可行**——reverseApprove 需 APPROVED 前置，而 useWorkflow 实体达 APPROVED 须经 wf submit（user:$0 阻塞），故其 reverseApprove 浏览器层同步阻塞。DIRECT 域（PO/SO 等 useApproval 轴）reverseApprove 浏览器层仍可达（submit→approve 经 DIRECT，1249-1 已证），归独立 successor。
 
 ### Payment/Receipt xwf 反向浏览器层 E2E
 
@@ -158,6 +159,7 @@ Exit Criteria:
 - Why Not Blocking Closure: Payment/Receipt 为 xwf WORKFLOW 模式，`nop` 浏览器用户被 wf 步骤参与者 `user:$0` 拒绝（1249-1 Deferred）。本计划仅覆盖 DIRECT 财务侧红冲（`ErpFinVoucher__reverse`）。
 - Successor Required: `yes`
 - Trigger Condition: 当 xwf 浏览器层审批 API 验证可行 / nop 用户 wf 委托配置落地 / wf 步骤参与者配置放宽时（同 1249-1 裁决）。
+- **经 plan `2026-07-09-2330-1` 权威裁决：不可行（NOT FEASIBLE）**。useWorkflow 审批轴浏览器层 3 条路径均阻断（委托 sysUser(0) seq PK 物化失败 / 无浏览器层身份映射 / .xwf 放宽属生产变更）。**重评触发条件更新**：当 nop-entropy 平台支持浏览器层测试用户身份映射 / 委托免 sysUser(0) 物化 / sysUser 种子物化时。详见 `docs/testing/e2e-runbook.md`「useWorkflow 审批轴浏览器层（xwf）」段 + plan 2330-1 Phase 1 Decision。
 
 ### 全业务类型反向覆盖（PURCHASE_RETURN/SALES_RETURN/PAYMENT/RECEIPT/PURCHASE_INPUT 等）
 

@@ -148,6 +148,7 @@ Exit Criteria:
 - Why Not Blocking Closure: Payment/Receipt 为 xwf WORKFLOW 模式，浏览器层 `nop` 用户上下文下 wf caller 解析存在未验证风险（后端测试用 SYS(id=0) 规避）。核心链路（PO/SO→入库/出库→发票→过账）经 DIRECT 审批已完整验证业财打通正确性；Payment/Receipt 属资金收付+核销层，经 Phase 3 Explore 裁决后定。
 - Successor Required: `yes`
 - Trigger Condition: 当 xwf 浏览器层审批 API 验证可行或 nop 用户 wf 委托配置落地时；或经 Phase 3 Explore 原型验证浏览器层直接 approve 成功时纳入本计划。
+- **经 plan `2026-07-09-2330-1` 权威裁决：不可行（NOT FEASIBLE）**。3 条候选路径均阻断：① wf 委托机制（`NopAuthUserSubstitution` nop→0）存在但 sysUser(0) 无法经浏览器层 `__save` 物化（`NopAuthUser.userId` `tagSet="seq"` 覆盖显式 "0" 为 UUID）；② 浏览器层无用户身份注入/伪装 API；③ `.xwf` submit step `<assignment>` 放宽属生产审批契约变更。后续步骤（finance-approval/cc-finance）经 `WorkflowService__invokeAction` GraphQL 浏览器层可达（actorType=all），但依赖先突破 submit user:$0 阻塞。**重评触发条件更新**：当 nop-entropy 平台支持浏览器层测试用户身份映射 / 委托免 sysUser(0) 物化 / sysUser 种子物化时。详见 `docs/testing/e2e-runbook.md`「useWorkflow 审批轴浏览器层（xwf）」段 + plan 2330-1 Phase 1 Decision。
 
 ### 反向冲销（reverseApprove 红字凭证）浏览器层 E2E
 

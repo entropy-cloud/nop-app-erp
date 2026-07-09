@@ -247,7 +247,7 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **清理原语**：`cleanupVoucherByBillCode`（经 billCode 关联删凭证行+凭证+回链）+ `cleanupArApByCode`（按 sourceBillCode 删 AR-AP 辅助账）+ `cleanupStockMove`（移动单凭证+流水+移动单行+移动单+余额逐域逻辑删除）。链路 spec 在 `finally` 调 `cleanupP2p`/`cleanupO2c` 清理全部不可逆下游产物，保护共享 DB 数值断言基线（inventory dashboard totalValue / ar-ap-aging 报表）。
 - **O2C 备货前置**：WH-RAW/MAT-1 种子无余额，出库会因负库存禁止（`CONFIG_ALLOW_NEGATIVE_STOCK` 默认 false）失败。链路前先 `generateMove` INCOMING 备货（独立移动 → CONFIRMED → `complete` → DONE），WH-RAW/MAT-1 余额无种子行清理时整行删除安全。
 - **关键发现（业财过账 COA 完备性修复）**：执行发现种子 COA（`erp_md_subject.csv`）与过账 Provider 硬编码科目码不一致——`PurAcctDocProvider`(1403/2221/2202)、`SalAcctDocProvider`(1131/6001/2221)、`InvAcctDocProvider`(1401/6401/2202) 所需 1403/2221/1131/1401/6401 在种子缺失，致 `resolveSubjects` 抛 `ERR_SUBJECT_NOT_FOUND`→过账优雅降级 posted=false。补齐种子 COA（`erp_md_subject.csv` +5 行 1401/1403/1131/2221/6401，`findByCode` 全局按码解析无需 COA 映射）后过账 happy-path 可达。安全性：`persistVoucher` 仅写 voucher/voucher_line/voucher_bill_r（**不写 gl_balance**），finance 看板/资产负债表/利润表读 gl_balance 不受影响，全套件 0 回归。此为种子演示数据完备性修复（非生产代码/契约/模型变更）。
-- **Payment/Receipt xwf 浏览器层裁决（Deferred）**：Payment/Receipt 为 `useWorkflow=true` xwf WORKFLOW 模式。原型实证：`nop` 浏览器用户调 `submitForApproval`，xwf 返回 `步骤[submit]不允许被用户[<nop uuid>]调用,步骤的参与者限定为[user:$0]`——wf `submit` 步骤参与者限定为 `user:$0`（SYS id=0，后端测试 `setUserId("0")` 规避），`nop` 用户不匹配致 submit 被拒。归 Deferred successor（触发条件：xwf 浏览器层审批 API 验证可行 / nop 用户 wf 委托配置落地 / wf 步骤参与者配置放宽时）。
+- **Payment/Receipt xwf 浏览器层裁决（Deferred — 已权威裁决不可行）**：Payment/Receipt 为 `useWorkflow=true` xwf WORKFLOW 模式。原型实证：`nop` 浏览器用户调 `submitForApproval`，xwf 返回 `步骤[submit]不允许被用户[<nop uuid>]调用,步骤的参与者限定为[user:$0]`——wf `submit` 步骤参与者限定为 `user:$0`（SYS id=0，后端测试 `setUserId("0")` 规避），`nop` 用户不匹配致 submit 被拒。**经 plan 2026-07-09-2330-1 权威裁决：不可行**（3 条路径均阻断：① wf 委托机制存在但 sysUser(0) 无法经浏览器层 `__save` 物化为真实可引用用户——`NopAuthUser.userId` 列 `tagSet="seq"` 覆盖显式 "0" 为 UUID；② 浏览器层无用户身份注入/伪装 API（`-Dnop.auth.service-public=true` 仅旁路 auth 不改 `ctx.getUserId()`）；③ `.xwf` submit step `<assignment>` 放宽属生产审批契约变更非浏览器层可行路径）。归 Deferred successor（触发条件：nop-entropy 平台支持浏览器层测试用户身份映射 / 委托免 sysUser 物化 / sysUser 种子物化时，详见下方「useWorkflow 审批轴浏览器层」段）。
 
 ### 反向冲销层（业财闭环方向二：财务侧 DIRECT 红字冲销 + 域监听者回退）
 
@@ -265,6 +265,44 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **清理范围裁决（Explore 探针）**：`reverseProcess` 以**同一 billHeadCode** 写红字凭证的 voucher_bill_r（与原凭证共用 billCode），故既有 `cleanupVoucherByBillCode` 已覆盖原+红字凭证（voucher_line + voucher + voucher_bill_r）清理；AR-AP 红冲为既有行 `status` OPEN→CANCELLED + openAmount 归零（`cancelOnReverse`，非新增行），既有 `cleanupArApByCode`（按 sourceBillCode deleteByFilter）已覆盖——**无需扩展清理原语**（`cleanupP2p`/`cleanupO2c` 已包含这两步，反向层直接复用为 `cleanupP2pReverse`/`cleanupO2cReverse`）。
 - **与正向编排层的层间关系**：反向层是正向层的扩展（正向链产前置 posted 凭证 + 反向 mutation + 反向回退断言），复用正向 helper 的全部链式驱动/过账产物断言/清理原语。反向层断言聚焦回退目标态（原凭证 isReversed + 域单据 posted/approveStatus 翻转），由 `VoucherReversedEvent` 同事务派发给各域监听者实现（`posting.md §冲销机制方向二 §实现策略 裁决3` SYNC 默认）。
 - **监听者失败隔离残留风险**：`ErpFinReversalListenerRegistry.dispatch` try/catch 隔离各域监听者失败（失败不回滚已过账红字凭证、不阻断其他域监听者，落入 finance 5.1 异常工作台）。spec 断言以 `__findPage`/`__get` 权威查库为准；若监听者异常，域回退可能未发生——本层 happy-path 全绿（监听者无异常），异常路径归 successor。
+
+## useWorkflow 审批轴浏览器层（xwf）— 可行性裁决：不可行
+
+> 本段为 plan `2026-07-09-2330-1` 权威裁决记录，收敛此前散乱于 1249-1 Deferred「Payment/Receipt xwf」+ 2004-2 Deferred「Payment-Receipt xwf 反向 useWorkflow 子集」的同一未解阻塞。
+
+### 范围
+
+4 个 `useWorkflow="true"` 实体（经 ORM 核实），各有 `.xwf` 工作流定义：
+
+- purchase **Payment**（`module-purchase/model/app-erp-purchase.orm.xml:928`）→ `payment-approval/v1.xwf`
+- sales **Receipt**（`module-sales/model/app-erp-sales.orm.xml:720`）→ `receipt-approval/v1.xwf`
+- assets **Disposal**（`module-assets/model/app-erp-assets.orm.xml:580`）→ `asset-disposal-approval/v1.xwf`
+- hr **Salary**（`module-hr/model/app-erp-hr.orm.xml:668`）→ `salary-approval/v1.xwf`
+
+> 区别于 useApproval（approvalStatus 轴，DIRECT `@BizMutation`）：PO/Receive/Invoice、SO/Delivery/Invoice 的 `submitForApproval`→`approve` 浏览器层已覆盖（1249-1，DIRECT 入口，不经 wf 步骤参与者校验）。manufacturing WorkOrder / purchase-sales Return / quality Recall 经核实非 `useWorkflow="true"`，属 useApproval DIRECT 轴（2004-1 曾误标 WorkOrder 为 xwf）。
+
+### sysUser 兜底机制（user:$0 阻塞根因）
+
+useWorkflow 实体 `submitForApproval` 启动 wf 时，`submit` 起始步骤无 `<assignment>`（`.xwf` 设计：由 `ApprovalFlowHelper.start` 自动 complete）。引擎 `WorkflowEngineImpl.newSteps:274-283` fallback：start step 无 assignment + 无 selected actors → `getManagerActor()`（`.xwf` 无 `<auth>` → null）→ **`getSysUser()`**（`WfRuntime.getSysUser:229` → `resolveUser(IWfActor.SYS_USER_ID="0")`）。故 submit step actor/owner=sysUser(id=0)。
+
+`ApprovalFlowHelper.start:20` 随后调 `getLatestStartStep().invokeAction(COMPLETE, ctx)` → `WorkflowStepImpl.invokeAction:228` 先 `allowCallByUser` → `WorkflowEngineImpl.allowCallByUser:1053`：owner=sysUser(0)，`owner.getActorId()("0") != ctx.getUserId()(nop 浏览器用户 uuid)` → 落 `canBeDelegatedBy` → 委托无配置 → 拒绝 submit。
+
+### 三条候选路径评估（均阻断）
+
+1. **wf 委托 API（`NopAuthUserSubstitution` nop→0）——机制存在但实测阻断**：`WfActorAssignSupport.canBeDelegatedBy:71` → `DaoUserDelegateService`（已注册）读 `NopAuthUserSubstitution`。临时探针 spec fresh-DB 实测：建 `NopAuthUserSubstitution(substitutedUserId="0")` 前须物化 sysUser(0) 为真实 `nop_auth_user` 行（FK 校验），但 `NopAuthUser.userId` 列 `tagSet="seq"`（`nop-auth/model/nop-auth.orm.xml:38-39`）→ `__save` 时 seq 生成器**覆盖显式 userId="0"**，实测创建的 SYS 用户 userId=UUID（非 "0"）→ 委托 FK「类型为[用户]，id为[0]的记录不存在」失败。**sysUser(0) 是引擎虚拟用户，浏览器层 `__save` 无法物化为真实可引用行**。
+2. **nop 用户身份映射/伪装（浏览器层等效 `setUserId`）——不存在**：nop-entropy 全量 wf/auth 模块无浏览器层（GraphQL `/graphql`）用户身份注入/伪装 API。`-Dnop.auth.service-public=true` 仅旁路 auth 校验，不改 `ctx.getUserId()`。后端 `ContextProvider.getOrCreateContext().setUserId("0")` 是线程局部出口，浏览器层无此注入点。
+3. **`.xwf` submit step `<assignment>` 放宽——属生产行为变更**：改 submit step 增 `<actor actorType="all"/>` 可使 `allowCallByUser` 经 `containsUser`（`IWfActor:75` ACTOR_TYPE_ALL→true）放行，但此为**生产审批契约变更**（削弱 sysUser 自动 complete 语义），超出「浏览器层可行性」范围。
+
+### 后续步骤驱动可行性（已确认可行，但依赖 submit 突破）
+
+wf 审批步骤（finance-approval/cc-finance 等 `actorType="all"` 步骤）经 `WorkflowService__invokeAction` GraphQL mutation（`@BizModel("WorkflowService")` + `@BizMutation("invokeAction")`，`WfActionRequestBean` 字段 `wfId`/`stepId`/`actionName` 作直接参数；step action 内含 `doTransition` 自动迁移）浏览器层可达（`allowCallByUser` 对 actorType=all 步骤的任意用户返回 true）。**但该路径依赖先突破 submit 步骤 user:$0 阻塞**——submit 不突破则 wf 不启动，后续步骤驱动无意义。
+
+### successor 触发条件
+
+useWorkflow 审批轴浏览器层覆盖需 nop-entropy 平台工作流引擎支持以下任一：
+- 浏览器层测试用户身份映射 / wf 委托免 sysUser(0) 物化（消除 seq PK 阻塞）
+- sysUser(0) 平台种子物化为真实 `nop_auth_user` 行（使委托 FK 可达）
+- 生产 `.xwf` 审批门控重构（submit step 显式 assignment，作为受控生产变更评审，非纯浏览器层可行路径）
 
 ## 看板 AMIS 前端渲染层 E2E（`visual/`，10 域）
 
