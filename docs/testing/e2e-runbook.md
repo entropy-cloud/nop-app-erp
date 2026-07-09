@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 3 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动），共 110 测试。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 3 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token），共 120 测试。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
@@ -107,7 +107,7 @@ java -Dfile.encoding=UTF8 \
 | 跨域编排套件 | `npx playwright test tests/e2e/orchestration/ --workers=1` | P2P/O2C 全链审批 + 业财过账产物（stockMove/voucher/AR-AP） |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 15 分钟（110 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 3 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket）+ 2 跨域编排 spec（P2P + O2C），含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 16 分钟（120 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 3 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket）+ 2 跨域编排 spec（P2P + O2C）+ 1 看板前端渲染层 spec（10 域 visual），含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -245,6 +245,31 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **关键发现（业财过账 COA 完备性修复）**：执行发现种子 COA（`erp_md_subject.csv`）与过账 Provider 硬编码科目码不一致——`PurAcctDocProvider`(1403/2221/2202)、`SalAcctDocProvider`(1131/6001/2221)、`InvAcctDocProvider`(1401/6401/2202) 所需 1403/2221/1131/1401/6401 在种子缺失，致 `resolveSubjects` 抛 `ERR_SUBJECT_NOT_FOUND`→过账优雅降级 posted=false。补齐种子 COA（`erp_md_subject.csv` +5 行 1401/1403/1131/2221/6401，`findByCode` 全局按码解析无需 COA 映射）后过账 happy-path 可达。安全性：`persistVoucher` 仅写 voucher/voucher_line/voucher_bill_r（**不写 gl_balance**），finance 看板/资产负债表/利润表读 gl_balance 不受影响，全套件 0 回归。此为种子演示数据完备性修复（非生产代码/契约/模型变更）。
 - **Payment/Receipt xwf 浏览器层裁决（Deferred）**：Payment/Receipt 为 `useWorkflow=true` xwf WORKFLOW 模式。原型实证：`nop` 浏览器用户调 `submitForApproval`，xwf 返回 `步骤[submit]不允许被用户[<nop uuid>]调用,步骤的参与者限定为[user:$0]`——wf `submit` 步骤参与者限定为 `user:$0`（SYS id=0，后端测试 `setUserId("0")` 规避），`nop` 用户不匹配致 submit 被拒。归 Deferred successor（触发条件：xwf 浏览器层审批 API 验证可行 / nop 用户 wf 委托配置落地 / wf 步骤参与者配置放宽时）。
 
+## 看板 AMIS 前端渲染层 E2E（`visual/`，10 域）
+
+在数值断言层之上，1249-2 叠加了看板 AMIS 前端渲染层 DOM 断言（`tests/e2e/visual/dashboards.visual.spec.ts`，1 spec / 10 测试）。区别于数值断言层（`page.request.post('/graphql')` 直调后端绕过 AMIS），本层驱动真实 AMIS 页面 → 拦截 AMIS 自身 GraphQL 响应 → 断言 DOM 渲染，验证「page → AMIS GraphQL 调用 → adaptor → DOM 渲染」全路径。解除 0637-1 Deferred「像素级视觉回归」的部分意图（以 DOM 内容/结构断言替代像素 diff；纯像素 diff 仍 Deferred）。
+
+### 断言范式（`visual/_helper.ts`）
+
+`assertDashboardRendered(cfg)` 编排：`loginAndNavigate` → `page.waitForResponse`（拦截含 `getDashboardKpi` 的 `/graphql` 响应，断言 200）→ 断言 KPI 卡片结构（`.border.rounded.p-3` wrapper 可见且 count≥1）→ 条件化数值 token（`cfg.expectedKpiTokens` 提供时，`expect.poll` 断言 `span.h3` textContent 含 token）→ 条件化 echarts canvas（`cfg.hasChart` 时 `toBeVisible` + boundingBox 非零）→ 条件化预警表格（`cfg.alertTable` 时 `table` 可见）。
+
+### 执行期发现的产品缺陷（首个能捕获的层）
+
+本层首次发现 **AMIS `$var` GraphQL 查询模板损坏缺陷**（`docs/bugs/2026-07-09-1249-dashboard-amis-var-mangling.md`）：8 参数化看板 page.yaml 手写 `query($var:Type){...($var)...}` 经 AMIS 运行时模板解析，裸 `$var` 被替换为空，致查询损坏（实测请求体 `query(:Long){ ...periodId: }`）、KPI 恒 0/空。冒烟层（仅查标签 + GraphQL 200，损坏查询仍返回 200）与数值断言层（直调后端绕过 AMIS）均无法捕获。
+
+据此断言分层：
+- **全 10 域**：AMIS GraphQL 管线（200）+ KPI 卡片结构 + echarts canvas（master-data 无 trend 跳过）+ 预警表格——全绿。
+- **2 非参数化域**（projects `50000`、master-data `4`，查询无 `$var`，AMIS 路径完整）：额外断言确定性数值 token 渲染进 DOM——全绿。
+- **8 参数化域**（finance/sales/purchase/inventory/assets/manufacturing/maintenance/quality）：因 `$var` 损坏缺陷暂仅断言结构，数值 token 断言随修复 successor（见 plan 2026-07-09-1249-2 Deferred）落地。
+
+### 层间区分
+
+| 层 | 验证路径 | 捕获能力 |
+| --- | --- | --- |
+| 冒烟层 `*.smoke.spec.ts` | AMIS 页面 → GraphQL 200 + 标签关键词 | 页面可达性 + GraphQL 不崩溃（不验数值） |
+| 数值断言层 `*.value.spec.ts` | `page.request.post` 直调后端绕过 AMIS | 后端聚合确定性数值（不验前端渲染） |
+| 前端渲染层 `*.visual.spec.ts` | AMIS 页面 → AMIS 自身 GraphQL → adaptor → DOM | AMIS 渲染管线完整性 + adaptor/模板回归（首个捕获 `$var` 损坏缺陷） |
+
 ## CRUD 套件（18 域列表/表单冒烟）
 
 `tests/e2e/crud/` 下每域 1 个代表性「主单据头」实体 spec（共 18 spec），调 `_helper.ts` 的 `runCrudListSmoke({ domain, entityRoute, addFormField })` 委派。每 spec 断言：列表页 DOM 渲染（`.cxd-Crud`/`.cxd-Table`）+ add 按钮（`button:has(.fa-plus)`）+ `/graphql` 查询 200 + 无 console error + add 表单打开后字段渲染（`input[name="code"]`）。
@@ -368,6 +393,9 @@ tests/e2e/
 │   ├── _helper.ts                        # runP2pChain/runO2cChain + findItems + 清理原语（凭证/AR-AP/移动单产物）
 │   ├── p2p-chain.spec.ts                 # P2P PO→Receive→Invoice 全链 + stockMove + GL/AP 过账产物
 │   └── o2c-chain.spec.ts                 # O2C SO→Delivery→Invoice 全链 + 出库移动 + GL/AR 过账产物
+├── visual/                              # 看板 AMIS 前端渲染层 E2E（1249-2，DOM 结构 + echarts canvas + 数值 token）
+│   ├── _helper.ts                       # assertDashboardRendered（waitForResponse getDashboardKpi + 卡片结构 + canvas + 表格）
+│   └── dashboards.visual.spec.ts        # 10 域看板 AMIS 渲染管线断言（2 非参数化域含数值 token）
 └── reports/
     ├── _helper.ts                    # runReportSmoke + assertReportRenderedWithValue 共享函数
     ├── fin-balance-sheet.value.spec.ts   # 数值断言层
