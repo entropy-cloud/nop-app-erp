@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 6 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机 / maintenance Visit 5 态+设备联动副作用 / projects Task 4 态+DAG 门控 / quality CAPA 3 态 + NCR 无 CAPA 路径，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 2 反向冲销 spec（业财闭环方向二：财务侧 `ErpFinVoucher__reverse` 红字冲销 + 域监听者回退，`p2p-reverse.spec.ts` / `o2c-reverse.spec.ts`）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token）+ 1 报表 AMIS 前端渲染层 spec（24 域，`reports.visual.spec.ts`，AMIS service reload 注入 renderHtml 响应），共 153 测试。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 10 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机 / maintenance Visit 5 态+设备联动副作用 / projects Task 4 态+DAG 门控 / quality CAPA 3 态 + NCR 无 CAPA 路径 / manufacturing WorkOrder DIRECT 审批轴+域迁移 / purchase Return DIRECT 审批轴+posted / sales Return DIRECT 审批轴+posted / quality Recall DIRECT 审批轴+locateTargets/close，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 2 反向冲销 spec（业财闭环方向二：财务侧 `ErpFinVoucher__reverse` 红字冲销 + 域监听者回退，`p2p-reverse.spec.ts` / `o2c-reverse.spec.ts`）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token）+ 1 报表 AMIS 前端渲染层 spec（24 域，`reports.visual.spec.ts`，AMIS service reload 注入 renderHtml 响应），共 164 测试。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
@@ -103,11 +103,11 @@ java -Dfile.encoding=UTF8 \
 | CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 + 13 域列表断言 + 写路径 |
 | 列表断言套件 | `npx playwright test tests/e2e/crud/*.list-value.spec.ts --workers=1` | 13 域 findPage seed 行断言 |
 | 写路径套件 | `npx playwright test tests/e2e/crud/*.write.spec.ts --workers=1` | CRUD 写持久化验证（create/update/delete） |
-| 业务动作套件 | `npx playwright test tests/e2e/business-actions/ --workers=1` | 6 代表域自定义 @BizMutation 经 GraphQL 全栈可达 + 状态机迁移 |
+| 业务动作套件 | `npx playwright test tests/e2e/business-actions/ --workers=1` | 10 代表域自定义 @BizMutation 经 GraphQL 全栈可达 + 状态机迁移 |
 | 跨域编排套件 | `npx playwright test tests/e2e/orchestration/ --workers=1` | P2P/O2C 全链审批 + 业财过账产物（stockMove/voucher/AR-AP）+ 财务侧反向冲销（红字凭证 + 域监听者回退） |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 20 分钟（153 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 6 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket + maintenance Visit + projects Task + quality CAPA/NCR）+ 2 跨域编排 spec（P2P + O2C）+ 2 反向冲销 spec（P2P + O2C 财务侧红冲）+ 1 看板前端渲染层 spec（10 域 visual）+ 1 报表前端渲染层 spec（24 域 visual），含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 20 分钟（164 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 10 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket + maintenance Visit + projects Task + quality CAPA/NCR + manufacturing WorkOrder + purchase Return + sales Return + quality Recall）+ 2 跨域编排 spec（P2P + O2C）+ 2 反向冲销 spec（P2P + O2C 财务侧红冲）+ 1 看板前端渲染层 spec（10 域 visual）+ 1 报表前端渲染层 spec（24 域 visual），含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -208,9 +208,9 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **状态隔离**：fresh-DB 每次启动重置（webServer 默认 `rm -f db/erp.mv.db`）+ 同运行内唯一 code（`E2E-{entityName}-{ts}`）。
 - **AMIS 表单写路径（0814-1 新增）**：`runAmisFormWrite` 经浏览器 UI 点「新增」→填表单（文本 + dict 下拉）→「确认」→列表/GraphQL 验证→行操作「编辑」→验证更新→（delete）。dict 下拉经 DOM evaluate 定位（label/option 多 locale 变体 + dict value code 匹配，规避 zh/en locale 漂移）。**已知限制**：AMIS action-group dropdown 的 Delete action（gated by confirmText）在 Playwright 下不触发其 confirm/API（Edit action 直接开 dialog 正常）→ AMIS spec 的 delete 改用同一 GraphQL `__delete` mutation（UI 按钮调用的同一端点），delete 机制本身由 GraphQL 层写 spec 独立证明。seq-default id 字段在 add 表单被标 mandatory（ORM 仍服务端生成实际 id，表单值仅满足客户端校验）。
 
-## 业务动作浏览器层 E2E（`business-actions/`，6 代表域）
+## 业务动作浏览器层 E2E（`business-actions/`，10 代表域）
 
-在 CRUD 读写路径之上，0814-2 叠加了自定义 `@BizMutation` 经 GraphQL `/graphql` 的全栈可达性 + 状态机迁移验证（解除 0628-2 Deferred「复杂业务动作 E2E」），覆盖 3 个代表域的非审批状态机/过账动作。2026-07-09-2004-1 将覆盖由 3 域扩展至 6 域：新增 maintenance Visit（5 态+设备联动副作用）、projects Task（4 态+前驱 DAG 门控）、quality CAPA（3 态）+ NCR（无 CAPA 路径），进一步验证三原语 helper 范式在多型状态机（含副作用联动、DAG 门控、过账标志）下的可复用性。审批工作流（xwf）域与剩余 DIRECT 域归 successor。
+在 CRUD 读写路径之上，0814-2 叠加了自定义 `@BizMutation` 经 GraphQL `/graphql` 的全栈可达性 + 状态机迁移验证（解除 0628-2 Deferred「复杂业务动作 E2E」），覆盖 3 个代表域的非审批状态机/过账动作。2026-07-09-2004-1 将覆盖由 3 域扩展至 6 域：新增 maintenance Visit（5 态+设备联动副作用）、projects Task（4 态+前驱 DAG 门控）、quality CAPA（3 态）+ NCR（无 CAPA 路径），进一步验证三原语 helper 范式在多型状态机（含副作用联动、DAG 门控、过账标志）下的可复用性。2026-07-10-0335-1 将覆盖扩展至 10 域：新增 4 个 DIRECT useApproval 审批轴实体（manufacturing WorkOrder / purchase Return / sales Return / quality Recall），验证审批轴 `submitForApproval`→`approve`→`approveStatus` 翻转 + reject 守卫 + 审批后域特定状态迁移 + Return approve 的 `posted` 布尔翻转（过账触发可观测）。useWorkflow（xwf）域经 2330-1 权威裁决浏览器层不可行，排除。
 
 | 域 | 实体/动作 | spec | 验证内容 |
 | --- | --- | --- | --- |
@@ -221,6 +221,10 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 | projects | `ErpPrjTask` startTask/completeTask/blockTask/unblockTask | `projects-task.action.spec.ts` | 4 态状态机 TODO→IN_PROGRESS→DONE + blockTask/unblockTask 闭环（reason 必填）+ 前驱 DAG 门控（无前驱任务绕过 STRICT）+ DONE→startTask/blockTask 非法迁移守卫（2004-1） |
 | quality | `ErpQaAction`（CAPA）startAction/completeAction/verifyAction | `quality-capa.action.spec.ts` | 3 态状态机 PENDING→IN_PROGRESS→COMPLETED + verifyAction 填充验证字段（不改 status）+ COMPLETED→completeAction 守卫（2004-1，最小状态机证明范式可复用性） |
 | quality | `ErpQaNonConformance`（NCR）submitReview/escalateToRecall/cancel | `quality-ncr.action.spec.ts` | 无 CAPA 路径状态机 OPEN→IN_REVIEW→cancel(CANCELLED) / escalateToRecall(ESCALATED_TO_RECALL) + 非法迁移守卫；resolve（CAPA 闭包门控）+ postNcr/reverseNcr（需 RESOLVED）归 successor（2004-1） |
+| manufacturing | `ErpMfgWorkOrder` submitForApproval/approve/reject + checkAvailability/start/close | `mfg-work-order.action.spec.ts` | DIRECT useApproval 审批轴 UNSUBMITTED→SUBMITTED→APPROVED（+ docStatus DRAFT→SUBMITTED→NOT_STARTED）+ reject(REJECTED) 守卫 + 审批后域迁移 checkAvailability(STOCK_RESERVED，无子件 BOM 作 enabler)→start(IN_PROCESS)→close(CLOSED)（0335-1） |
+| purchase | `ErpPurReturn` submitForApproval/approve/reject + cancel | `pur-return.action.spec.ts` | DIRECT useApproval 审批轴 + approve→posted=true（反向出库+PURCHASE_RETURN 红字过账）；approve 前置复用 runP2pChain 产 approved Receive + 行 + qty 校验 + reason；reject/cancel 路径 + 非法守卫（0335-1） |
+| sales | `ErpSalReturn` submitForApproval/approve/reject + cancel | `sal-return.action.spec.ts` | DIRECT useApproval 审批轴 + approve→posted=true（反向入库+SALES_RETURN 凭证+负 AR 辅助账）；approve 前置复用 runO2cChain 产 approved Delivery + 行 + qty 校验 + reason；reject/cancel 路径 + 非法守卫（0335-1） |
+| quality | `ErpQaRecall` register/submitForApproval/approve/reject + locateTargets/notifyCustomers/close/cancel | `qa-recall.action.spec.ts` | DIRECT useApproval 审批轴 + 双字段翻转（approveStatus=APPROVED + status=APPROVED）+ 域状态机 locateTargets(IN_PROGRESS，ErpInvBatch 作批次门控 enabler)→notifyCustomers(notifyCustomer=true)→close(CLOSED) + reject(REJECTED+status=CANCELLED)/cancel 守卫（0335-1） |
 
 ### 业务动作调用范式（`_helper.ts`）
 
@@ -461,7 +465,7 @@ tests/e2e/
 │   ├── master-data.write.amis.spec.ts # master-data CRUD 写路径 AMIS 表单层（UI 新增/编辑/删除，0814-1）
 │   ├── quality.write.spec.ts         # quality ErpQaRiskRegister CRUD 写路径 GraphQL 层（0814-1，含 dict status）
 │   └── maintenance.write.spec.ts     # maintenance ErpMntEquipmentCategory CRUD 写路径 GraphQL 层（0814-1）
-├── business-actions/                 # 业务动作浏览器层 E2E（0814-2 + 2004-1，自定义 @BizMutation 经 GraphQL，6 代表域）
+├── business-actions/                 # 业务动作浏览器层 E2E（0814-2 + 2004-1 + 0335-1，自定义 @BizMutation 经 GraphQL，10 代表域）
 │   ├── _helper.ts                    # createViaSave/callMutation/verifyState/eqFilter/deleteByFilter 原语
 │   ├── inventory-stock-move.action.spec.ts  # StockMove generateMove/complete/cancel 状态机+过账
 │   ├── crm-lead.action.spec.ts              # Lead qualify/moveStage/cancel 状态迁移
