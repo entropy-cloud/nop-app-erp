@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 3 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机，经 GraphQL 调自定义 `@BizMutation`），共 108 测试。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 3 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动），共 110 测试。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
@@ -66,7 +66,7 @@ SKIP_WEBSERVER=1 npx playwright test
 默认 webServer 命令（方式 A）已含 **部署期种子数据初始化**：
 
 - `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化），从 `_vfs/_init-data/*.csv` 按拓扑序插入 **91 张 CSV**：
-  - **21 张核心主数据表**（1234-1）：组织/币种/计量单位/物料/SKU/往来单位/仓库/员工/科目体系/税率/结算方式等
+  - **21 张核心主数据表**（1234-1）：组织/币种/计量单位/物料/SKU/往来单位/仓库/员工/科目体系/税率/结算方式等（科目体系：8 基础科目 + 1249-1 补齐 5 过账科目 1401/1403/1131/2221/6401，使 Pur/Sal/Inv 过账 Provider 硬编码科目码经 `findByCode` 可达，解除过账优雅降级）
   - **23 张业务交易单据表**（1445-1）：P2P（PO/Receive/Invoice/Payment 头+行）+ O2C（SO/Delivery/Invoice/Receipt 头+行）+ 已过账财务产物（凭证/凭证行/凭证回链/AR-AP 辅助账/GL 余额/会计期间 OPEN）
   - **13 张运营域表**（2210-1）：库存（stock_move+line/stock_balance/cost_layer）+ 资产（asset_category/asset/depreciation_schedule）+ 项目（project_type/project/cost_collection/timesheet/budget/project_pnl）；三域看板读域表非 GL，posted 统一 false
   - **4 张制造域表**（2026-07-09-0930-1）：work_order（4 行 IN_PROCESS/STOCK_PARTIAL/COMPLETED×2）+ cost_variance + forecast(APPROVED) + forecast_line；看板 4 `@BizQuery` + production-variance/forecast-variance 报表读域表非 GL，posted 统一 false；crp_load 因 workcenter 配置链依赖归 Deferred
@@ -104,9 +104,10 @@ java -Dfile.encoding=UTF8 \
 | 列表断言套件 | `npx playwright test tests/e2e/crud/*.list-value.spec.ts --workers=1` | 13 域 findPage seed 行断言 |
 | 写路径套件 | `npx playwright test tests/e2e/crud/*.write.spec.ts --workers=1` | CRUD 写持久化验证（create/update/delete） |
 | 业务动作套件 | `npx playwright test tests/e2e/business-actions/ --workers=1` | 3 代表域自定义 @BizMutation 经 GraphQL 全栈可达 + 状态机迁移 |
+| 跨域编排套件 | `npx playwright test tests/e2e/orchestration/ --workers=1` | P2P/O2C 全链审批 + 业财过账产物（stockMove/voucher/AR-AP） |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 14 分钟（108 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 3 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket），含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 15 分钟（110 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 3 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket）+ 2 跨域编排 spec（P2P + O2C），含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -225,6 +226,24 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **实现修订（generateMove 自动 confirm）**：经核实 `ErpInvStockMoveProcessor`，`generateMove` 内部经 `doConfirm` 自动推进 DRAFT→CONFIRMED（独立创建无 relatedBillType 停在 CONFIRMED），「confirm」为内部过渡步骤无独立 DRAFT 创建入口。故 StockMove spec 实测状态链为 `generateMove(独立)→CONFIRMED→complete→DONE`。
 - **posted 字段语义**：`posted` 反映跨域财务过账（`InvPostingDispatcher`：成功置 true、失败优雅降级 false 不阻塞 DONE 终态）。spec 断言 `typeof posted === 'boolean'` + 同事务不可变流水 `ErpInvStockLedger` 非空（可靠过账产物）；凭证借贷平衡精确数值归 finance 数值断言层 successor。
 - **产物清理（强制）**：业务动作创建不可逆下游产物（库存流水/余额、工单审计/调查、线索转化日志）。全栈共享同一 Quarkus+H2 实例（`reuseExistingServer: true`），不清理会污染下游数值断言（dashboard KPI 聚合 stock_balance/ledger、report 聚合 ticket/survey）。每个 spec 在断言完成后经 `deleteByFilter`/`deleteById` 清理自身产物（镜像 write.spec.ts create→delete 范式，但扩展到不可逆下游产物逐域删除）。
+
+## 跨域编排链浏览器层 E2E（`orchestration/`，P2P + O2C）
+
+在业务动作层之上，1249-1 叠加了 P2P（Procure-to-Pay）+ O2C（Order-to-Cash）核心业财循环的跨域编排链浏览器层端到端验证（解除 0814-2 Deferred「跨域编排链完整 E2E」+「业财过账凭证数值断言」）。经 GraphQL `/graphql` 驱动全链 `__save`（头+行）→ `submitForApproval` → `approve`，每步 `verifyState` 经 `__get` 独立断言 approveStatus 翻转，并断言业财过账产物（库存移动 + GL 凭证 + AR-AP 辅助账）。
+
+| 链路 | spec | 验证内容 |
+| --- | --- | --- |
+| P2P（PO→Receive→Invoice） | `p2p-chain.spec.ts` | PO/Receive/Invoice approveStatus UNSUBMITTED→SUBMITTED→APPROVED + Receive approve 触发 INCOMING 移动（DONE）+ Invoice approve GL 过账（posted=true + voucher bill_r 回链 + AP 辅助账 PAYABLE/openAmount=含税56.5/OPEN） |
+| O2C（SO→Delivery→Invoice） | `o2c-chain.spec.ts` | SO/Delivery/Invoice approveStatus 三态翻转 + SO approve 信用控制通过 + Delivery approve 触发 OUTGOING 移动（DONE）+ Invoice approve GL 过账（posted=true + voucher 回链 + AR 辅助账 RECEIVABLE/openAmount=含税113/OPEN） |
+
+### 编排链范式（`orchestration/_helper.ts`）
+
+- **链式驱动**：`runP2pChain` / `runO2cChain` 编排多实体链式创建（头 `__save` → 行独立 `__save` FK 引用头 id，行实体 `registerShortName=true` 有独立 GraphQL 端点）+ `submitForApproval` + `approve`（DIRECT 审批模式，Payment/Receipt xwf WORKFLOW 模式归 Deferred）。每步 `verifyState` 经 `__get` 权威断言状态翻转。返回各实体 id + 下游移动单（findFirst by relatedBillType+relatedBillCode）供 spec 断言/清理。
+- **过账产物断言原语**：`findItems`（`__findPage` 返回 items，读 stockMove.code / ar_ap.openAmount 等详情）；`findPageTotal`（0814-2 原语，total≥1 存在性）。
+- **清理原语**：`cleanupVoucherByBillCode`（经 billCode 关联删凭证行+凭证+回链）+ `cleanupArApByCode`（按 sourceBillCode 删 AR-AP 辅助账）+ `cleanupStockMove`（移动单凭证+流水+移动单行+移动单+余额逐域逻辑删除）。链路 spec 在 `finally` 调 `cleanupP2p`/`cleanupO2c` 清理全部不可逆下游产物，保护共享 DB 数值断言基线（inventory dashboard totalValue / ar-ap-aging 报表）。
+- **O2C 备货前置**：WH-RAW/MAT-1 种子无余额，出库会因负库存禁止（`CONFIG_ALLOW_NEGATIVE_STOCK` 默认 false）失败。链路前先 `generateMove` INCOMING 备货（独立移动 → CONFIRMED → `complete` → DONE），WH-RAW/MAT-1 余额无种子行清理时整行删除安全。
+- **关键发现（业财过账 COA 完备性修复）**：执行发现种子 COA（`erp_md_subject.csv`）与过账 Provider 硬编码科目码不一致——`PurAcctDocProvider`(1403/2221/2202)、`SalAcctDocProvider`(1131/6001/2221)、`InvAcctDocProvider`(1401/6401/2202) 所需 1403/2221/1131/1401/6401 在种子缺失，致 `resolveSubjects` 抛 `ERR_SUBJECT_NOT_FOUND`→过账优雅降级 posted=false。补齐种子 COA（`erp_md_subject.csv` +5 行 1401/1403/1131/2221/6401，`findByCode` 全局按码解析无需 COA 映射）后过账 happy-path 可达。安全性：`persistVoucher` 仅写 voucher/voucher_line/voucher_bill_r（**不写 gl_balance**），finance 看板/资产负债表/利润表读 gl_balance 不受影响，全套件 0 回归。此为种子演示数据完备性修复（非生产代码/契约/模型变更）。
+- **Payment/Receipt xwf 浏览器层裁决（Deferred）**：Payment/Receipt 为 `useWorkflow=true` xwf WORKFLOW 模式。原型实证：`nop` 浏览器用户调 `submitForApproval`，xwf 返回 `步骤[submit]不允许被用户[<nop uuid>]调用,步骤的参与者限定为[user:$0]`——wf `submit` 步骤参与者限定为 `user:$0`（SYS id=0，后端测试 `setUserId("0")` 规避），`nop` 用户不匹配致 submit 被拒。归 Deferred successor（触发条件：xwf 浏览器层审批 API 验证可行 / nop 用户 wf 委托配置落地 / wf 步骤参与者配置放宽时）。
 
 ## CRUD 套件（18 域列表/表单冒烟）
 
@@ -345,6 +364,10 @@ tests/e2e/
 │   ├── inventory-stock-move.action.spec.ts  # StockMove generateMove/complete/cancel 状态机+过账
 │   ├── crm-lead.action.spec.ts              # Lead qualify/moveStage/cancel 状态迁移
 │   └── cs-ticket.action.spec.ts             # Ticket 六态状态机 + 非法迁移守卫
+├── orchestration/                       # 跨域编排链浏览器层 E2E（1249-1，P2P/O2C 全链审批+过账产物）
+│   ├── _helper.ts                        # runP2pChain/runO2cChain + findItems + 清理原语（凭证/AR-AP/移动单产物）
+│   ├── p2p-chain.spec.ts                 # P2P PO→Receive→Invoice 全链 + stockMove + GL/AP 过账产物
+│   └── o2c-chain.spec.ts                 # O2C SO→Delivery→Invoice 全链 + 出库移动 + GL/AR 过账产物
 └── reports/
     ├── _helper.ts                    # runReportSmoke + assertReportRenderedWithValue 共享函数
     ├── fin-balance-sheet.value.spec.ts   # 数值断言层

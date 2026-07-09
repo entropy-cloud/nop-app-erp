@@ -146,6 +146,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 本计划验证过账「触发且产物存在」；凭证借贷平衡精确数值归 finance 数值断言层。
 - Successor Required: `yes`
 - Trigger Condition: 当需业务动作触发过账后的凭证精确数值断言时。
+- **RELEASED by `2026-07-09-1249-1`**：P2P/O2C 编排链 Invoice approve 后断言 posted=true + voucher bill_r 回链 + AR-AP 辅助账 openAmount=含税总额精确数值（PAYABLE 56.5 / RECEIVABLE 113）。
 
 ### 跨域编排链完整 E2E（P2P/O2C 全链）
 
@@ -153,6 +154,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 本计划覆盖单域状态机；跨域编排（PO→Receive→Invoice→Pay）属独立 successor。
 - Successor Required: `yes`
 - Trigger Condition: 当需浏览器层验证跨域编排全链时。
+- **RELEASED by `2026-07-09-1249-1`**：P2P（PO→Receive→Invoice）+ O2C（SO→Delivery→Invoice）跨域编排链浏览器层 E2E 全绿（Payment/Receipt xwf 归该计划新 Deferred）。
 
 ## Closure
 
