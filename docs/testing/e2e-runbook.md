@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 3 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token），共 120 测试。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 6 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机 / maintenance Visit 5 态+设备联动副作用 / projects Task 4 态+DAG 门控 / quality CAPA 3 态 + NCR 无 CAPA 路径，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token）+ 1 报表 AMIS 前端渲染层 spec（4 域，`reports.visual.spec.ts`，AMIS service reload 注入 renderHtml 响应），共 131 测试。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
@@ -103,11 +103,11 @@ java -Dfile.encoding=UTF8 \
 | CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 + 13 域列表断言 + 写路径 |
 | 列表断言套件 | `npx playwright test tests/e2e/crud/*.list-value.spec.ts --workers=1` | 13 域 findPage seed 行断言 |
 | 写路径套件 | `npx playwright test tests/e2e/crud/*.write.spec.ts --workers=1` | CRUD 写持久化验证（create/update/delete） |
-| 业务动作套件 | `npx playwright test tests/e2e/business-actions/ --workers=1` | 3 代表域自定义 @BizMutation 经 GraphQL 全栈可达 + 状态机迁移 |
+| 业务动作套件 | `npx playwright test tests/e2e/business-actions/ --workers=1` | 6 代表域自定义 @BizMutation 经 GraphQL 全栈可达 + 状态机迁移 |
 | 跨域编排套件 | `npx playwright test tests/e2e/orchestration/ --workers=1` | P2P/O2C 全链审批 + 业财过账产物（stockMove/voucher/AR-AP） |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 16 分钟（120 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 3 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket）+ 2 跨域编排 spec（P2P + O2C）+ 1 看板前端渲染层 spec（10 域 visual），含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 17.5 分钟（131 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 6 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket + maintenance Visit + projects Task + quality CAPA/NCR）+ 2 跨域编排 spec（P2P + O2C）+ 1 看板前端渲染层 spec（10 域 visual）+ 1 报表前端渲染层 spec（4 域 visual），含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -208,15 +208,19 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **状态隔离**：fresh-DB 每次启动重置（webServer 默认 `rm -f db/erp.mv.db`）+ 同运行内唯一 code（`E2E-{entityName}-{ts}`）。
 - **AMIS 表单写路径（0814-1 新增）**：`runAmisFormWrite` 经浏览器 UI 点「新增」→填表单（文本 + dict 下拉）→「确认」→列表/GraphQL 验证→行操作「编辑」→验证更新→（delete）。dict 下拉经 DOM evaluate 定位（label/option 多 locale 变体 + dict value code 匹配，规避 zh/en locale 漂移）。**已知限制**：AMIS action-group dropdown 的 Delete action（gated by confirmText）在 Playwright 下不触发其 confirm/API（Edit action 直接开 dialog 正常）→ AMIS spec 的 delete 改用同一 GraphQL `__delete` mutation（UI 按钮调用的同一端点），delete 机制本身由 GraphQL 层写 spec 独立证明。seq-default id 字段在 add 表单被标 mandatory（ORM 仍服务端生成实际 id，表单值仅满足客户端校验）。
 
-## 业务动作浏览器层 E2E（`business-actions/`，3 代表域）
+## 业务动作浏览器层 E2E（`business-actions/`，6 代表域）
 
-在 CRUD 读写路径之上，0814-2 叠加了自定义 `@BizMutation` 经 GraphQL `/graphql` 的全栈可达性 + 状态机迁移验证（解除 0628-2 Deferred「复杂业务动作 E2E」）。覆盖 3 个代表域的非审批状态机/过账动作，证明范式；其余域同范式 successor。
+在 CRUD 读写路径之上，0814-2 叠加了自定义 `@BizMutation` 经 GraphQL `/graphql` 的全栈可达性 + 状态机迁移验证（解除 0628-2 Deferred「复杂业务动作 E2E」），覆盖 3 个代表域的非审批状态机/过账动作。2026-07-09-2004-1 将覆盖由 3 域扩展至 6 域：新增 maintenance Visit（5 态+设备联动副作用）、projects Task（4 态+前驱 DAG 门控）、quality CAPA（3 态）+ NCR（无 CAPA 路径），进一步验证三原语 helper 范式在多型状态机（含副作用联动、DAG 门控、过账标志）下的可复用性。审批工作流（xwf）域与剩余 DIRECT 域归 successor。
 
 | 域 | 实体/动作 | spec | 验证内容 |
 | --- | --- | --- | --- |
 | inventory | `ErpInvStockMove` generateMove/complete/cancel | `inventory-stock-move.action.spec.ts` | 状态机 DRAFT→CONFIRMED→DONE + 过账型下游产物（不可变流水 `ErpInvStockLedger` 非空）+ cancel 异常路径 + CONFIRMED 态 confirm 拒绝守卫 |
 | crm | `ErpCrmLead` qualify/moveStage/cancel | `crm-lead.action.spec.ts` | docStatus NEW→QUALIFIED + 漏斗 stageId 翻转（convLog 留痕归 Deferred）+ cancel |
 | cs | `ErpCsTicket` assign/start/resolve/close/cancel | `cs-ticket.action.spec.ts` | 六态状态机 NEW→ASSIGNED→IN_PROGRESS→RESOLVED→CLOSED 全链 + cancel + 非法迁移 ErrorCode 守卫 |
+| maintenance | `ErpMntVisit` schedule/start/complete/cancel | `maintenance-visit.action.spec.ts` | 5 态状态机 DRAFT→SCHEDULED→IN_PROGRESS→COMPLETED + cancel（SCHEDULED→CANCELLED）+ 设备状态联动副作用（start→UNDER_MAINTENANCE，complete/cancel→RUNNING 恢复种子态）+ COMPLETED→start 非法迁移守卫（2004-1） |
+| projects | `ErpPrjTask` startTask/completeTask/blockTask/unblockTask | `projects-task.action.spec.ts` | 4 态状态机 TODO→IN_PROGRESS→DONE + blockTask/unblockTask 闭环（reason 必填）+ 前驱 DAG 门控（无前驱任务绕过 STRICT）+ DONE→startTask/blockTask 非法迁移守卫（2004-1） |
+| quality | `ErpQaAction`（CAPA）startAction/completeAction/verifyAction | `quality-capa.action.spec.ts` | 3 态状态机 PENDING→IN_PROGRESS→COMPLETED + verifyAction 填充验证字段（不改 status）+ COMPLETED→completeAction 守卫（2004-1，最小状态机证明范式可复用性） |
+| quality | `ErpQaNonConformance`（NCR）submitReview/escalateToRecall/cancel | `quality-ncr.action.spec.ts` | 无 CAPA 路径状态机 OPEN→IN_REVIEW→cancel(CANCELLED) / escalateToRecall(ESCALATED_TO_RECALL) + 非法迁移守卫；resolve（CAPA 闭包门控）+ postNcr/reverseNcr（需 RESOLVED）归 successor（2004-1） |
 
 ### 业务动作调用范式（`_helper.ts`）
 
@@ -384,11 +388,15 @@ tests/e2e/
 │   ├── master-data.write.amis.spec.ts # master-data CRUD 写路径 AMIS 表单层（UI 新增/编辑/删除，0814-1）
 │   ├── quality.write.spec.ts         # quality ErpQaRiskRegister CRUD 写路径 GraphQL 层（0814-1，含 dict status）
 │   └── maintenance.write.spec.ts     # maintenance ErpMntEquipmentCategory CRUD 写路径 GraphQL 层（0814-1）
-├── business-actions/                 # 业务动作浏览器层 E2E（0814-2，自定义 @BizMutation 经 GraphQL）
+├── business-actions/                 # 业务动作浏览器层 E2E（0814-2 + 2004-1，自定义 @BizMutation 经 GraphQL，6 代表域）
 │   ├── _helper.ts                    # createViaSave/callMutation/verifyState/eqFilter/deleteByFilter 原语
 │   ├── inventory-stock-move.action.spec.ts  # StockMove generateMove/complete/cancel 状态机+过账
 │   ├── crm-lead.action.spec.ts              # Lead qualify/moveStage/cancel 状态迁移
-│   └── cs-ticket.action.spec.ts             # Ticket 六态状态机 + 非法迁移守卫
+│   ├── cs-ticket.action.spec.ts             # Ticket 六态状态机 + 非法迁移守卫
+│   ├── maintenance-visit.action.spec.ts     # Visit schedule/start/complete/cancel 5 态 + 设备联动副作用（2004-1）
+│   ├── projects-task.action.spec.ts         # Task startTask/completeTask/blockTask/unblockTask 4 态 + DAG 门控（2004-1）
+│   ├── quality-capa.action.spec.ts          # CAPA startAction/completeAction/verifyAction 3 态（2004-1）
+│   └── quality-ncr.action.spec.ts           # NCR submitReview/escalateToRecall/cancel 无 CAPA 路径（2004-1）
 ├── orchestration/                       # 跨域编排链浏览器层 E2E（1249-1，P2P/O2C 全链审批+过账产物）
 │   ├── _helper.ts                        # runP2pChain/runO2cChain + findItems + 清理原语（凭证/AR-AP/移动单产物）
 │   ├── p2p-chain.spec.ts                 # P2P PO→Receive→Invoice 全链 + stockMove + GL/AP 过账产物

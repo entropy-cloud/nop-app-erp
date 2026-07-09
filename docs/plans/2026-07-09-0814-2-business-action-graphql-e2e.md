@@ -139,6 +139,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 3 代表域（inventory/crm/cs）证明范式。其余域同范式 successor。
 - Successor Required: `yes`
 - Trigger Condition: 当需按域推进全业务动作浏览器层覆盖时。
+- **RELEASED by `2026-07-09-2004-1`（部分）**：业务动作浏览器层 E2E 由 3 代表域扩展至 6 代表域（+maintenance ErpMntVisit/projects ErpPrjTask/quality ErpQaAction CAPA+ErpQaNonConformance NCR，4 新 spec）。剩余 DIRECT 域（如 maintenance Request、finance voucher compute 动作）仍为 successor，由 2004-1 自身 Deferred「全 18 域全业务动作覆盖（DIRECT 域剩余）」承接。
 
 ### 业财过账凭证精确数值断言
 
