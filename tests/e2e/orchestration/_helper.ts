@@ -274,6 +274,66 @@ export async function cleanupP2p(page: Page, r: P2pResult): Promise<void> {
   }
 }
 
+// ---------- P2P 反向冲销（业财闭环方向二：财务侧红冲 → 采购发票回退） ----------
+
+/**
+ * 反向冲销结果。reversalVoucherId 为红字凭证 id（reverseProcess 返回值）。
+ * originalVoucherId 为原正常凭证 id（经 voucher_bill_r 回链反查）。
+ */
+export interface P2pReverseResult extends P2pResult {
+  reversalVoucherId?: number;
+  originalVoucherId?: number;
+}
+
+/**
+ * 编排 P2P 正向链（产 posted AP_INVOICE 凭证）→ `ErpFinVoucher__reverse(billHeadCode, businessType)`
+ * 财务侧 DIRECT 红冲（plan 2026-07-09-2004-2，M5.2 后端 1452-2）。
+ *
+ * - 入参形式：`businessType` 经 Nop GraphQL 暴露为 String scalar（Explore 探针裁决：unquoted enum
+ *   名被 GraphQL 解析器拒绝 `非法的字符`；quoted 枚举名 `"AP_INVOICE"` 接受）。
+ * - 返回值：`reverse` 为标量 Long（非实体），不经 `{ selection }` 选择集——与既有 `callMutation`（总是包
+ *   选择集）不兼容，故此处直接构造 `mutation{ X__reverse(...) }` 原始查询。
+ * - `reverseProcess` 以**同一 billHeadCode** 写红字凭证的 voucher_bill_r（与原凭证共用 billCode），
+ *   故既有 `cleanupVoucherByBillCode` 已覆盖原+红字凭证清理；AR-AP 红冲为既有行 status OPEN→CANCELLED
+ *   （非新增行），既有 `cleanupArApByCode` 已覆盖——无需扩展清理原语（Explore 探针裁决）。
+ */
+export async function runP2pReverse(page: Page): Promise<P2pReverseResult> {
+  const base = await runP2pChain(page);
+  const billCode = base.codes.invoice;
+
+  // reverse 返回标量 Long，直接构造原始 mutation（无选择集）
+  const resp = await page.request.post('/graphql', {
+    data: {
+      query: `mutation{ ErpFinVoucher__reverse(billHeadCode:${JSON.stringify(billCode)},businessType:${JSON.stringify('AP_INVOICE')}) }`,
+    },
+  });
+  const json: any = await resp.json();
+  // GraphQL 成功响应省略 errors 字段（undefined）；失败时为非空数组。用真值检查而非 === null。
+  expect(json?.errors, `ErpFinVoucher__reverse(AP_INVOICE) should not return GraphQL errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
+  const reversalVoucherId = json?.data?.ErpFinVoucher__reverse;
+  expect(reversalVoucherId, 'ErpFinVoucher__reverse should return reversal voucher id').toBeTruthy();
+
+  const r: P2pReverseResult = { ...base, reversalVoucherId: Number(reversalVoucherId) };
+
+  // 反查原正常凭证 id（经 voucher_bill_r：NORMAL 凭证，非红字）
+  const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
+  for (const lnk of links) {
+    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(lnk.voucherId)), 'id postingType');
+    if (v && v.postingType === 'NORMAL') {
+      r.originalVoucherId = Number(v.id);
+      break;
+    }
+  }
+
+  return r;
+}
+
+/** 清理 P2P 反向冲销全链产物。复用既有 cleanupP2p（reverseProcess 红字凭证以同 billCode 关联，
+ *  既有 cleanupVoucherByBillCode 已覆盖原+红字凭证；AR-AP 既有行取消非新增）。 */
+export async function cleanupP2pReverse(page: Page, r: P2pReverseResult): Promise<void> {
+  await cleanupP2p(page, r);
+}
+
 // ---------- O2C 链路（SO → Delivery → Invoice） ----------
 
 export interface O2cResult {
@@ -411,4 +471,55 @@ export async function cleanupO2c(page: Page, r: O2cResult): Promise<void> {
     await deleteById(page, 'ErpSalOrder', r.so.id);
   }
   await cleanupStockMove(page, r.setupMove, SEED.MAT_1, SEED.WH_RAW);
+}
+
+// ---------- O2C 反向冲销（业财闭环方向二：财务侧红冲 → 销售发票回退） ----------
+
+/**
+ * 反向冲销结果。reversalVoucherId 为红字凭证 id；originalVoucherId 为原正常凭证 id。
+ */
+export interface O2cReverseResult extends O2cResult {
+  reversalVoucherId?: number;
+  originalVoucherId?: number;
+}
+
+/**
+ * 编排 O2C 正向链（产 posted AR_INVOICE 凭证，含备货前置）→ `ErpFinVoucher__reverse(billHeadCode, "AR_INVOICE")`
+ * 财务侧 DIRECT 红冲（plan 2026-07-09-2004-2 Phase 2）。
+ *
+ * 入参形式 + 清理范围裁决同 P2P（见 runP2pReverse）：`businessType` 为 String scalar（quoted 枚举名）；
+ * reverseProcess 以同一 billHeadCode 写红字凭证 voucher_bill_r，既有 cleanupVoucherByBillCode 已覆盖；
+ * AR-AP 红冲为既有行 status→CANCELLED 非新增，既有 cleanupArApByCode 已覆盖——无需扩展清理。
+ */
+export async function runO2cReverse(page: Page): Promise<O2cReverseResult> {
+  const base = await runO2cChain(page);
+  const billCode = base.codes.invoice;
+
+  const resp = await page.request.post('/graphql', {
+    data: {
+      query: `mutation{ ErpFinVoucher__reverse(billHeadCode:${JSON.stringify(billCode)},businessType:${JSON.stringify('AR_INVOICE')}) }`,
+    },
+  });
+  const json: any = await resp.json();
+  expect(json?.errors, `ErpFinVoucher__reverse(AR_INVOICE) should not return GraphQL errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
+  const reversalVoucherId = json?.data?.ErpFinVoucher__reverse;
+  expect(reversalVoucherId, 'ErpFinVoucher__reverse should return reversal voucher id').toBeTruthy();
+
+  const r: O2cReverseResult = { ...base, reversalVoucherId: Number(reversalVoucherId) };
+
+  const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
+  for (const lnk of links) {
+    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(lnk.voucherId)), 'id postingType');
+    if (v && v.postingType === 'NORMAL') {
+      r.originalVoucherId = Number(v.id);
+      break;
+    }
+  }
+
+  return r;
+}
+
+/** 清理 O2C 反向冲销全链产物。复用既有 cleanupO2c（同 P2P 反向裁决）。 */
+export async function cleanupO2cReverse(page: Page, r: O2cReverseResult): Promise<void> {
+  await cleanupO2c(page, r);
 }
