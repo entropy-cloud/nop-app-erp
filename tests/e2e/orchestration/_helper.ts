@@ -78,6 +78,68 @@ export async function findFirst<T = any>(
   return items.length > 0 ? items[0] : null;
 }
 
+// ---------- 凭证行精确数值断言原语（plan 2026-07-10-0704-1） ----------
+
+/** 凭证行期望：科目码 + 借贷方向 + 借方/贷方金额（金额为确定性种子派生，无浮点误差）。 */
+export interface VoucherLineExpect {
+  subjectCode: string;
+  dcDirection: 'DEBIT' | 'CREDIT';
+  /** 期望借方列值：NORMAL 正、REVERSAL 红字取负（方向不变、金额取负）。 */
+  debitAmount: number;
+  /** 期望贷方列值：NORMAL 正、REVERSAL 红字取负。 */
+  creditAmount: number;
+}
+
+/**
+ * 经 ErpFinVoucherBillR(billCode) 反查凭证 id，可选按 ErpFinVoucher.postingType(NORMAL/REVERSAL) 过滤。
+ * 反向冲销红字凭证与原正常凭证共用同一 billHeadCode（reverseProcess 同 code 写 voucher_bill_r），
+ * 故 postingType 过滤是区分原/红字凭证的唯一手段。
+ */
+export async function findVoucherIdByBillCode(
+  page: Page,
+  billCode: string,
+  postingType?: 'NORMAL' | 'REVERSAL',
+): Promise<number | null> {
+  if (!billCode) return null;
+  const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
+  for (const lnk of links) {
+    const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(lnk.voucherId)), 'id postingType');
+    if (!v) continue;
+    if (!postingType || v.postingType === postingType) {
+      return Number(v.id);
+    }
+  }
+  return null;
+}
+
+/**
+ * 断言凭证行精确数值：按 voucherId 查 ErpFinVoucherLine，逐行匹配期望 subjectCode + dcDirection + 借贷金额。
+ *
+ * 匹配语义：同一凭证内每科目码至多一行（Provider 结构派生），按 subjectCode 唯一匹配。
+ * 断言维度：①行数相等 ②每期望科目码存在唯一实际行 ③dcDirection + debitAmount + creditAmount 精确匹配。
+ * 金额精度：BigDecimal 经 Number() 转换后 toBe 精确匹配（种子派生确定性值，无浮点误差风险）。
+ */
+export async function assertVoucherLines(
+  page: Page,
+  voucherId: number | null | undefined,
+  expected: VoucherLineExpect[],
+): Promise<void> {
+  expect(voucherId, 'voucherId must be resolved before asserting voucher lines').toBeTruthy();
+  const lines = await findItems<any>(
+    page, 'ErpFinVoucherLine', eqFilter('voucherId', Number(voucherId)),
+    'subjectCode dcDirection debitAmount creditAmount',
+  );
+  expect(lines.length, `voucher ${voucherId} should have ${expected.length} lines`).toBe(expected.length);
+  for (const exp of expected) {
+    const matched = lines.filter((l) => l.subjectCode === exp.subjectCode);
+    expect(matched.length, `voucher ${voucherId}: exactly one line for subjectCode=${exp.subjectCode}`).toBe(1);
+    const line = matched[0];
+    expect(line.dcDirection, `subjectCode=${exp.subjectCode} dcDirection`).toBe(exp.dcDirection);
+    expect(Number(line.debitAmount ?? 0), `subjectCode=${exp.subjectCode} debitAmount`).toBe(exp.debitAmount);
+    expect(Number(line.creditAmount ?? 0), `subjectCode=${exp.subjectCode} creditAmount`).toBe(exp.creditAmount);
+  }
+}
+
 /**
  * 保存单据头 + 单条行（行实体 registerShortName=true，独立 __save，FK 显式引用头 id）。
  * 返回 { head, line }（含 id）。比嵌套 lines 更可控（不依赖 GraphQL input 是否暴露 to-many）。

@@ -5,7 +5,9 @@ import {
   runP2pReverse,
   cleanupP2pReverse,
   findItems,
+  assertVoucherLines,
   eqFilter,
+  P2P_EXPECT,
 } from './_helper';
 
 /**
@@ -56,6 +58,20 @@ test.describe('P2P reverse voucher (finance DIRECT red-letter reversal) browser-
       expect(reversal[0].isReversed, 'reversal voucher isReversed=true').toBe(true);
       expect(Number(reversal[0].reversalOfVoucherId), 'reversal reversalOfVoucherId→original')
         .toBe(r.originalVoucherId);
+
+      // ---- 红字凭证行同向取负断言（plan 2026-07-10-0704-1）----
+      // buildReversalDraft 保持 dcDirection 不变、金额取负：1403 Dr -50 / 2221 Dr -6.5 / 2202 Cr -56.5
+      await assertVoucherLines(page, r.reversalVoucherId, [
+        { subjectCode: '1403', dcDirection: 'DEBIT', debitAmount: -P2P_EXPECT.invoiceNet, creditAmount: 0 },
+        { subjectCode: '2221', dcDirection: 'DEBIT', debitAmount: -P2P_EXPECT.invoiceTax, creditAmount: 0 },
+        { subjectCode: '2202', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -P2P_EXPECT.invoiceWithTax },
+      ]);
+      // 原正常凭证行金额不变（正数）——红冲仅新增红字凭证，不修改原凭证行
+      await assertVoucherLines(page, r.originalVoucherId, [
+        { subjectCode: '1403', dcDirection: 'DEBIT', debitAmount: P2P_EXPECT.invoiceNet, creditAmount: 0 },
+        { subjectCode: '2221', dcDirection: 'DEBIT', debitAmount: P2P_EXPECT.invoiceTax, creditAmount: 0 },
+        { subjectCode: '2202', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: P2P_EXPECT.invoiceWithTax },
+      ]);
 
       // ---- 域监听者回退：ErpPurInvoice posted=false + approveStatus APPROVED→REJECTED ----
       const invoice = await findItems<any>(

@@ -5,6 +5,8 @@ import {
   cleanupVoucherByBillCode,
   cleanupArApByCode,
   findItems,
+  findVoucherIdByBillCode,
+  assertVoucherLines,
   SEED,
 } from '../orchestration/_helper';
 import type { Page } from '@playwright/test';
@@ -57,6 +59,9 @@ test.describe('purchase ErpPurReturn approval axis + posted side-effect', () => 
     const p2p = await runP2pChain(page);
     try {
       const retCode = `E2E-PUR-RET-${Date.now()}`;
+      // 退货行 qty=5 × unitPrice=5 = 25（不含税）。PURCHASE_RETURN 过账读 returnOrder.totalAmount（头字段，
+      // 非行级聚合），故头须显式置 totalAmount=25，凭证行方为有意义的 2202 Dr 25 / 1401 Cr 25（plan 0704-1）。
+      const returnNet = 5 * 5;
       const ret = await createViaSave(
         page, 'ErpPurReturn',
         {
@@ -67,6 +72,7 @@ test.describe('purchase ErpPurReturn approval axis + posted side-effect', () => 
           warehouseId: SEED.WH_RAW,
           businessDate: BDATE,
           currencyId: SEED.CURRENCY,
+          totalAmount: returnNet,
           docStatus: 'DRAFT',
           approveStatus: 'UNSUBMITTED',
           posted: false,
@@ -101,6 +107,14 @@ test.describe('purchase ErpPurReturn approval axis + posted side-effect', () => 
       s = await verifyState(page, 'ErpPurReturn', ret.id, 'approveStatus posted');
       expect(s.approveStatus, 'after approve approveStatus=APPROVED').toBe('APPROVED');
       expect(s.posted, 'after approve posted=true (posting triggered)').toBe(true);
+
+      // PURCHASE_RETURN 凭证行精确数值断言（plan 2026-07-10-0704-1）：
+      // 派生自 PurAcctDocProvider.PURCHASE_RETURN：Dr 2202 应付-暂估=TOTAL_AMOUNT(25) / Cr 1401 库存=TOTAL_AMOUNT(25)
+      const purReturnVid = await findVoucherIdByBillCode(page, retCode, 'NORMAL');
+      await assertVoucherLines(page, purReturnVid, [
+        { subjectCode: '2202', dcDirection: 'DEBIT', debitAmount: returnNet, creditAmount: 0 },
+        { subjectCode: '1401', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: returnNet },
+      ]);
 
       // 清理退货下游 + 退货自身
       await cleanupReturnDownstream(page, retCode, SEED.MAT_1, SEED.WH_RAW);

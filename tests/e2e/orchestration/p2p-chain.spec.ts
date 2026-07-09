@@ -6,6 +6,8 @@ import {
   cleanupP2p,
   findPageTotal,
   findItems,
+  findVoucherIdByBillCode,
+  assertVoucherLines,
   eqFilter,
   andFilter,
   P2P_EXPECT,
@@ -54,6 +56,15 @@ test.describe('P2P orchestration chain (PO → Receive → Invoice) browser-laye
 
       const vbrTotal = await findPageTotal(page, 'ErpFinVoucherBillR', eqFilter('billCode', r.codes.invoice));
       expect(vbrTotal, 'Invoice posting should write a voucher bill_r link').toBeGreaterThan(0);
+
+      // AP_INVOICE 凭证行精确数值断言（plan 2026-07-10-0704-1）：1403 Dr 50 / 2221 Dr 6.5 / 2202 Cr 56.5
+      // 派生自 PurAcctDocProvider.AP_INVOICE：Dr 1403=TOTAL_AMOUNT(50) + Dr 2221=TOTAL_TAX(6.5) / Cr 2202=TOTAL_WITH_TAX(56.5)
+      const voucherId = await findVoucherIdByBillCode(page, r.codes.invoice, 'NORMAL');
+      await assertVoucherLines(page, voucherId, [
+        { subjectCode: '1403', dcDirection: 'DEBIT', debitAmount: P2P_EXPECT.invoiceNet, creditAmount: 0 },
+        { subjectCode: '2221', dcDirection: 'DEBIT', debitAmount: P2P_EXPECT.invoiceTax, creditAmount: 0 },
+        { subjectCode: '2202', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: P2P_EXPECT.invoiceWithTax },
+      ]);
 
       const apItems = await findItems<any>(
         page, 'ErpFinArApItem',

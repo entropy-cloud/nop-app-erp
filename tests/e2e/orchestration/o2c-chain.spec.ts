@@ -6,6 +6,8 @@ import {
   cleanupO2c,
   findPageTotal,
   findItems,
+  findVoucherIdByBillCode,
+  assertVoucherLines,
   eqFilter,
   andFilter,
   O2C_EXPECT,
@@ -54,6 +56,15 @@ test.describe('O2C orchestration chain (SO → Delivery → Invoice) browser-lay
 
       const vbrTotal = await findPageTotal(page, 'ErpFinVoucherBillR', eqFilter('billCode', r.codes.invoice));
       expect(vbrTotal, 'Invoice posting should write a voucher bill_r link').toBeGreaterThan(0);
+
+      // AR_INVOICE 凭证行精确数值断言（plan 2026-07-10-0704-1）：1131 Dr 113 / 6001 Cr 100 / 2221 Cr 13
+      // 派生自 SalAcctDocProvider.AR_INVOICE：Dr 1131=TOTAL_WITH_TAX(113) / Cr 6001=TOTAL_AMOUNT(100) / Cr 2221=TOTAL_TAX(13)
+      const voucherId = await findVoucherIdByBillCode(page, r.codes.invoice, 'NORMAL');
+      await assertVoucherLines(page, voucherId, [
+        { subjectCode: '1131', dcDirection: 'DEBIT', debitAmount: O2C_EXPECT.invoiceWithTax, creditAmount: 0 },
+        { subjectCode: '6001', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: O2C_EXPECT.invoiceNet },
+        { subjectCode: '2221', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: O2C_EXPECT.invoiceTax },
+      ]);
 
       const arItems = await findItems<any>(
         page, 'ErpFinArApItem',

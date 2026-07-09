@@ -5,6 +5,8 @@ import {
   cleanupVoucherByBillCode,
   cleanupArApByCode,
   findItems,
+  findVoucherIdByBillCode,
+  assertVoucherLines,
   SEED,
 } from '../orchestration/_helper';
 import type { Page } from '@playwright/test';
@@ -96,6 +98,16 @@ test.describe('sales ErpSalReturn approval axis + posted side-effect', () => {
       s = await verifyState(page, 'ErpSalReturn', ret.id, 'approveStatus posted');
       expect(s.approveStatus, 'after approve approveStatus=APPROVED').toBe('APPROVED');
       expect(s.posted, 'after approve posted=true (posting triggered)').toBe(true);
+
+      // SALES_RETURN 凭证行精确数值断言（plan 2026-07-10-0704-1）：
+      // 派生自 SalAcctDocProvider.SALES_RETURN：Dr 1401 库存=TOTAL_COST / Cr 6401 主营业务成本=TOTAL_COST。
+      // TOTAL_COST=Σ 行 quantity×unitPrice=5×10=50（SalReturnPostingDispatcher.computeTotalCost，行级聚合）。
+      const salReturnCost = 5 * 10;
+      const salReturnVid = await findVoucherIdByBillCode(page, retCode, 'NORMAL');
+      await assertVoucherLines(page, salReturnVid, [
+        { subjectCode: '1401', dcDirection: 'DEBIT', debitAmount: salReturnCost, creditAmount: 0 },
+        { subjectCode: '6401', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: salReturnCost },
+      ]);
 
       await cleanupReturnDownstream(page, retCode, SEED.MAT_1, SEED.WH_RAW);
       await deleteByFilter(page, 'ErpSalReturnLine', eqFilter('returnId', Number(ret.id)));
