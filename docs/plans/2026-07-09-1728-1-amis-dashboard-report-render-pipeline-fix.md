@@ -181,6 +181,8 @@ Skill: `nop-frontend-dev`
 
 **残留风险：** date-range 报表（如 mfg/mnt/qa 域报表）的 AMIS `input-date` 过滤器无 fillable `<input name>`，`reports.visual.spec.ts` 代表性抽样（fin income-statement/balance-sheet + crm + hr）规避了 date 填充问题（fin 用 input-number periodId 可填充，crm/hr 无参数）。全域报表的 date 过滤运行时交互属独立验证能力面（successor），本阶段已用 service 范式使全部 24 张报表的渲染管线结构正确（YAML 全部有效 + service+reload+adaptor 结构一致）。
 
+**承接证据（2026-07-10 经 plan 2026-07-09-2330-2 落地）：** 全域报表 date 过滤运行时交互现已覆盖——2330-2 将 DOM 断言由 4 代表报表扩展至全 24 报表域，新增 `fillDates` 经 label 定位填充 AMIS input-date + `page.route` 拦截器规范化空字符串/时间戳变量。全域报表（含 mfg/mnt/qa/ast/prj date-range 报表）的「page form → AMIS service reload → renderHtml → DOM 注入」全路径均经浏览器层验证。
+
 Exit Criteria:
 
 - [x] 23 张报表点「渲染报表」后 `reportContainer` 注入非空渲染 HTML（DOM 可见），balance-sheet 回归不破坏

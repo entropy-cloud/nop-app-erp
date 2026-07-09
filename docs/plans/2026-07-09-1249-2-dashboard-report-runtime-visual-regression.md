@@ -125,8 +125,9 @@ Exit Criteria:
 ### 报表渲染容器接线修复 + 报表 AMIS 前端渲染层 DOM 断言
 
 - Classification: `out-of-scope improvement`（含已确认产品缺陷子集）
+- **RELEASED**: 经 plan `2026-07-09-1728-1`（渲染管线修复 + 4 代表报表 DOM 断言落地）+ plan `2026-07-09-2330-2`（DOM 断言由 4 代表报表扩展至全 24 报表域）承接完成。1728-1 修复 `$var` 损坏 + reportContainer 接线（全 24 报表统一 service reload 范式），2330-2 将 DOM 断言扩展至全 24 报表域（含非平凡域参数报表表单→service 接线验证）。
 - Why Not Blocking Closure: 24 报表 page.yaml 中 23 张渲染 button ajax 无响应管线注入 reportContainer（仅 balance-sheet 接线），用户点「渲染报表」后端计算返回但页面容器不显示。此为已确认产品缺陷（草案审查期核实，记入 docs/bugs/），报表 DOM 断言在接线修复前不可达。本计划聚焦看板前端渲染层（已验证可行），报表面归独立 Fix-heavy successor。
-- Successor Required: `yes`
+- Successor Required: `yes`（已满足）
 - Trigger Condition: 当报表渲染容器接线修复计划（镜像 balance-sheet `setVariable reportHtml → setValue target reportContainer` 范式补全 23 张报表 page.yaml）落地后。
 
 ### 像素级截图基线 diff（toHaveScreenshot 全页比对）
