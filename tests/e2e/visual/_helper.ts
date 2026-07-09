@@ -99,3 +99,94 @@ export function assertDashboardRendered(cfg: DashboardVisualAssertion): void {
     });
   });
 }
+
+export interface ReportVisualAssertion {
+  reportLabel: string;
+  route: string;
+  expectedTokens: string[];
+  fill?: Record<string, string>;
+  /** AMIS input-date fields to fill, keyed by form-item label text. Date
+   * inputs have no fillable <input name>, so they are targeted by the label
+   * of their enclosing .cxd-Form-item wrapper. Used when the page.yaml
+   * default (e.g. ${NOW()}) produces an unparseable value. */
+  fillDates?: Record<string, string>;
+}
+
+export function assertReportRendered(cfg: ReportVisualAssertion): void {
+  test.describe(`${cfg.reportLabel} report AMIS render`, () => {
+    test('injects renderHtml response into the page via AMIS service reload', async ({ page }) => {
+      const renderResponsePromise = page.waitForResponse(
+        (resp) => {
+          if (!resp.url().includes('/graphql')) return false;
+          const body = resp.request().postData() || '';
+          return body.includes('renderHtml');
+        },
+        { timeout: 30_000 },
+      );
+
+      await loginAndNavigate(page, cfg.route);
+
+      if (cfg.fill) {
+        for (const [name, value] of Object.entries(cfg.fill)) {
+          await page.locator(`input[name="${name}"]`).first().fill(value);
+        }
+      }
+
+      if (cfg.fillDates) {
+        for (const [label, value] of Object.entries(cfg.fillDates)) {
+          await page.locator('.cxd-Form-item').filter({ hasText: label }).locator('input').first().fill(value);
+        }
+      }
+
+      // AMIS sends empty-string "" for unfilled optional form fields, and its
+      // DatePicker serializes dates as raw Unix timestamps (seconds). Both
+      // cause backend failures: "" is treated as a filter (matches nothing),
+      // and timestamps can't be parsed as date strings. The value-spec layer
+      // avoids both by posting explicit variables. Here we intercept the
+      // renderHtml GraphQL request and normalize variables: "" → null (no
+      // filter), and 10-digit timestamps → ISO date strings.
+      await page.route('**/graphql', async (route) => {
+        const postData = route.request().postData();
+        if (postData && postData.includes('renderHtml')) {
+          try {
+            const body = JSON.parse(postData);
+            if (body.variables) {
+              for (const key of Object.keys(body.variables)) {
+                const val = body.variables[key];
+                if (val === '') {
+                  body.variables[key] = null;
+                } else if (typeof val === 'string' && /^\d{10}$/.test(val)) {
+                  body.variables[key] = new Date(Number(val) * 1000).toISOString().substring(0, 10);
+                }
+              }
+            }
+            await route.continue({ postData: JSON.stringify(body) });
+            return;
+          } catch {
+            // fall through
+          }
+        }
+        await route.continue();
+      });
+
+      await page.getByRole('button', { name: /渲染报表|Render/ }).first().click();
+
+      const renderResponse = await renderResponsePromise;
+      expect(renderResponse.status(), `${cfg.reportLabel} renderHtml should return 200`).toBe(200);
+
+      const firstToken = cfg.expectedTokens[0];
+      await expect.poll(
+        async () => (await page.textContent('body')) || '',
+        { timeout: 20_000, message: `${cfg.reportLabel} body should contain rendered token "${firstToken}"` },
+      ).toContain(firstToken);
+
+      const bodyText = (await page.textContent('body')) || '';
+      for (const tok of cfg.expectedTokens) {
+        expect(
+          bodyText,
+          `${cfg.reportLabel} rendered report should contain token "${tok}"`,
+        ).toContain(tok);
+      }
+    });
+  });
+}
