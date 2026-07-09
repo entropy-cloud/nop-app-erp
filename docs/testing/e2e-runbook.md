@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 6 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机 / maintenance Visit 5 态+设备联动副作用 / projects Task 4 态+DAG 门控 / quality CAPA 3 态 + NCR 无 CAPA 路径，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token）+ 1 报表 AMIS 前端渲染层 spec（4 域，`reports.visual.spec.ts`，AMIS service reload 注入 renderHtml 响应），共 131 测试。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 6 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机 / maintenance Visit 5 态+设备联动副作用 / projects Task 4 态+DAG 门控 / quality CAPA 3 态 + NCR 无 CAPA 路径，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 2 反向冲销 spec（业财闭环方向二：财务侧 `ErpFinVoucher__reverse` 红字冲销 + 域监听者回退，`p2p-reverse.spec.ts` / `o2c-reverse.spec.ts`）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token）+ 1 报表 AMIS 前端渲染层 spec（4 域，`reports.visual.spec.ts`，AMIS service reload 注入 renderHtml 响应），共 133 测试。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
@@ -104,10 +104,10 @@ java -Dfile.encoding=UTF8 \
 | 列表断言套件 | `npx playwright test tests/e2e/crud/*.list-value.spec.ts --workers=1` | 13 域 findPage seed 行断言 |
 | 写路径套件 | `npx playwright test tests/e2e/crud/*.write.spec.ts --workers=1` | CRUD 写持久化验证（create/update/delete） |
 | 业务动作套件 | `npx playwright test tests/e2e/business-actions/ --workers=1` | 6 代表域自定义 @BizMutation 经 GraphQL 全栈可达 + 状态机迁移 |
-| 跨域编排套件 | `npx playwright test tests/e2e/orchestration/ --workers=1` | P2P/O2C 全链审批 + 业财过账产物（stockMove/voucher/AR-AP） |
+| 跨域编排套件 | `npx playwright test tests/e2e/orchestration/ --workers=1` | P2P/O2C 全链审批 + 业财过账产物（stockMove/voucher/AR-AP）+ 财务侧反向冲销（红字凭证 + 域监听者回退） |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 17.5 分钟（131 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 6 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket + maintenance Visit + projects Task + quality CAPA/NCR）+ 2 跨域编排 spec（P2P + O2C）+ 1 看板前端渲染层 spec（10 域 visual）+ 1 报表前端渲染层 spec（4 域 visual），含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 18 分钟（133 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 6 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket + maintenance Visit + projects Task + quality CAPA/NCR）+ 2 跨域编排 spec（P2P + O2C）+ 2 反向冲销 spec（P2P + O2C 财务侧红冲）+ 1 看板前端渲染层 spec（10 域 visual）+ 1 报表前端渲染层 spec（4 域 visual），含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -248,6 +248,23 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **O2C 备货前置**：WH-RAW/MAT-1 种子无余额，出库会因负库存禁止（`CONFIG_ALLOW_NEGATIVE_STOCK` 默认 false）失败。链路前先 `generateMove` INCOMING 备货（独立移动 → CONFIRMED → `complete` → DONE），WH-RAW/MAT-1 余额无种子行清理时整行删除安全。
 - **关键发现（业财过账 COA 完备性修复）**：执行发现种子 COA（`erp_md_subject.csv`）与过账 Provider 硬编码科目码不一致——`PurAcctDocProvider`(1403/2221/2202)、`SalAcctDocProvider`(1131/6001/2221)、`InvAcctDocProvider`(1401/6401/2202) 所需 1403/2221/1131/1401/6401 在种子缺失，致 `resolveSubjects` 抛 `ERR_SUBJECT_NOT_FOUND`→过账优雅降级 posted=false。补齐种子 COA（`erp_md_subject.csv` +5 行 1401/1403/1131/2221/6401，`findByCode` 全局按码解析无需 COA 映射）后过账 happy-path 可达。安全性：`persistVoucher` 仅写 voucher/voucher_line/voucher_bill_r（**不写 gl_balance**），finance 看板/资产负债表/利润表读 gl_balance 不受影响，全套件 0 回归。此为种子演示数据完备性修复（非生产代码/契约/模型变更）。
 - **Payment/Receipt xwf 浏览器层裁决（Deferred）**：Payment/Receipt 为 `useWorkflow=true` xwf WORKFLOW 模式。原型实证：`nop` 浏览器用户调 `submitForApproval`，xwf 返回 `步骤[submit]不允许被用户[<nop uuid>]调用,步骤的参与者限定为[user:$0]`——wf `submit` 步骤参与者限定为 `user:$0`（SYS id=0，后端测试 `setUserId("0")` 规避），`nop` 用户不匹配致 submit 被拒。归 Deferred successor（触发条件：xwf 浏览器层审批 API 验证可行 / nop 用户 wf 委托配置落地 / wf 步骤参与者配置放宽时）。
+
+### 反向冲销层（业财闭环方向二：财务侧 DIRECT 红字冲销 + 域监听者回退）
+
+在正向编排链之上，2004-2 叠加了业财闭环方向二的浏览器层 E2E：经 `ErpFinVoucher__reverse(billHeadCode, businessType)` 财务侧 DIRECT 红字冲销（M5.2 后端 1452-2，`reverseProcess` + `VoucherReversedEvent` + 域监听者）的浏览器层全栈可达性 + 红字凭证生成 + 原凭证补标 + 域单据回退验证。**机制区分**：本层覆盖财务侧 DIRECT 红冲（财务员直接红冲已过账凭证，无审批/xwf 依赖），区别于域审批轴 `ErpXxx__reverseApprove`（需 APPROVED 前置，归 approval-pattern successor，本层不解除）。
+
+| 链路 | spec | 验证内容 |
+| --- | --- | --- |
+| P2P 反向（AP_INVOICE 红冲 + 采购发票回退） | `p2p-reverse.spec.ts` | `runP2pReverse` 正向链产 posted AP_INVOICE 凭证 → `ErpFinVoucher__reverse(AP_INVOICE)` → 原正常凭证 NORMAL+isReversed=true + 红字凭证 REVERSAL+isReversed=true+reversalOfVoucherId 回链 + `ErpPurInvoice` posted=false + approveStatus APPROVED→REJECTED（`PurReversalListener.rollbackInvoice`） |
+| O2C 反向（AR_INVOICE 红冲 + 销售发票回退） | `o2c-reverse.spec.ts` | `runO2cReverse` 正向链产 posted AR_INVOICE 凭证（含 O2C 备货前置）→ `ErpFinVoucher__reverse(AR_INVOICE)` → 原正常凭证 isReversed=true + 红字凭证生成 + `ErpSalInvoice` posted=false + approveStatus APPROVED→REJECTED（`SalReversalListener.rollbackInvoice`） |
+
+#### 编排链范式复用与反向裁决（`orchestration/_helper.ts`）
+
+- **反向驱动**：`runP2pReverse` / `runO2cReverse` 复用正向 `runP2pChain` / `runO2cChain`（产 posted AP/AR Invoice 凭证）后，附加一步 `ErpFinVoucher__reverse` mutation，返回 reversalVoucherId + 经 voucher_bill_r 反查 originalVoucherId（NORMAL 凭证）。
+- **枚举入参序列化裁决（Explore 探针）**：`reverse(billHeadCode, businessType: ErpFinBusinessType)` 的 Java 枚举入参经 Nop GraphQL **暴露为 String scalar**——原型实证：unquoted `AP_INVOICE`（GraphQL enum scalar 写法）被解析器拒绝（`非法的字符` / `nop.err.graphql.parse.unexpected-char`）；quoted `"AP_INVOICE"`（String scalar 写法）接受并返回红字凭证 id。故 helper 直接构造 `mutation{ ErpFinVoucher__reverse(billHeadCode:"...",businessType:"AP_INVOICE") }` 原始查询（`reverse` 返回标量 Long，无选择集，与既有 `callMutation` 总包选择集不兼容）。枚举名经 `.name()` 在事件/回链中以字符串形式存储（`PurReversalListener`/`SalReversalListener` 按 `switch(businessType)` 字符串分派）。
+- **清理范围裁决（Explore 探针）**：`reverseProcess` 以**同一 billHeadCode** 写红字凭证的 voucher_bill_r（与原凭证共用 billCode），故既有 `cleanupVoucherByBillCode` 已覆盖原+红字凭证（voucher_line + voucher + voucher_bill_r）清理；AR-AP 红冲为既有行 `status` OPEN→CANCELLED + openAmount 归零（`cancelOnReverse`，非新增行），既有 `cleanupArApByCode`（按 sourceBillCode deleteByFilter）已覆盖——**无需扩展清理原语**（`cleanupP2p`/`cleanupO2c` 已包含这两步，反向层直接复用为 `cleanupP2pReverse`/`cleanupO2cReverse`）。
+- **与正向编排层的层间关系**：反向层是正向层的扩展（正向链产前置 posted 凭证 + 反向 mutation + 反向回退断言），复用正向 helper 的全部链式驱动/过账产物断言/清理原语。反向层断言聚焦回退目标态（原凭证 isReversed + 域单据 posted/approveStatus 翻转），由 `VoucherReversedEvent` 同事务派发给各域监听者实现（`posting.md §冲销机制方向二 §实现策略 裁决3` SYNC 默认）。
+- **监听者失败隔离残留风险**：`ErpFinReversalListenerRegistry.dispatch` try/catch 隔离各域监听者失败（失败不回滚已过账红字凭证、不阻断其他域监听者，落入 finance 5.1 异常工作台）。spec 断言以 `__findPage`/`__get` 权威查库为准；若监听者异常，域回退可能未发生——本层 happy-path 全绿（监听者无异常），异常路径归 successor。
 
 ## 看板 AMIS 前端渲染层 E2E（`visual/`，10 域）
 
@@ -397,10 +414,12 @@ tests/e2e/
 │   ├── projects-task.action.spec.ts         # Task startTask/completeTask/blockTask/unblockTask 4 态 + DAG 门控（2004-1）
 │   ├── quality-capa.action.spec.ts          # CAPA startAction/completeAction/verifyAction 3 态（2004-1）
 │   └── quality-ncr.action.spec.ts           # NCR submitReview/escalateToRecall/cancel 无 CAPA 路径（2004-1）
-├── orchestration/                       # 跨域编排链浏览器层 E2E（1249-1，P2P/O2C 全链审批+过账产物）
-│   ├── _helper.ts                        # runP2pChain/runO2cChain + findItems + 清理原语（凭证/AR-AP/移动单产物）
+├── orchestration/                       # 跨域编排链浏览器层 E2E（1249-1 正向 + 2004-2 反向）
+│   ├── _helper.ts                        # runP2pChain/runO2cChain + runP2pReverse/runO2cReverse + findItems + 清理原语（凭证/AR-AP/移动单产物）
 │   ├── p2p-chain.spec.ts                 # P2P PO→Receive→Invoice 全链 + stockMove + GL/AP 过账产物
-│   └── o2c-chain.spec.ts                 # O2C SO→Delivery→Invoice 全链 + 出库移动 + GL/AR 过账产物
+│   ├── o2c-chain.spec.ts                 # O2C SO→Delivery→Invoice 全链 + 出库移动 + GL/AR 过账产物
+│   ├── p2p-reverse.spec.ts              # 业财闭环方向二：AP_INVOICE 财务侧红冲 + 采购发票回退（2004-2）
+│   └── o2c-reverse.spec.ts              # 业财闭环方向二：AR_INVOICE 财务侧红冲 + 销售发票回退（2004-2）
 ├── visual/                              # 看板 AMIS 前端渲染层 E2E（1249-2，DOM 结构 + echarts canvas + 数值 token）
 │   ├── _helper.ts                       # assertDashboardRendered（waitForResponse getDashboardKpi + 卡片结构 + canvas + 表格）
 │   └── dashboards.visual.spec.ts        # 10 域看板 AMIS 渲染管线断言（2 非参数化域含数值 token）
