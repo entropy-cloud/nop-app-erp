@@ -1,6 +1,6 @@
 # 2026-07-10-0335-2 依赖门控与剩余 DIRECT 业务动作浏览器层 E2E
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-10
 > Source: deferred 项承接 `docs/plans/2026-07-09-2004-1-business-action-e2e-maintenance-projects-quality.md` Deferred「NCR resolve 经 CAPA 闭包门控路径」（Successor Required: yes，触发条件「当需验证 NCR→CAPA 闭环 resolve 路径浏览器层 E2E 时」）+ Deferred「全 18 域全业务动作覆盖（DIRECT 域剩余）」maintenance Request 子集
 > Related: `docs/plans/2026-07-10-0335-1-approval-gated-direct-business-action-e2e.md`（同批，审批轴 E2E，先执行）、`docs/plans/2026-07-09-0814-2-business-action-graphql-e2e.md`（business-actions 原语基线）、`docs/plans/2026-07-09-2004-1`（quality-capa + quality-ncr 无 CAPA 路径基线）
@@ -49,43 +49,43 @@ No infra prereqs beyond existing baseline.
 
 ### Phase 1 - NCR→CAPA 闭包 resolve 门控 E2E
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/business-actions/quality-ncr-resolve-capa-gate.action.spec.ts`
 Skill: `none`
 
 - Item Types: `Add | Proof`
 - Prereqs: `2004-1` quality-capa + quality-ncr spec 已落地（CAPA 三步 + NCR 无 CAPA 路径基线）
 
-- [ ] `Add`：新建 `quality-ncr-resolve-capa-gate.action.spec.ts`——`createViaSave` 建 NCR（code 保唯一，dispositionType 选 RETURN 避免自动过账，status=OPEN）+ `createViaSave` 建关联 ErpQaAction（CAPA，ncrId=上面 NCR id，status=PENDING）
-- [ ] `Proof`：门控负路径——NCR `submitReview`(OPEN→IN_REVIEW) → `resolve`（CAPA 仍 PENDING 未闭包）→ 断言 errors 非空 + 含 `ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED` → `verifyState status` 仍 IN_REVIEW（未迁移）
-- [ ] `Proof`：CAPA 闭包——`callMutationOk startAction`(PENDING→IN_PROGRESS) → `callMutationOk completeAction`(→COMPLETED) → `callMutationOk verifyAction`(填 verificationPerson+verificationDate，:55-76) → `verifyState` CAPA status=COMPLETED
-- [ ] `Proof`：门控正路径——`callMutationOk resolve`(ncrId, resolution) → `verifyState status=RESOLVED`（全部 CAPA 闭包后门控通过）
-- [ ] `Proof`：清理——NCR + CAPA 自身删除（CAPA 先于 NCR 删，因 FK 依赖）
+- [x] `Add`：新建 `quality-ncr-resolve-capa-gate.action.spec.ts`——`createViaSave` 建 NCR（code 保唯一，dispositionType 选 CONCESSION 干净隔离门控【实现裁决：RETURN 触发 NcrReturnOrchestrator 退货单副作用属 Non-Goal，SCRAP 触发 config-gated 自动过账，CONCESSION 在 dispatchFinancialImpact 无分派】，status=OPEN）+ `createViaSave` 建关联 ErpQaAction（CAPA，ncrId=上面 NCR id，status=PENDING）
+- [x] `Proof`：门控负路径——NCR `submitReview`(OPEN→IN_REVIEW) → `resolve`（CAPA 仍 PENDING 未闭包）→ 断言 errors 非空 + 含 `ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED` 对应标志性 message token（Nop GraphQL 此配置仅回传 i18n message 不序列化 extensions.errorCode，故断言「CAPA」+「未完成」token 唯一区分状态迁移类错误）→ `verifyState status` 仍 IN_REVIEW（未迁移）
+- [x] `Proof`：CAPA 闭包——`callMutationOk startAction`(PENDING→IN_PROGRESS) → `callMutationOk completeAction`(→COMPLETED) → `callMutationOk verifyAction`(填 verificationPerson+verificationDate，:55-76) → `verifyState` CAPA status=COMPLETED
+- [x] `Proof`：门控正路径——`callMutationOk resolve`(ncrId, resolution) → `verifyState status=RESOLVED`（全部 CAPA 闭包后门控通过）
+- [x] `Proof`：清理——NCR + CAPA 自身删除（CAPA 先于 NCR 删，因 FK 依赖）
 
 Exit Criteria:
 
-- [ ] 门控负路径（CAPA 未闭包 → resolve 抛错 + status 不变）+ 正路径（CAPA 闭包 → resolve 成功 + status=RESOLVED）均通过
-- [ ] CAPA 三步（start→complete→verify）+ resolve 经 `verifyState` 独立断言
+- [x] 门控负路径（CAPA 未闭包 → resolve 抛错 + status 不变）+ 正路径（CAPA 闭包 → resolve 成功 + status=RESOLVED）均通过
+- [x] CAPA 三步（start→complete→verify）+ resolve 经 `verifyState` 独立断言
 
 ### Phase 2 - maintenance Request 5 态状态机 E2E
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/business-actions/mnt-request.action.spec.ts`
 Skill: `none`
 
 - Item Types: `Add | Proof`
 - Prereqs: 无
 
-- [ ] `Add`：新建 `mnt-request.action.spec.ts`——`createViaSave` 建 ErpMntRequest（mandatory code+requestDate+equipmentId+description+status=OPEN，code 保唯一；equipmentId 引用种子设备）
-- [ ] `Proof`：正路径——`callMutationOk accept`(OPEN→ACCEPTED) → `verifyState status=ACCEPTED` → `startRepair`(→IN_PROGRESS) → `complete`(→COMPLETED + completedAt)
-- [ ] `Proof`：分支路径——`rejectRequest`(OPEN/ACCEPTED→REJECTED) + `cancel`(OPEN/ACCEPTED→CANCELLED)
-- [ ] `Proof`：非法迁移守卫——如 COMPLETED 再 accept → 断言 errors 非空
-- [ ] `Proof`：清理——Request 自身删除（若 accept 生成 ErpMntVisit 副作用，按需清理或接受种子级隔离）
+- [x] `Add`：新建 `mnt-request.action.spec.ts`——`createViaSave` 建 ErpMntRequest（mandatory code+requestDate+equipmentId+description+priority+status+requestedBy，code 保唯一；equipmentId=1 种子设备 EQ-2026-001；requestedBy=2 种子员工李四）
+- [x] `Proof`：正路径——`callMutationOk accept`(OPEN→ACCEPTED) → `verifyState status=ACCEPTED` → `startRepair`(→IN_PROGRESS) → `complete`(→COMPLETED + completedAt)
+- [x] `Proof`：分支路径——`rejectRequest`(OPEN/ACCEPTED→REJECTED) + `cancel`(OPEN/ACCEPTED→CANCELLED)
+- [x] `Proof`：非法迁移守卫——如 COMPLETED 再 accept → 断言 errors 非空
+- [x] `Proof`：清理——accept 生成响应式 ErpMntVisit 副作用（code=VST-REQ-{requestId}，visitDate=today 落入看板区间），按 code 删除避免污染 periodVisitCount 基线 + Request 自身删除
 
 Exit Criteria:
 
-- [ ] 5 态状态机正路径（accept→startRepair→complete）+ 分支路径（rejectRequest/cancel）+ 守卫全通过
-- [ ] `status` 翻转经 `verifyState` 独立断言
+- [x] 5 态状态机正路径（accept→startRepair→complete）+ 分支路径（rejectRequest/cancel）+ 守卫全通过
+- [x] `status` 翻转经 `verifyState` 独立断言
 
 ## Draft Review Record
 
@@ -93,14 +93,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（2 spec 全绿：quality-ncr-resolve-capa-gate + mnt-request）
-- [ ] 相关文档对齐（`docs/testing/e2e-runbook.md` 业务动作层新增 2 实体段 + 套件计数更新；`docs/logs/2026/07-10.md` 聚合条目）
-- [ ] 已运行验证：`npx playwright test tests/e2e/business-actions/`（新 spec 全绿，0 回归）+ `mvn clean install -DskipTests`（154 模块 BUILD SUCCESS）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（2 spec 全绿：quality-ncr-resolve-capa-gate + mnt-request）
+- [x] 相关文档对齐（`docs/testing/e2e-runbook.md` 业务动作层新增 2 实体段 + 套件计数更新；`docs/logs/2026/07-10.md` 聚合条目）
+- [x] 已运行验证：`npx playwright test tests/e2e/business-actions/`（新 spec 全绿，0 回归）+ `mvn clean install -DskipTests`（154 模块 BUILD SUCCESS）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -127,11 +127,21 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <pending>
+Status Note: 执行完成，独立结束审计已通过（独立子代理新会话冷重播审计，无执行者上下文复用）。
 
 Closure Audit Evidence:
 
-- <pending>
+- Auditor / Agent: 独立结束审计子代理（新会话，plan-check FAIL 触发的 closure-audit 轮次，非执行者会话）
+- Evidence:
+  - 结构校验：front matter `Plan Status: completed` + `Last Reviewed: 2026-07-10`；两 Phase 均 `Status: completed`，Exit Criteria 全 `[x]`，Phase items 全 `[x]`；Closure Gates 8/8 全 `[x]`（closure-audit gate 经本轮独立审计勾选）；Closure section 含具体证据非占位符。
+  - 活仓库核实（grep/glob/read）：`tests/e2e/business-actions/quality-ncr-resolve-capa-gate.action.spec.ts`（124 行，1 test：负路径 resolve 门控拒绝+message token 断言+status 不变 + CAPA 三步闭包 startAction/completeAction/verifyAction + 正路径 resolve 成功 status=RESOLVED + 清理）+ `mnt-request.action.spec.ts`（115 行，2 test：正路径 OPEN→ACCEPTED→IN_PROGRESS→COMPLETED+completedAt+COMPLETED→accept 非法守卫 + 分支 rejectRequest/cancel + 清理）均存在且非空壳（无空函数体/return null/吞异常）；`docs/testing/e2e-runbook.md` 含两实体段（mnt-request :221 / quality-ncr-resolve-capa-gate :225 标 0335-2）+ 套件计数 12 代表域 / 167 测试；`docs/logs/2026/07-10.md` 含聚合条目 + full-green 验证状态。
+  - Anti-Hollow：两 spec 均经 `callMutation`/`callMutationOk`/`verifyState` 真实驱动 GraphQL mutation + `__get` 独立断言状态翻转，断言密度高（状态值断言 + errors 断言 + message token 断言），无占位实现。
+  - Deferred honesty：3 个 Deferred But Adjudicated 项（NCR postNcr/reverseNcr SCRAP 过账数值断言 / Request→Visit 编排 / finance voucher post）均为不同结果表面的 out-of-scope improvement，非范围内实时缺陷降级，每项标注 Successor Required + Trigger Condition。
+  - 五点一致性：Plan Status=completed / 两 Phase Status=completed / 两 Phase Exit Criteria 全 [x] / Closure Gates 全 [x] / Closure 证据非占位符 — 一致。
+
+- Phase 1（quality-ncr-resolve-capa-gate）：`quality-ncr-resolve-capa-gate.action.spec.ts` 1 测试全绿——负路径（CAPA PENDING 时 resolve 抛错 + 含「CAPA」「未完成」message token + status 仍 IN_REVIEW）+ CAPA 三步闭包（start→complete→verify）+ 正路径（resolve 成功 status=RESOLVED）+ 清理。实现裁决：dispositionType 用 CONCESSION 非 RETURN（RETURN 触发 NcrReturnOrchestrator 退货单副作用属 Non-Goal，SCRAP 触发自动过账，CONCESSION 干净隔离门控本身）。Nop GraphQL 此配置仅回传 i18n message 不序列化 extensions.errorCode，故错误码断言改为标志性 message token。
+- Phase 2（mnt-request）：`mnt-request.action.spec.ts` 2 测试全绿——正路径（OPEN→ACCEPTED→IN_PROGRESS→COMPLETED + completedAt + COMPLETED→accept 非法守卫）+ 分支路径（rejectRequest→REJECTED / cancel→CANCELLED）。清理裁决：accept 生成响应式 visit（visitDate=today 落入看板区间），按 code 删除避免污染 maintenance.value.spec periodVisitCount 基线（1）。
+- 验证：`npx playwright test tests/e2e/business-actions/ tests/e2e/dashboards/{maintenance,quality}.value.spec.ts --workers=1` → 28 passed（含 3 新测试，0 回归，看板基线 intact）；`mvn install -DskipTests` → BUILD SUCCESS（154 模块）。
 
 Follow-up:
 
