@@ -255,6 +255,32 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **关键发现（业财过账 COA 完备性修复）**：执行发现种子 COA（`erp_md_subject.csv`）与过账 Provider 硬编码科目码不一致——`PurAcctDocProvider`(1403/2221/2202)、`SalAcctDocProvider`(1131/6001/2221)、`InvAcctDocProvider`(1401/6401/2202) 所需 1403/2221/1131/1401/6401 在种子缺失，致 `resolveSubjects` 抛 `ERR_SUBJECT_NOT_FOUND`→过账优雅降级 posted=false。补齐种子 COA（`erp_md_subject.csv` +5 行 1401/1403/1131/2221/6401，`findByCode` 全局按码解析无需 COA 映射）后过账 happy-path 可达。安全性：`persistVoucher` 仅写 voucher/voucher_line/voucher_bill_r（**不写 gl_balance**），finance 看板/资产负债表/利润表读 gl_balance 不受影响，全套件 0 回归。此为种子演示数据完备性修复（非生产代码/契约/模型变更）。
 - **Payment/Receipt xwf 浏览器层裁决（Deferred — 已权威裁决不可行）**：Payment/Receipt 为 `useWorkflow=true` xwf WORKFLOW 模式。原型实证：`nop` 浏览器用户调 `submitForApproval`，xwf 返回 `步骤[submit]不允许被用户[<nop uuid>]调用,步骤的参与者限定为[user:$0]`——wf `submit` 步骤参与者限定为 `user:$0`（SYS id=0，后端测试 `setUserId("0")` 规避），`nop` 用户不匹配致 submit 被拒。**经 plan 2026-07-09-2330-1 权威裁决：不可行**（3 条路径均阻断：① wf 委托机制存在但 sysUser(0) 无法经浏览器层 `__save` 物化为真实可引用用户——`NopAuthUser.userId` 列 `tagSet="seq"` 覆盖显式 "0" 为 UUID；② 浏览器层无用户身份注入/伪装 API（`-Dnop.auth.service-public=true` 仅旁路 auth 不改 `ctx.getUserId()`）；③ `.xwf` submit step `<assignment>` 放宽属生产审批契约变更非浏览器层可行路径）。归 Deferred successor（触发条件：nop-entropy 平台支持浏览器层测试用户身份映射 / 委托免 sysUser 物化 / sysUser 种子物化时，详见下方「useWorkflow 审批轴浏览器层」段）。
 
+### 凭证行精确数值断言（plan 2026-07-10-0704-1）
+
+在凭证存在性 + 辅助账 openAmount 断言之上，0704-1 叠加了过账凭证行（`ErpFinVoucherLine`）级 **subjectCode + dcDirection + debitAmount/creditAmount 精确数值**断言，覆盖 P2P/O2C 正向发票过账 + 财务侧反向冲销红字凭证 + Return 过账四条核心业财链路。捕获能力升级：科目码映射错位（如 Provider subjectCode 拼写错误）、不含税/含税金额混用、红冲借贷镜像断裂（方向翻转或金额未取负）均可在凭证行级被发现——此前仅断言凭证存在性 + 辅助账 openAmount，无法捕获此类行级错误。
+
+**可复用原语（`orchestration/_helper.ts`）：**
+
+- `findVoucherIdByBillCode(page, billCode, postingType?)`：经 `ErpFinVoucherBillR`(billCode) 反查 voucherId，可选按 `ErpFinVoucher.postingType`(NORMAL/REVERSAL) 过滤。反向冲销红字凭证与原正常凭证共用同一 billHeadCode（`reverseProcess` 同 code 写 voucher_bill_r），故 postingType 过滤是区分原/红字凭证的唯一手段。
+- `assertVoucherLines(page, voucherId, expectedLines[])`：经 `ErpFinVoucherLine__findPage`(voucherId)（实体 `registerShortName=true` 有独立端点）查凭证行，按 subjectCode 唯一匹配，逐行断言 dcDirection + debitAmount + creditAmount。BigDecimal 经 `Number()` 转换后 `toBe` 精确匹配（金额为确定性种子派生，无浮点误差）。
+
+**Provider 结构派生期望值表（期望行由各 AcctDocProvider 的科目码 + 金额口径派生）：**
+
+| 业务类型 | spec | 凭证行期望（subjectCode / dcDirection / 金额） | 金额来源 |
+| --- | --- | --- | --- |
+| AP_INVOICE | `p2p-chain.spec.ts` | 1403 DEBIT 50 / 2221 DEBIT 6.5 / 2202 CREDIT 56.5 | Dr 1403=TOTAL_AMOUNT(50) + Dr 2221=TOTAL_TAX(6.5) / Cr 2202=TOTAL_WITH_TAX(56.5) |
+| AR_INVOICE | `o2c-chain.spec.ts` | 1131 DEBIT 113 / 6001 CREDIT 100 / 2221 CREDIT 13 | Dr 1131=TOTAL_WITH_TAX(113) / Cr 6001=TOTAL_AMOUNT(100) / Cr 2221=TOTAL_TAX(13) |
+| 红字（AP_INVOICE 冲销） | `p2p-reverse.spec.ts` | 1403 DEBIT -50 / 2221 DEBIT -6.5 / 2202 CREDIT -56.5 | `buildReversalDraft`：dcDirection 不变、金额取负（原行 50→-50） |
+| 红字（AR_INVOICE 冲销） | `o2c-reverse.spec.ts` | 1131 DEBIT -113 / 6001 CREDIT -100 / 2221 CREDIT -13 | 同上：方向不变、金额取负 |
+| PURCHASE_RETURN | `pur-return.action.spec.ts` | 2202 DEBIT 25 / 1401 CREDIT 25 | Dr 2202 应付-暂估=TOTAL_AMOUNT / Cr 1401 库存=TOTAL_AMOUNT（退货 qty5×price5=25，**读头 totalAmount 非行级聚合，spec 须显式置头 totalAmount**） |
+| SALES_RETURN | `sal-return.action.spec.ts` | 1401 DEBIT 50 / 6401 CREDIT 50 | Dr 1401 库存=TOTAL_COST / Cr 6401 主营业务成本=TOTAL_COST（`computeTotalCost`=Σ 行 qty×price=5×10=50，行级聚合） |
+
+**关键裁决：**
+
+- **红字凭证同向取负（非借贷互换）**：`ErpFinPostingProcessor.buildReversalDraft` 保持原凭证行 dcDirection 不变、仅金额取负（如原 2202 CREDIT credit=56.5 → 红字 2202 CREDIT credit=-56.5，**非** 翻转为 DEBIT）。断言据此写同向取负期望。同时断言原正常凭证行金额不变（正数），验证红冲仅新增红字凭证、不修改原凭证行。
+- **PURCHASE_RETURN 读头 totalAmount**：`PurReturnPostingDispatcher` 置 `billData.TOTAL_AMOUNT = returnOrder.getTotalAmount()`（头字段，非行级聚合，头 `totalAmount` 列 `defaultValue=0` 无自动 rollup）。故 `pur-return` spec 创建退货头时须显式置 `totalAmount=qty×price`，凭证行方为有意义的非零金额（对齐 Java 集成测试 `TestErpPurReturnPosting` 显式 setTotalAmount 范式）。SALES_RETURN 则读行级 `computeTotalCost`（Σ qty×unitPrice），无需置头金额。
+- **套件计数**：新断言全部内联至既有 spec（不新增 spec 文件/测试用例），套件总数仍为 167（167→167，N=0）。
+
 ### 反向冲销层（业财闭环方向二：财务侧 DIRECT 红字冲销 + 域监听者回退）
 
 在正向编排链之上，2004-2 叠加了业财闭环方向二的浏览器层 E2E：经 `ErpFinVoucher__reverse(billHeadCode, businessType)` 财务侧 DIRECT 红字冲销（M5.2 后端 1452-2，`reverseProcess` + `VoucherReversedEvent` + 域监听者）的浏览器层全栈可达性 + 红字凭证生成 + 原凭证补标 + 域单据回退验证。**机制区分**：本层覆盖财务侧 DIRECT 红冲（财务员直接红冲已过账凭证，无审批/xwf 依赖），区别于域审批轴 `ErpXxx__reverseApprove`（需 APPROVED 前置，归 approval-pattern successor，本层不解除）。
