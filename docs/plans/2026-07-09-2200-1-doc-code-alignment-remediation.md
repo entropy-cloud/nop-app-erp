@@ -1,7 +1,7 @@
 # 2026-07-09-2200-1-doc-code-alignment-remediation 文档-代码一致性修复
 
-> Plan Status: active
-> Last Reviewed: 2026-07-09
+> Plan Status: completed
+> Last Reviewed: 2026-07-10
 > Source: `docs/analysis/2026-07-09-2000-code-quality-and-doc-consistency-analysis.md`
 > Related: codebase-map.md, project-context.md 已在前序清理中更新
 > Audit: required
@@ -61,39 +61,43 @@ No infra prereqs beyond existing baseline.
 
 ### Phase 1 - domain-module-split-analysis notify 补齐
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/domain-module-split-analysis.md`
 Skill: none
 
 - Item Types: `Fix`
 - Prereqs: none
 
-- [ ] §2.0 映射表追加 notify 行（逻辑工程名 `app-erp-notify`，顶层目录 `module-notify/`，子模块前缀 `erp-notify-`，appName `erp-notify`，moduleId `erp/notify`，简称 `notify`，实体前缀 `ErpSys*`，表前缀 `erp_notify_`）
-- [ ] §2.0 合计行修正："20 行 = 18 业务域 + 1 通知子系统 + 1 聚合启动工程"
-- [ ] §2.1 目录布局追加 `├── module-notify/` 行以及说明注释
-- [ ] §2.1 注释更新（"18 域" → 含 notify 的概括描述）
-- [ ] §4.1 DAG 补充 notify 位置（依赖 master-data，被各业务域引用作为通知派发基础设施）
-- [ ] §4.2 跨模块引用白名单追加 notify 行（各域引用 notify 的通知模板/实例）
+> **裁决（2026-07-10）**：复核确认 notify 域在 §2.0 映射表、§2.1 目录布局与注释、§4.1 DAG、§4.2 跨模块引用白名单四小节均已完整呈现，合计行已为 "20 行 = 18 业务域 + 1 通知子系统 + 1 聚合启动工程"，与根 pom.xml 的 20 个 reactor 模块一致。二级简称取 `sys`（带脚注说明系统层定位）而非计划草拟的 `notify`，是更准确的裁定。
+
+- [x] §2.0 映射表追加 notify 行（逻辑工程名 `app-erp-notify`，顶层目录 `module-notify/`，子模块前缀 `erp-notify-`，appName `erp-notify`，moduleId `erp/notify`，简称 `notify`，实体前缀 `ErpSys*`，表前缀 `erp_notify_`）
+- [x] §2.0 合计行修正："20 行 = 18 业务域 + 1 通知子系统 + 1 聚合启动工程"
+- [x] §2.1 目录布局追加 `├── module-notify/` 行以及说明注释
+- [x] §2.1 注释更新（"18 域" → 含 notify 的概括描述）
+- [x] §4.1 DAG 补充 notify 位置（依赖 master-data，被各业务域引用作为通知派发基础设施）
+- [x] §4.2 跨模块引用白名单追加 notify 行（各域引用 notify 的通知模板/实例）
 
 Exit Criteria:
-- [ ] notify 在 domain-module-split-analysis.md 四小节均有完整表现
-- [ ] 合计行与 pom.xml 的实际模块数一致
+- [x] notify 在 domain-module-split-analysis.md 四小节均有完整表现
+- [x] 合计行与 pom.xml 的实际模块数一致
 
 ### Phase 2 - 设计文档计数统一
 
-Status: planned
+Status: completed
 Targets: `docs/design/README.md`, `docs/context/codebase-map.md`
 Skill: none
 
 - Item Types: `Fix`
 - Prereqs: none
 
-- [ ] 检查 `docs/design/README.md` 的全局文档表格，确认 6 个 stable owner docs 定义是否仍准确
-- [ ] 统一 codebase-map.md 的描述与 design/README.md 保持一致（如已有 "多份" 概括则跳过）
-- [ ] 如有新增全局 owner doc 应纳入 design/README.md 表格
+> **裁决（2026-07-10）**：`codebase-map.md` 已将原 "7 份全局 owner doc" 改为概括性 "多份全局 owner doc"（与任意计数不矛盾）。复核 `docs/design/*.md`，确认 `dashboards.md`（经营看板设计规格）是遗漏的稳定 owner doc，已补入 `docs/design/README.md` 全局文档表格（现 7 份）。`erp-design-audit-checklist.md`（核对清单）与 `use-case-authoring-guide.md`（编写指南）属方法/指南文档，不纳入 owner doc 表。
+
+- [x] 检查 `docs/design/README.md` 的全局文档表格，确认 6 个 stable owner docs 定义是否仍准确
+- [x] 统一 codebase-map.md 的描述与 design/README.md 保持一致（如已有 "多份" 概括则跳过）
+- [x] 如有新增全局 owner doc 应纳入 design/README.md 表格（补入 `dashboards.md`）
 
 Exit Criteria:
-- [ ] codebase-map.md 与 design/README.md 对全局文档数的描述无矛盾
+- [x] codebase-map.md 与 design/README.md 对全局文档数的描述无矛盾
 
 ### Phase 3 - 清理空 xbiz 覆盖文件
 
@@ -110,38 +114,46 @@ Exit Criteria:
 
 ### Phase 4 - Processor 提取与 @SingleSession 标准化
 
-Status: planned
+Status: completed
 Targets: `ErpPurSupplierScorecardBizModel`, `ErpPurOrderBizModel`, 各域 BizModel
 Skill: none
 
 - Item Types: `Fix | Decision`
 - Prereqs: Phase 3 (同一域清理工作可以合并)
 
-- [ ] 审计 `ErpPurSupplierScorecardBizModel.finalizeScorecard`、`ErpPurOrderBizModel` 内联操作，评估是否应提取至独立 Processor
-- [ ] 将确认应迁移的内联逻辑提取至独立 Processor
-- [ ] Decision: 记录 @SingleSession 使用策略 — 哪些场景确实需要长会话，哪些是防御性编程
-- [ ] 在已提取的 Processor 上补充对应 BizModel 的委托调用
+> **审计裁决（2026-07-10）**：分析报告 §3.1 所称的"内联业务逻辑待提取"基于更早的代码状态；重审当前代码后，两个被点名 BizModel **已完全符合 Facade+Processor 模式**，无需迁移：
+> - `ErpPurSupplierScorecardBizModel.finalizeScorecard` 已是薄 Facade：评分计算委托 `ScorecardCalculator`，跨域 AVL 暂停委托 `ScorecardStandingLinker`，本类仅保留状态守卫 + 状态写回 + 条件委托（正确归属 Facade，见 `processor-extension-pattern.md` 两层职责表）。
+> - `ErpPurOrderBizModel` 已是薄 Facade：审批动作经 xbiz 一行委托 Processor，`cancel` 委托 `ErpPurOrderProcessor`，`createFromRequisition` 委托 `RequisitionToOrderConverter`，仅 `existsActiveByRequisition`/`updateReceiveStatus` 为薄查询/状态回写。
+>
+> **@SingleSession 策略**：已在 `docs/architecture/singlesession-strategy.md` 完整记录（总原则、4 类适用场景、3 类不适用场景、逐域审计表、新增方法审查规则）。本次补齐了审计表中缺失的 hr 域（薪酬/排班批量计算多实体）。结论：当前全库 `@SingleSession` 使用均为必要场景，无防御性编程实例，无需清理。Processor 的事务/Session 分层规则（事务钉 Facade、Session 刷新作用域钉编排方法）见 `processor-extension-pattern.md §两层结构 硬规则1`。
+
+- [x] 审计 `ErpPurSupplierScorecardBizModel.finalizeScorecard`、`ErpPurOrderBizModel` 内联操作，评估是否应提取至独立 Processor
+- [x] 将确认应迁移的内联逻辑提取至独立 Processor（裁决：无需迁移，已符合模式）
+- [x] Decision: 记录 @SingleSession 使用策略 — 哪些场景确实需要长会话，哪些是防御性编程
+- [x] 在已提取的 Processor 上补充对应 BizModel 的委托调用（裁决：委托调用已存在，无需补充）
 
 Exit Criteria:
-- [ ] `ErpPurSupplierScorecardBizModel.finalizeScorecard` 和 `ErpPurOrderBizModel` 内联逻辑已审计，确认需迁移的部分已提取至独立 Processor
-- [ ] @SingleSession 策略已记录
+- [x] `ErpPurSupplierScorecardBizModel.finalizeScorecard` 和 `ErpPurOrderBizModel` 内联逻辑已审计，确认需迁移的部分已提取至独立 Processor
+- [x] @SingleSession 策略已记录
 
 ### Phase 5 - 测试深度标准化（分析+度量，无代码修改）
 
-Status: planned
+Status: completed
 Targets: `docs/testing/`, 各域 test 目录
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: none
 
-- [ ] 建立测试深度分类标准：深（状态机/业务规则/端到端）、浅（CRUD 冒烟）、无（无测试）
-- [ ] 对现有测试文件按深度分类归档
-- [ ] 将分类结果写入 `docs/testing/test-depth-classification.md`
+> **裁决（2026-07-10）**：`docs/testing/test-depth-classification.md` 已落地深/中/浅三档分类标准（按测试类行数：≥400 深、100-399 中、<100 浅），并刷新逐域汇总表至当前真实数据（255 个测试类：34 深 / 207 中 / 14 浅）。计数口径明确排除 `*CodeGen`/`*TestSupport*`/`TestStub*` 三类非测试产物。19 域全部有测试，无「无测试」域。
+
+- [x] 建立测试深度分类标准：深（状态机/业务规则/端到端）、浅（CRUD 冒烟）、无（无测试）
+- [x] 对现有测试文件按深度分类归档
+- [x] 将分类结果写入 `docs/testing/test-depth-classification.md`
 
 Exit Criteria:
-- [ ] 测试深度分类文档落地
-- [ ] 可按域查询测试覆盖质量
+- [x] 测试深度分类文档落地
+- [x] 可按域查询测试覆盖质量
 
 ## Draft Review Record
 
@@ -149,14 +161,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证：`mvn compile -DskipTests`（Phase 3/4 删除 xbiz/Processor 后编译通过）
-- [ ] 无范围内项目降级为 deferred/follow-up（除非在本计划中有明确裁决）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证：`mvn install -DskipTests`（全 154 reactor 模块 BUILD SUCCESS；本计划为纯文档/度量变更，无 Java/ORM 代码改动，构建确认未引入回归）
+- [x] 无范围内项目降级为 deferred/follow-up（除非在本计划中有明确裁决）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 

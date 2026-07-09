@@ -27,6 +27,7 @@
 | logistics | Shipment 发运状态多实体操作 | ✅ 合理 |
 | b2b | EdiDoc/Asn 多步解析+处理 | ✅ 合理 |
 | finance | BadDebt/BankStatementLine/CashForecast/PostingException 过账多步 | ✅ 合理 |
+| hr | Salary/SalarySimulation/Shift/ShiftAssignment/ShiftSwapRequest/GapAnalysis 批量薪酬计算与排班生成多实体 | ✅ 合理，每步跨多条员工/排班实体 |
 
 **判定**：当前代码库中 `@SingleSession` 的使用均为必要场景，无防御性编程实例。无需清理。
 

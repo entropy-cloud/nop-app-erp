@@ -36,6 +36,7 @@
 | `domain-glossary.md` | 跨域核心术语统一词汇表 |
 | `flow-overview.md` | 全局业务流程编排（L1 宏观流程、L2 状态机映射、L3 跨域规则） |
 | `roles-and-permissions.md` | ERP 角色与权限模型 |
+| `dashboards.md` | 经营看板指标、数据源、布局、刷新与异常预警规格（各域看板页面设计依据） |
 | `feature-inventory.md` | 已支持功能清单 |
 
 ## 业务域设计文档（每域一个目录，结构因域而异）
