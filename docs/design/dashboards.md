@@ -219,6 +219,10 @@
 3. **权限过滤**:所有查询带 orgId/部门/成本中心过滤(行级权限自动注入)。
 4. **性能**:大表聚合(如 GlBalance 按12月)考虑物化或缓存;预警列表分页。
 5. **配置化**:阈值(如缺料安全库存、账龄预警天数、现金流下限)放系统配置(NopSysVariable),非硬编码。
+6. **AMIS 取数范式约定**(plan `2026-07-09-1728-1` 落地，修 P1 缺陷 `docs/bugs/2026-07-09-1249-dashboard-amis-var-mangling.md`):
+   - 看板/报表 page.yaml 中 `dataType: raw` 手写 GraphQL 查询字符串里的裸 `$var`（GraphQL 变量语法）**必须**以 `${'$'}` 转义（如 `query(${'$'}periodId:Long){ ...(periodId:${'$'}periodId) }`）。原因:amis-core `dataMapping` 对含 `$` 的字符串值经 `tokenize`(模板模式单趟解析)会把裸 `$var` 当模板变量替换为空,损坏查询致 KPI 恒 0。`${'$'}` 是 YAML 双引号安全的字面 `$` 输出(amis-formula `\$` 转义变体,单趟不回扫)。`variables` 中的 `${expr}` 模板不变。
+   - 不要改用平台 `@query:` URL 范式替代:`guessDefinition` 对整数推断 `Int`、浮点 `Float`,无法产出 BizModel 声明的 `Long`/`BigDecimal`,GraphQL 校验会拒绝(`Int` 用于 `Long` 位置)。`dataType: raw` + `${'$'}` 转义是覆盖全参数类型的纯前端方案。
+   - **报表渲染容器范式**:渲染 button 用 `actionType: reload target: "reportService"` 触发 form 内部的 `type: service`(name: reportService, initFetch: false),service 的 api 含 adaptor 将 `renderHtml` 返回 HTML 拍平为 `data.reportHtml`,body 为 `type: html html: "${reportHtml}"`。service 必须在 form **内部**(共享表单字段作用域;同级 service 取不到表单字段值)。**禁止**镜像旧 balance-sheet 的 `onEvent: setVariable(event.data.result)+setValue(target)` 范式——该范式运行时损坏(`event.data.result` 恒空、`target` 字段被忽略)。
 
 ## 实现状态
 

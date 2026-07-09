@@ -2,7 +2,7 @@
 
 > 发现于：`docs/plans/2026-07-09-1249-2-dashboard-report-runtime-visual-regression.md` 草案审查期（Current Baseline）
 > 严重度：P1（用户点「渲染报表」后端计算返回但页面容器不显示，23 张报表前端不可见渲染结果）
-> 状态：未修复（归 plan 2026-07-09-1249-2 Deferred successor「报表渲染容器接线修复 + 报表 AMIS 前端渲染层 DOM 断言」）
+> 状态：**已修复**（plan `2026-07-09-1728-1` Phase 3，2026-07-09）。注：草案指定的「镜像 balance-sheet onEvent setVariable/setValue」范式经运行时核实**本身即损坏**（balance-sheet「正确」为基线误判）——`event.data.result` 恒空（amis-core AjaxAction 结果在 `outputVar` 非 `result`）、`target:` 字段被 CmptAction 忽略（须 `componentId`/`componentName`）、`html:""` 静态不反应。改用经运行时验证可用的 **service reload 范式**（与看板 service+api+adaptor 同机制）：渲染 button `actionType: reload target: reportService`；form 内部 `type: service name: reportService initFetch: false`，api adaptor 将 `renderHtml` 返回 HTML 拍平为 `data.reportHtml`，body `type: html html: "${reportHtml}"`。service 必须在 form 内部以共享表单字段作用域。全 24 张报表重构（balance-sheet onEvent 一并替换）。运行时验证：`reports.visual.spec.ts` 4 张代表性报表（fin×2 + crm + hr）全部通过。
 
 ## 症状
 

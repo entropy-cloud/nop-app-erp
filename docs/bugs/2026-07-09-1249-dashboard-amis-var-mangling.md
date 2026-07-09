@@ -2,7 +2,7 @@
 
 > 发现于：`docs/plans/2026-07-09-1249-2-dashboard-report-runtime-visual-regression.md` Phase 1（看板 AMIS 前端渲染层 DOM 断言）
 > 严重度：P1（全 8 参数化看板 + 全参数化报表页面前端 KPI/渲染值恒为空/0，用户不可见正确数值）
-> 状态：未修复（归 plan 2026-07-09-1249-2 Deferred successor「看板/报表 AMIS `$var` 查询模板修复」）
+> 状态：**已修复**（plan `2026-07-09-1728-1` Phase 1/2/3，2026-07-09）。修复方向：`dataType: raw` 手写 GraphQL 查询字符串中的裸 `$var` 经 amis-core `dataMapping`→`tokenize`（模板模式单趟解析）当作模板变量替换为空；以 YAML 安全转义 `${'$'}`（amis-formula `\$` 转义的 YAML 双引号变体，`${}` 内 `'$'` 求值为字面 `$`，单趟不回扫）替换全部 34 个 `*.page.yaml` 的查询字符串中的裸 `$`。运行时验证：Playwright chromium 全 10 看板数值 token 断言通过（finance 1130 / sales 1000 / purchase 850 / inventory 10450 / assets 135000 / projects 50000+0.4 / manufacturing 80 / maintenance 3 / quality 0.67 / master-data 4）。
 
 ## 症状
 
