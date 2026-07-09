@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层，共 102 测试）。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 3 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机，经 GraphQL 调自定义 `@BizMutation`），共 108 测试。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
@@ -103,9 +103,10 @@ java -Dfile.encoding=UTF8 \
 | CRUD 套件 | `npx playwright test tests/e2e/crud/ --workers=1` | 18 域 CRUD 列表/表单回归 + 13 域列表断言 + 写路径 |
 | 列表断言套件 | `npx playwright test tests/e2e/crud/*.list-value.spec.ts --workers=1` | 13 域 findPage seed 行断言 |
 | 写路径套件 | `npx playwright test tests/e2e/crud/*.write.spec.ts --workers=1` | CRUD 写持久化验证（create/update/delete） |
+| 业务动作套件 | `npx playwright test tests/e2e/business-actions/ --workers=1` | 3 代表域自定义 @BizMutation 经 GraphQL 全栈可达 + 状态机迁移 |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 14 分钟（102 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance），含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 14 分钟（108 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 3 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket），含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -205,6 +206,25 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - `update` mutation 支持部分字段更新（仅需 id + 待改字段）；`delete` 为逻辑删除（`delVersion`），删除后 `__get` 返回 not-found。
 - **状态隔离**：fresh-DB 每次启动重置（webServer 默认 `rm -f db/erp.mv.db`）+ 同运行内唯一 code（`E2E-{entityName}-{ts}`）。
 - **AMIS 表单写路径（0814-1 新增）**：`runAmisFormWrite` 经浏览器 UI 点「新增」→填表单（文本 + dict 下拉）→「确认」→列表/GraphQL 验证→行操作「编辑」→验证更新→（delete）。dict 下拉经 DOM evaluate 定位（label/option 多 locale 变体 + dict value code 匹配，规避 zh/en locale 漂移）。**已知限制**：AMIS action-group dropdown 的 Delete action（gated by confirmText）在 Playwright 下不触发其 confirm/API（Edit action 直接开 dialog 正常）→ AMIS spec 的 delete 改用同一 GraphQL `__delete` mutation（UI 按钮调用的同一端点），delete 机制本身由 GraphQL 层写 spec 独立证明。seq-default id 字段在 add 表单被标 mandatory（ORM 仍服务端生成实际 id，表单值仅满足客户端校验）。
+
+## 业务动作浏览器层 E2E（`business-actions/`，3 代表域）
+
+在 CRUD 读写路径之上，0814-2 叠加了自定义 `@BizMutation` 经 GraphQL `/graphql` 的全栈可达性 + 状态机迁移验证（解除 0628-2 Deferred「复杂业务动作 E2E」）。覆盖 3 个代表域的非审批状态机/过账动作，证明范式；其余域同范式 successor。
+
+| 域 | 实体/动作 | spec | 验证内容 |
+| --- | --- | --- | --- |
+| inventory | `ErpInvStockMove` generateMove/complete/cancel | `inventory-stock-move.action.spec.ts` | 状态机 DRAFT→CONFIRMED→DONE + 过账型下游产物（不可变流水 `ErpInvStockLedger` 非空）+ cancel 异常路径 + CONFIRMED 态 confirm 拒绝守卫 |
+| crm | `ErpCrmLead` qualify/moveStage/cancel | `crm-lead.action.spec.ts` | docStatus NEW→QUALIFIED + 漏斗 stageId 翻转（convLog 留痕归 Deferred）+ cancel |
+| cs | `ErpCsTicket` assign/start/resolve/close/cancel | `cs-ticket.action.spec.ts` | 六态状态机 NEW→ASSIGNED→IN_PROGRESS→RESOLVED→CLOSED 全链 + cancel + 非法迁移 ErrorCode 守卫 |
+
+### 业务动作调用范式（`_helper.ts`）
+
+- **三个原语**：`createViaSave`（经标准 `__save` 建前置实体，复用 write.spec.ts `${entity}__save_input` 范式）、`callMutation`（经 GraphQL mutation 调自定义 `@BizMutation`，标量入参内联、复杂入参经 `input(type, value)` 包装走 variable + 显式 GraphQL input 类型名）、`verifyState`（经 `__get` 独立断言状态字段，独立于 mutation 返回值权威查库）。
+- **关键发现（Nop GraphQL filter 格式）**：`__findPage` 的 `filter` 必须用 Nop FieldTreeBean Map 格式 `{ $type:'eq', name, value }`（`$type` 持有算子，`name`/`value` 持有属性）；plain-map 字段相等（`{moveId:123}`）报 `nop.err.core.filter.op-is-null`。`eqFilter(field,value)` / `andFilter(...leafs)` helper 封装此格式。
+- **状态字段核实**：inventory StockMove 状态字段 `docStatus`（DRAFT/CONFIRMED/DONE/CANCELLED）+ `posted`（Boolean，过账标志）；CRM Lead 状态字段为 `docStatus`（非 `leadStatusId` 后者线索子状态 FK）；CS Ticket 状态字段为 `status`（六态）。
+- **实现修订（generateMove 自动 confirm）**：经核实 `ErpInvStockMoveProcessor`，`generateMove` 内部经 `doConfirm` 自动推进 DRAFT→CONFIRMED（独立创建无 relatedBillType 停在 CONFIRMED），「confirm」为内部过渡步骤无独立 DRAFT 创建入口。故 StockMove spec 实测状态链为 `generateMove(独立)→CONFIRMED→complete→DONE`。
+- **posted 字段语义**：`posted` 反映跨域财务过账（`InvPostingDispatcher`：成功置 true、失败优雅降级 false 不阻塞 DONE 终态）。spec 断言 `typeof posted === 'boolean'` + 同事务不可变流水 `ErpInvStockLedger` 非空（可靠过账产物）；凭证借贷平衡精确数值归 finance 数值断言层 successor。
+- **产物清理（强制）**：业务动作创建不可逆下游产物（库存流水/余额、工单审计/调查、线索转化日志）。全栈共享同一 Quarkus+H2 实例（`reuseExistingServer: true`），不清理会污染下游数值断言（dashboard KPI 聚合 stock_balance/ledger、report 聚合 ticket/survey）。每个 spec 在断言完成后经 `deleteByFilter`/`deleteById` 清理自身产物（镜像 write.spec.ts create→delete 范式，但扩展到不可逆下游产物逐域删除）。
 
 ## CRUD 套件（18 域列表/表单冒烟）
 
@@ -320,6 +340,11 @@ tests/e2e/
 │   ├── master-data.write.amis.spec.ts # master-data CRUD 写路径 AMIS 表单层（UI 新增/编辑/删除，0814-1）
 │   ├── quality.write.spec.ts         # quality ErpQaRiskRegister CRUD 写路径 GraphQL 层（0814-1，含 dict status）
 │   └── maintenance.write.spec.ts     # maintenance ErpMntEquipmentCategory CRUD 写路径 GraphQL 层（0814-1）
+├── business-actions/                 # 业务动作浏览器层 E2E（0814-2，自定义 @BizMutation 经 GraphQL）
+│   ├── _helper.ts                    # createViaSave/callMutation/verifyState/eqFilter/deleteByFilter 原语
+│   ├── inventory-stock-move.action.spec.ts  # StockMove generateMove/complete/cancel 状态机+过账
+│   ├── crm-lead.action.spec.ts              # Lead qualify/moveStage/cancel 状态迁移
+│   └── cs-ticket.action.spec.ts             # Ticket 六态状态机 + 非法迁移守卫
 └── reports/
     ├── _helper.ts                    # runReportSmoke + assertReportRenderedWithValue 共享函数
     ├── fin-balance-sheet.value.spec.ts   # 数值断言层
