@@ -37,6 +37,8 @@ alter table erp_inv_reservation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NU
 
 alter table erp_inv_ownership_transfer add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_inv_landed_cost add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_inv_picking_order add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_transfer_order_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -52,6 +54,8 @@ alter table erp_inv_cost_adjust_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' N
 alter table erp_inv_reservation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_ownership_transfer_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_inv_landed_cost_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_picking_order_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -114,6 +118,9 @@ alter table erp_inv_reservation add primary key (NOP_TENANT_ID, ID);
 alter table erp_inv_ownership_transfer drop primary key;
 alter table erp_inv_ownership_transfer add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_inv_landed_cost drop primary key;
+alter table erp_inv_landed_cost add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_inv_picking_order drop primary key;
 alter table erp_inv_picking_order add primary key (NOP_TENANT_ID, ID);
 
@@ -137,6 +144,9 @@ alter table erp_inv_reservation_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_inv_ownership_transfer_line drop primary key;
 alter table erp_inv_ownership_transfer_line add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_inv_landed_cost_line drop primary key;
+alter table erp_inv_landed_cost_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_inv_picking_order_line drop primary key;
 alter table erp_inv_picking_order_line add primary key (NOP_TENANT_ID, ID);

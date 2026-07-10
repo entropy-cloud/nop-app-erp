@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpInvLandedCost.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="receiveId" mandatory="true" sortable="true"/>
+                <col id="totalCostAmount" ui:number="true" sortable="true"/>
+                <col id="allocationMethod" mandatory="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
+                <col id="posted" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view"/>
+        <form id="edit">
+            <layout>
+                code[单号] businessDate[业务日期]
+                receiveId[采购入库单] supplierId[采购供应商]
+                allocationMethod[分摊方法] currencyId[币种]
+                exchangeRate[汇率] totalCostAmount[到岸成本合计]
+                remark[备注]
+            </layout>
+        </form>
+        <form id="add">
+            <layout>
+                code[单号] businessDate[业务日期]
+                receiveId[采购入库单] supplierId[采购供应商]
+                allocationMethod[分摊方法] currencyId[币种]
+                exchangeRate[汇率] totalCostAmount[到岸成本合计]
+                remark[备注]
+            </layout>
+        </form>
+    </forms>
+
+    <pages>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-approve-button" label="审核" level="success"
+                        icon="fa fa-check">
+                    <api url="@mutation:ErpInvLandedCost__approve?id=$id"/>
+                    <confirmText>确认审核此到岸成本单？审核后将执行分摊并生成凭证。</confirmText>
+                    <reloadAfterSuccess/>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-allocate-preview-button" label="分摊预览">
+                        <api url="@query:ErpInvLandedCost__allocate?id=$id"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpInvLandedCost__delete?id=$id"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker"/>
+    </pages>
+</view>

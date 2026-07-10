@@ -215,7 +215,7 @@ CREATE TABLE erp_inv_cost_adjust(
   CODE VARCHAR2(50) NOT NULL ,
   ORG_ID NUMBER(20)  ,
   BUSINESS_DATE DATE NOT NULL ,
-  ADJUST_TYPE VARCHAR2(20) NOT NULL ,
+  ADJUST_TYPE VARCHAR2(30) NOT NULL ,
   REASON VARCHAR2(500)  ,
   DOC_STATUS VARCHAR2(20) NOT NULL ,
   APPROVE_STATUS VARCHAR2(20) NOT NULL ,
@@ -307,6 +307,34 @@ CREATE TABLE erp_inv_ownership_transfer(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_inv_ownership_transfer primary key (ID)
+);
+
+CREATE TABLE erp_inv_landed_cost(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  RECEIVE_ID NUMBER(20) NOT NULL ,
+  SUPPLIER_ID NUMBER(20)  ,
+  CURRENCY_ID NUMBER(20)  ,
+  EXCHANGE_RATE NUMBER(20,6)  ,
+  TOTAL_COST_AMOUNT NUMBER(20,4)  ,
+  ALLOCATION_METHOD VARCHAR2(20) NOT NULL ,
+  DOC_STATUS VARCHAR2(20) NOT NULL ,
+  APPROVE_STATUS VARCHAR2(20) NOT NULL ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT DATE  ,
+  POSTED_BY VARCHAR2(36)  ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT DATE  ,
+  BUSINESS_DATE DATE NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_landed_cost primary key (ID)
 );
 
 CREATE TABLE erp_inv_picking_order(
@@ -487,6 +515,23 @@ CREATE TABLE erp_inv_ownership_transfer_line(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_inv_ownership_transfer_line primary key (ID)
+);
+
+CREATE TABLE erp_inv_landed_cost_line(
+  ID NUMBER(20) NOT NULL ,
+  LANDED_COST_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  COST_ELEMENT VARCHAR2(30) NOT NULL ,
+  AMOUNT NUMBER(20,4) NOT NULL ,
+  AP_PARTNER_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_landed_cost_line primary key (ID)
 );
 
 CREATE TABLE erp_inv_picking_order_line(
@@ -951,6 +996,56 @@ CREATE TABLE erp_inv_stock_ledger(
                     
       COMMENT ON COLUMN erp_inv_ownership_transfer.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_inv_landed_cost IS '到岸成本单';
+                
+      COMMENT ON COLUMN erp_inv_landed_cost.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.CODE IS '单号';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.RECEIVE_ID IS '采购入库单';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.SUPPLIER_ID IS '采购供应商';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.TOTAL_COST_AMOUNT IS '到岸成本合计';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.ALLOCATION_METHOD IS '分摊方法';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.DOC_STATUS IS '单据状态';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.APPROVE_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.POSTED IS '已过账';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.POSTED_BY IS '过账人';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.APPROVED_AT IS '审核时间';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_inv_picking_order IS '拣货单';
                 
       COMMENT ON COLUMN erp_inv_picking_order.ID IS 'ID';
@@ -1262,6 +1357,34 @@ CREATE TABLE erp_inv_stock_ledger(
       COMMENT ON COLUMN erp_inv_ownership_transfer_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_inv_ownership_transfer_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_inv_landed_cost_line IS '到岸成本行';
+                
+      COMMENT ON COLUMN erp_inv_landed_cost_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.LANDED_COST_ID IS '到岸成本单ID';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.COST_ELEMENT IS '费用要素';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.AMOUNT IS '金额';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.AP_PARTNER_ID IS '应付对象';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_landed_cost_line.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_inv_picking_order_line IS '拣货单行';
                 

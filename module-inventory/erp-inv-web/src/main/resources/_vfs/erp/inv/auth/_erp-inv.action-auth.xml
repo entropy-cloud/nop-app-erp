@@ -61,215 +61,243 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvOwnershipTransfer-main" displayName="所有权转移单" orderNo="10013"
+                <resource id="ErpInvLandedCost-main" displayName="到岸成本单" orderNo="10013"
+                          i18n-en:displayName="Landed Cost" icon="scale" component="AMIS" resourceType="SUBM"
+                          url="/erp/inv/pages/ErpInvLandedCost/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpInvLandedCost:query" displayName="查询到岸成本单"
+                                  i18n-en:displayName="Query Landed Cost" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpInvLandedCost:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpInvLandedCost:mutation" displayName="修改到岸成本单"
+                                  i18n-en:displayName="Modify Landed Cost" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpInvLandedCost:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpInvLandedCostLine-main" displayName="到岸成本行" orderNo="10016"
+                          i18n-en:displayName="Landed Cost Line" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/inv/pages/ErpInvLandedCostLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpInvLandedCostLine:query" displayName="查询到岸成本行"
+                                  i18n-en:displayName="Query Landed Cost Line" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpInvLandedCostLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpInvLandedCostLine:mutation" displayName="修改到岸成本行"
+                                  i18n-en:displayName="Modify Landed Cost Line" orderNo="10018" resourceType="FNPT">
+                            <permissions>ErpInvLandedCostLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpInvOwnershipTransfer-main" displayName="所有权转移单" orderNo="10019"
                           i18n-en:displayName="Ownership Transfer" icon="arrow-left-right" component="AMIS"
                           resourceType="SUBM" url="/erp/inv/pages/ErpInvOwnershipTransfer/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvOwnershipTransfer:query" displayName="查询所有权转移单"
-                                  i18n-en:displayName="Query Ownership Transfer" orderNo="10014" resourceType="FNPT">
+                                  i18n-en:displayName="Query Ownership Transfer" orderNo="10020" resourceType="FNPT">
                             <permissions>ErpInvOwnershipTransfer:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvOwnershipTransfer:mutation" displayName="修改所有权转移单"
-                                  i18n-en:displayName="Modify Ownership Transfer" orderNo="10015" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Ownership Transfer" orderNo="10021" resourceType="FNPT">
                             <permissions>ErpInvOwnershipTransfer:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvOwnershipTransferLine-main" displayName="所有权转移单行" orderNo="10016"
+                <resource id="ErpInvOwnershipTransferLine-main" displayName="所有权转移单行" orderNo="10022"
                           i18n-en:displayName="Ownership Transfer Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvOwnershipTransferLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvOwnershipTransferLine:query" displayName="查询所有权转移单行"
-                                  i18n-en:displayName="Query Ownership Transfer Line" orderNo="10017"
+                                  i18n-en:displayName="Query Ownership Transfer Line" orderNo="10023"
                                   resourceType="FNPT">
                             <permissions>ErpInvOwnershipTransferLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvOwnershipTransferLine:mutation" displayName="修改所有权转移单行"
-                                  i18n-en:displayName="Modify Ownership Transfer Line" orderNo="10018"
+                                  i18n-en:displayName="Modify Ownership Transfer Line" orderNo="10024"
                                   resourceType="FNPT">
                             <permissions>ErpInvOwnershipTransferLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvPickingOrder-main" displayName="拣货单" orderNo="10019"
+                <resource id="ErpInvPickingOrder-main" displayName="拣货单" orderNo="10025"
                           i18n-en:displayName="Picking Order" icon="package-search" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvPickingOrder/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvPickingOrder:query" displayName="查询拣货单"
-                                  i18n-en:displayName="Query Picking Order" orderNo="10020" resourceType="FNPT">
+                                  i18n-en:displayName="Query Picking Order" orderNo="10026" resourceType="FNPT">
                             <permissions>ErpInvPickingOrder:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvPickingOrder:mutation" displayName="修改拣货单"
-                                  i18n-en:displayName="Modify Picking Order" orderNo="10021" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Picking Order" orderNo="10027" resourceType="FNPT">
                             <permissions>ErpInvPickingOrder:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvPickingOrderLine-main" displayName="拣货单行" orderNo="10022"
+                <resource id="ErpInvPickingOrderLine-main" displayName="拣货单行" orderNo="10028"
                           i18n-en:displayName="Picking Order Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvPickingOrderLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvPickingOrderLine:query" displayName="查询拣货单行"
-                                  i18n-en:displayName="Query Picking Order Line" orderNo="10023" resourceType="FNPT">
+                                  i18n-en:displayName="Query Picking Order Line" orderNo="10029" resourceType="FNPT">
                             <permissions>ErpInvPickingOrderLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvPickingOrderLine:mutation" displayName="修改拣货单行"
-                                  i18n-en:displayName="Modify Picking Order Line" orderNo="10024" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Picking Order Line" orderNo="10030" resourceType="FNPT">
                             <permissions>ErpInvPickingOrderLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvReservation-main" displayName="库存预留单" orderNo="10025"
+                <resource id="ErpInvReservation-main" displayName="库存预留单" orderNo="10031"
                           i18n-en:displayName="Stock Reservation" icon="bookmark" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvReservation/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvReservation:query" displayName="查询库存预留单"
-                                  i18n-en:displayName="Query Stock Reservation" orderNo="10026" resourceType="FNPT">
+                                  i18n-en:displayName="Query Stock Reservation" orderNo="10032" resourceType="FNPT">
                             <permissions>ErpInvReservation:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvReservation:mutation" displayName="修改库存预留单"
-                                  i18n-en:displayName="Modify Stock Reservation" orderNo="10027" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Stock Reservation" orderNo="10033" resourceType="FNPT">
                             <permissions>ErpInvReservation:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvReservationLine-main" displayName="库存预留单行" orderNo="10028"
+                <resource id="ErpInvReservationLine-main" displayName="库存预留单行" orderNo="10034"
                           i18n-en:displayName="Stock Reservation Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvReservationLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvReservationLine:query" displayName="查询库存预留单行"
-                                  i18n-en:displayName="Query Stock Reservation Line" orderNo="10029" resourceType="FNPT">
+                                  i18n-en:displayName="Query Stock Reservation Line" orderNo="10035" resourceType="FNPT">
                             <permissions>ErpInvReservationLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvReservationLine:mutation" displayName="修改库存预留单行"
-                                  i18n-en:displayName="Modify Stock Reservation Line" orderNo="10030"
+                                  i18n-en:displayName="Modify Stock Reservation Line" orderNo="10036"
                                   resourceType="FNPT">
                             <permissions>ErpInvReservationLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvSerialNumber-main" displayName="序列号台账" orderNo="10031"
+                <resource id="ErpInvSerialNumber-main" displayName="序列号台账" orderNo="10037"
                           i18n-en:displayName="Serial Number Ledger" icon="hash" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvSerialNumber/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvSerialNumber:query" displayName="查询序列号台账"
-                                  i18n-en:displayName="Query Serial Number Ledger" orderNo="10032" resourceType="FNPT">
+                                  i18n-en:displayName="Query Serial Number Ledger" orderNo="10038" resourceType="FNPT">
                             <permissions>ErpInvSerialNumber:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvSerialNumber:mutation" displayName="修改序列号台账"
-                                  i18n-en:displayName="Modify Serial Number Ledger" orderNo="10033" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Serial Number Ledger" orderNo="10039" resourceType="FNPT">
                             <permissions>ErpInvSerialNumber:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvStockBalance-main" displayName="库存余额" orderNo="10034"
+                <resource id="ErpInvStockBalance-main" displayName="库存余额" orderNo="10040"
                           i18n-en:displayName="Stock Balance" icon="scale" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvStockBalance/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvStockBalance:query" displayName="查询库存余额"
-                                  i18n-en:displayName="Query Stock Balance" orderNo="10035" resourceType="FNPT">
+                                  i18n-en:displayName="Query Stock Balance" orderNo="10041" resourceType="FNPT">
                             <permissions>ErpInvStockBalance:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvStockBalance:mutation" displayName="修改库存余额"
-                                  i18n-en:displayName="Modify Stock Balance" orderNo="10036" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Stock Balance" orderNo="10042" resourceType="FNPT">
                             <permissions>ErpInvStockBalance:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvStockLedger-main" displayName="库存流水" orderNo="10037"
+                <resource id="ErpInvStockLedger-main" displayName="库存流水" orderNo="10043"
                           i18n-en:displayName="Stock Ledger" icon="trending-up" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvStockLedger/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvStockLedger:query" displayName="查询库存流水"
-                                  i18n-en:displayName="Query Stock Ledger" orderNo="10038" resourceType="FNPT">
+                                  i18n-en:displayName="Query Stock Ledger" orderNo="10044" resourceType="FNPT">
                             <permissions>ErpInvStockLedger:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvStockLedger:mutation" displayName="修改库存流水"
-                                  i18n-en:displayName="Modify Stock Ledger" orderNo="10039" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Stock Ledger" orderNo="10045" resourceType="FNPT">
                             <permissions>ErpInvStockLedger:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvStockMove-main" displayName="库存移动单" orderNo="10040" i18n-en:displayName="Stock Move"
+                <resource id="ErpInvStockMove-main" displayName="库存移动单" orderNo="10046" i18n-en:displayName="Stock Move"
                           icon="arrow-left-right" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvStockMove/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvStockMove:query" displayName="查询库存移动单"
-                                  i18n-en:displayName="Query Stock Move" orderNo="10041" resourceType="FNPT">
+                                  i18n-en:displayName="Query Stock Move" orderNo="10047" resourceType="FNPT">
                             <permissions>ErpInvStockMove:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvStockMove:mutation" displayName="修改库存移动单"
-                                  i18n-en:displayName="Modify Stock Move" orderNo="10042" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Stock Move" orderNo="10048" resourceType="FNPT">
                             <permissions>ErpInvStockMove:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvStockMoveLine-main" displayName="库存移动单行" orderNo="10043"
+                <resource id="ErpInvStockMoveLine-main" displayName="库存移动单行" orderNo="10049"
                           i18n-en:displayName="Stock Move Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvStockMoveLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvStockMoveLine:query" displayName="查询库存移动单行"
-                                  i18n-en:displayName="Query Stock Move Line" orderNo="10044" resourceType="FNPT">
+                                  i18n-en:displayName="Query Stock Move Line" orderNo="10050" resourceType="FNPT">
                             <permissions>ErpInvStockMoveLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvStockMoveLine:mutation" displayName="修改库存移动单行"
-                                  i18n-en:displayName="Modify Stock Move Line" orderNo="10045" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Stock Move Line" orderNo="10051" resourceType="FNPT">
                             <permissions>ErpInvStockMoveLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvStockTake-main" displayName="盘点单" orderNo="10046" i18n-en:displayName="Stock Take"
+                <resource id="ErpInvStockTake-main" displayName="盘点单" orderNo="10052" i18n-en:displayName="Stock Take"
                           icon="clipboard-list" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvStockTake/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvStockTake:query" displayName="查询盘点单"
-                                  i18n-en:displayName="Query Stock Take" orderNo="10047" resourceType="FNPT">
+                                  i18n-en:displayName="Query Stock Take" orderNo="10053" resourceType="FNPT">
                             <permissions>ErpInvStockTake:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvStockTake:mutation" displayName="修改盘点单"
-                                  i18n-en:displayName="Modify Stock Take" orderNo="10048" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Stock Take" orderNo="10054" resourceType="FNPT">
                             <permissions>ErpInvStockTake:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvStockTakeLine-main" displayName="盘点单行" orderNo="10049"
+                <resource id="ErpInvStockTakeLine-main" displayName="盘点单行" orderNo="10055"
                           i18n-en:displayName="Stock Take Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvStockTakeLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvStockTakeLine:query" displayName="查询盘点单行"
-                                  i18n-en:displayName="Query Stock Take Line" orderNo="10050" resourceType="FNPT">
+                                  i18n-en:displayName="Query Stock Take Line" orderNo="10056" resourceType="FNPT">
                             <permissions>ErpInvStockTakeLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvStockTakeLine:mutation" displayName="修改盘点单行"
-                                  i18n-en:displayName="Modify Stock Take Line" orderNo="10051" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Stock Take Line" orderNo="10057" resourceType="FNPT">
                             <permissions>ErpInvStockTakeLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvTransferOrder-main" displayName="调拨单" orderNo="10052"
+                <resource id="ErpInvTransferOrder-main" displayName="调拨单" orderNo="10058"
                           i18n-en:displayName="Transfer Order" icon="arrow-right-left" component="AMIS"
                           resourceType="SUBM" url="/erp/inv/pages/ErpInvTransferOrder/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvTransferOrder:query" displayName="查询调拨单"
-                                  i18n-en:displayName="Query Transfer Order" orderNo="10053" resourceType="FNPT">
+                                  i18n-en:displayName="Query Transfer Order" orderNo="10059" resourceType="FNPT">
                             <permissions>ErpInvTransferOrder:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvTransferOrder:mutation" displayName="修改调拨单"
-                                  i18n-en:displayName="Modify Transfer Order" orderNo="10054" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Transfer Order" orderNo="10060" resourceType="FNPT">
                             <permissions>ErpInvTransferOrder:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvTransferOrderLine-main" displayName="调拨单行" orderNo="10055"
+                <resource id="ErpInvTransferOrderLine-main" displayName="调拨单行" orderNo="10061"
                           i18n-en:displayName="Transfer Order Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/inv/pages/ErpInvTransferOrderLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvTransferOrderLine:query" displayName="查询调拨单行"
-                                  i18n-en:displayName="Query Transfer Order Line" orderNo="10056" resourceType="FNPT">
+                                  i18n-en:displayName="Query Transfer Order Line" orderNo="10062" resourceType="FNPT">
                             <permissions>ErpInvTransferOrderLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvTransferOrderLine:mutation" displayName="修改调拨单行"
-                                  i18n-en:displayName="Modify Transfer Order Line" orderNo="10057" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Transfer Order Line" orderNo="10063" resourceType="FNPT">
                             <permissions>ErpInvTransferOrderLine:mutation</permissions>
                         </resource>
                     </children>

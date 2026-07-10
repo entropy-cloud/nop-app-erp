@@ -112,6 +112,25 @@ public interface ErpInvConstants {
     // 成本调整流水 moveId 哨兵：成本调整为纯成本变更（无 StockMove），流水 moveId/moveLineId 置 0 标识非移动单来源
     long LEDGER_MOVE_ID_COST_ADJUST = 0L;
 
+    // 到岸成本分摊方法（dict erp-inv/landed-cost-alloc-method，plan 2026-07-10-1100-3）
+    String ALLOC_METHOD_BY_AMOUNT = "BY_AMOUNT";
+    String ALLOC_METHOD_BY_QUANTITY = "BY_QUANTITY";
+    String ALLOC_METHOD_BY_WEIGHT = "BY_WEIGHT";
+
+    // 到岸成本费用要素（dict erp-inv/cost-element）
+    String COST_ELEMENT_FREIGHT = "FREIGHT";
+    String COST_ELEMENT_INSURANCE = "INSURANCE";
+    String COST_ELEMENT_DUTY = "DUTY";
+    String COST_ELEMENT_CUSTOMS_CLEARANCE = "CUSTOMS_CLEARANCE";
+    String COST_ELEMENT_OTHER = "OTHER";
+
+    // 到岸成本过账 PostingEvent.billData 键
+    String BILL_DATA_LANDED_COST_ALLOCATIONS = "ALLOCATIONS";   // List<Map> 每入库行的分摊结果
+    String BILL_DATA_LANDED_COST_COST_ELEMENTS = "COST_ELEMENTS"; // List<Map> 每费用要素（含 apPartnerId）
+
+    // 到岸成本应付科目编码（costing-methods.md §到岸成本凭证步骤4：贷：应付账款）
+    String SUBJECT_ACCOUNTS_PAYABLE = "2202";
+
     // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
     /** 滞销库存阈值天数（最后出库日期 > 此值 且 qty > 0）；默认 0=关闭预警。 */
     String CONFIG_DASH_INV_SLOW_MOVING_DAYS = "erp-dash.inv-slow-moving-days";

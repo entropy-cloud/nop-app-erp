@@ -97,6 +97,19 @@
             <option code="LANDED_COST_SUPPLEMENT" label="到岸成本补录" value="LANDED_COST_SUPPLEMENT"
                     i18n-en:label="Landed Cost Supplement"/>
         </dict>
+        <dict label="到岸成本分摊方法" name="erp-inv/landed-cost-alloc-method" valueType="string"
+              i18n-en:label="Landed Cost Allocation Method">
+            <option code="BY_AMOUNT" label="按金额" value="BY_AMOUNT" i18n-en:label="By Amount"/>
+            <option code="BY_QUANTITY" label="按数量" value="BY_QUANTITY" i18n-en:label="By Quantity"/>
+            <option code="BY_WEIGHT" label="按重量" value="BY_WEIGHT" i18n-en:label="By Weight"/>
+        </dict>
+        <dict label="到岸成本费用要素" name="erp-inv/cost-element" valueType="string" i18n-en:label="Cost Element">
+            <option code="FREIGHT" label="运费" value="FREIGHT" i18n-en:label="Freight"/>
+            <option code="INSURANCE" label="保险费" value="INSURANCE" i18n-en:label="Insurance"/>
+            <option code="DUTY" label="关税" value="DUTY" i18n-en:label="Duty"/>
+            <option code="CUSTOMS_CLEARANCE" label="清关费" value="CUSTOMS_CLEARANCE" i18n-en:label="Customs Clearance"/>
+            <option code="OTHER" label="其他" value="OTHER" i18n-en:label="Other"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -2152,7 +2165,7 @@
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="4"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
-                <column code="ADJUST_TYPE" displayName="调整类型" mandatory="true" name="adjustType" precision="20"
+                <column code="ADJUST_TYPE" displayName="调整类型" mandatory="true" name="adjustType" precision="30"
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/adjust-type"
                         i18n-en:displayName="Adjust Type"/>
                 <column code="REASON" displayName="调整原因" name="reason" precision="500" propId="6" stdDataType="string"
@@ -2316,6 +2329,165 @@
                         i18n-en:displayName="Currency">
                     <join>
                         <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.inv.dao.entity.ErpInvLandedCost" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="到岸成本单"
+                name="app.erp.inv.dao.entity.ErpInvLandedCost" registerShortName="true" tableName="erp_inv_landed_cost"
+                tagSet="gid,erp.inventory" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="scale" i18n-en:displayName="Landed Cost">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="单号" domain="orderCode" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="RECEIVE_ID" displayName="采购入库单" mandatory="true" name="receiveId" propId="4"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Purchase Receive"/>
+                <column code="SUPPLIER_ID" displayName="采购供应商" name="supplierId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
+                <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
+                <column code="EXCHANGE_RATE" displayName="汇率" domain="exchangeRate" name="exchangeRate" precision="20"
+                        propId="7" scale="6" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Exchange Rate"/>
+                <column code="TOTAL_COST_AMOUNT" displayName="到岸成本合计" domain="amount" name="totalCostAmount"
+                        precision="20" propId="8" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Total Cost Amount"/>
+                <column code="ALLOCATION_METHOD" displayName="分摊方法" mandatory="true" name="allocationMethod"
+                        precision="20" propId="9" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-inv/landed-cost-alloc-method" i18n-en:displayName="Allocation Method"/>
+                <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
+                        propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
+                        i18n-en:displayName="Doc Status"/>
+                <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
+                        i18n-en:displayName="Approve Status"/>
+                <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="12"
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="13" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="14"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="15"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="16" stdDataType="datetime"
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="17"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="18"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="19" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="20" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="21" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="22" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="23" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_INV_LANDED_COST_RECEIVE_ID" unique="false">
+                    <column name="receiveId"/>
+                </index>
+                <index name="IDX_INV_LANDED_COST_DOC_STATUS" unique="false">
+                    <column name="docStatus"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub"
+                        i18n-en:displayName="Currency">
+                    <join>
+                        <on leftProp="currencyId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Supplier">
+                    <join>
+                        <on leftProp="supplierId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.inv.dao.entity.ErpInvLandedCostLine"
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="10">
+                    <join>
+                        <on leftProp="id" rightProp="landedCostId"/>
+                    </join>
+                </to-many>
+            </relations>
+            <unique-keys>
+                <unique-key columns="code,orgId" name="UK_INV_LANDED_COST_CODE_ORG"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.inv.dao.entity.ErpInvLandedCostLine" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="到岸成本行"
+                name="app.erp.inv.dao.entity.ErpInvLandedCostLine" registerShortName="true"
+                tableName="erp_inv_landed_cost_line" tagSet="gid,erp.inventory" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
+                i18n-en:displayName="Landed Cost Line">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="LANDED_COST_ID" displayName="到岸成本单ID" mandatory="true" name="landedCostId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Landed Cost"/>
+                <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
+                <column code="COST_ELEMENT" displayName="费用要素" mandatory="true" name="costElement" precision="30"
+                        propId="4" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/cost-element"
+                        i18n-en:displayName="Cost Element"/>
+                <column code="AMOUNT" displayName="金额" domain="amount" mandatory="true" name="amount" precision="20"
+                        propId="5" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
+                <column code="AP_PARTNER_ID" displayName="应付对象" name="apPartnerId" propId="6" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="AP Partner"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="8" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="9" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="11" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="12" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_INV_LANDED_COST_LINE_LANDED_COST_ID" unique="false">
+                    <column name="landedCostId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="landedCost" refEntityName="app.erp.inv.dao.entity.ErpInvLandedCost" tagSet="pub"
+                        i18n-en:displayName="Landed Cost">
+                    <join>
+                        <on leftProp="landedCostId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="apPartner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="AP Partner">
+                    <join>
+                        <on leftProp="apPartnerId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>

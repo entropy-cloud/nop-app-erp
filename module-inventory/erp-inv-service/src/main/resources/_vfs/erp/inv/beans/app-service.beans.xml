@@ -52,6 +52,18 @@
     <bean id="app.erp.inv.service.processor.ErpInvCostAdjustProcessor"
           class="app.erp.inv.service.processor.ErpInvCostAdjustProcessor"/>
 
+    <!-- 到岸成本（plan 2026-07-10-1100-3）：分摊引擎 + Processor -->
+    <bean id="app.erp.inv.service.costing.LandedCostAllocationEngine"
+          class="app.erp.inv.service.costing.LandedCostAllocationEngine"/>
+    <bean id="app.erp.inv.service.processor.ErpInvLandedCostProcessor"
+          class="app.erp.inv.service.processor.ErpInvLandedCostProcessor"/>
+
+    <!-- 到岸成本过账（plan 2026-07-10-1100-3）：派发器 + Provider -->
+    <bean id="app.erp.inv.service.posting.LandedCostPostingDispatcher"
+          class="app.erp.inv.service.posting.LandedCostPostingDispatcher"/>
+    <bean id="app.erp.inv.service.posting.LandedCostAcctDocProvider"
+          class="app.erp.inv.service.posting.LandedCostAcctDocProvider"/>
+
     <!-- 所有权转移过账（consignment.md §业财过账，plan 2026-07-04-0549-1） -->
     <bean id="app.erp.inv.service.posting.OwnershipTransferPostingDispatcher"
           class="app.erp.inv.service.posting.OwnershipTransferPostingDispatcher"/>

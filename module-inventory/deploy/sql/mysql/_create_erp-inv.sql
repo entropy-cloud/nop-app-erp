@@ -215,7 +215,7 @@ CREATE TABLE erp_inv_cost_adjust(
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
   ORG_ID BIGINT NULL    COMMENT '业务组织',
   BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
-  ADJUST_TYPE VARCHAR(20) NOT NULL    COMMENT '调整类型',
+  ADJUST_TYPE VARCHAR(30) NOT NULL    COMMENT '调整类型',
   REASON VARCHAR(500) NULL    COMMENT '调整原因',
   DOC_STATUS VARCHAR(20) NOT NULL    COMMENT '单据状态',
   APPROVE_STATUS VARCHAR(20) NOT NULL    COMMENT '审核状态',
@@ -307,6 +307,34 @@ CREATE TABLE erp_inv_ownership_transfer(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_inv_ownership_transfer primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_inv_landed_cost(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '单号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  RECEIVE_ID BIGINT NOT NULL    COMMENT '采购入库单',
+  SUPPLIER_ID BIGINT NULL    COMMENT '采购供应商',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,6) NULL    COMMENT '汇率',
+  TOTAL_COST_AMOUNT DECIMAL(20,4) NULL    COMMENT '到岸成本合计',
+  ALLOCATION_METHOD VARCHAR(20) NOT NULL    COMMENT '分摊方法',
+  DOC_STATUS VARCHAR(20) NOT NULL    COMMENT '单据状态',
+  APPROVE_STATUS VARCHAR(20) NOT NULL    COMMENT '审核状态',
+  POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
+  POSTED_AT DATETIME NULL    COMMENT '过账时间',
+  POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
+  APPROVED_BY VARCHAR(36) NULL    COMMENT '审核人',
+  APPROVED_AT DATETIME NULL    COMMENT '审核时间',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_landed_cost primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_picking_order(
@@ -489,6 +517,23 @@ CREATE TABLE erp_inv_ownership_transfer_line(
   constraint PK_erp_inv_ownership_transfer_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_inv_landed_cost_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  LANDED_COST_ID BIGINT NOT NULL    COMMENT '到岸成本单ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  COST_ELEMENT VARCHAR(30) NOT NULL    COMMENT '费用要素',
+  AMOUNT DECIMAL(20,4) NOT NULL    COMMENT '金额',
+  AP_PARTNER_ID BIGINT NULL    COMMENT '应付对象',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_landed_cost_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_inv_picking_order_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   PICKING_ID BIGINT NOT NULL    COMMENT '拣货单ID',
@@ -581,6 +626,8 @@ CREATE TABLE erp_inv_stock_ledger(
                 
    ALTER TABLE erp_inv_ownership_transfer COMMENT '所有权转移单';
                 
+   ALTER TABLE erp_inv_landed_cost COMMENT '到岸成本单';
+                
    ALTER TABLE erp_inv_picking_order COMMENT '拣货单';
                 
    ALTER TABLE erp_inv_transfer_order_line COMMENT '调拨单行';
@@ -596,6 +643,8 @@ CREATE TABLE erp_inv_stock_ledger(
    ALTER TABLE erp_inv_reservation_line COMMENT '库存预留单行';
                 
    ALTER TABLE erp_inv_ownership_transfer_line COMMENT '所有权转移单行';
+                
+   ALTER TABLE erp_inv_landed_cost_line COMMENT '到岸成本行';
                 
    ALTER TABLE erp_inv_picking_order_line COMMENT '拣货单行';
                 

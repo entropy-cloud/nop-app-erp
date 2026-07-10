@@ -37,6 +37,8 @@ alter table erp_inv_reservation add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT N
 
 alter table erp_inv_ownership_transfer add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_inv_landed_cost add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_inv_picking_order add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_transfer_order_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -52,6 +54,8 @@ alter table erp_inv_cost_adjust_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' 
 alter table erp_inv_reservation_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_ownership_transfer_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_inv_landed_cost_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_picking_order_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -114,6 +118,9 @@ alter table erp_inv_reservation add constraint PK_erp_inv_reservation primary ke
 alter table erp_inv_ownership_transfer drop constraint PK_erp_inv_ownership_transfer;
 alter table erp_inv_ownership_transfer add constraint PK_erp_inv_ownership_transfer primary key (NOP_TENANT_ID, ID);
 
+alter table erp_inv_landed_cost drop constraint PK_erp_inv_landed_cost;
+alter table erp_inv_landed_cost add constraint PK_erp_inv_landed_cost primary key (NOP_TENANT_ID, ID);
+
 alter table erp_inv_picking_order drop constraint PK_erp_inv_picking_order;
 alter table erp_inv_picking_order add constraint PK_erp_inv_picking_order primary key (NOP_TENANT_ID, ID);
 
@@ -137,6 +144,9 @@ alter table erp_inv_reservation_line add constraint PK_erp_inv_reservation_line 
 
 alter table erp_inv_ownership_transfer_line drop constraint PK_erp_inv_ownership_transfer_line;
 alter table erp_inv_ownership_transfer_line add constraint PK_erp_inv_ownership_transfer_line primary key (NOP_TENANT_ID, ID);
+
+alter table erp_inv_landed_cost_line drop constraint PK_erp_inv_landed_cost_line;
+alter table erp_inv_landed_cost_line add constraint PK_erp_inv_landed_cost_line primary key (NOP_TENANT_ID, ID);
 
 alter table erp_inv_picking_order_line drop constraint PK_erp_inv_picking_order_line;
 alter table erp_inv_picking_order_line add constraint PK_erp_inv_picking_order_line primary key (NOP_TENANT_ID, ID);

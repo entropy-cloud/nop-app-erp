@@ -39,7 +39,7 @@
         </prop>
         <prop name="adjustType" displayName="调整类型" propId="5" i18n-en:displayName="Adjust Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-inv/adjust-type"/>
+            <schema type="java.lang.String" precision="30" dict="erp-inv/adjust-type"/>
         </prop>
         <prop name="reason" displayName="调整原因" propId="6" i18n-en:displayName="Reason" queryable="true" sortable="true"
               insertable="true" updatable="true">

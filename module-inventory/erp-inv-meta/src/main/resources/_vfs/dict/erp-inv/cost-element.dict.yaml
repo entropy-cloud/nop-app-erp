@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 到岸成本费用要素
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 运费
+    value: FREIGHT
+    description: 
+  
+  - label: 保险费
+    value: INSURANCE
+    description: 
+  
+  - label: 关税
+    value: DUTY
+    description: 
+  
+  - label: 清关费
+    value: CUSTOMS_CLEARANCE
+    description: 
+  
+  - label: 其他
+    value: OTHER
+    description: 
+  

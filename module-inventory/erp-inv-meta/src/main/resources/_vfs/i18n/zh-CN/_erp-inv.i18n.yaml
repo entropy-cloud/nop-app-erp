@@ -4,6 +4,8 @@ entity:
     ErpInvCostAdjust: 成本调整单
     ErpInvCostAdjustLine: 成本调整单行
     ErpInvCostLayer: 成本层
+    ErpInvLandedCost: 到岸成本单
+    ErpInvLandedCostLine: 到岸成本行
     ErpInvOwnershipTransfer: 所有权转移单
     ErpInvOwnershipTransferLine: 所有权转移单行
     ErpInvPickingOrder: 拣货单
@@ -128,6 +130,55 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 仓库
+    ErpInvLandedCost:
+      allocationMethod: 分摊方法
+      allocationMethod_label: 分摊方法
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      approvedAt: 审核时间
+      approvedBy: 审核人
+      businessDate: 业务日期
+      code: 单号
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      docStatus: 单据状态
+      docStatus_label: 单据状态
+      exchangeRate: 汇率
+      id: ID
+      lines: null
+      org: null
+      orgId: 业务组织
+      posted: 已过账
+      postedAt: 过账时间
+      postedBy: 过账人
+      receiveId: 采购入库单
+      remark: 备注
+      supplier: null
+      supplierId: 采购供应商
+      totalCostAmount: 到岸成本合计
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpInvLandedCostLine:
+      amount: 金额
+      apPartner: null
+      apPartnerId: 应付对象
+      costElement: 费用要素
+      costElement_label: 费用要素
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      landedCost: null
+      landedCostId: 到岸成本单ID
+      lineNo: 行号
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpInvOwnershipTransfer:
       businessDate: 业务日期
       code: 单号

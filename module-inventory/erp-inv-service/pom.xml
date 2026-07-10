@@ -36,6 +36,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 到岸成本分摊只读查询采购入库单头/行（ErpPurReceive/ErpPurReceiveLine，
+             plan 2026-07-10-1100-3）。inventory→purchase R（purchase-dao 为叶子 DAO 模块，仅依赖 master-data-dao，
+             DAG 无环）。与 mfg-dao 同范式：跨域只读 DAO 访问，不经 IBiz（receive 行查询无 IBiz 方法）。 -->
+        <dependency>
+            <artifactId>app-erp-purchase-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- compile: 存货过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
              IErpFinAcctDocProvider SPI 位于 finance-service）。
              inventory→finance 单向无环（finance 为 DAG 顶，不依赖 inventory）。 -->

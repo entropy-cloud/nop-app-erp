@@ -30,6 +30,9 @@ public interface ErpInvErrors {
     String ARG_UNIT_COST = "unitCost";
     String ARG_BALANCE_ID = "balanceId";
     String ARG_ATTEMPTS = "attempts";
+    String ARG_LANDED_COST_ID = "landedCostId";
+    String ARG_LANDED_COST_CODE = "landedCostCode";
+    String ARG_RECEIVE_ID = "receiveId";
 
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
@@ -119,6 +122,24 @@ public interface ErpInvErrors {
     ErrorCode ERR_COST_ADJUST_NOT_APPLIED = ErrorCode.define("erp.err.inv.cost-adjust-not-applied",
             "成本调整单 {adjustCode} 未过账，不可冲销",
             ARG_ADJUST_CODE);
+
+    // ---------- 到岸成本（plan 2026-07-10-1100-3） ----------
+
+    ErrorCode ERR_LANDED_COST_NOT_FOUND = ErrorCode.define("erp.err.inv.landed-cost-not-found",
+            "到岸成本单 {landedCostId} 不存在", ARG_LANDED_COST_ID);
+
+    ErrorCode ERR_LANDED_COST_RECEIVE_NOT_APPROVED = ErrorCode.define("erp.err.inv.landed-cost-receive-not-approved",
+            "关联采购入库单 {receiveId} 未审核，不可分摊到岸成本", ARG_RECEIVE_ID);
+
+    ErrorCode ERR_LANDED_COST_ALREADY_ALLOCATED = ErrorCode.define("erp.err.inv.landed-cost-already-allocated",
+            "采购入库单 {receiveId} 已有审核完成的到岸成本单 {landedCostCode}，不可重复分摊",
+            ARG_RECEIVE_ID, ARG_LANDED_COST_CODE);
+
+    ErrorCode ERR_LANDED_COST_ALREADY_APPROVED = ErrorCode.define("erp.err.inv.landed-cost-already-approved",
+            "到岸成本单 {landedCostCode} 已审核，不可重复审核", ARG_LANDED_COST_CODE);
+
+    ErrorCode ERR_LANDED_COST_NO_LINES = ErrorCode.define("erp.err.inv.landed-cost-no-lines",
+            "到岸成本单 {landedCostCode} 无费用行，不可分摊", ARG_LANDED_COST_CODE);
 
     // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，库存域独立错误码，不跨域 import） ---
 

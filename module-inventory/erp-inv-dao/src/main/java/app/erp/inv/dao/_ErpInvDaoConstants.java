@@ -253,4 +253,44 @@ public interface _ErpInvDaoConstants {
      */
     String ADJUST_TYPE_LANDED_COST_SUPPLEMENT = "LANDED_COST_SUPPLEMENT";
                     
+    /**
+     * 到岸成本分摊方法: 按金额 
+     */
+    String LANDED_COST_ALLOC_METHOD_BY_AMOUNT = "BY_AMOUNT";
+                    
+    /**
+     * 到岸成本分摊方法: 按数量 
+     */
+    String LANDED_COST_ALLOC_METHOD_BY_QUANTITY = "BY_QUANTITY";
+                    
+    /**
+     * 到岸成本分摊方法: 按重量 
+     */
+    String LANDED_COST_ALLOC_METHOD_BY_WEIGHT = "BY_WEIGHT";
+                    
+    /**
+     * 到岸成本费用要素: 运费 
+     */
+    String COST_ELEMENT_FREIGHT = "FREIGHT";
+                    
+    /**
+     * 到岸成本费用要素: 保险费 
+     */
+    String COST_ELEMENT_INSURANCE = "INSURANCE";
+                    
+    /**
+     * 到岸成本费用要素: 关税 
+     */
+    String COST_ELEMENT_DUTY = "DUTY";
+                    
+    /**
+     * 到岸成本费用要素: 清关费 
+     */
+    String COST_ELEMENT_CUSTOMS_CLEARANCE = "CUSTOMS_CLEARANCE";
+                    
+    /**
+     * 到岸成本费用要素: 其他 
+     */
+    String COST_ELEMENT_OTHER = "OTHER";
+                    
 }

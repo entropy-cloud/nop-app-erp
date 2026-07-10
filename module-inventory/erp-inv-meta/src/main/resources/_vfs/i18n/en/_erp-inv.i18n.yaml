@@ -4,6 +4,8 @@ entity:
     ErpInvCostAdjust: Cost Adjustment
     ErpInvCostAdjustLine: Cost Adjustment Line
     ErpInvCostLayer: Cost Layer
+    ErpInvLandedCost: Landed Cost
+    ErpInvLandedCostLine: Landed Cost Line
     ErpInvOwnershipTransfer: Ownership Transfer
     ErpInvOwnershipTransferLine: Ownership Transfer Line
     ErpInvPickingOrder: Picking Order
@@ -128,6 +130,55 @@ prop:
       org: Org
       incomingMove: Incoming Move
       acctSchema: Acct Schema
+    ErpInvLandedCost:
+      id: ID
+      code: Code
+      orgId: Organization
+      receiveId: Purchase Receive
+      supplierId: Supplier
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      totalCostAmount: Total Cost Amount
+      allocationMethod: Allocation Method
+      allocationMethod_label: null
+      docStatus: Doc Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
+      approvedBy: Approved By
+      approvedAt: Approved At
+      businessDate: Business Date
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      org: Org
+      currency: Currency
+      supplier: Supplier
+      lines: Lines
+    ErpInvLandedCostLine:
+      id: ID
+      landedCostId: Landed Cost
+      lineNo: Line No
+      costElement: Cost Element
+      costElement_label: null
+      amount: Amount
+      apPartnerId: AP Partner
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      landedCost: Landed Cost
+      apPartner: AP Partner
     ErpInvOwnershipTransfer:
       id: ID
       code: Code
@@ -557,6 +608,8 @@ dict:
     erp-inv/ownership-transfer-type: Ownership Transfer Type
     erp-inv/ownership-transfer-status: Ownership Transfer Status
     erp-inv/adjust-type: Cost Adjust Type
+    erp-inv/landed-cost-alloc-method: Landed Cost Allocation Method
+    erp-inv/cost-element: Cost Element
 dict.option.label:
   erp-inv/move-status:
     DRAFT: Draft
@@ -621,3 +674,13 @@ dict.option.label:
     COST_DIFFERENCE: Cost Difference
     STANDARD_REVALUATION: Standard Revaluation
     LANDED_COST_SUPPLEMENT: Landed Cost Supplement
+  erp-inv/landed-cost-alloc-method:
+    BY_AMOUNT: By Amount
+    BY_QUANTITY: By Quantity
+    BY_WEIGHT: By Weight
+  erp-inv/cost-element:
+    FREIGHT: Freight
+    INSURANCE: Insurance
+    DUTY: Duty
+    CUSTOMS_CLEARANCE: Customs Clearance
+    OTHER: Other
