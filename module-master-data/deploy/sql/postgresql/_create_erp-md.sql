@@ -72,6 +72,7 @@ CREATE TABLE erp_md_partner(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  customer_group VARCHAR(100)  ,
   constraint PK_erp_md_partner primary key (id)
 );
 
@@ -563,6 +564,8 @@ CREATE TABLE erp_md_uom_conversion(
       COMMENT ON COLUMN erp_md_partner.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_md_partner.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_md_partner.customer_group IS '客户组';
                     
       COMMENT ON TABLE erp_md_currency IS '币种';
                 

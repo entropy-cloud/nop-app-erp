@@ -264,6 +264,7 @@ prop:
       createdBy: 创建人
       creditLimit: 信用额度
       creditPeriodDays: 信用期(天)
+      customerGroup: 客户组
       delVersion: 逻辑删除版本
       email: 邮箱
       id: ID

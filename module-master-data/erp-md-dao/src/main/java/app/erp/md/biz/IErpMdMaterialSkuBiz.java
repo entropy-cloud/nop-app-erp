@@ -57,6 +57,25 @@ public interface IErpMdMaterialSkuBiz extends ICrudBiz<ErpMdMaterialSku>{
                                       IServiceContext context);
 
     /**
+     * UC-SAL-11：客户价格清单取价（含数量阶梯 + 币种 + 期间匹配）。
+     * 优先级：客户价格清单 > SKU 默认档。无清单命中返回 SKU 默认档。
+     *
+     * @param skuId       SKU 主键
+     * @param partnerId   客户 ID（可空）
+     * @param billType    单据类型（选默认档兜底；可空）
+     * @param quantity    数量（阶梯匹配；可空视为 1）
+     * @param currencyId  币种 ID（可空）
+     * @return 取价结果（含来源标记），永不返回 null
+     */
+    @BizQuery
+    app.erp.md.dao.dto.ResolvedPrice resolvePriceWithSource(@Name("skuId") Long skuId,
+                                                             @Optional @Name("partnerId") Long partnerId,
+                                                             @Optional @Name("billType") String billType,
+                                                             @Optional @Name("quantity") java.math.BigDecimal quantity,
+                                                             @Optional @Name("currencyId") Long currencyId,
+                                                             IServiceContext context);
+
+    /**
      * UC-MD-04：最低价校验预检（前端/下游域调用）。按 MaterialCategory.priceValidationLevel 分派：
      * HARD 低于底线抛 {@link NopException}；WARN 返回 warning=true 放行；OFF 直接通过。
      */

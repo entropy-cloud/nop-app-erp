@@ -332,6 +332,20 @@
         }
 
 
+        private String _customerGroup;
+
+    
+        @PropMeta(propId=100)
+    
+        public String getCustomerGroup(){
+            return _customerGroup;
+        }
+
+        public void setCustomerGroup(String value){
+            this._customerGroup = value;
+        }
+
+
         private List<Map<String,Object>> _addresses;
 
         public List<Map<String,Object>> getAddresses(){

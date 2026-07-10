@@ -277,6 +277,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      customerGroup: Customer Group
       addresses: Addresses
       contacts: Contacts
       bankAccounts: Bank Accounts

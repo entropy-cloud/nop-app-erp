@@ -463,6 +463,8 @@
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="21"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="CUSTOMER_GROUP" displayName="客户组" name="customerGroup" precision="100" propId="100"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Customer Group"/>
             </columns>
             <relations>
                 <to-many cascadeDelete="true" name="addresses" refEntityName="app.erp.md.dao.entity.ErpMdPartnerAddress"

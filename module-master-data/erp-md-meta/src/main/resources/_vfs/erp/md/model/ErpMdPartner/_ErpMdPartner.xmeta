@@ -105,6 +105,10 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
+        <prop name="customerGroup" displayName="客户组" propId="100" i18n-en:displayName="Customer Group" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="100"/>
+        </prop>
         <prop name="addresses" i18n-en:displayName="Addresses" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="partnerId" insertable="true"
               updatable="true" lazy="true">

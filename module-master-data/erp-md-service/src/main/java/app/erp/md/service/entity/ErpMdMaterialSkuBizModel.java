@@ -15,11 +15,13 @@ import io.nop.dao.api.IEntityDao;
 
 import app.erp.md.biz.IErpMdMaterialSkuBiz;
 import app.erp.md.dao.dto.PriceValidationResult;
+import app.erp.md.dao.dto.ResolvedPrice;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdMaterialCategory;
 import app.erp.md.dao.entity.ErpMdMaterialSku;
 import app.erp.md.service.ErpMdConstants;
 import app.erp.md.service.ErpMdErrors;
+import app.erp.md.spi.IErpMdCustomerPriceResolver;
 import app.erp.md.spi.IErpMdSkuReferenceChecker;
 import app.erp.md.spi.IErpMdSupplierPriceResolver;
 
@@ -56,6 +58,10 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
     @Inject
     @Nullable
     protected IErpMdSupplierPriceResolver supplierPriceResolver;
+
+    @Inject
+    @Nullable
+    protected IErpMdCustomerPriceResolver customerPriceResolver;
 
     @Inject
     @Nullable
@@ -130,6 +136,14 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
             return manualPrice;
         }
         ErpMdMaterialSku sku = requireSku(skuId, context);
+        // 客户价格清单层（UC-SAL-11）：优先于供应商价格表和 SKU 默认档
+        if (customerPriceResolver != null && partnerId != null) {
+            ResolvedPrice customerPrice = customerPriceResolver.resolveCustomerPrice(
+                    sku, partnerId, null, null, context);
+            if (customerPrice != null && customerPrice.getUnitPrice() != null) {
+                return customerPrice.getUnitPrice();
+            }
+        }
         if (supplierPriceResolver != null && partnerId != null) {
             BigDecimal priceListPrice = supplierPriceResolver.resolveSupplierPrice(sku, partnerId);
             if (priceListPrice != null) {
@@ -137,6 +151,28 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
             }
         }
         return pickDefaultTierPrice(sku, billType);
+    }
+
+    @Override
+    @BizQuery
+    public ResolvedPrice resolvePriceWithSource(@Name("skuId") Long skuId,
+                                                 @Optional @Name("partnerId") Long partnerId,
+                                                 @Optional @Name("billType") String billType,
+                                                 @Optional @Name("quantity") BigDecimal quantity,
+                                                 @Optional @Name("currencyId") Long currencyId,
+                                                 IServiceContext context) {
+        ErpMdMaterialSku sku = requireSku(skuId, context);
+        // 客户价格清单层
+        if (customerPriceResolver != null && partnerId != null) {
+            ResolvedPrice customerPrice = customerPriceResolver.resolveCustomerPrice(
+                    sku, partnerId, quantity, currencyId, context);
+            if (customerPrice != null && customerPrice.getUnitPrice() != null) {
+                return customerPrice;
+            }
+        }
+        // SKU 默认档兜底
+        BigDecimal tier = pickDefaultTierPrice(sku, billType);
+        return new ResolvedPrice(tier, ErpMdConstants.PRICING_SOURCE_SKU_DEFAULT, null, null);
     }
 
     @Override

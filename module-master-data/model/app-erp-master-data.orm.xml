@@ -349,6 +349,7 @@
                 <column name="creditPeriodDays" code="CREDIT_PERIOD_DAYS" displayName="信用期(天)" propId="12" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Credit Period Days' />
                 <column name="receivableBalance" code="RECEIVABLE_BALANCE" displayName="应收余额" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Receivable Balance' />
                 <column name="payableBalance" code="PAYABLE_BALANCE" displayName="应付余额" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Payable Balance' />
+                <column name="customerGroup" code="CUSTOMER_GROUP" displayName="客户组" propId="100" stdSqlType="VARCHAR" precision="100" stdDataType="string" i18n-en:displayName='Customer Group' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="15" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="16" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="17" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />

@@ -105,8 +105,12 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 21;
     
+    /* 客户组: CUSTOMER_GROUP VARCHAR */
+    public static final String PROP_NAME_customerGroup = "customerGroup";
+    public static final int PROP_ID_customerGroup = 100;
+    
 
-    private static int _PROP_ID_BOUND = 22;
+    private static int _PROP_ID_BOUND = 101;
 
     
     /* relation:  */
@@ -122,7 +126,7 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[22];
+    private static final String[] PROP_ID_TO_NAME = new String[101];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -189,6 +193,9 @@ public class _ErpMdPartner extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_customerGroup] = PROP_NAME_customerGroup;
+          PROP_NAME_TO_ID.put(PROP_NAME_customerGroup, PROP_ID_customerGroup);
+      
     }
 
     
@@ -254,6 +261,9 @@ public class _ErpMdPartner extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 客户组: CUSTOMER_GROUP */
+    private java.lang.String _customerGroup;
     
 
     public _ErpMdPartner(){
@@ -391,6 +401,9 @@ public class _ErpMdPartner extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_customerGroup:
+               return getCustomerGroup();
         
            default:
               return super.orm_propValue(propId);
@@ -613,6 +626,16 @@ public class _ErpMdPartner extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_customerGroup:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_customerGroup));
+               }
+               setCustomerGroup(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -765,6 +788,13 @@ public class _ErpMdPartner extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_customerGroup:{
+               onInitProp(propId);
+               this._customerGroup = (java.lang.String)value;
                
                break;
             }
@@ -1170,6 +1200,25 @@ public class _ErpMdPartner extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 客户组: CUSTOMER_GROUP
+     */
+    public final java.lang.String getCustomerGroup(){
+         onPropGet(PROP_ID_customerGroup);
+         return _customerGroup;
+    }
+
+    /**
+     * 客户组: CUSTOMER_GROUP
+     */
+    public final void setCustomerGroup(java.lang.String value){
+        if(onPropSet(PROP_ID_customerGroup,value)){
+            this._customerGroup = value;
+            internalClearRefs(PROP_ID_customerGroup);
             
         }
     }

@@ -54,4 +54,14 @@ public interface ErpMdConstants {
     // AVL 准入类型 erp-md/supplier-approval-type
     String APPROVAL_TYPE_NEW = "NEW";
     String APPROVAL_TYPE_RENEWAL = "RENEWAL";
+
+    // ---- 取价来源标记（UC-SAL-11，pricingSource 字段权威编码）----
+    /** 手工录入价格。 */
+    String PRICING_SOURCE_MANUAL = "MANUAL";
+    /** 客户价格清单命中。 */
+    String PRICING_SOURCE_PRICE_LIST = "PRICE_LIST";
+    /** 促销规则命中。 */
+    String PRICING_SOURCE_PROMOTION = "PROMOTION";
+    /** SKU 默认档兜底。 */
+    String PRICING_SOURCE_SKU_DEFAULT = "SKU_DEFAULT";
 }
