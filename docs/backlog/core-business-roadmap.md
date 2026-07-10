@@ -24,7 +24,12 @@
 - 1.11 批次追溯链：`done`（计划 0700-1：移动单自追溯上链 originMoveId/originReturnedMoveId + 四类追溯查询 forward/backward/return/batch + 退货移动单透传挂链）
 - 1.12 主数据业务服务：`done`（计划 `2026-07-07-0024-1`：UC-MD-01~06 六大用例 BizModel 服务方法全落地——findSkuByBarcode/resolveSku/findDefaultSku/convertQty/resolvePrice/validatePrice/validateSkuDeactivation。3 Phase 21 tests 全绿（含 barcode 应用层唯一性 + 换算物料级/通用 fallback + 默认 SKU 兜底 + 价格三级优先级手工价>SPI>默认档 + OFF/WARN/HARD 校验分派 + 默认 SKU 唯一性守卫 + 物料停用联动 + 删除引用校验）。跨域经 SPI 解耦（IErpMdSupplierPriceResolver/IErpMdSkuReferenceChecker，避免 master→下游依赖环）。G1~G5 模型缺口以应用层校验 + Deferred successor 承接）
 
-> **Non-Goal scope boundary**：以下 UCs 不在 M1 设计范围内，非实现遗漏：UC-SAL-06（客户信用额度增强，含信用评级/额度审批）、UC-SAL-08（价格策略引擎，含阶梯价/促销/客户组价）、UC-SAL-10（销售佣金计算，含佣金规则/结算）。属后继工作项。
+> **Non-Goal scope boundary**：以下功能不在 M1 设计范围内，非实现遗漏：
+> - **销售定价引擎**（阶梯价/促销/客户组价，UC-SAL-11 目标态）：`ready` — 计划 `2026-07-10-1100-1`。erp-survey 对标 Odoo Pricelist + ERPNext Pricing Rule 均为核心内置。
+> - **信用冻结**（出库/发票审核环节信用控制）：`ready` — 计划 `2026-07-10-1100-2`。erp-survey 对标 ERPNext Credit Limit 双点校验。
+> - **销售佣金计算**（佣金规则/结算）：无独立计划。Odoo 18+ 内置但多数开源 ERP 无规则引擎，优先级较低。
+>
+> **文档修正**：原 Non-Goal 声明将这些功能贴在 UC-SAL-06/08/10 编号上，但 `use-cases.md` 中 UC-SAL-06=退货换货、UC-SAL-08=赠品价税分离、UC-SAL-10=并发出库扣批次，编号标签与实际定义冲突。已修正为不绑定错误编号。
 
 ### Milestone M4 — 业财一体端到端
 - 4.3 期末结账全流程：`done`（计划 1000-3；含 4.3 前置「存货成本核算」done 计划 1538-1：记账器策略分派 MOVING_AVERAGE/FIFO + ErpInvCostLayer FIFO 队列 + period-close step2 接线 IErpInvCostingBiz.reclosePeriodCosts）
@@ -68,7 +73,7 @@
 
 > **年度结转 + 银行存款外币重估（承接 1000-3 双 Deferred）**：✅ `done` 计划 `2026-07-05-0540-2`——`closePeriod` 增年度分支（12 月结账后）：辅助账跨年对账门控（AR/AP 辅助账合计 vs 总账科目余额，config-gated `erp-fin.auxiliary-recon-gate-enabled`）→ 本年利润→未分配利润结转凭证（新增业务类型 `PROFIT_TO_RETAINED_EARNINGS`=380，本年利润清零，经 `CloseVoucherWriter` 直接持久化同损益结转/汇兑/坏账范式）→ populate 次年 1 月 `ErpFinGlBalance.yearOpeningDebit/Credit` 年初余额 → `generateNextYearPeriods(year+1)` 自动创建次年 12 期间（1 月 OPEN、其余 NEVER_OPENED，幂等 config-gated）；反结账红冲年度结转凭证，次年期间已创建时阻止反结账。`ExchangeRevaluationService` 扩展银行存款外币重估（外币 `ErpFinFundAccount.currentBalance`×期末汇率 vs 科目账面本位币聚合，config-gated `erp-fin.bank-fx-revaluation-enabled`，与 AR/AP 同业务类型同事务），解除 1000-3 Non-Goal。新增 `AnnualCloseService`。Non-Goal：年度报表渲染（nop-report）/利润分配明细（盈余公积+应付股利）/多账套合并年度结转/历史年度追溯结转。
 
-> **存货成本核算引擎（M4 前置 / 1000-3 step2 deferred 承接）**：`done` 计划 `2026-07-02-1538-1`——`StockMoveBookkeeper` 重构为按物料 `costMethod` 策略分派（`CostMethodResolver` → `MovingAverageCostingStrategy` 抽取既有逻辑行为不变 / 新增 `FifoCostingStrategy` 维护消耗 `ErpInvCostLayer` FIFO 队列、多层加权 COGS 经既有 `ledger.totalCost` 通道、红冲按加权 unitCost 追加层、首次无成本抛 `ERR_COST_NOT_AVAILABLE`）；`IErpInvCostingBiz.reclosePeriodCosts` + finance `closeInvModule` 接线 period-close §步骤2 兜底重算（finance→inventory R，config-gated）。解除 1000-3 step2 deferred。Non-Goal：BATCH/INDIVIDUAL/~~STANDARD~~/全月一次/LIFO/Landed Cost/~~成本调整~~/报表（见计划 Deferred）。
+> **存货成本核算引擎（M4 前置 / 1000-3 step2 deferred 承接）**：`done` 计划 `2026-07-02-1538-1`——`StockMoveBookkeeper` 重构为按物料 `costMethod` 策略分派（`CostMethodResolver` → `MovingAverageCostingStrategy` 抽取既有逻辑行为不变 / 新增 `FifoCostingStrategy` 维护消耗 `ErpInvCostLayer` FIFO 队列、多层加权 COGS 经既有 `ledger.totalCost` 通道、红冲按加权 unitCost 追加层、首次无成本抛 `ERR_COST_NOT_AVAILABLE`）；`IErpInvCostingBiz.reclosePeriodCosts` + finance `closeInvModule` 接线 period-close §步骤2 兜底重算（finance→inventory R，config-gated）。解除 1000-3 step2 deferred。Non-Goal：BATCH/INDIVIDUAL/~~STANDARD~~/全月一次/LIFO/~~Landed Cost~~/~~成本调整~~/报表（见计划 Deferred）。**Landed Cost 分摊引擎**：`ready` — 计划 `2026-07-10-1100-3`（解除 5 个 plan Deferred + logistics path-2 阻塞）。erp-survey 对标：ERPNext Landed Cost Voucher + Metasfresh 标配。
 >
 > **STANDARD 标准成本法 + 采购价差（PPV）**：✅ `done` 计划 `2026-07-05-0427-2`——新增 `StandardCostingStrategy`（出入库按标准成本记账，标准成本来源 `StandardCostResolver` 读 `ErpMfgCostRollupLine.unitCost` 最近 FIRMED 行）+ PPV 捕获（`InvPostingDispatcher.dispatchPurchasePriceVariance` + `PURCHASE_PRICE_VARIANCE` 业务类型 + `PurchasePriceVarianceAcctDocProvider` 方向相关 Dr/Cr）。承接 1538-1 Deferred「STANDARD 方法」，触发条件已满足（1538-2 BOM/工艺 rollup 落地）。Non-Goal：~~生产差异（归 variance-analysis.md 工单完工触发面）~~ ✅ `done` 计划 `2026-07-05-1838-2`（`ProductionVarianceCalculator` + 完工触发 config-gated + `ProductionVarianceDispatcher` 过账 `PRODUCTION_VARIANCE` 业务类型）/ ~~标准成本重估（归 1538-1 成本调整单 Deferred）~~ ✅ `done` 计划 `2026-07-05-2352-3`（`ErpInvCostAdjust` 头-行实体 + `CostAdjustmentService` 引擎 + 审批门控 `erp-fin.cost-adjust-approval` + `CostAdjustmentAcctDocProvider` 过账 `COST_ADJUSTMENT` 业务类型方向相关 借存货/贷差异 或相反 + `STANDARD_REVALUATION` apply 发布 FIRMED `ErpMfgCostRollup` 行 + reverse 红冲回退余额/层/凭证；FIFO 追加 delta 调整层；制造件标准成本重估归制造域 `rollupCost` successor）。costing 模块完整性收口。
 | 4.4 | 采购/销售退货到退款全链路 | purchase/sales/finance | ✅ `done`（计划 1018-1） |
@@ -104,6 +109,15 @@
 | 5.3 | 运行监控（自动化记账率 / 时延 / 异常率 / 业财闭环成功率 + 告警 SLA） | finance | `finance/posting-log.md` §运行监控指标 | ✅ `done`（P1，plan `2026-07-04-1452-3` completed） |
 | 5.4 | 域运营事件通知消费者接线（CS SLA / 过账异常 / 信用超限 / CRM 活动提醒 / CSAT 调查提醒 / 生产差异阈值告警 → 站内消息派发链 + 2 提醒类 scheduler job） | cs/finance/sales/crm/manufacturing | `architecture/notification-strategy.md` §业务消费者接线清单 | ✅ `done`（plan `2026-07-06-0642-1` completed） |
 | 5.5 | 审批工作流通知与抄送（4 实体 WORKFLOW 审批结果通知提单人 + cc step 抄送知会 + 任务到达通知候选审批人） | purchase/sales/assets/hr | `architecture/approval-framework.md` §抄送/通知，`architecture/notification-strategy.md` §审批通知类型 | ✅ `done`（plan `2026-07-06-0642-2` completed） |
+
+### 后继工作项（Non-Goal → ready，erp-survey 对标驱动）
+
+| # | 工作项 | 域 | 设计文档 | 状态 |
+|---|--------|-----|---------|------|
+| S-1 | 销售定价引擎（阶梯价/促销/客户组价，UC-SAL-11 目标态） | sales | `sales/use-cases.md` UC-SAL-11 | `ready` — 计划 `2026-07-10-1100-1`（erp-survey 对标 Odoo Pricelist + ERPNext Pricing Rule） |
+| S-2 | 信用冻结（出库/发票审核环节信用控制） | sales | `sales/README.md` §信用额度控制 Non-Goals | `ready` — 计划 `2026-07-10-1100-2`（erp-survey 对标 ERPNext Credit Limit 双点校验） |
+| S-3 | 到岸成本分摊（Landed Cost） | inventory/finance | `finance/costing-methods.md:302-365` | `ready` — 计划 `2026-07-10-1100-3`（erp-survey 对标 ERPNext Landed Cost Voucher；解除 5 plan Deferred + logistics path-2） |
+| S-4 | 预算管理（编制/控制/对比，UC-FIN-11/13） | finance | `finance/budget.md`（107 行完整设计） | `ready` — 计划 `2026-07-10-1100-4`（erp-survey 对标 iDempiere GL Budget；use-case 审计 🔶；解除 0700-2 Follow-up） |
 
 ## Reference
 
