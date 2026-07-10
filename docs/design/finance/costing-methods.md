@@ -37,7 +37,17 @@
 - **FIFO 红冲**：`ErpInvStockMoveBizModel.reverse` 生成反向移动单重走正常 DONE 流程，反向入库按原出库刷新的加权 `unitCost` 追加新 cost layer（Decision (a)，避免直接恢复被消耗层致双计），保证红冲后成本不变量（Σ layer remaining×unitCost 恢复至原出库前）。
 - **期末成本兜底（period-close §步骤2）**：`IErpInvCostingBiz.reclosePeriodCosts(periodId,startDate,endDate)` 扫描本期 DONE 的 FIFO 移动单，对成本层缺失的入库补建、对 COGS 异常（`ledger.unitCost` 空/零）的出库按 FIFO 重算并刷新流水（正常路径补算数为 0；非 0 为历史/异常单据兜底修复）。finance 期末结账 INV 模块关账（`ErpFinAccountingPeriodBizModel.closeInvModule`）经 `IBizObjectManager` 跨模块调用（finance→inventory R，DAG 合法），config-gated `erp-fin.inv-costing-reclose-on-close`（默认 true），单域 finance 测试无 inv-service 时 try/catch 告警跳过。
 
-**Non-Goal（计划 `1538-1` Deferred But Adjudicated，已裁定留后继）**：BATCH（批次成本）/ INDIVIDUAL（个别计价，需出库指定批次 + FEFO 效期路由 + `ErpInvCostLayer.batchNo` 维度）、~~STANDARD（标准成本，依赖制造域 cost rollup N=2 产出到 `ErpMfgCostRollupLine.unitCost`）~~（**已收口，见下文 plan 2026-07-05-0427-2 实现注记**）、~~成本调整单 + 成本差异凭证（采购价格调整/成本差异/标准成本重估）~~（**已收口，见 plan 2026-07-05-2352-3 实现注记**）、全月一次加权平均（dict 20）/ LIFO（dict 40）、到岸成本（Landed Cost）分摊算法（成本调整单已预留 `adjustType=LANDED_COST_SUPPLEMENT` 码值供 successor）、默认最低价/折扣叠加规则（取较低值的保守估计）、成本报表（存货成本明细/FIFO 队列/差异表，属 nop-report 报表面）、多账套并行成本、存货减值（成本与可变现净值孰低）。各 Non-Goal 均已命名 successor 触发条件，见计划 Deferred 章节。
+**Non-Goal（计划 `1538-1` Deferred But Adjudicated，已裁定留后继）**：BATCH（批次成本）/ INDIVIDUAL（个别计价，需出库指定批次 + FEFO 效期路由 + `ErpInvCostLayer.batchNo` 维度）、~~STANDARD（标准成本，依赖制造域 cost rollup N=2 产出到 `ErpMfgCostRollupLine.unitCost`）~~（**已收口，见下文 plan 2026-07-05-0427-2 实现注记**）、~~成本调整单 + 成本差异凭证（采购价格调整/成本差异/标准成本重估）~~（**已收口，见 plan 2026-07-05-2352-3 实现注记**）、全月一次加权平均（dict 20）/ LIFO（dict 40）、~~到岸成本（Landed Cost）分摊算法（成本调整单已预留 `adjustType=LANDED_COST_SUPPLEMENT` 码值供 successor）~~（**已收口，见 plan 2026-07-10-1100-3 实现注记**）、默认最低价/折扣叠加规则（取较低值的保守估计）、成本报表（存货成本明细/FIFO 队列/差异表，属 nop-report 报表面）、多账套并行成本、存货减值（成本与可变现净值孰低）。各 Non-Goal 均已命名 successor 触发条件，见计划 Deferred 章节。
+
+## 实现注记（计划 `2026-07-10-1100-3`）
+
+本节承接 `1538-1` Deferred「到岸成本（Landed Cost）分摊算法」，触发条件「costing-methods.md §到岸成本设计落地需求」已满足。
+
+- **到岸成本单实体（`ErpInvLandedCost`/`ErpInvLandedCostLine`）**：头-行结构（头携带 code/receiveId/supplierId/allocationMethod/docStatus/approveStatus/posted；行携带 costElement/amount/apPartnerId）。审核时关联采购入库单（`ErpPurReceive`，跨域只读 DAO 访问）。
+- **分摊引擎（`LandedCostAllocationEngine`）**：纯函数式——输入入库行 + 费用要素合计 + allocationMethod(BY_AMOUNT/BY_QUANTITY/BY_WEIGHT)，输出每入库行的分摊金额与新单位成本。末行吸收舍入差保证 Σ=totalCost。
+- **审核编排（`ErpInvLandedCostProcessor`）**：approve 步骤——(1) 加载到岸成本 + 费用行 + 入库单 + 入库行；(2) 校验入库单已审核 + 防重复分摊；(3) 调引擎分摊；(4) 创建 `ErpInvCostAdjust`(type=LANDED_COST_SUPPLEMENT) + 行；(5) 调 `CostAdjustmentService.applyCostAdjust` **直接更新成本层**（不走 `ErpInvCostAdjustProcessor.applyCostAdjust` 完整链，避免 COST_ADJUSTMENT(420) 与 LANDED_COST(490) 双重入账）；(6) LANDED_COST 过账。
+- **过账（`LandedCostAcctDocProvider` + `LandedCostPostingDispatcher`）**：业务类型 `LANDED_COST`(490)。借：每入库行分摊金额 → 存货(1401)；贷：每费用要素 → 应付账款(2202, partnerId=费用行应付对象或采购供应商)。
+- **本期 Non-Goal**：多段到岸成本累计管理（同一入库单多次分摊）、到岸成本预估、logistics path-2 运费自动创建到岸成本单的完整编排——各归 successor。
 
 ## 实现注记（计划 `2026-07-05-0427-2`）
 

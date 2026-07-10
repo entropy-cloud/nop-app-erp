@@ -1,6 +1,6 @@
 # 2026-07-10-1100-3-landed-cost-allocation 到岸成本分摊
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-10 (iteration 2 — consensus)
 > Source: `docs/design/finance/costing-methods.md:302-365` 设计章节 + 5 个 plan Deferred 解除 + logistics path-2 运费过账阻塞解除
 > Related: `core-business-roadmap.md:76` Non-Goal 声明；解除 5 个 plan Deferred：`2026-07-02-1538-1`（LANDED_COST_SUPPLEMENT 算法）、`2026-07-04-1115-3`（logistics path-2 运费过账）、`2026-07-05-2352-3`（LANDED_COST_SUPPLEMENT 码值预留 + 成本调整 Deferred）、`2026-07-05-0427-2`（StandardCosting Landed Cost 注记）、`2026-07-02-0300-1`（采购到付款到岸成本段）
@@ -72,14 +72,14 @@
 
 ### Phase 1 - ORM 模型：到岸成本实体
 
-Status: planned
+Status: completed
 Targets: `module-inventory/model/app-erp-inventory.orm.xml`
 Skill: nop-backend-dev
 
 - Item Types: `Decision | Add`
 - Prereqs: none
 
-- [ ] Decision: 实体结构设计
+- [x] Decision: 实体结构设计
   - 创建独立实体 `ErpInvLandedCost`（头）+ `ErpInvLandedCostLine`（费用要素行），而非复用 `ErpInvCostAdjust`
   - 理由：到岸成本单有多项费用要素（运费/保险/关税各有不同应付对象）、需选择分摊方法、关联采购入库单——结构比通用成本调整丰富
   - 替代方案 A：复用 `ErpInvCostAdjust`(type=LANDED_COST_SUPPLEMENT)——rejected，费用要素多应付对象和分摊方法选择无法表达
@@ -87,42 +87,42 @@ Skill: nop-backend-dev
   - 残留风险：到岸成本审核时创建 `ErpInvCostAdjust`(type=LANDED_COST_SUPPLEMENT) 作为成本层更新的载体——两实体关联但独立
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpInvLandedCost`（到岸成本单头）
+- [x] Add: `ErpInvLandedCost`（到岸成本单头）
   - 字段：code, orgId, receiveId(→ErpPurReceive, 必填), supplierId(采购供应商, from Receive), currencyId, exchangeRate, totalCostAmount(到岸成本合计), allocationMethod(字典 `erp-inv/landed-cost-alloc-method`: BY_AMOUNT/BY_QUANTITY/BY_WEIGHT), docStatus(字典 `erp-inv/move-status`), approveStatus(字典 `erp-inv/approve-status`), posted(BOOL), postedAt/postedBy, businessDate, remark + 标准审计字段
   - 关系：to-one receive/supplier/currency/org；to-many lines(→ErpInvLandedCostLine)
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpInvLandedCostLine`（到岸成本费用要素行）
+- [x] Add: `ErpInvLandedCostLine`（到岸成本费用要素行）
   - 字段：id, landedCostId(必填), lineNo, costElement(字典 `erp-inv/cost-element`: FREIGHT/INSURANCE/DUTY/CUSTOMS_CLEARANCE/OTHER), amount(DECIMAL 20,4, 必填), apPartnerId(应付对象→ErpMdPartner, nullable=与采购供应商相同时为空), remark + 标准审计字段
   - 关系：to-one landedCost/apPartner
   - Skill: nop-backend-dev
 
-- [ ] Add: 字典 `erp-inv/landed-cost-alloc-method`（BY_AMOUNT/BY_QUANTITY/BY_WEIGHT）+ 字典 `erp-inv/cost-element`（FREIGHT/INSURANCE/DUTY/CUSTOMS_CLEARANCE/OTHER）
+- [x] Add: 字典 `erp-inv/landed-cost-alloc-method`（BY_AMOUNT/BY_QUANTITY/BY_WEIGHT）+ 字典 `erp-inv/cost-element`（FREIGHT/INSURANCE/DUTY/CUSTOMS_CLEARANCE/OTHER）
   - Skill: nop-backend-dev
 
-- [ ] Add: 执行 `mvn clean install -DskipTests`（module-inventory 链）触发增量代码生成
+- [x] Add: 执行 `mvn clean install -DskipTests`（module-inventory 链）触发增量代码生成
   - Skill: nop-backend-dev
 
 Exit Criteria:
 
-- [ ] ORM 变更后 `mvn clean install -DskipTests`（module-inventory 链）BUILD SUCCESS
-- [ ] 生成的 Entity/DAO 类包含 `ErpInvLandedCost`/`ErpInvLandedCostLine`
+- [x] ORM 变更后 `mvn clean install -DskipTests`（module-inventory 链）BUILD SUCCESS
+- [x] 生成的 Entity/DAO 类包含 `ErpInvLandedCost`/`ErpInvLandedCostLine`
 
 ### Phase 2 - 分摊引擎 + BizModel + Processor
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/`
 Skill: nop-backend-dev
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] Decision: 分摊结果存储方式
+- [x] Decision: 分摊结果存储方式
   - 分摊结果（每入库行的分摊金额 + 新单位成本）**不独立建表**——在审核时创建 `ErpInvCostAdjust`(type=LANDED_COST_SUPPLEMENT) 行记录分摊结果，作为成本层更新的载体
   - 理由：复用成熟的 `CostAdjustmentService` 成本层更新逻辑（追加 delta 层 + 更新余额），避免重复实现
   - Skill: nop-backend-dev
 
-- [ ] Add: `LandedCostAllocationEngine`（纯函数式引擎，`erp-inv-service/.../support/`）
+- [x] Add: `LandedCostAllocationEngine`（纯函数式引擎，`erp-inv-service/.../support/`）
   - 输入：ErpPurReceiveLine 列表 + ErpInvLandedCostLine 费用要素列表 + allocationMethod
   - 计算逻辑：
     ```
@@ -136,12 +136,12 @@ Skill: nop-backend-dev
   - 参考：`docs/design/finance/costing-methods.md:341-365` 算例
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpInvLandedCostBizModel`（CrudBizModel）
+- [x] Add: `ErpInvLandedCostBizModel`（CrudBizModel）
   - 标准 CRUD + `defaultPrepareQuery`（按 receiveId/docStatus 过滤）
   - `@BizMutation approve`：审核编排（见下 Processor）
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpInvLandedCostProcessor`（审核编排）
+- [x] Add: `ErpInvLandedCostProcessor`（审核编排）
   - `approve(landedCostId, context)` 步骤：
     1. 加载到岸成本单 + 费用行 + 关联采购入库单 + 入库行（跨域经 `IErpPurReceiveBiz` 只读查询）
     2. 调用 `LandedCostAllocationEngine.allocate(...)` 计算分摊结果
@@ -151,51 +151,51 @@ Skill: nop-backend-dev
     6. 状态迁移 SUBMITTED→APPROVED
   - Skill: nop-backend-dev
 
-- [ ] Add: `IErpInvLandedCostBiz` 接口声明（在 erp-inv-dao）
+- [x] Add: `IErpInvLandedCostBiz` 接口声明（在 erp-inv-dao）
   - 标准 `ICurdBiz<ErpInvLandedCost>` + `approve` 方法
   - Skill: nop-backend-dev
 
-- [ ] Proof: 单元测试 `TestErpInvLandedCostAllocationEngine`
+- [x] Proof: 单元测试 `TestErpInvLandedCostAllocationEngine`
   - 纯函数引擎测试：BY_AMOUNT/BY_QUANTITY/BY_WEIGHT 三种方法 + 算例验证（对照 costing-methods.md:341-365）
   - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] 分摊引擎纯单元测试全绿（3 种分摊方法 + 算例验证）
-- [ ] `ErpInvLandedCostProcessor.approve` 正确创建 CostAdjust 并更新成本层
+- [x] 分摊引擎纯单元测试全绿（3 种分摊方法 + 算例验证）
+- [x] `ErpInvLandedCostProcessor.approve` 正确创建 CostAdjust 并更新成本层
 
 ### Phase 3 - GL 过账 Provider + 测试
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/`（AcctDocProvider）、`module-inventory/erp-inv-service/src/test/`
 Skill: nop-backend-dev, nop-testing
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2
 
-- [ ] Decision: 到岸成本凭证科目映射
+- [x] Decision: 到岸成本凭证科目映射
   - 借：存货科目（1401，从物料主数据 `materialSubject` 解析，与 PURCHASE_INPUT 同科目）
   - 贷：应付账款（2202，从费用行的 `apPartnerId` 解析应付对象；无 apPartnerId 时用采购供应商）
   - 替代方案：贷方按费用要素分科目（运费→5001 销售费用/关税→6401 税金及附加）——rejected，到岸成本分摊的核心语义是"费用资本化到存货"，贷方是"应付给服务商"，不是费用化
   - 残留风险：实际部署时科目映射可能按客户需求调整——通过 AcctDocProvider 配置化
   - Skill: nop-backend-dev
 
-- [ ] Add: `LandedCostAcctDocProvider`（implements `IErpFinAcctDocProvider`）
+- [x] Add: `LandedCostAcctDocProvider`（implements `IErpFinAcctDocProvider`）
   - businessType = `LANDED_COST`(新增码值 **490**，在 `ErpFinBusinessType` 枚举中注册——码值 430 已被 `PROJECT_SETTLEMENT` 占用，420–480 均已占用，下一个空闲值为 490)
   - 凭证行生成：每入库行 → 借方行（存货科目, 金额=分摊金额）；每费用要素 → 贷方行（应付科目, 金额=费用金额）
   - 注册到 `app-service.beans.xml` via IoC collect-beans
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpInvLandedCostProcessor` 审核时触发过账
+- [x] Add: `ErpInvLandedCostProcessor` 审核时触发过账
   - 在步骤 5 后调用 `IErpFinPostingDispatcher.tryPost(...)`（复用现有过账管道）
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpInvErrors`（或复用现有）新增错误码
+- [x] Add: `ErpInvErrors`（或复用现有）新增错误码
   - `ERR_LANDED_COST_RECEIVE_NOT_APPROVED`（关联入库单未审核）
   - `ERR_LANDED_COST_ALREADY_ALLOCATED`（入库单已有到岸成本单且已审核——防重复分摊）
   - Skill: nop-backend-dev
 
-- [ ] Proof: GraphQL Engine 集成测试 `TestErpInvLandedCostEndToEnd`
+- [x] Proof: GraphQL Engine 集成测试 `TestErpInvLandedCostEndToEnd`
   - 场景 1（BY_AMOUNT）：入库单 2 行（物料A 1000/物料B 500）+ 到岸成本 180 → 分摊 A=120/B=60 → 成本层更新 → 凭证（借存货 180 / 贷应付 180）
   - 场景 2（BY_QUANTITY）：同上但按数量分摊
   - 场景 3（多应付对象）：运费 150 应付物流商 + 保险 30 应付保险公司 → 凭证两条贷方行
@@ -204,26 +204,26 @@ Skill: nop-backend-dev, nop-testing
 
 Exit Criteria:
 
-- [ ] GraphQL Engine 集成测试全绿（≥4 场景）
-- [ ] 到岸成本审核 → 成本层更新 + GL 凭证生成 全链路验证
+- [x] GraphQL Engine 集成测试全绿（≥4 场景）
+- [x] 到岸成本审核 → 成本层更新 + GL 凭证生成 全链路验证
 
 ### Phase 4 - 前端页面
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-web/`
 Skill: nop-frontend-dev
 
 - Item Types: `Add`
 - Prereqs: Phase 3
 
-- [ ] Add: 到岸成本单列表页 + 编辑页（头 + 费用行 grid + 分摊预览）
+- [x] Add: 到岸成本单列表页 + 编辑页（头 + 费用行 grid + 分摊预览）
   - action-auth 菜单注册（inventory 域「成本管理」分组下）
   - 编辑页含分摊预览按钮（调用 GraphQL `allocate` query 预览分摊结果，不落库）
   - Skill: nop-frontend-dev
 
 Exit Criteria:
 
-- [ ] 页面 YAML 通过 AMIS 加载无报错
+- [x] 页面 YAML 通过 AMIS 加载无报错
 
 ## Draft Review Record
 
@@ -232,14 +232,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐（`docs/design/finance/costing-methods.md` §到岸成本 标注已实现；`core-business-roadmap.md:76` Non-Goal 标注修正；5 个 plan Deferred 标注解除）
-- [ ] 已运行验证：`mvn clean install -DskipTests`（全 reactor）+ `mvn test -pl module-inventory/erp-inv-service`
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐（`docs/design/finance/costing-methods.md` §到岸成本 标注已实现；`core-business-roadmap.md:76` Non-Goal 标注修正；5 个 plan Deferred 标注解除）
+- [x] 已运行验证：`mvn clean install -DskipTests`（全 reactor）+ `mvn test -pl module-inventory/erp-inv-service`
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -257,12 +257,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: completed
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: EXECUTE driver (2026-07-10)
+- Evidence: 全 4 Phase 完成。ORM 实体 `ErpInvLandedCost`/`ErpInvLandedCostLine` + 2 字典（landed-cost-alloc-method, cost-element）已生成。分摊引擎 `LandedCostAllocationEngine`（纯函数式，3 种方法）+ 单元测试 5 场景全绿。`ErpInvLandedCostProcessor`（审核编排：分摊→CostAdjust 成本层更新→LANDED_COST(490) 过账）+ `LandedCostAcctDocProvider`（借存货/贷应付）+ `LandedCostPostingDispatcher`。集成测试 `TestErpInvLandedCostEndToEnd` 4 场景全绿（BY_AMOUNT/BY_QUANTITY/多应付对象/防重复分摊）。前端 view.xml 含审核 + 分摊预览按钮，action-auth 菜单已生成。全 reactor `mvn clean install -DskipTests` BUILD SUCCESS。inventory-service `mvn test` 96/96 全绿。
 
 Follow-up:
 
