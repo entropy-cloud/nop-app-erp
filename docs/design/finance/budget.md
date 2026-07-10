@@ -1,5 +1,7 @@
 # 预算管理(Budget)
 
+> 实现状态：✅ 已实现（计划 `2026-07-10-1100-4` completed）。ORM 3 实体 + postingType=BUDGET 影子凭证范式 + HARD/WARN/NONE 三级预算控制 SPI + 预算对比报表。余额统一从 `ErpFinVoucherLine` 聚合，不动 `ErpFinGlBalance`；实际数聚合（损益结转/坏账/年报/试算平衡/汇兑）已隔离 BUDGET 凭证。Deferred：承付款（COMMITMENT）/滚动预算自动复制/调整版本链管理。
+
 ## 目的
 
 设计 ERP 的预算编制、预算控制、预算对比能力,实现管理会计的预算管理闭环。
