@@ -172,7 +172,7 @@
 - **领料出库 moveType 用 OUTGOING(20) 而非 MANUFACTURING(40)**：库存域 `StockMoveBookkeeper.bookCompletion` 按 moveType 决定方向——MANUFACTURING(40) 视为入库（加库存），OUTGOING(20) 才扣减余额。故领料出库移动单用 `MOVE_TYPE_OUTGOING_ISSUE(20)`（relatedBillType=ERP_MFG_ISSUE）；完工入库移动单用 MANUFACTURING(40)（relatedBillType=ERP_MFG_WORK_ORDER）。计划原写「moveType=MANUFACTURE」为对库存域方向语义的假设偏差，已按库存域实际实现修正。
 - **齐套校验只读不写预留**：`checkAvailability`（NOT_STARTED→STOCK_RESERVED/STOCK_PARTIAL）仅读 `ErpInvStockBalance.availableQuantity` 置状态，不写库存预留记录（实际扣减由开工后领料出库移动单 DONE 完成，对齐 `inventory/cross-domain.md §余量校验规则`）。故 `cancel`（→CANCELLED）为纯状态迁移，无预留记录需释放。
 - **制造费用 overheadCost=0**：工作中心仅有单一 `hourlyRate`（无独立制造费率分列，同 plan 1538-2），故报工工时成本（`durationMins/60 × hourlyRate`）统一计入 `WorkOrder.laborCost`，`overheadCost`=0。**触发条件**：工作中心费率拆分后细化。
-- **完工成本结转凭证 Non-Goal**：完工入库移动单生成（产成品入 destWarehouse）已落地，但产成品存货估值过账凭证（MANUFACTURING_RECEIPT 凭证类型）依赖 finance 域制造业财一体过账 Provider，属独立 owner plan successor（Non-Goal）。当前完工入库移动单 posted=false。
+- **完工成本结转凭证已实现**：完工入库移动单生成（产成品入 destWarehouse）+ 产成品存货估值过账凭证（MANUFACTURING_RECEIPT 凭证类型：Dr 产成品存货 1401 / Cr WIP 1411）已由 plan 2026-07-10-1100-5 落地。完工入库移动单 posted=true。领料出库 GL 过账（MANUFACTURING_ISSUE：Dr WIP 1411 / Cr 原材料存货 1401）同步落地，领料单 posted=true。
 - **工时/实领数量列类型修正补注**：`ErpMfgJobCardTimeLog.durationMins`/`setupMins`/`runMins`/`hourlyRate`（VARCHAR→DECIMAL，对齐 domain）+ `ErpMfgMaterialIssueLine.issuedQuantity`（BOOLEAN→DECIMAL，对齐 domain）已修正，解除报工成本归集数值计算阻塞（同 plan 1538-2 工时/费率修正范式）。
 
 ---

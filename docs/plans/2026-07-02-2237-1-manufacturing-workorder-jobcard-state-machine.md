@@ -187,9 +187,9 @@ Exit Criteria:
 
 ### 完工成本结转凭证（产成品存货估值过账）
 
-- Classification: `out-of-scope improvement`
+- Classification: `out-of-scope improvement` → **已由 successor plan `2026-07-10-1100-5` 落地，Deferred 解除**
 - Why Not Blocking Closure: 依赖 finance 域制造过账 Provider（MANUFACTURING_RECEIPT 凭证类型）；属制造业财一体面。
-- Successor Required: yes（触发条件：制造业财一体过账 Provider 落地时）
+- Successor Required: yes（触发条件：制造业财一体过账 Provider 落地时）→ **已满足（plan 1100-5 completed）**
 
 ### APS 排产集成 / BOM 版本快照 / 联副产品分摊 / 返工工单 / 超产配置 / work-order-status INSPECTING 态
 

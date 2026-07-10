@@ -130,10 +130,10 @@ Exit Criteria:
 
 ### 完工入库 GL 过账凭证（MANUFACTURING_RECEIPT voucher）
 
-- Classification: `out-of-scope improvement`（经核实为 Non-Goal）
+- Classification: `out-of-scope improvement`（经核实为 Non-Goal）→ **已由 successor plan `2026-07-10-1100-5` 落地，Deferred 解除**
 - Why Not Blocking Closure: 完工入库移动（MANUFACTURING/40）经 `reportCompletion` 生成但 `posted=false`——MANUFACTURING_RECEIPT GL 过账凭证依赖 finance 域制造过账 Provider（尚未构建，见 `2237-1` state-machine doc §实现偏离补注）。成本归集（materialCost/laborCost/totalCost/unitCost 在 WorkOrder 上）已完整，仅 GL 过账缺失。
-- Successor Required: `yes`
-- Trigger Condition: 当 finance 域制造过账 Provider 落地后。
+- Successor Required: `yes` → **已落地（plan 1100-5 completed）**
+- Trigger Condition: 当 finance 域制造过账 Provider 落地后。→ **已满足**
 
 ### 生产差异计算（ProductionVarianceCalculator）
 
