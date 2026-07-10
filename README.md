@@ -107,4 +107,4 @@ java -Dfile.encoding=UTF8 -Dquarkus.profile=dev \
 
 ## License
 
-MIT
+Apache License 2.0（见 [LICENSE](LICENSE)）
