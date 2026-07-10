@@ -64,35 +64,36 @@
 
 ### Phase 1 - 业务类型枚举 + InvPostingDispatcher 修正
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-dao/.../ErpFinBusinessType.java`、`module-inventory/erp-inv-service/.../posting/InvPostingDispatcher.java`
 Skill: nop-backend-dev
 
 - Item Types: `Decision | Fix | Add`
 - Prereqs: none
 
-- [ ] Decision: 领料过账架构选择
+- [x] Decision: 领料过账架构选择
   - **选择 A**：在 InvPostingDispatcher 中为 ERP_MFG_ISSUE 添加跳过，由 manufacturing 域独立 Dispatcher 处理（镜像 `ProductionVarianceDispatcher` 显式调用范式）
   - 替代方案 B：在 InvPostingDispatcher 中映射 ERP_MFG_ISSUE OUTGOING → MANUFACTURING_ISSUE 类型，由 InvAcctDocProvider 处理——rejected，WIP 科目解析依赖 manufacturing 上下文（WorkOrder/BOM），不宜放在 inventory 域
   - 残留风险：InvPostingDispatcher 的跳过列表已有 3 项（PUR_RETURN/SAL_RETURN/MNT_SPARE_PART），新增 ERP_MFG_ISSUE 后为 4 项——跳过列表增长需注释说明各跳过项由哪个域独占
   - Skill: nop-backend-dev
 
-- [ ] Fix: `InvPostingDispatcher.resolveBusinessType` 增加 ERP_MFG_ISSUE 跳过 + MANUFACTURE 分支
+- [x] Fix: `InvPostingDispatcher.resolveBusinessType` 增加 ERP_MFG_ISSUE 跳过 + MANUFACTURE 分支
   - L145-148 跳过列表新增 `RELATED_BILL_TYPE_MNT_SPARE_PART` 同层添加 `RELATED_BILL_TYPE_MFG_ISSUE` → `return null`（领料由 manufacturing 域独占）
   - L151-160 新增 MANUFACTURE 分支：`if (MOVE_TYPE_MANUFACTURING.equals(moveType)) return MANUFACTURING_RECEIPT;`（完工入库由 inventory 域 InvAcctDocProvider 处理，因存货估值属 inventory 职责）
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpFinBusinessType` 新增 `MANUFACTURING_RECEIPT(490)` 和 `MANUFACTURING_ISSUE(491)`
+- [x] Add: `ErpFinBusinessType` 新增 `MANUFACTURING_RECEIPT(500)` 和 `MANUFACTURING_ISSUE(501)`
+  - 注：计划草案原写 490/491，但 490 已被 LANDED_COST 占用（plan 2026-07-10-1100-3 先于此计划落库），改用 500/501（下一个可用码段）
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpInvConstants` 新增 `RELATED_BILL_TYPE_MFG_ISSUE = "ERP_MFG_ISSUE"`
+- [x] Add: `ErpInvConstants` 新增 `RELATED_BILL_TYPE_MFG_ISSUE = "ERP_MFG_ISSUE"`
   - inventory 域本地副本（同一字面值已存在于 `ErpMfgConstants.RELATED_BILL_TYPE_MFG_ISSUE`），目的：避免 inventory→manufacturing 上行模块依赖，同 `RELATED_BILL_TYPE_MNT_SPARE_PART` 范式
   - Skill: nop-backend-dev
 
 Exit Criteria:
 
-- [ ] InvPostingDispatcher 编译通过，MANUFACTURE 返回 MANUFACTURING_RECEIPT，ERP_MFG_ISSUE 返回 null
-- [ ] 现有 InvPostingDispatcher 测试回归无失败
+- [x] InvPostingDispatcher 编译通过，MANUFACTURE 返回 MANUFACTURING_RECEIPT，ERP_MFG_ISSUE 返回 null
+- [x] 现有 InvPostingDispatcher 测试回归无失败
 
 ### Phase 2 - 完工入库 AcctDocProvider
 

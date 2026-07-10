@@ -71,6 +71,10 @@ public interface ErpInvConstants {
     String RELATED_BILL_TYPE_PUR_RETURN = "ERP_PUR_RETURN";
     String RELATED_BILL_TYPE_SAL_RETURN = "ERP_SAL_RETURN";
     String RELATED_BILL_TYPE_MNT_SPARE_PART = "ERP_MNT_SPARE_PART";
+    // 制造领料出库移动（MFG_ISSUE）非销售出库，其 WIP 过账（MANUFACTURING_ISSUE）由 manufacturing 域独占
+    // （Dr: WIP / Cr: Inventory，借方科目需 WorkOrder 上下文），inventory 域跳过避免误派 SALES_OUTPUT。
+    // 本地副本（同字面值 ErpMfgConstants.RELATED_BILL_TYPE_MFG_ISSUE），避免 inventory→manufacturing 上行依赖。
+    String RELATED_BILL_TYPE_MFG_ISSUE = "ERP_MFG_ISSUE";
 
     // 所有权类型（dict erp-inv/ownership-type，consignment.md）
     String OWNERSHIP_TYPE_OWNED = "OWNED";

@@ -6,6 +6,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.AcctDocContext;
 import app.erp.fin.service.posting.IErpFinAcctDocProvider;
 import app.erp.fin.service.posting.VoucherFact;
+import io.nop.api.core.config.AppConfig;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,13 +17,19 @@ import java.util.Set;
 /**
  * 存货估值过账 Provider（inventory 域，**非默认** Provider——Registry 中优先于默认 fallback）。
  *
- * <p>支持业务类型：{@link ErpFinBusinessType#PURCHASE_INPUT}（入库：借存货/贷暂估应付）、
- * {@link ErpFinBusinessType#SALES_OUTPUT}（出库：借结转成本/贷存货）。金额取自流水汇总（PostingEvent.billData.TOTAL_COST）。
+ * <p>支持业务类型：
+ * <ul>
+ *   <li>{@link ErpFinBusinessType#PURCHASE_INPUT}（入库：借存货/贷暂估应付）</li>
+ *   <li>{@link ErpFinBusinessType#SALES_OUTPUT}（出库：借结转成本/贷存货）</li>
+ *   <li>{@link ErpFinBusinessType#MANUFACTURING_RECEIPT}（完工入库：借产成品存货/贷 WIP 在制品）</li>
+ * </ul>
+ * 金额取自流水汇总（PostingEvent.billData.TOTAL_COST）。
  *
  * <p>科目编码（subjectCode）由引擎 {@code resolveSubjects} 按 code 解析为主数据科目：
  * <ul>
  *   <li>PURCHASE_INPUT：借 1401 库存商品 / 贷 2202 应付账款-暂估。</li>
  *   <li>SALES_OUTPUT：借 6401 主营业务成本 / 贷 1401 库存商品。</li>
+ *   <li>MANUFACTURING_RECEIPT：借 1401 产成品存货 / 贷 1411 WIP 在制品（config {@code erp-mfg.wip-subject-code}）。</li>
  * </ul>
  * 同法人内部调拨不发事件（{@link InvPostingDispatcher} 已跳过），故本 Provider 不处理 INTER_TRANSFER。
  */
@@ -35,9 +42,13 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_ESTIMATED_AP = "2202";
     static final String SUBJECT_COGS = "6401";
 
+    static final String CONFIG_WIP_SUBJECT_CODE = "erp-mfg.wip-subject-code";
+    static final String DEFAULT_WIP_SUBJECT_CODE = "1411";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
-        return EnumSet.of(ErpFinBusinessType.PURCHASE_INPUT, ErpFinBusinessType.SALES_OUTPUT);
+        return EnumSet.of(ErpFinBusinessType.PURCHASE_INPUT, ErpFinBusinessType.SALES_OUTPUT,
+                ErpFinBusinessType.MANUFACTURING_RECEIPT);
     }
 
     @Override
@@ -50,11 +61,24 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
         if (event.getBusinessType() == ErpFinBusinessType.PURCHASE_INPUT) {
             facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_DEBIT, total, materialId, warehouseId, event));
             facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_CREDIT, total, materialId, warehouseId, event));
+        } else if (event.getBusinessType() == ErpFinBusinessType.MANUFACTURING_RECEIPT) {
+            String wipSubject = resolveWipSubjectCode();
+            facts.add(fact(SUBJECT_INVENTORY, "产成品存货", DC_DEBIT, total, materialId, warehouseId, event));
+            facts.add(fact(wipSubject, "在制品-WIP", DC_CREDIT, total, materialId, warehouseId, event));
         } else {
             facts.add(fact(SUBJECT_COGS, "主营业务成本", DC_DEBIT, total, materialId, warehouseId, event));
             facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, total, materialId, warehouseId, event));
         }
         return facts;
+    }
+
+    /**
+     * 解析 WIP 在制品科目编码。经 config {@code erp-mfg.wip-subject-code}（默认 1411）读取，
+     * 完工入库贷方 / 领料出库借方共用此科目。字符串字面值避免 inventory→manufacturing 上行模块依赖。
+     */
+    private String resolveWipSubjectCode() {
+        String code = AppConfig.var(CONFIG_WIP_SUBJECT_CODE, DEFAULT_WIP_SUBJECT_CODE);
+        return code != null && !code.trim().isEmpty() ? code.trim() : DEFAULT_WIP_SUBJECT_CODE;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,

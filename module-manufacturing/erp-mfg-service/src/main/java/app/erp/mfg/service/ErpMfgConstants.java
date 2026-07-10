@@ -220,4 +220,12 @@ public interface ErpMfgConstants {
 
     /** 产出批次 batchNo 派生前缀（工单 code + 序号）。 */
     String GENEALOGY_OUTPUT_BATCH_PREFIX = "FG";
+
+    // ---- 制造业财一体过账（plan 2026-07-10-1100-5） ----
+
+    /** WIP 在制品科目编码配置项（默认 1411；完工入库 Cr / 领料出库 Dr 共用）。经 AppConfig.var 读取，NopSysVariable 可运行时覆盖。 */
+    String CONFIG_WIP_SUBJECT_CODE = "erp-mfg.wip-subject-code";
+    String DEFAULT_WIP_SUBJECT_CODE = "1411";
+    /** 产成品存货科目编码（与 InvAcctDocProvider.SUBJECT_INVENTORY 一致，完工入库 Dr）。 */
+    String SUBJECT_FINISHED_GOODS = "1401";
 }
