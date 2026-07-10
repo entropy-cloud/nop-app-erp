@@ -98,4 +98,44 @@ public interface _ErpSalDaoConstants {
      */
     String INVOICE_TYPE_RECEIPT = "RECEIPT";
                     
+    /**
+     * 价格清单状态: 启用 
+     */
+    String PRICE_LIST_STATUS_ACTIVE = "ACTIVE";
+                    
+    /**
+     * 价格清单状态: 停用 
+     */
+    String PRICE_LIST_STATUS_INACTIVE = "INACTIVE";
+                    
+    /**
+     * 促销规则类型: 百分比折扣 
+     */
+    String PRICING_RULE_TYPE_PERCENT_DISCOUNT = "PERCENT_DISCOUNT";
+                    
+    /**
+     * 促销规则类型: 满减 
+     */
+    String PRICING_RULE_TYPE_AMOUNT_OFF = "AMOUNT_OFF";
+                    
+    /**
+     * 促销规则类型: 买赠 
+     */
+    String PRICING_RULE_TYPE_GIFT = "GIFT";
+                    
+    /**
+     * 促销规则类型: 价格覆盖 
+     */
+    String PRICING_RULE_TYPE_PRICE_OVERRIDE = "PRICE_OVERRIDE";
+                    
+    /**
+     * 促销规则目标: 行级 
+     */
+    String PRICING_TARGET_LINE = "LINE";
+                    
+    /**
+     * 促销规则目标: 单级 
+     */
+    String PRICING_TARGET_ORDER = "ORDER";
+                    
 }

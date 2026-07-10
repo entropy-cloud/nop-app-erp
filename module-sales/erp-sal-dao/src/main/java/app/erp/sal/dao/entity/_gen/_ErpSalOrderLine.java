@@ -117,8 +117,20 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 24;
     
+    /* 行折扣率(%): DISCOUNT_RATE DECIMAL */
+    public static final String PROP_NAME_discountRate = "discountRate";
+    public static final int PROP_ID_discountRate = 100;
+    
+    /* 行折扣金额: DISCOUNT_AMOUNT DECIMAL */
+    public static final String PROP_NAME_discountAmount = "discountAmount";
+    public static final int PROP_ID_discountAmount = 101;
+    
+    /* 取价来源: PRICING_SOURCE VARCHAR */
+    public static final String PROP_NAME_pricingSource = "pricingSource";
+    public static final int PROP_ID_pricingSource = 102;
+    
 
-    private static int _PROP_ID_BOUND = 25;
+    private static int _PROP_ID_BOUND = 103;
 
     
     /* relation:  */
@@ -146,7 +158,7 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[25];
+    private static final String[] PROP_ID_TO_NAME = new String[103];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -222,6 +234,15 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_discountRate] = PROP_NAME_discountRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_discountRate, PROP_ID_discountRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_discountAmount] = PROP_NAME_discountAmount;
+          PROP_NAME_TO_ID.put(PROP_NAME_discountAmount, PROP_ID_discountAmount);
+      
+          PROP_ID_TO_NAME[PROP_ID_pricingSource] = PROP_NAME_pricingSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_pricingSource, PROP_ID_pricingSource);
+      
     }
 
     
@@ -296,6 +317,15 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 行折扣率(%): DISCOUNT_RATE */
+    private java.math.BigDecimal _discountRate;
+    
+    /* 行折扣金额: DISCOUNT_AMOUNT */
+    private java.math.BigDecimal _discountAmount;
+    
+    /* 取价来源: PRICING_SOURCE */
+    private java.lang.String _pricingSource;
     
 
     public _ErpSalOrderLine(){
@@ -442,6 +472,15 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_discountRate:
+               return getDiscountRate();
+        
+            case PROP_ID_discountAmount:
+               return getDiscountAmount();
+        
+            case PROP_ID_pricingSource:
+               return getPricingSource();
         
            default:
               return super.orm_propValue(propId);
@@ -694,6 +733,36 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_discountRate:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_discountRate));
+               }
+               setDiscountRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_discountAmount:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_discountAmount));
+               }
+               setDiscountAmount(typedValue);
+               break;
+            }
+        
+            case PROP_ID_pricingSource:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_pricingSource));
+               }
+               setPricingSource(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -867,6 +936,27 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_discountRate:{
+               onInitProp(propId);
+               this._discountRate = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_discountAmount:{
+               onInitProp(propId);
+               this._discountAmount = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_pricingSource:{
+               onInitProp(propId);
+               this._pricingSource = (java.lang.String)value;
                
                break;
             }
@@ -1329,6 +1419,63 @@ public class _ErpSalOrderLine extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 行折扣率(%): DISCOUNT_RATE
+     */
+    public final java.math.BigDecimal getDiscountRate(){
+         onPropGet(PROP_ID_discountRate);
+         return _discountRate;
+    }
+
+    /**
+     * 行折扣率(%): DISCOUNT_RATE
+     */
+    public final void setDiscountRate(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_discountRate,value)){
+            this._discountRate = value;
+            internalClearRefs(PROP_ID_discountRate);
+            
+        }
+    }
+    
+    /**
+     * 行折扣金额: DISCOUNT_AMOUNT
+     */
+    public final java.math.BigDecimal getDiscountAmount(){
+         onPropGet(PROP_ID_discountAmount);
+         return _discountAmount;
+    }
+
+    /**
+     * 行折扣金额: DISCOUNT_AMOUNT
+     */
+    public final void setDiscountAmount(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_discountAmount,value)){
+            this._discountAmount = value;
+            internalClearRefs(PROP_ID_discountAmount);
+            
+        }
+    }
+    
+    /**
+     * 取价来源: PRICING_SOURCE
+     */
+    public final java.lang.String getPricingSource(){
+         onPropGet(PROP_ID_pricingSource);
+         return _pricingSource;
+    }
+
+    /**
+     * 取价来源: PRICING_SOURCE
+     */
+    public final void setPricingSource(java.lang.String value){
+        if(onPropSet(PROP_ID_pricingSource,value)){
+            this._pricingSource = value;
+            internalClearRefs(PROP_ID_pricingSource);
             
         }
     }

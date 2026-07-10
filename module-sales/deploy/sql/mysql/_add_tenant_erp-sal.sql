@@ -21,13 +21,19 @@ alter table erp_prj_project add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_bank_account add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_sal_price_list add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_sal_quotation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_sal_contract add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_sal_invoice add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_sal_pricing_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_sal_receipt add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_sal_price_list_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_sal_quotation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -80,6 +86,9 @@ alter table erp_prj_project add primary key (NOP_TENANT_ID, ID);
 alter table erp_md_bank_account drop primary key;
 alter table erp_md_bank_account add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_sal_price_list drop primary key;
+alter table erp_sal_price_list add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_sal_quotation drop primary key;
 alter table erp_sal_quotation add primary key (NOP_TENANT_ID, ID);
 
@@ -89,8 +98,14 @@ alter table erp_sal_contract add primary key (NOP_TENANT_ID, ID);
 alter table erp_sal_invoice drop primary key;
 alter table erp_sal_invoice add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_sal_pricing_rule drop primary key;
+alter table erp_sal_pricing_rule add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_sal_receipt drop primary key;
 alter table erp_sal_receipt add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_sal_price_list_line drop primary key;
+alter table erp_sal_price_list_line add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_sal_quotation_line drop primary key;
 alter table erp_sal_quotation_line add primary key (NOP_TENANT_ID, ID);

@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 促销规则目标
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 行级
+    value: LINE
+    description: 
+  
+  - label: 单级
+    value: ORDER
+    description: 
+  

@@ -17,6 +17,9 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
+  "discountRate": 0.0,
+  "discountAmount": 0.0,
+  "pricingSource": "",
   "quotation": null,
   "material": null,
   "uoM": null

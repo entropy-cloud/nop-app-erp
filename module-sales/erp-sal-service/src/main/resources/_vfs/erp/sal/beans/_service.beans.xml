@@ -5,6 +5,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+    <bean id="app.erp.sal.service.entity.ErpSalPriceListBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalPriceList" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalPriceListBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpSalPriceList"/>
+    </bean>
+
     <bean id="app.erp.sal.service.entity.ErpSalQuotationBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpSalQuotation" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -26,11 +33,27 @@
         <property name="bizObjName" value="ErpSalInvoice"/>
     </bean>
 
+    <bean id="app.erp.sal.service.entity.ErpSalPricingRuleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalPricingRule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalPricingRuleBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSalPricingRule"/>
+    </bean>
+
     <bean id="app.erp.sal.service.entity.ErpSalReceiptBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpSalReceipt" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.sal.biz.IErpSalReceiptBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpSalReceipt"/>
+    </bean>
+
+    <bean id="app.erp.sal.service.entity.ErpSalPriceListLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpSalPriceListLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.sal.biz.IErpSalPriceListLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpSalPriceListLine"/>
     </bean>
 
     <bean id="app.erp.sal.service.entity.ErpSalQuotationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

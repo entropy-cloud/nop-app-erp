@@ -100,6 +100,27 @@ CREATE TABLE erp_md_bank_account(
   constraint PK_erp_md_bank_account primary key (id)
 );
 
+CREATE TABLE erp_sal_price_list(
+  id INT8 NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  currency_id INT8  ,
+  customer_group_code VARCHAR(100)  ,
+  partner_id INT8  ,
+  valid_from DATE  ,
+  valid_to DATE  ,
+  priority INT4 default 100   ,
+  is_active BOOLEAN default true   ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_sal_price_list primary key (id)
+);
+
 CREATE TABLE erp_sal_quotation(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -191,6 +212,39 @@ CREATE TABLE erp_sal_invoice(
   constraint PK_erp_sal_invoice primary key (id)
 );
 
+CREATE TABLE erp_sal_pricing_rule(
+  id INT8 NOT NULL ,
+  rule_name VARCHAR(200) NOT NULL ,
+  rule_code VARCHAR(50) NOT NULL ,
+  rule_type VARCHAR(20) NOT NULL ,
+  target_type VARCHAR(20) NOT NULL ,
+  material_id INT8  ,
+  material_category_id INT8  ,
+  customer_group_code VARCHAR(100)  ,
+  partner_id INT8  ,
+  min_order_amount NUMERIC(20,4)  ,
+  discount_percent NUMERIC(10,4)  ,
+  discount_amount NUMERIC(20,4)  ,
+  gift_material_id INT8  ,
+  gift_sku_id INT8  ,
+  gift_quantity NUMERIC(20,4)  ,
+  price_override NUMERIC(20,4)  ,
+  currency_id INT8  ,
+  priority INT4 default 100   ,
+  stackable BOOLEAN default false   ,
+  valid_from TIMESTAMP  ,
+  valid_to TIMESTAMP  ,
+  is_active BOOLEAN default true   ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_sal_pricing_rule primary key (id)
+);
+
 CREATE TABLE erp_sal_receipt(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -225,6 +279,27 @@ CREATE TABLE erp_sal_receipt(
   constraint PK_erp_sal_receipt primary key (id)
 );
 
+CREATE TABLE erp_sal_price_list_line(
+  id INT8 NOT NULL ,
+  price_list_id INT8 NOT NULL ,
+  material_id INT8  ,
+  sku_id INT8  ,
+  uom_id INT8  ,
+  unit_price NUMERIC(20,4) NOT NULL ,
+  min_quantity NUMERIC(20,4) default 0   ,
+  max_quantity NUMERIC(20,4)  ,
+  valid_from DATE  ,
+  valid_to DATE  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_sal_price_list_line primary key (id)
+);
+
 CREATE TABLE erp_sal_quotation_line(
   id INT8 NOT NULL ,
   quotation_id INT8 NOT NULL ,
@@ -244,6 +319,9 @@ CREATE TABLE erp_sal_quotation_line(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  discount_rate NUMERIC(10,4)  ,
+  discount_amount NUMERIC(20,4) default 0   ,
+  pricing_source VARCHAR(50)  ,
   constraint PK_erp_sal_quotation_line primary key (id)
 );
 
@@ -327,6 +405,9 @@ CREATE TABLE erp_sal_order_line(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  discount_rate NUMERIC(10,4)  ,
+  discount_amount NUMERIC(20,4) default 0   ,
+  pricing_source VARCHAR(50)  ,
   constraint PK_erp_sal_order_line primary key (id)
 );
 
@@ -488,6 +569,42 @@ CREATE TABLE erp_sal_return_line(
                 
       COMMENT ON TABLE erp_md_bank_account IS '银行账户';
                 
+      COMMENT ON TABLE erp_sal_price_list IS '销售价格清单';
+                
+      COMMENT ON COLUMN erp_sal_price_list.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.name IS '名称';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.code IS '编码';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.customer_group_code IS '客户组';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.partner_id IS '指定客户';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.valid_from IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.valid_to IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.priority IS '优先级';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.is_active IS '启用';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_sal_price_list.remark IS '备注';
+                    
       COMMENT ON TABLE erp_sal_quotation IS '销售报价单';
                 
       COMMENT ON COLUMN erp_sal_quotation.id IS 'ID';
@@ -652,6 +769,66 @@ CREATE TABLE erp_sal_return_line(
                     
       COMMENT ON COLUMN erp_sal_invoice.remark IS '备注';
                     
+      COMMENT ON TABLE erp_sal_pricing_rule IS '销售促销规则';
+                
+      COMMENT ON COLUMN erp_sal_pricing_rule.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.rule_name IS '规则名称';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.rule_code IS '规则编码';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.rule_type IS '规则类型';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.target_type IS '目标';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.material_category_id IS '物料分类';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.customer_group_code IS '客户组';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.partner_id IS '指定客户';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.min_order_amount IS '满减门槛';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.discount_percent IS '折扣率(%)';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.discount_amount IS '折扣金额';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.gift_material_id IS '赠品物料';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.gift_sku_id IS '赠品SKU';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.gift_quantity IS '赠品数量';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.price_override IS '覆盖单价';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.priority IS '优先级';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.stackable IS '可叠加';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.valid_from IS '生效时间';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.valid_to IS '失效时间';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.is_active IS '启用';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_sal_pricing_rule.remark IS '备注';
+                    
       COMMENT ON TABLE erp_sal_receipt IS '收款单';
                 
       COMMENT ON COLUMN erp_sal_receipt.id IS 'ID';
@@ -712,6 +889,42 @@ CREATE TABLE erp_sal_return_line(
                     
       COMMENT ON COLUMN erp_sal_receipt.remark IS '备注';
                     
+      COMMENT ON TABLE erp_sal_price_list_line IS '销售价格清单行';
+                
+      COMMENT ON COLUMN erp_sal_price_list_line.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.price_list_id IS '价格清单ID';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.sku_id IS 'SKU';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.uom_id IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.unit_price IS '单价';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.min_quantity IS '数量下限';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.max_quantity IS '数量上限';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.valid_from IS '生效日期(覆盖头)';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.valid_to IS '失效日期(覆盖头)';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_sal_price_list_line.remark IS '备注';
+                    
       COMMENT ON TABLE erp_sal_quotation_line IS '销售报价单行';
                 
       COMMENT ON COLUMN erp_sal_quotation_line.id IS 'ID';
@@ -749,6 +962,12 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_quotation_line.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_sal_quotation_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_sal_quotation_line.discount_rate IS '行折扣率(%)';
+                    
+      COMMENT ON COLUMN erp_sal_quotation_line.discount_amount IS '行折扣金额';
+                    
+      COMMENT ON COLUMN erp_sal_quotation_line.pricing_source IS '取价来源';
                     
       COMMENT ON TABLE erp_sal_order IS '销售订单';
                 
@@ -897,6 +1116,12 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_order_line.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_sal_order_line.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_sal_order_line.discount_rate IS '行折扣率(%)';
+                    
+      COMMENT ON COLUMN erp_sal_order_line.discount_amount IS '行折扣金额';
+                    
+      COMMENT ON COLUMN erp_sal_order_line.pricing_source IS '取价来源';
                     
       COMMENT ON TABLE erp_sal_delivery IS '销售出库单';
                 

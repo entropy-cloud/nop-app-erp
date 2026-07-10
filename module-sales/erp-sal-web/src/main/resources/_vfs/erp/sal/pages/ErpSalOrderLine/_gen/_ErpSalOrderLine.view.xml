@@ -86,6 +86,15 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--行折扣率(%)-->
+                <col id="discountRate" ui:number="true" sortable="true"/>
+
+                <!--行折扣金额-->
+                <col id="discountAmount" ui:number="true" sortable="true"/>
+
+                <!--取价来源-->
+                <col id="pricingSource" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -105,7 +114,8 @@
  projectId[项目] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] discountRate[行折扣率(%)]
+ discountAmount[行折扣金额] pricingSource[取价来源]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售订单行" i18n-en:title="Add Sales Order Line">
@@ -119,6 +129,8 @@
  amountWithTax[金额(含税)] deliveredQuantity[已出库数量]
  invoicedQuantity[已开票数量] warehouseId[发货仓库]
  projectId[项目] remark[备注]
+ discountRate[行折扣率(%)] discountAmount[行折扣金额]
+ pricingSource[取价来源] 
 </layout>
         </form>
         <form id="edit" editMode="edit" title="编辑-销售订单行" i18n-en:title="Edit Sales Order Line">
@@ -132,7 +144,8 @@
  amountWithTax[金额(含税)] deliveredQuantity[已出库数量]
  invoicedQuantity[已开票数量] warehouseId[发货仓库]
  projectId[项目] delVersion[逻辑删除版本]
- remark[备注] 
+ remark[备注] discountRate[行折扣率(%)]
+ discountAmount[行折扣金额] pricingSource[取价来源]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

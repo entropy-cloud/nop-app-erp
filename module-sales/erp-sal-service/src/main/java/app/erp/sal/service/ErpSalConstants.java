@@ -75,4 +75,16 @@ public interface ErpSalConstants {
     /** 应收超期预警金额（openAmount > 此值触发）；默认 0=关闭预警。 */
     String CONFIG_DASH_SAL_AR_OVERDUE_AMOUNT = "erp-dash.sal-ar-overdue-amount";
     java.math.BigDecimal DEFAULT_DASH_SAL_AR_OVERDUE_AMOUNT = java.math.BigDecimal.ZERO;
+
+    // ---- 定价引擎配置项（UC-SAL-11）----
+    /** 订单保存时是否自动应用促销规则（默认 true）。 */
+    String CONFIG_AUTO_PRICING_ON_SAVE = "erp-sal.auto-pricing-on-save";
+    /** 促销规则默认是否可叠加（默认 false）。 */
+    String CONFIG_PRICING_RULE_STACK_DEFAULT = "erp-sal.pricing-rule-stack-default";
+
+    // ---- 取价来源标记（pricingSource 字段权威编码，UC-SAL-11）----
+    String PRICING_SOURCE_MANUAL = "MANUAL";
+    String PRICING_SOURCE_PRICE_LIST = "PRICE_LIST";
+    String PRICING_SOURCE_PROMOTION = "PROMOTION";
+    String PRICING_SOURCE_SKU_DEFAULT = "SKU_DEFAULT";
 }

@@ -115,6 +115,18 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
+        <prop name="discountRate" displayName="行折扣率(%)" propId="100" i18n-en:displayName="Discount Rate"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="discountRate" type="java.math.BigDecimal" precision="10" scale="4"/>
+        </prop>
+        <prop name="discountAmount" displayName="行折扣金额" propId="101" i18n-en:displayName="Discount Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="pricingSource" displayName="取价来源" propId="102" i18n-en:displayName="Pricing Source" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
         <prop name="order" i18n-en:displayName="Order" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orderId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
               lazy="true">

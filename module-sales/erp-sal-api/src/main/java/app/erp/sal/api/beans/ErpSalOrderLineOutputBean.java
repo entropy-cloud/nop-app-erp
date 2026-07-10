@@ -349,6 +349,48 @@
         }
 
 
+        private java.math.BigDecimal _discountRate;
+
+    
+        @PropMeta(propId=100)
+    
+        public java.math.BigDecimal getDiscountRate(){
+            return _discountRate;
+        }
+
+        public void setDiscountRate(java.math.BigDecimal value){
+            this._discountRate = value;
+        }
+
+
+        private java.math.BigDecimal _discountAmount;
+
+    
+        @PropMeta(propId=101)
+    
+        public java.math.BigDecimal getDiscountAmount(){
+            return _discountAmount;
+        }
+
+        public void setDiscountAmount(java.math.BigDecimal value){
+            this._discountAmount = value;
+        }
+
+
+        private String _pricingSource;
+
+    
+        @PropMeta(propId=102)
+    
+        public String getPricingSource(){
+            return _pricingSource;
+        }
+
+        public void setPricingSource(String value){
+            this._pricingSource = value;
+        }
+
+
         private Map<String,Object> _order;
 
         public Map<String,Object> getOrder(){

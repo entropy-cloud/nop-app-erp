@@ -84,6 +84,20 @@
             <option code="VAT_NORMAL" label="增值税普通" value="VAT_NORMAL" i18n-en:label='VAT General'/>
             <option code="RECEIPT" label="收据" value="RECEIPT" i18n-en:label='Receipt Note'/>
         </dict>
+        <dict label="价格清单状态" name="erp-sal/price-list-status" valueType="string" i18n-en:label='Price List Status'>
+            <option code="ACTIVE" label="启用" value="ACTIVE" i18n-en:label='Active'/>
+            <option code="INACTIVE" label="停用" value="INACTIVE" i18n-en:label='Inactive'/>
+        </dict>
+        <dict label="促销规则类型" name="erp-sal/pricing-rule-type" valueType="string" i18n-en:label='Pricing Rule Type'>
+            <option code="PERCENT_DISCOUNT" label="百分比折扣" value="PERCENT_DISCOUNT" i18n-en:label='Percent Discount'/>
+            <option code="AMOUNT_OFF" label="满减" value="AMOUNT_OFF" i18n-en:label='Amount Off'/>
+            <option code="GIFT" label="买赠" value="GIFT" i18n-en:label='Gift'/>
+            <option code="PRICE_OVERRIDE" label="价格覆盖" value="PRICE_OVERRIDE" i18n-en:label='Price Override'/>
+        </dict>
+        <dict label="促销规则目标" name="erp-sal/pricing-target" valueType="string" i18n-en:label='Pricing Target'>
+            <option code="LINE" label="行级" value="LINE" i18n-en:label='Line'/>
+            <option code="ORDER" label="单级" value="ORDER" i18n-en:label='Order'/>
+        </dict>
     </dicts>
 
     <entities>
@@ -172,6 +186,9 @@
                 <column name="taxAmount" code="TAX_AMOUNT" displayName="税额" propId="9" domain="taxAmount" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Tax Amount' />
                 <column name="amount" code="AMOUNT" displayName="金额(不含税)" propId="10" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="amountWithTax" code="AMOUNT_WITH_TAX" displayName="金额(含税)" propId="11" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount With Tax' />
+                <column name="discountRate" code="DISCOUNT_RATE" displayName="行折扣率(%)" propId="100" domain="discountRate" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Discount Rate' />
+                <column name="discountAmount" code="DISCOUNT_AMOUNT" displayName="行折扣金额" propId="101" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Discount Amount' />
+                <column name="pricingSource" code="PRICING_SOURCE" displayName="取价来源" propId="102" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Pricing Source' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="14" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
@@ -391,6 +408,9 @@
                 <column name="invoicedQuantity" code="INVOICED_QUANTITY" displayName="已开票数量" propId="15" domain="quantity" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Invoiced Quantity' />
                 <column name="warehouseId" code="WAREHOUSE_ID" displayName="发货仓库" propId="16" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="projectId" code="PROJECT_ID" displayName="项目" propId="17" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Project' />
+                <column name="discountRate" code="DISCOUNT_RATE" displayName="行折扣率(%)" propId="100" domain="discountRate" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Discount Rate' />
+                <column name="discountAmount" code="DISCOUNT_AMOUNT" displayName="行折扣金额" propId="101" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Discount Amount' />
+                <column name="pricingSource" code="PRICING_SOURCE" displayName="取价来源" propId="102" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Pricing Source' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
                 <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
@@ -976,6 +996,183 @@
                 </index>
                 <index name="IDX_SAL_RETURN_LINE_UOM_ID" unique="false">
                     <column name="uoMId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 销售价格清单头（UC-SAL-11 定价引擎） -->
+        <entity className="app.erp.sal.dao.entity.ErpSalPriceList"
+                displayName="销售价格清单" ext:icon="tag" i18n-en:displayName="Sales Price List" name="app.erp.sal.dao.entity.ErpSalPriceList"
+                tableName="erp_sal_price_list" tagSet="gid,erp.sales" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="name" code="NAME" displayName="名称" propId="2" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true" i18n-en:displayName='Name' />
+                <column name="code" code="CODE" displayName="编码" propId="3" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Code' />
+                <column name="currencyId" code="CURRENCY_ID" displayName="币种" propId="4" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="customerGroupCode" code="CUSTOMER_GROUP_CODE" displayName="客户组" propId="5" stdSqlType="VARCHAR" precision="100" stdDataType="string" i18n-en:displayName='Customer Group' />
+                <column name="partnerId" code="PARTNER_ID" displayName="指定客户" propId="6" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="validFrom" code="VALID_FROM" displayName="生效日期" propId="7" stdSqlType="DATE" stdDataType="date" i18n-en:displayName='Valid From' />
+                <column name="validTo" code="VALID_TO" displayName="失效日期" propId="8" stdSqlType="DATE" stdDataType="date" i18n-en:displayName='Valid To' />
+                <column name="priority" code="PRIORITY" displayName="优先级" propId="9" stdSqlType="INTEGER" stdDataType="int" defaultValue="100" i18n-en:displayName='Priority' />
+                <column name="isActive" code="IS_ACTIVE" displayName="启用" propId="10" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="true" i18n-en:displayName='Is Active' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="12" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="13" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+            </columns>
+            <relations>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'>
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'>
+                    <join><on leftProp="partnerId" rightProp="id"/></join>
+                </to-one>
+                <to-many name="lines" refEntityName="app.erp.sal.dao.entity.ErpSalPriceListLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="50">
+                    <join><on leftProp="id" rightProp="priceListId"/></join>
+                </to-many>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_SAL_PRICE_LIST_CODE" columns="code"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_PRICE_LIST_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_SAL_PRICE_LIST_CUSTOMER_GROUP" unique="false">
+                    <column name="customerGroupCode"/>
+                </index>
+                <index name="IDX_SAL_PRICE_LIST_CURRENCY_ID" unique="false">
+                    <column name="currencyId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 销售价格清单行 -->
+        <entity className="app.erp.sal.dao.entity.ErpSalPriceListLine"
+                displayName="销售价格清单行" ext:icon="list" i18n-en:displayName="Sales Price List Line" name="app.erp.sal.dao.entity.ErpSalPriceListLine"
+                tableName="erp_sal_price_list_line" tagSet="gid,erp.sales" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="priceListId" code="PRICE_LIST_ID" displayName="价格清单ID" propId="2" stdSqlType="BIGINT" stdDataType="long" mandatory="true" i18n-en:displayName='Price List' />
+                <column name="materialId" code="MATERIAL_ID" displayName="物料" propId="3" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="skuId" code="SKU_ID" displayName="SKU" propId="4" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='SKU' />
+                <column name="uoMId" code="UOM_ID" displayName="计量单位" propId="5" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='UoM' />
+                <column name="unitPrice" code="UNIT_PRICE" displayName="单价" propId="6" domain="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4" mandatory="true" i18n-en:displayName='Unit Price' />
+                <column name="minQuantity" code="MIN_QUANTITY" displayName="数量下限" propId="7" domain="quantity" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Min Quantity' />
+                <column name="maxQuantity" code="MAX_QUANTITY" displayName="数量上限" propId="8" domain="quantity" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Max Quantity' />
+                <column name="validFrom" code="VALID_FROM" displayName="生效日期(覆盖头)" propId="9" stdSqlType="DATE" stdDataType="date" i18n-en:displayName='Valid From' />
+                <column name="validTo" code="VALID_TO" displayName="失效日期(覆盖头)" propId="10" stdSqlType="DATE" stdDataType="date" i18n-en:displayName='Valid To' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="12" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="13" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="remark" code="REMARK" displayName="备注" propId="17" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+            </columns>
+            <relations>
+                <to-one name="priceList" refEntityName="app.erp.sal.dao.entity.ErpSalPriceList" tagSet="pub" i18n-en:displayName='Price List'>
+                    <join><on leftProp="priceListId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'>
+                    <join><on leftProp="materialId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="sku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub" i18n-en:displayName='Sku'>
+                    <join><on leftProp="skuId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="uoM" refEntityName="app.erp.md.dao.entity.ErpMdUoM" tagSet="pub" i18n-en:displayName='Uo M'>
+                    <join><on leftProp="uoMId" rightProp="id"/></join>
+                </to-one>
+            </relations>
+            <indexes>
+                <index name="IDX_SAL_PRICE_LIST_LINE_PRICE_LIST_ID" unique="false">
+                    <column name="priceListId"/>
+                </index>
+                <index name="IDX_SAL_PRICE_LIST_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_PRICE_LIST_LINE_SKU_ID" unique="false">
+                    <column name="skuId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 销售促销规则（UC-SAL-11 定价引擎） -->
+        <entity className="app.erp.sal.dao.entity.ErpSalPricingRule"
+                displayName="销售促销规则" ext:icon="percent" i18n-en:displayName="Sales Pricing Rule" name="app.erp.sal.dao.entity.ErpSalPricingRule"
+                tableName="erp_sal_pricing_rule" tagSet="gid,erp.sales" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="ruleName" code="RULE_NAME" displayName="规则名称" propId="2" domain="name" stdSqlType="VARCHAR" precision="200" mandatory="true" i18n-en:displayName='Rule Name' />
+                <column name="ruleCode" code="RULE_CODE" displayName="规则编码" propId="3" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Rule Code' />
+                <column name="ruleType" code="RULE_TYPE" displayName="规则类型" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-sal/pricing-rule-type" i18n-en:displayName='Rule Type' />
+                <column name="targetType" code="TARGET_TYPE" displayName="目标" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-sal/pricing-target" i18n-en:displayName='Target Type' />
+                <column name="materialId" code="MATERIAL_ID" displayName="物料" propId="6" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="materialCategoryId" code="MATERIAL_CATEGORY_ID" displayName="物料分类" propId="7" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Material Category' />
+                <column name="customerGroupCode" code="CUSTOMER_GROUP_CODE" displayName="客户组" propId="8" stdSqlType="VARCHAR" precision="100" stdDataType="string" i18n-en:displayName='Customer Group' />
+                <column name="partnerId" code="PARTNER_ID" displayName="指定客户" propId="9" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="minOrderAmount" code="MIN_ORDER_AMOUNT" displayName="满减门槛" propId="10" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Min Order Amount' />
+                <column name="discountPercent" code="DISCOUNT_PERCENT" displayName="折扣率(%)" propId="11" domain="discountRate" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Discount Percent' />
+                <column name="discountAmount" code="DISCOUNT_AMOUNT" displayName="折扣金额" propId="12" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Discount Amount' />
+                <column name="giftMaterialId" code="GIFT_MATERIAL_ID" displayName="赠品物料" propId="13" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Gift Material' />
+                <column name="giftSkuId" code="GIFT_SKU_ID" displayName="赠品SKU" propId="14" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Gift SKU' />
+                <column name="giftQuantity" code="GIFT_QUANTITY" displayName="赠品数量" propId="15" domain="quantity" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Gift Quantity' />
+                <column name="priceOverride" code="PRICE_OVERRIDE" displayName="覆盖单价" propId="16" domain="unitPrice" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Price Override' />
+                <column name="currencyId" code="CURRENCY_ID" displayName="币种" propId="17" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="priority" code="PRIORITY" displayName="优先级" propId="18" stdSqlType="INTEGER" stdDataType="int" defaultValue="100" i18n-en:displayName='Priority' />
+                <column name="stackable" code="STACKABLE" displayName="可叠加" propId="19" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Stackable' />
+                <column name="validFrom" code="VALID_FROM" displayName="生效时间" propId="20" stdSqlType="TIMESTAMP" stdDataType="timestamp" i18n-en:displayName='Valid From' />
+                <column name="validTo" code="VALID_TO" displayName="失效时间" propId="21" stdSqlType="TIMESTAMP" stdDataType="timestamp" i18n-en:displayName='Valid To' />
+                <column name="isActive" code="IS_ACTIVE" displayName="启用" propId="22" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="true" i18n-en:displayName='Is Active' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="23" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="24" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="25" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="26" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="27" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="28" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="remark" code="REMARK" displayName="备注" propId="29" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+            </columns>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'>
+                    <join><on leftProp="materialId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="giftMaterial" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Gift Material'>
+                    <join><on leftProp="giftMaterialId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="giftSku" refEntityName="app.erp.md.dao.entity.ErpMdMaterialSku" tagSet="pub" i18n-en:displayName='Gift Sku'>
+                    <join><on leftProp="giftSkuId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'>
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'>
+                    <join><on leftProp="partnerId" rightProp="id"/></join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_SAL_PRICING_RULE_CODE" columns="ruleCode"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_SAL_PRICING_RULE_RULE_TYPE" unique="false">
+                    <column name="ruleType"/>
+                </index>
+                <index name="IDX_SAL_PRICING_RULE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_SAL_PRICING_RULE_CUSTOMER_GROUP" unique="false">
+                    <column name="customerGroupCode"/>
                 </index>
             </indexes>
         </entity>

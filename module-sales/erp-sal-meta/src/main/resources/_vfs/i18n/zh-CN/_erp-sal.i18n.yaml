@@ -7,6 +7,9 @@ entity:
     ErpSalInvoiceLine: 销售发票行
     ErpSalOrder: 销售订单
     ErpSalOrderLine: 销售订单行
+    ErpSalPriceList: 销售价格清单
+    ErpSalPriceListLine: 销售价格清单行
+    ErpSalPricingRule: 销售促销规则
     ErpSalQuotation: 销售报价单
     ErpSalQuotationLine: 销售报价单行
     ErpSalReceipt: 收款单
@@ -229,6 +232,8 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       deliveredQuantity: 已出库数量
+      discountAmount: 行折扣金额
+      discountRate: 行折扣率(%)
       id: ID
       invoicedQuantity: 已开票数量
       lineNo: 行号
@@ -236,6 +241,7 @@ prop:
       materialId: 物料
       order: null
       orderId: 订单ID
+      pricingSource: 取价来源
       project: null
       projectId: 项目
       quantity: 数量
@@ -254,6 +260,86 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 发货仓库
+    ErpSalPriceList:
+      code: 编码
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      customerGroupCode: 客户组
+      delVersion: 逻辑删除版本
+      id: ID
+      isActive: 启用
+      lines: null
+      name: 名称
+      partner: null
+      partnerId: 指定客户
+      priority: 优先级
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      validFrom: 生效日期
+      validTo: 失效日期
+      version: 数据版本
+    ErpSalPriceListLine:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      material: null
+      materialId: 物料
+      maxQuantity: 数量上限
+      minQuantity: 数量下限
+      priceList: null
+      priceListId: 价格清单ID
+      remark: 备注
+      sku: null
+      skuId: SKU
+      unitPrice: 单价
+      uoM: null
+      uoMId: 计量单位
+      updateTime: 修改时间
+      updatedBy: 修改人
+      validFrom: 生效日期(覆盖头)
+      validTo: 失效日期(覆盖头)
+      version: 数据版本
+    ErpSalPricingRule:
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      customerGroupCode: 客户组
+      delVersion: 逻辑删除版本
+      discountAmount: 折扣金额
+      discountPercent: 折扣率(%)
+      giftMaterial: null
+      giftMaterialId: 赠品物料
+      giftQuantity: 赠品数量
+      giftSku: null
+      giftSkuId: 赠品SKU
+      id: ID
+      isActive: 启用
+      material: null
+      materialCategoryId: 物料分类
+      materialId: 物料
+      minOrderAmount: 满减门槛
+      partner: null
+      partnerId: 指定客户
+      priceOverride: 覆盖单价
+      priority: 优先级
+      remark: 备注
+      ruleCode: 规则编码
+      ruleName: 规则名称
+      ruleType: 规则类型
+      ruleType_label: 规则类型
+      stackable: 可叠加
+      targetType: 目标
+      targetType_label: 目标
+      updateTime: 修改时间
+      updatedBy: 修改人
+      validFrom: 生效时间
+      validTo: 失效时间
+      version: 数据版本
     ErpSalQuotation:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
@@ -291,10 +377,13 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
+      discountAmount: 行折扣金额
+      discountRate: 行折扣率(%)
       id: ID
       lineNo: 行号
       material: null
       materialId: 物料
+      pricingSource: 取价来源
       quantity: 数量
       quotation: null
       quotationId: 报价单ID

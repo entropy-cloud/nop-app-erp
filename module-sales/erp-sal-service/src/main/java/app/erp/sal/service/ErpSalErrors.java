@@ -203,4 +203,20 @@ public interface ErpSalErrors {
     ErrorCode ERR_DELIVERY_INSPECTION_BLOCKED = ErrorCode.define("erp.err.sal.delivery-inspection-blocked",
             "出库单 {deliveryCode} 属强制质检类型，关联质检单未合格/让步，审核暂挂待质检结论",
             ARG_DELIVERY_CODE);
+
+    // ---- 定价引擎错误码（UC-SAL-11） ----
+
+    String ARG_RULE_CODE = "ruleCode";
+    String ARG_RULE_NAME = "ruleName";
+    String ARG_PRICE_LIST_CODE = "priceListCode";
+
+    /** 多条同优先级促销规则冲突。 */
+    ErrorCode ERR_PRICING_RULE_CONFLICT = ErrorCode.define("erp.err.sal.pricing-rule-conflict",
+            "促销规则 {ruleCode} 与同优先级规则冲突，无法自动裁决",
+            ARG_RULE_CODE, ARG_RULE_NAME);
+
+    /** 引用的价格清单已过期。 */
+    ErrorCode ERR_PRICE_LIST_EXPIRED = ErrorCode.define("erp.err.sal.price-list-expired",
+            "价格清单 {priceListCode} 已过期，不可引用",
+            ARG_PRICE_LIST_CODE);
 }

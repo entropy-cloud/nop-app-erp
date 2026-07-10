@@ -84,4 +84,19 @@
     <!-- 销售看板聚合入口（plan 2026-07-06-0935-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate/IErpFinArApItemBiz，
          经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findCustomerTopN/findArOverdueAlert。 -->
     <bean id="app.erp.sal.service.dashboard.ErpSalDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- UC-SAL-11 定价引擎：客户价格清单解析器（实现 IErpMdCustomerPriceResolver SPI，由 master-data 注入） -->
+    <bean id="app.erp.sal.service.support.ErpSalCustomerPriceResolver"
+          class="app.erp.sal.service.support.ErpSalCustomerPriceResolver">
+        <property name="daoProvider">
+            <ioc:inject type="io.nop.dao.api.IDaoProvider"/>
+        </property>
+        <property name="mdPartnerBiz">
+            <ioc:inject type="app.erp.md.biz.IErpMdPartnerBiz"/>
+        </property>
+    </bean>
+
+    <!-- UC-SAL-11 定价引擎：促销规则引擎（纯函数式，无 IoC 状态） -->
+    <bean id="app.erp.sal.service.support.ErpSalPricingRuleEngine"
+          class="app.erp.sal.service.support.ErpSalPricingRuleEngine"/>
 </beans>

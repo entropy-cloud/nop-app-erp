@@ -20,6 +20,9 @@ import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
@@ -34,6 +37,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpSalOrderProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpSalOrderProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -69,6 +74,7 @@ public class ErpSalOrderProcessor {
         validateNotCancelled(order, context);
         validateTransitionForApprove(order, context);
         validateBusinessRulesForApprove(order, context);
+        auditPricingSourceDistribution(order, context);
         doApprove(order, context);
         return order;
     }
@@ -240,6 +246,32 @@ public class ErpSalOrderProcessor {
             throw new NopException(ErpSalErrors.ERR_PARTNER_INACTIVE)
                     .param(ErpSalErrors.ARG_CUSTOMER_ID, order.getCustomerId());
         }
+    }
+
+    /**
+     * UC-SAL-11：审核时审计 pricingSource 分布（不重取价，仅记录日志用于审计追踪）。
+     */
+    protected void auditPricingSourceDistribution(ErpSalOrder order, IServiceContext context) {
+        List<ErpSalOrderLine> lines = loadLines(order.getId());
+        int manual = 0, priceList = 0, promotion = 0, skuDefault = 0, unknown = 0;
+        for (ErpSalOrderLine line : lines) {
+            String src = line.getPricingSource();
+            if (src == null || src.isEmpty()) {
+                unknown++;
+            } else if (Objects.equals(src, ErpSalConstants.PRICING_SOURCE_MANUAL)) {
+                manual++;
+            } else if (Objects.equals(src, ErpSalConstants.PRICING_SOURCE_PRICE_LIST)) {
+                priceList++;
+            } else if (Objects.equals(src, ErpSalConstants.PRICING_SOURCE_PROMOTION)) {
+                promotion++;
+            } else if (Objects.equals(src, ErpSalConstants.PRICING_SOURCE_SKU_DEFAULT)) {
+                skuDefault++;
+            } else {
+                unknown++;
+            }
+        }
+        LOG.debug("orderCode={} pricingSourceAudit: manual={} priceList={} promotion={} skuDefault={} unknown={}",
+                order.getCode(), manual, priceList, promotion, skuDefault, unknown);
     }
 
     protected List<ErpSalOrderLine> loadLines(Long orderId) {

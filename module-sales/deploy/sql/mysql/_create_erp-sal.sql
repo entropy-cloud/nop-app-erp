@@ -100,6 +100,27 @@ CREATE TABLE erp_md_bank_account(
   constraint PK_erp_md_bank_account primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_sal_price_list(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  NAME VARCHAR(200) NOT NULL    COMMENT '名称',
+  CODE VARCHAR(50) NOT NULL    COMMENT '编码',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  CUSTOMER_GROUP_CODE VARCHAR(100) NULL    COMMENT '客户组',
+  PARTNER_ID BIGINT NULL    COMMENT '指定客户',
+  VALID_FROM DATE NULL    COMMENT '生效日期',
+  VALID_TO DATE NULL    COMMENT '失效日期',
+  PRIORITY INTEGER default 100  NULL    COMMENT '优先级',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '启用',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_sal_price_list primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_sal_quotation(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
@@ -191,6 +212,39 @@ CREATE TABLE erp_sal_invoice(
   constraint PK_erp_sal_invoice primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_sal_pricing_rule(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  RULE_NAME VARCHAR(200) NOT NULL    COMMENT '规则名称',
+  RULE_CODE VARCHAR(50) NOT NULL    COMMENT '规则编码',
+  RULE_TYPE VARCHAR(20) NOT NULL    COMMENT '规则类型',
+  TARGET_TYPE VARCHAR(20) NOT NULL    COMMENT '目标',
+  MATERIAL_ID BIGINT NULL    COMMENT '物料',
+  MATERIAL_CATEGORY_ID BIGINT NULL    COMMENT '物料分类',
+  CUSTOMER_GROUP_CODE VARCHAR(100) NULL    COMMENT '客户组',
+  PARTNER_ID BIGINT NULL    COMMENT '指定客户',
+  MIN_ORDER_AMOUNT DECIMAL(20,4) NULL    COMMENT '满减门槛',
+  DISCOUNT_PERCENT DECIMAL(10,4) NULL    COMMENT '折扣率(%)',
+  DISCOUNT_AMOUNT DECIMAL(20,4) NULL    COMMENT '折扣金额',
+  GIFT_MATERIAL_ID BIGINT NULL    COMMENT '赠品物料',
+  GIFT_SKU_ID BIGINT NULL    COMMENT '赠品SKU',
+  GIFT_QUANTITY DECIMAL(20,4) NULL    COMMENT '赠品数量',
+  PRICE_OVERRIDE DECIMAL(20,4) NULL    COMMENT '覆盖单价',
+  CURRENCY_ID BIGINT NULL    COMMENT '币种',
+  PRIORITY INTEGER default 100  NULL    COMMENT '优先级',
+  STACKABLE BOOLEAN default 0  NULL    COMMENT '可叠加',
+  VALID_FROM DATETIME(3) NULL    COMMENT '生效时间',
+  VALID_TO DATETIME(3) NULL    COMMENT '失效时间',
+  IS_ACTIVE BOOLEAN default 1  NULL    COMMENT '启用',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_sal_pricing_rule primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_sal_receipt(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
@@ -225,6 +279,27 @@ CREATE TABLE erp_sal_receipt(
   constraint PK_erp_sal_receipt primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_sal_price_list_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  PRICE_LIST_ID BIGINT NOT NULL    COMMENT '价格清单ID',
+  MATERIAL_ID BIGINT NULL    COMMENT '物料',
+  SKU_ID BIGINT NULL    COMMENT 'SKU',
+  UOM_ID BIGINT NULL    COMMENT '计量单位',
+  UNIT_PRICE DECIMAL(20,4) NOT NULL    COMMENT '单价',
+  MIN_QUANTITY DECIMAL(20,4) default 0  NULL    COMMENT '数量下限',
+  MAX_QUANTITY DECIMAL(20,4) NULL    COMMENT '数量上限',
+  VALID_FROM DATE NULL    COMMENT '生效日期(覆盖头)',
+  VALID_TO DATE NULL    COMMENT '失效日期(覆盖头)',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_sal_price_list_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_sal_quotation_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   QUOTATION_ID BIGINT NOT NULL    COMMENT '报价单ID',
@@ -244,6 +319,9 @@ CREATE TABLE erp_sal_quotation_line(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DISCOUNT_RATE DECIMAL(10,4) NULL    COMMENT '行折扣率(%)',
+  DISCOUNT_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '行折扣金额',
+  PRICING_SOURCE VARCHAR(50) NULL    COMMENT '取价来源',
   constraint PK_erp_sal_quotation_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -327,6 +405,9 @@ CREATE TABLE erp_sal_order_line(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DISCOUNT_RATE DECIMAL(10,4) NULL    COMMENT '行折扣率(%)',
+  DISCOUNT_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '行折扣金额',
+  PRICING_SOURCE VARCHAR(50) NULL    COMMENT '取价来源',
   constraint PK_erp_sal_order_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -488,13 +569,19 @@ CREATE TABLE erp_sal_return_line(
                 
    ALTER TABLE erp_md_bank_account COMMENT '银行账户';
                 
+   ALTER TABLE erp_sal_price_list COMMENT '销售价格清单';
+                
    ALTER TABLE erp_sal_quotation COMMENT '销售报价单';
                 
    ALTER TABLE erp_sal_contract COMMENT '销售合同';
                 
    ALTER TABLE erp_sal_invoice COMMENT '销售发票';
                 
+   ALTER TABLE erp_sal_pricing_rule COMMENT '销售促销规则';
+                
    ALTER TABLE erp_sal_receipt COMMENT '收款单';
+                
+   ALTER TABLE erp_sal_price_list_line COMMENT '销售价格清单行';
                 
    ALTER TABLE erp_sal_quotation_line COMMENT '销售报价单行';
                 

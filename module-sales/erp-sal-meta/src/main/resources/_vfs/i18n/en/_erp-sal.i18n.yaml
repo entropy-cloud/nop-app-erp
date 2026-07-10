@@ -7,6 +7,9 @@ entity:
     ErpSalInvoiceLine: Sales Invoice Line
     ErpSalOrder: Sales Order
     ErpSalOrderLine: Sales Order Line
+    ErpSalPriceList: Sales Price List
+    ErpSalPriceListLine: Sales Price List Line
+    ErpSalPricingRule: Sales Pricing Rule
     ErpSalQuotation: Sales Quotation
     ErpSalQuotationLine: Sales Quotation Line
     ErpSalReceipt: Receipt
@@ -247,6 +250,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      discountRate: Discount Rate
+      discountAmount: Discount Amount
+      pricingSource: Pricing Source
       order: Order
       material: Material
       sku: Sku
@@ -254,6 +260,86 @@ prop:
       taxRateMd: Tax Rate Md
       warehouse: Warehouse
       project: Project
+    ErpSalPriceList:
+      id: ID
+      name: Name
+      code: Code
+      currencyId: Currency
+      customerGroupCode: Customer Group
+      partnerId: Partner
+      validFrom: Valid From
+      validTo: Valid To
+      priority: Priority
+      isActive: Is Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      currency: Currency
+      partner: Partner
+      lines: Lines
+    ErpSalPriceListLine:
+      id: ID
+      priceListId: Price List
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      unitPrice: Unit Price
+      minQuantity: Min Quantity
+      maxQuantity: Max Quantity
+      validFrom: Valid From
+      validTo: Valid To
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      priceList: Price List
+      material: Material
+      sku: Sku
+      uoM: Uo M
+    ErpSalPricingRule:
+      id: ID
+      ruleName: Rule Name
+      ruleCode: Rule Code
+      ruleType: Rule Type
+      ruleType_label: null
+      targetType: Target Type
+      targetType_label: null
+      materialId: Material
+      materialCategoryId: Material Category
+      customerGroupCode: Customer Group
+      partnerId: Partner
+      minOrderAmount: Min Order Amount
+      discountPercent: Discount Percent
+      discountAmount: Discount Amount
+      giftMaterialId: Gift Material
+      giftSkuId: Gift SKU
+      giftQuantity: Gift Quantity
+      priceOverride: Price Override
+      currencyId: Currency
+      priority: Priority
+      stackable: Stackable
+      validFrom: Valid From
+      validTo: Valid To
+      isActive: Is Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      material: Material
+      giftMaterial: Gift Material
+      giftSku: Gift Sku
+      currency: Currency
+      partner: Partner
     ErpSalQuotation:
       id: ID
       code: Code
@@ -304,6 +390,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      discountRate: Discount Rate
+      discountAmount: Discount Amount
+      pricingSource: Pricing Source
       quotation: Quotation
       material: Material
       uoM: Uo M
@@ -432,6 +521,9 @@ dict:
     erp-sal/delivery-status: Delivery Status
     erp-sal/biz-type: Sales Doc Type
     erp-sal/invoice-type: Invoice Type
+    erp-sal/price-list-status: Price List Status
+    erp-sal/pricing-rule-type: Pricing Rule Type
+    erp-sal/pricing-target: Pricing Target
 dict.option.label:
   erp-sal/doc-status:
     DRAFT: Draft
@@ -457,3 +549,14 @@ dict.option.label:
     VAT_SPECIAL: VAT Special
     VAT_NORMAL: VAT General
     RECEIPT: Receipt Note
+  erp-sal/price-list-status:
+    ACTIVE: Active
+    INACTIVE: Inactive
+  erp-sal/pricing-rule-type:
+    PERCENT_DISCOUNT: Percent Discount
+    AMOUNT_OFF: Amount Off
+    GIFT: Gift
+    PRICE_OVERRIDE: Price Override
+  erp-sal/pricing-target:
+    LINE: Line
+    ORDER: Order

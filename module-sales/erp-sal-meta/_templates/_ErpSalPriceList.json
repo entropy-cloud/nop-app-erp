@@ -1,0 +1,22 @@
+{
+  "id": 0,
+  "name": "",
+  "code": "",
+  "currencyId": 0,
+  "customerGroupCode": "",
+  "partnerId": 0,
+  "validFrom": "2000-01-01",
+  "validTo": "2000-01-01",
+  "priority": 0,
+  "isActive": false,
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "remark": "",
+  "currency": null,
+  "partner": null,
+  "lines": null
+}

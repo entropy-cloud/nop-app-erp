@@ -5,19 +5,22 @@
     "lineNo": 1,
     "materialId": 4,
     "uoMId": 3,
-    "quantity": null,
     "unitPrice": 100,
-    "taxRate": null,
-    "taxAmount": null,
-    "amount": null,
-    "amountWithTax": null,
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpSalQuotationLine@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpSalQuotationLine@updateTime",
-    "remark": null
+    "discountAmount": 0,
+    "quantity": null,
+    "taxRate": null,
+    "taxAmount": null,
+    "amount": null,
+    "amountWithTax": null,
+    "remark": null,
+    "discountRate": null,
+    "pricingSource": null
   },
   "status": 0
 }

@@ -44,4 +44,10 @@ public interface IErpSalOrderBiz extends ICrudBiz<ErpSalOrder>, IApprovableBiz<E
     void updateDeliveryStatus(@Name("orderId") Long orderId,
                               @Name("deliveryStatus") String deliveryStatus,
                               IServiceContext context);
+
+    /**
+     * UC-SAL-11：对订单应用促销规则引擎，写回订单行折扣/赠品行 + 重算订单头合计。
+     */
+    @BizMutation
+    void applyPricingRules(@Name("orderId") String orderId, IServiceContext context);
 }

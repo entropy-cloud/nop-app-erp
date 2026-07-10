@@ -103,88 +103,130 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpSalQuotation-main" displayName="销售报价单" orderNo="10022"
+                <resource id="ErpSalPriceList-main" displayName="销售价格清单" orderNo="10022"
+                          i18n-en:displayName="Sales Price List" icon="tag" component="AMIS" resourceType="SUBM"
+                          url="/erp/sal/pages/ErpSalPriceList/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpSalPriceList:query" displayName="查询销售价格清单"
+                                  i18n-en:displayName="Query Sales Price List" orderNo="10023" resourceType="FNPT">
+                            <permissions>ErpSalPriceList:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpSalPriceList:mutation" displayName="修改销售价格清单"
+                                  i18n-en:displayName="Modify Sales Price List" orderNo="10024" resourceType="FNPT">
+                            <permissions>ErpSalPriceList:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpSalPriceListLine-main" displayName="销售价格清单行" orderNo="10025"
+                          i18n-en:displayName="Sales Price List Line" icon="list" component="AMIS" resourceType="SUBM"
+                          url="/erp/sal/pages/ErpSalPriceListLine/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpSalPriceListLine:query" displayName="查询销售价格清单行"
+                                  i18n-en:displayName="Query Sales Price List Line" orderNo="10026" resourceType="FNPT">
+                            <permissions>ErpSalPriceListLine:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpSalPriceListLine:mutation" displayName="修改销售价格清单行"
+                                  i18n-en:displayName="Modify Sales Price List Line" orderNo="10027" resourceType="FNPT">
+                            <permissions>ErpSalPriceListLine:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpSalPricingRule-main" displayName="销售促销规则" orderNo="10028"
+                          i18n-en:displayName="Sales Pricing Rule" icon="percent" component="AMIS" resourceType="SUBM"
+                          url="/erp/sal/pages/ErpSalPricingRule/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpSalPricingRule:query" displayName="查询销售促销规则"
+                                  i18n-en:displayName="Query Sales Pricing Rule" orderNo="10029" resourceType="FNPT">
+                            <permissions>ErpSalPricingRule:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpSalPricingRule:mutation" displayName="修改销售促销规则"
+                                  i18n-en:displayName="Modify Sales Pricing Rule" orderNo="10030" resourceType="FNPT">
+                            <permissions>ErpSalPricingRule:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpSalQuotation-main" displayName="销售报价单" orderNo="10031"
                           i18n-en:displayName="Sales Quotation" icon="file-sign" component="AMIS" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalQuotation/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalQuotation:query" displayName="查询销售报价单"
-                                  i18n-en:displayName="Query Sales Quotation" orderNo="10023" resourceType="FNPT">
+                                  i18n-en:displayName="Query Sales Quotation" orderNo="10032" resourceType="FNPT">
                             <permissions>ErpSalQuotation:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpSalQuotation:mutation" displayName="修改销售报价单"
-                                  i18n-en:displayName="Modify Sales Quotation" orderNo="10024" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Sales Quotation" orderNo="10033" resourceType="FNPT">
                             <permissions>ErpSalQuotation:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpSalQuotationLine-main" displayName="销售报价单行" orderNo="10025"
+                <resource id="ErpSalQuotationLine-main" displayName="销售报价单行" orderNo="10034"
                           i18n-en:displayName="Sales Quotation Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalQuotationLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalQuotationLine:query" displayName="查询销售报价单行"
-                                  i18n-en:displayName="Query Sales Quotation Line" orderNo="10026" resourceType="FNPT">
+                                  i18n-en:displayName="Query Sales Quotation Line" orderNo="10035" resourceType="FNPT">
                             <permissions>ErpSalQuotationLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpSalQuotationLine:mutation" displayName="修改销售报价单行"
-                                  i18n-en:displayName="Modify Sales Quotation Line" orderNo="10027" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Sales Quotation Line" orderNo="10036" resourceType="FNPT">
                             <permissions>ErpSalQuotationLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpSalReceipt-main" displayName="收款单" orderNo="10028" i18n-en:displayName="Receipt"
+                <resource id="ErpSalReceipt-main" displayName="收款单" orderNo="10037" i18n-en:displayName="Receipt"
                           icon="banknote" component="AMIS" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalReceipt/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalReceipt:query" displayName="查询收款单" i18n-en:displayName="Query Receipt"
-                                  orderNo="10029" resourceType="FNPT">
+                                  orderNo="10038" resourceType="FNPT">
                             <permissions>ErpSalReceipt:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpSalReceipt:mutation" displayName="修改收款单"
-                                  i18n-en:displayName="Modify Receipt" orderNo="10030" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Receipt" orderNo="10039" resourceType="FNPT">
                             <permissions>ErpSalReceipt:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpSalReceiptLine-main" displayName="收款核销行" orderNo="10031"
+                <resource id="ErpSalReceiptLine-main" displayName="收款核销行" orderNo="10040"
                           i18n-en:displayName="Receipt Settlement Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalReceiptLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalReceiptLine:query" displayName="查询收款核销行"
-                                  i18n-en:displayName="Query Receipt Settlement Line" orderNo="10032"
+                                  i18n-en:displayName="Query Receipt Settlement Line" orderNo="10041"
                                   resourceType="FNPT">
                             <permissions>ErpSalReceiptLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpSalReceiptLine:mutation" displayName="修改收款核销行"
-                                  i18n-en:displayName="Modify Receipt Settlement Line" orderNo="10033"
+                                  i18n-en:displayName="Modify Receipt Settlement Line" orderNo="10042"
                                   resourceType="FNPT">
                             <permissions>ErpSalReceiptLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpSalReturn-main" displayName="销售退货单" orderNo="10034" i18n-en:displayName="Sales Return"
+                <resource id="ErpSalReturn-main" displayName="销售退货单" orderNo="10043" i18n-en:displayName="Sales Return"
                           icon="undo-2" component="AMIS" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalReturn/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalReturn:query" displayName="查询销售退货单"
-                                  i18n-en:displayName="Query Sales Return" orderNo="10035" resourceType="FNPT">
+                                  i18n-en:displayName="Query Sales Return" orderNo="10044" resourceType="FNPT">
                             <permissions>ErpSalReturn:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpSalReturn:mutation" displayName="修改销售退货单"
-                                  i18n-en:displayName="Modify Sales Return" orderNo="10036" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Sales Return" orderNo="10045" resourceType="FNPT">
                             <permissions>ErpSalReturn:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpSalReturnLine-main" displayName="销售退货单行" orderNo="10037"
+                <resource id="ErpSalReturnLine-main" displayName="销售退货单行" orderNo="10046"
                           i18n-en:displayName="Sales Return Line" icon="list" component="AMIS" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalReturnLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalReturnLine:query" displayName="查询销售退货单行"
-                                  i18n-en:displayName="Query Sales Return Line" orderNo="10038" resourceType="FNPT">
+                                  i18n-en:displayName="Query Sales Return Line" orderNo="10047" resourceType="FNPT">
                             <permissions>ErpSalReturnLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpSalReturnLine:mutation" displayName="修改销售退货单行"
-                                  i18n-en:displayName="Modify Sales Return Line" orderNo="10039" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Sales Return Line" orderNo="10048" resourceType="FNPT">
                             <permissions>ErpSalReturnLine:mutation</permissions>
                         </resource>
                     </children>
