@@ -2,7 +2,7 @@
 
 ## 概述
 
-本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 12 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机 / maintenance Visit 5 态+设备联动副作用 + maintenance Request 自定义 status 5 态 / projects Task 4 态+DAG 门控 / quality CAPA 3 态 + NCR 无 CAPA 路径 + NCR resolve CAPA 闭包门控跨实体依赖 / manufacturing WorkOrder DIRECT 审批轴+域迁移 / purchase Return DIRECT 审批轴+posted / sales Return DIRECT 审批轴+posted / quality Recall DIRECT 审批轴+locateTargets/close，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 1 制造链编排 spec（manufacturing WorkOrder+MaterialIssue+JobCard 三聚合根协作 齐套→领料→报工→完工，经 GraphQL 驱动）+ 2 反向冲销 spec（业财闭环方向二：财务侧 `ErpFinVoucher__reverse` 红字冲销 + 域监听者回退，`p2p-reverse.spec.ts` / `o2c-reverse.spec.ts`）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token）+ 1 报表 AMIS 前端渲染层 spec（24 域，`reports.visual.spec.ts`，AMIS service reload 注入 renderHtml 响应），共 166 测试。
+本手册指导如何运行 `nop-app-erp` 的 Playwright E2E 冒烟回归套件，覆盖 10 域看板 + 24 域报表页面 + 18 域 CRUD 列表/表单页 + 1 KB 建议定向冒烟 + 28 个数据驱动数值断言 spec + 13 域 CRUD 数据驱动列表断言 spec + 4 域 CRUD 写路径 spec（master-data GraphQL 层 + master-data AMIS 表单层 + quality GraphQL 层 + maintenance GraphQL 层）+ 12 代表域业务动作 spec（inventory StockMove 状态机+过账 / CRM Lead 状态迁移 / CS Ticket 六态状态机 / maintenance Visit 5 态+设备联动副作用 + maintenance Request 自定义 status 5 态 / projects Task 4 态+DAG 门控 / quality CAPA 3 态 + NCR 无 CAPA 路径 + NCR resolve CAPA 闭包门控跨实体依赖 / manufacturing WorkOrder DIRECT 审批轴+域迁移 / purchase Return DIRECT 审批轴+posted / sales Return DIRECT 审批轴+posted / quality Recall DIRECT 审批轴+locateTargets/close，经 GraphQL 调自定义 `@BizMutation`）+ 2 跨域编排链 spec（P2P PO→Receive→Invoice / O2C SO→Delivery→Invoice 全链审批+过账产物，经 GraphQL 驱动）+ 1 制造链编排 spec（manufacturing WorkOrder+MaterialIssue+JobCard 三聚合根协作 齐套→领料→报工→完工，经 GraphQL 驱动）+ 2 反向冲销 spec（业财闭环方向二：财务侧 `ErpFinVoucher__reverse` 红字冲销 + 域监听者回退，`p2p-reverse.spec.ts` / `o2c-reverse.spec.ts`）+ 1 看板 AMIS 前端渲染层 spec（10 域，`dashboards.visual.spec.ts`，DOM 结构 + echarts canvas + 2 非参数化域数值 token）+ 1 报表 AMIS 前端渲染层 spec（24 域，`reports.visual.spec.ts`，AMIS service reload 注入 renderHtml 响应），共 167 测试。
 
 测试层级：**冒烟级**（页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 请求返回 200 + 无未捕获 console error）。非像素级视觉回归。
 
@@ -39,7 +39,8 @@ npx playwright test
 webServer 命令含测试专用 JVM 参数：
 - `-Dnop.auth.service-public=true` — 服务端认证旁路（sys 用户上下文）
 - `-Dnop.auth.login.allow-create-default-user=true` — 自动创建测试用户 `nop`/`123`
-- `-Dnop.orm.init-database-data=true` — 部署期种子数据初始化（21 张主数据表 + 23 张交易单据表 + 13 张运营域表 + 4 张制造域表 + 11 张维护+质量域表 + 12 张 CRM/CS/HR 域表 + 3 张质量域 SPC 表 + 4 张制造域工作中心配置链+crp_load 表，详见下方「种子库启动」）
+  - `-Dnop.orm.init-database-data=true` — 部署期种子数据初始化（21 张主数据表 + 23 张交易单据表 + 13 张运营域表 + 4 张制造域表 + 11 张维护+质量域表 + 12 张 CRM/CS/HR 域表 + 3 张质量域 SPC 表 + 4 张制造域工作中心配置链+crp_load 表，详见下方「种子库启动」）
+  - `-Derp-qua.ncr-default-acct-schema=1` — NCR SCRAP 过账 acctSchemaId（种子 ACCT-FIN-01，plan 2026-07-10-1800-1）
 - `rm -f db/erp.mv.db` — fresh-DB 重置（seed 非幂等，每次启动前清库）
 - 页面模型校验保持默认开启（`nop.web.validate-page-model=true`，application.yaml 默认值）——`ErpCsTicket.view.xml`/`ErpHrEmployee.view.xml` layout 缺陷已修复（见 `docs/bugs/`），启动期页面校验安全网已恢复
 
@@ -66,7 +67,7 @@ SKIP_WEBSERVER=1 npx playwright test
 默认 webServer 命令（方式 A）已含 **部署期种子数据初始化**：
 
 - `-Dnop.orm.init-database-data=true` — 激活平台 `DataInitInitializer`（条件 bean，仅此 JVM 属性开启时实例化），从 `_vfs/_init-data/*.csv` 按拓扑序插入 **91 张 CSV**：
-  - **21 张核心主数据表**（1234-1）：组织/币种/计量单位/物料/SKU/往来单位/仓库/员工/科目体系/税率/结算方式等（科目体系：8 基础科目 + 1249-1 补齐 5 过账科目 1401/1403/1131/2221/6401，使 Pur/Sal/Inv 过账 Provider 硬编码科目码经 `findByCode` 可达，解除过账优雅降级）
+  - **21 张核心主数据表**（1234-1）：组织/币种/计量单位/物料/SKU/往来单位/仓库/员工/科目体系/税率/结算方式等（科目体系：8 基础科目 + 1249-1 补齐 5 过账科目 1401/1403/1131/2221/6401 + 1800-1 补齐 1 NCR SCRAP 科目 6711，使 Pur/Sal/Inv/QA 过账 Provider 硬编码科目码经 `findByCode` 可达，解除过账优雅降级）
   - **23 张业务交易单据表**（1445-1）：P2P（PO/Receive/Invoice/Payment 头+行）+ O2C（SO/Delivery/Invoice/Receipt 头+行）+ 已过账财务产物（凭证/凭证行/凭证回链/AR-AP 辅助账/GL 余额/会计期间 OPEN）
   - **13 张运营域表**（2210-1）：库存（stock_move+line/stock_balance/cost_layer）+ 资产（asset_category/asset/depreciation_schedule）+ 项目（project_type/project/cost_collection/timesheet/budget/project_pnl）；三域看板读域表非 GL，posted 统一 false
   - **4 张制造域表**（2026-07-09-0930-1）：work_order（4 行 IN_PROCESS/STOCK_PARTIAL/COMPLETED×2）+ cost_variance + forecast(APPROVED) + forecast_line；看板 4 `@BizQuery` + production-variance/forecast-variance 报表读域表非 GL，posted 统一 false；crp_load 因 workcenter 配置链依赖归 Deferred
@@ -107,7 +108,7 @@ java -Dfile.encoding=UTF8 \
 | 跨域编排套件 | `npx playwright test tests/e2e/orchestration/ --workers=1` | P2P/O2C 全链审批 + 业财过账产物（stockMove/voucher/AR-AP）+ 制造链三聚合根协作（齐套→领料→报工→完工）+ 财务侧反向冲销（红字凭证 + 域监听者回退） |
 | 全套件 | `npx playwright test --workers=1` | 提交前完整回归 |
 
-全套件运行时间：约 22 分钟（166 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 12 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket + maintenance Visit + maintenance Request + projects Task + quality CAPA/NCR + quality NCR resolve CAPA 门控 + manufacturing WorkOrder + purchase Return + sales Return + quality Recall）+ 2 跨域编排 spec（P2P + O2C）+ 1 制造链编排 spec（WorkOrder+MaterialIssue+JobCard 三聚合根协作）+ 2 反向冲销 spec（P2P + O2C 财务侧红冲）+ 1 看板前端渲染层 spec（10 域 visual）+ 1 报表前端渲染层 spec（24 域 visual），含每测试 UI 登录；`--workers=1`）。
+全套件运行时间：约 22 分钟（167 测试：冒烟 + 数值断言 + CRUD 列表断言 + 4 写路径 spec（master-data GraphQL + master-data AMIS + quality + maintenance）+ 13 业务动作 spec（inventory StockMove + CRM Lead + CS Ticket + maintenance Visit + maintenance Request + projects Task + quality CAPA/NCR + quality NCR resolve CAPA 门控 + quality NCR SCRAP 过账凭证行 + manufacturing WorkOrder + purchase Return + sales Return + quality Recall）+ 2 跨域编排 spec（P2P + O2C）+ 1 制造链编排 spec（WorkOrder+MaterialIssue+JobCard 三聚合根协作）+ 2 反向冲销 spec（P2P + O2C 财务侧红冲）+ 1 看板前端渲染层 spec（10 域 visual）+ 1 报表前端渲染层 spec（24 域 visual），含每测试 UI 登录；`--workers=1`）。
 
 ## 数据驱动数值断言层
 
@@ -210,7 +211,7 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 
 ## 业务动作浏览器层 E2E（`business-actions/`，12 代表域）
 
-在 CRUD 读写路径之上，0814-2 叠加了自定义 `@BizMutation` 经 GraphQL `/graphql` 的全栈可达性 + 状态机迁移验证（解除 0628-2 Deferred「复杂业务动作 E2E」），覆盖 3 个代表域的非审批状态机/过账动作。2026-07-09-2004-1 将覆盖由 3 域扩展至 6 域：新增 maintenance Visit（5 态+设备联动副作用）、projects Task（4 态+前驱 DAG 门控）、quality CAPA（3 态）+ NCR（无 CAPA 路径），进一步验证三原语 helper 范式在多型状态机（含副作用联动、DAG 门控、过账标志）下的可复用性。2026-07-10-0335-1 将覆盖扩展至 10 域：新增 4 个 DIRECT useApproval 审批轴实体（manufacturing WorkOrder / purchase Return / sales Return / quality Recall），验证审批轴 `submitForApproval`→`approve`→`approveStatus` 翻转 + reject 守卫 + 审批后域特定状态迁移 + Return approve 的 `posted` 布尔翻转（过账触发可观测）。2026-07-10-0335-2 补齐两条 DIRECT 业务动作路径：NCR resolve CAPA 闭包门控（跨实体依赖门控负/正路径）+ maintenance Request 自定义 status 5 态状态机（use-approval tagSet 但无 approveStatus 列，自定义 status 驱动），验证三原语范式在跨实体依赖门控 + 自定义（非平台审批轴）状态机下的可复用性。useWorkflow（xwf）域经 2330-1 权威裁决浏览器层不可行，排除。
+在 CRUD 读写路径之上，0814-2 叠加了自定义 `@BizMutation` 经 GraphQL `/graphql` 的全栈可达性 + 状态机迁移验证（解除 0628-2 Deferred「复杂业务动作 E2E」），覆盖 3 个代表域的非审批状态机/过账动作。2026-07-09-2004-1 将覆盖由 3 域扩展至 6 域：新增 maintenance Visit（5 态+设备联动副作用）、projects Task（4 态+前驱 DAG 门控）、quality CAPA（3 态）+ NCR（无 CAPA 路径），进一步验证三原语 helper 范式在多型状态机（含副作用联动、DAG 门控、过账标志）下的可复用性。2026-07-10-0335-1 将覆盖扩展至 10 域：新增 4 个 DIRECT useApproval 审批轴实体（manufacturing WorkOrder / purchase Return / sales Return / quality Recall），验证审批轴 `submitForApproval`→`approve`→`approveStatus` 翻转 + reject 守卫 + 审批后域特定状态迁移 + Return approve 的 `posted` 布尔翻转（过账触发可观测）。2026-07-10-0335-2 补齐两条 DIRECT 业务动作路径：NCR resolve CAPA 闭包门控（跨实体依赖门控负/正路径）+ maintenance Request 自定义 status 5 态状态机（use-approval tagSet 但无 approveStatus 列，自定义 status 驱动），验证三原语范式在跨实体依赖门控 + 自定义（非平台审批轴）状态机下的可复用性。2026-07-10-1800-1 新增 NCR SCRAP 过账凭证行断言（resolve AUTO_POST → NcrPostingDispatcher → NcrScrapAcctDocProvider → Dr 6711 / Cr 1401），验证凭证行级科目码/金额在 quality 域过账下的正确性。useWorkflow（xwf）域经 2330-1 权威裁决浏览器层不可行，排除。
 
 | 域 | 实体/动作 | spec | 验证内容 |
 | --- | --- | --- | --- |
@@ -227,6 +228,7 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 | purchase | `ErpPurReturn` submitForApproval/approve/reject + cancel | `pur-return.action.spec.ts` | DIRECT useApproval 审批轴 + approve→posted=true（反向出库+PURCHASE_RETURN 红字过账）；approve 前置复用 runP2pChain 产 approved Receive + 行 + qty 校验 + reason；reject/cancel 路径 + 非法守卫（0335-1） |
 | sales | `ErpSalReturn` submitForApproval/approve/reject + cancel | `sal-return.action.spec.ts` | DIRECT useApproval 审批轴 + approve→posted=true（反向入库+SALES_RETURN 凭证+负 AR 辅助账）；approve 前置复用 runO2cChain 产 approved Delivery + 行 + qty 校验 + reason；reject/cancel 路径 + 非法守卫（0335-1） |
 | quality | `ErpQaRecall` register/submitForApproval/approve/reject + locateTargets/notifyCustomers/close/cancel | `qa-recall.action.spec.ts` | DIRECT useApproval 审批轴 + 双字段翻转（approveStatus=APPROVED + status=APPROVED）+ 域状态机 locateTargets(IN_PROGRESS，ErpInvBatch 作批次门控 enabler)→notifyCustomers(notifyCustomer=true)→close(CLOSED) + reject(REJECTED+status=CANCELLED)/cancel 守卫（0335-1） |
+| quality | `ErpQaNonConformance`（NCR）resolve SCRAP 过账凭证行 | `quality-ncr-scrap-posting.action.spec.ts` | resolve AUTO_POST → NcrPostingDispatcher.dispatchScrap → NcrScrapAcctDocProvider → NCR_SCRAP 凭证行 Dr 6711=120/Cr 1401=120 精确数值断言（SCRAP_AMOUNT=qty1×seed avgCost120）+ posted=true + reverseNcr 红冲清理（1800-1） |
 
 ### 业务动作调用范式（`_helper.ts`）
 
@@ -287,12 +289,17 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 | 红字（AR_INVOICE 冲销） | `o2c-reverse.spec.ts` | 1131 DEBIT -113 / 6001 CREDIT -100 / 2221 CREDIT -13 | 同上：方向不变、金额取负 |
 | PURCHASE_RETURN | `pur-return.action.spec.ts` | 2202 DEBIT 25 / 1401 CREDIT 25 | Dr 2202 应付-暂估=TOTAL_AMOUNT / Cr 1401 库存=TOTAL_AMOUNT（退货 qty5×price5=25，**读头 totalAmount 非行级聚合，spec 须显式置头 totalAmount**） |
 | SALES_RETURN | `sal-return.action.spec.ts` | 1401 DEBIT 50 / 6401 CREDIT 50 | Dr 1401 库存=TOTAL_COST / Cr 6401 主营业务成本=TOTAL_COST（`computeTotalCost`=Σ 行 qty×price=5×10=50，行级聚合） |
+| PURCHASE_INPUT | `p2p-chain.spec.ts` | 1401 DEBIT 50 / 2202 CREDIT 50 | Dr 1401 库存=TOTAL_COST / Cr 2202 应付-暂估=TOTAL_COST（InvAcctDocProvider.PURCHASE_INPUT，TOTAL_COST=ledger.totalCost=qty10×unitCost5=50，plan 2026-07-10-1800-1） |
+| SALES_OUTPUT | `o2c-chain.spec.ts` | 6401 DEBIT 1200 / 1401 CREDIT 1200 | Dr 6401 成本=TOTAL_COST / Cr 1401 库存=TOTAL_COST（InvAcctDocProvider.SALES_OUTPUT，TOTAL_COST=qty10×avgCost120=1200，备货20@120 MOVING_AVERAGE，plan 2026-07-10-1800-1） |
+| NCR_SCRAP | `quality-ncr-scrap-posting.action.spec.ts` | 6711 DEBIT 120 / 1401 CREDIT 120 | Dr 6711 营业外支出=SCRAP_AMOUNT / Cr 1401 库存=SCRAP_AMOUNT（NcrScrapAcctDocProvider.NCR_SCRAP，SCRAP_AMOUNT=qty1×seed avgCost120=120，MAT_1 种子余额行，plan 2026-07-10-1800-1） |
 
 **关键裁决：**
 
 - **红字凭证同向取负（非借贷互换）**：`ErpFinPostingProcessor.buildReversalDraft` 保持原凭证行 dcDirection 不变、仅金额取负（如原 2202 CREDIT credit=56.5 → 红字 2202 CREDIT credit=-56.5，**非** 翻转为 DEBIT）。断言据此写同向取负期望。同时断言原正常凭证行金额不变（正数），验证红冲仅新增红字凭证、不修改原凭证行。
 - **PURCHASE_RETURN 读头 totalAmount**：`PurReturnPostingDispatcher` 置 `billData.TOTAL_AMOUNT = returnOrder.getTotalAmount()`（头字段，非行级聚合，头 `totalAmount` 列 `defaultValue=0` 无自动 rollup）。故 `pur-return` spec 创建退货头时须显式置 `totalAmount=qty×price`，凭证行方为有意义的非零金额（对齐 Java 集成测试 `TestErpPurReturnPosting` 显式 setTotalAmount 范式）。SALES_RETURN 则读行级 `computeTotalCost`（Σ qty×unitPrice），无需置头金额。
-- **套件计数**：新断言全部内联至既有 spec（不新增 spec 文件/测试用例），套件总数仍为 167（167→167，N=0）。
+- **套件计数**：0704-1 新断言全部内联至既有 spec（不新增 spec 文件/测试用例）。1800-1 新增 1 个 spec（`quality-ncr-scrap-posting.action.spec.ts`），套件总数 167（166→167，N=1）。
+- **NCR SCRAP avgCost 来源裁决（plan 2026-07-10-1800-1）**：`NcrPostingDispatcher.resolveStockBalance` 按 `materialId`（**非** warehouseId）查 `ErpInvStockBalance`(limit 1)。MAT_1(materialId=1) 种子有唯一余额行（warehouseId=1, avgCost=120, MOVING_AVERAGE），故 `resolveStockBalance(1)` 确定性返回 avgCost=120。SCRAP posting 不扣减物理库存（`NcrPostingDispatcher` 注释：物理出库属 successor），种子余额不受影响。**无需前置备货**——备货会为 materialId=1 新增第二行致 limit 1 返回行不确定（非确定性）。SCRAP_AMOUNT = NCR.quantity(1) × 120 = 120。
+- **NCR SCRAP acctSchemaId 配置（plan 2026-07-10-1800-1）**：`NcrPostingDispatcher.resolveAcctSchemaId` 读 config `erp-qua.ncr-default-acct-schema`（默认空→null），致凭证行 `acctSchemaId` 非空约束失败。webServer JVM 属性增 `-Derp-qua.ncr-default-acct-schema=1`（种子 ACCT-FIN-01），解除阻塞。
 
 ### 反向冲销层（业财闭环方向二：财务侧 DIRECT 红字冲销 + 域监听者回退）
 
