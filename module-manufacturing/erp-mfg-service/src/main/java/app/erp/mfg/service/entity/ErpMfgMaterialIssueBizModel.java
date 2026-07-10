@@ -13,6 +13,7 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.posting.ManufacturingIssuePostingDispatcher;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -64,6 +65,8 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
     IErpMfgWorkOrderBiz workOrderBiz;
     @Inject
     IErpMfgWorkOrderLineBiz workOrderLineBiz;
+    @Inject
+    ManufacturingIssuePostingDispatcher issuePostingDispatcher;
 
     public ErpMfgMaterialIssueBizModel() {
         setEntityName(ErpMfgMaterialIssue.class.getName());
@@ -115,6 +118,9 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
         updateEntity(issue, null, context);
 
         applyMaterialCostToWorkOrder(issue.getWorkOrderId(), materialCostDelta, context);
+
+        // 领料 GL 过账（Dr: WIP / Cr: Inventory），镜像 ProductionVarianceDispatcher 显式调用范式
+        issuePostingDispatcher.dispatchIfApplicable(issueId);
         return issue;
     }
 

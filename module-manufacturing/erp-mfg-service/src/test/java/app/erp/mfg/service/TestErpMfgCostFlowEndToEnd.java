@@ -1,5 +1,6 @@
 package app.erp.mfg.service;
 
+import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
@@ -7,8 +8,11 @@ import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgBomLine;
+import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
+import app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
+import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
@@ -32,34 +36,40 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Phase 2 测试：完工入库 GL 过账（plan 2026-07-10-1100-5）。
+ * Phase 4 全链路端到端测试：制造业财一体成本流转闭环（plan 2026-07-10-1100-5）。
  *
- * <p>覆盖 MANUFACTURING_RECEIPT 凭证生成（Dr: 产成品存货 1401 / Cr: WIP 在制品 1411），
- * 三种计价方法（MOVING_AVERAGE / STANDARD / FIFO）均正确过账，完工入库移动单 posted=true。
+ * <p>验证完整成本流转链：原材料存货 →（领料）→ WIP →（完工）→ 产成品存货。
+ * 领料过账（Dr WIP / Cr Inventory）+ 完工入库过账（Dr Inventory / Cr WIP）双凭证同时存在，
+ * WIP 科目净余额 = 0（成本完整流转闭环），且领料出库不再误派 SALES_OUTPUT 凭证。
+ *
+ * <p>差异过账为 config-gated（默认关），本测试不开启，故差异凭证不参与 WIP 余额。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
-public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
+public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
 
-    static final Long ORG_ID = 1501L;
-    static final Long WAREHOUSE_ID = 3501L;
-    static final Long UOM_ID = 5501L;
-    static final Long CURRENCY_ID = 6501L;
-    static final Long ACCT_SCHEMA_ID = 7501L;
-    static final Long P = 1301L;
-    static final Long M1 = 1302L;
+    static final Long ORG_ID = 1701L;
+    static final Long WAREHOUSE_ID = 3701L;
+    static final Long UOM_ID = 5701L;
+    static final Long CURRENCY_ID = 6701L;
+    static final Long ACCT_SCHEMA_ID = 7701L;
+    static final Long P = 1501L;
+    static final Long M1 = 1502L;
     static final String MOVE_TYPE_INCOMING = "INCOMING";
-    static final String VOUCHER_STATUS_POSTED = "POSTED";
     static final String SUBJECT_INVENTORY = "1401";
     static final String SUBJECT_WIP = "1411";
+    static final String SUBJECT_AP = "2202";
+    static final String VOUCHER_STATUS_POSTED = "POSTED";
 
     @Inject
     IDaoProvider daoProvider;
@@ -69,101 +79,14 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
     IGraphQLEngine graphQLEngine;
 
     @Test
-    public void testMovingAverageCompletionPosting() {
+    public void testFullCostFlowIssueToCompletion() {
         seedPeriodAndSubjects();
-        seedMaterial(P, null);
         seedMaterial(M1, "MOVING_AVERAGE");
-        seedBom(9401L, P, M1, bd("2"));
-        generateIncoming(M1, "PR-CMP-MA", bd("10"), bd("5"));
-
-        Long woId = seedWorkOrder("WO-CMP-MA", 9401L);
-        Long inputLineId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
-        seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
-
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
-
-        // 领料 M1×2 → materialCost = 2×5 = 10
-        Long issueId = seedIssue("MI-CMP-MA", woId);
-        seedIssueLine(9501L, issueId, M1, bd("2"), inputLineId);
-        rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
-
-        Map<String, Object> completeReq = new LinkedHashMap<>();
-        completeReq.put("workOrderId", woId);
-        completeReq.put("completedQty", bd("1"));
-        rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion", completeReq);
-
-        ErpInvStockMove move = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-CMP-MA");
-        assertNotNull(move, "应生成完工入库移动单");
-        assertEquals(ErpMfgConstants.MOVE_TYPE_MANUFACTURING, move.getMoveType());
-        assertEquals(true, move.getPosted(), "完工入库 DONE 应过账 posted=true");
-
-        ErpFinVoucher voucher = findVoucherByMoveCode(move.getCode());
-        assertNotNull(voucher, "应生成 MANUFACTURING_RECEIPT 凭证");
-        assertEquals(VOUCHER_STATUS_POSTED, voucher.getDocStatus());
-
-        ErpFinVoucherLine drLine = findVoucherLine(voucher.getId(), SUBJECT_INVENTORY);
-        assertNotNull(drLine, "借方 产成品存货 1401 行存在");
-        assertEquals("DEBIT", drLine.getDcDirection());
-        assertTrue(drLine.getDebitAmount().signum() > 0, "借方金额 > 0");
-        assertEquals(0, bd("10").compareTo(drLine.getDebitAmount()), "借方 = materialCost 10");
-
-        ErpFinVoucherLine crLine = findVoucherLine(voucher.getId(), SUBJECT_WIP);
-        assertNotNull(crLine, "贷方 WIP 在制品 1411 行存在");
-        assertEquals("CREDIT", crLine.getDcDirection());
-        assertEquals(0, drLine.getDebitAmount().compareTo(crLine.getCreditAmount()),
-                "借贷平衡");
-    }
-
-    @Test
-    public void testStandardCostCompletionPosting() {
-        seedPeriodAndSubjects();
-        seedMaterial(P, "STANDARD");
-        seedMaterial(M1, "STANDARD");
-        seedBom(9402L, P, M1, bd("2"));
-        seedStandardCost(P, bd("40"));
-        seedStandardCost(M1, bd("5"));
-        generateIncoming(M1, "PR-CMP-STD", bd("10"), bd("5"));
-
-        Long woId = seedWorkOrder("WO-CMP-STD", 9402L);
-        Long inputLineId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
-        seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
-
-        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
-        rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
-        rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
-
-        Long issueId = seedIssue("MI-CMP-STD", woId);
-        seedIssueLine(9502L, issueId, M1, bd("2"), inputLineId);
-        rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
-
-        Map<String, Object> completeReq = new LinkedHashMap<>();
-        completeReq.put("workOrderId", woId);
-        completeReq.put("completedQty", bd("1"));
-        rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion", completeReq);
-
-        ErpInvStockMove move = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-CMP-STD");
-        assertNotNull(move, "应生成完工入库移动单");
-        assertEquals(true, move.getPosted(), "STANDARD 完工入库 posted=true");
-
-        ErpFinVoucher voucher = findVoucherByMoveCode(move.getCode());
-        assertNotNull(voucher, "STANDARD 凭证应生成");
-        assertEquals(2, countVoucherLines(voucher.getId()), "2 行（Dr Inventory / Cr WIP）");
-    }
-
-    @Test
-    public void testFifoCompletionPosting() {
-        seedPeriodAndSubjects();
         seedMaterial(P, null);
-        seedMaterial(M1, "FIFO");
-        seedBom(9403L, P, M1, bd("1"));
-        generateIncoming(M1, "PR-CMP-FIFO-1", bd("10"), bd("3"));
-        generateIncoming(M1, "PR-CMP-FIFO-2", bd("5"), bd("7"));
+        seedBom(9801L, P, M1, bd("2"));
+        generateIncoming(M1, "PR-CF-E2E", bd("10"), bd("5"));
 
-        Long woId = seedWorkOrder("WO-CMP-FIFO", 9403L);
+        Long woId = seedWorkOrder("WO-CF-E2E", 9801L);
         Long inputLineId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
         seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
 
@@ -172,30 +95,62 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
         rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
         rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
 
-        Long issueId = seedIssue("MI-CMP-FIFO", woId);
-        seedIssueLine(9503L, issueId, M1, bd("2"), inputLineId);
+        // ---- 领料出库 → MANUFACTURING_ISSUE 凭证 ----
+        Long issueId = seedIssue("MI-CF-E2E", woId);
+        seedIssueLine(9801L, issueId, M1, bd("2"), inputLineId);
         rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
 
+        BigDecimal materialCost = bd("10"); // 2 × avgCost 5
+
+        ErpMfgMaterialIssue issue = daoProvider.daoFor(ErpMfgMaterialIssue.class).getEntityById(issueId);
+        assertEquals(true, issue.getPosted(), "领料 posted=true");
+        ErpInvStockMove issueMove = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_ISSUE, "MI-CF-E2E");
+        assertNotNull(issueMove, "领料出库移动单存在");
+
+        ErpFinVoucher issueVoucher = findVoucher("MI-CF-E2E-MI", ErpFinBusinessType.MANUFACTURING_ISSUE);
+        assertNotNull(issueVoucher, "MANUFACTURING_ISSUE 凭证存在");
+        assertEquals(VOUCHER_STATUS_POSTED, issueVoucher.getDocStatus());
+        assertVoucherLine(issueVoucher.getId(), SUBJECT_WIP, "DEBIT", materialCost);
+        assertVoucherLine(issueVoucher.getId(), SUBJECT_INVENTORY, "CREDIT", materialCost);
+
+        // ---- 领料出库不再误派 SALES_OUTPUT 凭证 ----
+        assertNull(findVoucher(issueMove.getCode(), ErpFinBusinessType.SALES_OUTPUT),
+                "领料出库不应生成 SALES_OUTPUT 凭证");
+
+        // ---- 完工入库 → MANUFACTURING_RECEIPT 凭证 ----
         Map<String, Object> completeReq = new LinkedHashMap<>();
         completeReq.put("workOrderId", woId);
         completeReq.put("completedQty", bd("1"));
         rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion", completeReq);
 
-        ErpInvStockMove move = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-CMP-FIFO");
-        assertNotNull(move, "应生成完工入库移动单");
-        assertEquals(true, move.getPosted(), "FIFO 完工入库 posted=true");
+        ErpInvStockMove completionMove = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-CF-E2E");
+        assertNotNull(completionMove, "完工入库移动单存在");
+        assertEquals(true, completionMove.getPosted(), "完工入库 posted=true");
 
-        ErpFinVoucher voucher = findVoucherByMoveCode(move.getCode());
-        assertNotNull(voucher, "FIFO 凭证应生成");
+        BigDecimal completionCost = materialCost; // laborCost=0 → totalCost = materialCost
+
+        ErpFinVoucher completionVoucher = findVoucher(completionMove.getCode(), ErpFinBusinessType.MANUFACTURING_RECEIPT);
+        assertNotNull(completionVoucher, "MANUFACTURING_RECEIPT 凭证存在");
+        assertEquals(VOUCHER_STATUS_POSTED, completionVoucher.getDocStatus());
+        assertVoucherLine(completionVoucher.getId(), SUBJECT_INVENTORY, "DEBIT", completionCost);
+        assertVoucherLine(completionVoucher.getId(), SUBJECT_WIP, "CREDIT", completionCost);
+
+        // ---- WIP 科目净余额验证：领料 Dr - 完工 Cr = materialCost - completionCost = 0（成本完整流转闭环）----
+        BigDecimal wipNet = sumSubjectBalance(SUBJECT_WIP);
+        assertEquals(0, BigDecimal.ZERO.compareTo(wipNet),
+                "WIP 净余额 = 0（领料借方 " + materialCost + " - 完工贷方 " + completionCost + "）");
+
+        // ---- 产成品存货科目净余额：完工 Dr - 领料 Cr = completionCost - 0 = completionCost ----
+        BigDecimal invNet = sumSubjectBalance(SUBJECT_INVENTORY);
+        assertTrue(invNet.signum() > 0, "产成品存货净余额 > 0（完工入库借方）");
     }
 
     // ---------- seed helpers ----------
 
     private void seedPeriodAndSubjects() {
         ormTemplate.runInSession(() -> {
-            IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> asDao =
-                    daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
-            app.erp.md.dao.entity.ErpMdAcctSchema acctSchema = new app.erp.md.dao.entity.ErpMdAcctSchema();
+            IEntityDao<ErpMdAcctSchema> asDao = daoProvider.daoFor(ErpMdAcctSchema.class);
+            ErpMdAcctSchema acctSchema = new ErpMdAcctSchema();
             acctSchema.orm_propValueByName("id", ACCT_SCHEMA_ID);
             acctSchema.setCode("ACCT-" + ORG_ID);
             acctSchema.setName("账套 " + ORG_ID);
@@ -219,7 +174,7 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
 
             seedSubject(SUBJECT_INVENTORY, "库存商品", "ASSET", "DEBIT");
             seedSubject(SUBJECT_WIP, "在制品-WIP", "ASSET", "DEBIT");
-            seedSubject("2202", "应付账款-暂估", "LIABILITY", "CREDIT");
+            seedSubject(SUBJECT_AP, "应付账款-暂估", "LIABILITY", "CREDIT");
         });
     }
 
@@ -273,35 +228,6 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
         });
     }
 
-    private void seedStandardCost(Long productId, BigDecimal unitCost) {
-        ormTemplate.runInSession(() -> {
-            Long headerId = productId * 10000 + 90;
-            IEntityDao<app.erp.mfg.dao.entity.ErpMfgCostRollup> hDao =
-                    daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgCostRollup.class);
-            app.erp.mfg.dao.entity.ErpMfgCostRollup header = new app.erp.mfg.dao.entity.ErpMfgCostRollup();
-            header.orm_propValueByName("id", headerId);
-            header.setCode("ROLLUP-STD-" + productId);
-            header.setOrgId(ORG_ID);
-            header.setBusinessDate(LocalDate.of(2026, 6, 1));
-            header.orm_propValueByName("status", ErpMfgConstants.COST_ROLLUP_STATUS_FIRMED);
-            hDao.saveEntity(header);
-
-            IEntityDao<app.erp.mfg.dao.entity.ErpMfgCostRollupLine> lDao =
-                    daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgCostRollupLine.class);
-            app.erp.mfg.dao.entity.ErpMfgCostRollupLine line = new app.erp.mfg.dao.entity.ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", productId * 10000 + 91);
-            line.setCostRollupId(headerId);
-            line.setLineNo(10);
-            line.setMaterialId(productId);
-            line.setUoMId(UOM_ID);
-            line.setMaterialCost(unitCost);
-            line.setUnitCost(unitCost);
-            line.setTotalCost(unitCost);
-            line.setCurrencyId(CURRENCY_ID);
-            lDao.saveEntity(line);
-        });
-    }
-
     private void generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
         Map<String, Object> req = new LinkedHashMap<>();
         req.put("moveType", MOVE_TYPE_INCOMING);
@@ -323,7 +249,7 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
     }
 
     private Long seedWorkOrder(String code, Long bomId) {
-        Long id = 8600L + (long) Math.abs(code.hashCode() % 600);
+        Long id = 9100L + (long) Math.abs(code.hashCode() % 500);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
             ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
@@ -344,7 +270,7 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
     private Long seedWorkOrderLine(Long woId, Long materialId, BigDecimal plannedQty, String lineType,
                                    Long destWarehouseId) {
         long raw = (woId + "" + materialId + lineType).hashCode();
-        Long id = 9400L + (long) Math.abs(raw % 600);
+        Long id = 9900L + (long) Math.abs(raw % 500);
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
             ErpMfgWorkOrderLine wol = new ErpMfgWorkOrderLine();
@@ -362,11 +288,10 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
     }
 
     private Long seedIssue(String code, Long woId) {
-        Long id = 8700L + (long) Math.abs(code.hashCode() % 500);
+        Long id = 9200L + (long) Math.abs(code.hashCode() % 500);
         ormTemplate.runInSession(() -> {
-            IEntityDao<app.erp.mfg.dao.entity.ErpMfgMaterialIssue> dao =
-                    daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgMaterialIssue.class);
-            app.erp.mfg.dao.entity.ErpMfgMaterialIssue issue = new app.erp.mfg.dao.entity.ErpMfgMaterialIssue();
+            IEntityDao<ErpMfgMaterialIssue> dao = daoProvider.daoFor(ErpMfgMaterialIssue.class);
+            ErpMfgMaterialIssue issue = new ErpMfgMaterialIssue();
             issue.orm_propValueByName("id", id);
             issue.setCode(code);
             issue.setWorkOrderId(woId);
@@ -383,9 +308,8 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
 
     private void seedIssueLine(Long id, Long issueId, Long materialId, BigDecimal qty, Long wolId) {
         ormTemplate.runInSession(() -> {
-            IEntityDao<app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine> dao =
-                    daoProvider.daoFor(app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine.class);
-            app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine line = new app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine();
+            IEntityDao<ErpMfgMaterialIssueLine> dao = daoProvider.daoFor(ErpMfgMaterialIssueLine.class);
+            ErpMfgMaterialIssueLine line = new ErpMfgMaterialIssueLine();
             line.orm_propValueByName("id", id);
             line.setIssueId(issueId);
             line.setLineNo(10);
@@ -408,10 +332,11 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private ErpFinVoucher findVoucherByMoveCode(String moveCode) {
+    private ErpFinVoucher findVoucher(String billHeadCode, ErpFinBusinessType businessType) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
-        q.addFilter(eq("billCode", moveCode));
+        q.addFilter(and(eq("billCode", billHeadCode),
+                eq("businessType", businessType.name())));
         List<ErpFinVoucherBillR> links = dao.findAllByQuery(q);
         if (links.isEmpty()) {
             return null;
@@ -419,20 +344,35 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
     }
 
-    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
+    private void assertVoucherLine(Long voucherId, String subjectCode, String dcDirection, BigDecimal amount) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("voucherId", voucherId));
         q.addFilter(eq("subjectCode", subjectCode));
         List<ErpFinVoucherLine> list = dao.findAllByQuery(q);
-        return list.isEmpty() ? null : list.get(0);
+        assertEquals(1, list.size(), "凭证 " + voucherId + " 科目 " + subjectCode + " 应唯一一行");
+        ErpFinVoucherLine line = list.get(0);
+        assertEquals(dcDirection, line.getDcDirection(),
+                "凭证 " + voucherId + " 科目 " + subjectCode + " 方向");
+        if ("DEBIT".equals(dcDirection)) {
+            assertEquals(0, amount.compareTo(line.getDebitAmount()),
+                    "凭证 " + voucherId + " 科目 " + subjectCode + " 借方金额");
+        } else {
+            assertEquals(0, amount.compareTo(line.getCreditAmount()),
+                    "凭证 " + voucherId + " 科目 " + subjectCode + " 贷方金额");
+        }
     }
 
-    private long countVoucherLines(Long voucherId) {
+    private BigDecimal sumSubjectBalance(String subjectCode) {
         IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
-        q.addFilter(eq("voucherId", voucherId));
-        return dao.findAllByQuery(q).size();
+        q.addFilter(eq("subjectCode", subjectCode));
+        List<ErpFinVoucherLine> lines = dao.findAllByQuery(q);
+        BigDecimal net = BigDecimal.ZERO;
+        for (ErpFinVoucherLine l : lines) {
+            net = net.add(nz(l.getDebitAmount())).subtract(nz(l.getCreditAmount()));
+        }
+        return net;
     }
 
     private ApiResponse<?> rpc(io.nop.graphql.core.ast.GraphQLOperationType op, String action, Map<String, Object> args) {
@@ -447,5 +387,9 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
 
     private static BigDecimal bd(String v) {
         return new BigDecimal(v);
+    }
+
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 }

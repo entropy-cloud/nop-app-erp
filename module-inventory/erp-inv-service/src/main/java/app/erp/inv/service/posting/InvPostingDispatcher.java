@@ -64,9 +64,7 @@ public class InvPostingDispatcher {
         try {
             Long voucherId = executor.postEvent(event);
             if (voucherId != null) {
-                move.setPosted(true);
-                move.setPostedAt(CoreMetrics.currentDateTime());
-                daoProvider.daoFor(ErpInvStockMove.class).saveOrUpdateEntity(move);
+                markMovePosted(move.getId());
             }
         } catch (Exception e) {
             // 过账失败不阻塞移动单终态：保持 DONE + posted=false，由兜底扫描重试。
@@ -79,6 +77,19 @@ public class InvPostingDispatcher {
 
         // STANDARD 物料采购入库：捕获采购价差（PPV），config-gated 总开关
         dispatchPurchasePriceVariance(move, lines);
+    }
+
+    /**
+     * 标记移动单 posted=true。过账经 {@code IErpFinVoucherBiz.post} 的 REQUIRES_NEW 事务执行，
+     * 成功返回后当前 session 的移动单实体可能被 evict（saveOrUpdateEntity 报 save-entity-not-transient），
+     * 故按 ID 重新加载后再设值，确保 posted 标志在当前事务提交时持久化。
+     */
+    private void markMovePosted(Long moveId) {
+        ErpInvStockMove managed = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
+        if (managed != null) {
+            managed.setPosted(true);
+            managed.setPostedAt(CoreMetrics.currentDateTime());
+        }
     }
 
     /**

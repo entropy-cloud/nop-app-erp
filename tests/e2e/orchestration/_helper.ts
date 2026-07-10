@@ -600,7 +600,8 @@ export async function cleanupO2cReverse(page: Page, r: O2cReverseResult): Promis
 //   - MaterialIssue.confirm → ErpInvStockMove(relatedBillType=ERP_MFG_ISSUE) OUTGOING + WorkOrder.materialCost
 //   - JobCard.recordWork → ErpMfgJobCardTimeLog + WorkOrder.laborCost
 //   - reportCompletion → ErpInvStockMove(relatedBillType=ERP_MFG_WORK_ORDER) MANUFACTURE + WorkOrder COMPLETED
-// 完工入库 GL 过账凭证为 Non-Goal（待 finance 域制造过账 Provider），故断言 posted=false。
+// 完工入库 GL 过账（MANUFACTURING_RECEIPT：Dr Inventory / Cr WIP）+ 领料 GL 过账（MANUFACTURING_ISSUE：
+// Dr WIP / Cr Inventory）已由 plan 2026-07-10-1100-5 落地，完工/领料移动单 posted=true。
 
 export interface MfgResult {
   componentMat?: any;
@@ -848,6 +849,9 @@ export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
   // 领料出库移动（OUTGOING，relatedBillType=ERP_MFG_ISSUE，relatedBillCode=issue.code）+ 组件物料余额
   const componentId = r.componentMat?.id;
   if (r.codes?.issue) {
+    // 领料 GL 凭证业财回链 billCode = issue.code + '-MI'（ManufacturingIssuePostingDispatcher），
+    // 与出库移动单 code 不同，需单独清理（cleanupStockMove 仅按 move.code 清理）
+    await cleanupVoucherByBillCode(page, r.codes.issue + '-MI');
     const issueMove = await findFirst<any>(
       page, 'ErpInvStockMove',
       andFilter(eqFilter('relatedBillType', 'ERP_MFG_ISSUE'), eqFilter('relatedBillCode', r.codes.issue)),

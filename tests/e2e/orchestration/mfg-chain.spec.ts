@@ -7,6 +7,8 @@ import {
   findPageTotal,
   findFirst,
   verifyState,
+  findVoucherIdByBillCode,
+  assertVoucherLines,
   eqFilter,
   andFilter,
   MFG_EXPECT,
@@ -30,8 +32,10 @@ import {
  *      + WorkOrder.materialCost > 0（出库流水 totalCost 绝对值回写）。
  *   3. 报工 + 完工入库产物——JobCard.recordWork 回写 WorkOrder.laborCost > 0；reportCompletion 触发
  *      ErpInvStockMove(relatedBillType=ERP_MFG_WORK_ORDER) 入库移动存在 + docStatus=COMPLETED
- *      + completedQuantity=10 + totalCost > 0 + unitCost > 0 + posted=false（完工入库 GL 过账为 Non-Goal，
- *      待 finance 域制造过账 Provider）。
+ *      + completedQuantity=10 + totalCost > 0 + unitCost > 0 + posted=true（完工入库 GL 过账
+ *      MANUFACTURING_RECEIPT，plan 2026-07-10-1100-5 已落地：Dr 产成品存货 1401 / Cr WIP 1411）。
+ *   4. 领料 GL 过账产物——MaterialIssue.confirm 触发 ManufacturingIssuePostingDispatcher 生成
+ *      MANUFACTURING_ISSUE 凭证（Dr WIP 1411 / Cr 原材料存货 1401），ErpMfgMaterialIssue.posted=true。
  *
  * 确定性期望值（见 helper MFG_EXPECT）：组件用量 2/单位 × plannedQty 10 = 齐套需求 20；备货 30 覆盖；
  *   materialCost = 出库 20 × moving-average unitCost 50 = 1000；laborCost = 60min/60 × 100 = 100；
@@ -53,6 +57,16 @@ test.describe('manufacturing WorkOrder full chain orchestration (WorkOrder + Mat
         andFilter(eqFilter('relatedBillType', 'ERP_MFG_ISSUE'), eqFilter('relatedBillCode', r.codes.issue)),
       );
       expect(issueMoveTotal, 'MaterialIssue.confirm should produce an ErpInvStockMove').toBeGreaterThan(0);
+
+      // ---- 领料 GL 过账产物：MaterialIssue.confirm → MANUFACTURING_ISSUE 凭证（Dr WIP / Cr Inventory）----
+      const issueState = await verifyState(page, 'ErpMfgMaterialIssue', r.issue!.id, 'posted');
+      expect(issueState?.posted, 'MaterialIssue.posted=true (MANUFACTURING_ISSUE GL voucher generated)').toBe(true);
+      const issueVoucherId = await findVoucherIdByBillCode(page, r.codes.issue + '-MI');
+      expect(issueVoucherId, 'MANUFACTURING_ISSUE voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, issueVoucherId, [
+        { subjectCode: '1411', dcDirection: 'DEBIT', debitAmount: MFG_EXPECT.materialCost, creditAmount: 0 },
+        { subjectCode: '1401', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: MFG_EXPECT.materialCost },
+      ]);
 
       // ---- 跨聚合根协作：MaterialIssue.confirm → WorkOrder.materialCost 回写 ----
       // materialCost = 出库流水 totalCost 绝对值回写。组件为测试专用物料（无种子余额，无 WEIGHTED_AVERAGE 混合），
@@ -76,7 +90,15 @@ test.describe('manufacturing WorkOrder full chain orchestration (WorkOrder + Mat
       expect(completionMoveTotal, 'reportCompletion should produce an ErpInvStockMove').toBeGreaterThan(0);
       expect(r.completionMove, 'completion move should be found').toBeTruthy();
       expect(r.completionMove!.docStatus, 'business-linked completion move auto-completes to DONE').toBe('DONE');
-      expect(r.completionMove!.posted, 'completion move posted=false (GL posting is Non-Goal)').toBe(false);
+      expect(r.completionMove!.posted, 'completion move posted=true (MANUFACTURING_RECEIPT GL voucher generated)').toBe(true);
+
+      // ---- 完工入库 GL 过账产物：MANUFACTURING_RECEIPT 凭证（Dr Inventory / Cr WIP）----
+      const completionVoucherId = await findVoucherIdByBillCode(page, r.completionMove!.code);
+      expect(completionVoucherId, 'MANUFACTURING_RECEIPT voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, completionVoucherId, [
+        { subjectCode: '1401', dcDirection: 'DEBIT', debitAmount: MFG_EXPECT.totalCost, creditAmount: 0 },
+        { subjectCode: '1411', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: MFG_EXPECT.totalCost },
+      ]);
 
       // ---- 完工入库终态断言：COMPLETED + 成本归集重算 ----
       woState = await verifyState(
@@ -88,7 +110,7 @@ test.describe('manufacturing WorkOrder full chain orchestration (WorkOrder + Mat
       expect(Number(woState?.totalCost ?? 0), 'totalCost = material(1000)+labor(100) = 1100').toBe(MFG_EXPECT.totalCost);
       expect(Number(woState?.unitCost ?? 0), 'unitCost = total/completed > 0').toBeGreaterThan(0);
       expect(Number(woState?.unitCost ?? 0), 'unitCost = 1100/10 = 110').toBe(MFG_EXPECT.unitCost);
-      expect(woState?.posted, 'WorkOrder.posted=false (MANUFACTURING_RECEIPT GL voucher is Non-Goal)').toBe(false);
+      expect(woState?.posted, 'WorkOrder.posted=false (GL posting signal is on the stock move, not the WorkOrder)').toBe(false);
     } finally {
       await cleanupMfg(page, r);
     }

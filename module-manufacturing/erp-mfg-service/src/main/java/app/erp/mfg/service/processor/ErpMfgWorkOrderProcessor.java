@@ -209,6 +209,12 @@ public class ErpMfgWorkOrderProcessor {
         // config-gated erp-mfg.genealogy-write-enabled。作为 protected step，下游派生 Processor 可覆盖跳过/增强。
         writeBatchGenealogy(wo, completedQty, context);
 
+        // generateCompletionMove 经 cross-BizModel generateMove 调用，其内部 GL 过账用 REQUIRES_NEW 事务，
+        // 成功过账后当前 session 实体可能被 evict。重新加载 wo 并重应用字段，避免 updateEntity 报 save-entity-not-transient。
+        wo = workOrderDao().getEntityById(workOrderId);
+        wo.setCompletedQuantity(newCompleted);
+        recomputeTotals(wo);
+
         if (willFinish) {
             wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED);
             wo.setActualEndDate(CoreMetrics.today());
@@ -363,6 +369,7 @@ public class ErpMfgWorkOrderProcessor {
         request.setBusinessDate(wo.getBusinessDate() != null ? wo.getBusinessDate() : CoreMetrics.today());
         request.setDestWarehouseId(destWarehouseId);
         request.setCurrencyId(wo.getCurrencyId());
+        request.setAcctSchemaId(resolveAcctSchemaId(wo.getOrgId()));
         request.setRelatedBillType(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER);
         request.setRelatedBillCode(wo.getCode());
         StockMoveLineRequest line = new StockMoveLineRequest();
@@ -434,6 +441,24 @@ public class ErpMfgWorkOrderProcessor {
         IEntityDao<ErpMfgWorkOrderLine> dao = daoProvider.daoFor(ErpMfgWorkOrderLine.class);
         List<ErpMfgWorkOrderLine> list = dao.findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    /**
+     * 解析工单所属组织的会计账套 ID（同 {@code ProductionVarianceDispatcher.resolveAcctSchemaId} 范式）。
+     * 完工入库 GL 过账要求凭证行 acctSchemaId 非空，故 generateCompletionMove 需传入。
+     */
+    protected Long resolveAcctSchemaId(Long orgId) {
+        if (orgId == null) {
+            return null;
+        }
+        IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao =
+                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("orgId", orgId));
+        q.addFilter(eq("status", "ACTIVE"));
+        q.setLimit(1);
+        List<app.erp.md.dao.entity.ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
+        return schemas.isEmpty() ? null : schemas.get(0).getId();
     }
 
     protected boolean isAllowPartialKitStart() {
