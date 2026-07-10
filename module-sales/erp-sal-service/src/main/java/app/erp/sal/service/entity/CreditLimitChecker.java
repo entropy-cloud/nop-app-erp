@@ -61,6 +61,12 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  *   <li>客户风险评分联动信用额度动态调整：依赖 CRM 客户信用评分体系落地。</li>
  *   <li>跨账套（multi AcctSchema）AR 余额聚合：本期单账套。</li>
  * </ul>
+ *
+ * <p><b>出库/发票环节信用冻结（{@link #checkCreditHold}）</b>：语义为检查客户<b>当前</b>是否已超额
+ * （{@code available < 0}），不把本单金额叠加到 outstanding（订单审核时额度已被占用）。三级策略与订单审核一致：
+ * HARD_BLOCK 抛 {@link ErpSalErrors#ERR_CREDIT_HOLD_DELIVERY} / {@link ErpSalErrors#ERR_CREDIT_HOLD_INVOICE}，
+ * SOFT_WARNING 放行带告警，SPECIAL_APPROVAL 经权限门控。是否启用由 {@code erp-sal.credit-check-on-delivery}
+ * 和 {@code erp-sal.credit-check-on-invoice}（均默认 false，向后兼容）控制，由调用方 Processor 在审核时门控。
  */
 public class CreditLimitChecker {
 
@@ -116,33 +122,107 @@ public class CreditLimitChecker {
         BigDecimal outstanding = sumOutstanding(customerId, context);
         BigDecimal available = creditLimit.subtract(outstanding);
         BigDecimal orderAmountFunctional = toFunctional(thisOrderAmount, thisOrderExchangeRate);
+        // 订单审核语义：available >= thisOrderAmount（本单金额加到 outstanding 上后是否超额）
         if (available.compareTo(orderAmountFunctional) < 0) {
-            String level = resolveLevel();
-            if (ErpSalConstants.CREDIT_CHECK_LEVEL_HARD_BLOCK.equals(level)) {
-                throw new NopException(ErpSalErrors.ERR_CREDIT_LIMIT_EXCEEDED)
-                        .param(ErpSalErrors.ARG_CUSTOMER_ID, customerId)
-                        .param(ErpSalErrors.ARG_CREDIT_LIMIT, creditLimit)
-                        .param(ErpSalErrors.ARG_AVAILABLE, available)
-                        .param(ErpSalErrors.ARG_ORDER_AMOUNT, orderAmountFunctional);
-            }
-            if (ErpSalConstants.CREDIT_CHECK_LEVEL_SPECIAL_APPROVAL.equals(level)) {
-                if (hasSpecialApprovalPermission(context)) {
-                    LOG.info("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税(本位币)={}），策略=SPECIAL_APPROVAL 持专项审批权限放行",
-                            customerId, creditLimit, available, orderAmountFunctional);
-                    return;
-                }
-                throw new NopException(ErpSalErrors.ERR_CREDIT_SPECIAL_APPROVAL_REQUIRED)
-                        .param(ErpSalErrors.ARG_CUSTOMER_ID, customerId)
-                        .param(ErpSalErrors.ARG_CREDIT_LIMIT, creditLimit)
-                        .param(ErpSalErrors.ARG_AVAILABLE, available)
-                        .param(ErpSalErrors.ARG_ORDER_AMOUNT, orderAmountFunctional);
-            }
-            LOG.warn("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税(本位币)={}），策略={} 放行审核",
-                    customerId, creditLimit, available, orderAmountFunctional, level);
-            // SOFT_WARNING 放行后派发通知（config-gated）：提醒销售员跟进客户超限订单
-            notifyCreditOverLimit(partner, orderCode, orderAmountFunctional, creditLimit, outstanding, available,
-                    context);
+            enforceOverLimit(partner, orderCode, ErpSalConstants.BILL_TYPE_ORDER, creditLimit, outstanding,
+                    available, orderAmountFunctional, context);
         }
+    }
+
+    /**
+     * 信用冻结检查（credit hold）：检查客户<b>当前</b>信用状况是否已超额（{@code available < 0}）。
+     *
+     * <p>与 {@link #check} 的区别：本单金额不叠加到 outstanding——订单审核时额度已被占用，出库/发票审核是检查
+     * "额度占用后信用是否恶化"，而非新增占用。三级策略（{@code erp-sal.credit-check-level}）与订单审核一致。
+     *
+     * @param customerId  客户 ID
+     * @param billCode    当前审核单据的单号（用于错误消息与通知上下文）
+     * @param billType    单据类型（{@link ErpSalConstants#BILL_TYPE_DELIVERY} / {@link ErpSalConstants#BILL_TYPE_INVOICE}）
+     * @param context     服务上下文（提供命令式权限检查入口）
+     */
+    public void checkCreditHold(Long customerId, String billCode, String billType, IServiceContext context) {
+        if (customerId == null) {
+            return;
+        }
+        ErpMdPartner partner = mdPartnerBiz.findById(customerId, context);
+        if (partner == null) {
+            return;
+        }
+        BigDecimal creditLimit = partner.getCreditLimit();
+        if (creditLimit == null) {
+            return;
+        }
+        BigDecimal outstanding = sumOutstanding(customerId, context);
+        BigDecimal available = creditLimit.subtract(outstanding);
+        // 信用冻结语义：客户当前已超额（available < 0）
+        if (available.signum() < 0) {
+            enforceOverLimit(partner, billCode, billType, creditLimit, outstanding, available,
+                    BigDecimal.ZERO, context);
+        }
+    }
+
+    /**
+     * 三级策略统一执行（订单审核与信用冻结复用）。
+     *
+     * <ul>
+     *   <li>HARD_BLOCK：按 {@code billType} 抛对应错误码（ORDER→{@link ErpSalErrors#ERR_CREDIT_LIMIT_EXCEEDED}、
+     *       DELIVERY→{@link ErpSalErrors#ERR_CREDIT_HOLD_DELIVERY}、INVOICE→{@link ErpSalErrors#ERR_CREDIT_HOLD_INVOICE}）。</li>
+     *   <li>SPECIAL_APPROVAL：持专项权限放行，否则抛 {@link ErpSalErrors#ERR_CREDIT_SPECIAL_APPROVAL_REQUIRED}。</li>
+     *   <li>SOFT_WARNING：放行并派发超限通知（config-gated）。</li>
+     * </ul>
+     *
+     * @param billAmountFunctional 本单含税本位币金额（信用冻结场景传 {@link BigDecimal#ZERO}）
+     */
+    private void enforceOverLimit(ErpMdPartner partner, String billCode, String billType,
+                                  BigDecimal creditLimit, BigDecimal outstanding, BigDecimal available,
+                                  BigDecimal billAmountFunctional, IServiceContext context) {
+        String level = resolveLevel();
+        if (ErpSalConstants.CREDIT_CHECK_LEVEL_HARD_BLOCK.equals(level)) {
+            throw buildHardBlockException(billType, partner.getId(), billCode, creditLimit, available,
+                    billAmountFunctional);
+        }
+        if (ErpSalConstants.CREDIT_CHECK_LEVEL_SPECIAL_APPROVAL.equals(level)) {
+            if (hasSpecialApprovalPermission(context)) {
+                LOG.info("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税(本位币)={}，单据类型={}），策略=SPECIAL_APPROVAL 持专项审批权限放行",
+                        partner.getId(), creditLimit, available, billAmountFunctional, billType);
+                return;
+            }
+            throw new NopException(ErpSalErrors.ERR_CREDIT_SPECIAL_APPROVAL_REQUIRED)
+                    .param(ErpSalErrors.ARG_CUSTOMER_ID, partner.getId())
+                    .param(ErpSalErrors.ARG_CREDIT_LIMIT, creditLimit)
+                    .param(ErpSalErrors.ARG_AVAILABLE, available)
+                    .param(ErpSalErrors.ARG_ORDER_AMOUNT, billAmountFunctional);
+        }
+        LOG.warn("客户 {} 信用额度超限（额度={}, 可用={}, 本单含税(本位币)={}，单据类型={}），策略={} 放行",
+                partner.getId(), creditLimit, available, billAmountFunctional, billType, level);
+        // SOFT_WARNING 放行后派发通知（config-gated）：提醒销售员跟进客户超限单据
+        notifyCreditOverLimit(partner, billCode, billAmountFunctional, creditLimit, outstanding, available,
+                context);
+    }
+
+    private NopException buildHardBlockException(String billType, Long customerId, String billCode,
+                                                 BigDecimal creditLimit, BigDecimal available,
+                                                 BigDecimal billAmountFunctional) {
+        if (ErpSalConstants.BILL_TYPE_DELIVERY.equals(billType)) {
+            return new NopException(ErpSalErrors.ERR_CREDIT_HOLD_DELIVERY)
+                    .param(ErpSalErrors.ARG_CUSTOMER_ID, customerId)
+                    .param(ErpSalErrors.ARG_DELIVERY_CODE, billCode)
+                    .param(ErpSalErrors.ARG_CREDIT_LIMIT, creditLimit)
+                    .param(ErpSalErrors.ARG_AVAILABLE, available);
+        }
+        if (ErpSalConstants.BILL_TYPE_INVOICE.equals(billType)) {
+            return new NopException(ErpSalErrors.ERR_CREDIT_HOLD_INVOICE)
+                    .param(ErpSalErrors.ARG_CUSTOMER_ID, customerId)
+                    .param(ErpSalErrors.ARG_INVOICE_CODE, billCode)
+                    .param(ErpSalErrors.ARG_CREDIT_LIMIT, creditLimit)
+                    .param(ErpSalErrors.ARG_AVAILABLE, available);
+        }
+        // ORDER（默认）：订单审核信用超限
+        return new NopException(ErpSalErrors.ERR_CREDIT_LIMIT_EXCEEDED)
+                .param(ErpSalErrors.ARG_CUSTOMER_ID, customerId)
+                .param(ErpSalErrors.ARG_CREDIT_LIMIT, creditLimit)
+                .param(ErpSalErrors.ARG_AVAILABLE, available)
+                .param(ErpSalErrors.ARG_ORDER_AMOUNT, billAmountFunctional);
     }
 
     /**

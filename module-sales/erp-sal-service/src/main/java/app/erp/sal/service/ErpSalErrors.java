@@ -91,6 +91,15 @@ public interface ErpSalErrors {
             "客户 {customerId} 的订单超信用额度（额度={creditLimit}，可用={available}，本单含税金额={orderAmount}），需持有专项审批权限方可审核",
             ARG_CUSTOMER_ID, ARG_CREDIT_LIMIT, ARG_AVAILABLE, ARG_ORDER_AMOUNT);
 
+    // 信用冻结（credit hold）：出库/发票审核环节客户当前已超额（plan 2026-07-10-1100-2）
+    ErrorCode ERR_CREDIT_HOLD_DELIVERY = ErrorCode.define("erp.err.sal.credit-hold-delivery",
+            "客户 {customerId} 信用额度不足，出库单 {deliveryCode} 被信用冻结：额度={creditLimit}，可用={available}",
+            ARG_CUSTOMER_ID, ARG_DELIVERY_CODE, ARG_CREDIT_LIMIT, ARG_AVAILABLE);
+
+    ErrorCode ERR_CREDIT_HOLD_INVOICE = ErrorCode.define("erp.err.sal.credit-hold-invoice",
+            "客户 {customerId} 信用额度不足，发票 {invoiceCode} 被信用冻结：额度={creditLimit}，可用={available}",
+            ARG_CUSTOMER_ID, ARG_INVOICE_CODE, ARG_CREDIT_LIMIT, ARG_AVAILABLE);
+
     // ---- 销售报价单作用域 ----
 
     ErrorCode ERR_QUOTATION_NOT_FOUND = ErrorCode.define("erp.err.sal.quotation-not-found",

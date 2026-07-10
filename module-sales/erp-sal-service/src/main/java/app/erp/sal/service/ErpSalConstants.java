@@ -47,6 +47,19 @@ public interface ErpSalConstants {
     String CREDIT_CHECK_LEVEL_SPECIAL_APPROVAL = "SPECIAL_APPROVAL";
     String CREDIT_CHECK_LEVEL_HARD_BLOCK = "HARD_BLOCK";
 
+    // 出库审核环节是否启用信用冻结检查（默认 false，向后兼容；plan 2026-07-10-1100-2）
+    String CONFIG_CREDIT_CHECK_ON_DELIVERY = "erp-sal.credit-check-on-delivery";
+    boolean CREDIT_CHECK_ON_DELIVERY_DEFAULT = false;
+
+    // 发票审核环节是否启用信用冻结检查（默认 false，向后兼容；plan 2026-07-10-1100-2）
+    String CONFIG_CREDIT_CHECK_ON_INVOICE = "erp-sal.credit-check-on-invoice";
+    boolean CREDIT_CHECK_ON_INVOICE_DEFAULT = false;
+
+    // 信用冻结检查的单据类型（区分错误消息来源，非字典值）
+    String BILL_TYPE_ORDER = "ORDER";
+    String BILL_TYPE_DELIVERY = "DELIVERY";
+    String BILL_TYPE_INVOICE = "INVOICE";
+
     // 信用控制是否纳入 AR 未核销余额（默认 true，关闭时回退纯订单口径）
     String CONFIG_CREDIT_CHECK_INCLUDE_AR = "erp-sal.credit-check-include-ar";
     boolean CREDIT_CHECK_INCLUDE_AR_DEFAULT = true;

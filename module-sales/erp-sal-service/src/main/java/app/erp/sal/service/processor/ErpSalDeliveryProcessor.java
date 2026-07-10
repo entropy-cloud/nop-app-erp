@@ -13,9 +13,11 @@ import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.entity.CreditLimitChecker;
 import app.erp.sal.service.entity.DeliveryStockMoveBuilder;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -66,6 +68,9 @@ public class ErpSalDeliveryProcessor {
 
     @Inject
     IErpQaInspectionBiz inspectionBiz;
+
+    @Inject
+    CreditLimitChecker creditLimitChecker;
 
     public ErpSalDelivery submitForApproval(String id, IServiceContext context) {
         ErpSalDelivery delivery = requireDelivery(id, context);
@@ -183,6 +188,22 @@ public class ErpSalDeliveryProcessor {
 
     protected void validateBusinessRulesForApprove(ErpSalDelivery delivery, IServiceContext context) {
         requireCustomerActive(delivery, context);
+        enforceCreditHold(delivery, context);
+    }
+
+    /**
+     * 出库审核信用冻结检查（config-gated by {@code erp-sal.credit-check-on-delivery}，默认 false 向后兼容）。
+     *
+     * <p>检查客户当前信用状况是否已超额（订单审核时额度已被占用，此处为 point-in-time hold）。
+     * 详见 {@link CreditLimitChecker#checkCreditHold}。
+     */
+    protected void enforceCreditHold(ErpSalDelivery delivery, IServiceContext context) {
+        if (!AppConfig.var(ErpSalConstants.CONFIG_CREDIT_CHECK_ON_DELIVERY,
+                ErpSalConstants.CREDIT_CHECK_ON_DELIVERY_DEFAULT)) {
+            return;
+        }
+        creditLimitChecker.checkCreditHold(delivery.getCustomerId(), delivery.getCode(),
+                ErpSalConstants.BILL_TYPE_DELIVERY, context);
     }
 
     // ---------- step：执行（状态推进 + 持久化） ----------
