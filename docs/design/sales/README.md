@@ -67,7 +67,7 @@
 4. **价税分离**：行级金额、税额、税率独立列。
 5. **多币种**：单据引用币种，金额按业务日期汇率转换本位币。
 6. **可用量校验**：出库前校验库存可用量（由库存域提供），不足时拒绝。
-7. **赠品与折扣**：赠品行金额为 0 但计入数量；折扣可按行或单头，影响应收金额。
+7. **赠品与折扣**：赠品行金额为 0 但计入数量；折扣可按行或单头，影响应收金额。UC-SAL-11 定价引擎支持价格清单取价（`IErpMdCustomerPriceResolver` SPI → `ErpSalPriceList` 客户组/物料/阶梯匹配）和促销规则（`ErpSalPricingRuleEngine` 4 种 ruleType：PERCENT_DISCOUNT/AMOUNT_OFF/GIFT/PRICE_OVERRIDE，支持 stackable 叠加和优先级排他），经 `ErpSalOrderBizModel.applyPricingRules` 在订单保存时应用并回写行级 `discountRate`/`discountAmount`/`pricingSource`。
 8. **退货退款**：退货生成的反向凭证（红字）由财务域处理，退款冲销原收款。
 
 ### 信用额度控制

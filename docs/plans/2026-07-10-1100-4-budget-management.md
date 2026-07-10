@@ -1,7 +1,7 @@
 # 2026-07-10-1100-4-budget-management 预算管理（编制/控制/对比）
 
-> Plan Status: draft
-> Last Reviewed: 2026-07-10
+> Plan Status: active
+> Last Reviewed: 2026-07-10 (iteration 2 — consensus)
 > Source: `docs/design/finance/budget.md`（107 行完整设计）+ use-case 审计 UC-FIN-11/13 🔶
 > Related: `2026-07-02-0700-2` Follow-up（预算控制不存在）；`core-business-roadmap.md` 无对应工作项
 > Audit: required
@@ -11,20 +11,21 @@
 ### 已实现
 
 - **`ErpFinVoucher.postingType` 字段已存在**（VARCHAR 20，字典 `erp-fin/posting-type`：NORMAL/OPENING_BALANCE/ADJUSTMENT/CLOSING/REVERSAL）。`module-finance/model/app-erp-finance.orm.xml:270`
-- **凭证引擎/试算平衡/GlBalance 聚合** 全链路成熟（`ErpFinVoucher` → `ErpFinVoucherLine` → `ErpFinGlBalance`）
-- **`ErpMdCostCenter` 实体已落地**（含 `isBudgetable` 列，`master-data.orm.xml`），预算行可用成本中心维度
+- **`ErpFinVoucherLine` 是权威本期发生额来源**：过账引擎**不维护** `ErpFinGlBalance`（`ProfitLossClosingService`/`AnnualCloseService`/`BadDebtProvisionService` 注释明确"GlBalance 在当前阶段未由过账引擎维护，故以 VoucherLine 为权威本期发生额来源"）。损益结转 / 坏账准备 / 年度结转从 `ErpFinVoucherLine` 聚合；报表/看板从 `ErpFinGlBalance` 读取（GlBalance 仅由年度结转写入快照）。
+- **`ErpMdCostCenter` 实体已落地**（含 `isBudgetable` 列，`master-data.orm.xml:1002`）
+- **`ErpMdSubject.isBudgetable` 列已存在**（`master-data.orm.xml:830`，propId 15，BOOLEAN 默认 false）——无需新增
+- **`ErpFinVoucherLine` 含 `costCenterId` 维度**（`finance.orm.xml:351`），预算控制可按成本中心粒度从凭证行聚合
 - **项目域预算控制**（`ErpPrjBudget`/`ErpPrjBudgetLine` + WARNING/STRICT）已 done（extended-roadmap 2.6）——但这是项目级预算，**非** finance 域预算管理
 - **期间控制** `ErpFinAccountingPeriodStatus.glStatus` 已实现，预算凭证可复用
-- **费用报销**已预留预算门控钩子点（`erp-fin.expense-budget-check-enabled`，默认 false，`2026-07-02-0700-2` Follow-up）
+- **费用报销**已预留预算门控钩子点（`erp-fin.expense-budget-check-enabled`，默认 false，`ErpFinConstants.java:43`）
 
 ### 剩余差距
 
 - **`ErpFinBudgetScenario`/`ErpFinBudgetLine`/`ErpFinBudgetControlLog` 三个设计实体均未落地**（ORM 中无定义）
-- **`ErpFinGlBalance` 无 `postingType` 维度**（24 列，无过账类型区分）——无法分离预算余额与实际余额
-- **`erp-fin/posting-type` 字典无 BUDGET/COMMITMENT 值**（现有值面向凭证用途分类，非预算分类维度）
-- **`IErpFinBudgetControlBiz` SPI 未定义**（全仓 grep 零命中，`0700-2:22` 确认）
-- **`ErpMdSubject.isBudgetable` 列未落地**（`ErpMdCostCenter.isBudgetable` 已有但 Subject 上没有）
+- **`erp-fin/posting-type` 字典无 BUDGET 值**（现有 5 值面向凭证用途分类）
+- **`IErpFinBudgetControlBiz` SPI 未定义**（全仓 grep 零命中）
 - **预算编制/控制/对比**全链路零实现零测试（use-case 审计 UC-FIN-11/13 🔶）
+- **【关键前置缺陷】实际数聚合未按 postingType 隔离预算凭证**：`ProfitLossClosingService.findPostedVoucherIds`（:167-173）、`BadDebtProvisionService.findPostedVoucherIds`（:128）筛选 POSTED+非红冲凭证时**无 postingType 过滤**。一旦引入 `postingType=BUDGET` 的预算凭证，其损益类行会被错误结转进实际损益 / 坏账余额，污染真实财务。本计划必须先修复此隔离缺口（见 Phase 2 Fix 项）。
 
 ### 设计来源
 
@@ -45,9 +46,10 @@
 
 ## Goals
 
-- 实现预算编制（方案 + 明细行），支持审批后生成 BUDGET 影子凭证
-- 实现预算控制（HARD/WARN/NONE 三级），在采购订单/付款审核时同步校验预算余量
-- 实现预算对比报表（预算 vs 实际 vs 承付款 vs 余量），复用凭证行按 postingType 分组
+- 实现预算编制（方案 + 明细行），支持审批后生成 BUDGET 影子凭证（postingType=BUDGET）
+- **前置修复**：实际数聚合（损益结转/坏账/年报）隔离 BUDGET 凭证，确保预算凭证不污染真实财务
+- 实现预算控制（HARD/WARN/NONE 三级），在采购订单/付款审核时同步校验预算余量（余额从 VoucherLine 按 postingType 聚合）
+- 实现预算对比报表（预算 vs 实际 vs 余量），复用凭证行按关联凭证 postingType 分组
 - 前端 CRUD 页面替换占位页
 
 ## Non-Goals
@@ -60,9 +62,10 @@
 
 ## Task Route
 
-- Type: `app-layer design change`（新增 ORM 实体 + 修改 GlBalance 结构 + 新增跨域 SPI）
+- Type: `app-layer design change`（新增 ORM 实体 + 扩展凭证 postingType 字典 + 新增跨域 SPI + **前置修复实际数聚合隔离 BUDGET 凭证**）
 - Owner Docs: `docs/design/finance/budget.md`（权威设计）、`docs/design/finance/posting.md`（IErpFinFactsValidator 扩展点）
-- Skill Selection Basis: 新增 ORM 实体 + 修改 GlBalance + BizModel + 跨域 SPI → nop-backend-dev；GraphQL Engine 测试 → nop-testing
+- Skill Selection Basis: 新增 ORM 实体 + BizModel + 跨域 SPI + 聚合隔离修复 → nop-backend-dev；GraphQL Engine 测试 → nop-testing
+- 保护区域：`module-finance/model/*.orm.xml` 模式属 ask-first 保护区域（`docs/context/ai-autonomy-policy.md:69`）。本计划新增 3 实体 + 扩展凭证字典属加性变更，经 mission-driver 授权的 plan-first 路线；**不修改** `ErpFinGlBalance` / `ErpFinVoucherLine` / `ErpMdSubject` 结构（isBudgetable 列已存在），降低保护区域风险。`ProfitLossClosingService`/`BadDebtProvisionService` 聚合过滤修复属 finance 服务层行为变更，需在计划审计中确认。
 
 ## Infrastructure And Config Prereqs
 
@@ -70,35 +73,26 @@
 
 ## Execution Plan
 
-### Phase 1 - ORM 模型变更：预算实体 + GlBalance postingType 维度
+### Phase 1 - ORM 模型变更：预算实体 + postingType 字典扩展
 
 Status: planned
-Targets: `module-finance/model/app-erp-finance.orm.xml`、`module-master-data/model/app-erp-master-data.orm.xml`
+Targets: `module-finance/model/app-erp-finance.orm.xml`
 Skill: nop-backend-dev
 
 - Item Types: `Decision | Add`
 - Prereqs: none
 
-- [ ] Decision: `ErpFinVoucher.postingType` 字典扩展策略
+- [ ] Decision: `ErpFinVoucher.postingType` 字典扩展策略（仅凭证层，不动 GlBalance）
   - 现状：`erp-fin/posting-type` 字典有 5 值（NORMAL/OPENING_BALANCE/ADJUSTMENT/CLOSING/REVERSAL），面向**凭证用途分类**
   - 设计文档要求：新增 BUDGET/COMMITMENT 值用于预算分类
-  - **选择扩展现有字典**：新增 `BUDGET`/`COMMITMENT` 两个值到 `erp-fin/posting-type`。NORMAL 等同于 ACTUAL（实际凭证的默认值）
-  - 替代方案：新增独立列 `postingCategory`(ACTUAL/BUDGET/COMMITMENT/RESERVATION)——rejected，增加正交维度复杂度且现有凭证均为 ACTUAL=可由 NORMAL 推断；iDempiere 范式也是单列多值
-  - 残留风险：OPENING_BALANCE/ADJUSTMENT/CLOSING/REVERSAL 值理论上既可是 ACTUAL 也可是 BUDGET（如预算调整）——本期接受 NORMAL=BUDGET 用于预算凭证，其余值不混用
+  - **选择扩展现有字典**：新增 `BUDGET`（本期范围）/`COMMITMENT`（Deferred）两个值到 `erp-fin/posting-type`。预算凭证 postingType=BUDGET；实际凭证保持 NORMAL（=ACTUAL）
+  - **不动 `ErpFinGlBalance`**：过账引擎本就不维护 GlBalance（baseline 已核实），预算余额/实际余额/可用余额统一从 `ErpFinVoucherLine` 按关联 `ErpFinVoucher.postingType` 聚合（与损益结转/坏账/报表/看板同权威源），避免引入 GlBalance 结构变更这一最高风险项
+  - 替代方案 A：GlBalance 新增 postingType 列 + 唯一键——rejected，过账引擎不写 GlBalance，新增列无人维护且破坏年度结转快照语义，且 GlBalance 无 costCenterId 维度无法支撑成本中心粒度预算控制
+  - 替代方案 B：新增独立列 `postingCategory`(ACTUAL/BUDGET/COMMITMENT)——rejected，增加正交维度复杂度且现有凭证均为 ACTUAL=NORMAL 可推断
+  - 残留风险：OPENING_BALANCE/ADJUSTMENT 等值理论上既可是实际也可是预算（如预算调整）——本期约束 BUDGET 仅用于预算凭证，其余值不混用
   - Skill: nop-backend-dev
 
-- [ ] Decision: `ErpFinGlBalance` 新增 `postingType` 列
-  - 现状：GlBalance 24 列无 postingType——所有余额混在一起
-  - 设计文档要求：预算余量 = 预算凭证累计 − 实际凭证累计，需按 postingType 分组
-  - **选择新增列**：`postingType VARCHAR(20)`（默认 NORMAL，字典同上）+ 修改唯一键包含 postingType
-  - 影响范围：GlBalance 汇总逻辑需按 postingType 分组聚合；期末结账 GlBalance 重建需感知 postingType
-  - 保护区域：此为 finance 域核心实体结构变更，需 owner-doc 确认
-  - Skill: nop-backend-dev
-
-- [ ] Add: `erp-fin/posting-type` 字典新增 `BUDGET`/`COMMITMENT` 值
-  - Skill: nop-backend-dev
-
-- [ ] Add: `ErpFinGlBalance` 新增 `postingType` 列（VARCHAR 20, 默认 NORMAL, 字典 `erp-fin/posting-type`）
+- [ ] Add: `erp-fin/posting-type` 字典新增 `BUDGET` 值（`COMMITMENT` 值登记但本期不使用，归 Deferred）
   - Skill: nop-backend-dev
 
 - [ ] Add: `ErpFinBudgetScenario`（预算方案头）
@@ -107,31 +101,27 @@ Skill: nop-backend-dev
   - Skill: nop-backend-dev
 
 - [ ] Add: `ErpFinBudgetLine`（预算明细行）
-  - 字段（对照 `budget.md:37-53`）：id/scenarioId/lineNo/orgId, acctSchemaId, periodId(→ErpFinAccountingPeriod), subjectId/subjectCode, costCenterId(nullable), departmentId/projectId/partnerId/warehouseId/materialId(均 nullable 辅助维度), budgetAmountSource/budgetAmountFunctional, currencyId/exchangeRate, 标准审计字段
+  - 字段（对照 `budget.md:37-53`）：id/scenarioId/lineNo/orgId, acctSchemaId, periodId(→ErpFinAccountingPeriod), subjectId/subjectCode, costCenterId(nullable,→ErpMdCostCenter), departmentId/projectId/partnerId/warehouseId/materialId(均 nullable 辅助维度), budgetAmountSource/budgetAmountFunctional, currencyId/exchangeRate, 标准审计字段
   - 关系：to-one scenario/period/subject/costCenter + 辅助维度 to-one
-  - 注意：commitmentAmount/actualAmount/availableAmount **不落库**（派生，查询时从凭证行聚合计算）
+  - 注意：commitmentAmount/actualAmount/availableAmount **不落库**（派生，查询时从 `ErpFinVoucherLine` 按关联凭证 postingType 聚合计算）
   - Skill: nop-backend-dev
 
 - [ ] Add: `ErpFinBudgetControlLog`（预算控制日志）
   - 字段（对照 `budget.md:55-68`）：id/orgId/businessDate, scenarioId/budgetLineId, sourceBillType/sourceBillCode, subjectId/costCenterId/projectId/periodId, requestedAmount, committedAmount, actionResult(字典 `erp-fin/budget-action`: PASS/WARNED/BLOCKED), operatorId/operatedAt/reason, 标准审计字段
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpMdSubject` 新增 `isBudgetable BOOLEAN`（默认 false）
-  - 在 `module-master-data/model/app-erp-master-data.orm.xml` 中 ErpMdSubject 实体新增列
-  - Skill: nop-backend-dev
-
 - [ ] Add: 新增字典 `erp-fin/budget-scenario-type`、`erp-fin/budget-control-level`、`erp-fin/budget-status`、`erp-fin/budget-action`
   - Skill: nop-backend-dev
 
-- [ ] Add: 执行 `mvn clean install -DskipTests`（module-finance + module-master-data 链）触发增量代码生成
+- [ ] Add: 执行 `mvn clean install -DskipTests`（module-finance 链）触发增量代码生成
   - Skill: nop-backend-dev
 
 Exit Criteria:
 
-- [ ] ORM 变更后 `mvn clean install -DskipTests`（module-finance + module-master-data 链）BUILD SUCCESS
+- [ ] ORM 变更后 `mvn clean install -DskipTests`（module-finance 链）BUILD SUCCESS
 - [ ] `ErpFinBudgetScenario`/`ErpFinBudgetLine`/`ErpFinBudgetControlLog` Entity/DAO 生成
-- [ ] `ErpFinGlBalance` 含 `postingType` getter
-- [ ] `ErpMdSubject` 含 `isBudgetable` getter
+- [ ] `erp-fin/posting-type` 字典含 BUDGET 值
+- [ ] **`ErpFinGlBalance` 无任何结构变更**（本计划不动该实体）
 
 ### Phase 2 - 预算编制 BizModel + 审批过账引擎
 
@@ -139,8 +129,18 @@ Status: planned
 Targets: `module-finance/erp-fin-service/`
 Skill: nop-backend-dev
 
-- Item Types: `Add | Proof`
+- Item Types: `Fix | Add | Proof`
 - Prereqs: Phase 1
+
+- [ ] Fix: 实际数聚合隔离 BUDGET 凭证（**关键前置安全修复，必须先于 BUDGET 凭证引入完成**）
+  - 缺陷：`ProfitLossClosingService.findPostedVoucherIds`（:167-173）、`BadDebtProvisionService.findPostedVoucherIds`（:128）筛选 POSTED+非红冲凭证时无 postingType 过滤。引入 BUDGET 凭证后，其损益/费用类行会被错误结转进实际损益 / 坏账余额，污染真实财务（违反设计 `budget.md` 规则 4/6/8：实际数仅来自 ACTUAL 凭证）
+  - 修复：在这些方法及任何"实际数"聚合点增加 `postingType != BUDGET`（或显式 `postingType = NORMAL`）过滤；同步检查 `AnnualCloseService`、试算平衡、财务看板/报表的 VoucherLine 聚合是否需要同等隔离
+  - Skill: nop-backend-dev
+
+- [ ] Proof: BUDGET 凭证隔离回归测试 `TestErpFinBudgetIsolation`
+  - 场景：在期间内创建一张 postingType=BUDGET 的损益类凭证（POSTED）→ 运行损益结转 → 断言 BUDGET 凭证行**未**进入结转金额；运行坏账余额派生 → 断言 BUDGET 凭证行**未**计入
+  - 此回归证明实际财务不受 BUDGET 凭证污染，是预算凭证安全引入的门控测试
+  - Skill: nop-testing
 
 - [ ] Add: `ErpFinBudgetScenarioBizModel`（CrudBizModel）
   - 标准 CRUD + 三轴状态机（DRAFT→SUBMITTED→APPROVED / →REJECTED→DRAFT / APPROVED→CANCELLED）
@@ -149,8 +149,8 @@ Skill: nop-backend-dev
 
 - [ ] Add: `BudgetVoucherGenerator`（预算凭证生成器，`erp-fin-service/.../support/`）
   - 审核通过时：遍历 `ErpFinBudgetLine`，按 `subject.direction` 自动取借贷方向（资产/费用→借方，负债/收入→贷方）
-  - 创建 `ErpFinVoucher`(postingType=BUDGET) + `ErpFinVoucherLine`（每预算行→一凭证行）
-  - 凭证走正常 `DRAFT → POSTED` 流程，写入 `ErpFinGlBalance`(postingType=BUDGET)
+  - 创建 `ErpFinVoucher`(postingType=BUDGET) + `ErpFinVoucherLine`（每预算行→一凭证行，携带 costCenterId 维度）
+  - 凭证走正常 `DRAFT → POSTED` 流程；预算余额从 `ErpFinVoucherLine`（关联凭证 postingType=BUDGET）聚合，**不写 `ErpFinGlBalance`**（过账引擎本就不维护 GlBalance）
   - Skill: nop-backend-dev
 
 - [ ] Add: `ErpFinBudgetScenarioProcessor`（审核编排）
@@ -183,8 +183,8 @@ Skill: nop-backend-dev
   - Skill: nop-backend-dev
 
 - [ ] Add: `ErpFinBudgetControlBiz` 实现（in erp-fin-service）
-  - 查找命中的预算行（subjectId + costCenterId + periodId 匹配的 BUDGET postingType 余额）
-  - 计算 availableAmount = budgetBalance − actualBalance（均从 GlBalance 按 postingType 聚合）
+  - 查找命中的预算行（subjectId + costCenterId + periodId 匹配）
+  - 计算 availableAmount = budgetBalance − actualBalance：**均从 `ErpFinVoucherLine` 聚合**（budgetBalance = 关联凭证 postingType=BUDGET 的行累计；actualBalance = 关联凭证 postingType=NORMAL 的行累计；按 subjectId + costCenterId + periodId 分组）。VoucherLine 含 costCenterId（finance.orm.xml:351）支撑成本中心粒度
   - 按 scenario.controlLevel 决定：NONE→PASS / WARN→写日志放行 / HARD→余额不足抛异常
   - Skill: nop-backend-dev
 
@@ -193,18 +193,20 @@ Skill: nop-backend-dev
   - Skill: nop-backend-dev
 
 - [ ] Proof: GraphQL Engine 集成测试 `TestErpFinBudgetEndToEnd`
-  - 场景 1（编制+审批+过账）：创建方案 + 预算行 → 审核 → BUDGET 凭证生成 → GlBalance(postingType=BUDGET) 有余额
-  - 场景 2（HARD 拦截）：方案 controlLevel=HARD + 预算行 1000 → 模拟 actualAmount 800 → check(300) → BLOCKED
+  - 场景 1（编制+审批+过账）：创建方案 + 预算行 → 审核 → BUDGET 凭证生成 → 从 `ErpFinVoucherLine`（关联凭证 postingType=BUDGET）聚合得预算余额
+  - 场景 2（HARD 拦截）：方案 controlLevel=HARD + 预算行 1000 → 模拟 actualAmount（NORMAL 凭证）800 → check(300) → BLOCKED
   - 场景 3（WARN 放行）：同上 controlLevel=WARN → check(300) → WARNED + 写日志
   - 场景 4（NONE 不控制）：controlLevel=NONE → check(9999) → PASS
-  - 场景 5（CANCELLED 红冲）：方案 APPROVED→CANCELLED → 红冲 BUDGET 凭证 → GlBalance 归零
+  - 场景 5（CANCELLED 红冲）：方案 APPROVED→CANCELLED → 红冲 BUDGET 凭证 → 预算余额（VoucherLine 聚合）归零
+  - 场景 6（隔离）：BUDGET 凭证存在下运行损益结转 → 实际损益不含 BUDGET 行（依赖前置 Fix + 隔离回归测试）
   - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] 预算方案审核 → BUDGET 影子凭证生成 → GlBalance 更新 全链路验证
-- [ ] 预算控制 HARD/WARN/NONE 三级行为正确
-- [ ] GraphQL Engine 集成测试全绿（≥5 场景）
+- [ ] BUDGET 凭证隔离回归测试全绿（BUDGET 凭证不污染实际损益/坏账）
+- [ ] 预算方案审核 → BUDGET 影子凭证生成 → VoucherLine 聚合预算余额 全链路验证
+- [ ] 预算控制 HARD/WARN/NONE 三级行为正确（从 VoucherLine 聚合 actual/budget）
+- [ ] GraphQL Engine 集成测试全绿（≥6 场景）
 
 ### Phase 3 - 预算控制跨域集成
 
@@ -281,7 +283,8 @@ Exit Criteria:
 
 ## Draft Review Record
 
-- Independent draft review iteration 1: pending
+- Independent draft review iteration 1: needs revision (ses_0b659948b8ffe3QVGxsN3HuEVwq) — 6 blocking：B1 baseline 错（`ErpMdSubject.isBudgetable` 已存在 orm.xml:830）；B2 架构前提错误（过账引擎不维护 GlBalance，VoucherLine 为权威源）；B3 关键缺陷（损益结转/坏账无 postingType 过滤，BUDGET 凭证会污染实际财务）；B4 ORM ask-first 未标注；B5 postingType 字典设计漂移；B6 GlBalance 无 costCenterId。
+- Independent draft review iteration 2: accept (ses_0b644de95ffevvRgG0D3IwKk5r) — B1-B6 全部 resolved（isBudgetable 已存在 :830；过账引擎不维护 GlBalance 注释已核实；损益结转 :167-173 / 坏账 :176-182 无 postingType 过滤缺陷已核实且 Fix+回归测试已落地——AnnualCloseService 为间接 BUDGET→GlBalance 泄漏关键 choke point 已纳入 Fix 检查范围；ask-first 已标注；字典仅扩展凭证层；VoucherLine costCenterId :351 支撑成本中心粒度）；移除 GlBalance 结构变更后单一 VoucherLine 聚合结果表面一致，无矛盾引用，Deferred GlBalance 迁移项已移除；无新阻塞项。**草案审查收敛，状态 draft→active。**
 
 ## Closure Gates
 
@@ -307,12 +310,6 @@ Exit Criteria:
 - Classification: `optimization candidate`
 - Why Not Blocking Closure: 本期手动创建方案；滚动预算从年度预算自动按月拆分 + 调整预算 parentScenarioId 版本链差异对比归 successor
 - Successor Required: yes
-
-### GlBalance postingType 唯一键变更的存量数据迁移
-
-- Classification: `watch-only residual`
-- Why Not Blocking Closure: 新增 postingType 列默认 NORMAL，现有 GlBalance 行自动获得 NORMAL 值，无需迁移脚本。唯一键变更需确认是否影响现有结账逻辑
-- Successor Required: no
 
 ## Closure
 

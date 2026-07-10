@@ -1,7 +1,7 @@
 # 2026-07-10-1100-2-sales-credit-hold 信用冻结：出库/发票审核环节信用控制
 
-> Plan Status: draft
-> Last Reviewed: 2026-07-10
+> Plan Status: active
+> Last Reviewed: 2026-07-10 (iteration 1 — consensus)
 > Source: erp-survey 对标调研（ERPNext Credit Limit 在 Sales Order + Sales Invoice 双点校验为标准功能）+ `docs/design/sales/README.md:98-99` Deferred successor
 > Related: `docs/design/sales/README.md`（§信用额度控制 Non-Goals）、`docs/plans/2026-07-10-1100-1-sales-pricing-engine.md`（同属销售域增强）
 > Audit: required
@@ -164,7 +164,7 @@ Exit Criteria:
 
 ## Draft Review Record
 
-- Independent draft review iteration 1: pending
+- Independent draft review iteration 1: accept (ses_0b65a53e3ffe3NCmnaEh30fiNY) — baseline 全部 8 项已核实（CreditLimitChecker 三级策略 + AR 纳入 :121-139/:196-234，唯一调用点 OrderProcessor:158，配置键 :45/51/55/62，错误码 :86/90，Delivery/Invoice Processor 确认未调信用校验）；Decision 理由+被拒替代+残留风险齐备；向后兼容（config 默认 false）一致；范围/退出标准/类型/技能/保护区域/测试覆盖/无范围蔓延均 PASS；无阻塞项。**草案审查一次收敛，状态 draft→active。**
 
 ## Closure Gates
 

@@ -1,9 +1,9 @@
 # 2026-07-10-1100-3-landed-cost-allocation 到岸成本分摊
 
-> Plan Status: draft
-> Last Reviewed: 2026-07-10
+> Plan Status: active
+> Last Reviewed: 2026-07-10 (iteration 2 — consensus)
 > Source: `docs/design/finance/costing-methods.md:302-365` 设计章节 + 5 个 plan Deferred 解除 + logistics path-2 运费过账阻塞解除
-> Related: `core-business-roadmap.md:76` Non-Goal 声明；`2026-07-02-1538-1` Deferred；`2026-07-04-1115-3` path-2 阻塞；`2026-07-05-2352-3` LANDED_COST_SUPPLEMENT 码值预留
+> Related: `core-business-roadmap.md:76` Non-Goal 声明；解除 5 个 plan Deferred：`2026-07-02-1538-1`（LANDED_COST_SUPPLEMENT 算法）、`2026-07-04-1115-3`（logistics path-2 运费过账）、`2026-07-05-2352-3`（LANDED_COST_SUPPLEMENT 码值预留 + 成本调整 Deferred）、`2026-07-05-0427-2`（StandardCosting Landed Cost 注记）、`2026-07-02-0300-1`（采购到付款到岸成本段）
 > Audit: required
 
 ## Current Baseline
@@ -146,7 +146,7 @@ Skill: nop-backend-dev
     1. 加载到岸成本单 + 费用行 + 关联采购入库单 + 入库行（跨域经 `IErpPurReceiveBiz` 只读查询）
     2. 调用 `LandedCostAllocationEngine.allocate(...)` 计算分摊结果
     3. 创建 `ErpInvCostAdjust`(type=LANDED_COST_SUPPLEMENT)，每入库行对应一行 CostAdjustLine（adjustAmount=分摊金额，newUnitCost=新单位成本）
-    4. 调用 `CostAdjustmentService.execute(adjust)` 更新成本层（复用现有 delta 层追加逻辑）
+    4. 调用 `CostAdjustmentService.applyCostAdjust(adjust, lines)` **直接更新成本层**（balance/ledger/layer delta 层追加，无过账）——**切勿**经 `ErpInvCostAdjustProcessor.applyCostAdjust` 走完整审核链（其于 :137 独立派发 `COST_ADJUSTMENT(420)` 过账），否则与到岸成本自有的 `LANDED_COST` 过账双重入账
     5. 设置 `ErpInvCostAdjust.posted=true` + `ErpInvLandedCost.posted=true`
     6. 状态迁移 SUBMITTED→APPROVED
   - Skill: nop-backend-dev
@@ -181,7 +181,7 @@ Skill: nop-backend-dev, nop-testing
   - Skill: nop-backend-dev
 
 - [ ] Add: `LandedCostAcctDocProvider`（implements `IErpFinAcctDocProvider`）
-  - businessType = `LANDED_COST`(新增码值 430，在 `ErpFinBizType` 枚举中注册)
+  - businessType = `LANDED_COST`(新增码值 **490**，在 `ErpFinBusinessType` 枚举中注册——码值 430 已被 `PROJECT_SETTLEMENT` 占用，420–480 均已占用，下一个空闲值为 490)
   - 凭证行生成：每入库行 → 借方行（存货科目, 金额=分摊金额）；每费用要素 → 贷方行（应付科目, 金额=费用金额）
   - 注册到 `app-service.beans.xml` via IoC collect-beans
   - Skill: nop-backend-dev
@@ -227,7 +227,8 @@ Exit Criteria:
 
 ## Draft Review Record
 
-- Independent draft review iteration 1: pending
+- Independent draft review iteration 1: needs revision (ses_0b659dacaffejXxUZs26V6AVHJ) — B1 businessType 码值 430 与 `PROJECT_SETTLEMENT(430)` 硬冲突（`ErpFinBusinessType.java:55`，420–480 均已占用）；B2 内部 `ErpInvCostAdjust` 载体若经 `ErpInvCostAdjustProcessor.apply` 会与 `LANDED_COST` 过账双重入账，且方法名 `execute` 不存在（实为 `applyCostAdjust` :64）；baseline 全部 10 项已核实。
+- Independent draft review iteration 2: accept (ses_0b6453b78ffe784mFWlHpomRzC) — B1 码值冲突已解（LANDED_COST=490，430=PROJECT_SETTLEMENT 已占，enum 尾 480 已核实 490 空闲）；B2 双重过账已解（applyCostAdjust :64 无过账，Processor.applyCostAdjust :120/:137 独立派发 420，禁走 Processor 警告成立）；Related 5 个 Deferred 已齐；baseline/设计对齐/GL 映射/两实体/跨域/anti-slack/类型/技能/退出标准回归全 PASS；无新阻塞项。**草案审查收敛，状态 draft→active。**
 
 ## Closure Gates
 
