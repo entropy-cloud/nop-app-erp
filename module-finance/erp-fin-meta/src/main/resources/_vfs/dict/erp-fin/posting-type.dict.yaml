@@ -25,3 +25,11 @@ options:
     value: REVERSAL
     description: 
   
+  - label: 预算
+    value: BUDGET
+    description: 
+  
+  - label: 承付款
+    value: COMMITMENT
+    description: 
+  

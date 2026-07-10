@@ -48,6 +48,16 @@ public interface ErpFinErrors {
     String ARG_DISCOUNT_RATE = "discountRate";
     String ARG_CONFIG_KEY = "configKey";
 
+    // --- 预算管理作用域参数键 ---
+    String ARG_SUBJECT_ID = "subjectId";
+    String ARG_COST_CENTER_ID = "costCenterId";
+    String ARG_BUDGET_LINE_ID = "budgetLineId";
+    String ARG_SCENARIO_ID = "scenarioId";
+    String ARG_SCENARIO_CODE = "scenarioCode";
+    String ARG_BUDGET_AMOUNT = "budgetAmount";
+    String ARG_REQUESTED_AMOUNT = "requestedAmount";
+    String ARG_ACTUAL_AMOUNT = "actualAmount";
+
     // --- 期末结账作用域参数键 ---
     String ARG_PERIOD_ID = "periodId";
     String ARG_PERIOD_CODE = "periodCode";
@@ -331,6 +341,20 @@ public interface ErpFinErrors {
     ErrorCode ERR_BAD_DEBT_NRV_NEGATIVE = ErrorCode.define("erp.err.fin.bad-debt.nrv-negative",
             "应收净额（NRV）为负：应收总额 {openAmount} − 坏账准备 {allowanceBalance} < 0，数据异常或 Allowance 反转",
             ARG_OPEN_AMOUNT, ARG_ALLOWANCE_BALANCE);
+
+    // --- 预算管理作用域（budget.md） ---
+
+    ErrorCode ERR_BUDGET_EXCEEDED = ErrorCode.define("erp.err.fin.budget.exceeded",
+            "预算超支：科目 {subjectId} 余量 {availableAmount} 不足以承担申请金额 {requestedAmount}（HARD 级别拦截）",
+            ARG_SUBJECT_ID, ARG_AVAILABLE_AMOUNT, ARG_REQUESTED_AMOUNT);
+
+    ErrorCode ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION = ErrorCode.define("erp.err.fin.budget.scenario.illegal-transition",
+            "预算方案 {scenarioCode} 当前状态 {currentDocStatus} 不允许此操作，期望 {expectedDocStatus}",
+            ARG_SCENARIO_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+
+    ErrorCode ERR_BUDGET_SCENARIO_NO_LINES = ErrorCode.define("erp.err.fin.budget.scenario.no-lines",
+            "预算方案 {scenarioCode} 无预算明细行，无法生成预算凭证",
+            ARG_SCENARIO_CODE);
 
     // --- 报表渲染作用域 ---
 

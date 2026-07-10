@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 预算方案类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 年度预算
+    value: ANNUAL
+    description: 
+  
+  - label: 滚动预算
+    value: ROLLING
+    description: 
+  
+  - label: 调整预算
+    value: ADJUSTMENT
+    description: 
+  

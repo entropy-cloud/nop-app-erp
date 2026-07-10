@@ -615,6 +615,35 @@ CREATE TABLE erp_fin_voucher_bill_r(
   constraint PK_erp_fin_voucher_bill_r primary key (ID)
 );
 
+CREATE TABLE erp_fin_budget_scenario(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  ACCT_SCHEMA_ID NUMBER(20) NOT NULL ,
+  FISCAL_YEAR INTEGER NOT NULL ,
+  SCENARIO_TYPE VARCHAR2(20) NOT NULL ,
+  PARENT_SCENARIO_ID NUMBER(20)  ,
+  VALID_FROM DATE  ,
+  VALID_TO DATE  ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  CONTROL_LEVEL VARCHAR2(20) default 'NONE'  NOT NULL ,
+  DOC_STATUS VARCHAR2(20) NOT NULL ,
+  APPROVE_STATUS VARCHAR2(20) NOT NULL ,
+  VOUCHER_ID NUMBER(20)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_budget_scenario primary key (ID)
+);
+
 CREATE TABLE erp_fin_reconciliation_line(
   ID NUMBER(20) NOT NULL ,
   RECONCILIATION_ID NUMBER(20) NOT NULL ,
@@ -761,6 +790,35 @@ CREATE TABLE erp_fin_bank_statement_line(
   constraint PK_erp_fin_bank_statement_line primary key (ID)
 );
 
+CREATE TABLE erp_fin_budget_line(
+  ID NUMBER(20) NOT NULL ,
+  SCENARIO_ID NUMBER(20) NOT NULL ,
+  LINE_NO INTEGER NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  ACCT_SCHEMA_ID NUMBER(20) NOT NULL ,
+  PERIOD_ID NUMBER(20)  ,
+  SUBJECT_ID NUMBER(20) NOT NULL ,
+  SUBJECT_CODE VARCHAR2(50) NOT NULL ,
+  COST_CENTER_ID NUMBER(20)  ,
+  DEPARTMENT_ID NUMBER(20)  ,
+  PROJECT_ID NUMBER(20)  ,
+  PARTNER_ID NUMBER(20)  ,
+  WAREHOUSE_ID NUMBER(20)  ,
+  MATERIAL_ID NUMBER(20)  ,
+  BUDGET_AMOUNT_SOURCE NUMBER(20,4) default 0   ,
+  BUDGET_AMOUNT_FUNCTIONAL NUMBER(20,4) default 0   ,
+  CURRENCY_ID NUMBER(20) NOT NULL ,
+  EXCHANGE_RATE NUMBER(20,8) default 1   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_budget_line primary key (ID)
+);
+
 CREATE TABLE erp_fin_bank_reconciliation_line(
   ID NUMBER(20) NOT NULL ,
   RECONCILIATION_ID NUMBER(20) NOT NULL ,
@@ -778,6 +836,34 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_fin_bank_reconciliation_line primary key (ID)
+);
+
+CREATE TABLE erp_fin_budget_control_log(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  BUSINESS_DATE DATE NOT NULL ,
+  SCENARIO_ID NUMBER(20)  ,
+  BUDGET_LINE_ID NUMBER(20)  ,
+  SOURCE_BILL_TYPE VARCHAR2(50) NOT NULL ,
+  SOURCE_BILL_CODE VARCHAR2(50) NOT NULL ,
+  SUBJECT_ID NUMBER(20)  ,
+  COST_CENTER_ID NUMBER(20)  ,
+  PROJECT_ID NUMBER(20)  ,
+  PERIOD_ID NUMBER(20)  ,
+  REQUESTED_AMOUNT NUMBER(20,4) NOT NULL ,
+  COMMITTED_AMOUNT NUMBER(20,4) default 0   ,
+  AVAILABLE_AMOUNT NUMBER(20,4)  ,
+  ACTION_RESULT VARCHAR2(20) NOT NULL ,
+  OPERATOR_ID VARCHAR2(36)  ,
+  OPERATED_AT DATE  ,
+  REASON VARCHAR2(500)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_budget_control_log primary key (ID)
 );
 
 
@@ -1707,6 +1793,58 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                     
       COMMENT ON COLUMN erp_fin_voucher_bill_r.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_fin_budget_scenario IS '预算方案';
+                
+      COMMENT ON COLUMN erp_fin_budget_scenario.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.CODE IS '方案编码';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.NAME IS '方案名称';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.ACCT_SCHEMA_ID IS '账套';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.FISCAL_YEAR IS '预算年度';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.SCENARIO_TYPE IS '方案类型';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.PARENT_SCENARIO_ID IS '源方案(调整预算版本链)';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.VALID_FROM IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.VALID_TO IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.AMOUNT_SOURCE IS '预算金额(源币种)';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.AMOUNT_FUNCTIONAL IS '预算金额(本位币)';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.CONTROL_LEVEL IS '控制级别';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.DOC_STATUS IS '方案状态';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.APPROVE_STATUS IS '审核状态';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.VOUCHER_ID IS '关联预算凭证ID';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_fin_reconciliation_line IS '核销单行';
                 
       COMMENT ON COLUMN erp_fin_reconciliation_line.ID IS 'ID';
@@ -1963,6 +2101,58 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                     
       COMMENT ON COLUMN erp_fin_bank_statement_line.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_fin_budget_line IS '预算明细行';
+                
+      COMMENT ON COLUMN erp_fin_budget_line.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.SCENARIO_ID IS '预算方案';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.ACCT_SCHEMA_ID IS '账套';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.PERIOD_ID IS '会计期间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.SUBJECT_ID IS '预算科目';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.SUBJECT_CODE IS '科目编码';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.COST_CENTER_ID IS '成本中心';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.DEPARTMENT_ID IS '辅助-部门';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.PROJECT_ID IS '辅助-项目';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.PARTNER_ID IS '辅助-往来单位';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.WAREHOUSE_ID IS '辅助-仓库';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.MATERIAL_ID IS '辅助-物料';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.BUDGET_AMOUNT_SOURCE IS '预算金额(源币种)';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.BUDGET_AMOUNT_FUNCTIONAL IS '预算金额(本位币)';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_line.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_fin_bank_reconciliation_line IS '银行对账调整行';
                 
       COMMENT ON COLUMN erp_fin_bank_reconciliation_line.ID IS 'ID';
@@ -1994,4 +2184,54 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
       COMMENT ON COLUMN erp_fin_bank_reconciliation_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_bank_reconciliation_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_budget_control_log IS '预算控制日志';
+                
+      COMMENT ON COLUMN erp_fin_budget_control_log.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.SCENARIO_ID IS '预算方案';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.BUDGET_LINE_ID IS '预算明细行';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.SOURCE_BILL_TYPE IS '触发单据类型';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.SOURCE_BILL_CODE IS '触发单据号';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.SUBJECT_ID IS '命中科目';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.COST_CENTER_ID IS '命中成本中心';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.PROJECT_ID IS '命中项目';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.PERIOD_ID IS '命中期间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.REQUESTED_AMOUNT IS '申请占用金额';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.COMMITTED_AMOUNT IS '实际占用金额';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.AVAILABLE_AMOUNT IS '检查时余量';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.ACTION_RESULT IS '控制结果';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.OPERATOR_ID IS '操作人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.OPERATED_AT IS '操作时间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.REASON IS '原因';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_control_log.UPDATE_TIME IS '修改时间';
                     

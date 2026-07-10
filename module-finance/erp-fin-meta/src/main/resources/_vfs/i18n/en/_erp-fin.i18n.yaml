@@ -8,6 +8,9 @@ entity:
     ErpFinBankReconciliationLine: Bank Reconciliation Line
     ErpFinBankStatement: Bank Statement
     ErpFinBankStatementLine: Bank Statement Line
+    ErpFinBudgetControlLog: Budget Control Log
+    ErpFinBudgetLine: Budget Line
+    ErpFinBudgetScenario: Budget Scenario
     ErpFinCashForecast: Cash Forecast
     ErpFinCreditFacility: Credit Facility
     ErpFinEmployeeAdvance: Employee Advance
@@ -235,6 +238,112 @@ prop:
       statement: Statement
       matchedLine: Matched Voucher Line
       currency: Currency
+    ErpFinBudgetControlLog:
+      id: ID
+      orgId: Organization
+      businessDate: Business Date
+      scenarioId: Scenario
+      budgetLineId: Budget Line
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      subjectId: Subject
+      costCenterId: Cost Center
+      projectId: Project
+      periodId: Period
+      requestedAmount: Requested Amount
+      committedAmount: Committed Amount
+      availableAmount: Available Amount
+      actionResult: Action Result
+      actionResult_label: null
+      operatorId: Operator
+      operatedAt: Operated At
+      reason: Reason
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scenario: Scenario
+      budgetLine: Budget Line
+      subject: Subject
+      costCenter: Cost Center
+      period: Period
+      org: Org
+    ErpFinBudgetLine:
+      id: ID
+      scenarioId: Scenario
+      lineNo: Line No
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      periodId: Period
+      subjectId: Subject
+      subjectCode: Subject Code
+      costCenterId: Cost Center
+      departmentId: Department
+      projectId: Project
+      partnerId: Partner
+      warehouseId: Warehouse
+      materialId: Material
+      budgetAmountSource: Budget Amt (Source)
+      budgetAmountFunctional: Budget Amt (Functional)
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scenario: Scenario
+      acctSchema: Acct Schema
+      period: Period
+      subject: Subject
+      costCenter: Cost Center
+      department: Department
+      project: Project
+      partner: Partner
+      warehouse: Warehouse
+      material: Material
+      currency: Currency
+      org: Org
+    ErpFinBudgetScenario:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      acctSchemaId: Acct Schema
+      fiscalYear: Fiscal Year
+      scenarioType: Scenario Type
+      scenarioType_label: null
+      parentScenarioId: Parent Scenario
+      validFrom: Valid From
+      validTo: Valid To
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      controlLevel: Control Level
+      controlLevel_label: null
+      docStatus: Budget Status
+      docStatus_label: null
+      approveStatus: Approve Status
+      approveStatus_label: null
+      voucherId: Voucher
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      acctSchema: Acct Schema
+      currency: Currency
+      org: Org
+      parentScenario: Parent Scenario
+      voucher: Voucher
+      lines: Lines
     ErpFinCashForecast:
       id: ID
       orgId: Organization
@@ -799,6 +908,10 @@ dict:
     erp-fin/cash-flow-direction: Cash Flow Direction
     erp-fin/posting-exception-status: Posting Exception Status
     erp-fin/posting-exception-resolution: Posting Exception Resolution
+    erp-fin/budget-scenario-type: Budget Scenario Type
+    erp-fin/budget-control-level: Budget Control Level
+    erp-fin/budget-status: Budget Status
+    erp-fin/budget-action: Budget Action
 dict.option.label:
   erp-fin/voucher-type:
     RECEIPT: Receive
@@ -810,6 +923,8 @@ dict.option.label:
     ADJUSTMENT: Adjustment
     CLOSING: Period Closing
     REVERSAL: Reversal
+    BUDGET: Budget
+    COMMITMENT: Commitment
   erp-fin/voucher-status:
     DRAFT: Draft
     POSTED: Posted
@@ -963,3 +1078,21 @@ dict.option.label:
     RETRY: Retry
     IGNORE: Ignore
     MANUAL: Manual Entry
+  erp-fin/budget-scenario-type:
+    ANNUAL: Annual
+    ROLLING: Rolling
+    ADJUSTMENT: Adjustment
+  erp-fin/budget-control-level:
+    NONE: None
+    WARN: Warn
+    HARD: Hard
+  erp-fin/budget-status:
+    DRAFT: Draft
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    REJECTED: Rejected
+    CANCELLED: Cancelled
+  erp-fin/budget-action:
+    PASS: Pass
+    WARNED: Warned
+    BLOCKED: Blocked

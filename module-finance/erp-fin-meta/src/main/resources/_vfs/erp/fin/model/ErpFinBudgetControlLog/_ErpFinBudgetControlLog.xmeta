@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="clipboard-list" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="预算控制日志" i18n-en:displayName="Budget Control Log"
+      tagSet="gid,erp.finance" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.fin.dao.entity.ErpFinBudgetControlLog</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys/>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="核算组织" propId="2" i18n-en:displayName="Organization" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="businessDate" displayName="业务日期" propId="3" i18n-en:displayName="Business Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="scenarioId" displayName="预算方案" propId="4" i18n-en:displayName="Scenario" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="scenario">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="budgetLineId" displayName="预算明细行" propId="5" i18n-en:displayName="Budget Line" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="budgetLine">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="sourceBillType" displayName="触发单据类型" propId="6" i18n-en:displayName="Source Bill Type"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="sourceBillCode" displayName="触发单据号" propId="7" i18n-en:displayName="Source Bill Code"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="subjectId" displayName="命中科目" propId="8" i18n-en:displayName="Subject" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="subject">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="costCenterId" displayName="命中成本中心" propId="9" i18n-en:displayName="Cost Center" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="costCenter">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="projectId" displayName="命中项目" propId="10" i18n-en:displayName="Project" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="periodId" displayName="命中期间" propId="11" i18n-en:displayName="Period" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="period">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="requestedAmount" displayName="申请占用金额" propId="12" i18n-en:displayName="Requested Amount"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="committedAmount" displayName="实际占用金额" propId="13" i18n-en:displayName="Committed Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="availableAmount" displayName="检查时余量" propId="14" i18n-en:displayName="Available Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="actionResult" displayName="控制结果" propId="15" i18n-en:displayName="Action Result" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/budget-action"/>
+        </prop>
+        <prop name="operatorId" displayName="操作人" propId="16" i18n-en:displayName="Operator" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
+        </prop>
+        <prop name="operatedAt" displayName="操作时间" propId="17" i18n-en:displayName="Operated At" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDateTime"/>
+        </prop>
+        <prop name="reason" displayName="原因" propId="18" i18n-en:displayName="Reason" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="19" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="20" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="21" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="22" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="23" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="24" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="scenario" i18n-en:displayName="Scenario" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="scenarioId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpFinBudgetScenario"/>
+        </prop>
+        <prop name="budgetLine" i18n-en:displayName="Budget Line" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="budgetLineId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpFinBudgetLine"/>
+        </prop>
+        <prop name="subject" i18n-en:displayName="Subject" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="costCenter" i18n-en:displayName="Cost Center" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="costCenterId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdCostCenter"/>
+        </prop>
+        <prop name="period" i18n-en:displayName="Period" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="periodId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpFinAccountingPeriod"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+    </props>
+</meta>

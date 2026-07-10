@@ -26,7 +26,10 @@ import java.util.stream.Collectors;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import static io.nop.api.core.beans.FilterBeans.isNull;
+import static io.nop.api.core.beans.FilterBeans.ne;
 import static io.nop.api.core.beans.FilterBeans.notIn;
+import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
  * 坏账准备期末计提/释放服务（{@code bad-debt.md §步骤2 计提 / §步骤5 释放}）。
@@ -178,6 +181,8 @@ public class BadDebtProvisionService {
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         q.addFilter(eq("isReversed", Boolean.FALSE));
+        // 预算凭证（postingType=BUDGET）是影子凭证，不得计入实际坏账准备余额（budget.md 规则4/6/8）。
+        q.addFilter(or(isNull("postingType"), ne("postingType", ErpFinConstants.POSTING_TYPE_BUDGET)));
         return dao.findAllByQuery(q).stream().map(ErpFinVoucher::getId).collect(Collectors.toList());
     }
 

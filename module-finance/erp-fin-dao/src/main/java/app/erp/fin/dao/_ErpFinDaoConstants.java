@@ -44,6 +44,16 @@ public interface _ErpFinDaoConstants {
     String POSTING_TYPE_REVERSAL = "REVERSAL";
                     
     /**
+     * 过账类型: 预算 
+     */
+    String POSTING_TYPE_BUDGET = "BUDGET";
+                    
+    /**
+     * 过账类型: 承付款 
+     */
+    String POSTING_TYPE_COMMITMENT = "COMMITMENT";
+                    
+    /**
      * 凭证状态: 草稿 
      */
     String VOUCHER_STATUS_DRAFT = "DRAFT";
@@ -687,5 +697,75 @@ public interface _ErpFinDaoConstants {
      * 过账异常处置动作: 手工补录 
      */
     String POSTING_EXCEPTION_RESOLUTION_MANUAL = "MANUAL";
+                    
+    /**
+     * 预算方案类型: 年度预算 
+     */
+    String BUDGET_SCENARIO_TYPE_ANNUAL = "ANNUAL";
+                    
+    /**
+     * 预算方案类型: 滚动预算 
+     */
+    String BUDGET_SCENARIO_TYPE_ROLLING = "ROLLING";
+                    
+    /**
+     * 预算方案类型: 调整预算 
+     */
+    String BUDGET_SCENARIO_TYPE_ADJUSTMENT = "ADJUSTMENT";
+                    
+    /**
+     * 预算控制级别: 不控制 
+     */
+    String BUDGET_CONTROL_LEVEL_NONE = "NONE";
+                    
+    /**
+     * 预算控制级别: 告警放行 
+     */
+    String BUDGET_CONTROL_LEVEL_WARN = "WARN";
+                    
+    /**
+     * 预算控制级别: 硬拦截 
+     */
+    String BUDGET_CONTROL_LEVEL_HARD = "HARD";
+                    
+    /**
+     * 预算方案状态: 草稿 
+     */
+    String BUDGET_STATUS_DRAFT = "DRAFT";
+                    
+    /**
+     * 预算方案状态: 已提交 
+     */
+    String BUDGET_STATUS_SUBMITTED = "SUBMITTED";
+                    
+    /**
+     * 预算方案状态: 已审批 
+     */
+    String BUDGET_STATUS_APPROVED = "APPROVED";
+                    
+    /**
+     * 预算方案状态: 已驳回 
+     */
+    String BUDGET_STATUS_REJECTED = "REJECTED";
+                    
+    /**
+     * 预算方案状态: 已作废 
+     */
+    String BUDGET_STATUS_CANCELLED = "CANCELLED";
+                    
+    /**
+     * 预算控制结果: 通过 
+     */
+    String BUDGET_ACTION_PASS = "PASS";
+                    
+    /**
+     * 预算控制结果: 告警 
+     */
+    String BUDGET_ACTION_WARNED = "WARNED";
+                    
+    /**
+     * 预算控制结果: 拦截 
+     */
+    String BUDGET_ACTION_BLOCKED = "BLOCKED";
                     
 }

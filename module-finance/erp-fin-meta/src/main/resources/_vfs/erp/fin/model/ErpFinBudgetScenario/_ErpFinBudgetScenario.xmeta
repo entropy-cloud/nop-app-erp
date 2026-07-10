@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="chart-pie" xmlns:c="c" xmlns:graphql="graphql" xmlns:meta-gen="meta-gen"
+      xmlns:biz="biz" displayName="预算方案" i18n-en:displayName="Budget Scenario" tagSet="gid,erp.finance" xmlns:ui="ui"
+      xmlns:orm="orm">
+
+    <entityName>app.erp.fin.dao.entity.ErpFinBudgetScenario</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_FIN_BUDGET_SCENARIO_CODE_ORG" props="code,orgId"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="方案编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="voucherCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="方案名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="orgId" displayName="核算组织" propId="4" i18n-en:displayName="Organization" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="acctSchemaId" displayName="账套" propId="5" i18n-en:displayName="Acct Schema" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="acctSchema">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="fiscalYear" displayName="预算年度" propId="6" i18n-en:displayName="Fiscal Year" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="scenarioType" displayName="方案类型" propId="7" i18n-en:displayName="Scenario Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/budget-scenario-type"/>
+        </prop>
+        <prop name="parentScenarioId" displayName="源方案(调整预算版本链)" propId="8" i18n-en:displayName="Parent Scenario"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="parentScenario">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="validFrom" displayName="生效日期" propId="9" i18n-en:displayName="Valid From" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="validTo" displayName="失效日期" propId="10" i18n-en:displayName="Valid To" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="currencyId" displayName="币种" propId="11" i18n-en:displayName="Currency" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="currency">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="exchangeRate" displayName="汇率" propId="12" i18n-en:displayName="Exchange Rate" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="1">
+            <schema domain="exchangeRate" type="java.math.BigDecimal" precision="20" scale="8"/>
+        </prop>
+        <prop name="amountSource" displayName="预算金额(源币种)" propId="13" i18n-en:displayName="Amt (Source)"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="amountFunctional" displayName="预算金额(本位币)" propId="14" i18n-en:displayName="Amt (Functional)"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="controlLevel" displayName="控制级别" propId="15" i18n-en:displayName="Control Level" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="NONE">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/budget-control-level"/>
+        </prop>
+        <prop name="docStatus" displayName="方案状态" propId="16" i18n-en:displayName="Budget Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/budget-status"/>
+        </prop>
+        <prop name="approveStatus" displayName="审核状态" propId="17" i18n-en:displayName="Approve Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="wf/approve-status"/>
+        </prop>
+        <prop name="voucherId" displayName="关联预算凭证ID" propId="18" i18n-en:displayName="Voucher" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="voucher">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="19" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="20" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="21" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="22" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="23" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="24" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="25" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="acctSchema" i18n-en:displayName="Acct Schema" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdAcctSchema"/>
+        </prop>
+        <prop name="currency" i18n-en:displayName="Currency" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="parentScenario" i18n-en:displayName="Parent Scenario" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="parentScenarioId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpFinBudgetScenario"/>
+        </prop>
+        <prop name="voucher" i18n-en:displayName="Voucher" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="voucherId" ext:joinRightProp="id" insertable="false" updatable="false"
+              lazy="true">
+            <schema bizObjName="ErpFinVoucher"/>
+        </prop>
+        <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="scenarioId" insertable="true"
+              updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpFinBudgetLine"/>
+            </schema>
+        </prop>
+    </props>
+</meta>

@@ -1,0 +1,3 @@
+erp-fin:
+  budget-check-enabled: true
+  budget-purchase-expense-subject-code: "6601"

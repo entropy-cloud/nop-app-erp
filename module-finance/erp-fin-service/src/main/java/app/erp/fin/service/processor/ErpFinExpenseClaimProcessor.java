@@ -1,5 +1,7 @@
 package app.erp.fin.service.processor;
 
+import app.erp.fin.biz.IErpFinBudgetControlBiz;
+import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinExpenseClaim;
 import app.erp.fin.dao.entity.ErpFinExpenseClaimLine;
 import app.erp.fin.service.ErpFinConstants;
@@ -7,6 +9,7 @@ import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.AdvanceOffsetOrchestrator;
 import app.erp.fin.service.posting.ExpenseClaimPostingDispatcher;
 import app.erp.md.dao.entity.ErpMdEmployee;
+import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -21,10 +24,13 @@ import jakarta.inject.Inject;
 import java.util.Objects;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.le;
 
 public class ErpFinExpenseClaimProcessor {
 
@@ -36,6 +42,9 @@ public class ErpFinExpenseClaimProcessor {
 
     @Inject
     AdvanceOffsetOrchestrator offsetOrchestrator;
+
+    @Inject
+    IErpFinBudgetControlBiz budgetControlBiz;
 
     public ErpFinExpenseClaim submitForApproval(String id, IServiceContext context) {
         ErpFinExpenseClaim claim = requireClaim(id, context);
@@ -193,8 +202,49 @@ public class ErpFinExpenseClaimProcessor {
         }
     }
 
+    /**
+     * 预算控制钩子（budget.md §业务规则2/8）。经 {@code erp-fin.expense-budget-check-enabled} 门控（默认 false，向后兼容）。
+     * 报销单行无科目维度，按 {@code erp-fin.budget-expense-subject-code} 配置的默认费用科目、
+     * 按报销业务日期解析的会计期间，对报销本位币金额做预算余量校验。科目/期间未配置时静默跳过。
+     */
     protected void runBudgetCheckHook(ErpFinExpenseClaim claim, IServiceContext context) {
-        AppConfig.var(ErpFinConstants.CONFIG_EXPENSE_BUDGET_CHECK_ENABLED, Boolean.FALSE);
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_EXPENSE_BUDGET_CHECK_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_EXPENSE_SUBJECT_CODE);
+        if (subjectId == null) {
+            return;
+        }
+        Long periodId = resolvePeriodId(claim.getBusinessDate());
+        BigDecimal amount = claim.getAmountFunctional() != null
+                ? claim.getAmountFunctional() : BigDecimal.ZERO;
+        budgetControlBiz.check(subjectId, null, periodId, amount, "EXPENSE_CLAIM", claim.getCode(), context);
+    }
+
+    protected Long resolveBudgetSubjectId(String configKey) {
+        String code = AppConfig.var(configKey, null);
+        if (code == null || code.isEmpty()) {
+            return null;
+        }
+        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", code));
+        q.setLimit(1);
+        List<ErpMdSubject> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0).getId();
+    }
+
+    protected Long resolvePeriodId(LocalDate businessDate) {
+        if (businessDate == null) {
+            return null;
+        }
+        IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(le("startDate", businessDate));
+        q.addFilter(ge("endDate", businessDate));
+        q.setLimit(1);
+        List<ErpFinAccountingPeriod> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0).getId();
     }
 
     // ---------- step：执行（状态推进 + 持久化） ----------

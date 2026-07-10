@@ -61,6 +61,8 @@ alter table erp_fin_voucher_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT N
 
 alter table erp_fin_voucher_bill_r add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_budget_scenario add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_fin_reconciliation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_bad_debt add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -73,7 +75,11 @@ alter table erp_fin_expense_claim_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0'
 
 alter table erp_fin_bank_statement_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_budget_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_fin_bank_reconciliation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_budget_control_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_acct_schema drop primary key;
 alter table erp_md_acct_schema add primary key (NOP_TENANT_ID, ID);
@@ -168,6 +174,9 @@ alter table erp_fin_voucher_line add primary key (NOP_TENANT_ID, ID);
 alter table erp_fin_voucher_bill_r drop primary key;
 alter table erp_fin_voucher_bill_r add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_fin_budget_scenario drop primary key;
+alter table erp_fin_budget_scenario add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_fin_reconciliation_line drop primary key;
 alter table erp_fin_reconciliation_line add primary key (NOP_TENANT_ID, ID);
 
@@ -186,7 +195,13 @@ alter table erp_fin_expense_claim_line add primary key (NOP_TENANT_ID, ID);
 alter table erp_fin_bank_statement_line drop primary key;
 alter table erp_fin_bank_statement_line add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_fin_budget_line drop primary key;
+alter table erp_fin_budget_line add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_fin_bank_reconciliation_line drop primary key;
 alter table erp_fin_bank_reconciliation_line add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_budget_control_log drop primary key;
+alter table erp_fin_budget_control_log add primary key (NOP_TENANT_ID, ID);
 
 

@@ -150,11 +150,11 @@
                         <resource id="budget-scenario" app:useCases="UC-FIN-13" displayName="预算方案"
                                   i18n-en:displayName="Budget Scenario" icon="wallet"
                                   component="AMIS" resourceType="SUBM" orderNo="10010"
-                                  url="/erp/fin/pages/budget-scenario/main.page.yaml"/>
+                                  url="/erp/fin/pages/ErpFinBudgetScenario/main.page.yaml"/>
                         <resource id="budget-control-log" app:useCases="UC-FIN-13" displayName="预算控制日志"
                                   i18n-en:displayName="Budget Control Log" icon="shield-alert"
                                   component="AMIS" resourceType="SUBM" orderNo="10020"
-                                  url="/erp/fin/pages/budget-control-log/main.page.yaml"/>
+                                  url="/erp/fin/pages/ErpFinBudgetControlLog/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 银行对账 -->

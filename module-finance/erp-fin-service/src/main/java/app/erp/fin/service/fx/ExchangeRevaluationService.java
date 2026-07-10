@@ -30,8 +30,10 @@ import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.ne;
 import static io.nop.api.core.beans.FilterBeans.notIn;
+import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
  * 期末汇兑重估服务（{@code period-close.md §汇兑重估}，承接 0300-3 deferred + 0540-2 银行存款扩展）。查询外币应收应付未核销项
@@ -208,6 +210,8 @@ public class ExchangeRevaluationService {
         vq.addFilter(eq("periodId", periodId));
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         vq.addFilter(eq("isReversed", Boolean.FALSE));
+        // 预算凭证（postingType=BUDGET）是影子凭证，不得计入实际银行存款重估（budget.md 规则4/6/8）。
+        vq.addFilter(or(isNull("postingType"), ne("postingType", ErpFinConstants.POSTING_TYPE_BUDGET)));
         java.util.Set<Long> voucherIds = new java.util.HashSet<>();
         for (ErpFinVoucher v : vDao.findAllByQuery(vq)) {
             voucherIds.add(v.getId());

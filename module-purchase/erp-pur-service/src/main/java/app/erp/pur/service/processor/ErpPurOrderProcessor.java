@@ -1,25 +1,34 @@
 package app.erp.pur.service.processor;
 
+import app.erp.fin.biz.IErpFinBudgetControlBiz;
+import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.le;
 
 /**
  * 采购订单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
@@ -39,6 +48,9 @@ public class ErpPurOrderProcessor {
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
+
+    @Inject
+    IErpFinBudgetControlBiz budgetControlBiz;
 
     public ErpPurOrder submitForApproval(String id, IServiceContext context) {
         ErpPurOrder order = requireOrder(id, context);
@@ -151,6 +163,52 @@ public class ErpPurOrderProcessor {
 
     protected void validateBusinessRulesForApprove(ErpPurOrder order, IServiceContext context) {
         requireSupplierActive(order, context);
+        runBudgetCheckHook(order, context);
+    }
+
+    /**
+     * 预算控制钩子（budget.md §业务规则2/8）。经 {@code erp-fin.budget-check-enabled} 门控（默认 false，向后兼容）。
+     * 采购订单无科目维度，按 {@code erp-fin.budget-purchase-expense-subject-code} 配置的默认采购费用科目、
+     * 按订单业务日期解析的会计期间，对订单含税合计做预算余量校验。科目/期间未配置时静默跳过。
+     */
+    protected void runBudgetCheckHook(ErpPurOrder order, IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_CHECK_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_PURCHASE_EXPENSE_SUBJECT_CODE);
+        if (subjectId == null) {
+            return;
+        }
+        Long periodId = resolvePeriodId(order.getBusinessDate());
+        BigDecimal amount = order.getTotalAmountWithTax() != null
+                ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
+        budgetControlBiz.check(subjectId, null, periodId, amount, "PURCHASE_ORDER", order.getCode(), context);
+    }
+
+    protected Long resolveBudgetSubjectId(String configKey) {
+        String code = AppConfig.var(configKey, null);
+        if (code == null || code.isEmpty()) {
+            return null;
+        }
+        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", code));
+        q.setLimit(1);
+        List<ErpMdSubject> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0).getId();
+    }
+
+    protected Long resolvePeriodId(LocalDate businessDate) {
+        if (businessDate == null) {
+            return null;
+        }
+        IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(le("startDate", businessDate));
+        q.addFilter(ge("endDate", businessDate));
+        q.setLimit(1);
+        List<ErpFinAccountingPeriod> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0).getId();
     }
 
     // ---------- step：执行（状态推进 + 持久化） ----------

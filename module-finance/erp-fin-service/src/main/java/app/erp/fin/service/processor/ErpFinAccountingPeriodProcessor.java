@@ -47,7 +47,10 @@ import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
+import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.le;
+import static io.nop.api.core.beans.FilterBeans.ne;
+import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
  * 会计期间期末结账编排 Processor（{@code processor-extension-pattern.md} Facade + Processor）。
@@ -503,6 +506,8 @@ public class ErpFinAccountingPeriodProcessor {
         q.addFilter(eq("periodId", periodId));
         q.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         q.addFilter(eq("isReversed", Boolean.FALSE));
+        // 预算凭证（postingType=BUDGET）是影子凭证，不得进入实际试算平衡快照（budget.md 规则4/6/8）。
+        q.addFilter(or(isNull("postingType"), ne("postingType", ErpFinConstants.POSTING_TYPE_BUDGET)));
         return dao.findAllByQuery(q).stream().map(ErpFinVoucher::getId).collect(Collectors.toList());
     }
 

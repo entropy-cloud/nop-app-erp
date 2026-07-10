@@ -156,6 +156,16 @@
     <bean id="app.erp.fin.service.processor.ErpFinBadDebtProcessor"
           class="app.erp.fin.service.processor.ErpFinBadDebtProcessor"/>
 
+    <!-- 预算管理（plan 2026-07-10-1100-4，budget.md）：预算凭证生成器 + 方案状态机编排 Processor + 跨域预算控制 SPI 实现。
+         BudgetVoucherGenerator 按 periodId 分组生成 postingType=BUDGET 影子凭证；Processor 被 ErpFinBudgetScenarioBizModel 调用；
+         ErpFinBudgetControlBiz 实现 IErpFinBudgetControlBiz，被采购/付款/报销审核经 @Inject 调用（config 门控默认关闭）。 -->
+    <bean id="app.erp.fin.service.budget.BudgetVoucherGenerator"
+          class="app.erp.fin.service.budget.BudgetVoucherGenerator"/>
+    <bean id="app.erp.fin.service.budget.ErpFinBudgetScenarioProcessor"
+          class="app.erp.fin.service.budget.ErpFinBudgetScenarioProcessor"/>
+    <bean id="app.erp.fin.service.budget.ErpFinBudgetControlBiz"
+          class="app.erp.fin.service.budget.ErpFinBudgetControlBiz"/>
+
     <!-- 银行对账（plan 2026-07-05-0115-2）：导入器 + 自动勾对候选查询 + 自动勾对算法 + 调节表生成 + 未达调整凭证。
          被 ErpFinBankStatementBizModel / ErpFinBankStatementLineBizModel / ErpFinBankReconciliationBizModel 调用。 -->
     <bean id="app.erp.fin.service.bankrecon.BankStatementImporter"

@@ -162,6 +162,14 @@
         <property name="bizObjName" value="ErpFinVoucherBillR"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinBudgetScenarioBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBudgetScenario" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBudgetScenarioBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBudgetScenario"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinReconciliationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -209,11 +217,26 @@
         <property name="bizObjName" value="ErpFinBankStatementLine"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinBudgetLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBudgetLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBudgetLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpFinBudgetLine"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinBankReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinBankReconciliationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.fin.biz.IErpFinBankReconciliationLineBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpFinBankReconciliationLine"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinBudgetControlLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBudgetControlLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBudgetControlLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBudgetControlLog"/>
     </bean>
 </beans>

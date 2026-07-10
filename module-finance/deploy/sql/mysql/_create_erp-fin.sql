@@ -615,6 +615,35 @@ CREATE TABLE erp_fin_voucher_bill_r(
   constraint PK_erp_fin_voucher_bill_r primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_budget_scenario(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '方案编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '方案名称',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  ACCT_SCHEMA_ID BIGINT NOT NULL    COMMENT '账套',
+  FISCAL_YEAR INTEGER NOT NULL    COMMENT '预算年度',
+  SCENARIO_TYPE VARCHAR(20) NOT NULL    COMMENT '方案类型',
+  PARENT_SCENARIO_ID BIGINT NULL    COMMENT '源方案(调整预算版本链)',
+  VALID_FROM DATE NULL    COMMENT '生效日期',
+  VALID_TO DATE NULL    COMMENT '失效日期',
+  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '预算金额(源币种)',
+  AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '预算金额(本位币)',
+  CONTROL_LEVEL VARCHAR(20) default 'NONE'  NOT NULL    COMMENT '控制级别',
+  DOC_STATUS VARCHAR(20) NOT NULL    COMMENT '方案状态',
+  APPROVE_STATUS VARCHAR(20) NOT NULL    COMMENT '审核状态',
+  VOUCHER_ID BIGINT NULL    COMMENT '关联预算凭证ID',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_budget_scenario primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_reconciliation_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   RECONCILIATION_ID BIGINT NOT NULL    COMMENT '核销单ID',
@@ -761,6 +790,35 @@ CREATE TABLE erp_fin_bank_statement_line(
   constraint PK_erp_fin_bank_statement_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_budget_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SCENARIO_ID BIGINT NOT NULL    COMMENT '预算方案',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  ACCT_SCHEMA_ID BIGINT NOT NULL    COMMENT '账套',
+  PERIOD_ID BIGINT NULL    COMMENT '会计期间',
+  SUBJECT_ID BIGINT NOT NULL    COMMENT '预算科目',
+  SUBJECT_CODE VARCHAR(50) NOT NULL    COMMENT '科目编码',
+  COST_CENTER_ID BIGINT NULL    COMMENT '成本中心',
+  DEPARTMENT_ID BIGINT NULL    COMMENT '辅助-部门',
+  PROJECT_ID BIGINT NULL    COMMENT '辅助-项目',
+  PARTNER_ID BIGINT NULL    COMMENT '辅助-往来单位',
+  WAREHOUSE_ID BIGINT NULL    COMMENT '辅助-仓库',
+  MATERIAL_ID BIGINT NULL    COMMENT '辅助-物料',
+  BUDGET_AMOUNT_SOURCE DECIMAL(20,4) default 0  NULL    COMMENT '预算金额(源币种)',
+  BUDGET_AMOUNT_FUNCTIONAL DECIMAL(20,4) default 0  NULL    COMMENT '预算金额(本位币)',
+  CURRENCY_ID BIGINT NOT NULL    COMMENT '币种',
+  EXCHANGE_RATE DECIMAL(20,8) default 1  NULL    COMMENT '汇率',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_budget_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_bank_reconciliation_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   RECONCILIATION_ID BIGINT NOT NULL    COMMENT '对账记录ID',
@@ -778,6 +836,34 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_fin_bank_reconciliation_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_fin_budget_control_log(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  SCENARIO_ID BIGINT NULL    COMMENT '预算方案',
+  BUDGET_LINE_ID BIGINT NULL    COMMENT '预算明细行',
+  SOURCE_BILL_TYPE VARCHAR(50) NOT NULL    COMMENT '触发单据类型',
+  SOURCE_BILL_CODE VARCHAR(50) NOT NULL    COMMENT '触发单据号',
+  SUBJECT_ID BIGINT NULL    COMMENT '命中科目',
+  COST_CENTER_ID BIGINT NULL    COMMENT '命中成本中心',
+  PROJECT_ID BIGINT NULL    COMMENT '命中项目',
+  PERIOD_ID BIGINT NULL    COMMENT '命中期间',
+  REQUESTED_AMOUNT DECIMAL(20,4) NOT NULL    COMMENT '申请占用金额',
+  COMMITTED_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '实际占用金额',
+  AVAILABLE_AMOUNT DECIMAL(20,4) NULL    COMMENT '检查时余量',
+  ACTION_RESULT VARCHAR(20) NOT NULL    COMMENT '控制结果',
+  OPERATOR_ID VARCHAR(36) NULL    COMMENT '操作人',
+  OPERATED_AT DATETIME NULL    COMMENT '操作时间',
+  REASON VARCHAR(500) NULL    COMMENT '原因',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_budget_control_log primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 
@@ -843,6 +929,8 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                 
    ALTER TABLE erp_fin_voucher_bill_r COMMENT '业财回链';
                 
+   ALTER TABLE erp_fin_budget_scenario COMMENT '预算方案';
+                
    ALTER TABLE erp_fin_reconciliation_line COMMENT '核销单行';
                 
    ALTER TABLE erp_fin_bad_debt COMMENT '坏账单';
@@ -855,5 +943,9 @@ CREATE TABLE erp_fin_bank_reconciliation_line(
                 
    ALTER TABLE erp_fin_bank_statement_line COMMENT '银行对账单行';
                 
+   ALTER TABLE erp_fin_budget_line COMMENT '预算明细行';
+                
    ALTER TABLE erp_fin_bank_reconciliation_line COMMENT '银行对账调整行';
+                
+   ALTER TABLE erp_fin_budget_control_log COMMENT '预算控制日志';
                 

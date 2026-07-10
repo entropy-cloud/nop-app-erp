@@ -1,5 +1,6 @@
 package app.erp.fin.service.report;
 
+import app.erp.fin.biz.IErpFinBudgetLineBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus;
@@ -78,6 +79,8 @@ public class ErpFinReportBizModel {
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
+    @Inject
+    IErpFinBudgetLineBiz budgetLineBiz;
 
     // ===================== 渲染入口 =====================
 
@@ -182,6 +185,10 @@ public class ErpFinReportBizModel {
             case "period-close-report":
                 data.put(DS_VAR, buildPeriodCloseDataset(asLong(data, "periodId")));
                 break;
+            case "budget-vs-actual":
+                data.put(DS_VAR, buildBudgetVsActualDataset(asLong(data, "acctSchemaId"),
+                        asLong(data, "periodId"), asLong(data, "subjectId")));
+                break;
             default:
                 // 未知报表：不自动装配，模板可经 beforeExpand 自行构造数据集
                 break;
@@ -202,6 +209,13 @@ public class ErpFinReportBizModel {
     }
 
     // ===================== 数据集构造（也作 @BizQuery 供前端取原始数据） =====================
+
+    /** 预算对比数据集（budget.md §业务规则5）：委托 {@link IErpFinBudgetLineBiz#getBudgetVsActual} 聚合。 */
+    public List<app.erp.fin.dao.dto.BudgetVsActualRow> buildBudgetVsActualDataset(Long acctSchemaId,
+                                                                                   Long periodId, Long subjectId) {
+        return budgetLineBiz.getBudgetVsActual(acctSchemaId, periodId, subjectId,
+                new io.nop.core.context.ServiceContextImpl());
+    }
 
     /** 资产负债表数据集：按科目层级汇总资产/负债/权益期末余额。口径对齐 finance owner doc 与年度结转产物。 */
     @BizQuery

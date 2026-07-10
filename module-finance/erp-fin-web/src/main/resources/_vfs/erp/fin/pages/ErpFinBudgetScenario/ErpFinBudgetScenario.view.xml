@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpFinBudgetScenario.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+      xmlns:x="/nop/schema/xdsl.xdef">
+
+    <grids>
+        <grid id="list">
+            <!-- 预算方案列表：仅保留业务关键字段（bounded-merge 丢弃生成层冗余列） -->
+            <cols x:override="bounded-merge">
+                <col id="code" label="方案编码"/>
+                <col id="name" label="方案名称"/>
+                <col id="fiscalYear" label="预算年度"/>
+                <col id="scenarioType" label="方案类型"/>
+                <col id="amountFunctional" label="预算金额(本位币)"/>
+                <col id="controlLevel" label="控制级别"/>
+                <col id="docStatus" label="方案状态"/>
+                <col id="approveStatus" label="审核状态"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view"/>
+        <form id="edit"/>
+        <form id="add"/>
+    </forms>
+
+    <pages>
+        <crud name="main" grid="list">
+            <!-- 预算方案审批操作（budget.md 状态机：DRAFT→SUBMITTED→APPROVED / →REJECTED / APPROVED→CANCELLED） -->
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <api url="@query:ErpFinBudgetScenario__get?id=$id" gql:selection="{@viewSelection}"/>
+                </action>
+                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                    <api url="@mutation:ErpFinBudgetScenario__submit?id=$id"/>
+                </action>
+                <action id="row-approve-button" label="审核通过" level="primary" icon="fa fa-check"
+                        confirmText="确认审核通过？将生成 BUDGET 影子凭证。">
+                    <api url="@mutation:ErpFinBudgetScenario__approve?id=$id"/>
+                </action>
+                <action id="row-reject-button" label="驳回" level="danger" icon="fa fa-times">
+                    <api url="@mutation:ErpFinBudgetScenario__reject?id=$id"/>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban"
+                        confirmText="确认作废？将红冲原 BUDGET 凭证。">
+                    <api url="@mutation:ErpFinBudgetScenario__cancel?id=$id"/>
+                </action>
+            </rowActions>
+        </crud>
+        <picker name="picker"/>
+    </pages>
+</view>

@@ -30,11 +30,14 @@ drop table erp_fin_notes_discount;
 drop table erp_fin_expense_claim;
 drop table erp_fin_voucher_line;
 drop table erp_fin_voucher_bill_r;
+drop table erp_fin_budget_scenario;
 drop table erp_fin_reconciliation_line;
 drop table erp_fin_bad_debt;
 drop table erp_fin_bank_reconciliation;
 drop table erp_fin_notes_payable;
 drop table erp_fin_expense_claim_line;
 drop table erp_fin_bank_statement_line;
+drop table erp_fin_budget_line;
 drop table erp_fin_bank_reconciliation_line;
+drop table erp_fin_budget_control_log;
 

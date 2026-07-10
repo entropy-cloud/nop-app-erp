@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 预算控制级别
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 不控制
+    value: NONE
+    description: 
+  
+  - label: 告警放行
+    value: WARN
+    description: 
+  
+  - label: 硬拦截
+    value: HARD
+    description: 
+  

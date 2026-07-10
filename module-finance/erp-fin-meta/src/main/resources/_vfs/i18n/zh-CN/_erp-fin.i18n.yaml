@@ -8,6 +8,9 @@ entity:
     ErpFinBankReconciliationLine: 银行对账调整行
     ErpFinBankStatement: 银行对账单
     ErpFinBankStatementLine: 银行对账单行
+    ErpFinBudgetControlLog: 预算控制日志
+    ErpFinBudgetLine: 预算明细行
+    ErpFinBudgetScenario: 预算方案
     ErpFinCashForecast: 现金预测
     ErpFinCreditFacility: 银行授信额度
     ErpFinEmployeeAdvance: 员工借款单
@@ -235,6 +238,112 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpFinBudgetControlLog:
+      actionResult: 控制结果
+      actionResult_label: 控制结果
+      availableAmount: 检查时余量
+      budgetLine: null
+      budgetLineId: 预算明细行
+      businessDate: 业务日期
+      committedAmount: 实际占用金额
+      costCenter: null
+      costCenterId: 命中成本中心
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      operatedAt: 操作时间
+      operatorId: 操作人
+      org: null
+      orgId: 核算组织
+      period: null
+      periodId: 命中期间
+      projectId: 命中项目
+      reason: 原因
+      requestedAmount: 申请占用金额
+      scenario: null
+      scenarioId: 预算方案
+      sourceBillCode: 触发单据号
+      sourceBillType: 触发单据类型
+      subject: null
+      subjectId: 命中科目
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinBudgetLine:
+      acctSchema: null
+      acctSchemaId: 账套
+      budgetAmountFunctional: 预算金额(本位币)
+      budgetAmountSource: 预算金额(源币种)
+      costCenter: null
+      costCenterId: 成本中心
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      department: null
+      departmentId: 辅助-部门
+      exchangeRate: 汇率
+      id: ID
+      lineNo: 行号
+      material: null
+      materialId: 辅助-物料
+      org: null
+      orgId: 核算组织
+      partner: null
+      partnerId: 辅助-往来单位
+      period: null
+      periodId: 会计期间
+      project: null
+      projectId: 辅助-项目
+      remark: 备注
+      scenario: null
+      scenarioId: 预算方案
+      subject: null
+      subjectCode: 科目编码
+      subjectId: 预算科目
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      warehouse: null
+      warehouseId: 辅助-仓库
+    ErpFinBudgetScenario:
+      acctSchema: null
+      acctSchemaId: 账套
+      amountFunctional: 预算金额(本位币)
+      amountSource: 预算金额(源币种)
+      approveStatus: 审核状态
+      approveStatus_label: 审核状态
+      code: 方案编码
+      controlLevel: 控制级别
+      controlLevel_label: 控制级别
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currencyId: 币种
+      delVersion: 逻辑删除版本
+      docStatus: 方案状态
+      docStatus_label: 方案状态
+      exchangeRate: 汇率
+      fiscalYear: 预算年度
+      id: ID
+      lines: null
+      name: 方案名称
+      org: null
+      orgId: 核算组织
+      parentScenario: null
+      parentScenarioId: 源方案(调整预算版本链)
+      remark: 备注
+      scenarioType: 方案类型
+      scenarioType_label: 方案类型
+      updateTime: 修改时间
+      updatedBy: 修改人
+      validFrom: 生效日期
+      validTo: 失效日期
+      version: 数据版本
+      voucher: null
+      voucherId: 关联预算凭证ID
     ErpFinCashForecast:
       amountFunctional: 本位币金额
       amountSource: 源币种金额

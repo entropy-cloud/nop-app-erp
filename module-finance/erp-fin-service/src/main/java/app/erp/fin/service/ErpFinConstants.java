@@ -160,6 +160,10 @@ public interface ErpFinConstants {
     // ---- 过账类型（与 erp-fin/posting-type 字典对齐） ----
     String POSTING_TYPE_NORMAL = "NORMAL";
     String POSTING_TYPE_REVERSAL = "REVERSAL";
+    /** 预算影子凭证（budget.md：预算作为影子凭证与实际凭证并行入账）。实际数聚合必须排除 BUDGET。 */
+    String POSTING_TYPE_BUDGET = "BUDGET";
+    /** 承付款凭证（Deferred，本期登记不使用）。 */
+    String POSTING_TYPE_COMMITMENT = "COMMITMENT";
 
     // ---- 配置项（posting.md §冲销机制方向二 §实现策略 裁决3），经 AppConfig.var 读取 ----
     /** 凭证红冲事件派发模式：SYNC（默认，同事务同步通知）/ ASYNC（post-commit afterCommit）。 */
@@ -345,4 +349,34 @@ public interface ErpFinConstants {
     /** 现金流预警阈值（银行余额下限）；默认 0=关闭预警。 */
     String CONFIG_DASH_FIN_CASH_FLOW_THRESHOLD = "erp-dash.fin-cash-flow-threshold";
     java.math.BigDecimal DEFAULT_DASH_FIN_CASH_FLOW_THRESHOLD = java.math.BigDecimal.ZERO;
+
+    // ---- 预算管理（budget.md，plan 2026-07-10-1100-4） ----
+    /** 预算控制开关（默认 false，向后兼容；开启后采购/付款/报销审核触发预算余量校验）。 */
+    String CONFIG_BUDGET_CHECK_ENABLED = "erp-fin.budget-check-enabled";
+    /** 采购预算控制科目编码（budget-check-enabled=true 时，采购订单/付款审核按此科目校验预算余量）。 */
+    String CONFIG_BUDGET_PURCHASE_EXPENSE_SUBJECT_CODE = "erp-fin.budget-purchase-expense-subject-code";
+    /** 报销预算控制科目编码（expense-budget-check-enabled=true 时，报销审核按此科目校验预算余量）。 */
+    String CONFIG_BUDGET_EXPENSE_SUBJECT_CODE = "erp-fin.budget-expense-subject-code";
+
+    // budget-status（erp-fin/budget-status）
+    String BUDGET_STATUS_DRAFT = "DRAFT";
+    String BUDGET_STATUS_SUBMITTED = "SUBMITTED";
+    String BUDGET_STATUS_APPROVED = "APPROVED";
+    String BUDGET_STATUS_REJECTED = "REJECTED";
+    String BUDGET_STATUS_CANCELLED = "CANCELLED";
+
+    // budget-control-level（erp-fin/budget-control-level）
+    String BUDGET_CONTROL_NONE = "NONE";
+    String BUDGET_CONTROL_WARN = "WARN";
+    String BUDGET_CONTROL_HARD = "HARD";
+
+    // budget-action（erp-fin/budget-action）
+    String BUDGET_ACTION_PASS = "PASS";
+    String BUDGET_ACTION_WARNED = "WARNED";
+    String BUDGET_ACTION_BLOCKED = "BLOCKED";
+
+    /** 预算凭证业财回链 billType / businessType（不进入 ErpFinBusinessType 枚举，预算凭证不走 Provider 模型）。 */
+    String BUDGET_VOUCHER_BILL_TYPE = "BUDGET_SCENARIO";
+    /** 预算凭证业财回链 billHeadCode 前缀（红冲按 scenario.code 反查）。 */
+    String BUDGET_VOUCHER_BILL_CODE_PREFIX = "BUDGET-";
 }

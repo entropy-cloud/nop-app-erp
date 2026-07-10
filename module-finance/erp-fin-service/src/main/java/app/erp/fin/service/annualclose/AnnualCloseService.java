@@ -30,6 +30,9 @@ import java.util.Set;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import static io.nop.api.core.beans.FilterBeans.isNull;
+import static io.nop.api.core.beans.FilterBeans.ne;
+import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
  * 年度结转服务（{@code period-close.md §年度结转规则} 步骤3 + 步骤4 对账基线）。承接月度结账之后：
@@ -309,6 +312,8 @@ public class AnnualCloseService {
         vq.addFilter(in("periodId", periodIds));
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         vq.addFilter(eq("isReversed", Boolean.FALSE));
+        // 预算凭证（postingType=BUDGET）是影子凭证，不得计入实际年度结转/未分配利润（budget.md 规则4/6/8）。
+        vq.addFilter(or(isNull("postingType"), ne("postingType", ErpFinConstants.POSTING_TYPE_BUDGET)));
         List<Long> ids = new ArrayList<>();
         for (ErpFinVoucher v : vDao.findAllByQuery(vq)) {
             ids.add(v.getId());

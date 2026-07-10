@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 预算控制结果
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 通过
+    value: PASS
+    description: 
+  
+  - label: 告警
+    value: WARNED
+    description: 
+  
+  - label: 拦截
+    value: BLOCKED
+    description: 
+  
