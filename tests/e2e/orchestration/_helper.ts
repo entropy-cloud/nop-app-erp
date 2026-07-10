@@ -605,6 +605,8 @@ export async function cleanupO2cReverse(page: Page, r: O2cReverseResult): Promis
 
 export interface MfgResult {
   componentMat?: any;
+  /** 成品物料（默认 MAT-001；差异 spec 使用测试专用成品物料时置此，cleanupMfg 据此清理成品余额）。 */
+  productMat?: any;
   setupMove?: { id: any; code: string } | null;
   bom?: any; bomLine?: any;
   wo?: any; woOutputLine?: any; woInputLine?: any;
@@ -612,6 +614,15 @@ export interface MfgResult {
   jobCard?: any;
   completionMove?: { id: any; code: string; docStatus: string; posted: boolean } | null;
   codes: { component: string; setup: string; bom: string; wo: string; issue: string; jobCard: string };
+}
+
+/**
+ * runMfgChain 可选参数。productId 默认 MAT-001（0704-2 基线）；差异 spec 传入测试专用成品物料。
+ *（plan 2026-07-10-1800-2 Phase 3：自包含差异链路与 MAT-001 链路隔离。）
+ */
+export interface MfgChainOptions {
+  productId?: number;
+  productUoMId?: number;
 }
 
 /**
@@ -651,7 +662,9 @@ const MFG_BDATE = '2026-07-10';
  *   9. 报工：JobCard → startJob → recordWork → laborCost 回写 → submitJob → completeJob
  *   10. 完工入库：reportCompletion(completedQty=10) → MANUFACTURE 入库移动 + totalCost/unitCost + COMPLETED
  */
-export async function runMfgChain(page: Page): Promise<MfgResult> {
+export async function runMfgChain(page: Page, options?: MfgChainOptions): Promise<MfgResult> {
+  const productId = options?.productId ?? SEED.MAT_1;
+  const productUoMId = options?.productUoMId ?? SEED.UOM;
   const ts = Date.now();
   const r: MfgResult = {
     codes: {
@@ -695,10 +708,10 @@ export async function runMfgChain(page: Page): Promise<MfgResult> {
   await callMutationOk(page, 'ErpInvStockMove', 'complete', { moveId: setupCreated.id }, 'id docStatus posted');
   r.setupMove = { id: setupCreated.id, code: setupCreated.code };
 
-  // 3. BOM + 行：成品 MAT-001 + 组件物料（用量 2/单位）
+  // 3. BOM + 行：成品 + 组件物料（用量 2/单位）
   const bom = await createViaSave(
     page, 'ErpMfgBom',
-    { code: r.codes.bom, productId: SEED.MAT_1, bomType: 'NORMAL', qty: 1, isActive: true },
+    { code: r.codes.bom, productId, bomType: 'NORMAL', qty: 1, isActive: true },
     'id',
   );
   r.bom = bom;
@@ -708,11 +721,11 @@ export async function runMfgChain(page: Page): Promise<MfgResult> {
     'id',
   );
 
-  // 4. WorkOrder + 行：MAT-001 + bomId + plannedQty=10
+  // 4. WorkOrder + 行：成品 + bomId + plannedQty=10
   const wo = await createViaSave(
     page, 'ErpMfgWorkOrder',
     {
-      code: r.codes.wo, orgId: SEED.ORG, bomId: bom.id, productId: SEED.MAT_1,
+      code: r.codes.wo, orgId: SEED.ORG, bomId: bom.id, productId,
       plannedQuantity: MFG_EXPECT.plannedQty, businessDate: MFG_BDATE,
       currencyId: SEED.CURRENCY, exchangeRate: 1,
       docStatus: 'DRAFT', approveStatus: 'UNSUBMITTED',
@@ -725,7 +738,7 @@ export async function runMfgChain(page: Page): Promise<MfgResult> {
     page, 'ErpMfgWorkOrderLine',
     {
       workOrderId: wo.id, lineNo: 1, lineType: 'OUTPUT',
-      materialId: SEED.MAT_1, uoMId: SEED.UOM, plannedQuantity: MFG_EXPECT.plannedQty,
+      materialId: productId, uoMId: productUoMId, plannedQuantity: MFG_EXPECT.plannedQty,
       destWarehouseId: SEED.WH_RAW,
     },
     'id',
@@ -839,8 +852,18 @@ export async function runMfgChain(page: Page): Promise<MfgResult> {
  */
 export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
   if (!r) return;
-  // 完工入库移动 + 成品 MAT-001 余额（WH-RAW 无种子 MAT-001 余额，整行删除安全）
-  await cleanupStockMove(page, r.completionMove, SEED.MAT_1, SEED.WH_RAW);
+  const finishedProductId = r.productMat?.id ?? SEED.MAT_1;
+  // 生产差异记录清理（config erp-mfg.variance-auto-calc-enabled 时 willFinish 完工触发；
+  // MAT-001 链路无 FIRMED rollup → calculateVariances 抛异常被吞 → 无差异记录 → deleteByFilter 空操作安全）
+  if (r.wo) {
+    await deleteByFilter(page, 'ErpMfgCostVariance', eqFilter('workOrderId', Number(r.wo.id)));
+  }
+  // PRODUCTION_VARIANCE 凭证清理（billHeadCode = woCode + '-PV'，ProductionVarianceDispatcher 后缀）
+  if (r.codes?.wo) {
+    await cleanupVoucherByBillCode(page, r.codes.wo + '-PV');
+  }
+  // 完工入库移动 + 成品余额（MAT-001 或测试专用成品在 WH-RAW 均无种子余额行，整行删除安全）
+  await cleanupStockMove(page, r.completionMove, finishedProductId, SEED.WH_RAW);
   // MaterialIssue 行 + 头
   if (r.issue) {
     await deleteByFilter(page, 'ErpMfgMaterialIssueLine', eqFilter('issueId', Number(r.issue.id)));
