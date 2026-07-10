@@ -1,4 +1,4 @@
- 
+
 nop:
   debug: true
   auth:
@@ -46,6 +46,7 @@ quarkus:
   http:
     host: 0.0.0.0
     cors: true
+    port: 8011
 
   log:
     level: INFO
@@ -53,3 +54,17 @@ quarkus:
     category:
       "io.nop":
         level: INFO
+
+  dev:
+    watch:
+      enabled: false
+
+
+  live-reload:
+    enabled: false
+
+"%dev":
+   nop:
+     auth:
+       login:
+         allow-create-default-user: true

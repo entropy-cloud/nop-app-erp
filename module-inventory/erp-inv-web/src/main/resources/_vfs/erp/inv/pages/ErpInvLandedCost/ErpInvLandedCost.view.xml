@@ -52,7 +52,6 @@
                         icon="fa fa-check">
                     <api url="@mutation:ErpInvLandedCost__approve?id=$id"/>
                     <confirmText>确认审核此到岸成本单？审核后将执行分摊并生成凭证。</confirmText>
-                    <reloadAfterSuccess/>
                 </action>
                 <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
                     <action id="row-allocate-preview-button" label="分摊预览">

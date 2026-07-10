@@ -35,15 +35,13 @@
                 <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpFinBudgetScenario__submit?id=$id"/>
                 </action>
-                <action id="row-approve-button" label="审核通过" level="primary" icon="fa fa-check"
-                        confirmText="确认审核通过？将生成 BUDGET 影子凭证。">
+                <action id="row-approve-button" label="审核通过" level="primary" icon="fa fa-check">
                     <api url="@mutation:ErpFinBudgetScenario__approve?id=$id"/>
                 </action>
                 <action id="row-reject-button" label="驳回" level="danger" icon="fa fa-times">
                     <api url="@mutation:ErpFinBudgetScenario__reject?id=$id"/>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban"
-                        confirmText="确认作废？将红冲原 BUDGET 凭证。">
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpFinBudgetScenario__cancel?id=$id"/>
                 </action>
             </rowActions>

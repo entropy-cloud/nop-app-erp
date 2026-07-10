@@ -64,8 +64,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-screening-button" label="筛选" level="primary" icon="fa fa-filter"
-                        visibleOn="${status == 'OPEN'}">
+                <action id="row-screening-button" label="筛选" level="primary" icon="fa fa-filter">
                     <api url="@mutation:ErpHrRecruitment__moveToScreening?id=$id"/>
                     <confirmText>确认推进到简历筛选？</confirmText>
                     <messages>
@@ -73,19 +72,18 @@
                     </messages>
                 </action>
                 <action id="row-interview-button" label="面试" level="info" icon="fa fa-calendar"
-                        visibleOn="${status == 'SCREENING'}" actionType="drawer">
+                        actionType="drawer">
                     <dialog page="scheduleInterview" size="md"/>
                 </action>
                 <action id="row-offer-button" label="Offer" level="success" icon="fa fa-file-text-o"
-                        visibleOn="${status == 'INTERVIEW'}" actionType="drawer">
+                        actionType="drawer">
                     <dialog page="makeOffer" size="md"/>
                 </action>
                 <action id="row-hire-button" label="入职" level="success" icon="fa fa-user-plus"
-                        visibleOn="${status == 'OFFERED'}" actionType="drawer">
+                        actionType="drawer">
                     <dialog page="hire" size="md"/>
                 </action>
-                <action id="row-reject-button" label="拒绝" level="danger" icon="fa fa-times"
-                        visibleOn="${status != 'HIRED' &amp;&amp; status != 'CLOSED' &amp;&amp; status != 'REJECTED'}">
+                <action id="row-reject-button" label="拒绝" level="danger" icon="fa fa-times">
                     <api url="@mutation:ErpHrRecruitment__reject?id=$id"/>
                     <confirmText>确认拒绝此候选人？</confirmText>
                     <messages>

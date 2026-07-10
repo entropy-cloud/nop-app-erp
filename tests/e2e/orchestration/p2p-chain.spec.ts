@@ -48,6 +48,16 @@ test.describe('P2P orchestration chain (PO → Receive → Invoice) browser-laye
       expect(r.receiveMove, 'receive move should be found').toBeTruthy();
       expect(r.receiveMove!.docStatus, 'business-linked move auto-completes to DONE').toBe('DONE');
 
+      // PURCHASE_INPUT 凭证行精确数值断言（plan 2026-07-10-1800-1）：1401 Dr 50 / 2202 Cr 50
+      // 派生自 InvAcctDocProvider.PURCHASE_INPUT：Dr 1401=TOTAL_COST(50) / Cr 2202=TOTAL_COST(50)
+      // TOTAL_COST = ledger.totalCost = qty(10) × unitCost(5) = 50
+      expect(r.receiveMove!.posted, 'Receive move should be posted (posted=true)').toBe(true);
+      const purchaseInputVoucherId = await findVoucherIdByBillCode(page, r.receiveMove!.code, 'NORMAL');
+      await assertVoucherLines(page, purchaseInputVoucherId, [
+        { subjectCode: '1401', dcDirection: 'DEBIT', debitAmount: P2P_EXPECT.invoiceNet, creditAmount: 0 },
+        { subjectCode: '2202', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: P2P_EXPECT.invoiceNet },
+      ]);
+
       // ---- GL 过账产物：Invoice approve → posted=true + voucher 回链 + AP 辅助账 ----
       const invState = await findItems<any>(
         page, 'ErpPurInvoice', eqFilter('code', r.codes.invoice), 'id posted',

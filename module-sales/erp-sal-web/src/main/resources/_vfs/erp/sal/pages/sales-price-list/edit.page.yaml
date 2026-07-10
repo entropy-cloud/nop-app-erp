@@ -1,3 +1,0 @@
-
-x:gen-extends: |
-    <web:GenPage view="ErpSalPriceList.view.xml" page="edit" xpl:lib="/nop/web/xlib/web.xlib" />

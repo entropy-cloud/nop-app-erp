@@ -48,6 +48,17 @@ test.describe('O2C orchestration chain (SO → Delivery → Invoice) browser-lay
       expect(r.deliveryMove, 'delivery move should be found').toBeTruthy();
       expect(r.deliveryMove!.docStatus, 'business-linked move auto-completes to DONE').toBe('DONE');
 
+      // SALES_OUTPUT 凭证行精确数值断言（plan 2026-07-10-1800-1）：6401 Dr 1200 / 1401 Cr 1200
+      // 派生自 InvAcctDocProvider.SALES_OUTPUT：Dr 6401=TOTAL_COST(1200) / Cr 1401=TOTAL_COST(1200)
+      // TOTAL_COST = ledger.totalCost = qty(10) × avgCost(120) = 1200（备货 20@120 MOVING_AVERAGE）
+      expect(r.deliveryMove!.posted, 'Delivery move should be posted (posted=true)').toBe(true);
+      const salesOutputCost = O2C_EXPECT.qty * 120; // 10 × setupUnitCost(120) = 1200
+      const salesOutputVoucherId = await findVoucherIdByBillCode(page, r.deliveryMove!.code, 'NORMAL');
+      await assertVoucherLines(page, salesOutputVoucherId, [
+        { subjectCode: '6401', dcDirection: 'DEBIT', debitAmount: salesOutputCost, creditAmount: 0 },
+        { subjectCode: '1401', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: salesOutputCost },
+      ]);
+
       // ---- GL 过账产物：Invoice approve → posted=true + voucher 回链 + AR 辅助账 ----
       const invState = await findItems<any>(
         page, 'ErpSalInvoice', eqFilter('code', r.codes.invoice), 'id posted',
