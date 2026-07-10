@@ -529,6 +529,50 @@
             </indexes>
         </entity>
 
+        <!-- 休假额度/余额（镜像 ERPNext Leave Allocation 范式，UC-HR-02）。
+             usedDays 不落库——由 BizModel 实时聚合 Σ approved LeaveRequest.durationDays（对齐 budget.md 派生字段范式）。 -->
+        <entity className="app.erp.hr.dao.entity.ErpHrLeaveBalance"
+                displayName="休假额度" ext:icon="calendar-days" i18n-en:displayName="Leave Balance" name="app.erp.hr.dao.entity.ErpHrLeaveBalance"
+                tableName="erp_hr_leave_balance" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="employeeId" displayName="员工" stdSqlType="BIGINT" mandatory="true" code="EMPLOYEE_ID" propId="2" stdDataType="long" i18n-en:displayName='Employee' />
+                <column name="leaveType" displayName="休假类型" ext:dict="erp-hr/leave-type" mandatory="true" code="LEAVE_TYPE" propId="3" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Leave Type' />
+                <column name="fiscalYear" displayName="福利年度" stdSqlType="INTEGER" mandatory="true" code="FISCAL_YEAR" propId="4" stdDataType="int" i18n-en:displayName='Fiscal Year' />
+                <column name="entitledDays" displayName="应休额度(天)" domain="durationDays" mandatory="true" code="ENTITLED_DAYS" propId="5" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Entitled Days' />
+                <column name="carriedForwardDays" displayName="结转额度(天)" domain="durationDays" defaultValue="0" code="CARRIED_FORWARD_DAYS" propId="6" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Carried Forward Days' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="7" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="8" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="9" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="10" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="11" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="12" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="13" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="14" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="15" stdDataType="date" i18n-en:displayName='Business Date' />
+            </columns>
+            <relations>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub" i18n-en:displayName='Employee'><join><on leftProp="employeeId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_LEAVE_BALANCE_EMP_TYPE_YEAR_ORG" columns="employeeId,leaveType,fiscalYear,orgId"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_HR_LEAVE_BALANCE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_LEAVE_BALANCE_TYPE_YEAR" unique="false">
+                    <column name="leaveType"/>
+                    <column name="fiscalYear"/>
+                </index>
+                <index name="IDX_HR_LEAVE_BALANCE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+            </indexes>
+        </entity>
+
         <!-- 工时表 -->
         <entity className="app.erp.hr.dao.entity.ErpHrTimesheet"
                 displayName="工时表" ext:icon="clock" i18n-en:displayName="Timesheet" name="app.erp.hr.dao.entity.ErpHrTimesheet"
@@ -648,6 +692,10 @@
                 <to-one name="leaveRequest" refEntityName="app.erp.hr.dao.entity.ErpHrLeaveRequest" tagSet="pub" i18n-en:displayName='Leave Request'><join><on leftProp="leaveRequestId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <!-- 防止同员工同日多条打卡记录（UC-HR-06 打卡唯一约束） -->
+                <unique-key name="UK_HR_ATTENDANCE_EMP_DATE" columns="employeeId,date"/>
+            </unique-keys>
             <indexes>
                 <index name="IDX_HR_ATTENDANCE_EMPLOYEE_ID" unique="false">
                     <column name="employeeId"/>

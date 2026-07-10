@@ -13,7 +13,32 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge">
+                <action id="list-clock-in-button" label="签到" level="primary" icon="fa fa-sign-in"
+                        actionType="ajax">
+                    <api url="@mutation:ErpHrAttendance__clockIn?employeeId=$employeeId" dataType="raw"/>
+                    <confirmText>确认签到？</confirmText>
+                    <messages>
+                        <success>签到成功</success>
+                    </messages>
+                </action>
+                <action id="list-clock-out-button" label="签退" level="info" icon="fa fa-sign-out"
+                        actionType="ajax">
+                    <api url="@mutation:ErpHrAttendance__clockOut?employeeId=$employeeId" dataType="raw"/>
+                    <confirmText>确认签退？</confirmText>
+                    <messages>
+                        <success>签退成功</success>
+                    </messages>
+                </action>
+            </listActions>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
+
         <picker name="picker"/>
     </pages>
 </view>

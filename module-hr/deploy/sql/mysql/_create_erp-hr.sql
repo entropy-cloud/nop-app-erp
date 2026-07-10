@@ -424,6 +424,25 @@ CREATE TABLE erp_hr_leave_request(
   constraint PK_erp_hr_leave_request primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_hr_leave_balance(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  EMPLOYEE_ID BIGINT NOT NULL    COMMENT '员工',
+  LEAVE_TYPE VARCHAR(20) NOT NULL    COMMENT '休假类型',
+  FISCAL_YEAR INTEGER NOT NULL    COMMENT '福利年度',
+  ENTITLED_DAYS DECIMAL(10,2) NOT NULL    COMMENT '应休额度(天)',
+  CARRIED_FORWARD_DAYS DECIMAL(10,2) default 0  NULL    COMMENT '结转额度(天)',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  constraint PK_erp_hr_leave_balance primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_hr_timesheet(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
@@ -865,6 +884,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
    ALTER TABLE erp_hr_employment_contract COMMENT '劳动合同';
                 
    ALTER TABLE erp_hr_leave_request COMMENT '休假申请';
+                
+   ALTER TABLE erp_hr_leave_balance COMMENT '休假额度';
                 
    ALTER TABLE erp_hr_timesheet COMMENT '工时表';
                 

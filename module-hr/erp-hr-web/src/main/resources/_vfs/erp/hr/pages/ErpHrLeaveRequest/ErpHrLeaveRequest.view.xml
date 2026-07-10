@@ -13,7 +13,46 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane"
+                        visibleOn="${status == 'DRAFT'}">
+                    <api url="@mutation:ErpHrLeaveRequest__submit?id=$id"/>
+                    <confirmText>确认提交此休假申请？</confirmText>
+                    <messages>
+                        <success>休假申请已提交</success>
+                    </messages>
+                </action>
+                <action id="row-approve-button" label="批准" level="success" icon="fa fa-check"
+                        visibleOn="${status == 'SUBMITTED'}">
+                    <api url="@mutation:ErpHrLeaveRequest__approve?id=$id"/>
+                    <confirmText>确认批准此休假申请？</confirmText>
+                    <messages>
+                        <success>休假申请已批准</success>
+                    </messages>
+                </action>
+                <action id="row-reject-button" label="驳回" level="warning" icon="fa fa-times"
+                        visibleOn="${status == 'SUBMITTED'}">
+                    <api url="@mutation:ErpHrLeaveRequest__reject?id=$id"/>
+                    <confirmText>确认驳回此休假申请？</confirmText>
+                    <messages>
+                        <success>休假申请已驳回</success>
+                    </messages>
+                </action>
+                <action id="row-cancel-button" label="取消" level="danger" icon="fa fa-ban"
+                        visibleOn="${status == 'APPROVED'}">
+                    <api url="@mutation:ErpHrLeaveRequest__cancel?id=$id"/>
+                    <confirmText>确认取消此已批准的休假？将回退排班联动。</confirmText>
+                    <messages>
+                        <success>休假申请已取消</success>
+                    </messages>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
+
         <picker name="picker"/>
     </pages>
 </view>

@@ -2,6 +2,7 @@ package app.erp.hr.service.payroll;
 
 import app.erp.hr.dao.entity.ErpHrAttendance;
 import app.erp.hr.dao.entity.ErpHrEmploymentContract;
+import app.erp.hr.dao.entity.ErpHrLeaveRequest;
 import app.erp.hr.dao.entity.ErpHrSalary;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
@@ -20,6 +21,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
 
 /**
@@ -69,6 +71,15 @@ public class PayrollCalculator {
                 ? requiredDays : attendance.actualDays;
         BigDecimal attendanceRatio = requiredDays.signum() == 0 ? BigDecimal.ONE
                 : actualDays.divide(requiredDays, 6, RoundingMode.HALF_UP);
+
+        // 1b. 无薪假扣减（config-gated，默认 false 向后兼容）
+        BigDecimal unpaidLeaveDays = attendance.unpaidLeaveDays != null ? attendance.unpaidLeaveDays : BigDecimal.ZERO;
+        if (ErpHrConfigs.deductUnpaidLeave() && unpaidLeaveDays.signum() > 0) {
+            // 按比例扣减基本工资：basicSalary × (1 − unpaidLeaveDays / requiredDays)
+            BigDecimal deductionRatio = unpaidLeaveDays.divide(requiredDays.signum() == 0 ? BigDecimal.ONE : requiredDays,
+                    6, RoundingMode.HALF_UP);
+            attendanceRatio = attendanceRatio.subtract(deductionRatio).max(BigDecimal.ZERO);
+        }
 
         // 2. 基本工资（合同月薪 × 出勤比例）
         BigDecimal monthlySalary = nz(contract.getMonthlySalary());
@@ -140,7 +151,7 @@ public class PayrollCalculator {
         salary.setActualWorkDays(actualDays);
         salary.setRequiredWorkDays(requiredDays);
         salary.setTotalOvertimeHours(overtimeHours);
-        salary.setUnpaidLeaveDays(BigDecimal.ZERO);
+        salary.setUnpaidLeaveDays(unpaidLeaveDays);
         salary.setCumulativeData(cumulativeData);
         // 公司承担部分暂存 remark 用于过账派发器读取（避免扩展实体字段）；
         // 正式存档于 PostingEvent.billData 而非持久化——见 SalaryPostingDispatcher。
@@ -294,7 +305,30 @@ public class PayrollCalculator {
         summary.actualDays = presentDays;
         summary.requiredDays = DEFAULT_REQUIRED_WORK_DAYS;
         summary.overtimeHours = overtimeHours;
+        summary.unpaidLeaveDays = sumUnpaidLeaveDays(employeeId, periodStart, periodEnd);
         return summary;
+    }
+
+    /**
+     * 汇总无薪假天数（UC-HR-06）：APPROVED 状态的 SICK/PERSONAL 类型休假落入核算期间的天数。
+     * 视 SICK/PERSONAL 为无薪假（config-gated by erp-hr.deduct-unpaid-leave）。
+     */
+    BigDecimal sumUnpaidLeaveDays(Long employeeId, LocalDate periodStart, LocalDate periodEnd) {
+        IEntityDao<ErpHrLeaveRequest> dao = daoProvider.daoFor(ErpHrLeaveRequest.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("employeeId", employeeId));
+        q.addFilter(eq("status", ErpHrConstants.LEAVE_STATUS_APPROVED));
+        q.addFilter(in("leaveType", List.of("SICK", "PERSONAL")));
+        q.addFilter(ge("startDate", periodStart));
+        q.addFilter(le("endDate", periodEnd));
+        List<ErpHrLeaveRequest> unpaidLeaves = dao.findAllByQuery(q);
+        BigDecimal sum = BigDecimal.ZERO;
+        for (ErpHrLeaveRequest lr : unpaidLeaves) {
+            if (lr.getDurationDays() != null) {
+                sum = sum.add(lr.getDurationDays());
+            }
+        }
+        return sum;
     }
 
     static BigDecimal nz(BigDecimal v) {
@@ -305,5 +339,6 @@ public class PayrollCalculator {
         BigDecimal actualDays;
         BigDecimal requiredDays;
         BigDecimal overtimeHours;
+        BigDecimal unpaidLeaveDays;
     }
 }

@@ -203,4 +203,51 @@ public interface ErpHrErrors {
             "erp.err.hr.transfer-target-position-not-found",
             "调动目标职位 {targetPositionId} 不存在或不归属目标部门 {targetDepartmentId}",
             ARG_TARGET_POSITION_ID, ARG_TARGET_DEPARTMENT_ID);
+
+    // --- 休假审批引擎（use-cases.md UC-HR-02）---
+    String ARG_LEAVE_TYPE = "leaveType";
+    String ARG_FISCAL_YEAR = "fiscalYear";
+    String ARG_ENTITLED_DAYS = "entitledDays";
+    String ARG_USED_DAYS = "usedDays";
+    String ARG_REQUEST_DAYS = "requestDays";
+    ErrorCode ERR_LEAVE_BALANCE_INSUFFICIENT = ErrorCode.define(
+            "erp.err.hr.leave-balance-insufficient",
+            "员工 {employeeId} 休假类型 {leaveType} 福利年度 {fiscalYear} 余额不足（应休 {entitledDays} 天/已用 {usedDays} 天/申请 {requestDays} 天）",
+            ARG_EMPLOYEE_ID, ARG_LEAVE_TYPE, ARG_FISCAL_YEAR, ARG_ENTITLED_DAYS, ARG_USED_DAYS, ARG_REQUEST_DAYS);
+    ErrorCode ERR_LEAVE_DATE_OVERLAP = ErrorCode.define(
+            "erp.err.hr.leave-date-overlap",
+            "员工 {employeeId} 休假日期与已有 APPROVED/SUBMITTED 休假区间重叠",
+            ARG_EMPLOYEE_ID);
+    ErrorCode ERR_LEAVE_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.hr.leave-illegal-status-transition",
+            "休假申请 {leaveRequestId} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_LEAVE_REQUEST_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    // --- 考勤打卡（use-cases.md UC-HR-06）---
+    ErrorCode ERR_ALREADY_CLOCKED_IN = ErrorCode.define(
+            "erp.err.hr.already-clocked-in",
+            "员工 {employeeId} 当日已签到，禁止重复签到",
+            ARG_EMPLOYEE_ID);
+    ErrorCode ERR_NOT_CLOCKED_IN = ErrorCode.define(
+            "erp.err.hr.not-clocked-in",
+            "员工 {employeeId} 当日尚未签到，无法签退",
+            ARG_EMPLOYEE_ID);
+
+    // --- 招聘状态机（use-cases.md UC-HR-05）---
+    String ARG_RECRUITMENT_ID = "recruitmentId";
+    ErrorCode ERR_RECRUITMENT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.hr.recruitment-illegal-status-transition",
+            "招聘记录 {recruitmentId} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_RECRUITMENT_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_RECRUITMENT_EMPLOYEE_CREATE_FAILED = ErrorCode.define(
+            "erp.err.hr.recruitment-employee-create-failed",
+            "招聘记录 {recruitmentId} 入职联动创建员工失败",
+            ARG_RECRUITMENT_ID);
+
+    // --- 合同到期（use-cases.md UC-HR-07）---
+    String ARG_CONTRACT_ID = "contractId";
+    ErrorCode ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.hr.contract-illegal-status-transition",
+            "合同 {contractId} 当前状态={currentStatus}，不允许续签（仅 ACTIVE/EXPIRED 允许）",
+            ARG_CONTRACT_ID, ARG_CURRENT_STATUS);
 }

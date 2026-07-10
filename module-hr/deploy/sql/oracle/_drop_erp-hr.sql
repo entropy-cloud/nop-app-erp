@@ -22,6 +22,7 @@ drop table erp_hr_survey_question;
 drop table erp_hr_survey_result;
 drop table erp_hr_employment_contract;
 drop table erp_hr_leave_request;
+drop table erp_hr_leave_balance;
 drop table erp_hr_timesheet;
 drop table erp_hr_salary;
 drop table erp_hr_recruitment;

@@ -219,4 +219,38 @@ public interface ErpHrConstants {
     // ---- 合同状态（erp-hr/contract-status）----
     String CONTRACT_STATUS_ACTIVE = "ACTIVE";
     String CONTRACT_STATUS_TERMINATED = "TERMINATED";
+    String CONTRACT_STATUS_EXPIRED = "EXPIRED";
+    String CONTRACT_STATUS_SUSPENDED = "SUSPENDED";
+
+    // ---- erp-hr/leave-status（完整五态，UC-HR-02 审批状态机）----
+    String LEAVE_STATUS_DRAFT = "DRAFT";
+    String LEAVE_STATUS_SUBMITTED = "SUBMITTED";
+    String LEAVE_STATUS_REJECTED = "REJECTED";
+
+    // ---- erp-hr/recruitment-status（UC-HR-05 招聘状态机）----
+    String RECRUITMENT_STATUS_OPEN = "OPEN";
+    String RECRUITMENT_STATUS_SCREENING = "SCREENING";
+    String RECRUITMENT_STATUS_INTERVIEW = "INTERVIEW";
+    String RECRUITMENT_STATUS_OFFERED = "OFFERED";
+    String RECRUITMENT_STATUS_HIRED = "HIRED";
+    String RECRUITMENT_STATUS_REJECTED = "REJECTED";
+    String RECRUITMENT_STATUS_CLOSED = "CLOSED";
+
+    // ---- erp-hr/contract-type ----
+    String CONTRACT_TYPE_FIXED_TERM = "FIXED_TERM";
+
+    // ---- 合同到期扫描配置项（UC-HR-07）----
+    /** 合同到期预警提前天数（默认 30）。 */
+    String CONFIG_CONTRACT_EXPIRY_WARNING_DAYS = "erp-hr.contract-expiry-warning-days";
+    /** 合同到期扫描 cron 表达式（空值不调度）。 */
+    String CONFIG_CONTRACT_EXPIRY_CRON = "erp-hr.contract-expiry-cron";
+    /** 合同到期预警通知事件。 */
+    String NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING = "hr.contract-expiry-warning";
+
+    // ---- 无薪假扣减配置项（UC-HR-06）----
+    /** 无薪假是否扣减基本工资（默认 false 向后兼容）。 */
+    String CONFIG_DEDUCT_UNPAID_LEAVE = "erp-hr.deduct-unpaid-leave";
+
+    // ---- 考勤来源 ----
+    String ATTENDANCE_SOURCE_CARD = "CARD";
 }

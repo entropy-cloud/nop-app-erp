@@ -131,6 +131,13 @@
         <property name="bizObjName" value="ErpHrLeaveRequest"/>
     </bean>
 
+    <bean id="app.erp.hr.service.entity.ErpHrLeaveBalanceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpHrLeaveBalance" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.hr.biz.IErpHrLeaveBalanceBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpHrLeaveBalance"/>
+    </bean>
+
     <bean id="app.erp.hr.service.entity.ErpHrTimesheetBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpHrTimesheet" class="io.nop.biz.proxy.BizProxyFactoryBean"

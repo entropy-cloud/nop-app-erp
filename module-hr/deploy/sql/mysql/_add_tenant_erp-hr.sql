@@ -45,6 +45,8 @@ alter table erp_hr_employment_contract add NOP_TENANT_ID VARCHAR(32) DEFAULT '0'
 
 alter table erp_hr_leave_request add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_hr_leave_balance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_hr_timesheet add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_hr_salary add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -149,6 +151,9 @@ alter table erp_hr_employment_contract add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_hr_leave_request drop primary key;
 alter table erp_hr_leave_request add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_hr_leave_balance drop primary key;
+alter table erp_hr_leave_balance add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_hr_timesheet drop primary key;
 alter table erp_hr_timesheet add primary key (NOP_TENANT_ID, ID);

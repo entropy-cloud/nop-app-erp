@@ -424,6 +424,25 @@ CREATE TABLE erp_hr_leave_request(
   constraint PK_erp_hr_leave_request primary key (id)
 );
 
+CREATE TABLE erp_hr_leave_balance(
+  id INT8 NOT NULL ,
+  employee_id INT8 NOT NULL ,
+  leave_type VARCHAR(20) NOT NULL ,
+  fiscal_year INT4 NOT NULL ,
+  entitled_days NUMERIC(10,2) NOT NULL ,
+  carried_forward_days NUMERIC(10,2) default 0   ,
+  org_id INT8  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  business_date DATE NOT NULL ,
+  constraint PK_erp_hr_leave_balance primary key (id)
+);
+
 CREATE TABLE erp_hr_timesheet(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -1499,6 +1518,38 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
       COMMENT ON COLUMN erp_hr_leave_request.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_hr_leave_request.business_date IS '业务日期';
+                    
+      COMMENT ON TABLE erp_hr_leave_balance IS '休假额度';
+                
+      COMMENT ON COLUMN erp_hr_leave_balance.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.employee_id IS '员工';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.leave_type IS '休假类型';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.fiscal_year IS '福利年度';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.entitled_days IS '应休额度(天)';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.carried_forward_days IS '结转额度(天)';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_hr_leave_balance.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_hr_timesheet IS '工时表';
                 

@@ -11,6 +11,7 @@ entity:
     ErpHrEmployeeAssessment: 员工评估
     ErpHrEmploymentContract: 劳动合同
     ErpHrGapAnalysis: 差距分析
+    ErpHrLeaveBalance: 休假额度
     ErpHrLeaveRequest: 休假申请
     ErpHrPayrollBankFile: 银行代发文件
     ErpHrPosition: 职位
@@ -296,6 +297,25 @@ prop:
       gapValue: 差距值
       id: ID
       requiredLevel: 要求等级
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpHrLeaveBalance:
+      businessDate: 业务日期
+      carriedForwardDays: 结转额度(天)
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      employee: null
+      employeeId: 员工
+      entitledDays: 应休额度(天)
+      fiscalYear: 福利年度
+      id: ID
+      leaveType: 休假类型
+      leaveType_label: 休假类型
+      org: null
+      orgId: 业务组织
+      remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

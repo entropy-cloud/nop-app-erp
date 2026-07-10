@@ -161,3 +161,12 @@ jobs:
     invoker:
       bean: erpFinDeferredPostingSweepJob
       method: execute
+
+  - jobName: erp-hr-contract-expiry
+    displayName: HR Contract Expiry Scan
+    description: 每日 01:00 扫描到期前合同派发提醒通知 + 推进已过期合同状态 ACTIVE→EXPIRED；cron 经 erp-hr.contract-expiry-cron 配置门控
+    trigger:
+      cronExpr: "0 0 1 * * ?"
+    invoker:
+      bean: erpHrContractExpiryJob
+      method: execute

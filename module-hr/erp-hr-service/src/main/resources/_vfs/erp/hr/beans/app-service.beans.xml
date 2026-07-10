@@ -35,8 +35,11 @@
           class="app.erp.hr.service.competency.GapAnalysisCalculator"/>
 
     <!-- HR 域报表渲染入口（plan 2026-07-06-1247-1）：非实体 BizModel，注入平台 IReportEngine，
-         经 @BizQuery 暴露 renderHtml/download。@BizModel 注解由 bizObject 管理器自动识别。
-         镜像 finance ErpFinReportBizModel / manufacturing ErpMfgReportBizModel / inventory ErpInvReportBizModel
-         （域隔离 /hr/ vs /fin/ vs /mfg/ vs /inv/）。员工净余额跨域只读经 IErpFinArApItemBiz 聚合。 -->
+          经 @BizQuery 暴露 renderHtml/download。@BizModel 注解由 bizObject 管理器自动识别。
+          镜像 finance ErpFinReportBizModel / manufacturing ErpMfgReportBizModel / inventory ErpInvReportBizModel
+          （域隔离 /hr/ vs /fin/ vs /mfg/ vs /inv/）。员工净余额跨域只读经 IErpFinArApItemBiz 聚合。 -->
     <bean id="app.erp.hr.service.report.ErpHrReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- HR 合同到期扫描 Job Bean（UC-HR-07），由 scheduler.yaml 经 BeanMethodJobInvoker 反射调用 -->
+    <bean id="erpHrContractExpiryJob" class="app.erp.hr.service.job.ErpHrContractExpiryJob"/>
 </beans>

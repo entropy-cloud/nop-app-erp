@@ -22,6 +22,7 @@ drop table  if exists  erp_hr_survey_question;
 drop table  if exists  erp_hr_survey_result;
 drop table  if exists  erp_hr_employment_contract;
 drop table  if exists  erp_hr_leave_request;
+drop table  if exists  erp_hr_leave_balance;
 drop table  if exists  erp_hr_timesheet;
 drop table  if exists  erp_hr_salary;
 drop table  if exists  erp_hr_recruitment;

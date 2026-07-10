@@ -43,6 +43,10 @@ public interface ErpHrConfigs {
     boolean DEFAULT_TRANSFER_AUTO_HANDLE_CONTRACT = true;
     /** 调动生效日期与 APPROVED 休假冲突时默认告警（不阻塞）。 */
     boolean DEFAULT_TRANSFER_LEAVE_CONFLICT_WARN = true;
+    /** 合同到期预警默认提前天数。 */
+    int DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS = 30;
+    /** 无薪假扣减默认关闭（向后兼容）。 */
+    boolean DEFAULT_DEDUCT_UNPAID_LEAVE = false;
 
     static String defaultSocialInsuranceBaseCity() {
         String city = io.nop.api.core.config.AppConfig.var(
@@ -162,5 +166,17 @@ public interface ErpHrConfigs {
         Boolean v = io.nop.api.core.config.AppConfig.var(
                 ErpHrConstants.CONFIG_TRANSFER_LEAVE_CONFLICT_WARN, DEFAULT_TRANSFER_LEAVE_CONFLICT_WARN);
         return v == null ? DEFAULT_TRANSFER_LEAVE_CONFLICT_WARN : v;
+    }
+
+    static int contractExpiryWarningDays() {
+        Integer v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_CONTRACT_EXPIRY_WARNING_DAYS, DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS);
+        return v == null ? DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS : v;
+    }
+
+    static boolean deductUnpaidLeave() {
+        Boolean v = io.nop.api.core.config.AppConfig.var(
+                ErpHrConstants.CONFIG_DEDUCT_UNPAID_LEAVE, DEFAULT_DEDUCT_UNPAID_LEAVE);
+        return v == null ? DEFAULT_DEDUCT_UNPAID_LEAVE : v;
     }
 }

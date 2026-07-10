@@ -11,6 +11,7 @@ entity:
     ErpHrEmployeeAssessment: Employee Assessment
     ErpHrEmploymentContract: Employment Contract
     ErpHrGapAnalysis: Gap Analysis
+    ErpHrLeaveBalance: Leave Balance
     ErpHrLeaveRequest: Leave Request
     ErpHrPayrollBankFile: Payroll Bank File
     ErpHrPosition: Position
@@ -299,6 +300,25 @@ prop:
       updateTime: Update Time
       employee: Employee
       competency: Competency
+    ErpHrLeaveBalance:
+      id: ID
+      employeeId: Employee
+      leaveType: Leave Type
+      leaveType_label: null
+      fiscalYear: Fiscal Year
+      entitledDays: Entitled Days
+      carriedForwardDays: Carried Forward Days
+      orgId: Organization
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      businessDate: Business Date
+      employee: Employee
+      org: Org
     ErpHrLeaveRequest:
       id: ID
       code: Code

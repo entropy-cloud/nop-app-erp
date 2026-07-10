@@ -1,0 +1,20 @@
+{
+  "id": 0,
+  "employeeId": 0,
+  "leaveType": "",
+  "leaveType_label": "",
+  "fiscalYear": 0,
+  "entitledDays": 0.0,
+  "carriedForwardDays": 0.0,
+  "orgId": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "businessDate": "2000-01-01",
+  "employee": null,
+  "org": null
+}

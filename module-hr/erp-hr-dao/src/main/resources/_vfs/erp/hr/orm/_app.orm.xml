@@ -775,6 +775,80 @@
                 <unique-key columns="code,orgId" name="UK_HR_LEAVE_REQUEST_CODE_ORG"/>
             </unique-keys>
         </entity>
+        <entity className="app.erp.hr.dao.entity.ErpHrLeaveBalance" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="休假额度"
+                name="app.erp.hr.dao.entity.ErpHrLeaveBalance" registerShortName="true" tableName="erp_hr_leave_balance"
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="calendar-days" i18n-en:displayName="Leave Balance">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="EMPLOYEE_ID" displayName="员工" mandatory="true" name="employeeId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Employee"/>
+                <column code="LEAVE_TYPE" displayName="休假类型" mandatory="true" name="leaveType" precision="20" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-hr/leave-type"
+                        i18n-en:displayName="Leave Type"/>
+                <column code="FISCAL_YEAR" displayName="福利年度" mandatory="true" name="fiscalYear" propId="4"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Fiscal Year"/>
+                <column code="ENTITLED_DAYS" displayName="应休额度(天)" domain="durationDays" mandatory="true"
+                        name="entitledDays" precision="10" propId="5" scale="2" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Entitled Days"/>
+                <column code="CARRIED_FORWARD_DAYS" defaultValue="0" displayName="结转额度(天)" domain="durationDays"
+                        name="carriedForwardDays" precision="10" propId="6" scale="2" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Carried Forward Days"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="7" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="15"
+                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+            </columns>
+            <indexes>
+                <index name="IDX_HR_LEAVE_BALANCE_EMPLOYEE_ID" unique="false">
+                    <column name="employeeId"/>
+                </index>
+                <index name="IDX_HR_LEAVE_BALANCE_TYPE_YEAR" unique="false">
+                    <column name="leaveType"/>
+                    <column name="fiscalYear"/>
+                </index>
+                <index name="IDX_HR_LEAVE_BALANCE_ORG_BUSINESS_DATE" unique="false">
+                    <column name="orgId"/>
+                    <column name="businessDate"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="employee" refEntityName="app.erp.hr.dao.entity.ErpHrEmployee" tagSet="pub"
+                        i18n-en:displayName="Employee">
+                    <join>
+                        <on leftProp="employeeId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="employeeId,leaveType,fiscalYear,orgId" name="UK_HR_LEAVE_BALANCE_EMP_TYPE_YEAR_ORG"/>
+            </unique-keys>
+        </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrTimesheet" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时表"
                 name="app.erp.hr.dao.entity.ErpHrTimesheet" registerShortName="true" tableName="erp_hr_timesheet"
@@ -1019,6 +1093,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="employeeId,date" name="UK_HR_ATTENDANCE_EMP_DATE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrSalary" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬记录"

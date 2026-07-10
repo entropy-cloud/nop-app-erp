@@ -10,10 +10,131 @@
         <form id="view"/>
         <form id="edit"/>
         <form id="add"/>
+
+        <!-- UC-HR-05 安排面试表单 -->
+        <form id="scheduleInterview" editMode="add" title="安排面试">
+            <layout>
+  interviewerId[面试官ID] interviewDate[面试日期]
+</layout>
+            <cells>
+                <cell id="interviewerId" label="面试官ID" domain="long" custom="true">
+                    <gen-control>
+                        <input-number placeholder="面试官员工ID"/>
+                    </gen-control>
+                </cell>
+                <cell id="interviewDate" label="面试日期" domain="date" custom="true">
+                    <gen-control>
+                        <input-date format="YYYY-MM-DD" placeholder="面试日期"/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
+
+        <!-- UC-HR-05 发放Offer表单 -->
+        <form id="makeOffer" editMode="add" title="发放Offer">
+            <layout>
+  offerSalary[Offer薪资]
+</layout>
+            <cells>
+                <cell id="offerSalary" label="Offer薪资(月薪)" domain="decimal" custom="true">
+                    <gen-control>
+                        <input-number placeholder="月薪金额"/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
+
+        <!-- UC-HR-05 入职表单 -->
+        <form id="hire" editMode="add" title="入职">
+            <layout>
+  hiredDate[入职日期]
+</layout>
+            <cells>
+                <cell id="hiredDate" label="入职日期" domain="date" custom="true">
+                    <gen-control>
+                        <input-date format="YYYY-MM-DD" placeholder="入职日期"/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-screening-button" label="筛选" level="primary" icon="fa fa-filter"
+                        visibleOn="${status == 'OPEN'}">
+                    <api url="@mutation:ErpHrRecruitment__moveToScreening?id=$id"/>
+                    <confirmText>确认推进到简历筛选？</confirmText>
+                    <messages>
+                        <success>已推进到筛选阶段</success>
+                    </messages>
+                </action>
+                <action id="row-interview-button" label="面试" level="info" icon="fa fa-calendar"
+                        visibleOn="${status == 'SCREENING'}" actionType="drawer">
+                    <dialog page="scheduleInterview" size="md"/>
+                </action>
+                <action id="row-offer-button" label="Offer" level="success" icon="fa fa-file-text-o"
+                        visibleOn="${status == 'INTERVIEW'}" actionType="drawer">
+                    <dialog page="makeOffer" size="md"/>
+                </action>
+                <action id="row-hire-button" label="入职" level="success" icon="fa fa-user-plus"
+                        visibleOn="${status == 'OFFERED'}" actionType="drawer">
+                    <dialog page="hire" size="md"/>
+                </action>
+                <action id="row-reject-button" label="拒绝" level="danger" icon="fa fa-times"
+                        visibleOn="${status != 'HIRED' &amp;&amp; status != 'CLOSED' &amp;&amp; status != 'REJECTED'}">
+                    <api url="@mutation:ErpHrRecruitment__reject?id=$id"/>
+                    <confirmText>确认拒绝此候选人？</confirmText>
+                    <messages>
+                        <success>已拒绝此候选人</success>
+                    </messages>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
+
+        <!-- 安排面试提交页 -->
+        <simple name="scheduleInterview" form="scheduleInterview" useFormActions="true">
+            <api url="@mutation:ErpHrRecruitment__scheduleInterview/id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" actionType="cancel"/>
+                <action id="confirm" label="确认安排" actionType="submit" level="primary">
+                    <messages>
+                        <success>面试已安排</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+
+        <!-- 发放Offer提交页 -->
+        <simple name="makeOffer" form="makeOffer" useFormActions="true">
+            <api url="@mutation:ErpHrRecruitment__makeOffer/id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" actionType="cancel"/>
+                <action id="confirm" label="确认发放" actionType="submit" level="primary">
+                    <messages>
+                        <success>Offer已发放</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+
+        <!-- 入职提交页 -->
+        <simple name="hire" form="hire" useFormActions="true">
+            <api url="@mutation:ErpHrRecruitment__hire/id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" actionType="cancel"/>
+                <action id="confirm" label="确认入职" actionType="submit" level="primary">
+                    <messages>
+                        <success>入职已确认，员工档案已创建</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+
         <picker name="picker"/>
     </pages>
 </view>
