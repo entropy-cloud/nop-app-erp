@@ -35,6 +35,7 @@ export const SEED = {
   WH_RAW: 2,        // WH-RAW 原料仓（种子中 MAT-1 无余额，备货+清理安全）
   MAT_1: 1,         // MAT-001 ERP 标准型产品甲（FINISHED_PRODUCT, MOVING_AVERAGE, uom=1）
   UOM: 1,           // PCS 个
+  UOM_KG: 2,        // KG 千克（制造链测试专用组件物料计量单位）
   CURRENCY: 1,      // CNY
   ACCT_SCHEMA: 1,   // ACCT-FIN-01
   SUPPLIER: 3,      // SUP-001 北方钢铁供应商
@@ -584,4 +585,297 @@ export async function runO2cReverse(page: Page): Promise<O2cReverseResult> {
 /** 清理 O2C 反向冲销全链产物。复用既有 cleanupO2c（同 P2P 反向裁决）。 */
 export async function cleanupO2cReverse(page: Page, r: O2cReverseResult): Promise<void> {
   await cleanupO2c(page, r);
+}
+
+// ---------- 制造链编排（WorkOrder + MaterialIssue + JobCard 三聚合根协作，plan 2026-07-10-0704-2） ----------
+//
+// 镜像 P2P/O2C 范式，经 GraphQL /graphql 驱动 WorkOrder 完整制造链：
+//   前置备货（组件物料建库存）→ BOM+行 → WorkOrder+OUTPUT/INPUT 行 → 审批轴（submit→approve）
+//   → 齐套校验（checkAvailability→STOCK_RESERVED）→ 开工（start→IN_PROCESS）
+//   → 领料出库（MaterialIssue+行→confirm，触发 OUTGOING 移动 + WorkOrder.materialCost 回写）
+//   → 报工（JobCard→startJob→recordWork，回写 WorkOrder.laborCost→submitJob→completeJob）
+//   → 完工入库（reportCompletion，触发 MANUFACTURE 入库移动 + WorkOrder.totalCost/unitCost 重算 + COMPLETED）。
+//
+// 跨聚合根协作产物：
+//   - MaterialIssue.confirm → ErpInvStockMove(relatedBillType=ERP_MFG_ISSUE) OUTGOING + WorkOrder.materialCost
+//   - JobCard.recordWork → ErpMfgJobCardTimeLog + WorkOrder.laborCost
+//   - reportCompletion → ErpInvStockMove(relatedBillType=ERP_MFG_WORK_ORDER) MANUFACTURE + WorkOrder COMPLETED
+// 完工入库 GL 过账凭证为 Non-Goal（待 finance 域制造过账 Provider），故断言 posted=false。
+
+export interface MfgResult {
+  componentMat?: any;
+  setupMove?: { id: any; code: string } | null;
+  bom?: any; bomLine?: any;
+  wo?: any; woOutputLine?: any; woInputLine?: any;
+  issue?: any; issueLine?: any;
+  jobCard?: any;
+  completionMove?: { id: any; code: string; docStatus: string; posted: boolean } | null;
+  codes: { component: string; setup: string; bom: string; wo: string; issue: string; jobCard: string };
+}
+
+/**
+ * 期望值（确定性派生）：
+ *   组件用量 bomLineQty=2/单位 × plannedQty=10 → 齐套需求 20；备货 30 覆盖。
+ *   materialCost = 出库 20 × moving-average unitCost 50 = 1000（组件为测试专用物料，无种子余额，无混合）。
+ *   laborCost = durationMins 60 / 60 × hourlyRate 100 = 100。
+ *   totalCost = material(1000) + labor(100) = 1100；unitCost = 1100 / completed 10 = 110。
+ */
+export const MFG_EXPECT = {
+  plannedQty: 10, completedQty: 10,
+  setupQty: 30, componentUnitCost: 50,
+  bomLineQty: 2, componentRequirement: 20,
+  materialCost: 1000, laborCost: 100, totalCost: 1100, unitCost: 110,
+  durationMins: 60, hourlyRate: 100,
+} as const;
+
+const MFG_MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
+const MFG_BDATE = '2026-07-10';
+
+/**
+ * 编排 WorkOrder 完整制造链（三聚合根协作）。返回各实体 id + 下游移动单供 spec 断言/清理。
+ *
+ * 组件物料为**测试专用新建物料**（非种子 MAT-003），无种子余额，使 materialCost 确定性（无 WEIGHTED_AVERAGE
+ * 混合）且清理安全（整行删除余额不污染种子库存基线——inventory dashboard totalValue 读 stock_balance）。
+ *
+ * 步骤链路（每步状态翻转在 helper 内 verifyState 断言，spec 层仅断言跨聚合根协作产物）：
+ *   1. 组件物料：createViaSave 测试专用 RAW_MATERIAL（MOVING_AVERAGE，无种子余额）
+ *   2. 前置备货：generateMove INCOMING 为组件物料建库存（unitCost=50 确定性 → moving-average 50）
+ *   3. BOM + 行：MAT-001 成品 BOM + 组件物料行（用量 2/单位）
+ *   4. WorkOrder + 行：MAT-001 + bomId + plannedQty=10；OUTPUT 行（成品 + destWarehouseId，generateCompletionMove 必读）
+ *      + INPUT 行（组件 + 需求量）
+ *   5. 审批轴：submitForApproval → approve（docStatus DRAFT→SUBMITTED→NOT_STARTED）
+ *   6. 齐套校验：checkAvailability → STOCK_RESERVED（BOM 展开组件需求 20 ≤ 库存 30）
+ *   7. 开工：start → IN_PROCESS
+ *   8. 领料出库：MaterialIssue + 行（引用 WorkOrder INPUT 行）→ confirm → OUTGOING 移动 + materialCost 回写
+ *   9. 报工：JobCard → startJob → recordWork → laborCost 回写 → submitJob → completeJob
+ *   10. 完工入库：reportCompletion(completedQty=10) → MANUFACTURE 入库移动 + totalCost/unitCost + COMPLETED
+ */
+export async function runMfgChain(page: Page): Promise<MfgResult> {
+  const ts = Date.now();
+  const r: MfgResult = {
+    codes: {
+      component: `E2E-MFG-MAT-${ts}`,
+      setup: `E2E-MFG-SEED-${ts}`,
+      bom: `E2E-MFG-BOM-${ts}`,
+      wo: `E2E-MFG-WO-${ts}`,
+      issue: `E2E-MFG-ISSUE-${ts}`,
+      jobCard: `E2E-MFG-JC-${ts}`,
+    },
+  } as MfgResult;
+
+  // 1. 组件物料：测试专用 RAW_MATERIAL（无种子余额 → 确定性 unitCost + 清理安全）
+  const componentMat = await createViaSave(
+    page, 'ErpMdMaterial',
+    {
+      code: r.codes.component, name: 'E2E 测试组件原料',
+      materialType: 'RAW_MATERIAL', uoMId: SEED.UOM_KG, status: 'ACTIVE',
+      costMethod: 'MOVING_AVERAGE', defaultWarehouseId: SEED.WH_RAW,
+    },
+    'id',
+  );
+  r.componentMat = componentMat;
+
+  // 2. 前置备货：组件物料无种子余额，齐套校验/领料出库需库存余额。INCOMING 备货 30（独立移动 → CONFIRMED → complete → DONE）。
+  const setupCreated = await callMutationOk(
+    page, 'ErpInvStockMove', 'generateMove',
+    {
+      request: input(MFG_MOVE_REQ_TYPE, {
+        moveType: 'INCOMING', orgId: SEED.ORG, businessDate: MFG_BDATE,
+        destWarehouseId: SEED.WH_RAW, currencyId: SEED.CURRENCY,
+        lines: [{
+          materialId: componentMat.id, uoMId: SEED.UOM_KG,
+          quantity: MFG_EXPECT.setupQty, unitCost: MFG_EXPECT.componentUnitCost, currencyId: SEED.CURRENCY,
+        }],
+        remark: r.codes.setup,
+      }),
+    },
+    'id code docStatus',
+  );
+  await callMutationOk(page, 'ErpInvStockMove', 'complete', { moveId: setupCreated.id }, 'id docStatus posted');
+  r.setupMove = { id: setupCreated.id, code: setupCreated.code };
+
+  // 3. BOM + 行：成品 MAT-001 + 组件物料（用量 2/单位）
+  const bom = await createViaSave(
+    page, 'ErpMfgBom',
+    { code: r.codes.bom, productId: SEED.MAT_1, bomType: 'NORMAL', qty: 1, isActive: true },
+    'id',
+  );
+  r.bom = bom;
+  r.bomLine = await createViaSave(
+    page, 'ErpMfgBomLine',
+    { bomId: bom.id, lineNo: 1, materialId: componentMat.id, uoMId: SEED.UOM_KG, quantity: MFG_EXPECT.bomLineQty, warehouseId: SEED.WH_RAW },
+    'id',
+  );
+
+  // 4. WorkOrder + 行：MAT-001 + bomId + plannedQty=10
+  const wo = await createViaSave(
+    page, 'ErpMfgWorkOrder',
+    {
+      code: r.codes.wo, orgId: SEED.ORG, bomId: bom.id, productId: SEED.MAT_1,
+      plannedQuantity: MFG_EXPECT.plannedQty, businessDate: MFG_BDATE,
+      currencyId: SEED.CURRENCY, exchangeRate: 1,
+      docStatus: 'DRAFT', approveStatus: 'UNSUBMITTED',
+    },
+    'id approveStatus docStatus',
+  );
+  r.wo = wo;
+  // OUTPUT 行：成品产出，destWarehouseId 必填（generateCompletionMove 读此生成入库移动，null 时静默跳过）
+  r.woOutputLine = await createViaSave(
+    page, 'ErpMfgWorkOrderLine',
+    {
+      workOrderId: wo.id, lineNo: 1, lineType: 'OUTPUT',
+      materialId: SEED.MAT_1, uoMId: SEED.UOM, plannedQuantity: MFG_EXPECT.plannedQty,
+      destWarehouseId: SEED.WH_RAW,
+    },
+    'id',
+  );
+  // INPUT 行：组件投入，sourceWarehouseId=备货所在仓
+  r.woInputLine = await createViaSave(
+    page, 'ErpMfgWorkOrderLine',
+    {
+      workOrderId: wo.id, lineNo: 2, lineType: 'INPUT',
+      materialId: componentMat.id, uoMId: SEED.UOM_KG, plannedQuantity: MFG_EXPECT.componentRequirement,
+      sourceWarehouseId: SEED.WH_RAW,
+    },
+    'id',
+  );
+
+  // 5. 审批轴：submit → SUBMITTED → approve → APPROVED + docStatus=NOT_STARTED
+  await callMutationOk(page, 'ErpMfgWorkOrder', 'submitForApproval', { id: wo.id }, 'id');
+  await expectApproveStatus(page, 'ErpMfgWorkOrder', wo.id, 'SUBMITTED', 'after submit');
+  await callMutationOk(page, 'ErpMfgWorkOrder', 'approve', { id: wo.id }, 'id');
+  await expectApproveStatus(page, 'ErpMfgWorkOrder', wo.id, 'APPROVED', 'after approve');
+  let ws = await verifyState(page, 'ErpMfgWorkOrder', wo.id, 'docStatus');
+  expect(ws?.docStatus, 'after approve docStatus=NOT_STARTED').toBe('NOT_STARTED');
+
+  // 6. 齐套校验：BOM 展开组件需求 20 ≤ 库存 30 → STOCK_RESERVED
+  await callMutationOk(page, 'ErpMfgWorkOrder', 'checkAvailability', { workOrderId: wo.id }, 'id docStatus');
+  ws = await verifyState(page, 'ErpMfgWorkOrder', wo.id, 'docStatus');
+  expect(ws?.docStatus, 'after checkAvailability docStatus=STOCK_RESERVED').toBe('STOCK_RESERVED');
+
+  // 7. 开工 → IN_PROCESS
+  await callMutationOk(page, 'ErpMfgWorkOrder', 'start', { workOrderId: wo.id }, 'id docStatus');
+  ws = await verifyState(page, 'ErpMfgWorkOrder', wo.id, 'docStatus');
+  expect(ws?.docStatus, 'after start docStatus=IN_PROCESS').toBe('IN_PROCESS');
+
+  // 8. 领料出库：MaterialIssue + 行（引用 WorkOrder INPUT 行）→ confirm → OUTGOING 移动 + materialCost 回写
+  const issue = await createViaSave(
+    page, 'ErpMfgMaterialIssue',
+    {
+      code: r.codes.issue, orgId: SEED.ORG, workOrderId: wo.id, warehouseId: SEED.WH_RAW,
+      businessDate: MFG_BDATE, currencyId: SEED.CURRENCY, exchangeRate: 1,
+      docStatus: 'DRAFT', approveStatus: 'UNSUBMITTED',
+    },
+    'id',
+  );
+  r.issue = issue;
+  r.issueLine = await createViaSave(
+    page, 'ErpMfgMaterialIssueLine',
+    {
+      issueId: issue.id, lineNo: 1, materialId: componentMat.id, uoMId: SEED.UOM_KG,
+      workOrderLineId: r.woInputLine.id,
+      requiredQuantity: MFG_EXPECT.componentRequirement, issuedQuantity: MFG_EXPECT.componentRequirement,
+    },
+    'id',
+  );
+  // confirm：DRAFT→CONFIRMED→DONE，经 IErpInvStockMoveBiz.generateMove 生成 OUTGOING 移动（业务联动自动 DONE）+ WorkOrder.materialCost 回写
+  await callMutationOk(page, 'ErpMfgMaterialIssue', 'confirm', { issueId: issue.id }, 'id docStatus');
+
+  // 9. 报工：JobCard → startJob → recordWork（回写 WorkOrder.laborCost）→ submitJob → completeJob
+  const jobCard = await createViaSave(
+    page, 'ErpMfgJobCard',
+    {
+      workOrderId: wo.id, lineNo: 1, code: r.codes.jobCard,
+      plannedQuantity: MFG_EXPECT.plannedQty, status: 'OPEN',
+    },
+    'id status',
+  );
+  r.jobCard = jobCard;
+  await callMutationOk(page, 'ErpMfgJobCard', 'startJob', { jobCardId: jobCard.id }, 'id status');
+  // recordWork 入参 @RequestBean JobCardWorkRecord 经 GraphQL 展平为独立标量参数（非 record 包装，见后端
+  // TestErpMfgWorkOrderEndToEnd#recordWorkRequest 范式）。人工成本 = durationMins/60 × hourlyRate → WorkOrder.laborCost。
+  await callMutationOk(
+    page, 'ErpMfgJobCard', 'recordWork',
+    {
+      jobCardId: jobCard.id, operatorId: '1', workDate: MFG_BDATE,
+      durationMins: MFG_EXPECT.durationMins, setupMins: 0, runMins: MFG_EXPECT.durationMins,
+      hourlyRate: MFG_EXPECT.hourlyRate, completedQuantity: 0, scrappedQuantity: 0,
+    },
+    'id status',
+  );
+  await callMutationOk(page, 'ErpMfgJobCard', 'submitJob', { jobCardId: jobCard.id }, 'id status');
+  await callMutationOk(page, 'ErpMfgJobCard', 'completeJob', { jobCardId: jobCard.id }, 'id status');
+
+  // 10. 完工入库：reportCompletion → MANUFACTURE 入库移动 + totalCost/unitCost 重算 + COMPLETED
+  await callMutationOk(
+    page, 'ErpMfgWorkOrder', 'reportCompletion',
+    { workOrderId: wo.id, completedQty: MFG_EXPECT.completedQty },
+    'id docStatus completedQuantity materialCost laborCost totalCost unitCost posted',
+  );
+  ws = await verifyState(
+    page, 'ErpMfgWorkOrder', wo.id,
+    'docStatus completedQuantity materialCost laborCost totalCost unitCost posted',
+  );
+  expect(ws?.docStatus, 'after reportCompletion docStatus=COMPLETED').toBe('COMPLETED');
+
+  // 完工入库移动（MANUFACTURE，relatedBillType=ERP_MFG_WORK_ORDER，业务联动自动 DONE）
+  r.completionMove = await findFirst(
+    page, 'ErpInvStockMove',
+    andFilter(eqFilter('relatedBillType', 'ERP_MFG_WORK_ORDER'), eqFilter('relatedBillCode', r.codes.wo)),
+    'id code docStatus posted',
+  );
+
+  return r;
+}
+
+/**
+ * 清理制造链全部产物（下游不可逆产物优先，头最后）。逻辑删除，容忍部分结果。
+ *
+ * 清理顺序（依赖反向）：完工入库移动（成品 MAT-001 余额）→ MaterialIssue(行) → JobCard+TimeLog
+ *   → 领料出库移动（组件物料余额）→ WorkOrderLine → WorkOrder → BOM(行)
+ *   → 前置备货移动（组件物料余额）→ 测试专用组件物料。
+ * 成品 MAT-001 / 测试组件物料在 WH-RAW 均无种子余额行，整行删除余额安全（不污染 inventory dashboard totalValue 基线）。
+ */
+export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
+  if (!r) return;
+  // 完工入库移动 + 成品 MAT-001 余额（WH-RAW 无种子 MAT-001 余额，整行删除安全）
+  await cleanupStockMove(page, r.completionMove, SEED.MAT_1, SEED.WH_RAW);
+  // MaterialIssue 行 + 头
+  if (r.issue) {
+    await deleteByFilter(page, 'ErpMfgMaterialIssueLine', eqFilter('issueId', Number(r.issue.id)));
+    await deleteById(page, 'ErpMfgMaterialIssue', r.issue.id);
+  }
+  // 领料出库移动（OUTGOING，relatedBillType=ERP_MFG_ISSUE，relatedBillCode=issue.code）+ 组件物料余额
+  const componentId = r.componentMat?.id;
+  if (r.codes?.issue) {
+    const issueMove = await findFirst<any>(
+      page, 'ErpInvStockMove',
+      andFilter(eqFilter('relatedBillType', 'ERP_MFG_ISSUE'), eqFilter('relatedBillCode', r.codes.issue)),
+      'id code',
+    );
+    if (componentId != null) await cleanupStockMove(page, issueMove, componentId, SEED.WH_RAW);
+    else await cleanupStockMove(page, issueMove);
+  }
+  // JobCard TimeLog + JobCard
+  if (r.jobCard) {
+    await deleteByFilter(page, 'ErpMfgJobCardTimeLog', eqFilter('jobCardId', Number(r.jobCard.id)));
+    await deleteById(page, 'ErpMfgJobCard', r.jobCard.id);
+  }
+  // WorkOrderLine + WorkOrder
+  if (r.wo) {
+    await deleteByFilter(page, 'ErpMfgWorkOrderLine', eqFilter('workOrderId', Number(r.wo.id)));
+    await deleteById(page, 'ErpMfgWorkOrder', r.wo.id);
+  }
+  // BOMLine + BOM
+  if (r.bom) {
+    await deleteByFilter(page, 'ErpMfgBomLine', eqFilter('bomId', Number(r.bom.id)));
+    await deleteById(page, 'ErpMfgBom', r.bom.id);
+  }
+  // 前置备货移动 + 组件物料余额（测试专用物料无种子余额，整行删除安全）
+  if (componentId != null) await cleanupStockMove(page, r.setupMove, componentId, SEED.WH_RAW);
+  else await cleanupStockMove(page, r.setupMove);
+  // 测试专用组件物料
+  if (r.componentMat) {
+    await deleteById(page, 'ErpMdMaterial', r.componentMat.id);
+  }
 }
