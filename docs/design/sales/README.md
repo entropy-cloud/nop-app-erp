@@ -90,13 +90,15 @@
 - `erp-sal.credit-check-level`（默认 SOFT_WARNING）——信用控制级别。
 - `erp-sal.credit-check-include-ar`（默认 true）——是否纳入 AR 未核销余额；关闭时回退纯订单口径。
 - `erp-sal.credit-check-ar-fallback`（默认 true）——AR 项 `openAmountFunctional` 缺失时是否回退 `openAmountSource × exchangeRate` 近似折算。
+- `erp-sal.credit-check-on-delivery`（默认 false）——出库审核是否启用信用冻结检查（向后兼容；启用后出库审核时检查客户当前是否已超额）。
+- `erp-sal.credit-check-on-invoice`（默认 false）——发票审核是否启用信用冻结检查（向后兼容；启用后发票审核时检查客户当前是否已超额）。
 
 **Non-Goals（已登记，触发后纳入）**：
 
 - **多级 `.xwf` 信用审批工作流链**（信用分析师→财务经理多步链）：本期 SPECIAL_APPROVAL 经 DIRECT 模式 + 权限门控实现"超额度需更高权限"核心语义；多步工作流定义（`useWorkflow="true"` + `wf:wfName` + 结束 listener）归 Deferred。
   - 触发条件：多级审批链业务需求落地时（承接 `docs/plans/2026-07-04-2050-1-use-approval-migration.md` Deferred 范式）。
-- **信用冻结（credit hold）实时拦截开票/出库**：本期信用控制仅在订单审核环节；开票/出库环节实时信用冻结需跨域 hooks + 信用占用预留机制，独立 successor。
-  - 触发条件：开票/出库环节信用实时管控需求落地时。
+- **信用冻结（credit hold）实时拦截开票/出库**：✅ **已实现**（`CreditLimitChecker.checkCreditHold`，plan 2026-07-10-1100-2）。出库审核（`ErpSalDeliveryProcessor`）与发票审核（`ErpSalInvoiceProcessor`）在 `validateBusinessRulesForApprove` 中按 `erp-sal.credit-check-on-delivery`/`erp-sal.credit-check-on-invoice`（均默认 false，向后兼容）门控调用，检查客户当前是否已超额（`available < 0`，point-in-time，本单不叠加 outstanding），复用三级策略（HARD_BLOCK 抛 `ERR_CREDIT_HOLD_DELIVERY`/`ERR_CREDIT_HOLD_INVOICE`）。正式信用占用预留/释放生命周期（订单审核冻结额度→出库释放→开票转 AR 占用）仍归 Deferred。
+  - 触发条件（残留预留机制）：需精确额度预留会计的高信用管控场景落地时。
 - **客户风险评分体系联动信用额度动态调整**：依赖 CRM 客户信用评分。
   - 触发条件：CRM 客户风险评分体系落地时。
 - **跨账套（multi AcctSchema）AR 余额聚合**：本期单账套；多 `acctSchemaId` 维度 AR 聚合归多账套架构 successor。

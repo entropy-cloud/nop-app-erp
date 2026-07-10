@@ -1,6 +1,6 @@
 # 2026-07-10-1100-2-sales-credit-hold 信用冻结：出库/发票审核环节信用控制
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-10 (iteration 1 — consensus)
 > Source: erp-survey 对标调研（ERPNext Credit Limit 在 Sales Order + Sales Invoice 双点校验为标准功能）+ `docs/design/sales/README.md:98-99` Deferred successor
 > Related: `docs/design/sales/README.md`（§信用额度控制 Non-Goals）、`docs/plans/2026-07-10-1100-1-sales-pricing-engine.md`（同属销售域增强）
@@ -59,14 +59,14 @@
 
 ### Phase 1 - CreditLimitChecker 扩展 + 配置 + 错误码
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-service/src/main/java/app/erp/sal/service/entity/CreditLimitChecker.java`、`ErpSalConstants.java`、`ErpSalErrors.java`
 Skill: nop-backend-dev
 
 - Item Types: `Decision | Add`
 - Prereqs: none
 
-- [ ] Decision: 信用冻结检查语义
+- [x] Decision: 信用冻结检查语义
   - 订单审核信用检查：`available >= thisOrderAmount`（本单金额加到 outstanding 上后是否超额）
   - 出库/发票审核信用检查：`available >= 0`（客户当前是否已超额，本单不额外增加 outstanding，因为订单已审核、额度已占用）
   - 理由：订单审核通过后额度已被占用；出库/发票审核是检查"额度占用后信用是否恶化"，而非新增占用
@@ -74,19 +74,19 @@ Skill: nop-backend-dev
   - 残留风险：订单部分出库时，已出库部分会从 `sumOutstandingOrders` 中移除（deliveryStatus 变更），但暂估应收可能尚未进入 AR——本期接受此时间差（保守口径，不重复计入）
   - Skill: nop-backend-dev
 
-- [ ] Add: `CreditLimitChecker.checkCreditHold(customerId, billCode, billType, context)` 新方法
+- [x] Add: `CreditLimitChecker.checkCreditHold(customerId, billCode, billType, context)` 新方法
   - 语义：检查客户**当前**信用状况是否已超额（`available < 0`）
   - 复用现有 `sumOutstanding` + 三级策略逻辑
   - `billType` 参数（"DELIVERY"/"INVOICE"）用于错误消息区分
   - 与现有 `check(customerId, amount, rate, orderCode, context)` 并行，不修改现有方法签名
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpSalConstants` 新增配置键
+- [x] Add: `ErpSalConstants` 新增配置键
   - `CONFIG_CREDIT_CHECK_ON_DELIVERY = "erp-sal.credit-check-on-delivery"`（默认 `false`，向后兼容）
   - `CONFIG_CREDIT_CHECK_ON_INVOICE = "erp-sal.credit-check-on-invoice"`（默认 `false`，向后兼容）
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpSalErrors` 新增错误码
+- [x] Add: `ErpSalErrors` 新增错误码
   - `ERR_CREDIT_HOLD_DELIVERY` = "客户 {customerId} 信用额度不足，出库单 {billCode} 被信用冻结：额度={creditLimit}，可用={available}"
   - `ERR_CREDIT_HOLD_INVOICE` = "客户 {customerId} 信用额度不足，发票 {billCode} 被信用冻结：额度={creditLimit}，可用={available}"
   - 理由：与订单审核的 `ERR_CREDIT_LIMIT_EXCEEDED` 区分，便于前端按场景展示不同提示；错误码不同但错误处理路径相同（NopException → GraphQL error）
@@ -94,19 +94,19 @@ Skill: nop-backend-dev
 
 Exit Criteria:
 
-- [ ] `CreditLimitChecker.checkCreditHold` 方法通过 nop-backend-dev 19 项自检
-- [ ] 新增配置键和错误码编译无错误（`erp-sal-service` 模块 `mvn compile` 通过）
+- [x] `CreditLimitChecker.checkCreditHold` 方法通过 nop-backend-dev 19 项自检
+- [x] 新增配置键和错误码编译无错误（`erp-sal-service` 模块 `mvn compile` 通过）
 
 ### Phase 2 - 出库/发票 Processor 集成
 
-Status: planned
+Status: completed
 Targets: `ErpSalDeliveryProcessor.java`、`ErpSalInvoiceProcessor.java`
 Skill: nop-backend-dev
 
 - Item Types: `Add`
 - Prereqs: Phase 1
 
-- [ ] Add: `ErpSalDeliveryProcessor.validateBusinessRulesForApprove` 增加信用冻结检查
+- [x] Add: `ErpSalDeliveryProcessor.validateBusinessRulesForApprove` 增加信用冻结检查
   - 在现有 `requireCustomerActive` 之后、`enforceInspectionGate` 之前插入：
   ```
   if config("erp-sal.credit-check-on-delivery", false):
@@ -115,7 +115,7 @@ Skill: nop-backend-dev
   - `@Inject CreditLimitChecker creditLimitChecker` 已在 OrderProcessor 中注入；DeliveryProcessor 需新增注入
   - Skill: nop-backend-dev
 
-- [ ] Add: `ErpSalInvoiceProcessor.validateBusinessRulesForApprove` 增加信用冻结检查
+- [x] Add: `ErpSalInvoiceProcessor.validateBusinessRulesForApprove` 增加信用冻结检查
   - 在现有 `requireCustomerActive` 之后插入：
   ```
   if config("erp-sal.credit-check-on-invoice", false):
@@ -125,20 +125,20 @@ Skill: nop-backend-dev
 
 Exit Criteria:
 
-- [ ] 出库单审核时，`credit-check-on-delivery=true` 且客户超额 → 抛 `ERR_CREDIT_HOLD_DELIVERY`，状态不变
-- [ ] 发票审核时，`credit-check-on-invoice=true` 且客户超额 → 抛 `ERR_CREDIT_HOLD_INVOICE`，状态不变
-- [ ] `credit-check-on-delivery=false`（默认）→ 出库审核不触发信用检查（向后兼容）
+- [x] 出库单审核时，`credit-check-on-delivery=true` 且客户超额 → 抛 `ERR_CREDIT_HOLD_DELIVERY`，状态不变
+- [x] 发票审核时，`credit-check-on-invoice=true` 且客户超额 → 抛 `ERR_CREDIT_HOLD_INVOICE`，状态不变
+- [x] `credit-check-on-delivery=false`（默认）→ 出库审核不触发信用检查（向后兼容）
 
 ### Phase 3 - GraphQL Engine 集成测试
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-service/src/test/java/.../`
 Skill: nop-testing
 
 - Item Types: `Proof`
 - Prereqs: Phase 2
 
-- [ ] Proof: `TestErpSalCreditHoldOnDelivery`
+- [x] Proof: `TestErpSalCreditHoldOnDelivery`
   - 场景 1（HARD_BLOCK 拦截）：客户 creditLimit=10000，已有 APPROVED 未发货订单 8000 + AR open 3000 → outstanding=11000 > 10000 → 出库审核被拦截（`ERR_CREDIT_HOLD_DELIVERY`），状态保持 SUBMITTED
   - 场景 2（SOFT_WARNING 放行）：同上但 level=SOFT_WARNING → 出库审核通过（放行带告警）
   - 场景 3（SPECIAL_APPROVAL 权限放行）：同上但 level=SPECIAL_APPROVAL + 持有权限 → 出库审核通过
@@ -147,20 +147,20 @@ Skill: nop-testing
   - 场景 6（多币种）：客户 creditLimit 本位币，订单/AR 含外币 → 汇率折算后超额 → 拦截
   - Skill: nop-testing
 
-- [ ] Proof: `TestErpSalCreditHoldOnInvoice`
+- [x] Proof: `TestErpSalCreditHoldOnInvoice`
   - 场景 1（HARD_BLOCK 拦截）：同出库模式，发票审核被拦截
   - 场景 2（SOFT_WARNING 放行）
   - 场景 3（config 关闭 → 向后兼容）
   - Skill: nop-testing
 
-- [ ] Proof: 回归验证——现有 `TestErpSalOrderApproval` 信用测试仍全绿（信用控制在订单环节行为不变）
+- [x] Proof: 回归验证——现有 `TestErpSalOrderApproval` 信用测试仍全绿（信用控制在订单环节行为不变）
   - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] 出库信用冻结测试全绿（≥6 场景）
-- [ ] 发票信用冻结测试全绿（≥3 场景）
-- [ ] 现有订单信用测试回归无失败
+- [x] 出库信用冻结测试全绿（≥6 场景）
+- [x] 发票信用冻结测试全绿（≥3 场景）
+- [x] 现有订单信用测试回归无失败
 
 ## Draft Review Record
 
@@ -168,14 +168,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐（`docs/design/sales/README.md` §信用额度控制 Non-Goals 更新：标注"出库/发票信用冻结已实现"；原 Deferred successor 标注已完成）
-- [ ] 已运行验证：`mvn clean install -DskipTests`（全 reactor）+ `mvn test -pl module-sales/erp-sal-service`
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐（`docs/design/sales/README.md` §信用额度控制 Non-Goals 更新：标注"出库/发票信用冻结已实现"；原 Deferred successor 标注已完成）
+- [x] 已运行验证：`mvn clean install -DskipTests`（全 reactor）+ `mvn test -pl module-sales/erp-sal-service`
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -193,12 +193,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: 2026-07-10 执行完成。3 Phase 全部完成：`CreditLimitChecker.checkCreditHold`（point-in-time，检查客户当前是否已超额 `available<0`，本单不叠加 outstanding，复用三级策略）+ `ErpSalDeliveryProcessor`/`ErpSalInvoiceProcessor` 门控集成（`erp-sal.credit-check-on-delivery`/`erp-sal.credit-check-on-invoice` 默认 false 向后兼容）+ 错误码 `ERR_CREDIT_HOLD_DELIVERY`/`ERR_CREDIT_HOLD_INVOICE`。现有订单审核 `check()` 路径行为保持不变（ORDER→`ERR_CREDIT_LIMIT_EXCEEDED`）。验证：`mvn clean install -DskipTests` 全 reactor BUILD SUCCESS + `mvn test -pl module-sales/erp-sal-service` 119 tests 全绿（新增 9：出库 6 场景 + 发票 3 场景；回归 TestErpSalOrderApproval 14 + Delivery/Invoice/Quotation/CreditNotify 无失败）。文档对齐 `docs/design/sales/README.md` §信用额度控制 + `core-business-roadmap.md` S-2 done + `backlog/README.md` P6 done。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立子代理 ses_0b5b96f4cffenvoJVZUDDRjfWv（新会话，非执行者）
+- Verdict: PASS
+- Evidence: 全部 6 审计域经 live source 核实——(1) `checkCreditHold` 语义正确（CreditLimitChecker.java:143/158/160，`available.signum()<0` + 传 BigDecimal.ZERO 不叠加 outstanding）；(2) 三级策略复用（共享 `enforceOverLimit` L176-201）；(3) 配置键/错误码/BILL_TYPE 常量齐备（ErpSalConstants L51-61、ErpSalErrors L95-101）；(4) Delivery/Invoice Processor 集成位置正确（requireCustomerActive 之后、enforceInspectionGate 之前，config-gated）；(5) 订单审核 backward-compat intact（OrderProcessor:164 仍调 `check()`，ORDER→`ERR_CREDIT_LIMIT_EXCEEDED`）；(6) 测试 9 场景断言正确错误码 + 拦截后状态 SUBMITTED，`mvn test` 23/23 green（含 TestErpSalOrderApproval 14 回归）；(7) Deferred honesty——正式额度预留/释放生命周期仍 Deferred（README:100、计划 §Deferred L182-186）；(8) 无反模式（无 `@Inject private`、NopException+ErrorCode、IServiceContext 末参、未触碰 _gen 文件）。无缺陷。
 
 Follow-up:
 

@@ -26,7 +26,7 @@
 
 > **Non-Goal scope boundary**：以下功能不在 M1 设计范围内，非实现遗漏：
 > - **销售定价引擎**（阶梯价/促销/客户组价，UC-SAL-11 目标态）：✅ `done` — 计划 `2026-07-10-1100-1` completed。erp-survey 对标 Odoo Pricelist + ERPNext Pricing Rule 均为核心内置。实现：`ErpSalPriceList`（头/行）+ `ErpSalPricingRule` + `IErpMdCustomerPriceResolver` SPI + `ErpSalCustomerPriceResolver` + `ErpSalPricingRuleEngine`（纯函数式 4 种 ruleType + stackable + 优先级）+ `ErpMdPartner.customerGroup` 客户组维度 + 订单行/报价行行级折扣字段。测试全绿（19 tests：10 单元 + 7 E2E + 2 CRUD；`mvn clean install -DskipTests` 154 模块 + 全 workspace `mvn test` 0 failures/0 errors）。
-> - **信用冻结**（出库/发票审核环节信用控制）：`in-progress` — 计划 `2026-07-10-1100-2` active。erp-survey 对标 ERPNext Credit Limit 双点校验。
+> - **信用冻结**（出库/发票审核环节信用控制）：✅ `done` — 计划 `2026-07-10-1100-2` completed。erp-survey 对标 ERPNext Credit Limit 双点校验。实现：`CreditLimitChecker.checkCreditHold`（point-in-time，检查客户当前是否已超额）+ `ErpSalDeliveryProcessor`/`ErpSalInvoiceProcessor` 门控调用 + 新增配置 `erp-sal.credit-check-on-delivery`/`erp-sal.credit-check-on-invoice`（默认 false 向后兼容）+ 错误码 `ERR_CREDIT_HOLD_DELIVERY`/`ERR_CREDIT_HOLD_INVOICE`。9 tests 全绿（出库 6 场景 + 发票 3 场景；现有订单信用测试回归无失败）。
 > - **销售佣金计算**（佣金规则/结算）：无独立计划。Odoo 18+ 内置但多数开源 ERP 无规则引擎，优先级较低。
 >
 > **文档修正**：原 Non-Goal 声明将这些功能贴在 UC-SAL-06/08/10 编号上，但 `use-cases.md` 中 UC-SAL-06=退货换货、UC-SAL-08=赠品价税分离、UC-SAL-10=并发出库扣批次，编号标签与实际定义冲突。已修正为不绑定错误编号。
@@ -115,7 +115,7 @@
 | # | 工作项 | 域 | 设计文档 | 状态 |
 |---|--------|-----|---------|------|
 | S-1 | 销售定价引擎（阶梯价/促销/客户组价，UC-SAL-11 目标态） | sales | `sales/use-cases.md` UC-SAL-11 | ✅ `done` — 计划 `2026-07-10-1100-1` completed（4 Phase 全 done：ORM 模型 + 定价解析引擎 + 订单定价集成 + 前端页面。`ErpSalPriceList`/`ErpSalPricingRule`/`ErpSalCustomerPriceResolver`/`ErpSalPricingRuleEngine`/`ErpMdPartner.customerGroup`。19 tests 全绿） |
-| S-2 | 信用冻结（出库/发票审核环节信用控制） | sales | `sales/README.md` §信用额度控制 Non-Goals | `in-progress` — 计划 `2026-07-10-1100-2` active（草案审查 1 轮收敛）（erp-survey 对标 ERPNext Credit Limit 双点校验） |
+| S-2 | 信用冻结（出库/发票审核环节信用控制） | sales | `sales/README.md` §信用额度控制 Non-Goals | ✅ `done` — 计划 `2026-07-10-1100-2` completed（3 Phase 全 done：CreditLimitChecker.checkCreditHold + Delivery/Invoice Processor 门控集成 + GraphQL 集成测试。`erp-sal.credit-check-on-delivery`/`erp-sal.credit-check-on-invoice` 默认 false 向后兼容。9 tests 全绿） |
 | S-3 | 到岸成本分摊（Landed Cost） | inventory/finance | `finance/costing-methods.md:302-365` | `in-progress` — 计划 `2026-07-10-1100-3` active（草案审查经 2 轮收敛：businessType 码值 430→490 解冲突 + applyCostAdjust 防双重过账）（erp-survey 对标 ERPNext Landed Cost Voucher；解除 5 plan Deferred + logistics path-2） |
 | S-4 | 预算管理（编制/控制/对比，UC-FIN-11/13） | finance | `finance/budget.md`（107 行完整设计） | `in-progress` — 计划 `2026-07-10-1100-4` active（草案审查经 2 轮收敛：移除 GlBalance 结构变更改 VoucherLine 聚合 + 新增实际数聚合隔离 BUDGET 凭证前置 Fix）（erp-survey 对标 iDempiere GL Budget；use-case 审计 🔶；解除 0700-2 Follow-up） |
 | S-5 | 制造完工入库与领料 GL 过账 | manufacturing/finance | `manufacturing/state-machine.md` §2/§7/§实现偏离补注 | `ready` — 计划 `2026-07-10-1100-5`（erp-survey 对标 Odoo/ERPNext/Metasfresh 标配；解除 0704-2 posted Deferred；触发条件已满足） |
