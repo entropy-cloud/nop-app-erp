@@ -32,6 +32,18 @@ public interface ErpMntConstants {
     /** 定时到期访问生成 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
     String CONFIG_DUE_VISIT_CRON = "erp-mnt.due-visit-cron";
 
+    // ---- 备件消耗 GL 过账配置项（plan 2026-07-10-1100-6）----
+    /** 备件消耗 GL 过账总开关，默认 false（向后兼容：仅库存出库，不生成凭证）。 */
+    String CONFIG_SPARE_PART_POSTING_ENABLED = "erp-mnt.spare-part-posting-enabled";
+    /** 维修费用科目编码（借方），默认 6602。 */
+    String CONFIG_EXPENSE_SUBJECT_CODE = "erp-mnt.expense-subject-code";
+    /** 存货科目编码（贷方默认），默认 1403（与物料类别 inventorySubject 同科目源族）。 */
+    String CONFIG_INVENTORY_SUBJECT_CODE = "erp-mnt.inventory-subject-code";
+
+    boolean DEFAULT_SPARE_PART_POSTING_ENABLED = false;
+    String DEFAULT_EXPENSE_SUBJECT_CODE = "6602";
+    String DEFAULT_INVENTORY_SUBJECT_CODE = "1403";
+
     boolean DEFAULT_AUTO_GENERATE_DUE_VISITS = true;
     boolean DEFAULT_EQUIPMENT_STATUS_LINK_ENABLED = true;
 

@@ -72,6 +72,10 @@ public interface ErpMntErrors {
             "备件消耗单 {usageCode} 无行明细，不可确认出库",
             ARG_USAGE_CODE);
 
+    ErrorCode ERR_SPARE_PART_POSTING_FAILED = ErrorCode.define("erp.err.mnt.spare-part-posting-failed",
+            "备件消耗单 {usageCode} 库存已出库，但 GL 过账失败（posted 保持库存出库语义，凭证由人工或兜底补登）",
+            ARG_USAGE_CODE);
+
     ErrorCode ERR_EQUIPMENT_NOT_FOUND = ErrorCode.define("erp.err.mnt.equipment-not-found",
             "设备 {equipmentId} 不存在", ARG_EQUIPMENT_ID);
 

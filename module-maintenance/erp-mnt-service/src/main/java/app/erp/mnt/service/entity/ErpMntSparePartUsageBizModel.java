@@ -7,6 +7,7 @@ import app.erp.mnt.dao.entity.ErpMntSparePartUsage;
 import app.erp.mnt.dao.entity.ErpMntSparePartUsageLine;
 import app.erp.mnt.service.ErpMntConstants;
 import app.erp.mnt.service.ErpMntErrors;
+import app.erp.mnt.service.posting.MaintenanceIssuePostingDispatcher;
 import app.erp.mnt.service.support.SparePartIssueService;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -32,6 +33,9 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
     @Inject
     SparePartIssueService sparePartIssueService;
 
+    @Inject
+    MaintenanceIssuePostingDispatcher issuePostingDispatcher;
+
     public ErpMntSparePartUsageBizModel() {
         setEntityName(ErpMntSparePartUsage.class.getName());
     }
@@ -50,6 +54,13 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
         usage = daoProvider().daoFor(ErpMntSparePartUsage.class).getEntityById(usageId);
         applyIssueResult(usage, lines, move, context);
         updateEntity(usage, null, context);
+
+        // 备件消耗 GL 过账（Dr: 维修费用 / Cr: 存货），config-gated 默认关（dispatchIfApplicable 内部门控，
+        // erp-mnt.spare-part-posting-enabled=false 时不生成凭证，向后兼容）。maintenance 域独占，InvPostingDispatcher
+        // 对 ERP_MNT_SPARE_PART 显式跳过交由本域处理。镜像 ManufacturingIssuePostingDispatcher 显式调用范式。
+        if (isStockIssued(move)) {
+            issuePostingDispatcher.dispatchIfApplicable(usageId);
+        }
         return usage;
     }
 

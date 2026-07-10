@@ -16,6 +16,16 @@
     <bean id="app.erp.mnt.service.support.SparePartIssueService"
           class="app.erp.mnt.service.support.SparePartIssueService"/>
 
+    <!-- 备件消耗 GL 过账（plan 2026-07-10-1100-6）：备件消耗 confirm 后 → Dr: 维修费用 / Cr: 存货 凭证。
+          Dispatcher 由 ErpMntSparePartUsageBizModel.confirm 显式调用（config-gated 默认关）；
+          Provider 由 finance ErpFinAcctDocRegistry 跨模块 collect-beans 自动聚合（同 ManufacturingIssue 范式）。 -->
+    <bean id="app.erp.mnt.service.posting.MntPostingExecutor"
+          class="app.erp.mnt.service.posting.MntPostingExecutor"/>
+    <bean id="app.erp.mnt.service.posting.MaintenanceIssuePostingDispatcher"
+          class="app.erp.mnt.service.posting.MaintenanceIssuePostingDispatcher"/>
+    <bean id="app.erp.mnt.service.posting.MaintenanceIssueAcctDocProvider"
+          class="app.erp.mnt.service.posting.MaintenanceIssueAcctDocProvider"/>
+
     <!-- 维护域服务（非 BizModel）：维护计划到期生成访问生成器（扫描 active 计划生成 PLANNED 访问 + 推进 nextDueDate） -->
     <bean id="app.erp.mnt.service.support.ScheduleDueGenerator"
           class="app.erp.mnt.service.support.ScheduleDueGenerator"/>
