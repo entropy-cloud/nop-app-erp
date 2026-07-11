@@ -31,6 +31,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ne;
 
 /**
  * 到岸成本单审核编排 Processor（plan 2026-07-10-1100-3；costing-methods.md §到岸成本分摊）。
@@ -123,6 +124,96 @@ public class ErpInvLandedCostProcessor {
             preview.add(row);
         }
         return preview;
+    }
+
+    // ---------- 自动创建（path-2 运费→到岸成本，plan 2026-07-11-2329-1） ----------
+
+    /**
+     * 按采购入库单 code + 运费数据自动创建 DRAFT 到岸成本单（FREIGHT 费用行）。
+     *
+     * <p>内部解析 receiveCode→receiveId（inventory-service 已 compile-scope 依赖 purchase-dao）。
+     * 幂等：同 receiveId 已有非 CANCELLED 到岸成本单时抛 {@link ErpInvErrors#ERR_LANDED_COST_DRAFT_EXISTS}。
+     */
+    public ErpInvLandedCost generateFreightLandedCost(String receiveCode, BigDecimal freightAmount,
+                                                       Long freightCurrencyId, BigDecimal freightExchangeRate,
+                                                       IServiceContext context) {
+        ErpPurReceive receive = loadReceiveByCode(receiveCode);
+        if (receive == null) {
+            throw new NopException(ErpInvErrors.ERR_LANDED_COST_RECEIVE_NOT_FOUND)
+                    .param("receiveCode", receiveCode);
+        }
+
+        validateNoDraftExists(receive.getId());
+
+        Long currencyId = freightCurrencyId != null ? freightCurrencyId : receive.getCurrencyId();
+        BigDecimal exchangeRate = resolveExchangeRate(freightExchangeRate, freightCurrencyId, receive);
+
+        ErpInvLandedCost landedCost = createLandedCostHead(receive, freightAmount, currencyId, exchangeRate);
+        createFreightLine(landedCost, freightAmount, receive.getSupplierId());
+
+        return landedCost;
+    }
+
+    protected ErpPurReceive loadReceiveByCode(String receiveCode) {
+        IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", receiveCode));
+        q.addOrderField("code", false);
+        return dao.findFirstByQuery(q);
+    }
+
+    protected void validateNoDraftExists(Long receiveId) {
+        IEntityDao<ErpInvLandedCost> dao = landedCostDao();
+        QueryBean q = new QueryBean();
+        q.addFilter(and(
+                eq("receiveId", receiveId),
+                ne("docStatus", "CANCELLED")
+        ));
+        List<ErpInvLandedCost> existing = dao.findAllByQuery(q);
+        if (!existing.isEmpty()) {
+            throw new NopException(ErpInvErrors.ERR_LANDED_COST_DRAFT_EXISTS)
+                    .param(ErpInvErrors.ARG_RECEIVE_ID, receiveId)
+                    .param(ErpInvErrors.ARG_LANDED_COST_CODE, existing.get(0).getCode());
+        }
+    }
+
+    protected BigDecimal resolveExchangeRate(BigDecimal freightExchangeRate, Long freightCurrencyId,
+                                              ErpPurReceive receive) {
+        if (freightExchangeRate != null) {
+            return freightExchangeRate;
+        }
+        return receive.getExchangeRate() != null ? receive.getExchangeRate() : BigDecimal.ONE;
+    }
+
+    protected ErpInvLandedCost createLandedCostHead(ErpPurReceive receive, BigDecimal freightAmount,
+                                                      Long currencyId, BigDecimal exchangeRate) {
+        IEntityDao<ErpInvLandedCost> dao = landedCostDao();
+        ErpInvLandedCost head = dao.newEntity();
+        head.setCode("LC-FRT-" + receive.getCode() + "-" + CoreMetrics.currentTimeMillis());
+        head.setOrgId(receive.getOrgId());
+        head.setReceiveId(receive.getId());
+        head.setSupplierId(receive.getSupplierId());
+        head.setCurrencyId(currencyId);
+        head.setExchangeRate(exchangeRate);
+        head.setTotalCostAmount(freightAmount);
+        head.setAllocationMethod(ErpInvConstants.ALLOC_METHOD_BY_AMOUNT);
+        head.setDocStatus(ErpInvConstants.DOC_STATUS_DRAFT);
+        head.setApproveStatus(APPROVE_STATUS_UNSUBMITTED);
+        head.setPosted(false);
+        head.setBusinessDate(CoreMetrics.today());
+        dao.saveEntity(head);
+        return head;
+    }
+
+    protected void createFreightLine(ErpInvLandedCost head, BigDecimal freightAmount, Long apPartnerId) {
+        IEntityDao<ErpInvLandedCostLine> dao = daoProvider.daoFor(ErpInvLandedCostLine.class);
+        ErpInvLandedCostLine line = dao.newEntity();
+        line.setLandedCostId(head.getId());
+        line.setLineNo(1);
+        line.setCostElement(ErpInvConstants.COST_ELEMENT_FREIGHT);
+        line.setAmount(freightAmount);
+        line.setApPartnerId(apPartnerId);
+        dao.saveEntity(line);
     }
 
     // ---------- step 方法（protected，下游可覆盖） ----------

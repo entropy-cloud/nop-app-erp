@@ -141,6 +141,12 @@ public interface ErpInvErrors {
     ErrorCode ERR_LANDED_COST_NO_LINES = ErrorCode.define("erp.err.inv.landed-cost-no-lines",
             "到岸成本单 {landedCostCode} 无费用行，不可分摊", ARG_LANDED_COST_CODE);
 
+    ErrorCode ERR_LANDED_COST_DRAFT_EXISTS = ErrorCode.define("erp.err.inv.landed-cost-draft-exists",
+            "采购入库单 {receiveId} 已有未取消的到岸成本单，不可重复创建", ARG_RECEIVE_ID);
+
+    ErrorCode ERR_LANDED_COST_RECEIVE_NOT_FOUND = ErrorCode.define("erp.err.inv.landed-cost-receive-not-found",
+            "采购入库单 {receiveCode} 不存在", "receiveCode");
+
     // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，库存域独立错误码，不跨域 import） ---
 
     ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define("erp.err.inv.report.name-invalid",
