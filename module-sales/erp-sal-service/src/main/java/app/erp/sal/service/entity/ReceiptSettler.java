@@ -1,6 +1,6 @@
 package app.erp.sal.service.entity;
 
-import app.erp.sal.biz.SettlementAllocation;
+import app.erp.md.biz.SettlementAllocation;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.dao.entity.ErpSalReceiptLine;

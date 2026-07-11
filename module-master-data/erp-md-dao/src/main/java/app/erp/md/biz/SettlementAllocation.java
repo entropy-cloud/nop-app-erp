@@ -1,12 +1,12 @@
-package app.erp.pur.biz;
+package app.erp.md.biz;
 
 import java.math.BigDecimal;
 
 /**
- * 付款→发票域级核销分配明细（{@link IErpPurPaymentBiz#settle} 入参元素）。
+ * 核销分配明细——指定核销到哪张发票/应付单（invoiceId）以及核销多少金额（amount）。
  *
- * <p>每条分配指定「核销到哪张发票 + 核销多少金额」。核销约束（同供应商、双方已审核、金额不超余额）
- * 由 {@code PaymentSettler} 在执行时校验，违例抛 {@link io.nop.api.core.exceptions.NopException}。
+ * <p>提供者只负责将分配指令传递给 settler；核销约束（同往来单位、双方已审核、金额不超余额）
+ * 由各域 {@code Settler} 在执行时校验，违例抛 {@link io.nop.api.core.exceptions.NopException}。
  */
 public class SettlementAllocation {
     private Long invoiceId;

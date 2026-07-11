@@ -7,6 +7,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 import io.nop.wf.core.biz.IApprovableBiz;
 
+import app.erp.md.biz.SettlementAllocation;
 import app.erp.pur.dao.entity.ErpPurPayment;
 
 import java.util.List;

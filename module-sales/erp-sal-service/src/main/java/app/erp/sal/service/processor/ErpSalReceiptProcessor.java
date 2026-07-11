@@ -2,7 +2,7 @@ package app.erp.sal.service.processor;
 
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
-import app.erp.sal.biz.SettlementAllocation;
+import app.erp.md.biz.SettlementAllocation;
 import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;

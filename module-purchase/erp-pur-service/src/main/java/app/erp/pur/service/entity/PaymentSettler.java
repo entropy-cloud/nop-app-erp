@@ -1,6 +1,6 @@
 package app.erp.pur.service.entity;
 
-import app.erp.pur.biz.SettlementAllocation;
+import app.erp.md.biz.SettlementAllocation;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.dao.entity.ErpPurPaymentLine;

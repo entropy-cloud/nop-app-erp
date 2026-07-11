@@ -6,7 +6,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdSubject;
-import app.erp.pur.biz.SettlementAllocation;
+import app.erp.md.biz.SettlementAllocation;
 import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;

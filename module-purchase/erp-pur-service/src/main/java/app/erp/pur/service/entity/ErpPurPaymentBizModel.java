@@ -2,7 +2,7 @@
 package app.erp.pur.service.entity;
 
 import app.erp.pur.biz.IErpPurPaymentBiz;
-import app.erp.pur.biz.SettlementAllocation;
+import app.erp.md.biz.SettlementAllocation;
 import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.service.processor.ErpPurPaymentProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
