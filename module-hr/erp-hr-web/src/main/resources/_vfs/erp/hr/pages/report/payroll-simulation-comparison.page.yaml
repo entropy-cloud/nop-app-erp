@@ -21,22 +21,24 @@ body:
             label: "下载 XLSX"
             actionType: download
             api:
-              url: /graphql
+              url: /p/ErpHrReport__download
               method: post
               responseType: blob
               data:
-                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}simulationId:BigDecimal){ ErpHrReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{simulationId:${'$'}simulationId}) }"
-                variables: { reportName: "payroll-simulation-comparison", renderType: "xlsx", simulationId: "${simulationId}" }
+                reportName: "payroll-simulation-comparison"
+                renderType: "xlsx"
+                data: { simulationId: "${simulationId}" }
           - type: button
             label: "下载 PDF"
             actionType: download
             api:
-              url: /graphql
+              url: /p/ErpHrReport__download
               method: post
               responseType: blob
               data:
-                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}simulationId:BigDecimal){ ErpHrReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{simulationId:${'$'}simulationId}) }"
-                variables: { reportName: "payroll-simulation-comparison", renderType: "pdf", simulationId: "${simulationId}" }
+                reportName: "payroll-simulation-comparison"
+                renderType: "pdf"
+                data: { simulationId: "${simulationId}" }
       - type: service
         name: reportService
         id: reportContainer

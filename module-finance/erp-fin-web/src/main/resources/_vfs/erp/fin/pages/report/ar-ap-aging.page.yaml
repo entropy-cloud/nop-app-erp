@@ -20,22 +20,24 @@ body:
             label: "下载 XLSX"
             actionType: download
             api:
-              url: /graphql
+              url: /p/ErpFinReport__download
               method: post
               responseType: blob
               data:
-                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}asOfDate:String){ ErpFinReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{asOfDate:${'$'}asOfDate}) }"
-                variables: { reportName: "ar-ap-aging", renderType: "xlsx", asOfDate: "${asOfDate}" }
+                reportName: "ar-ap-aging"
+                renderType: "xlsx"
+                data: { asOfDate: "${asOfDate}" }
           - type: button
             label: "下载 PDF"
             actionType: download
             api:
-              url: /graphql
+              url: /p/ErpFinReport__download
               method: post
               responseType: blob
               data:
-                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}asOfDate:String){ ErpFinReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{asOfDate:${'$'}asOfDate}) }"
-                variables: { reportName: "ar-ap-aging", renderType: "pdf", asOfDate: "${asOfDate}" }
+                reportName: "ar-ap-aging"
+                renderType: "pdf"
+                data: { asOfDate: "${asOfDate}" }
       - type: service
         name: reportService
         id: reportContainer

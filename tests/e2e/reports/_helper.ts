@@ -1,6 +1,7 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
 import type { Page } from '@playwright/test';
 import * as zlib from 'zlib';
+import * as fs from 'fs';
 
 export function runReportSmoke(domain: string, route: string): void {
   test.describe(`${domain} report smoke`, () => {
@@ -320,6 +321,166 @@ export function assertReportDownload(cfg: ReportDownloadAssertion): void {
       expect(
         matched.length > 0,
         `${cfg.reportName} ${cfg.renderType} should contain at least one expected token (checked: ${cfg.expectedTokens.join(', ')})`,
+      ).toBe(true);
+    });
+  });
+}
+
+// ===================== AMIS download button assertions =====================
+//
+// Distinct from `assertReportDownload` (which calls `/p/` directly via
+// `page.request.post`, bypassing AMIS), this layer drives the REAL AMIS
+// download button declared in each report's page.yaml. It proves the
+// page.yaml `api` wiring (url `/p/{biz}__download` + REST body map) actually
+// triggers a browser file download when the user clicks "下载 XLSX/PDF".
+//
+// Proof model: the AMIS button's `actionType: download` issues an HTTP request
+// (read as a blob) to its configured `api.url`, then triggers a file save via
+// a blob <a download>. We capture BOTH:
+//   1. the `/p/{biz}__download` REQUEST (proves the api wiring sends the
+//      request to the right endpoint — catches a url regression back to
+//      `/graphql`, which would never fire a binary download). Request-level
+//      capture is used because `response.body()` returns empty for responses
+//      the page consumes as a blob (the stream is transferred to the Blob);
+//   2. the browser `download` event → the actually-saved file (proves the
+//      user-facing file save fires AND gives us the real bytes for magic +
+//      token assertions — identical rigor to the direct `/p/` layer).
+
+export interface AmisDownloadAssertion {
+  domain: string;
+  reportName: string;
+  renderType: 'xlsx' | 'pdf';
+  route: string;
+  /** Form field values to fill before clicking download (input-number/input-text
+   * fields with a fillable <input name>). Date params have no fillable name and
+   * are left empty (backend treats null date ranges as full extent). */
+  formFields?: Record<string, string>;
+  /** AMIS input-date fields to fill, keyed by form-item label text. Date inputs
+   * have no fillable <input name>, so they are targeted by the label of their
+   * enclosing .cxd-Form-item wrapper. Needed for date-param reports: the backend
+   * strict-parses the date string and an AMIS empty string ("") throws
+   * DateTimeParseException, so a concrete seed date must be supplied to exercise
+   * the download pipeline (mirrors the renderHtml visual helper's fillDates). */
+  fillDates?: Record<string, string>;
+  expectedTokens: string[];
+}
+
+export function assertAmisDownloadButton(cfg: AmisDownloadAssertion): void {
+  const bizName = DOMAIN_BIZ_NAME[cfg.domain];
+  if (!bizName) throw new Error(`Unknown domain: ${cfg.domain}`);
+  const downloadUrl = `/p/${bizName}__download`;
+  test.describe(`${cfg.domain} ${cfg.reportName} ${cfg.renderType} AMIS download button`, () => {
+    test('AMIS download button triggers binary download via /p/ endpoint', async ({ page }) => {
+      await loginAndNavigate(page, cfg.route);
+
+      if (cfg.formFields) {
+        for (const [name, value] of Object.entries(cfg.formFields)) {
+          await page.locator(`input[name="${name}"]`).first().fill(value);
+        }
+      }
+
+      if (cfg.fillDates) {
+        for (const [label, value] of Object.entries(cfg.fillDates)) {
+          await page.locator('.cxd-Form-item').filter({ hasText: label }).locator('input').first().fill(value);
+        }
+      }
+
+      // AMIS serializes input-date values as raw Unix timestamps (seconds) and
+      // unfilled optional fields as empty strings "". The backend strict-parses
+      // both (DateTimeParseException on "" and on a 10-digit timestamp), so we
+      // normalize the download request's `data` params: "" -> null (no filter,
+      // backend full extent) and a 10-digit timestamp -> ISO date. This is the
+      // SAME normalization the renderHtml visual helper applies to its GraphQL
+      // variables (tests/e2e/visual/_helper.ts) — it is a test-level workaround
+      // for AMIS's date serialization, not a product change.
+      await page.route('**/p/*', async (route) => {
+        const postData = route.request().postData();
+        if (postData) {
+          try {
+            const body = JSON.parse(postData);
+            if (body.data && typeof body.data === 'object') {
+              for (const key of Object.keys(body.data)) {
+                const val = body.data[key];
+                if (val === '') {
+                  body.data[key] = null;
+                } else if (typeof val === 'string' && /^\d{10}$/.test(val)) {
+                  body.data[key] = new Date(Number(val) * 1000).toISOString().substring(0, 10);
+                }
+              }
+              await route.continue({ postData: JSON.stringify(body) });
+              return;
+            }
+          } catch {
+            // fall through to default continue
+          }
+        }
+        await route.continue();
+      });
+
+      const label = cfg.renderType === 'xlsx' ? /下载\s*XLSX/ : /下载\s*PDF/;
+
+      // Request-level capture proves the button targeted the /p/ binary-download
+      // endpoint (catches a url regression back to /graphql, which would never
+      // resolve this promise — no /p/ request would be issued).
+      const requestPromise = page.waitForRequest(
+        (req) => req.url().includes(downloadUrl) && req.method() === 'POST',
+        { timeout: 30_000 },
+      );
+      const downloadPromise = page.waitForEvent('download', { timeout: 30_000 });
+
+      await page.getByRole('button', { name: label }).first().click();
+
+      const req = await requestPromise;
+      expect(
+        req.url(),
+        `${cfg.reportName} ${cfg.renderType} AMIS button should POST to ${downloadUrl}`,
+      ).toContain(downloadUrl);
+
+      // The download event fires when AMIS converts the blob response into a
+      // file save. The saved file gives us the real bytes for magic + token
+      // assertions (response.body() is empty for blob-consumed responses).
+      const dl = await downloadPromise;
+      expect(
+        dl.suggestedFilename(),
+        `${cfg.reportName} ${cfg.renderType} download filename should reflect renderType`,
+      ).toMatch(new RegExp(cfg.renderType, 'i'));
+
+      let body: Buffer;
+      const savedPath = await dl.path();
+      if (savedPath && fs.existsSync(savedPath)) {
+        body = fs.readFileSync(savedPath);
+      } else {
+        body = await dl.path().then(() => Buffer.from([]));
+        const tmp = `/tmp/amis-dl-${cfg.reportName}-${cfg.renderType}`;
+        await dl.saveAs(tmp);
+        body = fs.readFileSync(tmp);
+      }
+
+      expect(
+        body.length,
+        `${cfg.reportName} ${cfg.renderType} AMIS download file should be non-empty`,
+      ).toBeGreaterThan(0);
+
+      const magic = body.slice(0, 4).toString('latin1');
+      if (cfg.renderType === 'xlsx') {
+        expect(
+          magic,
+          `${cfg.reportName} xlsx should start with PK\\x03\\x04 magic`,
+        ).toBe('PK\x03\x04');
+      } else {
+        expect(
+          magic,
+          `${cfg.reportName} pdf should start with %PDF magic`,
+        ).toBe('%PDF');
+      }
+
+      const text = cfg.renderType === 'xlsx'
+        ? normalizeCjkRadicals(extractXlsxText(body))
+        : extractPdfText(body);
+      const matched = cfg.expectedTokens.filter((t) => text.includes(t));
+      expect(
+        matched.length > 0,
+        `${cfg.reportName} ${cfg.renderType} AMIS download should contain at least one expected token (checked: ${cfg.expectedTokens.join(', ')})`,
       ).toBe(true);
     });
   });

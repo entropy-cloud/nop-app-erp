@@ -26,22 +26,24 @@ body:
             label: "下载 XLSX"
             actionType: download
             api:
-              url: /graphql
+              url: /p/ErpMfgReport__download
               method: post
               responseType: blob
               data:
-                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}materialId:BigDecimal,${'$'}periodStart:String,${'$'}periodEnd:String){ ErpMfgReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{materialId:${'$'}materialId,periodStart:${'$'}periodStart,periodEnd:${'$'}periodEnd}) }"
-                variables: { reportName: "forecast-variance-report", renderType: "xlsx", materialId: "${materialId}", periodStart: "${periodStart}", periodEnd: "${periodEnd}" }
+                reportName: "forecast-variance-report"
+                renderType: "xlsx"
+                data: { materialId: "${materialId}", periodStart: "${periodStart}", periodEnd: "${periodEnd}" }
           - type: button
             label: "下载 PDF"
             actionType: download
             api:
-              url: /graphql
+              url: /p/ErpMfgReport__download
               method: post
               responseType: blob
               data:
-                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}materialId:BigDecimal,${'$'}periodStart:String,${'$'}periodEnd:String){ ErpMfgReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{materialId:${'$'}materialId,periodStart:${'$'}periodStart,periodEnd:${'$'}periodEnd}) }"
-                variables: { reportName: "forecast-variance-report", renderType: "pdf", materialId: "${materialId}", periodStart: "${periodStart}", periodEnd: "${periodEnd}" }
+                reportName: "forecast-variance-report"
+                renderType: "pdf"
+                data: { materialId: "${materialId}", periodStart: "${periodStart}", periodEnd: "${periodEnd}" }
       - type: service
         name: reportService
         id: reportContainer

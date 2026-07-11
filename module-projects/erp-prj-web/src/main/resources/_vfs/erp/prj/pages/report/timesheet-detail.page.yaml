@@ -26,22 +26,24 @@ body:
             label: "下载 XLSX"
             actionType: download
             api:
-              url: /graphql
+              url: /p/ErpPrjReport__download
               method: post
               responseType: blob
               data:
-                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}projectId:BigDecimal,${'$'}startDate:String,${'$'}endDate:String){ ErpPrjReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{projectId:${'$'}projectId,startDate:${'$'}startDate,endDate:${'$'}endDate}) }"
-                variables: { reportName: "timesheet-detail", renderType: "xlsx", projectId: "${projectId}", startDate: "${startDate}", endDate: "${endDate}" }
+                reportName: "timesheet-detail"
+                renderType: "xlsx"
+                data: { projectId: "${projectId}", startDate: "${startDate}", endDate: "${endDate}" }
           - type: button
             label: "下载 PDF"
             actionType: download
             api:
-              url: /graphql
+              url: /p/ErpPrjReport__download
               method: post
               responseType: blob
               data:
-                query: "query(${'$'}reportName:String!,${'$'}renderType:String!,${'$'}projectId:BigDecimal,${'$'}startDate:String,${'$'}endDate:String){ ErpPrjReport__download(reportName:${'$'}reportName,renderType:${'$'}renderType,data:{projectId:${'$'}projectId,startDate:${'$'}startDate,endDate:${'$'}endDate}) }"
-                variables: { reportName: "timesheet-detail", renderType: "pdf", projectId: "${projectId}", startDate: "${startDate}", endDate: "${endDate}" }
+                reportName: "timesheet-detail"
+                renderType: "pdf"
+                data: { projectId: "${projectId}", startDate: "${startDate}", endDate: "${endDate}" }
       - type: service
         name: reportService
         id: reportContainer
