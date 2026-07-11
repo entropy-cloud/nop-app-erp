@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -84,23 +85,24 @@ public class ErpMntDashboardBizModel {
     @BizQuery
     public List<Map<String, Object>> getEquipmentStatusDistribution(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            List<ErpMntEquipment> equipments = daoProvider.daoFor(ErpMntEquipment.class).findAll();
-            Map<String, Long> countByStatus = new LinkedHashMap<>();
-            for (ErpMntEquipment e : equipments) {
-                String s = e.getStatus();
-                if (s == null) s = "UNKNOWN";
-                countByStatus.merge(s, 1L, Long::sum);
+            // DB 级 GROUP BY status + COUNT，避免全表物化
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpMntEquipment.class.getName());
+            QueryFieldBean dim = QueryFieldBean.mainField("status");
+            QueryFieldBean cnt = QueryFieldBean.mainField("status").count().alias("cnt");
+            q.setFields(java.util.Arrays.asList(dim, cnt));
+            List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+            List<Map<String, Object>> result = new ArrayList<>(rows.size());
+            for (Map<String, Object> row : rows) {
+                String s = row.get("status") == null ? "UNKNOWN" : String.valueOf(row.get("status"));
+                Map<String, Object> r = new LinkedHashMap<>();
+                r.put("status", s);
+                r.put("count", ((Number) row.get("cnt")).longValue());
+                result.add(r);
             }
-            List<Map<String, Object>> rows = new ArrayList<>();
-            countByStatus.entrySet().stream()
-                    .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
-                    .forEach(e -> {
-                        Map<String, Object> row = new LinkedHashMap<>();
-                        row.put("status", e.getKey());
-                        row.put("count", e.getValue());
-                        rows.add(row);
-                    });
-            return rows;
+            result.sort(Comparator.<Map<String, Object>, Long>comparing(
+                    r -> (Long) r.get("count"), Comparator.reverseOrder()));
+            return result;
         });
     }
 
@@ -167,14 +169,14 @@ public class ErpMntDashboardBizModel {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         QueryBean q = new QueryBean();
         q.addFilter(ne("status", ErpMntDaoConstants.EQUIPMENT_STATUS_DECOMMISSIONED));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private long countEquipmentByStatus(String status) {
         IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("status", status));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private List<ErpMntEquipment> loadEquipmentsByStatus(String status) {
@@ -188,7 +190,7 @@ public class ErpMntDashboardBizModel {
         IEntityDao<ErpMntRequest> dao = daoProvider.daoFor(ErpMntRequest.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("status", status));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private long countCompletedVisitsInRange(LocalDate from, LocalDate to) {
@@ -197,7 +199,7 @@ public class ErpMntDashboardBizModel {
         q.addFilter(eq("status", ErpMntDaoConstants.VISIT_STATUS_COMPLETED));
         q.addFilter(ge("businessDate", from));
         q.addFilter(le("businessDate", to));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private Set<Long> loadEquipmentIdsWithOngoingDowntime(Set<Long> equipmentIds) {
@@ -220,10 +222,13 @@ public class ErpMntDashboardBizModel {
         return dao.findAllByQuery(q);
     }
 
+    /** 收集已生成 Visit 的 scheduleId 集合（类 C：单字段收集，带硬上限的受限扫描）。 */
     private Set<Long> loadScheduleIdsWithVisit() {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
+        QueryBean q = new QueryBean();
+        q.setLimit(5000);
         Set<Long> ids = new HashSet<>();
-        for (ErpMntVisit v : dao.findAll()) {
+        for (ErpMntVisit v : dao.findAllByQuery(q)) {
             if (v.getScheduleId() != null) ids.add(v.getScheduleId());
         }
         return ids;

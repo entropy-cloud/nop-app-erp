@@ -422,7 +422,10 @@ public class CrpLoadCalculator {
                 set.add(l.getWorkcenterId());
             }
         }
-        for (ErpMfgWorkcenterCalendar c : daoProvider.daoFor(ErpMfgWorkcenterCalendar.class).findAll()) {
+        // 类 D 裁决：WorkcenterCalendar 是配置数据（量小），加硬上限受限扫描后收集 workcenterId 集合
+        QueryBean calQ = new QueryBean();
+        calQ.setLimit(5000);
+        for (ErpMfgWorkcenterCalendar c : daoProvider.daoFor(ErpMfgWorkcenterCalendar.class).findAllByQuery(calQ)) {
             if (c.getWorkcenterId() != null) {
                 set.add(c.getWorkcenterId());
             }

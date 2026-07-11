@@ -7,6 +7,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -80,23 +81,24 @@ public class ErpMfgDashboardBizModel {
     @BizQuery
     public List<Map<String, Object>> getWorkOrderStatusDistribution(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            List<ErpMfgWorkOrder> orders = daoProvider.daoFor(ErpMfgWorkOrder.class).findAll();
-            Map<String, Long> countByStatus = new LinkedHashMap<>();
-            for (ErpMfgWorkOrder o : orders) {
-                String s = o.getDocStatus();
-                if (s == null) s = "UNKNOWN";
-                countByStatus.merge(s, 1L, Long::sum);
+            // DB 级 GROUP BY docStatus + COUNT，避免全表物化
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpMfgWorkOrder.class.getName());
+            QueryFieldBean dim = QueryFieldBean.mainField("docStatus");
+            QueryFieldBean cnt = QueryFieldBean.mainField("docStatus").count().alias("cnt");
+            q.setFields(Arrays.asList(dim, cnt));
+            List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+            List<Map<String, Object>> result = new ArrayList<>(rows.size());
+            for (Map<String, Object> row : rows) {
+                String s = row.get("docStatus") == null ? "UNKNOWN" : String.valueOf(row.get("docStatus"));
+                Map<String, Object> r = new LinkedHashMap<>();
+                r.put("status", s);
+                r.put("count", ((Number) row.get("cnt")).longValue());
+                result.add(r);
             }
-            List<Map<String, Object>> rows = new ArrayList<>();
-            countByStatus.entrySet().stream()
-                    .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
-                    .forEach(e -> {
-                        Map<String, Object> row = new LinkedHashMap<>();
-                        row.put("status", e.getKey());
-                        row.put("count", e.getValue());
-                        rows.add(row);
-                    });
-            return rows;
+            result.sort(Comparator.<Map<String, Object>, Long>comparing(
+                    r -> (Long) r.get("count"), Comparator.reverseOrder()));
+            return result;
         });
     }
 
@@ -164,14 +166,14 @@ public class ErpMfgDashboardBizModel {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("docStatus", statuses));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private long countByDocStatus(String status) {
         IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", status));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private BigDecimal sumCompletedQtyInRange(LocalDate from, LocalDate to) {

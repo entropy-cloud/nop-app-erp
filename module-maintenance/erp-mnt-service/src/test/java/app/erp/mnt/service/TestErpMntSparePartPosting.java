@@ -246,10 +246,6 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
     private ApiResponse<?> confirm(Long usageId) {
         ApiResponse<?> resp = executeRpc(mutation, "ErpMntSparePartUsage__confirm",
                 ApiRequest.build(Map.of("usageId", usageId)));
-        if (resp.getStatus() != 0) {
-            System.out.println("[DEBUG confirm] status=" + resp.getStatus() + " code=" + resp.getCode()
-                    + " msg=" + resp.getMsg());
-        }
         return resp;
     }
 

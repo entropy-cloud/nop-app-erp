@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.WebContentBean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.commons.concurrent.executor.GlobalExecutors;
 import io.nop.commons.util.StringHelper;
@@ -188,33 +189,50 @@ public class ErpCrmReportBizModel {
     /**
      * 线索转化漏斗数据集。从 {@link ErpCrmLead} 按 stageId 聚合：leadCount + expectedRevenue 合计，
      * 对齐 {@code crm/README.md}。阶段名称经 {@link ErpCrmStage} 关系解析。
+     * <p>DB 级 GROUP BY stageId + COUNT + SUM(expectedRevenue)（类 D 裁决：报表渲染数据集，DB 级聚合避免全表物化）。
      */
     List<Map<String, Object>> buildLeadConversionFunnelDataset() {
         return ormTemplate.runInSession(session -> {
-            List<ErpCrmLead> leads = daoProvider.daoFor(ErpCrmLead.class).findAll();
-            if (leads.isEmpty()) {
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpCrmLead.class.getName());
+            QueryFieldBean dim = QueryFieldBean.mainField("stageId");
+            QueryFieldBean cnt = QueryFieldBean.mainField("stageId").count().alias("leadCount");
+            QueryFieldBean sumRev = QueryFieldBean.mainField("expectedRevenue").sum().alias("expectedRevenue");
+            q.setFields(Arrays.asList(dim, cnt, sumRev));
+            List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+            if (rows.isEmpty()) {
                 return Collections.emptyList();
             }
-            Map<Long, FunnelAggregator> agg = new LinkedHashMap<>();
-            for (ErpCrmLead l : leads) {
-                Long sid = l.getStageId();
+            Map<Long, Object[]> agg = new LinkedHashMap<>();
+            for (Map<String, Object> row : rows) {
+                Object sid = row.get("stageId");
                 if (sid == null) continue;
-                FunnelAggregator a = agg.computeIfAbsent(sid, FunnelAggregator::new);
-                a.leadCount++;
-                a.expectedRevenue = a.expectedRevenue.add(nz(l.getExpectedRevenue()));
+                long stageId = ((Number) sid).longValue();
+                long leadCount = row.get("leadCount") == null ? 0L : ((Number) row.get("leadCount")).longValue();
+                BigDecimal expectedRevenue = toBigDecimal(row.get("expectedRevenue"));
+                agg.put(stageId, new Object[]{leadCount, expectedRevenue});
             }
             Map<Long, String> stageNames = resolveStageNames(agg.keySet());
-            List<Map<String, Object>> rows = new ArrayList<>(agg.size());
-            for (FunnelAggregator a : agg.values()) {
+            List<Map<String, Object>> result = new ArrayList<>(agg.size());
+            for (Map.Entry<Long, Object[]> e : agg.entrySet()) {
+                long stageId = e.getKey();
+                Object[] v = e.getValue();
                 Map<String, Object> r = new LinkedHashMap<>();
-                r.put("stageId", a.stageId);
-                r.put("stageName", stageNames.getOrDefault(a.stageId, ""));
-                r.put("leadCount", a.leadCount);
-                r.put("expectedRevenue", a.expectedRevenue);
-                rows.add(r);
+                r.put("stageId", stageId);
+                r.put("stageName", stageNames.getOrDefault(stageId, ""));
+                r.put("leadCount", v[0]);
+                r.put("expectedRevenue", v[1]);
+                result.add(r);
             }
-            return rows;
+            return result;
         });
+    }
+
+    private static BigDecimal toBigDecimal(Object v) {
+        if (v == null) return BigDecimal.ZERO;
+        if (v instanceof BigDecimal) return (BigDecimal) v;
+        if (v instanceof Number) return new BigDecimal(v.toString());
+        return new BigDecimal(v.toString());
     }
 
     /**
@@ -288,16 +306,6 @@ public class ErpCrmReportBizModel {
 
     private static BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
-    }
-
-    private static class FunnelAggregator {
-        final Long stageId;
-        int leadCount = 0;
-        BigDecimal expectedRevenue = BigDecimal.ZERO;
-
-        FunnelAggregator(Long stageId) {
-            this.stageId = stageId;
-        }
     }
 
     private static class ForecastLineAggregator {

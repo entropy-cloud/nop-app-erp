@@ -196,7 +196,7 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
     }
 
     static String generateEmployeeCode(ErpHrRecruitment rec) {
-        return "EMP-" + rec.getId() + "-" + System.currentTimeMillis() % 100000;
+        return "EMP-" + rec.getId() + "-" + CoreMetrics.currentTimeMillis() % 100000;
     }
 
     static String extractFirstName(String candidateName) {

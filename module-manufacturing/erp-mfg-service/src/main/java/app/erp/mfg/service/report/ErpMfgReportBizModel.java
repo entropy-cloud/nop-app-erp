@@ -332,13 +332,18 @@ public class ErpMfgReportBizModel {
     // ===================== helpers =====================
 
     private LocalDate[] deriveCrpWindow(Long workcenterId) {
+        // 类 D 裁决：CRP 负荷报表窗口推导需明细 min/max(loadDate)，带硬上限的受限扫描
         IEntityDao<ErpMfgCrpLoad> dao = daoProvider.daoFor(ErpMfgCrpLoad.class);
-        List<ErpMfgCrpLoad> all = dao.findAll();
+        QueryBean q = new QueryBean();
+        if (workcenterId != null) {
+            q.addFilter(eq("workcenterId", workcenterId));
+        }
+        q.setLimit(5000);
+        List<ErpMfgCrpLoad> all = dao.findAllByQuery(q);
         if (all.isEmpty()) return null;
         LocalDate min = null;
         LocalDate max = null;
         for (ErpMfgCrpLoad l : all) {
-            if (workcenterId != null && !workcenterId.equals(l.getWorkcenterId())) continue;
             LocalDate d = l.getLoadDate();
             if (d == null) continue;
             if (min == null || d.isBefore(min)) min = d;

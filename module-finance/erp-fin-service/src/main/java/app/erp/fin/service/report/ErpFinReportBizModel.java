@@ -371,7 +371,15 @@ public class ErpFinReportBizModel {
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         List<ErpFinGlBalance> list;
         if (periodId == null) {
-            list = dao.findAll();
+            // periodId 缺省时限定最近一个会计期间，避免全表回退（原全表加载会物化全表）。
+            Long latestPeriodId = findLatestPeriodId();
+            if (latestPeriodId == null) {
+                list = Collections.emptyList();
+            } else {
+                QueryBean q = new QueryBean();
+                q.addFilter(eq("periodId", latestPeriodId));
+                list = dao.findAllByQuery(q);
+            }
         } else {
             QueryBean q = new QueryBean();
             q.addFilter(eq("periodId", periodId));
@@ -384,6 +392,15 @@ public class ErpFinReportBizModel {
             return sa.compareTo(sb);
         });
         return list;
+    }
+
+    private Long findLatestPeriodId() {
+        IEntityDao<ErpFinAccountingPeriod> pDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        QueryBean q = new QueryBean();
+        q.addOrderField("startDate", true);
+        q.setLimit(1);
+        List<ErpFinAccountingPeriod> latest = pDao.findAllByQuery(q);
+        return latest.isEmpty() ? null : latest.get(0).getId();
     }
 
     private List<ErpFinVoucherLine> loadPostedVoucherLines(Long periodId) {

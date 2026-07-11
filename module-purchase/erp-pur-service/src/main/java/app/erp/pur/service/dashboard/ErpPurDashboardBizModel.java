@@ -227,7 +227,7 @@ public class ErpPurDashboardBizModel {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpPurConstants.DOC_STATUS_ACTIVE));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private BigDecimal sumArApOpen(String direction, IServiceContext context) {
@@ -262,10 +262,13 @@ public class ErpPurDashboardBizModel {
         return totalWithOrder > 0 ? (double) onTime / (double) totalWithOrder : 0.0;
     }
 
+    /** 收集订单 id → deliveryDate（类 C：单字段收集，带硬上限的受限扫描）。 */
     private Map<Long, LocalDate> loadOrderDeliveryDates() {
         IEntityDao<ErpPurOrder> dao = daoProvider.daoFor(ErpPurOrder.class);
+        QueryBean q = new QueryBean();
+        q.setLimit(5000);
         Map<Long, LocalDate> map = new HashMap<>();
-        for (ErpPurOrder o : dao.findAll()) {
+        for (ErpPurOrder o : dao.findAllByQuery(q)) {
             if (o.getDeliveryDate() != null) {
                 map.put(o.getId(), o.getDeliveryDate());
             }

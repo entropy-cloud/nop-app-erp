@@ -10,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -49,6 +50,9 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 @BizModel("ErpPrjDashboard")
 public class ErpPrjDashboardBizModel {
 
+    /** 预警扫描的服务端硬上限：项目行数封顶，防止企业级数据量 OOM（类 D 裁决保留）。 */
+    private static final int ALERT_MAX_ROWS = 5000;
+
     @Inject
     IDaoProvider daoProvider;
     @Inject
@@ -79,23 +83,24 @@ public class ErpPrjDashboardBizModel {
     @BizQuery
     public List<Map<String, Object>> getProjectStatusDistribution(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            List<ErpPrjProject> projects = daoProvider.daoFor(ErpPrjProject.class).findAll();
-            Map<String, Long> countByStatus = new LinkedHashMap<>();
-            for (ErpPrjProject p : projects) {
-                String s = p.getStatus();
-                if (s == null) s = "UNKNOWN";
-                countByStatus.merge(s, 1L, Long::sum);
+            // DB 级 GROUP BY status + COUNT，避免全表物化
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpPrjProject.class.getName());
+            QueryFieldBean dim = QueryFieldBean.mainField("status");
+            QueryFieldBean cnt = QueryFieldBean.mainField("status").count().alias("cnt");
+            q.setFields(java.util.Arrays.asList(dim, cnt));
+            List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+            List<Map<String, Object>> result = new ArrayList<>(rows.size());
+            for (Map<String, Object> row : rows) {
+                String s = row.get("status") == null ? "UNKNOWN" : String.valueOf(row.get("status"));
+                Map<String, Object> r = new LinkedHashMap<>();
+                r.put("status", s);
+                r.put("count", ((Number) row.get("cnt")).longValue());
+                result.add(r);
             }
-            List<Map<String, Object>> rows = new ArrayList<>();
-            countByStatus.entrySet().stream()
-                    .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
-                    .forEach(e -> {
-                        Map<String, Object> row = new LinkedHashMap<>();
-                        row.put("status", e.getKey());
-                        row.put("count", e.getValue());
-                        rows.add(row);
-                    });
-            return rows;
+            result.sort(Comparator.<Map<String, Object>, Long>comparing(
+                    r -> (Long) r.get("count"), Comparator.reverseOrder()));
+            return result;
         });
     }
 
@@ -103,7 +108,10 @@ public class ErpPrjDashboardBizModel {
     @BizQuery
     public List<Map<String, Object>> findCostOverrunAlert(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            List<ErpPrjProject> projects = daoProvider.daoFor(ErpPrjProject.class).findAll();
+            // 类 D 裁决：逐行比对预算 vs 成本需项目明细，带硬上限的受限扫描
+            QueryBean pq = new QueryBean();
+            pq.setLimit(ALERT_MAX_ROWS);
+            List<ErpPrjProject> projects = daoProvider.daoFor(ErpPrjProject.class).findAllByQuery(pq);
             Map<Long, BigDecimal> budgetByProject = loadBudgetByProject();
             Map<Long, BigDecimal> costByProject = loadCostByProject();
             List<Map<String, Object>> rows = new ArrayList<>();
@@ -228,22 +236,28 @@ public class ErpPrjDashboardBizModel {
         return sum;
     }
 
+    /** DB 级 GROUP BY projectId + SUM(totalAmount)，返回 projectId → 总预算。 */
     private Map<Long, BigDecimal> loadBudgetByProject() {
-        IEntityDao<ErpPrjBudget> dao = daoProvider.daoFor(ErpPrjBudget.class);
-        Map<Long, BigDecimal> map = new HashMap<>();
-        for (ErpPrjBudget b : dao.findAll()) {
-            if (b.getProjectId() == null) continue;
-            map.merge(b.getProjectId(), nz(b.getTotalAmount()), BigDecimal::add);
-        }
-        return map;
+        return sumByProject(ErpPrjBudget.class.getName(), "totalAmount");
     }
 
+    /** DB 级 GROUP BY projectId + SUM(totalAmount)，返回 projectId → 已发生成本。 */
     private Map<Long, BigDecimal> loadCostByProject() {
-        IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
+        return sumByProject(ErpPrjCostCollection.class.getName(), "totalAmount");
+    }
+
+    private Map<Long, BigDecimal> sumByProject(String entityName, String amountField) {
+        QueryBean q = new QueryBean();
+        q.setSourceName(entityName);
+        QueryFieldBean dim = QueryFieldBean.mainField("projectId");
+        QueryFieldBean sumAmt = QueryFieldBean.mainField(amountField).sum().alias("total");
+        q.setFields(java.util.Arrays.asList(dim, sumAmt));
+        List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
         Map<Long, BigDecimal> map = new HashMap<>();
-        for (ErpPrjCostCollection c : dao.findAll()) {
-            if (c.getProjectId() == null) continue;
-            map.merge(c.getProjectId(), nz(c.getTotalAmount()), BigDecimal::add);
+        for (Map<String, Object> row : rows) {
+            Object pid = row.get("projectId");
+            if (pid == null) continue;
+            map.put(((Number) pid).longValue(), toBigDecimal(row.get("total")));
         }
         return map;
     }
@@ -256,5 +270,12 @@ public class ErpPrjDashboardBizModel {
 
     private static BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    private static BigDecimal toBigDecimal(Object v) {
+        if (v == null) return BigDecimal.ZERO;
+        if (v instanceof BigDecimal) return (BigDecimal) v;
+        if (v instanceof Number) return new BigDecimal(v.toString());
+        return new BigDecimal(v.toString());
     }
 }

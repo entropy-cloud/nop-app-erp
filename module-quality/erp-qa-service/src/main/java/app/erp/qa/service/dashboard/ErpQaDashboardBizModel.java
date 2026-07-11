@@ -12,6 +12,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -134,24 +135,26 @@ public class ErpQaDashboardBizModel {
                                                      IServiceContext context) {
         int topN = limit == null || limit <= 0 ? 10 : limit;
         return ormTemplate.runInSession(session -> {
-            List<ErpQaNonConformance> ncrs = daoProvider.daoFor(ErpQaNonConformance.class).findAll();
-            Map<String, Long> countByDisposition = new LinkedHashMap<>();
-            for (ErpQaNonConformance n : ncrs) {
-                String d = n.getDispositionType();
-                if (d == null) d = "UNSPECIFIED";
-                countByDisposition.merge(d, 1L, Long::sum);
+            // DB 级 GROUP BY dispositionType + COUNT，避免全表物化
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpQaNonConformance.class.getName());
+            QueryFieldBean dim = QueryFieldBean.mainField("dispositionType");
+            QueryFieldBean cnt = QueryFieldBean.mainField("dispositionType").count().alias("cnt");
+            q.setFields(Arrays.asList(dim, cnt));
+            List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+            List<Map<String, Object>> grouped = new ArrayList<>(rows.size());
+            for (Map<String, Object> row : rows) {
+                String d = row.get("dispositionType") == null ? "UNSPECIFIED" : String.valueOf(row.get("dispositionType"));
+                Map<String, Object> r = new LinkedHashMap<>();
+                r.put("dispositionType", d);
+                r.put("count", ((Number) row.get("cnt")).longValue());
+                grouped.add(r);
             }
-            List<Map<String, Object>> rows = new ArrayList<>();
-            countByDisposition.entrySet().stream()
-                    .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
-                    .limit(topN)
-                    .forEach(e -> {
-                        Map<String, Object> row = new LinkedHashMap<>();
-                        row.put("dispositionType", e.getKey());
-                        row.put("count", e.getValue());
-                        rows.add(row);
-                    });
-            return rows;
+            grouped.sort(Comparator.<Map<String, Object>, Long>comparing(
+                    r -> (Long) r.get("count"), Comparator.reverseOrder()));
+            List<Map<String, Object>> result = new ArrayList<>();
+            grouped.stream().limit(topN).forEach(result::add);
+            return result;
         });
     }
 
@@ -251,7 +254,7 @@ public class ErpQaDashboardBizModel {
         q.addFilter(in("status", Arrays.asList(
                 ErpQaConstants.NCR_STATUS_OPEN,
                 ErpQaConstants.NCR_STATUS_IN_REVIEW)));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private List<ErpQaInspection> loadInspectionsInRange(LocalDate from, LocalDate to) {
@@ -268,6 +271,6 @@ public class ErpQaDashboardBizModel {
         q.addFilter(in("status", Arrays.asList(
                 ErpQaConstants.NCR_STATUS_OPEN,
                 ErpQaConstants.NCR_STATUS_IN_REVIEW)));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 }

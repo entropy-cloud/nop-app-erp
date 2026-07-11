@@ -159,11 +159,28 @@ public class ErpFinDashboardBizModel {
     private List<ErpFinGlBalance> loadGlBalances(Long periodId) {
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         if (periodId == null) {
-            return dao.findAll();
+            // periodId 缺省时限定最近一个会计期间，避免全表回退（原全表加载会物化全表）。
+            // 取最近期间的 id 后按该期间过滤；无任何期间时返回空（KPI 退化为 0）。
+            Long latestPeriodId = findLatestPeriodId();
+            if (latestPeriodId == null) {
+                return Collections.emptyList();
+            }
+            QueryBean q = new QueryBean();
+            q.addFilter(eq("periodId", latestPeriodId));
+            return dao.findAllByQuery(q);
         }
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
         return dao.findAllByQuery(q);
+    }
+
+    private Long findLatestPeriodId() {
+        IEntityDao<ErpFinAccountingPeriod> pDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        QueryBean q = new QueryBean();
+        q.addOrderField("startDate", true);
+        q.setLimit(1);
+        List<ErpFinAccountingPeriod> latest = pDao.findAllByQuery(q);
+        return latest.isEmpty() ? null : latest.get(0).getId();
     }
 
     private List<ErpFinGlBalance> loadGlBalancesInRange(LocalDate from, LocalDate to) {

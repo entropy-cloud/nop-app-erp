@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -121,25 +122,28 @@ public class ErpSalDashboardBizModel {
                                                        IServiceContext context) {
         int topN = limit == null || limit <= 0 ? 10 : limit;
         return ormTemplate.runInSession(session -> {
-            List<ErpSalInvoice> invoices = daoProvider.daoFor(ErpSalInvoice.class).findAll();
-            Map<Long, BigDecimal> byCustomer = new LinkedHashMap<>();
-            for (ErpSalInvoice inv : invoices) {
-                if (!Boolean.TRUE.equals(inv.getPosted())) continue;
-                Long cid = inv.getCustomerId();
-                if (cid == null) continue;
-                byCustomer.merge(cid, nz(inv.getAmountFunctional()), BigDecimal::add);
+            // DB 级 GROUP BY customerId + SUM(amountFunctional) WHERE posted=true（报告 §1.6 严重度项：
+            // 原 findAll 全表内存聚合改为 DB 级聚合，消除企业数据量 OOM）
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpSalInvoice.class.getName());
+            q.addFilter(eq("posted", Boolean.TRUE));
+            QueryFieldBean dim = QueryFieldBean.mainField("customerId");
+            QueryFieldBean sumAmt = QueryFieldBean.mainField("amountFunctional").sum().alias("salesAmount");
+            q.setFields(Arrays.asList(dim, sumAmt));
+            List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+            List<Map<String, Object>> grouped = new ArrayList<>(rows.size());
+            for (Map<String, Object> row : rows) {
+                if (row.get("customerId") == null) continue;
+                Map<String, Object> r = new LinkedHashMap<>();
+                r.put("customerId", row.get("customerId"));
+                r.put("salesAmount", toBigDecimal(row.get("salesAmount")));
+                grouped.add(r);
             }
-            List<Map<String, Object>> rows = new ArrayList<>();
-            byCustomer.entrySet().stream()
-                    .sorted(Map.Entry.<Long, BigDecimal>comparingByValue(Comparator.reverseOrder()))
-                    .limit(topN)
-                    .forEach(e -> {
-                        Map<String, Object> row = new LinkedHashMap<>();
-                        row.put("customerId", e.getKey());
-                        row.put("salesAmount", e.getValue());
-                        rows.add(row);
-                    });
-            return rows;
+            grouped.sort(Comparator.<Map<String, Object>, BigDecimal>comparing(
+                    r -> (BigDecimal) r.get("salesAmount"), Comparator.reverseOrder()));
+            List<Map<String, Object>> result = new ArrayList<>();
+            grouped.stream().limit(topN).forEach(result::add);
+            return result;
         });
     }
 
@@ -197,7 +201,7 @@ public class ErpSalDashboardBizModel {
         IEntityDao<ErpSalOrder> dao = daoProvider.daoFor(ErpSalOrder.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("docStatus", ErpSalConstants.DOC_STATUS_ACTIVE));
-        return dao.findAllByQuery(q).size();
+        return dao.countByQuery(q);
     }
 
     private BigDecimal sumArApOpen(String direction, IServiceContext context) {
@@ -211,5 +215,12 @@ public class ErpSalDashboardBizModel {
 
     private static BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    private static BigDecimal toBigDecimal(Object v) {
+        if (v == null) return BigDecimal.ZERO;
+        if (v instanceof BigDecimal) return (BigDecimal) v;
+        if (v instanceof Number) return new BigDecimal(v.toString());
+        return new BigDecimal(v.toString());
     }
 }

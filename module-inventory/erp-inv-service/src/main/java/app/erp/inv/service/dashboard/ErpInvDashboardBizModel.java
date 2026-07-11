@@ -13,6 +13,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -54,6 +56,9 @@ import static io.nop.api.core.beans.FilterBeans.le;
 @BizModel("ErpInvDashboard")
 public class ErpInvDashboardBizModel {
 
+    /** 预警扫描的服务端硬上限：StockBalance 行数封顶，防止企业级数据量 OOM（类 D 裁决保留）。 */
+    private static final int ALERT_MAX_ROWS = 5000;
+
     @Inject
     IDaoProvider daoProvider;
     @Inject
@@ -68,11 +73,7 @@ public class ErpInvDashboardBizModel {
             LocalDate from = startDate != null ? startDate : today.withDayOfMonth(1);
             LocalDate to = endDate != null ? endDate : today;
 
-            List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAll();
-            BigDecimal totalValue = BigDecimal.ZERO;
-            for (ErpInvStockBalance b : balances) {
-                totalValue = totalValue.add(nz(b.getTotalCost()));
-            }
+            BigDecimal totalValue = sumBalanceTotalCost();
 
             BigDecimal[] inOut = sumMoveQtyInRange(from, to);
             BigDecimal incomingQty = inOut[0];
@@ -129,23 +130,24 @@ public class ErpInvDashboardBizModel {
     @BizQuery
     public List<Map<String, Object>> findWarehouseDistribution(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAll();
-            Map<Long, BigDecimal> byWh = new LinkedHashMap<>();
-            for (ErpInvStockBalance b : balances) {
-                Long wid = b.getWarehouseId();
-                if (wid == null) continue;
-                byWh.merge(wid, nz(b.getTotalCost()), BigDecimal::add);
+            // DB 级 GROUP BY warehouseId + SUM(totalCost)，避免全表物化
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpInvStockBalance.class.getName());
+            QueryFieldBean dim = QueryFieldBean.mainField("warehouseId");
+            QueryFieldBean sumCost = QueryFieldBean.mainField("totalCost").sum().alias("totalValue");
+            q.setFields(Arrays.asList(dim, sumCost));
+            List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+            List<Map<String, Object>> result = new ArrayList<>(rows.size());
+            for (Map<String, Object> row : rows) {
+                if (row.get("warehouseId") == null) continue;
+                Map<String, Object> r = new LinkedHashMap<>();
+                r.put("warehouseId", row.get("warehouseId"));
+                r.put("totalValue", nz(toBigDecimal(row.get("totalValue"))));
+                result.add(r);
             }
-            List<Map<String, Object>> rows = new ArrayList<>();
-            byWh.entrySet().stream()
-                    .sorted(Map.Entry.<Long, BigDecimal>comparingByValue(Comparator.reverseOrder()))
-                    .forEach(e -> {
-                        Map<String, Object> row = new LinkedHashMap<>();
-                        row.put("warehouseId", e.getKey());
-                        row.put("totalValue", e.getValue());
-                        rows.add(row);
-                    });
-            return rows;
+            result.sort(Comparator.<Map<String, Object>, BigDecimal>comparing(
+                    r -> (BigDecimal) r.get("totalValue"), Comparator.reverseOrder()));
+            return result;
         });
     }
 
@@ -153,7 +155,10 @@ public class ErpInvDashboardBizModel {
     @BizQuery
     public List<Map<String, Object>> findShortageAlert(IServiceContext context) {
         return ormTemplate.runInSession(session -> {
-            List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAll();
+            // 类 D 裁决：逐行比对 availableQuantity vs safetyStock 需余额明细，带硬上限的受限扫描
+            QueryBean q = new QueryBean();
+            q.setLimit(ALERT_MAX_ROWS);
+            List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAllByQuery(q);
             Set<Long> materialIds = new HashSet<>();
             for (ErpInvStockBalance b : balances) {
                 if (b.getMaterialId() != null) materialIds.add(b.getMaterialId());
@@ -189,7 +194,10 @@ public class ErpInvDashboardBizModel {
         }
         LocalDate cutoff = CoreMetrics.currentDate().minusDays(days);
         return ormTemplate.runInSession(session -> {
-            List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAll();
+            // 类 D 裁决：逐行比对 totalQuantity vs 最后出库日期需余额明细，带硬上限的受限扫描
+            QueryBean q = new QueryBean();
+            q.setLimit(ALERT_MAX_ROWS);
+            List<ErpInvStockBalance> balances = daoProvider.daoFor(ErpInvStockBalance.class).findAllByQuery(q);
             Map<Long, LocalDate> lastOutByMaterial = loadLastOutgoingDates(cutoff);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpInvStockBalance b : balances) {
@@ -361,5 +369,31 @@ public class ErpInvDashboardBizModel {
 
     private static BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    /**
+     * DB 级 SUM(totalCost)：按 warehouseId 分组取各组 SUM 后再汇总。
+     * <p>不直接用无维度全局聚合——MdxQueryExecutor 对无维度聚合会强制注入主键维度，生成非法 SQL
+     * （select sum(..), o.id 无 group by）。按真实维度分组后汇总等价于全局 SUM，且 null 仓库行单独成组被计入。
+     */
+    private BigDecimal sumBalanceTotalCost() {
+        QueryBean q = new QueryBean();
+        q.setSourceName(ErpInvStockBalance.class.getName());
+        QueryFieldBean dim = QueryFieldBean.mainField("warehouseId");
+        QueryFieldBean sumCost = QueryFieldBean.mainField("totalCost").sum().alias("totalValue");
+        q.setFields(Arrays.asList(dim, sumCost));
+        List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+        BigDecimal total = BigDecimal.ZERO;
+        for (Map<String, Object> row : rows) {
+            total = total.add(nz(toBigDecimal(row.get("totalValue"))));
+        }
+        return total;
+    }
+
+    private static BigDecimal toBigDecimal(Object v) {
+        if (v == null) return BigDecimal.ZERO;
+        if (v instanceof BigDecimal) return (BigDecimal) v;
+        if (v instanceof Number) return new BigDecimal(v.toString());
+        return new BigDecimal(v.toString());
     }
 }
