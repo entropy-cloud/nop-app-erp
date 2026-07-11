@@ -196,6 +196,27 @@ export async function findPageTotal(
 }
 
 /**
+ * 经 __findPage 返回首条匹配实体（带 selection），无匹配返回 null。
+ * 用于副作用编排断言（如 Request accept 生成的响应式 Visit 字段核实）。filter 走 GraphQL variable。
+ */
+export async function findFirst<T = any>(
+  page: Page,
+  entityName: string,
+  filter: Record<string, unknown>,
+  selection: string,
+): Promise<T | null> {
+  const resp = await page.request.post('/graphql', {
+    data: {
+      query: `query($f:Map){ ${entityName}__findPage(query:{offset:0,limit:1,filter:$f}){ items{ ${selection} } } }`,
+      variables: { f: filter },
+    },
+  });
+  const { data } = await extract(resp, `${entityName}__findPage`);
+  const items: any[] = data?.items || [];
+  return items.length > 0 ? (items[0] as T) : null;
+}
+
+/**
  * 清理（逻辑删除）匹配过滤的所有实体：findPage 全量后逐条 __delete。
  *
  * 业务动作 E2E 会创建不可逆下游产物（库存流水/余额、工单审计/调查、线索转化日志），
