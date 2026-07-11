@@ -1,6 +1,6 @@
 # 2026-07-11-1643-3-roles-permission-mapping roles-and-permissions.md 角色→权限点映射补全
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-11
 > Source: `docs/plans/2026-07-11-1225-1-analysis-consistency-fixes.md` Deferred「`feature-inventory.md` 完成状态补全 + `roles-and-permissions.md` 权限映射」（Successor Required: yes，触发条件=另开 owner-doc 内容对齐计划，**本计划承接其中 roles-and-permissions.md 段**）；`docs/analysis/2026-07-10-deep-code-and-doc-consistency-analysis.md` §2.5:147（"`roles-and-permissions.md` 缺角色→权限点映射"）
 > Related: `docs/design/roles-and-permissions.md`（权威设计，本计划目标文件）、`docs/design/domain-design-guidelines.md §6`（角色职责分离矩阵，角色名一致性源）、`docs/design/app-overview.md §菜单权威源与定制约定`（action-auth 三层链）
@@ -72,13 +72,13 @@ Exit Criteria:
 > 纯文档计划——删除 `mvn`/`build`/`test` 验证门控（无代码变更）。验证为文档核对：ID grep + 角色名一致性 + 矩阵完整性。
 
 - [x] 范围内行为完成（15 角色 × 域/菜单组映射矩阵落地）
-- [ ] 相关文档对齐（`roles-and-permissions.md` 与 `domain-design-guidelines.md §6.1` 角色名一致；分析报告 §2.5:147 状态订正）
+- [x] 相关文档对齐（`roles-and-permissions.md` 与 `domain-design-guidelines.md §6.1` 角色名一致；分析报告 §2.5:147 状态订正）
 - [x] 已运行验证（引用的 SUBM/FNPT ID grep 核对存在 + 角色名一致性核对 + 15 角色全覆盖）
 - [x] 无范围内项目降级为 deferred/follow-up（feature-inventory.md 段因约定冲突显式移出范围，见 Deferred）
 - [x] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -103,6 +103,9 @@ Closure Audit Evidence:
 - 目标文件：`docs/design/roles-and-permissions.md`（新增"角色→权限点映射"节含 15 行矩阵表 + SUB 域说明）
 - 角色名一致性：15 角色与 `domain-design-guidelines.md §6.1` 完全一致
 - SUBM/FNPT ID 核验：`rg` 确认所有引用存在于生成或定制 action-auth.xml
+- FNPT 精度订正（advisory A-1 处理）：矩阵列说明补"实际权限点为 `{前缀}:{query,mutation}`，动作列表为 BizModel 方法归入 mutation"，消除读者误查不存在的 FNPT ID 风险
+- 分析报告订正：`docs/analysis/2026-07-10-deep-code-and-doc-consistency-analysis.md:147` 已标注"2026-07-11 已订正"
+- 独立结束审计（`ses_0ae5125fdffeAar81TmTcuB3Lo`，general agent 新会话）：VERDICT: PASS，7 项证据全 PASS，零 Blocker。3 项 advisory（A-1 已处理 / A-2 已勾选 / A-3 文档变更随计划关闭提交）
 
 Follow-up:
 

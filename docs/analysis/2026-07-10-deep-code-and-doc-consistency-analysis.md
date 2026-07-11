@@ -144,7 +144,7 @@ public interface ErpSalErrors {
 | **文档称 279 实体，代码实际 447** | `data-dependency-matrix.md` | 实体计数已漂移（2026-07-11 已订正：源文档对齐 447） |
 | **文档称 1721 Java 文件，代码实际 2758** | `product-scope.md` | 文件计数已漂移（2026-07-11 已订正：源文档对齐 2758） |
 | **`feature-inventory.md` 无完成状态** | `feature-inventory.md` | 列出所有功能但未标记是否已实现，新读者无法判断基线 |
-| `roles-and-permissions.md` 缺角色→权限点映射 | `roles-and-permissions.md` | 业务角色未映射到 `*.action-auth.xml` 权限点 |
+| `roles-and-permissions.md` 缺角色→权限点映射 | `roles-and-permissions.md` | 业务角色未映射到 `*.action-auth.xml` 权限点（2026-07-11 已订正：新增"角色→权限点映射"节，15 角色 × 域/菜单组 SUBM 粗粒度矩阵 + FNPT 前缀引用，见 plan `2026-07-11-1643-3`） |
 
 > **2026-07-11 复核**：原表中的"`flow-overview.md:312` INSPECTING 状态"与"`flow-overview.md:499` 分布式事务声称"两项已在仓库修复（`flow-overview.md:314` 现明确声明无 INSPECTING 态；`:499` 现写"单库事务(REQUIRED)"），从残留表移除。
 

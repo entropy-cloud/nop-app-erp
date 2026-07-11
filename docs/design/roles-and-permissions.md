@@ -94,9 +94,11 @@
 
 映射层级：粗粒度（15 角色 × 域/菜单组 SUBM 层 + 关键 FNPT 前缀引用）。细粒度 15 × 674 FNPT 全矩阵过大易与生成文件漂移，逐权限点映射归 successor（触发条件：RBAC 精细化或合规审计需求）。
 
-角色名与 `domain-design-guidelines.md §6.1` 职责分离矩阵一致：
+角色名与 `domain-design-guidelines.md §6.1` 职责分离矩阵一致。
 
-| 角色 | 可访问 SUBM 域/菜单组 | 关键 FNPT 前缀 |
+> **FNPT 权限点模式说明**：生成文件 `_erp-*.action-auth.xml` 中每实体仅有两个 FNPT 权限点——`{EntityName}:query`（查询）与 `{EntityName}:mutation`（修改，覆盖所有写操作）。下表"FNPT 前缀 + 业务动作"列中，`{前缀}*` 为 FNPT 权限点前缀（实际点为 `{前缀}:{query,mutation}`），冒号后列出的动作（如 `save/update/submitForApproval`）是 BizModel 业务方法名，均归入 `mutation` 权限点，**不是**独立的 FNPT 权限点 ID。
+
+| 角色 | 可访问 SUBM 域/菜单组 | FNPT 前缀（→ `{前缀}:{query,mutation}`）+ 覆盖的业务动作 |
 |------|-----------------------|---------------|
 | 采购员 | `erp-pur`（采购管理）全部 + `erp-md`（主数据）只读（物料/往来单位/地址）+ `erp-inv`（库存）只读（库存余额查看） | `ErpPur*:{query,save,update,delete,submitForApproval}`、`ErpInv*:query` |
 | 销售员 | `erp-sal`（销售管理）全部 + `erp-md` 只读 + `erp-inv` 只读 | `ErpSal*:{query,save,update,delete,submitForApproval}`、`ErpMd*:query` |
