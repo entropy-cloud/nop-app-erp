@@ -1,6 +1,6 @@
 # 2026-07-11-2329-2 remaining-direct-action-e2e
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-11
 > Source: Deferred items from `2026-07-10-0335-2`：① maintenance Request→Visit 副作用编排 E2E（trigger met：当需推进 maintenance Request→Visit 编排 E2E 时）② finance voucher 手工 post 业务动作（trigger met：当需验证 voucher 手工过账浏览器层可达性时）
 > Related: `2026-07-10-0335-2`（Deferred source）; `2026-07-09-2004-2`（reverse 已覆盖）; `2026-07-09-0814-2`（DIRECT 业务动作 E2E 范式）
@@ -41,83 +41,83 @@
 
 ### Phase 1 - maintenance Request→Visit 副作用编排 E2E
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/business-actions/mnt-request-visit-orchestration.action.spec.ts`; `tests/e2e/business-actions/_helper.ts`
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: none
 
-- [ ] Add: `tests/e2e/business-actions/_helper.ts` 新增 `findVisitByCode(code: string)` 原语——经 GraphQL `ErpMntVisit__findPage` filter `code eq '{exactCode}'` 返回首条 Visit 实体（Visit code 为精确值 `VST-REQ-{requestId}`，无后缀，用 eqFilter 非 like）
+- [x] Add: `tests/e2e/business-actions/_helper.ts` 新增 `findVisitByCode(code: string)` 原语——经 GraphQL `ErpMntVisit__findPage` filter `code eq '{exactCode}'` 返回首条 Visit 实体（Visit code 为精确值 `VST-REQ-{requestId}`，无后缀，用 eqFilter 非 like）
   - Skill: `nop-testing`
-- [ ] Add: `mnt-request-visit-orchestration.action.spec.ts`——新建 Request（OPEN）→ `accept`（ACCEPTED）→ `findVisitByCode('VST-REQ-{requestId}')` → 断言 Visit 字段：code 精确匹配 / equipmentId == request.equipmentId / visitDate == today / visitType == RESPONSIVE / status == DRAFT / assignedTo 匹配
+- [x] Add: `mnt-request-visit-orchestration.action.spec.ts`——新建 Request（OPEN）→ `accept`（ACCEPTED）→ `findVisitByCode('VST-REQ-{requestId}')` → 断言 Visit 字段：code 精确匹配 / equipmentId == request.equipmentId / visitDate == today / visitType == RESPONSIVE / status == DRAFT / assignedTo 匹配
   - Skill: `nop-testing`
-- [ ] Add: 清理——accept 路径完成后删除生成的 Visit（按 code，对齐既有 mnt-request spec 清理范式防看板基线污染）+ 删除 Request
+- [x] Add: 清理——accept 路径完成后删除生成的 Visit（按 code，对齐既有 mnt-request spec 清理范式防看板基线污染）+ 删除 Request
   - Skill: `nop-testing`
-- [ ] Proof: `npx playwright test tests/e2e/business-actions/mnt-request-visit-orchestration.action.spec.ts --workers=1` → 新增 test 全绿 + 无回归
+- [x] Proof: `npx playwright test tests/e2e/business-actions/mnt-request-visit-orchestration.action.spec.ts --workers=1` → 新增 test 全绿 + 无回归
   - Skill: none
 
 Exit Criteria:
 
 > Phase 1 交付 Request→Visit 副作用编排 E2E。
 
-- [ ] Request accept 后 Visit 字段断言全绿（code/equipmentId/visitDate/visitType/status/assignedTo 6 字段）
-- [ ] 清理完整（无看板基线污染）
+- [x] Request accept 后 Visit 字段断言全绿（code/equipmentId/visitDate/visitType/status/assignedTo 6 字段）
+- [x] 清理完整（无看板基线污染）
 
 ### Phase 2 - finance voucher 手工 post E2E
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/business-actions/finance-voucher-post.action.spec.ts`; `tests/e2e/orchestration/_helper.ts`
 Skill: `nop-testing`
 
 - Item Types: `Add | Decision | Proof | Explore`
 - Prereqs: none
 
-- [ ] Explore: 读 Provider 代码确定 `ErpFinVoucher__post` 浏览器层可达性 + 最小 billData 构造。读 `ErpFinPostingProcessor`（post 入口编排）+ 至少一个 AcctDocProvider（如 `LandedCostAcctDocProvider` / `LogisticsFreightProvider`）确定 billData 键值结构。确认：(a) PostingEvent 能否经 GraphQL input object 序列化（枚举/Map/BigDecimal）; (b) 哪个 businessType 的 Provider 接受最简 billData（无库存/订单状态依赖）; (c) `post` 返回 Long scalar 是否被 `_helper.ts callMutation` 正确处理（现有 helper 默认包装 selection set，scalar return 需特殊处理）。
+- [x] Explore: 读 Provider 代码确定 `ErpFinVoucher__post` 浏览器层可达性 + 最小 billData 构造。读 `ErpFinPostingProcessor`（post 入口编排）+ 至少一个 AcctDocProvider（如 `LandedCostAcctDocProvider` / `LogisticsFreightProvider`）确定 billData 键值结构。确认：(a) PostingEvent 能否经 GraphQL input object 序列化（枚举/Map/BigDecimal）; (b) 哪个 businessType 的 Provider 接受最简 billData（无库存/订单状态依赖）; (c) `post` 返回 Long scalar 是否被 `_helper.ts callMutation` 正确处理（现有 helper 默认包装 selection set，scalar return 需特殊处理）。
   - 若探针发现 post 不可浏览器层可达（如 PostingEvent 无法序列化、Provider 强依赖运行时上下文），将 Phase 2 voucher post 项移入 Deferred But Adjudicated 并记录不可行裁决（对齐 `2330-1` xwf 不可行裁决范式）
   - Skill: `nop-testing`
-- [ ] Decision: PostingEvent 构造方案——基于 Explore 结果选定 businessType + billData 结构。
+- [x] Decision: PostingEvent 构造方案——基于 Explore 结果选定 businessType + billData 结构。
   - 候选优先级：① `LANDED_COST(490)`（`LandedCostAcctDocProvider` billData=ALLOCATIONS+COST_ELEMENTS，结构最规则、最近实现、文档最全）; ② `FREIGHT(310)`（`LogisticsFreightProvider`，需 SALES_DELIVERY 上下文）; ③ 经 `SALES_OUTPUT`/`PURCHASE_INPUT`（InvAcctDocProvider，需库存 avgCost 快照——复杂度最高）
   - billHeadCode 用唯一 `E2E-VCH-POST-{tag}-{ts}`
   - Explore 必须在此 Decision 解决之前完成
   - Skill: `nop-testing`
-- [ ] Add: `finance-voucher-post.action.spec.ts`——构造 PostingEvent input → `ErpFinVoucher__post` mutation（注意 Long scalar return 处理）→ 断言返回 voucherId 非 null → `ErpFinVoucher__get` 查凭证头（billHeadCode 匹配、voucherType/businessType 匹配）→ 查凭证行（subjectCode/amount 方向正确）
+- [x] Add: `finance-voucher-post.action.spec.ts`——构造 PostingEvent input → `ErpFinVoucher__post` mutation（注意 Long scalar return 处理）→ 断言返回 voucherId 非 null → `ErpFinVoucher__get` 查凭证头（billHeadCode 匹配、voucherType/businessType 匹配）→ 查凭证行（subjectCode/amount 方向正确）
   - 幂等路径：重复 post 同 billHeadCode → 返回 null（幂等命中）
   - 注意：ErpFinVoucher 是过账产物本身，`posted` 字段是源单据标记不是凭证标记——断言凭证头字段（billHeadCode/voucherNo/voucherType）+ 行明细，不断言 `posted=true`
   - Skill: `nop-testing`
-- [ ] Add: 清理——按 billHeadCode 删除凭证 + 凭证行（复用 `cleanupVoucherByBillCode` 或等价清理原语）
+- [x] Add: 清理——按 billHeadCode 删除凭证 + 凭证行（复用 `cleanupVoucherByBillCode` 或等价清理原语）
   - Skill: `nop-testing`
-- [ ] Proof: `npx playwright test tests/e2e/business-actions/finance-voucher-post.action.spec.ts --workers=1` → 新增 test 全绿
+- [x] Proof: `npx playwright test tests/e2e/business-actions/finance-voucher-post.action.spec.ts --workers=1` → 新增 test 全绿
   - Skill: none
 
 Exit Criteria:
 
 > Phase 2 交付 voucher post 浏览器层 E2E 覆盖。
 
-- [ ] post 正路径：凭证创建 + 头行字段断言全绿
-- [ ] post 幂等路径：重复 post 返回 null
-- [ ] 清理完整（无凭证残留）
+- [x] post 正路径：凭证创建 + 头行字段断言全绿
+- [x] post 幂等路径：重复 post 返回 null
+- [x] 清理完整（无凭证残留）
 
 ### Phase 3 - e2e-runbook 更新 + 日志
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`; `docs/logs/2026/07-11.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1, Phase 2
 
-- [ ] Add: `docs/testing/e2e-runbook.md` 增「maintenance Request→Visit 副作用编排」子段 + 「finance voucher 手工 post」子段；套件计数更新（+2 spec）
+- [x] Add: `docs/testing/e2e-runbook.md` 增「maintenance Request→Visit 副作用编排」子段 + 「finance voucher 手工 post」子段；套件计数更新（+2 spec）
   - Skill: none
-- [ ] Add: `docs/logs/2026/07-11.md` 追加聚合日志条目（验证状态、套件计数变化）
+- [x] Add: `docs/logs/2026/07-11.md` 追加聚合日志条目（验证状态、套件计数变化）
   - Skill: none
 
 Exit Criteria:
 
 > Phase 3 交付文档对齐。
 
-- [ ] e2e-runbook 两新子段在场 + 套件计数正确
-- [ ] 日志条目含验证状态
+- [x] e2e-runbook 两新子段在场 + 套件计数正确
+- [x] 日志条目含验证状态
 
 ## Draft Review Record
 
@@ -128,14 +128,14 @@ Exit Criteria:
 
 > 纯测试+文档计划，无生产代码/契约/ORM 模型变更。验证命令为 Playwright E2E + Maven 构建。
 
-- [ ] 范围内行为完成（两 spec 全绿）
-- [ ] 相关文档对齐（e2e-runbook + 日志）
-- [ ] 已运行验证：`npx playwright test tests/e2e/business-actions/mnt-request-visit-orchestration.action.spec.ts tests/e2e/business-actions/finance-voucher-post.action.spec.ts --workers=1` + `mvn clean install -DskipTests`（回归）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（两 spec 全绿）
+- [x] 相关文档对齐（e2e-runbook + 日志）
+- [x] 已运行验证：`npx playwright test tests/e2e/business-actions/mnt-request-visit-orchestration.action.spec.ts tests/e2e/business-actions/finance-voucher-post.action.spec.ts --workers=1` + `mvn clean install -DskipTests`（回归）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -147,11 +147,20 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending implementation
+Status Note: 实现完成（Phase 1+2+3 全部 done，2 新 spec 全绿 + 回归全绿 + mvn build SUCCESS）；独立结束审计通过（独立子代理新会话，冷重播仓库核实，非执行者自审计）。
 
 Closure Audit Evidence:
 
-- (pending)
+- Auditor / Agent: 独立结束审计子代理（closure auditor mission，新会话，未重用执行者上下文）
+- Evidence:
+  - **冷重播核实（live repo, 非记忆）**：
+    - Phase 1 `tests/e2e/business-actions/mnt-request-visit-orchestration.action.spec.ts` 在场（4935B，90 行）——`accept`(OPEN→ACCEPTED)→`findFirst` ErpMntVisit eqFilter `code=VST-REQ-{requestId}` → 6 字段精确断言（code 精确匹配 / equipmentId==request.equipmentId / visitDate==同事务 createTime 日期部分 / visitType=RESPONSIVE / status=DRAFT / assignedTo 回退 request.requestedBy）+ 删 Visit 防看板 periodVisitCount 污染 + 删 Request + 残留核实。退出标准「6 字段断言全绿 + 清理完整」可观察结果真实落地。
+    - Phase 2 `tests/e2e/business-actions/finance-voucher-post.action.spec.ts` 在场（8284B，141 行）——PostingEventInput(LANDED_COST 490) 经原始 mutation（Long scalar return 无选择集）→ 凭证头断言（voucherType=TRANSFER/postingType=NORMAL/docStatus=POSTED/totalDebit=totalCredit=100）+ 业财回链 ErpFinVoucherBillR(billCode/businessType=LANDED_COST) + 凭证行 Dr 1401=100/Cr 2202=100 + 幂等路径（重复 post 同 billHeadCode 返回 null）+ cleanupVoucherByBillCode + 残留核实。退出标准「正路径+幂等路径+清理」三段全部落地，非空壳（无 `{}`/`return null` 占位/吞噬异常）。
+    - Phase 1 原语命名偏差：计划项标 `findVisitByCode` 原语，执行者改用更通用的 `findFirst`（`_helper.ts:202` 经 __findPage 返回首条匹配实体，镜像 orchestration/_helper），spec 内联 `findFirst`+`eqFilter` 调用。结果表面（Visit 字段断言）完整交付，命名偏差已在 `docs/logs/2026/07-11.md` L6 透明记录，不阻塞关闭（规则 6：计划追踪结果表面非低级实现细节）。
+    - Phase 3 文档同步：`docs/testing/e2e-runbook.md` 业务动作表 +2 行（L224 maintenance Request→Visit / L240 finance voucher post）+ 套件计数 184→186（L5/L111）+ 文件结构 listing +2 文件（L547-548）；`docs/logs/2026/07-11.md` L3-12 聚合日志含验证状态（L11「验证全绿：2 新增 spec 各 1 passed + 回归 12 passed + mvn install -DskipTests BUILD SUCCESS」）。
+  - **反空壳核查**：两 spec 均含完整 test body、真实断言、真实清理；幂等路径返回 null 是业务幂等语义断言（源单已过账），非占位符。
+  - **五点一致性**：Plan Status completed / 3 Phase 全 completed / 各 Phase Exit Criteria 全 [x] / Closure Gates 全 [x] / Closure evidence 真实——全部一致。
+  - **Deferred honesty**：仅一项 Deferred（voucher post 多 businessType 覆盖矩阵，optimization candidate，successor no），非范围内缺陷降级。
 
 Follow-up:
 

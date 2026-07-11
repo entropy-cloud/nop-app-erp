@@ -117,6 +117,7 @@ Exit Criteria:
 - Why Not Blocking Closure: `accept` 生成响应式 ErpMntVisit。本计划仅断言 Request 自身 `status` 迁移。
 - Successor Required: `yes`
 - Trigger Condition: 当需推进 maintenance Request→Visit 编排 E2E 时。
+- **Resolved**: plan `2026-07-11-2329-2` Phase 1 落地 `mnt-request-visit-orchestration.action.spec.ts`（accept → 响应式 DRAFT Visit 6 字段精确断言：code/equipmentId/visitDate/visitType/status/assignedTo）。
 
 ### finance voucher 手工 post 业务动作
 
@@ -124,6 +125,7 @@ Exit Criteria:
 - Why Not Blocking Closure: `reverse` 已在 `2004-2` orchestration 覆盖；`post` 入参复杂 `PostingEvent`、边际收益递减（`2004-1` Deferred 明示）。
 - Successor Required: `yes`
 - Trigger Condition: 当需验证 voucher 手工过账浏览器层可达性时。
+- **Resolved**: plan `2026-07-11-2329-2` Phase 2 落地 `finance-voucher-post.action.spec.ts`（PostingEventInput → `ErpFinVoucher__post` LANDED_COST 最简路径 + 凭证头/回链/凭证行断言 + 幂等路径）。
 
 ## Closure
 
