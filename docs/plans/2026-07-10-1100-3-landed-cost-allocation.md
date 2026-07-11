@@ -266,4 +266,4 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- logistics path-2 运费 → 到岸成本单自动编排（解除 `2026-07-04-1115-3` path-2 Deferred）
+- ✅ logistics path-2 运费 → 到岸成本单自动编排（解除 `2026-07-04-1115-3` path-2 Deferred）—— 计划 `2026-07-11-2329-1` completed（config-gated `erp-log.path2-landed-cost-auto-create`，DELIVERED → `IErpInvLandedCostBiz.generateFreightLandedCost` 创建 DRAFT + FREIGHT 行 + 轮询路径修复）

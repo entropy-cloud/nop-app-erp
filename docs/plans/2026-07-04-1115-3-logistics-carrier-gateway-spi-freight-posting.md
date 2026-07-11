@@ -222,5 +222,5 @@ Closure Audit Evidence:
 Follow-up:
 
 - 真实承运商 HTTP 集成（DHL/顺丰/京东 等）——触发条件：具体承运商接入需求 + 凭证就绪
-- path-2 采购运费到岸成本分摊——触发条件：finance Landed Cost 能力落地（`costing-methods.md:40` Deferred）
+- ✅ path-2 采购运费到岸成本分摊——触发条件：finance Landed Cost 能力落地（`costing-methods.md:40` Deferred）—— 计划 `2026-07-11-2329-1` completed（config-gated auto-create + 轮询修复）
 - 比价生产路径 / 月台预约 / 前端面单预览 / nop-job cron 生产注册——触发条件：相应生产需求

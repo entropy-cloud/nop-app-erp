@@ -14,7 +14,7 @@
 | 已预约（ADVISED） | 已向承运商预约取件/发运，等待承运商接单 | 关联出库单锁定（不允许重复发运） |
 | 已派发（DISPATCHED） | 承运商已接单，等待运输中更新 | 库存已出账（写入 inventory） |
 | 运输中（IN_TRANSIT） | 货物在途，等待签收 | 追踪信息持续更新 |
-| 已签收（DELIVERED） | 终态：客户已签收 | 触发运费过账 |
+| 已签收（DELIVERED） | 终态：客户已签收 | 触发运费过账（path-1 销售运费）/ 到岸成本自动创建（path-2 采购运费，config-gated） |
 | 已取消（CANCELLED） | 终态：发运取消 | 释放关联出库单锁定 |
 
 ### 2. 迁移完整性
@@ -98,13 +98,16 @@
 | 承运商网关回调（追踪更新） | 本域暴露网关回调端点，更新发运单状态和 `ErpLogShipmentLog` |
 | 运费过账 | DELIVERED 后本域**直接调用** `IErpFinVoucherBiz.post(PostingEvent{businessType=FREIGHT})`（参 inventory `InvPostingExecutor` 范式），非事件订阅模型 |
 
-> **实现裁决补注（plan 2026-07-04-1115-3）**：原描述"DELIVERED 后本域发布 `ShipmentDeliveredEvent`，finance 域订阅执行过账"已调整为 path-1（SALES_DELIVERY）**直接调用** `IErpFinVoucherBiz.post`——与现有全域过账（inventory/sales/projects）一致。path-2（PURCHASE_RECEIPT 采购运费）仍仅发事件占位，待 finance Landed Cost 能力落地后订阅（Deferred）。
+> **实现裁决补注（plan 2026-07-04-1115-3 + 2026-07-11-2329-1）**：原描述"DELIVERED 后本域发布 `ShipmentDeliveredEvent`，finance 域订阅执行过账"已调整为：
+> - **path-1（SALES_DELIVERY）**：**直接调用** `IErpFinVoucherBiz.post(PostingEvent{businessType=FREIGHT})`（参 inventory `InvPostingExecutor` 范式），与现有全域过账一致。
+> - **path-2（PURCHASE_RECEIPT 采购运费）**：已从事件占位升级为 config-gated **到岸成本自动编排**。`erp-log.path2-landed-cost-auto-create=true`（默认 false，向后兼容）时，DELIVERED 后调用 `IErpInvLandedCostBiz.generateFreightLandedCost(receiveCode, freightAmount, ...)` 创建 DRAFT 到岸成本单（FREIGHT 费用行），由用户人工审核触发分摊→成本层更新→`LANDED_COST(490)` 过账（引擎由 plan `2026-07-10-1100-3` 提供）。config 关闭时退化为事件占位 + SETTLED（向后兼容）。
 
 外部触发渠道：
 - 用户手工创建发运单（主要渠道）。
 - sales 域出库事件触发自动创建发运单草稿（可选集成）。
 - 承运商网关回调（异步追踪）。
 - 定时任务：检查预计送达日期超期发运单。
+- 轮询兜底（`scanForPolling`）：对 DISPATCHED/IN_TRANSIT 运单调 `trackShipment` 推进状态；DELIVERED 翻转后补调 `onDelivered`（与 webhook 路径一致，path-1 + path-2 均受益）。
 
 ### 8. TODO / 任务策略
 
