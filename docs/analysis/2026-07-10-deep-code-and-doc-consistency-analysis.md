@@ -246,11 +246,11 @@ backlog/README.md → design/*.md / architecture/*.md → plans/2026-07-*.md →
 |--------|------|------|------|
 | P0 | Dashboard BizModel `dao.findAll()` 全表加载 OOM 风险 | 代码质量 — 高 | ✅ 2026-07-11 plan `2026-07-11-1225-1` Phase 3 落地（10 域 25 处改 countByQuery / DB 级 SUM / 受限查询） |
 | P0 | `data-dependency-matrix.md` 实体计数 279→447 未同步 | 文档一致性 | ✅ 2026-07-11 已订正（实体 447 / Java 2758 / reactor 154） |
-| P1 | Sales/Purchase order 页面缺审批按钮（BizModel 已实现） | 代码一致性 | ⏳ 移出本批，successor：另开前端质量 owner plan |
-| P1 | 系统审计字段在生成的 add/edit form 中暴露 | 前端质量 | ⏳ 移出本批，successor：另开前端质量 owner plan |
-| P1 | 外键字段显示为数字 ID 而非名称 | 前端质量 | ⏳ 移出本批，successor：另开前端质量 owner plan |
+| P1 | Sales/Purchase order 页面缺审批按钮（BizModel 已实现） | 代码一致性 | ✅ 2026-07-11 plan `2026-07-11-1643-1` Phase 1 落地（审批按钮 + visibleOn 状态门控） |
+| P1 | 系统审计字段在生成的 add/edit form 中暴露 | 前端质量 | ✅ 2026-07-11 plan `2026-07-11-1643-1` Phase 2 落地（ORM `ui:show="R"` codegen 层一处修复） |
+| P1 | 外键字段显示为数字 ID 而非名称 | 前端质量 | ✅ 2026-07-11 plan `2026-07-11-1643-1` Phase 3 落地（4 头实体 xmeta `*Name` + BizLoader 批量加载 + grid 列替换；全量 1036 FK 列归 successor） |
 | P1 | `System.currentTimeMillis()` 1 处违规 | 代码质量 | ✅ 2026-07-11 plan `2026-07-11-1225-1` Phase 2 落地（改 CoreMetrics） |
-| P2 | Dashboard 图表显示客户/供应商 ID 而非名称 | 前端质量 | ⏳ 移出本批，successor：另开前端质量 owner plan |
+| P2 | Dashboard 图表显示客户/供应商 ID 而非名称 | 前端质量 | ✅ 2026-07-11 plan `2026-07-11-1643-1` Phase 4 落地（sales/purchase/inventory/assets/master-data/maintenance 看板后端 join + 前端 adaptor/列改用名称） |
 | P2 | 排查 `flow-overview.md` 中 INSPECTING 状态和分布式事务声称 | 文档一致性 | ✅ 已 stale（仓库此前已修：`flow-overview.md:314` 无 INSPECTING、`:499` 单库事务） |
 | P2 | `SettlementAllocation` DTO 两域重复提取共用 | 代码质量 | ⏳ 移出本批，successor：另开代码重构 owner plan |
 

@@ -319,9 +319,9 @@ Exit Criteria:
 
 ### AMIS 前端质量四项（审批按钮缺失 / 审计字段暴露 / FK 显示 ID / Dashboard 图表 ID）
 
-- Classification: `out-of-scope improvement`
+- Classification: `out-of-scope improvement` → **已由 successor `2026-07-11-1643-1` 全部落地（completed）**
 - Why Not Blocking Closure: 不同结果表面（前端 AMIS view.xml/page.yaml 改造），本批是文档一致性 + 后端代码质量。前端改造需独立 owner plan 与 AMIS 范式技能。
-- Successor Required: `yes` — 另开前端质量 owner plan
+- Successor Required: `yes` — ~~另开前端质量 owner plan~~ → 已完成：plan `2026-07-11-1643-1-amis-frontend-quality.md`
 
 ### `SettlementAllocation` DTO 跨模块重复
 

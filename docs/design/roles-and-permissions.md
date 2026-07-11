@@ -87,7 +87,36 @@
 
 - **角色矩阵**：见本文"角色体系"——按业务职能划分，角色名与各域状态机迁移执行角色同源。
 - **操作权限资源点**：`*.action-auth.xml`（`TOPM`/`SUBM`/`FNPT`）由 codegen 自动产出，定义菜单与功能权限点。三层文件链与定制约定见 `app-overview.md §菜单权威源与定制约定`。
+- **角色→权限点映射**（粗粒度）：见下方"角色→权限点映射"节。权限点 ID 引用 `_erp-*.action-auth.xml` 生成文件为真相源（AGENTS.md 规则 7 ——不在散文重复生成文件定义）。FNPT 权限点模式：每实体约 2 个（query/mutation），格式 `<permissions>{EntityName}:{action}</permissions>`，详见各域 `_erp-*.action-auth.xml`。
 - **数据权限规则**：`data-auth.xml` 行级过滤——**独立于操作级开关，始终附加到查询条件**（平台机制见 `nop-entropy/docs-for-ai/02-core-guides/auth-and-permissions.md` 数据权限节）。
+
+## 角色→权限点映射
+
+映射层级：粗粒度（15 角色 × 域/菜单组 SUBM 层 + 关键 FNPT 前缀引用）。细粒度 15 × 674 FNPT 全矩阵过大易与生成文件漂移，逐权限点映射归 successor（触发条件：RBAC 精细化或合规审计需求）。
+
+角色名与 `domain-design-guidelines.md §6.1` 职责分离矩阵一致：
+
+| 角色 | 可访问 SUBM 域/菜单组 | 关键 FNPT 前缀 |
+|------|-----------------------|---------------|
+| 采购员 | `erp-pur`（采购管理）全部 + `erp-md`（主数据）只读（物料/往来单位/地址）+ `erp-inv`（库存）只读（库存余额查看） | `ErpPur*:{query,save,update,delete,submitForApproval}`、`ErpInv*:query` |
+| 销售员 | `erp-sal`（销售管理）全部 + `erp-md` 只读 + `erp-inv` 只读 | `ErpSal*:{query,save,update,delete,submitForApproval}`、`ErpMd*:query` |
+| 库管员 | `erp-inv`（库存管理）全部 + `erp-md` 只读（物料/仓库/库存维度） | `ErpInv*:{query,save,update,delete,confirm,cancel,transfer}`、`ErpMdMaterial*:query`、`ErpMdWarehouse*:query` |
+| 财务员 | `erp-fin`（财务管理）全部 + `erp-md` 只读（科目/结算方式）+ 报表 `sys-report` | `ErpFin*:{query,save,update,delete,post,reverse,close,batchDepreciation,reconcile}`、`ErpMdSubject*:query` |
+| 资产管理员 | `erp-ast`（资产管理）全部 + `erp-md` 只读 | `ErpAst*:{query,save,update,delete,capitalize,suspend,resume}`、`ErpMd*:query` |
+| 项目经理 | `erp-prj`（项目管理）全部 + `erp-md` 只读（员工/往来单位） | `ErpPrj*:{query,save,update,delete,start,suspend,resume,complete}`、`ErpMdEmployee*:query` |
+| 生产计划员 | `erp-mfg`（制造管理）工单创建/提交子集 + `erp-md` 只读（物料 BOM） | `ErpMfgWorkOrder:{query,save,update,delete,submitForApproval,cancel}`、`ErpMfgBom*:query`、`ErpMdMaterial*:query` |
+| 生产主管 | `erp-mfg`（制造管理）全部（含审核/开工/停工/关闭） | `ErpMfg*:{query,approve,reject,start,stop,resume,close,checkAvailability,reportCompletion}` |
+| 作业员 | `erp-mfg` 工单报工子集 `mfg-jobcard`（作业卡管理） | `ErpMfgJobCard:{query,recordWork}` |
+| 质检员 | `erp-qa`（质量管理）质检单录入/提让步子集 | `ErpQaInspection:{query,save,update,recordResult}`、`ErpQaNcr:query` |
+| 质量主管 | `erp-qa`（质量管理）全部（含 NCR 评审/CAPA 验证/让步审批/召回） | `ErpQa*:{query,save,update,delete,approve,reject,verify,review,escalate,locateTargets,close}` |
+| 维护主管 | `erp-mnt`（维护管理）全部（含排程/受理/拒绝） | `ErpMnt*:{query,save,update,delete,accept,reject,schedule,assign}` |
+| 维护人员 | `erp-mnt` 维护执行子集（访问单执行/备件消耗） | `ErpMntVisit:{query,start,complete,recordSparePart}`、`ErpMntRequest:query` |
+| 审核人 | 各域审核相关 SUBM（取决于审批流配置） | 按审批流分配 `*:{approve,reject}` 权限 |
+| 管理员 | **全部域 TOPM + SUBM** + `sys-*`（系统管理全部含工作流/报表/监控）+ `erp-l10n-cn` | 所有 FNPT 前缀全权限（`*:*`）；`nop.auth.skip-check-for-admin=true` 默认启用 |
+
+> **说明**：上表为粗粒度映射蓝图。实际权限配置在 `app.action-auth.xml` 按角色关联 SUBM 资源 + `_erp-*.action-auth.xml` 的 FNPT 权限点。当前运行基线 `nop.auth.enable-action-auth=false`（见"运行基线"节），启用操作级拦截后方生效。
+
+> **SUB 域（CRM/CS/HR/APS/Logistics/B2B/Contract/DRP）**：这些域的业务操作由对应角色（如客服人员、HR 专员等）在各自域内执行，尚未定义独立 ERP 角色映射。灰度启用操作级拦截时可按需为上述域的新建角色分配对应 SUBM 资源。
 
 ## 运行基线（当前拦截状态）
 
