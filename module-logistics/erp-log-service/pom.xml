@@ -29,7 +29,12 @@
              可加载（与 finance-service 自身测试依赖一致）；master-data 提供账套/科目主数据 seed。 -->
         <dependency><artifactId>app-erp-master-data-service</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency><artifactId>app-erp-assets-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
-        <dependency><artifactId>app-erp-inventory-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <!-- compile: path-2 运费→到岸成本编排注入 IErpInvLandedCostBiz（位于 inventory-dao）；inventory-dao 不依赖 logistics，无环。
+             plan 2026-07-11-2329-1 Phase 1：test→compile 升级 -->
+        <dependency><artifactId>app-erp-inventory-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version></dependency>
+        <!-- test-only: path-2 集成测试需 inv-service bean（ErpInvLandedCostBizModel/ErpInvLandedCostProcessor）在 logistics test classpath 上。
+             plan 2026-07-11-2329-1 Phase 1 -->
+        <dependency><artifactId>app-erp-inventory-service</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency><artifactId>app-erp-projects-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency>
             <artifactId>app-erp-logistics-codegen</artifactId>

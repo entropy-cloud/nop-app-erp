@@ -188,8 +188,11 @@ public class GatewayDispatcher {
         return advanced;
     }
 
-    /** 轮询兜底：对 DISPATCHED/IN_TRANSIT 运单调 trackShipment 推进。返回本轮推进数。 */
-    public int scanForPolling(IServiceContext context) {
+    /**
+     * 轮询兜底：对 DISPATCHED/IN_TRANSIT 运单调 trackShipment 推进。返回本轮状态发生迁移的运单列表
+     * （BizModel 层据此对 DELIVERED 运单调用 {@code onDelivered} 完成 path-1/path-2 编排）。
+     */
+    public List<ErpLogShipment> scanForPolling(IServiceContext context) {
         IEntityDao<ErpLogShipment> dao = daoProvider.daoFor(ErpLogShipment.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("status", List.of(
@@ -197,10 +200,10 @@ public class GatewayDispatcher {
                 ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT)));
         q.setLimit(100);
         List<ErpLogShipment> candidates = dao.findAllByQuery(q);
-        int advanced = 0;
+        List<ErpLogShipment> advanced = new ArrayList<>();
         for (ErpLogShipment shipment : candidates) {
             if (advanceTrackingViaPolling(shipment, context)) {
-                advanced++;
+                advanced.add(shipment);
             }
         }
         return advanced;

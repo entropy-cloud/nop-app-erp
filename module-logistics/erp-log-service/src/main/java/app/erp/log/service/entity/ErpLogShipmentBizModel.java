@@ -4,6 +4,8 @@ package app.erp.log.service.entity;
 import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
+import app.erp.inv.biz.IErpInvLandedCostBiz;
+import app.erp.inv.dao.entity.ErpInvLandedCost;
 import app.erp.log.biz.IErpLogShipmentBiz;
 import app.erp.log.dao.entity.ErpLogCarrier;
 import app.erp.log.dao.entity.ErpLogShipment;
@@ -34,6 +36,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -48,7 +51,8 @@ import io.nop.biz.crud.EntityData;
  * （{@link GatewayDispatcher#completeShipment}）→IN_TRANSIT→DELIVERED（webhook {@link #handleTrackingWebhook}
  * 或轮询 {@link #scanForPolling}）；CANCELLED 终态（{@link #cancelShipment}）。
  *
- * <p>DELIVERED 触发运费过账（{@link #onDelivered}，3.18 wiring）。
+ * <p>DELIVERED 触发运费过账（path-1，{@link #onDelivered}，3.18 wiring）或到岸成本自动创建（path-2，
+ * config-gated {@code erp-log.path2-landed-cost-auto-create}，plan 2026-07-11-2329-1）。
  */
 @BizModel("ErpLogShipment")
 public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> implements IErpLogShipmentBiz {
@@ -72,6 +76,8 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
     GatewayDispatcher gatewayDispatcher;
     @Inject
     IErpFinVoucherBiz voucherBiz;
+    @Inject
+    IErpInvLandedCostBiz landedCostBiz;
 
     @Override
     @BizMutation
@@ -137,17 +143,33 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
     @BizMutation
     @SingleSession
     public int scanForPolling(IServiceContext context) {
-        return gatewayDispatcher.scanForPolling(context);
+        List<ErpLogShipment> advanced = gatewayDispatcher.scanForPolling(context);
+        for (ErpLogShipment shipment : advanced) {
+            if (!ErpLogConstants.SHIPMENT_STATUS_DELIVERED.equals(shipment.getStatus())) {
+                continue;
+            }
+            try {
+                onDelivered(shipment, context);
+            } catch (Exception e) {
+                LOG.error("轮询驱动 DELIVERED 后 onDelivered 失败，运单 {} 保持 PENDING：{}",
+                        shipment.getCode(), e.getMessage(), e);
+            }
+        }
+        return advanced.size();
     }
 
     /**
-     * DELIVERED 触发运费过账入口（3.18 wiring）。
+     * DELIVERED 触发运费过账/到岸成本编排入口（3.18 wiring + plan 2026-07-11-2329-1 path-2 升级）。
      * <p>按 {@code relatedBillType} 分流：
      * <ul>
      *   <li>{@code SALES_DELIVERY}（path-1）：构建携带 {@code businessType=FREIGHT} + billData 的 {@link PostingEvent}，
      *       调 {@link IErpFinVoucherBiz#post}（直接调用范式参 {@code InvPostingExecutor}，非设计文档原描述的"finance 订阅事件"模型）。
      *       {@code erp-log.shipment-settlement-mode=AUTO}（默认）才调 post；MANUAL 仅标记待处理。</li>
-     *   <li>{@code PURCHASE_RECEIPT}（path-2）：发布 {@link ShipmentDeliveredEvent} 占位（Landed Cost 分摊归 finance Deferred）。</li>
+     *   <li>{@code PURCHASE_RECEIPT}（path-2）：config-gated {@code erp-log.path2-landed-cost-auto-create}（默认 false）。
+     *       若开启且 {@code freightAmount > 0}，调 {@link IErpInvLandedCostBiz#generateFreightLandedCost} 自动创建 DRAFT
+     *       到岸成本单（FREIGHT 费用行）；成功 → mark SETTLED；失败 → 保持 PENDING（对齐 path-1 可重试语义）。
+     *       若 {@code freightAmount} 为 null 或 ≤ 0 → mark SETTLED（无可分摊运费）。
+     *       config 关闭时 → 发布 {@link ShipmentDeliveredEvent} 占位 + mark SETTLED（向后兼容）。</li>
      * </ul>
      * 成功 {@code freightSettlementStatus} PENDING→SETTLED；已 SETTLED 幂等抛 {@link ErpLogErrors#ERR_LOG_SHIPMENT_ALREADY_DELIVERED}。
      */
@@ -159,9 +181,7 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
         String relatedBillType = shipment.getRelatedBillType();
 
         if (ErpLogConstants.RELATED_BILL_TYPE_PURCHASE_RECEIPT.equals(relatedBillType)) {
-            // path-2：采购运费到岸成本分摊依赖 finance Landed Cost（Deferred），本期仅事件交接。
-            publishDeliveredEvent(shipment);
-            gatewayDispatcher.saveShipment(markSettled(shipment));
+            handlePurchaseReceiptDelivered(shipment, context);
             return;
         }
 
@@ -185,6 +205,52 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
                         shipment.getCode(), e.getMessage());
             } else {
                 LOG.error("运费过账异常，运单 {} 保持 DELIVERED、freightSettlementStatus=PENDING", shipment.getCode(), e);
+            }
+        }
+    }
+
+    /**
+     * path-2 采购运费→到岸成本编排（plan 2026-07-11-2329-1）。
+     *
+     * <p>config-gated {@code erp-log.path2-landed-cost-auto-create}（默认 false）：
+     * <ul>
+     *   <li>开启且 freightAmount > 0 → 调 {@code generateFreightLandedCost} 创建 DRAFT；成功 mark SETTLED，失败保持 PENDING</li>
+     *   <li>开启但 freightAmount ≤ 0/null → mark SETTLED（无可分摊运费）</li>
+     *   <li>关闭 → 发布事件占位 + mark SETTLED（向后兼容）</li>
+     * </ul>
+     */
+    protected void handlePurchaseReceiptDelivered(ErpLogShipment shipment, IServiceContext context) {
+        boolean autoCreate = AppConfig.var(ErpLogConstants.CONFIG_PATH2_LANDED_COST_AUTO_CREATE, false);
+        BigDecimal freightAmount = shipment.getFreightAmount();
+
+        if (!autoCreate) {
+            publishDeliveredEvent(shipment);
+            gatewayDispatcher.saveShipment(markSettled(shipment));
+            return;
+        }
+
+        if (freightAmount == null || freightAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            LOG.info("运单 {} PURCHASE_RECEIPT DELIVERED 但 freightAmount={}≤0，无 path-2 职责，标记 SETTLED",
+                    shipment.getCode(), freightAmount);
+            gatewayDispatcher.saveShipment(markSettled(shipment));
+            return;
+        }
+
+        try {
+            ErpInvLandedCost landedCost = landedCostBiz.generateFreightLandedCost(
+                    shipment.getRelatedBillCode(), freightAmount,
+                    shipment.getFreightCurrencyId(), null, context);
+            LOG.info("path-2 自动创建到岸成本单 {}：运单 {} / 采购入库单 {} / 运费 {}",
+                    landedCost.getCode(), shipment.getCode(), shipment.getRelatedBillCode(), freightAmount);
+            publishDeliveredEvent(shipment);
+            gatewayDispatcher.saveShipment(markSettled(shipment));
+        } catch (Exception e) {
+            // path-2 失败保持 PENDING，允许 scanForPolling/webhook 重入重试（对齐 path-1 失败语义）
+            if (e instanceof NopException) {
+                LOG.error("path-2 到岸成本自动创建失败，运单 {} 保持 PENDING：{}",
+                        shipment.getCode(), e.getMessage());
+            } else {
+                LOG.error("path-2 到岸成本自动创建异常，运单 {} 保持 PENDING", shipment.getCode(), e);
             }
         }
     }
@@ -240,10 +306,10 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
     }
 
     private void publishDeliveredEvent(ErpLogShipment shipment) {
-        // 事件总线订阅（finance Landed Cost 落地后）归 follow-up；当前发布即记录交接意图 + 日志。
         ShipmentDeliveredEvent evt = new ShipmentDeliveredEvent(shipment.getId(), shipment.getCode(),
-                shipment.getRelatedBillType(), shipment.getRelatedBillCode(), shipment.getCarrierId());
-        LOG.info("ShipmentDeliveredEvent 发布（path-2 采购运费交接占位）：{}", evt.getShipmentCode());
+                shipment.getRelatedBillType(), shipment.getRelatedBillCode(), shipment.getCarrierId(),
+                shipment.getFreightAmount(), shipment.getFreightCurrencyId());
+        LOG.info("ShipmentDeliveredEvent 发布（path-2 采购运费交接）：{}", evt.getShipmentCode());
     }
 
     /** webhook HMAC 密钥：取承运商编码（mock 测试可控；真实部署可扩展 credentials JSON 内 webhookSecret）。 */
