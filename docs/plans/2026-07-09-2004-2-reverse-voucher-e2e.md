@@ -152,6 +152,7 @@ Exit Criteria:
 - Successor Required: `yes`
 - Trigger Condition: 当 xwf 浏览器层审批 API 验证可行 / approval-pattern 域浏览器层反向验证需求时（归 0814-2 approval-pattern successor）。
 - **useWorkflow 子集（Payment/Receipt/Disposal/Salary reverseApprove）经 plan `2026-07-09-2330-1` 权威裁决：不可行**——reverseApprove 需 APPROVED 前置，而 useWorkflow 实体达 APPROVED 须经 wf submit（user:$0 阻塞），故其 reverseApprove 浏览器层同步阻塞。DIRECT 域（PO/SO 等 useApproval 轴）reverseApprove 浏览器层仍可达（submit→approve 经 DIRECT，1249-1 已证），归独立 successor。
+- **DIRECT 子集已解除**：plan `2026-07-11-1234-1` Phase 2 落地 `ErpPurInvoice__reverseApprove` DIRECT 轴浏览器层 E2E（`p2p-reverse-approve.spec.ts` 全绿）。useWorkflow 子集仍开放。
 
 ### Payment/Receipt xwf 反向浏览器层 E2E
 
@@ -174,6 +175,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 库存物理冲销（库存移动反向）独立于凭证红冲（PurReversalListener.rollbackReceive 注释明示「库存物理冲销独立于凭证红冲」）。财务侧红冲仅回退 posted 标志，保留库存物理状态。
 - Successor Required: `yes`
 - Trigger Condition: 当需浏览器层验证库存物理冲销端到端时。
+- **已解除**：plan `2026-07-11-1234-1` Phase 1 落地 `ErpInvStockMoveBiz__reverse` 物理冲销浏览器层 E2E（`inventory-stock-move-reverse.action.spec.ts` 全绿：DONE 移动单 → 反向移动单创建 + relatedBill 挂链 + originReturnedMoveId + 方向取反 + 非 DONE 守卫）。
 
 ### 红字凭证借贷精确数值镜像断言
 

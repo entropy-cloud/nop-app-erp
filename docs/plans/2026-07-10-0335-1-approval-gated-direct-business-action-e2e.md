@@ -155,6 +155,7 @@ Exit Criteria:
 - Why Not Blocking Closure: `generateReturns` 跨域建 ErpSalReturn，属编排链。本计划验证审批轴 + locateTargets/close。
 - Successor Required: `yes`
 - Trigger Condition: 当需推进 Recall→Return 跨域编排 E2E 时。
+- **已解除**：plan `2026-07-11-1234-1` Phase 3 落地 `ErpQaRecall__generateReturns` 跨域建退货单浏览器层 E2E（`quality-recall-generate-returns.action.spec.ts` 全绿：自包含批次追溯编排 → RecallTarget RETURNED + generatedReturnId 非空 + ErpSalReturn 创建）。
 
 ## Closure
 
