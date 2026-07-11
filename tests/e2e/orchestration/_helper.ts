@@ -18,6 +18,7 @@ export { test, expect, loginAndNavigate };
 // 复用 0814-2 已验证原语
 import {
   createViaSave,
+  callMutation,
   callMutationOk,
   verifyState,
   findPageTotal,
@@ -27,7 +28,7 @@ import {
   deleteById,
   input,
 } from '../business-actions/_helper';
-export { createViaSave, callMutationOk, verifyState, findPageTotal, eqFilter, andFilter, deleteByFilter, deleteById, input };
+export { createViaSave, callMutation, callMutationOk, verifyState, findPageTotal, eqFilter, andFilter, deleteByFilter, deleteById, input };
 
 /** 种子引用（master-data init-data，与 0814-2 inventory spec 一致）。 */
 export const SEED = {
@@ -612,6 +613,8 @@ export interface MfgResult {
   wo?: any; woOutputLine?: any; woInputLine?: any;
   issue?: any; issueLine?: any;
   jobCard?: any;
+  /** 输入批次（withBatchTracking 时测试创建，cleanupMfg 据此清理）。 */
+  inputBatch?: any;
   completionMove?: { id: any; code: string; docStatus: string; posted: boolean } | null;
   codes: { component: string; setup: string; bom: string; wo: string; issue: string; jobCard: string };
 }
@@ -619,10 +622,19 @@ export interface MfgResult {
 /**
  * runMfgChain 可选参数。productId 默认 MAT-001（0704-2 基线）；差异 spec 传入测试专用成品物料。
  *（plan 2026-07-10-1800-2 Phase 3：自包含差异链路与 MAT-001 链路隔离。）
+ *
+ * plan 2026-07-11-0730-1 扩展：
+ *   - withBatchTracking：创建输入 ErpInvBatch + 设 MaterialIssueLine.batchNo，触发完工时
+ *     BatchGenealogyWriter 写入 inputLot→outputLot 基因链（默认 false，不影响既有 spec）。
+ *   - inspectionRequired：BOM 经 __save 时设 inspectionRequired=true，使 Gate 1
+ *     （config erp-mfg.inspection-gate-enabled=true）命中满量完工。当 true 时链路停在
+ *     reportCompletion 之前（WO=IN_PROCESS），由 spec 驱动 reportCompletion 断言 ERR_INSPECTION_REQUIRED。
  */
 export interface MfgChainOptions {
   productId?: number;
   productUoMId?: number;
+  withBatchTracking?: boolean;
+  inspectionRequired?: boolean;
 }
 
 /**
@@ -689,7 +701,26 @@ export async function runMfgChain(page: Page, options?: MfgChainOptions): Promis
   );
   r.componentMat = componentMat;
 
+  // withBatchTracking：先创建输入 ErpInvBatch + 备货移动携带 batchNo，使库存余额按批次维度落入。
+  //   StockMoveBookkeeper.upsertBalance 以 batchNo 为余额键维度之一，故备货/领料须共用同一 batchNo。
+  //   完工时 BatchGenealogyWriter.resolveInputLot 据此 batchNo 反查 ErpInvBatch 得 inputLotId。
+  const inputBatchNo = `GEN-IN-${ts}`;
+  if (options?.withBatchTracking) {
+    r.inputBatch = await createViaSave(
+      page, 'ErpInvBatch',
+      {
+        orgId: SEED.ORG, batchNo: inputBatchNo,
+        materialId: componentMat.id, warehouseId: SEED.WH_RAW,
+        totalQuantity: MFG_EXPECT.setupQty,
+        availableQuantity: MFG_EXPECT.setupQty,
+        productionDate: MFG_BDATE, status: 'OPEN',
+      },
+      'id',
+    );
+  }
+
   // 2. 前置备货：组件物料无种子余额，齐套校验/领料出库需库存余额。INCOMING 备货 30（独立移动 → CONFIRMED → complete → DONE）。
+  //    withBatchTracking：备货行携带 batchNo，余额按批次维度建立（领料出库按批次扣减时可用量充足）。
   const setupCreated = await callMutationOk(
     page, 'ErpInvStockMove', 'generateMove',
     {
@@ -699,6 +730,7 @@ export async function runMfgChain(page: Page, options?: MfgChainOptions): Promis
         lines: [{
           materialId: componentMat.id, uoMId: SEED.UOM_KG,
           quantity: MFG_EXPECT.setupQty, unitCost: MFG_EXPECT.componentUnitCost, currencyId: SEED.CURRENCY,
+          ...(options?.withBatchTracking ? { batchNo: inputBatchNo } : {}),
         }],
         remark: r.codes.setup,
       }),
@@ -708,10 +740,13 @@ export async function runMfgChain(page: Page, options?: MfgChainOptions): Promis
   await callMutationOk(page, 'ErpInvStockMove', 'complete', { moveId: setupCreated.id }, 'id docStatus posted');
   r.setupMove = { id: setupCreated.id, code: setupCreated.code };
 
-  // 3. BOM + 行：成品 + 组件物料（用量 2/单位）
+  // 3. BOM + 行：成品 + 组件物料（用量 2/单位）。inspectionRequired=true 时置 BOM 字段触发 Gate 1。
   const bom = await createViaSave(
     page, 'ErpMfgBom',
-    { code: r.codes.bom, productId, bomType: 'NORMAL', qty: 1, isActive: true },
+    {
+      code: r.codes.bom, productId, bomType: 'NORMAL', qty: 1, isActive: true,
+      ...(options?.inspectionRequired ? { inspectionRequired: true } : {}),
+    },
     'id',
   );
   r.bom = bom;
@@ -773,6 +808,8 @@ export async function runMfgChain(page: Page, options?: MfgChainOptions): Promis
   expect(ws?.docStatus, 'after start docStatus=IN_PROCESS').toBe('IN_PROCESS');
 
   // 8. 领料出库：MaterialIssue + 行（引用 WorkOrder INPUT 行）→ confirm → OUTGOING 移动 + materialCost 回写
+  //    withBatchTracking：MaterialIssueLine.batchNo 引用输入批次，MaterialIssueStockMoveBuilder 透传 batchNo
+  //    至出库移动行 → 按批次余额扣减；完工时 BatchGenealogyWriter.findIssueLinesWithBatch 命中 → 写入基因链。
   const issue = await createViaSave(
     page, 'ErpMfgMaterialIssue',
     {
@@ -789,6 +826,7 @@ export async function runMfgChain(page: Page, options?: MfgChainOptions): Promis
       issueId: issue.id, lineNo: 1, materialId: componentMat.id, uoMId: SEED.UOM_KG,
       workOrderLineId: r.woInputLine.id,
       requiredQuantity: MFG_EXPECT.componentRequirement, issuedQuantity: MFG_EXPECT.componentRequirement,
+      ...(options?.withBatchTracking ? { batchNo: inputBatchNo } : {}),
     },
     'id',
   );
@@ -821,23 +859,27 @@ export async function runMfgChain(page: Page, options?: MfgChainOptions): Promis
   await callMutationOk(page, 'ErpMfgJobCard', 'completeJob', { jobCardId: jobCard.id }, 'id status');
 
   // 10. 完工入库：reportCompletion → MANUFACTURE 入库移动 + totalCost/unitCost 重算 + COMPLETED
-  await callMutationOk(
-    page, 'ErpMfgWorkOrder', 'reportCompletion',
-    { workOrderId: wo.id, completedQty: MFG_EXPECT.completedQty },
-    'id docStatus completedQuantity materialCost laborCost totalCost unitCost posted',
-  );
-  ws = await verifyState(
-    page, 'ErpMfgWorkOrder', wo.id,
-    'docStatus completedQuantity materialCost laborCost totalCost unitCost posted',
-  );
-  expect(ws?.docStatus, 'after reportCompletion docStatus=COMPLETED').toBe('COMPLETED');
+  //     inspectionRequired=true 时跳过：Gate 1（config+BOM.inspectionRequired）命中满量完工会抛
+  //     ERR_INSPECTION_REQUIRED，由 spec 驱动 reportCompletion 断言负路径。链路停在 completeJob（WO=IN_PROCESS）。
+  if (!options?.inspectionRequired) {
+    await callMutationOk(
+      page, 'ErpMfgWorkOrder', 'reportCompletion',
+      { workOrderId: wo.id, completedQty: MFG_EXPECT.completedQty },
+      'id docStatus completedQuantity materialCost laborCost totalCost unitCost posted',
+    );
+    ws = await verifyState(
+      page, 'ErpMfgWorkOrder', wo.id,
+      'docStatus completedQuantity materialCost laborCost totalCost unitCost posted',
+    );
+    expect(ws?.docStatus, 'after reportCompletion docStatus=COMPLETED').toBe('COMPLETED');
 
-  // 完工入库移动（MANUFACTURE，relatedBillType=ERP_MFG_WORK_ORDER，业务联动自动 DONE）
-  r.completionMove = await findFirst(
-    page, 'ErpInvStockMove',
-    andFilter(eqFilter('relatedBillType', 'ERP_MFG_WORK_ORDER'), eqFilter('relatedBillCode', r.codes.wo)),
-    'id code docStatus posted',
-  );
+    // 完工入库移动（MANUFACTURE，relatedBillType=ERP_MFG_WORK_ORDER，业务联动自动 DONE）
+    r.completionMove = await findFirst(
+      page, 'ErpInvStockMove',
+      andFilter(eqFilter('relatedBillType', 'ERP_MFG_WORK_ORDER'), eqFilter('relatedBillCode', r.codes.wo)),
+      'id code docStatus posted',
+    );
+  }
 
   return r;
 }
@@ -853,6 +895,17 @@ export async function runMfgChain(page: Page, options?: MfgChainOptions): Promis
 export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
   if (!r) return;
   const finishedProductId = r.productMat?.id ?? SEED.MAT_1;
+  // 批次基因链产物清理（plan 2026-07-11-0730-1，withBatchTracking 完工触发 BatchGenealogyWriter 写入）：
+  //   基因链行（filter workOrderId）→ 输出批次（batchNo=FG-{woCode}，ensureOutputLot 创建）→ 输入批次（测试创建）。
+  if (r.wo) {
+    await deleteByFilter(page, 'ErpMfgBatchGenealogy', eqFilter('workOrderId', Number(r.wo.id)));
+  }
+  if (r.codes?.wo) {
+    await deleteByFilter(page, 'ErpInvBatch', eqFilter('batchNo', `FG-${r.codes.wo}`));
+  }
+  if (r.inputBatch) {
+    await deleteById(page, 'ErpInvBatch', r.inputBatch.id);
+  }
   // 生产差异记录清理（config erp-mfg.variance-auto-calc-enabled 时 willFinish 完工触发；
   // MAT-001 链路无 FIRMED rollup → calculateVariances 抛异常被吞 → 无差异记录 → deleteByFilter 空操作安全）
   if (r.wo) {
