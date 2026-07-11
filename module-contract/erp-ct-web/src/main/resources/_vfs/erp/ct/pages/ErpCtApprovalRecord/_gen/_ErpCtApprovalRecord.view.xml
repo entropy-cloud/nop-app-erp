@@ -83,24 +83,14 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-审批记录" i18n-en:title="Add Approval Record">
-            <layout>
- id[ID] contractId[合同]
- orgId[业务组织] approvalMatrixId[审批矩阵]
- approvalOrder[顺序号] approverId[审批人]
- approvalStatus[审批状态] comment[审批意见]
- approvedAt[通过时间] rejectedAt[驳回时间]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-审批记录" i18n-en:title="Add Approval Record" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-审批记录" i18n-en:title="Edit Approval Record">
             <layout>
  id[ID] contractId[合同]
  orgId[业务组织] approvalMatrixId[审批矩阵]
  approvalOrder[顺序号] approverId[审批人]
  approvalStatus[审批状态] comment[审批意见]
- approvedAt[通过时间] rejectedAt[驳回时间]
- remark[备注] delVersion[逻辑删除版本]
+ rejectedAt[驳回时间] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

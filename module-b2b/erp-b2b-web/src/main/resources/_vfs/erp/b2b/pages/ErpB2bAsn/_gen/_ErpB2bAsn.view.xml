@@ -90,17 +90,7 @@
  updateTime[修改时间] businessDate[业务日期]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-提前发货通知" i18n-en:title="Add Advanced Shipping Notice">
-            <layout>
- id[ID] code[ASN 编码]
- orgId[业务组织] sourceEdiDocId[来源 EDI 文档]
- partnerId[发货方（供应商）] shipmentDate[发货日期]
- estimatedArrivalDate[预计到货日期] trackingNo[物流单号]
- relatedBillType[关联采购订单类型] relatedBillCode[关联采购订单号]
- status[状态] remark[备注]
- businessDate[业务日期] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-提前发货通知" i18n-en:title="Add Advanced Shipping Notice" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-提前发货通知" i18n-en:title="Edit Advanced Shipping Notice">
             <layout>
  id[ID] code[ASN 编码]
@@ -109,7 +99,7 @@
  estimatedArrivalDate[预计到货日期] trackingNo[物流单号]
  relatedBillType[关联采购订单类型] relatedBillCode[关联采购订单号]
  status[状态] remark[备注]
- delVersion[逻辑删除版本] businessDate[业务日期]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

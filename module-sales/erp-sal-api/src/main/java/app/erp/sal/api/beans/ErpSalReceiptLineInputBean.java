@@ -68,20 +68,6 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=5)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
         private String _remark;
 
     

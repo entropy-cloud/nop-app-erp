@@ -97,18 +97,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-成本层" i18n-en:title="Add Cost Layer">
-            <layout>
- id[ID] orgId[业务组织]
- materialId[物料] skuId[SKU]
- warehouseId[仓库] batchNo[批号]
- costMethod[计价方法] incomingQuantity[入库数量]
- remainingQuantity[剩余数量] unitCost[单位成本]
- totalCost[总成本] currencyId[币种]
- incomingDate[入库日期] incomingMoveId[入库移动单]
- acctSchemaId[账套] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-成本层" i18n-en:title="Add Cost Layer" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-成本层" i18n-en:title="Edit Cost Layer">
             <layout>
  id[ID] orgId[业务组织]
@@ -118,7 +107,7 @@
  remainingQuantity[剩余数量] unitCost[单位成本]
  totalCost[总成本] currencyId[币种]
  incomingDate[入库日期] incomingMoveId[入库移动单]
- acctSchemaId[账套] delVersion[逻辑删除版本]
+ acctSchemaId[账套] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

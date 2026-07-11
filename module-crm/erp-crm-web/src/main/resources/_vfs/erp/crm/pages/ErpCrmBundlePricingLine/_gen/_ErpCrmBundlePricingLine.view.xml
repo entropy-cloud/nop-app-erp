@@ -73,18 +73,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-捆绑包明细" i18n-en:title="Add Bundle Pricing Line">
-            <layout>
- id[ID]
- bundleId[所属捆绑包]
- orgId[业务组织]
- productId[产品]
- quantity[数量]
- unitPrice[单价]
- sequence[排序]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-捆绑包明细" i18n-en:title="Add Bundle Pricing Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-捆绑包明细" i18n-en:title="Edit Bundle Pricing Line">
             <layout>
  id[ID]
@@ -95,7 +84,6 @@
  unitPrice[单价]
  sequence[排序]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

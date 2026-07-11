@@ -46,5 +46,9 @@
   "lines": null,
   "org": null,
   "quotation": null,
-  "contract": null
+  "contract": null,
+  "customerName": "",
+  "warehouseName": "",
+  "currencyName": "",
+  "orgName": ""
 }

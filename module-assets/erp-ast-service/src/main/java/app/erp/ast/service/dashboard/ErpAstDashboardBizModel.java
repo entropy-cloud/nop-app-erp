@@ -1,6 +1,7 @@
 package app.erp.ast.service.dashboard;
 
 import app.erp.ast.dao.entity.ErpAstAsset;
+import app.erp.ast.dao.entity.ErpAstAssetCategory;
 import app.erp.ast.dao.entity.ErpAstCip;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.service.ErpAstConstants;
@@ -9,6 +10,7 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.in;
 
 /**
  * 资产看板聚合入口（{@code dashboards.md §5}）。服务型 BizObject（非实体聚合），
@@ -86,12 +90,14 @@ public class ErpAstDashboardBizModel {
                 BigDecimal net = nz(a.getOriginalValue()).subtract(nz(a.getAccumulatedDepreciation()));
                 netByCategory.merge(cid, net, BigDecimal::add);
             }
+            Map<Long, String> categoryNames = loadCategoryNames(netByCategory.keySet());
             List<Map<String, Object>> rows = new ArrayList<>();
             netByCategory.entrySet().stream()
                     .sorted(Map.Entry.<Long, BigDecimal>comparingByValue(Comparator.reverseOrder()))
                     .forEach(e -> {
                         Map<String, Object> row = new LinkedHashMap<>();
                         row.put("categoryId", e.getKey());
+                        row.put("categoryName", categoryNames.get(e.getKey()));
                         row.put("netBookValue", e.getValue());
                         rows.add(row);
                     });
@@ -153,6 +159,18 @@ public class ErpAstDashboardBizModel {
     }
 
     // ===================== helpers =====================
+
+    private Map<Long, String> loadCategoryNames(java.util.Set<Long> categoryIds) {
+        if (categoryIds.isEmpty()) return Collections.emptyMap();
+        IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(in("id", categoryIds));
+        Map<Long, String> map = new HashMap<>();
+        for (ErpAstAssetCategory c : dao.findAllByQuery(q)) {
+            map.put(c.getId(), c.getName());
+        }
+        return map;
+    }
 
     private List<ErpAstAsset> loadInServiceAssets() {
         IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);

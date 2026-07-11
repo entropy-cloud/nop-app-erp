@@ -62,15 +62,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-设备分类" i18n-en:title="Add Equipment Category">
-            <layout>
- id[ID]
- code[分类编码]
- name[分类名称]
- parentId[上级分类ID]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-设备分类" i18n-en:title="Add Equipment Category" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-设备分类" i18n-en:title="Edit Equipment Category">
             <layout>
  id[ID]
@@ -78,7 +70,6 @@
  name[分类名称]
  parentId[上级分类ID]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

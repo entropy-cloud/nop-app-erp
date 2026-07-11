@@ -73,18 +73,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-职位" i18n-en:title="Add Position">
-            <layout>
- id[ID]
- code[编码]
- name[名称]
- departmentId[所属部门]
- jobGrade[职级]
- jobCategory[职位类别]
- orgId[业务组织]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-职位" i18n-en:title="Add Position" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-职位" i18n-en:title="Edit Position">
             <layout>
  id[ID]
@@ -95,7 +84,6 @@
  jobCategory[职位类别]
  orgId[业务组织]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

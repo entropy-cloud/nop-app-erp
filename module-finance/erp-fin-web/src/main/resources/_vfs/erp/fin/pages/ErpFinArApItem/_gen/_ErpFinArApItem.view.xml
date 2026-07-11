@@ -97,18 +97,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-应收应付明细账" i18n-en:title="Add AR/AP Subledger">
-            <layout>
- id[ID] code[单号]
- orgId[组织] acctSchemaId[账套]
- direction[应收应付] partnerId[往来单位]
- sourceBillType[来源单据类型(AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT)] sourceBillCode[来源单据号]
- businessDate[业务日期] dueDate[到期日]
- currencyId[币种] exchangeRate[汇率]
- status[状态] periodId[所属期间]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-应收应付明细账" i18n-en:title="Add AR/AP Subledger" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-应收应付明细账" i18n-en:title="Edit AR/AP Subledger">
             <layout>
  id[ID] code[单号]
@@ -118,7 +107,7 @@
  businessDate[业务日期] dueDate[到期日]
  currencyId[币种] exchangeRate[汇率]
  status[状态] periodId[所属期间]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

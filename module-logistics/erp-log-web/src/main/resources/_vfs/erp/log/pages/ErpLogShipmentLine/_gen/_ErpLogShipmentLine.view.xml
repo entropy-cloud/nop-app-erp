@@ -73,18 +73,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-发运明细" i18n-en:title="Add Shipment Line">
-            <layout>
- id[ID]
- shipmentId[发运单ID]
- lineNo[行号]
- materialId[物料]
- quantity[数量]
- unit[单位]
- packageDescription[包装说明]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-发运明细" i18n-en:title="Add Shipment Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-发运明细" i18n-en:title="Edit Shipment Line">
             <layout>
  id[ID]
@@ -95,7 +84,6 @@
  unit[单位]
  packageDescription[包装说明]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

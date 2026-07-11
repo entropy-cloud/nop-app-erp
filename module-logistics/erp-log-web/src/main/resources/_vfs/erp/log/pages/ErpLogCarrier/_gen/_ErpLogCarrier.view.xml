@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-承运商" i18n-en:title="Add Carrier">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] carrierName[承运商名称]
- carrierType[承运商类型] gatewayId[网关标识]
- partnerId[承运商往来单位ID] isActive[是否启用]
- trackingUrlTemplate[追踪URL模板] maxParcelWeight[最大包裹重量(kg)]
- supportedServiceTypes[支持服务类型] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-承运商" i18n-en:title="Add Carrier" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-承运商" i18n-en:title="Edit Carrier">
             <layout>
  id[ID] code[编码]
@@ -105,7 +96,6 @@
  partnerId[承运商往来单位ID] isActive[是否启用]
  trackingUrlTemplate[追踪URL模板] maxParcelWeight[最大包裹重量(kg)]
  supportedServiceTypes[支持服务类型] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

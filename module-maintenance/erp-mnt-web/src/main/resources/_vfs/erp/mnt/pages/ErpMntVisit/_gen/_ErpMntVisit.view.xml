@@ -115,20 +115,7 @@
  postedBy[过账人] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-维护访问" i18n-en:title="Add Maintenance Visit">
-            <layout>
- id[ID] code[访问编码]
- scheduleId[维护计划ID] equipmentId[设备ID]
- visitDate[访问日期] status[状态]
- assignedTo[指派人] completedBy[完成人]
- completedAt[完成时间] startTime[开始时间]
- endTime[结束时间] totalMinutes[总分钟数]
- visitType[维护类型] result[执行结果]
- remark[备注] orgId[业务组织]
- businessDate[业务日期] posted[是否已过账]
- postedAt[过账时间] postedBy[过账人]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-维护访问" i18n-en:title="Add Maintenance Visit" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-维护访问" i18n-en:title="Edit Maintenance Visit">
             <layout>
  id[ID] code[访问编码]
@@ -138,10 +125,8 @@
  completedAt[完成时间] startTime[开始时间]
  endTime[结束时间] totalMinutes[总分钟数]
  visitType[维护类型] result[执行结果]
- remark[备注] delVersion[逻辑删除版本]
- orgId[业务组织] businessDate[业务日期]
- posted[是否已过账] postedAt[过账时间]
- postedBy[过账人] 
+ remark[备注] orgId[业务组织]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

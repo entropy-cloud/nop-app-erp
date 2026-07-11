@@ -108,19 +108,7 @@
  approvedAt[审核时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售报价单" i18n-en:title="Add Sales Quotation">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] customerId[客户]
- businessDate[报价日期] validFrom[生效日期]
- validTo[失效日期] currencyId[币种]
- exchangeRate[汇率] totalAmount[合计金额(不含税)]
- totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
- isAccepted[是否已转订单] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
- approvedBy[审核人] approvedAt[审核时间]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-销售报价单" i18n-en:title="Add Sales Quotation" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售报价单" i18n-en:title="Edit Sales Quotation">
             <layout>
  id[ID] code[单号]
@@ -130,9 +118,7 @@
  exchangeRate[汇率] totalAmount[合计金额(不含税)]
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
  isAccepted[是否已转订单] docStatus[单据状态]
- approveStatus[审核状态] delVersion[逻辑删除版本]
- remark[备注] approvedBy[审核人]
- approvedAt[审核时间] 
+ approveStatus[审核状态] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

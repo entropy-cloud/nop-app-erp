@@ -76,7 +76,8 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-工作中心" i18n-en:title="Add Work Center">
+        <form id="add" editMode="add" title="新增-工作中心" i18n-en:title="Add Work Center" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-工作中心" i18n-en:title="Edit Work Center">
             <layout>
  id[ID]
  code[工作中心编码]
@@ -87,15 +88,6 @@
  workHoursPerDay[日工时]
  isExternal[是否外协]
  remark[备注]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-工作中心" i18n-en:title="Edit Work Center">
-            <layout>
- id[ID] code[工作中心编码]
- name[工作中心名称] capacity[产能]
- capacityUnit[产能单位] hourlyRate[小时费率]
- workHoursPerDay[日工时] isExternal[是否外协]
- remark[备注] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

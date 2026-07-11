@@ -66,16 +66,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-胜任力等级" i18n-en:title="Add Competency Level">
-            <layout>
- id[ID]
- competencyId[胜任力]
- levelNumber[等级编号]
- levelName[等级名称]
- behavioralAnchor[行为锚定]
- sortOrder[排序号]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-胜任力等级" i18n-en:title="Add Competency Level" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-胜任力等级" i18n-en:title="Edit Competency Level">
             <layout>
  id[ID]
@@ -84,7 +75,6 @@
  levelName[等级名称]
  behavioralAnchor[行为锚定]
  sortOrder[排序号]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

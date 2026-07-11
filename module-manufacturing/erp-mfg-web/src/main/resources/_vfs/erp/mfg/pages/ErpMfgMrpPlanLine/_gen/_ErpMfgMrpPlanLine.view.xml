@@ -97,18 +97,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-MRP计划行" i18n-en:title="Add MRP Plan Line">
-            <layout>
- id[ID] mrpPlanId[MRP计划ID]
- lineNo[行号] materialId[物料]
- uoMId[计量单位] orderType[建议类型]
- grossRequirement[毛需求] scheduledReceipt[预计入库]
- onHand[现有库存] netRequirement[净需求]
- plannedQuantity[计划数量] plannedDate[计划到货/开工日期]
- parentLineId[父需求行(多级 BOM 展开)] isFirmed[是否已转正式单据]
- convertedBillCode[转换后单据号] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-MRP计划行" i18n-en:title="Add MRP Plan Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-MRP计划行" i18n-en:title="Edit MRP Plan Line">
             <layout>
  id[ID] mrpPlanId[MRP计划ID]
@@ -118,7 +107,7 @@
  onHand[现有库存] netRequirement[净需求]
  plannedQuantity[计划数量] plannedDate[计划到货/开工日期]
  parentLineId[父需求行(多级 BOM 展开)] isFirmed[是否已转正式单据]
- convertedBillCode[转换后单据号] delVersion[逻辑删除版本]
+ convertedBillCode[转换后单据号] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

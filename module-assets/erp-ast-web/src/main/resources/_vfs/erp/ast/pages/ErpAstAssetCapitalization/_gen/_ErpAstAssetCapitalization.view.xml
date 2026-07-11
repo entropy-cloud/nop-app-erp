@@ -125,22 +125,7 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-资产资本化" i18n-en:title="Add Asset Capitalization">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] assetCode[资产编码]
- assetName[资产名称] categoryId[资产类别]
- currencyId[币种] capitalizationDate[资本化日期]
- originalValue[原值] sourceType[来源类型]
- sourceCode[来源单号] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] businessDate[业务日期]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-资产资本化" i18n-en:title="Add Asset Capitalization" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产资本化" i18n-en:title="Edit Asset Capitalization">
             <layout>
  id[ID] code[单号]
@@ -149,10 +134,7 @@
  currencyId[币种] capitalizationDate[资本化日期]
  originalValue[原值] sourceType[来源类型]
  sourceCode[来源单号] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- delVersion[逻辑删除版本] remark[备注]
+ approveStatus[审核状态] remark[备注]
  businessDate[业务日期] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>

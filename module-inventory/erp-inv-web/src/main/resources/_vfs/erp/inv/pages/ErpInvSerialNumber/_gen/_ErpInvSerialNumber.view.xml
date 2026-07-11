@@ -90,17 +90,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-序列号台账" i18n-en:title="Add Serial Number Ledger">
-            <layout>
- id[ID] orgId[业务组织]
- serialNo[序列号] materialId[物料]
- skuId[SKU] warehouseId[当前仓库]
- locationId[当前库位] status[状态]
- inBillType[入库单类型] inBillCode[入库单号]
- outBillType[出库单类型] outBillCode[出库单号]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-序列号台账" i18n-en:title="Add Serial Number Ledger" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-序列号台账" i18n-en:title="Edit Serial Number Ledger">
             <layout>
  id[ID] orgId[业务组织]
@@ -109,7 +99,7 @@
  locationId[当前库位] status[状态]
  inBillType[入库单类型] inBillCode[入库单号]
  outBillType[出库单类型] outBillCode[出库单号]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

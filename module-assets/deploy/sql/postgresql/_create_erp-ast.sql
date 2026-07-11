@@ -298,9 +298,9 @@ CREATE TABLE erp_ast_disposal(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  nop_flow_id VARCHAR(32)  ,
   amount_source NUMERIC(20,4) default 0   ,
   amount_functional NUMERIC(20,4) default 0   ,
-  nop_flow_id VARCHAR(32)  ,
   constraint PK_erp_ast_disposal primary key (id)
 );
 
@@ -1022,6 +1022,8 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_disposal.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_disposal.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_ast_disposal.nop_flow_id IS '工作流实例';
                     
       COMMENT ON COLUMN erp_ast_disposal.amount_source IS '源币种金额';
                     

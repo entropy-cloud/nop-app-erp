@@ -76,7 +76,10 @@ public class ErpSalInvoiceProcessor {
         validateNotCancelled(invoice, context);
         validateTransitionForApprove(invoice, context);
         validateBusinessRulesForApprove(invoice, context);
-        doApprove(invoice, context);
+
+        boolean posted = doPosting(invoice, context);
+        invoice = invoiceDao().getEntityById(id);
+        doApprove(invoice, posted, context);
         return invoice;
     }
 
@@ -201,9 +204,7 @@ public class ErpSalInvoiceProcessor {
         invoiceDao().updateEntity(invoice);
     }
 
-    protected void doApprove(ErpSalInvoice invoice, IServiceContext context) {
-        boolean posted = doPosting(invoice, context);
-        invoice = invoiceDao().getEntityById(invoice.getId());
+    protected void doApprove(ErpSalInvoice invoice, boolean posted, IServiceContext context) {
         invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         invoice.setApprovedBy(currentUserId());
         invoice.setApprovedAt(CoreMetrics.currentDateTime());

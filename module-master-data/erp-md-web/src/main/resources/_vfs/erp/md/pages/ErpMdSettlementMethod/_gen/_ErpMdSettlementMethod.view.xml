@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-结算方式" i18n-en:title="Add Settlement Method">
-            <layout>
- id[ID]
- code[编码]
- name[名称]
- settlementType[结算类型]
- defaultFundAccountId[默认资金账户]
- defaultDays[默认账期(天)]
- status[状态]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-结算方式" i18n-en:title="Add Settlement Method" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-结算方式" i18n-en:title="Edit Settlement Method">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  defaultFundAccountId[默认资金账户]
  defaultDays[默认账期(天)]
  status[状态]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

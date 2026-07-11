@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpPurInvoice.xmeta">
 
-    <props/>
+    <props>
+        <prop name="supplierName" displayName="供应商名称" queryable="false" sortable="false"/>
+        <prop name="currencyName" displayName="币种名称" queryable="false" sortable="false"/>
+        <prop name="orgName" displayName="业务组织名称" queryable="false" sortable="false"/>
+    </props>
 </meta>

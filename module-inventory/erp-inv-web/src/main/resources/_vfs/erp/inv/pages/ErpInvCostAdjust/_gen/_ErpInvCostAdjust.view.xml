@@ -97,28 +97,14 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-成本调整单" i18n-en:title="Add Cost Adjustment">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] businessDate[业务日期]
- adjustType[调整类型] reason[调整原因]
- docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] currencyId[币种]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-成本调整单" i18n-en:title="Add Cost Adjustment" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-成本调整单" i18n-en:title="Edit Cost Adjustment">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] businessDate[业务日期]
  adjustType[调整类型] reason[调整原因]
  docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] currencyId[币种]
- remark[备注] delVersion[逻辑删除版本]
+ currencyId[币种] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -78,23 +78,23 @@
             <schema type="java.lang.String" precision="500"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="15" i18n-en:displayName="Posted" queryable="true" sortable="true"
-              insertable="true" updatable="true" defaultValue="false">
+              insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
         <prop name="postedAt" displayName="过账时间" propId="16" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="postedBy" displayName="过账人" propId="17" i18n-en:displayName="Posted By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedBy" displayName="审核人" propId="18" i18n-en:displayName="Approved By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedAt" displayName="审核时间" propId="19" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="reversed" displayName="已红冲" propId="20" i18n-en:displayName="Reversed" queryable="true"
@@ -110,7 +110,7 @@
             <schema type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="23" i18n-en:displayName="Del Flag" mandatory="true"
-              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
         <prop name="version" displayName="数据版本" propId="24" i18n-en:displayName="Version" mandatory="true"

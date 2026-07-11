@@ -90,17 +90,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-薪酬项目" i18n-en:title="Add Salary Item">
-            <layout>
- id[ID] code[编码]
- name[名称] itemCategory[类别]
- itemGroup[分组] calcMethod[计算方式]
- formula[计算公式] isTaxable[是否应税]
- isSocialInsuranceBase[计入社保基数] isMandatory[是否必含]
- sortOrder[排序号] orgId[业务组织]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-薪酬项目" i18n-en:title="Add Salary Item" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-薪酬项目" i18n-en:title="Edit Salary Item">
             <layout>
  id[ID] code[编码]
@@ -109,7 +99,7 @@
  formula[计算公式] isTaxable[是否应税]
  isSocialInsuranceBase[计入社保基数] isMandatory[是否必含]
  sortOrder[排序号] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

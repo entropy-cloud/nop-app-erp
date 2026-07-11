@@ -482,6 +482,42 @@
         }
 
 
+        private Object _supplierName;
+
+    
+        public Object getSupplierName(){
+            return _supplierName;
+        }
+
+        public void setSupplierName(Object value){
+            this._supplierName = value;
+        }
+
+
+        private Object _currencyName;
+
+    
+        public Object getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(Object value){
+            this._currencyName = value;
+        }
+
+
+        private Object _orgName;
+
+    
+        public Object getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(Object value){
+            this._orgName = value;
+        }
+
+
         private Map<String,Object> _supplier;
 
         public Map<String,Object> getSupplier(){

@@ -155,7 +155,7 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="34" i18n-en:displayName="Del Flag" mandatory="true"
-              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
         <prop name="version" displayName="数据版本" propId="35" i18n-en:displayName="Version" mandatory="true"
@@ -183,7 +183,7 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="41" i18n-en:displayName="Posted" queryable="true" sortable="true"
-              insertable="true" updatable="true" defaultValue="false">
+              insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
         <prop name="carrier" i18n-en:displayName="Carrier" tagSet="pub" ext:kind="to-one" internal="true"

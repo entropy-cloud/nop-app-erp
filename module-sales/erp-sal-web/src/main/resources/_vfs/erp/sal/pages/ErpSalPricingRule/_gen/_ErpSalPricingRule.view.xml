@@ -125,22 +125,7 @@
  updateTime[修改时间] remark[备注]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售促销规则" i18n-en:title="Add Sales Pricing Rule">
-            <layout>
- id[ID] ruleName[规则名称]
- ruleCode[规则编码] ruleType[规则类型]
- targetType[目标] materialId[物料]
- materialCategoryId[物料分类] customerGroupCode[客户组]
- partnerId[指定客户] minOrderAmount[满减门槛]
- discountPercent[折扣率(%)] discountAmount[折扣金额]
- giftMaterialId[赠品物料] giftSkuId[赠品SKU]
- giftQuantity[赠品数量] priceOverride[覆盖单价]
- currencyId[币种] priority[优先级]
- stackable[可叠加] validFrom[生效时间]
- validTo[失效时间] isActive[启用]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-销售促销规则" i18n-en:title="Add Sales Pricing Rule" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售促销规则" i18n-en:title="Edit Sales Pricing Rule">
             <layout>
  id[ID] ruleName[规则名称]
@@ -154,7 +139,7 @@
  currencyId[币种] priority[优先级]
  stackable[可叠加] validFrom[生效时间]
  validTo[失效时间] isActive[启用]
- delVersion[逻辑删除版本] remark[备注]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

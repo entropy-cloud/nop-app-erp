@@ -91,23 +91,23 @@
             <schema type="java.lang.String" precision="20" dict="erp-pur/paid-status"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="18" i18n-en:displayName="Posted" queryable="true" sortable="true"
-              insertable="true" updatable="true" defaultValue="false">
+              insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
         <prop name="postedAt" displayName="过账时间" propId="19" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="postedBy" displayName="过账人" propId="20" i18n-en:displayName="Posted By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedBy" displayName="审核人" propId="21" i18n-en:displayName="Approved By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedAt" displayName="审核时间" propId="22" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="remark" displayName="备注" propId="23" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -115,7 +115,7 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="24" i18n-en:displayName="Del Flag" mandatory="true"
-              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
         <prop name="version" displayName="数据版本" propId="25" i18n-en:displayName="Version" mandatory="true"
@@ -138,7 +138,8 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="nopFlowId" propId="30" queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="nopFlowId" displayName="工作流实例" propId="30" i18n-en:displayName="Workflow Flow Id" queryable="true"
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.lang.String" precision="32"/>
         </prop>
         <prop name="supplier" i18n-en:displayName="Supplier" tagSet="pub" ext:kind="to-one" internal="true"

@@ -136,23 +136,7 @@
  businessDate[业务日期] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-质检单" i18n-en:title="Add Inspection">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] inspectionType[检验类型]
- relatedBillType[关联单据类型] relatedBillCode[关联单据号]
- relatedLineCode[关联单据行号] materialId[物料]
- templateId[质检模板] supplierId[供应商]
- warehouseId[仓库] batchNo[批号]
- inspectionDate[检验日期] lotQuantity[批量]
- sampleQuantity[抽样数量] inspectorId[检验员(职员)]
- result[质检结果] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账(质量结论已回写业务单据)]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] businessDate[业务日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-质检单" i18n-en:title="Add Inspection" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-质检单" i18n-en:title="Edit Inspection">
             <layout>
  id[ID] code[单号]
@@ -164,10 +148,7 @@
  inspectionDate[检验日期] lotQuantity[批量]
  sampleQuantity[抽样数量] inspectorId[检验员(职员)]
  result[质检结果] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账(质量结论已回写业务单据)]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] delVersion[逻辑删除版本]
+ approveStatus[审核状态] remark[备注]
  businessDate[业务日期] 
 </layout>
         </form>

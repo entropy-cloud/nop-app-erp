@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-MRP计划" i18n-en:title="Add MRP Plan">
-            <layout>
- id[ID]
- code[计划号]
- orgId[业务组织]
- businessDate[计划日期]
- planningHorizonDays[计划区间(天)]
- status[状态]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-MRP计划" i18n-en:title="Add MRP Plan" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-MRP计划" i18n-en:title="Edit MRP Plan">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  planningHorizonDays[计划区间(天)]
  status[状态]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

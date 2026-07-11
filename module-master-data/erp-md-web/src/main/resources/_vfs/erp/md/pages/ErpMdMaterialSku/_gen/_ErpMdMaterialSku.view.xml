@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-物料SKU" i18n-en:title="Add Material SKU">
-            <layout>
- id[ID] materialId[物料ID]
- skuCode[SKU编码] barcode[条码]
- uoMId[计量单位] conversionRate[换算系数]
- purchasePrice[采购价(不含税)] salePrice[销售价(不含税)]
- wholesalePrice[批发价(不含税)] retailPrice[零售价(不含税)]
- taxRateId[默认税率] isDefault[是否默认SKU]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-物料SKU" i18n-en:title="Add Material SKU" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-物料SKU" i18n-en:title="Edit Material SKU">
             <layout>
  id[ID] materialId[物料ID]
@@ -105,7 +96,6 @@
  purchasePrice[采购价(不含税)] salePrice[销售价(不含税)]
  wholesalePrice[批发价(不含税)] retailPrice[零售价(不含税)]
  taxRateId[默认税率] isDefault[是否默认SKU]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

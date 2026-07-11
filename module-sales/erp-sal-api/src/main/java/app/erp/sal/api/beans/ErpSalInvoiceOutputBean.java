@@ -482,6 +482,42 @@
         }
 
 
+        private Object _customerName;
+
+    
+        public Object getCustomerName(){
+            return _customerName;
+        }
+
+        public void setCustomerName(Object value){
+            this._customerName = value;
+        }
+
+
+        private Object _currencyName;
+
+    
+        public Object getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(Object value){
+            this._currencyName = value;
+        }
+
+
+        private Object _orgName;
+
+    
+        public Object getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(Object value){
+            this._orgName = value;
+        }
+
+
         private Map<String,Object> _customer;
 
         public Map<String,Object> getCustomer(){

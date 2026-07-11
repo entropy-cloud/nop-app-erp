@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-评分维度" i18n-en:title="Add Scorecard Criteria">
-            <layout>
- id[ID]
- scorecardId[评分卡]
- criteriaName[维度名]
- weight[权重(0-100)]
- formula[公式(XLang表达式)]
- score[维度得分]
- weightedScore[加权得分]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-评分维度" i18n-en:title="Add Scorecard Criteria" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-评分维度" i18n-en:title="Edit Scorecard Criteria">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  formula[公式(XLang表达式)]
  score[维度得分]
  weightedScore[加权得分]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

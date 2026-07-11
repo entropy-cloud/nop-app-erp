@@ -111,20 +111,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-预算明细行" i18n-en:title="Add Budget Line">
-            <layout>
- id[ID] scenarioId[预算方案]
- lineNo[行号] orgId[核算组织]
- acctSchemaId[账套] periodId[会计期间]
- subjectId[预算科目] subjectCode[科目编码]
- costCenterId[成本中心] departmentId[辅助-部门]
- projectId[辅助-项目] partnerId[辅助-往来单位]
- warehouseId[辅助-仓库] materialId[辅助-物料]
- budgetAmountSource[预算金额(源币种)] budgetAmountFunctional[预算金额(本位币)]
- currencyId[币种] exchangeRate[汇率]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-预算明细行" i18n-en:title="Add Budget Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-预算明细行" i18n-en:title="Edit Budget Line">
             <layout>
  id[ID] scenarioId[预算方案]
@@ -136,7 +123,7 @@
  warehouseId[辅助-仓库] materialId[辅助-物料]
  budgetAmountSource[预算金额(源币种)] budgetAmountFunctional[预算金额(本位币)]
  currencyId[币种] exchangeRate[汇率]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

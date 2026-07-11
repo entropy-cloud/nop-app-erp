@@ -1669,6 +1669,8 @@ CREATE TABLE erp_hr_salary_simulation_item_adj(
                     
       COMMENT ON COLUMN erp_hr_salary.posted IS '已过账';
                     
+      COMMENT ON COLUMN erp_hr_salary.nop_flow_id IS '工作流实例';
+                    
       COMMENT ON TABLE erp_hr_recruitment IS '招聘记录';
                 
       COMMENT ON COLUMN erp_hr_recruitment.id IS 'ID';

@@ -83,16 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-BOM联副产品" i18n-en:title="Add BOM By-product">
-            <layout>
- id[ID] bomId[BOM ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] uoMId[计量单位]
- quantity[数量] remark[备注]
- byproductType[联副产品类型] yieldRate[产出率(%)]
- costAllocationPercent[成本分摊比例(%)] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-BOM联副产品" i18n-en:title="Add BOM By-product" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-BOM联副产品" i18n-en:title="Edit BOM By-product">
             <layout>
  id[ID] bomId[BOM ID]
@@ -100,7 +91,7 @@
  skuId[SKU] uoMId[计量单位]
  quantity[数量] remark[备注]
  byproductType[联副产品类型] yieldRate[产出率(%)]
- costAllocationPercent[成本分摊比例(%)] delVersion[逻辑删除版本]
+ costAllocationPercent[成本分摊比例(%)] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

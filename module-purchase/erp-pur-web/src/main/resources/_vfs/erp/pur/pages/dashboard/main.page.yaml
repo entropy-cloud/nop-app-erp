@@ -133,7 +133,7 @@ body:
                 name: '采购额',
                 type: 'pie',
                 radius: ['40%', '70%'],
-                data: rows.map(function(r){return {name: '供应商#' + r.supplierId, value: r.purchaseAmount};})
+                data: rows.map(function(r){return {name: r.supplierName || '供应商#' + r.supplierId, value: r.purchaseAmount};})
               }
             ]
           }
@@ -158,12 +158,10 @@ body:
         const rows = gql.ErpPurDashboard__findThreeWayMatchDiffAlert || [];
         return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
-      - name: invoiceId
-        label: "发票ID"
       - name: invoiceCode
         label: "发票号"
-      - name: supplierId
-        label: "供应商ID"
+      - name: supplierName
+        label: "供应商"
       - name: varianceType
         label: "差异类型"
 
@@ -186,8 +184,8 @@ body:
         const rows = gql.ErpPurDashboard__findApOverdueAlert || [];
         return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
-      - name: partnerId
-        label: "供应商ID"
+      - name: partnerName
+        label: "供应商"
       - name: sourceBillCode
         label: "单据号"
       - name: openAmount

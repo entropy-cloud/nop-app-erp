@@ -104,19 +104,7 @@
  approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-校准记录" i18n-en:title="Add Calibration">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] equipmentId[被校设备/量具]
- businessDate[校准日期] standardRef[参考标准]
- measuredValue[测量值] targetValue[目标值]
- tolerance[允差] result[校准结果]
- nextCalibrationDate[下次校准日期] calibratedBy[校准人(职员)]
- docStatus[单据状态] approveStatus[审核状态]
- remark[备注] approvedBy[审核人]
- approvedAt[审核时间] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-校准记录" i18n-en:title="Add Calibration" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-校准记录" i18n-en:title="Edit Calibration">
             <layout>
  id[ID] code[单号]
@@ -126,8 +114,7 @@
  tolerance[允差] result[校准结果]
  nextCalibrationDate[下次校准日期] calibratedBy[校准人(职员)]
  docStatus[单据状态] approveStatus[审核状态]
- remark[备注] delVersion[逻辑删除版本]
- approvedBy[审核人] approvedAt[审核时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

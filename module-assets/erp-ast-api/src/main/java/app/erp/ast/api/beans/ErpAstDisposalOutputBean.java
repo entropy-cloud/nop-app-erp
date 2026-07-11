@@ -411,10 +411,24 @@
         }
 
 
+        private String _nopFlowId;
+
+    
+        @PropMeta(propId=29)
+    
+        public String getNopFlowId(){
+            return _nopFlowId;
+        }
+
+        public void setNopFlowId(String value){
+            this._nopFlowId = value;
+        }
+
+
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=30)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -428,7 +442,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=31)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -436,20 +450,6 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
-        }
-
-
-        private String _nopFlowId;
-
-    
-        @PropMeta(propId=29)
-    
-        public String getNopFlowId(){
-            return _nopFlowId;
-        }
-
-        public void setNopFlowId(String value){
-            this._nopFlowId = value;
         }
 
 

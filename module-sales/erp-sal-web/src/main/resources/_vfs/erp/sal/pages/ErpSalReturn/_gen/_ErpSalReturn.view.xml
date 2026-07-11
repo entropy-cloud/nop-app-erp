@@ -122,21 +122,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售退货单" i18n-en:title="Add Sales Return">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] deliveryId[出库单]
- customerId[客户] warehouseId[入库仓库]
- businessDate[退货日期] currencyId[币种]
- exchangeRate[汇率] amountSource[合计金额(源币)]
- amountFunctional[合计金额(本位币)] totalAmount[合计金额(不含税)]
- totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
- docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-销售退货单" i18n-en:title="Add Sales Return" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售退货单" i18n-en:title="Edit Sales Return">
             <layout>
  id[ID] code[单号]
@@ -147,9 +133,6 @@
  amountFunctional[合计金额(本位币)] totalAmount[合计金额(不含税)]
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
  docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] delVersion[逻辑删除版本]
  remark[备注] 
 </layout>
         </form>

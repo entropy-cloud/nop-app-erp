@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-供应商评分卡" i18n-en:title="Add Supplier Scorecard">
-            <layout>
- id[ID] partnerId[供应商]
- orgId[业务组织] periodFrom[评分周期起]
- periodTo[评分周期止] totalScore[总分(派生)]
- standing[评级] warnThreshold[warn阈值]
- holdThreshold[hold阈值] preventThreshold[prevent阈值]
- status[周期状态] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-供应商评分卡" i18n-en:title="Add Supplier Scorecard" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-供应商评分卡" i18n-en:title="Edit Supplier Scorecard">
             <layout>
  id[ID] partnerId[供应商]
@@ -105,7 +96,6 @@
  standing[评级] warnThreshold[warn阈值]
  holdThreshold[hold阈值] preventThreshold[prevent阈值]
  status[周期状态] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

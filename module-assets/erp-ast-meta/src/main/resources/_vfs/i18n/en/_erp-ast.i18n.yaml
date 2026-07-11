@@ -260,9 +260,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      nopFlowId: Workflow Flow Id
       amountSource: Amt (Source)
       amountFunctional: Amt (Functional)
-      nopFlowId: null
       asset: Asset
       org: Org
       currency: Currency

@@ -101,18 +101,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-SPC 样本数据" i18n-en:title="Add SPC Sample">
-            <layout>
- id[ID] chartId[控制图ID]
- orgId[业务组织] subgroupNo[子组序号]
- sampleTime[采样时间] measuredValues[子组实测值(JSON 数组)]
- mean[子组均值 X̄] range[子组极差 R]
- stdDev[子组标准差 s] sourceBillType[数据来源单据类型]
- sourceCode[数据来源单号] sourceLineCode[数据来源行号]
- inspectorId[检验员] violatedRules[违反的判异规则(逗号分隔)]
- isOutOfControl[是否失控] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-SPC 样本数据" i18n-en:title="Add SPC Sample" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-SPC 样本数据" i18n-en:title="Edit SPC Sample">
             <layout>
  id[ID] chartId[控制图ID]
@@ -123,7 +112,6 @@
  sourceCode[数据来源单号] sourceLineCode[数据来源行号]
  inspectorId[检验员] violatedRules[违反的判异规则(逗号分隔)]
  isOutOfControl[是否失控] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

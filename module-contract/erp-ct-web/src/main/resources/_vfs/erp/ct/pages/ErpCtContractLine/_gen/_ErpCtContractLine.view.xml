@@ -76,7 +76,8 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-合同行" i18n-en:title="Add Contract Line">
+        <form id="add" editMode="add" title="新增-合同行" i18n-en:title="Add Contract Line" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-合同行" i18n-en:title="Edit Contract Line">
             <layout>
  id[ID]
  contractId[合同ID]
@@ -87,15 +88,6 @@
  unitPrice[单价]
  amount[金额]
  remark[备注]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-合同行" i18n-en:title="Edit Contract Line">
-            <layout>
- id[ID] contractId[合同ID]
- lineNo[行号] materialId[物料]
- description[行描述] quantity[数量]
- unitPrice[单价] amount[金额]
- remark[备注] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

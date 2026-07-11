@@ -94,17 +94,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-盘点单行" i18n-en:title="Add Stock Take Line">
-            <layout>
- id[ID] takeId[盘点单ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] uoMId[计量单位]
- locationId[库位] batchNo[批号]
- bookQuantity[账面数量] actualQuantity[实盘数量]
- differenceQuantity[差异数量] unitCost[单位成本]
- differenceAmount[差异金额] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-盘点单行" i18n-en:title="Add Stock Take Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-盘点单行" i18n-en:title="Edit Stock Take Line">
             <layout>
  id[ID] takeId[盘点单ID]
@@ -114,7 +104,6 @@
  bookQuantity[账面数量] actualQuantity[实盘数量]
  differenceQuantity[差异数量] unitCost[单位成本]
  differenceAmount[差异金额] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

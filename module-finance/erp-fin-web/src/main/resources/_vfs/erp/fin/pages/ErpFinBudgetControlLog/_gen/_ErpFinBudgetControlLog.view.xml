@@ -108,19 +108,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-预算控制日志" i18n-en:title="Add Budget Control Log">
-            <layout>
- id[ID] orgId[核算组织]
- businessDate[业务日期] scenarioId[预算方案]
- budgetLineId[预算明细行] sourceBillType[触发单据类型]
- sourceBillCode[触发单据号] subjectId[命中科目]
- costCenterId[命中成本中心] projectId[命中项目]
- periodId[命中期间] requestedAmount[申请占用金额]
- committedAmount[实际占用金额] availableAmount[检查时余量]
- actionResult[控制结果] operatorId[操作人]
- operatedAt[操作时间] reason[原因]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-预算控制日志" i18n-en:title="Add Budget Control Log" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-预算控制日志" i18n-en:title="Edit Budget Control Log">
             <layout>
  id[ID] orgId[核算组织]
@@ -132,7 +120,6 @@
  committedAmount[实际占用金额] availableAmount[检查时余量]
  actionResult[控制结果] operatorId[操作人]
  operatedAt[操作时间] reason[原因]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

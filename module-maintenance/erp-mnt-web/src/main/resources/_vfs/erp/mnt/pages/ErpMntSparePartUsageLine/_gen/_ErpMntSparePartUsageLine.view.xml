@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-备件消耗行" i18n-en:title="Add Spare Part Usage Line">
-            <layout>
- id[ID] sparePartUsageId[备件消耗单ID]
- lineNo[行号] materialId[备件(物料)]
- uoMId[计量单位] quantity[消耗数量]
- unitCost[单位成本] amount[金额]
- batchNo[批号] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-备件消耗行" i18n-en:title="Add Spare Part Usage Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-备件消耗行" i18n-en:title="Edit Spare Part Usage Line">
             <layout>
  id[ID] sparePartUsageId[备件消耗单ID]
@@ -96,7 +88,6 @@
  uoMId[计量单位] quantity[消耗数量]
  unitCost[单位成本] amount[金额]
  batchNo[批号] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

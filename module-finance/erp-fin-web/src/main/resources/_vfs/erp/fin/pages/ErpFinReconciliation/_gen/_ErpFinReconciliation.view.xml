@@ -101,18 +101,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-核销单" i18n-en:title="Add Reconciliation">
-            <layout>
- id[ID] code[单号]
- orgId[组织] acctSchemaId[账套]
- direction[应收应付] partnerId[往来单位]
- businessDate[业务日期] currencyId[币种]
- exchangeRate[汇率] totalAmountSource[核销总额(源币)]
- totalAmountFunctional[核销总额(本位币)] fxGainLoss[汇兑损益]
- docStatus[状态] postedBy[过账人]
- postedAt[过账时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-核销单" i18n-en:title="Add Reconciliation" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-核销单" i18n-en:title="Edit Reconciliation">
             <layout>
  id[ID] code[单号]
@@ -121,9 +110,7 @@
  businessDate[业务日期] currencyId[币种]
  exchangeRate[汇率] totalAmountSource[核销总额(源币)]
  totalAmountFunctional[核销总额(本位币)] fxGainLoss[汇兑损益]
- docStatus[状态] postedBy[过账人]
- postedAt[过账时间] remark[备注]
- delVersion[逻辑删除版本] 
+ docStatus[状态] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

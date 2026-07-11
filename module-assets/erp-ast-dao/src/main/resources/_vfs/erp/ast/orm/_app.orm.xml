@@ -188,7 +188,7 @@
                         i18n-en:displayName="Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="20" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="21" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -308,7 +308,7 @@
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Expense Subject"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -415,16 +415,17 @@
                 <column code="EXECUTED_AT" displayName="执行时间" name="executedAt" propId="10" stdDataType="datetime"
                         stdSqlType="DATETIME" i18n-en:displayName="Executed At"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="11"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="12" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="13"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="VOUCHER_ID" displayName="凭证ID" name="voucherId" propId="14" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Voucher"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="15" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="16" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -532,17 +533,18 @@
                         propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="17"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="18" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="19"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="DOC_VERSION" defaultValue="1" displayName="单据版本" mandatory="true" name="docVersion"
                         precision="20" propId="20" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Doc Version"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="21" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="22" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -558,9 +560,10 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="27"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="200"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"
+                        ui:show="R"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="202" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
@@ -713,18 +716,20 @@
                         propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="13"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="14" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="15"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="16"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"
+                        ui:show="R"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="17" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="18" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="19" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -825,18 +830,20 @@
                         propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="14"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="15" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="16"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="17"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"
+                        ui:show="R"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="18" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="20" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="21" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -851,14 +858,14 @@
                         propId="25" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="26"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="NOP_FLOW_ID" displayName="工作流实例" name="nopFlowId" precision="32" propId="29"
+                        stdDataType="string" stdSqlType="VARCHAR" ui:show="R" i18n-en:displayName="Workflow Flow Id"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
-                        propId="27" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        propId="30" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
                 <column code="AMOUNT_FUNCTIONAL" defaultValue="0" displayName="本位币金额" name="amountFunctional"
-                        precision="20" propId="28" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        precision="20" propId="31" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Functional)"/>
-                <column code="NOP_FLOW_ID" name="nopFlowId" precision="32" propId="29" stdDataType="string"
-                        stdSqlType="VARCHAR"/>
             </columns>
             <indexes>
                 <index name="IDX_AST_DISPOSAL_ORG_DOC_STATUS" unique="false">
@@ -938,18 +945,20 @@
                         propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="14"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="15" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="16"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="17"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"
+                        ui:show="R"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="18" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="19" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="20" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1050,7 +1059,7 @@
                         i18n-en:displayName="Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="14" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1071,11 +1080,12 @@
                         precision="500" propId="21" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="CIP Category Snapshot"/>
                 <column code="POSTED" defaultValue="false" displayName="是否已过账" name="posted" propId="22"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="23" stdDataType="timestamp"
-                        stdSqlType="TIMESTAMP" i18n-en:displayName="Posted At"/>
+                        stdSqlType="TIMESTAMP" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="50" propId="24"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
                         propId="25" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -1177,7 +1187,7 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="15" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="16" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1261,7 +1271,7 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="14" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1333,18 +1343,20 @@
                         propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="10"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="11" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="12"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="13"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"
+                        ui:show="R"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="14" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="15" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="16" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1436,18 +1448,20 @@
                         propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="10"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="11" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="12"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="13"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"
+                        ui:show="R"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="14" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="15" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="16" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1552,7 +1566,7 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Target Asset"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="14" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="15" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1636,7 +1650,7 @@
                         i18n-en:displayName="Net Book Value"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="10" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="11" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1726,15 +1740,17 @@
                         precision="20" propId="17" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Shortage Amount"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="18"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="19" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="20"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="APPROVED_BY" displayName="复核人" name="approvedBy" precision="36" propId="21"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"
+                        ui:show="R"/>
                 <column code="APPROVED_AT" displayName="复核时间" name="approvedAt" propId="22" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
                         propId="23" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Amt (Source)"/>
@@ -1743,7 +1759,7 @@
                         i18n-en:displayName="Amt (Functional)"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="25" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="26" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1877,7 +1893,7 @@
                         propId="20" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Investigated Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="21" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="22" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -1992,15 +2008,17 @@
                 <column code="REASON" displayName="维修原因" name="reason" precision="500" propId="14" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="15"
-                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted"/>
+                        stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="POSTED_AT" displayName="过账时间" name="postedAt" propId="16" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Posted At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Posted At" ui:show="R"/>
                 <column code="POSTED_BY" displayName="过账人" name="postedBy" precision="36" propId="17"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Posted By"
+                        ui:show="R"/>
                 <column code="APPROVED_BY" displayName="审核人" name="approvedBy" precision="36" propId="18"
-                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"/>
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Approved By"
+                        ui:show="R"/>
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="19" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Approved At"/>
+                        stdSqlType="DATETIME" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="REVERSED" defaultValue="false" displayName="已红冲" name="reversed" propId="20"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Reversed"/>
                 <column code="AMOUNT_SOURCE" defaultValue="0" displayName="源币种金额" name="amountSource" precision="20"
@@ -2011,7 +2029,7 @@
                         i18n-en:displayName="Amt (Functional)"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="23" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="24" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -2100,7 +2118,7 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"

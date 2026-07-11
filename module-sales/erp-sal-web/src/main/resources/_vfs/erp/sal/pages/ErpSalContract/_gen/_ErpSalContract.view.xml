@@ -111,20 +111,7 @@
  approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售合同" i18n-en:title="Add Sales Contract">
-            <layout>
- id[ID] code[合同号]
- orgId[业务组织] customerId[客户]
- contractName[合同名称] businessDate[签订日期]
- validFrom[生效日期] validTo[失效日期]
- currencyId[币种] exchangeRate[汇率]
- totalAmount[合同金额(不含税)] totalTaxAmount[合计税额]
- totalAmountWithTax[合同金额(含税)] signedBy[签约人(职员)]
- docStatus[单据状态] approveStatus[审核状态]
- remark[备注] approvedBy[审核人]
- approvedAt[审核时间] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-销售合同" i18n-en:title="Add Sales Contract" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售合同" i18n-en:title="Edit Sales Contract">
             <layout>
  id[ID] code[合同号]
@@ -135,8 +122,7 @@
  totalAmount[合同金额(不含税)] totalTaxAmount[合计税额]
  totalAmountWithTax[合同金额(含税)] signedBy[签约人(职员)]
  docStatus[单据状态] approveStatus[审核状态]
- delVersion[逻辑删除版本] remark[备注]
- approvedBy[审核人] approvedAt[审核时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -122,7 +122,8 @@
  eventData[原始事件数据(JSON)] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-过账异常记录" i18n-en:title="Add Posting Exception">
+        <form id="add" editMode="add" title="新增-过账异常记录" i18n-en:title="Add Posting Exception" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-过账异常记录" i18n-en:title="Edit Posting Exception">
             <layout>
  id[ID] traceId[追踪ID]
  billHeadCode[单据编号] businessType[业务类型]
@@ -135,22 +136,6 @@
  resolvedAt[处置时间] voucherId[关联凭证ID]
  occurrenceTime[发生时间] currencyId[币种]
  exchangeRate[汇率] eventData[原始事件数据(JSON)]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-过账异常记录" i18n-en:title="Edit Posting Exception">
-            <layout>
- id[ID] traceId[追踪ID]
- billHeadCode[单据编号] businessType[业务类型]
- postingType[过账类型] errorCode[错误码]
- errorMessage[错误信息] failedStage[失败阶段]
- voucherDate[凭证日期] orgId[核算组织]
- acctSchemaId[账套] status[处置状态]
- retryCount[重试次数] resolution[处置动作]
- resolutionNote[处置说明] resolvedBy[处置人]
- resolvedAt[处置时间] voucherId[关联凭证ID]
- occurrenceTime[发生时间] delVersion[逻辑删除版本]
- currencyId[币种] exchangeRate[汇率]
- eventData[原始事件数据(JSON)] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

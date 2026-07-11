@@ -73,18 +73,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-往来单位联系人" i18n-en:title="Add Partner Contact">
-            <layout>
- id[ID]
- partnerId[往来单位]
- contactPerson[联系人姓名]
- position[职务]
- phone[电话]
- email[邮箱]
- isDefault[是否默认联系人]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-往来单位联系人" i18n-en:title="Add Partner Contact" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-往来单位联系人" i18n-en:title="Edit Partner Contact">
             <layout>
  id[ID]
@@ -94,7 +83,6 @@
  phone[电话]
  email[邮箱]
  isDefault[是否默认联系人]
- delVersion[逻辑删除版本]
  remark[备注]
 </layout>
         </form>

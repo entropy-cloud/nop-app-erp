@@ -104,19 +104,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-工单计时条目" i18n-en:title="Add Time Entry">
-            <layout>
- id[ID] orgId[业务组织]
- ticketId[关联工单] agentId[处理人]
- startTime[开始时间] endTime[结束时间]
- duration[时长(分钟)] isBillable[是否可计费]
- billingRate[计费费率] billableAmount[计费金额]
- description[工作内容描述] approvalStatus[审批状态]
- approvedById[审批人] approvedAt[审批时间]
- projectId[关联项目] taskId[关联任务]
- source[来源] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-工单计时条目" i18n-en:title="Add Time Entry" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-工单计时条目" i18n-en:title="Edit Time Entry">
             <layout>
  id[ID] orgId[业务组织]
@@ -125,9 +113,8 @@
  duration[时长(分钟)] isBillable[是否可计费]
  billingRate[计费费率] billableAmount[计费金额]
  description[工作内容描述] approvalStatus[审批状态]
- approvedById[审批人] approvedAt[审批时间]
- projectId[关联项目] taskId[关联任务]
- source[来源] delVersion[逻辑删除版本]
+ approvedById[审批人] projectId[关联项目]
+ taskId[关联任务] source[来源]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

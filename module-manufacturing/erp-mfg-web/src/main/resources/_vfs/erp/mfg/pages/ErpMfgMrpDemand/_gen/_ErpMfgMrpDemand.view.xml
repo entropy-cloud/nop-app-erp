@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-MRP独立需求" i18n-en:title="Add MRP Demand">
-            <layout>
- id[ID] mrpPlanId[MRP计划ID]
- lineNo[行号] materialId[物料]
- uoMId[计量单位] demandSource[需求来源]
- sourceBillType[来源单据类型] sourceBillCode[来源单据号]
- quantity[需求数量] requirementDate[需求日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-MRP独立需求" i18n-en:title="Add MRP Demand" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-MRP独立需求" i18n-en:title="Edit MRP Demand">
             <layout>
  id[ID] mrpPlanId[MRP计划ID]
@@ -96,7 +88,6 @@
  uoMId[计量单位] demandSource[需求来源]
  sourceBillType[来源单据类型] sourceBillCode[来源单据号]
  quantity[需求数量] requirementDate[需求日期]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

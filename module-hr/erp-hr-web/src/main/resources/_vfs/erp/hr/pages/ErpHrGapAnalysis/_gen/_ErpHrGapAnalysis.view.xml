@@ -76,7 +76,8 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-差距分析" i18n-en:title="Add Gap Analysis">
+        <form id="add" editMode="add" title="新增-差距分析" i18n-en:title="Add Gap Analysis" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-差距分析" i18n-en:title="Edit Gap Analysis">
             <layout>
  id[ID]
  employeeId[员工]
@@ -87,15 +88,6 @@
  gapSeverity[差距严重程度]
  assessmentDate[评估日期]
  analysisDate[分析日期]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-差距分析" i18n-en:title="Edit Gap Analysis">
-            <layout>
- id[ID] employeeId[员工]
- competencyId[胜任力] requiredLevel[要求等级]
- actualLevel[实际等级] gapValue[差距值]
- gapSeverity[差距严重程度] assessmentDate[评估日期]
- analysisDate[分析日期] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

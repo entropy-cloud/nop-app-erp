@@ -76,7 +76,8 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-BOM工艺" i18n-en:title="Add BOM Operation">
+        <form id="add" editMode="add" title="新增-BOM工艺" i18n-en:title="Add BOM Operation" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-BOM工艺" i18n-en:title="Edit BOM Operation">
             <layout>
  id[ID]
  bomId[BOM ID]
@@ -87,15 +88,6 @@
  timeUnit[时间单位]
  rate[效率系数]
  remark[备注]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-BOM工艺" i18n-en:title="Edit BOM Operation">
-            <layout>
- id[ID] bomId[BOM ID]
- lineNo[行号] operationId[工序ID]
- workcenterId[工作中心] standardTime[标准工时]
- timeUnit[时间单位] rate[效率系数]
- remark[备注] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

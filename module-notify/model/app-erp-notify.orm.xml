@@ -65,7 +65,7 @@
                 <column name="mergeStrategy" displayName="合并策略" ext:dict="erp-notify/merge-strategy" mandatory="true" defaultValue="MERGE_BY_USER_TYPE" code="MERGE_STRATEGY" propId="10" stdSqlType="VARCHAR" precision="30" stdDataType="string" i18n-en:displayName='Merge Strategy' />
                 <column name="status" displayName="模板状态" ext:dict="erp-notify/template-status" mandatory="true" defaultValue="DRAFT" code="STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
-                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
@@ -102,7 +102,7 @@
                 <column name="mergeCount" displayName="合并次数" stdSqlType="INTEGER" defaultValue="1" code="MERGE_COUNT" propId="13" stdDataType="int" i18n-en:displayName='Merge Count' />
                 <column name="sentAt" displayName="发送时间" stdSqlType="DATETIME" code="SENT_AT" propId="14" stdDataType="datetime" i18n-en:displayName='Sent At' />
                 <column name="errorMsg" displayName="错误信息" stdSqlType="VARCHAR" precision="1000" code="ERROR_MSG" propId="15" stdDataType="string" i18n-en:displayName='Error Msg' />
-                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="16" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="17" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="18" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="19" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
@@ -136,7 +136,7 @@
                 <column name="notificationId" displayName="通知ID" stdSqlType="BIGINT" mandatory="true" code="NOTIFICATION_ID" propId="2" stdDataType="long" i18n-en:displayName='Notification' />
                 <column name="userId" displayName="用户" stdDomain="userId" stdSqlType="VARCHAR" precision="36" mandatory="true" code="USER_ID" propId="3" stdDataType="string" i18n-en:displayName='User' />
                 <column name="readTime" displayName="阅读时间" stdSqlType="DATETIME" mandatory="true" code="READ_TIME" propId="4" stdDataType="datetime" i18n-en:displayName='Read Time' />
-                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="5" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="5" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="6" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="7" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="8" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />

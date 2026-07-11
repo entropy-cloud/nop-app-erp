@@ -112,7 +112,7 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="24" i18n-en:displayName="Del Flag" mandatory="true"
-              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
         <prop name="version" displayName="数据版本" propId="25" i18n-en:displayName="Version" mandatory="true"

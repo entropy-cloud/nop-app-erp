@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-汇率" i18n-en:title="Add Exchange Rate">
-            <layout>
- id[ID]
- fromCurrencyId[源币种]
- toCurrencyId[目标币种]
- rateType[汇率类型]
- rate[汇率]
- validFrom[生效日期]
- validTo[失效日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-汇率" i18n-en:title="Add Exchange Rate" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-汇率" i18n-en:title="Edit Exchange Rate">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  rate[汇率]
  validFrom[生效日期]
  validTo[失效日期]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

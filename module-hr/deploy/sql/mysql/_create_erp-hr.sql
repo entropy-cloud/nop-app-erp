@@ -505,7 +505,7 @@ CREATE TABLE erp_hr_salary(
   APPROVED_AT DATETIME NULL    COMMENT '审核时间',
   BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
   POSTED BOOLEAN default 0  NULL    COMMENT '已过账',
-  NOP_FLOW_ID VARCHAR(32) NULL    COMMENT 'null',
+  NOP_FLOW_ID VARCHAR(32) NULL    COMMENT '工作流实例',
   constraint PK_erp_hr_salary primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 

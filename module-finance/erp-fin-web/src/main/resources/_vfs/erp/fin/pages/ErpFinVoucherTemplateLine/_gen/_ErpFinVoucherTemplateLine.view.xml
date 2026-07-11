@@ -76,7 +76,8 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-凭证模板行" i18n-en:title="Add Voucher Template Line">
+        <form id="add" editMode="add" title="新增-凭证模板行" i18n-en:title="Add Voucher Template Line" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-凭证模板行" i18n-en:title="Edit Voucher Template Line">
             <layout>
  id[ID]
  templateId[模板ID]
@@ -87,15 +88,6 @@
  accountKey[科目映射键]
  amountKey[金额占位键]
  memoTemplate[摘要模板]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-凭证模板行" i18n-en:title="Edit Voucher Template Line">
-            <layout>
- id[ID] templateId[模板ID]
- lineNo[行号] subjectCode[科目编码(可含占位符)]
- dcDirection[借贷方向] amountExpression[金额表达式]
- accountKey[科目映射键] amountKey[金额占位键]
- memoTemplate[摘要模板] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

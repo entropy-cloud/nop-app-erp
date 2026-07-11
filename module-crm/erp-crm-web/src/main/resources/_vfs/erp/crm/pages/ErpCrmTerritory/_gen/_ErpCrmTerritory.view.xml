@@ -94,17 +94,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售区域" i18n-en:title="Add Territory">
-            <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- parentId[父区域] territoryType[区域类型]
- managerId[区域负责人] description[区域描述]
- fullPath[路径冗余] level[层级深度]
- isActive[是否启用] isLeaf[是否叶子节点]
- sortOrder[排序] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-销售区域" i18n-en:title="Add Territory" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售区域" i18n-en:title="Edit Territory">
             <layout>
  id[ID] code[编码]
@@ -114,7 +104,6 @@
  fullPath[路径冗余] level[层级深度]
  isActive[是否启用] isLeaf[是否叶子节点]
  sortOrder[排序] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

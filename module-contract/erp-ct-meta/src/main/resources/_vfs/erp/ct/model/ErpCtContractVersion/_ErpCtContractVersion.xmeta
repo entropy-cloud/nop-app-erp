@@ -52,11 +52,11 @@
             <schema type="java.lang.String" precision="20" dict="erp-ct/version-status"/>
         </prop>
         <prop name="approvedBy" displayName="批准人" propId="9" i18n-en:displayName="Approved By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedAt" displayName="批准时间" propId="10" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="remark" displayName="备注" propId="11" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -64,7 +64,7 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
-              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
         <prop name="version" displayName="数据版本" propId="13" i18n-en:displayName="Version" mandatory="true"

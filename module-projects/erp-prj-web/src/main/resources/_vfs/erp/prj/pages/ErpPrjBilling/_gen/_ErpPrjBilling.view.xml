@@ -115,20 +115,7 @@
  amountFunctional[本位币金额] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-项目开票" i18n-en:title="Add Project Billing">
-            <layout>
- id[ID] code[单号]
- projectId[项目] orgId[业务组织]
- customerId[客户] milestoneId[关联里程碑]
- businessDate[开票日期] currencyId[币种]
- exchangeRate[汇率] totalAmount[开票金额]
- docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] remark[备注]
- approvedBy[审核人] approvedAt[审核时间]
- amountSource[源币种金额] amountFunctional[本位币金额]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-项目开票" i18n-en:title="Add Project Billing" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-项目开票" i18n-en:title="Edit Project Billing">
             <layout>
  id[ID] code[单号]
@@ -137,10 +124,7 @@
  businessDate[开票日期] currencyId[币种]
  exchangeRate[汇率] totalAmount[开票金额]
  docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] remark[备注]
- delVersion[逻辑删除版本] approvedBy[审核人]
- approvedAt[审核时间] amountSource[源币种金额]
+ remark[备注] amountSource[源币种金额]
  amountFunctional[本位币金额] 
 </layout>
         </form>

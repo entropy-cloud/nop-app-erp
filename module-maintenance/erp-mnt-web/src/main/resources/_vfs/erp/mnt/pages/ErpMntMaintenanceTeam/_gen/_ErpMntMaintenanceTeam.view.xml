@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-维护团队" i18n-en:title="Add Maintenance Team">
-            <layout>
- id[ID]
- code[团队编码]
- name[团队名称]
- orgId[所属组织]
- leaderId[负责人(职员)]
- description[描述]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-维护团队" i18n-en:title="Add Maintenance Team" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-维护团队" i18n-en:title="Edit Maintenance Team">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  leaderId[负责人(职员)]
  description[描述]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

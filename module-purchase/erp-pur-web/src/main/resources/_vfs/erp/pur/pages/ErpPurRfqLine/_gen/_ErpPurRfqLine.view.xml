@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-采购询价单行" i18n-en:title="Add Purchase RFQ Line">
-            <layout>
- id[ID]
- rfqId[询价单ID]
- lineNo[行号]
- materialId[物料]
- uoMId[计量单位]
- quantity[询价数量]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-采购询价单行" i18n-en:title="Add Purchase RFQ Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-采购询价单行" i18n-en:title="Edit Purchase RFQ Line">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  uoMId[计量单位]
  quantity[询价数量]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

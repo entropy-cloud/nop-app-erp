@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-项目预算行" i18n-en:title="Add Project Budget Line">
-            <layout>
- id[ID] budgetId[预算ID]
- lineNo[行号] costCategory[成本类别(人工/材料/费用/分包)]
- subjectId[科目] taskId[任务]
- plannedAmount[预算金额] committedAmount[已承诺金额]
- actualAmount[实际金额] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-项目预算行" i18n-en:title="Add Project Budget Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-项目预算行" i18n-en:title="Edit Project Budget Line">
             <layout>
  id[ID] budgetId[预算ID]
@@ -96,7 +88,6 @@
  subjectId[科目] taskId[任务]
  plannedAmount[预算金额] committedAmount[已承诺金额]
  actualAmount[实际金额] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

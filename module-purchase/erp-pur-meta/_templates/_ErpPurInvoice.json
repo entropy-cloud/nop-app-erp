@@ -36,5 +36,8 @@
   "supplier": null,
   "currency": null,
   "org": null,
-  "lines": null
+  "lines": null,
+  "supplierName": null,
+  "currencyName": null,
+  "orgName": null
 }

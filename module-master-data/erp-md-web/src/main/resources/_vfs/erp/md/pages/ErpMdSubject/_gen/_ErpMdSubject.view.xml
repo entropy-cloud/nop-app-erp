@@ -108,19 +108,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-会计科目" i18n-en:title="Add Accounting Subject">
-            <layout>
- id[ID] code[科目编码]
- name[科目名称] parentId[父级科目]
- subjectClass[科目类别] direction[余额方向]
- balanceType[余额类型] currencyId[核算币种]
- isAuxiliaryPartner[辅助-往来单位] isAuxiliaryDepartment[辅助-部门]
- isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
- isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
- isBudgetable[是否预算控制] isLeaf[是否明细科目]
- status[状态] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-会计科目" i18n-en:title="Add Accounting Subject" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-会计科目" i18n-en:title="Edit Accounting Subject">
             <layout>
  id[ID] code[科目编码]
@@ -131,8 +119,7 @@
  isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
  isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
  isBudgetable[是否预算控制] isLeaf[是否明细科目]
- status[状态] delVersion[逻辑删除版本]
- remark[备注] 
+ status[状态] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

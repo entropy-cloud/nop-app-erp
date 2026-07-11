@@ -108,19 +108,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-批次追溯" i18n-en:title="Add Batch Genealogy">
-            <layout>
- id[ID] workOrderId[工单]
- jobCardId[作业卡] operationId[工序]
- inputLotId[输入批次] inputMaterialId[输入物料]
- inputQty[投入数量] inputUoMId[投入计量单位]
- outputLotId[产出批次] outputMaterialId[产出物料]
- outputQty[产出数量] outputUoMId[产出计量单位]
- productionDate[生产日期] productionTime[生产时间]
- lineNo[行号] lotStatus[批次状态]
- isInputConsumed[输入是否已消耗] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-批次追溯" i18n-en:title="Add Batch Genealogy" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-批次追溯" i18n-en:title="Edit Batch Genealogy">
             <layout>
  id[ID] workOrderId[工单]
@@ -132,7 +120,6 @@
  productionDate[生产日期] productionTime[生产时间]
  lineNo[行号] lotStatus[批次状态]
  isInputConsumed[输入是否已消耗] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

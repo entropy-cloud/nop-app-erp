@@ -122,7 +122,8 @@
  netBookValue[净值] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-固定资产" i18n-en:title="Add Fixed Asset">
+        <form id="add" editMode="add" title="新增-固定资产" i18n-en:title="Add Fixed Asset" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-固定资产" i18n-en:title="Edit Fixed Asset">
             <layout>
  id[ID] code[资产编码]
  name[资产名称] orgId[所属组织]
@@ -135,22 +136,6 @@
  staffId[使用人(往来单位,旧字段保留)] brandModel[品牌型号]
  status[资产状态] remark[备注]
  accumulatedDepreciation[累计折旧] netBookValue[净值]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-固定资产" i18n-en:title="Edit Fixed Asset">
-            <layout>
- id[ID] code[资产编码]
- name[资产名称] orgId[所属组织]
- categoryId[资产类别] acquisitionDate[取得日期]
- currencyId[币种] originalValue[原值]
- currentValue[当前价值] residualValue[残值]
- depreciationMethod[折旧方法] depreciationRate[折旧率]
- usefulLifeMonths[使用年限(月)] departmentId[使用部门]
- locationId[使用地点] employeeId[使用人(职员)]
- staffId[使用人(往来单位,旧字段保留)] brandModel[品牌型号]
- status[资产状态] delVersion[逻辑删除版本]
- remark[备注] accumulatedDepreciation[累计折旧]
- netBookValue[净值] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

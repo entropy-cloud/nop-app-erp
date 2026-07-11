@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-工单类型" i18n-en:title="Add Ticket Type">
-            <layout>
- id[ID]
- code[编码]
- name[名称]
- defaultPriority[默认优先级]
- defaultSlaPolicyId[默认 SLA 策略]
- sequence[排序]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-工单类型" i18n-en:title="Add Ticket Type" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-工单类型" i18n-en:title="Edit Ticket Type">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  defaultSlaPolicyId[默认 SLA 策略]
  sequence[排序]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

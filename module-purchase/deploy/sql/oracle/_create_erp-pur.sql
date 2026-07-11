@@ -862,6 +862,8 @@ CREATE TABLE erp_pur_return_line(
                     
       COMMENT ON COLUMN erp_pur_payment.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON COLUMN erp_pur_payment.NOP_FLOW_ID IS '工作流实例';
+                    
       COMMENT ON TABLE erp_pur_requisition_line IS '采购请购单行';
                 
       COMMENT ON COLUMN erp_pur_requisition_line.ID IS 'ID';

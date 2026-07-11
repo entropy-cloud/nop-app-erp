@@ -35,6 +35,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -46,6 +47,7 @@ prop:
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       paidAmount: 已付金额
       paidStatus: 付款进度
       paidStatus_label: 付款进度
@@ -55,6 +57,7 @@ prop:
       remark: 备注
       supplier: null
       supplierId: 供应商
+      supplierName: 供应商名称
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额
@@ -97,6 +100,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       deliveryDate: 交货日期
       discountAmount: 折扣金额
@@ -108,6 +112,7 @@ prop:
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       paidAmount: 已付金额
       paidStatus: 付款进度
       paidStatus_label: 付款进度
@@ -125,6 +130,7 @@ prop:
       settlementMethodId: 结算方式
       supplier: null
       supplierId: 供应商
+      supplierName: 供应商名称
       totalAmount: 合计金额(本位币不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额
@@ -133,6 +139,7 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 收货仓库
+      warehouseName: 收货仓库名称
     ErpPurOrderLine:
       amount: 金额(不含税)
       amountWithTax: 金额(含税)
@@ -186,7 +193,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
-      nopFlowId: null
+      nopFlowId: 工作流实例
       org: null
       orgId: 业务组织
       partnerBankAccount: null

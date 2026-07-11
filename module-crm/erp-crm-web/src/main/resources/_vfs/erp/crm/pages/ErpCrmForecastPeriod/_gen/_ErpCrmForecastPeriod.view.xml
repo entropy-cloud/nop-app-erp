@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-预测期间" i18n-en:title="Add Forecast Period">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] periodType[期间类型]
- periodStart[期间开始日期] periodEnd[期间结束日期]
- label[期间标签] status[期间状态]
- isCurrent[是否当前期间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-预测期间" i18n-en:title="Add Forecast Period" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-预测期间" i18n-en:title="Edit Forecast Period">
             <layout>
  id[ID] code[编码]
@@ -96,7 +88,6 @@
  periodStart[期间开始日期] periodEnd[期间结束日期]
  label[期间标签] status[期间状态]
  isCurrent[是否当前期间] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

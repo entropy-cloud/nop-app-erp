@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-包裹" i18n-en:title="Add Shipment Parcel">
-            <layout>
- id[ID] shipmentId[发运单ID]
- parcelNo[包裹编号] trackingNo[运单号]
- labelUrl[面单URL] weight[重量(kg)]
- length[长(cm)] width[宽(cm)]
- height[高(cm)] declaredValue[申报价值]
- isActive[是否有效] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-包裹" i18n-en:title="Add Shipment Parcel" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-包裹" i18n-en:title="Edit Shipment Parcel">
             <layout>
  id[ID] shipmentId[发运单ID]
@@ -105,7 +96,6 @@
  length[长(cm)] width[宽(cm)]
  height[高(cm)] declaredValue[申报价值]
  isActive[是否有效] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

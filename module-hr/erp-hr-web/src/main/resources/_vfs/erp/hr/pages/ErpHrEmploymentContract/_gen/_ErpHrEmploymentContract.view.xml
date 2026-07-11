@@ -101,18 +101,7 @@
  businessDate[业务日期] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-劳动合同" i18n-en:title="Add Employment Contract">
-            <layout>
- id[ID] code[合同编号]
- employeeId[员工] contractType[合同类型]
- signDate[签订日期] startDate[生效日期]
- endDate[到期日期] probationMonths[试用期月数]
- workingHoursPerWeek[每周工时] salaryCurrencyId[薪资币种]
- salaryPayMethod[发薪方式] status[合同状态]
- attachmentFileId[合同文件] orgId[业务组织]
- remark[备注] businessDate[业务日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-劳动合同" i18n-en:title="Add Employment Contract" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-劳动合同" i18n-en:title="Edit Employment Contract">
             <layout>
  id[ID] code[合同编号]
@@ -122,8 +111,7 @@
  workingHoursPerWeek[每周工时] salaryCurrencyId[薪资币种]
  salaryPayMethod[发薪方式] status[合同状态]
  attachmentFileId[合同文件] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
- businessDate[业务日期] 
+ remark[备注] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

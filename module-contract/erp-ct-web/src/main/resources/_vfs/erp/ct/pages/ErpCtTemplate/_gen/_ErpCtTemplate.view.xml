@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-合同模板" i18n-en:title="Add Contract Template">
-            <layout>
- id[ID]
- code[编码]
- name[名称]
- contractType[适用合同类型]
- contentTemplate[模板内容]
- isActive[是否启用]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-合同模板" i18n-en:title="Add Contract Template" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-合同模板" i18n-en:title="Edit Contract Template">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  contentTemplate[模板内容]
  isActive[是否启用]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

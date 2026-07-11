@@ -131,7 +131,7 @@ body:
                 name: '库存价值',
                 type: 'pie',
                 radius: '60%',
-                data: rows.map(function(r){return {name: '仓库#' + r.warehouseId, value: r.totalValue};})
+                data: rows.map(function(r){return {name: r.warehouseName || '仓库#' + r.warehouseId, value: r.totalValue};})
               }
             ]
           }
@@ -156,10 +156,10 @@ body:
         const rows = gql.ErpInvDashboard__findShortageAlert || [];
         return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
-      - name: materialId
-        label: "物料ID"
-      - name: warehouseId
-        label: "仓库ID"
+      - name: materialName
+        label: "物料"
+      - name: warehouseName
+        label: "仓库"
       - name: availableQuantity
         label: "可用量"
       - name: safetyStock
@@ -184,10 +184,10 @@ body:
         const rows = gql.ErpInvDashboard__findSlowMovingAlert || [];
         return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
-      - name: materialId
-        label: "物料ID"
-      - name: warehouseId
-        label: "仓库ID"
+      - name: materialName
+        label: "物料"
+      - name: warehouseName
+        label: "仓库"
       - name: totalQuantity
         label: "库存量"
       - name: lastOutDate
@@ -214,10 +214,10 @@ body:
     columns:
       - name: batchNo
         label: "批次号"
-      - name: materialId
-        label: "物料ID"
-      - name: warehouseId
-        label: "仓库ID"
+      - name: materialName
+        label: "物料"
+      - name: warehouseName
+        label: "仓库"
       - name: expiryDate
         label: "到期日"
       - name: remainingDays

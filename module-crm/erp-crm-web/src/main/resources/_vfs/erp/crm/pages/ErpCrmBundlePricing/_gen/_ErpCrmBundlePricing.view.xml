@@ -90,17 +90,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-捆绑定价" i18n-en:title="Add Bundle Pricing">
-            <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- bundleName[捆绑包名称] description[描述]
- discountType[折扣类型] discountValue[折扣值]
- bundleAmount[捆绑包总价] effectiveFrom[生效开始日期]
- effectiveTo[生效结束日期] isActive[是否启用]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-捆绑定价" i18n-en:title="Add Bundle Pricing" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-捆绑定价" i18n-en:title="Edit Bundle Pricing">
             <layout>
  id[ID] code[编码]
@@ -109,7 +99,7 @@
  discountType[折扣类型] discountValue[折扣值]
  bundleAmount[捆绑包总价] effectiveFrom[生效开始日期]
  effectiveTo[生效结束日期] isActive[是否启用]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

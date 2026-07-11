@@ -3,6 +3,7 @@ package app.erp.sal.service.dashboard;
 import app.erp.fin.biz.IErpFinArApItemBiz;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalConstants;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,6 +145,19 @@ public class ErpSalDashboardBizModel {
                     r -> (BigDecimal) r.get("salesAmount"), Comparator.reverseOrder()));
             List<Map<String, Object>> result = new ArrayList<>();
             grouped.stream().limit(topN).forEach(result::add);
+            Map<Long, String> nameCache = new HashMap<>();
+            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+            for (Map<String, Object> r : result) {
+                Long pid = (Long) r.get("customerId");
+                if (pid == null) continue;
+                String name = nameCache.get(pid);
+                if (name == null) {
+                    ErpMdPartner p = partnerDao.getEntityById(pid);
+                    name = p != null ? p.getName() : null;
+                    nameCache.put(pid, name);
+                }
+                r.put("customerName", name);
+            }
             return result;
         });
     }
@@ -177,6 +192,12 @@ public class ErpSalDashboardBizModel {
             if (dayHit && amountHit) {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("partnerId", it.getPartnerId());
+                String partnerName = null;
+                if (it.getPartnerId() != null) {
+                    ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).getEntityById(it.getPartnerId());
+                    partnerName = p != null ? p.getName() : null;
+                }
+                row.put("partnerName", partnerName);
                 row.put("sourceBillCode", it.getSourceBillCode());
                 row.put("openAmount", open);
                 row.put("ageDays", age);

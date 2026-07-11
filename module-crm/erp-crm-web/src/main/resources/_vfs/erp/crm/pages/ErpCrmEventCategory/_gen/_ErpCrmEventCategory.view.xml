@@ -62,15 +62,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-活动类别" i18n-en:title="Add Event Category">
-            <layout>
- id[ID]
- code[编码]
- name[名称]
- color[日历颜色]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-活动类别" i18n-en:title="Add Event Category" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-活动类别" i18n-en:title="Edit Event Category">
             <layout>
  id[ID]
@@ -78,7 +70,6 @@
  name[名称]
  color[日历颜色]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

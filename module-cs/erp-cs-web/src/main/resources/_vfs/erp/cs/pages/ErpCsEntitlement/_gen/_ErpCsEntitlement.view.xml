@@ -97,18 +97,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-服务权益" i18n-en:title="Add Entitlement">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] partnerId[客户]
- contractId[支持合同] slaPolicyId[SLA策略]
- serviceType[服务类型] startDate[生效日期]
- endDate[失效日期] maxTickets[最大工单数]
- usedTickets[已用工单数] maxResponseTime[承诺响应时限(分钟)]
- maxResolutionTime[承诺解决时限(分钟)] isActive[是否启用]
- notes[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-服务权益" i18n-en:title="Add Entitlement" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-服务权益" i18n-en:title="Edit Entitlement">
             <layout>
  id[ID] code[编码]
@@ -118,7 +107,7 @@
  endDate[失效日期] maxTickets[最大工单数]
  usedTickets[已用工单数] maxResponseTime[承诺响应时限(分钟)]
  maxResolutionTime[承诺解决时限(分钟)] isActive[是否启用]
- notes[备注] delVersion[逻辑删除版本]
+ notes[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

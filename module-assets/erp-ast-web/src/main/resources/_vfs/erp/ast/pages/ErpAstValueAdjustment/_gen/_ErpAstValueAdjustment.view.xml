@@ -115,20 +115,7 @@
  amountFunctional[本位币金额] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-资产价值调整" i18n-en:title="Add Asset Value Adjustment">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] assetId[资产ID]
- businessDate[调整日期] currencyId[币种]
- exchangeRate[汇率] adjustmentType[调整类型]
- adjustmentAmount[调整金额] reason[调整原因]
- docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] remark[备注]
- amountSource[源币种金额] amountFunctional[本位币金额]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-资产价值调整" i18n-en:title="Add Asset Value Adjustment" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产价值调整" i18n-en:title="Edit Asset Value Adjustment">
             <layout>
  id[ID] code[单号]
@@ -137,9 +124,6 @@
  exchangeRate[汇率] adjustmentType[调整类型]
  adjustmentAmount[调整金额] reason[调整原因]
  docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] delVersion[逻辑删除版本]
  remark[备注] amountSource[源币种金额]
  amountFunctional[本位币金额] 
 </layout>

@@ -118,21 +118,7 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-在建工程" i18n-en:title="Add CIP">
-            <layout>
- id[ID] code[工程编码]
- name[工程名称] orgId[所属组织]
- categoryId[预定资产类别(完工后转入)] currencyId[币种]
- businessDate[开工日期] estimatedCompletionDate[预计完工日期]
- accumulatedCost[累计归集成本] isCompleted[是否已转固]
- completedAssetId[完工转出资产] status[状态]
- remark[备注] projectId[关联项目(可空)]
- cipAssetCategorySnapshot[转固时类别快照] posted[是否已过账]
- postedAt[过账时间] postedBy[过账人]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-在建工程" i18n-en:title="Add CIP" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-在建工程" i18n-en:title="Edit CIP">
             <layout>
  id[ID] code[工程编码]
@@ -141,10 +127,8 @@
  businessDate[开工日期] estimatedCompletionDate[预计完工日期]
  accumulatedCost[累计归集成本] isCompleted[是否已转固]
  completedAssetId[完工转出资产] status[状态]
- delVersion[逻辑删除版本] remark[备注]
- projectId[关联项目(可空)] cipAssetCategorySnapshot[转固时类别快照]
- posted[是否已过账] postedAt[过账时间]
- postedBy[过账人] exchangeRate[汇率]
+ remark[备注] projectId[关联项目(可空)]
+ cipAssetCategorySnapshot[转固时类别快照] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>

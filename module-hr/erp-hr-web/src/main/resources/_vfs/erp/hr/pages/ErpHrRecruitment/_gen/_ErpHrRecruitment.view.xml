@@ -111,20 +111,7 @@
  updateTime[修改时间] businessDate[业务日期]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-招聘记录" i18n-en:title="Add Recruitment">
-            <layout>
- id[ID] code[编号]
- positionId[招聘职位] departmentId[招聘部门]
- headcount[招聘人数] candidateName[应聘者姓名]
- candidatePhone[联系电话] candidateEmail[电子邮箱]
- source[来源] resumeAttachmentFileId[简历附件]
- status[状态] interviewerId[面试官]
- interviewDate[面试日期] offerSalary[Offer薪资]
- hiredDate[入职日期] employeeId[关联员工]
- orgId[业务组织] remark[备注]
- businessDate[业务日期] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-招聘记录" i18n-en:title="Add Recruitment" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-招聘记录" i18n-en:title="Edit Recruitment">
             <layout>
  id[ID] code[编号]
@@ -136,7 +123,7 @@
  interviewDate[面试日期] offerSalary[Offer薪资]
  hiredDate[入职日期] employeeId[关联员工]
  orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] businessDate[业务日期]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

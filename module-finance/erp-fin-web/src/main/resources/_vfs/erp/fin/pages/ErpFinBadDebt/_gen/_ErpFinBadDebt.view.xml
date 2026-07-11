@@ -101,18 +101,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-坏账单" i18n-en:title="Add Bad Debt">
-            <layout>
- id[ID] code[单号]
- orgId[组织] acctSchemaId[账套]
- docType[坏账单类型] partnerId[客户]
- sourceArApItemId[源应收辅助账项] amount[核销/恢复金额(本位币)]
- currencyId[币种] exchangeRate[汇率]
- businessDate[业务日期] reason[核销/恢复原因]
- approvalStatus[审核状态] periodId[所属期间]
- voucherId[关联凭证ID] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-坏账单" i18n-en:title="Add Bad Debt" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-坏账单" i18n-en:title="Edit Bad Debt">
             <layout>
  id[ID] code[单号]
@@ -123,7 +112,6 @@
  businessDate[业务日期] reason[核销/恢复原因]
  approvalStatus[审核状态] periodId[所属期间]
  voucherId[关联凭证ID] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

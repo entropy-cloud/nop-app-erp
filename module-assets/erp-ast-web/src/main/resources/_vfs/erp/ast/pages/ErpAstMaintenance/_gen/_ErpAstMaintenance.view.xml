@@ -125,22 +125,7 @@
  updateTime[修改时间] remark[备注]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-资产维修工单" i18n-en:title="Add Asset Maintenance">
-            <layout>
- id[ID] code[维修单号]
- name[维修名称] orgId[业务组织]
- assetId[资产卡片] maintenanceVisitId[维护工单(弱关联)]
- status[维修状态] treatment[处置裁决]
- capitalizedAmount[资本化金额] totalCostAmount[费用合计]
- businessDate[维修日期] currencyId[币种]
- exchangeRate[汇率] reason[维修原因]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] reversed[已红冲]
- amountSource[源币种金额] amountFunctional[本位币金额]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-资产维修工单" i18n-en:title="Add Asset Maintenance" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产维修工单" i18n-en:title="Edit Asset Maintenance">
             <layout>
  id[ID] code[维修单号]
@@ -150,11 +135,8 @@
  capitalizedAmount[资本化金额] totalCostAmount[费用合计]
  businessDate[维修日期] currencyId[币种]
  exchangeRate[汇率] reason[维修原因]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] reversed[已红冲]
- amountSource[源币种金额] amountFunctional[本位币金额]
- delVersion[逻辑删除版本] remark[备注]
+ reversed[已红冲] amountSource[源币种金额]
+ amountFunctional[本位币金额] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

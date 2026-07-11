@@ -111,20 +111,6 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=8)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
         private List<ErpPurSupplierScorecardVariableInputBean> _variables;
 
         public List<ErpPurSupplierScorecardVariableInputBean> getVariables(){

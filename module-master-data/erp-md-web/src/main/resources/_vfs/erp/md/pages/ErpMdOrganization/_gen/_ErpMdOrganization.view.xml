@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-组织" i18n-en:title="Add Organization">
-            <layout>
- id[ID]
- code[编码]
- name[名称]
- parentId[父级组织]
- orgType[组织类型]
- functionalCurrencyId[本位币]
- status[状态]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-组织" i18n-en:title="Add Organization" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-组织" i18n-en:title="Edit Organization">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  orgType[组织类型]
  functionalCurrencyId[本位币]
  status[状态]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

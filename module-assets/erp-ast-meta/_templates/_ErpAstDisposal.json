@@ -28,9 +28,9 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
+  "nopFlowId": "",
   "amountSource": 0.0,
   "amountFunctional": 0.0,
-  "nopFlowId": "",
   "asset": null,
   "org": null,
   "currency": null

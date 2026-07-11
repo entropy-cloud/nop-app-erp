@@ -111,30 +111,14 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-领料单" i18n-en:title="Add Material Issue">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] workOrderId[工单]
- jobCardId[作业卡] warehouseId[发料仓库]
- businessDate[领料日期] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- remark[备注] approvedBy[审核人]
- approvedAt[审核时间] currencyId[币种]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-领料单" i18n-en:title="Add Material Issue" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-领料单" i18n-en:title="Edit Material Issue">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] workOrderId[工单]
  jobCardId[作业卡] warehouseId[发料仓库]
  businessDate[领料日期] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- remark[备注] delVersion[逻辑删除版本]
- approvedBy[审核人] approvedAt[审核时间]
+ approveStatus[审核状态] remark[备注]
  currencyId[币种] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>

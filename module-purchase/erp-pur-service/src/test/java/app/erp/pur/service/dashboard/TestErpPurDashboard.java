@@ -123,6 +123,7 @@ public class TestErpPurDashboard extends JunitAutoTestCase {
         List<Map<String, Object>> top = dashboardBiz.findVendorTopN(10, CTX);
         assertEquals(2, top.size());
         assertEquals(531L, top.get(0).get("supplierId"));
+        assertEquals("S-TOP1", top.get(0).get("supplierName"), "供应商名称已解析");
         assertEquals(0, ((BigDecimal) top.get(0).get("purchaseAmount")).compareTo(new BigDecimal("350")));
     }
 

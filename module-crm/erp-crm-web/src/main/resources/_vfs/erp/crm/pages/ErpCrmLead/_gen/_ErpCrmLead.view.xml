@@ -167,28 +167,7 @@
  updateTime[修改时间] territoryId[销售区域]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-线索/商机" i18n-en:title="Add Lead / Opportunity">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] leadType[线索/商机类型]
- partnerId[客户] contactName[联系人姓名]
- contactPhone[联系电话] contactEmail[联系邮箱]
- companyName[公司名称] jobTitle[职位]
- department[部门] sourceId[线索来源]
- leadStatusId[线索状态] stageId[漏斗阶段]
- expectedRevenue[预期收入] bestCaseAmount[乐观预期]
- worstCaseAmount[悲观预期] recurringRevenue[周期性收入]
- recurringPlan[周期性计划] expectedCloseDate[预期签单日]
- probability[成交概率] campaignId[营销活动]
- utmMedium[UTM Medium] utmSource[UTM Source]
- ownerId[负责人] teamId[销售团队]
- lostReasonId[丢单原因] lostReasonDesc[丢单描述]
- lastContactDate[最后联系日期] nextActivityDate[下次活动日期]
- relatedBillType[转化结果单据类型] relatedBillCode[转化结果单据号]
- docStatus[单据状态] remark[备注]
- territoryId[销售区域] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-线索/商机" i18n-en:title="Add Lead / Opportunity" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-线索/商机" i18n-en:title="Edit Lead / Opportunity">
             <layout>
  id[ID] code[编码]
@@ -208,7 +187,7 @@
  lastContactDate[最后联系日期] nextActivityDate[下次活动日期]
  relatedBillType[转化结果单据类型] relatedBillCode[转化结果单据号]
  docStatus[单据状态] remark[备注]
- delVersion[逻辑删除版本] territoryId[销售区域]
+ territoryId[销售区域] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

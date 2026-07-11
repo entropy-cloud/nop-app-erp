@@ -236,20 +236,6 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=17)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
         private String _remark;
 
     
@@ -261,34 +247,6 @@
 
         public void setRemark(String value){
             this._remark = value;
-        }
-
-
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=200)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.time.LocalDateTime _approvedAt;
-
-    
-        @PropMeta(propId=201)
-    
-        public java.time.LocalDateTime getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.time.LocalDateTime value){
-            this._approvedAt = value;
         }
 
 

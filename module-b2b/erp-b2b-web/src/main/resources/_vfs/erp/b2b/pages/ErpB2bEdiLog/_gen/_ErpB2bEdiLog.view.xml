@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-EDI 交互日志" i18n-en:title="Add EDI Log">
-            <layout>
- id[ID] ediDocId[EDI 事务 ID]
- orgId[业务组织] direction[方向]
- requestPayload[请求报文] responsePayload[响应报文]
- resultCode[结果码] resultMsg[结果消息]
- logTime[日志时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-EDI 交互日志" i18n-en:title="Add EDI Log" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-EDI 交互日志" i18n-en:title="Edit EDI Log">
             <layout>
  id[ID] ediDocId[EDI 事务 ID]
@@ -96,7 +88,6 @@
  requestPayload[请求报文] responsePayload[响应报文]
  resultCode[结果码] resultMsg[结果消息]
  logTime[日志时间] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

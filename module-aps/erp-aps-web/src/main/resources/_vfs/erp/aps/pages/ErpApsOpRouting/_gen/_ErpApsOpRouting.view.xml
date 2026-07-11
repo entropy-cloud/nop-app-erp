@@ -94,17 +94,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-替代工艺路线" i18n-en:title="Add OP Routing">
-            <layout>
- id[ID] orgId[业务组织]
- operationId[工序] machineId[工作中心]
- priority[优先级] setupTimeDelta[换模时间差(分钟)]
- runtimePerUnitDelta[单件加工时间差(分钟)] isDefault[默认路由]
- isEnabled[启用] effectiveFrom[生效日期]
- effectiveTo[失效日期] minBatchQty[最小批量]
- maxBatchQty[最大批量] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-替代工艺路线" i18n-en:title="Add OP Routing" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-替代工艺路线" i18n-en:title="Edit OP Routing">
             <layout>
  id[ID] orgId[业务组织]
@@ -114,7 +104,6 @@
  isEnabled[启用] effectiveFrom[生效日期]
  effectiveTo[失效日期] minBatchQty[最小批量]
  maxBatchQty[最大批量] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

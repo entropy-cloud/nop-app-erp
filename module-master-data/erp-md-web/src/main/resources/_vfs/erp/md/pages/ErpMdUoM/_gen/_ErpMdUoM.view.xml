@@ -62,15 +62,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-计量单位" i18n-en:title="Add Unit of Measure">
-            <layout>
- id[ID]
- code[编码]
- name[名称]
- uoMGroup[单位组]
- isBase[是否基本单位]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-计量单位" i18n-en:title="Add Unit of Measure" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-计量单位" i18n-en:title="Edit Unit of Measure">
             <layout>
  id[ID]
@@ -78,7 +70,6 @@
  name[名称]
  uoMGroup[单位组]
  isBase[是否基本单位]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

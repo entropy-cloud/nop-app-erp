@@ -62,15 +62,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-评分变量" i18n-en:title="Add Scorecard Variable">
-            <layout>
- id[ID]
- criteriaId[评分维度]
- variableName[变量名]
- path[业务取值路径]
- value[取值]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-评分变量" i18n-en:title="Add Scorecard Variable" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-评分变量" i18n-en:title="Edit Scorecard Variable">
             <layout>
  id[ID]
@@ -78,7 +70,6 @@
  variableName[变量名]
  path[业务取值路径]
  value[取值]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

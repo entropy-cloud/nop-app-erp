@@ -94,17 +94,7 @@
  businessDate[业务日期] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-排班分配" i18n-en:title="Add Shift Assignment">
-            <layout>
- id[ID] orgId[业务组织]
- employeeId[员工] shiftId[班次]
- assignmentDate[排班日期] actualStartTime[实际签到时间]
- actualEndTime[实际签退时间] isAbsent[是否缺勤]
- absenceReason[缺勤原因] leaveRequestId[关联休假]
- swapRequestId[关联调换] replacedByAssignmentId[被替换排班]
- status[状态] businessDate[业务日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-排班分配" i18n-en:title="Add Shift Assignment" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-排班分配" i18n-en:title="Edit Shift Assignment">
             <layout>
  id[ID] orgId[业务组织]
@@ -113,8 +103,7 @@
  actualEndTime[实际签退时间] isAbsent[是否缺勤]
  absenceReason[缺勤原因] leaveRequestId[关联休假]
  swapRequestId[关联调换] replacedByAssignmentId[被替换排班]
- status[状态] delVersion[逻辑删除版本]
- businessDate[业务日期] 
+ status[状态] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -104,7 +104,8 @@
  ownerId[所有权往来单位] ownershipType[所有权类型]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-库存余额" i18n-en:title="Add Stock Balance">
+        <form id="add" editMode="add" title="新增-库存余额" i18n-en:title="Add Stock Balance" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-库存余额" i18n-en:title="Edit Stock Balance">
             <layout>
  id[ID] orgId[业务组织]
  materialId[物料] skuId[SKU]
@@ -115,19 +116,6 @@
  avgCost[平均成本] totalCost[总成本]
  currencyId[币种] ownerId[所有权往来单位]
  ownershipType[所有权类型] 
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-库存余额" i18n-en:title="Edit Stock Balance">
-            <layout>
- id[ID] orgId[业务组织]
- materialId[物料] skuId[SKU]
- warehouseId[仓库] locationId[库位]
- batchNo[批号] totalQuantity[总数量]
- reservedQuantity[预留数量] lockedQuantity[冻结数量]
- availableQuantity[可用数量] costMethod[计价方法]
- avgCost[平均成本] totalCost[总成本]
- currencyId[币种] delVersion[逻辑删除版本]
- ownerId[所有权往来单位] ownershipType[所有权类型]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

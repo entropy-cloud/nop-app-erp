@@ -97,18 +97,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-票据贴现明细" i18n-en:title="Add Notes Discount">
-            <layout>
- id[ID] notesReceivableId[应收票据]
- orgId[核算组织] discountDate[贴现日]
- bankId[贴现银行账户] faceAmount[票面金额]
- discountInterest[贴现息] netAmount[实得金额]
- currencyId[币种] exchangeRate[汇率]
- exchangeGainLoss[汇兑损益] posted[是否已过账]
- postedBy[过账人] postedAt[过账时间]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-票据贴现明细" i18n-en:title="Add Notes Discount" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-票据贴现明细" i18n-en:title="Edit Notes Discount">
             <layout>
  id[ID] notesReceivableId[应收票据]
@@ -116,9 +105,7 @@
  bankId[贴现银行账户] faceAmount[票面金额]
  discountInterest[贴现息] netAmount[实得金额]
  currencyId[币种] exchangeRate[汇率]
- exchangeGainLoss[汇兑损益] posted[是否已过账]
- postedBy[过账人] postedAt[过账时间]
- remark[备注] delVersion[逻辑删除版本]
+ exchangeGainLoss[汇兑损益] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

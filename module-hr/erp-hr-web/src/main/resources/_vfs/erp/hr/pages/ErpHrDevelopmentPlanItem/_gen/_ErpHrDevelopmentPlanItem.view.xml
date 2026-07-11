@@ -83,16 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-发展计划项" i18n-en:title="Add Development Plan Item">
-            <layout>
- id[ID] planId[发展计划]
- competencyId[目标胜任力] gapId[关联差距分析]
- targetLevel[目标等级] developmentAction[发展行动]
- mentorId[导师] startDate[开始日期]
- endDate[预计完成日期] status[状态]
- progressNote[进度说明] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-发展计划项" i18n-en:title="Add Development Plan Item" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-发展计划项" i18n-en:title="Edit Development Plan Item">
             <layout>
  id[ID] planId[发展计划]
@@ -100,7 +91,7 @@
  targetLevel[目标等级] developmentAction[发展行动]
  mentorId[导师] startDate[开始日期]
  endDate[预计完成日期] status[状态]
- progressNote[进度说明] delVersion[逻辑删除版本]
+ progressNote[进度说明] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

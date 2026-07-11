@@ -76,7 +76,8 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-工时表明细" i18n-en:title="Add Timesheet Line">
+        <form id="add" editMode="add" title="新增-工时表明细" i18n-en:title="Add Timesheet Line" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-工时表明细" i18n-en:title="Edit Timesheet Line">
             <layout>
  id[ID]
  timesheetId[工时表ID]
@@ -87,15 +88,6 @@
  activityType[活动类型]
  hours[小时数]
  description[工作内容]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-工时表明细" i18n-en:title="Edit Timesheet Line">
-            <layout>
- id[ID] timesheetId[工时表ID]
- employeeId[员工] workDate[工作日期]
- projectId[项目] taskId[任务]
- activityType[活动类型] hours[小时数]
- description[工作内容] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

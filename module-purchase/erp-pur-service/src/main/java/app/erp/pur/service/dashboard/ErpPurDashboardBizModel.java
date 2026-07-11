@@ -3,6 +3,7 @@ package app.erp.pur.service.dashboard;
 import app.erp.fin.biz.IErpFinArApItemBiz;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.dao.entity.ErpPurInvoiceLine;
 import app.erp.pur.dao.entity.ErpPurOrder;
@@ -149,6 +150,19 @@ public class ErpPurDashboardBizModel {
                         row.put("purchaseAmount", e.getValue());
                         rows.add(row);
                     });
+            Map<Long, String> nameCache = new HashMap<>();
+            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
+            for (Map<String, Object> r : rows) {
+                Long sid = (Long) r.get("supplierId");
+                if (sid == null) continue;
+                String name = nameCache.get(sid);
+                if (name == null) {
+                    ErpMdPartner p = partnerDao.getEntityById(sid);
+                    name = p != null ? p.getName() : null;
+                    nameCache.put(sid, name);
+                }
+                r.put("supplierName", name);
+            }
             return rows;
         });
     }
@@ -166,6 +180,7 @@ public class ErpPurDashboardBizModel {
                 ? new BigDecimal("0.05") : configured;
         return ormTemplate.runInSession(session -> {
             List<ErpPurInvoice> invoices = loadActiveInvoicesInRange(null, null);
+            IEntityDao<ErpMdPartner> partnerDao = daoProvider.daoFor(ErpMdPartner.class);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpPurInvoice inv : invoices) {
                 if (hasPriceVariance(inv.getId(), tolerance)) {
@@ -173,6 +188,12 @@ public class ErpPurDashboardBizModel {
                     row.put("invoiceId", inv.getId());
                     row.put("invoiceCode", inv.getCode());
                     row.put("supplierId", inv.getSupplierId());
+                    String supplierName = null;
+                    if (inv.getSupplierId() != null) {
+                        ErpMdPartner p = partnerDao.getEntityById(inv.getSupplierId());
+                        supplierName = p != null ? p.getName() : null;
+                    }
+                    row.put("supplierName", supplierName);
                     row.put("varianceType", "PRICE");
                     rows.add(row);
                 }
@@ -203,6 +224,12 @@ public class ErpPurDashboardBizModel {
             if (age > daysThreshold) {
                 Map<String, Object> row = new LinkedHashMap<>();
                 row.put("partnerId", it.getPartnerId());
+                String partnerName = null;
+                if (it.getPartnerId() != null) {
+                    ErpMdPartner p = daoProvider.daoFor(ErpMdPartner.class).getEntityById(it.getPartnerId());
+                    partnerName = p != null ? p.getName() : null;
+                }
+                row.put("partnerName", partnerName);
                 row.put("sourceBillCode", it.getSourceBillCode());
                 row.put("openAmount", nz(it.getOpenAmountFunctional()));
                 row.put("ageDays", age);

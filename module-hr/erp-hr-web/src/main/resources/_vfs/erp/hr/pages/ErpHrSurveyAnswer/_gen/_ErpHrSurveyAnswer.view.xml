@@ -66,16 +66,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-回答明细" i18n-en:title="Add Survey Answer">
-            <layout>
- id[ID]
- responseId[答卷]
- questionId[题目]
- ratingValue[评分值]
- selectedOption[选项]
- openText[文本回答]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-回答明细" i18n-en:title="Add Survey Answer" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-回答明细" i18n-en:title="Edit Survey Answer">
             <layout>
  id[ID]
@@ -84,7 +75,6 @@
  ratingValue[评分值]
  selectedOption[选项]
  openText[文本回答]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

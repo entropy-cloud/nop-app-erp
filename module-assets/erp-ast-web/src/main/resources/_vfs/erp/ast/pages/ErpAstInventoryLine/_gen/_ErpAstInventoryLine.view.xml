@@ -118,21 +118,7 @@
  updateTime[修改时间] remark[备注]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-资产盘点行" i18n-en:title="Add Asset Inventory Line">
-            <layout>
- id[ID] inventoryId[盘点单]
- orgId[所属组织] lineNo[行号]
- assetId[账面资产] assetCodeSnapshot[资产编码快照]
- assetNameSnapshot[资产名称快照] categoryId[资产类别]
- bookQuantity[账面数量] actualQuantity[实盘数量]
- varianceQuantity[差异数量] varianceType[差异类型]
- bookValue[账面价值] assessedValue[评估价值]
- varianceAmount[差异金额] disposition[差异处置]
- newAssetId[盘盈新建资产] capitalizationId[盘盈资本化单]
- disposalId[盘亏处置单] investigatedRemark[调查备注]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-资产盘点行" i18n-en:title="Add Asset Inventory Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产盘点行" i18n-en:title="Edit Asset Inventory Line">
             <layout>
  id[ID] inventoryId[盘点单]
@@ -145,7 +131,7 @@
  varianceAmount[差异金额] disposition[差异处置]
  newAssetId[盘盈新建资产] capitalizationId[盘盈资本化单]
  disposalId[盘亏处置单] investigatedRemark[调查备注]
- delVersion[逻辑删除版本] remark[备注]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

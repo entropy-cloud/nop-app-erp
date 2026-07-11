@@ -138,48 +138,6 @@
         }
 
 
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=10)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.time.LocalDateTime _approvedAt;
-
-    
-        @PropMeta(propId=11)
-    
-        public java.time.LocalDateTime getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.time.LocalDateTime value){
-            this._approvedAt = value;
-        }
-
-
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=12)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
         private String _remark;
 
     

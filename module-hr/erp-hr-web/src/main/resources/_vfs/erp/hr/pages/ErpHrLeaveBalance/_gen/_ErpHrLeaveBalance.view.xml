@@ -76,7 +76,8 @@
  updateTime[修改时间] businessDate[业务日期]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-休假额度" i18n-en:title="Add Leave Balance">
+        <form id="add" editMode="add" title="新增-休假额度" i18n-en:title="Add Leave Balance" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-休假额度" i18n-en:title="Edit Leave Balance">
             <layout>
  id[ID]
  employeeId[员工]
@@ -87,15 +88,6 @@
  orgId[业务组织]
  remark[备注]
  businessDate[业务日期]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-休假额度" i18n-en:title="Edit Leave Balance">
-            <layout>
- id[ID] employeeId[员工]
- leaveType[休假类型] fiscalYear[福利年度]
- entitledDays[应休额度(天)] carriedForwardDays[结转额度(天)]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

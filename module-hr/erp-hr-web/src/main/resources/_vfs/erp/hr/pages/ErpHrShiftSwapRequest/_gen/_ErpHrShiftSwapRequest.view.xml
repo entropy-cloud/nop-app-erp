@@ -87,16 +87,7 @@
  businessDate[业务日期] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-排班调换申请" i18n-en:title="Add Shift Swap Request">
-            <layout>
- id[ID] code[编号]
- orgId[业务组织] requesterId[申请人]
- targetEmployeeId[目标员工] sourceAssignmentId[原排班]
- targetAssignmentId[目标排班] swapDate[调换日期]
- reason[调换原因] status[状态]
- approvedById[审批人] businessDate[业务日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-排班调换申请" i18n-en:title="Add Shift Swap Request" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-排班调换申请" i18n-en:title="Edit Shift Swap Request">
             <layout>
  id[ID] code[编号]
@@ -104,8 +95,7 @@
  targetEmployeeId[目标员工] sourceAssignmentId[原排班]
  targetAssignmentId[目标排班] swapDate[调换日期]
  reason[调换原因] status[状态]
- approvedById[审批人] delVersion[逻辑删除版本]
- businessDate[业务日期] 
+ approvedById[审批人] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

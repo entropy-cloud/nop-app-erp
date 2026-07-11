@@ -99,7 +99,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="14" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -166,7 +166,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Error Msg"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="16" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="17" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
@@ -219,7 +219,7 @@
                         stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Read Time"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="5" stdDataType="long" stdSqlType="BIGINT"
-                        i18n-en:displayName="Del Flag"/>
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
                 <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
                         name="version" propId="6" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
                 <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"

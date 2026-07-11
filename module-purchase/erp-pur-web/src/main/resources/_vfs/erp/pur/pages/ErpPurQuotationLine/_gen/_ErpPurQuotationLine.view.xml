@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-供应商报价单行" i18n-en:title="Add Supplier Quotation Line">
-            <layout>
- id[ID] quotationId[报价单ID]
- lineNo[行号] materialId[物料]
- uoMId[计量单位] quantity[数量]
- unitPrice[报价单价(不含税)] taxRate[税率(%)]
- leadTimeDays[交货周期(天)] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-供应商报价单行" i18n-en:title="Add Supplier Quotation Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-供应商报价单行" i18n-en:title="Edit Supplier Quotation Line">
             <layout>
  id[ID] quotationId[报价单ID]
@@ -96,7 +88,6 @@
  uoMId[计量单位] quantity[数量]
  unitPrice[报价单价(不含税)] taxRate[税率(%)]
  leadTimeDays[交货周期(天)] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

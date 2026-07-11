@@ -97,18 +97,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-作业工时记录" i18n-en:title="Add Job Card Time Log">
-            <layout>
- id[ID] jobCardId[作业卡ID]
- workOrderId[工单ID] operatorId[操作员(职员)]
- workDate[作业日期] startTime[开始时间]
- endTime[结束时间] durationMins[工时(分钟)]
- setupMins[准备时间(分钟)] runMins[加工时间(分钟)]
- completedQuantity[本班完工数量] scrappedQuantity[本班报废数量]
- hourlyRate[小时费率] laborCost[人工成本]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-作业工时记录" i18n-en:title="Add Job Card Time Log" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-作业工时记录" i18n-en:title="Edit Job Card Time Log">
             <layout>
  id[ID] jobCardId[作业卡ID]
@@ -118,7 +107,7 @@
  setupMins[准备时间(分钟)] runMins[加工时间(分钟)]
  completedQuantity[本班完工数量] scrappedQuantity[本班报废数量]
  hourlyRate[小时费率] laborCost[人工成本]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

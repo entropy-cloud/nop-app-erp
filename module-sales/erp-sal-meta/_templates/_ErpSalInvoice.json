@@ -36,5 +36,8 @@
   "customer": null,
   "currency": null,
   "org": null,
-  "lines": null
+  "lines": null,
+  "customerName": null,
+  "currencyName": null,
+  "orgName": null
 }

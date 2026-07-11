@@ -1,6 +1,7 @@
 package app.erp.ast.service.dashboard;
 
 import app.erp.ast.dao.entity.ErpAstAsset;
+import app.erp.ast.dao.entity.ErpAstAssetCategory;
 import app.erp.ast.dao.entity.ErpAstCip;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.service.ErpAstConstants;
@@ -95,6 +96,8 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
     @Test
     public void testAssetCategoryDistribution() {
         ormTemplate.runInSession(() -> {
+            seedCategory(21L, "机器设备");
+            seedCategory(22L, "交通工具");
             // 类别 21: 原值 1000 折旧 200 → 净值 800
             seedAsset(111L, 21L, new BigDecimal("1000"), new BigDecimal("200"),
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
@@ -109,8 +112,10 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
         assertEquals(2, dist.size(), "2 个类别");
         // 类别 22 净值 2000 > 类别 21 净值 1200 → 22 排第一
         assertEquals(22L, dist.get(0).get("categoryId"));
+        assertEquals("交通工具", dist.get(0).get("categoryName"), "类别名称已解析");
         assertEquals(0, ((BigDecimal) dist.get(0).get("netBookValue")).compareTo(new BigDecimal("2000")));
         assertEquals(21L, dist.get(1).get("categoryId"));
+        assertEquals("机器设备", dist.get(1).get("categoryName"), "类别名称已解析");
         assertEquals(0, ((BigDecimal) dist.get(1).get("netBookValue")).compareTo(new BigDecimal("1200")));
     }
 
@@ -153,6 +158,15 @@ public class TestErpAstDashboard extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    private void seedCategory(long id, String name) {
+        IEntityDao<ErpAstAssetCategory> dao = daoProvider.daoFor(ErpAstAssetCategory.class);
+        ErpAstAssetCategory c = dao.newEntity();
+        c.orm_propValue(1, id);
+        c.setCode("CAT-" + id);
+        c.setName(name);
+        dao.saveEntity(c);
+    }
 
     private void seedAsset(long id, long categoryId, BigDecimal originalValue,
                            BigDecimal accumulatedDepreciation, String status) {

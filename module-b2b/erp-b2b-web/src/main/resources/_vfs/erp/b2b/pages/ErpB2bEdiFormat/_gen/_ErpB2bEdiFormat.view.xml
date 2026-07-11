@@ -76,7 +76,8 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-EDI 格式配置" i18n-en:title="Add EDI Format">
+        <form id="add" editMode="add" title="新增-EDI 格式配置" i18n-en:title="Add EDI Format" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-EDI 格式配置" i18n-en:title="Edit EDI Format">
             <layout>
  id[ID]
  code[编码]
@@ -87,15 +88,6 @@
  needsWebService[需要 WebService]
  isActive[是否启用]
  remark[备注]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-EDI 格式配置" i18n-en:title="Edit EDI Format">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] formatName[格式名称]
- formatStandard[EDI 标准] direction[方向]
- needsWebService[需要 WebService] isActive[是否启用]
- remark[备注] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

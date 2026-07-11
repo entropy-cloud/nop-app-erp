@@ -101,6 +101,8 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--工作流实例-->
                 <col id="nopFlowId" sortable="true"/>
             </cols>
         </grid>
@@ -124,25 +126,10 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
- nopFlowId[null] 
+ nopFlowId[工作流实例] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-收款单" i18n-en:title="Add Receipt">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] customerId[客户]
- businessDate[收款日期] currencyId[币种]
- exchangeRate[汇率] amountSource[合计金额(源币)]
- amountFunctional[合计金额(本位币)] totalAmount[合计金额]
- settlementMethodId[结算方式] receiptMethod[收款方式]
- bankAccountId[收款账户(资金账户)] partnerBankAccountId[客户付款账户(银行账户主数据)]
- docStatus[单据状态] approveStatus[审核状态]
- writtenOffStatus[核销状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] nopFlowId[null]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-收款单" i18n-en:title="Add Receipt" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-收款单" i18n-en:title="Edit Receipt">
             <layout>
  id[ID] code[单号]
@@ -153,11 +140,7 @@
  settlementMethodId[结算方式] receiptMethod[收款方式]
  bankAccountId[收款账户(资金账户)] partnerBankAccountId[客户付款账户(银行账户主数据)]
  docStatus[单据状态] approveStatus[审核状态]
- writtenOffStatus[核销状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- delVersion[逻辑删除版本] remark[备注]
- nopFlowId[null] 
+ writtenOffStatus[核销状态] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

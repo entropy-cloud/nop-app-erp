@@ -83,16 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-拣货单行" i18n-en:title="Add Picking Order Line">
-            <layout>
- id[ID] pickingId[拣货单ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] uoMId[计量单位]
- sourceLocationId[拣货库位] quantity[应拣数量]
- pickedQuantity[已拣数量] batchNo[批号]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-拣货单行" i18n-en:title="Add Picking Order Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-拣货单行" i18n-en:title="Edit Picking Order Line">
             <layout>
  id[ID] pickingId[拣货单ID]
@@ -100,7 +91,7 @@
  skuId[SKU] uoMId[计量单位]
  sourceLocationId[拣货库位] quantity[应拣数量]
  pickedQuantity[已拣数量] batchNo[批号]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

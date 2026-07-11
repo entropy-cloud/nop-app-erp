@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-凭证模板" i18n-en:title="Add Voucher Template">
-            <layout>
- id[ID] code[模板编码]
- name[模板名称] acctSchemaId[账套(空表示所有账套通用)]
- businessType[业务类型] voucherType[凭证字]
- templateType[模板类型] isActive[是否启用]
- validFrom[生效日期] validTo[失效日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-凭证模板" i18n-en:title="Add Voucher Template" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-凭证模板" i18n-en:title="Edit Voucher Template">
             <layout>
  id[ID] code[模板编码]
@@ -96,7 +88,6 @@
  businessType[业务类型] voucherType[凭证字]
  templateType[模板类型] isActive[是否启用]
  validFrom[生效日期] validTo[失效日期]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

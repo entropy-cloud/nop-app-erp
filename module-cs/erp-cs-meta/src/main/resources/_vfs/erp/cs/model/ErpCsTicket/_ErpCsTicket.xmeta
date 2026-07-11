@@ -114,7 +114,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="24" i18n-en:displayName="Del Flag" mandatory="true"
-              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
         <prop name="version" displayName="数据版本" propId="25" i18n-en:displayName="Version" mandatory="true"
@@ -138,11 +138,11 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="approvedBy" displayName="审核人" propId="200" i18n-en:displayName="Approved By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="approvedAt" displayName="审核时间" propId="201" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="202" i18n-en:displayName="Business Date" mandatory="true"

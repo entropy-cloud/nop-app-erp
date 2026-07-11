@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-到岸成本行" i18n-en:title="Add Landed Cost Line">
-            <layout>
- id[ID]
- landedCostId[到岸成本单ID]
- lineNo[行号]
- costElement[费用要素]
- amount[金额]
- apPartnerId[应付对象]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-到岸成本行" i18n-en:title="Add Landed Cost Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-到岸成本行" i18n-en:title="Edit Landed Cost Line">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  amount[金额]
  apPartnerId[应付对象]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

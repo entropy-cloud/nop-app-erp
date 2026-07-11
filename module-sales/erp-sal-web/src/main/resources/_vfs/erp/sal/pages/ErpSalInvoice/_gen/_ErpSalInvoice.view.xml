@@ -129,22 +129,7 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售发票" i18n-en:title="Add Sales Invoice">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] customerId[客户]
- invoiceNo[发票号码] invoiceType[发票类型]
- businessDate[发票日期] currencyId[币种]
- exchangeRate[汇率] amountSource[合计金额(源币)]
- amountFunctional[合计金额(本位币)] totalAmount[合计金额(不含税)]
- totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
- receivedAmount[已收金额] docStatus[单据状态]
- approveStatus[审核状态] receivedStatus[收款进度]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-销售发票" i18n-en:title="Add Sales Invoice" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售发票" i18n-en:title="Edit Sales Invoice">
             <layout>
  id[ID] code[单号]
@@ -156,9 +141,6 @@
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
  receivedAmount[已收金额] docStatus[单据状态]
  approveStatus[审核状态] receivedStatus[收款进度]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] delVersion[逻辑删除版本]
  remark[备注] 
 </layout>
         </form>

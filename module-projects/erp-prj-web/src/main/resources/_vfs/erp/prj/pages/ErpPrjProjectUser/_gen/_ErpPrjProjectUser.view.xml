@@ -66,16 +66,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-项目成员" i18n-en:title="Add Project Member">
-            <layout>
- id[ID]
- projectId[项目]
- userId[用户]
- role[角色]
- startDate[加入日期]
- endDate[退出日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-项目成员" i18n-en:title="Add Project Member" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-项目成员" i18n-en:title="Edit Project Member">
             <layout>
  id[ID]
@@ -84,7 +75,6 @@
  role[角色]
  startDate[加入日期]
  endDate[退出日期]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

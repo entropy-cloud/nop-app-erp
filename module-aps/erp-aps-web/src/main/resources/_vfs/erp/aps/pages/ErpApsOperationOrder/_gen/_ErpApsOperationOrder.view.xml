@@ -125,7 +125,8 @@
  latestEndDateT[最晚完工时间] businessDate[业务日期]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-工序工单" i18n-en:title="Add Operation Order">
+        <form id="add" editMode="add" title="新增-工序工单" i18n-en:title="Add Operation Order" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-工序工单" i18n-en:title="Edit Operation Order">
             <layout>
  id[ID] code[编号]
  workOrderId[主工单] operationName[工序名称]
@@ -139,22 +140,6 @@
  orgId[业务组织] remark[备注]
  earliestStartDateT[最早开工时间] latestEndDateT[最晚完工时间]
  businessDate[业务日期] 
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-工序工单" i18n-en:title="Edit Operation Order">
-            <layout>
- id[ID] code[编号]
- workOrderId[主工单] operationName[工序名称]
- sequence[工序顺序] machineId[工作中心/设备]
- priority[优先级] plannedStartDateT[计划开工时间]
- plannedEndDateT[计划完工时间] realStartDateT[实际开工时间]
- realEndDateT[实际完工时间] setupTime[准备时间(分钟)]
- runtimePerUnit[每件加工时间(分钟)] qty[加工数量]
- totalDuration[总耗时(分钟)] assignedToId[操作工]
- isOutsourced[是否外协] status[状态]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] earliestStartDateT[最早开工时间]
- latestEndDateT[最晚完工时间] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

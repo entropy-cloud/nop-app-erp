@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-问卷题目" i18n-en:title="Add Survey Question">
-            <layout>
- id[ID] surveyId[所属问卷]
- sortOrder[排序号] questionText[题目内容]
- questionType[题型] ratingScaleMin[评分最低分]
- ratingScaleMax[评分最高分] ratingLabelMin[最低分标签]
- ratingLabelMax[最高分标签] options[选项列表]
- driverCategory[驱动因子分类] isRequired[是否必填]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-问卷题目" i18n-en:title="Add Survey Question" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-问卷题目" i18n-en:title="Edit Survey Question">
             <layout>
  id[ID] surveyId[所属问卷]
@@ -105,7 +96,6 @@
  ratingScaleMax[评分最高分] ratingLabelMin[最低分标签]
  ratingLabelMax[最高分标签] options[选项列表]
  driverCategory[驱动因子分类] isRequired[是否必填]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

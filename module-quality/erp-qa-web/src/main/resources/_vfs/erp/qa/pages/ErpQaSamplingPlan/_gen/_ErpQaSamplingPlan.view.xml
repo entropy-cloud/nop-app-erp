@@ -83,16 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-抽样方案" i18n-en:title="Add Sampling Plan">
-            <layout>
- id[ID] code[编码]
- name[名称] aqlLevel[AQL 检验水平(如 II)]
- lotSizeFrom[批量下限] lotSizeTo[批量上限]
- sampleSize[样本量] acceptNumber[合格判定数(Ac)]
- rejectNumber[不合格判定数(Re)] isActive[是否启用]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-抽样方案" i18n-en:title="Add Sampling Plan" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-抽样方案" i18n-en:title="Edit Sampling Plan">
             <layout>
  id[ID] code[编码]
@@ -100,7 +91,7 @@
  lotSizeFrom[批量下限] lotSizeTo[批量上限]
  sampleSize[样本量] acceptNumber[合格判定数(Ac)]
  rejectNumber[不合格判定数(Re)] isActive[是否启用]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

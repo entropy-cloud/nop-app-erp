@@ -127,8 +127,10 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       customer: null
       customerId: 客户
+      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -140,6 +142,7 @@ prop:
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -191,8 +194,10 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       customer: null
       customerId: 客户
+      customerName: 客户名称
       delVersion: 逻辑删除版本
       deliveryDate: 交货日期
       deliveryStatus: 发货进度
@@ -206,6 +211,7 @@ prop:
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -225,6 +231,7 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 发货仓库
+      warehouseName: 仓库名称
     ErpSalOrderLine:
       amount: 金额(不含税)
       amountWithTax: 金额(含税)
@@ -419,7 +426,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       lines: null
-      nopFlowId: null
+      nopFlowId: 工作流实例
       org: null
       orgId: 业务组织
       partnerBankAccount: null

@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-工作中心日历" i18n-en:title="Add Work Center Calendar">
-            <layout>
- id[ID] workcenterId[工作中心]
- orgId[业务组织] calendarName[日历名称]
- shiftType[班次类型] workDatePattern[工作日模式]
- startTime[班次开始时间] endTime[班次结束时间]
- effectiveFrom[生效起始日期] effectiveTo[生效结束日期]
- isActive[是否有效] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-工作中心日历" i18n-en:title="Add Work Center Calendar" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-工作中心日历" i18n-en:title="Edit Work Center Calendar">
             <layout>
  id[ID] workcenterId[工作中心]
@@ -105,7 +96,6 @@
  startTime[班次开始时间] endTime[班次结束时间]
  effectiveFrom[生效起始日期] effectiveTo[生效结束日期]
  isActive[是否有效] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

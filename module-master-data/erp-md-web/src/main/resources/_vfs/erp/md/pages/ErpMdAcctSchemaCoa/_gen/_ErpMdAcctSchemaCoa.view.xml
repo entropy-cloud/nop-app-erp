@@ -63,21 +63,13 @@
  updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-账套科目表" i18n-en:title="Add Chart of Accounts">
-            <layout>
- id[ID]
- acctSchemaId[账套]
- name[科目表名称]
- isPrimary[是否主科目表]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-账套科目表" i18n-en:title="Add Chart of Accounts" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-账套科目表" i18n-en:title="Edit Chart of Accounts">
             <layout>
  id[ID]
  acctSchemaId[账套]
  name[科目表名称]
  isPrimary[是否主科目表]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

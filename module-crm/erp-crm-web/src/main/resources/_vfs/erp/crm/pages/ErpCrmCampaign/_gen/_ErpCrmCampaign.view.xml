@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-营销活动" i18n-en:title="Add Campaign">
-            <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- campaignName[活动名称] medium[UTM Medium]
- source[UTM Source] startDate[开始日期]
- endDate[结束日期] budgetAmount[预算金额]
- actualCost[实际成本] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-营销活动" i18n-en:title="Add Campaign" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-营销活动" i18n-en:title="Edit Campaign">
             <layout>
  id[ID] code[编码]
@@ -105,7 +96,6 @@
  source[UTM Source] startDate[开始日期]
  endDate[结束日期] budgetAmount[预算金额]
  actualCost[实际成本] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

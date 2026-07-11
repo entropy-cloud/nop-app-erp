@@ -129,22 +129,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-采购发票" i18n-en:title="Add Purchase Invoice">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] supplierId[供应商]
- invoiceNo[发票号码] invoiceType[发票类型]
- businessDate[发票日期] currencyId[币种]
- exchangeRate[汇率] amountSource[合计金额(源币)]
- amountFunctional[合计金额(本位币)] totalAmount[合计金额(不含税)]
- totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
- paidAmount[已付金额] docStatus[单据状态]
- approveStatus[审核状态] paidStatus[付款进度]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-采购发票" i18n-en:title="Add Purchase Invoice" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-采购发票" i18n-en:title="Edit Purchase Invoice">
             <layout>
  id[ID] code[单号]
@@ -156,10 +141,7 @@
  totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
  paidAmount[已付金额] docStatus[单据状态]
  approveStatus[审核状态] paidStatus[付款进度]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] remark[备注]
- delVersion[逻辑删除版本] 
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

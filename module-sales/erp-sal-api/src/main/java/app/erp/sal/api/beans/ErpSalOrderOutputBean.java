@@ -566,6 +566,54 @@
         }
 
 
+        private String _customerName;
+
+    
+        public String getCustomerName(){
+            return _customerName;
+        }
+
+        public void setCustomerName(String value){
+            this._customerName = value;
+        }
+
+
+        private String _warehouseName;
+
+    
+        public String getWarehouseName(){
+            return _warehouseName;
+        }
+
+        public void setWarehouseName(String value){
+            this._warehouseName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
         private Map<String,Object> _customer;
 
         public Map<String,Object> getCustomer(){

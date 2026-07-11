@@ -83,16 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-评分记录明细" i18n-en:title="Add Lead Score Line">
-            <layout>
- id[ID] scoreId[评分记录]
- orgId[业务组织] configLineId[对应准则行]
- criterionCode[准则编码(快照)] criterionName[准则名称(快照)]
- rawValue[原始值] lookupValue[匹配档次]
- rawScore[原始得分] weightedScore[加权得分]
- sequence[排序] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-评分记录明细" i18n-en:title="Add Lead Score Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-评分记录明细" i18n-en:title="Edit Lead Score Line">
             <layout>
  id[ID] scoreId[评分记录]
@@ -100,7 +91,7 @@
  criterionCode[准则编码(快照)] criterionName[准则名称(快照)]
  rawValue[原始值] lookupValue[匹配档次]
  rawScore[原始得分] weightedScore[加权得分]
- sequence[排序] delVersion[逻辑删除版本]
+ sequence[排序] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

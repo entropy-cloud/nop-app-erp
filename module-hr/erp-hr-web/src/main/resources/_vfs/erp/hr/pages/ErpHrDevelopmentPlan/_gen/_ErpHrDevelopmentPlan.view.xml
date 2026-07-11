@@ -73,18 +73,7 @@
  businessDate[业务日期] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-发展计划" i18n-en:title="Add Development Plan">
-            <layout>
- id[ID]
- employeeId[员工]
- planName[计划名称]
- targetDate[目标完成日期]
- status[状态]
- orgId[业务组织]
- remark[备注]
- businessDate[业务日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-发展计划" i18n-en:title="Add Development Plan" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-发展计划" i18n-en:title="Edit Development Plan">
             <layout>
  id[ID]
@@ -94,7 +83,6 @@
  status[状态]
  orgId[业务组织]
  remark[备注]
- delVersion[逻辑删除版本]
  businessDate[业务日期]
 </layout>
         </form>

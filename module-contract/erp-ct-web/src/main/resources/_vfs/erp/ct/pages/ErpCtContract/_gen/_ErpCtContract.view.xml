@@ -111,20 +111,7 @@
  updateTime[修改时间] businessDate[业务日期]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-合同" i18n-en:title="Add Contract">
-            <layout>
- id[ID] code[合同编号]
- orgId[业务组织] contractName[合同名称]
- contractType[合同类型] contractDirection[合同方向]
- partnerId[合作方] currencyId[币种]
- totalAmount[合同总额] startDate[生效日期]
- endDate[到期日期] signDate[签署日期]
- status[合同状态] templateId[合同模板]
- parentContractId[父合同] description[描述]
- attachmentFileId[合同附件] remark[备注]
- businessDate[业务日期] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-合同" i18n-en:title="Add Contract" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-合同" i18n-en:title="Edit Contract">
             <layout>
  id[ID] code[合同编号]
@@ -136,7 +123,7 @@
  status[合同状态] templateId[合同模板]
  parentContractId[父合同] description[描述]
  attachmentFileId[合同附件] remark[备注]
- delVersion[逻辑删除版本] businessDate[业务日期]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

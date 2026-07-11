@@ -66,16 +66,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-评估明细" i18n-en:title="Add Assessment Detail">
-            <layout>
- id[ID]
- assessmentId[评估]
- competencyId[胜任力]
- actualLevel[实际等级]
- comment[评语]
- sourceType[来源类型]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-评估明细" i18n-en:title="Add Assessment Detail" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-评估明细" i18n-en:title="Edit Assessment Detail">
             <layout>
  id[ID]
@@ -84,7 +75,6 @@
  actualLevel[实际等级]
  comment[评语]
  sourceType[来源类型]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

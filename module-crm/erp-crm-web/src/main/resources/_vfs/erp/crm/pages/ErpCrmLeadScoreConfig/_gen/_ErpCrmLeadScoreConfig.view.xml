@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-评分规则配置" i18n-en:title="Add Lead Score Config">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] configName[规则集名称]
- isActive[是否生效] effectiveFrom[生效开始日期]
- effectiveTo[生效结束日期] autoQualifyThreshold[自动转商机阈值]
- minScoreForFollowUp[最低跟进分数] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-评分规则配置" i18n-en:title="Add Lead Score Config" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-评分规则配置" i18n-en:title="Edit Lead Score Config">
             <layout>
  id[ID] code[编码]
@@ -96,7 +88,6 @@
  isActive[是否生效] effectiveFrom[生效开始日期]
  effectiveTo[生效结束日期] autoQualifyThreshold[自动转商机阈值]
  minScoreForFollowUp[最低跟进分数] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

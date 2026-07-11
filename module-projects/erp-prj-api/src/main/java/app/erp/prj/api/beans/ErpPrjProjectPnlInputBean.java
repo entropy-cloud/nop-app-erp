@@ -348,48 +348,6 @@
         }
 
 
-        private Boolean _posted;
-
-    
-        @PropMeta(propId=25)
-    
-        public Boolean getPosted(){
-            return _posted;
-        }
-
-        public void setPosted(Boolean value){
-            this._posted = value;
-        }
-
-
-        private java.time.LocalDateTime _postedAt;
-
-    
-        @PropMeta(propId=26)
-    
-        public java.time.LocalDateTime getPostedAt(){
-            return _postedAt;
-        }
-
-        public void setPostedAt(java.time.LocalDateTime value){
-            this._postedAt = value;
-        }
-
-
-        private String _postedBy;
-
-    
-        @PropMeta(propId=27)
-    
-        public String getPostedBy(){
-            return _postedBy;
-        }
-
-        public void setPostedBy(String value){
-            this._postedBy = value;
-        }
-
-
         private String _remark;
 
     
@@ -401,20 +359,6 @@
 
         public void setRemark(String value){
             this._remark = value;
-        }
-
-
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=29)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
         }
 
 

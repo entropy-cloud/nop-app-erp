@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-预设应答模板" i18n-en:title="Add Canned Response">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] title[模板标题]
- content[模板正文] categoryId[应答分类]
- variableDefs[变量定义] macroTicketTypeId[自动匹配工单类型]
- macroPriority[自动匹配优先级] sequence[排序]
- isActive[是否启用] usageCount[使用次数]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-预设应答模板" i18n-en:title="Add Canned Response" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-预设应答模板" i18n-en:title="Edit Canned Response">
             <layout>
  id[ID] code[编码]
@@ -105,7 +96,6 @@
  variableDefs[变量定义] macroTicketTypeId[自动匹配工单类型]
  macroPriority[自动匹配优先级] sequence[排序]
  isActive[是否启用] usageCount[使用次数]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

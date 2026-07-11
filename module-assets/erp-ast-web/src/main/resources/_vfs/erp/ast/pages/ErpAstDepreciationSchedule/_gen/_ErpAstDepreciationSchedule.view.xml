@@ -111,20 +111,7 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-折旧计划" i18n-en:title="Add Depreciation Schedule">
-            <layout>
- id[ID] assetId[资产ID]
- orgId[所属组织] period[折旧期间]
- plannedAmount[计划折旧额] actualAmount[实际折旧额]
- accumulatedDepreciation[累计折旧] netBookValue[净值]
- status[执行状态] executedAt[执行时间]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] voucherId[凭证ID]
- businessDate[业务日期] currencyId[币种]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-折旧计划" i18n-en:title="Add Depreciation Schedule" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-折旧计划" i18n-en:title="Edit Depreciation Schedule">
             <layout>
  id[ID] assetId[资产ID]
@@ -132,9 +119,7 @@
  plannedAmount[计划折旧额] actualAmount[实际折旧额]
  accumulatedDepreciation[累计折旧] netBookValue[净值]
  status[执行状态] executedAt[执行时间]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] voucherId[凭证ID]
- delVersion[逻辑删除版本] businessDate[业务日期]
+ voucherId[凭证ID] businessDate[业务日期]
  currencyId[币种] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>

@@ -94,17 +94,7 @@
  businessDate[业务日期] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-休假申请" i18n-en:title="Add Leave Request">
-            <layout>
- id[ID] code[单号]
- employeeId[员工] leaveType[休假类型]
- startDate[开始日期] endDate[结束日期]
- durationDays[天数] reason[请假原因]
- status[状态] approverId[审批人]
- approvedAt[审批时间] orgId[业务组织]
- remark[备注] businessDate[业务日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-休假申请" i18n-en:title="Add Leave Request" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-休假申请" i18n-en:title="Edit Leave Request">
             <layout>
  id[ID] code[单号]
@@ -112,8 +102,7 @@
  startDate[开始日期] endDate[结束日期]
  durationDays[天数] reason[请假原因]
  status[状态] approverId[审批人]
- approvedAt[审批时间] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
+ orgId[业务组织] remark[备注]
  businessDate[业务日期] 
 </layout>
         </form>

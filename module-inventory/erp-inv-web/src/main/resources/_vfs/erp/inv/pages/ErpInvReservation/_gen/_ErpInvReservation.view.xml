@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-库存预留单" i18n-en:title="Add Stock Reservation">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] businessDate[业务日期]
- sourceBillType[来源单据类型(如 SALES_ORDER/WORK_ORDER)] sourceBillCode[来源单据号]
- reservedForPartnerId[为谁预留(往来单位)] status[状态]
- validUntil[预留有效期至] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-库存预留单" i18n-en:title="Add Stock Reservation" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-库存预留单" i18n-en:title="Edit Stock Reservation">
             <layout>
  id[ID] code[单号]
@@ -96,7 +88,6 @@
  sourceBillType[来源单据类型(如 SALES_ORDER/WORK_ORDER)] sourceBillCode[来源单据号]
  reservedForPartnerId[为谁预留(往来单位)] status[状态]
  validUntil[预留有效期至] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

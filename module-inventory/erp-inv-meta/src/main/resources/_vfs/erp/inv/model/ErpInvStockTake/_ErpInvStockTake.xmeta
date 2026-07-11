@@ -54,15 +54,15 @@
             <schema type="java.lang.String" precision="20" dict="erp-inv/approve-status"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="9" i18n-en:displayName="Posted" queryable="true" sortable="true"
-              insertable="true" updatable="true" defaultValue="false">
+              insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
         <prop name="postedAt" displayName="过账时间" propId="10" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.time.LocalDateTime"/>
         </prop>
         <prop name="postedBy" displayName="过账人" propId="11" i18n-en:displayName="Posted By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
         <prop name="remark" displayName="备注" propId="12" i18n-en:displayName="Remark" queryable="true" sortable="true"
@@ -70,7 +70,7 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
-              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
         <prop name="version" displayName="数据版本" propId="14" i18n-en:displayName="Version" mandatory="true"

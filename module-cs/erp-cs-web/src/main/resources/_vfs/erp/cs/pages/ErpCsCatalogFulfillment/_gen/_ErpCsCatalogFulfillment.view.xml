@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-目录项履行映射" i18n-en:title="Add Catalog Fulfillment">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] catalogItemId[目录项]
- sequence[执行顺序] actionType[动作类型]
- actionConfig[动作配置] assignToRole[执行角色]
- estimatedDuration[预估时长(分钟)] isMandatory[是否必须执行]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-目录项履行映射" i18n-en:title="Add Catalog Fulfillment" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-目录项履行映射" i18n-en:title="Edit Catalog Fulfillment">
             <layout>
  id[ID] code[编码]
@@ -96,7 +88,6 @@
  sequence[执行顺序] actionType[动作类型]
  actionConfig[动作配置] assignToRole[执行角色]
  estimatedDuration[预估时长(分钟)] isMandatory[是否必须执行]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

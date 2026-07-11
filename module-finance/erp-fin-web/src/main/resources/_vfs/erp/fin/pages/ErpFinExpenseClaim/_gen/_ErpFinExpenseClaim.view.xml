@@ -129,22 +129,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-费用报销单" i18n-en:title="Add Expense Claim">
-            <layout>
- id[ID] code[单号]
- orgId[核算组织] claimantId[报销人]
- departmentId[部门] businessDate[业务日期]
- paymentMode[付款方式] currencyId[币种]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] amountWithoutTax[不含税金额]
- taxAmount[税额] amountWithTax[价税合计]
- settleAdvanceId[抵扣借款单] reason[报销事由]
- docStatus[单据状态] approveStatus[审核状态]
- approvedBy[审核人] approvedAt[审核时间]
- posted[是否已过账] postedBy[过账人]
- postedAt[过账时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-费用报销单" i18n-en:title="Add Expense Claim" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-费用报销单" i18n-en:title="Edit Expense Claim">
             <layout>
  id[ID] code[单号]
@@ -156,10 +141,7 @@
  taxAmount[税额] amountWithTax[价税合计]
  settleAdvanceId[抵扣借款单] reason[报销事由]
  docStatus[单据状态] approveStatus[审核状态]
- approvedBy[审核人] approvedAt[审核时间]
- posted[是否已过账] postedBy[过账人]
- postedAt[过账时间] remark[备注]
- delVersion[逻辑删除版本] 
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

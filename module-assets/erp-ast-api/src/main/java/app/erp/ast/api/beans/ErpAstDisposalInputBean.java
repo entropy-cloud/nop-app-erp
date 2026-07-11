@@ -194,90 +194,6 @@
         }
 
 
-        private Boolean _posted;
-
-    
-        @PropMeta(propId=14)
-    
-        public Boolean getPosted(){
-            return _posted;
-        }
-
-        public void setPosted(Boolean value){
-            this._posted = value;
-        }
-
-
-        private java.time.LocalDateTime _postedAt;
-
-    
-        @PropMeta(propId=15)
-    
-        public java.time.LocalDateTime getPostedAt(){
-            return _postedAt;
-        }
-
-        public void setPostedAt(java.time.LocalDateTime value){
-            this._postedAt = value;
-        }
-
-
-        private String _postedBy;
-
-    
-        @PropMeta(propId=16)
-    
-        public String getPostedBy(){
-            return _postedBy;
-        }
-
-        public void setPostedBy(String value){
-            this._postedBy = value;
-        }
-
-
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=17)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.time.LocalDateTime _approvedAt;
-
-    
-        @PropMeta(propId=18)
-    
-        public java.time.LocalDateTime getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.time.LocalDateTime value){
-            this._approvedAt = value;
-        }
-
-
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=20)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
         private String _remark;
 
     
@@ -295,7 +211,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=30)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -309,7 +225,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=31)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -317,20 +233,6 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
-        }
-
-
-        private String _nopFlowId;
-
-    
-        @PropMeta(propId=29)
-    
-        public String getNopFlowId(){
-            return _nopFlowId;
-        }
-
-        public void setNopFlowId(String value){
-            this._nopFlowId = value;
         }
 
 

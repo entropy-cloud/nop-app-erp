@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-销售配额" i18n-en:title="Add Quota">
-            <layout>
- id[ID] orgId[业务组织]
- territoryId[区域] teamId[团队]
- ownerId[销售员] periodType[配额期间类型]
- fiscalYear[财年] periodLabel[期间标签]
- quotaAmount[配额金额] currencyId[币种]
- isFinalized[是否已定稿] notes[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-销售配额" i18n-en:title="Add Quota" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售配额" i18n-en:title="Edit Quota">
             <layout>
  id[ID] orgId[业务组织]
@@ -105,7 +96,6 @@
  fiscalYear[财年] periodLabel[期间标签]
  quotaAmount[配额金额] currencyId[币种]
  isFinalized[是否已定稿] notes[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

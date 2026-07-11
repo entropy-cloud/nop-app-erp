@@ -83,16 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-期间结账状态" i18n-en:title="Add Period Close Status">
-            <layout>
- id[ID] periodId[期间ID]
- acctSchemaId[账套] totalVouchers[凭证总数]
- postedVouchers[已过账凭证数] unpostedVouchers[未过账凭证数]
- arStatus[应收模块状态] apStatus[应付模块状态]
- invStatus[存货模块状态] glStatus[总账模块状态]
- assetStatus[资产模块状态] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-期间结账状态" i18n-en:title="Add Period Close Status" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-期间结账状态" i18n-en:title="Edit Period Close Status">
             <layout>
  id[ID] periodId[期间ID]
@@ -100,7 +91,7 @@
  postedVouchers[已过账凭证数] unpostedVouchers[未过账凭证数]
  arStatus[应收模块状态] apStatus[应付模块状态]
  invStatus[存货模块状态] glStatus[总账模块状态]
- assetStatus[资产模块状态] delVersion[逻辑删除版本]
+ assetStatus[资产模块状态] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

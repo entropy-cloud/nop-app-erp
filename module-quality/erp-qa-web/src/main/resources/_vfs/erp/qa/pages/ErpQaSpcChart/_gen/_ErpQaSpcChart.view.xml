@@ -125,22 +125,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-SPC 控制图配置" i18n-en:title="Add SPC Chart">
-            <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- chartType[图类型] materialId[物料]
- inspectionTypeId[质检模板] parameterId[关键检验参数]
- specMin[规格下限] specMax[规格上限]
- subgroupSize[子组样本量 n] samplingFrequency[采样频率]
- clCenterType[中心线计算方式] ruleSet[判异规则集(逗号分隔)]
- alarmThreshold[预警阈值(违规次数)] ucl[控制上限(UCL)]
- lcl[控制下限(LCL)] cl[中心线(CL)]
- calcStatus[计算状态] isActive[是否启用]
- docStatus[单据状态] approveStatus[审核状态]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-SPC 控制图配置" i18n-en:title="Add SPC Chart" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-SPC 控制图配置" i18n-en:title="Edit SPC Chart">
             <layout>
  id[ID] code[编码]
@@ -154,7 +139,7 @@
  lcl[控制下限(LCL)] cl[中心线(CL)]
  calcStatus[计算状态] isActive[是否启用]
  docStatus[单据状态] approveStatus[审核状态]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

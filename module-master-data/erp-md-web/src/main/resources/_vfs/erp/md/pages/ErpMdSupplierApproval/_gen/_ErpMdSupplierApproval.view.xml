@@ -87,25 +87,14 @@
  remark[备注] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-供应商准入资格" i18n-en:title="Add Supplier Approval (AVL)">
-            <layout>
- id[ID] partnerId[供应商]
- orgId[所属组织] approvalType[准入类型]
- materialCategoryId[准入物料类别] validFrom[生效日期]
- validTo[失效日期] qualificationDoc[资质文件]
- status[准入状态] approvedBy[批准人]
- approvedAt[批准时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-供应商准入资格" i18n-en:title="Add Supplier Approval (AVL)" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-供应商准入资格" i18n-en:title="Edit Supplier Approval (AVL)">
             <layout>
  id[ID] partnerId[供应商]
  orgId[所属组织] approvalType[准入类型]
  materialCategoryId[准入物料类别] validFrom[生效日期]
  validTo[失效日期] qualificationDoc[资质文件]
- status[准入状态] approvedBy[批准人]
- approvedAt[批准时间] delVersion[逻辑删除版本]
- remark[备注] 
+ status[准入状态] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

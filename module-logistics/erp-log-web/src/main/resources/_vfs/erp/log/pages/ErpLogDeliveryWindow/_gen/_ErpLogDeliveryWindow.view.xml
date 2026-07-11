@@ -90,17 +90,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-配送时间窗口" i18n-en:title="Add Delivery Window">
-            <layout>
- id[ID] partnerId[客户]
- orgId[业务组织] weekday[星期]
- startTime[开始时间] endTime[结束时间]
- maxCapacity[最大预约数] currentBooked[当前已预约]
- isActive[是否启用] effectiveFrom[生效日期]
- effectiveTo[失效日期] allowedShipmentTypes[允许发运类型]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-配送时间窗口" i18n-en:title="Add Delivery Window" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-配送时间窗口" i18n-en:title="Edit Delivery Window">
             <layout>
  id[ID] partnerId[客户]
@@ -109,7 +99,7 @@
  maxCapacity[最大预约数] currentBooked[当前已预约]
  isActive[是否启用] effectiveFrom[生效日期]
  effectiveTo[失效日期] allowedShipmentTypes[允许发运类型]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

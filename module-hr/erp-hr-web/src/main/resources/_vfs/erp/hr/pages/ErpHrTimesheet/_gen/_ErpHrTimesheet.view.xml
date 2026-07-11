@@ -80,23 +80,14 @@
  businessDate[业务日期] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-工时表" i18n-en:title="Add Timesheet">
-            <layout>
- id[ID] code[单号]
- employeeId[员工] periodFrom[周期开始]
- periodTo[周期结束] totalHours[总工时]
- status[状态] orgId[业务组织]
- remark[备注] businessDate[业务日期]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-工时表" i18n-en:title="Add Timesheet" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-工时表" i18n-en:title="Edit Timesheet">
             <layout>
  id[ID] code[单号]
  employeeId[员工] periodFrom[周期开始]
  periodTo[周期结束] totalHours[总工时]
  status[状态] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
- businessDate[业务日期] 
+ remark[备注] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

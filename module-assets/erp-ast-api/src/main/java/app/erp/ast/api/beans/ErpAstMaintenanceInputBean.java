@@ -209,76 +209,6 @@
         }
 
 
-        private Boolean _posted;
-
-    
-        @PropMeta(propId=15)
-    
-        public Boolean getPosted(){
-            return _posted;
-        }
-
-        public void setPosted(Boolean value){
-            this._posted = value;
-        }
-
-
-        private java.time.LocalDateTime _postedAt;
-
-    
-        @PropMeta(propId=16)
-    
-        public java.time.LocalDateTime getPostedAt(){
-            return _postedAt;
-        }
-
-        public void setPostedAt(java.time.LocalDateTime value){
-            this._postedAt = value;
-        }
-
-
-        private String _postedBy;
-
-    
-        @PropMeta(propId=17)
-    
-        public String getPostedBy(){
-            return _postedBy;
-        }
-
-        public void setPostedBy(String value){
-            this._postedBy = value;
-        }
-
-
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=18)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.time.LocalDateTime _approvedAt;
-
-    
-        @PropMeta(propId=19)
-    
-        public java.time.LocalDateTime getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.time.LocalDateTime value){
-            this._approvedAt = value;
-        }
-
-
         private Boolean _reversed;
 
     
@@ -318,20 +248,6 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
-        }
-
-
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=23)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
         }
 
 

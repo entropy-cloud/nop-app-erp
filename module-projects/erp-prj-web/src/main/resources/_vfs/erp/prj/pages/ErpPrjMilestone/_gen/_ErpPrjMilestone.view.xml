@@ -80,15 +80,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-项目里程碑" i18n-en:title="Add Project Milestone">
-            <layout>
- id[ID] projectId[项目]
- code[编码] name[里程碑名称]
- plannedDate[计划完成日期] actualDate[实际完成日期]
- billingAmount[应结算金额] isBillingTrigger[是否触发开票节点]
- status[状态] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-项目里程碑" i18n-en:title="Add Project Milestone" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-项目里程碑" i18n-en:title="Edit Project Milestone">
             <layout>
  id[ID] projectId[项目]
@@ -96,7 +88,6 @@
  plannedDate[计划完成日期] actualDate[实际完成日期]
  billingAmount[应结算金额] isBillingTrigger[是否触发开票节点]
  status[状态] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

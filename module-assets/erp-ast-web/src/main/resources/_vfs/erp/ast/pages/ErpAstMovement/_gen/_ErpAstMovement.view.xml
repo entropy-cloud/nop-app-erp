@@ -139,24 +139,7 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-资产移动" i18n-en:title="Add Asset Movement">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] assetId[资产ID]
- businessDate[移动日期] fromDate[开始日期]
- thruDate[截止日期] fromDepartmentId[原使用部门]
- toDepartmentId[新使用部门] fromStaffId[原使用人]
- toStaffId[新使用人] fromLocationId[原使用地点]
- toLocationId[新使用地点] handlerId[经办人]
- docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] docVersion[单据版本]
- remark[备注] approvedBy[审核人]
- approvedAt[审核时间] currencyId[币种]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-资产移动" i18n-en:title="Add Asset Movement" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产移动" i18n-en:title="Edit Asset Movement">
             <layout>
  id[ID] code[单号]
@@ -167,10 +150,7 @@
  toStaffId[新使用人] fromLocationId[原使用地点]
  toLocationId[新使用地点] handlerId[经办人]
  docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] docVersion[单据版本]
- delVersion[逻辑删除版本] remark[备注]
- approvedBy[审核人] approvedAt[审核时间]
+ docVersion[单据版本] remark[备注]
  currencyId[币种] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>

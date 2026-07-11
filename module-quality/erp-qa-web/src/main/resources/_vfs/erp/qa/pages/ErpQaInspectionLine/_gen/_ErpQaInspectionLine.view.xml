@@ -83,16 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-质检单行" i18n-en:title="Add Inspection Line">
-            <layout>
- id[ID] inspectionId[质检单ID]
- lineNo[行号] parameterId[检验参数]
- parameterName[检验参数名称] specMin[规格下限]
- specMax[规格上限] measuredValue[实测值]
- unit[计量单位] result[行结果]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-质检单行" i18n-en:title="Add Inspection Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-质检单行" i18n-en:title="Edit Inspection Line">
             <layout>
  id[ID] inspectionId[质检单ID]
@@ -100,7 +91,7 @@
  parameterName[检验参数名称] specMin[规格下限]
  specMax[规格上限] measuredValue[实测值]
  unit[计量单位] result[行结果]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

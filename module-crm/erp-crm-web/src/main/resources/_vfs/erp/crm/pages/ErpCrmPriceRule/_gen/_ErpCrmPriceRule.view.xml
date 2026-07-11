@@ -115,20 +115,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-价格规则" i18n-en:title="Add Price Rule">
-            <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- ruleType[规则类型] priority[优先级]
- productId[适用产品] productCategory[适用产品品类]
- customerId[适用客户] customerCategory[适用客户类别]
- minQuantity[最小数量] maxQuantity[最大数量]
- priceOverride[覆盖单价] discountPercent[折扣百分比]
- discountAmount[折扣固定金额] currencyId[币种]
- effectiveFrom[生效开始日期] effectiveTo[生效结束日期]
- isActive[是否启用] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-价格规则" i18n-en:title="Add Price Rule" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-价格规则" i18n-en:title="Edit Price Rule">
             <layout>
  id[ID] code[编码]
@@ -141,7 +128,6 @@
  discountAmount[折扣固定金额] currencyId[币种]
  effectiveFrom[生效开始日期] effectiveTo[生效结束日期]
  isActive[是否启用] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

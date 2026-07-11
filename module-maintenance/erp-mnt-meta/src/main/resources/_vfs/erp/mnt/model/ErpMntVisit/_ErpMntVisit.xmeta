@@ -82,7 +82,7 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="16" i18n-en:displayName="Del Flag" mandatory="true"
-              queryable="true" sortable="true" insertable="false" updatable="true" defaultValue="0">
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
         <prop name="version" displayName="数据版本" propId="17" i18n-en:displayName="Version" mandatory="true"
@@ -114,15 +114,15 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="posted" displayName="是否已过账" propId="24" i18n-en:displayName="Posted" queryable="true"
-              sortable="true" insertable="true" updatable="true" defaultValue="false">
+              sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
         <prop name="postedAt" displayName="过账时间" propId="25" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="postedBy" displayName="过账人" propId="26" i18n-en:displayName="Posted By" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+              sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="schedule" i18n-en:displayName="Schedule" tagSet="pub" ext:kind="to-one" internal="true"

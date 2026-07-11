@@ -100,7 +100,7 @@ body:
                 name: '净值',
                 type: 'pie',
                 radius: ['40%', '70%'],
-                data: rows.map(function(r){return {name: '类别#' + r.categoryId, value: r.netBookValue};})
+                data: rows.map(function(r){return {name: r.categoryName || '类别#' + r.categoryId, value: r.netBookValue};})
               }
             ]
           }

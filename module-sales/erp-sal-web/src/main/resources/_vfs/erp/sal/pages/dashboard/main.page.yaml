@@ -133,7 +133,7 @@ body:
                 name: '销售额',
                 type: 'pie',
                 radius: ['40%', '70%'],
-                data: rows.map(function(r){return {name: '客户#' + r.customerId, value: r.salesAmount};})
+                data: rows.map(function(r){return {name: r.customerName || '客户#' + r.customerId, value: r.salesAmount};})
               }
             ]
           }
@@ -158,8 +158,8 @@ body:
         const rows = gql.ErpSalDashboard__findArOverdueAlert || [];
         return { status: 0, msg: '', data: { items: rows, count: rows.length } };
     columns:
-      - name: partnerId
-        label: "客户ID"
+      - name: partnerName
+        label: "客户"
       - name: sourceBillCode
         label: "单据号"
       - name: openAmount

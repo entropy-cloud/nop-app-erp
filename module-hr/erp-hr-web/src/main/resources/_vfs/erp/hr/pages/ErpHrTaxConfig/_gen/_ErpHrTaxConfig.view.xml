@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-个税配置" i18n-en:title="Add Tax Config">
-            <layout>
- id[ID]
- year[年份]
- taxThreshold[起征点(月)]
- taxBrackets[税率表]
- specialDeductionItems[专项附加扣除项配置]
- orgId[业务组织]
- remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-个税配置" i18n-en:title="Add Tax Config" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-个税配置" i18n-en:title="Edit Tax Config">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  specialDeductionItems[专项附加扣除项配置]
  orgId[业务组织]
  remark[备注]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

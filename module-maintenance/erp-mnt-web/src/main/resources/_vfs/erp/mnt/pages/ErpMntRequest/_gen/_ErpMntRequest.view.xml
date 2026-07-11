@@ -90,17 +90,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-维护请求" i18n-en:title="Add Maintenance Request">
-            <layout>
- id[ID] code[请求编码]
- equipmentId[设备ID] requestDate[请求日期]
- description[问题描述] priority[优先级]
- status[状态] requestedBy[请求人]
- assignedTo[指派人] acceptedBy[受理人]
- completedBy[完成人] completedAt[完成时间]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-维护请求" i18n-en:title="Add Maintenance Request" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-维护请求" i18n-en:title="Edit Maintenance Request">
             <layout>
  id[ID] code[请求编码]
@@ -109,7 +99,7 @@
  status[状态] requestedBy[请求人]
  assignedTo[指派人] acceptedBy[受理人]
  completedBy[完成人] completedAt[完成时间]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

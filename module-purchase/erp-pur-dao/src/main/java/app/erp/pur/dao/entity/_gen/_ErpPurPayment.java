@@ -137,7 +137,7 @@ public class _ErpPurPayment extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 29;
     
-    /* : NOP_FLOW_ID VARCHAR */
+    /* 工作流实例: NOP_FLOW_ID VARCHAR */
     public static final String PROP_NAME_nopFlowId = "nopFlowId";
     public static final int PROP_ID_nopFlowId = 30;
     
@@ -354,7 +354,7 @@ public class _ErpPurPayment extends DynamicOrmEntity{
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
     
-    /* : NOP_FLOW_ID */
+    /* 工作流实例: NOP_FLOW_ID */
     private java.lang.String _nopFlowId;
     
 
@@ -1609,7 +1609,7 @@ public class _ErpPurPayment extends DynamicOrmEntity{
     }
     
     /**
-     * : NOP_FLOW_ID
+     * 工作流实例: NOP_FLOW_ID
      */
     public final java.lang.String getNopFlowId(){
          onPropGet(PROP_ID_nopFlowId);
@@ -1617,7 +1617,7 @@ public class _ErpPurPayment extends DynamicOrmEntity{
     }
 
     /**
-     * : NOP_FLOW_ID
+     * 工作流实例: NOP_FLOW_ID
      */
     public final void setNopFlowId(java.lang.String value){
         if(onPropSet(PROP_ID_nopFlowId,value)){

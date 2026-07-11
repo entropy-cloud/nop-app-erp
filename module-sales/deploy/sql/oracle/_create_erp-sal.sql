@@ -889,6 +889,8 @@ CREATE TABLE erp_sal_return_line(
                     
       COMMENT ON COLUMN erp_sal_receipt.REMARK IS '备注';
                     
+      COMMENT ON COLUMN erp_sal_receipt.NOP_FLOW_ID IS '工作流实例';
+                    
       COMMENT ON TABLE erp_sal_price_list_line IS '销售价格清单行';
                 
       COMMENT ON COLUMN erp_sal_price_list_line.ID IS 'ID';

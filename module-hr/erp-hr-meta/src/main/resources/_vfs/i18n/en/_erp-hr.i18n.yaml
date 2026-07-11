@@ -477,7 +477,7 @@ prop:
       approvedAt: Approved At
       businessDate: Business Date
       posted: Posted
-      nopFlowId: null
+      nopFlowId: Workflow Flow Id
       employee: Employee
       org: Org
       bankFile: Bank File

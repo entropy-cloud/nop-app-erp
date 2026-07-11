@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-区域分配规则" i18n-en:title="Add Territory Assignment Rule">
-            <layout>
- id[ID] orgId[业务组织]
- ruleName[规则名称] priority[优先级]
- territoryId[目标区域] conditionType[条件类型]
- conditionValue[条件值(JSON)] assignmentMethod[分配方法]
- groupId[目标团队] isDefault[是否默认规则]
- isActive[是否启用] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-区域分配规则" i18n-en:title="Add Territory Assignment Rule" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-区域分配规则" i18n-en:title="Edit Territory Assignment Rule">
             <layout>
  id[ID] orgId[业务组织]
@@ -105,7 +96,6 @@
  conditionValue[条件值(JSON)] assignmentMethod[分配方法]
  groupId[目标团队] isDefault[是否默认规则]
  isActive[是否启用] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

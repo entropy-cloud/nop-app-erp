@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-银行授信额度" i18n-en:title="Add Credit Facility">
-            <layout>
- id[ID] code[单号]
- orgId[核算组织] fundAccountId[授信银行账户]
- facilityType[授信类型] totalAmount[授信总额]
- usedAmount[已用额度] availableAmount[可用额度]
- validFrom[生效日] validTo[到期日]
- status[状态] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-银行授信额度" i18n-en:title="Add Credit Facility" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-银行授信额度" i18n-en:title="Edit Credit Facility">
             <layout>
  id[ID] code[单号]
@@ -105,7 +96,6 @@
  usedAmount[已用额度] availableAmount[可用额度]
  validFrom[生效日] validTo[到期日]
  status[状态] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

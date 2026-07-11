@@ -61,6 +61,9 @@ prop:
       currency: Currency
       org: Org
       lines: Lines
+      supplierName: null
+      currencyName: null
+      orgName: null
     ErpPurInvoiceLine:
       id: ID
       invoiceId: Invoice
@@ -133,6 +136,10 @@ prop:
       requisition: Requisition
       quotation: Quotation
       lines: Lines
+      supplierName: null
+      warehouseName: null
+      currencyName: null
+      orgName: null
     ErpPurOrderLine:
       id: ID
       orderId: Order
@@ -198,7 +205,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      nopFlowId: null
+      nopFlowId: Workflow Flow Id
       supplier: Supplier
       currency: Currency
       settlementMethod: Settlement Method

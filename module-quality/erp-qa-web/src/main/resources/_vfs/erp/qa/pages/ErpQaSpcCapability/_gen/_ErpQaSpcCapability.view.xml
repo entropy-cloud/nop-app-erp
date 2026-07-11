@@ -115,20 +115,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-SPC 过程能力分析" i18n-en:title="Add SPC Capability">
-            <layout>
- id[ID] chartId[控制图ID]
- orgId[业务组织] periodFrom[分析周期起]
- periodTo[分析周期止] sampleCount[样本数(子组数)]
- totalObservations[总观测点数] grandMean[总均值 X̄̄]
- overallStdDev[总体标准差(用于 Pp/Ppk)] withinStdDev[组内标准差 σ̂=R̄/d2(用于 Cp/Cpk)]
- cp[过程能力指数 Cp] cpk[过程能力指数 Cpk]
- pp[过程性能指数 Pp] ppk[过程性能指数 Ppk]
- cpm[偏度修正 Cpm] capabilityLevel[能力等级评定]
- isStable[过程是否统计受控] calculatedBy[计算人]
- calculatedAt[计算时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-SPC 过程能力分析" i18n-en:title="Add SPC Capability" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-SPC 过程能力分析" i18n-en:title="Edit SPC Capability">
             <layout>
  id[ID] chartId[控制图ID]
@@ -141,7 +128,6 @@
  cpm[偏度修正 Cpm] capabilityLevel[能力等级评定]
  isStable[过程是否统计受控] calculatedBy[计算人]
  calculatedAt[计算时间] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

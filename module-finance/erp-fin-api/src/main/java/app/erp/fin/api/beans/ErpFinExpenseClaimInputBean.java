@@ -265,76 +265,6 @@
         }
 
 
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=19)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.time.LocalDateTime _approvedAt;
-
-    
-        @PropMeta(propId=20)
-    
-        public java.time.LocalDateTime getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.time.LocalDateTime value){
-            this._approvedAt = value;
-        }
-
-
-        private Boolean _posted;
-
-    
-        @PropMeta(propId=21)
-    
-        public Boolean getPosted(){
-            return _posted;
-        }
-
-        public void setPosted(Boolean value){
-            this._posted = value;
-        }
-
-
-        private String _postedBy;
-
-    
-        @PropMeta(propId=22)
-    
-        public String getPostedBy(){
-            return _postedBy;
-        }
-
-        public void setPostedBy(String value){
-            this._postedBy = value;
-        }
-
-
-        private java.time.LocalDateTime _postedAt;
-
-    
-        @PropMeta(propId=23)
-    
-        public java.time.LocalDateTime getPostedAt(){
-            return _postedAt;
-        }
-
-        public void setPostedAt(java.time.LocalDateTime value){
-            this._postedAt = value;
-        }
-
-
         private String _remark;
 
     
@@ -346,20 +276,6 @@
 
         public void setRemark(String value){
             this._remark = value;
-        }
-
-
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=25)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
         }
 
 

@@ -122,6 +122,18 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--供应商名称-->
+                <col id="supplierName"/>
+
+                <!--收货仓库名称-->
+                <col id="warehouseName"/>
+
+                <!--币种名称-->
+                <col id="currencyName"/>
+
+                <!--业务组织名称-->
+                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -147,28 +159,12 @@
  approvedAt[审核时间] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] supplierName[供应商名称]
+ warehouseName[收货仓库名称] currencyName[币种名称]
+ orgName[业务组织名称] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-采购订单" i18n-en:title="Add Purchase Order">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] requisitionId[请购单]
- quotationId[报价单] supplierId[供应商]
- warehouseId[收货仓库] businessDate[订单日期]
- deliveryDate[交货日期] currencyId[币种]
- exchangeRate[汇率] amountSource[合计金额(源币不含税)]
- amountFunctional[合计金额(本位币不含税)] totalAmount[合计金额(本位币不含税)]
- totalTaxAmount[合计税额] totalAmountWithTax[合计金额(含税)]
- discountRate[整单折扣率(%)] discountAmount[折扣金额]
- paidAmount[已付金额] settlementMethodId[结算方式]
- docStatus[单据状态] approveStatus[审核状态]
- paidStatus[付款进度] receiveStatus[收货状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-采购订单" i18n-en:title="Add Purchase Order" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-采购订单" i18n-en:title="Edit Purchase Order">
             <layout>
  id[ID] code[单号]
@@ -183,10 +179,7 @@
  paidAmount[已付金额] settlementMethodId[结算方式]
  docStatus[单据状态] approveStatus[审核状态]
  paidStatus[付款进度] receiveStatus[收货状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] approvedBy[审核人]
- approvedAt[审核时间] remark[备注]
- delVersion[逻辑删除版本] 
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

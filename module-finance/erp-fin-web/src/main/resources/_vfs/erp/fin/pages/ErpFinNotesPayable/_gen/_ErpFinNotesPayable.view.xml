@@ -122,21 +122,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-应付票据" i18n-en:title="Add Notes Payable">
-            <layout>
- id[ID] code[单号]
- orgId[核算组织] notesType[票据类型]
- notesNo[票据号] payeeName[收款人]
- payeeBank[收款行] issueDate[出票日]
- dueDate[到期日] currencyId[币种]
- exchangeRate[汇率] amountSource[源币种票面金额]
- amountFunctional[本位币票面金额] partnerId[收款方往来]
- creditFacilityId[占用授信额度] sourceBillType[来源单据类型]
- sourceBillCode[来源单据号] status[票据状态]
- posted[是否已过账] postedBy[过账人]
- postedAt[过账时间] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-应付票据" i18n-en:title="Add Notes Payable" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-应付票据" i18n-en:title="Edit Notes Payable">
             <layout>
  id[ID] code[单号]
@@ -148,9 +134,7 @@
  amountFunctional[本位币票面金额] partnerId[收款方往来]
  creditFacilityId[占用授信额度] sourceBillType[来源单据类型]
  sourceBillCode[来源单据号] status[票据状态]
- posted[是否已过账] postedBy[过账人]
- postedAt[过账时间] remark[备注]
- delVersion[逻辑删除版本] 
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -104,19 +104,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-任务" i18n-en:title="Add Task">
-            <layout>
- id[ID] projectId[项目]
- parentTaskId[父任务] title[任务标题]
- assigneeId[负责人] plannedStartDate[计划开始日期]
- plannedEndDate[计划结束日期] actualStartDate[实际开始日期]
- actualEndDate[实际结束日期] estimatedHours[预估工时]
- actualHours[实际工时] dependsOnId[依赖任务]
- status[状态] priority[优先级]
- blockReason[阻塞原因] sortNum[排序号]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-任务" i18n-en:title="Add Task" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-任务" i18n-en:title="Edit Task">
             <layout>
  id[ID] projectId[项目]
@@ -127,7 +115,7 @@
  actualHours[实际工时] dependsOnId[依赖任务]
  status[状态] priority[优先级]
  blockReason[阻塞原因] sortNum[排序号]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

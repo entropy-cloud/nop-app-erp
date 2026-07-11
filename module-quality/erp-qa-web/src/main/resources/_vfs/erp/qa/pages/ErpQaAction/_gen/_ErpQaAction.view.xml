@@ -87,16 +87,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-纠正预防措施" i18n-en:title="Add Corrective Action">
-            <layout>
- id[ID] ncrId[不合格品报告ID]
- actionType[措施类型] description[措施描述]
- responsiblePerson[负责人] dueDate[计划完成日期]
- status[状态] completedBy[完成人]
- completedAt[完成时间] verificationPerson[验证人]
- verificationDate[验证日期] remark[备注]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-纠正预防措施" i18n-en:title="Add Corrective Action" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-纠正预防措施" i18n-en:title="Edit Corrective Action">
             <layout>
  id[ID] ncrId[不合格品报告ID]
@@ -105,7 +96,6 @@
  status[状态] completedBy[完成人]
  completedAt[完成时间] verificationPerson[验证人]
  verificationDate[验证日期] remark[备注]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

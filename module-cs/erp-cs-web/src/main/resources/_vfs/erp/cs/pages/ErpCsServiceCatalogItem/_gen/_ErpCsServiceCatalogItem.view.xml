@@ -101,18 +101,7 @@
  updateTime[修改时间] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-服务目录项" i18n-en:title="Add Service Catalog Item">
-            <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- categoryId[目录分类] parentId[父项]
- shortDescription[简短描述] fullDescription[详细说明]
- ticketTypeId[关联工单类型] slaPolicyId[默认SLA策略]
- fulfillmentProcessId[履行流程标识] requestFormConfig[请求表单配置]
- isActive[是否上架] isPublic[是否客户可见]
- sequence[排序] estimatedResolution[预计解决时间]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-服务目录项" i18n-en:title="Add Service Catalog Item" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-服务目录项" i18n-en:title="Edit Service Catalog Item">
             <layout>
  id[ID] code[编码]
@@ -123,7 +112,6 @@
  fulfillmentProcessId[履行流程标识] requestFormConfig[请求表单配置]
  isActive[是否上架] isPublic[是否客户可见]
  sequence[排序] estimatedResolution[预计解决时间]
- delVersion[逻辑删除版本] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

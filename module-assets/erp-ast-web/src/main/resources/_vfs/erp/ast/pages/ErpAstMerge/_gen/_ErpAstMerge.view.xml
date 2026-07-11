@@ -108,29 +108,14 @@
  amountFunctional[本位币金额] 
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-资产合并单" i18n-en:title="Add Asset Merge">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] targetAssetId[合并目标资产]
- businessDate[合并日期] currencyId[币种]
- mergeReason[合并原因] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] exchangeRate[汇率]
- amountSource[源币种金额] amountFunctional[本位币金额]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-资产合并单" i18n-en:title="Add Asset Merge" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产合并单" i18n-en:title="Edit Asset Merge">
             <layout>
  id[ID] code[单号]
  orgId[业务组织] targetAssetId[合并目标资产]
  businessDate[合并日期] currencyId[币种]
  mergeReason[合并原因] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- delVersion[逻辑删除版本] remark[备注]
+ approveStatus[审核状态] remark[备注]
  exchangeRate[汇率] amountSource[源币种金额]
  amountFunctional[本位币金额] 
 </layout>

@@ -132,23 +132,7 @@
  updateTime[修改时间] remark[备注]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-资产盘点单" i18n-en:title="Add Asset Inventory">
-            <layout>
- id[ID] code[盘点单号]
- name[盘点名称] orgId[业务组织]
- status[盘点状态] rangeDepartmentId[范围-部门]
- rangeCategoryId[范围-资产类别] rangeLocationId[范围-地点]
- responsibleById[盘点负责人] businessDate[盘点基准日]
- currencyId[币种] exchangeRate[汇率]
- surplusCount[盘盈行数] shortageCount[盘亏行数]
- matchedCount[一致行数] surplusAmount[盘盈金额]
- shortageAmount[盘亏金额] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[复核人] approvedAt[复核时间]
- amountSource[源币种金额] amountFunctional[本位币金额]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-资产盘点单" i18n-en:title="Add Asset Inventory" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产盘点单" i18n-en:title="Edit Asset Inventory">
             <layout>
  id[ID] code[盘点单号]
@@ -159,11 +143,8 @@
  currencyId[币种] exchangeRate[汇率]
  surplusCount[盘盈行数] shortageCount[盘亏行数]
  matchedCount[一致行数] surplusAmount[盘盈金额]
- shortageAmount[盘亏金额] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[复核人] approvedAt[复核时间]
- amountSource[源币种金额] amountFunctional[本位币金额]
- delVersion[逻辑删除版本] remark[备注]
+ shortageAmount[盘亏金额] amountSource[源币种金额]
+ amountFunctional[本位币金额] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

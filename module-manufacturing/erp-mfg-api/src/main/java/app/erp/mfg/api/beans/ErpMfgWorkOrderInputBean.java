@@ -405,48 +405,6 @@
         }
 
 
-        private Boolean _posted;
-
-    
-        @PropMeta(propId=29)
-    
-        public Boolean getPosted(){
-            return _posted;
-        }
-
-        public void setPosted(Boolean value){
-            this._posted = value;
-        }
-
-
-        private java.time.LocalDateTime _postedAt;
-
-    
-        @PropMeta(propId=30)
-    
-        public java.time.LocalDateTime getPostedAt(){
-            return _postedAt;
-        }
-
-        public void setPostedAt(java.time.LocalDateTime value){
-            this._postedAt = value;
-        }
-
-
-        private String _postedBy;
-
-    
-        @PropMeta(propId=31)
-    
-        public String getPostedBy(){
-            return _postedBy;
-        }
-
-        public void setPostedBy(String value){
-            this._postedBy = value;
-        }
-
-
         private String _remark;
 
     
@@ -461,20 +419,6 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=33)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
         private Long _sourceScheduleId;
 
     
@@ -486,34 +430,6 @@
 
         public void setSourceScheduleId(Long value){
             this._sourceScheduleId = value;
-        }
-
-
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=200)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.time.LocalDateTime _approvedAt;
-
-    
-        @PropMeta(propId=201)
-    
-        public java.time.LocalDateTime getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.time.LocalDateTime value){
-            this._approvedAt = value;
         }
 
 

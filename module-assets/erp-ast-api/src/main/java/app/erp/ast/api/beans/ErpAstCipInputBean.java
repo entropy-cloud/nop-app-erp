@@ -180,20 +180,6 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=13)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
         private String _remark;
 
     
@@ -233,48 +219,6 @@
 
         public void setCipAssetCategorySnapshot(String value){
             this._cipAssetCategorySnapshot = value;
-        }
-
-
-        private Boolean _posted;
-
-    
-        @PropMeta(propId=22)
-    
-        public Boolean getPosted(){
-            return _posted;
-        }
-
-        public void setPosted(Boolean value){
-            this._posted = value;
-        }
-
-
-        private java.sql.Timestamp _postedAt;
-
-    
-        @PropMeta(propId=23)
-    
-        public java.sql.Timestamp getPostedAt(){
-            return _postedAt;
-        }
-
-        public void setPostedAt(java.sql.Timestamp value){
-            this._postedAt = value;
-        }
-
-
-        private String _postedBy;
-
-    
-        @PropMeta(propId=24)
-    
-        public String getPostedBy(){
-            return _postedBy;
-        }
-
-        public void setPostedBy(String value){
-            this._postedBy = value;
         }
 
 

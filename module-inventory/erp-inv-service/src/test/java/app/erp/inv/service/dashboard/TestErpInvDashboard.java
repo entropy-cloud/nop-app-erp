@@ -6,6 +6,7 @@ import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.md.dao.entity.ErpMdMaterial;
+import app.erp.md.dao.entity.ErpMdWarehouse;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.config.AppConfig;
@@ -79,6 +80,8 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
     public void testWarehouseDistribution() {
         ormTemplate.runInSession(() -> {
             seedMaterial(111L, BigDecimal.ZERO);
+            seedWarehouse(1L, "中央仓");
+            seedWarehouse(2L, "华东仓");
             seedBalance(211L, 111L, 1L, new BigDecimal("10"), new BigDecimal("100"));
             seedBalance(212L, 111L, 2L, new BigDecimal("20"), new BigDecimal("300"));
         });
@@ -86,6 +89,8 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         assertEquals(2, dist.size());
         // 仓库 2 (300) > 仓库 1 (100) → 排序后仓库 2 在前
         assertEquals(2L, dist.get(0).get("warehouseId"));
+        assertEquals("华东仓", dist.get(0).get("warehouseName"), "仓库名称已解析");
+        assertEquals("中央仓", dist.get(1).get("warehouseName"), "仓库名称已解析");
     }
 
     @Test
@@ -182,6 +187,16 @@ public class TestErpInvDashboard extends JunitAutoTestCase {
         m.setStatus("ACTIVE");
         m.setSafetyStock(safetyStock);
         dao.saveEntity(m);
+    }
+
+    private void seedWarehouse(long id, String name) {
+        IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
+        ErpMdWarehouse w = dao.newEntity();
+        w.orm_propValue(1, id);
+        w.setCode("WH-" + id);
+        w.setName(name);
+        w.setStatus("ACTIVE");
+        dao.saveEntity(w);
     }
 
     private void seedBalance(long id, long materialId, long warehouseId,

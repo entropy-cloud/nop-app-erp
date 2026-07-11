@@ -69,17 +69,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-预设应答分类" i18n-en:title="Add Canned Category">
-            <layout>
- id[ID]
- code[编码]
- name[名称]
- orgId[业务组织]
- parentId[父分类]
- icon[图标]
- sequence[排序]
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-预设应答分类" i18n-en:title="Add Canned Category" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-预设应答分类" i18n-en:title="Edit Canned Category">
             <layout>
  id[ID]
@@ -89,7 +79,6 @@
  parentId[父分类]
  icon[图标]
  sequence[排序]
- delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

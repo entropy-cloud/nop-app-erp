@@ -104,19 +104,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-所有权转移单" i18n-en:title="Add Ownership Transfer">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] transferType[转移类型]
- partnerId[所有权对方(往来单位)] businessDate[业务日期]
- warehouseId[仓库] sourceLocId[源库位(=目的库位)]
- destLocId[目的库位(=源库位)] fromOwnershipType[转前所有权类型]
- toOwnershipType[转后所有权类型] currencyId[币种]
- docStatus[单据状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- remark[备注] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-所有权转移单" i18n-en:title="Add Ownership Transfer" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-所有权转移单" i18n-en:title="Edit Ownership Transfer">
             <layout>
  id[ID] code[单号]
@@ -125,9 +113,7 @@
  warehouseId[仓库] sourceLocId[源库位(=目的库位)]
  destLocId[目的库位(=源库位)] fromOwnershipType[转前所有权类型]
  toOwnershipType[转后所有权类型] currencyId[币种]
- docStatus[单据状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- remark[备注] delVersion[逻辑删除版本]
+ docStatus[单据状态] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -76,7 +76,8 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-漏斗阶段" i18n-en:title="Add Funnel Stage">
+        <form id="add" editMode="add" title="新增-漏斗阶段" i18n-en:title="Add Funnel Stage" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-漏斗阶段" i18n-en:title="Edit Funnel Stage">
             <layout>
  id[ID]
  code[编码]
@@ -87,15 +88,6 @@
  defaultProbability[默认成交概率%]
  isWonStage[是否赢单阶段]
  remark[备注]
-</layout>
-        </form>
-        <form id="edit" editMode="edit" title="编辑-漏斗阶段" i18n-en:title="Edit Funnel Stage">
-            <layout>
- id[ID] code[编码]
- orgId[业务组织] stageName[阶段名称]
- sequence[排序] teamId[团队作用域]
- defaultProbability[默认成交概率%] isWonStage[是否赢单阶段]
- remark[备注] delVersion[逻辑删除版本]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

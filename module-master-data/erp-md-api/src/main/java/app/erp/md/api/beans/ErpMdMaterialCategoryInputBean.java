@@ -97,20 +97,6 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=7)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
         private List<ErpMdMaterialCategoryInputBean> _children;
 
         public List<ErpMdMaterialCategoryInputBean> getChildren(){

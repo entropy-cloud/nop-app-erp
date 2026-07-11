@@ -83,16 +83,7 @@
  updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-SLA 策略" i18n-en:title="Add SLA Policy">
-            <layout>
- id[ID] code[编码]
- name[名称] ticketTypeId[适用工单类型]
- minPriority[最低触发优先级] teamId[适用团队]
- resolveHours[解决时限(小时)] resolveDays[解决时限(天)]
- isWorkingDays[仅计算工作日] escalationUserId[升级通知人]
- description[说明] 
-</layout>
-        </form>
+        <form id="add" editMode="add" title="新增-SLA 策略" i18n-en:title="Add SLA Policy" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-SLA 策略" i18n-en:title="Edit SLA Policy">
             <layout>
  id[ID] code[编码]
@@ -100,7 +91,7 @@
  minPriority[最低触发优先级] teamId[适用团队]
  resolveHours[解决时限(小时)] resolveDays[解决时限(天)]
  isWorkingDays[仅计算工作日] escalationUserId[升级通知人]
- description[说明] delVersion[逻辑删除版本]
+ description[说明] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -209,34 +209,6 @@
         }
 
 
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=15)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.time.LocalDateTime _approvedAt;
-
-    
-        @PropMeta(propId=16)
-    
-        public java.time.LocalDateTime getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.time.LocalDateTime value){
-            this._approvedAt = value;
-        }
-
-
         private String _remark;
 
     
@@ -248,20 +220,6 @@
 
         public void setRemark(String value){
             this._remark = value;
-        }
-
-
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=18)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
         }
 
 
