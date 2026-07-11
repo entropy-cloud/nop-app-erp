@@ -189,6 +189,8 @@ nop-job 在 deadline 前 1h / 30min 发送预警通知给处理人
 
 ## 四、SLA 绩效报表
 
+> **实现状态**（plan `2026-07-11-1234-2`）：§4.1 关键指标 SLA 达标率/平均解决时长/超时工单数/团队排名已实现为 `ErpCsQualityDashboardBizModel` 看板 @BizQuery（经 `ErpCsQualityDashboard__getDashboardKpi/getTeamSlaRanking`）。§4.2 独立 .xpt.xml 报表模板（SLA 月报/超时明细/趋势图/工单类型分析）归 Deferred successor。
+
 ### 4.1 关键指标
 
 | 指标 | 计算方式 | 用途 |

@@ -4,6 +4,8 @@
 
 为客服人员提供预设应答模板，减少重复输入、统一服务口径、提高响应效率。支持按类别分组、变量占位符替换和宏自动匹配。
 
+> **实现状态**（plan `2026-07-11-1234-2`）：§一~§三 已实现。CannedResponseRenderer 纯函数式工具 + ErpCsCannedResponseBizModel（renderTemplate/suggestForTicket/applyCannedResponse）+ 3 ErrorCode + 3 配置键。§四（管理功能 Excel 导入/导出 + §五 分类树校验）归 Deferred successor。
+
 ---
 
 ## 一、模型设计

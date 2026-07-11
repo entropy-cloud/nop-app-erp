@@ -218,6 +218,7 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 | inventory | `ErpInvStockMove` generateMove/complete/cancel | `inventory-stock-move.action.spec.ts` | 状态机 DRAFT→CONFIRMED→DONE + 过账型下游产物（不可变流水 `ErpInvStockLedger` 非空）+ cancel 异常路径 + CONFIRMED 态 confirm 拒绝守卫 |
 | crm | `ErpCrmLead` qualify/moveStage/cancel | `crm-lead.action.spec.ts` | docStatus NEW→QUALIFIED + 漏斗 stageId 翻转（convLog 留痕归 Deferred）+ cancel |
 | cs | `ErpCsTicket` assign/start/resolve/close/cancel | `cs-ticket.action.spec.ts` | 六态状态机 NEW→ASSIGNED→IN_PROGRESS→RESOLVED→CLOSED 全链 + cancel + 非法迁移 ErrorCode 守卫 |
+| cs | `ErpCsCannedResponse` suggestForTicket/renderTemplate/applyCannedResponse | `cs-canned-response.action.spec.ts` | 三级宏匹配（精确>类型>全局兜底）+ 系统变量替换（customer_name/ticket_id/agent_name）+ usageCount 递增 + TicketAction NOTE 审计写入（plan 2026-07-11-1234-2） |
 | maintenance | `ErpMntVisit` schedule/start/complete/cancel | `maintenance-visit.action.spec.ts` | 5 态状态机 DRAFT→SCHEDULED→IN_PROGRESS→COMPLETED + cancel（SCHEDULED→CANCELLED）+ 设备状态联动副作用（start→UNDER_MAINTENANCE，complete/cancel→RUNNING 恢复种子态）+ COMPLETED→start 非法迁移守卫（2004-1） |
 | maintenance | `ErpMntRequest` accept/startRepair/complete/rejectRequest/cancel | `mnt-request.action.spec.ts` | 自定义 status 5 态状态机（ORM use-approval tagSet 但无 approveStatus 列，生命周期由自定义 status 驱动）：正路径 OPEN→ACCEPTED→IN_PROGRESS→COMPLETED(+completedAt) + COMPLETED→accept 非法守卫 + 分支 rejectRequest(→REJECTED)/cancel(→CANCELLED)；accept 生成响应式 visit 按 code 清理避免污染 periodVisitCount（0335-2） |
 | projects | `ErpPrjTask` startTask/completeTask/blockTask/unblockTask | `projects-task.action.spec.ts` | 4 态状态机 TODO→IN_PROGRESS→DONE + blockTask/unblockTask 闭环（reason 必填）+ 前驱 DAG 门控（无前驱任务绕过 STRICT）+ DONE→startTask/blockTask 非法迁移守卫（2004-1） |
@@ -536,6 +537,7 @@ tests/e2e/
 │   ├── inventory-stock-move.action.spec.ts  # StockMove generateMove/complete/cancel 状态机+过账
 │   ├── crm-lead.action.spec.ts              # Lead qualify/moveStage/cancel 状态迁移
 │   ├── cs-ticket.action.spec.ts             # Ticket 六态状态机 + 非法迁移守卫
+│   ├── cs-canned-response.action.spec.ts    # CannedResponse 三级宏匹配 + 变量渲染 + usageCount + 审计
 │   ├── maintenance-visit.action.spec.ts     # Visit schedule/start/complete/cancel 5 态 + 设备联动副作用（2004-1）
 │   ├── projects-task.action.spec.ts         # Task startTask/completeTask/blockTask/unblockTask 4 态 + DAG 门控（2004-1）
 │   ├── quality-capa.action.spec.ts          # CAPA startAction/completeAction/verifyAction 3 态（2004-1）
