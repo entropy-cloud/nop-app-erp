@@ -49,10 +49,10 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 
 ## 当前里程碑（代码生成已完成 - Post-Codegen 阶段）
 
-- 产品摘要：18 域已全部通过 nop-cli 完成代码生成，共生成 1721 Java 文件、146 reactor 模块、279 实体，项目进入 post-codegen 阶段。
+- 产品摘要：18 域已全部通过 nop-cli 完成代码生成，共生成 2758 Java 文件、154 reactor 模块、447 实体，项目进入 post-codegen 阶段。
 - 用户：实施方（基于基线定制各领域 ERP）、开发人员（完善模型与生成链路、编写 BizModel 与 xbiz）
 - 当前已完成：
-  - 18 份 `module-<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（279 实体）
+  - 18 份 `module-<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（447 实体）
   - 18 域完整的代码生成工程骨架（model → codegen → dao → service → web → app）
   - 18 域目录式设计文档（README + state-machine + 跨域协作等）
   - 全局设计文档（app-overview/flow-overview/domain-glossary/roles-and-permissions/feature-inventory）
@@ -68,7 +68,7 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
   - 垂直行业扩展工程（待具体客户需求）
   - 外部集成（税控/银行/物流/电商）
 - 成功指标：
-  - 所有 146 模块可独立编译通过
+  - 所有 154 模块可独立编译通过
   - 首域端到端 CRUD 流程测试通过
   - 第一个业务循环端到端测试通过
 - 约束：

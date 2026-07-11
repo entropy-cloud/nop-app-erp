@@ -9,7 +9,7 @@
 
 ## TL;DR
 
-nop-app-erp 共 **18 个业务域、279 个实体表**（见 `domain-module-split-analysis.md §2.0` 与 `docs/context/codebase-map.md`）。跨域数据依赖遵循三条铁律：
+nop-app-erp 共 **18 个业务域 + 1 跨域通知派发子系统（module-notify）、447 个实体表**（见 `domain-module-split-analysis.md §2.0` 与 `docs/context/codebase-map.md`）。跨域数据依赖遵循三条铁律：
 
 1. **只读依赖**：所有业务域对 `master-data` 表族（物料/往来单位/仓库/科目/币种等）是**只读引用**，通过纯字符串/ID 外键列承载，不做 ORM 强引用。
 2. **同步修改仅限业财一体闭环**：业务单据状态变迁时，**同事务内**写"本域单据表 + inventory 流水/余额表 + finance 凭证/回链表"。这是唯一的跨域写场景。

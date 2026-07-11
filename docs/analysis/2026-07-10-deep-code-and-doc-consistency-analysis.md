@@ -1,5 +1,7 @@
 # 深度分析报告：代码质量、代码与文档一致性、文档内在一致性
 
+> **维护说明**：本报告为 2026-07-10 时间快照，文中计数（实体/Java 文件/reactor 模块/spec 等）为当时实测值。最新计数以 `docs/architecture/data-dependency-matrix.md` 与 `docs/requirements/product-scope.md` 为准（2026-07-11 经 plan `2026-07-11-1225-1` 订正：447 实体 / 2758 Java 文件 / 154 reactor 模块）。报告中标记 ✅ 的修复项已落地，⏳ 项已移出该批并命名 successor。
+
 > 分析日期：2026-07-10
 > 分析范围：全仓库 19 域（18 业务域 + notify 子系统），154 reactor 模块
 > 分析方法：独立子代理并行扫描 + 交叉验证 + 多维度评分
@@ -62,11 +64,11 @@ public interface ErpSalErrors {
 
 **已知违规**：
 
-| 位置 | 问题 | 严重度 |
-|------|------|--------|
-| `module-hr/.../ErpHrRecruitmentBizModel.java:199` | 使用 `System.currentTimeMillis()` 应改为 `CoreMetrics.currentTimeMillis()` | 中 |
-| `module-maintenance/.../TestErpMntSparePartPosting.java:250` | `System.out.println` 调试语句残留 | 低 |
-| `module-maintenance/.../TestErpMntSparePartAndSchedule.java:191` | `System.out.println` 调试语句残留 | 低 |
+| 位置 | 问题 | 严重度 | 状态 |
+|------|------|--------|------|
+| `module-hr/.../ErpHrRecruitmentBizModel.java:199` | 使用 `System.currentTimeMillis()` 应改为 `CoreMetrics.currentTimeMillis()` | 中 | ✅ 2026-07-11 已修 |
+| `module-maintenance/.../TestErpMntSparePartPosting.java:250` | `System.out.println` 调试语句残留 | 低 | ✅ 2026-07-11 已修 |
+| `module-maintenance/.../TestErpMntSparePartAndSchedule.java:191` | `System.out.println` 调试语句残留 | 低 | ✅ 2026-07-11 已修 |
 
 ### 1.5 代码风格一致性（优秀）
 
@@ -79,8 +81,8 @@ public interface ErpSalErrors {
 
 | 问题 | 位置 | 严重度 | 说明 |
 |------|------|--------|------|
-| `dao.findAll()` 全表加载 | `ErpMdDashboardBizModel`、`ErpSalDashboardBizModel` 等 | **高** | 企业数据量下会产生 OOM |
-| 内存聚合无 SQL GROUP BY | `ErpSalDashboardBizModel.findCustomerTopN()` | **中** | 应使用数据库级聚合 + LIMIT |
+| `dao.findAll()` 全表加载 | `ErpMdDashboardBizModel`、`ErpSalDashboardBizModel` 等 10 域 / 25 处（Dashboard + Report/CRP 层） | **高** | 企业数据量下会产生 OOM（2026-07-11 经 plan `2026-07-11-1225-1` Phase 3 全部改造为 countByQuery / DB 级 SUM 聚合 / 带硬上限的受限查询） |
+| 内存聚合无 SQL GROUP BY | `ErpSalDashboardBizModel.findCustomerTopN()` | **中** | 应使用数据库级聚合 + LIMIT（2026-07-11 已改为 DB 级 GROUP BY customerId + SUM） |
 | `SettlementAllocation` DTO 重复 | `erp-sal-dao` 和 `erp-pur-dao` | 低 | 两个模块有完全相同的 DTO 类 |
 | 异常捕获过宽 | `ErpSalOrderProcessor.currentUserId()` | 低 | `catch (Exception e)` 应缩小范围 |
 | `BigDecimal` 非常量 | `ErpSalConstants`、`ErpFinConstants` | 低 | 常量接口中 `new BigDecimal(...)` 应为 `BigDecimal.valueOf()` |
@@ -96,7 +98,7 @@ public interface ErpSalErrors {
 | 可读性 | 优秀 | Given-When-Then 结构 + 辅助方法 |
 
 - **测试总数**：322 个 Java 测试文件（含 34 deep / 207 medium / 14 shallow）
-- **E2E Playwright 测试**：167 个 spec 文件（5 层测试金字塔）
+- **E2E Playwright 测试**：spec 文件数见 `docs/testing/` 实时计数（5 层测试金字塔）
 - **已知基线**：`mvn clean install -DskipTests` 全绿
 
 ---
@@ -128,7 +130,7 @@ public interface ErpSalErrors {
 
 ### 2.4 文档准确反映了代码能力
 
-- **CRUD 全 18 域**：文档标记 ✅ done，代码 337 实体均有 CRUD 页面
+- **CRUD 全 18 域**：文档标记 ✅ done，代码 447 实体均有 CRUD 页面
 - **核心业务逻辑 M1**：文档标记 ✅ done，采购/销售审批-触发-过账三段代码完整
 - **扩展域 M2/M3**：文档标记 ✅ done，制造/质量/资产/项目等业务逻辑完整
 - **业财一体 M4**：文档标记 ✅ done，P2P/O2C/期末结账/成本核算端到端链完整
@@ -139,12 +141,12 @@ public interface ErpSalErrors {
 
 | 不一致 | 涉及文档 | 影响 |
 |--------|---------|------|
-| **文档称 279 实体，代码实际 332** | `data-dependency-matrix.md` | 实体计数已漂移 +15.8% |
-| **文档称 1721 Java 文件，代码实际 2,423** | `product-scope.md` | 文件计数已漂移 +53.8%（2026-07-09 已从核心文档清理） |
+| **文档称 279 实体，代码实际 447** | `data-dependency-matrix.md` | 实体计数已漂移（2026-07-11 已订正：源文档对齐 447） |
+| **文档称 1721 Java 文件，代码实际 2758** | `product-scope.md` | 文件计数已漂移（2026-07-11 已订正：源文档对齐 2758） |
 | **`feature-inventory.md` 无完成状态** | `feature-inventory.md` | 列出所有功能但未标记是否已实现，新读者无法判断基线 |
 | `roles-and-permissions.md` 缺角色→权限点映射 | `roles-and-permissions.md` | 业务角色未映射到 `*.action-auth.xml` 权限点 |
-| 流量概览状态机与实际不符 | `flow-overview.md:312` | 声称 `INSPECTING` 状态，工单状态机实际无此状态 |
-| 分布式事务声称 | `flow-overview.md:499` | 称"期末结账=分布式事务"，实际单库 Quarkus 无分布式事务 |
+
+> **2026-07-11 复核**：原表中的"`flow-overview.md:312` INSPECTING 状态"与"`flow-overview.md:499` 分布式事务声称"两项已在仓库修复（`flow-overview.md:314` 现明确声明无 INSPECTING 态；`:499` 现写"单库事务(REQUIRED)"），从残留表移除。
 
 ---
 
@@ -176,9 +178,9 @@ backlog/README.md → design/*.md / architecture/*.md → plans/2026-07-*.md →
 - 2026-07-09 进行了大规模新鲜度清理（从 4 个核心文档中移除陈旧数字）
 
 **弱项**：
-- `api-response-conventions.md:3-4` 仍含模板占位符"如果不适用，请删除此文件"
-- 实体计数 279→332 的漂移在 `data-dependency-matrix.md` 中未更新
-- `18 vs 19 模块` 的表述歧义（`product-scope.md` 称 18 域，实际 19 含 notify）
+- `api-response-conventions.md:3-4` 仍含模板占位符"如果不适用，请删除此文件"（2026-07-11 已删除）
+- 实体计数 279→447 的漂移已在 `data-dependency-matrix.md` 订正（2026-07-11）
+- `18 业务域 + 1 跨域通知派发子系统（共 19 个 module-*/）` 表述已统一对齐 AGENTS.md 口径（2026-07-11）
 
 ### 3.4 完成度（7/10）
 
@@ -197,7 +199,7 @@ backlog/README.md → design/*.md / architecture/*.md → plans/2026-07-*.md →
 |------|------|
 | **无 API 契约文档**（OpenAPI/Swagger 或 GraphQL schema） | 外部集成方需从 ORM 模型推断 |
 | **无部署/运维手册** | 生产上线缺少数据库迁移、监控、备份策略 |
-| **无性能/伸缩性文档** | 无法评估 332 实体 18 域的规模化特性 |
+| **无性能/伸缩性文档** | 无法评估 447 实体 18 域的规模化特性 |
 | **i18n/l10n 薄弱**（仅 1 个文件） | 无国际化策略 |
 | **无集成架构文档** | 无外部系统集成模式 |
 
@@ -205,7 +207,7 @@ backlog/README.md → design/*.md / architecture/*.md → plans/2026-07-*.md →
 
 | 维度 | 评分 | 关键发现 |
 |------|------|----------|
-| 内部一致性 | **8/10** | 实体名、状态机状态、术语跨文档稳定；279→332 计数漂移；18 vs 19 模块歧义；路线图三重状态不一致 |
+| 内部一致性 | **8/10** | 实体名、状态机状态、术语跨文档稳定；实体计数 279→447、Java 文件 1721→2758 已于 2026-07-11 订正；18 业务域+notify 表述已统一；路线图三重状态不一致 |
 | 交叉引用 | **9/10** | 系统性 file:section 引用；计划-审计-Bug-日志端到端追溯为最佳实践级；中英文文件名混用 |
 | 新鲜度 | **8/10** | 日期前缀文件名；新鲜度横幅；07-09 系统性清理；模板残留 1 处；实体计数漂移 |
 | 完成度 | **7/10** | 无 API 契约文档；无部署/运维手册；无性能文档；i18n 薄弱；其他均全面 |
@@ -236,21 +238,21 @@ backlog/README.md → design/*.md / architecture/*.md → plans/2026-07-*.md →
 2. **明确的真相源纪律**：ORM XML 为模型唯一真相，文档明确引用，不散文重复
 3. **端到端追溯链完整**：从 Backlog → Plan → Log → Audit → Bug，每个决策都可追踪
 4. **审计体系成熟**：独立子代理交叉审计 + 强制闭门审计，已发现并修复多个 P0/P1 问题
-5. **测试体系全面**：322 单元测试 + 167 E2E Playwright 测试，5 层测试金字塔
+5. **测试体系全面**：322 单元测试 + E2E Playwright 测试（spec 数见 `docs/testing/` 实时计数），5 层测试金字塔
 
 ### 4.2 优先修复项
 
-| 优先级 | 问题 | 分类 |
-|--------|------|------|
-| P0 | Dashboard BizModel `dao.findAll()` 全表加载 OOM 风险 | 代码质量 — 高 |
-| P0 | `data-dependency-matrix.md` 实体计数 279→332 未同步 | 文档一致性 |
-| P1 | Sales/Purchase order 页面缺审批按钮（BizModel 已实现） | 代码一致性 |
-| P1 | 系统审计字段在生成的 add/edit form 中暴露 | 前端质量 |
-| P1 | 外键字段显示为数字 ID 而非名称 | 前端质量 |
-| P1 | `System.currentTimeMillis()` 1 处违规 | 代码质量 |
-| P2 | Dashboard 图表显示客户/供应商 ID 而非名称 | 前端质量 |
-| P2 | 排查 `flow-overview.md` 中 INSPECTING 状态和分布式事务声称 | 文档一致性 |
-| P2 | `SettlementAllocation` DTO 两域重复提取共用 | 代码质量 |
+| 优先级 | 问题 | 分类 | 状态 |
+|--------|------|------|------|
+| P0 | Dashboard BizModel `dao.findAll()` 全表加载 OOM 风险 | 代码质量 — 高 | ✅ 2026-07-11 plan `2026-07-11-1225-1` Phase 3 落地（10 域 25 处改 countByQuery / DB 级 SUM / 受限查询） |
+| P0 | `data-dependency-matrix.md` 实体计数 279→447 未同步 | 文档一致性 | ✅ 2026-07-11 已订正（实体 447 / Java 2758 / reactor 154） |
+| P1 | Sales/Purchase order 页面缺审批按钮（BizModel 已实现） | 代码一致性 | ⏳ 移出本批，successor：另开前端质量 owner plan |
+| P1 | 系统审计字段在生成的 add/edit form 中暴露 | 前端质量 | ⏳ 移出本批，successor：另开前端质量 owner plan |
+| P1 | 外键字段显示为数字 ID 而非名称 | 前端质量 | ⏳ 移出本批，successor：另开前端质量 owner plan |
+| P1 | `System.currentTimeMillis()` 1 处违规 | 代码质量 | ✅ 2026-07-11 plan `2026-07-11-1225-1` Phase 2 落地（改 CoreMetrics） |
+| P2 | Dashboard 图表显示客户/供应商 ID 而非名称 | 前端质量 | ⏳ 移出本批，successor：另开前端质量 owner plan |
+| P2 | 排查 `flow-overview.md` 中 INSPECTING 状态和分布式事务声称 | 文档一致性 | ✅ 已 stale（仓库此前已修：`flow-overview.md:314` 无 INSPECTING、`:499` 单库事务） |
+| P2 | `SettlementAllocation` DTO 两域重复提取共用 | 代码质量 | ⏳ 移出本批，successor：另开代码重构 owner plan |
 
 ### 4.3 项目成熟度定位
 

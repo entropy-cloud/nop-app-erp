@@ -10,6 +10,8 @@
 
 根 pom.xml 列出 20 个 reactor 模块：18 个 `module-<domain>` + 1 个 `module-notify`（跨域 sys 通知派发子系统）+ 1 个 `app-erp-all`（子模块链合计 154 个 reactor 模块）。
 
+> **reactor 模块计数口径（权威）**：154 = 根 `mvn validate` 展开的完整 Maven reactor，含根聚合 pom（`app-erp`）+ `app-erp-all` 聚合启动工程 + 18 业务域与 notify 的各子模块链（model/codegen/dao/meta/service/web/app/api）。`find module-* -name pom.xml -maxdepth 3` 得 152，比 154 少 2，因它不含根 pom 与 `app-erp-all/`（位于 `module-*/` 之外）。历史快照（如 `known-good-baselines.md`）中的 154 保留为当时基线，新增基线行沿用本 154 口径。
+
 > **物理目录 ↔ 逻辑工程名 ↔ appName ↔ moduleId 映射**：完整 19 行映射表见 `docs/architecture/domain-module-split-analysis.md §2.0`（唯一规范）。物理目录 `module-<domain>/` 是 bootstrap 期别名，逻辑工程名为 `app-erp-<domain>`，聚合启动工程逻辑名 = 物理名 = `app-erp-all`。`module-notify`（逻辑工程名 `app-erp-notify`，appName `erp-notify`，moduleId `erp/notify`）为跨域 sys 子系统，与 18 业务域并列。
 
 所有域 codegen 骨架已生成，含实体类、DAO、I*Biz 接口、BizModel、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
