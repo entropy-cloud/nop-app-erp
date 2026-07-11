@@ -133,4 +133,15 @@ public interface ErpCsConstants {
 
     /** 工单主题建议最小有效长度（< 2 字符返回空集）。 */
     int SUGGEST_SUBJECT_MIN_LENGTH = 2;
+
+    // === 预设应答（plan 2026-07-11-1234-2）===
+
+    /** 预设应答是否启用（默认 true；canned-response.md §五）。 */
+    String CONFIG_CANNED_RESPONSE_ENABLED = "erp-cs.canned-response-enabled";
+
+    /** 宏自动匹配展示条数（默认 3；canned-response.md §五/§二）。 */
+    String CONFIG_CANNED_RESPONSE_MACRO_COUNT = "erp-cs.canned-response-macro-count";
+
+    /** 应答分类最大深度（默认 3；canned-response.md §五，本期仅声明不强制校验）。 */
+    String CONFIG_CANNED_RESPONSE_CATEGORY_MAX_DEPTH = "erp-cs.canned-response-category-max-depth";
 }

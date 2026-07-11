@@ -16,6 +16,8 @@ site:
       displayName: Entitlement
     ErpCsKnowledgeBase-main:
       displayName: Knowledge Base
+    ErpCsQualityDashboard-main:
+      displayName: Quality Dashboard
     ErpCsServiceCatalogItem-main:
       displayName: Catalog Item
     ErpCsSlaPolicy-main:
@@ -38,6 +40,8 @@ site:
       displayName: Configuration
     cs-entitlement:
       displayName: Entitlements
+    cs-quality-dashboard:
+      displayName: Quality Dashboard
     cs-report:
       displayName: Customer Service Reports
     cs-service-catalog:

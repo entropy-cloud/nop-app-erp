@@ -26,4 +26,8 @@
     <!-- 客服域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /cs/）。 -->
     <bean id="app.erp.cs.service.report.ErpCsReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- 客服绩效聚合看板（plan 2026-07-11-1234-2 §Phase 3）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
+          经 @BizQuery 暴露 getDashboardKpi/getTeamSlaRanking/getAgentCsatBreakdown。镜像 finance ErpFinDashboardBizModel。 -->
+    <bean id="app.erp.cs.service.dashboard.ErpCsQualityDashboardBizModel" ioc:type="@bean:id"/>
 </beans>

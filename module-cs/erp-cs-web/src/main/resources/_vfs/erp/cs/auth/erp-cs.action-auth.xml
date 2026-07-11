@@ -6,6 +6,15 @@
                   icon="headset" resourceType="TOPM" orderNo="1100"
                   routePath="/erp-cs" component="layouts/default/index">
             <children>
+                <resource id="cs-quality-dashboard" displayName="客服绩效看板" i18n-en:displayName="Quality Dashboard"
+                          icon="layout-dashboard" resourceType="SUBM" orderNo="50">
+                    <children>
+                        <resource id="ErpCsQualityDashboard-main" displayName="客服绩效看板"
+                                  i18n-en:displayName="Quality Dashboard" icon="layout-dashboard"
+                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  url="/erp/cs/pages/ErpCsQualityDashboard/main.page.yaml"/>
+                    </children>
+                </resource>
                 <resource id="cs-ticket" displayName="客服工单" i18n-en:displayName="Tickets"
                           icon="ticket" resourceType="SUBM" orderNo="100">
                     <children>

@@ -44,6 +44,10 @@ public interface ErpCsErrors {
     String ARG_LIMIT = "limit";
     String ARG_MAX_LIMIT = "maxLimit";
 
+    // --- 预设应答参数键（plan 2026-07-11-1234-2） ---
+    String ARG_CANNED_RESPONSE_ID = "cannedResponseId";
+    String ARG_VARIABLE_KEY = "variableKey";
+
     ErrorCode ERR_TICKET_NOT_FOUND = ErrorCode.define(
             "erp.err.cs.ticket.not-found",
             "客服工单不存在: {ticketId}",
@@ -154,4 +158,21 @@ public interface ErpCsErrors {
             "erp.err.cs.knowledge-search.limit-exceeded",
             "知识库搜索 limit[{limit}]超过最大值[{maxLimit}]",
             ARG_LIMIT, ARG_MAX_LIMIT);
+
+    // --- 预设应答错误码（plan 2026-07-11-1234-2 §Phase 1） ---
+
+    ErrorCode ERR_CANNED_RESPONSE_NOT_FOUND = ErrorCode.define(
+            "erp.err.cs.canned-response.not-found",
+            "预设应答不存在: {cannedResponseId}",
+            ARG_CANNED_RESPONSE_ID);
+
+    ErrorCode ERR_CANNED_RESPONSE_INACTIVE = ErrorCode.define(
+            "erp.err.cs.canned-response.inactive",
+            "预设应答[{cannedResponseId}]未启用（isActive=false），禁止渲染/插入",
+            ARG_CANNED_RESPONSE_ID);
+
+    ErrorCode ERR_CANNED_RESPONSE_REQUIRED_VAR_MISSING = ErrorCode.define(
+            "erp.err.cs.canned-response.required-var-missing",
+            "预设应答必填变量[{variableKey}]缺失",
+            ARG_VARIABLE_KEY);
 }

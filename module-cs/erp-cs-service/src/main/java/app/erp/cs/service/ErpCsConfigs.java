@@ -122,6 +122,23 @@ public final class ErpCsConfigs {
         return intVar(ErpCsConstants.CONFIG_KNOWLEDGE_SEARCH_MAX_LIMIT, 20);
     }
 
+    // === 预设应答（plan 2026-07-11-1234-2）===
+
+    /** 预设应答是否启用（默认 true；canned-response.md §五）。 */
+    public static boolean isCannedResponseEnabled() {
+        return boolVar(ErpCsConstants.CONFIG_CANNED_RESPONSE_ENABLED, true);
+    }
+
+    /** 宏自动匹配展示条数（默认 3；canned-response.md §五/§二）。 */
+    public static int getCannedResponseMacroCount() {
+        return intVar(ErpCsConstants.CONFIG_CANNED_RESPONSE_MACRO_COUNT, 3);
+    }
+
+    /** 应答分类最大深度（默认 3；canned-response.md §五，本期仅声明不强制校验）。 */
+    public static int getCannedResponseCategoryMaxDepth() {
+        return intVar(ErpCsConstants.CONFIG_CANNED_RESPONSE_CATEGORY_MAX_DEPTH, 3);
+    }
+
     private static boolean boolVar(String key, boolean defaultValue) {
         String raw = AppConfig.var(key, String.valueOf(defaultValue));
         if (raw == null || raw.trim().isEmpty()) {
