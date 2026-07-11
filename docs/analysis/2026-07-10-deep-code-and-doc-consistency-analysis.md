@@ -83,7 +83,7 @@ public interface ErpSalErrors {
 |------|------|--------|------|
 | `dao.findAll()` 全表加载 | `ErpMdDashboardBizModel`、`ErpSalDashboardBizModel` 等 10 域 / 25 处（Dashboard + Report/CRP 层） | **高** | 企业数据量下会产生 OOM（2026-07-11 经 plan `2026-07-11-1225-1` Phase 3 全部改造为 countByQuery / DB 级 SUM 聚合 / 带硬上限的受限查询） |
 | 内存聚合无 SQL GROUP BY | `ErpSalDashboardBizModel.findCustomerTopN()` | **中** | 应使用数据库级聚合 + LIMIT（2026-07-11 已改为 DB 级 GROUP BY customerId + SUM） |
-| `SettlementAllocation` DTO 重复 | `erp-sal-dao` 和 `erp-pur-dao` | 低 | 两个模块有完全相同的 DTO 类 |
+| `SettlementAllocation` DTO 重复 | `erp-sal-dao` 和 `erp-pur-dao` | 低 | 两个模块有完全相同的 DTO 类（2026-07-11 经 plan `2026-07-11-1643-2` 提取至 `app.erp.md.biz` 单一真相源，两旧文件删除，8 处 import 迁移，已修复） |
 | 异常捕获过宽 | `ErpSalOrderProcessor.currentUserId()` | 低 | `catch (Exception e)` 应缩小范围 |
 | `BigDecimal` 非常量 | `ErpSalConstants`、`ErpFinConstants` | 低 | 常量接口中 `new BigDecimal(...)` 应为 `BigDecimal.valueOf()` |
 
@@ -252,7 +252,7 @@ backlog/README.md → design/*.md / architecture/*.md → plans/2026-07-*.md →
 | P1 | `System.currentTimeMillis()` 1 处违规 | 代码质量 | ✅ 2026-07-11 plan `2026-07-11-1225-1` Phase 2 落地（改 CoreMetrics） |
 | P2 | Dashboard 图表显示客户/供应商 ID 而非名称 | 前端质量 | ✅ 2026-07-11 plan `2026-07-11-1643-1` Phase 4 落地（sales/purchase/inventory/assets/master-data/maintenance 看板后端 join + 前端 adaptor/列改用名称） |
 | P2 | 排查 `flow-overview.md` 中 INSPECTING 状态和分布式事务声称 | 文档一致性 | ✅ 已 stale（仓库此前已修：`flow-overview.md:314` 无 INSPECTING、`:499` 单库事务） |
-| P2 | `SettlementAllocation` DTO 两域重复提取共用 | 代码质量 | ⏳ 移出本批，successor：另开代码重构 owner plan |
+| P2 | `SettlementAllocation` DTO 两域重复提取共用 | 代码质量 | ✅ 2026-07-11 plan `2026-07-11-1643-2` 落地（提取至 `app.erp.md.biz` 单一真相源，8 处 import 迁移，两旧文件删除） |
 
 ### 4.3 项目成熟度定位
 

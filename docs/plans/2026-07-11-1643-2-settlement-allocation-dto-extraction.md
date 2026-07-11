@@ -1,6 +1,6 @@
 # 2026-07-11-1643-2-settlement-allocation-dto-extraction SettlementAllocation DTO 跨域去重提取至 md-dao
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-11
 > Source: `docs/plans/2026-07-11-1225-1-analysis-consistency-fixes.md` Deferred「`SettlementAllocation` DTO 跨模块重复」（Successor Required: yes，触发条件=另开代码重构 owner plan，**本计划即该 successor**）；`docs/analysis/2026-07-10-deep-code-and-doc-consistency-analysis.md` §1.6:86 + §4.2:255（P2，"两域重复提取共用"）
 > Related: `docs/plans/2026-07-02-0300-2-sales-invoice-receipt-bizmodel.md`（ReceiptSettler 落地，sales 侧 DTO 源头）、`docs/plans/2026-07-02-0300-1-purchase-invoice-payment-three-way-match.md`（PaymentSettler 落地，purchase 侧 DTO 源头）
@@ -100,13 +100,13 @@ Exit Criteria:
 > 仅在所有项目和每个阶段退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处：`mvn clean install -DskipTests`（154 模块，重生 GraalVM reflect-config + GraphQL schema dump）一次。
 
 - [x] 范围内行为完成（单一真相源 DTO + 8 处迁移 + 两旧文件删除）
-- [ ] 相关文档对齐（`domain-module-split-analysis.md`/`data-dependency-matrix.md` 若提及共享 DTO 约定则补注；分析报告 §1.6:86 + §4.2:255 状态订正为已修）
+- [x] 相关文档对齐（`domain-module-split-analysis.md`/`data-dependency-matrix.md` 未提及共享 DTO 约定，无需补注；分析报告 §1.6:86 + §4.2:255 状态订正为已修；前驱计划 `2026-07-11-1225-1` Deferred + Follow-up successor 标记完成）
 - [x] 已运行验证（`mvn clean install -DskipTests` 相关模块 BUILD SUCCESS + sales/purchase service `mvn test` 0 failures/0 errors）
 - [x] 无范围内项目降级为 deferred/follow-up
 - [x] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话 `ses_0ae63cf00ffenU5Fm5eVZEPw3I`）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -124,14 +124,21 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 实施完成 2026-07-11。Phase 1-2 全部 done：共享 SettlementAllocation 在 `app.erp.md.biz` 包创建（泛化 Javadoc 去客户/供应商措辞）；sales/purchase 共 8 处 import 迁移至 md-dao 共享类型；两旧文件删除。验证：`mvn test -pl module-sales/erp-sal-service,module-purchase/erp-pur-service -am` 全绿（3m3s BUILD SUCCESS，0 failures/0 errors）；`mvn clean install -DskipTests` 相关模块 BUILD SUCCESS。GraphQL schema 随后端重部署自动重生（`_dump/` gitignore）。纯 Java 重构，零 ORM/契约/AMIS 变更。
+Status Note: 实施完成 2026-07-11，关闭 2026-07-11。Phase 1-2 全部 done：共享 SettlementAllocation 在 `app.erp.md.biz` 包创建（泛化 Javadoc 去客户/供应商措辞）；sales/purchase 共 8 处 import 迁移至 md-dao 共享类型；两旧文件删除。验证：`mvn test -pl module-sales/erp-sal-service,module-purchase/erp-pur-service -am` 全绿（BUILD SUCCESS，121 tests 0 failures/0 errors）；`mvn clean install -DskipTests` 相关模块 BUILD SUCCESS。GraphQL schema 随后端重部署自动重生（`_dump/` gitignore）。纯 Java 重构，零 ORM/契约/AMIS 变更。文档对齐：分析报告 §1.6:86 + §4.2:255 订正为已修；前驱计划 `2026-07-11-1225-1` Deferred + Follow-up successor 标记完成。
 
 Closure Audit Evidence:
 
-- DTO 单一真相源：`module-master-data/erp-md-dao/src/main/java/app/erp/md/biz/SettlementAllocation.java`
-- 8 处迁移文件：4 sales 文件 + 4 purchase 文件（import `app.erp.sal.biz`/`app.erp.pur.biz` → `app.erp.md.biz`）
-- 两旧文件已删：`module-{sales,purchase}/erp-{sal,pur}-dao/.../SettlementAllocation.java`
-- 测试验证：sales-service 35.148s + purchase-service 35.658s 全绿
+- Auditor / Agent: 独立子代理（新会话 `ses_0ae63cf00ffenU5Fm5eVZEPw3I`，冷重播无执行者上下文，read-only 核对）
+- Verdict: PASS（无 Blocker / 无 Major）
+- Evidence:
+  - DTO 单一真相源：`module-master-data/erp-md-dao/src/main/java/app/erp/md/biz/SettlementAllocation.java`（`glob **/SettlementAllocation.java` count=1，两旧文件实测已删）
+  - 8 处迁移文件：4 sales 文件（`IErpSalReceiptBiz.java:10`、`ErpSalReceiptBizModel.java:5`、`ReceiptSettler.java:3`、`ErpSalReceiptProcessor.java:5`）+ 4 purchase 文件（`IErpPurPaymentBiz.java:10`、`ErpPurPaymentBizModel.java:5`、`PaymentSettler.java:3`、`ErpPurPaymentProcessor.java:9`），import 全部 `app.erp.md.biz`
+  - `rg "app\.erp\.(sal|pur)\.biz\.SettlementAllocation"` 零命中（无残留旧包引用）
+  - 模块依赖已接线：`erp-sal-dao/pom.xml:18` + `erp-pur-dao/pom.xml:18` 均声明 `app-erp-master-data-dao`，无需新 pom 接线
+  - 字段集/行为不变：纯 POJO（无注解/无构造/无 serialVersionUID），`Settler` 签名与循环体仅 import 行变更
+  - 测试验证：sales+purchase service 121 tests 0 failures/0 errors（BUILD SUCCESS）
+  - 无范围蔓延：`ReturnStockMoveBuilder`/`ReturnQtyValidator` 仍存于两 service 层未动（正确 deferred）；`module-common` 未建
+- Anti-hollow: 旧文件实测删除（glob count=1），非 no-op
 
 Follow-up:
 

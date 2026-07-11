@@ -327,7 +327,7 @@ Exit Criteria:
 
 - Classification: `optimization candidate`
 - Why Not Blocking Closure: 跨 sales/purchase dao 的 DTO 提取属跨模块重构，不同结果表面。
-- Successor Required: `yes` — 另开代码重构 owner plan
+- Successor Required: `yes` — ~~另开代码重构 owner plan~~ → 已完成：plan `2026-07-11-1643-2-settlement-allocation-dto-extraction.md`（completed）
 
 ### `feature-inventory.md` 完成状态补全 + `roles-and-permissions.md` 权限映射
 
@@ -367,5 +367,5 @@ Closure Audit Evidence:
 Follow-up:
 
 - AMIS 前端质量四项 → 另开前端 owner plan
-- `SettlementAllocation` DTO 重复 → 另开代码重构 owner plan
+- ~~`SettlementAllocation` DTO 重复 → 另开代码重构 owner plan~~ → 已完成：plan `2026-07-11-1643-2`（completed）
 - `feature-inventory.md` / `roles-and-permissions.md` 内容补全 → 另开 owner-doc 对齐计划
