@@ -124,6 +124,43 @@ export async function verifyState(
 }
 
 /**
+ * 原语 4：经 GraphQL query 调自定义 @BizQuery 动作（非实体 CRUD，如 suggestForTicket/renderTemplate）。
+ *
+ * args 中：标量值内联为 GraphQL 字面量；input() 包装的值为 input 对象参数（经 variable + 显式类型）。
+ * 返回 query 结果（可能是标量/列表/对象）。失败时 data 为 null 且 errors 含 ErrorCode。
+ */
+export async function callQuery(
+  page: Page,
+  entityName: string,
+  action: string,
+  args: Record<string, unknown>,
+): Promise<{ data: any | null; errors: any[] | null; json: any }> {
+  const parts: string[] = [];
+  const varDecls: string[] = [];
+  const vars: Record<string, unknown> = {};
+  for (const [name, arg] of Object.entries(args)) {
+    if (arg && typeof arg === 'object' && (arg as InputArg).__input) {
+      const ia = arg as InputArg;
+      varDecls.push(`$${name}:${ia.type}`);
+      vars[name] = ia.value;
+      parts.push(`${name}:$${name}`);
+    } else {
+      parts.push(`${name}:${JSON.stringify(arg)}`);
+    }
+  }
+  const query = varDecls.length
+    ? `query(${varDecls.join(',')}){ ${entityName}__${action}(${parts.join(',')}) }`
+    : `query{ ${entityName}__${action}(${parts.join(',')}) }`;
+  const payload = varDecls.length ? { query, variables: vars } : { query };
+  const resp = await page.request.post('/graphql', { data: payload });
+  const json: any = await resp.json();
+  const actionKey = `${entityName}__${action}`;
+  const data = json?.data?.[actionKey] ?? null;
+  const errors = json?.errors ?? null;
+  return { data, errors, json };
+}
+
+/**
  * 构建 Nop FieldTreeBean 等值过滤（TreeBean Map 格式：`$type`=op, `name`/`value`=属性）。
  * Nop filter 不接受 plain-map 字段相等（报 op-is-null）；必须用 `$type:'eq'` 显式声明算子。
  */
