@@ -119,6 +119,7 @@ prop:
       orderLine: Order Line
       warehouse: Warehouse
       materialName: null
+      warehouseName: null
     ErpSalInvoice:
       id: ID
       code: Code
@@ -274,6 +275,7 @@ prop:
       warehouse: Warehouse
       project: Project
       materialName: null
+      warehouseName: null
     ErpSalPriceList:
       id: ID
       name: Name

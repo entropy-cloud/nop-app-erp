@@ -1,3 +1,3 @@
 _chgType,ID,SCORECARD_ID,CRITERIA_NAME,WEIGHT,FORMULA,SCORE,WEIGHTED_SCORE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,1,质量,40,pass_rate,,,0,0,autotest-ref,*,autotest-ref,*
-A,4,1,交货,50,on_time,,,0,0,autotest-ref,*,autotest-ref,*
+A,2,1,质量,40,pass_rate,,,*,0,autotest-ref,*,autotest-ref,*
+A,4,1,交货,50,on_time,,,*,0,autotest-ref,*,autotest-ref,*

@@ -668,6 +668,8 @@ prop:
       sourceWarehouse: Source Warehouse
       destWarehouse: Dest Warehouse
       materialName: null
+      sourceWarehouseName: null
+      destWarehouseName: null
     ErpMfgWorkcenter:
       id: ID
       code: Code

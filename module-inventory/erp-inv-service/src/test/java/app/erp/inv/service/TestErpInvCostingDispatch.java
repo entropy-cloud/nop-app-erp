@@ -115,9 +115,9 @@ public class TestErpInvCostingDispatch extends JunitAutoTestCase {
 
     @Test
     public void testUnrecognizedCostMethodFallsBackToDefault() {
-        // 物料配 LIFO（40，本期 Non-Goal）→ resolver 不识别 → 回退默认 MOVING_AVERAGE，记账不中断
+        // 物料配未识别码值 → resolver 不识别 → 回退默认 MOVING_AVERAGE，记账不中断
         Long materialId = 2104L;
-        seedMaterial(materialId, ErpInvConstants.COST_METHOD_LIFO);
+        seedMaterial(materialId, "UNRECOGNIZED_METHOD");
 
         generateIncoming(materialId, "PR-DISP-005", new BigDecimal("3"), new BigDecimal("2"));
         ErpInvStockBalance balance = findBalance(materialId);

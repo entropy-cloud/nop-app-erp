@@ -1,4 +1,4 @@
 _chgType,ID,CODE,NAME,PARENT_ID,SUBJECT_CLASS,DIRECTION,BALANCE_TYPE,CURRENCY_ID,IS_AUXILIARY_PARTNER,IS_AUXILIARY_DEPARTMENT,IS_AUXILIARY_PROJECT,IS_AUXILIARY_WAREHOUSE,IS_AUXILIARY_PRODUCT,IS_AUXILIARY_COST_CENTER,IS_BUDGETABLE,IS_LEAF,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
-A,2,1401,库存商品,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,0,0,autotest-ref,*,autotest-ref,*,
-A,3,2202,应付账款-暂估,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,0,0,autotest-ref,*,autotest-ref,*,
-A,4,6401,主营业务成本,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,0,0,autotest-ref,*,autotest-ref,*,
+A,2,1401,库存商品,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,*,0,autotest-ref,*,autotest-ref,*,
+A,3,2202,应付账款-暂估,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,*,0,autotest-ref,*,autotest-ref,*,
+A,4,6401,主营业务成本,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,*,0,autotest-ref,*,autotest-ref,*,

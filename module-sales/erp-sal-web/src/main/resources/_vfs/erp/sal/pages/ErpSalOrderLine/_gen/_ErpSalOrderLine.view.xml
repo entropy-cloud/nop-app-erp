@@ -98,6 +98,9 @@
 
                 <!--物料名称-->
                 <col id="materialName"/>
+
+                <!--发货仓库名称-->
+                <col id="warehouseName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -119,7 +122,7 @@
  updatedBy[修改人] updateTime[修改时间]
  remark[备注] discountRate[行折扣率(%)]
  discountAmount[行折扣金额] pricingSource[取价来源]
- materialName[物料名称] 
+ materialName[物料名称] warehouseName[发货仓库名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售订单行" i18n-en:title="Add Sales Order Line" x:prototype="edit"/>

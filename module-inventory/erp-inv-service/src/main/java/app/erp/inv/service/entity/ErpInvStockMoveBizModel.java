@@ -101,34 +101,48 @@ public class ErpInvStockMoveBizModel extends CrudBizModel<ErpInvStockMove> imple
 
     // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。
+    // 容错：实体可能因 REQUIRES_NEW 过账事务 evict 而脱离 session（见 StockMoveProcessor reload 注释），
+    // 此时 batchLoadProps 触发 session-closed。catch 后返回 null 名称，不阻塞主操作（*Name 仅为展示字段）。
 
     @BizLoader(forType = ErpInvStockMove.class)
     public List<String> sourceWarehouseName(@ContextSource List<ErpInvStockMove> moves) {
-        orm().batchLoadProps(moves, Collections.singleton("sourceWarehouse"));
-        List<String> result = new ArrayList<>(moves.size());
-        for (ErpInvStockMove move : moves) {
-            result.add(move.getSourceWarehouse() != null ? move.getSourceWarehouse().getName() : null);
+        try {
+            orm().batchLoadProps(moves, Collections.singleton("sourceWarehouse"));
+            List<String> result = new ArrayList<>(moves.size());
+            for (ErpInvStockMove move : moves) {
+                result.add(move.getSourceWarehouse() != null ? move.getSourceWarehouse().getName() : null);
+            }
+            return result;
+        } catch (Exception e) {
+            return Collections.nCopies(moves.size(), null);
         }
-        return result;
     }
 
     @BizLoader(forType = ErpInvStockMove.class)
     public List<String> destWarehouseName(@ContextSource List<ErpInvStockMove> moves) {
-        orm().batchLoadProps(moves, Collections.singleton("destWarehouse"));
-        List<String> result = new ArrayList<>(moves.size());
-        for (ErpInvStockMove move : moves) {
-            result.add(move.getDestWarehouse() != null ? move.getDestWarehouse().getName() : null);
+        try {
+            orm().batchLoadProps(moves, Collections.singleton("destWarehouse"));
+            List<String> result = new ArrayList<>(moves.size());
+            for (ErpInvStockMove move : moves) {
+                result.add(move.getDestWarehouse() != null ? move.getDestWarehouse().getName() : null);
+            }
+            return result;
+        } catch (Exception e) {
+            return Collections.nCopies(moves.size(), null);
         }
-        return result;
     }
 
     @BizLoader(forType = ErpInvStockMove.class)
     public List<String> orgName(@ContextSource List<ErpInvStockMove> moves) {
-        orm().batchLoadProps(moves, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(moves.size());
-        for (ErpInvStockMove move : moves) {
-            result.add(move.getOrg() != null ? move.getOrg().getName() : null);
+        try {
+            orm().batchLoadProps(moves, Collections.singleton("org"));
+            List<String> result = new ArrayList<>(moves.size());
+            for (ErpInvStockMove move : moves) {
+                result.add(move.getOrg() != null ? move.getOrg().getName() : null);
+            }
+            return result;
+        } catch (Exception e) {
+            return Collections.nCopies(moves.size(), null);
         }
-        return result;
     }
 }

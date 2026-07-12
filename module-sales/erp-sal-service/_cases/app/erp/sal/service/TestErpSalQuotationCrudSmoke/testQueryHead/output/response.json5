@@ -3,6 +3,13 @@
     "extData": null,
     "hasNext": null,
     "hasPrev": null,
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1,
     "items": [
       {
         "id": "5",
@@ -28,16 +35,14 @@
         "createTime": "@var:ErpSalQuotation@createTime",
         "updatedBy": "autotest-ref",
         "updateTime": "@var:ErpSalQuotation@createTime",
-        "remark": null
+        "remark": null,
+        "approvedBy": null,
+        "approvedAt": null,
+        "currencyName": "元",
+        "customerName": "冒烟客户",
+        "orgName": null
       }
-    ],
-    "limit": 10,
-    "nextCursor": null,
-    "offset": 0,
-    "page": 1,
-    "pageCount": 1,
-    "prevCursor": null,
-    "total": 1
+    ]
   },
   "status": 0
 }

@@ -74,6 +74,7 @@ public class ErpInvStockMoveProcessor {
         doConfirm(move, lines, context);
         if (request.isBusinessLinked()) {
             doComplete(move, lines, request.getAcctSchemaId(), context);
+            move = requireMove(move.getId(), context);
         }
         return move;
     }
@@ -89,7 +90,7 @@ public class ErpInvStockMoveProcessor {
         ErpInvStockMove move = requireMove(moveId, context);
         List<ErpInvStockMoveLine> lines = loadLines(move.getId());
         doComplete(move, lines, null, context);
-        return move;
+        return requireMove(move.getId(), context);
     }
 
     public ErpInvStockMove cancel(Long moveId, IServiceContext context) {

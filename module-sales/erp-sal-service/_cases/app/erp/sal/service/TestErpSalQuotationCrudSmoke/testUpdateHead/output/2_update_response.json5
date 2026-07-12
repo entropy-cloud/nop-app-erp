@@ -23,7 +23,12 @@
     "createTime": "@var:ErpSalQuotation@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpSalQuotation@updateTime_1",
-    "remark": "冒烟-已修改"
+    "remark": "冒烟-已修改",
+    "approvedBy": null,
+    "approvedAt": null,
+    "currencyName": "元",
+    "customerName": "冒烟客户",
+    "orgName": null
   },
   "status": 0
 }

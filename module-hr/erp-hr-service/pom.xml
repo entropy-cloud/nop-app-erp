@@ -23,6 +23,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- test-only: ErpFinPostingProcessor 注入 SubjectMappingResolver（master-data beans），单域测试需引入。 -->
+        <dependency>
+            <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <artifactId>app-erp-hr-codegen</artifactId>
             <groupId>io.nop.app</groupId>

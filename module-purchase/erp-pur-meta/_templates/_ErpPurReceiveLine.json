@@ -27,5 +27,6 @@
   "uoM": null,
   "orderLine": null,
   "warehouse": null,
-  "materialName": ""
+  "materialName": "",
+  "warehouseName": ""
 }

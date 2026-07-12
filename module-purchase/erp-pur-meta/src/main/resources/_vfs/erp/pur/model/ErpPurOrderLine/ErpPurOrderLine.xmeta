@@ -5,5 +5,8 @@
         <prop name="materialName" displayName="物料名称" queryable="false" sortable="false">
             <schema type="java.lang.String"/>
         </prop>
+        <prop name="warehouseName" displayName="收货仓库名称" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
     </props>
 </meta>

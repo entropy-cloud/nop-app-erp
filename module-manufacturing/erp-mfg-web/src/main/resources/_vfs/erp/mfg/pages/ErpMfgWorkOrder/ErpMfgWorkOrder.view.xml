@@ -25,6 +25,14 @@
                     </messages>
                     <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
                 </action>
+                <action id="row-withdraw-approval-button" label="撤回提交" level="default" icon="fa fa-mail-reply">
+                    <api url="@mutation:ErpMfgWorkOrder__withdrawApproval?id=$id"/>
+                    <confirmText>确认撤回此工单的提交？撤回后单据将回到未提交状态，可重新编辑提交。</confirmText>
+                    <messages>
+                        <success>工单已撤回提交</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
+                </action>
                 <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpMfgWorkOrder__approve?id=$id"/>
                     <confirmText>确认批准此工单？</confirmText>

@@ -2,11 +2,8 @@
   "data": {
     "id": "5",
     "code": "SMOKE-SAL",
-    "orgId": null,
     "customerId": 2,
     "businessDate": "2026-07-01",
-    "validFrom": null,
-    "validTo": null,
     "currencyId": 1,
     "exchangeRate": 1,
     "totalAmount": 0,
@@ -23,7 +20,15 @@
     "createTime": "@var:ErpSalQuotation@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpSalQuotation@createTime",
-    "remark": null
+    "orgId": null,
+    "validFrom": null,
+    "validTo": null,
+    "remark": null,
+    "approvedBy": null,
+    "approvedAt": null,
+    "currencyName": "元",
+    "customerName": "冒烟客户",
+    "orgName": null
   },
   "status": 0
 }

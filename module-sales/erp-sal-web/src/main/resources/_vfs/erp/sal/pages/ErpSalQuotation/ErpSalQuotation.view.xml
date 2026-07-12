@@ -38,6 +38,14 @@
                     </messages>
                     <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
                 </action>
+                <action id="row-withdraw-approval-button" label="撤回提交" level="default" icon="fa fa-mail-reply">
+                    <api url="@mutation:ErpSalQuotation__withdrawApproval?id=$id"/>
+                    <confirmText>确认撤回此销售报价单的提交？撤回后单据将回到未提交状态，可重新编辑提交。</confirmText>
+                    <messages>
+                        <success>销售报价单已撤回提交</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
+                </action>
                 <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpSalQuotation__approve?id=$id"/>
                     <confirmText>确认批准此销售报价单？</confirmText>

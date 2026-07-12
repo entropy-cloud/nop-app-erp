@@ -30,5 +30,6 @@
   "taxRateMd": null,
   "warehouse": null,
   "project": null,
-  "materialName": ""
+  "materialName": "",
+  "warehouseName": ""
 }

@@ -361,6 +361,18 @@
         }
 
 
+        private String _warehouseName;
+
+    
+        public String getWarehouseName(){
+            return _warehouseName;
+        }
+
+        public void setWarehouseName(String value){
+            this._warehouseName = value;
+        }
+
+
         private Map<String,Object> _order;
 
         public Map<String,Object> getOrder(){

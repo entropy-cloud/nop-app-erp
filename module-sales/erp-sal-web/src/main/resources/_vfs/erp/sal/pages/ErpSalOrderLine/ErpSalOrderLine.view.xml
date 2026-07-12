@@ -7,6 +7,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="materialName" label="物料名称"/>
+                <col id="warehouseName" label="发货仓库"/>
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="unitPrice" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="taxAmount" ui:number="true" sortable="true"/>

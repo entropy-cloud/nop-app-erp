@@ -147,6 +147,28 @@ public class TestErpPurFkNameLoader extends JunitAutoTestCase {
         assertEquals("物料Omega", first.get("materialName"));
     }
 
+    @Test
+    public void testPurOrderLineWarehouseNameResolution() {
+        ormTemplate.runInSession(() -> {
+            seedOrg(ORG_ID, "采购测试组织");
+            seedSupplier(SUPPLIER_ID, "供应商Eta");
+            seedWarehouse(WAREHOUSE_ID, "原料仓");
+            seedCurrency(CURRENCY_ID, "人民币");
+            seedUoM(UOM_ID, "个");
+            seedMaterial(MATERIAL_ID, "物料Theta");
+            seedOrder(7702L);
+            seedOrderLine(7802L, 7702L);
+        });
+
+        List<Map<String, Object>> rows = queryWithSelection(
+                "ErpPurOrderLine__findList",
+                "id", "warehouseName");
+        assertNotNull(rows);
+        assertEquals(false, rows.isEmpty(), "至少 1 条采购订单行");
+        Map<String, Object> first = rows.get(0);
+        assertEquals("原料仓", first.get("warehouseName"));
+    }
+
     // ---------- query helper ----------
 
     @SuppressWarnings("unchecked")
@@ -293,6 +315,7 @@ public class TestErpPurFkNameLoader extends JunitAutoTestCase {
         line.setLineNo(1);
         line.setMaterialId(MATERIAL_ID);
         line.setUoMId(UOM_ID);
+        line.setWarehouseId(WAREHOUSE_ID);
         line.setQuantity(BigDecimal.TEN);
         line.setUnitPrice(BigDecimal.ONE);
         line.setAmount(BigDecimal.TEN);

@@ -28,4 +28,14 @@ public class ErpPurReceiveLineBizModel extends CrudBizModel<ErpPurReceiveLine> i
         }
         return result;
     }
+
+    @BizLoader(forType = ErpPurReceiveLine.class)
+    public List<String> warehouseName(@ContextSource List<ErpPurReceiveLine> lines) {
+        orm().batchLoadProps(lines, Collections.singleton("warehouse"));
+        List<String> result = new ArrayList<>(lines.size());
+        for (ErpPurReceiveLine line : lines) {
+            result.add(line.getWarehouse() != null ? line.getWarehouse().getName() : null);
+        }
+        return result;
+    }
 }

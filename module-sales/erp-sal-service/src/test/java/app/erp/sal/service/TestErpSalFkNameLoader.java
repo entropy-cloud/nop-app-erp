@@ -147,6 +147,28 @@ public class TestErpSalFkNameLoader extends JunitAutoTestCase {
         assertEquals("物料Sigma", first.get("materialName"));
     }
 
+    @Test
+    public void testSalOrderLineWarehouseNameResolution() {
+        ormTemplate.runInSession(() -> {
+            seedOrg(ORG_ID, "销售测试组织");
+            seedCustomer(CUSTOMER_ID, "客户Epsilon");
+            seedWarehouse(WAREHOUSE_ID, "成品仓");
+            seedCurrency(CURRENCY_ID, "人民币");
+            seedUoM(UOM_ID, "个");
+            seedMaterial(MATERIAL_ID, "物料Phi");
+            seedOrder(8702L);
+            seedOrderLine(8802L, 8702L);
+        });
+
+        List<Map<String, Object>> rows = queryWithSelection(
+                "ErpSalOrderLine__findList",
+                "id", "warehouseName");
+        assertNotNull(rows);
+        assertEquals(false, rows.isEmpty(), "至少 1 条销售订单行");
+        Map<String, Object> first = rows.get(0);
+        assertEquals("成品仓", first.get("warehouseName"));
+    }
+
     // ---------- query helper ----------
 
     @SuppressWarnings("unchecked")
@@ -293,6 +315,7 @@ public class TestErpSalFkNameLoader extends JunitAutoTestCase {
         line.setLineNo(1);
         line.setMaterialId(MATERIAL_ID);
         line.setUoMId(UOM_ID);
+        line.setWarehouseId(WAREHOUSE_ID);
         line.setQuantity(BigDecimal.TEN);
         line.setUnitPrice(BigDecimal.ONE);
         line.setAmount(BigDecimal.TEN);

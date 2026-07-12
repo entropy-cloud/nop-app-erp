@@ -24,5 +24,7 @@
   "uoM": null,
   "sourceWarehouse": null,
   "destWarehouse": null,
-  "materialName": ""
+  "materialName": "",
+  "sourceWarehouseName": "",
+  "destWarehouseName": ""
 }

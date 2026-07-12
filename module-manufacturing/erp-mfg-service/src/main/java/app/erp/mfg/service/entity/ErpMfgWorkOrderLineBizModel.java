@@ -28,4 +28,24 @@ public class ErpMfgWorkOrderLineBizModel extends CrudBizModel<ErpMfgWorkOrderLin
         }
         return result;
     }
+
+    @BizLoader(forType = ErpMfgWorkOrderLine.class)
+    public List<String> sourceWarehouseName(@ContextSource List<ErpMfgWorkOrderLine> lines) {
+        orm().batchLoadProps(lines, Collections.singleton("sourceWarehouse"));
+        List<String> result = new ArrayList<>(lines.size());
+        for (ErpMfgWorkOrderLine line : lines) {
+            result.add(line.getSourceWarehouse() != null ? line.getSourceWarehouse().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMfgWorkOrderLine.class)
+    public List<String> destWarehouseName(@ContextSource List<ErpMfgWorkOrderLine> lines) {
+        orm().batchLoadProps(lines, Collections.singleton("destWarehouse"));
+        List<String> result = new ArrayList<>(lines.size());
+        for (ErpMfgWorkOrderLine line : lines) {
+            result.add(line.getDestWarehouse() != null ? line.getDestWarehouse().getName() : null);
+        }
+        return result;
+    }
 }

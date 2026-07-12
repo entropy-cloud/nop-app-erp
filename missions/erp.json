@@ -11,5 +11,9 @@
     "test": "mvn test",
     "build": "mvn clean install -DskipTests"
   },
+  "prompts": {
+    "multiAuditPrompt": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAuditPrompt": "docs/skills/open-ended-audit-prompt.md"
+  },
   "commitFormat": "<type>: <description>"
 }

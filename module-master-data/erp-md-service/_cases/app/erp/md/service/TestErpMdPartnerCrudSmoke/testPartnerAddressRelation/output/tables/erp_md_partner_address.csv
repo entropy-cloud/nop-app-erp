@@ -1,2 +1,2 @@
 _chgType,ID,PARTNER_ID,ADDRESS_TYPE,CONTACT_PERSON,PHONE,ADDRESS,IS_DEFAULT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,1,BILLING,,,冒烟测试-关系导航地址行,false,0,0,autotest-ref,*,autotest-ref,*
+A,2,1,BILLING,,,冒烟测试-关系导航地址行,false,*,0,autotest-ref,*,autotest-ref,*

@@ -1,2 +1,2 @@
 _chgType,ID,PAYMENT_ID,INVOICE_ID,AMOUNT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,30,24,16,30,,0,0,autotest-ref,*,autotest-ref,*
+A,30,24,16,30,,*,0,autotest-ref,*,autotest-ref,*

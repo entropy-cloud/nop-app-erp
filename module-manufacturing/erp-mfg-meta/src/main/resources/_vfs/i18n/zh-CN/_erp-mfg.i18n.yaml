@@ -648,6 +648,7 @@ prop:
       delVersion: 逻辑删除版本
       destWarehouse: null
       destWarehouseId: 入库仓库(产出用)
+      destWarehouseName: 入库仓库名称
       id: ID
       lineNo: 行号
       lineType: 行类型(OUTPUT 产出/INPUT 投入/BYPRODUCT 联副)
@@ -661,6 +662,7 @@ prop:
       skuId: SKU
       sourceWarehouse: null
       sourceWarehouseId: 领料仓库(投入用)
+      sourceWarehouseName: 领料仓库名称
       uoM: null
       uoMId: 计量单位
       updateTime: 修改时间

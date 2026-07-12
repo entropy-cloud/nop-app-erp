@@ -119,6 +119,7 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 出库库位
+      warehouseName: 出库库位名称
     ErpSalInvoice:
       amountFunctional: 合计金额(本位币)
       amountSource: 合计金额(源币)
@@ -274,6 +275,7 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 发货仓库
+      warehouseName: 发货仓库名称
     ErpSalPriceList:
       code: 编码
       createTime: 创建时间
