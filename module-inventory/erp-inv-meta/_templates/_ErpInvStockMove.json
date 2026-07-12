@@ -34,5 +34,8 @@
   "destLocation": null,
   "originMove": null,
   "originReturnedMove": null,
-  "lines": null
+  "lines": null,
+  "sourceWarehouseName": "",
+  "destWarehouseName": "",
+  "orgName": ""
 }

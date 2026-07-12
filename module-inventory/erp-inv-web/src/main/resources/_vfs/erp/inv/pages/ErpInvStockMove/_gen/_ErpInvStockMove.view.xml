@@ -89,6 +89,15 @@
 
                 <!--原退货移动单-->
                 <col id="originReturnedMoveId" ui:number="true" sortable="true"/>
+
+                <!--源仓库名称-->
+                <col id="sourceWarehouseName"/>
+
+                <!--目标仓库名称-->
+                <col id="destWarehouseName"/>
+
+                <!--业务组织名称-->
+                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -109,6 +118,8 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
  originMoveId[上游移动单] originReturnedMoveId[原退货移动单]
+ sourceWarehouseName[源仓库名称] destWarehouseName[目标仓库名称]
+ orgName[业务组织名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-库存移动单" i18n-en:title="Add Stock Move" x:prototype="edit"/>

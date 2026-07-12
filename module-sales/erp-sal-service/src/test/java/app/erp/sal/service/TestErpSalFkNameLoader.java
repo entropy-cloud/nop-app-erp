@@ -4,6 +4,7 @@ import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdOrganization;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdWarehouse;
+import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalConstants;
@@ -93,6 +94,28 @@ public class TestErpSalFkNameLoader extends JunitAutoTestCase {
         assertEquals(false, rows.isEmpty(), "至少 1 条发票");
         Map<String, Object> first = rows.get(0);
         assertEquals("客户Beta", first.get("customerName"));
+        assertEquals("人民币", first.get("currencyName"));
+        assertEquals("销售测试组织", first.get("orgName"));
+    }
+
+    @Test
+    public void testSalDeliveryFkNameResolution() {
+        ormTemplate.runInSession(() -> {
+            seedOrg(ORG_ID, "销售测试组织");
+            seedCustomer(CUSTOMER_ID, "客户Gamma");
+            seedWarehouse(WAREHOUSE_ID, "成品仓");
+            seedCurrency(CURRENCY_ID, "人民币");
+            seedDelivery(8601L);
+        });
+
+        List<Map<String, Object>> rows = queryWithSelection(
+                "ErpSalDelivery__findList",
+                "id", "customerName", "warehouseName", "currencyName", "orgName");
+        assertNotNull(rows);
+        assertEquals(false, rows.isEmpty(), "至少 1 条出库单");
+        Map<String, Object> first = rows.get(0);
+        assertEquals("客户Gamma", first.get("customerName"));
+        assertEquals("成品仓", first.get("warehouseName"));
         assertEquals("人民币", first.get("currencyName"));
         assertEquals("销售测试组织", first.get("orgName"));
     }
@@ -196,5 +219,21 @@ public class TestErpSalFkNameLoader extends JunitAutoTestCase {
         inv.setDocStatus(ErpSalConstants.DOC_STATUS_DRAFT);
         inv.setApproveStatus(ErpSalConstants.APPROVE_STATUS_UNSUBMITTED);
         dao.saveEntity(inv);
+    }
+
+    private void seedDelivery(long id) {
+        IEntityDao<ErpSalDelivery> dao = daoProvider.daoFor(ErpSalDelivery.class);
+        ErpSalDelivery deliv = dao.newEntity();
+        deliv.orm_propValue(1, id);
+        deliv.setCode("DL-FK-" + id);
+        deliv.setOrgId(ORG_ID);
+        deliv.setCustomerId(CUSTOMER_ID);
+        deliv.setWarehouseId(WAREHOUSE_ID);
+        deliv.setBusinessDate(LocalDate.of(2026, 7, 1));
+        deliv.setCurrencyId(CURRENCY_ID);
+        deliv.setExchangeRate(BigDecimal.ONE);
+        deliv.setDocStatus(ErpSalConstants.DOC_STATUS_DRAFT);
+        deliv.setApproveStatus(ErpSalConstants.APPROVE_STATUS_UNSUBMITTED);
+        dao.saveEntity(deliv);
     }
 }

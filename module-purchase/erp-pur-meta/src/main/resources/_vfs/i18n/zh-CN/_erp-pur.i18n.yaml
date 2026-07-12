@@ -187,6 +187,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -196,6 +197,7 @@ prop:
       nopFlowId: 工作流实例
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       partnerBankAccount: null
       partnerBankAccountId: 供应商收款账户(银行账户主数据)
       paymentMethod: 付款方式
@@ -207,6 +209,7 @@ prop:
       settlementMethodId: 结算方式
       supplier: null
       supplierId: 供应商
+      supplierName: 供应商名称
       totalAmount: 合计金额
       updateTime: 修改时间
       updatedBy: 修改人
@@ -290,6 +293,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -300,6 +304,7 @@ prop:
       orderId: 采购订单
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -310,6 +315,7 @@ prop:
       remark: 备注
       supplier: null
       supplierId: 供应商
+      supplierName: 供应商名称
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额
@@ -318,6 +324,7 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 入库仓库
+      warehouseName: 入库仓库名称
     ErpPurReceiveLine:
       amount: 金额(不含税)
       batchNo: 批号
@@ -359,15 +366,18 @@ prop:
       delVersion: 逻辑删除版本
       department: null
       departmentId: 请购部门
+      departmentName: 请购部门名称
       docStatus: 单据状态
       docStatus_label: 单据状态
       id: ID
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       remark: 备注
       requester: null
       requesterId: 请购人(职员)
+      requesterName: 请购人名称
       requiredDate: 需求日期
       updateTime: 修改时间
       updatedBy: 修改人
@@ -407,6 +417,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -415,6 +426,7 @@ prop:
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -423,6 +435,7 @@ prop:
       remark: 备注
       supplier: null
       supplierId: 供应商
+      supplierName: 供应商名称
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额
@@ -431,6 +444,7 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 出库仓库
+      warehouseName: 出库仓库名称
     ErpPurReturnLine:
       amount: 金额(不含税)
       createTime: 创建时间

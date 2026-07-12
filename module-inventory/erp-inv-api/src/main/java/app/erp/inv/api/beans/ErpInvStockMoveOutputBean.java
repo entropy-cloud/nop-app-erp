@@ -400,6 +400,42 @@
         }
 
 
+        private String _sourceWarehouseName;
+
+    
+        public String getSourceWarehouseName(){
+            return _sourceWarehouseName;
+        }
+
+        public void setSourceWarehouseName(String value){
+            this._sourceWarehouseName = value;
+        }
+
+
+        private String _destWarehouseName;
+
+    
+        public String getDestWarehouseName(){
+            return _destWarehouseName;
+        }
+
+        public void setDestWarehouseName(String value){
+            this._destWarehouseName = value;
+        }
+
+
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
         private Map<String,Object> _sourceWarehouse;
 
         public Map<String,Object> getSourceWarehouse(){

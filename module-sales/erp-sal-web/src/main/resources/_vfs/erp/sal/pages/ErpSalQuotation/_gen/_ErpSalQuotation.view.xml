@@ -86,6 +86,15 @@
 
                 <!--审核时间-->
                 <col id="approvedAt" sortable="true"/>
+
+                <!--客户名称-->
+                <col id="customerName"/>
+
+                <!--币种名称-->
+                <col id="currencyName"/>
+
+                <!--业务组织名称-->
+                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -105,7 +114,8 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
  remark[备注] approvedBy[审核人]
- approvedAt[审核时间] 
+ approvedAt[审核时间] customerName[客户名称]
+ currencyName[币种名称] orgName[业务组织名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售报价单" i18n-en:title="Add Sales Quotation" x:prototype="edit"/>

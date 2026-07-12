@@ -686,6 +686,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       direction: 应收应付
       direction_label: 应收应付
@@ -697,8 +698,10 @@ prop:
       lines: null
       org: null
       orgId: 组织
+      orgName: 业务组织名称
       partner: null
       partnerId: 往来单位
+      partnerName: 往来单位名称
       postedAt: 过账时间
       postedBy: 过账人
       remark: 备注

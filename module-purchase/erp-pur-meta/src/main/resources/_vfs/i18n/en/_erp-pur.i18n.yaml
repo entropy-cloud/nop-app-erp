@@ -213,6 +213,9 @@ prop:
       bankAccount: Bank Account
       partnerBankAccount: Partner Bank Account
       lines: Lines
+      supplierName: null
+      currencyName: null
+      orgName: null
     ErpPurPaymentLine:
       id: ID
       paymentId: Payment
@@ -318,6 +321,10 @@ prop:
       org: Org
       currency: Currency
       lines: Lines
+      supplierName: null
+      warehouseName: null
+      currencyName: null
+      orgName: null
     ErpPurReceiveLine:
       id: ID
       receiveId: Receive
@@ -372,6 +379,9 @@ prop:
       requester: Requester
       department: Department
       lines: Lines
+      orgName: null
+      requesterName: null
+      departmentName: null
     ErpPurRequisitionLine:
       id: ID
       requisitionId: Requisition
@@ -431,6 +441,10 @@ prop:
       org: Org
       currency: Currency
       lines: Lines
+      supplierName: null
+      warehouseName: null
+      currencyName: null
+      orgName: null
     ErpPurReturnLine:
       id: ID
       returnId: Return

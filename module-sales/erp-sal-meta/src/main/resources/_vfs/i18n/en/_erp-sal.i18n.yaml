@@ -86,6 +86,10 @@ prop:
       org: Org
       currency: Currency
       lines: Lines
+      customerName: null
+      warehouseName: null
+      currencyName: null
+      orgName: null
     ErpSalDeliveryLine:
       id: ID
       deliveryId: Delivery
@@ -378,6 +382,9 @@ prop:
       currency: Currency
       org: Org
       lines: Lines
+      customerName: null
+      currencyName: null
+      orgName: null
     ErpSalQuotationLine:
       id: ID
       quotationId: Quotation
@@ -444,6 +451,9 @@ prop:
       bankAccount: Bank Account
       partnerBankAccount: Partner Bank Account
       lines: Lines
+      customerName: null
+      currencyName: null
+      orgName: null
     ErpSalReceiptLine:
       id: ID
       receiptId: Receipt
@@ -495,6 +505,10 @@ prop:
       org: Org
       currency: Currency
       lines: Lines
+      customerName: null
+      warehouseName: null
+      currencyName: null
+      orgName: null
     ErpSalReturnLine:
       id: ID
       returnId: Return

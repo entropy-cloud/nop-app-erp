@@ -27,5 +27,8 @@
   "acctSchema": null,
   "currency": null,
   "lines": null,
-  "org": null
+  "org": null,
+  "partnerName": "",
+  "currencyName": "",
+  "orgName": ""
 }

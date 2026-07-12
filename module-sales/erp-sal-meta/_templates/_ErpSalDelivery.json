@@ -34,5 +34,9 @@
   "warehouse": null,
   "org": null,
   "currency": null,
-  "lines": null
+  "lines": null,
+  "customerName": "",
+  "warehouseName": "",
+  "currencyName": "",
+  "orgName": ""
 }

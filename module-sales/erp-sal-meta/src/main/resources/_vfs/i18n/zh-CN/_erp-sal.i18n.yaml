@@ -62,8 +62,10 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       customer: null
       customerId: 客户
+      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -74,6 +76,7 @@ prop:
       orderId: 销售订单
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -86,6 +89,7 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 出库仓库
+      warehouseName: 出库仓库名称
     ErpSalDeliveryLine:
       amount: 金额(不含税)
       batchNo: 批号
@@ -358,8 +362,10 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       customer: null
       customerId: 客户
+      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -369,6 +375,7 @@ prop:
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       remark: 备注
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
@@ -418,8 +425,10 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       customer: null
       customerId: 客户
+      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -429,6 +438,7 @@ prop:
       nopFlowId: 工作流实例
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       partnerBankAccount: null
       partnerBankAccountId: 客户付款账户(银行账户主数据)
       posted: 已过账
@@ -471,8 +481,10 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       customer: null
       customerId: 客户
+      customerName: 客户名称
       delVersion: 逻辑删除版本
       delivery: null
       deliveryId: 出库单
@@ -483,6 +495,7 @@ prop:
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -495,6 +508,7 @@ prop:
       version: 数据版本
       warehouse: null
       warehouseId: 入库仓库
+      warehouseName: 入库仓库名称
     ErpSalReturnLine:
       amount: 金额(不含税)
       createTime: 创建时间

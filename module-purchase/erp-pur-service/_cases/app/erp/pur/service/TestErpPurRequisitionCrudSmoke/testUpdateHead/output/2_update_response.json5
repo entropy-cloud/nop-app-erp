@@ -19,7 +19,10 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpPurRequisition@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpPurRequisition@updateTime_1"
+    "updateTime": "@var:ErpPurRequisition@updateTime_1",
+    "departmentName": null,
+    "orgName": null,
+    "requesterName": "冒烟职员"
   },
   "status": 0
 }

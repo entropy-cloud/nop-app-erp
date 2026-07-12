@@ -38,5 +38,8 @@
   "org": null,
   "bankAccount": null,
   "partnerBankAccount": null,
-  "lines": null
+  "lines": null,
+  "customerName": "",
+  "currencyName": "",
+  "orgName": ""
 }

@@ -22,5 +22,8 @@
   "org": null,
   "requester": null,
   "department": null,
-  "lines": null
+  "lines": null,
+  "orgName": "",
+  "requesterName": "",
+  "departmentName": ""
 }

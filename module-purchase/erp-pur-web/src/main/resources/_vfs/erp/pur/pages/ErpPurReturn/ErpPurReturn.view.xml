@@ -2,7 +2,20 @@
 <view x:extends="_gen/_ErpPurReturn.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="supplierName" label="供应商"/>
+                <col id="warehouseName" label="出库仓库"/>
+                <col id="currencyName" label="币种"/>
+                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="totalAmountWithTax" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

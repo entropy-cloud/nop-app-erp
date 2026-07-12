@@ -290,6 +290,42 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _requesterName;
+
+    
+        public String getRequesterName(){
+            return _requesterName;
+        }
+
+        public void setRequesterName(String value){
+            this._requesterName = value;
+        }
+
+
+        private String _departmentName;
+
+    
+        public String getDepartmentName(){
+            return _departmentName;
+        }
+
+        public void setDepartmentName(String value){
+            this._departmentName = value;
+        }
+
+
         private Map<String,Object> _org;
 
         public Map<String,Object> getOrg(){

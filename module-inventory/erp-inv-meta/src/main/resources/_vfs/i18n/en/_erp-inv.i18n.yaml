@@ -464,6 +464,9 @@ prop:
       originMove: Origin Move
       originReturnedMove: Origin Returned Move
       lines: Lines
+      sourceWarehouseName: null
+      destWarehouseName: null
+      orgName: null
     ErpInvStockMoveLine:
       id: ID
       moveId: Move

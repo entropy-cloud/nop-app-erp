@@ -2,21 +2,23 @@
   "data": {
     "id": "2",
     "code": "SMOKE-PUR-RFQ",
-    "orgId": null,
     "requisitionId": 1,
     "businessDate": "2026-07-01",
-    "validUntil": null,
     "docStatus": "DRAFT",
     "docStatus_label": "DRAFT-草稿",
     "approveStatus": "UNSUBMITTED",
     "approveStatus_label": "UNSUBMITTED-未提交",
-    "remark": null,
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpPurRfq@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpPurRfq@updateTime"
+    "updateTime": "@var:ErpPurRfq@updateTime",
+    "orgId": null,
+    "validUntil": null,
+    "remark": null,
+    "approvedBy": null,
+    "approvedAt": null
   },
   "status": 0
 }

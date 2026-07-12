@@ -707,6 +707,9 @@ prop:
       currency: Currency
       lines: Lines
       org: null
+      partnerName: null
+      currencyName: null
+      orgName: null
     ErpFinReconciliationLine:
       id: ID
       reconciliationId: Reconciliation

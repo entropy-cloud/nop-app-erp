@@ -346,6 +346,42 @@
         }
 
 
+        private String _partnerName;
+
+    
+        public String getPartnerName(){
+            return _partnerName;
+        }
+
+        public void setPartnerName(String value){
+            this._partnerName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
         private Map<String,Object> _partner;
 
         public Map<String,Object> getPartner(){

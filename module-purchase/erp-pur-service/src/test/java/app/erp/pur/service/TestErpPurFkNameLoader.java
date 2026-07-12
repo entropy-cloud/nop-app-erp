@@ -6,6 +6,7 @@ import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdWarehouse;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.dao.entity.ErpPurOrder;
+import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.service.ErpPurConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -93,6 +94,28 @@ public class TestErpPurFkNameLoader extends JunitAutoTestCase {
         assertEquals(false, rows.isEmpty(), "至少 1 条发票");
         Map<String, Object> first = rows.get(0);
         assertEquals("供应商Delta", first.get("supplierName"));
+        assertEquals("人民币", first.get("currencyName"));
+        assertEquals("采购测试组织", first.get("orgName"));
+    }
+
+    @Test
+    public void testPurReceiveFkNameResolution() {
+        ormTemplate.runInSession(() -> {
+            seedOrg(ORG_ID, "采购测试组织");
+            seedSupplier(SUPPLIER_ID, "供应商Epsilon");
+            seedWarehouse(WAREHOUSE_ID, "原料仓");
+            seedCurrency(CURRENCY_ID, "人民币");
+            seedReceive(7601L);
+        });
+
+        List<Map<String, Object>> rows = queryWithSelection(
+                "ErpPurReceive__findList",
+                "id", "supplierName", "warehouseName", "currencyName", "orgName");
+        assertNotNull(rows);
+        assertEquals(false, rows.isEmpty(), "至少 1 条入库单");
+        Map<String, Object> first = rows.get(0);
+        assertEquals("供应商Epsilon", first.get("supplierName"));
+        assertEquals("原料仓", first.get("warehouseName"));
         assertEquals("人民币", first.get("currencyName"));
         assertEquals("采购测试组织", first.get("orgName"));
     }
@@ -196,5 +219,21 @@ public class TestErpPurFkNameLoader extends JunitAutoTestCase {
         inv.setDocStatus(ErpPurConstants.DOC_STATUS_DRAFT);
         inv.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         dao.saveEntity(inv);
+    }
+
+    private void seedReceive(long id) {
+        IEntityDao<ErpPurReceive> dao = daoProvider.daoFor(ErpPurReceive.class);
+        ErpPurReceive recv = dao.newEntity();
+        recv.orm_propValue(1, id);
+        recv.setCode("RC-FK-" + id);
+        recv.setOrgId(ORG_ID);
+        recv.setSupplierId(SUPPLIER_ID);
+        recv.setWarehouseId(WAREHOUSE_ID);
+        recv.setBusinessDate(LocalDate.of(2026, 7, 1));
+        recv.setCurrencyId(CURRENCY_ID);
+        recv.setExchangeRate(BigDecimal.ONE);
+        recv.setDocStatus(ErpPurConstants.DOC_STATUS_DRAFT);
+        recv.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
+        dao.saveEntity(recv);
     }
 }
