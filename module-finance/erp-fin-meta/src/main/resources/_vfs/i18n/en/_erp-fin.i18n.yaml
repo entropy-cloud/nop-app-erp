@@ -983,6 +983,9 @@ dict.option.label:
     ASSET_INVENTORY_ADJUSTMENT: Asset Inventory Adjustment
     MAINTENANCE_EXPENSE: Maintenance Expense
     MAINTENANCE_CAPITALIZATION: Maintenance Capitalization
+    SUBCONTRACT_ISSUE: Subcontract Issue
+    SUBCONTRACT_RECEIPT: Subcontract Receipt
+    SUBCONTRACT_FEE: Subcontract Processing Fee
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

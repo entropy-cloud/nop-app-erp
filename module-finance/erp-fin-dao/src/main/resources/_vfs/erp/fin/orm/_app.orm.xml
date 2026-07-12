@@ -104,6 +104,11 @@
                     i18n-en:label="Maintenance Expense"/>
             <option code="MAINTENANCE_CAPITALIZATION" label="维修资本化" value="MAINTENANCE_CAPITALIZATION"
                     i18n-en:label="Maintenance Capitalization"/>
+            <option code="SUBCONTRACT_ISSUE" label="委外发料" value="SUBCONTRACT_ISSUE" i18n-en:label="Subcontract Issue"/>
+            <option code="SUBCONTRACT_RECEIPT" label="委外收货" value="SUBCONTRACT_RECEIPT"
+                    i18n-en:label="Subcontract Receipt"/>
+            <option code="SUBCONTRACT_FEE" label="委外加工费" value="SUBCONTRACT_FEE"
+                    i18n-en:label="Subcontract Processing Fee"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>

@@ -314,6 +314,21 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_MAINTENANCE_CAPITALIZATION = "MAINTENANCE_CAPITALIZATION";
                     
     /**
+     * 业务类型: 委外发料 
+     */
+    String BUSINESS_TYPE_SUBCONTRACT_ISSUE = "SUBCONTRACT_ISSUE";
+                    
+    /**
+     * 业务类型: 委外收货 
+     */
+    String BUSINESS_TYPE_SUBCONTRACT_RECEIPT = "SUBCONTRACT_RECEIPT";
+                    
+    /**
+     * 业务类型: 委外加工费 
+     */
+    String BUSINESS_TYPE_SUBCONTRACT_FEE = "SUBCONTRACT_FEE";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

@@ -114,6 +114,12 @@
             <option code="MAINTENANCE_EXPENSE" label="维修费用化" value="MAINTENANCE_EXPENSE" i18n-en:label='Maintenance Expense'/>
             <!-- 资产维修资本化过账（plan 2026-07-07-0842-2）：维修 post→借固定资产(原值增量)/贷在建工程或银行存款/存货。区别于 CAPITALIZATION(80) 新建资本化。 -->
             <option code="MAINTENANCE_CAPITALIZATION" label="维修资本化" value="MAINTENANCE_CAPITALIZATION" i18n-en:label='Maintenance Capitalization'/>
+            <!-- 委外加工过账（plan 2026-07-13-0455-1）：委外发料/收货/加工费三段过账，承接 MANUFACTURING_RECEIPT/ISSUE 范式。
+                 SUBCONTRACT_ISSUE 材料发出 Dr 委外物资 / Cr 原材料；SUBCONTRACT_RECEIPT 成品入库 Dr 产成品 / Cr 委外物资；
+                 SUBCONTRACT_FEE 加工费 Dr 委外物资 / Cr 应付账款。-->
+            <option code="SUBCONTRACT_ISSUE" label="委外发料" value="SUBCONTRACT_ISSUE" i18n-en:label='Subcontract Issue'/>
+            <option code="SUBCONTRACT_RECEIPT" label="委外收货" value="SUBCONTRACT_RECEIPT" i18n-en:label='Subcontract Receipt'/>
+            <option code="SUBCONTRACT_FEE" label="委外加工费" value="SUBCONTRACT_FEE" i18n-en:label='Subcontract Processing Fee'/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label='Period Status'>
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label='Open'/>
