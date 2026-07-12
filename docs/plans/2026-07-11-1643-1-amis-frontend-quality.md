@@ -171,6 +171,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 全域覆盖规模过大（321 grid/1036 列），需 codegen 模板层 FK 名称解析方案或大批量推广。本计划高价值子集验证机制 D 可行性后，successor 可批量复制。
 - Successor Required: `yes`（触发条件：高价值子集验证后批量推广需求，或 codegen 模板层 FK 名称解析方案落地）
+- Successor Progress: 批次 2（`docs/plans/2026-07-12-0600-1-transaction-list-fk-name-resolution-batch2.md`）已完成，覆盖 10 高流量交易头实体 + ErpSalOrder grid 修复。全域 ~321 grid/~1,036 列覆盖仍需 codegen 模板层方案或后续 successor。
 
 ### 23 实体全口径审批按钮
 
