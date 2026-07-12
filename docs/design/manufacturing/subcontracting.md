@@ -218,3 +218,16 @@ posted=false → 异步过账 → posted=true
 - Odoo `mrp_subcontracting` 模块设计
 - Metasfresh 异步过账 EventBus 模式
 - iDempiere 多公司/多币种架构
+
+## 实现偏离补注（plan 2026-07-13-0455-1）
+
+> 本节记录 plan 0455-1 落地时与上方设计的实现偏离，供 successor 触发时裁决回填。
+
+- **状态机裁剪为 8 态核心可执行子集**：设计 §状态机定义列 10 态，本期落地 8 态（DRAFT/SUBMITTED/APPROVED/ISSUED/RECEIVED/COMPLETED/CANCELLED/REJECTED），舍 PRODUCED（供应商确认属 Portal 协同 successor）与 RETURNED（退货 successor）。`erp-mfg/subcontract-status` 字典已由 3 态（DRAFT/ACTIVE/CANCELLED）扩展为 8 态。
+- **以委外订单为编排根，非四业务对象**：设计 §核心业务对象列委外订单/发料单/收货单/发票四实体，本期不引入独立 Issue/Receipt/Invoice 实体。发料/收货经委外订单动作 + inventory StockMove 留痕（对齐 Odoo mrp_subcontracting 复用 stock.picking 范式）。独立单据实体归 successor。
+- **三段业务动作经 Processor protected step 编排**：`issueMaterials`（APPROVED→ISSUED，OUTGOING 移动单）/ `receiveFinished`（ISSUED→RECEIVED，MANUFACTURING 入库移动单）/ `postProcessingFee`（RECEIVED→COMPLETED，SUBCONTRACT_FEE 凭证 + posted=true）。镜像 WorkOrderProcessor Facade→Processor 两层范式。
+- **业财过账 config-gated**：`erp-mfg.subcontract-posting-enabled`（默认 false 向后兼容）。新增 SUBCONTRACT_ISSUE(502)/RECEIPT(503)/FEE(504) 三个 ErpFinBusinessType + erp-fin/business-type 字典项 + COA 1408 委外物资科目。凭证科目分解：ISSUE Dr 1408 / Cr 1401；RECEIPT Dr 1405 / Cr 1408；FEE Dr 1408 / Cr 2202。
+- **MRP 委外释放 config-gated**：`erp-mfg.subcontract-release-enabled`（默认 false 向后兼容）。释放生成 APPROVED 委外单（跳过审批，对齐 MRP O-4 架构豁免）。
+- **加工费为订单头级单一金额**：设计描述按委外发票行金额分配，本期以订单头 `processingFee` 单一金额过账（精确行级加工费归集归 successor）。
+- **Successor 触发条件**：供应商 Portal 协同 / 来料质检触发 / 损耗核算 / 退货 / 批次序列号 / 独立单据实体 / 委外差异 / 浏览器层 E2E / 前端 AMIS 动作页面（见 plan 0455-1 Deferred But Adjudicated 各项）。
+

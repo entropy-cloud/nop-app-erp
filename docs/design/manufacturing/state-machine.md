@@ -220,3 +220,50 @@
 - 停工/关闭的成本结转是否完整。
 - 完工质检不合格的返工路径（新建返工工单）。
 - BOM 变更对已开工工单的影响（快照原则）。
+
+---
+
+## 适用对象三：委外加工单（SubcontractOrder）
+
+> plan 2026-07-13-0455-1 落地。委外单状态机 8 态核心可执行子集（设计 `subcontracting.md` 定义 10 态，
+> 本期舍 PRODUCED/RETURNED 两态归 successor）。
+
+### 状态定义
+
+| 状态 | 业务含义（等待什么） | 可修改 |
+|------|----------------------|--------|
+| 草稿（DRAFT） | 订单创建，待提交 | 是 |
+| 已提交（SUBMITTED） | 待审核 | 否 |
+| 已审核（APPROVED） | 审核通过，待发料 | 否 |
+| 已发料（ISSUED） | 材料已发给供应商 | 否 |
+| 已收货（RECEIVED） | 成品已入库 | 否 |
+| 已完成（COMPLETED） | 加工费已过账，终态 | 否 |
+| 已取消（CANCELLED） | 终态 | 否 |
+| 已驳回（REJECTED） | 审核驳回 | 是 |
+
+### 迁移完整性
+
+```
+草稿 (DRAFT)
+  └─ 提交 → 已提交 (SUBMITTED)
+              ├─ 审核 → 已审核 (APPROVED)
+              │           ├─ 发料 → 已发料 (ISSUED)
+              │           │           ├─ 收货 → 已收货 (RECEIVED)
+              │           │           │           ├─ 加工费过账 → 已完成 (COMPLETED)
+              │           │           └─ 取消 → 已取消 (CANCELLED)
+              │           └─ 取消 → 已取消 (CANCELLED)
+              └─ 驳回 → 已驳回 (REJECTED)
+  └─ 取消 → 已取消 (CANCELLED)
+```
+
+### 终态与外部依赖
+
+- 终态：`COMPLETED`、`CANCELLED`。
+- 外部依赖：发料/收货写库存经 `IErpInvStockMoveBiz`；加工费过账经 finance 域 SUBCONTRACT_FEE 凭证（config-gated `erp-mfg.subcontract-posting-enabled`）。
+- MRP 释放：SUBCONTRACT_REQUEST 经 `releaseSubcontractRequest` 生成 APPROVED 委外单（跳过审批，config-gated `erp-mfg.subcontract-release-enabled`）。
+
+### 实现偏离补注
+
+- 舍 PRODUCED（供应商确认属 Portal 协同 successor）与 RETURNED（退货 successor）。
+- 以委外订单为编排根，不引入独立 Issue/Receipt/Invoice 实体（对齐 Odoo mrp_subcontracting 范式）。
+
