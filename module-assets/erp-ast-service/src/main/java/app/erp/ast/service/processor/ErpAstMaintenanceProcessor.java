@@ -379,7 +379,7 @@ public class ErpAstMaintenanceProcessor {
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 }

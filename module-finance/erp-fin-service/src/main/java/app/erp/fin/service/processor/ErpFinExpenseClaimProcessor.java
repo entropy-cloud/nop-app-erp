@@ -389,11 +389,11 @@ public class ErpFinExpenseClaimProcessor {
         }
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private static boolean isBlank(String s) {
+    protected static boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
     }
 

@@ -255,7 +255,7 @@ public class ErpFinPostingProcessor {
         }
     }
 
-    private <T> T timeStage(String stage, PostingRun run, java.util.function.Supplier<T> action) {
+    protected <T> T timeStage(String stage, PostingRun run, java.util.function.Supplier<T> action) {
         long start = CoreMetrics.nanoTime();
         run.currentStage = stage;
         try {
@@ -268,7 +268,7 @@ public class ErpFinPostingProcessor {
         }
     }
 
-    private void timeStageVoid(String stage, PostingRun run, Runnable action) {
+    protected void timeStageVoid(String stage, PostingRun run, Runnable action) {
         long start = CoreMetrics.nanoTime();
         run.currentStage = stage;
         try {
@@ -280,7 +280,7 @@ public class ErpFinPostingProcessor {
         }
     }
 
-    private void logFailure(PostingRun run, RuntimeException e) {
+    protected void logFailure(PostingRun run, RuntimeException e) {
         String code = e instanceof NopException ? ((NopException) e).getErrorCode() : null;
         LOG.error("过账失败：traceId={}, billHeadCode={}, businessType={}, failedStage={}, errorCode={}, errorMsg={}",
                 run.traceId, run.billHeadCode, run.businessType, run.currentStage, code, e.getMessage());
@@ -292,7 +292,7 @@ public class ErpFinPostingProcessor {
      * {@link ErpFinPostingErrors#ERR_POSTING_UNEXPECTED_FAILURE} 泛化错误码统一记录，
      * 避免未预期异常（如 NPE/IllegalState）丢失于 posted=false 且无异常记录的盲区。
      */
-    private void recordPostFailure(PostingRun run, PostingEvent event, RuntimeException e) {
+    protected void recordPostFailure(PostingRun run, PostingEvent event, RuntimeException e) {
         String errorCode;
         String errorMessage;
         if (e instanceof NopException) {
@@ -318,7 +318,7 @@ public class ErpFinPostingProcessor {
                 currencyId, exchangeRate, eventData);
     }
 
-    private void recordReverseFailure(PostingRun run, RuntimeException e) {
+    protected void recordReverseFailure(PostingRun run, RuntimeException e) {
         String errorCode;
         String errorMessage;
         if (e instanceof NopException) {

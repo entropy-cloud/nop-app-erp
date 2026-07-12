@@ -534,7 +534,7 @@ public class ErpAstSplitProcessor {
         }
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 
@@ -554,7 +554,7 @@ public class ErpAstSplitProcessor {
 
     /** 供 Dispatcher 复用的行汇总科目解析（按行类别 subjectId 拆借方明细）。 */
     @SuppressWarnings("unused")
-    private static Map<String, Object> lineMap(String subjectCode, String subjectName, BigDecimal amount, String memo) {
+    protected static Map<String, Object> lineMap(String subjectCode, String subjectName, BigDecimal amount, String memo) {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put(ErpAstConstants.BILL_DATA_LINE_SUBJECT_CODE, subjectCode);
         m.put(ErpAstConstants.BILL_DATA_LINE_SUBJECT_NAME, subjectName);

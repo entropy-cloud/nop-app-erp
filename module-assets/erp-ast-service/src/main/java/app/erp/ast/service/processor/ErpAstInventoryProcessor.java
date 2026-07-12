@@ -479,11 +479,11 @@ public class ErpAstInventoryProcessor {
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private static int nzInt(Integer v) {
+    protected static int nzInt(Integer v) {
         return v != null ? v : 0;
     }
 }

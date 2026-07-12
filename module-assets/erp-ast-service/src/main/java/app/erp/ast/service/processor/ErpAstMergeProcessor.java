@@ -477,11 +477,11 @@ public class ErpAstMergeProcessor {
         }
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private static BigDecimal sum(List<ErpAstAsset> sources, java.util.function.Function<ErpAstAsset, BigDecimal> f) {
+    protected static BigDecimal sum(List<ErpAstAsset> sources, java.util.function.Function<ErpAstAsset, BigDecimal> f) {
         BigDecimal total = BigDecimal.ZERO;
         for (ErpAstAsset src : sources) {
             total = total.add(nz(f.apply(src)));

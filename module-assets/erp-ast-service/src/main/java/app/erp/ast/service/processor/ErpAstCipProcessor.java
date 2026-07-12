@@ -477,11 +477,11 @@ public class ErpAstCipProcessor {
         return ((IOrmEntityDao<?>) cipDao()).getOrmTemplate();
     }
 
-    private static BigDecimal nz(BigDecimal v, BigDecimal fallback) {
+    protected static BigDecimal nz(BigDecimal v, BigDecimal fallback) {
         return v != null ? v : fallback;
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 }

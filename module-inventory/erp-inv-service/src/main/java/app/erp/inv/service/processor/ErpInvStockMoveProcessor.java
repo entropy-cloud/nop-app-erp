@@ -406,11 +406,11 @@ public class ErpInvStockMoveProcessor {
         return daoProvider.daoFor(ErpInvStockMove.class);
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private static String newMoveCode() {
+    protected static String newMoveCode() {
         return "MV-" + StringHelper.generateUUID();
     }
 }

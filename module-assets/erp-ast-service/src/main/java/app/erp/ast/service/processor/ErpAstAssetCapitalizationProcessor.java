@@ -316,13 +316,13 @@ public class ErpAstAssetCapitalizationProcessor {
         return "AST-" + cap.getId();
     }
 
-    private void markPosted(ErpAstAssetCapitalization cap) {
+    protected void markPosted(ErpAstAssetCapitalization cap) {
         cap.setPosted(true);
         cap.setPostedAt(CoreMetrics.currentDateTime());
         cap.setPostedBy(currentUserId());
     }
 
-    private void clearPosted(ErpAstAssetCapitalization cap) {
+    protected void clearPosted(ErpAstAssetCapitalization cap) {
         cap.setPosted(false);
         cap.setPostedAt(null);
         cap.setPostedBy(null);
@@ -351,7 +351,7 @@ public class ErpAstAssetCapitalizationProcessor {
         }
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 

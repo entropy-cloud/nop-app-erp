@@ -276,7 +276,7 @@ public class ErpPrjProjectSettlementProcessor {
 
     // ---- helpers ----
 
-    private ErpPrjProjectSettlement requireSettlement(Long id) {
+    protected ErpPrjProjectSettlement requireSettlement(Long id) {
         IEntityDao<ErpPrjProjectSettlement> dao = daoProvider.daoFor(ErpPrjProjectSettlement.class);
         ErpPrjProjectSettlement settlement = dao.getEntityById(id);
         if (settlement == null) {
@@ -286,11 +286,11 @@ public class ErpPrjProjectSettlementProcessor {
         return settlement;
     }
 
-    private void save(ErpPrjProjectSettlement settlement) {
+    protected void save(ErpPrjProjectSettlement settlement) {
         daoProvider.daoFor(ErpPrjProjectSettlement.class).updateEntity(settlement);
     }
 
-    private List<ErpPrjBilling> findBillings(Long projectId) {
+    protected List<ErpPrjBilling> findBillings(Long projectId) {
         IEntityDao<ErpPrjBilling> dao = daoProvider.daoFor(ErpPrjBilling.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -298,7 +298,7 @@ public class ErpPrjProjectSettlementProcessor {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpPrjCostCollection> findCostCollections(Long projectId) {
+    protected List<ErpPrjCostCollection> findCostCollections(Long projectId) {
         IEntityDao<ErpPrjCostCollection> dao = daoProvider.daoFor(ErpPrjCostCollection.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("projectId", projectId));
@@ -306,29 +306,29 @@ public class ErpPrjProjectSettlementProcessor {
         return dao.findAllByQuery(q);
     }
 
-    private ErpPrjProject loadProject(Long projectId) {
+    protected ErpPrjProject loadProject(Long projectId) {
         if (projectId == null) {
             return null;
         }
         return daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectId);
     }
 
-    private String resolveUserId(IServiceContext context) {
+    protected String resolveUserId(IServiceContext context) {
         return context != null && context.getUserId() != null ? context.getUserId() : "system";
     }
 
-    private NopException illegalTransition(ErpPrjProjectSettlement settlement, String current, String expected) {
+    protected NopException illegalTransition(ErpPrjProjectSettlement settlement, String current, String expected) {
         return new NopException(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode())
                 .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpPrjErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    private BigDecimal nz(BigDecimal v) {
+    protected BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    private BigDecimal parseAmount(String s) {
+    protected BigDecimal parseAmount(String s) {
         if (s == null || s.trim().isEmpty()) {
             return BigDecimal.ZERO;
         }

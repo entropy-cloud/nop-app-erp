@@ -282,7 +282,7 @@ public class ErpAstDisposalProcessor {
         }
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 

@@ -114,7 +114,7 @@ public class ErpFinBudgetScenarioProcessor {
         }
     }
 
-    private ErpFinBudgetScenario requireScenario(Long id) {
+    protected ErpFinBudgetScenario requireScenario(Long id) {
         IEntityDao<ErpFinBudgetScenario> dao = daoProvider.daoFor(ErpFinBudgetScenario.class);
         ErpFinBudgetScenario scenario = dao.getEntityById(id);
         if (scenario == null) {
@@ -124,11 +124,11 @@ public class ErpFinBudgetScenarioProcessor {
         return scenario;
     }
 
-    private void save(ErpFinBudgetScenario scenario) {
+    protected void save(ErpFinBudgetScenario scenario) {
         daoProvider.daoFor(ErpFinBudgetScenario.class).updateEntity(scenario);
     }
 
-    private static String join(String[] arr) {
+    protected static String join(String[] arr) {
         return String.join("/", arr);
     }
 }

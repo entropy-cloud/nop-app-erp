@@ -178,7 +178,7 @@ public class ErpCrmConversionProcessor {
     }
 
     @java.lang.FunctionalInterface
-    private interface Setter<T> {
+    protected interface Setter<T> {
         void set(T value);
     }
 

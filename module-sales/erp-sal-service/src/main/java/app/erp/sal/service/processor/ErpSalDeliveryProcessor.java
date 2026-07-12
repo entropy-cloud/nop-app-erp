@@ -414,7 +414,7 @@ public class ErpSalDeliveryProcessor {
         return new ArrayList<>(deliveryDao().findAllByQuery(rq));
     }
 
-    private void addLineQuantities(Map<Long, BigDecimal> map, List<ErpSalDeliveryLine> lines) {
+    protected void addLineQuantities(Map<Long, BigDecimal> map, List<ErpSalDeliveryLine> lines) {
         for (ErpSalDeliveryLine dl : lines) {
             if (dl.getOrderLineId() == null) {
                 continue;

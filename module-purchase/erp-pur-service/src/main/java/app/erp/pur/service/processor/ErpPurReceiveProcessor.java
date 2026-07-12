@@ -393,7 +393,7 @@ public class ErpPurReceiveProcessor {
         return new ArrayList<>(receiveDao().findAllByQuery(rq));
     }
 
-    private void addLineQuantities(Map<Long, BigDecimal> map, List<ErpPurReceiveLine> lines) {
+    protected void addLineQuantities(Map<Long, BigDecimal> map, List<ErpPurReceiveLine> lines) {
         for (ErpPurReceiveLine rl : lines) {
             if (rl.getOrderLineId() == null) {
                 continue;

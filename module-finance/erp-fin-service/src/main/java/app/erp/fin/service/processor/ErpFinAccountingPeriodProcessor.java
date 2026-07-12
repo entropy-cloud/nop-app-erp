@@ -266,7 +266,7 @@ public class ErpFinAccountingPeriodProcessor {
         return created;
     }
 
-    private Long resolveDefaultOrgId() {
+    protected Long resolveDefaultOrgId() {
         // 默认 1L（与 findOrCreatePeriodStatus 的 acctSchema fallback 同范式）。
         return 1L;
     }
@@ -416,7 +416,7 @@ public class ErpFinAccountingPeriodProcessor {
         status.setGlStatus(ErpFinConstants.MODULE_CLOSE_OPEN);
     }
 
-    private String moduleStatusOf(ErpFinAccountingPeriodStatus status, Module module) {
+    protected String moduleStatusOf(ErpFinAccountingPeriodStatus status, Module module) {
         switch (module) {
             case AR:
                 return status.getArStatus();
@@ -433,7 +433,7 @@ public class ErpFinAccountingPeriodProcessor {
         }
     }
 
-    private void setModuleStatus(ErpFinAccountingPeriodStatus status, Module module, String value) {
+    protected void setModuleStatus(ErpFinAccountingPeriodStatus status, Module module, String value) {
         switch (module) {
             case AR:
                 status.setArStatus(value);
@@ -515,7 +515,7 @@ public class ErpFinAccountingPeriodProcessor {
         }
     }
 
-    private List<Long> findPostedVoucherIds(Long periodId) {
+    protected List<Long> findPostedVoucherIds(Long periodId) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
@@ -526,7 +526,7 @@ public class ErpFinAccountingPeriodProcessor {
         return dao.findAllByQuery(q).stream().map(ErpFinVoucher::getId).collect(Collectors.toList());
     }
 
-    private Long resolveAcctSchemaId(Long periodId) {
+    protected Long resolveAcctSchemaId(Long periodId) {
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
         Long orgId = period != null ? period.getOrgId() : null;
         if (orgId != null) {
@@ -546,7 +546,7 @@ public class ErpFinAccountingPeriodProcessor {
         return 1L;
     }
 
-    private static final class TbAgg {
+    protected static final class TbAgg {
         final Long subjectId;
         final String subjectCode;
         final String subjectName;
@@ -562,7 +562,7 @@ public class ErpFinAccountingPeriodProcessor {
 
     // ===================== 前置检查查询 =====================
 
-    private List<String> findUnpostedVoucherCodes(ErpFinAccountingPeriod period) {
+    protected List<String> findUnpostedVoucherCodes(ErpFinAccountingPeriod period) {
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", period.getId()));
@@ -572,7 +572,7 @@ public class ErpFinAccountingPeriodProcessor {
                 .collect(Collectors.toList());
     }
 
-    private List<String> findUnsettledArApCodes(ErpFinAccountingPeriod period) {
+    protected List<String> findUnsettledArApCodes(ErpFinAccountingPeriod period) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(ge("businessDate", period.getStartDate()), le("businessDate", period.getEndDate())));
@@ -586,7 +586,7 @@ public class ErpFinAccountingPeriodProcessor {
     }
 
     /** 扫描本期未处置过账异常（status=PENDING/RETRYING 且 voucherDate 落在本期，见 posting-log.md §失败不静默丢弃）。 */
-    private List<String> findUnresolvedPostingExceptionKeys(ErpFinAccountingPeriod period) {
+    protected List<String> findUnresolvedPostingExceptionKeys(ErpFinAccountingPeriod period) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinPostingException> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinPostingException.class);
         QueryBean q = new QueryBean();
@@ -603,8 +603,8 @@ public class ErpFinAccountingPeriodProcessor {
 
     // ===================== 反结账凭证冲销 =====================
 
-    private void reverseCloseVoucher(ErpFinAccountingPeriod period, String billHeadCode,
-                                     ErpFinBusinessType businessType, IServiceContext context) {
+    protected void reverseCloseVoucher(ErpFinAccountingPeriod period, String billHeadCode,
+                                       ErpFinBusinessType businessType, IServiceContext context) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billHeadCode), eq("businessType", businessType.name())));
@@ -656,7 +656,7 @@ public class ErpFinAccountingPeriodProcessor {
         return status;
     }
 
-    private Long resolveAcctSchemaId(ErpFinAccountingPeriod period) {
+    protected Long resolveAcctSchemaId(ErpFinAccountingPeriod period) {
         Long orgId = period != null ? period.getOrgId() : null;
         if (orgId != null) {
             Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);

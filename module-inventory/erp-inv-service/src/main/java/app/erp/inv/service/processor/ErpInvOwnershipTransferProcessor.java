@@ -298,11 +298,11 @@ public class ErpInvOwnershipTransferProcessor {
         return dao.findAllByQuery(q);
     }
 
-    private IEntityDao<ErpInvOwnershipTransfer> transferDao() {
+    protected IEntityDao<ErpInvOwnershipTransfer> transferDao() {
         return daoProvider.daoFor(ErpInvOwnershipTransfer.class);
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 }

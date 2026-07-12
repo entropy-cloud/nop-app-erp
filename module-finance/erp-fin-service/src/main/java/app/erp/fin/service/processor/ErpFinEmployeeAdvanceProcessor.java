@@ -235,13 +235,13 @@ public class ErpFinEmployeeAdvanceProcessor {
         validateTransitionForCancel(advance, context);
     }
 
-    private void markPosted(ErpFinEmployeeAdvance advance) {
+    protected void markPosted(ErpFinEmployeeAdvance advance) {
         advance.setPosted(true);
         advance.setPostedAt(CoreMetrics.currentDateTime());
         advance.setPostedBy(currentUserId());
     }
 
-    private void clearPosted(ErpFinEmployeeAdvance advance) {
+    protected void clearPosted(ErpFinEmployeeAdvance advance) {
         advance.setPosted(false);
         advance.setPostedAt(null);
         advance.setPostedBy(null);
@@ -285,7 +285,7 @@ public class ErpFinEmployeeAdvanceProcessor {
         }
     }
 
-    private static BigDecimal nz(BigDecimal v) {
+    protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
     }
 
