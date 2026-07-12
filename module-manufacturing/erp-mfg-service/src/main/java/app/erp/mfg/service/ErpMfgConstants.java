@@ -228,4 +228,36 @@ public interface ErpMfgConstants {
     String DEFAULT_WIP_SUBJECT_CODE = "1411";
     /** 产成品存货科目编码（与 InvAcctDocProvider.SUBJECT_INVENTORY 一致，完工入库 Dr）。 */
     String SUBJECT_FINISHED_GOODS = "1401";
+
+    // ---- 委外加工（plan 2026-07-13-0455-1；权威：docs/design/manufacturing/subcontracting.md） ----
+
+    // 委外单状态（erp-mfg/subcontract-status，8 态核心可执行子集；权威：subcontracting.md §状态机设计）
+    String SUBCONTRACT_STATUS_DRAFT = "DRAFT";
+    String SUBCONTRACT_STATUS_SUBMITTED = "SUBMITTED";
+    String SUBCONTRACT_STATUS_APPROVED = "APPROVED";
+    String SUBCONTRACT_STATUS_ISSUED = "ISSUED";
+    String SUBCONTRACT_STATUS_RECEIVED = "RECEIVED";
+    String SUBCONTRACT_STATUS_COMPLETED = "COMPLETED";
+    String SUBCONTRACT_STATUS_CANCELLED = "CANCELLED";
+    String SUBCONTRACT_STATUS_REJECTED = "REJECTED";
+
+    // 委外单发起新库存移动单 relatedBillType（自由字符串）
+    String RELATED_BILL_TYPE_MFG_SUBCONTRACT_ISSUE = "ERP_MFG_SUBCONTRACT_ISSUE";
+    String RELATED_BILL_TYPE_MFG_SUBCONTRACT_RECEIPT = "ERP_MFG_SUBCONTRACT_RECEIPT";
+
+    /** 委外加费过账总开关（默认 false 向后兼容，对齐既有制造过账 config 范式）。 */
+    String CONFIG_SUBCONTRACT_POSTING_ENABLED = "erp-mfg.subcontract-posting-enabled";
+    /** MRP 委外释放总开关（默认 false 向后兼容）。 */
+    String CONFIG_SUBCONTRACT_RELEASE_ENABLED = "erp-mfg.subcontract-release-enabled";
+
+    /** 委外物资中转科目编码配置项（默认 1408；发料/收货/加工费过账共用）。 */
+    String CONFIG_SUBCONTRACT_SUBJECT_CODE = "erp-mfg.subcontract-subject-code";
+    String DEFAULT_SUBCONTRACT_SUBJECT_CODE = "1408";
+    /** 产成品存货科目编码（委外收货入库 Dr，对齐 SUBJECT_FINISHED_GOODS）。 */
+    String SUBJECT_SUBCONTRACT_FINISHED_GOODS = "1405";
+    /** 应付账款科目编码（委外加工费 Cr）。 */
+    String SUBJECT_ACCOUNTS_PAYABLE = "2202";
+
+    /** 释放生成的委外单 code 前缀。 */
+    String RELEASE_SUBCONTRACT_CODE_PREFIX = "SUB-MRP-";
 }

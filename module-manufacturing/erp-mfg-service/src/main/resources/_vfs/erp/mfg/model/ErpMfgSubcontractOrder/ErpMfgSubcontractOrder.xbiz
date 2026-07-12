@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpMfgSubcontractOrder.xbiz">
+<biz x:schema="/nop/schema/biz/xbiz.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:c="c" x:extends="_ErpMfgSubcontractOrder.xbiz">
 
-    <actions/>
+    <actions>
+        <mutation name="submitForApproval">
+            <source><c:script><![CDATA[
+                return inject('app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor').submitForApproval(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="approve">
+            <source><c:script><![CDATA[
+                return inject('app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor').approve(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="reject">
+            <source><c:script><![CDATA[
+                return inject('app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor').reject(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+        <mutation name="reverseApprove">
+            <source><c:script><![CDATA[
+                return inject('app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor').reverseApprove(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
+    </actions>
 </biz>

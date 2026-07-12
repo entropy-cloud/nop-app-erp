@@ -40,4 +40,14 @@ public class ErpMfgMrpPlanLineBizModel extends CrudBizModel<ErpMfgMrpPlanLine> i
         mrpReleaseService.releaseWorkRequest(planLineId);
         return get(String.valueOf(planLineId), false, context);
     }
+
+    @Override
+    @BizMutation
+    public ErpMfgMrpPlanLine releaseSubcontractRequest(@Name("planLineId") Long planLineId,
+                                                        @Name("supplierId") Long supplierId,
+                                                        @Name("currencyId") Long currencyId,
+                                                        IServiceContext context) {
+        mrpReleaseService.releaseSubcontractRequest(planLineId, supplierId, currencyId);
+        return get(String.valueOf(planLineId), false, context);
+    }
 }

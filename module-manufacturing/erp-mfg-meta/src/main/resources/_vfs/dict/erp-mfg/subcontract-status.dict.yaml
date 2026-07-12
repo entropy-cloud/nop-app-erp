@@ -9,11 +9,31 @@ options:
     value: DRAFT
     description: 
   
-  - label: 已生效
-    value: ACTIVE
+  - label: 已提交
+    value: SUBMITTED
     description: 
   
-  - label: 已作废
+  - label: 已审核
+    value: APPROVED
+    description: 
+  
+  - label: 已发料
+    value: ISSUED
+    description: 
+  
+  - label: 已收货
+    value: RECEIVED
+    description: 
+  
+  - label: 已完成
+    value: COMPLETED
+    description: 
+  
+  - label: 已取消
     value: CANCELLED
+    description: 
+  
+  - label: 已驳回
+    value: REJECTED
     description: 
   

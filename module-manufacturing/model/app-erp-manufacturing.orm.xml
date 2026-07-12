@@ -94,10 +94,18 @@
             <option code="DONE" label="已出库" value="DONE" i18n-en:label='Delivered'/>
             <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
         </dict>
+        <!-- 委外单状态机核心可执行子集（plan 2026-07-13-0455-1 §Phase 1 Decision）：设计 subcontracting.md 定义 10 态，
+             本期落地 8 态（舍 PRODUCED 供应商确认属 Portal 协同 successor、RETURNED 退货属 successor）。加性扩展：
+             既有 DRAFT/ACTIVE/CANCELLED 中 ACTIVE 收敛为提交后态，CANCELLED 保留。-->
         <dict label="委外单状态" name="erp-mfg/subcontract-status" valueType="string" i18n-en:label='Subcontract Order Status'>
             <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
-            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label='Effective'/>
-            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
+            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label='Submitted'/>
+            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label='Approved'/>
+            <option code="ISSUED" label="已发料" value="ISSUED" i18n-en:label='Issued'/>
+            <option code="RECEIVED" label="已收货" value="RECEIVED" i18n-en:label='Received'/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label='Completed'/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
+            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
         </dict>
         <dict label="成本滚算状态" name="erp-mfg/cost-rollup-status" valueType="string" i18n-en:label='Cost Rollup Status'>
             <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>

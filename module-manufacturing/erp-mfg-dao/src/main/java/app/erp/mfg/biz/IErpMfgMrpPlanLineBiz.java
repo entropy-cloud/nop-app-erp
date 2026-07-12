@@ -29,4 +29,17 @@ public interface IErpMfgMrpPlanLineBiz extends ICrudBiz<ErpMfgMrpPlanLine>{
      */
     @BizMutation
     ErpMfgMrpPlanLine releaseWorkRequest(@Name("planLineId") Long planLineId, IServiceContext context);
+
+    /**
+     * 释放委外建议行为委外加工单（{@link app.erp.mfg.dao.entity.ErpMfgSubcontractOrder}，plan 2026-07-13-0455-1 §Phase 4）。
+     * config-gated {@code erp-mfg.subcontract-release-enabled}（默认 false）。生成的委外单直接置 APPROVED（跳过审批）。
+     *
+     * @param supplierId 供应商（必填）
+     * @param currencyId 币种（必填）
+     */
+    @BizMutation
+    ErpMfgMrpPlanLine releaseSubcontractRequest(@Name("planLineId") Long planLineId,
+                                                 @Name("supplierId") Long supplierId,
+                                                 @Name("currencyId") Long currencyId,
+                                                 IServiceContext context);
 }

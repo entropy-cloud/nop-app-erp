@@ -36,6 +36,20 @@
     <bean id="app.erp.mfg.service.posting.ManufacturingIssueAcctDocProvider"
           class="app.erp.mfg.service.posting.ManufacturingIssueAcctDocProvider"/>
 
+    <!-- 委外加工生命周期 + GL 过账（plan 2026-07-13-0455-1）：委外单状态机 Processor（Facade + Processor 两层结构）。
+          Dispatcher 镜像 ManufacturingIssuePostingDispatcher 范式；三个 AcctDocProvider 由 finance ErpFinAcctDocRegistry
+          跨模块 collect-beans 自动聚合（同 ProductionVariance/ManufacturingIssue 范式）。 -->
+    <bean id="app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor"/>
+    <bean id="app.erp.mfg.service.posting.SubcontractPostingDispatcher"
+          class="app.erp.mfg.service.posting.SubcontractPostingDispatcher"/>
+    <bean id="app.erp.mfg.service.posting.SubcontractIssueAcctDocProvider"
+          class="app.erp.mfg.service.posting.SubcontractIssueAcctDocProvider"/>
+    <bean id="app.erp.mfg.service.posting.SubcontractReceiptAcctDocProvider"
+          class="app.erp.mfg.service.posting.SubcontractReceiptAcctDocProvider"/>
+    <bean id="app.erp.mfg.service.posting.SubcontractFeeAcctDocProvider"
+          class="app.erp.mfg.service.posting.SubcontractFeeAcctDocProvider"/>
+
     <!-- 工单齐套校验服务（plan 2026-07-02-2237-1 Phase 2）：BOM 展开 × plannedQuantity 对照 inventory 余额可用量 -->
     <bean id="app.erp.mfg.service.workorder.KitAvailabilityChecker"
           class="app.erp.mfg.service.workorder.KitAvailabilityChecker"/>

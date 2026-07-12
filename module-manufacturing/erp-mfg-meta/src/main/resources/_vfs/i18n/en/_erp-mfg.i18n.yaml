@@ -805,8 +805,13 @@ dict.option.label:
     CANCELLED: Cancelled
   erp-mfg/subcontract-status:
     DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
+    SUBMITTED: Submitted
+    APPROVED: Approved
+    ISSUED: Issued
+    RECEIVED: Received
+    COMPLETED: Completed
+    CANCELLED: Cancelled
+    REJECTED: Rejected
   erp-mfg/cost-rollup-status:
     DRAFT: Draft
     CALCULATED: Calculated

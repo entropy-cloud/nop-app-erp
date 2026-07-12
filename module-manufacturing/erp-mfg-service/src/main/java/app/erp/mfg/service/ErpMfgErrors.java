@@ -208,4 +208,39 @@ public interface ErpMfgErrors {
             "erp.err.mfg.genealogy.invalid-direction",
             "追溯方向[{direction}]非法（仅允许 FORWARD/BACKWARD）",
             ARG_DIRECTION);
+
+    // --- 委外加工（plan 2026-07-13-0455-1；权威：docs/design/manufacturing/subcontracting.md） ---
+
+    String ARG_SUBCONTRACT_ORDER_ID = "subcontractOrderId";
+    String ARG_SUBCONTRACT_ORDER_CODE = "subcontractOrderCode";
+
+    ErrorCode ERR_SUBCONTRACT_ORDER_NOT_FOUND = ErrorCode.define(
+            "erp.err.mfg.subcontract-order.not-found",
+            "委外单不存在: {subcontractOrderId}",
+            ARG_SUBCONTRACT_ORDER_ID);
+
+    ErrorCode ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.mfg.subcontract-order.illegal-status-transition",
+            "委外单[{subcontractOrderCode}]当前状态[{currentStatus}]不允许此操作，期望状态[{expectedStatus}]",
+            ARG_SUBCONTRACT_ORDER_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_SUBCONTRACT_LINES_EMPTY = ErrorCode.define(
+            "erp.err.mfg.subcontract-order.lines-empty",
+            "委外单[{subcontractOrderCode}]无委外行，无法发料",
+            ARG_SUBCONTRACT_ORDER_CODE);
+
+    ErrorCode ERR_SUBCONTRACT_OVER_ISSUE = ErrorCode.define(
+            "erp.err.mfg.subcontract-order.over-issue",
+            "委外单[{subcontractOrderCode}]发料数量[{requiredQty}]超过委外行标准数量[{plannedQty}]（未启用超发配置）",
+            ARG_SUBCONTRACT_ORDER_CODE, ARG_REQUIRED_QTY, ARG_PLANNED_QTY);
+
+    ErrorCode ERR_SUBCONTRACT_OVER_RECEIPT = ErrorCode.define(
+            "erp.err.mfg.subcontract-order.over-receipt",
+            "委外单[{subcontractOrderCode}]收货数量[{completedQty}]超过发料数量[{plannedQty}]（扣除损耗）",
+            ARG_SUBCONTRACT_ORDER_CODE, ARG_COMPLETED_QTY, ARG_PLANNED_QTY);
+
+    ErrorCode ERR_SUBCONTRACT_RELEASE_MISSING_SUPPLIER = ErrorCode.define(
+            "erp.err.mfg.subcontract-release.missing-supplier",
+            "释放委外建议行[{mrpLineId}]须提供供应商[supplierId]",
+            ARG_MRP_LINE_ID);
 }

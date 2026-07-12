@@ -229,14 +229,39 @@ public interface _ErpMfgDaoConstants {
     String SUBCONTRACT_STATUS_DRAFT = "DRAFT";
                     
     /**
-     * 委外单状态: 已生效 
+     * 委外单状态: 已提交 
      */
-    String SUBCONTRACT_STATUS_ACTIVE = "ACTIVE";
+    String SUBCONTRACT_STATUS_SUBMITTED = "SUBMITTED";
                     
     /**
-     * 委外单状态: 已作废 
+     * 委外单状态: 已审核 
+     */
+    String SUBCONTRACT_STATUS_APPROVED = "APPROVED";
+                    
+    /**
+     * 委外单状态: 已发料 
+     */
+    String SUBCONTRACT_STATUS_ISSUED = "ISSUED";
+                    
+    /**
+     * 委外单状态: 已收货 
+     */
+    String SUBCONTRACT_STATUS_RECEIVED = "RECEIVED";
+                    
+    /**
+     * 委外单状态: 已完成 
+     */
+    String SUBCONTRACT_STATUS_COMPLETED = "COMPLETED";
+                    
+    /**
+     * 委外单状态: 已取消 
      */
     String SUBCONTRACT_STATUS_CANCELLED = "CANCELLED";
+                    
+    /**
+     * 委外单状态: 已驳回 
+     */
+    String SUBCONTRACT_STATUS_REJECTED = "REJECTED";
                     
     /**
      * 成本滚算状态: 草稿 

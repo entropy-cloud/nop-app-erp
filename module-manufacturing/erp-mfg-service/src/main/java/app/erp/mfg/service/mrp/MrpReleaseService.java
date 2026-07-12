@@ -3,12 +3,15 @@ package app.erp.mfg.service.mrp;
 import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgMrpPlan;
 import app.erp.mfg.dao.entity.ErpMfgMrpPlanLine;
+import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
+import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
@@ -46,7 +49,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 跨域持久化经 {@code IDaoProvider}（非 {@code IErpPurOrderBiz}），因目标单为骨架草稿（单价/金额 0），通用 save 管道会因
  * 必填校验拒绝；待采购域提供 purpose-built {@code createFromMrpLine} 时可收敛为 I*Biz 调用（successor）。
  *
- * <p><b>Non-Goal</b>：SUBCONTRACT_REQUEST（委外）释放——委外流程独立面，本期不支持。
+ * <p><b>Non-Goal</b>：仅支持 PURCHASE_REQUEST / WORK_ORDER_REQUEST / SUBCONTRACT_REQUEST 三类释放。
  */
 public class MrpReleaseService {
 
@@ -83,6 +86,29 @@ public class MrpReleaseService {
         ErpMfgMrpPlanLine line = requireReleasable(planLineId, ErpMfgConstants.MRP_ORDER_TYPE_WORK_ORDER_REQUEST);
         ErpMfgMrpPlan plan = daoProvider.daoFor(ErpMfgMrpPlan.class).getEntityById(line.getMrpPlanId());
         String billCode = releaseToWorkOrder(line, plan, CoreMetrics.today());
+        markFirmed(line, billCode);
+        advancePlanToFirmedIfComplete(plan);
+        return billCode;
+    }
+
+    /**
+     * 释放委外建议行为委外加工单（plan 2026-07-13-0455-1 §Phase 4）。返回生成的委外单号（回写 convertedBillCode）。
+     * 镜像 {@link #releasePurchaseRequest} 范式：supplierId/currencyId 由调用方提供；config-gated
+     * {@code erp-mfg.subcontract-release-enabled}（默认 false 向后兼容）。生成的委外单直接置 APPROVED（跳过审批，
+     * 对齐 MRP 自动释放不经人工审批管道的 O-4 架构豁免）。
+     */
+    public String releaseSubcontractRequest(Long planLineId, Long supplierId, Long currencyId) {
+        if (!isSubcontractReleaseEnabled()) {
+            throw new NopException(ErpMfgErrors.ERR_MRP_RELEASE_UNSUPPORTED_ORDER_TYPE)
+                    .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
+        }
+        if (supplierId == null) {
+            throw new NopException(ErpMfgErrors.ERR_SUBCONTRACT_RELEASE_MISSING_SUPPLIER)
+                    .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
+        }
+        ErpMfgMrpPlanLine line = requireReleasable(planLineId, ErpMfgConstants.MRP_ORDER_TYPE_SUBCONTRACT_REQUEST);
+        ErpMfgMrpPlan plan = daoProvider.daoFor(ErpMfgMrpPlan.class).getEntityById(line.getMrpPlanId());
+        String billCode = releaseToSubcontractOrder(line, plan, supplierId, currencyId, CoreMetrics.today());
         markFirmed(line, billCode);
         advancePlanToFirmedIfComplete(plan);
         return billCode;
@@ -158,6 +184,39 @@ public class MrpReleaseService {
         return code;
     }
 
+    private String releaseToSubcontractOrder(ErpMfgMrpPlanLine line, ErpMfgMrpPlan plan, Long supplierId,
+                                             Long currencyId, LocalDate today) {
+        IEntityDao<ErpMfgSubcontractOrder> orderDao = daoProvider.daoFor(ErpMfgSubcontractOrder.class);
+        ErpMfgSubcontractOrder order = orderDao.newEntity();
+        String code = ErpMfgConstants.RELEASE_SUBCONTRACT_CODE_PREFIX + line.getId();
+        order.setCode(code);
+        order.setOrgId(plan != null ? plan.getOrgId() : null);
+        order.setSupplierId(supplierId);
+        order.setProductId(line.getMaterialId());
+        order.setCurrencyId(currencyId);
+        order.setExchangeRate(BigDecimal.ONE);
+        order.setBusinessDate(today);
+        order.setProcessingFee(BigDecimal.ZERO);
+        order.setTotalAmount(BigDecimal.ZERO);
+        order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED);
+        order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
+        order.orm_propValueByName("postedStatus", "DRAFT");
+        // O-4 架构豁免：MRP 自动释放不经人工审批管道，跨模块直接持久化委外单骨架（加工费 0 待采购员补录）。
+        orderDao.saveEntity(order);
+
+        IEntityDao<ErpMfgSubcontractOrderLine> lineDao = daoProvider.daoFor(ErpMfgSubcontractOrderLine.class);
+        ErpMfgSubcontractOrderLine subLine = lineDao.newEntity();
+        subLine.setSubcontractOrderId(order.getId());
+        subLine.setLineNo(10);
+        subLine.setMaterialId(line.getMaterialId());
+        subLine.setUoMId(line.getUoMId());
+        subLine.setQuantity(nz(line.getPlannedQuantity()));
+        subLine.setUnitProcessingFee(BigDecimal.ZERO);
+        subLine.setAmount(BigDecimal.ZERO);
+        lineDao.saveEntity(subLine);
+        return code;
+    }
+
     private void advancePlanToFirmedIfComplete(ErpMfgMrpPlan plan) {
         if (plan == null) {
             return;
@@ -204,5 +263,17 @@ public class MrpReleaseService {
 
     static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    private boolean isSubcontractReleaseEnabled() {
+        try {
+            String value = AppConfig.var(ErpMfgConstants.CONFIG_SUBCONTRACT_RELEASE_ENABLED, "false");
+            if (value == null || value.trim().isEmpty()) {
+                return false;
+            }
+            return Boolean.parseBoolean(value.trim());
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
