@@ -189,6 +189,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
                 continue;
             }
             ErpFinReconciliation head = create(direction, pid, businessDate, match.getLines(), ctx);
+            orm().flushSession();
             post(head.getId(), ctx);
             result.getReconciliationIds().add(head.getId());
         }

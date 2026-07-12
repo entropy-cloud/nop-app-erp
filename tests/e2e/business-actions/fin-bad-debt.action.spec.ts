@@ -11,7 +11,7 @@ import {
   deleteById,
   findFirst,
 } from './_helper';
-import { cleanupVoucherByBillCode } from '../orchestration/_helper';
+import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines } from '../orchestration/_helper';
 
 /**
  * Finance ErpFinBadDebt 坏账生命周期浏览器层 E2E（plan 2026-07-12-0413-2 Phase 2）。
@@ -191,6 +191,14 @@ test.describe('Finance ErpFinBadDebt lifecycle browser-layer E2E', () => {
       );
       expect(billR, 'approve should produce BAD_DEBT_WRITE_OFF voucher bill-link by debt.code').toBeTruthy();
       expect(billR.voucherId, 'BAD_DEBT_WRITE_OFF voucher id should be non-null').toBeTruthy();
+
+      // BAD_DEBT_WRITE_OFF 凭证行精确数值断言（Dr 1231 坏账准备 / Cr 1122 应收账款，金额=AR 项 openAmount=100，
+      // plan 2026-07-12-1321-2 Phase 1；ErpFinBadDebtProcessor.executeWriteOff :130-136）
+      const writeOffVoucherId = await findVoucherIdByBillCode(page, writtenOff.code, 'NORMAL');
+      await assertVoucherLines(page, writeOffVoucherId, [
+        { subjectCode: '1231', dcDirection: 'DEBIT', debitAmount: AMOUNT, creditAmount: 0 },
+        { subjectCode: '1122', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: AMOUNT },
+      ]);
     } finally {
       await cleanupBadDebt(page, ctx);
     }
@@ -246,6 +254,14 @@ test.describe('Finance ErpFinBadDebt lifecycle browser-layer E2E', () => {
       );
       expect(billR, 'recover approve should produce BAD_DEBT_RECOVERY voucher bill-link by debt.code').toBeTruthy();
       expect(billR.voucherId, 'BAD_DEBT_RECOVERY voucher id should be non-null').toBeTruthy();
+
+      // BAD_DEBT_RECOVERY 凭证行精确数值断言（Dr 1122 应收账款 / Cr 1231 坏账准备，金额=核销时金额=100，
+      // plan 2026-07-12-1321-2 Phase 1；ErpFinBadDebtProcessor.executeRecovery :156-160；CloseVoucherWriter postingType=NORMAL）
+      const recoveryVoucherId = await findVoucherIdByBillCode(page, recovered.code, 'NORMAL');
+      await assertVoucherLines(page, recoveryVoucherId, [
+        { subjectCode: '1122', dcDirection: 'DEBIT', debitAmount: AMOUNT, creditAmount: 0 },
+        { subjectCode: '1231', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: AMOUNT },
+      ]);
     } finally {
       await cleanupBadDebt(page, ctx);
     }
@@ -270,6 +286,17 @@ test.describe('Finance ErpFinBadDebt lifecycle browser-layer E2E', () => {
 
     if (result.action !== 'NONE') {
       expect(result.voucherId, `${result.action} action should produce a voucher id`).toBeTruthy();
+    }
+
+    // BAD_DEBT_RESERVE 凭证行精确数值断言（Dr 6701 信用减值损失 / Cr 1231 坏账准备，
+    // 金额=requiredProvision − allowanceBalance，plan 2026-07-12-1321-2 Phase 1；
+    // BadDebtProvisionService :88-104；RELEASE 反向科目经 Deferred 裁决 Successor Required: no 不覆盖）
+    if (result.action === 'RESERVE') {
+      const reserveAmount = Number(result.requiredProvision) - Number(result.allowanceBalance);
+      await assertVoucherLines(page, result.voucherId, [
+        { subjectCode: '6701', dcDirection: 'DEBIT', debitAmount: reserveAmount, creditAmount: 0 },
+        { subjectCode: '1231', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: reserveAmount },
+      ]);
     }
 
     // cleanup 计提凭证（按 voucherId 直接删 lines + voucher + bill_r，使 Allowance 账面恢复，不污染后续/基线）

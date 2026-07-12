@@ -11,7 +11,7 @@ import {
   deleteById,
   findFirst,
 } from './_helper';
-import { cleanupVoucherByBillCode } from '../orchestration/_helper';
+import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines } from '../orchestration/_helper';
 
 /**
  * Finance ErpFinBankReconciliation 银行对账生命周期浏览器层 E2E（plan 2026-07-12-0413-2 Phase 1）。
@@ -178,6 +178,14 @@ test.describe('Finance ErpFinBankReconciliation lifecycle browser-layer E2E', ()
       expect(billR, 'post should produce BANK_RECON_ADJ voucher bill-link by recon.code').toBeTruthy();
       expect(billR.voucherId, 'BANK_RECON_ADJ voucher id should be non-null').toBeTruthy();
 
+      // BANK_RECON_ADJ 正向凭证行精确数值断言（Dr 1002 银行存款 / Cr 2240OTHER 各 100，plan 2026-07-12-1321-2 Phase 1）
+      // bankCredit=100（1 行 UNMATCHED CREDIT），bankDebit=0 → BankReconAdjAcctDocProvider Dr bankSubject/Cr adjSubject
+      const normalVoucherId = await findVoucherIdByBillCode(page, generated.code, 'NORMAL');
+      await assertVoucherLines(page, normalVoucherId, [
+        { subjectCode: '1002', dcDirection: 'DEBIT', debitAmount: UNRECONCILED_AMT, creditAmount: 0 },
+        { subjectCode: '2240OTHER', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: UNRECONCILED_AMT },
+      ]);
+
       // reverse：POSTED → CANCELLED + 红冲凭证
       const reversed = await callMutationOk(
         page, 'ErpFinBankReconciliation', 'reverse', { reconciliationId: generated.id }, 'id docStatus',
@@ -205,6 +213,13 @@ test.describe('Finance ErpFinBankReconciliation lifecycle browser-layer E2E', ()
         }
       }
       expect(hasReversal, 'reverse should produce a REVERSAL voucher (by postingType)').toBe(true);
+
+      // 红冲凭证行精确数值断言（同向取负：buildReversalDraft dcDirection 不变、金额取负，plan 2026-07-12-1321-2 Phase 1）
+      const reversalVoucherId = await findVoucherIdByBillCode(page, generated.code, 'REVERSAL');
+      await assertVoucherLines(page, reversalVoucherId, [
+        { subjectCode: '1002', dcDirection: 'DEBIT', debitAmount: -UNRECONCILED_AMT, creditAmount: 0 },
+        { subjectCode: '2240OTHER', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -UNRECONCILED_AMT },
+      ]);
     } finally {
       await cleanupBankRecon(page, null, null, statement.id, fundAccount.id);
       await deleteById(page, 'ErpFinBankStatementLine', line.id);
