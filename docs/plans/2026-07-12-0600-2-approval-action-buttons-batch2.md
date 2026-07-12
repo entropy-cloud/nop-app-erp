@@ -137,6 +137,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: reverseApprove 为审批后撤销操作，语义不同于审批正向生命周期三步（提交/批准/驳回）。本计划仅覆盖正向审批入口。
 - Successor Required: `yes`（触发条件：反审批用户面需求落地时）
+- Successor Delivered: ✅ plan `2026-07-12-0800-1-reverse-approve-action-buttons-batch3.md`（23 实体 reverseApprove 按钮全接线，结束审计通过）
 
 ### drawer / edit 表单内审批入口
 
