@@ -254,6 +254,8 @@ App = Delta × x-extends × Generator(DSL)
 
 ### 6.1 需要改为 `protected` 的方法清单
 
+> **状态：已修复（2026-07-13）** — 全部 24 个 Processor 文件中的全部 57 个 `private` 方法 + 2 个内部类型（`TbAgg` 类、`Setter` 接口）已改为 `protected`，执行计划见 `docs/plans/2026-07-12-1400-1-processor-private-to-protected-for-delta-customization.md`。唯一保留的 `private` 是 `ErpFinPostingProcessor.PostingRun` 的构造器（有意工厂方法约束，非 Delta 阻塞）。下方原始清单保留作为历史审计证据。
+
 以下方法是阻碍纯 Delta 定制的精确"机关"。如果产品侧将它们从 `private` 改为 `protected`，即可解除相关阻塞。
 
 **文件：`module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/ErpFinPostingProcessor.java`**
