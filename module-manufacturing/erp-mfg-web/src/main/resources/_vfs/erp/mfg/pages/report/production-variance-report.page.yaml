@@ -13,9 +13,11 @@ body:
       - type: input-date
         name: startDate
         label: "开始日期"
+        valueFormat: "YYYY-MM-DD"
       - type: input-date
         name: endDate
         label: "结束日期"
+        valueFormat: "YYYY-MM-DD"
       - type: button
         label: "渲染报表"
         actionType: reload

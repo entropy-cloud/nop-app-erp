@@ -178,7 +178,10 @@ public class ErpInvReportBizModel {
     private static Long asLong(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
-        return v == null ? null : Long.valueOf(v.toString());
+        if (v == null) return null;
+        String s = v.toString();
+        if (s.trim().isEmpty()) return null;
+        return Long.valueOf(s);
     }
 
     // ===================== 数据集构造（也作 @BizQuery 供前端取原始数据） =====================

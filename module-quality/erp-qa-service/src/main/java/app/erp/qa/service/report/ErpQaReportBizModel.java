@@ -29,7 +29,9 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -173,14 +175,22 @@ public class ErpQaReportBizModel {
     private static Long asLong(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
-        return v == null ? null : Long.valueOf(v.toString());
+        if (v == null) return null;
+        String s = v.toString();
+        if (s.trim().isEmpty()) return null;
+        return Long.valueOf(s);
     }
 
     private static LocalDate asDate(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
         if (v == null) return null;
-        return v instanceof LocalDate ? (LocalDate) v : LocalDate.parse(v.toString());
+        if (v instanceof LocalDate) return (LocalDate) v;
+        String s = v.toString();
+        if (s.isEmpty()) return null;
+        if (s.matches("\\d{13}")) return LocalDate.ofInstant(Instant.ofEpochMilli(Long.parseLong(s)), ZoneOffset.UTC);
+        if (s.matches("\\d{10}")) return LocalDate.ofInstant(Instant.ofEpochSecond(Long.parseLong(s)), ZoneOffset.UTC);
+        return LocalDate.parse(s);
     }
 
     // ===================== 数据集构造（也作 @BizQuery 供前端取原始数据） =====================

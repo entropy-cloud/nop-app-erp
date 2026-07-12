@@ -13,9 +13,11 @@ body:
       - type: input-date
         name: periodStart
         label: "区间起"
+        valueFormat: "YYYY-MM-DD"
       - type: input-date
         name: periodEnd
         label: "区间止"
+        valueFormat: "YYYY-MM-DD"
       - type: button
         label: "渲染报表"
         actionType: reload

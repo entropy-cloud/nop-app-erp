@@ -385,38 +385,6 @@ export function assertAmisDownloadButton(cfg: AmisDownloadAssertion): void {
         }
       }
 
-      // AMIS serializes input-date values as raw Unix timestamps (seconds) and
-      // unfilled optional fields as empty strings "". The backend strict-parses
-      // both (DateTimeParseException on "" and on a 10-digit timestamp), so we
-      // normalize the download request's `data` params: "" -> null (no filter,
-      // backend full extent) and a 10-digit timestamp -> ISO date. This is the
-      // SAME normalization the renderHtml visual helper applies to its GraphQL
-      // variables (tests/e2e/visual/_helper.ts) — it is a test-level workaround
-      // for AMIS's date serialization, not a product change.
-      await page.route('**/p/*', async (route) => {
-        const postData = route.request().postData();
-        if (postData) {
-          try {
-            const body = JSON.parse(postData);
-            if (body.data && typeof body.data === 'object') {
-              for (const key of Object.keys(body.data)) {
-                const val = body.data[key];
-                if (val === '') {
-                  body.data[key] = null;
-                } else if (typeof val === 'string' && /^\d{10}$/.test(val)) {
-                  body.data[key] = new Date(Number(val) * 1000).toISOString().substring(0, 10);
-                }
-              }
-              await route.continue({ postData: JSON.stringify(body) });
-              return;
-            }
-          } catch {
-            // fall through to default continue
-          }
-        }
-        await route.continue();
-      });
-
       const label = cfg.renderType === 'xlsx' ? /下载\s*XLSX/ : /下载\s*PDF/;
 
       // Request-level capture proves the button targeted the /p/ binary-download

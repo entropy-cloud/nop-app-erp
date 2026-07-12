@@ -164,7 +164,9 @@ public class ErpMdReportBizModel {
     private static String asString(Map<String, Object> data, String k) {
         if (data == null) return null;
         Object v = data.get(k);
-        return v == null ? null : v.toString();
+        if (v == null) return null;
+        String s = v.toString();
+        return s.trim().isEmpty() ? null : s;
     }
 
     // ===================== 数据集构造（也作 @BizQuery 供前端取原始数据） =====================

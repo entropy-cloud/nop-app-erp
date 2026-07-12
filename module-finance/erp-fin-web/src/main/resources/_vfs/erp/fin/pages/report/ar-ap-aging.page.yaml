@@ -10,6 +10,7 @@ body:
         name: asOfDate
         label: "账龄基准日"
         value: "${NOW()}"
+        valueFormat: "YYYY-MM-DD"
       - type: button
         label: "渲染报表"
         actionType: reload

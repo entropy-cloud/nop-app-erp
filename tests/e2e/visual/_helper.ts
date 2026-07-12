@@ -138,37 +138,6 @@ export function assertReportRendered(cfg: ReportVisualAssertion): void {
         }
       }
 
-      // AMIS sends empty-string "" for unfilled optional form fields, and its
-      // DatePicker serializes dates as raw Unix timestamps (seconds). Both
-      // cause backend failures: "" is treated as a filter (matches nothing),
-      // and timestamps can't be parsed as date strings. The value-spec layer
-      // avoids both by posting explicit variables. Here we intercept the
-      // renderHtml GraphQL request and normalize variables: "" → null (no
-      // filter), and 10-digit timestamps → ISO date strings.
-      await page.route('**/graphql', async (route) => {
-        const postData = route.request().postData();
-        if (postData && postData.includes('renderHtml')) {
-          try {
-            const body = JSON.parse(postData);
-            if (body.variables) {
-              for (const key of Object.keys(body.variables)) {
-                const val = body.variables[key];
-                if (val === '') {
-                  body.variables[key] = null;
-                } else if (typeof val === 'string' && /^\d{10}$/.test(val)) {
-                  body.variables[key] = new Date(Number(val) * 1000).toISOString().substring(0, 10);
-                }
-              }
-            }
-            await route.continue({ postData: JSON.stringify(body) });
-            return;
-          } catch {
-            // fall through
-          }
-        }
-        await route.continue();
-      });
-
       await page.getByRole('button', { name: /渲染报表|Render/ }).first().click();
 
       const renderResponse = await renderResponsePromise;
