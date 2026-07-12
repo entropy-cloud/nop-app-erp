@@ -178,6 +178,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 仅 2 核心订单在本计划；其余 21 实体审批入口需求逐域触发。
 - Successor Required: `yes`（触发条件：对应实体审批入口用户面需求落地）
+- Successor Progress: 批次 2（`docs/plans/2026-07-12-0600-2-approval-action-buttons-batch2.md`）已完成，覆盖剩余全部 21 实体（purchase 5 + sales 5 + assets 5 + finance 2 + manufacturing 1 + quality 1 + inventory 1 + hr 1）的 submit / approve / reject 三按钮 rowActions 接线。23 实体全口径审批按钮 successor 全部落地。
 
 ### 缺陷 2 剩余实体（若降级 delta 路径）
 
