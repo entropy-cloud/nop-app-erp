@@ -75,6 +75,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       quantity: 数量
       receiveLine: null
       receiveLineId: 入库行ID
@@ -151,6 +152,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       order: null
       orderId: 订单ID
       project: null
@@ -335,6 +337,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       orderLine: null
       orderLineId: 订单行ID
       quantity: 实收数量
@@ -390,6 +393,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       project: null
       projectId: 项目
       quantity: 请购数量
@@ -454,6 +458,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       quantity: 退货数量
       reason: 退货原因
       receiveLine: null

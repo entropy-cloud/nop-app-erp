@@ -22,5 +22,6 @@
   "pricingSource": "",
   "quotation": null,
   "material": null,
-  "uoM": null
+  "uoM": null,
+  "materialName": ""
 }

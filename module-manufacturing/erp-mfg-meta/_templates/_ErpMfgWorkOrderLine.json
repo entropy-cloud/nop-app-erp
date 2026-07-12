@@ -23,5 +23,6 @@
   "sku": null,
   "uoM": null,
   "sourceWarehouse": null,
-  "destWarehouse": null
+  "destWarehouse": null,
+  "materialName": ""
 }

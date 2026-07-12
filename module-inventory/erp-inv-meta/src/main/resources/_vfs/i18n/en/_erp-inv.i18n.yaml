@@ -496,6 +496,7 @@ prop:
       currency: Currency
       sourceLocation: Source Location
       destLocation: Dest Location
+      materialName: null
     ErpInvStockTake:
       id: ID
       code: Code

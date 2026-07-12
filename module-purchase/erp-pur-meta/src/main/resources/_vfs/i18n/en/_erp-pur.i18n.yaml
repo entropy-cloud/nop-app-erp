@@ -87,6 +87,7 @@ prop:
       material: Material
       receiveLine: Receive Line
       uoM: Uo M
+      materialName: null
     ErpPurOrder:
       id: ID
       code: Code
@@ -172,6 +173,7 @@ prop:
       taxRateMd: Tax Rate Md
       warehouse: Warehouse
       project: Project
+      materialName: null
     ErpPurPayment:
       id: ID
       code: Code
@@ -354,6 +356,7 @@ prop:
       uoM: Uo M
       orderLine: Order Line
       warehouse: Warehouse
+      materialName: null
     ErpPurRequisition:
       id: ID
       code: Code
@@ -404,6 +407,7 @@ prop:
       uoM: Uo M
       suggestedSupplier: Suggested Supplier
       project: Project
+      materialName: null
     ErpPurReturn:
       id: ID
       code: Code
@@ -471,6 +475,7 @@ prop:
       sku: Sku
       uoM: Uo M
       receiveLine: Receive Line
+      materialName: null
     ErpPurRfq:
       id: ID
       code: Code

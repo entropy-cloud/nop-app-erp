@@ -1,11 +1,14 @@
 package app.erp.pur.service;
 
 import app.erp.md.dao.entity.ErpMdCurrency;
+import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdOrganization;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.md.dao.entity.ErpMdUoM;
 import app.erp.md.dao.entity.ErpMdWarehouse;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.dao.entity.ErpPurOrder;
+import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.service.ErpPurConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
@@ -48,6 +51,8 @@ public class TestErpPurFkNameLoader extends JunitAutoTestCase {
     static final Long SUPPLIER_ID = 8201L;
     static final Long WAREHOUSE_ID = 8301L;
     static final Long CURRENCY_ID = 8401L;
+    static final Long UOM_ID = 8501L;
+    static final Long MATERIAL_ID = 8601L;
 
     @Inject
     IDaoProvider daoProvider;
@@ -118,6 +123,28 @@ public class TestErpPurFkNameLoader extends JunitAutoTestCase {
         assertEquals("原料仓", first.get("warehouseName"));
         assertEquals("人民币", first.get("currencyName"));
         assertEquals("采购测试组织", first.get("orgName"));
+    }
+
+    @Test
+    public void testPurOrderLineMaterialNameResolution() {
+        ormTemplate.runInSession(() -> {
+            seedOrg(ORG_ID, "采购测试组织");
+            seedSupplier(SUPPLIER_ID, "供应商Zeta");
+            seedWarehouse(WAREHOUSE_ID, "原料仓");
+            seedCurrency(CURRENCY_ID, "人民币");
+            seedUoM(UOM_ID, "个");
+            seedMaterial(MATERIAL_ID, "物料Omega");
+            seedOrder(7701L);
+            seedOrderLine(7801L, 7701L);
+        });
+
+        List<Map<String, Object>> rows = queryWithSelection(
+                "ErpPurOrderLine__findList",
+                "id", "materialName");
+        assertNotNull(rows);
+        assertEquals(false, rows.isEmpty(), "至少 1 条采购订单行");
+        Map<String, Object> first = rows.get(0);
+        assertEquals("物料Omega", first.get("materialName"));
     }
 
     // ---------- query helper ----------
@@ -235,5 +262,40 @@ public class TestErpPurFkNameLoader extends JunitAutoTestCase {
         recv.setDocStatus(ErpPurConstants.DOC_STATUS_DRAFT);
         recv.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         dao.saveEntity(recv);
+    }
+
+    private void seedUoM(long id, String name) {
+        IEntityDao<ErpMdUoM> dao = daoProvider.daoFor(ErpMdUoM.class);
+        ErpMdUoM u = dao.newEntity();
+        u.orm_propValue(1, id);
+        u.setCode("UOM-" + id);
+        u.setName(name);
+        dao.saveEntity(u);
+    }
+
+    private void seedMaterial(long id, String name) {
+        IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
+        ErpMdMaterial m = dao.newEntity();
+        m.orm_propValue(1, id);
+        m.setCode("MAT-" + id);
+        m.setName(name);
+        m.orm_propValueByName("materialType", "GOODS");
+        m.setUoMId(UOM_ID);
+        m.setStatus("ACTIVE");
+        dao.saveEntity(m);
+    }
+
+    private void seedOrderLine(long id, long orderId) {
+        IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
+        ErpPurOrderLine line = dao.newEntity();
+        line.orm_propValue(1, id);
+        line.setOrderId(orderId);
+        line.setLineNo(1);
+        line.setMaterialId(MATERIAL_ID);
+        line.setUoMId(UOM_ID);
+        line.setQuantity(BigDecimal.TEN);
+        line.setUnitPrice(BigDecimal.ONE);
+        line.setAmount(BigDecimal.TEN);
+        dao.saveEntity(line);
     }
 }

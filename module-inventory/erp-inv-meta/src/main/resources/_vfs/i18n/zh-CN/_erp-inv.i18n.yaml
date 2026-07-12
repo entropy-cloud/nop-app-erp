@@ -480,6 +480,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       move: null
       moveId: 移动单ID
       quantity: 数量

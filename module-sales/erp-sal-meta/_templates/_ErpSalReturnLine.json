@@ -23,5 +23,6 @@
   "material": null,
   "sku": null,
   "uoM": null,
-  "deliveryLine": null
+  "deliveryLine": null,
+  "materialName": ""
 }

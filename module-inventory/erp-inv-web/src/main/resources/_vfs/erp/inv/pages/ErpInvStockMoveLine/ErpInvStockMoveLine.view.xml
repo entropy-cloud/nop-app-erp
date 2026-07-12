@@ -3,7 +3,19 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialName" label="物料名称"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="unitCost" ui:number="true" sortable="true"/>
+                <col id="totalCost" ui:number="true" sortable="true"/>
+                <col id="batchNo" sortable="true"/>
+                <col id="serialNo" sortable="true"/>
+                <col id="remark" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

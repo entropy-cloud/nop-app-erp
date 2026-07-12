@@ -118,6 +118,7 @@ prop:
       uoM: Uo M
       orderLine: Order Line
       warehouse: Warehouse
+      materialName: null
     ErpSalInvoice:
       id: ID
       code: Code
@@ -183,6 +184,7 @@ prop:
       material: Material
       deliveryLine: Delivery Line
       uoM: Uo M
+      materialName: null
     ErpSalOrder:
       id: ID
       code: Code
@@ -271,6 +273,7 @@ prop:
       taxRateMd: Tax Rate Md
       warehouse: Warehouse
       project: Project
+      materialName: null
     ErpSalPriceList:
       id: ID
       name: Name
@@ -410,6 +413,7 @@ prop:
       quotation: Quotation
       material: Material
       uoM: Uo M
+      materialName: null
     ErpSalReceipt:
       id: ID
       code: Code
@@ -535,6 +539,7 @@ prop:
       sku: Sku
       uoM: Uo M
       deliveryLine: Delivery Line
+      materialName: null
 dict:
   label:
     erp-sal/doc-status: Doc Status

@@ -26,5 +26,6 @@
   "uoM": null,
   "currency": null,
   "sourceLocation": null,
-  "destLocation": null
+  "destLocation": null,
+  "materialName": ""
 }

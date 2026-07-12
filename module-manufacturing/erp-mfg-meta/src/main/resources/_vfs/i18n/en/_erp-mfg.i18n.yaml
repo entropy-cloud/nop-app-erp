@@ -398,6 +398,7 @@ prop:
       uoM: Uo M
       workOrderLine: Work Order Line
       location: Location
+      materialName: null
     ErpMfgMrpDemand:
       id: ID
       mrpPlanId: Mrp Plan
@@ -666,6 +667,7 @@ prop:
       uoM: Uo M
       sourceWarehouse: Source Warehouse
       destWarehouse: Dest Warehouse
+      materialName: null
     ErpMfgWorkcenter:
       id: ID
       code: Code

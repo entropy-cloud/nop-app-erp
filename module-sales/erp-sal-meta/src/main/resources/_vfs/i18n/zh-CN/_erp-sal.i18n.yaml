@@ -102,6 +102,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       orderLine: null
       orderLineId: 订单行ID
       quantity: 实发数量
@@ -173,6 +174,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       quantity: 数量
       remark: 备注
       taxAmount: 税额
@@ -250,6 +252,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       order: null
       orderId: 订单ID
       pricingSource: 取价来源
@@ -397,6 +400,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       pricingSource: 取价来源
       quantity: 数量
       quotation: null
@@ -520,6 +524,7 @@ prop:
       lineNo: 行号
       material: null
       materialId: 物料
+      materialName: 物料名称
       quantity: 退货数量
       reason: 退货原因
       remark: 备注

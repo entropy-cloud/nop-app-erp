@@ -24,5 +24,6 @@
   "sku": null,
   "uoM": null,
   "workOrderLine": null,
-  "location": null
+  "location": null,
+  "materialName": ""
 }

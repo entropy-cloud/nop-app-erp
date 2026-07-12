@@ -2,7 +2,18 @@
 <view x:extends="_gen/_ErpPurInvoiceLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialName" label="物料名称"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="unitPrice" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="taxAmount" ui:number="true" sortable="true"/>
+                <col id="amount" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="remark" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

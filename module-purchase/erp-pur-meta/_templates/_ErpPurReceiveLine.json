@@ -26,5 +26,6 @@
   "sku": null,
   "uoM": null,
   "orderLine": null,
-  "warehouse": null
+  "warehouse": null,
+  "materialName": ""
 }

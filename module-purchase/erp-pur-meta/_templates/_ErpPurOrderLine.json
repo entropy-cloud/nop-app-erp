@@ -29,5 +29,6 @@
   "uoM": null,
   "taxRateMd": null,
   "warehouse": null,
-  "project": null
+  "project": null,
+  "materialName": ""
 }

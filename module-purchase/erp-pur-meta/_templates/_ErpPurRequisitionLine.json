@@ -19,5 +19,6 @@
   "material": null,
   "uoM": null,
   "suggestedSupplier": null,
-  "project": null
+  "project": null,
+  "materialName": ""
 }

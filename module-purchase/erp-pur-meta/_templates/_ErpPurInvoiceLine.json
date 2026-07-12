@@ -20,5 +20,6 @@
   "invoice": null,
   "material": null,
   "receiveLine": null,
-  "uoM": null
+  "uoM": null,
+  "materialName": ""
 }
