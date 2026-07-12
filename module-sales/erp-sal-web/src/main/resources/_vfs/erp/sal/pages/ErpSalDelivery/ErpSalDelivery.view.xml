@@ -26,7 +26,37 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                    <api url="@mutation:ErpSalDelivery__submitForApproval?id=$id"/>
+                    <confirmText>确认提交此销售出库单审批？</confirmText>
+                    <messages>
+                        <success>销售出库单已提交审批</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
+                </action>
+                <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpSalDelivery__approve?id=$id"/>
+                    <confirmText>确认批准此销售出库单？</confirmText>
+                    <messages>
+                        <success>销售出库单已批准</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
+                </action>
+                <action id="row-reject-button" label="驳回" level="warning" icon="fa fa-times">
+                    <api url="@mutation:ErpSalDelivery__reject?id=$id"/>
+                    <confirmText>确认驳回此销售出库单？</confirmText>
+                    <messages>
+                        <success>销售出库单已驳回</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>
