@@ -1,6 +1,6 @@
 # 2026-07-12-1321-1-cs-canned-response-test-fix CS 预设应答业务动作 E2E 测试修复
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-07-12
 > Mission: erp
 > Work Item: business-actions E2E 套件唯一红色用例 `cs-canned-response.action.spec.ts` 修复（`callQuery` 原语缺 selection set + `callMutationOk` 误传 selection 给标量返回）
@@ -18,7 +18,7 @@
   - **缺陷 B（:81，A 修复后暴露）**：`callMutationOk(page, 'ErpCsCannedResponse', 'applyCannedResponse', {...}, 'id')`——`applyCannedResponse` 返回 `String`（标量），`callMutationOk` 产 `mutation{ ...applyCannedResponse(...){ id } }` 对标量选 `id` → GraphQL 拒绝。
   - **缺陷 C（:89，A/B 修复后暴露）**：`callQuery(page, 'ErpCsCannedResponse', '__get', { id })`——`__get` 返回实体（复杂），`callQuery` 不产 selection → GraphQL 拒绝 → `after.data?.usageCount`（:91）不可达。
   - `renderTemplate`（:71，`callQuery`）返回 `String`，是 `callQuery` 唯一正确用法。
-- **CS BizModel 返回类型已确认（权威源 Java，无 xbiz 覆盖）**：`module-cs/erp-cs-service/.../entity/ErpCsCannedResponseBizModel.java`：`renderTemplate` `@BizQuery` :83-91 返回 `String`；`suggestForTicket` `@BizQuery` :95-132 返回 `List<ErpCsCannedResponse>`；`applyCannedResponse` `@BizMutation` :138-156 返回 `String`。无 `.xbiz.xml` 覆盖（grep 确认），Java 签名即 GraphQL 契约。
+- **CS BizModel 返回类型已确认（权威源 Java，无 xbiz 覆盖）**：`module-cs/erp-cs-service/.../entity/ErpCsCannedResponseBizModel.java`：`renderTemplate` `@BizQuery` :82-91 返回 `String`；`suggestForTicket` `@BizQuery` :94-132 返回 `List<ErpCsCannedResponse>`；`applyCannedResponse` `@BizMutation` :137-156 返回 `String`。无 `.xbiz.xml` 覆盖（grep 确认），Java 签名即 GraphQL 契约。
 - **既有绕过范式已验证（fin-reconciliation）**：`tests/e2e/business-actions/fin-reconciliation.action.spec.ts:232` 注释明示「`checkDualSideConsistency` 返回 DualSideDiffReport（复杂对象，需 selection set，非 callQuery 原语可表达）」，:235-239 以 inline `page.request.post('/graphql', { data: { query: 'query{ ...{ direction partnerId consistent rows{ ... } } }' } })` 带 selection 直调。cs-canned-response spec 未遵循此范式。
 - **`callQuery` 调用面仅 1 spec（修复无涟漪）**：grep 确认 `callQuery` 仅被 `cs-canned-response.action.spec.ts` import + 3 处调用（:62/:71/:89）；`fin-reconciliation` 仅在注释（:232）提及。修复该 spec 的 3 处调用不波及其他 spec。
 
@@ -28,7 +28,7 @@
 
 - 修复 `cs-canned-response.action.spec.ts` 的 3 处结构性缺陷，使该用例全绿，解除 business-actions 套件唯一红色用例，恢复全绿基线声明能力。
 - 验证 CS 预设应答三动作（`renderTemplate` 标量 / `suggestForTicket` 复杂列表 / `applyCannedResponse` 标量 mutation）浏览器层全栈可达 + 业务断言（建议列表非空 + 精确匹配 + 渲染占位符替换 + usageCount 递增 + TicketAction NOTE 审计）。
-- 可选：扩展 `callQuery` 原语支持可选 `selection` 参数（镜像 `callMutation` 范式），防止后续 spec 作者重复此类错误。
+- `callQuery` 原语是否扩展 `selection` 参数经 Phase 1 Decision 裁决——候选 A（仅重写 spec，不改 helper）或候选 B（扩展 helper 防未来），选中 B 时作为 Execution Plan in-scope 项执行。
 
 ## Non-Goals
 
@@ -80,7 +80,7 @@ Exit Criteria:
 
 ## Draft Review Record
 
-- Independent draft review iteration 1: <pending>
+- Independent draft review iteration 1: `acceptable as-is` (ses_0ab3102ccffeB4YU23yl61LQKo) — 全部 Current Baseline 主张经实时仓库核实为真（`callQuery` :132 无 selection / `callMutation` :65 有 selection / `verifyState` :112 有 selection / cs-canned-response spec 三处缺陷 :62/:81/:89 / BizModel 三返回类型 / fin-reconciliation :232 注释 + :235-239 inline 范式 / `callQuery` 仅 1 spec 使用）。规则 4/5/7/8/10/13 全合规，命名合规，无反松弛禁词，Deferred 项带触发条件。**无 BLOCKER**。采纳 2 non-blocking：S1（Goals 第三条「可选」禁词→改为「经 Phase 1 Decision 裁决」措辞，委托 Decision 项裁定）；S2（BizModel 行号 :83→:82/:95→:94/:138→:137 注解行号对齐）。修订后草案审查已收敛 → `Plan Status: active`。
 
 ## Closure Gates
 
