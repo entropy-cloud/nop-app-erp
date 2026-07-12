@@ -9,11 +9,14 @@ import app.erp.mfg.dao.entity.ErpMfgBomLine;
 import app.erp.mfg.dao.entity.ErpMfgBomOperation;
 import app.erp.mfg.dao.entity.ErpMfgCostRollup;
 import app.erp.mfg.dao.entity.ErpMfgCostRollupLine;
+import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
+import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenter;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.bom.BomExpander;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
@@ -47,7 +50,10 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * </ul>
  *
  * <p><b>Decision（人工/制造费用分列）</b>：工作中心仅有单一 {@code hourlyRate}（无独立人工/制造费率分列），
- * 故工序工时成本统一计入 {@code laborCost}，{@code overheadCost}=0；待工作中心费率拆分后细化（Follow-up）。
+ * 故工序工时成本统一计入 {@code laborCost}；{@code overheadCost} 经 config-gated 分配率（plan 2026-07-13-0455-2）
+ * 应用——关时恒 0（向后兼容），开时按 {@code erp-mfg.overhead-allocation-mode}（MACHINE_HOUR=机器工时×rate /
+ * LABOR_RATIO=laborCost×rate）× {@code erp-mfg.overhead-allocation-rate} 计算。
+ * 工作中心费率拆分（laborRate/overheadRate 分列）为 successor（ask-first ORM 保护区域）。
  *
  * <p>结果写入既有 {@link ErpMfgCostRollup}(status=CALCULATED) + {@link ErpMfgCostRollupLine}（每物料一行，
  * 均为单位标准成本分解）。FIRMED 由人工动作置位（Non-Goal）。scrapRate 本期不纳入（Non-Goal）。
@@ -113,7 +119,7 @@ public class CostRollupService {
             line.setMaterialCost(scale(cb.material));
             line.setLaborCost(scale(cb.labor));
             line.setOverheadCost(scale(cb.overhead));
-            line.setSubcontractCost(BigDecimal.ZERO);
+            line.setSubcontractCost(scale(cb.subcontract));
             line.setTotalCost(scale(cb.unit));
             line.setUnitCost(scale(cb.unit));
             dao.saveEntity(line);
@@ -146,7 +152,8 @@ public class CostRollupService {
             cb.material = price;
             cb.labor = BigDecimal.ZERO;
             cb.overhead = BigDecimal.ZERO;
-            cb.unit = price;
+            cb.subcontract = aggregateSubcontractCost(materialId);
+            cb.unit = cb.material.add(cb.subcontract);
         } else {
             path.add(materialId);
             try {
@@ -157,11 +164,13 @@ public class CostRollupService {
                     CostBreakdown child = computeUnit(line.getMaterialId(), computed, path);
                     mat = mat.add(qtyPerUnit.multiply(child.unit));
                 }
-                BigDecimal labor = sumOperationLabor(bom.getId());
+                OperationCost oc = sumOperationCost(bom.getId());
+                BigDecimal overhead = computeOverhead(oc);
                 cb.material = mat;
-                cb.labor = labor;
-                cb.overhead = BigDecimal.ZERO;
-                cb.unit = mat.add(labor);
+                cb.labor = oc.labor;
+                cb.overhead = overhead;
+                cb.subcontract = aggregateSubcontractCost(materialId);
+                cb.unit = mat.add(oc.labor).add(overhead).add(cb.subcontract);
             } finally {
                 path.remove(materialId);
             }
@@ -170,8 +179,8 @@ public class CostRollupService {
         return cb;
     }
 
-    private BigDecimal sumOperationLabor(Long bomId) {
-        BigDecimal labor = BigDecimal.ZERO;
+    private OperationCost sumOperationCost(Long bomId) {
+        OperationCost oc = new OperationCost();
         for (ErpMfgBomOperation op : loadOperations(bomId)) {
             BigDecimal minutes = nz(op.getStandardTime());
             Long wcId = op.getWorkcenterId();
@@ -186,9 +195,100 @@ public class CostRollupService {
             if (rate.signum() <= 0) {
                 continue;
             }
-            labor = labor.add(divide(minutes, SIXTY).multiply(rate));
+            BigDecimal hours = divide(minutes, SIXTY);
+            oc.labor = oc.labor.add(hours.multiply(rate));
+            oc.machineHours = oc.machineHours.add(hours);
         }
-        return labor;
+        return oc;
+    }
+
+    /**
+     * 计算 overhead 制造费用（plan 2026-07-13-0455-2 §Phase 1）。
+     * config 关时恒 0（向后兼容）；开时按 mode × rate 计算：
+     * MACHINE_HOUR = 机器工时 × rate；LABOR_RATIO = laborCost × rate。
+     */
+    BigDecimal computeOverhead(OperationCost oc) {
+        if (!overheadAllocationEnabled()) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal rate = overheadAllocationRate();
+        if (rate.signum() <= 0) {
+            return BigDecimal.ZERO;
+        }
+        String mode = overheadAllocationMode();
+        if (ErpMfgConstants.OVERHEAD_ALLOCATION_MODE_MACHINE_HOUR.equals(mode)) {
+            return oc.machineHours.multiply(rate);
+        }
+        if (ErpMfgConstants.OVERHEAD_ALLOCATION_MODE_LABOR_RATIO.equals(mode)) {
+            return oc.labor.multiply(rate);
+        }
+        return BigDecimal.ZERO;
+    }
+
+    private boolean overheadAllocationEnabled() {
+        Boolean flag = AppConfig.var(ErpMfgConstants.CONFIG_OVERHEAD_ALLOCATION_ENABLED, Boolean.FALSE);
+        return Boolean.TRUE.equals(flag);
+    }
+
+    private String overheadAllocationMode() {
+        String mode = AppConfig.var(ErpMfgConstants.CONFIG_OVERHEAD_ALLOCATION_MODE,
+                ErpMfgConstants.OVERHEAD_ALLOCATION_MODE_MACHINE_HOUR);
+        return mode != null ? mode : ErpMfgConstants.OVERHEAD_ALLOCATION_MODE_MACHINE_HOUR;
+    }
+
+    private BigDecimal overheadAllocationRate() {
+        String raw = AppConfig.var(ErpMfgConstants.CONFIG_OVERHEAD_ALLOCATION_RATE,
+                ErpMfgConstants.DEFAULT_OVERHEAD_ALLOCATION_RATE);
+        if (raw == null) {
+            return BigDecimal.ZERO;
+        }
+        try {
+            return new BigDecimal(raw.trim());
+        } catch (NumberFormatException e) {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    /**
+     * 归集 subcontract 委外费（plan 2026-07-13-0455-2 §Phase 2）。
+     * config 关时恒 0（向后兼容）；开时按物料聚合已过账（COMPLETED）委外订单加工费，
+     * 按产量（委外行 quantity 之和）分摊为单位委外成本。归集源来自 N=1（2026-07-13-0455-1）。
+     */
+    BigDecimal aggregateSubcontractCost(Long materialId) {
+        if (!subcontractAggregationEnabled()) {
+            return BigDecimal.ZERO;
+        }
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("productId", materialId));
+        q.addFilter(eq("docStatus", ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED));
+        List<ErpMfgSubcontractOrder> orders = daoProvider.daoFor(ErpMfgSubcontractOrder.class).findAllByQuery(q);
+        if (orders.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal totalFee = BigDecimal.ZERO;
+        BigDecimal totalQty = BigDecimal.ZERO;
+        for (ErpMfgSubcontractOrder order : orders) {
+            totalFee = totalFee.add(nz(order.getProcessingFee()));
+            for (ErpMfgSubcontractOrderLine line : loadSubcontractLines(order.getId(), materialId)) {
+                totalQty = totalQty.add(nz(line.getQuantity()));
+            }
+        }
+        if (totalQty.signum() == 0) {
+            return BigDecimal.ZERO;
+        }
+        return divide(totalFee, totalQty);
+    }
+
+    private boolean subcontractAggregationEnabled() {
+        Boolean flag = AppConfig.var(ErpMfgConstants.CONFIG_SUBCONTRACT_COST_AGGREGATION_ENABLED, Boolean.FALSE);
+        return Boolean.TRUE.equals(flag);
+    }
+
+    private List<ErpMfgSubcontractOrderLine> loadSubcontractLines(Long orderId, Long materialId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("subcontractOrderId", orderId));
+        q.addFilter(eq("materialId", materialId));
+        return daoProvider.daoFor(ErpMfgSubcontractOrderLine.class).findAllByQuery(q);
     }
 
     private BigDecimal defaultSkuPurchasePrice(Long materialId) {
@@ -239,6 +339,7 @@ public class CostRollupService {
             v.setMaterialCost(scale(cb.material));
             v.setLaborCost(scale(cb.labor));
             v.setOverheadCost(scale(cb.overhead));
+            v.setSubcontractCost(scale(cb.subcontract));
             v.setTotalCost(scale(cb.unit));
             v.setUnitCost(scale(cb.unit));
             result.getLines().add(v);
@@ -265,7 +366,14 @@ public class CostRollupService {
         BigDecimal material = BigDecimal.ZERO;
         BigDecimal labor = BigDecimal.ZERO;
         BigDecimal overhead = BigDecimal.ZERO;
+        BigDecimal subcontract = BigDecimal.ZERO;
         BigDecimal unit = BigDecimal.ZERO;
         Long uoMId;
+    }
+
+    /** 工序工时成本中间结果（labor=人工费，machineHours=机器工时，供 overhead 分配率计算）。 */
+    static class OperationCost {
+        BigDecimal labor = BigDecimal.ZERO;
+        BigDecimal machineHours = BigDecimal.ZERO;
     }
 }

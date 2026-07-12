@@ -184,6 +184,29 @@ public interface ErpMfgConstants {
     String COST_ELEMENT_OVERHEAD = "OVERHEAD";
     String COST_ELEMENT_SUBCONTRACT = "SUBCONTRACT";
 
+    // ---- 成本要素拆分（plan 2026-07-13-0455-2；权威：docs/design/finance/costing-methods.md） ----
+
+    /**
+     * 制造费用（overhead）分配率应用总开关（默认 false=向后兼容，关时 overheadCost 恒 0，行为不变）。
+     * 开时按 {@link #CONFIG_OVERHEAD_ALLOCATION_MODE} × {@link #CONFIG_OVERHEAD_ALLOCATION_RATE} 计算并填入 overheadCost。
+     * 工作中心 schema 拆分（laborRate/overheadRate 分列）为 successor（ask-first ORM 保护区域）。
+     */
+    String CONFIG_OVERHEAD_ALLOCATION_ENABLED = "erp-mfg.overhead-allocation-enabled";
+    /** overhead 分配模式（MACHINE_HOUR=工序机器工时×rate / LABOR_RATIO=laborCost×rate）。 */
+    String CONFIG_OVERHEAD_ALLOCATION_MODE = "erp-mfg.overhead-allocation-mode";
+    String OVERHEAD_ALLOCATION_MODE_MACHINE_HOUR = "MACHINE_HOUR";
+    String OVERHEAD_ALLOCATION_MODE_LABOR_RATIO = "LABOR_RATIO";
+    /** overhead 分配率（ MACHINE_HOUR 模式：每机器工时费率；LABOR_RATIO 模式：占人工成本的比例）。 */
+    String CONFIG_OVERHEAD_ALLOCATION_RATE = "erp-mfg.overhead-allocation-rate";
+    String DEFAULT_OVERHEAD_ALLOCATION_RATE = "0";
+
+    /**
+     * 委外费（subcontract）归集总开关（默认 false=向后兼容，关时 subcontractCost 恒 0）。
+     * 开时按物料聚合已过账（COMPLETED）委外订单加工费，按产量分摊填入 subcontractCost。
+     * 依赖 N=1 计划（2026-07-13-0455-1）已过账委外订单作为归集源。
+     */
+    String CONFIG_SUBCONTRACT_COST_AGGREGATION_ENABLED = "erp-mfg.subcontract-cost-aggregation-enabled";
+
     /** 生产差异阈值告警开关（默认 true；plan 2026-07-06-0642-1 §Phase 3）。关闭时跳过 notify 调用。 */
     String CONFIG_VARIANCE_ALERT_ENABLED = "erp-mfg.variance-alert-enabled";
 

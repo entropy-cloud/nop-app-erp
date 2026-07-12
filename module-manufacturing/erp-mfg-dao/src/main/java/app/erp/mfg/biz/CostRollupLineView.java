@@ -15,6 +15,7 @@ public class CostRollupLineView {
     private BigDecimal materialCost;
     private BigDecimal laborCost;
     private BigDecimal overheadCost;
+    private BigDecimal subcontractCost;
     private BigDecimal totalCost;
     private BigDecimal unitCost;
 
@@ -51,6 +52,14 @@ public class CostRollupLineView {
 
     public void setOverheadCost(BigDecimal overheadCost) {
         this.overheadCost = overheadCost;
+    }
+
+    public BigDecimal getSubcontractCost() {
+        return subcontractCost;
+    }
+
+    public void setSubcontractCost(BigDecimal subcontractCost) {
+        this.subcontractCost = subcontractCost;
     }
 
     public BigDecimal getTotalCost() {
