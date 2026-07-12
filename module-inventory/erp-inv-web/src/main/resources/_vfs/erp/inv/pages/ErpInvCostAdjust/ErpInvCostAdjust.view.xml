@@ -41,6 +41,14 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
+                <action id="row-reverse-approve-button" label="反审批" level="info" icon="fa fa-undo">
+                    <api url="@mutation:ErpInvCostAdjust__reverseApprove?id=$id"/>
+                    <confirmText>确认反审批此成本调整单？反审批后单据将回到驳回状态，可重新编辑提交。</confirmText>
+                    <messages>
+                        <success>成本调整单已反审批</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
