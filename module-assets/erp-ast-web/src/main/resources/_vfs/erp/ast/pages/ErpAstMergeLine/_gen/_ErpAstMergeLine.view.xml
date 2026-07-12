@@ -70,24 +70,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-资产合并行" i18n-en:title="View Asset Merge Line">
             <layout>
- id[ID] mergeId[合并单]
- orgId[所属组织] lineNo[行号]
- sourceAssetId[源资产] contributionProportion[贡献比例]
- originalCostAmount[原值金额] accumulatedDepreciationAmount[累计折旧金额]
- netBookValue[账面净值] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ mergeId[合并单] orgId[所属组织]
+ lineNo[行号] sourceAssetId[源资产]
+ contributionProportion[贡献比例] originalCostAmount[原值金额]
+ accumulatedDepreciationAmount[累计折旧金额] netBookValue[账面净值]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] remark[备注]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产合并行" i18n-en:title="Add Asset Merge Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产合并行" i18n-en:title="Edit Asset Merge Line">
             <layout>
- id[ID] mergeId[合并单]
- orgId[所属组织] lineNo[行号]
- sourceAssetId[源资产] contributionProportion[贡献比例]
- originalCostAmount[原值金额] accumulatedDepreciationAmount[累计折旧金额]
- netBookValue[账面净值] remark[备注]
+ mergeId[合并单]
+ orgId[所属组织]
+ lineNo[行号]
+ sourceAssetId[源资产]
+ contributionProportion[贡献比例]
+ originalCostAmount[原值金额]
+ accumulatedDepreciationAmount[累计折旧金额]
+ netBookValue[账面净值]
+ remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

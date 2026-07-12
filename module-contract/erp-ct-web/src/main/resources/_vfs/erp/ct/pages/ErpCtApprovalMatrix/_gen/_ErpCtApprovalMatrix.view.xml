@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-审批矩阵" i18n-en:title="View Approval Matrix">
             <layout>
- id[ID] code[编码]
- orgId[业务组织] minAmount[最小金额]
- maxAmount[最大金额] approverRole[审批角色]
- approvalOrder[审批顺序] contractType[适用合同类型]
- allowSkip[可跳过] isActive[启用]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[编码] orgId[业务组织]
+ minAmount[最小金额] maxAmount[最大金额]
+ approverRole[审批角色] approvalOrder[审批顺序]
+ contractType[适用合同类型] allowSkip[可跳过]
+ isActive[启用] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-审批矩阵" i18n-en:title="Add Approval Matrix" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-审批矩阵" i18n-en:title="Edit Approval Matrix">
             <layout>
- id[ID] code[编码]
- orgId[业务组织] minAmount[最小金额]
- maxAmount[最大金额] approverRole[审批角色]
- approvalOrder[审批顺序] contractType[适用合同类型]
- allowSkip[可跳过] isActive[启用]
- remark[备注] 
+ code[编码] orgId[业务组织]
+ minAmount[最小金额] maxAmount[最大金额]
+ approverRole[审批角色] approvalOrder[审批顺序]
+ contractType[适用合同类型] allowSkip[可跳过]
+ isActive[启用] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

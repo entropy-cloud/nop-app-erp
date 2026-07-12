@@ -94,30 +94,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-项目成本归集" i18n-en:title="View Project Cost Collection">
             <layout>
- id[ID] code[单号]
- projectId[项目] orgId[业务组织]
- businessDate[归集日期] currencyId[币种]
- totalAmount[归集金额合计] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账(已转成本凭证)]
- postedAt[过账时间] postedBy[过账人]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- approvedBy[审核人] approvedAt[审核时间]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ code[单号] projectId[项目]
+ orgId[业务组织] businessDate[归集日期]
+ currencyId[币种] totalAmount[归集金额合计]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账(已转成本凭证)] postedAt[过账时间]
+ postedBy[过账人] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] approvedBy[审核人]
+ approvedAt[审核时间] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目成本归集" i18n-en:title="Add Project Cost Collection" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-项目成本归集" i18n-en:title="Edit Project Cost Collection">
             <layout>
- id[ID] code[单号]
- projectId[项目] orgId[业务组织]
- businessDate[归集日期] currencyId[币种]
- totalAmount[归集金额合计] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ code[单号] projectId[项目]
+ orgId[业务组织] businessDate[归集日期]
+ currencyId[币种] totalAmount[归集金额合计]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

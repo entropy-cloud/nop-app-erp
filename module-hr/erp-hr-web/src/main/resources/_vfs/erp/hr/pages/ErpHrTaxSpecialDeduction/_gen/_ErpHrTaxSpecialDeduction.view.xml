@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-员工专项附加扣除" i18n-en:title="View Tax Special Deduction">
             <layout>
- id[ID] employeeId[员工]
- year[年份] month[月份]
- deductionType[扣除项目] monthlyAmount[每月扣除金额]
- verified[是否已核验] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ employeeId[员工] year[年份]
+ month[月份] deductionType[扣除项目]
+ monthlyAmount[每月扣除金额] verified[是否已核验]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-员工专项附加扣除" i18n-en:title="Add Tax Special Deduction" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-员工专项附加扣除" i18n-en:title="Edit Tax Special Deduction">
             <layout>
- id[ID]
  employeeId[员工]
  year[年份]
  month[月份]

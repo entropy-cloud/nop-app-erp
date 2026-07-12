@@ -7,9 +7,42 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[编号] name[方案名称]
+ scheduleDate[排产日期] schedulingMode[排产模式]
+ horizonStart[展望期开始] horizonEnd[展望期结束]
+ status[状态] orgId[业务组织]
+ businessDate[业务日期]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[编号] name[方案名称]
+ scheduleDate[排产日期] schedulingMode[排产模式]
+ horizonStart[展望期开始] horizonEnd[展望期结束]
+ status[状态] orgId[业务组织]
+ businessDate[业务日期]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编号] status[状态]
+ scheduleDate[排产日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="scheduleDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

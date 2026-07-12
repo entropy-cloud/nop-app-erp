@@ -55,17 +55,20 @@
     <forms>
         <form id="view" editMode="view" title="查看-线索来源" i18n-en:title="View Lead Source">
             <layout>
- id[ID] code[编码]
- name[名称] sequence[排序]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[编码]
+ name[名称]
+ sequence[排序]
+ remark[备注]
+ delVersion[逻辑删除版本]
+ createdBy[创建人]
+ createTime[创建时间]
+ updatedBy[修改人]
+ updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-线索来源" i18n-en:title="Add Lead Source" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-线索来源" i18n-en:title="Edit Lead Source">
             <layout>
- id[ID]
  code[编码]
  name[名称]
  sequence[排序]

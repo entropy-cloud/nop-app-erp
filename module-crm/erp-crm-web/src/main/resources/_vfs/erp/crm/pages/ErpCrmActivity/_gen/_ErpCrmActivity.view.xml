@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-活动记录" i18n-en:title="View Activity">
             <layout>
- id[ID] leadId[关联线索/商机]
- orgId[业务组织] activityType[活动类型]
- activityDate[活动日期] summary[内容摘要]
- ownerId[负责人] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ leadId[关联线索/商机] orgId[业务组织]
+ activityType[活动类型] activityDate[活动日期]
+ summary[内容摘要] ownerId[负责人]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-活动记录" i18n-en:title="Add Activity" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-活动记录" i18n-en:title="Edit Activity">
             <layout>
- id[ID]
  leadId[关联线索/商机]
  orgId[业务组织]
  activityType[活动类型]

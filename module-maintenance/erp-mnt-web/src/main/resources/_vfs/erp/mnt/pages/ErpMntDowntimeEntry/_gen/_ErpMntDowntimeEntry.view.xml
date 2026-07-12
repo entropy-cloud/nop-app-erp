@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-停机记录" i18n-en:title="View Downtime Entry">
             <layout>
- id[ID] equipmentId[设备ID]
- startTime[开始时间] endTime[结束时间]
- totalMinutes[总分钟数] reason[原因]
- relatedJobOrderId[关联生产工单ID] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ equipmentId[设备ID] startTime[开始时间]
+ endTime[结束时间] totalMinutes[总分钟数]
+ reason[原因] relatedJobOrderId[关联生产工单ID]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-停机记录" i18n-en:title="Add Downtime Entry" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-停机记录" i18n-en:title="Edit Downtime Entry">
             <layout>
- id[ID]
  equipmentId[设备ID]
  startTime[开始时间]
  endTime[结束时间]

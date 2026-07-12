@@ -70,24 +70,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-胜任力字典" i18n-en:title="View Competency">
             <layout>
- id[ID] code[编码]
- name[名称] description[描述]
- category[分类] competencyGroup[能力组]
- isTechnical[是否技术能力] parentId[上级胜任力]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[编码] name[名称]
+ description[描述] category[分类]
+ competencyGroup[能力组] isTechnical[是否技术能力]
+ parentId[上级胜任力] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-胜任力字典" i18n-en:title="Add Competency" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-胜任力字典" i18n-en:title="Edit Competency">
             <layout>
- id[ID] code[编码]
- name[名称] description[描述]
- category[分类] competencyGroup[能力组]
- isTechnical[是否技术能力] parentId[上级胜任力]
- orgId[业务组织] remark[备注]
+ code[编码]
+ name[名称]
+ description[描述]
+ category[分类]
+ competencyGroup[能力组]
+ isTechnical[是否技术能力]
+ parentId[上级胜任力]
+ orgId[业务组织]
+ remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

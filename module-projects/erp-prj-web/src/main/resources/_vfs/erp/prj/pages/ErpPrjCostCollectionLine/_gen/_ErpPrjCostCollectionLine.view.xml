@@ -70,25 +70,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-项目成本归集行" i18n-en:title="View Project Cost Collection Line">
             <layout>
- id[ID] costCollectionId[归集单ID]
- lineNo[行号] costCategory[成本类别(人工/材料/费用/分包)]
- sourceBillType[来源单据类型(TIMESHEET/PURCHASE/EXPENSE)] sourceBillCode[来源单据号]
- subjectId[科目] taskId[任务]
- amount[金额] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ costCollectionId[归集单ID] lineNo[行号]
+ costCategory[成本类别(人工/材料/费用/分包)] sourceBillType[来源单据类型(TIMESHEET/PURCHASE/EXPENSE)]
+ sourceBillCode[来源单据号] subjectId[科目]
+ taskId[任务] amount[金额]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目成本归集行" i18n-en:title="Add Project Cost Collection Line"
               x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-项目成本归集行" i18n-en:title="Edit Project Cost Collection Line">
             <layout>
- id[ID] costCollectionId[归集单ID]
- lineNo[行号] costCategory[成本类别(人工/材料/费用/分包)]
- sourceBillType[来源单据类型(TIMESHEET/PURCHASE/EXPENSE)] sourceBillCode[来源单据号]
- subjectId[科目] taskId[任务]
- amount[金额] remark[备注]
+ costCollectionId[归集单ID]
+ lineNo[行号]
+ costCategory[成本类别(人工/材料/费用/分包)]
+ sourceBillType[来源单据类型(TIMESHEET/PURCHASE/EXPENSE)]
+ sourceBillCode[来源单据号]
+ subjectId[科目]
+ taskId[任务]
+ amount[金额]
+ remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -94,32 +94,31 @@
     <forms>
         <form id="view" editMode="view" title="查看-越库执行记录" i18n-en:title="View Cross Dock">
             <layout>
- id[ID] code[编号]
- orgId[业务组织] drpLineId[DRP行]
- inboundMoveId[入站移动单] outboundMoveId[出站移动单]
- sourceBillType[来源单据类型] sourceBillCode[来源单据号]
- targetBillType[目标单据类型] targetBillCode[目标单据号]
- materialId[物料] quantity[越库数量]
- stagingLocationId[暂存库位] dockSlotTime[月台时间窗口]
- status[状态] matchedAt[匹配时间]
- loadedAt[装车完成时间] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[编号] orgId[业务组织]
+ drpLineId[DRP行] inboundMoveId[入站移动单]
+ outboundMoveId[出站移动单] sourceBillType[来源单据类型]
+ sourceBillCode[来源单据号] targetBillType[目标单据类型]
+ targetBillCode[目标单据号] materialId[物料]
+ quantity[越库数量] stagingLocationId[暂存库位]
+ dockSlotTime[月台时间窗口] status[状态]
+ matchedAt[匹配时间] loadedAt[装车完成时间]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-越库执行记录" i18n-en:title="Add Cross Dock" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-越库执行记录" i18n-en:title="Edit Cross Dock">
             <layout>
- id[ID] code[编号]
- orgId[业务组织] drpLineId[DRP行]
- inboundMoveId[入站移动单] outboundMoveId[出站移动单]
- sourceBillType[来源单据类型] sourceBillCode[来源单据号]
- targetBillType[目标单据类型] targetBillCode[目标单据号]
- materialId[物料] quantity[越库数量]
- stagingLocationId[暂存库位] dockSlotTime[月台时间窗口]
- status[状态] matchedAt[匹配时间]
- loadedAt[装车完成时间] remark[备注]
+ code[编号] orgId[业务组织]
+ drpLineId[DRP行] inboundMoveId[入站移动单]
+ outboundMoveId[出站移动单] sourceBillType[来源单据类型]
+ sourceBillCode[来源单据号] targetBillType[目标单据类型]
+ targetBillCode[目标单据号] materialId[物料]
+ quantity[越库数量] stagingLocationId[暂存库位]
+ dockSlotTime[月台时间窗口] status[状态]
+ matchedAt[匹配时间] loadedAt[装车完成时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

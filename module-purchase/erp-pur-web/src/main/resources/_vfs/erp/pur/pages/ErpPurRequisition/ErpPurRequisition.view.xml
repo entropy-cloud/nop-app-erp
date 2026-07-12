@@ -19,9 +19,42 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ requesterId[请购人(职员)] departmentId[请购部门]
+ businessDate[请购日期] requiredDate[需求日期]
+ docStatus[单据状态] approveStatus[审核状态]
+==========^approval[审批信息]=========
+ approvedBy[审核人] approvedAt[审核时间]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ requesterId[请购人(职员)] departmentId[请购部门]
+ businessDate[请购日期] requiredDate[需求日期]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] docStatus[单据状态]
+ approveStatus[审核状态] businessDate[请购日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

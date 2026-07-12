@@ -79,27 +79,26 @@
     <forms>
         <form id="view" editMode="view" title="查看-提前期记录" i18n-en:title="View Lead Time Record">
             <layout>
- id[ID] orgId[业务组织]
- supplierId[供应商] materialId[物料]
- orderDate[订单日期] receiptDate[入库日期]
- actualLeadTime[实际提前期(天)] expectedLeadTime[预期提前期(天)]
- varianceDays[偏差天数] purchaseOrderCode[采购单号]
- isOnTime[是否准时] earlyLateFlag[提前/延迟标记]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ orgId[业务组织] supplierId[供应商]
+ materialId[物料] orderDate[订单日期]
+ receiptDate[入库日期] actualLeadTime[实际提前期(天)]
+ expectedLeadTime[预期提前期(天)] varianceDays[偏差天数]
+ purchaseOrderCode[采购单号] isOnTime[是否准时]
+ earlyLateFlag[提前/延迟标记] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-提前期记录" i18n-en:title="Add Lead Time Record" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-提前期记录" i18n-en:title="Edit Lead Time Record">
             <layout>
- id[ID] orgId[业务组织]
- supplierId[供应商] materialId[物料]
- orderDate[订单日期] receiptDate[入库日期]
- actualLeadTime[实际提前期(天)] expectedLeadTime[预期提前期(天)]
- varianceDays[偏差天数] purchaseOrderCode[采购单号]
- isOnTime[是否准时] earlyLateFlag[提前/延迟标记]
- remark[备注] 
+ orgId[业务组织] supplierId[供应商]
+ materialId[物料] orderDate[订单日期]
+ receiptDate[入库日期] actualLeadTime[实际提前期(天)]
+ expectedLeadTime[预期提前期(天)] varianceDays[偏差天数]
+ purchaseOrderCode[采购单号] isOnTime[是否准时]
+ earlyLateFlag[提前/延迟标记] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

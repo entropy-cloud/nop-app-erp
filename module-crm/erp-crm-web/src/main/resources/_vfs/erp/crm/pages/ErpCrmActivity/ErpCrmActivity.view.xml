@@ -7,9 +7,37 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ leadId[关联线索/商机] orgId[业务组织]
+ activityType[活动类型] activityDate[活动日期]
+ ownerId[负责人] summary[内容摘要]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ leadId[关联线索/商机] orgId[业务组织]
+ activityType[活动类型] activityDate[活动日期]
+ ownerId[负责人] summary[内容摘要]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ leadId[关联线索/商机] activityType[活动类型]
+ activityDate[活动日期]
+            </layout>
+            <cells>
+                <cell id="activityDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

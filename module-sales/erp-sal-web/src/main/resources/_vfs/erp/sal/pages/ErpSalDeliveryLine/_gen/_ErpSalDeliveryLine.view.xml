@@ -91,30 +91,29 @@
     <forms>
         <form id="view" editMode="view" title="查看-销售出库单行" i18n-en:title="View Sales Delivery Line">
             <layout>
- id[ID] deliveryId[出库单ID]
- orderLineId[订单行ID] lineNo[行号]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] quantity[实发数量]
- unitPrice[单价(不含税)] taxRate[税率(%)]
- taxAmount[税额] amount[金额(不含税)]
- warehouseId[出库库位] batchNo[批号]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
- materialName[物料名称] warehouseName[出库库位名称]
+ deliveryId[出库单ID] orderLineId[订单行ID]
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ quantity[实发数量] unitPrice[单价(不含税)]
+ taxRate[税率(%)] taxAmount[税额]
+ amount[金额(不含税)] warehouseId[出库库位]
+ batchNo[批号] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] materialName[物料名称]
+ warehouseName[出库库位名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售出库单行" i18n-en:title="Add Sales Delivery Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售出库单行" i18n-en:title="Edit Sales Delivery Line">
             <layout>
- id[ID] deliveryId[出库单ID]
- orderLineId[订单行ID] lineNo[行号]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] quantity[实发数量]
- unitPrice[单价(不含税)] taxRate[税率(%)]
- taxAmount[税额] amount[金额(不含税)]
- warehouseId[出库库位] batchNo[批号]
- remark[备注] 
+ deliveryId[出库单ID] orderLineId[订单行ID]
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ quantity[实发数量] unitPrice[单价(不含税)]
+ taxRate[税率(%)] taxAmount[税额]
+ amount[金额(不含税)] warehouseId[出库库位]
+ batchNo[批号] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

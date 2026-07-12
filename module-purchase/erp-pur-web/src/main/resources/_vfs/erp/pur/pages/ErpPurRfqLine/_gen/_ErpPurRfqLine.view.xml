@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-采购询价单行" i18n-en:title="View Purchase RFQ Line">
             <layout>
- id[ID] rfqId[询价单ID]
- lineNo[行号] materialId[物料]
- uoMId[计量单位] quantity[询价数量]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ rfqId[询价单ID] lineNo[行号]
+ materialId[物料] uoMId[计量单位]
+ quantity[询价数量] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-采购询价单行" i18n-en:title="Add Purchase RFQ Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-采购询价单行" i18n-en:title="Edit Purchase RFQ Line">
             <layout>
- id[ID]
  rfqId[询价单ID]
  lineNo[行号]
  materialId[物料]

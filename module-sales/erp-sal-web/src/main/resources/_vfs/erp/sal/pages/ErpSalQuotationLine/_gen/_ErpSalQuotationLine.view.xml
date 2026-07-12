@@ -88,30 +88,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-销售报价单行" i18n-en:title="View Sales Quotation Line">
             <layout>
- id[ID] quotationId[报价单ID]
- lineNo[行号] materialId[物料]
- uoMId[计量单位] quantity[数量]
- unitPrice[报价单价(不含税)] taxRate[税率(%)]
- taxAmount[税额] amount[金额(不含税)]
- amountWithTax[金额(含税)] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- remark[备注] discountRate[行折扣率(%)]
- discountAmount[行折扣金额] pricingSource[取价来源]
- materialName[物料名称] 
+ quotationId[报价单ID] lineNo[行号]
+ materialId[物料] uoMId[计量单位]
+ quantity[数量] unitPrice[报价单价(不含税)]
+ taxRate[税率(%)] taxAmount[税额]
+ amount[金额(不含税)] amountWithTax[金额(含税)]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] remark[备注]
+ discountRate[行折扣率(%)] discountAmount[行折扣金额]
+ pricingSource[取价来源] materialName[物料名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售报价单行" i18n-en:title="Add Sales Quotation Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售报价单行" i18n-en:title="Edit Sales Quotation Line">
             <layout>
- id[ID] quotationId[报价单ID]
- lineNo[行号] materialId[物料]
- uoMId[计量单位] quantity[数量]
- unitPrice[报价单价(不含税)] taxRate[税率(%)]
- taxAmount[税额] amount[金额(不含税)]
- amountWithTax[金额(含税)] remark[备注]
- discountRate[行折扣率(%)] discountAmount[行折扣金额]
- pricingSource[取价来源] 
+ quotationId[报价单ID] lineNo[行号]
+ materialId[物料] uoMId[计量单位]
+ quantity[数量] unitPrice[报价单价(不含税)]
+ taxRate[税率(%)] taxAmount[税额]
+ amount[金额(不含税)] amountWithTax[金额(含税)]
+ remark[备注] discountRate[行折扣率(%)]
+ discountAmount[行折扣金额] pricingSource[取价来源]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

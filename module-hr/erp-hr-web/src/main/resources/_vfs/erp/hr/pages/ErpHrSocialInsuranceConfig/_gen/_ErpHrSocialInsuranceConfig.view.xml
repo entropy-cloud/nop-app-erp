@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-社保配置" i18n-en:title="View Social Insurance Config">
             <layout>
- id[ID] cityCode[城市]
- insuranceType[险种] companyRate[公司比例]
- employeeRate[个人比例] baseLowerLimit[基数下限]
- baseUpperLimit[基数上限] effectiveFrom[生效日期]
- effectiveTo[失效日期] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ cityCode[城市] insuranceType[险种]
+ companyRate[公司比例] employeeRate[个人比例]
+ baseLowerLimit[基数下限] baseUpperLimit[基数上限]
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-社保配置" i18n-en:title="Add Social Insurance Config" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-社保配置" i18n-en:title="Edit Social Insurance Config">
             <layout>
- id[ID] cityCode[城市]
- insuranceType[险种] companyRate[公司比例]
- employeeRate[个人比例] baseLowerLimit[基数下限]
- baseUpperLimit[基数上限] effectiveFrom[生效日期]
- effectiveTo[失效日期] orgId[业务组织]
- remark[备注] 
+ cityCode[城市] insuranceType[险种]
+ companyRate[公司比例] employeeRate[个人比例]
+ baseLowerLimit[基数下限] baseUpperLimit[基数上限]
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+ orgId[业务组织] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

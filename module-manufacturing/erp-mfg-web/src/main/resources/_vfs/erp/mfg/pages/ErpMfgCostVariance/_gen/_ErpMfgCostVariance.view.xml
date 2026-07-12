@@ -97,32 +97,32 @@
     <forms>
         <form id="view" editMode="view" title="查看-成本差异记录" i18n-en:title="View Cost Variance">
             <layout>
- id[ID] workOrderId[工单]
- lineNo[行号] varianceType[差异类型]
- costElement[成本要素] materialId[物料]
- operationId[工序] standardAmount[标准金额]
- actualAmount[实际金额] varianceAmount[差异金额]
- variancePercent[差异百分比] standardQty[标准数量]
- actualQty[实际数量] standardPrice[标准单价]
- actualPrice[实际单价] workcenterId[工作中心]
- businessDate[业务日期] posted[已过账]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ workOrderId[工单] lineNo[行号]
+ varianceType[差异类型] costElement[成本要素]
+ materialId[物料] operationId[工序]
+ standardAmount[标准金额] actualAmount[实际金额]
+ varianceAmount[差异金额] variancePercent[差异百分比]
+ standardQty[标准数量] actualQty[实际数量]
+ standardPrice[标准单价] actualPrice[实际单价]
+ workcenterId[工作中心] businessDate[业务日期]
+ posted[已过账] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-成本差异记录" i18n-en:title="Add Cost Variance" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-成本差异记录" i18n-en:title="Edit Cost Variance">
             <layout>
- id[ID] workOrderId[工单]
- lineNo[行号] varianceType[差异类型]
- costElement[成本要素] materialId[物料]
- operationId[工序] standardAmount[标准金额]
- actualAmount[实际金额] varianceAmount[差异金额]
- variancePercent[差异百分比] standardQty[标准数量]
- actualQty[实际数量] standardPrice[标准单价]
- actualPrice[实际单价] workcenterId[工作中心]
- businessDate[业务日期] remark[备注]
+ workOrderId[工单] lineNo[行号]
+ varianceType[差异类型] costElement[成本要素]
+ materialId[物料] operationId[工序]
+ standardAmount[标准金额] actualAmount[实际金额]
+ varianceAmount[差异金额] variancePercent[差异百分比]
+ standardQty[标准数量] actualQty[实际数量]
+ standardPrice[标准单价] actualPrice[实际单价]
+ workcenterId[工作中心] businessDate[业务日期]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

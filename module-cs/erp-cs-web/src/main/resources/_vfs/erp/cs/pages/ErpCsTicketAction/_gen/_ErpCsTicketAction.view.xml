@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-工单操作日志" i18n-en:title="View Ticket Action">
             <layout>
- id[ID] ticketId[工单ID]
- actionType[操作类型] fromStatus[起始状态]
- toStatus[目标状态] operatorId[操作人]
- content[操作内容] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ ticketId[工单ID] actionType[操作类型]
+ fromStatus[起始状态] toStatus[目标状态]
+ operatorId[操作人] content[操作内容]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工单操作日志" i18n-en:title="Add Ticket Action" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-工单操作日志" i18n-en:title="Edit Ticket Action">
             <layout>
- id[ID]
  ticketId[工单ID]
  actionType[操作类型]
  fromStatus[起始状态]

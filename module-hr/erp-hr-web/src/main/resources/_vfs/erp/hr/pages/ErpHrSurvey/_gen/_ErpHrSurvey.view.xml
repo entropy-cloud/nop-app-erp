@@ -100,34 +100,33 @@
     <forms>
         <form id="view" editMode="view" title="查看-问卷模板" i18n-en:title="View Survey">
             <layout>
- id[ID] code[编号]
- title[问卷标题] description[问卷说明]
- surveyType[调研类型] isAnonymous[是否匿名]
- status[状态] startDate[开始日期]
- endDate[截止日期] targetDepartmentId[目标部门]
- includeENps[包含eNPS] eNpsQuestion[eNPS题面]
- reminderDays[催填间隔天数] totalQuestions[总题数]
- totalResponses[总答卷数] completionRate[完成率]
- avgScore[平均分] eNpsScore[eNPS得分]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[编号] title[问卷标题]
+ description[问卷说明] surveyType[调研类型]
+ isAnonymous[是否匿名] status[状态]
+ startDate[开始日期] endDate[截止日期]
+ targetDepartmentId[目标部门] includeENps[包含eNPS]
+ eNpsQuestion[eNPS题面] reminderDays[催填间隔天数]
+ totalQuestions[总题数] totalResponses[总答卷数]
+ completionRate[完成率] avgScore[平均分]
+ eNpsScore[eNPS得分] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-问卷模板" i18n-en:title="Add Survey" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-问卷模板" i18n-en:title="Edit Survey">
             <layout>
- id[ID] code[编号]
- title[问卷标题] description[问卷说明]
- surveyType[调研类型] isAnonymous[是否匿名]
- status[状态] startDate[开始日期]
- endDate[截止日期] targetDepartmentId[目标部门]
- includeENps[包含eNPS] eNpsQuestion[eNPS题面]
- reminderDays[催填间隔天数] totalQuestions[总题数]
- totalResponses[总答卷数] completionRate[完成率]
- avgScore[平均分] eNpsScore[eNPS得分]
- orgId[业务组织] remark[备注]
+ code[编号] title[问卷标题]
+ description[问卷说明] surveyType[调研类型]
+ isAnonymous[是否匿名] status[状态]
+ startDate[开始日期] endDate[截止日期]
+ targetDepartmentId[目标部门] includeENps[包含eNPS]
+ eNpsQuestion[eNPS题面] reminderDays[催填间隔天数]
+ totalQuestions[总题数] totalResponses[总答卷数]
+ completionRate[完成率] avgScore[平均分]
+ eNpsScore[eNPS得分] orgId[业务组织]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

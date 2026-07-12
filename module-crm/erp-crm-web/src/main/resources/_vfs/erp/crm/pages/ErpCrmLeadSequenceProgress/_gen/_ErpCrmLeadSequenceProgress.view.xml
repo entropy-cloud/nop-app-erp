@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-线索序列进度" i18n-en:title="View Lead Sequence Progress">
             <layout>
- id[ID] leadId[线索/商机]
- sequenceId[应用序列] orgId[业务组织]
- currentStepIndex[当前步骤序号] status[状态]
- startedAt[开始时间] completedAt[完成时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ leadId[线索/商机] sequenceId[应用序列]
+ orgId[业务组织] currentStepIndex[当前步骤序号]
+ status[状态] startedAt[开始时间]
+ completedAt[完成时间] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-线索序列进度" i18n-en:title="Add Lead Sequence Progress" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-线索序列进度" i18n-en:title="Edit Lead Sequence Progress">
             <layout>
- id[ID]
  leadId[线索/商机]
  sequenceId[应用序列]
  orgId[业务组织]

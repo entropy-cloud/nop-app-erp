@@ -7,9 +7,49 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[事务编码] orgId[业务组织]
+ formatId[EDI 格式] state[状态]
+ blockingLevel[阻断级别] businessDate[业务日期]
+==========>transaction[事务信息]======
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ attachmentFileId[附件（EDI 报文文件）] retryCount[重试次数]
+ error[错误信息]
+==========>timing[时间信息]======
+ sentAt[发送时间] acknowledgedAt[确认时间]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[事务编码] orgId[业务组织]
+ formatId[EDI 格式] state[状态]
+ blockingLevel[阻断级别] businessDate[业务日期]
+==========>transaction[事务信息]======
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ attachmentFileId[附件（EDI 报文文件）] retryCount[重试次数]
+ error[错误信息]
+==========>timing[时间信息]======
+ sentAt[发送时间] acknowledgedAt[确认时间]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[事务编码] state[状态]
+ relatedBillCode[关联单据号]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

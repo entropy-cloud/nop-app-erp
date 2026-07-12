@@ -79,27 +79,26 @@
     <forms>
         <form id="view" editMode="view" title="查看-支持合同" i18n-en:title="View Support Contract">
             <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- partnerId[签约客户] contractType[合同类型]
- startDate[生效日期] endDate[到期日期]
- totalAmount[合同总金额] billingCycle[计费周期]
- status[合同状态] attachmentFileId[合同附件]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] businessDate[业务日期]
+ code[编码] name[名称]
+ orgId[业务组织] partnerId[签约客户]
+ contractType[合同类型] startDate[生效日期]
+ endDate[到期日期] totalAmount[合同总金额]
+ billingCycle[计费周期] status[合同状态]
+ attachmentFileId[合同附件] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-支持合同" i18n-en:title="Add Support Contract" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-支持合同" i18n-en:title="Edit Support Contract">
             <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- partnerId[签约客户] contractType[合同类型]
- startDate[生效日期] endDate[到期日期]
- totalAmount[合同总金额] billingCycle[计费周期]
- status[合同状态] attachmentFileId[合同附件]
- businessDate[业务日期] 
+ code[编码] name[名称]
+ orgId[业务组织] partnerId[签约客户]
+ contractType[合同类型] startDate[生效日期]
+ endDate[到期日期] totalAmount[合同总金额]
+ billingCycle[计费周期] status[合同状态]
+ attachmentFileId[合同附件] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -58,18 +58,16 @@
     <forms>
         <form id="view" editMode="view" title="查看-活动类型" i18n-en:title="View Activity Type">
             <layout>
- id[ID] code[类型编码]
- name[类型名称] costRate[成本费率]
- subjectId[科目] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[类型编码] name[类型名称]
+ costRate[成本费率] subjectId[科目]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-活动类型" i18n-en:title="Add Activity Type" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-活动类型" i18n-en:title="Edit Activity Type">
             <layout>
- id[ID]
  code[类型编码]
  name[类型名称]
  costRate[成本费率]

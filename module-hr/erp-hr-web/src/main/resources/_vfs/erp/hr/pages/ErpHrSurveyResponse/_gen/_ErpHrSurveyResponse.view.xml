@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-答卷" i18n-en:title="View Survey Response">
             <layout>
- id[ID] surveyId[所属问卷]
- employeeId[填写员工] respondentHash[匿名哈希]
- submittedAt[提交时间] timeSpentSeconds[填写耗时]
- isComplete[是否完整] orgId[业务组织]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ surveyId[所属问卷] employeeId[填写员工]
+ respondentHash[匿名哈希] submittedAt[提交时间]
+ timeSpentSeconds[填写耗时] isComplete[是否完整]
+ orgId[业务组织] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-答卷" i18n-en:title="Add Survey Response" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-答卷" i18n-en:title="Edit Survey Response">
             <layout>
- id[ID]
  surveyId[所属问卷]
  employeeId[填写员工]
  respondentHash[匿名哈希]

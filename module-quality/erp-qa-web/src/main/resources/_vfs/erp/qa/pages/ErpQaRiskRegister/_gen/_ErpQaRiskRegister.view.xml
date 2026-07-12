@@ -76,26 +76,25 @@
     <forms>
         <form id="view" editMode="view" title="查看-风险登记" i18n-en:title="View Risk Register">
             <layout>
- id[ID] code[编号]
- riskDate[登记日期] description[风险描述]
- category[风险类别] likelihood[发生可能性]
- severity[影响严重性] riskScore[风险评分]
- mitigation[缓解措施] ownerId[责任人]
- status[状态] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[编号] riskDate[登记日期]
+ description[风险描述] category[风险类别]
+ likelihood[发生可能性] severity[影响严重性]
+ riskScore[风险评分] mitigation[缓解措施]
+ ownerId[责任人] status[状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-风险登记" i18n-en:title="Add Risk Register" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-风险登记" i18n-en:title="Edit Risk Register">
             <layout>
- id[ID] code[编号]
- riskDate[登记日期] description[风险描述]
- category[风险类别] likelihood[发生可能性]
- severity[影响严重性] riskScore[风险评分]
- mitigation[缓解措施] ownerId[责任人]
- status[状态] remark[备注]
+ code[编号] riskDate[登记日期]
+ description[风险描述] category[风险类别]
+ likelihood[发生可能性] severity[影响严重性]
+ riskScore[风险评分] mitigation[缓解措施]
+ ownerId[责任人] status[状态]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

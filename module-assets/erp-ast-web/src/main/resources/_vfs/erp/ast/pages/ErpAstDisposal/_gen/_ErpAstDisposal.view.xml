@@ -106,33 +106,32 @@
     <forms>
         <form id="view" editMode="view" title="查看-资产处置" i18n-en:title="View Asset Disposal">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] assetId[资产ID]
- disposalType[处置类型] disposalAmount[处置金额]
- currencyId[币种] exchangeRate[汇率]
- businessDate[处置日期] gainLoss[损益]
- reason[处置原因] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
- nopFlowId[工作流实例] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ code[单号] orgId[业务组织]
+ assetId[资产ID] disposalType[处置类型]
+ disposalAmount[处置金额] currencyId[币种]
+ exchangeRate[汇率] businessDate[处置日期]
+ gainLoss[损益] reason[处置原因]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] nopFlowId[工作流实例]
+ amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产处置" i18n-en:title="Add Asset Disposal" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产处置" i18n-en:title="Edit Asset Disposal">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] assetId[资产ID]
- disposalType[处置类型] disposalAmount[处置金额]
- currencyId[币种] exchangeRate[汇率]
- businessDate[处置日期] gainLoss[损益]
- reason[处置原因] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
- amountSource[源币种金额] amountFunctional[本位币金额]
+ code[单号] orgId[业务组织]
+ assetId[资产ID] disposalType[处置类型]
+ disposalAmount[处置金额] currencyId[币种]
+ exchangeRate[汇率] businessDate[处置日期]
+ gainLoss[损益] reason[处置原因]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注] amountSource[源币种金额]
+ amountFunctional[本位币金额] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-标准成本滚算" i18n-en:title="View Cost Rollup">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] businessDate[计算日期]
- costingVersion[成本核算版本] status[状态]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[单号] orgId[业务组织]
+ businessDate[计算日期] costingVersion[成本核算版本]
+ status[状态] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-标准成本滚算" i18n-en:title="Add Cost Rollup" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-标准成本滚算" i18n-en:title="Edit Cost Rollup">
             <layout>
- id[ID]
  code[单号]
  orgId[业务组织]
  businessDate[计算日期]

@@ -88,30 +88,29 @@
     <forms>
         <form id="view" editMode="view" title="查看-漏斗阶段度量" i18n-en:title="View Funnel Stage Metrics">
             <layout>
- id[ID] funnelId[所属漏斗]
- orgId[业务组织] stageId[阶段]
- stageOrder[阶段排序] stageName[阶段名称(快照)]
- leadCountIn[进入本阶段线索数] leadCountOut[流出本阶段线索数]
- leadCountRemaining[期末仍在本阶段数] conversionRate[转化率]
- dropOffRate[流失率] avgDaysInStage[平均停留天数]
- lostCount[本阶段丢失数] lostAmount[本阶段丢失金额]
- lostReasonTop[TOP丢失原因(JSON)] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ funnelId[所属漏斗] orgId[业务组织]
+ stageId[阶段] stageOrder[阶段排序]
+ stageName[阶段名称(快照)] leadCountIn[进入本阶段线索数]
+ leadCountOut[流出本阶段线索数] leadCountRemaining[期末仍在本阶段数]
+ conversionRate[转化率] dropOffRate[流失率]
+ avgDaysInStage[平均停留天数] lostCount[本阶段丢失数]
+ lostAmount[本阶段丢失金额] lostReasonTop[TOP丢失原因(JSON)]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-漏斗阶段度量" i18n-en:title="Add Funnel Stage Metrics" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-漏斗阶段度量" i18n-en:title="Edit Funnel Stage Metrics">
             <layout>
- id[ID] funnelId[所属漏斗]
- orgId[业务组织] stageId[阶段]
- stageOrder[阶段排序] stageName[阶段名称(快照)]
- leadCountIn[进入本阶段线索数] leadCountOut[流出本阶段线索数]
- leadCountRemaining[期末仍在本阶段数] conversionRate[转化率]
- dropOffRate[流失率] avgDaysInStage[平均停留天数]
- lostCount[本阶段丢失数] lostAmount[本阶段丢失金额]
- lostReasonTop[TOP丢失原因(JSON)] remark[备注]
+ funnelId[所属漏斗] orgId[业务组织]
+ stageId[阶段] stageOrder[阶段排序]
+ stageName[阶段名称(快照)] leadCountIn[进入本阶段线索数]
+ leadCountOut[流出本阶段线索数] leadCountRemaining[期末仍在本阶段数]
+ conversionRate[转化率] dropOffRate[流失率]
+ avgDaysInStage[平均停留天数] lostCount[本阶段丢失数]
+ lostAmount[本阶段丢失金额] lostReasonTop[TOP丢失原因(JSON)]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -7,9 +7,45 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[作业卡编号] workOrderId[工单ID]
+ operationId[工序ID] lineNo[行号]
+ status[状态] workcenterId[工作中心]
+==========>progress[执行进度]======
+ plannedQuantity[计划数量] completedQuantity[完工数量]
+ scrappedQuantity[报废数量] actualStartTime[实际开始时间]
+ actualEndTime[实际结束时间]
+==========^audit[审计信息]=========
+ remark[备注] sourceScheduleId[APS排程来源(弱参照)]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[作业卡编号] workOrderId[工单ID]
+ operationId[工序ID] lineNo[行号]
+ status[状态] workcenterId[工作中心]
+==========>progress[执行进度]======
+ plannedQuantity[计划数量] completedQuantity[完工数量]
+ scrappedQuantity[报废数量] actualStartTime[实际开始时间]
+ actualEndTime[实际结束时间]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[作业卡编号] status[状态]
+ workOrderId[工单ID]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -8,9 +8,60 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] projectId[项目]
+ orgId[业务组织] customerId[客户]
+ businessDate[结算日期] settlementType[结算类型]
+ docStatus[单据状态] approveStatus[审核状态]
+ pnlSnapshotId[关联损益汇总]
+==========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ finalRevenue[最终结算收入] finalCost[最终结算成本]
+ finalProfit[最终损益]
+==========^retention[保留款信息]=========
+ retentionAmount[质保金/保留款] retentionDueDate[质保金到期]
+ transferToAsset[是否转固定资产] assetCardId[转固资产卡片]
+ settlementVoucherCode[结算凭证号]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] projectId[项目]
+ orgId[业务组织] customerId[客户]
+ businessDate[结算日期] settlementType[结算类型]
+ docStatus[单据状态] approveStatus[审核状态]
+ pnlSnapshotId[关联损益汇总]
+==========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ finalRevenue[最终结算收入] finalCost[最终结算成本]
+ finalProfit[最终损益]
+==========>retention[保留款信息]======
+ retentionAmount[质保金/保留款] retentionDueDate[质保金到期]
+ transferToAsset[是否转固定资产] assetCardId[转固资产卡片]
+ settlementVoucherCode[结算凭证号]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] docStatus[单据状态]
+ projectId[项目] businessDate[结算日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

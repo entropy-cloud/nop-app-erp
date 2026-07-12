@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-资产类别" i18n-en:title="View Asset Category">
             <layout>
- id[ID] code[类别编码]
- name[类别名称] depreciationMethod[默认折旧方法]
- usefulLifeMonths[默认使用年限(月)] subjectId[资产科目]
- depreciationSubjectId[累计折旧科目] expenseSubjectId[折旧费用科目]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
- disposalGainLossSubjectId[清理损益科目] cipSubjectId[在建工程科目]
+ code[类别编码] name[类别名称]
+ depreciationMethod[默认折旧方法] usefulLifeMonths[默认使用年限(月)]
+ subjectId[资产科目] depreciationSubjectId[累计折旧科目]
+ expenseSubjectId[折旧费用科目] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] disposalGainLossSubjectId[清理损益科目]
+ cipSubjectId[在建工程科目] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产类别" i18n-en:title="Add Asset Category" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产类别" i18n-en:title="Edit Asset Category">
             <layout>
- id[ID] code[类别编码]
- name[类别名称] depreciationMethod[默认折旧方法]
- usefulLifeMonths[默认使用年限(月)] subjectId[资产科目]
- depreciationSubjectId[累计折旧科目] expenseSubjectId[折旧费用科目]
- remark[备注] disposalGainLossSubjectId[清理损益科目]
- cipSubjectId[在建工程科目] 
+ code[类别编码] name[类别名称]
+ depreciationMethod[默认折旧方法] usefulLifeMonths[默认使用年限(月)]
+ subjectId[资产科目] depreciationSubjectId[累计折旧科目]
+ expenseSubjectId[折旧费用科目] remark[备注]
+ disposalGainLossSubjectId[清理损益科目] cipSubjectId[在建工程科目]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

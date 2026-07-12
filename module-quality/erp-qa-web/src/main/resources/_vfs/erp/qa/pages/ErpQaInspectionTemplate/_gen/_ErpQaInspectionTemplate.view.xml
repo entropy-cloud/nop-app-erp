@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-质检模板" i18n-en:title="View Inspection Template">
             <layout>
- id[ID] code[编码]
- name[名称] inspectionType[检验类型]
- materialId[适用物料] isActive[是否启用]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[编码] name[名称]
+ inspectionType[检验类型] materialId[适用物料]
+ isActive[是否启用] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-质检模板" i18n-en:title="Add Inspection Template" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-质检模板" i18n-en:title="Edit Inspection Template">
             <layout>
- id[ID]
  code[编码]
  name[名称]
  inspectionType[检验类型]

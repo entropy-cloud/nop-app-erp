@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-需求预测行" i18n-en:title="View Demand Forecast Line">
             <layout>
- id[ID] forecastId[需求预测ID]
- lineNo[行号] materialId[物料]
- warehouseId[仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）] uoMId[计量单位]
- periodStart[桶起始日期] periodEnd[桶结束日期]
- forecastQty[预测数量] sourcedFlag[来源标记]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ forecastId[需求预测ID] lineNo[行号]
+ materialId[物料] warehouseId[仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）]
+ uoMId[计量单位] periodStart[桶起始日期]
+ periodEnd[桶结束日期] forecastQty[预测数量]
+ sourcedFlag[来源标记] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-需求预测行" i18n-en:title="Add Demand Forecast Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-需求预测行" i18n-en:title="Edit Demand Forecast Line">
             <layout>
- id[ID] forecastId[需求预测ID]
- lineNo[行号] materialId[物料]
- warehouseId[仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）] uoMId[计量单位]
- periodStart[桶起始日期] periodEnd[桶结束日期]
- forecastQty[预测数量] sourcedFlag[来源标记]
- remark[备注] 
+ forecastId[需求预测ID] lineNo[行号]
+ materialId[物料] warehouseId[仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）]
+ uoMId[计量单位] periodStart[桶起始日期]
+ periodEnd[桶结束日期] forecastQty[预测数量]
+ sourcedFlag[来源标记] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

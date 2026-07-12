@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-币种" i18n-en:title="View Currency">
             <layout>
- id[ID] code[币种代码]
- name[名称] symbol[符号]
- decimalPlaces[小数位数] isFunctional[是否本位币]
- isActive[是否启用] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[币种代码] name[名称]
+ symbol[符号] decimalPlaces[小数位数]
+ isFunctional[是否本位币] isActive[是否启用]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-币种" i18n-en:title="Add Currency" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-币种" i18n-en:title="Edit Currency">
             <layout>
- id[ID]
  code[币种代码]
  name[名称]
  symbol[符号]

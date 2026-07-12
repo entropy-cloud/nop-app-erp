@@ -70,24 +70,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-调研结果" i18n-en:title="View Survey Result">
             <layout>
- id[ID] surveyId[所属问卷]
- departmentId[部门] totalResponses[答卷数]
- avgScore[平均分] eNpsScore[eNPS得分]
- driverScores[驱动因子得分] questionBreakdown[每题得分]
- trendData[历史趋势] lastCalculatedAt[最后计算时间]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ surveyId[所属问卷] departmentId[部门]
+ totalResponses[答卷数] avgScore[平均分]
+ eNpsScore[eNPS得分] driverScores[驱动因子得分]
+ questionBreakdown[每题得分] trendData[历史趋势]
+ lastCalculatedAt[最后计算时间] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-调研结果" i18n-en:title="Add Survey Result" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-调研结果" i18n-en:title="Edit Survey Result">
             <layout>
- id[ID] surveyId[所属问卷]
- departmentId[部门] totalResponses[答卷数]
- avgScore[平均分] eNpsScore[eNPS得分]
- driverScores[驱动因子得分] questionBreakdown[每题得分]
- trendData[历史趋势] lastCalculatedAt[最后计算时间]
+ surveyId[所属问卷]
+ departmentId[部门]
+ totalResponses[答卷数]
+ avgScore[平均分]
+ eNpsScore[eNPS得分]
+ driverScores[驱动因子得分]
+ questionBreakdown[每题得分]
+ trendData[历史趋势]
+ lastCalculatedAt[最后计算时间]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

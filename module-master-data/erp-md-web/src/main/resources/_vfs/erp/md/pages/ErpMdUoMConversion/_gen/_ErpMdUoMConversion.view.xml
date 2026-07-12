@@ -55,17 +55,20 @@
     <forms>
         <form id="view" editMode="view" title="查看-单位换算" i18n-en:title="View UoM Conversion">
             <layout>
- id[ID] materialId[物料(空表示通用)]
- fromUoMId[源单位] toUoMId[目标单位]
- conversionRate[换算系数] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ materialId[物料(空表示通用)]
+ fromUoMId[源单位]
+ toUoMId[目标单位]
+ conversionRate[换算系数]
+ delVersion[逻辑删除版本]
+ createdBy[创建人]
+ createTime[创建时间]
+ updatedBy[修改人]
+ updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-单位换算" i18n-en:title="Add UoM Conversion" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-单位换算" i18n-en:title="Edit UoM Conversion">
             <layout>
- id[ID]
  materialId[物料(空表示通用)]
  fromUoMId[源单位]
  toUoMId[目标单位]

@@ -82,28 +82,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-资产拆分行" i18n-en:title="View Asset Split Line">
             <layout>
- id[ID] splitId[拆分单]
- orgId[所属组织] lineNo[行号]
- targetAssetCode[目标资产编码] targetAssetName[目标资产名称]
- categoryId[目标资产类别] allocationMethod[分摊方式]
- proportion[比例] originalCostAmount[原值金额]
- accumulatedDepreciationAmount[累计折旧金额] netBookValue[账面净值]
- targetAssetId[目标资产] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ splitId[拆分单] orgId[所属组织]
+ lineNo[行号] targetAssetCode[目标资产编码]
+ targetAssetName[目标资产名称] categoryId[目标资产类别]
+ allocationMethod[分摊方式] proportion[比例]
+ originalCostAmount[原值金额] accumulatedDepreciationAmount[累计折旧金额]
+ netBookValue[账面净值] targetAssetId[目标资产]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] remark[备注]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产拆分行" i18n-en:title="Add Asset Split Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-资产拆分行" i18n-en:title="Edit Asset Split Line">
             <layout>
- id[ID] splitId[拆分单]
- orgId[所属组织] lineNo[行号]
- targetAssetCode[目标资产编码] targetAssetName[目标资产名称]
- categoryId[目标资产类别] allocationMethod[分摊方式]
- proportion[比例] originalCostAmount[原值金额]
- accumulatedDepreciationAmount[累计折旧金额] netBookValue[账面净值]
- targetAssetId[目标资产] remark[备注]
+ splitId[拆分单] orgId[所属组织]
+ lineNo[行号] targetAssetCode[目标资产编码]
+ targetAssetName[目标资产名称] categoryId[目标资产类别]
+ allocationMethod[分摊方式] proportion[比例]
+ originalCostAmount[原值金额] accumulatedDepreciationAmount[累计折旧金额]
+ netBookValue[账面净值] targetAssetId[目标资产]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

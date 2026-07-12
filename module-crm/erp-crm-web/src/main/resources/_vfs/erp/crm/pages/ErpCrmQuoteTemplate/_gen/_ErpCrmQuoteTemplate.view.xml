@@ -58,18 +58,16 @@
     <forms>
         <form id="view" editMode="view" title="查看-报价模板" i18n-en:title="View Quote Template">
             <layout>
- id[ID] code[编码]
- name[名称] templateContent[模板内容]
- isDefault[是否默认] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[编码] name[名称]
+ templateContent[模板内容] isDefault[是否默认]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-报价模板" i18n-en:title="Add Quote Template" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-报价模板" i18n-en:title="Edit Quote Template">
             <layout>
- id[ID]
  code[编码]
  name[名称]
  templateContent[模板内容]

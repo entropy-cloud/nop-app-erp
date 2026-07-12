@@ -109,37 +109,36 @@
     <forms>
         <form id="view" editMode="view" title="查看-MFT 传输日志" i18n-en:title="View MFT Log">
             <layout>
- id[ID] orgId[业务组织]
- configId[MFT配置] relatedBillType[关联单据类型]
- relatedBillCode[关联单据号] direction[方向]
- fileName[文件名] fileSize[文件大小(字节)]
- fileHash[文件哈希] messageId[AS2 Message-ID]
- mdnStatus[MDN状态] protocol[传输协议]
- status[传输状态] startTime[开始时间]
- endTime[结束时间] durationMs[耗时(毫秒)]
- errorCode[错误码] errorMsg[错误消息]
- retryCount[重试次数] isCompressed[压缩]
- isEncrypted[加密] isSigned[签名]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ orgId[业务组织] configId[MFT配置]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ direction[方向] fileName[文件名]
+ fileSize[文件大小(字节)] fileHash[文件哈希]
+ messageId[AS2 Message-ID] mdnStatus[MDN状态]
+ protocol[传输协议] status[传输状态]
+ startTime[开始时间] endTime[结束时间]
+ durationMs[耗时(毫秒)] errorCode[错误码]
+ errorMsg[错误消息] retryCount[重试次数]
+ isCompressed[压缩] isEncrypted[加密]
+ isSigned[签名] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-MFT 传输日志" i18n-en:title="Add MFT Log" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-MFT 传输日志" i18n-en:title="Edit MFT Log">
             <layout>
- id[ID] orgId[业务组织]
- configId[MFT配置] relatedBillType[关联单据类型]
- relatedBillCode[关联单据号] direction[方向]
- fileName[文件名] fileSize[文件大小(字节)]
- fileHash[文件哈希] messageId[AS2 Message-ID]
- mdnStatus[MDN状态] protocol[传输协议]
- status[传输状态] startTime[开始时间]
- endTime[结束时间] durationMs[耗时(毫秒)]
- errorCode[错误码] errorMsg[错误消息]
- retryCount[重试次数] isCompressed[压缩]
- isEncrypted[加密] isSigned[签名]
- remark[备注] 
+ orgId[业务组织] configId[MFT配置]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ direction[方向] fileName[文件名]
+ fileSize[文件大小(字节)] fileHash[文件哈希]
+ messageId[AS2 Message-ID] mdnStatus[MDN状态]
+ protocol[传输协议] status[传输状态]
+ startTime[开始时间] endTime[结束时间]
+ durationMs[耗时(毫秒)] errorCode[错误码]
+ errorMsg[错误消息] retryCount[重试次数]
+ isCompressed[压缩] isEncrypted[加密]
+ isSigned[签名] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

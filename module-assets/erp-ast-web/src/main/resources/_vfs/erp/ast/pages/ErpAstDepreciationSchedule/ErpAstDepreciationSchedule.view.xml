@@ -8,9 +8,49 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ assetId[资产ID] orgId[所属组织]
+ period[折旧期间] status[执行状态]
+ executedAt[执行时间] voucherId[凭证ID]
+ businessDate[业务日期]
+==========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ plannedAmount[计划折旧额] actualAmount[实际折旧额]
+ accumulatedDepreciation[累计折旧] netBookValue[净值]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ assetId[资产ID] orgId[所属组织]
+ period[折旧期间] status[执行状态]
+ executedAt[执行时间] voucherId[凭证ID]
+ businessDate[业务日期]
+==========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ plannedAmount[计划折旧额] actualAmount[实际折旧额]
+ accumulatedDepreciation[累计折旧] netBookValue[净值]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ assetId[资产ID] status[执行状态]
+ period[折旧期间]
+            </layout>
+            <cells>
+                <cell id="assetId" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

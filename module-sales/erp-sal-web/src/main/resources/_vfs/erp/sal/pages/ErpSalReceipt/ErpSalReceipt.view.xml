@@ -20,9 +20,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ customerId[客户] businessDate[收款日期]
+ currencyId[币种] exchangeRate[汇率]
+ receiptMethod[收款方式] settlementMethodId[结算方式]
+ bankAccountId[收款账户(资金账户)] partnerBankAccountId[客户付款账户(银行账户主数据)]
+ docStatus[单据状态] approveStatus[审核状态]
+ writtenOffStatus[核销状态]
+==========>amount[金额信息]======
+ amountSource[合计金额(源币)] amountFunctional[合计金额(本位币)]
+ totalAmount[合计金额]
+==========^approval[审批与过账]=========
+ approvedBy[审核人] approvedAt[审核时间]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ customerId[客户] businessDate[收款日期]
+ currencyId[币种] exchangeRate[汇率]
+ receiptMethod[收款方式] settlementMethodId[结算方式]
+ bankAccountId[收款账户(资金账户)] partnerBankAccountId[客户付款账户(银行账户主数据)]
+ docStatus[单据状态] approveStatus[审核状态]
+ writtenOffStatus[核销状态]
+==========>amount[金额信息]======
+ amountSource[合计金额(源币)] amountFunctional[合计金额(本位币)]
+ totalAmount[合计金额]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] docStatus[单据状态]
+ customerId[客户] approveStatus[审核状态]
+ businessDate[收款日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

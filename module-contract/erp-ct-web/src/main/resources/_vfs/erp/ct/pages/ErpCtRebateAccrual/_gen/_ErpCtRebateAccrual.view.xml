@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-返利计提明细" i18n-en:title="View Rebate Accrual">
             <layout>
- id[ID] rebateAgreementId[返利协议]
- orgId[业务组织] sourceBillType[来源单据类型]
- sourceBillCode[来源单据号] billAmountSource[单据金额(源币种)]
- accruedRebate[计提返利金额] accrualDate[计提日期]
- isSettled[已结算] settledDate[结算日期]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ rebateAgreementId[返利协议] orgId[业务组织]
+ sourceBillType[来源单据类型] sourceBillCode[来源单据号]
+ billAmountSource[单据金额(源币种)] accruedRebate[计提返利金额]
+ accrualDate[计提日期] isSettled[已结算]
+ settledDate[结算日期] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-返利计提明细" i18n-en:title="Add Rebate Accrual" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-返利计提明细" i18n-en:title="Edit Rebate Accrual">
             <layout>
- id[ID] rebateAgreementId[返利协议]
- orgId[业务组织] sourceBillType[来源单据类型]
- sourceBillCode[来源单据号] billAmountSource[单据金额(源币种)]
- accruedRebate[计提返利金额] accrualDate[计提日期]
- isSettled[已结算] settledDate[结算日期]
- remark[备注] 
+ rebateAgreementId[返利协议] orgId[业务组织]
+ sourceBillType[来源单据类型] sourceBillCode[来源单据号]
+ billAmountSource[单据金额(源币种)] accruedRebate[计提返利金额]
+ accrualDate[计提日期] isSettled[已结算]
+ settledDate[结算日期] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -76,26 +76,25 @@
     <forms>
         <form id="view" editMode="view" title="查看-通知模板" i18n-en:title="View Notification Template">
             <layout>
- id[ID] notificationType[业务事件键]
- name[模板名称] channelSet[渠道集合]
- subjectTpl[标题模板] bodyTpl[正文模板]
- recipientResolver[接收人解析器] recipientConfig[接收人配置(JSON)]
- mergeWindowSeconds[合并窗口(秒)] mergeStrategy[合并策略]
- status[模板状态] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ notificationType[业务事件键] name[模板名称]
+ channelSet[渠道集合] subjectTpl[标题模板]
+ bodyTpl[正文模板] recipientResolver[接收人解析器]
+ recipientConfig[接收人配置(JSON)] mergeWindowSeconds[合并窗口(秒)]
+ mergeStrategy[合并策略] status[模板状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-通知模板" i18n-en:title="Add Notification Template" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-通知模板" i18n-en:title="Edit Notification Template">
             <layout>
- id[ID] notificationType[业务事件键]
- name[模板名称] channelSet[渠道集合]
- subjectTpl[标题模板] bodyTpl[正文模板]
- recipientResolver[接收人解析器] recipientConfig[接收人配置(JSON)]
- mergeWindowSeconds[合并窗口(秒)] mergeStrategy[合并策略]
- status[模板状态] remark[备注]
+ notificationType[业务事件键] name[模板名称]
+ channelSet[渠道集合] subjectTpl[标题模板]
+ bodyTpl[正文模板] recipientResolver[接收人解析器]
+ recipientConfig[接收人配置(JSON)] mergeWindowSeconds[合并窗口(秒)]
+ mergeStrategy[合并策略] status[模板状态]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

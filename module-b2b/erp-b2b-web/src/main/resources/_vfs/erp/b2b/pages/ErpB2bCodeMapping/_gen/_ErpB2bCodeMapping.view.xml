@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-内外代码映射" i18n-en:title="View Code Mapping">
             <layout>
- id[ID] orgId[业务组织]
- mappingType[映射类型] internalCode[内部代码]
- externalCode[外部代码] partnerId[Trading Partner]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ orgId[业务组织] mappingType[映射类型]
+ internalCode[内部代码] externalCode[外部代码]
+ partnerId[Trading Partner] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-内外代码映射" i18n-en:title="Add Code Mapping" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-内外代码映射" i18n-en:title="Edit Code Mapping">
             <layout>
- id[ID]
  orgId[业务组织]
  mappingType[映射类型]
  internalCode[内部代码]

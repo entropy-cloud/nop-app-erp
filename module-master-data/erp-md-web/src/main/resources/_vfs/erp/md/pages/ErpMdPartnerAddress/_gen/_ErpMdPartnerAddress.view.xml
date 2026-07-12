@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-往来单位地址" i18n-en:title="View Partner Address">
             <layout>
- id[ID] partnerId[往来单位]
- addressType[地址类型] contactPerson[联系人]
- phone[电话] address[详细地址]
- isDefault[是否默认] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ partnerId[往来单位] addressType[地址类型]
+ contactPerson[联系人] phone[电话]
+ address[详细地址] isDefault[是否默认]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-往来单位地址" i18n-en:title="Add Partner Address" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-往来单位地址" i18n-en:title="Edit Partner Address">
             <layout>
- id[ID]
  partnerId[往来单位]
  addressType[地址类型]
  contactPerson[联系人]

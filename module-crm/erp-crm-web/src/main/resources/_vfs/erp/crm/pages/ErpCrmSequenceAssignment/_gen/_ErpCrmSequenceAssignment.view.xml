@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-序列分配规则" i18n-en:title="View Sequence Assignment">
             <layout>
- id[ID] orgId[业务组织]
- sequenceId[目标序列] priority[优先级]
- conditionType[条件类型] conditionValue[条件值(JSON)]
- isActive[是否启用] isDefault[是否默认规则]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ orgId[业务组织] sequenceId[目标序列]
+ priority[优先级] conditionType[条件类型]
+ conditionValue[条件值(JSON)] isActive[是否启用]
+ isDefault[是否默认规则] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-序列分配规则" i18n-en:title="Add Sequence Assignment" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-序列分配规则" i18n-en:title="Edit Sequence Assignment">
             <layout>
- id[ID]
  orgId[业务组织]
  sequenceId[目标序列]
  priority[优先级]

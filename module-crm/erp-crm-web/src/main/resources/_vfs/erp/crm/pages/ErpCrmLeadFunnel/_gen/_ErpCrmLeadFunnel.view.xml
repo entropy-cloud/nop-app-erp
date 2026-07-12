@@ -100,34 +100,33 @@
     <forms>
         <form id="view" editMode="view" title="查看-线索漏斗" i18n-en:title="View Lead Funnel">
             <layout>
- id[ID] orgId[业务组织]
- funnelName[漏斗名称] periodStart[分析期间开始]
- periodEnd[分析期间结束] territoryId[区域维度]
- teamId[团队维度] sourceId[来源维度]
- totalLeadsAtTop[漏斗顶部线索量] totalOpportunities[商机总量]
- totalWon[赢单总量] totalLost[丢单总量]
- totalRevenue[赢单总收入] lostRevenue[丢失金额合计]
- weightedRevenue[加权收入合计] avgDealSize[平均赢单金额]
- avgSalesCycleDays[平均销售周期天数] calculatedAt[聚合计算时间]
- calculatedBy[聚合计算人] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ orgId[业务组织] funnelName[漏斗名称]
+ periodStart[分析期间开始] periodEnd[分析期间结束]
+ territoryId[区域维度] teamId[团队维度]
+ sourceId[来源维度] totalLeadsAtTop[漏斗顶部线索量]
+ totalOpportunities[商机总量] totalWon[赢单总量]
+ totalLost[丢单总量] totalRevenue[赢单总收入]
+ lostRevenue[丢失金额合计] weightedRevenue[加权收入合计]
+ avgDealSize[平均赢单金额] avgSalesCycleDays[平均销售周期天数]
+ calculatedAt[聚合计算时间] calculatedBy[聚合计算人]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-线索漏斗" i18n-en:title="Add Lead Funnel" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-线索漏斗" i18n-en:title="Edit Lead Funnel">
             <layout>
- id[ID] orgId[业务组织]
- funnelName[漏斗名称] periodStart[分析期间开始]
- periodEnd[分析期间结束] territoryId[区域维度]
- teamId[团队维度] sourceId[来源维度]
- totalLeadsAtTop[漏斗顶部线索量] totalOpportunities[商机总量]
- totalWon[赢单总量] totalLost[丢单总量]
- totalRevenue[赢单总收入] lostRevenue[丢失金额合计]
- weightedRevenue[加权收入合计] avgDealSize[平均赢单金额]
- avgSalesCycleDays[平均销售周期天数] calculatedAt[聚合计算时间]
- calculatedBy[聚合计算人] remark[备注]
+ orgId[业务组织] funnelName[漏斗名称]
+ periodStart[分析期间开始] periodEnd[分析期间结束]
+ territoryId[区域维度] teamId[团队维度]
+ sourceId[来源维度] totalLeadsAtTop[漏斗顶部线索量]
+ totalOpportunities[商机总量] totalWon[赢单总量]
+ totalLost[丢单总量] totalRevenue[赢单总收入]
+ lostRevenue[丢失金额合计] weightedRevenue[加权收入合计]
+ avgDealSize[平均赢单金额] avgSalesCycleDays[平均销售周期天数]
+ calculatedAt[聚合计算时间] calculatedBy[聚合计算人]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

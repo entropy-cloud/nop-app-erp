@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-批量折扣" i18n-en:title="View Volume Discount">
             <layout>
- id[ID] contractLineId[合同行]
- orgId[业务组织] fromQty[起始数量]
- toQty[截止数量] discountPercent[折扣百分比]
- unitPrice[覆盖单价] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ contractLineId[合同行] orgId[业务组织]
+ fromQty[起始数量] toQty[截止数量]
+ discountPercent[折扣百分比] unitPrice[覆盖单价]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-批量折扣" i18n-en:title="Add Volume Discount" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-批量折扣" i18n-en:title="Edit Volume Discount">
             <layout>
- id[ID]
  contractLineId[合同行]
  orgId[业务组织]
  fromQty[起始数量]

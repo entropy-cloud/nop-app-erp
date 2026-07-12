@@ -7,9 +7,58 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[合同编号] contractName[合同名称]
+ contractType[合同类型] contractDirection[合同方向]
+ orgId[业务组织] status[合同状态]
+ businessDate[业务日期]
+==========>parties[合同方信息]======
+ partnerId[合作方] parentContractId[父合同]
+ templateId[合同模板]
+==========>finance[财务信息]======
+ currencyId[币种] totalAmount[合同总额]
+==========>schedule[日期信息]======
+ startDate[生效日期] endDate[到期日期]
+ signDate[签署日期]
+==========^audit[审计信息]=========
+ description[描述] attachmentFileId[合同附件]
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[合同编号] contractName[合同名称]
+ contractType[合同类型] contractDirection[合同方向]
+ orgId[业务组织] status[合同状态]
+ businessDate[业务日期]
+==========>parties[合同方信息]======
+ partnerId[合作方] parentContractId[父合同]
+ templateId[合同模板]
+==========>finance[财务信息]======
+ currencyId[币种] totalAmount[合同总额]
+==========>schedule[日期信息]======
+ startDate[生效日期] endDate[到期日期]
+ signDate[签署日期]
+ description[描述](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[合同编号] contractName[合同名称]
+ status[合同状态] contractType[合同类型]
+ partnerId[合作方]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="contractName" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

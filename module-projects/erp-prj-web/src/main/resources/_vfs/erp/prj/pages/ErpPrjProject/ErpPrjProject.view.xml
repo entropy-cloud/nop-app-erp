@@ -7,9 +7,52 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[项目编码] name[项目名称]
+ orgId[业务组织] projectTypeId[项目类型]
+ customerId[客户] status[状态]
+==========>schedule[进度信息]======
+ startDate[开始日期] endDate[结束日期]
+ managerId[项目经理(职员)]
+==========>finance[财务信息]======
+ currencyId[币种] budget[预算总额]
+ committedCost[已承诺成本] actualCost[实际成本]
+ billedAmount[已开票金额]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[项目编码] name[项目名称]
+ orgId[业务组织] projectTypeId[项目类型]
+ customerId[客户] status[状态]
+==========>schedule[进度信息]======
+ startDate[开始日期] endDate[结束日期]
+ managerId[项目经理(职员)]
+==========>finance[财务信息]======
+ currencyId[币种] budget[预算总额]
+ committedCost[已承诺成本] actualCost[实际成本]
+ billedAmount[已开票金额]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[项目编码] name[项目名称]
+ status[状态] customerId[客户]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

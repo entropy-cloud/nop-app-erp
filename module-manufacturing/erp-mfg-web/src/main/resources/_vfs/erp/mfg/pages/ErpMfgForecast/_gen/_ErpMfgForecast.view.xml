@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-需求预测" i18n-en:title="View Demand Forecast">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] planName[预测名称]
- periodFrom[预测区间起] periodTo[预测区间止]
- status[状态] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[单号] orgId[业务组织]
+ planName[预测名称] periodFrom[预测区间起]
+ periodTo[预测区间止] status[状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-需求预测" i18n-en:title="Add Demand Forecast" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-需求预测" i18n-en:title="Edit Demand Forecast">
             <layout>
- id[ID]
  code[单号]
  orgId[业务组织]
  planName[预测名称]

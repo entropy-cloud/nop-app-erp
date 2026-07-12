@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-承运商配置" i18n-en:title="View Carrier Config">
             <layout>
- id[ID] carrierId[承运商ID]
- orgId[业务组织] configCode[配置编码]
- serviceType[服务类型] apiEndpoint[接口地址]
- trackingUrlTemplate[追踪URL模板] printFormat[面单打印格式]
- additionalProperties[扩展参数] isActive[是否启用]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ carrierId[承运商ID] orgId[业务组织]
+ configCode[配置编码] serviceType[服务类型]
+ apiEndpoint[接口地址] trackingUrlTemplate[追踪URL模板]
+ printFormat[面单打印格式] additionalProperties[扩展参数]
+ isActive[是否启用] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-承运商配置" i18n-en:title="Add Carrier Config" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-承运商配置" i18n-en:title="Edit Carrier Config">
             <layout>
- id[ID] carrierId[承运商ID]
- orgId[业务组织] configCode[配置编码]
- serviceType[服务类型] apiEndpoint[接口地址]
- trackingUrlTemplate[追踪URL模板] printFormat[面单打印格式]
- additionalProperties[扩展参数] isActive[是否启用]
- remark[备注] 
+ carrierId[承运商ID] orgId[业务组织]
+ configCode[配置编码] serviceType[服务类型]
+ apiEndpoint[接口地址] trackingUrlTemplate[追踪URL模板]
+ printFormat[面单打印格式] additionalProperties[扩展参数]
+ isActive[是否启用] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

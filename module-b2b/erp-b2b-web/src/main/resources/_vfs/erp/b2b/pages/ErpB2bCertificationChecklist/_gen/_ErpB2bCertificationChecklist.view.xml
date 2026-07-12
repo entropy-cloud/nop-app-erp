@@ -70,24 +70,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-认证检查清单" i18n-en:title="View Certification Checklist">
             <layout>
- id[ID] partnerProfileId[伙伴档案]
- checklistItem[检查项] requiredDocType[对应文档类型]
- isMandatory[必检] isPassed[通过]
- checkedBy[检查人] checkedAt[检查时间]
- evidence[检查证据] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ partnerProfileId[伙伴档案] checklistItem[检查项]
+ requiredDocType[对应文档类型] isMandatory[必检]
+ isPassed[通过] checkedBy[检查人]
+ checkedAt[检查时间] evidence[检查证据]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-认证检查清单" i18n-en:title="Add Certification Checklist" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-认证检查清单" i18n-en:title="Edit Certification Checklist">
             <layout>
- id[ID] partnerProfileId[伙伴档案]
- checklistItem[检查项] requiredDocType[对应文档类型]
- isMandatory[必检] isPassed[通过]
- checkedBy[检查人] checkedAt[检查时间]
- evidence[检查证据] remark[备注]
+ partnerProfileId[伙伴档案]
+ checklistItem[检查项]
+ requiredDocType[对应文档类型]
+ isMandatory[必检]
+ isPassed[通过]
+ checkedBy[检查人]
+ checkedAt[检查时间]
+ evidence[检查证据]
+ remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

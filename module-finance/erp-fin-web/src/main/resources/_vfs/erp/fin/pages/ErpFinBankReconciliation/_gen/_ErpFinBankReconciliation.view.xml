@@ -82,28 +82,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-银行对账(余额调节表)" i18n-en:title="View Bank Reconciliation">
             <layout>
- id[ID] code[单号]
- orgId[组织] fundAccountId[资金账户]
- statementId[银行对账单] reconciliationDate[对账日期]
- bookBalance[账面余额] statementBalance[对账单余额]
- unreconciledDiff[未达差异] isBalanced[是否平衡]
- reconciledAt[对账完成时间] reconciledBy[对账人]
- docStatus[状态] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[单号] orgId[组织]
+ fundAccountId[资金账户] statementId[银行对账单]
+ reconciliationDate[对账日期] bookBalance[账面余额]
+ statementBalance[对账单余额] unreconciledDiff[未达差异]
+ isBalanced[是否平衡] reconciledAt[对账完成时间]
+ reconciledBy[对账人] docStatus[状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-银行对账(余额调节表)" i18n-en:title="Add Bank Reconciliation" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-银行对账(余额调节表)" i18n-en:title="Edit Bank Reconciliation">
             <layout>
- id[ID] code[单号]
- orgId[组织] fundAccountId[资金账户]
- statementId[银行对账单] reconciliationDate[对账日期]
- bookBalance[账面余额] statementBalance[对账单余额]
- unreconciledDiff[未达差异] isBalanced[是否平衡]
- reconciledAt[对账完成时间] reconciledBy[对账人]
- docStatus[状态] remark[备注]
+ code[单号] orgId[组织]
+ fundAccountId[资金账户] statementId[银行对账单]
+ reconciliationDate[对账日期] bookBalance[账面余额]
+ statementBalance[对账单余额] unreconciledDiff[未达差异]
+ isBalanced[是否平衡] reconciledAt[对账完成时间]
+ reconciledBy[对账人] docStatus[状态]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

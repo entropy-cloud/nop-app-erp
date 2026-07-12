@@ -94,31 +94,30 @@
     <forms>
         <form id="view" editMode="view" title="查看-采购入库单行" i18n-en:title="View Purchase Receipt Line">
             <layout>
- id[ID] receiveId[入库单ID]
- orderLineId[订单行ID] lineNo[行号]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] quantity[实收数量]
- rejectedQuantity[拒收数量] unitPrice[单价(不含税)]
- taxRate[税率(%)] taxAmount[税额]
- amount[金额(不含税)] warehouseId[入库库位]
- batchNo[批号] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] materialName[物料名称]
- warehouseName[入库库位名称] 
+ receiveId[入库单ID] orderLineId[订单行ID]
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ quantity[实收数量] rejectedQuantity[拒收数量]
+ unitPrice[单价(不含税)] taxRate[税率(%)]
+ taxAmount[税额] amount[金额(不含税)]
+ warehouseId[入库库位] batchNo[批号]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ materialName[物料名称] warehouseName[入库库位名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-采购入库单行" i18n-en:title="Add Purchase Receipt Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-采购入库单行" i18n-en:title="Edit Purchase Receipt Line">
             <layout>
- id[ID] receiveId[入库单ID]
- orderLineId[订单行ID] lineNo[行号]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] quantity[实收数量]
- rejectedQuantity[拒收数量] unitPrice[单价(不含税)]
- taxRate[税率(%)] taxAmount[税额]
- amount[金额(不含税)] warehouseId[入库库位]
- batchNo[批号] remark[备注]
+ receiveId[入库单ID] orderLineId[订单行ID]
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ quantity[实收数量] rejectedQuantity[拒收数量]
+ unitPrice[单价(不含税)] taxRate[税率(%)]
+ taxAmount[税额] amount[金额(不含税)]
+ warehouseId[入库库位] batchNo[批号]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -79,27 +79,26 @@
     <forms>
         <form id="view" editMode="view" title="查看-供应商价格清单" i18n-en:title="View Supplier Price List">
             <layout>
- id[ID] supplierId[供应商]
- materialId[物料] uoMId[计量单位]
- currencyId[币种] unitPrice[协议单价(不含税)]
- taxRate[税率(%)] minOrderQuantity[最小起订量]
- leadTimeDays[交货周期(天)] validFrom[生效日期]
- validTo[失效日期] priority[优先级(数字小优先)]
- isActive[是否启用] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ supplierId[供应商] materialId[物料]
+ uoMId[计量单位] currencyId[币种]
+ unitPrice[协议单价(不含税)] taxRate[税率(%)]
+ minOrderQuantity[最小起订量] leadTimeDays[交货周期(天)]
+ validFrom[生效日期] validTo[失效日期]
+ priority[优先级(数字小优先)] isActive[是否启用]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-供应商价格清单" i18n-en:title="Add Supplier Price List" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-供应商价格清单" i18n-en:title="Edit Supplier Price List">
             <layout>
- id[ID] supplierId[供应商]
- materialId[物料] uoMId[计量单位]
- currencyId[币种] unitPrice[协议单价(不含税)]
- taxRate[税率(%)] minOrderQuantity[最小起订量]
- leadTimeDays[交货周期(天)] validFrom[生效日期]
- validTo[失效日期] priority[优先级(数字小优先)]
- isActive[是否启用] 
+ supplierId[供应商] materialId[物料]
+ uoMId[计量单位] currencyId[币种]
+ unitPrice[协议单价(不含税)] taxRate[税率(%)]
+ minOrderQuantity[最小起订量] leadTimeDays[交货周期(天)]
+ validFrom[生效日期] validTo[失效日期]
+ priority[优先级(数字小优先)] isActive[是否启用]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

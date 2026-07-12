@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-轮换排班模板" i18n-en:title="View Shift Rotation Pattern">
             <layout>
- id[ID] code[编码]
- name[名称] orgId[业务组织]
- patternType[轮换类型] patternData[轮换序列]
- rotateInterval[轮换间隔(天)] startDate[起始日期]
- groupId[轮换组] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[编码] name[名称]
+ orgId[业务组织] patternType[轮换类型]
+ patternData[轮换序列] rotateInterval[轮换间隔(天)]
+ startDate[起始日期] groupId[轮换组]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-轮换排班模板" i18n-en:title="Add Shift Rotation Pattern" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-轮换排班模板" i18n-en:title="Edit Shift Rotation Pattern">
             <layout>
- id[ID]
  code[编码]
  name[名称]
  orgId[业务组织]

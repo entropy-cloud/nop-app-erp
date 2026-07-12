@@ -85,26 +85,30 @@
     <forms>
         <form id="view" editMode="view" title="查看-调拨单" i18n-en:title="View Transfer Order">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] businessDate[业务日期]
- fromWarehouseId[调出仓库] toWarehouseId[调入仓库]
- inTransitWarehouseId[在途仓库] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- approvedBy[审核人] approvedAt[审核时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[单号] orgId[业务组织]
+ businessDate[业务日期] fromWarehouseId[调出仓库]
+ toWarehouseId[调入仓库] inTransitWarehouseId[在途仓库]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-调拨单" i18n-en:title="Add Transfer Order" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-调拨单" i18n-en:title="Edit Transfer Order">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] businessDate[业务日期]
- fromWarehouseId[调出仓库] toWarehouseId[调入仓库]
- inTransitWarehouseId[在途仓库] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
+ code[单号]
+ orgId[业务组织]
+ businessDate[业务日期]
+ fromWarehouseId[调出仓库]
+ toWarehouseId[调入仓库]
+ inTransitWarehouseId[在途仓库]
+ docStatus[单据状态]
+ approveStatus[审核状态]
+ remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

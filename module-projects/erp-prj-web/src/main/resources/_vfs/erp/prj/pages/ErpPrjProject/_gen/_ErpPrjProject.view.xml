@@ -88,30 +88,29 @@
     <forms>
         <form id="view" editMode="view" title="查看-项目" i18n-en:title="View Project">
             <layout>
- id[ID] code[项目编码]
- name[项目名称] orgId[业务组织]
- projectTypeId[项目类型] customerId[客户]
- currencyId[币种] startDate[开始日期]
- endDate[结束日期] budget[预算总额]
- committedCost[已承诺成本] actualCost[实际成本]
- billedAmount[已开票金额] status[状态]
- managerId[项目经理(职员)] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[项目编码] name[项目名称]
+ orgId[业务组织] projectTypeId[项目类型]
+ customerId[客户] currencyId[币种]
+ startDate[开始日期] endDate[结束日期]
+ budget[预算总额] committedCost[已承诺成本]
+ actualCost[实际成本] billedAmount[已开票金额]
+ status[状态] managerId[项目经理(职员)]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目" i18n-en:title="Add Project" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-项目" i18n-en:title="Edit Project">
             <layout>
- id[ID] code[项目编码]
- name[项目名称] orgId[业务组织]
- projectTypeId[项目类型] customerId[客户]
- currencyId[币种] startDate[开始日期]
- endDate[结束日期] budget[预算总额]
- committedCost[已承诺成本] actualCost[实际成本]
- billedAmount[已开票金额] status[状态]
- managerId[项目经理(职员)] remark[备注]
+ code[项目编码] name[项目名称]
+ orgId[业务组织] projectTypeId[项目类型]
+ customerId[客户] currencyId[币种]
+ startDate[开始日期] endDate[结束日期]
+ budget[预算总额] committedCost[已承诺成本]
+ actualCost[实际成本] billedAmount[已开票金额]
+ status[状态] managerId[项目经理(职员)]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

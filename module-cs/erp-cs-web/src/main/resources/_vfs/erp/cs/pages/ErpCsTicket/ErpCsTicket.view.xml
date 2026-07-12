@@ -7,24 +7,47 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="add">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] subject[工单主题]
- description[问题描述] customerId[客户]
- contactId[联系人] ticketTypeId[工单类型]
- priority[优先级] source[来源]
+        <form id="view" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ subject[工单主题] customerId[客户]
+ ticketTypeId[工单类型] priority[优先级]
+ source[来源] status[工单状态]
+ docStatus[单据状态] approveStatus[审核状态]
+ contactId[联系人] catalogItemId[服务目录项]
+ description[问题描述](2)
+==========>sla[SLA与处理]======
  assignedToId[分配处理人] slaPolicyId[SLA 策略]
  deadlineDateTime[SLA 截止时间] isSlaCompleted[SLA 是否完成]
  startDateTime[开始处理时间] endDateTime[关闭时间]
  duration[处理时长(分钟)] progress[进度(%)]
+==========^audit[审计信息]=========
+ remark[备注] businessDate[业务日期]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ subject[工单主题] customerId[客户]
+ ticketTypeId[工单类型] priority[优先级]
+ source[来源] assignedToId[分配处理人]
  status[工单状态] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
- catalogItemId[服务目录项] approvedBy[审核人]
- approvedAt[审核时间]
+ approveStatus[审核状态] contactId[联系人]
+ catalogItemId[服务目录项]
+ description[问题描述](2)
+==========>sla[SLA与处理]======
+ slaPolicyId[SLA 策略] deadlineDateTime[SLA 截止时间]
+ isSlaCompleted[SLA 是否完成] startDateTime[开始处理时间]
+ endDateTime[关闭时间] duration[处理时长(分钟)]
+ progress[进度(%)]
+==========^audit[审计信息]=========
+ remark[备注]
  __kbSuggestion[相关知识库文章]
-</layout>
+            </layout>
             <cells>
                 <cell id="__kbSuggestion" custom="true" notSubmit="true">
                     <gen-control>
@@ -73,23 +96,26 @@
                 </cell>
             </cells>
         </form>
-        <form id="edit">
-            <layout>
- id[ID] code[单号]
- orgId[业务组织] subject[工单主题]
- description[问题描述] customerId[客户]
- contactId[联系人] ticketTypeId[工单类型]
- priority[优先级] source[来源]
- assignedToId[分配处理人] slaPolicyId[SLA 策略]
- deadlineDateTime[SLA 截止时间] isSlaCompleted[SLA 是否完成]
- startDateTime[开始处理时间] endDateTime[关闭时间]
- duration[处理时长(分钟)] progress[进度(%)]
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ subject[工单主题] customerId[客户]
+ ticketTypeId[工单类型] priority[优先级]
+ source[来源] assignedToId[分配处理人]
  status[工单状态] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
- catalogItemId[服务目录项] delVersion[逻辑删除版本]
- approvedBy[审核人] approvedAt[审核时间]
+ approveStatus[审核状态] contactId[联系人]
+ catalogItemId[服务目录项]
+ description[问题描述](2)
+==========>sla[SLA与处理]======
+ slaPolicyId[SLA 策略] deadlineDateTime[SLA 截止时间]
+ isSlaCompleted[SLA 是否完成] startDateTime[开始处理时间]
+ endDateTime[关闭时间] duration[处理时长(分钟)]
+ progress[进度(%)]
+==========^audit[审计信息]=========
+ remark[备注]
  __kbSuggestion[相关知识库文章]
-</layout>
+            </layout>
             <cells>
                 <cell id="__kbSuggestion" custom="true" notSubmit="true">
                     <gen-control>
@@ -136,6 +162,15 @@
                         </wrapper>
                     </gen-control>
                 </cell>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] status[工单状态]
+ customerId[客户] priority[优先级]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
             </cells>
         </form>
     </forms>

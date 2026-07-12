@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-知识库" i18n-en:title="View Knowledge Base">
             <layout>
- id[ID] code[编码]
- title[标题] content[正文]
- categoryId[分类] isPublished[是否发布]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[编码] title[标题]
+ content[正文] categoryId[分类]
+ isPublished[是否发布] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-知识库" i18n-en:title="Add Knowledge Base" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-知识库" i18n-en:title="Edit Knowledge Base">
             <layout>
- id[ID]
  code[编码]
  title[标题]
  content[正文]

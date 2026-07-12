@@ -91,31 +91,30 @@
     <forms>
         <form id="view" editMode="view" title="查看-班次模板" i18n-en:title="View Shift">
             <layout>
- id[ID] code[编码]
- orgId[业务组织] name[班次名称]
- shiftType[班次类型] startTime[上班时间]
- endTime[下班时间] graceLateMinutes[迟到宽容分钟数]
- graceEarlyLeaveMinutes[早退宽容分钟数] requireClockIn[需签到]
- requireClockOut[需签退] restStartTime[休息开始]
- restEndTime[休息结束] totalWorkMinutes[标准工时(分钟)]
- allowOvertime[允许加班] colorHex[显示颜色]
- description[说明] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[编码] orgId[业务组织]
+ name[班次名称] shiftType[班次类型]
+ startTime[上班时间] endTime[下班时间]
+ graceLateMinutes[迟到宽容分钟数] graceEarlyLeaveMinutes[早退宽容分钟数]
+ requireClockIn[需签到] requireClockOut[需签退]
+ restStartTime[休息开始] restEndTime[休息结束]
+ totalWorkMinutes[标准工时(分钟)] allowOvertime[允许加班]
+ colorHex[显示颜色] description[说明]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-班次模板" i18n-en:title="Add Shift" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-班次模板" i18n-en:title="Edit Shift">
             <layout>
- id[ID] code[编码]
- orgId[业务组织] name[班次名称]
- shiftType[班次类型] startTime[上班时间]
- endTime[下班时间] graceLateMinutes[迟到宽容分钟数]
- graceEarlyLeaveMinutes[早退宽容分钟数] requireClockIn[需签到]
- requireClockOut[需签退] restStartTime[休息开始]
- restEndTime[休息结束] totalWorkMinutes[标准工时(分钟)]
- allowOvertime[允许加班] colorHex[显示颜色]
- description[说明] 
+ code[编码] orgId[业务组织]
+ name[班次名称] shiftType[班次类型]
+ startTime[上班时间] endTime[下班时间]
+ graceLateMinutes[迟到宽容分钟数] graceEarlyLeaveMinutes[早退宽容分钟数]
+ requireClockIn[需签到] requireClockOut[需签退]
+ restStartTime[休息开始] restEndTime[休息结束]
+ totalWorkMinutes[标准工时(分钟)] allowOvertime[允许加班]
+ colorHex[显示颜色] description[说明]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

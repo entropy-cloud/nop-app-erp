@@ -82,28 +82,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-派工日志" i18n-en:title="View Dispatch Log">
             <layout>
- id[ID] orgId[业务组织]
- operationOrderId[工序工单] workcenterId[工作中心]
- dispatchType[派工类型] previousStatus[派工前状态]
- newStatus[派工后状态] conditionCheckResult[条件检查结果(JSON)]
- dispatchedBy[派工人] dispatchedAt[派工时间]
- materialAvailable[物料齐套] operatorAvailable[操作工可用]
- toolingAvailable[工装可用] note[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ orgId[业务组织] operationOrderId[工序工单]
+ workcenterId[工作中心] dispatchType[派工类型]
+ previousStatus[派工前状态] newStatus[派工后状态]
+ conditionCheckResult[条件检查结果(JSON)] dispatchedBy[派工人]
+ dispatchedAt[派工时间] materialAvailable[物料齐套]
+ operatorAvailable[操作工可用] toolingAvailable[工装可用]
+ note[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-派工日志" i18n-en:title="Add Dispatch Log" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-派工日志" i18n-en:title="Edit Dispatch Log">
             <layout>
- id[ID] orgId[业务组织]
- operationOrderId[工序工单] workcenterId[工作中心]
- dispatchType[派工类型] previousStatus[派工前状态]
- newStatus[派工后状态] conditionCheckResult[条件检查结果(JSON)]
- dispatchedBy[派工人] dispatchedAt[派工时间]
- materialAvailable[物料齐套] operatorAvailable[操作工可用]
- toolingAvailable[工装可用] note[备注]
+ orgId[业务组织] operationOrderId[工序工单]
+ workcenterId[工作中心] dispatchType[派工类型]
+ previousStatus[派工前状态] newStatus[派工后状态]
+ conditionCheckResult[条件检查结果(JSON)] dispatchedBy[派工人]
+ dispatchedAt[派工时间] materialAvailable[物料齐套]
+ operatorAvailable[操作工可用] toolingAvailable[工装可用]
+ note[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

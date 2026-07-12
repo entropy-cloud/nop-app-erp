@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-维护任务" i18n-en:title="View Maintenance Task">
             <layout>
- id[ID] visitId[维护访问ID]
- lineNo[行号] taskDescription[任务描述]
- status[状态] completedBy[完成人]
- completedAt[完成时间] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ visitId[维护访问ID] lineNo[行号]
+ taskDescription[任务描述] status[状态]
+ completedBy[完成人] completedAt[完成时间]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护任务" i18n-en:title="Add Maintenance Task" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-维护任务" i18n-en:title="Edit Maintenance Task">
             <layout>
- id[ID]
  visitId[维护访问ID]
  lineNo[行号]
  taskDescription[任务描述]

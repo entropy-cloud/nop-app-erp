@@ -58,18 +58,16 @@
     <forms>
         <form id="view" editMode="view" title="查看-维护团队成员" i18n-en:title="View Maintenance Team Member">
             <layout>
- id[ID] teamId[团队ID]
- employeeId[成员(职员)] role[角色]
- joinedAt[加入时间] leftAt[退出时间]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ teamId[团队ID] employeeId[成员(职员)]
+ role[角色] joinedAt[加入时间]
+ leftAt[退出时间] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护团队成员" i18n-en:title="Add Maintenance Team Member" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-维护团队成员" i18n-en:title="Edit Maintenance Team Member">
             <layout>
- id[ID]
  teamId[团队ID]
  employeeId[成员(职员)]
  role[角色]

@@ -7,9 +7,52 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[科目编码] name[科目名称]
+ parentId[父级科目] subjectClass[科目类别]
+ direction[余额方向] balanceType[余额类型]
+ status[状态]
+==========>auxiliary[辅助核算]======
+ isAuxiliaryPartner[辅助-往来单位] isAuxiliaryDepartment[辅助-部门]
+ isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
+ isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
+==========^control[控制属性]=========
+ currencyId[核算币种] isBudgetable[是否预算控制]
+ isLeaf[是否明细科目]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[科目编码] name[科目名称]
+ parentId[父级科目] subjectClass[科目类别]
+ direction[余额方向] balanceType[余额类型]
+ status[状态]
+==========>auxiliary[辅助核算]======
+ isAuxiliaryPartner[辅助-往来单位] isAuxiliaryDepartment[辅助-部门]
+ isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
+ isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
+ currencyId[核算币种] isBudgetable[是否预算控制]
+ isLeaf[是否明细科目] remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[科目编码] name[科目名称]
+ status[状态] subjectClass[科目类别]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

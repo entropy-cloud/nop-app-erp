@@ -109,35 +109,34 @@
     <forms>
         <form id="view" editMode="view" title="查看-薪酬记录" i18n-en:title="View Salary Record">
             <layout>
- id[ID] employeeId[员工]
- year[年份] month[月份]
- paymentStatus[支付状态] paymentDate[实发日期]
- approveStatus[审核状态] performanceFactor[绩效系数]
- actualWorkDays[实际出勤日] requiredWorkDays[应出勤日]
- totalOvertimeHours[月总加班小时] unpaidLeaveDays[无薪假天数]
- cumulativeData[累计个税数据] reviewNote[审核备注]
- paymentBatchNo[发放批次号] bankFileId[银行文件]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] approvedBy[审核人]
- approvedAt[审核时间] businessDate[业务日期]
- posted[已过账] nopFlowId[工作流实例]
+ employeeId[员工] year[年份]
+ month[月份] paymentStatus[支付状态]
+ paymentDate[实发日期] approveStatus[审核状态]
+ performanceFactor[绩效系数] actualWorkDays[实际出勤日]
+ requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
+ unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
+ reviewNote[审核备注] paymentBatchNo[发放批次号]
+ bankFileId[银行文件] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ approvedBy[审核人] approvedAt[审核时间]
+ businessDate[业务日期] posted[已过账]
+ nopFlowId[工作流实例] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-薪酬记录" i18n-en:title="Add Salary Record" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-薪酬记录" i18n-en:title="Edit Salary Record">
             <layout>
- id[ID] employeeId[员工]
- year[年份] month[月份]
- paymentStatus[支付状态] paymentDate[实发日期]
- approveStatus[审核状态] performanceFactor[绩效系数]
- actualWorkDays[实际出勤日] requiredWorkDays[应出勤日]
- totalOvertimeHours[月总加班小时] unpaidLeaveDays[无薪假天数]
- cumulativeData[累计个税数据] reviewNote[审核备注]
- paymentBatchNo[发放批次号] bankFileId[银行文件]
- orgId[业务组织] remark[备注]
- businessDate[业务日期] 
+ employeeId[员工] year[年份]
+ month[月份] paymentStatus[支付状态]
+ paymentDate[实发日期] approveStatus[审核状态]
+ performanceFactor[绩效系数] actualWorkDays[实际出勤日]
+ requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
+ unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
+ reviewNote[审核备注] paymentBatchNo[发放批次号]
+ bankFileId[银行文件] orgId[业务组织]
+ remark[备注] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

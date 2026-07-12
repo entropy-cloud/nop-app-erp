@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-满意度调查" i18n-en:title="View CSAT Survey">
             <layout>
- id[ID] orgId[业务组织]
- ticketId[关联工单] surveyToken[调查令牌]
- csatScore[CSAT评分] npsScore[NPS评分]
- cesScore[CES评分] comment[文字反馈]
- respondedAt[响应时间] surveySentAt[调查发送时间]
- surveyChannel[发送渠道] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ orgId[业务组织] ticketId[关联工单]
+ surveyToken[调查令牌] csatScore[CSAT评分]
+ npsScore[NPS评分] cesScore[CES评分]
+ comment[文字反馈] respondedAt[响应时间]
+ surveySentAt[调查发送时间] surveyChannel[发送渠道]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-满意度调查" i18n-en:title="Add CSAT Survey" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-满意度调查" i18n-en:title="Edit CSAT Survey">
             <layout>
- id[ID] orgId[业务组织]
- ticketId[关联工单] surveyToken[调查令牌]
- csatScore[CSAT评分] npsScore[NPS评分]
- cesScore[CES评分] comment[文字反馈]
- respondedAt[响应时间] surveySentAt[调查发送时间]
- surveyChannel[发送渠道] 
+ orgId[业务组织] ticketId[关联工单]
+ surveyToken[调查令牌] csatScore[CSAT评分]
+ npsScore[NPS评分] cesScore[CES评分]
+ comment[文字反馈] respondedAt[响应时间]
+ surveySentAt[调查发送时间] surveyChannel[发送渠道]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

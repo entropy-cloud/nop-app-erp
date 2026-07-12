@@ -82,28 +82,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-仓库补货参数" i18n-en:title="View DRP Parameter">
             <layout>
- id[ID] warehouseId[仓库]
- materialId[物料] safetyStock[安全库存]
- replenishmentLeadTime[补货提前期(天)] orderMultiple[订货倍数]
- preferredSourceWarehouseId[首选调出仓库] preferredSupplierId[首选供应商]
- replenishmentMethod[补货方法] minStockLevel[最低库存]
- maxStockLevel[最高库存] reviewPeriodDays[审视周期(天)]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ warehouseId[仓库] materialId[物料]
+ safetyStock[安全库存] replenishmentLeadTime[补货提前期(天)]
+ orderMultiple[订货倍数] preferredSourceWarehouseId[首选调出仓库]
+ preferredSupplierId[首选供应商] replenishmentMethod[补货方法]
+ minStockLevel[最低库存] maxStockLevel[最高库存]
+ reviewPeriodDays[审视周期(天)] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-仓库补货参数" i18n-en:title="Add DRP Parameter" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-仓库补货参数" i18n-en:title="Edit DRP Parameter">
             <layout>
- id[ID] warehouseId[仓库]
- materialId[物料] safetyStock[安全库存]
- replenishmentLeadTime[补货提前期(天)] orderMultiple[订货倍数]
- preferredSourceWarehouseId[首选调出仓库] preferredSupplierId[首选供应商]
- replenishmentMethod[补货方法] minStockLevel[最低库存]
- maxStockLevel[最高库存] reviewPeriodDays[审视周期(天)]
- orgId[业务组织] remark[备注]
+ warehouseId[仓库] materialId[物料]
+ safetyStock[安全库存] replenishmentLeadTime[补货提前期(天)]
+ orderMultiple[订货倍数] preferredSourceWarehouseId[首选调出仓库]
+ preferredSupplierId[首选供应商] replenishmentMethod[补货方法]
+ minStockLevel[最低库存] maxStockLevel[最高库存]
+ reviewPeriodDays[审视周期(天)] orgId[业务组织]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

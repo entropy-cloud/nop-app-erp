@@ -7,9 +7,41 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[BOM编码] productId[产品]
+ bomType[BOM类型] versionLabel[版本号]
+ qty[BOM数量] isActive[是否有效]
+ isDefault[是否默认] consumption[消耗控制]
+ useMultiLevelBom[展开多层BOM] inspectionRequired[需要质检]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[BOM编码] productId[产品]
+ bomType[BOM类型] versionLabel[版本号]
+ qty[BOM数量] isActive[是否有效]
+ isDefault[是否默认] consumption[消耗控制]
+ useMultiLevelBom[展开多层BOM] inspectionRequired[需要质检]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[BOM编码] productId[产品]
+ isActive[是否有效]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

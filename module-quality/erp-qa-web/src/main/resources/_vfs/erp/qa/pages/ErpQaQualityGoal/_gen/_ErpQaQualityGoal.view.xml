@@ -76,26 +76,25 @@
     <forms>
         <form id="view" editMode="view" title="查看-质量目标" i18n-en:title="View Quality Goal">
             <layout>
- id[ID] code[编码]
- name[名称] description[描述]
- targetValue[目标值] currentValue[当前值]
- unit[单位] responsiblePersonId[责任人]
- startDate[开始日期] endDate[结束日期]
- status[状态] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[编码] name[名称]
+ description[描述] targetValue[目标值]
+ currentValue[当前值] unit[单位]
+ responsiblePersonId[责任人] startDate[开始日期]
+ endDate[结束日期] status[状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-质量目标" i18n-en:title="Add Quality Goal" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-质量目标" i18n-en:title="Edit Quality Goal">
             <layout>
- id[ID] code[编码]
- name[名称] description[描述]
- targetValue[目标值] currentValue[当前值]
- unit[单位] responsiblePersonId[责任人]
- startDate[开始日期] endDate[结束日期]
- status[状态] remark[备注]
+ code[编码] name[名称]
+ description[描述] targetValue[目标值]
+ currentValue[当前值] unit[单位]
+ responsiblePersonId[责任人] startDate[开始日期]
+ endDate[结束日期] status[状态]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -88,30 +88,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-库存移动单行" i18n-en:title="View Stock Move Line">
             <layout>
- id[ID] moveId[移动单ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] uoMId[计量单位]
- quantity[数量] unitCost[单位成本]
- totalCost[总成本] currencyId[币种]
- batchNo[批号] serialNo[序列号]
- sourceLocationId[源库位] destLocationId[目标库位]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- materialName[物料名称] 
+ moveId[移动单ID] lineNo[行号]
+ materialId[物料] skuId[SKU]
+ uoMId[计量单位] quantity[数量]
+ unitCost[单位成本] totalCost[总成本]
+ currencyId[币种] batchNo[批号]
+ serialNo[序列号] sourceLocationId[源库位]
+ destLocationId[目标库位] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] materialName[物料名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-库存移动单行" i18n-en:title="Add Stock Move Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-库存移动单行" i18n-en:title="Edit Stock Move Line">
             <layout>
- id[ID] moveId[移动单ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] uoMId[计量单位]
- quantity[数量] unitCost[单位成本]
- totalCost[总成本] currencyId[币种]
- batchNo[批号] serialNo[序列号]
- sourceLocationId[源库位] destLocationId[目标库位]
- remark[备注] 
+ moveId[移动单ID] lineNo[行号]
+ materialId[物料] skuId[SKU]
+ uoMId[计量单位] quantity[数量]
+ unitCost[单位成本] totalCost[总成本]
+ currencyId[币种] batchNo[批号]
+ serialNo[序列号] sourceLocationId[源库位]
+ destLocationId[目标库位] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

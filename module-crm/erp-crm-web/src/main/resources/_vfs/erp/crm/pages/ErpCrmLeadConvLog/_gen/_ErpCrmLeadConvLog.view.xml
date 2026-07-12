@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-阶段流转日志" i18n-en:title="View Lead Conversion Log">
             <layout>
- id[ID] leadId[线索/商机]
- orgId[业务组织] fromStageId[前阶段]
- toStageId[后阶段] changedAt[变更时间]
- changedBy[变更人] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ leadId[线索/商机] orgId[业务组织]
+ fromStageId[前阶段] toStageId[后阶段]
+ changedAt[变更时间] changedBy[变更人]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-阶段流转日志" i18n-en:title="Add Lead Conversion Log" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-阶段流转日志" i18n-en:title="Edit Lead Conversion Log">
             <layout>
- id[ID]
  leadId[线索/商机]
  orgId[业务组织]
  fromStageId[前阶段]

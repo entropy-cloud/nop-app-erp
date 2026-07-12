@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-销售价格清单行" i18n-en:title="View Sales Price List Line">
             <layout>
- id[ID] priceListId[价格清单ID]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] unitPrice[单价]
- minQuantity[数量下限] maxQuantity[数量上限]
- validFrom[生效日期(覆盖头)] validTo[失效日期(覆盖头)]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
+ priceListId[价格清单ID] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ unitPrice[单价] minQuantity[数量下限]
+ maxQuantity[数量上限] validFrom[生效日期(覆盖头)]
+ validTo[失效日期(覆盖头)] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售价格清单行" i18n-en:title="Add Sales Price List Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售价格清单行" i18n-en:title="Edit Sales Price List Line">
             <layout>
- id[ID] priceListId[价格清单ID]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] unitPrice[单价]
- minQuantity[数量下限] maxQuantity[数量上限]
- validFrom[生效日期(覆盖头)] validTo[失效日期(覆盖头)]
- remark[备注] 
+ priceListId[价格清单ID] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ unitPrice[单价] minQuantity[数量下限]
+ maxQuantity[数量上限] validFrom[生效日期(覆盖头)]
+ validTo[失效日期(覆盖头)] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

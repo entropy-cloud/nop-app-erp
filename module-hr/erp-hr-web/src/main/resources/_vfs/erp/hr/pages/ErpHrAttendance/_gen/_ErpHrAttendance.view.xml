@@ -82,28 +82,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-考勤记录" i18n-en:title="View Attendance">
             <layout>
- id[ID] employeeId[员工]
- date[考勤日期] clockIn[签到时间]
- clockOut[签退时间] workHours[出勤时长]
- lateMinutes[迟到分钟数] earlyLeaveMinutes[早退分钟数]
- isAbsent[是否旷工] source[来源]
- leaveRequestId[关联休假] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- businessDate[业务日期] 
+ employeeId[员工] date[考勤日期]
+ clockIn[签到时间] clockOut[签退时间]
+ workHours[出勤时长] lateMinutes[迟到分钟数]
+ earlyLeaveMinutes[早退分钟数] isAbsent[是否旷工]
+ source[来源] leaveRequestId[关联休假]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] businessDate[业务日期]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-考勤记录" i18n-en:title="Add Attendance" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-考勤记录" i18n-en:title="Edit Attendance">
             <layout>
- id[ID] employeeId[员工]
- date[考勤日期] clockIn[签到时间]
- clockOut[签退时间] workHours[出勤时长]
- lateMinutes[迟到分钟数] earlyLeaveMinutes[早退分钟数]
- isAbsent[是否旷工] source[来源]
- leaveRequestId[关联休假] orgId[业务组织]
- remark[备注] businessDate[业务日期]
+ employeeId[员工] date[考勤日期]
+ clockIn[签到时间] clockOut[签退时间]
+ workHours[出勤时长] lateMinutes[迟到分钟数]
+ earlyLeaveMinutes[早退分钟数] isAbsent[是否旷工]
+ source[来源] leaveRequestId[关联休假]
+ orgId[业务组织] remark[备注]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -79,25 +79,29 @@
     <forms>
         <form id="view" editMode="view" title="查看-返利结算单" i18n-en:title="View Rebate Settlement">
             <layout>
- id[ID] rebateAgreementId[返利协议]
- orgId[业务组织] settlementDate[结算日期]
- totalRebateAmount[结算返利总额] creditMemoBillType[信用单类型]
- creditMemoBillCode[信用单号] status[状态]
- postedAt[过账时间] postedBy[过账人]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- businessDate[业务日期] posted[已过账]
+ rebateAgreementId[返利协议] orgId[业务组织]
+ settlementDate[结算日期] totalRebateAmount[结算返利总额]
+ creditMemoBillType[信用单类型] creditMemoBillCode[信用单号]
+ status[状态] postedAt[过账时间]
+ postedBy[过账人] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] businessDate[业务日期]
+ posted[已过账] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-返利结算单" i18n-en:title="Add Rebate Settlement" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-返利结算单" i18n-en:title="Edit Rebate Settlement">
             <layout>
- id[ID] rebateAgreementId[返利协议]
- orgId[业务组织] settlementDate[结算日期]
- totalRebateAmount[结算返利总额] creditMemoBillType[信用单类型]
- creditMemoBillCode[信用单号] status[状态]
- remark[备注] businessDate[业务日期]
+ rebateAgreementId[返利协议]
+ orgId[业务组织]
+ settlementDate[结算日期]
+ totalRebateAmount[结算返利总额]
+ creditMemoBillType[信用单类型]
+ creditMemoBillCode[信用单号]
+ status[状态]
+ remark[备注]
+ businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

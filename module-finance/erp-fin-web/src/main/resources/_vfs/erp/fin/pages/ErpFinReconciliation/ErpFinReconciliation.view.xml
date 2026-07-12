@@ -20,9 +20,48 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[组织]
+ acctSchemaId[账套] direction[应收应付]
+ partnerId[往来单位] businessDate[业务日期]
+ currencyId[币种] exchangeRate[汇率]
+ docStatus[状态]
+==========>amount[金额信息]======
+ totalAmountSource[核销总额(源币)] totalAmountFunctional[核销总额(本位币)]
+ fxGainLoss[汇兑损益]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[组织]
+ acctSchemaId[账套] direction[应收应付]
+ partnerId[往来单位] businessDate[业务日期]
+ currencyId[币种] exchangeRate[汇率]
+ docStatus[状态]
+==========>amount[金额信息]======
+ totalAmountSource[核销总额(源币)] totalAmountFunctional[核销总额(本位币)]
+ fxGainLoss[汇兑损益]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] docStatus[状态]
+ partnerId[往来单位] businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

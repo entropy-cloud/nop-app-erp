@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-部门" i18n-en:title="View Department">
             <layout>
- id[ID] code[编码]
- name[名称] parentId[上级部门]
- managerId[部门负责人] costCenterId[成本中心]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[编码] name[名称]
+ parentId[上级部门] managerId[部门负责人]
+ costCenterId[成本中心] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-部门" i18n-en:title="Add Department" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-部门" i18n-en:title="Edit Department">
             <layout>
- id[ID]
  code[编码]
  name[名称]
  parentId[上级部门]

@@ -76,26 +76,25 @@
     <forms>
         <form id="view" editMode="view" title="查看-银行对账单" i18n-en:title="View Bank Statement">
             <layout>
- id[ID] code[单号]
- orgId[组织] fundAccountId[资金账户]
- statementDate[对账日期] beginningBalance[期初余额]
- endingBalance[期末余额] totalDebit[借方发生额]
- totalCredit[贷方发生额] importTime[导入时间]
- docStatus[状态] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[单号] orgId[组织]
+ fundAccountId[资金账户] statementDate[对账日期]
+ beginningBalance[期初余额] endingBalance[期末余额]
+ totalDebit[借方发生额] totalCredit[贷方发生额]
+ importTime[导入时间] docStatus[状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-银行对账单" i18n-en:title="Add Bank Statement" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-银行对账单" i18n-en:title="Edit Bank Statement">
             <layout>
- id[ID] code[单号]
- orgId[组织] fundAccountId[资金账户]
- statementDate[对账日期] beginningBalance[期初余额]
- endingBalance[期末余额] totalDebit[借方发生额]
- totalCredit[贷方发生额] importTime[导入时间]
- docStatus[状态] remark[备注]
+ code[单号] orgId[组织]
+ fundAccountId[资金账户] statementDate[对账日期]
+ beginningBalance[期初余额] endingBalance[期末余额]
+ totalDebit[借方发生额] totalCredit[贷方发生额]
+ importTime[导入时间] docStatus[状态]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

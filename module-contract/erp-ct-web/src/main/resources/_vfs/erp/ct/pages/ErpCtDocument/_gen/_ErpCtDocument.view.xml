@@ -100,34 +100,33 @@
     <forms>
         <form id="view" editMode="view" title="查看-合同文档" i18n-en:title="View Contract Document">
             <layout>
- id[ID] orgId[业务组织]
- contractId[关联合同] code[文档编码]
- docName[文档名称] docType[文档类型]
- attachmentFileId[附件] fileSize[文件大小(字节)]
- fileHash[文件哈希] mimeType[MIME类型]
- ocrText[OCR文本] ocrStatus[OCR状态]
- fullTextSearch[全文检索] metadataTags[元数据标签(JSON)]
- retentionDate[保留截止日期] archiveDate[归档日期]
- purgeDate[销毁日期] isArchived[已归档]
- versionNo[文档版本] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ orgId[业务组织] contractId[关联合同]
+ code[文档编码] docName[文档名称]
+ docType[文档类型] attachmentFileId[附件]
+ fileSize[文件大小(字节)] fileHash[文件哈希]
+ mimeType[MIME类型] ocrText[OCR文本]
+ ocrStatus[OCR状态] fullTextSearch[全文检索]
+ metadataTags[元数据标签(JSON)] retentionDate[保留截止日期]
+ archiveDate[归档日期] purgeDate[销毁日期]
+ isArchived[已归档] versionNo[文档版本]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-合同文档" i18n-en:title="Add Contract Document" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-合同文档" i18n-en:title="Edit Contract Document">
             <layout>
- id[ID] orgId[业务组织]
- contractId[关联合同] code[文档编码]
- docName[文档名称] docType[文档类型]
- attachmentFileId[附件] fileSize[文件大小(字节)]
- fileHash[文件哈希] mimeType[MIME类型]
- ocrText[OCR文本] ocrStatus[OCR状态]
- fullTextSearch[全文检索] metadataTags[元数据标签(JSON)]
- retentionDate[保留截止日期] archiveDate[归档日期]
- purgeDate[销毁日期] isArchived[已归档]
- versionNo[文档版本] remark[备注]
+ orgId[业务组织] contractId[关联合同]
+ code[文档编码] docName[文档名称]
+ docType[文档类型] attachmentFileId[附件]
+ fileSize[文件大小(字节)] fileHash[文件哈希]
+ mimeType[MIME类型] ocrText[OCR文本]
+ ocrStatus[OCR状态] fullTextSearch[全文检索]
+ metadataTags[元数据标签(JSON)] retentionDate[保留截止日期]
+ archiveDate[归档日期] purgeDate[销毁日期]
+ isArchived[已归档] versionNo[文档版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

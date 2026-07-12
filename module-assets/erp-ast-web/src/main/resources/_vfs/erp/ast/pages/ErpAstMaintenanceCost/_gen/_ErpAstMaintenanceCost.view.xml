@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-维修费用行" i18n-en:title="View Maintenance Cost Line">
             <layout>
- id[ID] maintenanceId[维修工单]
- orgId[所属组织] lineNo[行号]
- costType[费用类型] amount[金额]
- businessDate[业务日期] currencyId[币种]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
+ maintenanceId[维修工单] orgId[所属组织]
+ lineNo[行号] costType[费用类型]
+ amount[金额] businessDate[业务日期]
+ currencyId[币种] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维修费用行" i18n-en:title="Add Maintenance Cost Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-维修费用行" i18n-en:title="Edit Maintenance Cost Line">
             <layout>
- id[ID]
  maintenanceId[维修工单]
  orgId[所属组织]
  lineNo[行号]

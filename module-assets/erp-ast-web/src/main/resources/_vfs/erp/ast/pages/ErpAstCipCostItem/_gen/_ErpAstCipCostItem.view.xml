@@ -85,29 +85,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-CIP成本归集行" i18n-en:title="View CIP Cost Item">
             <layout>
- id[ID] cipId[在建工程]
- orgId[所属组织] lineNo[行号]
- costType[成本类型] amountSource[源币种金额]
- exchangeRate[汇率] amountFunctional[本位币金额]
- sourceBillType[来源单据类型] sourceBillCode[来源单据号]
- postedTransferFlag[已转固标记] capitalizationId[转固资本化单]
- businessDate[业务日期] currencyId[币种]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
+ cipId[在建工程] orgId[所属组织]
+ lineNo[行号] costType[成本类型]
+ amountSource[源币种金额] exchangeRate[汇率]
+ amountFunctional[本位币金额] sourceBillType[来源单据类型]
+ sourceBillCode[来源单据号] postedTransferFlag[已转固标记]
+ capitalizationId[转固资本化单] businessDate[业务日期]
+ currencyId[币种] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-CIP成本归集行" i18n-en:title="Add CIP Cost Item" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-CIP成本归集行" i18n-en:title="Edit CIP Cost Item">
             <layout>
- id[ID] cipId[在建工程]
- orgId[所属组织] lineNo[行号]
- costType[成本类型] amountSource[源币种金额]
- exchangeRate[汇率] amountFunctional[本位币金额]
- sourceBillType[来源单据类型] sourceBillCode[来源单据号]
- postedTransferFlag[已转固标记] capitalizationId[转固资本化单]
- businessDate[业务日期] currencyId[币种]
- remark[备注] 
+ cipId[在建工程] orgId[所属组织]
+ lineNo[行号] costType[成本类型]
+ amountSource[源币种金额] exchangeRate[汇率]
+ amountFunctional[本位币金额] sourceBillType[来源单据类型]
+ sourceBillCode[来源单据号] postedTransferFlag[已转固标记]
+ capitalizationId[转固资本化单] businessDate[业务日期]
+ currencyId[币种] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

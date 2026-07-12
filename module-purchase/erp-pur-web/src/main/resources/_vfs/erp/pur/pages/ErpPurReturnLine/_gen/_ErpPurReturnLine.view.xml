@@ -85,28 +85,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-采购退货单行" i18n-en:title="View Purchase Return Line">
             <layout>
- id[ID] returnId[退货单ID]
- receiveLineId[入库行ID] lineNo[行号]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] quantity[退货数量]
- unitPrice[单价(不含税)] taxRate[税率(%)]
- taxAmount[税额] amount[金额(不含税)]
- reason[退货原因] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] materialName[物料名称]
+ returnId[退货单ID] receiveLineId[入库行ID]
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ quantity[退货数量] unitPrice[单价(不含税)]
+ taxRate[税率(%)] taxAmount[税额]
+ amount[金额(不含税)] reason[退货原因]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ materialName[物料名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-采购退货单行" i18n-en:title="Add Purchase Return Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-采购退货单行" i18n-en:title="Edit Purchase Return Line">
             <layout>
- id[ID] returnId[退货单ID]
- receiveLineId[入库行ID] lineNo[行号]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] quantity[退货数量]
- unitPrice[单价(不含税)] taxRate[税率(%)]
- taxAmount[税额] amount[金额(不含税)]
- reason[退货原因] remark[备注]
+ returnId[退货单ID] receiveLineId[入库行ID]
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ quantity[退货数量] unitPrice[单价(不含税)]
+ taxRate[税率(%)] taxAmount[税额]
+ amount[金额(不含税)] reason[退货原因]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -58,18 +58,16 @@
     <forms>
         <form id="view" editMode="view" title="查看-库位" i18n-en:title="View Location">
             <layout>
- id[ID] warehouseId[仓库ID]
- code[编码] name[名称]
- parentId[父级库位] isActive[是否启用]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ warehouseId[仓库ID] code[编码]
+ name[名称] parentId[父级库位]
+ isActive[是否启用] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-库位" i18n-en:title="Add Location" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-库位" i18n-en:title="Edit Location">
             <layout>
- id[ID]
  warehouseId[仓库ID]
  code[编码]
  name[名称]

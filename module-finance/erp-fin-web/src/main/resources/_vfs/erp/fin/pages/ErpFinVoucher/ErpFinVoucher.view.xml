@@ -7,9 +7,43 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[凭证号] voucherType[凭证字]
+ voucherDate[凭证日期] voucherNo[凭证编号]
+ orgId[核算组织] acctSchemaId[账套]
+ periodId[会计期间] docStatus[凭证状态]
+==========^posting[过账信息]=========
+ postingType[过账类型] isReversed[是否红字冲销凭证]
+ reversalOfVoucherId[原冲销凭证ID]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[凭证号] voucherType[凭证字]
+ voucherDate[凭证日期] voucherNo[凭证编号]
+ orgId[核算组织] acctSchemaId[账套]
+ periodId[会计期间] docStatus[凭证状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[凭证号] voucherType[凭证字]
+ voucherDate[凭证日期] docStatus[凭证状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="voucherDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

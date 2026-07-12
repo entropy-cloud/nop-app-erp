@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-工艺路线工序" i18n-en:title="View Routing Operation">
             <layout>
- id[ID] routingId[工艺路线ID]
- lineNo[行号] operationCode[工序编码]
- operationName[工序名称] workcenterId[工作中心]
- standardTime[标准工时] timeUnit[时间单位]
- setupTime[准备时间] runTime[加工时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ routingId[工艺路线ID] lineNo[行号]
+ operationCode[工序编码] operationName[工序名称]
+ workcenterId[工作中心] standardTime[标准工时]
+ timeUnit[时间单位] setupTime[准备时间]
+ runTime[加工时间] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工艺路线工序" i18n-en:title="Add Routing Operation" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-工艺路线工序" i18n-en:title="Edit Routing Operation">
             <layout>
- id[ID] routingId[工艺路线ID]
- lineNo[行号] operationCode[工序编码]
- operationName[工序名称] workcenterId[工作中心]
- standardTime[标准工时] timeUnit[时间单位]
- setupTime[准备时间] runTime[加工时间]
- remark[备注] 
+ routingId[工艺路线ID] lineNo[行号]
+ operationCode[工序编码] operationName[工序名称]
+ workcenterId[工作中心] standardTime[标准工时]
+ timeUnit[时间单位] setupTime[准备时间]
+ runTime[加工时间] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-往来单位联系人" i18n-en:title="View Partner Contact">
             <layout>
- id[ID] partnerId[往来单位]
- contactPerson[联系人姓名] position[职务]
- phone[电话] email[邮箱]
- isDefault[是否默认联系人] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ partnerId[往来单位] contactPerson[联系人姓名]
+ position[职务] phone[电话]
+ email[邮箱] isDefault[是否默认联系人]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] remark[备注]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-往来单位联系人" i18n-en:title="Add Partner Contact" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-往来单位联系人" i18n-en:title="Edit Partner Contact">
             <layout>
- id[ID]
  partnerId[往来单位]
  contactPerson[联系人姓名]
  position[职务]

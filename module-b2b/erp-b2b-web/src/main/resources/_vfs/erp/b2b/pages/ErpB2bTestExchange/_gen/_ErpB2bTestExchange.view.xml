@@ -79,27 +79,26 @@
     <forms>
         <form id="view" editMode="view" title="查看-测试消息交换" i18n-en:title="View Test Exchange">
             <layout>
- id[ID] partnerProfileId[伙伴档案]
- direction[方向] formatCode[EDI格式]
- testCaseCode[测试用例编号] sentPayload[发送报文]
- receivedPayload[接收报文] expectedResult[预期结果]
- actualResult[实际结果] passed[测试通过]
- testedBy[测试人] testedAt[测试时间]
- notes[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ partnerProfileId[伙伴档案] direction[方向]
+ formatCode[EDI格式] testCaseCode[测试用例编号]
+ sentPayload[发送报文] receivedPayload[接收报文]
+ expectedResult[预期结果] actualResult[实际结果]
+ passed[测试通过] testedBy[测试人]
+ testedAt[测试时间] notes[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-测试消息交换" i18n-en:title="Add Test Exchange" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-测试消息交换" i18n-en:title="Edit Test Exchange">
             <layout>
- id[ID] partnerProfileId[伙伴档案]
- direction[方向] formatCode[EDI格式]
- testCaseCode[测试用例编号] sentPayload[发送报文]
- receivedPayload[接收报文] expectedResult[预期结果]
- actualResult[实际结果] passed[测试通过]
- testedBy[测试人] testedAt[测试时间]
- notes[备注] 
+ partnerProfileId[伙伴档案] direction[方向]
+ formatCode[EDI格式] testCaseCode[测试用例编号]
+ sentPayload[发送报文] receivedPayload[接收报文]
+ expectedResult[预期结果] actualResult[实际结果]
+ passed[测试通过] testedBy[测试人]
+ testedAt[测试时间] notes[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

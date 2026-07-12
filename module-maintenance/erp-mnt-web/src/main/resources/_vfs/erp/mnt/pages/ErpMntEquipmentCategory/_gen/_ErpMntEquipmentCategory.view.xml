@@ -55,17 +55,20 @@
     <forms>
         <form id="view" editMode="view" title="查看-设备分类" i18n-en:title="View Equipment Category">
             <layout>
- id[ID] code[分类编码]
- name[分类名称] parentId[上级分类ID]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[分类编码]
+ name[分类名称]
+ parentId[上级分类ID]
+ remark[备注]
+ delVersion[逻辑删除版本]
+ createdBy[创建人]
+ createTime[创建时间]
+ updatedBy[修改人]
+ updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-设备分类" i18n-en:title="Add Equipment Category" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-设备分类" i18n-en:title="Edit Equipment Category">
             <layout>
- id[ID]
  code[分类编码]
  name[分类名称]
  parentId[上级分类ID]

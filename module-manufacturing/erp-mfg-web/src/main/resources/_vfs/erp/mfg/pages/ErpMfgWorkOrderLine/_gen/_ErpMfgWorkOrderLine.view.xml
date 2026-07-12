@@ -88,29 +88,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-工单行" i18n-en:title="View Work Order Line">
             <layout>
- id[ID] workOrderId[工单ID]
- lineNo[行号] lineType[行类型(OUTPUT 产出/INPUT 投入/BYPRODUCT 联副)]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] plannedQuantity[计划数量]
- actualQuantity[实际数量(完工/领用)] scrappedQuantity[报废数量]
- sourceWarehouseId[领料仓库(投入用)] destWarehouseId[入库仓库(产出用)]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- materialName[物料名称] sourceWarehouseName[领料仓库名称]
- destWarehouseName[入库仓库名称] 
+ workOrderId[工单ID] lineNo[行号]
+ lineType[行类型(OUTPUT 产出/INPUT 投入/BYPRODUCT 联副)] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ plannedQuantity[计划数量] actualQuantity[实际数量(完工/领用)]
+ scrappedQuantity[报废数量] sourceWarehouseId[领料仓库(投入用)]
+ destWarehouseId[入库仓库(产出用)] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] materialName[物料名称]
+ sourceWarehouseName[领料仓库名称] destWarehouseName[入库仓库名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工单行" i18n-en:title="Add Work Order Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-工单行" i18n-en:title="Edit Work Order Line">
             <layout>
- id[ID] workOrderId[工单ID]
- lineNo[行号] lineType[行类型(OUTPUT 产出/INPUT 投入/BYPRODUCT 联副)]
- materialId[物料] skuId[SKU]
- uoMId[计量单位] plannedQuantity[计划数量]
- actualQuantity[实际数量(完工/领用)] scrappedQuantity[报废数量]
- sourceWarehouseId[领料仓库(投入用)] destWarehouseId[入库仓库(产出用)]
- remark[备注] 
+ workOrderId[工单ID] lineNo[行号]
+ lineType[行类型(OUTPUT 产出/INPUT 投入/BYPRODUCT 联副)] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ plannedQuantity[计划数量] actualQuantity[实际数量(完工/领用)]
+ scrappedQuantity[报废数量] sourceWarehouseId[领料仓库(投入用)]
+ destWarehouseId[入库仓库(产出用)] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

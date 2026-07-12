@@ -73,20 +73,19 @@
     <forms>
         <form id="view" editMode="view" title="查看-采购询价单" i18n-en:title="View Purchase RFQ">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] requisitionId[请购单]
- businessDate[询价日期] validUntil[报价有效期至]
- docStatus[单据状态] approveStatus[审核状态]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- approvedBy[审核人] approvedAt[审核时间]
+ code[单号] orgId[业务组织]
+ requisitionId[请购单] businessDate[询价日期]
+ validUntil[报价有效期至] docStatus[单据状态]
+ approveStatus[审核状态] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] approvedBy[审核人]
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-采购询价单" i18n-en:title="Add Purchase RFQ" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-采购询价单" i18n-en:title="Edit Purchase RFQ">
             <layout>
- id[ID]
  code[单号]
  orgId[业务组织]
  requisitionId[请购单]

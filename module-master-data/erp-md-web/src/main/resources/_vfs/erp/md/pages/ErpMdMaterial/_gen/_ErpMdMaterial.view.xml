@@ -97,33 +97,32 @@
     <forms>
         <form id="view" editMode="view" title="查看-物料" i18n-en:title="View Material">
             <layout>
- id[ID] code[物料编码]
- name[物料名称] materialType[物料类型]
- categoryId[分类ID] uoMId[主计量单位]
- status[状态] costMethod[存货计价方法]
- isBatchManaged[是否批次管理] isSerialManaged[是否序列号管理]
- defaultWarehouseId[默认仓库] minStock[最低库存]
- maxStock[最高库存] safetyStock[安全库存]
- leadTimeDays[采购提前期(天)] weight[重量(kg)]
- volume[体积(m3)] defaultTaxRateId[默认税率]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
+ code[物料编码] name[物料名称]
+ materialType[物料类型] categoryId[分类ID]
+ uoMId[主计量单位] status[状态]
+ costMethod[存货计价方法] isBatchManaged[是否批次管理]
+ isSerialManaged[是否序列号管理] defaultWarehouseId[默认仓库]
+ minStock[最低库存] maxStock[最高库存]
+ safetyStock[安全库存] leadTimeDays[采购提前期(天)]
+ weight[重量(kg)] volume[体积(m3)]
+ defaultTaxRateId[默认税率] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-物料" i18n-en:title="Add Material" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-物料" i18n-en:title="Edit Material">
             <layout>
- id[ID] code[物料编码]
- name[物料名称] materialType[物料类型]
- categoryId[分类ID] uoMId[主计量单位]
- status[状态] costMethod[存货计价方法]
- isBatchManaged[是否批次管理] isSerialManaged[是否序列号管理]
- defaultWarehouseId[默认仓库] minStock[最低库存]
- maxStock[最高库存] safetyStock[安全库存]
- leadTimeDays[采购提前期(天)] weight[重量(kg)]
- volume[体积(m3)] defaultTaxRateId[默认税率]
- remark[备注] 
+ code[物料编码] name[物料名称]
+ materialType[物料类型] categoryId[分类ID]
+ uoMId[主计量单位] status[状态]
+ costMethod[存货计价方法] isBatchManaged[是否批次管理]
+ isSerialManaged[是否序列号管理] defaultWarehouseId[默认仓库]
+ minStock[最低库存] maxStock[最高库存]
+ safetyStock[安全库存] leadTimeDays[采购提前期(天)]
+ weight[重量(kg)] volume[体积(m3)]
+ defaultTaxRateId[默认税率] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -73,20 +73,19 @@
     <forms>
         <form id="view" editMode="view" title="查看-合同版本" i18n-en:title="View Contract Version">
             <layout>
- id[ID] contractId[合同ID]
- versionNo[版本号] versionDate[版本日期]
- content[版本内容] attachmentFileId[版本附件]
- isCurrent[是否当前版本] status[版本状态]
- approvedBy[批准人] approvedAt[批准时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ contractId[合同ID] versionNo[版本号]
+ versionDate[版本日期] content[版本内容]
+ attachmentFileId[版本附件] isCurrent[是否当前版本]
+ status[版本状态] approvedBy[批准人]
+ approvedAt[批准时间] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-合同版本" i18n-en:title="Add Contract Version" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-合同版本" i18n-en:title="Edit Contract Version">
             <layout>
- id[ID]
  contractId[合同ID]
  versionNo[版本号]
  versionDate[版本日期]

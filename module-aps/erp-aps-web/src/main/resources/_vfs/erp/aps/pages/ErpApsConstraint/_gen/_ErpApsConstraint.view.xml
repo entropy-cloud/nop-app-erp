@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-排产约束" i18n-en:title="View Constraint">
             <layout>
- id[ID] machineId[工作中心/设备]
- constraintType[约束类型] startTime[开始时间]
- endTime[结束时间] description[约束描述]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ machineId[工作中心/设备] constraintType[约束类型]
+ startTime[开始时间] endTime[结束时间]
+ description[约束描述] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-排产约束" i18n-en:title="Add Constraint" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-排产约束" i18n-en:title="Edit Constraint">
             <layout>
- id[ID]
  machineId[工作中心/设备]
  constraintType[约束类型]
  startTime[开始时间]

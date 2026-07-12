@@ -52,7 +52,6 @@
     <forms>
         <form id="view" editMode="view" title="查看-科目映射" i18n-en:title="View Subject Mapping">
             <layout>
- id[ID]
  sourceSubjectId[源科目]
  targetAcctSchemaId[目标账套]
  targetSubjectId[目标科目]
@@ -66,7 +65,6 @@
         <form id="add" editMode="add" title="新增-科目映射" i18n-en:title="Add Subject Mapping" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-科目映射" i18n-en:title="Edit Subject Mapping">
             <layout>
- id[ID]
  sourceSubjectId[源科目]
  targetAcctSchemaId[目标账套]
  targetSubjectId[目标科目]

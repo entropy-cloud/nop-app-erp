@@ -100,33 +100,32 @@
     <forms>
         <form id="view" editMode="view" title="查看-采购订单行" i18n-en:title="View Purchase Order Line">
             <layout>
- id[ID] orderId[订单ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] uoMId[计量单位]
- quantity[数量] unitPrice[单价(不含税)]
- taxRate[税率(%)] taxRateId[税率主数据]
- taxAmount[税额] amount[金额(不含税)]
- amountWithTax[金额(含税)] receivedQuantity[已收货数量]
- invoicedQuantity[已开票数量] warehouseId[收货仓库]
- projectId[项目] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] materialName[物料名称]
- warehouseName[收货仓库名称] 
+ orderId[订单ID] lineNo[行号]
+ materialId[物料] skuId[SKU]
+ uoMId[计量单位] quantity[数量]
+ unitPrice[单价(不含税)] taxRate[税率(%)]
+ taxRateId[税率主数据] taxAmount[税额]
+ amount[金额(不含税)] amountWithTax[金额(含税)]
+ receivedQuantity[已收货数量] invoicedQuantity[已开票数量]
+ warehouseId[收货仓库] projectId[项目]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ materialName[物料名称] warehouseName[收货仓库名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-采购订单行" i18n-en:title="Add Purchase Order Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-采购订单行" i18n-en:title="Edit Purchase Order Line">
             <layout>
- id[ID] orderId[订单ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] uoMId[计量单位]
- quantity[数量] unitPrice[单价(不含税)]
- taxRate[税率(%)] taxRateId[税率主数据]
- taxAmount[税额] amount[金额(不含税)]
- amountWithTax[金额(含税)] receivedQuantity[已收货数量]
- invoicedQuantity[已开票数量] warehouseId[收货仓库]
- projectId[项目] remark[备注]
+ orderId[订单ID] lineNo[行号]
+ materialId[物料] skuId[SKU]
+ uoMId[计量单位] quantity[数量]
+ unitPrice[单价(不含税)] taxRate[税率(%)]
+ taxRateId[税率主数据] taxAmount[税额]
+ amount[金额(不含税)] amountWithTax[金额(含税)]
+ receivedQuantity[已收货数量] invoicedQuantity[已开票数量]
+ warehouseId[收货仓库] projectId[项目]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

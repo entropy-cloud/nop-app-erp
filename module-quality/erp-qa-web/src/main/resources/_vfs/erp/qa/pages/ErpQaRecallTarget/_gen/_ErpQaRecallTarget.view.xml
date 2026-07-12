@@ -76,26 +76,25 @@
     <forms>
         <form id="view" editMode="view" title="查看-召回目标" i18n-en:title="View Recall Target">
             <layout>
- id[ID] recallId[召回事件]
- partnerId[受影响客户] batchNo[批号]
- serialNo[序列号] salesDeliveryId[销售出库单(弱指针)]
- shippedQty[发货数量] notifiedAt[通知时间]
- notifiedBy[通知人] returnStatus[退货状态]
- generatedReturnId[已生成退货单(弱指针)] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ recallId[召回事件] partnerId[受影响客户]
+ batchNo[批号] serialNo[序列号]
+ salesDeliveryId[销售出库单(弱指针)] shippedQty[发货数量]
+ notifiedAt[通知时间] notifiedBy[通知人]
+ returnStatus[退货状态] generatedReturnId[已生成退货单(弱指针)]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-召回目标" i18n-en:title="Add Recall Target" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-召回目标" i18n-en:title="Edit Recall Target">
             <layout>
- id[ID] recallId[召回事件]
- partnerId[受影响客户] batchNo[批号]
- serialNo[序列号] salesDeliveryId[销售出库单(弱指针)]
- shippedQty[发货数量] notifiedAt[通知时间]
- notifiedBy[通知人] returnStatus[退货状态]
- generatedReturnId[已生成退货单(弱指针)] remark[备注]
+ recallId[召回事件] partnerId[受影响客户]
+ batchNo[批号] serialNo[序列号]
+ salesDeliveryId[销售出库单(弱指针)] shippedQty[发货数量]
+ notifiedAt[通知时间] notifiedBy[通知人]
+ returnStatus[退货状态] generatedReturnId[已生成退货单(弱指针)]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

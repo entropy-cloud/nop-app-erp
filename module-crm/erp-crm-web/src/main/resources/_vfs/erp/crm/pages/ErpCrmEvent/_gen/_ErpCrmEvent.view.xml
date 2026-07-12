@@ -106,36 +106,35 @@
     <forms>
         <form id="view" editMode="view" title="查看-活动/事件" i18n-en:title="View Event">
             <layout>
- id[ID] code[编码]
- orgId[业务组织] eventType[事件类型]
- eventCategoryId[活动类别] subject[主题]
- description[描述] startDateTime[开始时间]
- endDateTime[结束时间] duration[时长(分钟)]
- relatedLeadId[关联线索/商机] relatedBillType[关联单据类型]
- relatedBillCode[关联单据号] partnerId[关联客户]
- contactId[联系人] ownerId[负责人]
- status[活动状态] priority[优先级]
- isRecurrent[是否重复事件] parentEventId[父事件]
- reminderMinutesBefore[提醒提前分钟数] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[编码] orgId[业务组织]
+ eventType[事件类型] eventCategoryId[活动类别]
+ subject[主题] description[描述]
+ startDateTime[开始时间] endDateTime[结束时间]
+ duration[时长(分钟)] relatedLeadId[关联线索/商机]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ partnerId[关联客户] contactId[联系人]
+ ownerId[负责人] status[活动状态]
+ priority[优先级] isRecurrent[是否重复事件]
+ parentEventId[父事件] reminderMinutesBefore[提醒提前分钟数]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-活动/事件" i18n-en:title="Add Event" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-活动/事件" i18n-en:title="Edit Event">
             <layout>
- id[ID] code[编码]
- orgId[业务组织] eventType[事件类型]
- eventCategoryId[活动类别] subject[主题]
- description[描述] startDateTime[开始时间]
- endDateTime[结束时间] duration[时长(分钟)]
- relatedLeadId[关联线索/商机] relatedBillType[关联单据类型]
- relatedBillCode[关联单据号] partnerId[关联客户]
- contactId[联系人] ownerId[负责人]
- status[活动状态] priority[优先级]
- isRecurrent[是否重复事件] parentEventId[父事件]
- reminderMinutesBefore[提醒提前分钟数] remark[备注]
+ code[编码] orgId[业务组织]
+ eventType[事件类型] eventCategoryId[活动类别]
+ subject[主题] description[描述]
+ startDateTime[开始时间] endDateTime[结束时间]
+ duration[时长(分钟)] relatedLeadId[关联线索/商机]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ partnerId[关联客户] contactId[联系人]
+ ownerId[负责人] status[活动状态]
+ priority[优先级] isRecurrent[是否重复事件]
+ parentEventId[父事件] reminderMinutesBefore[提醒提前分钟数]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

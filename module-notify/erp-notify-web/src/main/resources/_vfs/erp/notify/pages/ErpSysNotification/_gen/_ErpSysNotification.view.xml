@@ -85,29 +85,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-通知实例" i18n-en:title="View Notification">
             <layout>
- id[ID] templateId[模板ID]
- notificationType[业务事件键] recipientUserId[接收用户]
- recipientPartnerId[接收业务伙伴] recipientDeptId[接收部门]
- channel[渠道] subject[标题]
- body[正文] payloadJson[负载JSON]
- status[状态] mergeGroupId[合并组ID]
- mergeCount[合并次数] sentAt[发送时间]
- errorMsg[错误信息] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ templateId[模板ID] notificationType[业务事件键]
+ recipientUserId[接收用户] recipientPartnerId[接收业务伙伴]
+ recipientDeptId[接收部门] channel[渠道]
+ subject[标题] body[正文]
+ payloadJson[负载JSON] status[状态]
+ mergeGroupId[合并组ID] mergeCount[合并次数]
+ sentAt[发送时间] errorMsg[错误信息]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-通知实例" i18n-en:title="Add Notification" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-通知实例" i18n-en:title="Edit Notification">
             <layout>
- id[ID] templateId[模板ID]
- notificationType[业务事件键] recipientUserId[接收用户]
- recipientPartnerId[接收业务伙伴] recipientDeptId[接收部门]
- channel[渠道] subject[标题]
- body[正文] payloadJson[负载JSON]
- status[状态] mergeGroupId[合并组ID]
- mergeCount[合并次数] sentAt[发送时间]
- errorMsg[错误信息] 
+ templateId[模板ID] notificationType[业务事件键]
+ recipientUserId[接收用户] recipientPartnerId[接收业务伙伴]
+ recipientDeptId[接收部门] channel[渠道]
+ subject[标题] body[正文]
+ payloadJson[负载JSON] status[状态]
+ mergeGroupId[合并组ID] mergeCount[合并次数]
+ sentAt[发送时间] errorMsg[错误信息]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

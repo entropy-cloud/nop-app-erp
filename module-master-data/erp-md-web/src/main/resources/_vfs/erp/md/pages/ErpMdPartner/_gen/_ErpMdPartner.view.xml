@@ -88,30 +88,29 @@
     <forms>
         <form id="view" editMode="view" title="查看-往来单位" i18n-en:title="View Business Partner">
             <layout>
- id[ID] code[编码]
- name[名称] partnerType[类型]
- status[状态] contactPerson[联系人]
- phone[电话] email[邮箱]
- address[地址] taxNo[税号]
- creditLimit[信用额度] creditPeriodDays[信用期(天)]
- receivableBalance[应收余额] payableBalance[应付余额]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
- customerGroup[客户组] 
+ code[编码] name[名称]
+ partnerType[类型] status[状态]
+ contactPerson[联系人] phone[电话]
+ email[邮箱] address[地址]
+ taxNo[税号] creditLimit[信用额度]
+ creditPeriodDays[信用期(天)] receivableBalance[应收余额]
+ payableBalance[应付余额] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] customerGroup[客户组]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-往来单位" i18n-en:title="Add Business Partner" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-往来单位" i18n-en:title="Edit Business Partner">
             <layout>
- id[ID] code[编码]
- name[名称] partnerType[类型]
- status[状态] contactPerson[联系人]
- phone[电话] email[邮箱]
- address[地址] taxNo[税号]
- creditLimit[信用额度] creditPeriodDays[信用期(天)]
- receivableBalance[应收余额] payableBalance[应付余额]
- remark[备注] customerGroup[客户组]
+ code[编码] name[名称]
+ partnerType[类型] status[状态]
+ contactPerson[联系人] phone[电话]
+ email[邮箱] address[地址]
+ taxNo[税号] creditLimit[信用额度]
+ creditPeriodDays[信用期(天)] receivableBalance[应收余额]
+ payableBalance[应付余额] remark[备注]
+ customerGroup[客户组] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

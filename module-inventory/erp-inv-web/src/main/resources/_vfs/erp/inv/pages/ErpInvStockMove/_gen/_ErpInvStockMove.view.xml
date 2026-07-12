@@ -106,33 +106,32 @@
     <forms>
         <form id="view" editMode="view" title="查看-库存移动单" i18n-en:title="View Stock Move">
             <layout>
- id[ID] code[单号]
- moveType[作业类型] orgId[业务组织]
- businessDate[业务日期] sourceWarehouseId[源仓库]
- sourceLocationId[源库位] destWarehouseId[目标仓库]
- destLocationId[目标库位] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
- postedAt[过账时间] postedBy[过账人]
- relatedBillType[关联单据类型] relatedBillCode[关联单据号]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- originMoveId[上游移动单] originReturnedMoveId[原退货移动单]
- sourceWarehouseName[源仓库名称] destWarehouseName[目标仓库名称]
- orgName[业务组织名称] 
+ code[单号] moveType[作业类型]
+ orgId[业务组织] businessDate[业务日期]
+ sourceWarehouseId[源仓库] sourceLocationId[源库位]
+ destWarehouseId[目标仓库] destLocationId[目标库位]
+ docStatus[单据状态] approveStatus[审核状态]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] relatedBillType[关联单据类型]
+ relatedBillCode[关联单据号] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] originMoveId[上游移动单]
+ originReturnedMoveId[原退货移动单] sourceWarehouseName[源仓库名称]
+ destWarehouseName[目标仓库名称] orgName[业务组织名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-库存移动单" i18n-en:title="Add Stock Move" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-库存移动单" i18n-en:title="Edit Stock Move">
             <layout>
- id[ID] code[单号]
- moveType[作业类型] orgId[业务组织]
- businessDate[业务日期] sourceWarehouseId[源仓库]
- sourceLocationId[源库位] destWarehouseId[目标仓库]
- destLocationId[目标库位] docStatus[单据状态]
- approveStatus[审核状态] relatedBillType[关联单据类型]
- relatedBillCode[关联单据号] remark[备注]
- originMoveId[上游移动单] originReturnedMoveId[原退货移动单]
+ code[单号] moveType[作业类型]
+ orgId[业务组织] businessDate[业务日期]
+ sourceWarehouseId[源仓库] sourceLocationId[源库位]
+ destWarehouseId[目标仓库] destLocationId[目标库位]
+ docStatus[单据状态] approveStatus[审核状态]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ remark[备注] originMoveId[上游移动单]
+ originReturnedMoveId[原退货移动单] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

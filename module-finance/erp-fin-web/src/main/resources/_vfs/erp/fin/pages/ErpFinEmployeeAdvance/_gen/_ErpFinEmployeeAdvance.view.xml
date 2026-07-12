@@ -103,32 +103,32 @@
     <forms>
         <form id="view" editMode="view" title="查看-员工借款单" i18n-en:title="View Employee Advance">
             <layout>
- id[ID] code[单号]
- orgId[核算组织] employeeId[借款人]
- advanceType[借款类型] businessDate[借款日期]
- currencyId[币种] exchangeRate[汇率]
- amountSource[源币种金额] amountFunctional[本位币金额]
- settledAmount[已清算金额] outstandingAmount[未还金额]
- projectId[关联项目] docStatus[单据状态]
- approveStatus[审核状态] approvedBy[审核人]
- approvedAt[审核时间] posted[是否已过账]
- postedBy[过账人] postedAt[过账时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[单号] orgId[核算组织]
+ employeeId[借款人] advanceType[借款类型]
+ businessDate[借款日期] currencyId[币种]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] settledAmount[已清算金额]
+ outstandingAmount[未还金额] projectId[关联项目]
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+ posted[是否已过账] postedBy[过账人]
+ postedAt[过账时间] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-员工借款单" i18n-en:title="Add Employee Advance" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-员工借款单" i18n-en:title="Edit Employee Advance">
             <layout>
- id[ID] code[单号]
- orgId[核算组织] employeeId[借款人]
- advanceType[借款类型] businessDate[借款日期]
- currencyId[币种] exchangeRate[汇率]
- amountSource[源币种金额] amountFunctional[本位币金额]
- settledAmount[已清算金额] outstandingAmount[未还金额]
- projectId[关联项目] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
+ code[单号] orgId[核算组织]
+ employeeId[借款人] advanceType[借款类型]
+ businessDate[借款日期] currencyId[币种]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] settledAmount[已清算金额]
+ outstandingAmount[未还金额] projectId[关联项目]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

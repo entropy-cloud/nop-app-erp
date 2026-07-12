@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-银行对账调整行" i18n-en:title="View Bank Reconciliation Line">
             <layout>
- id[ID] reconciliationId[对账记录ID]
- lineNo[行号] adjustmentType[调整类型]
- description[说明] dcDirection[借贷方向]
- amount[金额] side[调整方]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ reconciliationId[对账记录ID] lineNo[行号]
+ adjustmentType[调整类型] description[说明]
+ dcDirection[借贷方向] amount[金额]
+ side[调整方] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-银行对账调整行" i18n-en:title="Add Bank Reconciliation Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-银行对账调整行" i18n-en:title="Edit Bank Reconciliation Line">
             <layout>
- id[ID]
  reconciliationId[对账记录ID]
  lineNo[行号]
  adjustmentType[调整类型]

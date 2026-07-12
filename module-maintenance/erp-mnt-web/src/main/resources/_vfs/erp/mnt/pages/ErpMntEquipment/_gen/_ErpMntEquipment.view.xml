@@ -85,29 +85,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-设备" i18n-en:title="View Equipment">
             <layout>
- id[ID] code[设备编码]
- name[设备名称] orgId[所属组织]
- assetId[资产卡片(关联 assets 域)] workcenterId[关联工作中心(关联 mfg 域)]
- locationId[位置ID] categoryId[分类ID]
- status[状态] serialNo[序列号]
- manufacturer[制造商] model[型号]
- installDate[安装日期] warrantyExpiry[保修到期]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[设备编码] name[设备名称]
+ orgId[所属组织] assetId[资产卡片(关联 assets 域)]
+ workcenterId[关联工作中心(关联 mfg 域)] locationId[位置ID]
+ categoryId[分类ID] status[状态]
+ serialNo[序列号] manufacturer[制造商]
+ model[型号] installDate[安装日期]
+ warrantyExpiry[保修到期] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-设备" i18n-en:title="Add Equipment" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-设备" i18n-en:title="Edit Equipment">
             <layout>
- id[ID] code[设备编码]
- name[设备名称] orgId[所属组织]
- assetId[资产卡片(关联 assets 域)] workcenterId[关联工作中心(关联 mfg 域)]
- locationId[位置ID] categoryId[分类ID]
- status[状态] serialNo[序列号]
- manufacturer[制造商] model[型号]
- installDate[安装日期] warrantyExpiry[保修到期]
- remark[备注] 
+ code[设备编码] name[设备名称]
+ orgId[所属组织] assetId[资产卡片(关联 assets 域)]
+ workcenterId[关联工作中心(关联 mfg 域)] locationId[位置ID]
+ categoryId[分类ID] status[状态]
+ serialNo[序列号] manufacturer[制造商]
+ model[型号] installDate[安装日期]
+ warrantyExpiry[保修到期] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

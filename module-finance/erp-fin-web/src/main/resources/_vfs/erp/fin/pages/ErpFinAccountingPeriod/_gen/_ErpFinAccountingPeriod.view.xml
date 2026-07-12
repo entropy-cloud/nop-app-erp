@@ -79,27 +79,26 @@
     <forms>
         <form id="view" editMode="view" title="查看-会计期间" i18n-en:title="View Accounting Period">
             <layout>
- id[ID] code[期间编码]
- name[期间名称] orgId[组织]
- year[年度] month[月份]
- startDate[开始日期] endDate[结束日期]
- quarter[季度] isAdjustment[是否调整期]
- status[期间状态] closedBy[结账人]
- closedAt[结账时间] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[期间编码] name[期间名称]
+ orgId[组织] year[年度]
+ month[月份] startDate[开始日期]
+ endDate[结束日期] quarter[季度]
+ isAdjustment[是否调整期] status[期间状态]
+ closedBy[结账人] closedAt[结账时间]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-会计期间" i18n-en:title="Add Accounting Period" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-会计期间" i18n-en:title="Edit Accounting Period">
             <layout>
- id[ID] code[期间编码]
- name[期间名称] orgId[组织]
- year[年度] month[月份]
- startDate[开始日期] endDate[结束日期]
- quarter[季度] isAdjustment[是否调整期]
- status[期间状态] closedBy[结账人]
- closedAt[结账时间] 
+ code[期间编码] name[期间名称]
+ orgId[组织] year[年度]
+ month[月份] startDate[开始日期]
+ endDate[结束日期] quarter[季度]
+ isAdjustment[是否调整期] status[期间状态]
+ closedBy[结账人] closedAt[结账时间]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -23,9 +23,63 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ requisitionId[请购单] quotationId[报价单]
+ supplierId[供应商] warehouseId[收货仓库]
+ businessDate[订单日期] deliveryDate[交货日期]
+ currencyId[币种] exchangeRate[汇率]
+ settlementMethodId[结算方式] docStatus[单据状态]
+ approveStatus[审核状态] paidStatus[付款进度]
+ receiveStatus[收货状态]
+==========>amount[金额信息]======
+ amountSource[合计金额(源币不含税)] amountFunctional[合计金额(本位币不含税)]
+ totalAmount[合计金额(本位币不含税)] totalTaxAmount[合计税额]
+ totalAmountWithTax[合计金额(含税)] discountRate[整单折扣率(%)]
+ discountAmount[折扣金额] paidAmount[已付金额]
+==========^approval[审批与过账]=========
+ approvedBy[审核人] approvedAt[审核时间]
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ requisitionId[请购单] quotationId[报价单]
+ supplierId[供应商] warehouseId[收货仓库]
+ businessDate[订单日期] deliveryDate[交货日期]
+ currencyId[币种] exchangeRate[汇率]
+ settlementMethodId[结算方式] docStatus[单据状态]
+ approveStatus[审核状态] paidStatus[付款进度]
+ receiveStatus[收货状态]
+==========>amount[金额信息]======
+ amountSource[合计金额(源币不含税)] amountFunctional[合计金额(本位币不含税)]
+ totalAmount[合计金额(本位币不含税)] totalTaxAmount[合计税额]
+ totalAmountWithTax[合计金额(含税)] discountRate[整单折扣率(%)]
+ discountAmount[折扣金额] paidAmount[已付金额]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] docStatus[单据状态]
+ supplierId[供应商] approveStatus[审核状态]
+ businessDate[订单日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

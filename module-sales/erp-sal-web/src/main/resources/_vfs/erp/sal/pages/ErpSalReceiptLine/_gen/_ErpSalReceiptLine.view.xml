@@ -55,17 +55,20 @@
     <forms>
         <form id="view" editMode="view" title="查看-收款核销行" i18n-en:title="View Receipt Settlement Line">
             <layout>
- id[ID] receiptId[收款单ID]
- invoiceId[发票ID] amount[核销金额]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
+ receiptId[收款单ID]
+ invoiceId[发票ID]
+ amount[核销金额]
+ delVersion[逻辑删除版本]
+ createdBy[创建人]
+ createTime[创建时间]
+ updatedBy[修改人]
+ updateTime[修改时间]
+ remark[备注]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-收款核销行" i18n-en:title="Add Receipt Settlement Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-收款核销行" i18n-en:title="Edit Receipt Settlement Line">
             <layout>
- id[ID]
  receiptId[收款单ID]
  invoiceId[发票ID]
  amount[核销金额]

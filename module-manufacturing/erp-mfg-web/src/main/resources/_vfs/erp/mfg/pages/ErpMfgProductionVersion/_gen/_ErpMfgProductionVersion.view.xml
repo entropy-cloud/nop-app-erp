@@ -76,26 +76,25 @@
     <forms>
         <form id="view" editMode="view" title="查看-生产版本" i18n-en:title="View Production Version">
             <layout>
- id[ID] code[版本编码]
- productId[产品] bomId[BOM]
- routingId[工艺路线] validFrom[生效日期]
- validTo[失效日期] lotSizeFrom[批量下限]
- lotSizeTo[批量上限] isDefault[是否默认版本]
- isActive[是否有效] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[版本编码] productId[产品]
+ bomId[BOM] routingId[工艺路线]
+ validFrom[生效日期] validTo[失效日期]
+ lotSizeFrom[批量下限] lotSizeTo[批量上限]
+ isDefault[是否默认版本] isActive[是否有效]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-生产版本" i18n-en:title="Add Production Version" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-生产版本" i18n-en:title="Edit Production Version">
             <layout>
- id[ID] code[版本编码]
- productId[产品] bomId[BOM]
- routingId[工艺路线] validFrom[生效日期]
- validTo[失效日期] lotSizeFrom[批量下限]
- lotSizeTo[批量上限] isDefault[是否默认版本]
- isActive[是否有效] remark[备注]
+ code[版本编码] productId[产品]
+ bomId[BOM] routingId[工艺路线]
+ validFrom[生效日期] validTo[失效日期]
+ lotSizeFrom[批量下限] lotSizeTo[批量上限]
+ isDefault[是否默认版本] isActive[是否有效]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

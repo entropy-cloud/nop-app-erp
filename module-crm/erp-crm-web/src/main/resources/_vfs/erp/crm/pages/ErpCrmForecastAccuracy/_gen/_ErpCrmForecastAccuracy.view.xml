@@ -85,29 +85,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-预测准确率" i18n-en:title="View Forecast Accuracy">
             <layout>
- id[ID] forecastId[预测数据]
- orgId[业务组织] periodId[预测期间]
- ownerId[销售员] teamId[销售团队]
- territoryId[销售区域] commitAmount[承诺金额]
- upsideAmount[乐观金额] actualClosedRevenue[实际关闭收入]
- commitAccuracy[承诺准确率] upsideAccuracy[乐观准确率]
- deviationAmount[偏差绝对值] calculatedBy[计算人]
- calculatedAt[计算时间] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ forecastId[预测数据] orgId[业务组织]
+ periodId[预测期间] ownerId[销售员]
+ teamId[销售团队] territoryId[销售区域]
+ commitAmount[承诺金额] upsideAmount[乐观金额]
+ actualClosedRevenue[实际关闭收入] commitAccuracy[承诺准确率]
+ upsideAccuracy[乐观准确率] deviationAmount[偏差绝对值]
+ calculatedBy[计算人] calculatedAt[计算时间]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-预测准确率" i18n-en:title="Add Forecast Accuracy" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-预测准确率" i18n-en:title="Edit Forecast Accuracy">
             <layout>
- id[ID] forecastId[预测数据]
- orgId[业务组织] periodId[预测期间]
- ownerId[销售员] teamId[销售团队]
- territoryId[销售区域] commitAmount[承诺金额]
- upsideAmount[乐观金额] actualClosedRevenue[实际关闭收入]
- commitAccuracy[承诺准确率] upsideAccuracy[乐观准确率]
- deviationAmount[偏差绝对值] calculatedBy[计算人]
- calculatedAt[计算时间] 
+ forecastId[预测数据] orgId[业务组织]
+ periodId[预测期间] ownerId[销售员]
+ teamId[销售团队] territoryId[销售区域]
+ commitAmount[承诺金额] upsideAmount[乐观金额]
+ actualClosedRevenue[实际关闭收入] commitAccuracy[承诺准确率]
+ upsideAccuracy[乐观准确率] deviationAmount[偏差绝对值]
+ calculatedBy[计算人] calculatedAt[计算时间]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

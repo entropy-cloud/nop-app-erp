@@ -7,9 +7,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ partnerType[类型] status[状态]
+ customerGroup[客户组]
+==========>contact[联系方式]======
+ contactPerson[联系人] phone[电话]
+ email[邮箱] address[地址]
+==========^credit[信用与余额]=========
+ taxNo[税号] creditLimit[信用额度]
+ creditPeriodDays[信用期(天)] receivableBalance[应收余额]
+ payableBalance[应付余额]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ partnerType[类型] status[状态]
+ customerGroup[客户组]
+==========>contact[联系方式]======
+ contactPerson[联系人] phone[电话]
+ email[邮箱] address[地址]
+ taxNo[税号] creditLimit[信用额度]
+ creditPeriodDays[信用期(天)] receivableBalance[应收余额]
+ payableBalance[应付余额]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ status[状态] partnerType[类型]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

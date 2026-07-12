@@ -7,9 +7,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ inspectionType[检验类型] docStatus[单据状态]
+ approveStatus[审核状态] businessDate[业务日期]
+==========>inspection[检验信息]======
+ materialId[物料] templateId[质检模板]
+ supplierId[供应商] warehouseId[仓库]
+ batchNo[批号] inspectionDate[检验日期]
+ inspectorId[检验员(职员)] result[质检结果]
+==========>sample[抽样信息]======
+ lotQuantity[批量] sampleQuantity[抽样数量]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ relatedLineCode[关联单据行号]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ inspectionType[检验类型] docStatus[单据状态]
+ approveStatus[审核状态] businessDate[业务日期]
+==========>inspection[检验信息]======
+ materialId[物料] templateId[质检模板]
+ supplierId[供应商] warehouseId[仓库]
+ batchNo[批号] inspectionDate[检验日期]
+ inspectorId[检验员(职员)] result[质检结果]
+==========>sample[抽样信息]======
+ lotQuantity[批量] sampleQuantity[抽样数量]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ relatedLineCode[关联单据行号]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] docStatus[单据状态]
+ result[质检结果] materialId[物料]
+ inspectionDate[检验日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="inspectionDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -7,9 +7,60 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[资产编码] name[资产名称]
+ orgId[所属组织] categoryId[资产类别]
+ acquisitionDate[取得日期] status[资产状态]
+==========>value[价值信息]======
+ currencyId[币种] originalValue[原值]
+ currentValue[当前价值] residualValue[残值]
+ accumulatedDepreciation[累计折旧] netBookValue[净值]
+==========>depreciation[折旧信息]======
+ depreciationMethod[折旧方法] depreciationRate[折旧率]
+ usefulLifeMonths[使用年限(月)]
+==========^usage[使用信息]=========
+ departmentId[使用部门] locationId[使用地点]
+ employeeId[使用人(职员)] staffId[使用人(往来单位,旧字段保留)]
+ brandModel[品牌型号]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+==========>baseInfo[基本信息]======
+ code[资产编码] name[资产名称]
+ orgId[所属组织] categoryId[资产类别]
+ acquisitionDate[取得日期] status[资产状态]
+==========>value[价值信息]======
+ currencyId[币种] originalValue[原值]
+ currentValue[当前价值] residualValue[残值]
+ accumulatedDepreciation[累计折旧] netBookValue[净值]
+==========>depreciation[折旧信息]======
+ depreciationMethod[折旧方法] depreciationRate[折旧率]
+ usefulLifeMonths[使用年限(月)]
+==========>usage[使用信息]======
+ departmentId[使用部门] locationId[使用地点]
+ employeeId[使用人(职员)] staffId[使用人(往来单位,旧字段保留)]
+ brandModel[品牌型号]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[资产编码] name[资产名称]
+ status[资产状态] categoryId[资产类别]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

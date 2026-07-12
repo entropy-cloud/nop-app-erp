@@ -79,27 +79,26 @@
     <forms>
         <form id="view" editMode="view" title="查看-银行对账单行" i18n-en:title="View Bank Statement Line">
             <layout>
- id[ID] statementId[对账单ID]
- lineNo[行号] transactionDate[交易日期]
- description[摘要(银行)] refNo[银行参考号]
- dcDirection[借贷方向] amount[金额]
- currencyId[币种] balanceAfter[交易后余额]
- matchStatus[匹配状态] matchedLineId[匹配凭证行ID]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ statementId[对账单ID] lineNo[行号]
+ transactionDate[交易日期] description[摘要(银行)]
+ refNo[银行参考号] dcDirection[借贷方向]
+ amount[金额] currencyId[币种]
+ balanceAfter[交易后余额] matchStatus[匹配状态]
+ matchedLineId[匹配凭证行ID] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-银行对账单行" i18n-en:title="Add Bank Statement Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-银行对账单行" i18n-en:title="Edit Bank Statement Line">
             <layout>
- id[ID] statementId[对账单ID]
- lineNo[行号] transactionDate[交易日期]
- description[摘要(银行)] refNo[银行参考号]
- dcDirection[借贷方向] amount[金额]
- currencyId[币种] balanceAfter[交易后余额]
- matchStatus[匹配状态] matchedLineId[匹配凭证行ID]
- remark[备注] 
+ statementId[对账单ID] lineNo[行号]
+ transactionDate[交易日期] description[摘要(银行)]
+ refNo[银行参考号] dcDirection[借贷方向]
+ amount[金额] currencyId[币种]
+ balanceAfter[交易后余额] matchStatus[匹配状态]
+ matchedLineId[匹配凭证行ID] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

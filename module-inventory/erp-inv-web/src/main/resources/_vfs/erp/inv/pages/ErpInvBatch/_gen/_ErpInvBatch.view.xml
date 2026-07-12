@@ -79,27 +79,26 @@
     <forms>
         <form id="view" editMode="view" title="查看-批次台账" i18n-en:title="View Batch Ledger">
             <layout>
- id[ID] orgId[业务组织]
- batchNo[批号] materialId[物料]
- skuId[SKU] warehouseId[仓库]
- totalQuantity[总数量] availableQuantity[可用数量]
- productionDate[生产日期] expiryDate[有效期至]
- shelfLifeDays[保质期(天)] status[状态]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ orgId[业务组织] batchNo[批号]
+ materialId[物料] skuId[SKU]
+ warehouseId[仓库] totalQuantity[总数量]
+ availableQuantity[可用数量] productionDate[生产日期]
+ expiryDate[有效期至] shelfLifeDays[保质期(天)]
+ status[状态] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-批次台账" i18n-en:title="Add Batch Ledger" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-批次台账" i18n-en:title="Edit Batch Ledger">
             <layout>
- id[ID] orgId[业务组织]
- batchNo[批号] materialId[物料]
- skuId[SKU] warehouseId[仓库]
- totalQuantity[总数量] availableQuantity[可用数量]
- productionDate[生产日期] expiryDate[有效期至]
- shelfLifeDays[保质期(天)] status[状态]
- remark[备注] 
+ orgId[业务组织] batchNo[批号]
+ materialId[物料] skuId[SKU]
+ warehouseId[仓库] totalQuantity[总数量]
+ availableQuantity[可用数量] productionDate[生产日期]
+ expiryDate[有效期至] shelfLifeDays[保质期(天)]
+ status[状态] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

@@ -79,27 +79,26 @@
     <forms>
         <form id="view" editMode="view" title="查看-成本调整单行" i18n-en:title="View Cost Adjustment Line">
             <layout>
- id[ID] adjustId[成本调整单ID]
- lineNo[行号] materialId[物料]
- warehouseId[仓库] batchNo[批号]
- oldUnitCost[原单位成本] newUnitCost[新单位成本]
- adjustQty[调整数量] adjustAmount[调整金额]
- adjustReason[行调整原因] currencyId[币种]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ adjustId[成本调整单ID] lineNo[行号]
+ materialId[物料] warehouseId[仓库]
+ batchNo[批号] oldUnitCost[原单位成本]
+ newUnitCost[新单位成本] adjustQty[调整数量]
+ adjustAmount[调整金额] adjustReason[行调整原因]
+ currencyId[币种] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-成本调整单行" i18n-en:title="Add Cost Adjustment Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-成本调整单行" i18n-en:title="Edit Cost Adjustment Line">
             <layout>
- id[ID] adjustId[成本调整单ID]
- lineNo[行号] materialId[物料]
- warehouseId[仓库] batchNo[批号]
- oldUnitCost[原单位成本] newUnitCost[新单位成本]
- adjustQty[调整数量] adjustAmount[调整金额]
- adjustReason[行调整原因] currencyId[币种]
- remark[备注] 
+ adjustId[成本调整单ID] lineNo[行号]
+ materialId[物料] warehouseId[仓库]
+ batchNo[批号] oldUnitCost[原单位成本]
+ newUnitCost[新单位成本] adjustQty[调整数量]
+ adjustAmount[调整金额] adjustReason[行调整原因]
+ currencyId[币种] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

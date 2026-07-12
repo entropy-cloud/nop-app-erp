@@ -70,24 +70,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-总账余额" i18n-en:title="View GL Balance">
             <layout>
- id[ID] orgId[组织]
- acctSchemaId[账套] periodId[期间]
- subjectId[科目] currencyId[币种]
- partnerId[辅助-往来单位] departmentId[辅助-部门]
- projectId[辅助-项目] warehouseId[辅助-仓库]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ orgId[组织] acctSchemaId[账套]
+ periodId[期间] subjectId[科目]
+ currencyId[币种] partnerId[辅助-往来单位]
+ departmentId[辅助-部门] projectId[辅助-项目]
+ warehouseId[辅助-仓库] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-总账余额" i18n-en:title="Add GL Balance" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-总账余额" i18n-en:title="Edit GL Balance">
             <layout>
- id[ID] orgId[组织]
- acctSchemaId[账套] periodId[期间]
- subjectId[科目] currencyId[币种]
- partnerId[辅助-往来单位] departmentId[辅助-部门]
- projectId[辅助-项目] warehouseId[辅助-仓库]
+ orgId[组织]
+ acctSchemaId[账套]
+ periodId[期间]
+ subjectId[科目]
+ currencyId[币种]
+ partnerId[辅助-往来单位]
+ departmentId[辅助-部门]
+ projectId[辅助-项目]
+ warehouseId[辅助-仓库]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

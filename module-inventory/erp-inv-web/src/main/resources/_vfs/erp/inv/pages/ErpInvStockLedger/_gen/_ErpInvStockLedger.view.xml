@@ -106,36 +106,35 @@
     <forms>
         <form id="view" editMode="view" title="查看-库存流水" i18n-en:title="View Stock Ledger">
             <layout>
- id[ID] code[流水号]
- orgId[业务组织] moveId[移动单ID]
- moveLineId[移动单行ID] materialId[物料]
- skuId[SKU] warehouseId[仓库]
- locationId[库位] quantity[数量]
- unitCost[单位成本] totalCost[总成本]
- balanceQuantity[结存数量] balanceTotalCost[结存总成本]
- costMethod[计价方法] acctSchemaId[账套]
- currencyId[币种] businessDate[业务日期]
- batchNo[批号] serialNo[序列号]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] ownerId[所有权往来单位]
- ownershipType[所有权类型] 
+ code[流水号] orgId[业务组织]
+ moveId[移动单ID] moveLineId[移动单行ID]
+ materialId[物料] skuId[SKU]
+ warehouseId[仓库] locationId[库位]
+ quantity[数量] unitCost[单位成本]
+ totalCost[总成本] balanceQuantity[结存数量]
+ balanceTotalCost[结存总成本] costMethod[计价方法]
+ acctSchemaId[账套] currencyId[币种]
+ businessDate[业务日期] batchNo[批号]
+ serialNo[序列号] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ ownerId[所有权往来单位] ownershipType[所有权类型]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-库存流水" i18n-en:title="Add Stock Ledger" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-库存流水" i18n-en:title="Edit Stock Ledger">
             <layout>
- id[ID] code[流水号]
- orgId[业务组织] moveId[移动单ID]
- moveLineId[移动单行ID] materialId[物料]
- skuId[SKU] warehouseId[仓库]
- locationId[库位] quantity[数量]
- unitCost[单位成本] totalCost[总成本]
- balanceQuantity[结存数量] balanceTotalCost[结存总成本]
- costMethod[计价方法] acctSchemaId[账套]
- currencyId[币种] businessDate[业务日期]
- batchNo[批号] serialNo[序列号]
- ownerId[所有权往来单位] ownershipType[所有权类型]
+ code[流水号] orgId[业务组织]
+ moveId[移动单ID] moveLineId[移动单行ID]
+ materialId[物料] skuId[SKU]
+ warehouseId[仓库] locationId[库位]
+ quantity[数量] unitCost[单位成本]
+ totalCost[总成本] balanceQuantity[结存数量]
+ balanceTotalCost[结存总成本] costMethod[计价方法]
+ acctSchemaId[账套] currencyId[币种]
+ businessDate[业务日期] batchNo[批号]
+ serialNo[序列号] ownerId[所有权往来单位]
+ ownershipType[所有权类型] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

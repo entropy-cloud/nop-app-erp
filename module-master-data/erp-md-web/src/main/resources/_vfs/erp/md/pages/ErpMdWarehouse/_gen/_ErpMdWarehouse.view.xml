@@ -70,24 +70,27 @@
     <forms>
         <form id="view" editMode="view" title="查看-仓库" i18n-en:title="View Warehouse">
             <layout>
- id[ID] code[编码]
- name[名称] warehouseType[仓库类型]
- orgId[所属组织] address[地址]
- managerId[负责人(职员)] status[状态]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
- batchSelectionStrategy[批次选择策略] 
+ code[编码] name[名称]
+ warehouseType[仓库类型] orgId[所属组织]
+ address[地址] managerId[负责人(职员)]
+ status[状态] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] batchSelectionStrategy[批次选择策略]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-仓库" i18n-en:title="Add Warehouse" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-仓库" i18n-en:title="Edit Warehouse">
             <layout>
- id[ID] code[编码]
- name[名称] warehouseType[仓库类型]
- orgId[所属组织] address[地址]
- managerId[负责人(职员)] status[状态]
- remark[备注] batchSelectionStrategy[批次选择策略]
+ code[编码]
+ name[名称]
+ warehouseType[仓库类型]
+ orgId[所属组织]
+ address[地址]
+ managerId[负责人(职员)]
+ status[状态]
+ remark[备注]
+ batchSelectionStrategy[批次选择策略]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

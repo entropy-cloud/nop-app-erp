@@ -76,26 +76,25 @@
     <forms>
         <form id="view" editMode="view" title="查看-库存预留单行" i18n-en:title="View Stock Reservation Line">
             <layout>
- id[ID] reservationId[预留单ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] warehouseId[仓库]
- locationId[库位] batchNo[批号]
- reservedQuantity[预留数量] consumedQuantity[已消耗数量]
- uomId[计量单位] sourceLineCode[来源行号]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ reservationId[预留单ID] lineNo[行号]
+ materialId[物料] skuId[SKU]
+ warehouseId[仓库] locationId[库位]
+ batchNo[批号] reservedQuantity[预留数量]
+ consumedQuantity[已消耗数量] uomId[计量单位]
+ sourceLineCode[来源行号] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-库存预留单行" i18n-en:title="Add Stock Reservation Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-库存预留单行" i18n-en:title="Edit Stock Reservation Line">
             <layout>
- id[ID] reservationId[预留单ID]
- lineNo[行号] materialId[物料]
- skuId[SKU] warehouseId[仓库]
- locationId[库位] batchNo[批号]
- reservedQuantity[预留数量] consumedQuantity[已消耗数量]
- uomId[计量单位] sourceLineCode[来源行号]
+ reservationId[预留单ID] lineNo[行号]
+ materialId[物料] skuId[SKU]
+ warehouseId[仓库] locationId[库位]
+ batchNo[批号] reservedQuantity[预留数量]
+ consumedQuantity[已消耗数量] uomId[计量单位]
+ sourceLineCode[来源行号] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

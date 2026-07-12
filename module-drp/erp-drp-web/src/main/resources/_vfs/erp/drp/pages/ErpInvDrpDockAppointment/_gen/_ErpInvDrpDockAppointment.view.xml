@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-月台预约" i18n-en:title="View Dock Appointment">
             <layout>
- id[ID] warehouseId[仓库]
- dockId[月台] appointmentDate[预约日期]
- slotStart[时间窗口开始] slotEnd[时间窗口结束]
- crossDockId[关联越库] carrierInfo[承运商信息]
- status[状态] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] orgId[业务组织]
+ warehouseId[仓库] dockId[月台]
+ appointmentDate[预约日期] slotStart[时间窗口开始]
+ slotEnd[时间窗口结束] crossDockId[关联越库]
+ carrierInfo[承运商信息] status[状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ orgId[业务组织] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-月台预约" i18n-en:title="Add Dock Appointment" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-月台预约" i18n-en:title="Edit Dock Appointment">
             <layout>
- id[ID] warehouseId[仓库]
- dockId[月台] appointmentDate[预约日期]
- slotStart[时间窗口开始] slotEnd[时间窗口结束]
- crossDockId[关联越库] carrierInfo[承运商信息]
- status[状态] remark[备注]
- orgId[业务组织] 
+ warehouseId[仓库] dockId[月台]
+ appointmentDate[预约日期] slotStart[时间窗口开始]
+ slotEnd[时间窗口结束] crossDockId[关联越库]
+ carrierInfo[承运商信息] status[状态]
+ remark[备注] orgId[业务组织]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

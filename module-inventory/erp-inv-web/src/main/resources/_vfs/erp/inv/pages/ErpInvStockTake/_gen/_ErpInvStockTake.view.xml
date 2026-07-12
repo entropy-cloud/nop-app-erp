@@ -76,21 +76,19 @@
     <forms>
         <form id="view" editMode="view" title="查看-盘点单" i18n-en:title="View Stock Take">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] businessDate[盘点日期]
- takeType[盘点类型] warehouseId[盘点仓库]
- docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedAt[过账时间]
- postedBy[过账人] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ code[单号] orgId[业务组织]
+ businessDate[盘点日期] takeType[盘点类型]
+ warehouseId[盘点仓库] docStatus[单据状态]
+ approveStatus[审核状态] posted[已过账]
+ postedAt[过账时间] postedBy[过账人]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-盘点单" i18n-en:title="Add Stock Take" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-盘点单" i18n-en:title="Edit Stock Take">
             <layout>
- id[ID]
  code[单号]
  orgId[业务组织]
  businessDate[盘点日期]

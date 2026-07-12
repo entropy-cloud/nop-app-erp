@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-开票计划" i18n-en:title="View Invoice Plan">
             <layout>
- id[ID] contractLineId[合同行ID]
- planDate[计划开票日期] amount[开票金额]
- isInvoiced[是否已开票] invoiceBillCode[关联发票号]
- invoiceDate[实际开票日期] invoiceTerm[开票条款]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ contractLineId[合同行ID] planDate[计划开票日期]
+ amount[开票金额] isInvoiced[是否已开票]
+ invoiceBillCode[关联发票号] invoiceDate[实际开票日期]
+ invoiceTerm[开票条款] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-开票计划" i18n-en:title="Add Invoice Plan" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-开票计划" i18n-en:title="Edit Invoice Plan">
             <layout>
- id[ID]
  contractLineId[合同行ID]
  planDate[计划开票日期]
  amount[开票金额]

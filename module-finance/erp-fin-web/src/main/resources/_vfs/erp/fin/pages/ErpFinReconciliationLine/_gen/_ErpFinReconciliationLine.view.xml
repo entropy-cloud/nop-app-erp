@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-核销单行" i18n-en:title="View Reconciliation Line">
             <layout>
- id[ID] reconciliationId[核销单ID]
- lineNo[行号] paymentItemId[付款/收款项(invoice or payment item)]
- invoiceItemId[被核销发票项] settledAmountSource[核销金额(源币)]
- settledAmountFunctional[核销金额(本位币)] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ reconciliationId[核销单ID] lineNo[行号]
+ paymentItemId[付款/收款项(invoice or payment item)] invoiceItemId[被核销发票项]
+ settledAmountSource[核销金额(源币)] settledAmountFunctional[核销金额(本位币)]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-核销单行" i18n-en:title="Add Reconciliation Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-核销单行" i18n-en:title="Edit Reconciliation Line">
             <layout>
- id[ID]
  reconciliationId[核销单ID]
  lineNo[行号]
  paymentItemId[付款/收款项(invoice or payment item)]

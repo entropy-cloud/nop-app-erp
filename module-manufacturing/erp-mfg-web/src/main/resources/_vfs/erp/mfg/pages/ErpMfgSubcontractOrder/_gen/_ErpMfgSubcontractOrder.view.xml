@@ -115,36 +115,36 @@
     <forms>
         <form id="view" editMode="view" title="查看-委外加工单" i18n-en:title="View Subcontract Order">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] workOrderId[来源工单]
- supplierId[委外供应商] workcenterId[外协工作中心]
- routingId[工艺路线] productionVersionId[生产版本]
- productId[产品] businessDate[委外日期]
- currencyId[币种] exchangeRate[汇率]
- processingFee[加工费] totalAmount[合计金额]
- docStatus[单据状态] approveStatus[审核状态]
- posted[已过账] postedStatus[过账状态]
- postedAt[过账时间] postedBy[过账人]
- remark[备注] amountSource[源币种金额]
- amountFunctional[本位币金额] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- approvedBy[审核人] approvedAt[审核时间]
+ code[单号] orgId[业务组织]
+ workOrderId[来源工单] supplierId[委外供应商]
+ workcenterId[外协工作中心] routingId[工艺路线]
+ productionVersionId[生产版本] productId[产品]
+ businessDate[委外日期] currencyId[币种]
+ exchangeRate[汇率] processingFee[加工费]
+ totalAmount[合计金额] docStatus[单据状态]
+ approveStatus[审核状态] posted[已过账]
+ postedStatus[过账状态] postedAt[过账时间]
+ postedBy[过账人] remark[备注]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] approvedBy[审核人]
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-委外加工单" i18n-en:title="Add Subcontract Order" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-委外加工单" i18n-en:title="Edit Subcontract Order">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] workOrderId[来源工单]
- supplierId[委外供应商] workcenterId[外协工作中心]
- routingId[工艺路线] productionVersionId[生产版本]
- productId[产品] businessDate[委外日期]
- currencyId[币种] exchangeRate[汇率]
- processingFee[加工费] totalAmount[合计金额]
- docStatus[单据状态] approveStatus[审核状态]
- postedStatus[过账状态] remark[备注]
- amountSource[源币种金额] amountFunctional[本位币金额]
+ code[单号] orgId[业务组织]
+ workOrderId[来源工单] supplierId[委外供应商]
+ workcenterId[外协工作中心] routingId[工艺路线]
+ productionVersionId[生产版本] productId[产品]
+ businessDate[委外日期] currencyId[币种]
+ exchangeRate[汇率] processingFee[加工费]
+ totalAmount[合计金额] docStatus[单据状态]
+ approveStatus[审核状态] postedStatus[过账状态]
+ remark[备注] amountSource[源币种金额]
+ amountFunctional[本位币金额] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

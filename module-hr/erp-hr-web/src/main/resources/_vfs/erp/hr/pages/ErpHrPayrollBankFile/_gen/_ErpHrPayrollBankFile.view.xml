@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-银行代发文件" i18n-en:title="View Payroll Bank File">
             <layout>
- id[ID] batchNo[批次号]
- paymentDate[发放日期] totalAmount[总金额]
- recordCount[记录数] fileFormat[文件格式]
- fileContent[文件内容] status[状态]
- bankId[开户银行] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ batchNo[批次号] paymentDate[发放日期]
+ totalAmount[总金额] recordCount[记录数]
+ fileFormat[文件格式] fileContent[文件内容]
+ status[状态] bankId[开户银行]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-银行代发文件" i18n-en:title="Add Payroll Bank File" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-银行代发文件" i18n-en:title="Edit Payroll Bank File">
             <layout>
- id[ID] batchNo[批次号]
- paymentDate[发放日期] totalAmount[总金额]
- recordCount[记录数] fileFormat[文件格式]
- fileContent[文件内容] status[状态]
- bankId[开户银行] orgId[业务组织]
- remark[备注] 
+ batchNo[批次号] paymentDate[发放日期]
+ totalAmount[总金额] recordCount[记录数]
+ fileFormat[文件格式] fileContent[文件内容]
+ status[状态] bankId[开户银行]
+ orgId[业务组织] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

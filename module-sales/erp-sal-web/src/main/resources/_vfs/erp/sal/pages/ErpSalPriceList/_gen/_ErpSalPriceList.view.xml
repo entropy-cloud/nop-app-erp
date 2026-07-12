@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-销售价格清单" i18n-en:title="View Sales Price List">
             <layout>
- id[ID] name[名称]
- code[编码] currencyId[币种]
- customerGroupCode[客户组] partnerId[指定客户]
- validFrom[生效日期] validTo[失效日期]
- priority[优先级] isActive[启用]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
+ name[名称] code[编码]
+ currencyId[币种] customerGroupCode[客户组]
+ partnerId[指定客户] validFrom[生效日期]
+ validTo[失效日期] priority[优先级]
+ isActive[启用] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售价格清单" i18n-en:title="Add Sales Price List" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-销售价格清单" i18n-en:title="Edit Sales Price List">
             <layout>
- id[ID] name[名称]
- code[编码] currencyId[币种]
- customerGroupCode[客户组] partnerId[指定客户]
- validFrom[生效日期] validTo[失效日期]
- priority[优先级] isActive[启用]
- remark[备注] 
+ name[名称] code[编码]
+ currencyId[币种] customerGroupCode[客户组]
+ partnerId[指定客户] validFrom[生效日期]
+ validTo[失效日期] priority[优先级]
+ isActive[启用] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

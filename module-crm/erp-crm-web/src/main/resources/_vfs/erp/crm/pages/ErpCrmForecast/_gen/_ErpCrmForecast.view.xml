@@ -88,30 +88,29 @@
     <forms>
         <form id="view" editMode="view" title="查看-预测数据" i18n-en:title="View Forecast">
             <layout>
- id[ID] orgId[业务组织]
- periodId[预测期间] territoryId[销售区域]
- teamId[销售团队] ownerId[销售员]
- currencyId[币种] commitAmount[承诺金额]
- upsideAmount[乐观金额] weightedAmount[加权金额]
- bestCaseAmount[最佳金额] opportunityCount[商机总数]
- commitOpportunityCount[承诺商机数] expectedClosedRevenue[实际已关闭收入]
- lastCalculatedAt[最近计算时间] notes[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ orgId[业务组织] periodId[预测期间]
+ territoryId[销售区域] teamId[销售团队]
+ ownerId[销售员] currencyId[币种]
+ commitAmount[承诺金额] upsideAmount[乐观金额]
+ weightedAmount[加权金额] bestCaseAmount[最佳金额]
+ opportunityCount[商机总数] commitOpportunityCount[承诺商机数]
+ expectedClosedRevenue[实际已关闭收入] lastCalculatedAt[最近计算时间]
+ notes[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-预测数据" i18n-en:title="Add Forecast" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-预测数据" i18n-en:title="Edit Forecast">
             <layout>
- id[ID] orgId[业务组织]
- periodId[预测期间] territoryId[销售区域]
- teamId[销售团队] ownerId[销售员]
- currencyId[币种] commitAmount[承诺金额]
- upsideAmount[乐观金额] weightedAmount[加权金额]
- bestCaseAmount[最佳金额] opportunityCount[商机总数]
- commitOpportunityCount[承诺商机数] expectedClosedRevenue[实际已关闭收入]
- lastCalculatedAt[最近计算时间] notes[备注]
+ orgId[业务组织] periodId[预测期间]
+ territoryId[销售区域] teamId[销售团队]
+ ownerId[销售员] currencyId[币种]
+ commitAmount[承诺金额] upsideAmount[乐观金额]
+ weightedAmount[加权金额] bestCaseAmount[最佳金额]
+ opportunityCount[商机总数] commitOpportunityCount[承诺商机数]
+ expectedClosedRevenue[实际已关闭收入] lastCalculatedAt[最近计算时间]
+ notes[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

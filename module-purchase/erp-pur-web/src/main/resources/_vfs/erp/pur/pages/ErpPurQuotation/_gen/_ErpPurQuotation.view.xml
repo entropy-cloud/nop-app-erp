@@ -88,29 +88,28 @@
     <forms>
         <form id="view" editMode="view" title="查看-供应商报价单" i18n-en:title="View Supplier Quotation">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] rfqId[询价单]
- supplierId[供应商] currencyId[币种]
- exchangeRate[汇率] businessDate[报价日期]
- validFrom[生效日期] validTo[失效日期]
- isAccepted[是否中标] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] approvedBy[审核人]
- approvedAt[审核时间] 
+ code[单号] orgId[业务组织]
+ rfqId[询价单] supplierId[供应商]
+ currencyId[币种] exchangeRate[汇率]
+ businessDate[报价日期] validFrom[生效日期]
+ validTo[失效日期] isAccepted[是否中标]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-供应商报价单" i18n-en:title="Add Supplier Quotation" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-供应商报价单" i18n-en:title="Edit Supplier Quotation">
             <layout>
- id[ID] code[单号]
- orgId[业务组织] rfqId[询价单]
- supplierId[供应商] currencyId[币种]
- exchangeRate[汇率] businessDate[报价日期]
- validFrom[生效日期] validTo[失效日期]
- isAccepted[是否中标] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
+ code[单号] orgId[业务组织]
+ rfqId[询价单] supplierId[供应商]
+ currencyId[币种] exchangeRate[汇率]
+ businessDate[报价日期] validFrom[生效日期]
+ validTo[失效日期] isAccepted[是否中标]
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

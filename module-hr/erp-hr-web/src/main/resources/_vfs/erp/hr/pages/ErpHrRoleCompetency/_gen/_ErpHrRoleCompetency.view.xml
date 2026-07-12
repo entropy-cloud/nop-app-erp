@@ -58,18 +58,16 @@
     <forms>
         <form id="view" editMode="view" title="查看-岗位胜任力要求" i18n-en:title="View Role Competency">
             <layout>
- id[ID] positionId[岗位]
- competencyId[胜任力] requiredLevel[要求等级]
- weight[权重] isCritical[是否关键]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ positionId[岗位] competencyId[胜任力]
+ requiredLevel[要求等级] weight[权重]
+ isCritical[是否关键] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-岗位胜任力要求" i18n-en:title="Add Role Competency" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-岗位胜任力要求" i18n-en:title="Edit Role Competency">
             <layout>
- id[ID]
  positionId[岗位]
  competencyId[胜任力]
  requiredLevel[要求等级]

@@ -76,26 +76,25 @@
     <forms>
         <form id="view" editMode="view" title="查看-评分准则明细" i18n-en:title="View Lead Score Config Line">
             <layout>
- id[ID] configId[评分规则配置]
- orgId[业务组织] criterionCode[准则编码]
- criterionName[准则名称] weight[权重系数]
- scoringMethod[评分方法] lookupTable[值表(JSON)]
- formula[公式表达式] maxScore[最高分]
- sequence[排序] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ configId[评分规则配置] orgId[业务组织]
+ criterionCode[准则编码] criterionName[准则名称]
+ weight[权重系数] scoringMethod[评分方法]
+ lookupTable[值表(JSON)] formula[公式表达式]
+ maxScore[最高分] sequence[排序]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-评分准则明细" i18n-en:title="Add Lead Score Config Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-评分准则明细" i18n-en:title="Edit Lead Score Config Line">
             <layout>
- id[ID] configId[评分规则配置]
- orgId[业务组织] criterionCode[准则编码]
- criterionName[准则名称] weight[权重系数]
- scoringMethod[评分方法] lookupTable[值表(JSON)]
- formula[公式表达式] maxScore[最高分]
- sequence[排序] remark[备注]
+ configId[评分规则配置] orgId[业务组织]
+ criterionCode[准则编码] criterionName[准则名称]
+ weight[权重系数] scoringMethod[评分方法]
+ lookupTable[值表(JSON)] formula[公式表达式]
+ maxScore[最高分] sequence[排序]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

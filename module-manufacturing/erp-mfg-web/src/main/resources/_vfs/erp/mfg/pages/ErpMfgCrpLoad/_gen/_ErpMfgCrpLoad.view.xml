@@ -64,19 +64,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-CRP负荷" i18n-en:title="View CRP Load">
             <layout>
- id[ID] workcenterId[工作中心]
- orgId[业务组织] workOrderId[工单(弱指针)]
- loadDate[负荷日期] loadHours[占用工时]
- setupHours[换模工时] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ workcenterId[工作中心] orgId[业务组织]
+ workOrderId[工单(弱指针)] loadDate[负荷日期]
+ loadHours[占用工时] setupHours[换模工时]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-CRP负荷" i18n-en:title="Add CRP Load" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-CRP负荷" i18n-en:title="Edit CRP Load">
             <layout>
- id[ID]
  workcenterId[工作中心]
  orgId[业务组织]
  workOrderId[工单(弱指针)]

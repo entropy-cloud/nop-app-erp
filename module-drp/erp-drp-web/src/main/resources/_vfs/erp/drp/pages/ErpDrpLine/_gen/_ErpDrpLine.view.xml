@@ -100,34 +100,33 @@
     <forms>
         <form id="view" editMode="view" title="查看-DRP明细" i18n-en:title="View DRP Line">
             <layout>
- id[ID] planId[计划ID]
- lineNo[行号] materialId[物料]
- warehouseId[目标仓库] sourceWarehouseId[来源仓库]
- replenishmentType[补货类型] currentStock[当前库存]
- allocatedQty[已分配量] onOrderQty[在单量]
- forecastDemand[预测需求量] safetyStock[安全库存]
- netRequirement[净需求] suggestedQty[建议补货量]
- approvedQty[批准补货量] orderBillType[生成单据类型]
- orderBillCode[生成单据号] status[状态]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ planId[计划ID] lineNo[行号]
+ materialId[物料] warehouseId[目标仓库]
+ sourceWarehouseId[来源仓库] replenishmentType[补货类型]
+ currentStock[当前库存] allocatedQty[已分配量]
+ onOrderQty[在单量] forecastDemand[预测需求量]
+ safetyStock[安全库存] netRequirement[净需求]
+ suggestedQty[建议补货量] approvedQty[批准补货量]
+ orderBillType[生成单据类型] orderBillCode[生成单据号]
+ status[状态] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-DRP明细" i18n-en:title="Add DRP Line" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-DRP明细" i18n-en:title="Edit DRP Line">
             <layout>
- id[ID] planId[计划ID]
- lineNo[行号] materialId[物料]
- warehouseId[目标仓库] sourceWarehouseId[来源仓库]
- replenishmentType[补货类型] currentStock[当前库存]
- allocatedQty[已分配量] onOrderQty[在单量]
- forecastDemand[预测需求量] safetyStock[安全库存]
- netRequirement[净需求] suggestedQty[建议补货量]
- approvedQty[批准补货量] orderBillType[生成单据类型]
- orderBillCode[生成单据号] status[状态]
- orgId[业务组织] remark[备注]
+ planId[计划ID] lineNo[行号]
+ materialId[物料] warehouseId[目标仓库]
+ sourceWarehouseId[来源仓库] replenishmentType[补货类型]
+ currentStock[当前库存] allocatedQty[已分配量]
+ onOrderQty[在单量] forecastDemand[预测需求量]
+ safetyStock[安全库存] netRequirement[净需求]
+ suggestedQty[建议补货量] approvedQty[批准补货量]
+ orderBillType[生成单据类型] orderBillCode[生成单据号]
+ status[状态] orgId[业务组织]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

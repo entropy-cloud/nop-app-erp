@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-员工社保基数" i18n-en:title="View Social Insurance Base">
             <layout>
- id[ID] employeeId[员工]
- cityCode[参保城市] socialInsuranceBase[社保基数]
- housingFundBase[公积金基数] effectiveFrom[生效日期]
- effectiveTo[失效日期] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ employeeId[员工] cityCode[参保城市]
+ socialInsuranceBase[社保基数] housingFundBase[公积金基数]
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-员工社保基数" i18n-en:title="Add Social Insurance Base" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-员工社保基数" i18n-en:title="Edit Social Insurance Base">
             <layout>
- id[ID]
  employeeId[员工]
  cityCode[参保城市]
  socialInsuranceBase[社保基数]

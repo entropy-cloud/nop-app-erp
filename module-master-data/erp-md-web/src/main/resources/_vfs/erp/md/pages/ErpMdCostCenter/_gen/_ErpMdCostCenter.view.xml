@@ -67,19 +67,18 @@
     <forms>
         <form id="view" editMode="view" title="查看-成本中心" i18n-en:title="View Cost Center">
             <layout>
- id[ID] code[编码]
- name[名称] orgId[所属组织]
- managerId[负责人] parentId[上级成本中心]
- isBudgetable[是否预算管控] status[状态]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] remark[备注]
+ code[编码] name[名称]
+ orgId[所属组织] managerId[负责人]
+ parentId[上级成本中心] isBudgetable[是否预算管控]
+ status[状态] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-成本中心" i18n-en:title="Add Cost Center" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-成本中心" i18n-en:title="Edit Cost Center">
             <layout>
- id[ID]
  code[编码]
  name[名称]
  orgId[所属组织]

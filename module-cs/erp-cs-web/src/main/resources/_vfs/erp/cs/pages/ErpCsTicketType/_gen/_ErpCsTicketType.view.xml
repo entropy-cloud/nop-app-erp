@@ -61,18 +61,17 @@
     <forms>
         <form id="view" editMode="view" title="查看-工单类型" i18n-en:title="View Ticket Type">
             <layout>
- id[ID] code[编码]
- name[名称] defaultPriority[默认优先级]
- defaultSlaPolicyId[默认 SLA 策略] sequence[排序]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[编码] name[名称]
+ defaultPriority[默认优先级] defaultSlaPolicyId[默认 SLA 策略]
+ sequence[排序] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工单类型" i18n-en:title="Add Ticket Type" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-工单类型" i18n-en:title="Edit Ticket Type">
             <layout>
- id[ID]
  code[编码]
  name[名称]
  defaultPriority[默认优先级]

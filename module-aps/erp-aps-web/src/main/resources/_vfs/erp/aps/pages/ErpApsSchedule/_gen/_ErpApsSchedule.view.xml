@@ -73,25 +73,24 @@
     <forms>
         <form id="view" editMode="view" title="查看-排产方案" i18n-en:title="View Schedule">
             <layout>
- id[ID] code[编号]
- name[方案名称] scheduleDate[排产日期]
- schedulingMode[排产模式] horizonStart[展望期开始]
- horizonEnd[展望期结束] status[状态]
- orgId[业务组织] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] businessDate[业务日期]
+ code[编号] name[方案名称]
+ scheduleDate[排产日期] schedulingMode[排产模式]
+ horizonStart[展望期开始] horizonEnd[展望期结束]
+ status[状态] orgId[业务组织]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-排产方案" i18n-en:title="Add Schedule" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-排产方案" i18n-en:title="Edit Schedule">
             <layout>
- id[ID] code[编号]
- name[方案名称] scheduleDate[排产日期]
- schedulingMode[排产模式] horizonStart[展望期开始]
- horizonEnd[展望期结束] status[状态]
- orgId[业务组织] remark[备注]
- businessDate[业务日期] 
+ code[编号] name[方案名称]
+ scheduleDate[排产日期] schedulingMode[排产模式]
+ horizonStart[展望期开始] horizonEnd[展望期结束]
+ status[状态] orgId[业务组织]
+ remark[备注] businessDate[业务日期]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

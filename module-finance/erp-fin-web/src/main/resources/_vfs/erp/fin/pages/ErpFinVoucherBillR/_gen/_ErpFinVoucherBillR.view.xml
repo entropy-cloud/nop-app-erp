@@ -58,18 +58,16 @@
     <forms>
         <form id="view" editMode="view" title="查看-业财回链" i18n-en:title="View Voucher Business Link">
             <layout>
- id[ID] voucherId[凭证ID]
- billType[单据类型] billCode[单据编号]
- billLineCode[单据行号] businessType[业务类型]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ voucherId[凭证ID] billType[单据类型]
+ billCode[单据编号] billLineCode[单据行号]
+ businessType[业务类型] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-业财回链" i18n-en:title="Add Voucher Business Link" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-业财回链" i18n-en:title="Edit Voucher Business Link">
             <layout>
- id[ID]
  voucherId[凭证ID]
  billType[单据类型]
  billCode[单据编号]

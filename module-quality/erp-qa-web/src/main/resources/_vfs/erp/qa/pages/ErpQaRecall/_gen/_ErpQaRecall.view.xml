@@ -91,30 +91,29 @@
     <forms>
         <form id="view" editMode="view" title="查看-召回事件" i18n-en:title="View Recall Event">
             <layout>
- id[ID] code[单号]
- recallName[召回名称] triggerType[触发类型]
- sourceNcrId[来源NCR(弱指针)] materialId[召回物料]
- batchId[召回批次(弱指针→ErpInvBatch)] serialNo[召回序列号]
- rootCause[根本原因] severityLevel[严重程度]
- businessDate[业务日期] notifyCustomer[已通知客户]
- status[召回状态] approveStatus[审核状态]
- approvedBy[审批人] approvedAt[审批时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ code[单号] recallName[召回名称]
+ triggerType[触发类型] sourceNcrId[来源NCR(弱指针)]
+ materialId[召回物料] batchId[召回批次(弱指针→ErpInvBatch)]
+ serialNo[召回序列号] rootCause[根本原因]
+ severityLevel[严重程度] businessDate[业务日期]
+ notifyCustomer[已通知客户] status[召回状态]
+ approveStatus[审核状态] approvedBy[审批人]
+ approvedAt[审批时间] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-召回事件" i18n-en:title="Add Recall Event" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-召回事件" i18n-en:title="Edit Recall Event">
             <layout>
- id[ID] code[单号]
- recallName[召回名称] triggerType[触发类型]
- sourceNcrId[来源NCR(弱指针)] materialId[召回物料]
- batchId[召回批次(弱指针→ErpInvBatch)] serialNo[召回序列号]
- rootCause[根本原因] severityLevel[严重程度]
- businessDate[业务日期] notifyCustomer[已通知客户]
- status[召回状态] approveStatus[审核状态]
- remark[备注] 
+ code[单号] recallName[召回名称]
+ triggerType[触发类型] sourceNcrId[来源NCR(弱指针)]
+ materialId[召回物料] batchId[召回批次(弱指针→ErpInvBatch)]
+ serialNo[召回序列号] rootCause[根本原因]
+ severityLevel[严重程度] businessDate[业务日期]
+ notifyCustomer[已通知客户] status[召回状态]
+ approveStatus[审核状态] remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

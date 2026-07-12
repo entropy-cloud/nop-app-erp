@@ -52,7 +52,6 @@
     <forms>
         <form id="view" editMode="view" title="查看-账套科目表" i18n-en:title="View Chart of Accounts">
             <layout>
- id[ID]
  acctSchemaId[账套]
  name[科目表名称]
  isPrimary[是否主科目表]
@@ -66,7 +65,6 @@
         <form id="add" editMode="add" title="新增-账套科目表" i18n-en:title="Add Chart of Accounts" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-账套科目表" i18n-en:title="Edit Chart of Accounts">
             <layout>
- id[ID]
  acctSchemaId[账套]
  name[科目表名称]
  isPrimary[是否主科目表]
