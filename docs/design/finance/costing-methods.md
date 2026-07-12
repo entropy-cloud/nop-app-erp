@@ -66,6 +66,15 @@
 - **差异过账（`ProductionVarianceDispatcher`）**：差异计算后按成本要素（材料/人工/制造费用）汇总净差异，组装 PostingEvent 经 `IErpFinVoucherBiz.post` 提交（`PRODUCTION_VARIANCE` 业务类型，`ProductionVarianceAcctDocProvider` 方向相关借贷分解到差异科目/WIP 科目），成功回写 `posted=true`。
 - **手动入口**：`ErpMfgCostVariance__calculateVariances` @BizMutation（幂等：先删旧行再重算，仅 COMPLETED 工单允许）+ `findByWorkOrder` / `aggregateByType` @BizQuery 查询。
 
+## 实现注记（计划 `2026-07-13-0455-2`）
+
+本节承接 `2026-07-12-1504-1` 裁决 M-2（成本要素拆分 successor），闭合 `CostRollupService` overhead/subcontract 两要素恒 0 缺口。依赖 N=1（`2026-07-13-0455-1` 委外引擎）提供已过账委外订单加工费归集源。
+
+- **overhead 制造费用（config-gated 分配率）**：`CostRollupService` 经 `erp-mfg.overhead-allocation-enabled`（默认 false 向后兼容）控制。关时 `overheadCost`=0（行为不变）；开时按 `erp-mfg.overhead-allocation-mode` 选择分配模式：`MACHINE_HOUR`=Σ(工序 standardTime/60)×`erp-mfg.overhead-allocation-rate`（机器工时×费率）；`LABOR_RATIO`=laborCost×rate（人工成本比例）。工作中心 schema 拆分（`ErpMfgWorkcenter` laborRate/overheadRate 分列）为 successor（ask-first ORM 保护区域，触发条件：产品要求工作中心级精确费率）。
+- **subcontract 委外费（归集源 = N=1 已过账委外订单）**：`CostRollupService` 经 `erp-mfg.subcontract-cost-aggregation-enabled`（默认 false）控制。关时 `subcontractCost`=0；开时按物料聚合 `docStatus=COMPLETED` 委外订单（`ErpMfgSubcontractOrder.productId`）的 `processingFee`，按委外行产量（`ErpMfgSubcontractOrderLine.quantity`）分摊为单位委外成本。
+- **CostBreakdown 四要素**：`unitCost = material + labor + overhead + subcontract`（`CostRollupLineView` 补 `subcontractCost` 字段，`ErpMfgCostRollupLine` schema 四要素列已存在）。FIRMED rollup 行 unitCost 含四要素后经 `StandardCostResolver` 传播进存货 STANDARD 成本法（costing-methods.md:56 链路）。
+- **本期 Non-Goal**：工作中心 laborRate/overheadRate schema 拆分（精确工作中心级费率，ask-first successor）/ subcontract 委外差异（`ProductionVarianceCalculator` SUBCONTRACT 差异类型 successor，5 类差异未含 SUBCONTRACT）。
+
 ## 成本核算方法
 
 ### 方法类型
