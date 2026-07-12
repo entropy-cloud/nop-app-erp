@@ -9,9 +9,13 @@ import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.costing.BookingContext;
 import app.erp.inv.service.costing.CostMethodResolver;
 import app.erp.inv.service.costing.CostingStrategy;
+import app.erp.inv.service.costing.BatchCostingStrategy;
 import app.erp.inv.service.costing.FifoCostingStrategy;
+import app.erp.inv.service.costing.LifoCostingStrategy;
 import app.erp.inv.service.costing.MovingAverageCostingStrategy;
+import app.erp.inv.service.costing.SpecificCostingStrategy;
 import app.erp.inv.service.costing.StandardCostingStrategy;
+import app.erp.inv.service.costing.WeightedAverageCostingStrategy;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -67,7 +71,18 @@ public class StockMoveBookkeeper implements BookingContext {
     @Inject
     StandardCostingStrategy standardCostingStrategy;
 
-    /** 其他策略（FIFO 等）按 costMethod 注册——Phase 2 注入 FifoCostingStrategy 后填充。 */
+    @Inject
+    LifoCostingStrategy lifoCostingStrategy;
+
+    @Inject
+    WeightedAverageCostingStrategy weightedAverageCostingStrategy;
+
+    @Inject
+    SpecificCostingStrategy specificCostingStrategy;
+
+    @Inject
+    BatchCostingStrategy batchCostingStrategy;
+
     final Map<String, CostingStrategy> strategyByMethod = new HashMap<>();
 
     @jakarta.annotation.PostConstruct
@@ -75,6 +90,10 @@ public class StockMoveBookkeeper implements BookingContext {
         register(movingAverageCostingStrategy);
         register(fifoCostingStrategy);
         register(standardCostingStrategy);
+        register(lifoCostingStrategy);
+        register(weightedAverageCostingStrategy);
+        register(specificCostingStrategy);
+        register(batchCostingStrategy);
     }
 
     public void register(CostingStrategy strategy) {

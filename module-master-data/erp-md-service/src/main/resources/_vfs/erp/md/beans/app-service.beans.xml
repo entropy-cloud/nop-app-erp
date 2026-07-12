@@ -15,4 +15,8 @@
     <!-- 主数据域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /md/）。 -->
     <bean id="app.erp.md.service.report.ErpMdReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- 跨账套科目映射解析器（多套账传播时科目翻译） -->
+    <bean id="app.erp.md.dao.SubjectMappingResolver"
+          class="app.erp.md.dao.SubjectMappingResolver"/>
 </beans>

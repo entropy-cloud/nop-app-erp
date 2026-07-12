@@ -17,6 +17,7 @@ entity:
     ErpMdPartnerContact: Partner Contact
     ErpMdSettlementMethod: Settlement Method
     ErpMdSubject: Accounting Subject
+    ErpMdSubjectMapping: Subject Mapping
     ErpMdSupplierApproval: Supplier Approval (AVL)
     ErpMdTaxRate: Tax Rate
     ErpMdUoM: Unit of Measure
@@ -361,6 +362,20 @@ prop:
       parent: Parent
       currency: Currency
       children: Children
+    ErpMdSubjectMapping:
+      id: ID
+      sourceSubjectId: Source Subject
+      targetAcctSchemaId: Target Acct Schema
+      targetSubjectId: Target Subject
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      sourceSubject: Source Subject
+      targetAcctSchema: Target Acct Schema
+      targetSubject: Target Subject
     ErpMdSupplierApproval:
       id: ID
       partnerId: Partner

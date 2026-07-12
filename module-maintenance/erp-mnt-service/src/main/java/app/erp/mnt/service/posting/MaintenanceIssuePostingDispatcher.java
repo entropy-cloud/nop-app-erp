@@ -9,6 +9,7 @@ import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mnt.dao.entity.ErpMntEquipment;
 import app.erp.mnt.dao.entity.ErpMntSparePartUsage;
 import app.erp.mnt.service.ErpMntConstants;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.beans.query.QueryBean;
@@ -209,16 +210,7 @@ public class MaintenanceIssuePostingDispatcher {
     }
 
     private Long resolveAcctSchemaId(Long orgId) {
-        if (orgId == null) {
-            return null;
-        }
-        IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orgId", orgId));
-        q.addFilter(eq("status", "ACTIVE"));
-        q.setLimit(1);
-        List<ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
-        return schemas.isEmpty() ? null : schemas.get(0).getId();
+        return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
     private Long resolveFunctionalCurrencyId(Long acctSchemaId) {

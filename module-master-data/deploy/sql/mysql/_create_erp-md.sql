@@ -354,6 +354,20 @@ CREATE TABLE erp_md_acct_schema_coa(
   constraint PK_erp_md_acct_schema_coa primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_subject_mapping(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SOURCE_SUBJECT_ID BIGINT NOT NULL    COMMENT '源科目',
+  TARGET_ACCT_SCHEMA_ID BIGINT NOT NULL    COMMENT '目标账套',
+  TARGET_SUBJECT_ID BIGINT NOT NULL    COMMENT '目标科目',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_md_subject_mapping primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_material(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '物料编码',
@@ -474,6 +488,8 @@ CREATE TABLE erp_md_uom_conversion(
    ALTER TABLE erp_md_cost_center COMMENT '成本中心';
                 
    ALTER TABLE erp_md_acct_schema_coa COMMENT '账套科目表';
+                
+   ALTER TABLE erp_md_subject_mapping COMMENT '科目映射';
                 
    ALTER TABLE erp_md_material COMMENT '物料';
                 

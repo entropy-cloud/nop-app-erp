@@ -14,18 +14,17 @@ import app.erp.log.service.ErpLogConstants;
 import app.erp.log.service.ErpLogErrors;
 import app.erp.log.service.event.ShipmentDeliveredEvent;
 import app.erp.log.service.gateway.GatewayDispatcher;
+import app.erp.md.dao.AcctSchemaResolver;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
-import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
-import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +38,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static io.nop.api.core.beans.FilterBeans.eq;
 import io.nop.biz.crud.EntityData;
 
 /**
@@ -279,17 +277,7 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
     /** 按 orgId 解析默认账套（运单不携带 acctSchemaId，由组织主数据解析）。 */
     @SuppressWarnings("unchecked")
     private Long resolveAcctSchemaId(Long orgId) {
-        if (orgId == null) {
-            return null;
-        }
-        IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao =
-                daoProvider().daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orgId", orgId));
-        // O-5：追加 code 排序确保确定性
-        q.addOrderField("code", false);
-        app.erp.md.dao.entity.ErpMdAcctSchema schema = dao.findFirstByQuery(q);
-        return schema != null ? schema.getId() : null;
+        return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider(), orgId);
     }
 
     private Long resolveCarrierPartnerId(ErpLogShipment shipment) {

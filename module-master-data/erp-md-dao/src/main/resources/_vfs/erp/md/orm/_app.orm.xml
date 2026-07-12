@@ -1367,6 +1367,66 @@
                 </to-one>
             </relations>
         </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdSubjectMapping" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="科目映射"
+                name="app.erp.md.dao.entity.ErpMdSubjectMapping" registerShortName="true"
+                tableName="erp_md_subject_mapping" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="arrow-right-left"
+                i18n-en:displayName="Subject Mapping">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="SOURCE_SUBJECT_ID" displayName="源科目" mandatory="true" name="sourceSubjectId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Subject"/>
+                <column code="TARGET_ACCT_SCHEMA_ID" displayName="目标账套" mandatory="true" name="targetAcctSchemaId"
+                        propId="3" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Target Acct Schema"/>
+                <column code="TARGET_SUBJECT_ID" displayName="目标科目" mandatory="true" name="targetSubjectId" propId="4"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Target Subject"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="5" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="6" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="7" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="8" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="9" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="10" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_MD_SUBJECT_MAPPING_TARGET_SCHEMA" unique="false">
+                    <column name="targetAcctSchemaId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="sourceSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
+                        i18n-en:displayName="Source Subject">
+                    <join>
+                        <on leftProp="sourceSubjectId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="targetAcctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"
+                        i18n-en:displayName="Target Acct Schema">
+                    <join>
+                        <on leftProp="targetAcctSchemaId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="targetSubject" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub"
+                        i18n-en:displayName="Target Subject">
+                    <join>
+                        <on leftProp="targetSubjectId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="sourceSubjectId,targetAcctSchemaId" name="UK_MD_SUBJECT_MAPPING"/>
+            </unique-keys>
+        </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="组织"
                 name="app.erp.md.dao.entity.ErpMdOrganization" registerShortName="true" tableName="erp_md_organization"

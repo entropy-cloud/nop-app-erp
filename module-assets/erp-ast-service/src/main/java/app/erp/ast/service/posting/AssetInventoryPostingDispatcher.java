@@ -5,9 +5,8 @@ import app.erp.ast.dao.entity.ErpAstInventory;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
-import app.erp.md.dao.entity.ErpMdAcctSchema;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
-import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -18,10 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
-import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 资产盘点差异过账派发器。盘点单 POSTED 时组装 {@link PostingEvent}(ASSET_INVENTORY_ADJUSTMENT)
@@ -100,15 +96,7 @@ public class AssetInventoryPostingDispatcher {
     }
 
     private Long resolveAcctSchemaId(Long orgId) {
-        if (orgId == null) {
-            return null;
-        }
-        IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orgId", orgId));
-        q.setLimit(1);
-        List<ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
-        return schemas.isEmpty() ? null : schemas.get(0).getId();
+        return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
     private String resolveSubjectCode(Long subjectId, String defaultCode) {

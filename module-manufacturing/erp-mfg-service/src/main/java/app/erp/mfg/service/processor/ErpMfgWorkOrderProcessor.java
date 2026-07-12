@@ -13,6 +13,7 @@ import app.erp.mfg.service.genealogy.BatchGenealogyWriter;
 import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
 import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
@@ -448,17 +449,7 @@ public class ErpMfgWorkOrderProcessor {
      * 完工入库 GL 过账要求凭证行 acctSchemaId 非空，故 generateCompletionMove 需传入。
      */
     protected Long resolveAcctSchemaId(Long orgId) {
-        if (orgId == null) {
-            return null;
-        }
-        IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao =
-                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orgId", orgId));
-        q.addFilter(eq("status", "ACTIVE"));
-        q.setLimit(1);
-        List<app.erp.md.dao.entity.ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
-        return schemas.isEmpty() ? null : schemas.get(0).getId();
+        return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
     protected boolean isAllowPartialKitStart() {

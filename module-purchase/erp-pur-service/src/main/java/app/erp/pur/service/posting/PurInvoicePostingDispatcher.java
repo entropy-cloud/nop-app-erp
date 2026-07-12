@@ -2,12 +2,10 @@ package app.erp.pur.service.posting;
 
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
-import app.erp.md.dao.entity.ErpMdAcctSchema;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.pur.dao.entity.ErpPurInvoice;
-import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
-import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,14 +97,6 @@ public class PurInvoicePostingDispatcher {
      * 过账所需账套由组织推导。取第一个匹配（单组织单账套基线）。
      */
     private Long resolveAcctSchemaId(Long orgId) {
-        if (orgId == null) {
-            return null;
-        }
-        IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("orgId", orgId));
-        q.setLimit(1);
-        java.util.List<ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
-        return schemas.isEmpty() ? null : schemas.get(0).getId();
+        return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

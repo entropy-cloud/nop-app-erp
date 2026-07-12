@@ -37,6 +37,8 @@ alter table erp_md_cost_center add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NU
 
 alter table erp_md_acct_schema_coa add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_subject_mapping add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_material add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_location add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -101,6 +103,9 @@ alter table erp_md_cost_center add constraint PK_erp_md_cost_center primary key 
 
 alter table erp_md_acct_schema_coa drop constraint PK_erp_md_acct_schema_coa;
 alter table erp_md_acct_schema_coa add constraint PK_erp_md_acct_schema_coa primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_subject_mapping drop constraint PK_erp_md_subject_mapping;
+alter table erp_md_subject_mapping add constraint PK_erp_md_subject_mapping primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_material drop constraint PK_erp_md_material;
 alter table erp_md_material add constraint PK_erp_md_material primary key (NOP_TENANT_ID, ID);

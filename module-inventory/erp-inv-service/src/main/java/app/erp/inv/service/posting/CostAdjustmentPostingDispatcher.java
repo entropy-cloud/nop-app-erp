@@ -9,7 +9,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.inv.dao.entity.ErpInvCostAdjust;
 import app.erp.inv.dao.entity.ErpInvCostAdjustLine;
 import app.erp.inv.service.ErpInvConstants;
-import app.erp.md.dao.entity.ErpMdAcctSchema;
+import app.erp.md.dao.AcctSchemaResolver;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -142,17 +142,6 @@ public class CostAdjustmentPostingDispatcher {
     }
 
     private Long resolveAcctSchemaId(Long orgId) {
-        if (orgId == null) {
-            return null;
-        }
-        IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orgId", orgId));
-        q.setLimit(1);
-        List<ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
-        if (!schemas.isEmpty()) {
-            return schemas.get(0).getId();
-        }
-        return null;
+        return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

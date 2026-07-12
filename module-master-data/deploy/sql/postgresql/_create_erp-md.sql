@@ -354,6 +354,20 @@ CREATE TABLE erp_md_acct_schema_coa(
   constraint PK_erp_md_acct_schema_coa primary key (id)
 );
 
+CREATE TABLE erp_md_subject_mapping(
+  id INT8 NOT NULL ,
+  source_subject_id INT8 NOT NULL ,
+  target_acct_schema_id INT8 NOT NULL ,
+  target_subject_id INT8 NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_md_subject_mapping primary key (id)
+);
+
 CREATE TABLE erp_md_material(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -1032,6 +1046,28 @@ CREATE TABLE erp_md_uom_conversion(
       COMMENT ON COLUMN erp_md_acct_schema_coa.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_md_acct_schema_coa.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_md_subject_mapping IS '科目映射';
+                
+      COMMENT ON COLUMN erp_md_subject_mapping.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.source_subject_id IS '源科目';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.target_acct_schema_id IS '目标账套';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.target_subject_id IS '目标科目';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_md_subject_mapping.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_md_material IS '物料';
                 

@@ -18,6 +18,7 @@ drop table erp_sys_config;
 drop table erp_md_warehouse;
 drop table erp_md_cost_center;
 drop table erp_md_acct_schema_coa;
+drop table erp_md_subject_mapping;
 drop table erp_md_material;
 drop table erp_md_location;
 drop table erp_md_material_sku;

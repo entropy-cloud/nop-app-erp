@@ -98,12 +98,19 @@ public class ErpFinPostingProcessor {
     @Inject
     ITransactionTemplate transactionTemplate;
 
+    @Inject
+    SchemaPropagator schemaPropagator;
+
+    @Inject
+    app.erp.md.dao.SubjectMappingResolver subjectMappingResolver;
+
     /**
      * 正向过账编排。幂等命中（源单已过账）返回 {@code null}。
      *
-     * <p>可观测性：入口解析 {@code traceId}（缺失生成），各 protected step 经 {@link #timeStage} 埋结构化日志
-     * （成功含 traceId+billHeadCode+businessType+voucherId+命中 Provider/模板+各阶段耗时；失败含同一键+ErrorCode+阶段）。
-     * 埋点在编排方法（非覆盖点），派生 Processor 覆盖单步时仍保留编排层埋点。
+     * <p>多套账传播：当 {@code erp-fin.multi-schema-enabled=true} 且源账套 {@code isPropagate=true} 时，
+     * 同一笔业务自动在所有目标账套各生成一张凭证。Facts 生成一次（schema 无关），persistVoucher 按账套循环。
+     *
+     * <p>可观测性：入口解析 {@code traceId}（缺失生成），各 protected step 经 {@link #timeStage} 埋结构化日志。
      */
     @SingleSession
     public Long process(PostingEvent event, IServiceContext context) {
@@ -111,7 +118,9 @@ public class ErpFinPostingProcessor {
         PostingRun run = PostingRun.forPost(event);
         long processBegin = CoreMetrics.nanoTime();
 
-        if (alreadyPosted(event, context)) {
+        List<Long> targetSchemas = schemaPropagator.resolveTargetSchemas(event.getOrgId(), event.getAcctSchemaId());
+
+        if (alreadyPosted(event, event.getAcctSchemaId(), context)) {
             LOG.info("过账幂等命中（源单已过账），空操作：traceId={}, billHeadCode={}, businessType={}",
                     run.traceId, run.billHeadCode, run.businessType);
             return null;
@@ -125,11 +134,11 @@ public class ErpFinPostingProcessor {
 
             ErpFinAccountingPeriod period = timeStage("resolveOpenPeriod", run,
                     () -> resolveOpenPeriod(event.getVoucherDate(), context));
-            AcctDocContext ctx = prepareContext(event, period, context);
-            ctx.setTraceId(run.traceId);
+            AcctDocContext primaryCtx = prepareContext(event, period, context);
+            primaryCtx.setTraceId(run.traceId);
 
             List<VoucherFact> facts = timeStage("generateFacts", run,
-                    () -> generateFacts(event, provider, ctx, context));
+                    () -> generateFacts(event, provider, primaryCtx, context));
             run.captureTemplate(facts);
             timeStageVoid("resolveSubjects", run, () -> resolveSubjects(facts, context));
 
@@ -137,17 +146,46 @@ public class ErpFinPostingProcessor {
                     () -> balanceTotals(facts, context));
             timeStageVoid("assertBalanced", run, () -> assertBalanced(totals[0], totals[1], context));
 
-            Long voucherId = timeStage("persistVoucher", run,
-                    () -> persistVoucher(event, ctx, facts, totals[0], totals[1], false, null, POSTING_TYPE_NORMAL, context));
-            // 凭证落库成功后、同事务内生成应收应付辅助账（强一致：凭证 + 辅助账同生共死）。
-            timeStageVoid("generateArApItems", run, () -> arApItemGenerator.generate(event, context));
+            Long primaryVoucherId = null;
+            Long originalSchemaId = event.getAcctSchemaId();
+            for (Long schemaId : targetSchemas) {
+                if (alreadyPosted(event, schemaId, context)) {
+                    LOG.info("跳过已过账账套：traceId={}, billHeadCode={}, schemaId={}",
+                            run.traceId, run.billHeadCode, schemaId);
+                    continue;
+                }
+                AcctDocContext ctx = prepareContext(event, period, context);
+                ctx.setAcctSchemaId(schemaId);
+                ctx.setTraceId(run.traceId);
 
+                List<VoucherFact> effectiveFacts = Objects.equals(schemaId, originalSchemaId)
+                        ? facts
+                        : translateFactsForSchema(facts, originalSchemaId, schemaId, context);
+
+                final Long currentSchemaId = schemaId;
+                final List<VoucherFact> factsForLambda = effectiveFacts;
+                Long voucherId = timeStage("persistVoucher_" + schemaId, run,
+                        () -> persistVoucher(event, ctx, factsForLambda, totals[0], totals[1], false, null,
+                                POSTING_TYPE_NORMAL, context));
+
+                event.setAcctSchemaId(currentSchemaId);
+                timeStageVoid("generateArApItems_" + schemaId, run,
+                        () -> arApItemGenerator.generate(event, context));
+
+                if (Objects.equals(schemaId, originalSchemaId)) {
+                    primaryVoucherId = voucherId;
+                }
+            }
+            event.setAcctSchemaId(originalSchemaId);
+
+            int voucherCount = targetSchemas.size();
             postingMetrics.recordLatency(CoreMetrics.nanoTimeDiff(processBegin));
-            LOG.info("过账成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, provider={}, fallback={}, template={}, timings(ms)={}",
-                    run.traceId, run.billHeadCode, run.businessType, voucherId,
-                    run.providerName, run.isFallback, run.templateDesc, run.timingsMillis());
-            return voucherId;
+            LOG.info("过账成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, provider={}, fallback={}, template={}, timings(ms)={}",
+                    run.traceId, run.billHeadCode, run.businessType, primaryVoucherId,
+                    voucherCount, run.providerName, run.isFallback, run.templateDesc, run.timingsMillis());
+            return primaryVoucherId;
         } catch (RuntimeException e) {
+            event.setAcctSchemaId(event.getAcctSchemaId());
             logFailure(run, e);
             recordPostFailure(run, event, e);
             throw e;
@@ -155,7 +193,7 @@ public class ErpFinPostingProcessor {
     }
 
     /**
-     * 红冲编排。按业财回链反查原已过账凭证，生成红字冲销凭证。
+     * 红冲编排。按业财回链反查<b>所有</b>已过账凭证（多套账模式下跨全部账套），逐张生成红字冲销凭证。
      */
     @SingleSession
     public Long reverseProcess(String billHeadCode, ErpFinBusinessType businessType, IServiceContext context) {
@@ -163,43 +201,44 @@ public class ErpFinPostingProcessor {
         long reverseBegin = CoreMetrics.nanoTime();
 
         try {
-            ErpFinVoucher original = timeStage("findPostedVoucher", run,
-                    () -> findPostedVoucher(billHeadCode, businessType, context));
-            if (original == null) {
+            List<ErpFinVoucher> originals = timeStage("findPostedVouchers", run,
+                    () -> findAllPostedVouchers(billHeadCode, businessType, context));
+            if (originals.isEmpty()) {
                 throw new NopException(ErpFinPostingErrors.ERR_REVERSE_SOURCE_NOT_FOUND)
                         .param(ErpFinPostingErrors.ARG_BILL_HEAD_CODE, billHeadCode)
                         .param(ErpFinPostingErrors.ARG_BUSINESS_TYPE, businessType);
             }
 
-            List<ErpFinVoucherLine> originalLines = timeStage("loadLines", run,
-                    () -> loadLines(original.getId(), context));
-            ErpFinAccountingPeriod period = timeStage("resolveOpenPeriod", run,
-                    () -> resolveOpenPeriod(original.getVoucherDate(), context));
-            AcctDocContext ctx = prepareReversalContext(original, period, originalLines, context);
-            ctx.setTraceId(run.traceId);
+            Long primaryReversalId = null;
+            Long primarySchemaId = originals.get(0).getAcctSchemaId();
+            for (ErpFinVoucher original : originals) {
+                List<ErpFinVoucherLine> originalLines = loadLines(original.getId(), context);
+                ErpFinAccountingPeriod period = resolveOpenPeriod(original.getVoucherDate(), context);
+                AcctDocContext ctx = prepareReversalContext(original, period, originalLines, context);
+                ctx.setTraceId(run.traceId);
 
-            ReversalDraft draft = timeStage("buildReversalDraft", run,
-                    () -> buildReversalDraft(originalLines, businessType, context));
+                ReversalDraft draft = buildReversalDraft(originalLines, businessType, context);
 
-            Long voucherId = timeStage("persistVoucher", run,
-                    () -> persistVoucher(null, ctx, draft.facts, draft.totalDebit, draft.totalCredit, true,
-                            original.getId(), POSTING_TYPE_REVERSAL, billHeadCode, businessType, context));
-            // 红冲凭证落库后、同事务内取消原辅助账项（对齐冲销语义）。
-            timeStageVoid("cancelArApOnReverse", run,
-                    () -> arApItemGenerator.cancelOnReverse(billHeadCode, businessType, context));
-            // O-8：原正常凭证补标 isReversed=true 统一由引擎公共流程处理（原由 Asset/ProjectPostingExecutor 各自重复实现）。
-            // 使账簿反映原凭证已被红冲、并允许幂等重过账（同 billCode 再过账时 alreadyPosted 不再命中已冲销凭证）。
-            timeStageVoid("markOriginalVoucherReversed", run,
-                    () -> markOriginalVoucherReversed(billHeadCode, businessType, context));
-            // 业财闭环方向二（冲销反写）：红字凭证+回链+辅助账落库后，构造 VoucherReversedEvent 派发给
-            // 各域监听者回退源单状态。默认 SYNC 同事务同步通知（posting.md §实现策略 裁决3）。
-            timeStageVoid("notifyReversalListeners", run,
-                    () -> dispatchReversalEvent(run, voucherId, original.getId(), billHeadCode, businessType, context));
+                Long voucherId = persistVoucher(null, ctx, draft.facts, draft.totalDebit, draft.totalCredit, true,
+                        original.getId(), POSTING_TYPE_REVERSAL, billHeadCode, businessType, context);
+                arApItemGenerator.cancelOnReverse(billHeadCode, businessType, context);
+
+                if (Objects.equals(original.getAcctSchemaId(), primarySchemaId)) {
+                    primaryReversalId = voucherId;
+                }
+            }
+
+            final Long finalPrimaryReversalId = primaryReversalId;
+            final Long firstOriginalId = originals.get(0).getId();
+            markOriginalVoucherReversed(billHeadCode, businessType, context);
+            dispatchReversalEvent(run, finalPrimaryReversalId,
+                    firstOriginalId, billHeadCode, businessType, context);
 
             postingMetrics.recordLatency(CoreMetrics.nanoTimeDiff(reverseBegin));
-            LOG.info("红冲成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, reversalOf={}, timings(ms)={}",
-                    run.traceId, run.billHeadCode, run.businessType, voucherId, original.getId(), run.timingsMillis());
-            return voucherId;
+            LOG.info("红冲成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, timings(ms)={}",
+                    run.traceId, run.billHeadCode, run.businessType, primaryReversalId, originals.size(),
+                    run.timingsMillis());
+            return primaryReversalId;
         } catch (RuntimeException e) {
             logFailure(run, e);
             recordReverseFailure(run, e);
@@ -413,22 +452,21 @@ public class ErpFinPostingProcessor {
     // ---------- 步骤（protected + IServiceContext 末参，供派生覆盖） ----------
 
     /**
-     * 幂等前置：按业财回链反查已过账凭证。
+     * 幂等前置：按业财回链反查指定账套的已过账凭证。
      *
-     * <p>O-16 补偿语义：REQUIRES_NEW 事务已提交（凭证已落库）但调用方在 {@code posted=true} 设置前失败的场景下，
-     * 源单据仍为 {@code posted=false}。下次兜底扫描重试调用 {@code process()} 时，本方法返回 {@code true}，
-     * {@code process()} 返回 {@code null}（幂等命中，跳过重试）——这正确表达了"凭证已存在，无需重建"的语义。
-     * 调用方（{@link DeferredPostingSweepJob}）据返回值将异常记录标记为已重试成功，完成补偿闭环。
+     * <p>{@code acctSchemaId} 非 null 时仅匹配该账套的凭证（多套账模式下的逐账套幂等）；
+     * 为 null 时匹配任意账套（向后兼容单账套调用）。
      *
      * <p>已冲销凭证（{@code isReversed=true}）不视为幂等命中——允许同 billCode 重新过账生成新正常凭证。
      */
-    protected boolean alreadyPosted(PostingEvent event, IServiceContext context) {
+    protected boolean alreadyPosted(PostingEvent event, Long acctSchemaId, IServiceContext context) {
         List<ErpFinVoucherBillR> links = findBillLinks(event.getBillHeadCode(), event.getBusinessType(), context);
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         for (ErpFinVoucherBillR link : links) {
             ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
             if (voucher != null && VOUCHER_STATUS_POSTED.equals(voucher.getDocStatus())
-                    && !Boolean.TRUE.equals(voucher.getIsReversed())) {
+                    && !Boolean.TRUE.equals(voucher.getIsReversed())
+                    && (acctSchemaId == null || Objects.equals(voucher.getAcctSchemaId(), acctSchemaId))) {
                 return true;
             }
         }
@@ -531,6 +569,64 @@ public class ErpFinPostingProcessor {
                 fact.setSubjectName(subject.getName());
             }
         }
+    }
+
+    /**
+     * 跨账套科目翻译：将源账套的 facts 科目翻译为目标账套科目。
+     * 无映射时保持源科目（所有账套共享同一科目表的场景）。
+     */
+    protected List<VoucherFact> translateFactsForSchema(List<VoucherFact> facts, Long sourceSchemaId,
+                                                         Long targetSchemaId, IServiceContext context) {
+        List<Long> sourceSubjectIds = new ArrayList<>();
+        for (VoucherFact f : facts) {
+            if (f.getSubjectId() != null) {
+                sourceSubjectIds.add(f.getSubjectId());
+            }
+        }
+        Map<Long, Long> mapping = subjectMappingResolver.resolveMappings(sourceSubjectIds, targetSchemaId);
+        if (mapping.isEmpty() || mapping.size() == sourceSubjectIds.size()
+                && mapping.entrySet().stream().allMatch(e -> e.getKey().equals(e.getValue()))) {
+            return facts;
+        }
+        IErpMdSubjectBiz mdSubjectBiz = bizObjectManager.getBizObject(ErpMdSubject.class.getSimpleName()).asProxy();
+        Map<Long, ErpMdSubject> targetSubjectCache = new HashMap<>();
+        List<VoucherFact> translated = new ArrayList<>(facts.size());
+        for (VoucherFact f : facts) {
+            VoucherFact copy = new VoucherFact();
+            copy.setSubjectCode(f.getSubjectCode());
+            copy.setSubjectId(f.getSubjectId());
+            copy.setSubjectName(f.getSubjectName());
+            copy.setDcDirection(f.getDcDirection());
+            copy.setAmount(f.getAmount());
+            copy.setAmountKey(f.getAmountKey());
+            copy.setAccountKey(f.getAccountKey());
+            copy.setMemo(f.getMemo());
+            copy.setPartnerId(f.getPartnerId());
+            copy.setDepartmentId(f.getDepartmentId());
+            copy.setProjectId(f.getProjectId());
+            copy.setWarehouseId(f.getWarehouseId());
+            copy.setMaterialId(f.getMaterialId());
+            copy.setCostCenterId(f.getCostCenterId());
+            copy.setBusinessType(f.getBusinessType());
+
+            Long mappedId = mapping.get(f.getSubjectId());
+            if (mappedId != null && !mappedId.equals(f.getSubjectId())) {
+                ErpMdSubject targetSubject = targetSubjectCache.get(mappedId);
+                if (targetSubject == null) {
+                    targetSubject = daoProvider.daoFor(ErpMdSubject.class).getEntityById(mappedId);
+                    if (targetSubject != null) {
+                        targetSubjectCache.put(mappedId, targetSubject);
+                    }
+                }
+                if (targetSubject != null) {
+                    copy.setSubjectId(targetSubject.getId());
+                    copy.setSubjectCode(targetSubject.getCode());
+                    copy.setSubjectName(targetSubject.getName());
+                }
+            }
+            translated.add(copy);
+        }
+        return translated;
     }
 
     protected BigDecimal[] balanceTotals(List<VoucherFact> facts, IServiceContext context) {
@@ -690,6 +786,28 @@ public class ErpFinPostingProcessor {
             }
         }
         return null;
+    }
+
+    /**
+     * 查找<b>所有</b>已过账且未冲销的凭证（跨全部账套）。多套账红冲时逐张反转。
+     * 结果按 acctSchemaId 升序排列（主账套 FINANCIAL 通常 ID 最小）。
+     */
+    protected List<ErpFinVoucher> findAllPostedVouchers(String billHeadCode, ErpFinBusinessType businessType,
+                                                         IServiceContext context) {
+        List<ErpFinVoucherBillR> links = findBillLinks(billHeadCode, businessType, context);
+        IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
+        List<ErpFinVoucher> result = new ArrayList<>();
+        for (ErpFinVoucherBillR link : links) {
+            ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
+            if (voucher != null && VOUCHER_STATUS_POSTED.equals(voucher.getDocStatus())
+                    && !Boolean.TRUE.equals(voucher.getIsReversed())
+                    && (voucher.getPostingType() == null
+                        || Objects.equals(voucher.getPostingType(), POSTING_TYPE_NORMAL))) {
+                result.add(voucher);
+            }
+        }
+        result.sort(Comparator.comparing(v -> v.getAcctSchemaId() == null ? Long.MAX_VALUE : v.getAcctSchemaId()));
+        return result;
     }
 
     protected List<ErpFinVoucherBillR> findBillLinks(String billHeadCode, ErpFinBusinessType businessType,

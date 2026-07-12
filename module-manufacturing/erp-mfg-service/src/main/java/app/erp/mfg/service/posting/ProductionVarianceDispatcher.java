@@ -6,8 +6,7 @@ import app.erp.mfg.dao.entity.ErpMfgCostVariance;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.costing.ProductionVarianceCalculator;
-import app.erp.md.dao.entity.ErpMdAcctSchema;
-import io.nop.api.core.beans.query.QueryBean;
+import app.erp.md.dao.AcctSchemaResolver;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
@@ -21,8 +20,6 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 生产差异过账派发器（manufacturing 域侧独立 dispatcher，plan 2026-07-05-1838-2 §Phase 3 Decision）。
@@ -165,16 +162,7 @@ public class ProductionVarianceDispatcher {
      * 对齐 PPV 范式中 ledger.acctSchemaId 的来源——库存账套来自库存域移动单，生产差异无库存通道故经组织解析。
      */
     private Long resolveAcctSchemaId(Long orgId) {
-        if (orgId == null) {
-            return null;
-        }
-        IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orgId", orgId));
-        q.addFilter(eq("status", "ACTIVE"));
-        q.setLimit(1);
-        List<ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
-        return schemas.isEmpty() ? null : schemas.get(0).getId();
+        return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 
     private static BigDecimal nullToZero(BigDecimal v) {

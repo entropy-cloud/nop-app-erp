@@ -37,6 +37,8 @@ alter table erp_md_cost_center add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NUL
 
 alter table erp_md_acct_schema_coa add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_subject_mapping add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_material add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_location add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -101,6 +103,9 @@ alter table erp_md_cost_center add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_acct_schema_coa drop primary key;
 alter table erp_md_acct_schema_coa add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_subject_mapping drop primary key;
+alter table erp_md_subject_mapping add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_material drop primary key;
 alter table erp_md_material add primary key (NOP_TENANT_ID, ID);

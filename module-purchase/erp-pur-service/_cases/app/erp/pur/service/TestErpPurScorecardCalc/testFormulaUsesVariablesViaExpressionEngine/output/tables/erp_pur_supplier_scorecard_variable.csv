@@ -1,0 +1,3 @@
+_chgType,ID,CRITERIA_ID,VARIABLE_NAME,PATH,VALUE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,3,2,pass_rate,pass_rate,80,0,0,autotest-ref,*,autotest-ref,*
+A,4,2,bonus,bonus,90,0,0,autotest-ref,*,autotest-ref,*

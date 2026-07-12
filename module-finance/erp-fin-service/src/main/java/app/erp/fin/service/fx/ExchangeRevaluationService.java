@@ -6,12 +6,14 @@ import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinFundAccount;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.close.CloseVoucherWriter;
 import app.erp.fin.service.close.CloseVoucherWriter.Line;
+import app.erp.fin.service.posting.SchemaPropagator;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -61,14 +63,27 @@ public class ExchangeRevaluationService {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    SchemaPropagator schemaPropagator;
+
     public Long revalue(ErpFinAccountingPeriod period, IServiceContext context) {
+        Long primarySchemaId = resolveAcctSchemaId(period.getId());
+        List<Long> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
+        Long lastVoucherId = null;
+        for (Long schemaId : schemas) {
+            lastVoucherId = revalueForSchema(period, schemaId, context);
+        }
+        return lastVoucherId;
+    }
+
+    private Long revalueForSchema(ErpFinAccountingPeriod period, Long acctSchemaId, IServiceContext context) {
         Long functionalCurrencyId = resolveFunctionalCurrencyId();
         // 汇率延迟解析：仅当存在外币 AR/AP 或外币银行账户时才要求配置 period-end-exchange-rate
         // （无外币项的干净期间不应因汇率未配而阻断结账，保持与既有行为一致）。
-        Long arApVoucherId = revalueArAp(period, functionalCurrencyId, null);
+        Long arApVoucherId = revalueArAp(period, functionalCurrencyId, null, acctSchemaId);
         Long bankVoucherId = null;
         if (isBankFxRevaluationEnabled()) {
-            bankVoucherId = revalueBankDeposits(period, functionalCurrencyId, null);
+            bankVoucherId = revalueBankDeposits(period, functionalCurrencyId, null, acctSchemaId);
         }
         // 返回任一非空凭证 ID（用于测试断言；两类凭证独立生成，调用方可按 billCode 反查）。
         return arApVoucherId != null ? arApVoucherId : bankVoucherId;
@@ -85,7 +100,7 @@ public class ExchangeRevaluationService {
     }
 
     /** AR/AP 外币未核销项重估（既有逻辑，抽方法）。periodEndRate 为 null 时按需延迟解析。 */
-    private Long revalueArAp(ErpFinAccountingPeriod period, Long functionalCurrencyId, BigDecimal periodEndRate) {
+    private Long revalueArAp(ErpFinAccountingPeriod period, Long functionalCurrencyId, BigDecimal periodEndRate, Long acctSchemaId) {
         // 外币未核销项（status != SETTLED/CANCELLED，currencyId != 本位币）。
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
@@ -133,7 +148,6 @@ public class ExchangeRevaluationService {
             return null;
         }
 
-        Long acctSchemaId = resolveAcctSchemaId(period.getId());
         return CloseVoucherWriter.writeVoucher(daoProvider, "FXV", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
                 period.getOrgId(), acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
@@ -146,7 +160,7 @@ public class ExchangeRevaluationService {
      * （借/贷银行存款科目 / 贷/借汇兑损益）。本位币账户不重估。
      */
     private Long revalueBankDeposits(ErpFinAccountingPeriod period, Long functionalCurrencyId,
-                                     BigDecimal periodEndRate) {
+                                     BigDecimal periodEndRate, Long acctSchemaId) {
         IEntityDao<ErpFinFundAccount> accDao = daoProvider.daoFor(ErpFinFundAccount.class);
         QueryBean q = new QueryBean();
         if (functionalCurrencyId != null) {
@@ -195,7 +209,6 @@ public class ExchangeRevaluationService {
         if (lines.isEmpty()) {
             return null;
         }
-        Long acctSchemaId = resolveAcctSchemaId(period.getId());
         return CloseVoucherWriter.writeVoucher(daoProvider, "FXB", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
                 period.getOrgId(), acctSchemaId, period.getId(), functionalCurrencyId, BigDecimal.ONE,
@@ -274,11 +287,19 @@ public class ExchangeRevaluationService {
     }
 
     private Long resolveAcctSchemaId(Long periodId) {
-        IEntityDao<app.erp.fin.dao.entity.ErpFinVoucher> dao = daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinVoucher.class);
+        ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
+        Long orgId = period != null ? period.getOrgId() : null;
+        if (orgId != null) {
+            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            if (schemaId != null) {
+                return schemaId;
+            }
+        }
+        IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
         q.setLimit(1);
-        List<app.erp.fin.dao.entity.ErpFinVoucher> list = dao.findAllByQuery(q);
+        List<ErpFinVoucher> list = dao.findAllByQuery(q);
         if (!list.isEmpty() && list.get(0).getAcctSchemaId() != null) {
             return list.get(0).getAcctSchemaId();
         }

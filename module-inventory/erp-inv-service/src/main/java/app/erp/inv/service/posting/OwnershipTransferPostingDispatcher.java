@@ -5,13 +5,11 @@ import app.erp.fin.dao.PostingEvent;
 import app.erp.inv.dao.entity.ErpInvOwnershipTransfer;
 import app.erp.inv.dao.entity.ErpInvOwnershipTransferLine;
 import app.erp.inv.service.ErpInvConstants;
-import app.erp.md.dao.entity.ErpMdAcctSchema;
-import io.nop.api.core.beans.query.QueryBean;
+import app.erp.md.dao.AcctSchemaResolver;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
-import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +19,6 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 所有权转移过账派发器。转移单 DONE 后（同库位调账同事务确立之后）按 {@code transferType} 派生业务类型，
@@ -120,14 +116,6 @@ public class OwnershipTransferPostingDispatcher {
     }
 
     private Long resolveAcctSchemaId(Long orgId) {
-        if (orgId == null) {
-            return null;
-        }
-        IEntityDao<ErpMdAcctSchema> dao = daoProvider.daoFor(ErpMdAcctSchema.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orgId", orgId));
-        q.setLimit(1);
-        List<ErpMdAcctSchema> schemas = dao.findAllByQuery(q);
-        return schemas.isEmpty() ? null : schemas.get(0).getId();
+        return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
 }

@@ -40,6 +40,10 @@
     <bean id="app.erp.fin.service.posting.ErpFinPostingProcessor"
           class="app.erp.fin.service.posting.ErpFinPostingProcessor"/>
 
+    <!-- 多套账（并行账簿）传播解析器（multiple-accounting-schemas.md §配置项） -->
+    <bean id="app.erp.fin.service.posting.SchemaPropagator"
+          class="app.erp.fin.service.posting.SchemaPropagator"/>
+
     <!-- 过账异常记录器（process()/reverse() 抛 NopException 时以 REQUIRES_NEW 写 PENDING 异常记录，
          独立事务保证不随主过账回滚丢失；被 ErpFinPostingProcessor 调用）。
          notificationBiz 注入标记为 optional：单域测试（如 inventory）未引入 notify-service 时降级跳过通知。 -->

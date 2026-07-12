@@ -17,6 +17,7 @@ entity:
     ErpMdPartnerContact: 往来单位联系人
     ErpMdSettlementMethod: 结算方式
     ErpMdSubject: 会计科目
+    ErpMdSubjectMapping: 科目映射
     ErpMdSupplierApproval: 供应商准入资格
     ErpMdTaxRate: 税率
     ErpMdUoM: 计量单位
@@ -358,6 +359,20 @@ prop:
       status_label: 状态
       subjectClass: 科目类别
       subjectClass_label: 科目类别
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpMdSubjectMapping:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      sourceSubject: null
+      sourceSubjectId: 源科目
+      targetAcctSchema: null
+      targetAcctSchemaId: 目标账套
+      targetSubject: null
+      targetSubjectId: 目标科目
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

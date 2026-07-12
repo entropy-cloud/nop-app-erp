@@ -6,12 +6,14 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.close.CloseVoucherWriter;
 import app.erp.fin.service.close.CloseVoucherWriter.Line;
+import app.erp.fin.service.posting.SchemaPropagator;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -59,6 +61,9 @@ public class BadDebtProvisionService {
     @Inject
     BadDebtProvisionCalculator calculator;
 
+    @Inject
+    SchemaPropagator schemaPropagator;
+
     /**
      * 期末计提/释放入口。返回结果含必需准备、Allowance 账面、动作与凭证 ID。
      *
@@ -66,6 +71,16 @@ public class BadDebtProvisionService {
      */
     public BadDebtProvisionResult runBadDebtProvision(Long periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = requirePeriod(periodId);
+        Long primarySchemaId = resolveAcctSchemaId(periodId);
+        List<Long> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
+        BadDebtProvisionResult lastResult = null;
+        for (Long schemaId : schemas) {
+            lastResult = runBadDebtProvisionForSchema(period, schemaId, context);
+        }
+        return lastResult;
+    }
+
+    private BadDebtProvisionResult runBadDebtProvisionForSchema(ErpFinAccountingPeriod period, Long acctSchemaId, IServiceContext context) {
         BadDebtProvisionResult result = calculateRequiredProvision(period);
         BigDecimal allowanceBalance = getAllowanceBalance();
         result.setAllowanceBalance(allowanceBalance);
@@ -83,7 +98,7 @@ public class BadDebtProvisionService {
             Long voucherId = CloseVoucherWriter.writeVoucher(daoProvider, "BDR",
                     ErpFinConstants.BAD_DEBT_RESERVE_BILL_CODE_PREFIX + period.getCode(),
                     ErpFinBusinessType.BAD_DEBT_RESERVE.name(), ErpFinBusinessType.BAD_DEBT_RESERVE.name(),
-                    period.getOrgId(), resolveAcctSchemaId(period.getId()), period.getId(),
+                    period.getOrgId(), acctSchemaId, period.getId(),
                     resolveFunctionalCurrencyId(), BigDecimal.ONE, period.getEndDate(), lines, RESERVE_MEMO);
             result.setAction("RESERVE");
             result.setVoucherId(voucherId);
@@ -99,7 +114,7 @@ public class BadDebtProvisionService {
             Long voucherId = CloseVoucherWriter.writeVoucher(daoProvider, "BDL",
                     ErpFinConstants.BAD_DEBT_RELEASE_BILL_CODE_PREFIX + period.getCode(),
                     ErpFinBusinessType.BAD_DEBT_RELEASE.name(), ErpFinBusinessType.BAD_DEBT_RELEASE.name(),
-                    period.getOrgId(), resolveAcctSchemaId(period.getId()), period.getId(),
+                    period.getOrgId(), acctSchemaId, period.getId(),
                     resolveFunctionalCurrencyId(), BigDecimal.ONE, period.getEndDate(), lines, RELEASE_MEMO);
             result.setAction("RELEASE");
             result.setVoucherId(voucherId);
@@ -217,6 +232,14 @@ public class BadDebtProvisionService {
     }
 
     protected Long resolveAcctSchemaId(Long periodId) {
+        ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
+        Long orgId = period != null ? period.getOrgId() : null;
+        if (orgId != null) {
+            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            if (schemaId != null) {
+                return schemaId;
+            }
+        }
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));

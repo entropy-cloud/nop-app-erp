@@ -24,6 +24,15 @@
           class="app.erp.inv.service.costing.StandardCostResolver"/>
     <bean id="app.erp.inv.service.costing.StandardCostingStrategy"
           class="app.erp.inv.service.costing.StandardCostingStrategy"/>
+    <!-- LIFO / 全月一次加权平均 / 个别计价 / 批次 计价 -->
+    <bean id="app.erp.inv.service.costing.LifoCostingStrategy"
+          class="app.erp.inv.service.costing.LifoCostingStrategy"/>
+    <bean id="app.erp.inv.service.costing.WeightedAverageCostingStrategy"
+          class="app.erp.inv.service.costing.WeightedAverageCostingStrategy"/>
+    <bean id="app.erp.inv.service.costing.SpecificCostingStrategy"
+          class="app.erp.inv.service.costing.SpecificCostingStrategy"/>
+    <bean id="app.erp.inv.service.costing.BatchCostingStrategy"
+          class="app.erp.inv.service.costing.BatchCostingStrategy"/>
 
     <!-- 存货成本核算服务 BizModel（plan 2026-07-02-1538-1 Phase 3）：期末成本兜底重算，经 IBizObjectManager 跨模块调用 -->
     <bean id="app.erp.inv.service.costing.ErpInvCostingBizModel"

@@ -8,6 +8,7 @@ import app.erp.fin.dao.entity.ErpFinBankStatementLine;
 import app.erp.fin.dao.entity.ErpFinFundAccount;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.md.dao.AcctSchemaResolver;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.config.AppConfig;
@@ -140,8 +141,12 @@ public class BankReconAdjustmentVoucherBuilder {
     }
 
     protected Long resolveAcctSchemaId(ErpFinBankReconciliation recon, ErpFinFundAccount fundAccount) {
-        // 资金账户无 acctSchemaId 列；优先取调节表关联的会计期间头表的 acctSchemaId，回退默认 1。
-        return recon.getOrgId() != null ? 1L : 1L;
+        Long orgId = fundAccount != null ? fundAccount.getOrgId() : null;
+        if (orgId == null && recon != null) {
+            orgId = recon.getOrgId();
+        }
+        Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+        return schemaId != null ? schemaId : 1L;
     }
 
     private static BigDecimal nz(BigDecimal v) {

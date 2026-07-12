@@ -18,6 +18,7 @@ drop table  if exists  erp_sys_config;
 drop table  if exists  erp_md_warehouse;
 drop table  if exists  erp_md_cost_center;
 drop table  if exists  erp_md_acct_schema_coa;
+drop table  if exists  erp_md_subject_mapping;
 drop table  if exists  erp_md_material;
 drop table  if exists  erp_md_location;
 drop table  if exists  erp_md_material_sku;

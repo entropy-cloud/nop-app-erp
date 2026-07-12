@@ -5,12 +5,14 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinGlBalance;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.close.CloseVoucherWriter;
 import app.erp.fin.service.close.CloseVoucherWriter.Line;
+import app.erp.fin.service.posting.SchemaPropagator;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -58,6 +60,9 @@ public class AnnualCloseService {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    SchemaPropagator schemaPropagator;
+
     /**
      * 执行年度结转：本年利润→未分配利润结转凭证 + 次年年初余额 populate。返回结转凭证 ID（无本年利润余额时返回 null）。
      *
@@ -65,8 +70,18 @@ public class AnnualCloseService {
      * @param nextYearPeriods 次年已生成的期间列表（用于 populate 年初余额，可为空——此时仅做结转不 populate）
      */
     public Long executeAnnualClose(ErpFinAccountingPeriod period, IServiceContext context) {
-        Long voucherId = transferProfitToRetainedEarnings(period);
-        populateNextYearOpening(period);
+        Long primarySchemaId = resolveAcctSchemaId(period.getId());
+        List<Long> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
+        Long lastVoucherId = null;
+        for (Long schemaId : schemas) {
+            lastVoucherId = executeAnnualCloseForSchema(period, schemaId, context);
+        }
+        return lastVoucherId;
+    }
+
+    private Long executeAnnualCloseForSchema(ErpFinAccountingPeriod period, Long acctSchemaId, IServiceContext context) {
+        Long voucherId = transferProfitToRetainedEarnings(period, acctSchemaId);
+        populateNextYearOpening(period, acctSchemaId);
         return voucherId;
     }
 
@@ -74,7 +89,7 @@ public class AnnualCloseService {
      * 本年利润科目余额 → 未分配利润科目结转（{@code period-close.md §年度结转规则} 步骤3）。
      * 聚合本年所有期间的本年利润科目净余额，生成 PROFIT_TO_RETAINED_EARNINGS 凭证使本年利润清零。
      */
-    public Long transferProfitToRetainedEarnings(ErpFinAccountingPeriod period) {
+    public Long transferProfitToRetainedEarnings(ErpFinAccountingPeriod period, Long acctSchemaId) {
         Integer year = period.getYear();
         if (year == null) {
             return null;
@@ -104,7 +119,6 @@ public class AnnualCloseService {
                     ErpFinConstants.DC_CREDIT, abs, null));
         }
 
-        Long acctSchemaId = resolveAcctSchemaId(period.getId());
         Long functionalCurrencyId = resolveFunctionalCurrencyId();
         return CloseVoucherWriter.writeVoucher(daoProvider, "ACY", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS.name(),
@@ -118,7 +132,7 @@ public class AnnualCloseService {
      * 取本年各科目年末净余额（贷/借），写入次年 1 月 GlBalance.yearOpening{Debit,Credit}。
      * 次年 1 月期间不存在时跳过（由 closePeriod 在调用前确保 generateNextYearPeriods 已执行）。
      */
-    public void populateNextYearOpening(ErpFinAccountingPeriod period) {
+    public void populateNextYearOpening(ErpFinAccountingPeriod period, Long acctSchemaId) {
         Integer year = period.getYear();
         if (year == null) {
             return;
@@ -129,7 +143,6 @@ public class AnnualCloseService {
             return;
         }
         Long functionalCurrencyId = resolveFunctionalCurrencyId();
-        Long acctSchemaId = resolveAcctSchemaId(period.getId());
 
         // 本年各科目净余额：按科目聚合 debit/credit。
         Map<Long, SubjectYearAgg> agg = aggregateYearSubjectActivity(year);
@@ -353,6 +366,14 @@ public class AnnualCloseService {
     }
 
     private Long resolveAcctSchemaId(Long periodId) {
+        ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
+        Long orgId = period != null ? period.getOrgId() : null;
+        if (orgId != null) {
+            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            if (schemaId != null) {
+                return schemaId;
+            }
+        }
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));

@@ -144,6 +144,14 @@
         <property name="bizObjName" value="ErpMdAcctSchemaCoa"/>
     </bean>
 
+    <bean id="app.erp.md.service.entity.ErpMdSubjectMappingBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdSubjectMapping" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdSubjectMappingBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdSubjectMapping"/>
+    </bean>
+
     <bean id="app.erp.md.service.entity.ErpMdMaterialBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMdMaterial" class="io.nop.biz.proxy.BizProxyFactoryBean"

@@ -14,6 +14,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.inv.biz.CostingRecloseReport;
 import app.erp.inv.biz.IErpInvCostingBiz;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.baddebt.BadDebtProvisionService;
@@ -87,6 +88,8 @@ public class ErpFinAccountingPeriodProcessor {
     BadDebtProvisionService badDebtProvisionService;
     @Inject
     AnnualCloseService annualCloseService;
+    @Inject
+    app.erp.fin.service.posting.SchemaPropagator schemaPropagator;
 
     public PeriodPreCheckReport preCheck(Long periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = requirePeriod(periodId);
@@ -321,14 +324,19 @@ public class ErpFinAccountingPeriodProcessor {
         advanceModule(status, Module.AST);
     }
 
-    /** GL 模块关账：汇兑重估→损益结转（§步骤5）→ 试算平衡表快照 → 标记 glStatus=CLOSED。运行顺序 FX→P&L 使汇兑损益进入当期结转。 */
+    /**
+     * GL 模块关账：汇兑重估→损益结转（§步骤5）→ 试算平衡表快照 → 标记 glStatus=CLOSED。
+     *
+     * <p>多套账模式：各子服务（汇兑重估/损益结转/坏账）内部已按 SchemaPropagator 逐账套循环；
+     * 试算平衡快照在此处逐账套生成。
+     */
     protected void closeGlModule(ErpFinAccountingPeriod period, ErpFinAccountingPeriodStatus status,
                                  IServiceContext context) {
         if (isExchangeRevaluationEnabled()) {
             exchangeRevaluationService.revalue(period, context);
         }
         profitLossClosingService.close(period, context);
-        populateTrialBalance(period);
+        populateTrialBalanceForAllSchemas(period);
         advanceModule(status, Module.GL);
     }
 
@@ -449,11 +457,13 @@ public class ErpFinAccountingPeriodProcessor {
 
     // ===================== 试算平衡表快照 =====================
 
-    protected void populateTrialBalance(ErpFinAccountingPeriod period) {
-        // 结转后试算平衡快照：聚合本期所有已过账、非红冲凭证分录（含结转凭证，反映结转后余额）。
+    /**
+     * 多套账试算平衡快照：按凭证行的 acctSchemaId 分组聚合，每个账套独立生成试算平衡行。
+     * 凭证行已有 acctSchemaId（过账时按账套写入），此处按实际归属分组。
+     */
+    protected void populateTrialBalanceForAllSchemas(ErpFinAccountingPeriod period) {
         List<Long> voucherIds = findPostedVoucherIds(period.getId());
         IEntityDao<ErpFinTrialBalance> tbDao = daoProvider.daoFor(ErpFinTrialBalance.class);
-        // 先清除本期既有快照（支持反结账后重新结账幂等）。
         QueryBean clearQ = new QueryBean();
         clearQ.addFilter(eq("periodId", period.getId()));
         for (ErpFinTrialBalance old : tbDao.findAllByQuery(clearQ)) {
@@ -468,35 +478,40 @@ public class ErpFinAccountingPeriodProcessor {
         q.addFilter(in("voucherId", voucherIds));
         List<ErpFinVoucherLine> lines = lineDao.findAllByQuery(q);
 
-        Map<Long, TbAgg> agg = new LinkedHashMap<>();
+        Map<Long, Map<Long, TbAgg>> bySchema = new LinkedHashMap<>();
+        Long fallbackSchema = resolveAcctSchemaId(period.getId());
         for (ErpFinVoucherLine l : lines) {
             if (l.getSubjectId() == null) {
                 continue;
             }
-            TbAgg a = agg.computeIfAbsent(l.getSubjectId(), k -> new TbAgg(l));
+            Long schemaId = l.getAcctSchemaId() != null ? l.getAcctSchemaId() : fallbackSchema;
+            Map<Long, TbAgg> subjectMap = bySchema.computeIfAbsent(schemaId, k -> new LinkedHashMap<>());
+            TbAgg a = subjectMap.computeIfAbsent(l.getSubjectId(), k -> new TbAgg(l));
             a.debit = a.debit.add(l.getDebitAmount() == null ? BigDecimal.ZERO : l.getDebitAmount());
             a.credit = a.credit.add(l.getCreditAmount() == null ? BigDecimal.ZERO : l.getCreditAmount());
         }
 
-        Long acctSchemaId = resolveAcctSchemaId(period.getId());
         LocalDateTime generatedAt = CoreMetrics.currentDateTime();
-        for (TbAgg a : agg.values()) {
-            ErpFinTrialBalance tb = tbDao.newEntity();
-            tb.setOrgId(period.getOrgId());
-            tb.setAcctSchemaId(acctSchemaId);
-            tb.setPeriodId(period.getId());
-            tb.setSubjectId(a.subjectId);
-            tb.setSubjectCode(a.subjectCode);
-            tb.setSubjectName(a.subjectName);
-            tb.setOpeningDebit(BigDecimal.ZERO);
-            tb.setOpeningCredit(BigDecimal.ZERO);
-            tb.setPeriodDebit(a.debit);
-            tb.setPeriodCredit(a.credit);
-            BigDecimal net = a.debit.subtract(a.credit);
-            tb.setClosingDebit(net.compareTo(BigDecimal.ZERO) > 0 ? net : BigDecimal.ZERO);
-            tb.setClosingCredit(net.compareTo(BigDecimal.ZERO) < 0 ? net.negate() : BigDecimal.ZERO);
-            tb.setGeneratedAt(generatedAt);
-            tbDao.saveEntity(tb);
+        for (Map.Entry<Long, Map<Long, TbAgg>> schemaEntry : bySchema.entrySet()) {
+            Long acctSchemaId = schemaEntry.getKey();
+            for (TbAgg a : schemaEntry.getValue().values()) {
+                ErpFinTrialBalance tb = tbDao.newEntity();
+                tb.setOrgId(period.getOrgId());
+                tb.setAcctSchemaId(acctSchemaId);
+                tb.setPeriodId(period.getId());
+                tb.setSubjectId(a.subjectId);
+                tb.setSubjectCode(a.subjectCode);
+                tb.setSubjectName(a.subjectName);
+                tb.setOpeningDebit(BigDecimal.ZERO);
+                tb.setOpeningCredit(BigDecimal.ZERO);
+                tb.setPeriodDebit(a.debit);
+                tb.setPeriodCredit(a.credit);
+                BigDecimal net = a.debit.subtract(a.credit);
+                tb.setClosingDebit(net.compareTo(BigDecimal.ZERO) > 0 ? net : BigDecimal.ZERO);
+                tb.setClosingCredit(net.compareTo(BigDecimal.ZERO) < 0 ? net.negate() : BigDecimal.ZERO);
+                tb.setGeneratedAt(generatedAt);
+                tbDao.saveEntity(tb);
+            }
         }
     }
 
@@ -512,6 +527,14 @@ public class ErpFinAccountingPeriodProcessor {
     }
 
     private Long resolveAcctSchemaId(Long periodId) {
+        ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
+        Long orgId = period != null ? period.getOrgId() : null;
+        if (orgId != null) {
+            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            if (schemaId != null) {
+                return schemaId;
+            }
+        }
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
@@ -634,13 +657,23 @@ public class ErpFinAccountingPeriodProcessor {
     }
 
     private Long resolveAcctSchemaId(ErpFinAccountingPeriod period) {
-        IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("periodId", period.getId()));
-        q.setLimit(1);
-        List<ErpFinVoucher> vouchers = dao.findAllByQuery(q);
-        if (!vouchers.isEmpty() && vouchers.get(0).getAcctSchemaId() != null) {
-            return vouchers.get(0).getAcctSchemaId();
+        Long orgId = period != null ? period.getOrgId() : null;
+        if (orgId != null) {
+            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            if (schemaId != null) {
+                return schemaId;
+            }
+        }
+        Long periodId = period != null ? period.getId() : null;
+        if (periodId != null) {
+            IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
+            QueryBean q = new QueryBean();
+            q.addFilter(eq("periodId", periodId));
+            q.setLimit(1);
+            List<ErpFinVoucher> vouchers = dao.findAllByQuery(q);
+            if (!vouchers.isEmpty() && vouchers.get(0).getAcctSchemaId() != null) {
+                return vouchers.get(0).getAcctSchemaId();
+            }
         }
         return 1L;
     }

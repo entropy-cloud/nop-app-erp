@@ -243,87 +243,101 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMdSupplierApproval-main" displayName="供应商准入资格" orderNo="10052"
+                <resource id="ErpMdSubjectMapping-main" displayName="科目映射" orderNo="10052"
+                          i18n-en:displayName="Subject Mapping" icon="arrow-right-left" component="AMIS"
+                          resourceType="SUBM" url="/erp/md/pages/ErpMdSubjectMapping/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMdSubjectMapping:query" displayName="查询科目映射"
+                                  i18n-en:displayName="Query Subject Mapping" orderNo="10053" resourceType="FNPT">
+                            <permissions>ErpMdSubjectMapping:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMdSubjectMapping:mutation" displayName="修改科目映射"
+                                  i18n-en:displayName="Modify Subject Mapping" orderNo="10054" resourceType="FNPT">
+                            <permissions>ErpMdSubjectMapping:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMdSupplierApproval-main" displayName="供应商准入资格" orderNo="10055"
                           i18n-en:displayName="Supplier Approval (AVL)" icon="badge-check" component="AMIS"
                           resourceType="SUBM" url="/erp/md/pages/ErpMdSupplierApproval/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMdSupplierApproval:query" displayName="查询供应商准入资格"
-                                  i18n-en:displayName="Query Supplier Approval (AVL)" orderNo="10053"
+                                  i18n-en:displayName="Query Supplier Approval (AVL)" orderNo="10056"
                                   resourceType="FNPT">
                             <permissions>ErpMdSupplierApproval:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMdSupplierApproval:mutation" displayName="修改供应商准入资格"
-                                  i18n-en:displayName="Modify Supplier Approval (AVL)" orderNo="10054"
+                                  i18n-en:displayName="Modify Supplier Approval (AVL)" orderNo="10057"
                                   resourceType="FNPT">
                             <permissions>ErpMdSupplierApproval:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMdTaxRate-main" displayName="税率" orderNo="10055" i18n-en:displayName="Tax Rate"
+                <resource id="ErpMdTaxRate-main" displayName="税率" orderNo="10058" i18n-en:displayName="Tax Rate"
                           icon="percent" component="AMIS" resourceType="SUBM"
                           url="/erp/md/pages/ErpMdTaxRate/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMdTaxRate:query" displayName="查询税率" i18n-en:displayName="Query Tax Rate"
-                                  orderNo="10056" resourceType="FNPT">
+                                  orderNo="10059" resourceType="FNPT">
                             <permissions>ErpMdTaxRate:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMdTaxRate:mutation" displayName="修改税率"
-                                  i18n-en:displayName="Modify Tax Rate" orderNo="10057" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Tax Rate" orderNo="10060" resourceType="FNPT">
                             <permissions>ErpMdTaxRate:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMdUoM-main" displayName="计量单位" orderNo="10058" i18n-en:displayName="Unit of Measure"
+                <resource id="ErpMdUoM-main" displayName="计量单位" orderNo="10061" i18n-en:displayName="Unit of Measure"
                           icon="ruler" component="AMIS" resourceType="SUBM" url="/erp/md/pages/ErpMdUoM/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMdUoM:query" displayName="查询计量单位"
-                                  i18n-en:displayName="Query Unit of Measure" orderNo="10059" resourceType="FNPT">
+                                  i18n-en:displayName="Query Unit of Measure" orderNo="10062" resourceType="FNPT">
                             <permissions>ErpMdUoM:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMdUoM:mutation" displayName="修改计量单位"
-                                  i18n-en:displayName="Modify Unit of Measure" orderNo="10060" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Unit of Measure" orderNo="10063" resourceType="FNPT">
                             <permissions>ErpMdUoM:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMdUoMConversion-main" displayName="单位换算" orderNo="10061"
+                <resource id="ErpMdUoMConversion-main" displayName="单位换算" orderNo="10064"
                           i18n-en:displayName="UoM Conversion" icon="arrow-left-right" component="AMIS"
                           resourceType="SUBM" url="/erp/md/pages/ErpMdUoMConversion/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMdUoMConversion:query" displayName="查询单位换算"
-                                  i18n-en:displayName="Query UoM Conversion" orderNo="10062" resourceType="FNPT">
+                                  i18n-en:displayName="Query UoM Conversion" orderNo="10065" resourceType="FNPT">
                             <permissions>ErpMdUoMConversion:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMdUoMConversion:mutation" displayName="修改单位换算"
-                                  i18n-en:displayName="Modify UoM Conversion" orderNo="10063" resourceType="FNPT">
+                                  i18n-en:displayName="Modify UoM Conversion" orderNo="10066" resourceType="FNPT">
                             <permissions>ErpMdUoMConversion:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMdWarehouse-main" displayName="仓库" orderNo="10064" i18n-en:displayName="Warehouse"
+                <resource id="ErpMdWarehouse-main" displayName="仓库" orderNo="10067" i18n-en:displayName="Warehouse"
                           icon="warehouse" component="AMIS" resourceType="SUBM"
                           url="/erp/md/pages/ErpMdWarehouse/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMdWarehouse:query" displayName="查询仓库"
-                                  i18n-en:displayName="Query Warehouse" orderNo="10065" resourceType="FNPT">
+                                  i18n-en:displayName="Query Warehouse" orderNo="10068" resourceType="FNPT">
                             <permissions>ErpMdWarehouse:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMdWarehouse:mutation" displayName="修改仓库"
-                                  i18n-en:displayName="Modify Warehouse" orderNo="10066" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Warehouse" orderNo="10069" resourceType="FNPT">
                             <permissions>ErpMdWarehouse:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpSysConfig-main" displayName="系统配置" orderNo="10067" i18n-en:displayName="System Config"
+                <resource id="ErpSysConfig-main" displayName="系统配置" orderNo="10070" i18n-en:displayName="System Config"
                           icon="settings" component="AMIS" resourceType="SUBM"
                           url="/erp/md/pages/ErpSysConfig/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSysConfig:query" displayName="查询系统配置"
-                                  i18n-en:displayName="Query System Config" orderNo="10068" resourceType="FNPT">
+                                  i18n-en:displayName="Query System Config" orderNo="10071" resourceType="FNPT">
                             <permissions>ErpSysConfig:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpSysConfig:mutation" displayName="修改系统配置"
-                                  i18n-en:displayName="Modify System Config" orderNo="10069" resourceType="FNPT">
+                                  i18n-en:displayName="Modify System Config" orderNo="10072" resourceType="FNPT">
                             <permissions>ErpSysConfig:mutation</permissions>
                         </resource>
                     </children>

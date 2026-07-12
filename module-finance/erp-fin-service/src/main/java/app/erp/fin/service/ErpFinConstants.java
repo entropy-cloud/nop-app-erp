@@ -185,6 +185,13 @@ public interface ErpFinConstants {
     /** O-2：兜底扫描重试 Job 的 cron 配置（空=不调度；非空时按 cronExpr 触发 DeferredPostingSweepJob）。 */
     String CONFIG_DEFERRED_POSTING_SWEEP_CRON = "erp-fin.deferred-posting-sweep-cron";
 
+    // ---- 多套账（并行账簿）配置项（multiple-accounting-schemas.md §配置项） ----
+    /** 是否启用多套账并行传播，默认 false（单账套行为，向后兼容）。 */
+    String CONFIG_MULTI_SCHEMA_ENABLED = "erp-fin.multi-schema-enabled";
+    /** 默认会计账套 nature（启用多套账时，主账套按此 nature 选取），默认 FINANCIAL。 */
+    String CONFIG_DEFAULT_SCHEMA_NATURE = "erp-fin.default-schema-nature";
+    String DEFAULT_SCHEMA_NATURE_FINANCIAL = "FINANCIAL";
+
     // ---- 过账异常处置状态（与 erp-fin/posting-exception-status 字典对齐，见 posting-log.md §过账异常处置） ----
     String POSTING_EXCEPTION_STATUS_PENDING = "PENDING";
     String POSTING_EXCEPTION_STATUS_RETRYING = "RETRYING";

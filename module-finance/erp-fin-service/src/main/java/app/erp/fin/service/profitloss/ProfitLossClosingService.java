@@ -4,12 +4,14 @@ import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.close.CloseVoucherWriter;
 import app.erp.fin.service.close.CloseVoucherWriter.Line;
+import app.erp.fin.service.posting.SchemaPropagator;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -51,7 +53,20 @@ public class ProfitLossClosingService {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    SchemaPropagator schemaPropagator;
+
     public Long close(ErpFinAccountingPeriod period, IServiceContext context) {
+        Long primarySchemaId = resolveAcctSchemaId(period.getId());
+        List<Long> schemas = schemaPropagator.resolveTargetSchemas(period.getOrgId(), primarySchemaId);
+        Long lastVoucherId = null;
+        for (Long schemaId : schemas) {
+            lastVoucherId = closeForSchema(period, schemaId, context);
+        }
+        return lastVoucherId;
+    }
+
+    private Long closeForSchema(ErpFinAccountingPeriod period, Long acctSchemaId, IServiceContext context) {
         // 收集本期已过账、非红冲凭证 ID。
         List<Long> voucherIds = findPostedVoucherIds(period.getId());
         if (voucherIds.isEmpty()) {
@@ -132,7 +147,6 @@ public class ProfitLossClosingService {
         }
 
         Long orgId = period.getOrgId();
-        Long acctSchemaId = resolveAcctSchemaId(period.getId());
         Long functionalCurrencyId = resolveFunctionalCurrencyId();
         return CloseVoucherWriter.writeVoucher(daoProvider, "CLP", BILL_CODE_PREFIX + period.getCode(),
                 ErpFinBusinessType.PERIOD_CLOSE.name(), ErpFinBusinessType.PERIOD_CLOSE.name(),
@@ -179,6 +193,14 @@ public class ProfitLossClosingService {
     }
 
     private Long resolveAcctSchemaId(Long periodId) {
+        ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
+        Long orgId = period != null ? period.getOrgId() : null;
+        if (orgId != null) {
+            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            if (schemaId != null) {
+                return schemaId;
+            }
+        }
         IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
