@@ -86,6 +86,24 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--DRP行-->
+                <col id="drpLineName"/>
+
+                <!--物料-->
+                <col id="materialName"/>
+
+                <!--暂存库位-->
+                <col id="stagingLocationName"/>
+
+                <!--入站移动单-->
+                <col id="inboundMoveName"/>
+
+                <!--出站移动单-->
+                <col id="outboundMoveName"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -105,6 +123,9 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ drpLineName[DRP行] materialName[物料]
+ stagingLocationName[暂存库位] inboundMoveName[入站移动单]
+ outboundMoveName[出站移动单] orgName[业务组织]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-越库执行记录" i18n-en:title="Add Cross Dock" x:prototype="edit"/>

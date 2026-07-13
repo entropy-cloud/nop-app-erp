@@ -27,7 +27,12 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpDrpLine@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpDrpLine@createTime"
+    "updateTime": "@var:ErpDrpLine@createTime",
+    "sourceWarehouseName": null,
+    "planName": "SMOKE-DRP",
+    "materialName": "冒烟物料",
+    "orgName": null,
+    "warehouseName": "冒烟仓库"
   },
   "status": 0
 }

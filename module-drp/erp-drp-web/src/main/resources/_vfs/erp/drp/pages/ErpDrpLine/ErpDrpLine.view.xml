@@ -2,7 +2,35 @@
 <view x:extends="_gen/_ErpDrpLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="planName" label="计划"/>
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialName" label="物料"/>
+                <col id="warehouseName" label="目标仓库"/>
+                <col id="sourceWarehouseName" label="来源仓库"/>
+                <col id="replenishmentType" mandatory="true" sortable="true"/>
+                <col id="currentStock" ui:number="true" sortable="true"/>
+                <col id="allocatedQty" ui:number="true" sortable="true"/>
+                <col id="onOrderQty" ui:number="true" sortable="true"/>
+                <col id="forecastDemand" ui:number="true" sortable="true"/>
+                <col id="safetyStock" ui:number="true" sortable="true"/>
+                <col id="netRequirement" ui:number="true" sortable="true"/>
+                <col id="suggestedQty" ui:number="true" sortable="true"/>
+                <col id="approvedQty" ui:number="true" sortable="true"/>
+                <col id="orderBillType" sortable="true"/>
+                <col id="orderBillCode" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

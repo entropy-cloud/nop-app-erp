@@ -18,7 +18,8 @@
     "createTime": "@var:ErpDrpPlan@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpDrpPlan@updateTime_1",
-    "businessDate": "*"
+    "businessDate": "*",
+    "orgName": null
   },
   "status": 0
 }

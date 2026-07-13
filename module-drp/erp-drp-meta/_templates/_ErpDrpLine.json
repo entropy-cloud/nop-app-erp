@@ -31,5 +31,10 @@
   "material": null,
   "warehouse": null,
   "sourceWarehouse": null,
-  "org": null
+  "org": null,
+  "planName": "",
+  "materialName": "",
+  "warehouseName": "",
+  "sourceWarehouseName": "",
+  "orgName": ""
 }

@@ -43,6 +43,11 @@ prop:
       warehouse: Warehouse
       sourceWarehouse: Source Warehouse
       org: Org
+      planName: null
+      materialName: null
+      warehouseName: null
+      sourceWarehouseName: null
+      orgName: null
     ErpDrpParameter:
       id: ID
       warehouseId: Warehouse
@@ -70,6 +75,11 @@ prop:
       preferredSourceWarehouse: Preferred Source Warehouse
       preferredSupplier: Preferred Supplier
       org: Org
+      warehouseName: null
+      materialName: null
+      preferredSourceWarehouseName: null
+      preferredSupplierName: null
+      orgName: null
     ErpDrpPlan:
       id: ID
       code: Code
@@ -92,6 +102,7 @@ prop:
       businessDate: Business Date
       lines: Lines
       org: Org
+      orgName: null
     ErpInvDrpCrossDock:
       id: ID
       code: Code
@@ -124,6 +135,12 @@ prop:
       inboundMove: Inbound Move
       outboundMove: Outbound Move
       org: Org
+      drpLineName: null
+      materialName: null
+      stagingLocationName: null
+      inboundMoveName: null
+      outboundMoveName: null
+      orgName: null
     ErpInvDrpDockAppointment:
       id: ID
       warehouseId: Warehouse
@@ -146,6 +163,10 @@ prop:
       dock: Dock
       crossDock: Cross Dock
       org: Org
+      warehouseName: null
+      dockName: null
+      crossDockName: null
+      orgName: null
     ErpInvDrpLeadTimeRecord:
       id: ID
       orgId: Organization
@@ -169,6 +190,9 @@ prop:
       supplier: Supplier
       material: Material
       org: Org
+      supplierName: null
+      materialName: null
+      orgName: null
     ErpInvDrpSafetyStockCalc:
       id: ID
       code: Code
@@ -196,6 +220,9 @@ prop:
       material: Material
       warehouse: Warehouse
       org: Org
+      materialName: null
+      warehouseName: null
+      orgName: null
 dict:
   label:
     erp-drp/drp-plan-status: DRP Plan Status

@@ -19,5 +19,9 @@
   "warehouse": null,
   "dock": null,
   "crossDock": null,
-  "org": null
+  "org": null,
+  "warehouseName": "",
+  "dockName": "",
+  "crossDockName": "",
+  "orgName": ""
 }

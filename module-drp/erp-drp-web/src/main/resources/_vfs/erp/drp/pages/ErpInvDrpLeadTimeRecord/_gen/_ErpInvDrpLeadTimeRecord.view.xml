@@ -71,6 +71,15 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--供应商-->
+                <col id="supplierName"/>
+
+                <!--物料-->
+                <col id="materialName"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -87,7 +96,8 @@
  earlyLateFlag[提前/延迟标记] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] supplierName[供应商]
+ materialName[物料] orgName[业务组织]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-提前期记录" i18n-en:title="Add Lead Time Record" x:prototype="edit"/>

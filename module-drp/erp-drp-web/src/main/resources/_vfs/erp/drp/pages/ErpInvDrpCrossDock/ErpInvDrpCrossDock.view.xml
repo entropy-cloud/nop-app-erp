@@ -3,7 +3,33 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="drpLineName" label="DRP行"/>
+                <col id="inboundMoveName" label="入站移动单"/>
+                <col id="outboundMoveName" label="出站移动单"/>
+                <col id="sourceBillType" sortable="true"/>
+                <col id="sourceBillCode" sortable="true"/>
+                <col id="targetBillType" sortable="true"/>
+                <col id="targetBillCode" sortable="true"/>
+                <col id="materialName" label="物料"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="stagingLocationName" label="暂存库位"/>
+                <col id="dockSlotTime" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="matchedAt" sortable="true"/>
+                <col id="loadedAt" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

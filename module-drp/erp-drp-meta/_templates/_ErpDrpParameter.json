@@ -24,5 +24,10 @@
   "material": null,
   "preferredSourceWarehouse": null,
   "preferredSupplier": null,
-  "org": null
+  "org": null,
+  "warehouseName": "",
+  "materialName": "",
+  "preferredSourceWarehouseName": "",
+  "preferredSupplierName": "",
+  "orgName": ""
 }

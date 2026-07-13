@@ -3,7 +3,30 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="materialName" label="物料"/>
+                <col id="warehouseName" label="仓库"/>
+                <col id="method" mandatory="true" sortable="true"/>
+                <col id="serviceLevel" mandatory="true" sortable="true"/>
+                <col id="historyMonths" ui:number="true" sortable="true"/>
+                <col id="leadTimeDays" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="calculatedSafetyStock" ui:number="true" sortable="true"/>
+                <col id="calculatedRop" ui:number="true" sortable="true"/>
+                <col id="overrideSafetyStock" ui:number="true" sortable="true"/>
+                <col id="lastCalculatedAt" sortable="true"/>
+                <col id="overwrittenBy" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 
