@@ -54,6 +54,21 @@
                 <!--汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>
 
+                <!--业务组织名称-->
+                <col id="orgName"/>
+
+                <!--账套编码-->
+                <col id="acctSchemaCode"/>
+
+                <!--往来单位名称-->
+                <col id="partnerName"/>
+
+                <!--币种名称-->
+                <col id="currencyName"/>
+
+                <!--会计期间编码-->
+                <col id="periodCode"/>
+
                 <!--状态-->
                 <col id="status" mandatory="true" sortable="true"/>
 
@@ -90,11 +105,13 @@
  partnerId[往来单位] sourceBillType[来源单据类型(AP_INVOICE/AR_INVOICE/PAYMENT/RECEIPT)]
  sourceBillCode[来源单据号] businessDate[业务日期]
  dueDate[到期日] currencyId[币种]
- exchangeRate[汇率] status[状态]
- periodId[所属期间] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ exchangeRate[汇率] orgName[业务组织名称]
+ acctSchemaCode[账套编码] partnerName[往来单位名称]
+ currencyName[币种名称] periodCode[会计期间编码]
+ status[状态] periodId[所属期间]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-应收应付明细账" i18n-en:title="Add AR/AP Subledger" x:prototype="edit"/>

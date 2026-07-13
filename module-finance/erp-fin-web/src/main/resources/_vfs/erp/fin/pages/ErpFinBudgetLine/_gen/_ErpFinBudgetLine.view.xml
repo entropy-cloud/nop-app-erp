@@ -89,6 +89,42 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--预算方案编码-->
+                <col id="scenarioCode"/>
+
+                <!--业务组织名称-->
+                <col id="orgName"/>
+
+                <!--账套编码-->
+                <col id="acctSchemaCode"/>
+
+                <!--会计期间编码-->
+                <col id="periodCode"/>
+
+                <!--科目名称-->
+                <col id="subjectName"/>
+
+                <!--成本中心名称-->
+                <col id="costCenterName"/>
+
+                <!--部门名称-->
+                <col id="departmentName"/>
+
+                <!--项目名称-->
+                <col id="projectName"/>
+
+                <!--往来单位名称-->
+                <col id="partnerName"/>
+
+                <!--仓库名称-->
+                <col id="warehouseName"/>
+
+                <!--物料名称-->
+                <col id="materialName"/>
+
+                <!--币种名称-->
+                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -108,7 +144,13 @@
  exchangeRate[汇率] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] scenarioCode[预算方案编码]
+ orgName[业务组织名称] acctSchemaCode[账套编码]
+ periodCode[会计期间编码] subjectName[科目名称]
+ costCenterName[成本中心名称] departmentName[部门名称]
+ projectName[项目名称] partnerName[往来单位名称]
+ warehouseName[仓库名称] materialName[物料名称]
+ currencyName[币种名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-预算明细行" i18n-en:title="Add Budget Line" x:prototype="edit"/>

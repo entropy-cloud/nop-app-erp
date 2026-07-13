@@ -277,6 +277,30 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _fundAccountName;
+
+    
+        public String getFundAccountName(){
+            return _fundAccountName;
+        }
+
+        public void setFundAccountName(String value){
+            this._fundAccountName = value;
+        }
+
+
         private Map<String,Object> _fundAccount;
 
         public Map<String,Object> getFundAccount(){

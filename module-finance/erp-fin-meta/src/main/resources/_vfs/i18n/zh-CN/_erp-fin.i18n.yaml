@@ -82,6 +82,7 @@ prop:
       version: 数据版本
     ErpFinArApItem:
       acctSchema: null
+      acctSchemaCode: 账套编码
       acctSchemaId: 账套
       amountFunctional: 本位币金额
       amountSource: 源币种金额
@@ -91,6 +92,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       direction: 应收应付
       direction_label: 应收应付
@@ -101,9 +103,12 @@ prop:
       openAmountSource: 未核销源币金额
       org: null
       orgId: 组织
+      orgName: 业务组织名称
       partner: null
       partnerId: 往来单位
+      partnerName: 往来单位名称
       period: null
+      periodCode: 会计期间编码
       periodId: 所属期间
       remark: 备注
       settledAmountFunctional: 已核销本位币金额
@@ -117,6 +122,7 @@ prop:
       version: 数据版本
     ErpFinBadDebt:
       acctSchema: null
+      acctSchemaCode: 账套编码
       acctSchemaId: 账套
       amount: 核销/恢复金额(本位币)
       approvalStatus: 审核状态
@@ -127,6 +133,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docType: 坏账单类型
       docType_label: 坏账单类型
@@ -134,9 +141,12 @@ prop:
       id: ID
       org: null
       orgId: 组织
+      orgName: 业务组织名称
       partner: null
       partnerId: 客户
+      partnerName: 客户名称
       period: null
+      periodCode: 会计期间编码
       periodId: 所属期间
       reason: 核销/恢复原因
       remark: 备注
@@ -146,6 +156,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       voucher: null
+      voucherCode: 凭证号
       voucherId: 关联凭证ID
     ErpFinBankReconciliation:
       adjustmentLines: null
@@ -158,16 +169,19 @@ prop:
       docStatus_label: 状态
       fundAccount: null
       fundAccountId: 资金账户
+      fundAccountName: 资金账户名称
       id: ID
       isBalanced: 是否平衡
       org: null
       orgId: 组织
+      orgName: 业务组织名称
       reconciledAt: 对账完成时间
       reconciledBy: 对账人
       reconciliationDate: 对账日期
       remark: 备注
       statement: null
       statementBalance: 对账单余额
+      statementCode: 对账单号
       statementId: 银行对账单
       unreconciledDiff: 未达差异
       updateTime: 修改时间
@@ -202,10 +216,12 @@ prop:
       endingBalance: 期末余额
       fundAccount: null
       fundAccountId: 资金账户
+      fundAccountName: 资金账户名称
       id: ID
       importTime: 导入时间
       org: null
       orgId: 组织
+      orgName: 业务组织名称
       remark: 备注
       statementDate: 对账日期
       totalCredit: 贷方发生额
@@ -220,6 +236,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       dcDirection: 借贷方向
       dcDirection_label: 借贷方向
       delVersion: 逻辑删除版本
@@ -233,6 +250,7 @@ prop:
       refNo: 银行参考号
       remark: 备注
       statement: null
+      statementCode: 对账单号
       statementId: 对账单ID
       transactionDate: 交易日期
       updateTime: 修改时间
@@ -272,42 +290,54 @@ prop:
       version: 数据版本
     ErpFinBudgetLine:
       acctSchema: null
+      acctSchemaCode: 账套编码
       acctSchemaId: 账套
       budgetAmountFunctional: 预算金额(本位币)
       budgetAmountSource: 预算金额(源币种)
       costCenter: null
       costCenterId: 成本中心
+      costCenterName: 成本中心名称
       createTime: 创建时间
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       department: null
       departmentId: 辅助-部门
+      departmentName: 部门名称
       exchangeRate: 汇率
       id: ID
       lineNo: 行号
       material: null
       materialId: 辅助-物料
+      materialName: 物料名称
       org: null
       orgId: 核算组织
+      orgName: 业务组织名称
       partner: null
       partnerId: 辅助-往来单位
+      partnerName: 往来单位名称
       period: null
+      periodCode: 会计期间编码
       periodId: 会计期间
       project: null
       projectId: 辅助-项目
+      projectName: 项目名称
       remark: 备注
       scenario: null
+      scenarioCode: 预算方案编码
       scenarioId: 预算方案
       subject: null
       subjectCode: 科目编码
       subjectId: 预算科目
+      subjectName: 科目名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
       warehouseId: 辅助-仓库
+      warehouseName: 仓库名称
     ErpFinBudgetScenario:
       acctSchema: null
       acctSchemaId: 账套
@@ -403,21 +433,25 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
       employee: null
       employeeId: 借款人
+      employeeName: 员工名称
       exchangeRate: 汇率
       id: ID
       org: null
       orgId: 核算组织
+      orgName: 业务组织名称
       outstandingAmount: 未还金额
       posted: 是否已过账
       postedAt: 过账时间
       postedBy: 过账人
       project: null
       projectId: 关联项目
+      projectName: 项目名称
       remark: 备注
       settledAmount: 已清算金额
       updateTime: 修改时间
@@ -435,21 +469,26 @@ prop:
       businessDate: 业务日期
       claimant: null
       claimantId: 报销人
+      claimantName: 报销人名称
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       department: null
       departmentId: 部门
+      departmentName: 部门名称
       docStatus: 单据状态
       docStatus_label: 单据状态
+      employeeAdvanceCode: 抵扣借款单号
       exchangeRate: 汇率
       id: ID
       lines: null
       org: null
       orgId: 核算组织
+      orgName: 业务组织名称
       paymentMode: 付款方式
       paymentMode_label: 付款方式
       posted: 是否已过账
@@ -498,6 +537,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       currentBalance: 当前余额
       delVersion: 逻辑删除版本
       id: ID
@@ -505,11 +545,13 @@ prop:
       openingBalance: 期初余额
       org: null
       orgId: 所属组织
+      orgName: 业务组织名称
       remark: 备注
       status: 状态
       status_label: 状态
       subject: null
       subjectId: 对应会计科目
+      subjectName: 科目名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -579,9 +621,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       creditFacility: null
+      creditFacilityCode: 授信额度单号
       creditFacilityId: 占用授信额度
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       dueDate: 到期日
       exchangeRate: 汇率
@@ -592,8 +636,10 @@ prop:
       notesType_label: 票据类型
       org: null
       orgId: 核算组织
+      orgName: 业务组织名称
       partner: null
       partnerId: 收款方往来
+      partnerName: 收款方名称
       payeeBank: 收款行
       payeeName: 收款人
       posted: 是否已过账
@@ -615,6 +661,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       discountId: 贴现明细
       drawerBank: 出票行
@@ -630,8 +677,10 @@ prop:
       notesType_label: 票据类型
       org: null
       orgId: 核算组织
+      orgName: 业务组织名称
       partner: null
       partnerId: 出票客户往来
+      partnerName: 出票客户名称
       payeeName: 收款人
       posted: 是否已过账
       postedAt: 过账时间
@@ -645,13 +694,17 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpFinPostingException:
+      acctSchema: null
+      acctSchemaCode: 账套编码
       acctSchemaId: 账套
       billHeadCode: 单据编号
       businessType: 业务类型
       businessType_label: 业务类型
       createTime: 创建时间
       createdBy: 创建人
+      currency: null
       currencyId: 币种
+      currencyName: 币种名称
       delVersion: 逻辑删除版本
       errorCode: 错误码
       errorMessage: 错误信息
@@ -660,7 +713,9 @@ prop:
       failedStage: 失败阶段
       id: ID
       occurrenceTime: 发生时间
+      org: null
       orgId: 核算组织
+      orgName: 业务组织名称
       postingType: 过账类型
       postingType_label: 过账类型
       resolution: 处置动作
@@ -675,6 +730,8 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+      voucher: null
+      voucherCode: 凭证号
       voucherDate: 凭证日期
       voucherId: 关联凭证ID
     ErpFinReconciliation:
@@ -755,6 +812,7 @@ prop:
       version: 数据版本
     ErpFinVoucher:
       acctSchema: null
+      acctSchemaCode: 账套编码
       acctSchemaId: 账套
       billLinks: null
       code: 凭证号
@@ -768,7 +826,9 @@ prop:
       lines: null
       org: null
       orgId: 核算组织
+      orgName: 业务组织名称
       period: null
+      periodCode: 会计期间编码
       periodId: 会计期间
       postedAt: 过账时间
       postedBy: 过账人
@@ -800,9 +860,11 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       voucher: null
+      voucherCode: 凭证号
       voucherId: 凭证ID
     ErpFinVoucherLine:
       acctSchema: null
+      acctSchemaCode: 账套编码
       acctSchemaId: 账套
       amountFunctional: 本位币金额
       amountSource: 源币种金额
@@ -810,29 +872,36 @@ prop:
       businessType_label: 业务类型
       costCenter: null
       costCenterId: 成本中心
+      costCenterName: 成本中心名称
       createTime: 创建时间
       createdBy: 创建人
       creditAmount: 贷方金额(本位币)
       currency: null
       currencyId: 币种
+      currencyName: 币种名称
       dcDirection: 借贷方向
       dcDirection_label: 借贷方向
       debitAmount: 借方金额(本位币)
       delVersion: 逻辑删除版本
       department: null
       departmentId: 辅助-部门
+      departmentName: 部门名称
       exchangeRate: 汇率
       id: ID
       lineNo: 行号
       material: null
       materialId: 辅助-物料
+      materialName: 物料名称
       memo: 摘要
       org: null
       orgId: 核算组织
+      orgName: 业务组织名称
       partner: null
       partnerId: 辅助-往来单位
+      partnerName: 往来单位名称
       project: null
       projectId: 辅助-项目
+      projectName: 项目名称
       subject: null
       subjectCode: 科目编码
       subjectId: 科目ID
@@ -841,9 +910,11 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       voucher: null
+      voucherCode: 凭证号
       voucherId: 凭证ID
       warehouse: null
       warehouseId: 辅助-仓库
+      warehouseName: 仓库名称
     ErpFinVoucherTemplate:
       acctSchema: null
       acctSchemaId: 账套(空表示所有账套通用)

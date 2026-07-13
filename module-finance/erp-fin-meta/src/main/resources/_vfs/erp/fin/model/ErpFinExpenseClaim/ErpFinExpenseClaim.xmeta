@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpFinExpenseClaim.xmeta">
 
-    <props/>
+    <props>
+        <prop name="orgName" displayName="业务组织名称" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="claimantName" displayName="报销人名称" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="departmentName" displayName="部门名称" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="currencyName" displayName="币种名称" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="employeeAdvanceCode" displayName="抵扣借款单号" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+    </props>
 </meta>

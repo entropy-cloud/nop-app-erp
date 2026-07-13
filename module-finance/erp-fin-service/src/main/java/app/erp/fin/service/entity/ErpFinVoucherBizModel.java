@@ -3,8 +3,10 @@ package app.erp.fin.service.entity;
 
 import io.nop.api.core.annotations.biz.AuditType;
 import io.nop.api.core.annotations.biz.BizAudit;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.txn.TransactionPropagation;
 import io.nop.api.core.annotations.txn.Transactional;
@@ -17,6 +19,10 @@ import app.erp.fin.dao.PostingEvent;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.service.posting.ErpFinPostingProcessor;
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 凭证聚合根 Biz（过账记录主实体）。CRUD 之外承载业财过账的两个动作入口（{@code post}/{@code reverse}），
@@ -60,5 +66,37 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
                         @Name("businessType") ErpFinBusinessType businessType,
                         IServiceContext context) {
         return postingProcessor.reverseProcess(billHeadCode, businessType, context);
+    }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生字段 + BizLoader 批量加载防 N+1）----------
+
+    @BizLoader(forType = ErpFinVoucher.class)
+    public List<String> orgName(@ContextSource List<ErpFinVoucher> vouchers) {
+        orm().batchLoadProps(vouchers, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(vouchers.size());
+        for (ErpFinVoucher voucher : vouchers) {
+            result.add(voucher.getOrg() != null ? voucher.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinVoucher.class)
+    public List<String> acctSchemaCode(@ContextSource List<ErpFinVoucher> vouchers) {
+        orm().batchLoadProps(vouchers, Collections.singleton("acctSchema"));
+        List<String> result = new ArrayList<>(vouchers.size());
+        for (ErpFinVoucher voucher : vouchers) {
+            result.add(voucher.getAcctSchema() != null ? voucher.getAcctSchema().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinVoucher.class)
+    public List<String> periodCode(@ContextSource List<ErpFinVoucher> vouchers) {
+        orm().batchLoadProps(vouchers, Collections.singleton("period"));
+        List<String> result = new ArrayList<>(vouchers.size());
+        for (ErpFinVoucher voucher : vouchers) {
+            result.add(voucher.getPeriod() != null ? voucher.getPeriod().getCode() : null);
+        }
+        return result;
     }
 }

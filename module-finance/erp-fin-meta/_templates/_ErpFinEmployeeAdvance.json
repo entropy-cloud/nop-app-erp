@@ -32,5 +32,9 @@
   "employee": null,
   "currency": null,
   "project": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "employeeName": "",
+  "currencyName": "",
+  "projectName": ""
 }

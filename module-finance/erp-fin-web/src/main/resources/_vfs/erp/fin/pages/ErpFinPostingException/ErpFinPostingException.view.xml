@@ -3,7 +3,25 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="traceId" sortable="true"/>
+                <col id="billHeadCode" sortable="true"/>
+                <col id="businessType" sortable="true"/>
+                <col id="postingType" sortable="true"/>
+                <col id="errorCode" mandatory="true" sortable="true"/>
+                <col id="errorMessage" sortable="true"/>
+                <col id="failedStage" sortable="true"/>
+                <col id="voucherDate" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="acctSchemaCode" label="账套"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="voucherCode" label="凭证号"/>
+                <col id="currencyName" label="币种"/>
+                <col id="occurrenceTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

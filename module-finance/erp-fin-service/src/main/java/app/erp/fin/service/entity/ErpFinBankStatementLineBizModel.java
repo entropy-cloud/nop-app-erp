@@ -8,8 +8,10 @@ import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.bankrecon.BankStatementMatcher;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
@@ -18,6 +20,10 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @BizModel("ErpFinBankStatementLine")
 public class ErpFinBankStatementLineBizModel extends CrudBizModel<ErpFinBankStatementLine>
@@ -62,5 +68,28 @@ public class ErpFinBankStatementLineBizModel extends CrudBizModel<ErpFinBankStat
         line.setMatchStatus(ErpFinConstants.BANK_MATCH_MANUAL_MATCHED);
         line.setMatchedLineId(voucherLineId);
         return line;
+    }
+
+    // ---------- 高价值外键名称解析（机制 D）----------
+    // matchedLineId 为内部匹配链路（自引用 voucherLine），保留原始 ID。
+
+    @BizLoader(forType = ErpFinBankStatementLine.class)
+    public List<String> statementCode(@ContextSource List<ErpFinBankStatementLine> lines) {
+        orm().batchLoadProps(lines, Collections.singleton("statement"));
+        List<String> result = new ArrayList<>(lines.size());
+        for (ErpFinBankStatementLine line : lines) {
+            result.add(line.getStatement() != null ? line.getStatement().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinBankStatementLine.class)
+    public List<String> currencyName(@ContextSource List<ErpFinBankStatementLine> lines) {
+        orm().batchLoadProps(lines, Collections.singleton("currency"));
+        List<String> result = new ArrayList<>(lines.size());
+        for (ErpFinBankStatementLine line : lines) {
+            result.add(line.getCurrency() != null ? line.getCurrency().getName() : null);
+        }
+        return result;
     }
 }

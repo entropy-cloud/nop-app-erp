@@ -49,7 +49,9 @@
         <!-- compile: 过账异常告警接入通知派发通道（IErpSysNotificationBiz 位于 erp-notify-dao）。
              finance→notify 单向（finance 触发通知，notify 不依赖 finance），DAG 无环。 -->
         <dependency><artifactId>app-erp-notify-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version></dependency>
-        <dependency><artifactId>app-erp-projects-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <!-- compile: 凭证行/预算行 projectName 经机制 D BizLoader 读 ErpPrjProject.name
+             （finance-dao ORM to-one relation 已引用 ErpPrjProject，DAG 合法 R：finance→projects 只读依赖）。 -->
+        <dependency><artifactId>app-erp-projects-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version></dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>

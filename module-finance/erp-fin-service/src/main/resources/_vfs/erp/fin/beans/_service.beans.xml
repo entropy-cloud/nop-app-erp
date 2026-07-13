@@ -5,14 +5,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-    <bean id="app.erp.fin.service.entity.ErpFinPostingExceptionBizModel" ioc:type="@bean:id" ioc:default="true"/>
-
-    <bean id="biz_ErpFinPostingException" class="io.nop.biz.proxy.BizProxyFactoryBean"
-          ioc:type="app.erp.fin.biz.IErpFinPostingExceptionBiz" ioc:force-lazy-property="true" lazy-init="true"
-          primary="true">
-        <property name="bizObjName" value="ErpFinPostingException"/>
-    </bean>
-
     <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinVoucherTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -160,6 +152,14 @@
           ioc:type="app.erp.fin.biz.IErpFinVoucherBillRBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpFinVoucherBillR"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinPostingExceptionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinPostingException" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinPostingExceptionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinPostingException"/>
     </bean>
 
     <bean id="app.erp.fin.service.entity.ErpFinBudgetScenarioBizModel" ioc:type="@bean:id" ioc:default="true"/>

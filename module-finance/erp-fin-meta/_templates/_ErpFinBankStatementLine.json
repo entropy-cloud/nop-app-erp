@@ -22,5 +22,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "statement": null,
   "matchedLine": null,
-  "currency": null
+  "currency": null,
+  "statementCode": "",
+  "currencyName": ""
 }

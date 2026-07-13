@@ -32,5 +32,9 @@
   "partner": null,
   "currency": null,
   "org": null,
-  "creditFacility": null
+  "creditFacility": null,
+  "orgName": "",
+  "currencyName": "",
+  "partnerName": "",
+  "creditFacilityCode": ""
 }

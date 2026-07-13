@@ -29,5 +29,11 @@
   "sourceArApItem": null,
   "period": null,
   "voucher": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "acctSchemaCode": "",
+  "partnerName": "",
+  "currencyName": "",
+  "periodCode": "",
+  "voucherCode": ""
 }

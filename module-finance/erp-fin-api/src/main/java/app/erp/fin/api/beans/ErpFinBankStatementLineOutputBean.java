@@ -303,6 +303,30 @@
         }
 
 
+        private String _statementCode;
+
+    
+        public String getStatementCode(){
+            return _statementCode;
+        }
+
+        public void setStatementCode(String value){
+            this._statementCode = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
         private Map<String,Object> _statement;
 
         public Map<String,Object> getStatement(){

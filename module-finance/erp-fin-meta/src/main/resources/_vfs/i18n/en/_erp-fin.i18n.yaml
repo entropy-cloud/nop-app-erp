@@ -100,6 +100,11 @@ prop:
       settledAmountFunctional: Settled Amount Functional
       openAmountSource: Open Amount Source
       openAmountFunctional: Open Amount Functional
+      orgName: null
+      acctSchemaCode: null
+      partnerName: null
+      currencyName: null
+      periodCode: null
       status: Status
       status_label: null
       periodId: Period
@@ -147,6 +152,12 @@ prop:
       period: Period
       voucher: Voucher
       org: null
+      orgName: null
+      acctSchemaCode: null
+      partnerName: null
+      currencyName: null
+      periodCode: null
+      voucherCode: null
     ErpFinBankReconciliation:
       id: ID
       code: Code
@@ -173,6 +184,9 @@ prop:
       statement: Bank Statement
       adjustmentLines: Adjustment Lines
       org: null
+      orgName: null
+      fundAccountName: null
+      statementCode: null
     ErpFinBankReconciliationLine:
       id: ID
       reconciliationId: Reconciliation
@@ -213,6 +227,8 @@ prop:
       updateTime: Update Time
       fundAccount: Fund Account
       org: null
+      orgName: null
+      fundAccountName: null
     ErpFinBankStatementLine:
       id: ID
       statementId: Statement
@@ -238,6 +254,8 @@ prop:
       statement: Statement
       matchedLine: Matched Voucher Line
       currency: Currency
+      statementCode: null
+      currencyName: null
     ErpFinBudgetControlLog:
       id: ID
       orgId: Organization
@@ -308,6 +326,18 @@ prop:
       material: Material
       currency: Currency
       org: Org
+      scenarioCode: null
+      orgName: null
+      acctSchemaCode: null
+      periodCode: null
+      subjectName: null
+      costCenterName: null
+      departmentName: null
+      projectName: null
+      partnerName: null
+      warehouseName: null
+      materialName: null
+      currencyName: null
     ErpFinBudgetScenario:
       id: ID
       code: Code
@@ -423,6 +453,10 @@ prop:
       currency: Currency
       project: Project
       org: Org
+      orgName: null
+      employeeName: null
+      currencyName: null
+      projectName: null
     ErpFinExpenseClaim:
       id: ID
       code: Code
@@ -463,6 +497,11 @@ prop:
       org: Org
       settleAdvance: Settle Advance
       lines: Lines
+      orgName: null
+      claimantName: null
+      departmentName: null
+      currencyName: null
+      employeeAdvanceCode: null
     ErpFinExpenseClaimLine:
       id: ID
       claimId: Claim
@@ -513,6 +552,9 @@ prop:
       currency: Currency
       subject: Subject
       org: null
+      orgName: null
+      subjectName: null
+      currencyName: null
     ErpFinGlBalance:
       id: ID
       orgId: Organization
@@ -607,6 +649,10 @@ prop:
       currency: Currency
       org: Org
       creditFacility: Credit Facility
+      orgName: null
+      currencyName: null
+      partnerName: null
+      creditFacilityCode: null
     ErpFinNotesReceivable:
       id: ID
       code: Code
@@ -644,6 +690,9 @@ prop:
       currency: Currency
       org: Org
       endorsementFrom: Endorsement From
+      orgName: null
+      currencyName: null
+      partnerName: null
     ErpFinPostingException:
       id: ID
       traceId: Trace ID
@@ -677,6 +726,14 @@ prop:
       currencyId: Currency
       exchangeRate: Exchange Rate
       eventData: Event Data
+      org: Organization
+      acctSchema: Acct Schema
+      voucher: Voucher
+      currency: Currency
+      orgName: null
+      acctSchemaCode: null
+      voucherCode: null
+      currencyName: null
     ErpFinReconciliation:
       id: ID
       code: Code
@@ -767,6 +824,9 @@ prop:
       periodId: Period
       totalDebit: Total Debit
       totalCredit: Total Credit
+      orgName: null
+      acctSchemaCode: null
+      periodCode: null
       isReversed: Is Reversed
       reversalOfVoucherId: Reversal Of Voucher
       docStatus: Doc Status
@@ -801,6 +861,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       voucher: Voucher
+      voucherCode: null
     ErpFinVoucherLine:
       id: ID
       voucherId: Voucher
@@ -844,6 +905,16 @@ prop:
       material: Material
       project: Project
       costCenter: Cost Center
+      voucherCode: null
+      currencyName: null
+      acctSchemaCode: null
+      orgName: null
+      partnerName: null
+      departmentName: null
+      projectName: null
+      warehouseName: null
+      materialName: null
+      costCenterName: null
     ErpFinVoucherTemplate:
       id: ID
       code: Code

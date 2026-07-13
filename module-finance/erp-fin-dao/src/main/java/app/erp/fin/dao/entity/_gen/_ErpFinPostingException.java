@@ -137,6 +137,18 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     private static int _PROP_ID_BOUND = 30;
 
     
+    /* relation:  */
+    public static final String PROP_NAME_org = "org";
+    
+    /* relation:  */
+    public static final String PROP_NAME_acctSchema = "acctSchema";
+    
+    /* relation:  */
+    public static final String PROP_NAME_voucher = "voucher";
+    
+    /* relation:  */
+    public static final String PROP_NAME_currency = "currency";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
@@ -1508,5 +1520,97 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
         }
     }
     
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdOrganization getOrg(){
+       return (app.erp.md.dao.entity.ErpMdOrganization)internalGetRefEntity(PROP_NAME_org);
+    }
+
+    public final void setOrg(app.erp.md.dao.entity.ErpMdOrganization refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setOrgId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_org, refEntity,()->{
+           
+                           this.setOrgId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdAcctSchema getAcctSchema(){
+       return (app.erp.md.dao.entity.ErpMdAcctSchema)internalGetRefEntity(PROP_NAME_acctSchema);
+    }
+
+    public final void setAcctSchema(app.erp.md.dao.entity.ErpMdAcctSchema refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setAcctSchemaId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_acctSchema, refEntity,()->{
+           
+                           this.setAcctSchemaId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.fin.dao.entity.ErpFinVoucher getVoucher(){
+       return (app.erp.fin.dao.entity.ErpFinVoucher)internalGetRefEntity(PROP_NAME_voucher);
+    }
+
+    public final void setVoucher(app.erp.fin.dao.entity.ErpFinVoucher refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setVoucherId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_voucher, refEntity,()->{
+           
+                           this.setVoucherId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.md.dao.entity.ErpMdCurrency getCurrency(){
+       return (app.erp.md.dao.entity.ErpMdCurrency)internalGetRefEntity(PROP_NAME_currency);
+    }
+
+    public final void setCurrency(app.erp.md.dao.entity.ErpMdCurrency refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCurrencyId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_currency, refEntity,()->{
+           
+                           this.setCurrencyId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
 }
 // resume CPD analysis - CPD-ON

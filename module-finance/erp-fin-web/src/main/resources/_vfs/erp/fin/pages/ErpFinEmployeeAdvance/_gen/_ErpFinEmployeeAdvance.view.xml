@@ -95,6 +95,18 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--业务组织名称-->
+                <col id="orgName"/>
+
+                <!--员工名称-->
+                <col id="employeeName"/>
+
+                <!--币种名称-->
+                <col id="currencyName"/>
+
+                <!--项目名称-->
+                <col id="projectName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -115,7 +127,9 @@
  postedAt[过账时间] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] orgName[业务组织名称]
+ employeeName[员工名称] currencyName[币种名称]
+ projectName[项目名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-员工借款单" i18n-en:title="Add Employee Advance" x:prototype="edit"/>

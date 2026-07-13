@@ -363,6 +363,150 @@
         }
 
 
+        private String _scenarioCode;
+
+    
+        public String getScenarioCode(){
+            return _scenarioCode;
+        }
+
+        public void setScenarioCode(String value){
+            this._scenarioCode = value;
+        }
+
+
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _acctSchemaCode;
+
+    
+        public String getAcctSchemaCode(){
+            return _acctSchemaCode;
+        }
+
+        public void setAcctSchemaCode(String value){
+            this._acctSchemaCode = value;
+        }
+
+
+        private String _periodCode;
+
+    
+        public String getPeriodCode(){
+            return _periodCode;
+        }
+
+        public void setPeriodCode(String value){
+            this._periodCode = value;
+        }
+
+
+        private String _subjectName;
+
+    
+        public String getSubjectName(){
+            return _subjectName;
+        }
+
+        public void setSubjectName(String value){
+            this._subjectName = value;
+        }
+
+
+        private String _costCenterName;
+
+    
+        public String getCostCenterName(){
+            return _costCenterName;
+        }
+
+        public void setCostCenterName(String value){
+            this._costCenterName = value;
+        }
+
+
+        private String _departmentName;
+
+    
+        public String getDepartmentName(){
+            return _departmentName;
+        }
+
+        public void setDepartmentName(String value){
+            this._departmentName = value;
+        }
+
+
+        private String _projectName;
+
+    
+        public String getProjectName(){
+            return _projectName;
+        }
+
+        public void setProjectName(String value){
+            this._projectName = value;
+        }
+
+
+        private String _partnerName;
+
+    
+        public String getPartnerName(){
+            return _partnerName;
+        }
+
+        public void setPartnerName(String value){
+            this._partnerName = value;
+        }
+
+
+        private String _warehouseName;
+
+    
+        public String getWarehouseName(){
+            return _warehouseName;
+        }
+
+        public void setWarehouseName(String value){
+            this._warehouseName = value;
+        }
+
+
+        private String _materialName;
+
+    
+        public String getMaterialName(){
+            return _materialName;
+        }
+
+        public void setMaterialName(String value){
+            this._materialName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
         private Map<String,Object> _scenario;
 
         public Map<String,Object> getScenario(){

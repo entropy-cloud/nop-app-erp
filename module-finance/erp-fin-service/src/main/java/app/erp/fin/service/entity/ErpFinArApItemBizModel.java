@@ -1,8 +1,10 @@
 
 package app.erp.fin.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -20,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,5 +120,57 @@ public class ErpFinArApItemBizModel extends CrudBizModel<ErpFinArApItem> impleme
             return 0;
         }
         return to.toEpochDay() - from.toEpochDay();
+    }
+
+    // ---------- 高价值外键名称解析（机制 D）----------
+
+    @BizLoader(forType = ErpFinArApItem.class)
+    public List<String> orgName(@ContextSource List<ErpFinArApItem> items) {
+        orm().batchLoadProps(items, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(items.size());
+        for (ErpFinArApItem item : items) {
+            result.add(item.getOrg() != null ? item.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinArApItem.class)
+    public List<String> acctSchemaCode(@ContextSource List<ErpFinArApItem> items) {
+        orm().batchLoadProps(items, Collections.singleton("acctSchema"));
+        List<String> result = new ArrayList<>(items.size());
+        for (ErpFinArApItem item : items) {
+            result.add(item.getAcctSchema() != null ? item.getAcctSchema().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinArApItem.class)
+    public List<String> partnerName(@ContextSource List<ErpFinArApItem> items) {
+        orm().batchLoadProps(items, Collections.singleton("partner"));
+        List<String> result = new ArrayList<>(items.size());
+        for (ErpFinArApItem item : items) {
+            result.add(item.getPartner() != null ? item.getPartner().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinArApItem.class)
+    public List<String> currencyName(@ContextSource List<ErpFinArApItem> items) {
+        orm().batchLoadProps(items, Collections.singleton("currency"));
+        List<String> result = new ArrayList<>(items.size());
+        for (ErpFinArApItem item : items) {
+            result.add(item.getCurrency() != null ? item.getCurrency().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinArApItem.class)
+    public List<String> periodCode(@ContextSource List<ErpFinArApItem> items) {
+        orm().batchLoadProps(items, Collections.singleton("period"));
+        List<String> result = new ArrayList<>(items.size());
+        for (ErpFinArApItem item : items) {
+            result.add(item.getPeriod() != null ? item.getPeriod().getCode() : null);
+        }
+        return result;
     }
 }

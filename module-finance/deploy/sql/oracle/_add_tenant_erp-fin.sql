@@ -19,8 +19,6 @@ alter table erp_md_cost_center add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NU
 
 alter table erp_md_employee add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
-alter table erp_fin_posting_exception add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
-
 alter table erp_ast_asset add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -60,6 +58,8 @@ alter table erp_fin_expense_claim add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT
 alter table erp_fin_voucher_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_bill_r add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_posting_exception add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_budget_scenario add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -110,9 +110,6 @@ alter table erp_md_cost_center add constraint PK_erp_md_cost_center primary key 
 
 alter table erp_md_employee drop constraint PK_erp_md_employee;
 alter table erp_md_employee add constraint PK_erp_md_employee primary key (NOP_TENANT_ID, ID);
-
-alter table erp_fin_posting_exception drop constraint PK_erp_fin_posting_exception;
-alter table erp_fin_posting_exception add constraint PK_erp_fin_posting_exception primary key (NOP_TENANT_ID, ID);
 
 alter table erp_ast_asset drop constraint PK_erp_ast_asset;
 alter table erp_ast_asset add constraint PK_erp_ast_asset primary key (NOP_TENANT_ID, ID);
@@ -173,6 +170,9 @@ alter table erp_fin_voucher_line add constraint PK_erp_fin_voucher_line primary 
 
 alter table erp_fin_voucher_bill_r drop constraint PK_erp_fin_voucher_bill_r;
 alter table erp_fin_voucher_bill_r add constraint PK_erp_fin_voucher_bill_r primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_posting_exception drop constraint PK_erp_fin_posting_exception;
+alter table erp_fin_posting_exception add constraint PK_erp_fin_posting_exception primary key (NOP_TENANT_ID, ID);
 
 alter table erp_fin_budget_scenario drop constraint PK_erp_fin_budget_scenario;
 alter table erp_fin_budget_scenario add constraint PK_erp_fin_budget_scenario primary key (NOP_TENANT_ID, ID);

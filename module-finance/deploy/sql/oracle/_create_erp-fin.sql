@@ -94,38 +94,6 @@ CREATE TABLE erp_md_employee(
   constraint PK_erp_md_employee primary key (ID)
 );
 
-CREATE TABLE erp_fin_posting_exception(
-  ID NUMBER(20) NOT NULL ,
-  TRACE_ID VARCHAR2(50)  ,
-  BILL_HEAD_CODE VARCHAR2(50)  ,
-  BUSINESS_TYPE VARCHAR2(30)  ,
-  POSTING_TYPE VARCHAR2(20)  ,
-  ERROR_CODE VARCHAR2(100) NOT NULL ,
-  ERROR_MESSAGE VARCHAR2(500)  ,
-  FAILED_STAGE VARCHAR2(50)  ,
-  VOUCHER_DATE DATE  ,
-  ORG_ID NUMBER(20)  ,
-  ACCT_SCHEMA_ID NUMBER(20)  ,
-  STATUS VARCHAR2(20) NOT NULL ,
-  RETRY_COUNT INTEGER default 0   ,
-  RESOLUTION VARCHAR2(20)  ,
-  RESOLUTION_NOTE VARCHAR2(500)  ,
-  RESOLVED_BY VARCHAR2(36)  ,
-  RESOLVED_AT DATE  ,
-  VOUCHER_ID NUMBER(20)  ,
-  OCCURRENCE_TIME TIMESTAMP NOT NULL ,
-  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
-  VERSION INTEGER default 0  NOT NULL ,
-  CREATED_BY VARCHAR2(50) NOT NULL ,
-  CREATE_TIME TIMESTAMP NOT NULL ,
-  UPDATED_BY VARCHAR2(50) NOT NULL ,
-  UPDATE_TIME TIMESTAMP NOT NULL ,
-  CURRENCY_ID NUMBER(20)  ,
-  EXCHANGE_RATE NUMBER(20,8)  ,
-  EVENT_DATA VARCHAR2(4000)  ,
-  constraint PK_erp_fin_posting_exception primary key (ID)
-);
-
 CREATE TABLE erp_ast_asset(
   ID NUMBER(20)  ,
   CODE VARCHAR2(50)  ,
@@ -615,6 +583,38 @@ CREATE TABLE erp_fin_voucher_bill_r(
   constraint PK_erp_fin_voucher_bill_r primary key (ID)
 );
 
+CREATE TABLE erp_fin_posting_exception(
+  ID NUMBER(20) NOT NULL ,
+  TRACE_ID VARCHAR2(50)  ,
+  BILL_HEAD_CODE VARCHAR2(50)  ,
+  BUSINESS_TYPE VARCHAR2(30)  ,
+  POSTING_TYPE VARCHAR2(20)  ,
+  ERROR_CODE VARCHAR2(100) NOT NULL ,
+  ERROR_MESSAGE VARCHAR2(500)  ,
+  FAILED_STAGE VARCHAR2(50)  ,
+  VOUCHER_DATE DATE  ,
+  ORG_ID NUMBER(20)  ,
+  ACCT_SCHEMA_ID NUMBER(20)  ,
+  STATUS VARCHAR2(20) NOT NULL ,
+  RETRY_COUNT INTEGER default 0   ,
+  RESOLUTION VARCHAR2(20)  ,
+  RESOLUTION_NOTE VARCHAR2(500)  ,
+  RESOLVED_BY VARCHAR2(36)  ,
+  RESOLVED_AT DATE  ,
+  VOUCHER_ID NUMBER(20)  ,
+  OCCURRENCE_TIME TIMESTAMP NOT NULL ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  CURRENCY_ID NUMBER(20)  ,
+  EXCHANGE_RATE NUMBER(20,8)  ,
+  EVENT_DATA VARCHAR2(4000)  ,
+  constraint PK_erp_fin_posting_exception primary key (ID)
+);
+
 CREATE TABLE erp_fin_budget_scenario(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -887,64 +887,6 @@ CREATE TABLE erp_fin_budget_control_log(
                 
       COMMENT ON TABLE erp_md_employee IS '职员';
                 
-      COMMENT ON TABLE erp_fin_posting_exception IS '过账异常记录';
-                
-      COMMENT ON COLUMN erp_fin_posting_exception.ID IS 'ID';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.TRACE_ID IS '追踪ID';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.BILL_HEAD_CODE IS '单据编号';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.BUSINESS_TYPE IS '业务类型';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.POSTING_TYPE IS '过账类型';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.ERROR_CODE IS '错误码';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.ERROR_MESSAGE IS '错误信息';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.FAILED_STAGE IS '失败阶段';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.VOUCHER_DATE IS '凭证日期';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.ORG_ID IS '核算组织';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.ACCT_SCHEMA_ID IS '账套';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.STATUS IS '处置状态';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.RETRY_COUNT IS '重试次数';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.RESOLUTION IS '处置动作';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.RESOLUTION_NOTE IS '处置说明';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.RESOLVED_BY IS '处置人';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.RESOLVED_AT IS '处置时间';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.VOUCHER_ID IS '关联凭证ID';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.OCCURRENCE_TIME IS '发生时间';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.DEL_VERSION IS '逻辑删除版本';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.VERSION IS '数据版本';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.CREATED_BY IS '创建人';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.CREATE_TIME IS '创建时间';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.UPDATED_BY IS '修改人';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.CURRENCY_ID IS '币种';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.EXCHANGE_RATE IS '汇率';
-                    
-      COMMENT ON COLUMN erp_fin_posting_exception.EVENT_DATA IS '原始事件数据(JSON)';
-                    
       COMMENT ON TABLE erp_ast_asset IS '固定资产';
                 
       COMMENT ON TABLE erp_fin_voucher_template IS '凭证模板';
@@ -1792,6 +1734,64 @@ CREATE TABLE erp_fin_budget_control_log(
       COMMENT ON COLUMN erp_fin_voucher_bill_r.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_voucher_bill_r.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_posting_exception IS '过账异常记录';
+                
+      COMMENT ON COLUMN erp_fin_posting_exception.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.TRACE_ID IS '追踪ID';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.BILL_HEAD_CODE IS '单据编号';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.BUSINESS_TYPE IS '业务类型';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.POSTING_TYPE IS '过账类型';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.ERROR_CODE IS '错误码';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.ERROR_MESSAGE IS '错误信息';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.FAILED_STAGE IS '失败阶段';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.VOUCHER_DATE IS '凭证日期';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.ACCT_SCHEMA_ID IS '账套';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.STATUS IS '处置状态';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.RETRY_COUNT IS '重试次数';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.RESOLUTION IS '处置动作';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.RESOLUTION_NOTE IS '处置说明';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.RESOLVED_BY IS '处置人';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.RESOLVED_AT IS '处置时间';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.VOUCHER_ID IS '关联凭证ID';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.OCCURRENCE_TIME IS '发生时间';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.CURRENCY_ID IS '币种';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.EXCHANGE_RATE IS '汇率';
+                    
+      COMMENT ON COLUMN erp_fin_posting_exception.EVENT_DATA IS '原始事件数据(JSON)';
                     
       COMMENT ON TABLE erp_fin_budget_scenario IS '预算方案';
                 

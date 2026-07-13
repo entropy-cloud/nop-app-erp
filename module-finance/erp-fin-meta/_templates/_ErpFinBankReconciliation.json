@@ -23,5 +23,8 @@
   "fundAccount": null,
   "statement": null,
   "adjustmentLines": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "fundAccountName": "",
+  "statementCode": ""
 }

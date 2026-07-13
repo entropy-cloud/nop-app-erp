@@ -3,7 +3,20 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="fundAccountName" label="资金账户"/>
+                <col id="statementDate" mandatory="true" sortable="true"/>
+                <col id="beginningBalance" ui:number="true" sortable="true"/>
+                <col id="endingBalance" ui:number="true" sortable="true"/>
+                <col id="totalDebit" ui:number="true" sortable="true"/>
+                <col id="totalCredit" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

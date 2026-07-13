@@ -80,6 +80,24 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--业务组织名称-->
+                <col id="orgName"/>
+
+                <!--账套编码-->
+                <col id="acctSchemaCode"/>
+
+                <!--客户名称-->
+                <col id="partnerName"/>
+
+                <!--币种名称-->
+                <col id="currencyName"/>
+
+                <!--会计期间编码-->
+                <col id="periodCode"/>
+
+                <!--凭证号-->
+                <col id="voucherCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -98,6 +116,9 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ orgName[业务组织名称] acctSchemaCode[账套编码]
+ partnerName[客户名称] currencyName[币种名称]
+ periodCode[会计期间编码] voucherCode[凭证号]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-坏账单" i18n-en:title="Add Bad Debt" x:prototype="edit"/>

@@ -427,6 +427,54 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _employeeName;
+
+    
+        public String getEmployeeName(){
+            return _employeeName;
+        }
+
+        public void setEmployeeName(String value){
+            this._employeeName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
+        private String _projectName;
+
+    
+        public String getProjectName(){
+            return _projectName;
+        }
+
+        public void setProjectName(String value){
+            this._projectName = value;
+        }
+
+
         private Map<String,Object> _employee;
 
         public Map<String,Object> getEmployee(){

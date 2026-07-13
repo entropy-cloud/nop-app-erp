@@ -101,6 +101,36 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--凭证号-->
+                <col id="voucherCode"/>
+
+                <!--币种名称-->
+                <col id="currencyName"/>
+
+                <!--账套编码-->
+                <col id="acctSchemaCode"/>
+
+                <!--业务组织名称-->
+                <col id="orgName"/>
+
+                <!--往来单位名称-->
+                <col id="partnerName"/>
+
+                <!--部门名称-->
+                <col id="departmentName"/>
+
+                <!--项目名称-->
+                <col id="projectName"/>
+
+                <!--仓库名称-->
+                <col id="warehouseName"/>
+
+                <!--物料名称-->
+                <col id="materialName"/>
+
+                <!--成本中心名称-->
+                <col id="costCenterName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -122,7 +152,12 @@
  businessType[业务类型] costCenterId[成本中心]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] voucherCode[凭证号]
+ currencyName[币种名称] acctSchemaCode[账套编码]
+ orgName[业务组织名称] partnerName[往来单位名称]
+ departmentName[部门名称] projectName[项目名称]
+ warehouseName[仓库名称] materialName[物料名称]
+ costCenterName[成本中心名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-凭证分录行" i18n-en:title="Add Voucher Line" x:prototype="edit"/>

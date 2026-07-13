@@ -1536,6 +1536,12 @@
                     <column name="currencyId"/>
                 </index>
             </indexes>
+            <relations>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Organization'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
+                <to-one name="voucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub" i18n-en:displayName='Voucher'><join><on leftProp="voucherId" rightProp="id"/></join></to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'><join><on leftProp="currencyId" rightProp="id"/></join></to-one>
+            </relations>
         </entity>
 
         <!-- 坏账核销/收回单（头，承载 writeOff/recovery 事件，关联客户 + 源 AR 辅助账项 + 审批状态机；bad-debt.md） -->

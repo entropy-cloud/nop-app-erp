@@ -10,5 +10,20 @@
         <prop name="settledAmountFunctional" internal="true" x:override="merge"/>
         <prop name="openAmountSource" internal="true" x:override="merge"/>
         <prop name="openAmountFunctional" internal="true" x:override="merge"/>
+        <prop name="orgName" displayName="业务组织名称" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="acctSchemaCode" displayName="账套编码" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="partnerName" displayName="往来单位名称" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="currencyName" displayName="币种名称" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="periodCode" displayName="会计期间编码" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
     </props>
 </meta>

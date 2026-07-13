@@ -12,9 +12,11 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.ErpFinPostingErrors;
 import app.erp.fin.service.posting.ErpFinPostingExceptionRecorder;
 import app.erp.fin.service.posting.ErpFinPostingMetrics;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
@@ -30,7 +32,9 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -310,5 +314,47 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
         } catch (Exception e) {
             return null;
         }
+    }
+
+    // ---------- 高价值外键名称解析（机制 D）----------
+
+    @BizLoader(forType = ErpFinPostingException.class)
+    public List<String> orgName(@ContextSource List<ErpFinPostingException> exceptions) {
+        orm().batchLoadProps(exceptions, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(exceptions.size());
+        for (ErpFinPostingException ex : exceptions) {
+            result.add(ex.getOrg() != null ? ex.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinPostingException.class)
+    public List<String> acctSchemaCode(@ContextSource List<ErpFinPostingException> exceptions) {
+        orm().batchLoadProps(exceptions, Collections.singleton("acctSchema"));
+        List<String> result = new ArrayList<>(exceptions.size());
+        for (ErpFinPostingException ex : exceptions) {
+            result.add(ex.getAcctSchema() != null ? ex.getAcctSchema().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinPostingException.class)
+    public List<String> voucherCode(@ContextSource List<ErpFinPostingException> exceptions) {
+        orm().batchLoadProps(exceptions, Collections.singleton("voucher"));
+        List<String> result = new ArrayList<>(exceptions.size());
+        for (ErpFinPostingException ex : exceptions) {
+            result.add(ex.getVoucher() != null ? ex.getVoucher().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpFinPostingException.class)
+    public List<String> currencyName(@ContextSource List<ErpFinPostingException> exceptions) {
+        orm().batchLoadProps(exceptions, Collections.singleton("currency"));
+        List<String> result = new ArrayList<>(exceptions.size());
+        for (ErpFinPostingException ex : exceptions) {
+            result.add(ex.getCurrency() != null ? ex.getCurrency().getName() : null);
+        }
+        return result;
     }
 }

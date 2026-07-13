@@ -2,7 +2,27 @@
 <view x:extends="_gen/_ErpFinBudgetLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="scenarioCode" label="预算方案"/>
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="acctSchemaCode" label="账套"/>
+                <col id="periodCode" label="会计期间"/>
+                <col id="subjectCode" mandatory="true" sortable="true"/>
+                <col id="subjectName" label="科目名称"/>
+                <col id="costCenterName" label="成本中心"/>
+                <col id="departmentName" label="部门"/>
+                <col id="projectName" label="项目"/>
+                <col id="partnerName" label="往来单位"/>
+                <col id="warehouseName" label="仓库"/>
+                <col id="materialName" label="物料"/>
+                <col id="budgetAmountSource" ui:number="true" sortable="true"/>
+                <col id="budgetAmountFunctional" ui:number="true" sortable="true"/>
+                <col id="currencyName" label="币种"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

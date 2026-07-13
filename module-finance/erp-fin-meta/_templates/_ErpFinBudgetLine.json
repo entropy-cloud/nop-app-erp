@@ -35,5 +35,17 @@
   "warehouse": null,
   "material": null,
   "currency": null,
-  "org": null
+  "org": null,
+  "scenarioCode": "",
+  "orgName": "",
+  "acctSchemaCode": "",
+  "periodCode": "",
+  "subjectName": "",
+  "costCenterName": "",
+  "departmentName": "",
+  "projectName": "",
+  "partnerName": "",
+  "warehouseName": "",
+  "materialName": "",
+  "currencyName": ""
 }

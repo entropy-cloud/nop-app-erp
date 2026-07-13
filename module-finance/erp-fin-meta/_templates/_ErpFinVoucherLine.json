@@ -40,5 +40,15 @@
   "org": null,
   "material": null,
   "project": null,
-  "costCenter": null
+  "costCenter": null,
+  "voucherCode": "",
+  "currencyName": "",
+  "acctSchemaCode": "",
+  "orgName": "",
+  "partnerName": "",
+  "departmentName": "",
+  "projectName": "",
+  "warehouseName": "",
+  "materialName": "",
+  "costCenterName": ""
 }

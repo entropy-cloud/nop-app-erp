@@ -34,5 +34,8 @@
   "partner": null,
   "currency": null,
   "org": null,
-  "endorsementFrom": null
+  "endorsementFrom": null,
+  "orgName": "",
+  "currencyName": "",
+  "partnerName": ""
 }

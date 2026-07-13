@@ -453,4 +453,96 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _acctSchemaCode;
+
+    
+        public String getAcctSchemaCode(){
+            return _acctSchemaCode;
+        }
+
+        public void setAcctSchemaCode(String value){
+            this._acctSchemaCode = value;
+        }
+
+
+        private String _voucherCode;
+
+    
+        public String getVoucherCode(){
+            return _voucherCode;
+        }
+
+        public void setVoucherCode(String value){
+            this._voucherCode = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
+        private Map<String,Object> _org;
+
+        public Map<String,Object> getOrg(){
+            return _org;
+        }
+
+        public void setOrg(Map<String,Object> value){
+            this._org = value;
+        }
+
+
+        private Map<String,Object> _acctSchema;
+
+        public Map<String,Object> getAcctSchema(){
+            return _acctSchema;
+        }
+
+        public void setAcctSchema(Map<String,Object> value){
+            this._acctSchema = value;
+        }
+
+
+        private Map<String,Object> _voucher;
+
+        public Map<String,Object> getVoucher(){
+            return _voucher;
+        }
+
+        public void setVoucher(Map<String,Object> value){
+            this._voucher = value;
+        }
+
+
+        private Map<String,Object> _currency;
+
+        public Map<String,Object> getCurrency(){
+            return _currency;
+        }
+
+        public void setCurrency(Map<String,Object> value){
+            this._currency = value;
+        }
+
+
     }

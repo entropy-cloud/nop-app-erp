@@ -2,7 +2,28 @@
 <view x:extends="_gen/_ErpFinVoucherLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="voucherCode" label="凭证号"/>
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="subjectCode" mandatory="true" sortable="true"/>
+                <col id="subjectName" sortable="true"/>
+                <col id="dcDirection" mandatory="true" sortable="true"/>
+                <col id="debitAmount" ui:number="true" sortable="true"/>
+                <col id="creditAmount" ui:number="true" sortable="true"/>
+                <col id="currencyName" label="币种"/>
+                <col id="acctSchemaCode" label="账套"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="partnerName" label="往来单位"/>
+                <col id="departmentName" label="部门"/>
+                <col id="projectName" label="项目"/>
+                <col id="warehouseName" label="仓库"/>
+                <col id="materialName" label="物料"/>
+                <col id="costCenterName" label="成本中心"/>
+                <col id="memo" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

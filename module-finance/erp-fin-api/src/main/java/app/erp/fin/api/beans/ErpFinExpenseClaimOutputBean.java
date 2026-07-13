@@ -470,6 +470,66 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _claimantName;
+
+    
+        public String getClaimantName(){
+            return _claimantName;
+        }
+
+        public void setClaimantName(String value){
+            this._claimantName = value;
+        }
+
+
+        private String _departmentName;
+
+    
+        public String getDepartmentName(){
+            return _departmentName;
+        }
+
+        public void setDepartmentName(String value){
+            this._departmentName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
+        private String _employeeAdvanceCode;
+
+    
+        public String getEmployeeAdvanceCode(){
+            return _employeeAdvanceCode;
+        }
+
+        public void setEmployeeAdvanceCode(String value){
+            this._employeeAdvanceCode = value;
+        }
+
+
         private Map<String,Object> _claimant;
 
         public Map<String,Object> getClaimant(){
