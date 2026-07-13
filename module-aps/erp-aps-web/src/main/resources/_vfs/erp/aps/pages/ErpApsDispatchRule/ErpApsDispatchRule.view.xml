@@ -3,7 +3,32 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="workcenterId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="ruleName" mandatory="true" sortable="true"/>
+                <col id="enableAuto" sortable="true"/>
+                <col id="requireMaterial" sortable="true"/>
+                <col id="requireOperator" sortable="true"/>
+                <col id="requireTooling" sortable="true"/>
+                <col id="maxLookaheadMinutes" ui:number="true" sortable="true"/>
+                <col id="dispatchAheadMinutes" ui:number="true" sortable="true"/>
+                <col id="autoConfirmMaterial" sortable="true"/>
+                <col id="maxConcurrentOps" ui:number="true" sortable="true"/>
+                <col id="priorityThreshold" ui:number="true" sortable="true"/>
+                <col id="enabledHours" sortable="true"/>
+                <col id="holdUntil" sortable="true"/>
+                <col id="holdReason" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

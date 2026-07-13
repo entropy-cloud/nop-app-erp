@@ -3,7 +3,38 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="workOrderId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="operationName" mandatory="true" sortable="true"/>
+                <col id="sequence" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="machineId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="priority" ui:number="true" sortable="true"/>
+                <col id="plannedStartDateT" sortable="true"/>
+                <col id="plannedEndDateT" sortable="true"/>
+                <col id="realStartDateT" sortable="true"/>
+                <col id="realEndDateT" sortable="true"/>
+                <col id="setupTime" ui:number="true" sortable="true"/>
+                <col id="runtimePerUnit" ui:number="true" sortable="true"/>
+                <col id="qty" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="totalDuration" ui:number="true" sortable="true"/>
+                <col id="assignedToId" sortable="true"/>
+                <col id="isOutsourced" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+                <col id="earliestStartDateT" sortable="true"/>
+                <col id="latestEndDateT" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

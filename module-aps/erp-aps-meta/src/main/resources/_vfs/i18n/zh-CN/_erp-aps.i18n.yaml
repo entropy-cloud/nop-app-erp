@@ -20,6 +20,7 @@ prop:
       machineId: 工作中心/设备
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       startTime: 开始时间
       updateTime: 修改时间
@@ -40,9 +41,11 @@ prop:
       note: 备注
       operationOrder: null
       operationOrderId: 工序工单
+      operationOrderName: 工序工单
       operatorAvailable: 操作工可用
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       previousStatus: 派工前状态
       toolingAvailable: 工装可用
       updateTime: 修改时间
@@ -64,6 +67,7 @@ prop:
       maxLookaheadMinutes: 前瞻窗口(分钟)
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       priorityThreshold: 优先级阈值
       remark: 备注
       requireMaterial: 物料齐套检查
@@ -89,6 +93,7 @@ prop:
       operationId: 工序
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       priority: 优先级
       remark: 备注
       runtimePerUnitDelta: 单件加工时间差(分钟)
@@ -111,6 +116,7 @@ prop:
       operationName: 工序名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       plannedEndDateT: 计划完工时间
       plannedStartDateT: 计划开工时间
       priority: 优先级
@@ -140,6 +146,7 @@ prop:
       name: 方案名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       scheduleDate: 排产日期
       schedulingMode: 排产模式

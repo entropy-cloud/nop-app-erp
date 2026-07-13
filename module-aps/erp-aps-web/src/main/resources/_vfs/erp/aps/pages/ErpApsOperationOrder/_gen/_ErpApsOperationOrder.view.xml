@@ -101,6 +101,9 @@
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -122,7 +125,7 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
  earliestStartDateT[最早开工时间] latestEndDateT[最晚完工时间]
- businessDate[业务日期] 
+ businessDate[业务日期] orgName[业务组织]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工序工单" i18n-en:title="Add Operation Order" x:prototype="edit"/>
