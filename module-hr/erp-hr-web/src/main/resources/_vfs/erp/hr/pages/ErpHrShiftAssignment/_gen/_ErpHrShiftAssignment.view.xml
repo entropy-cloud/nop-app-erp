@@ -74,6 +74,21 @@
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
+
+                <!--员工-->
+                <col id="employeeDisplayName"/>
+
+                <!--班次-->
+                <col id="shiftName"/>
+
+                <!--关联休假-->
+                <col id="leaveRequestCode"/>
+
+                <!--关联调换-->
+                <col id="swapRequestCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -91,6 +106,9 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] businessDate[业务日期]
+ orgName[业务组织] employeeDisplayName[员工]
+ shiftName[班次] leaveRequestCode[关联休假]
+ swapRequestCode[关联调换] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-排班分配" i18n-en:title="Add Shift Assignment" x:prototype="edit"/>

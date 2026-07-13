@@ -2,7 +2,17 @@
 <view x:extends="_gen/_ErpHrLeaveBalance.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeDisplayName" label="员工"/>
+                <col id="leaveType" mandatory="true" sortable="true"/>
+                <col id="fiscalYear" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="entitledDays" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="carriedForwardDays" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

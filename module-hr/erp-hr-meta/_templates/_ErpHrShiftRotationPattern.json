@@ -15,5 +15,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "group": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "groupName": ""
 }

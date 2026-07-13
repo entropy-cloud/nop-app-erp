@@ -30,5 +30,7 @@
   "questions": null,
   "responses": null,
   "targetDepartment": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "targetDepartmentName": ""
 }

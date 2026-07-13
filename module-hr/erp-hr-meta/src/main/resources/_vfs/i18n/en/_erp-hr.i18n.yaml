@@ -54,6 +54,7 @@ prop:
       updateTime: Update Time
       assessment: Assessment
       competency: Competency
+      competencyName: null
     ErpHrAttendance:
       id: ID
       employeeId: Employee
@@ -79,6 +80,9 @@ prop:
       employee: Employee
       leaveRequest: Leave Request
       org: Org
+      employeeDisplayName: null
+      leaveRequestCode: null
+      orgName: null
     ErpHrCompetency:
       id: ID
       code: Code
@@ -100,6 +104,8 @@ prop:
       levels: Levels
       parent: Parent Competency
       org: Org
+      parentName: null
+      orgName: null
     ErpHrCompetencyLevel:
       id: ID
       competencyId: Competency
@@ -114,6 +120,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       competency: Competency
+      competencyName: null
     ErpHrDepartment:
       id: ID
       code: Code
@@ -133,6 +140,10 @@ prop:
       manager: Manager
       costCenter: Cost Center
       org: Org
+      parentName: null
+      managerDisplayName: null
+      costCenterName: null
+      orgName: null
     ErpHrDevelopmentPlan:
       id: ID
       employeeId: Employee
@@ -152,6 +163,8 @@ prop:
       employee: Employee
       items: Items
       org: Org
+      employeeDisplayName: null
+      orgName: null
     ErpHrDevelopmentPlanItem:
       id: ID
       planId: Development Plan
@@ -175,6 +188,9 @@ prop:
       competency: Competency
       gap: Gap Analysis
       mentor: Mentor
+      planName: null
+      competencyName: null
+      mentorDisplayName: null
     ErpHrEmployee:
       id: ID
       code: Code
@@ -225,6 +241,12 @@ prop:
       costCenter: Cost Center
       bankAccount: Bank Account
       org: Org
+      orgName: null
+      departmentName: null
+      positionName: null
+      superiorDisplayName: null
+      costCenterName: null
+      bankAccountName: null
     ErpHrEmployeeAssessment:
       id: ID
       employeeId: Employee
@@ -248,6 +270,9 @@ prop:
       assessor: Assessor
       details: Details
       org: Org
+      employeeDisplayName: null
+      assessorDisplayName: null
+      orgName: null
     ErpHrEmploymentContract:
       id: ID
       code: Code
@@ -265,6 +290,9 @@ prop:
       salaryPayMethod: Salary Pay Method
       socialInsuranceBase: Social Insurance Base
       housingFundBase: Housing Fund Base
+      employeeDisplayName: null
+      currencyName: null
+      orgName: null
       status: Status
       status_label: null
       attachmentFileId: Attachment
@@ -300,6 +328,8 @@ prop:
       updateTime: Update Time
       employee: Employee
       competency: Competency
+      employeeDisplayName: null
+      competencyName: null
     ErpHrLeaveBalance:
       id: ID
       employeeId: Employee
@@ -319,6 +349,8 @@ prop:
       businessDate: Business Date
       employee: Employee
       org: Org
+      employeeDisplayName: null
+      orgName: null
     ErpHrLeaveRequest:
       id: ID
       code: Code
@@ -345,6 +377,9 @@ prop:
       employee: Employee
       approver: Approver
       org: Org
+      employeeDisplayName: null
+      approverDisplayName: null
+      orgName: null
     ErpHrPayrollBankFile:
       id: ID
       batchNo: Batch No
@@ -367,6 +402,8 @@ prop:
       updateTime: Update Time
       bank: Bank
       org: Org
+      bankDisplayName: null
+      orgName: null
     ErpHrPosition:
       id: ID
       code: Code
@@ -384,6 +421,8 @@ prop:
       updateTime: Update Time
       department: Department
       org: Org
+      departmentName: null
+      orgName: null
     ErpHrRecruitment:
       id: ID
       code: Code
@@ -418,6 +457,11 @@ prop:
       interviewer: Interviewer
       org: Org
       resumeAttachmentFileIdComponentFileStatus: null
+      positionName: null
+      departmentName: null
+      employeeDisplayName: null
+      interviewerDisplayName: null
+      orgName: null
     ErpHrRoleCompetency:
       id: ID
       positionId: Position
@@ -433,6 +477,8 @@ prop:
       updateTime: Update Time
       position: Position
       competency: Competency
+      positionName: null
+      competencyName: null
     ErpHrSalary:
       id: ID
       employeeId: Employee
@@ -451,6 +497,9 @@ prop:
       taxAmount: Tax Amount
       otherDeductions: Other Deductions
       netSalary: Net Salary
+      employeeDisplayName: null
+      bankFileBatchNo: null
+      orgName: null
       paymentStatus: Payment Status
       paymentStatus_label: null
       paymentDate: Payment Date
@@ -505,6 +554,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      orgName: null
     ErpHrSalarySimulation:
       id: ID
       code: Code
@@ -531,6 +581,8 @@ prop:
       reviewer: Reviewer
       convertedSalary: Converted Salary
       org: Org
+      orgName: null
+      reviewerDisplayName: null
     ErpHrSalarySimulationItemAdjustment:
       id: ID
       simulationId: Simulation
@@ -553,6 +605,9 @@ prop:
       simulation: Simulation
       employee: Employee
       org: Org
+      simulationCode: null
+      employeeDisplayName: null
+      orgName: null
     ErpHrShift:
       id: ID
       code: Code
@@ -579,6 +634,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      orgName: null
     ErpHrShiftAssignment:
       id: ID
       orgId: Organization
@@ -607,6 +663,11 @@ prop:
       swapRequest: Swap Request
       replacedByAssignment: Replaced By
       org: Org
+      orgName: null
+      employeeDisplayName: null
+      shiftName: null
+      leaveRequestCode: null
+      swapRequestCode: null
     ErpHrShiftRotationPattern:
       id: ID
       code: Code
@@ -625,6 +686,8 @@ prop:
       updateTime: Update Time
       group: Group
       org: Org
+      orgName: null
+      groupName: null
     ErpHrShiftSwapRequest:
       id: ID
       code: Code
@@ -650,6 +713,9 @@ prop:
       sourceAssignment: Source Assignment
       targetAssignment: Target Assignment
       org: Org
+      orgName: null
+      requesterDisplayName: null
+      targetEmployeeDisplayName: null
     ErpHrSocialInsuranceBase:
       id: ID
       employeeId: Employee
@@ -669,6 +735,8 @@ prop:
       updateTime: Update Time
       employee: Employee
       org: Org
+      employeeDisplayName: null
+      orgName: null
     ErpHrSocialInsuranceConfig:
       id: ID
       cityCode: City
@@ -690,6 +758,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      orgName: null
     ErpHrSurvey:
       id: ID
       code: Code
@@ -723,6 +792,8 @@ prop:
       responses: Responses
       targetDepartment: Target Department
       org: Org
+      orgName: null
+      targetDepartmentName: null
     ErpHrSurveyAnswer:
       id: ID
       responseId: Response
@@ -738,6 +809,7 @@ prop:
       updateTime: Update Time
       response: Response
       question: Question
+      questionText: null
     ErpHrSurveyQuestion:
       id: ID
       surveyId: Survey
@@ -760,6 +832,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       survey: Survey
+      surveyTitle: null
     ErpHrSurveyResponse:
       id: ID
       surveyId: Survey
@@ -779,6 +852,9 @@ prop:
       employee: Employee
       answers: Answers
       org: Org
+      surveyTitle: null
+      employeeDisplayName: null
+      orgName: null
     ErpHrSurveyResult:
       id: ID
       surveyId: Survey
@@ -798,6 +874,8 @@ prop:
       updateTime: Update Time
       survey: Survey
       department: Department
+      surveyTitle: null
+      departmentName: null
     ErpHrTaxConfig:
       id: ID
       year: Year
@@ -813,6 +891,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      orgName: null
     ErpHrTaxSpecialDeduction:
       id: ID
       employeeId: Employee
@@ -832,6 +911,8 @@ prop:
       updateTime: Update Time
       employee: Employee
       org: Org
+      employeeDisplayName: null
+      orgName: null
     ErpHrTimesheet:
       id: ID
       code: Code
@@ -853,6 +934,8 @@ prop:
       employee: Employee
       lines: Lines
       org: Org
+      employeeDisplayName: null
+      orgName: null
     ErpHrTimesheetLine:
       id: ID
       timesheetId: Timesheet
@@ -873,6 +956,10 @@ prop:
       employee: Employee
       project: Project
       task: Task
+      timesheetCode: null
+      employeeDisplayName: null
+      projectName: null
+      taskName: null
 dict:
   label:
     erp-hr/employment-status: Employment Status

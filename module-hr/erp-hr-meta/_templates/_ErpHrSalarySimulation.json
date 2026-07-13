@@ -23,5 +23,7 @@
   "sourceSalary": null,
   "reviewer": null,
   "convertedSalary": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "reviewerDisplayName": ""
 }

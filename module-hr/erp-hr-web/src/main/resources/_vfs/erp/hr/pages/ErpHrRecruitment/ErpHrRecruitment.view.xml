@@ -2,7 +2,24 @@
 <view x:extends="_gen/_ErpHrRecruitment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="positionName" label="职位"/>
+                <col id="departmentName" label="部门"/>
+                <col id="headcount" ui:number="true" sortable="true"/>
+                <col id="candidateName" mandatory="true" sortable="true"/>
+                <col id="source" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="interviewerDisplayName" label="面试官"/>
+                <col id="interviewDate" sortable="true"/>
+                <col id="offerSalary" ui:number="true" sortable="true"/>
+                <col id="hiredDate" sortable="true"/>
+                <col id="employeeDisplayName" label="员工"/>
+                <col id="orgName" label="业务组织"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

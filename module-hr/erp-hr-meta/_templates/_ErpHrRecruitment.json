@@ -31,5 +31,10 @@
   "employee": null,
   "interviewer": null,
   "org": null,
-  "resumeAttachmentFileIdComponentFileStatus": null
+  "resumeAttachmentFileIdComponentFileStatus": null,
+  "positionName": "",
+  "departmentName": "",
+  "employeeDisplayName": "",
+  "interviewerDisplayName": "",
+  "orgName": ""
 }

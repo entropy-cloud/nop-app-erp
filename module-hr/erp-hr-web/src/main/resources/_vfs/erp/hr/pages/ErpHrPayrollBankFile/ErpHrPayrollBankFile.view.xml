@@ -3,7 +3,19 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="batchNo" mandatory="true" sortable="true"/>
+                <col id="paymentDate" mandatory="true" sortable="true"/>
+                <col id="totalAmount" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="recordCount" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="fileFormat" mandatory="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="bankDisplayName" label="开户银行"/>
+                <col id="orgName" label="业务组织"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

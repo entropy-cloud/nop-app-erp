@@ -20,5 +20,8 @@
   "employee": null,
   "assessor": null,
   "details": null,
-  "org": null
+  "org": null,
+  "employeeDisplayName": "",
+  "assessorDisplayName": "",
+  "orgName": ""
 }

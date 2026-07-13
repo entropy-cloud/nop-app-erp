@@ -19,5 +19,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "simulation": null,
   "employee": null,
-  "org": null
+  "org": null,
+  "simulationCode": "",
+  "employeeDisplayName": "",
+  "orgName": ""
 }

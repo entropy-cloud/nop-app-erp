@@ -16,5 +16,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "businessDate": "2000-01-01",
   "employee": null,
-  "org": null
+  "org": null,
+  "employeeDisplayName": "",
+  "orgName": ""
 }

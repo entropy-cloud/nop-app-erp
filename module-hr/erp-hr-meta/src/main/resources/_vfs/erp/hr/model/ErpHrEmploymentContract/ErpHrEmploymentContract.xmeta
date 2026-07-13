@@ -8,5 +8,15 @@
         <prop name="monthlySalary" internal="true" x:override="merge"/>
         <prop name="socialInsuranceBase" internal="true" x:override="merge"/>
         <prop name="housingFundBase" internal="true" x:override="merge"/>
+
+        <prop name="employeeDisplayName" displayName="员工" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="currencyName" displayName="币种" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="orgName" displayName="业务组织" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
     </props>
 </meta>

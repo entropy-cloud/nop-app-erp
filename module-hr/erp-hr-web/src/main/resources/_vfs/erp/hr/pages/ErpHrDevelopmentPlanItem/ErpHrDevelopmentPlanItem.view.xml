@@ -3,7 +3,20 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="planName" label="发展计划"/>
+                <col id="competencyName" label="胜任力"/>
+                <col id="gapId" ui:number="true" sortable="true"/>
+                <col id="targetLevel" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="developmentAction" sortable="true"/>
+                <col id="mentorDisplayName" label="导师"/>
+                <col id="startDate" sortable="true"/>
+                <col id="endDate" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

@@ -7,8 +7,10 @@ import app.erp.hr.dao.entity.ErpHrShiftAssignment;
 import app.erp.hr.dao.entity.ErpHrShiftSwapRequest;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
@@ -19,6 +21,10 @@ import jakarta.inject.Inject;
 
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.EntityData;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 排班调换审批 BizModel（shift-scheduling.md §五）。继承 {@link CrudBizModel} 标准 CRUD，
@@ -143,5 +149,36 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
                     .param(ErpHrErrors.ARG_CURRENT_STATUS, current)
                     .param(ErpHrErrors.ARG_EXPECTED_STATUS, targetTo);
         }
+    }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpHrShiftSwapRequest.class)
+    public List<String> orgName(@ContextSource List<ErpHrShiftSwapRequest> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrShiftSwapRequest row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpHrShiftSwapRequest.class)
+    public List<String> requesterDisplayName(@ContextSource List<ErpHrShiftSwapRequest> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("requester"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrShiftSwapRequest row : rows) {
+            result.add(row.orm_attached() && row.getRequester() != null ? row.getRequester().getFullName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpHrShiftSwapRequest.class)
+    public List<String> targetEmployeeDisplayName(@ContextSource List<ErpHrShiftSwapRequest> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("targetEmployee"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrShiftSwapRequest row : rows) {
+            result.add(row.orm_attached() && row.getTargetEmployee() != null ? row.getTargetEmployee().getFullName() : null);
+        }
+        return result;
     }
 }

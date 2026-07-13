@@ -10,9 +10,11 @@ import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.payroll.PayrollCalculator;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
@@ -1135,5 +1137,25 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
             m.put("totalDiff", simulatedTotal.subtract(sourceTotal));
             return m;
         }
+    }
+
+    @BizLoader(forType = ErpHrSalarySimulation.class)
+    public List<String> orgName(@ContextSource List<ErpHrSalarySimulation> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrSalarySimulation row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpHrSalarySimulation.class)
+    public List<String> reviewerDisplayName(@ContextSource List<ErpHrSalarySimulation> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("reviewer"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrSalarySimulation row : rows) {
+            result.add(row.orm_attached() && row.getReviewer() != null ? row.getReviewer().getFullName() : null);
+        }
+        return result;
     }
 }

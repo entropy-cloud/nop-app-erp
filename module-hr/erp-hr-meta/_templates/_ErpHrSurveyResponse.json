@@ -16,5 +16,8 @@
   "survey": null,
   "employee": null,
   "answers": null,
-  "org": null
+  "org": null,
+  "surveyTitle": "",
+  "employeeDisplayName": "",
+  "orgName": ""
 }

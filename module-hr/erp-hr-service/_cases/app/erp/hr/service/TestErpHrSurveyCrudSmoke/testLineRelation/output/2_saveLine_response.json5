@@ -2,24 +2,25 @@
   "data": {
     "id": "2",
     "surveyId": 1,
-    "sortOrder": null,
     "questionText": "冒烟问题",
     "questionType": "RATING",
     "questionType_label": "RATING-评分题",
     "ratingScaleMin": 1,
     "ratingScaleMax": 5,
-    "ratingLabelMin": null,
-    "ratingLabelMax": null,
-    "options": null,
-    "driverCategory": null,
-    "driverCategory_label": null,
     "isRequired": true,
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpHrSurveyQuestion@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpHrSurveyQuestion@updateTime"
+    "updateTime": "@var:ErpHrSurveyQuestion@updateTime",
+    "surveyTitle": "冒烟调查",
+    "sortOrder": null,
+    "ratingLabelMin": null,
+    "ratingLabelMax": null,
+    "options": null,
+    "driverCategory": null,
+    "driverCategory_label": null
   },
   "status": 0
 }

@@ -16,5 +16,9 @@
   "parent": null,
   "manager": null,
   "costCenter": null,
-  "org": null
+  "org": null,
+  "parentName": "",
+  "managerDisplayName": "",
+  "costCenterName": "",
+  "orgName": ""
 }

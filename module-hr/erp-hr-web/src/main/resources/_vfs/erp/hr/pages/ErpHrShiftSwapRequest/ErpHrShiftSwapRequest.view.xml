@@ -3,7 +3,21 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="requesterDisplayName" label="申请人"/>
+                <col id="targetEmployeeDisplayName" label="目标员工"/>
+                <col id="sourceAssignmentId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="targetAssignmentId" ui:number="true" sortable="true"/>
+                <col id="swapDate" mandatory="true" sortable="true"/>
+                <col id="reason" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="approvedById" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

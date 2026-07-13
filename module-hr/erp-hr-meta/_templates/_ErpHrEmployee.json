@@ -47,5 +47,11 @@
   "superior": null,
   "costCenter": null,
   "bankAccount": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "departmentName": "",
+  "positionName": "",
+  "superiorDisplayName": "",
+  "costCenterName": "",
+  "bankAccountName": ""
 }

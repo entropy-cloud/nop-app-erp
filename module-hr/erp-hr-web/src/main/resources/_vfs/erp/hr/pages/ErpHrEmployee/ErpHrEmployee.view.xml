@@ -2,7 +2,24 @@
 <view x:extends="_gen/_ErpHrEmployee.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="fullName" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="departmentName" label="部门"/>
+                <col id="positionName" label="职位"/>
+                <col id="jobTitle" sortable="true"/>
+                <col id="superiorDisplayName" label="直接上级"/>
+                <col id="costCenterName" label="默认成本中心"/>
+                <col id="bankAccountName" label="工资卡账户"/>
+                <col id="employmentStatus" mandatory="true" sortable="true"/>
+                <col id="employeeType" mandatory="true" sortable="true"/>
+                <col id="hireDate" mandatory="true" sortable="true"/>
+                <col id="userAccountId" ui:number="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

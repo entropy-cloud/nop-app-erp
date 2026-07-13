@@ -22,5 +22,8 @@
   "businessDate": "2000-01-01",
   "employee": null,
   "leaveRequest": null,
-  "org": null
+  "org": null,
+  "employeeDisplayName": "",
+  "leaveRequestCode": "",
+  "orgName": ""
 }

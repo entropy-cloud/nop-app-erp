@@ -3,7 +3,23 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="employeeDisplayName" label="员工"/>
+                <col id="shiftName" label="班次"/>
+                <col id="assignmentDate" mandatory="true" sortable="true"/>
+                <col id="actualStartTime" sortable="true"/>
+                <col id="actualEndTime" sortable="true"/>
+                <col id="isAbsent" sortable="true"/>
+                <col id="absenceReason" sortable="true"/>
+                <col id="leaveRequestCode" label="关联休假"/>
+                <col id="swapRequestCode" label="关联调换"/>
+                <col id="replacedByAssignmentId" ui:number="true" sortable="true"/>
+                <col id="status" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

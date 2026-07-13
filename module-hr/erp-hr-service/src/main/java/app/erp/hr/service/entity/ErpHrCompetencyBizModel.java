@@ -3,14 +3,19 @@ package app.erp.hr.service.entity;
 import app.erp.hr.biz.IErpHrCompetencyBiz;
 import app.erp.hr.dao.entity.ErpHrCompetency;
 import app.erp.hr.service.ErpHrErrors;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -71,5 +76,25 @@ public class ErpHrCompetencyBizModel extends CrudBizModel<ErpHrCompetency>
         return new NopException(ErpHrErrors.ERR_COMPETENCY_PARENT_CYCLE)
                 .param(ErpHrErrors.ARG_COMPETENCY_ID, competencyId)
                 .param("parentId", parentId);
+    }
+
+    @BizLoader(forType = ErpHrCompetency.class)
+    public List<String> parentName(@ContextSource List<ErpHrCompetency> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("parent"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrCompetency row : rows) {
+            result.add(row.orm_attached() && row.getParent() != null ? row.getParent().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpHrCompetency.class)
+    public List<String> orgName(@ContextSource List<ErpHrCompetency> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrCompetency row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
     }
 }

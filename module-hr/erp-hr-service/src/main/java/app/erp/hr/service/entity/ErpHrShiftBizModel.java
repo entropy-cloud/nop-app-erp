@@ -12,9 +12,11 @@ import app.erp.hr.dao.entity.ErpHrShiftAssignment;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.scheduling.ShiftAttendanceCalculator;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
@@ -25,6 +27,8 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.and;
@@ -234,5 +238,15 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
                 eq("employeeId", employeeId),
                 dateBetween("assignmentDate", startDate, endDate)));
         return assignmentBiz.findList(q, null, context);
+    }
+
+    @BizLoader(forType = ErpHrShift.class)
+    public List<String> orgName(@ContextSource List<ErpHrShift> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrShift row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
     }
 }

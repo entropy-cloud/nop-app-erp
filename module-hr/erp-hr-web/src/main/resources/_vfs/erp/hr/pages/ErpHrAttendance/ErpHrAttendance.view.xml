@@ -2,7 +2,22 @@
 <view x:extends="_gen/_ErpHrAttendance.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeDisplayName" label="员工"/>
+                <col id="date" mandatory="true" sortable="true"/>
+                <col id="clockIn" sortable="true"/>
+                <col id="clockOut" sortable="true"/>
+                <col id="workHours" ui:number="true" sortable="true"/>
+                <col id="lateMinutes" ui:number="true" sortable="true"/>
+                <col id="earlyLeaveMinutes" ui:number="true" sortable="true"/>
+                <col id="isAbsent" sortable="true"/>
+                <col id="source" sortable="true"/>
+                <col id="leaveRequestCode" label="请假申请"/>
+                <col id="orgName" label="业务组织"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

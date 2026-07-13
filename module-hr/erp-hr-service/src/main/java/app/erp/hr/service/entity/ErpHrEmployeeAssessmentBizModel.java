@@ -8,8 +8,10 @@ import app.erp.hr.dao.entity.ErpHrEmployeeAssessment;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.competency.AssessmentAggregator;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
@@ -20,6 +22,8 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -156,5 +160,35 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
                 .param(ErpHrErrors.ARG_ASSESSMENT_ID, assessmentId)
                 .param(ErpHrErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpHrErrors.ARG_EXPECTED_STATUS, expected);
+    }
+
+    @BizLoader(forType = ErpHrEmployeeAssessment.class)
+    public List<String> employeeDisplayName(@ContextSource List<ErpHrEmployeeAssessment> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("employee"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrEmployeeAssessment row : rows) {
+            result.add(row.orm_attached() && row.getEmployee() != null ? row.getEmployee().getFullName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpHrEmployeeAssessment.class)
+    public List<String> assessorDisplayName(@ContextSource List<ErpHrEmployeeAssessment> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("assessor"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrEmployeeAssessment row : rows) {
+            result.add(row.orm_attached() && row.getAssessor() != null ? row.getAssessor().getFullName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpHrEmployeeAssessment.class)
+    public List<String> orgName(@ContextSource List<ErpHrEmployeeAssessment> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrEmployeeAssessment row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
     }
 }

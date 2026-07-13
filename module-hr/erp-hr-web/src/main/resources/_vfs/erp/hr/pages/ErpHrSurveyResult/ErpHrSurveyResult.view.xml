@@ -2,7 +2,17 @@
 <view x:extends="_gen/_ErpHrSurveyResult.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="surveyTitle" label="问卷"/>
+                <col id="departmentName" label="部门"/>
+                <col id="totalResponses" ui:number="true" sortable="true"/>
+                <col id="avgScore" ui:number="true" sortable="true"/>
+                <col id="eNpsScore" ui:number="true" sortable="true"/>
+                <col id="lastCalculatedAt" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

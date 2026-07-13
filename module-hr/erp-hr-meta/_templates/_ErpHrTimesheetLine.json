@@ -17,5 +17,9 @@
   "timesheet": null,
   "employee": null,
   "project": null,
-  "task": null
+  "task": null,
+  "timesheetCode": "",
+  "employeeDisplayName": "",
+  "projectName": "",
+  "taskName": ""
 }

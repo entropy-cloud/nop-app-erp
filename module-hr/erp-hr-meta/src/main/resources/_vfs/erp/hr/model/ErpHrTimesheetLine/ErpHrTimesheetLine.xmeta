@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpHrTimesheetLine.xmeta">
 
-    <props/>
+    <props>
+        <prop name="timesheetCode" displayName="工时表" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="employeeDisplayName" displayName="员工" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="projectName" displayName="项目" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="taskName" displayName="任务" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+    </props>
 </meta>

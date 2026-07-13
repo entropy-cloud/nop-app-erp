@@ -25,5 +25,10 @@
   "leaveRequest": null,
   "swapRequest": null,
   "replacedByAssignment": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "employeeDisplayName": "",
+  "shiftName": "",
+  "leaveRequestCode": "",
+  "swapRequestCode": ""
 }

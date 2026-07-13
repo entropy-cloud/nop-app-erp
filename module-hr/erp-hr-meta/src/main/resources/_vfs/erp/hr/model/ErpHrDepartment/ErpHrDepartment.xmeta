@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpHrDepartment.xmeta">
 
-    <props/>
+    <props>
+        <prop name="parentName" displayName="上级" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="managerDisplayName" displayName="负责人" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="costCenterName" displayName="成本中心" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="orgName" displayName="业务组织" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+    </props>
 </meta>

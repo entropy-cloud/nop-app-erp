@@ -18,5 +18,7 @@
   "businessDate": "2000-01-01",
   "employee": null,
   "lines": null,
-  "org": null
+  "org": null,
+  "employeeDisplayName": "",
+  "orgName": ""
 }

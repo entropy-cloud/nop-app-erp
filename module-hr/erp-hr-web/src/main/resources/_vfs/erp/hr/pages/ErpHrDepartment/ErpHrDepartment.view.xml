@@ -2,7 +2,17 @@
 <view x:extends="_gen/_ErpHrDepartment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="parentName" label="上级"/>
+                <col id="managerDisplayName" label="负责人"/>
+                <col id="costCenterName" label="成本中心"/>
+                <col id="orgName" label="业务组织"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

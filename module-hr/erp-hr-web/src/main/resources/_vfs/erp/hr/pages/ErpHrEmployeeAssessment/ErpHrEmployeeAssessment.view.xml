@@ -3,7 +3,19 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="employeeDisplayName" label="员工"/>
+                <col id="assessmentType" mandatory="true" sortable="true"/>
+                <col id="assessorDisplayName" label="评估人"/>
+                <col id="assessmentDate" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="overallScore" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="businessDate" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

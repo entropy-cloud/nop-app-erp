@@ -2,7 +2,21 @@
 <view x:extends="_gen/_ErpHrShift.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="shiftType" mandatory="true" sortable="true"/>
+                <col id="startTime" mandatory="true" sortable="true"/>
+                <col id="endTime" mandatory="true" sortable="true"/>
+                <col id="graceLateMinutes" ui:number="true" sortable="true"/>
+                <col id="graceEarlyLeaveMinutes" ui:number="true" sortable="true"/>
+                <col id="requireClockIn" sortable="true"/>
+                <col id="requireClockOut" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

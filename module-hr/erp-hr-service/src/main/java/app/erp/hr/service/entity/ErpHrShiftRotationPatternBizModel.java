@@ -9,8 +9,10 @@ import app.erp.hr.dao.entity.ErpHrShiftAssignment;
 import app.erp.hr.dao.entity.ErpHrShiftRotationPattern;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
@@ -23,6 +25,7 @@ import jakarta.inject.Inject;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -193,5 +196,26 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
             dao.updateEntity(a);
         }
         dao.flushSession();
+    }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpHrShiftRotationPattern.class)
+    public List<String> orgName(@ContextSource List<ErpHrShiftRotationPattern> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrShiftRotationPattern row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpHrShiftRotationPattern.class)
+    public List<String> groupName(@ContextSource List<ErpHrShiftRotationPattern> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("group"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpHrShiftRotationPattern row : rows) {
+            result.add(row.orm_attached() && row.getGroup() != null ? row.getGroup().getName() : null);
+        }
+        return result;
     }
 }

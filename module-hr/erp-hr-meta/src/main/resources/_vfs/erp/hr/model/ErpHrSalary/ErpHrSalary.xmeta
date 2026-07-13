@@ -18,5 +18,15 @@
         <prop name="taxAmount" internal="true" x:override="merge"/>
         <prop name="otherDeductions" internal="true" x:override="merge"/>
         <prop name="netSalary" internal="true" x:override="merge"/>
+
+        <prop name="employeeDisplayName" displayName="员工" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="bankFileBatchNo" displayName="银行代发文件" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="orgName" displayName="业务组织" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
     </props>
 </meta>
