@@ -235,6 +235,42 @@
         }
 
 
+        private String _maintenanceCode;
+
+    
+        public String getMaintenanceCode(){
+            return _maintenanceCode;
+        }
+
+        public void setMaintenanceCode(String value){
+            this._maintenanceCode = value;
+        }
+
+
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
         private Map<String,Object> _maintenance;
 
         public Map<String,Object> getMaintenance(){

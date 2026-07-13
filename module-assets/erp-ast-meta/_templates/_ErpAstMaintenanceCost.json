@@ -17,5 +17,8 @@
   "remark": "",
   "maintenance": null,
   "org": null,
-  "currency": null
+  "currency": null,
+  "maintenanceCode": "",
+  "orgName": "",
+  "currencyName": ""
 }

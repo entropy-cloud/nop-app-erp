@@ -20,5 +20,8 @@
   "remark": "",
   "cip": null,
   "org": null,
-  "currency": null
+  "currency": null,
+  "cipCode": "",
+  "orgName": "",
+  "currencyName": ""
 }

@@ -263,6 +263,66 @@
         }
 
 
+        private String _subjectName;
+
+    
+        public String getSubjectName(){
+            return _subjectName;
+        }
+
+        public void setSubjectName(String value){
+            this._subjectName = value;
+        }
+
+
+        private String _depreciationSubjectName;
+
+    
+        public String getDepreciationSubjectName(){
+            return _depreciationSubjectName;
+        }
+
+        public void setDepreciationSubjectName(String value){
+            this._depreciationSubjectName = value;
+        }
+
+
+        private String _expenseSubjectName;
+
+    
+        public String getExpenseSubjectName(){
+            return _expenseSubjectName;
+        }
+
+        public void setExpenseSubjectName(String value){
+            this._expenseSubjectName = value;
+        }
+
+
+        private String _disposalGainLossSubjectName;
+
+    
+        public String getDisposalGainLossSubjectName(){
+            return _disposalGainLossSubjectName;
+        }
+
+        public void setDisposalGainLossSubjectName(String value){
+            this._disposalGainLossSubjectName = value;
+        }
+
+
+        private String _cipSubjectName;
+
+    
+        public String getCipSubjectName(){
+            return _cipSubjectName;
+        }
+
+        public void setCipSubjectName(String value){
+            this._cipSubjectName = value;
+        }
+
+
         private Map<String,Object> _subject;
 
         public Map<String,Object> getSubject(){

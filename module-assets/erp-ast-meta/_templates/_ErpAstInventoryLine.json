@@ -34,5 +34,11 @@
   "category": null,
   "newAsset": null,
   "capitalization": null,
-  "disposal": null
+  "disposal": null,
+  "inventoryCode": "",
+  "orgName": "",
+  "categoryName": "",
+  "newAssetCode": "",
+  "capitalizationCode": "",
+  "disposalCode": ""
 }

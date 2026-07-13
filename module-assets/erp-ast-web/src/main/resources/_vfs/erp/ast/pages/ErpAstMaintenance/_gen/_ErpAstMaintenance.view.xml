@@ -101,6 +101,15 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
+
+                <!--资产编码-->
+                <col id="assetCode"/>
+
+                <!--币种-->
+                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -122,7 +131,8 @@
  amountFunctional[本位币金额] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] orgName[所属组织]
+ assetCode[资产编码] currencyName[币种]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产维修工单" i18n-en:title="Add Asset Maintenance" x:prototype="edit"/>

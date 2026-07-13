@@ -6,9 +6,11 @@ import app.erp.ast.dao.entity.ErpAstCip;
 import app.erp.ast.dao.entity.ErpAstCipCostItem;
 import app.erp.ast.dao.entity.ErpAstCipProgressBilling;
 import app.erp.ast.service.processor.ErpAstCipProcessor;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
@@ -17,6 +19,8 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,6 +37,46 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     public ErpAstCipBizModel() {
         setEntityName(ErpAstCip.class.getName());
+    }
+
+    @BizLoader(forType = ErpAstCip.class)
+    public List<String> orgName(@ContextSource List<ErpAstCip> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpAstCip row : rows) {
+            result.add(row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpAstCip.class)
+    public List<String> categoryName(@ContextSource List<ErpAstCip> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("category"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpAstCip row : rows) {
+            result.add(row.getCategory() != null ? row.getCategory().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpAstCip.class)
+    public List<String> currencyName(@ContextSource List<ErpAstCip> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("currency"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpAstCip row : rows) {
+            result.add(row.getCurrency() != null ? row.getCurrency().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpAstCip.class)
+    public List<String> completedAssetCode(@ContextSource List<ErpAstCip> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("completedAsset"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpAstCip row : rows) {
+            result.add(row.getCompletedAsset() != null ? row.getCompletedAsset().getCode() : null);
+        }
+        return result;
     }
 
     @Override

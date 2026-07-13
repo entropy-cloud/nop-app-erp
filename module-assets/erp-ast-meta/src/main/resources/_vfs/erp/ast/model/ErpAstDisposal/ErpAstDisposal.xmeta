@@ -2,5 +2,15 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:wf="wf"
       x:extends="_ErpAstDisposal.xmeta" wf:wfName="asset-disposal-approval">
 
-    <props/>
+    <props>
+        <prop name="orgName" displayName="所属组织" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="assetCode" displayName="资产编码" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="currencyName" displayName="币种" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+    </props>
 </meta>

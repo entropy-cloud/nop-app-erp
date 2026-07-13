@@ -453,6 +453,42 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _assetCode;
+
+    
+        public String getAssetCode(){
+            return _assetCode;
+        }
+
+        public void setAssetCode(String value){
+            this._assetCode = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
         private Map<String,Object> _asset;
 
         public Map<String,Object> getAsset(){

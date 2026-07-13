@@ -43,5 +43,15 @@
   "fromLocation": null,
   "toLocation": null,
   "handler": null,
-  "currency": null
+  "currency": null,
+  "orgName": "",
+  "assetCode": "",
+  "fromDepartmentName": "",
+  "toDepartmentName": "",
+  "fromStaffName": "",
+  "toStaffName": "",
+  "fromLocationName": "",
+  "toLocationName": "",
+  "handlerName": "",
+  "currencyName": ""
 }

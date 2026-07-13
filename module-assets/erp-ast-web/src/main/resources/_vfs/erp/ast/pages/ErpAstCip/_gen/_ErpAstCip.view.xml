@@ -95,6 +95,18 @@
 
                 <!--本位币金额-->
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
+
+                <!--资产类别-->
+                <col id="categoryName"/>
+
+                <!--币种-->
+                <col id="currencyName"/>
+
+                <!--转固资产编码-->
+                <col id="completedAssetCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -115,7 +127,9 @@
  cipAssetCategorySnapshot[转固时类别快照] posted[是否已过账]
  postedAt[过账时间] postedBy[过账人]
  exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ amountFunctional[本位币金额] orgName[所属组织]
+ categoryName[资产类别] currencyName[币种]
+ completedAssetCode[转固资产编码] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-在建工程" i18n-en:title="Add CIP" x:prototype="edit"/>

@@ -59,6 +59,15 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--维修单编码-->
+                <col id="maintenanceCode"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
+
+                <!--币种-->
+                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -73,7 +82,8 @@
  currencyId[币种] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] maintenanceCode[维修单编码]
+ orgName[所属组织] currencyName[币种]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维修费用行" i18n-en:title="Add Maintenance Cost Line" x:prototype="edit"/>

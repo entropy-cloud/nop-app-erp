@@ -460,6 +460,78 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _rangeDepartmentName;
+
+    
+        public String getRangeDepartmentName(){
+            return _rangeDepartmentName;
+        }
+
+        public void setRangeDepartmentName(String value){
+            this._rangeDepartmentName = value;
+        }
+
+
+        private String _rangeCategoryName;
+
+    
+        public String getRangeCategoryName(){
+            return _rangeCategoryName;
+        }
+
+        public void setRangeCategoryName(String value){
+            this._rangeCategoryName = value;
+        }
+
+
+        private String _rangeLocationName;
+
+    
+        public String getRangeLocationName(){
+            return _rangeLocationName;
+        }
+
+        public void setRangeLocationName(String value){
+            this._rangeLocationName = value;
+        }
+
+
+        private String _responsibleByName;
+
+    
+        public String getResponsibleByName(){
+            return _responsibleByName;
+        }
+
+        public void setResponsibleByName(String value){
+            this._responsibleByName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
         private Map<String,Object> _org;
 
         public Map<String,Object> getOrg(){

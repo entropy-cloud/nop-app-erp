@@ -95,6 +95,24 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--盘点单编码-->
+                <col id="inventoryCode"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
+
+                <!--资产类别-->
+                <col id="categoryName"/>
+
+                <!--新增资产编码-->
+                <col id="newAssetCode"/>
+
+                <!--资本化单编码-->
+                <col id="capitalizationCode"/>
+
+                <!--处置单编码-->
+                <col id="disposalCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -115,7 +133,10 @@
  investigatedRemark[调查备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] inventoryCode[盘点单编码]
+ orgName[所属组织] categoryName[资产类别]
+ newAssetCode[新增资产编码] capitalizationCode[资本化单编码]
+ disposalCode[处置单编码] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产盘点行" i18n-en:title="Add Asset Inventory Line" x:prototype="edit"/>

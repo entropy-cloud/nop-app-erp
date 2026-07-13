@@ -2,7 +2,24 @@
 <view x:extends="_gen/_ErpAstAsset.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="orgName" label="所属组织"/>
+                <col id="categoryName" label="资产类别"/>
+                <col id="acquisitionDate" mandatory="true" sortable="true"/>
+                <col id="currencyName" label="币种"/>
+                <col id="originalValue" sortable="true"/>
+                <col id="netBookValue" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="departmentName" label="使用部门"/>
+                <col id="locationName" label="使用地点"/>
+                <col id="employeeName" label="使用人(职员)"/>
+                <col id="staffName" label="使用人(往来单位)"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

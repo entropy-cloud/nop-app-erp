@@ -2,7 +2,19 @@
 <view x:extends="_gen/_ErpAstCipCostItem.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="cipCode" label="在建工程编码"/>
+                <col id="orgName" label="所属组织"/>
+                <col id="lineNo" ui:number="true" sortable="true"/>
+                <col id="costType" sortable="true"/>
+                <col id="currencyName" label="币种"/>
+                <col id="amountSource" sortable="true"/>
+                <col id="businessDate" sortable="true"/>
+                <col id="capitalizationId" ui:number="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

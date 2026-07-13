@@ -35,5 +35,12 @@
   "employee": null,
   "currency": null,
   "org": null,
-  "staff": null
+  "staff": null,
+  "orgName": "",
+  "categoryName": "",
+  "currencyName": "",
+  "departmentName": "",
+  "locationName": "",
+  "employeeName": "",
+  "staffName": ""
 }

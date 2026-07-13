@@ -3,7 +3,21 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="assetCode" label="资产编码"/>
+                <col id="orgName" label="所属组织"/>
+                <col id="period" sortable="true"/>
+                <col id="plannedAmount" sortable="true"/>
+                <col id="actualAmount" sortable="true"/>
+                <col id="netBookValue" sortable="true"/>
+                <col id="currencyName" label="币种"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="posted" sortable="true"/>
+                <col id="voucherId" ui:number="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

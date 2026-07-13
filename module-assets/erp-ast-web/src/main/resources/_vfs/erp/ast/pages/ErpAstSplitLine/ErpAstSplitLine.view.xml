@@ -2,7 +2,20 @@
 <view x:extends="_gen/_ErpAstSplitLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="splitCode" label="拆分单编码"/>
+                <col id="orgName" label="所属组织"/>
+                <col id="lineNo" ui:number="true" sortable="true"/>
+                <col id="targetAssetCode" label="目标资产编码"/>
+                <col id="targetAssetName" sortable="true"/>
+                <col id="categoryName" label="资产类别"/>
+                <col id="allocationMethod" sortable="true"/>
+                <col id="proportion" sortable="true"/>
+                <col id="netBookValue" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

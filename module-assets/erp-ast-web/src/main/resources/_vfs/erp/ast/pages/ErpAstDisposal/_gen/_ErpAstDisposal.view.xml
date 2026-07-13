@@ -98,6 +98,15 @@
 
                 <!--本位币金额-->
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
+
+                <!--资产编码-->
+                <col id="assetCode"/>
+
+                <!--币种-->
+                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -119,6 +128,8 @@
  updatedBy[修改人] updateTime[修改时间]
  remark[备注] nopFlowId[工作流实例]
  amountSource[源币种金额] amountFunctional[本位币金额]
+ orgName[所属组织] assetCode[资产编码]
+ currencyName[币种] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产处置" i18n-en:title="Add Asset Disposal" x:prototype="edit"/>

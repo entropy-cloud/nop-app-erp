@@ -69,6 +69,42 @@
         }
 
 
+        private String _splitCode;
+
+    
+        public String getSplitCode(){
+            return _splitCode;
+        }
+
+        public void setSplitCode(String value){
+            this._splitCode = value;
+        }
+
+
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _categoryName;
+
+    
+        public String getCategoryName(){
+            return _categoryName;
+        }
+
+        public void setCategoryName(String value){
+            this._categoryName = value;
+        }
+
+
         private String _targetAssetCode;
 
     

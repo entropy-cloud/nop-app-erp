@@ -3,7 +3,20 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="depreciationMethod" sortable="true"/>
+                <col id="usefulLifeMonths" sortable="true"/>
+                <col id="subjectName" label="折旧科目"/>
+                <col id="depreciationSubjectName" label="折旧费用科目"/>
+                <col id="expenseSubjectName" label="费用科目"/>
+                <col id="disposalGainLossSubjectName" label="处置损益科目"/>
+                <col id="cipSubjectName" label="在建工程科目"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 
