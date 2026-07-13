@@ -235,6 +235,30 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _partnerName;
+
+    
+        public String getPartnerName(){
+            return _partnerName;
+        }
+
+        public void setPartnerName(String value){
+            this._partnerName = value;
+        }
+
+
         private Map<String,Object> _organization;
 
         public Map<String,Object> getOrganization(){

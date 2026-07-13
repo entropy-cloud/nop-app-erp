@@ -21,5 +21,8 @@
   "remark": "",
   "partner": null,
   "organization": null,
-  "materialCategory": null
+  "materialCategory": null,
+  "partnerName": "",
+  "orgName": "",
+  "materialCategoryName": ""
 }

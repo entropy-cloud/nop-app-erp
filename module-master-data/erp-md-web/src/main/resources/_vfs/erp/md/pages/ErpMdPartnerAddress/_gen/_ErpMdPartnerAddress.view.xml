@@ -53,6 +53,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--往来单位-->
+                <col id="partnerName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -66,7 +69,7 @@
  address[详细地址] isDefault[是否默认]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] partnerName[往来单位]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-往来单位地址" i18n-en:title="Add Partner Address" x:prototype="edit"/>

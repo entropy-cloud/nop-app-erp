@@ -49,6 +49,8 @@ prop:
       organization: Organization
       functionalCurrency: Functional Currency
       coaMappings: Coa Mappings
+      orgName: null
+      functionalCurrencyName: null
     ErpMdAcctSchemaCoa:
       id: ID
       acctSchemaId: Acct Schema
@@ -61,6 +63,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       acctSchema: Acct Schema
+      acctSchemaName: null
     ErpMdBankAccount:
       id: ID
       partnerId: Partner
@@ -78,6 +81,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+      partnerName: null
     ErpMdCostCenter:
       id: ID
       code: Code
@@ -99,6 +103,9 @@ prop:
       manager: Manager
       parent: Parent
       children: Children
+      orgName: null
+      managerName: null
+      parentName: null
     ErpMdCurrency:
       id: ID
       code: Code
@@ -132,6 +139,8 @@ prop:
       updateTime: Update Time
       organization: Organization
       partner: Partner
+      orgName: null
+      partnerName: null
     ErpMdExchangeRate:
       id: ID
       fromCurrencyId: From Currency
@@ -148,6 +157,8 @@ prop:
       updateTime: Update Time
       fromCurrency: From Currency
       toCurrency: To Currency
+      fromCurrencyName: null
+      toCurrencyName: null
     ErpMdLocation:
       id: ID
       warehouseId: Warehouse
@@ -163,6 +174,8 @@ prop:
       updateTime: Update Time
       warehouse: Warehouse
       parent: Parent
+      warehouseName: null
+      parentName: null
     ErpMdMaterial:
       id: ID
       code: Code
@@ -197,6 +210,10 @@ prop:
       defaultWarehouse: Default Warehouse
       defaultTaxRate: Default Tax Rate
       skus: Skus
+      categoryName: null
+      uomName: null
+      defaultWarehouseName: null
+      defaultTaxRateName: null
     ErpMdMaterialCategory:
       id: ID
       code: Code
@@ -213,6 +230,7 @@ prop:
       updateTime: Update Time
       parent: Parent
       children: Children
+      parentName: null
     ErpMdMaterialSku:
       id: ID
       materialId: Material
@@ -235,6 +253,9 @@ prop:
       material: Material
       uoM: Uo M
       taxRate: Tax Rate
+      materialName: null
+      uomName: null
+      taxRateName: null
     ErpMdOrganization:
       id: ID
       code: Code
@@ -254,6 +275,8 @@ prop:
       parent: Parent
       functionalCurrency: Functional Currency
       children: Children
+      parentName: null
+      functionalCurrencyName: null
     ErpMdPartner:
       id: ID
       code: Code
@@ -298,6 +321,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+      partnerName: null
     ErpMdPartnerContact:
       id: ID
       partnerId: Partner
@@ -314,6 +338,7 @@ prop:
       updateTime: Update Time
       remark: Remark
       partner: Partner
+      partnerName: null
     ErpMdSettlementMethod:
       id: ID
       code: Code
@@ -362,6 +387,8 @@ prop:
       parent: Parent
       currency: Currency
       children: Children
+      parentName: null
+      currencyName: null
     ErpMdSubjectMapping:
       id: ID
       sourceSubjectId: Source Subject
@@ -376,6 +403,9 @@ prop:
       sourceSubject: Source Subject
       targetAcctSchema: Target Acct Schema
       targetSubject: Target Subject
+      sourceSubjectName: null
+      targetAcctSchemaName: null
+      targetSubjectName: null
     ErpMdSupplierApproval:
       id: ID
       partnerId: Partner
@@ -400,6 +430,9 @@ prop:
       partner: Partner
       organization: Organization
       materialCategory: Material Category
+      partnerName: null
+      orgName: null
+      materialCategoryName: null
     ErpMdTaxRate:
       id: ID
       code: Code
@@ -446,6 +479,9 @@ prop:
       material: Material
       fromUoM: From Uo M
       toUoM: To Uo M
+      materialName: null
+      fromUoMName: null
+      toUoMName: null
     ErpMdWarehouse:
       id: ID
       code: Code
@@ -469,6 +505,8 @@ prop:
       organization: Organization
       manager: Manager
       locations: Locations
+      orgName: null
+      managerName: null
     ErpSysConfig:
       id: ID
       configKey: Config Key
@@ -482,6 +520,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       organization: Organization
+      orgName: null
 dict:
   label:
     erp-md/material-type: Material Type

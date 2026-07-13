@@ -153,6 +153,18 @@
         }
 
 
+        private String _acctSchemaName;
+
+    
+        public String getAcctSchemaName(){
+            return _acctSchemaName;
+        }
+
+        public void setAcctSchemaName(String value){
+            this._acctSchemaName = value;
+        }
+
+
         private Map<String,Object> _acctSchema;
 
         public Map<String,Object> getAcctSchema(){

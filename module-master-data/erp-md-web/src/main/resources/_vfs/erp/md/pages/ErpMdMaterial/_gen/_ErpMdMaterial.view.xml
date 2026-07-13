@@ -89,6 +89,18 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--分类-->
+                <col id="categoryName"/>
+
+                <!--主计量单位-->
+                <col id="uomName"/>
+
+                <!--默认仓库-->
+                <col id="defaultWarehouseName"/>
+
+                <!--默认税率-->
+                <col id="defaultTaxRateName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -108,7 +120,9 @@
  defaultTaxRateId[默认税率] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] categoryName[分类]
+ uomName[主计量单位] defaultWarehouseName[默认仓库]
+ defaultTaxRateName[默认税率] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-物料" i18n-en:title="Add Material" x:prototype="edit"/>

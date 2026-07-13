@@ -20,5 +20,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "organization": null,
   "functionalCurrency": null,
-  "coaMappings": null
+  "coaMappings": null,
+  "orgName": "",
+  "functionalCurrencyName": ""
 }

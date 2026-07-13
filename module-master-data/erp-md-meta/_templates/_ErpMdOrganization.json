@@ -16,5 +16,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "parent": null,
   "functionalCurrency": null,
-  "children": null
+  "children": null,
+  "parentName": "",
+  "functionalCurrencyName": ""
 }

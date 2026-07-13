@@ -1,6 +1,9 @@
 
 package app.erp.md.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.Collections;
 import app.erp.md.biz.IErpMdSupplierApprovalBiz;
 import app.erp.md.dao.entity.ErpMdSupplierApproval;
 import app.erp.md.service.ErpMdConstants;
@@ -220,4 +223,36 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
                 .param(ErpMdErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpMdErrors.ARG_EXPECTED_STATUS, expected);
     }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpMdSupplierApproval.class)
+    public List<String> partnerName(@ContextSource List<ErpMdSupplierApproval> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("partner"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpMdSupplierApproval row : rows) {
+            result.add(row.orm_attached() && row.getPartner() != null ? row.getPartner().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMdSupplierApproval.class)
+    public List<String> orgName(@ContextSource List<ErpMdSupplierApproval> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("organization"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpMdSupplierApproval row : rows) {
+            result.add(row.orm_attached() && row.getOrganization() != null ? row.getOrganization().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMdSupplierApproval.class)
+    public List<String> materialCategoryName(@ContextSource List<ErpMdSupplierApproval> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("materialCategory"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpMdSupplierApproval row : rows) {
+            result.add(row.orm_attached() && row.getMaterialCategory() != null ? row.getMaterialCategory().getName() : null);
+        }
+        return result;
+    }
+
 }

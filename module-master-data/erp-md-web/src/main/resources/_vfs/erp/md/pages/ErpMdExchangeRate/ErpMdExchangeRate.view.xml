@@ -2,7 +2,22 @@
 <view x:extends="_gen/_ErpMdExchangeRate.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="fromCurrencyName" label="源币种"/>
+                <col id="toCurrencyName" label="目标币种"/>
+                <col id="rateType" sortable="true"/>
+                <col id="rate" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="validFrom" mandatory="true" sortable="true"/>
+                <col id="validTo" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

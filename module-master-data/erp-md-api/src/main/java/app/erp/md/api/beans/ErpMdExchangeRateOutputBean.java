@@ -195,6 +195,30 @@
         }
 
 
+        private String _fromCurrencyName;
+
+    
+        public String getFromCurrencyName(){
+            return _fromCurrencyName;
+        }
+
+        public void setFromCurrencyName(String value){
+            this._fromCurrencyName = value;
+        }
+
+
+        private String _toCurrencyName;
+
+    
+        public String getToCurrencyName(){
+            return _toCurrencyName;
+        }
+
+        public void setToCurrencyName(String value){
+            this._toCurrencyName = value;
+        }
+
+
         private Map<String,Object> _fromCurrency;
 
         public Map<String,Object> getFromCurrency(){

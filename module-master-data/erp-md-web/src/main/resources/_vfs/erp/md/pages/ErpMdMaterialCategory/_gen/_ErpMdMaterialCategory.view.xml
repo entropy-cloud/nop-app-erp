@@ -50,6 +50,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--父级-->
+                <col id="parentName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -63,6 +66,7 @@
  priceValidationLevel[价格校验级别] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ parentName[父级] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-物料分类" i18n-en:title="Add Material Category" x:prototype="edit"/>

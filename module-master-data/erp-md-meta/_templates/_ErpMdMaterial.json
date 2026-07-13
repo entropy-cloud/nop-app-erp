@@ -31,5 +31,9 @@
   "uoM": null,
   "defaultWarehouse": null,
   "defaultTaxRate": null,
-  "skus": null
+  "skus": null,
+  "categoryName": "",
+  "uomName": "",
+  "defaultWarehouseName": "",
+  "defaultTaxRateName": ""
 }

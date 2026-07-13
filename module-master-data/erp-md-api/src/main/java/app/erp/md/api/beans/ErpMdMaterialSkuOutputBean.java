@@ -265,6 +265,42 @@
         }
 
 
+        private String _materialName;
+
+    
+        public String getMaterialName(){
+            return _materialName;
+        }
+
+        public void setMaterialName(String value){
+            this._materialName = value;
+        }
+
+
+        private String _uomName;
+
+    
+        public String getUomName(){
+            return _uomName;
+        }
+
+        public void setUomName(String value){
+            this._uomName = value;
+        }
+
+
+        private String _taxRateName;
+
+    
+        public String getTaxRateName(){
+            return _taxRateName;
+        }
+
+        public void setTaxRateName(String value){
+            this._taxRateName = value;
+        }
+
+
         private Map<String,Object> _material;
 
         public Map<String,Object> getMaterial(){

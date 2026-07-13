@@ -62,6 +62,12 @@
 
                 <!--批次选择策略-->
                 <col id="batchSelectionStrategy" sortable="true"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
+
+                <!--负责人(职员)-->
+                <col id="managerName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -77,6 +83,7 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
  remark[备注] batchSelectionStrategy[批次选择策略]
+ orgName[所属组织] managerName[负责人(职员)]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-仓库" i18n-en:title="Add Warehouse" x:prototype="edit"/>

@@ -194,6 +194,18 @@
         }
 
 
+        private String _parentName;
+
+    
+        public String getParentName(){
+            return _parentName;
+        }
+
+        public void setParentName(String value){
+            this._parentName = value;
+        }
+
+
         private Map<String,Object> _parent;
 
         public Map<String,Object> getParent(){

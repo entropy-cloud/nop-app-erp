@@ -3,7 +3,27 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerName" label="供应商"/>
+                <col id="orgName" label="所属组织"/>
+                <col id="approvalType" mandatory="true" sortable="true"/>
+                <col id="materialCategoryName" label="准入物料类别"/>
+                <col id="validFrom" sortable="true"/>
+                <col id="validTo" sortable="true"/>
+                <col id="qualificationDoc" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="approvedBy" sortable="true"/>
+                <col id="approvedAt" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+                <col id="remark" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

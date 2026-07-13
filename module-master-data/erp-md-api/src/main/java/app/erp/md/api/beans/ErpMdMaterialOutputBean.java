@@ -400,6 +400,54 @@
         }
 
 
+        private String _categoryName;
+
+    
+        public String getCategoryName(){
+            return _categoryName;
+        }
+
+        public void setCategoryName(String value){
+            this._categoryName = value;
+        }
+
+
+        private String _uomName;
+
+    
+        public String getUomName(){
+            return _uomName;
+        }
+
+        public void setUomName(String value){
+            this._uomName = value;
+        }
+
+
+        private String _defaultWarehouseName;
+
+    
+        public String getDefaultWarehouseName(){
+            return _defaultWarehouseName;
+        }
+
+        public void setDefaultWarehouseName(String value){
+            this._defaultWarehouseName = value;
+        }
+
+
+        private String _defaultTaxRateName;
+
+    
+        public String getDefaultTaxRateName(){
+            return _defaultTaxRateName;
+        }
+
+        public void setDefaultTaxRateName(String value){
+            this._defaultTaxRateName = value;
+        }
+
+
         private Map<String,Object> _category;
 
         public Map<String,Object> getCategory(){

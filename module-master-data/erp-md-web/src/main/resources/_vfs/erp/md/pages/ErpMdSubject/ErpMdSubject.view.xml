@@ -2,7 +2,33 @@
 <view x:extends="_gen/_ErpMdSubject.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="parentName" label="父级科目"/>
+                <col id="subjectClass" mandatory="true" sortable="true"/>
+                <col id="direction" mandatory="true" sortable="true"/>
+                <col id="balanceType" sortable="true"/>
+                <col id="currencyName" label="核算币种"/>
+                <col id="isAuxiliaryPartner" sortable="true"/>
+                <col id="isAuxiliaryDepartment" sortable="true"/>
+                <col id="isAuxiliaryProject" sortable="true"/>
+                <col id="isAuxiliaryWarehouse" sortable="true"/>
+                <col id="isAuxiliaryProduct" sortable="true"/>
+                <col id="isAuxiliaryCostCenter" sortable="true"/>
+                <col id="isBudgetable" sortable="true"/>
+                <col id="isLeaf" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+                <col id="remark" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

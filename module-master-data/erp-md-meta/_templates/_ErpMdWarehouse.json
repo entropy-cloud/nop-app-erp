@@ -20,5 +20,7 @@
   "batchSelectionStrategy_label": "",
   "organization": null,
   "manager": null,
-  "locations": null
+  "locations": null,
+  "orgName": "",
+  "managerName": ""
 }

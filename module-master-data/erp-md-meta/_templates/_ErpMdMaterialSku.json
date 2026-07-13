@@ -19,5 +19,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "material": null,
   "uoM": null,
-  "taxRate": null
+  "taxRate": null,
+  "materialName": "",
+  "uomName": "",
+  "taxRateName": ""
 }

@@ -181,6 +181,30 @@
         }
 
 
+        private String _warehouseName;
+
+    
+        public String getWarehouseName(){
+            return _warehouseName;
+        }
+
+        public void setWarehouseName(String value){
+            this._warehouseName = value;
+        }
+
+
+        private String _parentName;
+
+    
+        public String getParentName(){
+            return _parentName;
+        }
+
+        public void setParentName(String value){
+            this._parentName = value;
+        }
+
+
         private Map<String,Object> _warehouse;
 
         public Map<String,Object> getWarehouse(){

@@ -68,6 +68,15 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--供应商-->
+                <col id="partnerName"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
+
+                <!--准入物料类别-->
+                <col id="materialCategoryName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -84,6 +93,8 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
+ partnerName[供应商] orgName[所属组织]
+ materialCategoryName[准入物料类别] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-供应商准入资格" i18n-en:title="Add Supplier Approval (AVL)" x:prototype="edit"/>

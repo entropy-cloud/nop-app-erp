@@ -50,6 +50,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--仓库-->
+                <col id="warehouseName"/>
+
+                <!--父级库位-->
+                <col id="parentName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -63,6 +69,7 @@
  isActive[是否启用] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ warehouseName[仓库] parentName[父级库位]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-库位" i18n-en:title="Add Location" x:prototype="edit"/>

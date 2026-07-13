@@ -12,5 +12,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "material": null,
   "fromUoM": null,
-  "toUoM": null
+  "toUoM": null,
+  "materialName": "",
+  "fromUoMName": "",
+  "toUoMName": ""
 }

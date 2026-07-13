@@ -47,6 +47,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -55,15 +58,11 @@
     <forms>
         <form id="view" editMode="view" title="查看-系统配置" i18n-en:title="View System Config">
             <layout>
- configKey[配置键]
- configValue[配置值]
- orgId[所属组织]
- description[说明]
- delVersion[逻辑删除版本]
- createdBy[创建人]
- createTime[创建时间]
- updatedBy[修改人]
- updateTime[修改时间]
+ configKey[配置键] configValue[配置值]
+ orgId[所属组织] description[说明]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] orgName[所属组织]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-系统配置" i18n-en:title="Add System Config" x:prototype="edit"/>

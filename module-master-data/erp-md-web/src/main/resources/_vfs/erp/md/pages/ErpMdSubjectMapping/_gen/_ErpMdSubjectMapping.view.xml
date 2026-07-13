@@ -44,6 +44,15 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--源科目-->
+                <col id="sourceSubjectName"/>
+
+                <!--目标账套-->
+                <col id="targetAcctSchemaName"/>
+
+                <!--目标科目-->
+                <col id="targetSubjectName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -52,14 +61,12 @@
     <forms>
         <form id="view" editMode="view" title="查看-科目映射" i18n-en:title="View Subject Mapping">
             <layout>
- sourceSubjectId[源科目]
- targetAcctSchemaId[目标账套]
- targetSubjectId[目标科目]
- delVersion[逻辑删除版本]
- createdBy[创建人]
- createTime[创建时间]
- updatedBy[修改人]
- updateTime[修改时间]
+ sourceSubjectId[源科目] targetAcctSchemaId[目标账套]
+ targetSubjectId[目标科目] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ sourceSubjectName[源科目] targetAcctSchemaName[目标账套]
+ targetSubjectName[目标科目] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-科目映射" i18n-en:title="Add Subject Mapping" x:prototype="edit"/>

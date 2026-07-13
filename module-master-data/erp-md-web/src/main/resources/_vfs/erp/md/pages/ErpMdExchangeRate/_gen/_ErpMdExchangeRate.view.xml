@@ -53,6 +53,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--源币种-->
+                <col id="fromCurrencyName"/>
+
+                <!--目标币种-->
+                <col id="toCurrencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -66,7 +72,8 @@
  validFrom[生效日期] validTo[失效日期]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] fromCurrencyName[源币种]
+ toCurrencyName[目标币种] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-汇率" i18n-en:title="Add Exchange Rate" x:prototype="edit"/>

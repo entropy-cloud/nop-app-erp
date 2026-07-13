@@ -29,5 +29,7 @@
   "remark": "",
   "parent": null,
   "currency": null,
-  "children": null
+  "children": null,
+  "parentName": "",
+  "currencyName": ""
 }

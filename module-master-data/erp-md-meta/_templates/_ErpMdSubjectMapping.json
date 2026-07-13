@@ -11,5 +11,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "sourceSubject": null,
   "targetAcctSchema": null,
-  "targetSubject": null
+  "targetSubject": null,
+  "sourceSubjectName": "",
+  "targetAcctSchemaName": "",
+  "targetSubjectName": ""
 }

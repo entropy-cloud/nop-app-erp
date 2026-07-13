@@ -59,6 +59,15 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--所属组织-->
+                <col id="orgName"/>
+
+                <!--负责人-->
+                <col id="managerName"/>
+
+                <!--上级成本中心-->
+                <col id="parentName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -73,7 +82,8 @@
  status[状态] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] orgName[所属组织]
+ managerName[负责人] parentName[上级成本中心]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-成本中心" i18n-en:title="Add Cost Center" x:prototype="edit"/>

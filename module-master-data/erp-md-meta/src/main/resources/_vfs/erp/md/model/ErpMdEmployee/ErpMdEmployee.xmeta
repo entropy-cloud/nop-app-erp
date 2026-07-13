@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpMdEmployee.xmeta">
 
-    <props/>
+        <props>
+        <prop name="orgName" displayName="所属组织/部门" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="partnerName" displayName="对应内部往来单位" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+    </props>
 </meta>

@@ -36,6 +36,7 @@ prop:
       delVersion: 逻辑删除版本
       functionalCurrency: null
       functionalCurrencyId: 本位币
+      functionalCurrencyName: 本位币
       id: ID
       isAdjustCurrency: 是否调整汇率差异
       isPropagate: 是否自动复制分录到其它账套
@@ -43,6 +44,7 @@ prop:
       nature: 账套性质
       nature_label: 账套性质
       orgId: 核算组织
+      orgName: 核算组织
       organization: null
       status: 状态
       status_label: 状态
@@ -52,6 +54,7 @@ prop:
     ErpMdAcctSchemaCoa:
       acctSchema: null
       acctSchemaId: 账套
+      acctSchemaName: 账套
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -75,6 +78,7 @@ prop:
       isDefault: 是否默认
       partner: null
       partnerId: 往来单位
+      partnerName: 往来单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -88,11 +92,14 @@ prop:
       isBudgetable: 是否预算管控
       manager: null
       managerId: 负责人
+      managerName: 负责人
       name: 名称
       orgId: 所属组织
+      orgName: 所属组织
       organization: null
       parent: null
       parentId: 上级成本中心
+      parentName: 上级成本中心
       remark: 备注
       status: 状态
       status_label: 状态
@@ -122,9 +129,11 @@ prop:
       id: ID
       name: 姓名
       orgId: 所属组织/部门
+      orgName: 所属组织/部门
       organization: null
       partner: null
       partnerId: 对应内部往来单位
+      partnerName: 对应内部往来单位
       phone: 电话
       position: 职务
       status: 状态
@@ -138,11 +147,13 @@ prop:
       delVersion: 逻辑删除版本
       fromCurrency: null
       fromCurrencyId: 源币种
+      fromCurrencyName: 源币种
       id: ID
       rate: 汇率
       rateType: 汇率类型
       toCurrency: null
       toCurrencyId: 目标币种
+      toCurrencyName: 目标币种
       updateTime: 修改时间
       updatedBy: 修改人
       validFrom: 生效日期
@@ -158,14 +169,17 @@ prop:
       name: 名称
       parent: null
       parentId: 父级库位
+      parentName: 父级库位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
       warehouseId: 仓库ID
+      warehouseName: 仓库
     ErpMdMaterial:
       category: null
       categoryId: 分类ID
+      categoryName: 分类
       code: 物料编码
       costMethod: 存货计价方法
       costMethod_label: 存货计价方法
@@ -173,8 +187,10 @@ prop:
       createdBy: 创建人
       defaultTaxRate: null
       defaultTaxRateId: 默认税率
+      defaultTaxRateName: 默认税率
       defaultWarehouse: null
       defaultWarehouseId: 默认仓库
+      defaultWarehouseName: 默认仓库
       delVersion: 逻辑删除版本
       id: ID
       isBatchManaged: 是否批次管理
@@ -192,6 +208,7 @@ prop:
       status_label: 状态
       uoM: null
       uoMId: 主计量单位
+      uomName: 主计量单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -207,6 +224,7 @@ prop:
       name: 名称
       parent: null
       parentId: 父级ID
+      parentName: 父级
       priceValidationLevel: 价格校验级别
       priceValidationLevel_label: 价格校验级别
       sortNum: 排序
@@ -223,14 +241,17 @@ prop:
       isDefault: 是否默认SKU
       material: null
       materialId: 物料ID
+      materialName: 物料
       purchasePrice: 采购价(不含税)
       retailPrice: 零售价(不含税)
       salePrice: 销售价(不含税)
       skuCode: SKU编码
       taxRate: null
       taxRateId: 默认税率
+      taxRateName: 默认税率
       uoM: null
       uoMId: 计量单位
+      uomName: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -243,12 +264,14 @@ prop:
       delVersion: 逻辑删除版本
       functionalCurrency: null
       functionalCurrencyId: 本位币
+      functionalCurrencyName: 本位币
       id: ID
       name: 名称
       orgType: 组织类型
       orgType_label: 组织类型
       parent: null
       parentId: 父级组织
+      parentName: 父级组织
       status: 状态
       status_label: 状态
       updateTime: 修改时间
@@ -294,6 +317,7 @@ prop:
       isDefault: 是否默认
       partner: null
       partnerId: 往来单位
+      partnerName: 往来单位
       phone: 电话
       updateTime: 修改时间
       updatedBy: 修改人
@@ -308,6 +332,7 @@ prop:
       isDefault: 是否默认联系人
       partner: null
       partnerId: 往来单位
+      partnerName: 往来单位
       phone: 电话
       position: 职务
       remark: 备注
@@ -339,6 +364,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 核算币种
+      currencyName: 核算币种
       delVersion: 逻辑删除版本
       direction: 余额方向
       direction_label: 余额方向
@@ -354,6 +380,7 @@ prop:
       name: 科目名称
       parent: null
       parentId: 父级科目
+      parentName: 父级科目
       remark: 备注
       status: 状态
       status_label: 状态
@@ -369,10 +396,13 @@ prop:
       id: ID
       sourceSubject: null
       sourceSubjectId: 源科目
+      sourceSubjectName: 源科目
       targetAcctSchema: null
       targetAcctSchemaId: 目标账套
+      targetAcctSchemaName: 目标账套
       targetSubject: null
       targetSubjectId: 目标科目
+      targetSubjectName: 目标科目
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -387,10 +417,13 @@ prop:
       id: ID
       materialCategory: null
       materialCategoryId: 准入物料类别
+      materialCategoryName: 准入物料类别
       orgId: 所属组织
+      orgName: 所属组织
       organization: null
       partner: null
       partnerId: 供应商
+      partnerName: 供应商
       qualificationDoc: 资质文件
       remark: 备注
       status: 准入状态
@@ -438,11 +471,14 @@ prop:
       delVersion: 逻辑删除版本
       fromUoM: null
       fromUoMId: 源单位
+      fromUoMName: 源单位
       id: ID
       material: null
       materialId: 物料(空表示通用)
+      materialName: 物料(空表示通用)
       toUoM: null
       toUoMId: 目标单位
+      toUoMName: 目标单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -458,8 +494,10 @@ prop:
       locations: null
       manager: null
       managerId: 负责人(职员)
+      managerName: 负责人(职员)
       name: 名称
       orgId: 所属组织
+      orgName: 所属组织
       organization: null
       remark: 备注
       status: 状态
@@ -478,6 +516,7 @@ prop:
       description: 说明
       id: ID
       orgId: 所属组织
+      orgName: 所属组织
       organization: null
       updateTime: 修改时间
       updatedBy: 修改人

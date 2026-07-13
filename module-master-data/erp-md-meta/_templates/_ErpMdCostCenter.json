@@ -18,5 +18,8 @@
   "organization": null,
   "manager": null,
   "parent": null,
-  "children": null
+  "children": null,
+  "orgName": "",
+  "managerName": "",
+  "parentName": ""
 }
