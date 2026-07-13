@@ -959,3 +959,238 @@ export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
     await deleteById(page, 'ErpMdMaterial', r.componentMat.id);
   }
 }
+
+// ---------- 委外链编排（SubcontractOrder 生命周期 + GL 过账，plan 2026-07-13-0701-2） ----------
+//
+// 经 GraphQL /graphql 驱动委外订单完整生命周期：
+//   建测试专用组件物料 + 成品物料 → 前置备货（组件物料建库存）→ 委外订单头+行
+//   → 审批轴（submit→approve）→ 发料（issueMaterials APPROVED→ISSUED，OUTGOING 移动）
+//   → 收货（receiveFinished ISSUED→RECEIVED，MANUFACTURE 入库移动）
+//   → 加工费过账（postProcessingFee RECEIVED→COMPLETED，SUBCONTRACT_FEE 凭证 + posted=true）。
+//
+// 跨域协作产物：
+//   - issueMaterials → ErpInvStockMove(relatedBillType=ERP_MFG_SUBCONTRACT_ISSUE) OUTGOING + SUBCONTRACT_ISSUE 凭证
+//   - receiveFinished → ErpInvStockMove(relatedBillType=ERP_MFG_SUBCONTRACT_RECEIPT) MANUFACTURE + SUBCONTRACT_RECEIPT 凭证
+//   - postProcessingFee → SUBCONTRACT_FEE 凭证（Dr 委外物资 1408 / Cr 应付账款 2202）+ posted=true
+// config erp-mfg.subcontract-posting-enabled=true 时三段均产 GL 凭证（playwright.config.ts webServer JVM arg 已追加）。
+
+export interface SubcontractResult {
+  componentMat?: any;
+  productMat?: any;
+  setupMove?: { id: any; code: string } | null;
+  order?: any;
+  orderLine?: any;
+  issueMove?: { id: any; code: string; docStatus: string; posted: boolean } | null;
+  receiptMove?: { id: any; code: string; docStatus: string; posted: boolean } | null;
+  codes: { component: string; product: string; setup: string; order: string };
+}
+
+/**
+ * 期望值（确定性派生）：
+ *   组件备货 10 × unitCost 5 → moving-average unitCost 5。
+ *   发料 line.quantity 2 × unitCost 5 = issueCost 10（组件为测试专用物料，无种子余额混合）。
+ *   加工费 processingFee 50；收货 receivedQty 1 → receiptUnitCost 50/1 = 50 → receiptCost 50。
+ *
+ * 凭证科目分解（SubcontractPostingDispatcher billHeadCode 后缀 -SI/-SR/-SF）：
+ *   SUBCONTRACT_ISSUE  Dr 1408 委外物资 / Cr 1401 原材料（SUBJECT_FINISHED_GOODS=1401）—— issueCost 10。
+ *   SUBCONTRACT_RECEIPT Dr 1405 产成品 / Cr 1408 委外物资 —— receiptCost 50。
+ *   SUBCONTRACT_FEE     Dr 1408 委外物资 / Cr 2202 应付账款 —— processingFee 50。
+ */
+export const SUBCONTRACT_EXPECT = {
+  setupQty: 10,
+  componentUnitCost: 5,
+  lineQty: 2,
+  issueCost: 10,
+  processingFee: 50,
+  receivedQty: 1,
+  receiptUnitCost: 50,
+  receiptCost: 50,
+} as const;
+
+const SUB_BDATE = '2026-07-13';
+const SUB_MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
+
+/**
+ * 编排委外订单完整生命周期（DRAFT→SUBMITTED→APPROVED→ISSUED→RECEIVED→COMPLETED）。
+ * 返回各实体 id + 下游移动单供 spec 断言/清理。
+ *
+ * 组件物料与成品物料均为**测试专用新建物料**（非种子），无种子余额，使 issueCost/receiptCost 确定性
+ * 且清理安全（整行删除余额不污染种子库存基线——inventory dashboard totalValue 读 stock_balance）。
+ *
+ * 参数不对称：审批方法用 `id`（String），生命周期方法用 `subcontractOrderId`（Long）。helper 内分别处理。
+ */
+export async function runSubcontractChain(page: Page): Promise<SubcontractResult> {
+  const ts = Date.now();
+  const r: SubcontractResult = {
+    codes: {
+      component: `E2E-SC-MAT-${ts}`,
+      product: `E2E-SC-PROD-${ts}`,
+      setup: `E2E-SC-SEED-${ts}`,
+      order: `E2E-SC-ORDER-${ts}`,
+    },
+  } as SubcontractResult;
+
+  // 1. 测试专用组件物料（RAW_MATERIAL, MOVING_AVERAGE, 无种子余额 → 确定性 unitCost + 清理安全）
+  r.componentMat = await createViaSave(
+    page, 'ErpMdMaterial',
+    {
+      code: r.codes.component, name: 'E2E 测试委外组件原料',
+      materialType: 'RAW_MATERIAL', uoMId: SEED.UOM_KG, status: 'ACTIVE',
+      costMethod: 'MOVING_AVERAGE', defaultWarehouseId: SEED.WH_RAW,
+    },
+    'id',
+  );
+
+  // 2. 测试专用成品物料（FINISHED_PRODUCT, 无种子余额 → 收货入库余额清理安全）
+  r.productMat = await createViaSave(
+    page, 'ErpMdMaterial',
+    {
+      code: r.codes.product, name: 'E2E 测试委外成品',
+      materialType: 'FINISHED_PRODUCT', uoMId: SEED.UOM, status: 'ACTIVE',
+      costMethod: 'MOVING_AVERAGE', defaultWarehouseId: SEED.WH_RAW,
+    },
+    'id',
+  );
+
+  // 3. 前置备货：组件物料无种子余额，发料出库需库存余额。INCOMING 备货 10（unitCost=5 → moving-average 5）。
+  const setupCreated = await callMutationOk(
+    page, 'ErpInvStockMove', 'generateMove',
+    {
+      request: input(SUB_MOVE_REQ_TYPE, {
+        moveType: 'INCOMING', orgId: SEED.ORG, businessDate: SUB_BDATE,
+        destWarehouseId: SEED.WH_RAW, currencyId: SEED.CURRENCY,
+        lines: [{
+          materialId: r.componentMat.id, uoMId: SEED.UOM_KG,
+          quantity: SUBCONTRACT_EXPECT.setupQty, unitCost: SUBCONTRACT_EXPECT.componentUnitCost,
+          currencyId: SEED.CURRENCY,
+        }],
+        remark: r.codes.setup,
+      }),
+    },
+    'id code docStatus',
+  );
+  await callMutationOk(page, 'ErpInvStockMove', 'complete', { moveId: setupCreated.id }, 'id docStatus posted');
+  r.setupMove = { id: setupCreated.id, code: setupCreated.code };
+
+  // 4. 委外订单头 + 行（组件物料 × quantity 2）
+  r.order = await createViaSave(
+    page, 'ErpMfgSubcontractOrder',
+    {
+      code: r.codes.order, orgId: SEED.ORG, supplierId: SEED.SUPPLIER,
+      productId: r.productMat.id, businessDate: SUB_BDATE,
+      currencyId: SEED.CURRENCY, exchangeRate: 1,
+      processingFee: SUBCONTRACT_EXPECT.processingFee, totalAmount: SUBCONTRACT_EXPECT.processingFee,
+      docStatus: 'DRAFT', approveStatus: 'UNSUBMITTED', postedStatus: 'DRAFT',
+    },
+    'id approveStatus docStatus',
+  );
+  r.orderLine = await createViaSave(
+    page, 'ErpMfgSubcontractOrderLine',
+    {
+      subcontractOrderId: r.order.id, lineNo: 1,
+      materialId: r.componentMat.id, uoMId: SEED.UOM_KG, quantity: SUBCONTRACT_EXPECT.lineQty,
+    },
+    'id',
+  );
+
+  // 5. 审批轴：submit → SUBMITTED → approve → APPROVED（审批方法参数名 `id`）
+  await callMutationOk(page, 'ErpMfgSubcontractOrder', 'submitForApproval', { id: r.order.id }, 'id');
+  await expectApproveStatus(page, 'ErpMfgSubcontractOrder', r.order.id, 'SUBMITTED', 'after submit');
+  let ws = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus');
+  expect(ws?.docStatus, 'after submit docStatus=SUBMITTED').toBe('SUBMITTED');
+
+  await callMutationOk(page, 'ErpMfgSubcontractOrder', 'approve', { id: r.order.id }, 'id');
+  await expectApproveStatus(page, 'ErpMfgSubcontractOrder', r.order.id, 'APPROVED', 'after approve');
+  ws = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus');
+  expect(ws?.docStatus, 'after approve docStatus=APPROVED').toBe('APPROVED');
+
+  // 6. 发料：APPROVED→ISSUED。Processor 生成 OUTGOING 移动单（business-linked → 自动 DONE + ledgers）。
+  //    生命周期方法参数名 `subcontractOrderId`。
+  await callMutationOk(
+    page, 'ErpMfgSubcontractOrder', 'issueMaterials',
+    { subcontractOrderId: r.order.id, sourceWarehouseId: SEED.WH_RAW },
+    'id docStatus',
+  );
+  ws = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus');
+  expect(ws?.docStatus, 'after issueMaterials docStatus=ISSUED').toBe('ISSUED');
+  r.issueMove = await findFirst(
+    page, 'ErpInvStockMove',
+    andFilter(eqFilter('relatedBillType', 'ERP_MFG_SUBCONTRACT_ISSUE'), eqFilter('relatedBillCode', r.codes.order)),
+    'id code docStatus posted',
+  );
+
+  // 7. 收货：ISSUED→RECEIVED。Processor 生成 MANUFACTURE 入库移动单（business-linked → 自动 DONE + ledgers）。
+  await callMutationOk(
+    page, 'ErpMfgSubcontractOrder', 'receiveFinished',
+    { subcontractOrderId: r.order.id, receivedQty: SUBCONTRACT_EXPECT.receivedQty, destWarehouseId: SEED.WH_RAW },
+    'id docStatus',
+  );
+  ws = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus');
+  expect(ws?.docStatus, 'after receiveFinished docStatus=RECEIVED').toBe('RECEIVED');
+  r.receiptMove = await findFirst(
+    page, 'ErpInvStockMove',
+    andFilter(eqFilter('relatedBillType', 'ERP_MFG_SUBCONTRACT_RECEIPT'), eqFilter('relatedBillCode', r.codes.order)),
+    'id code docStatus posted',
+  );
+
+  // 8. 加工费过账：RECEIVED→COMPLETED。SUBCONTRACT_FEE 凭证（Dr 1408 / Cr 2202）+ posted=true。
+  await callMutationOk(
+    page, 'ErpMfgSubcontractOrder', 'postProcessingFee',
+    { subcontractOrderId: r.order.id },
+    'id docStatus posted',
+  );
+  ws = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus posted');
+  expect(ws?.docStatus, 'after postProcessingFee docStatus=COMPLETED').toBe('COMPLETED');
+  expect(ws?.posted, 'after postProcessingFee posted=true').toBe(true);
+
+  return r;
+}
+
+/**
+ * 清理委外链全部产物（下游不可逆产物优先，头最后）。逻辑删除，容忍部分结果。
+ *
+ * 清理顺序（依赖反向）：
+ *   三段 GL 凭证（billHeadCode={code}-SF/-SR/-SI，与移动单 code 不同，需单独按 billHeadCode 清理）
+ *   → 收货入库移动（成品余额）→ 发料出库移动（组件余额）
+ *   → 委外行 + 委外单头 → 前置备货移动（组件余额，issue 清理已删 → no-op）
+ *   → 测试专用成品物料 + 组件物料。
+ * 测试专用物料在 WH-RAW 均无种子余额行，整行删除余额安全（不污染 inventory dashboard totalValue 基线）。
+ */
+export async function cleanupSubcontract(page: Page, r: SubcontractResult): Promise<void> {
+  if (!r) return;
+  const componentId = r.componentMat?.id;
+  const productId = r.productMat?.id;
+
+  // 三段 GL 凭证（billHeadCode = order.code + 后缀，与移动单 code 不同）
+  if (r.codes?.order) {
+    await cleanupVoucherByBillCode(page, r.codes.order + '-SF');
+    await cleanupVoucherByBillCode(page, r.codes.order + '-SR');
+    await cleanupVoucherByBillCode(page, r.codes.order + '-SI');
+  }
+
+  // 收货入库移动 + 成品余额（测试专用成品无种子余额，整行删除安全）
+  await cleanupStockMove(page, r.receiptMove, productId, SEED.WH_RAW);
+
+  // 发料出库移动 + 组件余额（issueMove 由 runSubcontractChain 已捕获，否则按 relatedBill 反查）
+  const issueMove = r.issueMove ?? (r.codes?.order ? await findFirst<any>(
+    page, 'ErpInvStockMove',
+    andFilter(eqFilter('relatedBillType', 'ERP_MFG_SUBCONTRACT_ISSUE'), eqFilter('relatedBillCode', r.codes.order)),
+    'id code',
+  ) : null);
+  if (componentId != null) await cleanupStockMove(page, issueMove, componentId, SEED.WH_RAW);
+  else await cleanupStockMove(page, issueMove);
+
+  // 委外行 + 委外单头
+  if (r.order) {
+    await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', Number(r.order.id)));
+    await deleteById(page, 'ErpMfgSubcontractOrder', r.order.id);
+  }
+
+  // 前置备货移动 + 组件余额（issue 清理已删组件余额 → 此处 no-op）
+  if (componentId != null) await cleanupStockMove(page, r.setupMove, componentId, SEED.WH_RAW);
+  else await cleanupStockMove(page, r.setupMove);
+
+  // 测试专用物料
+  if (r.productMat) await deleteById(page, 'ErpMdMaterial', r.productMat.id);
+  if (r.componentMat) await deleteById(page, 'ErpMdMaterial', r.componentMat.id);
+}

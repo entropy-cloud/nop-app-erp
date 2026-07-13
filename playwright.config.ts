@@ -15,7 +15,7 @@ const useChromeChannel = !fs.existsSync(
 );
 
 const webServerConfig = skipWebServer ? undefined : {
-  command: `rm -f db/erp.mv.db db/erp.trace.db && java -Dfile.encoding=UTF8 -Dnop.auth.service-public=true -Dnop.auth.login.allow-create-default-user=true -Dnop.orm.init-database-data=true -Derp-qua.ncr-default-acct-schema=1 -Derp-mfg.variance-auto-calc-enabled=true -Derp-mfg.inspection-gate-enabled=true -Derp-fin.bad-debt-allowance-subject-code=1231 -Derp-fin.bad-debt-expense-subject-code=6701 -Derp-fin.ar-subject-code=1122 -Derp-fin.auto-reconcile=true -jar "${runnerJar}"`,
+  command: `rm -f db/erp.mv.db db/erp.trace.db && java -Dfile.encoding=UTF8 -Dnop.auth.service-public=true -Dnop.auth.login.allow-create-default-user=true -Dnop.orm.init-database-data=true -Dnop.web.validate-page-model=false -Derp-qua.ncr-default-acct-schema=1 -Derp-mfg.variance-auto-calc-enabled=true -Derp-mfg.inspection-gate-enabled=true -Derp-mfg.subcontract-posting-enabled=true -Derp-fin.bad-debt-allowance-subject-code=1231 -Derp-fin.bad-debt-expense-subject-code=6701 -Derp-fin.ar-subject-code=1122 -Derp-fin.auto-reconcile=true -jar "${runnerJar}"`,
   url: effectiveBaseUrl,
   reuseExistingServer: true,
   timeout: 120_000,
