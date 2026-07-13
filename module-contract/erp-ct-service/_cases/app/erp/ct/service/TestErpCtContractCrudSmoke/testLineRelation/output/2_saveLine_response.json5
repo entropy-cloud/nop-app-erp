@@ -14,7 +14,9 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpCtContractLine@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCtContractLine@createTime"
+    "updateTime": "@var:ErpCtContractLine@createTime",
+    "materialName": null,
+    "contractName": "SMOKE-CT"
   },
   "status": 0
 }

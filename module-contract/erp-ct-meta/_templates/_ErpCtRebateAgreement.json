@@ -25,5 +25,8 @@
   "businessDate": "2000-01-01",
   "contract": null,
   "org": null,
-  "partner": null
+  "partner": null,
+  "contractName": "",
+  "orgName": "",
+  "partnerName": ""
 }

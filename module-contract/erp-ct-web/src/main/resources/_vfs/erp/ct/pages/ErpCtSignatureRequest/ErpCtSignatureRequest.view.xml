@@ -3,7 +3,29 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="contractVersionId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="provider" mandatory="true" sortable="true"/>
+                <col id="providerRequestName" label="提供商请求"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="signers" sortable="true"/>
+                <col id="signingDeadline" sortable="true"/>
+                <col id="completedAt" sortable="true"/>
+                <col id="certificateUrl" sortable="true"/>
+                <col id="evidenceNo" sortable="true"/>
+                <col id="attachmentFileId" sortable="true"/>
+                <col id="errorMsg" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

@@ -34,5 +34,10 @@
   "lines": null,
   "versions": null,
   "currency": null,
-  "attachmentFileIdComponentFileStatus": null
+  "attachmentFileIdComponentFileStatus": null,
+  "partnerName": "",
+  "templateName": "",
+  "parentContractName": "",
+  "orgName": "",
+  "currencyName": ""
 }

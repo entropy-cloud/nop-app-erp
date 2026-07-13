@@ -27,7 +27,12 @@
     "createTime": "@var:ErpCtContract@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpCtContract@updateTime",
-    "businessDate": "*"
+    "businessDate": "*",
+    "orgName": null,
+    "parentContractName": null,
+    "templateName": null,
+    "partnerName": "冒烟客户",
+    "currencyName": null
   },
   "status": 0
 }

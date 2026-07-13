@@ -2,7 +2,35 @@
 <view x:extends="_gen/_ErpCtDocument.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="contractName" label="关联合同"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="docName" mandatory="true" sortable="true"/>
+                <col id="docType" mandatory="true" sortable="true"/>
+                <col id="attachmentFileId" sortable="true"/>
+                <col id="fileSize" ui:number="true" sortable="true"/>
+                <col id="fileHash" sortable="true"/>
+                <col id="mimeType" sortable="true"/>
+                <col id="ocrText" sortable="true"/>
+                <col id="ocrStatus" sortable="true"/>
+                <col id="fullTextSearch" sortable="true"/>
+                <col id="metadataTags" sortable="true"/>
+                <col id="retentionDate" sortable="true"/>
+                <col id="archiveDate" sortable="true"/>
+                <col id="purgeDate" sortable="true"/>
+                <col id="isArchived" sortable="true"/>
+                <col id="versionNo" ui:number="true" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

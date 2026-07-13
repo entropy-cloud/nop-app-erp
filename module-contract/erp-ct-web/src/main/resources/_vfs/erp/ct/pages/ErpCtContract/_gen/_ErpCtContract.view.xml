@@ -89,6 +89,21 @@
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--合作方-->
+                <col id="partnerName"/>
+
+                <!--合同模板-->
+                <col id="templateName"/>
+
+                <!--父合同-->
+                <col id="parentContractName"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
+
+                <!--币种-->
+                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -108,7 +123,9 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- businessDate[业务日期] 
+ businessDate[业务日期] partnerName[合作方]
+ templateName[合同模板] parentContractName[父合同]
+ orgName[业务组织] currencyName[币种]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-合同" i18n-en:title="Add Contract" x:prototype="edit"/>

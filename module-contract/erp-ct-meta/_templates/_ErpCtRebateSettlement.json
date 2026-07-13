@@ -20,5 +20,7 @@
   "businessDate": "2000-01-01",
   "posted": false,
   "rebateAgreement": null,
-  "org": null
+  "org": null,
+  "rebateAgreementName": "",
+  "orgName": ""
 }

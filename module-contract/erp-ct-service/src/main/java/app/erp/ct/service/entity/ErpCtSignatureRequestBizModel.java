@@ -1,6 +1,8 @@
 
 package app.erp.ct.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
 import app.erp.ct.biz.IErpCtSignatureRequestBiz;
 import app.erp.ct.service.ErpCtConfigs;
@@ -514,4 +516,26 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
     protected String asString(Object value) {
         return value == null ? null : value.toString();
     }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCtSignatureRequest.class)
+    public List<String> orgName(@ContextSource List<ErpCtSignatureRequest> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCtSignatureRequest row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCtSignatureRequest.class)
+    public List<String> providerRequestName(@ContextSource List<ErpCtSignatureRequest> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("providerRequest"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCtSignatureRequest row : rows) {
+            result.add(row.orm_attached() && row.getProviderRequest() != null ? row.getProviderRequest().getProviderRequestId() : null);
+        }
+        return result;
+    }
+
 }

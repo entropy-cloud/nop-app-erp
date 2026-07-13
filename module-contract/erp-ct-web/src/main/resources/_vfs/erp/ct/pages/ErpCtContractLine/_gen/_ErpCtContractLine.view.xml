@@ -59,6 +59,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--合同-->
+                <col id="contractName"/>
+
+                <!--物料-->
+                <col id="materialName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -73,7 +79,8 @@
  amount[金额] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] contractName[合同]
+ materialName[物料] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-合同行" i18n-en:title="Add Contract Line" x:prototype="edit"/>
