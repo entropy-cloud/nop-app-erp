@@ -115,6 +115,41 @@ export async function findVoucherIdByBillCode(
 }
 
 /**
+ * 经 ErpFinVoucherBillR(billCode) 反查 **BUDGET 影子凭证** id，按 reversalOfVoucherId 区分正向/红冲
+ * （plan 2026-07-14-0606-1）。
+ *
+ * 既有 {@link findVoucherIdByBillCode} 的 postingType 参数仅 `'NORMAL'|'REVERSAL'`，不能表达 BUDGET。
+ * BUDGET 影子凭证正向与红冲凭证 **同 postingType=BUDGET**（{@code BudgetVoucherGenerator.java:126}），
+ * 唯一区分项是 `reversalOfVoucherId`（正向 null / 红冲非 null，{@code BudgetVoucherGenerator.java:134-136}），
+ * 故本原语按 postingType=BUDGET + reversalOfVoucherId 是否非空裁定。
+ *
+ * @param reversal false=正向 BUDGET 凭证（reversalOfVoucherId IS NULL）；true=红冲 BUDGET 凭证（IS NOT NULL）
+ */
+export async function findBudgetVoucherIdByCode(
+  page: Page,
+  billCode: string,
+  reversal: boolean,
+): Promise<number | null> {
+  if (!billCode) return null;
+  const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
+  for (const lnk of links) {
+    const v = await findFirst<any>(
+      page, 'ErpFinVoucher',
+      eqFilter('id', Number(lnk.voucherId)),
+      'id postingType reversalOfVoucherId',
+    );
+    if (!v || v.postingType !== 'BUDGET') {
+      continue;
+    }
+    const isReversal = v.reversalOfVoucherId != null;
+    if (isReversal === reversal) {
+      return Number(v.id);
+    }
+  }
+  return null;
+}
+
+/**
  * 断言凭证行精确数值：按 voucherId 查 ErpFinVoucherLine，逐行匹配期望 subjectCode + dcDirection + 借贷金额。
  *
  * 匹配语义：同一凭证内每科目码至多一行（Provider 结构派生），按 subjectCode 唯一匹配。
