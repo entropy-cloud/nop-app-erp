@@ -14,5 +14,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "asn": null,
-  "material": null
+  "material": null,
+  "asnName": "",
+  "materialName": ""
 }

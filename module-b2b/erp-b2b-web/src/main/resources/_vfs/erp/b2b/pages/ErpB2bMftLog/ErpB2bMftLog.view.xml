@@ -2,7 +2,38 @@
 <view x:extends="_gen/_ErpB2bMftLog.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="configName" label="MFT配置"/>
+                <col id="relatedBillType" sortable="true"/>
+                <col id="relatedBillCode" sortable="true"/>
+                <col id="direction" mandatory="true" sortable="true"/>
+                <col id="fileName" sortable="true"/>
+                <col id="fileSize" ui:number="true" sortable="true"/>
+                <col id="fileHash" sortable="true"/>
+                <col id="messageId" sortable="true"/>
+                <col id="mdnStatus" sortable="true"/>
+                <col id="protocol" mandatory="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="startTime" sortable="true"/>
+                <col id="endTime" sortable="true"/>
+                <col id="durationMs" ui:number="true" sortable="true"/>
+                <col id="errorCode" sortable="true"/>
+                <col id="errorMsg" sortable="true"/>
+                <col id="retryCount" ui:number="true" sortable="true"/>
+                <col id="isCompressed" sortable="true"/>
+                <col id="isEncrypted" sortable="true"/>
+                <col id="isSigned" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

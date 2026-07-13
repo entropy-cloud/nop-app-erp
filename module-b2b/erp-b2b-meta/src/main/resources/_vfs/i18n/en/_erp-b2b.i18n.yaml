@@ -40,6 +40,9 @@ prop:
       partner: Partner
       org: Org
       lines: Lines
+      sourceEdiDocName: null
+      partnerName: null
+      orgName: null
     ErpB2bAsnLine:
       id: ID
       asnId: ASN
@@ -57,6 +60,8 @@ prop:
       updateTime: Update Time
       asn: ASN
       material: Material
+      asnName: null
+      materialName: null
     ErpB2bCertificationChecklist:
       id: ID
       partnerProfileId: Partner Profile
@@ -75,6 +80,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partnerProfile: Partner Profile
+      partnerProfileName: null
     ErpB2bCodeMapping:
       id: ID
       orgId: Organization
@@ -92,6 +98,8 @@ prop:
       updateTime: Update Time
       org: Org
       partner: Partner
+      orgName: null
+      partnerName: null
     ErpB2bEdiDoc:
       id: ID
       code: Code
@@ -119,6 +127,8 @@ prop:
       format: Format
       org: Org
       attachmentFileIdComponentFileStatus: null
+      formatName: null
+      orgName: null
     ErpB2bEdiFormat:
       id: ID
       code: Code
@@ -138,6 +148,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      orgName: null
     ErpB2bEdiLog:
       id: ID
       ediDocId: EDI Document
@@ -158,6 +169,8 @@ prop:
       updateTime: Update Time
       ediDoc: EDI Document
       org: Org
+      ediDocName: null
+      orgName: null
     ErpB2bMftCertificate:
       id: ID
       orgId: Organization
@@ -182,6 +195,8 @@ prop:
       updateTime: Update Time
       partner: Partner
       org: Org
+      partnerName: null
+      orgName: null
     ErpB2bMftConfig:
       id: ID
       orgId: Organization
@@ -217,6 +232,9 @@ prop:
       partner: Partner
       org: Org
       cert: null
+      partnerName: null
+      orgName: null
+      certName: null
     ErpB2bMftLog:
       id: ID
       orgId: Organization
@@ -251,6 +269,8 @@ prop:
       updateTime: Update Time
       config: MFT Config
       org: Org
+      configName: null
+      orgName: null
     ErpB2bPartnerCredential:
       id: ID
       partnerProfileId: Partner Profile
@@ -269,12 +289,14 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partnerProfile: Partner Profile
+      partnerProfileName: null
     ErpB2bPartnerProfile:
       id: ID
       code: Code
       orgId: Organization
       partnerId: Partner
       partnerName: Partner Name
+      orgName: null
       status: Status
       status_label: null
       protocol: Protocol
@@ -323,6 +345,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partnerProfile: Partner Profile
+      partnerProfileName: null
 dict:
   label:
     erp-b2b/edi-doc-state: EDI Document State

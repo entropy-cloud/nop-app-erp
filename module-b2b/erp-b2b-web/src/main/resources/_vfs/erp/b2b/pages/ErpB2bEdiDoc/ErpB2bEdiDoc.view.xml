@@ -2,7 +2,30 @@
 <view x:extends="_gen/_ErpB2bEdiDoc.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="formatName" label="EDI 格式"/>
+                <col id="relatedBillType" sortable="true"/>
+                <col id="relatedBillCode" sortable="true"/>
+                <col id="state" mandatory="true" sortable="true"/>
+                <col id="blockingLevel" mandatory="true" sortable="true"/>
+                <col id="error" sortable="true"/>
+                <col id="retryCount" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="attachmentFileId" sortable="true"/>
+                <col id="sentAt" sortable="true"/>
+                <col id="acknowledgedAt" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

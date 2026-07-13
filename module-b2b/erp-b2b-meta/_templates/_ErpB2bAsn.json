@@ -22,5 +22,8 @@
   "sourceEdiDoc": null,
   "partner": null,
   "org": null,
-  "lines": null
+  "lines": null,
+  "sourceEdiDocName": "",
+  "partnerName": "",
+  "orgName": ""
 }

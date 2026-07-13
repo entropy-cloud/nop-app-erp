@@ -21,5 +21,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "partner": null,
-  "org": null
+  "org": null,
+  "partnerName": "",
+  "orgName": ""
 }

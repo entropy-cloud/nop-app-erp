@@ -19,7 +19,10 @@
     "createTime": "@var:ErpB2bAsn@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpB2bAsn@updateTime_1",
-    "businessDate": "*"
+    "businessDate": "*",
+    "sourceEdiDocName": null,
+    "orgName": null,
+    "partnerName": null
   },
   "status": 0
 }

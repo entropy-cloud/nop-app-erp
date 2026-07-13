@@ -2,7 +2,25 @@
 <view x:extends="_gen/_ErpB2bEdiLog.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="ediDocName" label="EDI 事务"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="direction" mandatory="true" sortable="true"/>
+                <col id="requestPayload" sortable="true"/>
+                <col id="responsePayload" sortable="true"/>
+                <col id="resultCode" sortable="true"/>
+                <col id="resultMsg" sortable="true"/>
+                <col id="logTime" mandatory="true" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

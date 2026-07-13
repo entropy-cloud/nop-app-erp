@@ -3,7 +3,25 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerProfileName" label="伙伴档案"/>
+                <col id="checklistItem" mandatory="true" sortable="true"/>
+                <col id="requiredDocType" sortable="true"/>
+                <col id="isMandatory" sortable="true"/>
+                <col id="isPassed" sortable="true"/>
+                <col id="checkedBy" sortable="true"/>
+                <col id="checkedAt" sortable="true"/>
+                <col id="evidence" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 
