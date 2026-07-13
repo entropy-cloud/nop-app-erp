@@ -182,9 +182,10 @@ Exit Criteria:
 
 ### 委外浏览器层 E2E + 前端 AMIS 动作页面
 
-- Classification: `successor`
+- Classification: `successor` → **已由 successor `2026-07-13-0701-2` 全部落地（completed）**
 - Why Not Blocking Closure: 后端生命周期落地后才有 E2E 可验证对象；前端 codegen 已生成基础 CRUD 页，状态机/动作按钮接入为前端 successor。
 - Successor Required: `yes`（触发条件：本计划 completed 后）
+- Successor Delivered: ✅ plan `2026-07-13-0701-2-subcontracting-e2e-frontend.md`（委外生命周期浏览器层 E2E spec + 9 前端 AMIS 动作按钮接线，结束审计通过）
 
 ## Closure
 
@@ -207,4 +208,5 @@ Closure Audit Evidence:
 Follow-up:
 
 - 委外费归集源就位后启动 N=2 计划 `2026-07-13-0455-2-manufacturing-cost-element-decomposition.md`（subcontract 成本列）。
-- 独立单据实体 / Portal / 质检 / 损耗 / 退货 / 批次 / 委外差异 / E2E / 前端（见 Deferred But Adjudicated 各 successor 触发条件）。
+- 独立单据实体 / Portal / 质检 / 损耗 / 退货 / 批次 / 委外差异（见 Deferred But Adjudicated 各 successor 触发条件）。
+- ~~E2E / 前端~~ — ✅ 已由 `2026-07-13-0701-2` 全部落地

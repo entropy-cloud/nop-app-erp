@@ -140,9 +140,10 @@ Exit Criteria:
 
 ### 明细行（Line）实体 FK 名称解析
 
-- Classification: `out-of-scope improvement`
+- Classification: `out-of-scope improvement` → **已由 successor `2026-07-12-0800-2` 全部落地（completed）**
 - Why Not Blocking Closure: 头实体列表页为用户首要触面；明细行 FK 在 drawer/子表中展示，优先级较低。
 - Successor Required: `yes`（触发条件：明细行列表页 FK 显示需求落地时）
+- Successor Delivered: ✅ plan `2026-07-12-0800-2-transaction-line-fk-name-resolution-batch3.md`（13 核心交易行实体 materialName 三层解析落地，结束审计通过）
 
 ### 内部/系统 FK 名称解析（location / originMove / nopFlow / bankAccount 等）
 
@@ -169,4 +170,4 @@ Closure Audit Evidence:
 Follow-up:
 
 - 全量 FK 名称解析 successor（见上方 Deferred）
-- 明细行 FK 名称解析 successor（见上方 Deferred）
+- ~~明细行 FK 名称解析 successor~~ — ✅ 已由 `2026-07-12-0800-2` 全部落地

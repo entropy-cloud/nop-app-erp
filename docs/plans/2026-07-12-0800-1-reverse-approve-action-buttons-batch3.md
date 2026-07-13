@@ -147,9 +147,10 @@ Exit Criteria:
 
 ### withdrawApproval（撤回提交）按钮
 
-- Classification: `out-of-scope improvement`
+- Classification: `out-of-scope improvement` → **已由 successor `2026-07-12-0900-1` 全部落地（completed）**
 - Why Not Blocking Closure: withdrawApproval 语义为提交人撤回自己的提交（SUBMITTED → UNSUBMITTED），不同于 reverseApprove（审批人撤销审批）。本计划仅覆盖审批人侧反审批入口。
 - Successor Required: `yes`（触发条件：撤回提交用户面需求落地时）
+- Successor Delivered: ✅ plan `2026-07-12-0900-1-withdraw-approval-action-buttons-batch4.md`（23 实体 withdrawApproval 按钮全接线，结束审计通过）
 
 ### drawer / edit 表单内审批入口
 
@@ -175,6 +176,6 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- withdrawApproval 按钮 successor（见上方 Deferred）
+- ~~withdrawApproval 按钮 successor~~ — ✅ 已由 `2026-07-12-0900-1` 全部落地
 - drawer/edit 表单审批入口 successor（见上方 Deferred）
 - useWorkflow (xwf) reverseApprove 按钮 successor（见上方 Deferred）
