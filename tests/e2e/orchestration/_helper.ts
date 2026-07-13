@@ -975,14 +975,36 @@ export async function cleanupMfg(page: Page, r: MfgResult): Promise<void> {
 // config erp-mfg.subcontract-posting-enabled=true 时三段均产 GL 凭证（playwright.config.ts webServer JVM arg 已追加）。
 
 export interface SubcontractResult {
+  componentMats: any[];
   componentMat?: any;
   productMat?: any;
+  setupMoves: { id: any; code: string }[];
   setupMove?: { id: any; code: string } | null;
   order?: any;
+  orderLines: any[];
   orderLine?: any;
   issueMove?: { id: any; code: string; docStatus: string; posted: boolean } | null;
   receiptMove?: { id: any; code: string; docStatus: string; posted: boolean } | null;
-  codes: { component: string; product: string; setup: string; order: string };
+  codes: { components: string[]; component: string; product: string; setup: string; order: string };
+}
+
+/**
+ * 委外链编排选项（plan 2026-07-14-0035-2）。
+ * - lineCount：订单行数（默认 1，对齐既有单行行为）。lineCount>1 时每行建独立组件物料，issueMaterials 生成 N 行 OUTGOING 移动明细。
+ * - stopAfterIssue：发料后停止（ISSUED），跳过收货/过账，供部分收货 test 手动控制 receiveFinished 入参。
+ */
+export interface MultiLineSubcontractOptions {
+  lineCount?: number;
+  stopAfterIssue?: boolean;
+}
+
+/** MRP 释放→自动建单编排结果（plan 2026-07-14-0035-2 Phase 1）。 */
+export interface SubcontractMrpReleaseResult {
+  productMat?: any;
+  mrpPlan?: any;
+  mrpPlanLine?: any;
+  releasedOrder?: any;
+  codes: { product: string; plan: string };
 }
 
 /**
@@ -1019,27 +1041,37 @@ const SUB_MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
  *
  * 参数不对称：审批方法用 `id`（String），生命周期方法用 `subcontractOrderId`（Long）。helper 内分别处理。
  */
-export async function runSubcontractChain(page: Page): Promise<SubcontractResult> {
+export async function runSubcontractChain(page: Page, options?: MultiLineSubcontractOptions): Promise<SubcontractResult> {
+  const lineCount = options?.lineCount && options.lineCount > 0 ? options.lineCount : 1;
+  const stopAfterIssue = options?.stopAfterIssue === true;
   const ts = Date.now();
   const r: SubcontractResult = {
+    componentMats: [],
+    orderLines: [],
+    setupMoves: [],
     codes: {
-      component: `E2E-SC-MAT-${ts}`,
+      components: Array.from({ length: lineCount }, (_, i) => `E2E-SC-MAT-${ts}-${i + 1}`),
+      component: `E2E-SC-MAT-${ts}-1`,
       product: `E2E-SC-PROD-${ts}`,
       setup: `E2E-SC-SEED-${ts}`,
       order: `E2E-SC-ORDER-${ts}`,
     },
   } as SubcontractResult;
 
-  // 1. 测试专用组件物料（RAW_MATERIAL, MOVING_AVERAGE, 无种子余额 → 确定性 unitCost + 清理安全）
-  r.componentMat = await createViaSave(
-    page, 'ErpMdMaterial',
-    {
-      code: r.codes.component, name: 'E2E 测试委外组件原料',
-      materialType: 'RAW_MATERIAL', uoMId: SEED.UOM_KG, status: 'ACTIVE',
-      costMethod: 'MOVING_AVERAGE', defaultWarehouseId: SEED.WH_RAW,
-    },
-    'id',
-  );
+  // 1. 测试专用组件物料（N 个，RAW_MATERIAL, MOVING_AVERAGE, 无种子余额 → 确定性 unitCost + 清理安全）
+  for (let i = 0; i < lineCount; i++) {
+    const mat = await createViaSave(
+      page, 'ErpMdMaterial',
+      {
+        code: r.codes.components[i], name: `E2E 测试委外组件原料 ${i + 1}`,
+        materialType: 'RAW_MATERIAL', uoMId: SEED.UOM_KG, status: 'ACTIVE',
+        costMethod: 'MOVING_AVERAGE', defaultWarehouseId: SEED.WH_RAW,
+      },
+      'id',
+    );
+    r.componentMats.push(mat);
+  }
+  r.componentMat = r.componentMats[0];
 
   // 2. 测试专用成品物料（FINISHED_PRODUCT, 无种子余额 → 收货入库余额清理安全）
   r.productMat = await createViaSave(
@@ -1052,27 +1084,30 @@ export async function runSubcontractChain(page: Page): Promise<SubcontractResult
     'id',
   );
 
-  // 3. 前置备货：组件物料无种子余额，发料出库需库存余额。INCOMING 备货 10（unitCost=5 → moving-average 5）。
-  const setupCreated = await callMutationOk(
-    page, 'ErpInvStockMove', 'generateMove',
-    {
-      request: input(SUB_MOVE_REQ_TYPE, {
-        moveType: 'INCOMING', orgId: SEED.ORG, businessDate: SUB_BDATE,
-        destWarehouseId: SEED.WH_RAW, currencyId: SEED.CURRENCY,
-        lines: [{
-          materialId: r.componentMat.id, uoMId: SEED.UOM_KG,
-          quantity: SUBCONTRACT_EXPECT.setupQty, unitCost: SUBCONTRACT_EXPECT.componentUnitCost,
-          currencyId: SEED.CURRENCY,
-        }],
-        remark: r.codes.setup,
-      }),
-    },
-    'id code docStatus',
-  );
-  await callMutationOk(page, 'ErpInvStockMove', 'complete', { moveId: setupCreated.id }, 'id docStatus posted');
-  r.setupMove = { id: setupCreated.id, code: setupCreated.code };
+  // 3. 前置备货：每个组件物料 INCOMING 备货（unitCost=5 → moving-average 5）。N 个物料 → N 行备货移动单。
+  for (let i = 0; i < lineCount; i++) {
+    const setupCreated = await callMutationOk(
+      page, 'ErpInvStockMove', 'generateMove',
+      {
+        request: input(SUB_MOVE_REQ_TYPE, {
+          moveType: 'INCOMING', orgId: SEED.ORG, businessDate: SUB_BDATE,
+          destWarehouseId: SEED.WH_RAW, currencyId: SEED.CURRENCY,
+          lines: [{
+            materialId: r.componentMats[i].id, uoMId: SEED.UOM_KG,
+            quantity: SUBCONTRACT_EXPECT.setupQty, unitCost: SUBCONTRACT_EXPECT.componentUnitCost,
+            currencyId: SEED.CURRENCY,
+          }],
+          remark: `${r.codes.setup}-${i + 1}`,
+        }),
+      },
+      'id code docStatus',
+    );
+    await callMutationOk(page, 'ErpInvStockMove', 'complete', { moveId: setupCreated.id }, 'id docStatus posted');
+    r.setupMoves.push({ id: setupCreated.id, code: setupCreated.code });
+  }
+  r.setupMove = r.setupMoves[0] ?? null;
 
-  // 4. 委外订单头 + 行（组件物料 × quantity 2）
+  // 4. 委外订单头 + N 行（每行独立组件物料 × quantity 2）
   r.order = await createViaSave(
     page, 'ErpMfgSubcontractOrder',
     {
@@ -1084,14 +1119,18 @@ export async function runSubcontractChain(page: Page): Promise<SubcontractResult
     },
     'id approveStatus docStatus',
   );
-  r.orderLine = await createViaSave(
-    page, 'ErpMfgSubcontractOrderLine',
-    {
-      subcontractOrderId: r.order.id, lineNo: 1,
-      materialId: r.componentMat.id, uoMId: SEED.UOM_KG, quantity: SUBCONTRACT_EXPECT.lineQty,
-    },
-    'id',
-  );
+  for (let i = 0; i < lineCount; i++) {
+    const line = await createViaSave(
+      page, 'ErpMfgSubcontractOrderLine',
+      {
+        subcontractOrderId: r.order.id, lineNo: (i + 1) * 10,
+        materialId: r.componentMats[i].id, uoMId: SEED.UOM_KG, quantity: SUBCONTRACT_EXPECT.lineQty,
+      },
+      'id',
+    );
+    r.orderLines.push(line);
+  }
+  r.orderLine = r.orderLines[0];
 
   // 5. 审批轴：submit → SUBMITTED → approve → APPROVED（审批方法参数名 `id`）
   await callMutationOk(page, 'ErpMfgSubcontractOrder', 'submitForApproval', { id: r.order.id }, 'id');
@@ -1105,7 +1144,7 @@ export async function runSubcontractChain(page: Page): Promise<SubcontractResult
   expect(ws?.docStatus, 'after approve docStatus=APPROVED').toBe('APPROVED');
 
   // 6. 发料：APPROVED→ISSUED。Processor 生成 OUTGOING 移动单（business-linked → 自动 DONE + ledgers）。
-  //    生命周期方法参数名 `subcontractOrderId`。
+  //    生命周期方法参数名 `subcontractOrderId`。多行 → 1 张移动单含 N 行明细。
   await callMutationOk(
     page, 'ErpMfgSubcontractOrder', 'issueMaterials',
     { subcontractOrderId: r.order.id, sourceWarehouseId: SEED.WH_RAW },
@@ -1118,6 +1157,10 @@ export async function runSubcontractChain(page: Page): Promise<SubcontractResult
     andFilter(eqFilter('relatedBillType', 'ERP_MFG_SUBCONTRACT_ISSUE'), eqFilter('relatedBillCode', r.codes.order)),
     'id code docStatus posted',
   );
+
+  if (stopAfterIssue) {
+    return r;
+  }
 
   // 7. 收货：ISSUED→RECEIVED。Processor 生成 MANUFACTURE 入库移动单（business-linked → 自动 DONE + ledgers）。
   await callMutationOk(
@@ -1158,7 +1201,7 @@ export async function runSubcontractChain(page: Page): Promise<SubcontractResult
  */
 export async function cleanupSubcontract(page: Page, r: SubcontractResult): Promise<void> {
   if (!r) return;
-  const componentId = r.componentMat?.id;
+  const componentIds: any[] = (r.componentMats || []).map((m) => m?.id).filter((v) => v != null);
   const productId = r.productMat?.id;
 
   // 三段 GL 凭证（billHeadCode = order.code + 后缀，与移动单 code 不同）
@@ -1171,14 +1214,15 @@ export async function cleanupSubcontract(page: Page, r: SubcontractResult): Prom
   // 收货入库移动 + 成品余额（测试专用成品无种子余额，整行删除安全）
   await cleanupStockMove(page, r.receiptMove, productId, SEED.WH_RAW);
 
-  // 发料出库移动 + 组件余额（issueMove 由 runSubcontractChain 已捕获，否则按 relatedBill 反查）
+  // 发料出库移动 + 各组件余额（issueMove 由 runSubcontractChain 已捕获，否则按 relatedBill 反查）
   const issueMove = r.issueMove ?? (r.codes?.order ? await findFirst<any>(
     page, 'ErpInvStockMove',
     andFilter(eqFilter('relatedBillType', 'ERP_MFG_SUBCONTRACT_ISSUE'), eqFilter('relatedBillCode', r.codes.order)),
     'id code',
   ) : null);
-  if (componentId != null) await cleanupStockMove(page, issueMove, componentId, SEED.WH_RAW);
-  else await cleanupStockMove(page, issueMove);
+  for (const cid of componentIds) {
+    await cleanupStockMove(page, issueMove, cid, SEED.WH_RAW);
+  }
 
   // 委外行 + 委外单头
   if (r.order) {
@@ -1186,11 +1230,124 @@ export async function cleanupSubcontract(page: Page, r: SubcontractResult): Prom
     await deleteById(page, 'ErpMfgSubcontractOrder', r.order.id);
   }
 
-  // 前置备货移动 + 组件余额（issue 清理已删组件余额 → 此处 no-op）
-  if (componentId != null) await cleanupStockMove(page, r.setupMove, componentId, SEED.WH_RAW);
-  else await cleanupStockMove(page, r.setupMove);
+  // 前置备货移动 + 各组件余额（issue 清理已删组件余额 → 此处 no-op）
+  for (let i = 0; i < (r.setupMoves || []).length; i++) {
+    const cid = componentIds[i];
+    if (cid != null) await cleanupStockMove(page, r.setupMoves[i], cid, SEED.WH_RAW);
+    else await cleanupStockMove(page, r.setupMoves[i]);
+  }
 
   // 测试专用物料
   if (r.productMat) await deleteById(page, 'ErpMdMaterial', r.productMat.id);
-  if (r.componentMat) await deleteById(page, 'ErpMdMaterial', r.componentMat.id);
+  for (const mat of r.componentMats || []) {
+    if (mat) await deleteById(page, 'ErpMdMaterial', mat.id);
+  }
+}
+
+// ---------- 委外 MRP 释放→自动建单链路（plan 2026-07-14-0035-2 Phase 1） ----------
+
+/**
+ * MRP 释放期望值（确定性派生）：
+ *   MRP 计划行 plannedQuantity=5；config-gated subcontract-release-enabled=true（playwright.config.ts JVM arg）。
+ *   释放后生成委外单骨架：code=SUB-MRP-{lineId}，docStatus=APPROVED（跳审批），processingFee=0/totalAmount=0；
+ *   单行 qty=plannedQuantity；计划行 isFirmed=true + convertedBillCode 回写。
+ */
+export const SUBCONTRACT_MRP_EXPECT = {
+  plannedQuantity: 5,
+} as const;
+
+const MRP_RELEASE_BDATE = '2026-07-13';
+const MRP_RELEASE_PLANNED_DATE = '2026-07-20';
+
+/**
+ * 编排 MRP 释放→自动建单（plan 2026-07-14-0035-2 Phase 1）。
+ *
+ * 建 FINISHED_PRODUCT 物料 → 建 MRP 计划（status=COMPLETED）+ SUBCONTRACT_REQUEST 计划行 →
+ * 调 `ErpMfgMrpPlanLine__releaseSubcontractRequest`（config-gated 开启）→ 断言自动建 APPROVED 委外单骨架
+ * （code=SUB-MRP-{lineId}，processingFee=0/totalAmount=0）+ 单行（qty=plannedQuantity）+ 计划行 isFirmed=true。
+ *
+ * 释放生成的委外单为 APPROVED 骨架（未发料/收货/过账），无可逆下游产物，清理仅需删单+行+计划+物料。
+ */
+export async function runSubcontractMrpRelease(page: Page): Promise<SubcontractMrpReleaseResult> {
+  const ts = Date.now();
+  const r: SubcontractMrpReleaseResult = {
+    codes: {
+      product: `E2E-SC-MRP-PROD-${ts}`,
+      plan: `E2E-SC-MRP-PLAN-${ts}`,
+    },
+  } as SubcontractMrpReleaseResult;
+
+  // 1. 测试专用成品物料（FINISHED_PRODUCT）——MRP 计划行 materialId，释放后作为委外单 productId/行 materialId 骨架。
+  r.productMat = await createViaSave(
+    page, 'ErpMdMaterial',
+    {
+      code: r.codes.product, name: 'E2E 测试 MRP 释放委外成品',
+      materialType: 'FINISHED_PRODUCT', uoMId: SEED.UOM, status: 'ACTIVE',
+      costMethod: 'MOVING_AVERAGE', defaultWarehouseId: SEED.WH_RAW,
+    },
+    'id',
+  );
+
+  // 2. MRP 计划（status=COMPLETED，已运行完毕可释放）。
+  r.mrpPlan = await createViaSave(
+    page, 'ErpMfgMrpPlan',
+    {
+      code: r.codes.plan, orgId: SEED.ORG, businessDate: MRP_RELEASE_BDATE, status: 'COMPLETED',
+    },
+    'id',
+  );
+
+  // 3. SUBCONTRACT_REQUEST 计划行（isFirmed=false，plannedQuantity=5）。
+  r.mrpPlanLine = await createViaSave(
+    page, 'ErpMfgMrpPlanLine',
+    {
+      mrpPlanId: r.mrpPlan.id, lineNo: 10,
+      materialId: r.productMat.id, uoMId: SEED.UOM,
+      orderType: 'SUBCONTRACT_REQUEST',
+      grossRequirement: SUBCONTRACT_MRP_EXPECT.plannedQuantity,
+      netRequirement: SUBCONTRACT_MRP_EXPECT.plannedQuantity,
+      plannedQuantity: SUBCONTRACT_MRP_EXPECT.plannedQuantity,
+      plannedDate: MRP_RELEASE_PLANNED_DATE,
+      isFirmed: false,
+    },
+    'id isFirmed convertedBillCode',
+  );
+
+  // 4. 释放 SUBCONTRACT_REQUEST → 自动建 APPROVED 委外单骨架（config-gated subcontract-release-enabled=true）。
+  await callMutationOk(
+    page, 'ErpMfgMrpPlanLine', 'releaseSubcontractRequest',
+    { planLineId: r.mrpPlanLine.id, supplierId: SEED.SUPPLIER, currencyId: SEED.CURRENCY },
+    'id isFirmed convertedBillCode',
+  );
+
+  // 5. 释放后回查计划行（isFirmed=true + convertedBillCode 回写）。
+  const firmedLine = await verifyState(
+    page, 'ErpMfgMrpPlanLine', r.mrpPlanLine.id, 'isFirmed convertedBillCode',
+  );
+  r.mrpPlanLine.isFirmed = firmedLine?.isFirmed;
+  r.mrpPlanLine.convertedBillCode = firmedLine?.convertedBillCode;
+
+  // 6. 回查自动建的委外单骨架（code=SUB-MRP-{lineId}，APPROVED，processingFee=0/totalAmount=0）。
+  const expectedCode = `SUB-MRP-${r.mrpPlanLine.id}`;
+  r.releasedOrder = await findFirst(
+    page, 'ErpMfgSubcontractOrder', eqFilter('code', expectedCode),
+    'id code docStatus approveStatus processingFee totalAmount supplierId',
+  );
+
+  return r;
+}
+
+/**
+ * 清理 MRP 释放→自动建单产物（依赖反向）：委外行 + 委外单 → 计划行 + 计划 → 成品物料。
+ * 释放生成的骨架单未发料/收货/过账，无库存移动/凭证/GL 余额产物。
+ */
+export async function cleanupSubcontractMrpRelease(page: Page, r: SubcontractMrpReleaseResult): Promise<void> {
+  if (!r) return;
+  if (r.releasedOrder) {
+    await deleteByFilter(page, 'ErpMfgSubcontractOrderLine', eqFilter('subcontractOrderId', Number(r.releasedOrder.id)));
+    await deleteById(page, 'ErpMfgSubcontractOrder', r.releasedOrder.id);
+  }
+  if (r.mrpPlanLine) await deleteById(page, 'ErpMfgMrpPlanLine', r.mrpPlanLine.id);
+  if (r.mrpPlan) await deleteById(page, 'ErpMfgMrpPlan', r.mrpPlan.id);
+  if (r.productMat) await deleteById(page, 'ErpMdMaterial', r.productMat.id);
 }
