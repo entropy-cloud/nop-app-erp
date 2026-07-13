@@ -38,6 +38,8 @@ import java.util.Set;
  *       贷/借 {@link #SUBJECT_WIP_LABOR}（1413 在制品-人工）</li>
  *   <li>制造费用差异：借/贷 {@link #SUBJECT_OVERHEAD_VARIANCE}（1414 制造差异-制造费用）/
  *       贷/借 {@link #SUBJECT_WIP_OVERHEAD}（1415 在制品-制造费用）</li>
+ *   <li>委外费差异（plan 2026-07-14-0035-1）：借/贷 {@link #SUBJECT_SUBCONTRACT_VARIANCE}（1416 制造差异-委外）/
+ *       贷/借 {@link #SUBJECT_WIP_SUBCONTRACT}（1417 在制品-委外）</li>
  * </ul>
  * unfavorable（实际>标准）→ 借差异科目 / 贷 WIP；favorable（实际<标准）→ 借 WIP / 贷差异科目。
  *
@@ -55,13 +57,17 @@ public class ProductionVarianceAcctDocProvider implements IErpFinAcctDocProvider
     static final String SUBJECT_WIP_LABOR = "1413";
     static final String SUBJECT_OVERHEAD_VARIANCE = "1414";
     static final String SUBJECT_WIP_OVERHEAD = "1415";
+    static final String SUBJECT_SUBCONTRACT_VARIANCE = "1416";
+    static final String SUBJECT_WIP_SUBCONTRACT = "1417";
 
     static final String KEY_MATERIAL_VARIANCE = "MATERIAL_VARIANCE";
     static final String KEY_LABOR_VARIANCE = "LABOR_VARIANCE";
     static final String KEY_OVERHEAD_VARIANCE = "OVERHEAD_VARIANCE";
+    static final String KEY_SUBCONTRACT_VARIANCE = "SUBCONTRACT_VARIANCE";
     static final String KEY_MATERIAL_DIRECTION = "MATERIAL_DIRECTION";
     static final String KEY_LABOR_DIRECTION = "LABOR_DIRECTION";
     static final String KEY_OVERHEAD_DIRECTION = "OVERHEAD_DIRECTION";
+    static final String KEY_SUBCONTRACT_DIRECTION = "SUBCONTRACT_DIRECTION";
     static final String KEY_WORKORDER_CODE = "WORKORDER_CODE";
 
     static final String DIRECTION_DEBIT = "DEBIT";
@@ -83,6 +89,8 @@ public class ProductionVarianceAcctDocProvider implements IErpFinAcctDocProvider
                 SUBJECT_LABOR_VARIANCE, "制造差异-人工", SUBJECT_WIP_LABOR, "在制品-人工", event);
         appendElementFacts(facts, data, KEY_OVERHEAD_VARIANCE, KEY_OVERHEAD_DIRECTION,
                 SUBJECT_OVERHEAD_VARIANCE, "制造差异-制造费用", SUBJECT_WIP_OVERHEAD, "在制品-制造费用", event);
+        appendElementFacts(facts, data, KEY_SUBCONTRACT_VARIANCE, KEY_SUBCONTRACT_DIRECTION,
+                SUBJECT_SUBCONTRACT_VARIANCE, "制造差异-委外", SUBJECT_WIP_SUBCONTRACT, "在制品-委外", event);
 
         return facts;
     }

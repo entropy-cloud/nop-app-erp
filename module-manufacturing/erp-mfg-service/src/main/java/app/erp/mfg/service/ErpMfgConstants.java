@@ -177,6 +177,8 @@ public interface ErpMfgConstants {
     String VARIANCE_TYPE_LABOR_RATE = "LABOR_RATE";
     String VARIANCE_TYPE_OVERHEAD = "OVERHEAD";
     String VARIANCE_TYPE_VOLUME = "VOLUME";
+    // 委外费差异（plan 2026-07-14-0035-1）
+    String VARIANCE_TYPE_SUBCONTRACT = "SUBCONTRACT";
 
     // 成本要素（erp-mfg/cost-element，plan 2026-07-05-1838-2）
     String COST_ELEMENT_MATERIAL = "MATERIAL";

@@ -46,7 +46,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *       按完工数量 × 单位标准成本 = 标准成本。人工标准工时来自 BOM 工艺（{@link ErpMfgBomOperation#getStandardTime}）。</li>
  *   <li>实际成本：取 {@link ErpMfgWorkOrder} 已累加的四要素（materialCost/laborCost/overheadCost/subcontractCost）。
  *       实际工时来自 {@link ErpMfgJobCardTimeLog#getDurationMins} 求和。</li>
- *   <li>差异类型（5 类，{@code erp-mfg/variance-type}）：
+ *   <li>差异类型（6 类，{@code erp-mfg/variance-type}）：
  *     <ul>
  *       <li>{@code MATERIAL_USAGE}（材料用量）：实际材料 − 标准材料。材料价格差异由 PPV（plan 2026-07-05-0427-2）
  *           在采购入库捕获，本期材料段仅算用量差异避免重复计入。</li>
@@ -56,12 +56,14 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *       <li>{@code VOLUME}（产量）：(实际产出 − 计划产出) × 标准单位成本。
  *           <b>注</b>：完工触发时实际产出 = 计划产出（{@code ERR_OVER_REPORT} 拒绝超产），故通常为 0；
  *           此行始终写入以保留可追溯性，完工 ≠ 计划时（如部分完工手动触发）非 0。</li>
+ *       <li>{@code SUBCONTRACT}（委外费，plan 2026-07-14-0035-1）：实际委外费 − 标准委外费。标准 = rollupLine.subcontractCost ×
+ *           完工量；实际 = wo.subcontractCost。仅当标准侧或实际侧非零时生成行。</li>
  *     </ul></li>
  * </ul>
  *
  * <p><b>成本要素归属</b>：{@code VOLUME} 类型按 {@code MATERIAL} 要素归集（量差主导影响材料消耗，承接设计文档
- * 简化建模，按类型分科目精度归 Deferred）。{@code SUBCONTRACT} 要素本期不算差异（5 类差异类型未含 SUBCONTRACT，
- * 委外差异需求落地时新增类型码）。
+ * 简化建模，按类型分科目精度归 Deferred）。{@code SUBCONTRACT} 要素算差异（plan 2026-07-14-0035-1 落地第 6 类差异
+ * {@code SUBCONTRACT}：标准 = rollupLine.subcontractCost × 完工量；实际 = wo.subcontractCost；仅非零时生成行）。
  *
  * <p>本类为非 BizModel 服务助手（对齐 {@link CostRollupService} 范式），直接用 {@link IDaoProvider}。
  * 幂等由调用方负责：完工触发首次写入；手动重算入口先删该工单旧行再重算。
@@ -184,6 +186,21 @@ public class ProductionVarianceCalculator {
                 volumeStdAmount, volumeActAmount,
                 planned, completed,
                 stdUnit, stdUnit));
+        lineNo += 10;
+
+        // 6. 委外费差异（plan 2026-07-14-0035-1）：标准 = rollup.subcontractCost × completed；实际 = wo.subcontractCost。
+        //    仅当标准侧或实际侧 subcontractCost 非零时生成行（对齐既有「零差异不生成行」范式，避免污染既有 5 类输出）。
+        BigDecimal stdSubcontractPerUnit = nz(stdLine.getSubcontractCost());
+        BigDecimal actSubcontract = nz(wo.getSubcontractCost());
+        if (stdSubcontractPerUnit.signum() != 0 || actSubcontract.signum() != 0) {
+            BigDecimal stdSubcontract = stdSubcontractPerUnit.multiply(completed);
+            lines.add(buildLine(workOrderId, lineNo, ErpMfgConstants.VARIANCE_TYPE_SUBCONTRACT,
+                    ErpMfgConstants.COST_ELEMENT_SUBCONTRACT, productId, workcenterId, bizDate,
+                    stdSubcontract, actSubcontract,
+                    completed, completed,
+                    stdSubcontractPerUnit,
+                    divideSafe(actSubcontract, completed)));
+        }
 
         IEntityDao<ErpMfgCostVariance> dao = daoProvider.daoFor(ErpMfgCostVariance.class);
         for (ErpMfgCostVariance line : lines) {

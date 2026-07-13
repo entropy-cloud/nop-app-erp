@@ -888,6 +888,7 @@ dict.option.label:
     LABOR_RATE: Labor Rate
     OVERHEAD: Overhead
     VOLUME: Volume
+    SUBCONTRACT: Subcontract
   erp-mfg/cost-element:
     MATERIAL: Material
     LABOR: Labor

@@ -150,6 +150,8 @@
             <option code="LABOR_RATE" label="人工费率差异" value="LABOR_RATE" i18n-en:label='Labor Rate'/>
             <option code="OVERHEAD" label="制造费用差异" value="OVERHEAD" i18n-en:label='Overhead'/>
             <option code="VOLUME" label="产量差异" value="VOLUME" i18n-en:label='Volume'/>
+            <!-- 委外费差异（plan 2026-07-14-0035-1）。标准侧 ErpMfgCostRollupLine.subcontractCost × 完工量 vs 实际侧 ErpMfgWorkOrder.subcontractCost。 -->
+            <option code="SUBCONTRACT" label="委外费差异" value="SUBCONTRACT" i18n-en:label='Subcontract'/>
         </dict>
         <!-- 成本要素（plan 2026-07-05-1838-2）。生产差异按四要素分解；要素汇总净差异入账（承接 PPV 范式）。 -->
         <dict label="成本要素" name="erp-mfg/cost-element" valueType="string" i18n-en:label='Cost Element'>

@@ -25,3 +25,7 @@ options:
     value: VOLUME
     description: 
   
+  - label: 委外费差异
+    value: SUBCONTRACT
+    description: 
+  

@@ -132,6 +132,7 @@
             <option code="LABOR_RATE" label="人工费率差异" value="LABOR_RATE" i18n-en:label="Labor Rate"/>
             <option code="OVERHEAD" label="制造费用差异" value="OVERHEAD" i18n-en:label="Overhead"/>
             <option code="VOLUME" label="产量差异" value="VOLUME" i18n-en:label="Volume"/>
+            <option code="SUBCONTRACT" label="委外费差异" value="SUBCONTRACT" i18n-en:label="Subcontract"/>
         </dict>
         <dict label="成本要素" name="erp-mfg/cost-element" valueType="string" i18n-en:label="Cost Element">
             <option code="MATERIAL" label="材料" value="MATERIAL" i18n-en:label="Material"/>

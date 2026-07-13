@@ -92,13 +92,15 @@ public class ProductionVarianceDispatcher {
         BigDecimal materialNet = elementVariance.getOrDefault(ErpMfgConstants.COST_ELEMENT_MATERIAL, BigDecimal.ZERO);
         BigDecimal laborNet = elementVariance.getOrDefault(ErpMfgConstants.COST_ELEMENT_LABOR, BigDecimal.ZERO);
         BigDecimal overheadNet = elementVariance.getOrDefault(ErpMfgConstants.COST_ELEMENT_OVERHEAD, BigDecimal.ZERO);
+        BigDecimal subcontractNet = elementVariance.getOrDefault(ErpMfgConstants.COST_ELEMENT_SUBCONTRACT, BigDecimal.ZERO);
 
         // 全部为零则跳过过账（差异为零无需入账）
-        if (materialNet.signum() == 0 && laborNet.signum() == 0 && overheadNet.signum() == 0) {
+        if (materialNet.signum() == 0 && laborNet.signum() == 0
+                && overheadNet.signum() == 0 && subcontractNet.signum() == 0) {
             return;
         }
 
-        PostingEvent event = buildEvent(wo, materialNet, laborNet, overheadNet);
+        PostingEvent event = buildEvent(wo, materialNet, laborNet, overheadNet, subcontractNet);
         try {
             Long voucherId = executor.postEvent(event);
             if (voucherId != null) {
@@ -114,7 +116,7 @@ public class ProductionVarianceDispatcher {
     }
 
     private PostingEvent buildEvent(ErpMfgWorkOrder wo, BigDecimal materialNet, BigDecimal laborNet,
-                                    BigDecimal overheadNet) {
+                                    BigDecimal overheadNet, BigDecimal subcontractNet) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.PRODUCTION_VARIANCE);
         event.setBillHeadCode(wo.getCode() + "-PV");
@@ -129,12 +131,15 @@ public class ProductionVarianceDispatcher {
         billData.put(ProductionVarianceAcctDocProvider.KEY_MATERIAL_VARIANCE, materialNet.abs());
         billData.put(ProductionVarianceAcctDocProvider.KEY_LABOR_VARIANCE, laborNet.abs());
         billData.put(ProductionVarianceAcctDocProvider.KEY_OVERHEAD_VARIANCE, overheadNet.abs());
+        billData.put(ProductionVarianceAcctDocProvider.KEY_SUBCONTRACT_VARIANCE, subcontractNet.abs());
         billData.put(ProductionVarianceAcctDocProvider.KEY_MATERIAL_DIRECTION,
                 directionOf(materialNet));
         billData.put(ProductionVarianceAcctDocProvider.KEY_LABOR_DIRECTION,
                 directionOf(laborNet));
         billData.put(ProductionVarianceAcctDocProvider.KEY_OVERHEAD_DIRECTION,
                 directionOf(overheadNet));
+        billData.put(ProductionVarianceAcctDocProvider.KEY_SUBCONTRACT_DIRECTION,
+                directionOf(subcontractNet));
         billData.put(ProductionVarianceAcctDocProvider.KEY_WORKORDER_CODE, wo.getCode());
         event.setBillData(billData);
         return event;

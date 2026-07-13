@@ -73,6 +73,8 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
     static final String SUBJECT_WIP_LABOR = "1413";
     static final String SUBJECT_OVERHEAD_VARIANCE = "1414";
     static final String SUBJECT_WIP_OVERHEAD = "1415";
+    static final String SUBJECT_SUBCONTRACT_VARIANCE = "1416";
+    static final String SUBJECT_WIP_SUBCONTRACT = "1417";
 
     static final Long P = 1201L;
     static final Long ACCT_SCHEMA_ID = 7401L;
@@ -308,6 +310,90 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
                 "非 COMPLETED 工单手动计算拒绝 ERR_VARIANCE_WORKORDER_NOT_COMPLETED");
     }
 
+    @Test
+    public void testSubcontractVarianceGeneratedWhenNonZero() {
+        seedProduct(P);
+        seedWorkcenter(WC1, bd("20"));
+        Long bomId = seedBom(9208L, P);
+        seedBomOperation(4208L, bomId, WC1, bd("60"));
+        // 标准侧 subcontractCost = 3/单位
+        seedFirmedRollupWithSubcontract(P, bd("10"), bd("10"), bd("5"), bd("3"), bd("25"));
+        seedPeriodAndSubjects();
+
+        // 实际侧 subcontractCost = 7
+        seedCompletedWorkOrderWithSubcontract(8209L, "WO-PV-SUB", bomId, P,
+                bd("2"), bd("2"), bd("20"), bd("20"), bd("10"), bd("7"));
+        seedTimeLog(5608L, 8209L, bd("120"));
+
+        productionVarianceCalculator.calculateVariances(8209L);
+
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8209L);
+        assertEquals(6, lines.size(), "6 类差异行（含 SUBCONTRACT）");
+
+        ErpMfgCostVariance sub = lineByType(lines, ErpMfgConstants.VARIANCE_TYPE_SUBCONTRACT);
+        assertEquals(ErpMfgConstants.COST_ELEMENT_SUBCONTRACT, sub.getCostElement(), "要素 = SUBCONTRACT");
+        // 标准 = rollup.subcontractCost(3) × completed(2) = 6；实际 = wo.subcontractCost(7)
+        assertEquals(0, bd("6").compareTo(sub.getStandardAmount()), "标准委外 = 3×2 = 6");
+        assertEquals(0, bd("7").compareTo(sub.getActualAmount()), "实际委外 = 7");
+        assertEquals(0, bd("1").compareTo(sub.getVarianceAmount()), "委外差异 = 7-6 = +1（unfavorable）");
+    }
+
+    @Test
+    public void testSubcontractLineOmittedWhenBothSidesZero() {
+        seedProduct(P);
+        seedWorkcenter(WC1, bd("20"));
+        Long bomId = seedBom(9209L, P);
+        seedBomOperation(4209L, bomId, WC1, bd("60"));
+        // 标准侧/实际侧 subcontractCost 均未设（0）
+        seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
+        seedPeriodAndSubjects();
+
+        seedCompletedWorkOrder(8210L, "WO-PV-NOSUB", bomId, P,
+                bd("2"), bd("2"), bd("20"), bd("20"), bd("10"));
+        seedTimeLog(5609L, 8210L, bd("120"));
+
+        productionVarianceCalculator.calculateVariances(8210L);
+
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8210L);
+        assertEquals(5, lines.size(), "两侧 subcontractCost 均为 0 → 不生成 SUBCONTRACT 行（保持 5 类）");
+        assertTrue(lines.stream().noneMatch(l -> ErpMfgConstants.VARIANCE_TYPE_SUBCONTRACT.equals(l.getVarianceType())),
+                "无 SUBCONTRACT 差异行");
+    }
+
+    @Test
+    public void testSubcontractVariancePosting() {
+        seedProduct(P);
+        seedWorkcenter(WC1, bd("20"));
+        Long bomId = seedBom(9210L, P);
+        seedBomOperation(4210L, bomId, WC1, bd("60"));
+        seedFirmedRollupWithSubcontract(P, bd("10"), bd("10"), bd("5"), bd("3"), bd("25"));
+        seedPeriodAndSubjects();
+
+        // 配置使得仅 SUBCONTRACT 净差异非零：材料/制造费用/产量均为 0，人工效率+费率互抵。
+        seedCompletedWorkOrderWithSubcontract(8211L, "WO-PV-SUBPOST", bomId, P,
+                bd("2"), bd("2"), bd("20"), bd("20"), bd("10"), bd("7"));
+        seedTimeLog(5610L, 8211L, bd("120"));
+
+        ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
+                ApiRequest.build(Map.of("workOrderId", 8211L)));
+        assertEquals(0, resp.getStatus(), "calculateVariances（含过账）应成功: " + resp);
+
+        ErpFinVoucher voucher = findVoucherByBillCode("WO-PV-SUBPOST-PV");
+        assertNotNull(voucher, "生产差异凭证应生成");
+        assertEquals(VOUCHER_STATUS_POSTED, voucher.getDocStatus(), "凭证已过账");
+
+        // SUBCONTRACT 净差异 = +1（unfavorable）→ 借 1416 / 贷 1417
+        ErpFinVoucherLine subVarLine = findVoucherLine(voucher.getId(), SUBJECT_SUBCONTRACT_VARIANCE);
+        assertNotNull(subVarLine, "委外差异科目行存在");
+        assertEquals("DEBIT", subVarLine.getDcDirection(), "委外差异 unfavorable → 借方");
+        assertEquals(0, bd("1").compareTo(subVarLine.getDebitAmount()), "委外差异借方金额 = 1");
+
+        ErpFinVoucherLine wipSubLine = findVoucherLine(voucher.getId(), SUBJECT_WIP_SUBCONTRACT);
+        assertNotNull(wipSubLine, "在制品-委外科目行存在");
+        assertEquals("CREDIT", wipSubLine.getDcDirection(), "在制品-委外 → 贷方");
+        assertEquals(0, bd("1").compareTo(wipSubLine.getCreditAmount()), "在制品-委外贷方金额 = 1");
+    }
+
     // ---------- query helpers ----------
 
     private ErpMfgCostVariance lineByType(List<ErpMfgCostVariance> lines, String type) {
@@ -428,6 +514,38 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         });
     }
 
+    private void seedFirmedRollupWithSubcontract(Long productId, BigDecimal materialCost, BigDecimal laborCost,
+                                                 BigDecimal overheadCost, BigDecimal subcontractCost,
+                                                 BigDecimal unitCost) {
+        ormTemplate.runInSession(() -> {
+            Long headerId = productId * 10000 + 1;
+            IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
+            ErpMfgCostRollup header = new ErpMfgCostRollup();
+            header.orm_propValueByName("id", headerId);
+            header.setCode("ROLLUP-" + productId);
+            header.setOrgId(ORG_ID);
+            header.setBusinessDate(LocalDate.of(2026, 6, 1));
+            header.orm_propValueByName("status", ErpMfgConstants.COST_ROLLUP_STATUS_FIRMED);
+            headerDao.saveEntity(header);
+
+            IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
+            ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
+            line.orm_propValueByName("id", productId * 10000 + 2);
+            line.setCostRollupId(headerId);
+            line.setLineNo(10);
+            line.setMaterialId(productId);
+            line.setUoMId(UOM_ID);
+            line.setMaterialCost(materialCost);
+            line.setLaborCost(laborCost);
+            line.setOverheadCost(overheadCost);
+            line.setSubcontractCost(subcontractCost);
+            line.setUnitCost(unitCost);
+            line.setTotalCost(unitCost);
+            line.setCurrencyId(CURRENCY_ID);
+            lineDao.saveEntity(line);
+        });
+    }
+
     private ErpMfgWorkOrder seedCompletedWorkOrder(Long id, String code, Long bomId, Long productId,
                                                    BigDecimal planned, BigDecimal completed,
                                                    BigDecimal materialCost, BigDecimal laborCost,
@@ -446,6 +564,32 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
             wo.setMaterialCost(materialCost);
             wo.setLaborCost(laborCost);
             wo.setOverheadCost(overheadCost);
+            wo.setBusinessDate(LocalDate.of(2026, 7, 1));
+            wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED);
+            dao.saveEntity(wo);
+        });
+        return daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(id);
+    }
+
+    private ErpMfgWorkOrder seedCompletedWorkOrderWithSubcontract(Long id, String code, Long bomId, Long productId,
+                                                                   BigDecimal planned, BigDecimal completed,
+                                                                   BigDecimal materialCost, BigDecimal laborCost,
+                                                                   BigDecimal overheadCost, BigDecimal subcontractCost) {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMfgWorkOrder> dao = daoProvider.daoFor(ErpMfgWorkOrder.class);
+            ErpMfgWorkOrder wo = new ErpMfgWorkOrder();
+            wo.orm_propValueByName("id", id);
+            wo.setCode(code);
+            wo.setProductId(productId);
+            wo.setBomId(bomId);
+            wo.setOrgId(ORG_ID);
+            wo.setCurrencyId(CURRENCY_ID);
+            wo.setPlannedQuantity(planned);
+            wo.setCompletedQuantity(completed);
+            wo.setMaterialCost(materialCost);
+            wo.setLaborCost(laborCost);
+            wo.setOverheadCost(overheadCost);
+            wo.setSubcontractCost(subcontractCost);
             wo.setBusinessDate(LocalDate.of(2026, 7, 1));
             wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED);
             dao.saveEntity(wo);
@@ -522,6 +666,8 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
             seedSubject(SUBJECT_WIP_LABOR, "在制品-人工", "ASSET", "DEBIT");
             seedSubject(SUBJECT_OVERHEAD_VARIANCE, "制造差异-制造费用", "ASSET", "DEBIT");
             seedSubject(SUBJECT_WIP_OVERHEAD, "在制品-制造费用", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_SUBCONTRACT_VARIANCE, "制造差异-委外", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_SUBCONTRACT, "在制品-委外", "ASSET", "DEBIT");
         });
     }
 

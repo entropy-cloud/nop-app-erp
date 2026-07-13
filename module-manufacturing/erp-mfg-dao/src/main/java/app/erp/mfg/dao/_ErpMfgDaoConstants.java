@@ -394,6 +394,11 @@ public interface _ErpMfgDaoConstants {
     String VARIANCE_TYPE_VOLUME = "VOLUME";
                     
     /**
+     * 差异类型: 委外费差异 
+     */
+    String VARIANCE_TYPE_SUBCONTRACT = "SUBCONTRACT";
+                    
+    /**
      * 成本要素: 材料 
      */
     String COST_ELEMENT_MATERIAL = "MATERIAL";
