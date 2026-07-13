@@ -34,6 +34,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: null
+      orgName: null
     ErpCsCannedCategory:
       id: ID
       code: Code
@@ -50,6 +51,8 @@ prop:
       updateTime: Update Time
       parent: Parent Category
       org: null
+      orgName: null
+      parentName: null
     ErpCsCannedResponse:
       id: ID
       code: Code
@@ -73,6 +76,9 @@ prop:
       category: Category
       macroTicketType: Macro Ticket Type
       org: null
+      orgName: null
+      categoryName: null
+      ticketTypeName: null
     ErpCsCatalogCategory:
       id: ID
       code: Code
@@ -90,6 +96,8 @@ prop:
       updateTime: Update Time
       parent: Parent Category
       org: null
+      orgName: null
+      parentName: null
     ErpCsCatalogFulfillment:
       id: ID
       code: Code
@@ -110,6 +118,8 @@ prop:
       updateTime: Update Time
       catalogItem: Catalog Item
       org: null
+      orgName: null
+      catalogItemName: null
     ErpCsContract:
       id: ID
       code: Code
@@ -136,6 +146,8 @@ prop:
       partner: Partner
       org: null
       attachmentFileIdComponentFileStatus: null
+      orgName: null
+      partnerName: null
     ErpCsEntitlement:
       id: ID
       code: Code
@@ -163,6 +175,10 @@ prop:
       contract: Contract
       slaPolicy: SLA Policy
       org: null
+      orgName: null
+      partnerName: null
+      contractName: null
+      slaPolicyName: null
     ErpCsKnowledgeBase:
       id: ID
       code: Code
@@ -178,6 +194,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       category: null
+      categoryName: null
     ErpCsServiceCatalogItem:
       id: ID
       code: Code
@@ -206,6 +223,11 @@ prop:
       ticketType: Ticket Type
       slaPolicy: SLA Policy
       org: null
+      orgName: null
+      categoryName: null
+      parentName: null
+      ticketTypeName: null
+      slaPolicyName: null
     ErpCsSlaPolicy:
       id: ID
       code: Code
@@ -227,6 +249,8 @@ prop:
       updateTime: Update Time
       ticketType: Ticket Type
       team: Team
+      ticketTypeName: null
+      teamName: null
     ErpCsSurvey:
       id: ID
       orgId: Organization
@@ -248,6 +272,8 @@ prop:
       updateTime: Update Time
       ticket: Ticket
       org: null
+      orgName: null
+      ticketCode: null
     ErpCsTeam:
       id: ID
       code: Code
@@ -305,6 +331,12 @@ prop:
       org: Org
       catalogItem: Catalog Item
       actions: Actions
+      orgName: null
+      customerName: null
+      contactName: null
+      ticketTypeName: null
+      slaPolicyName: null
+      catalogItemName: null
     ErpCsTicketAction:
       id: ID
       ticketId: Ticket
@@ -323,6 +355,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       ticket: Ticket
+      ticketCode: null
     ErpCsTicketType:
       id: ID
       code: Code
@@ -339,6 +372,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       defaultSlaPolicy: null
+      slaPolicyName: null
     ErpCsTimeEntry:
       id: ID
       orgId: Organization
@@ -367,6 +401,8 @@ prop:
       updateTime: Update Time
       ticket: Ticket
       org: null
+      orgName: null
+      ticketCode: null
 dict:
   label:
     erp-cs/ticket-status: Ticket Status

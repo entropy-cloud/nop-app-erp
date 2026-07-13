@@ -18,6 +18,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 目录分类 BizModel（{@code docs/design/customer-service/service-catalog.md §1.2/§4}）。
@@ -147,4 +152,27 @@ public class ErpCsCatalogCategoryBizModel extends CrudBizModel<ErpCsCatalogCateg
         IEntityDao<ErpCsCatalogCategory> dao = daoProvider().daoFor(ErpCsCatalogCategory.class);
         return dao.getEntityById(categoryId);
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCsCatalogCategory.class)
+    public List<String> orgName(@ContextSource List<ErpCsCatalogCategory> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsCatalogCategory row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsCatalogCategory.class)
+    public List<String> parentName(@ContextSource List<ErpCsCatalogCategory> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("parent"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsCatalogCategory row : rows) {
+            result.add(row.orm_attached() && row.getParent() != null ? row.getParent().getName() : null);
+        }
+        return result;
+    }
+
 }

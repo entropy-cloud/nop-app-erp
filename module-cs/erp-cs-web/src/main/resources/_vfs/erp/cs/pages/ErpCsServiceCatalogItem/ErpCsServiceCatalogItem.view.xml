@@ -3,7 +3,22 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="categoryName" label="分类"/>
+                <col id="parentName" label="上级项"/>
+                <col id="ticketTypeName" label="工单类型"/>
+                <col id="slaPolicyName" label="SLA策略"/>
+                <col id="shortDescription" sortable="true"/>
+                <col id="isActive" sortable="true"/>
+                <col id="isPublic" sortable="true"/>
+                <col id="sequence" ui:number="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

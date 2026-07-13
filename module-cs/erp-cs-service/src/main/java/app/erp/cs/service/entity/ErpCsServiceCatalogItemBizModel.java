@@ -23,6 +23,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 服务目录项 BizModel（{@code docs/design/customer-service/service-catalog.md §一/§二}）。
@@ -201,4 +206,57 @@ public class ErpCsServiceCatalogItemBizModel extends CrudBizModel<ErpCsServiceCa
             dst.put(dstKey, value);
         }
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCsServiceCatalogItem.class)
+    public List<String> orgName(@ContextSource List<ErpCsServiceCatalogItem> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsServiceCatalogItem row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsServiceCatalogItem.class)
+    public List<String> categoryName(@ContextSource List<ErpCsServiceCatalogItem> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("category"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsServiceCatalogItem row : rows) {
+            result.add(row.orm_attached() && row.getCategory() != null ? row.getCategory().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsServiceCatalogItem.class)
+    public List<String> parentName(@ContextSource List<ErpCsServiceCatalogItem> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("parent"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsServiceCatalogItem row : rows) {
+            result.add(row.orm_attached() && row.getParent() != null ? row.getParent().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsServiceCatalogItem.class)
+    public List<String> ticketTypeName(@ContextSource List<ErpCsServiceCatalogItem> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("ticketType"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsServiceCatalogItem row : rows) {
+            result.add(row.orm_attached() && row.getTicketType() != null ? row.getTicketType().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsServiceCatalogItem.class)
+    public List<String> slaPolicyName(@ContextSource List<ErpCsServiceCatalogItem> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("slaPolicy"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsServiceCatalogItem row : rows) {
+            result.add(row.orm_attached() && row.getSlaPolicy() != null ? row.getSlaPolicy().getName() : null);
+        }
+        return result;
+    }
+
 }

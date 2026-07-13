@@ -13,5 +13,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "parent": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "parentName": ""
 }

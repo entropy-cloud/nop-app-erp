@@ -3,17 +3,18 @@
     "id": "1",
     "code": "SMOKE-CS",
     "name": "冒烟工单类型",
-    "defaultPriority": null,
-    "defaultPriority_label": null,
-    "defaultSlaPolicyId": null,
     "sequence": 0,
-    "remark": null,
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpCsTicketType@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCsTicketType@createTime"
+    "updateTime": "@var:ErpCsTicketType@createTime",
+    "slaPolicyName": null,
+    "defaultPriority": null,
+    "defaultPriority_label": null,
+    "defaultSlaPolicyId": null,
+    "remark": null
   },
   "status": 0
 }

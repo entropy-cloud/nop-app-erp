@@ -24,5 +24,9 @@
   "partner": null,
   "contract": null,
   "slaPolicy": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "partnerName": "",
+  "contractName": "",
+  "slaPolicyName": ""
 }

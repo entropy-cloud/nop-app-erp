@@ -22,6 +22,9 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.Collections;
 
 @BizModel("ErpCsKnowledgeBase")
 public class ErpCsKnowledgeBaseBizModel extends CrudBizModel<ErpCsKnowledgeBase> implements IErpCsKnowledgeBaseBiz {
@@ -146,4 +149,17 @@ public class ErpCsKnowledgeBaseBizModel extends CrudBizModel<ErpCsKnowledgeBase>
         }
         return subject.length() >= ErpCsConstants.SUGGEST_SUBJECT_MIN_LENGTH ? subject : null;
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCsKnowledgeBase.class)
+    public List<String> categoryName(@ContextSource List<ErpCsKnowledgeBase> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("category"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsKnowledgeBase row : rows) {
+            result.add(row.orm_attached() && row.getCategory() != null ? row.getCategory().getName() : null);
+        }
+        return result;
+    }
+
 }

@@ -23,5 +23,7 @@
   "businessDate": "2000-01-01",
   "partner": null,
   "org": null,
-  "attachmentFileIdComponentFileStatus": null
+  "attachmentFileIdComponentFileStatus": null,
+  "orgName": "",
+  "partnerName": ""
 }

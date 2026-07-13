@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpCsSlaPolicy.xmeta">
 
-    <props/>
+    <props>
+        <prop name="ticketTypeName" displayName="工单类型" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="teamName" displayName="客服团队" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+    </props>
 </meta>

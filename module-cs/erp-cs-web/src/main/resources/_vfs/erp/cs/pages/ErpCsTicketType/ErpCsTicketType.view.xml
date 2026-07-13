@@ -2,7 +2,16 @@
 <view x:extends="_gen/_ErpCsTicketType.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" sortable="true"/>
+                <col id="defaultPriority" sortable="true"/>
+                <col id="slaPolicyName" label="默认SLA策略"/>
+                <col id="sequence" ui:number="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

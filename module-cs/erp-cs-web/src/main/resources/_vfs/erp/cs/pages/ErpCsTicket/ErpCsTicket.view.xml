@@ -2,7 +2,25 @@
 <view x:extends="_gen/_ErpCsTicket.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="subject" sortable="true"/>
+                <col id="customerName" label="客户"/>
+                <col id="contactName" label="联系人"/>
+                <col id="ticketTypeName" label="工单类型"/>
+                <col id="slaPolicyName" label="SLA策略"/>
+                <col id="catalogItemName" label="目录项"/>
+                <col id="priority" sortable="true"/>
+                <col id="status" sortable="true"/>
+                <col id="docStatus" sortable="true"/>
+                <col id="approveStatus" sortable="true"/>
+                <col id="deadlineDateTime" sortable="true"/>
+                <col id="isSlaCompleted" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

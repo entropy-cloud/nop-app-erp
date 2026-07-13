@@ -32,6 +32,9 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.dateTimeBetween;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.lt;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.Collections;
 
 /**
  * 服务权益 BizModel（{@code docs/design/customer-service/entitlement.md}）。
@@ -248,4 +251,47 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
             return null;
         }
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCsEntitlement.class)
+    public List<String> orgName(@ContextSource List<ErpCsEntitlement> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsEntitlement row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsEntitlement.class)
+    public List<String> partnerName(@ContextSource List<ErpCsEntitlement> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("partner"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsEntitlement row : rows) {
+            result.add(row.orm_attached() && row.getPartner() != null ? row.getPartner().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsEntitlement.class)
+    public List<String> contractName(@ContextSource List<ErpCsEntitlement> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("contract"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsEntitlement row : rows) {
+            result.add(row.orm_attached() && row.getContract() != null ? row.getContract().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsEntitlement.class)
+    public List<String> slaPolicyName(@ContextSource List<ErpCsEntitlement> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("slaPolicy"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsEntitlement row : rows) {
+            result.add(row.orm_attached() && row.getSlaPolicy() != null ? row.getSlaPolicy().getName() : null);
+        }
+        return result;
+    }
+
 }

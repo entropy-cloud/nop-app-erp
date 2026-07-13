@@ -38,6 +38,9 @@ import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.lt;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.EntityData;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.Collections;
 
 /**
  * 客服工单 BizModel。权威：{@code docs/design/customer-service/state-machine.md}、
@@ -460,4 +463,67 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             }
         }
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCsTicket.class)
+    public List<String> orgName(@ContextSource List<ErpCsTicket> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsTicket row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsTicket.class)
+    public List<String> customerName(@ContextSource List<ErpCsTicket> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("customer"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsTicket row : rows) {
+            result.add(row.orm_attached() && row.getCustomer() != null ? row.getCustomer().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsTicket.class)
+    public List<String> contactName(@ContextSource List<ErpCsTicket> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("contact"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsTicket row : rows) {
+            result.add(row.orm_attached() && row.getContact() != null ? row.getContact().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsTicket.class)
+    public List<String> ticketTypeName(@ContextSource List<ErpCsTicket> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("ticketType"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsTicket row : rows) {
+            result.add(row.orm_attached() && row.getTicketType() != null ? row.getTicketType().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsTicket.class)
+    public List<String> slaPolicyName(@ContextSource List<ErpCsTicket> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("slaPolicy"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsTicket row : rows) {
+            result.add(row.orm_attached() && row.getSlaPolicy() != null ? row.getSlaPolicy().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCsTicket.class)
+    public List<String> catalogItemName(@ContextSource List<ErpCsTicket> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("catalogItem"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCsTicket row : rows) {
+            result.add(row.orm_attached() && row.getCatalogItem() != null ? row.getCatalogItem().getName() : null);
+        }
+        return result;
+    }
+
 }

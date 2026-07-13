@@ -2,7 +2,17 @@
 <view x:extends="_gen/_ErpCsTicketAction.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="ticketCode" label="工单"/>
+                <col id="actionType" sortable="true"/>
+                <col id="fromStatus" sortable="true"/>
+                <col id="toStatus" sortable="true"/>
+                <col id="operatorId" sortable="true"/>
+                <col id="content" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

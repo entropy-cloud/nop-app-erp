@@ -2,7 +2,21 @@
 <view x:extends="_gen/_ErpCsContract.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="partnerName" label="客户"/>
+                <col id="contractType" sortable="true"/>
+                <col id="startDate" sortable="true"/>
+                <col id="endDate" sortable="true"/>
+                <col id="totalAmount" ui:number="true" sortable="true"/>
+                <col id="billingCycle" sortable="true"/>
+                <col id="status" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

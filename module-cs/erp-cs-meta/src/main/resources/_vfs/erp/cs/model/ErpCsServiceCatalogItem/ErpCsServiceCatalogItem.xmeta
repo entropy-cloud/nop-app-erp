@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpCsServiceCatalogItem.xmeta">
 
-    <props/>
+    <props>
+        <prop name="orgName" displayName="业务组织" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="categoryName" displayName="分类" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="parentName" displayName="上级项" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="ticketTypeName" displayName="工单类型" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+        <prop name="slaPolicyName" displayName="SLA策略" queryable="false" sortable="false">
+            <schema type="java.lang.String"/>
+        </prop>
+    </props>
 </meta>

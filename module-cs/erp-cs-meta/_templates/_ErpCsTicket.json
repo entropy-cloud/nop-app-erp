@@ -42,5 +42,11 @@
   "slaPolicy": null,
   "org": null,
   "catalogItem": null,
-  "actions": null
+  "actions": null,
+  "orgName": "",
+  "customerName": "",
+  "contactName": "",
+  "ticketTypeName": "",
+  "slaPolicyName": "",
+  "catalogItemName": ""
 }
