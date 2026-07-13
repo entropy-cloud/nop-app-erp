@@ -2,7 +2,24 @@
 <view x:extends="_gen/_ErpCrmEvent.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="eventType" sortable="true"/>
+                <col id="categoryName" label="活动类别"/>
+                <col id="subject" sortable="true"/>
+                <col id="leadCode" label="关联线索"/>
+                <col id="partnerName" label="客户"/>
+                <col id="contactName" label="联系人"/>
+                <col id="eventCode" label="父活动"/>
+                <col id="startDateTime" sortable="true"/>
+                <col id="endDateTime" sortable="true"/>
+                <col id="status" sortable="true"/>
+                <col id="priority" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

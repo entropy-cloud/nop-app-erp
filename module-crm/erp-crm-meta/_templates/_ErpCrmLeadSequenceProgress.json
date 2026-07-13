@@ -17,5 +17,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "lead": null,
   "sequence": null,
-  "org": null
+  "org": null,
+  "leadCode": "",
+  "sequenceName": "",
+  "orgName": ""
 }

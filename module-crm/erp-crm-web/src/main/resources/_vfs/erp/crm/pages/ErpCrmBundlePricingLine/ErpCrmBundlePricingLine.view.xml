@@ -3,7 +3,17 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="bundleName" label="捆绑定价"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="materialName" label="产品"/>
+                <col id="quantity" ui:number="true" sortable="true"/>
+                <col id="unitPrice" ui:number="true" sortable="true"/>
+                <col id="sequence" ui:number="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

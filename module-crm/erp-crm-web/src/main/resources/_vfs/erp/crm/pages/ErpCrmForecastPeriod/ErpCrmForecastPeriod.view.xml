@@ -3,7 +3,19 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="periodType" sortable="true"/>
+                <col id="periodStart" sortable="true"/>
+                <col id="periodEnd" sortable="true"/>
+                <col id="label" sortable="true"/>
+                <col id="status" sortable="true"/>
+                <col id="isCurrent" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

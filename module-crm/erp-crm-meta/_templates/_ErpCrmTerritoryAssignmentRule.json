@@ -21,5 +21,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "territory": null,
   "team": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "territoryName": "",
+  "teamName": ""
 }

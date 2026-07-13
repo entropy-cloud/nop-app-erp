@@ -28,5 +28,9 @@
   "org": null,
   "territory": null,
   "team": null,
-  "source": null
+  "source": null,
+  "orgName": "",
+  "territoryName": "",
+  "teamName": "",
+  "sourceName": ""
 }

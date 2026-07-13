@@ -14,6 +14,11 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.util.Objects;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 预测期间 BizModel。期间状态机：{@code OPEN → FROZEN}（锁定不再重算）/ {@code OPEN → CLOSED}（关闭后触发准确率计算，
@@ -77,4 +82,17 @@ public class ErpCrmForecastPeriodBizModel extends CrudBizModel<ErpCrmForecastPer
                     .param(ErpCrmErrors.ARG_EXPECTED_STATUS, ErpCrmConstants.FORECAST_PERIOD_STATUS_OPEN);
         }
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCrmForecastPeriod.class)
+    public List<String> orgName(@ContextSource List<ErpCrmForecastPeriod> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmForecastPeriod row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
 }

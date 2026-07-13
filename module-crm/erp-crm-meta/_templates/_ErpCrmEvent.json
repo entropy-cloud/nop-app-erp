@@ -35,5 +35,11 @@
   "parentEvent": null,
   "org": null,
   "eventCategory": null,
-  "contact": null
+  "contact": null,
+  "orgName": "",
+  "categoryName": "",
+  "leadCode": "",
+  "partnerName": "",
+  "contactName": "",
+  "eventCode": ""
 }

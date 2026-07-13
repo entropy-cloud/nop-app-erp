@@ -41,6 +41,9 @@ import java.util.stream.Collectors;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.Collections;
 
 /**
  * 销售序列进度 BizModel。{@link #assignSequence} / {@link #advanceStep} / {@link #switchSequence} /
@@ -408,4 +411,37 @@ public class ErpCrmLeadSequenceProgressBizModel
     protected IEntityDao<ErpCrmEvent> eventDao() {
         return daoProvider().daoFor(ErpCrmEvent.class);
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCrmLeadSequenceProgress.class)
+    public List<String> leadCode(@ContextSource List<ErpCrmLeadSequenceProgress> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("lead"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadSequenceProgress row : rows) {
+            result.add(row.orm_attached() && row.getLead() != null ? row.getLead().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmLeadSequenceProgress.class)
+    public List<String> sequenceName(@ContextSource List<ErpCrmLeadSequenceProgress> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("sequence"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadSequenceProgress row : rows) {
+            result.add(row.orm_attached() && row.getSequence() != null ? row.getSequence().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmLeadSequenceProgress.class)
+    public List<String> orgName(@ContextSource List<ErpCrmLeadSequenceProgress> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadSequenceProgress row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
 }

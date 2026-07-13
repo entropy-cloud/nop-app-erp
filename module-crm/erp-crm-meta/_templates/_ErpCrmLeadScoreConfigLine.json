@@ -19,5 +19,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "config": null,
-  "org": null
+  "org": null,
+  "configName": "",
+  "orgName": ""
 }

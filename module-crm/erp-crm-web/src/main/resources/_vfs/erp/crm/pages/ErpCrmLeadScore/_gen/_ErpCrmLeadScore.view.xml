@@ -65,6 +65,15 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--关联线索-->
+                <col id="leadCode"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
+
+                <!--评分配置-->
+                <col id="configName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -80,7 +89,8 @@
  triggerEvent[触发计算事件] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] leadCode[关联线索]
+ orgName[业务组织] configName[评分配置]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-线索评分记录" i18n-en:title="Add Lead Score" x:prototype="edit"/>

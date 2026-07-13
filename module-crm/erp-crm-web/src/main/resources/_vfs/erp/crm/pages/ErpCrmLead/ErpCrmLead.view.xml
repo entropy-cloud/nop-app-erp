@@ -2,7 +2,27 @@
 <view x:extends="_gen/_ErpCrmLead.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="leadType" sortable="true"/>
+                <col id="partnerName" label="客户"/>
+                <col id="contactName" sortable="true"/>
+                <col id="sourceName" label="线索来源"/>
+                <col id="leadStatusName" label="线索状态"/>
+                <col id="stageName" label="漏斗阶段"/>
+                <col id="expectedRevenue" ui:number="true" sortable="true"/>
+                <col id="probability" ui:number="true" sortable="true"/>
+                <col id="campaignName" label="营销活动"/>
+                <col id="teamName" label="销售团队"/>
+                <col id="territoryName" label="销售区域"/>
+                <col id="lostReasonName" label="丢单原因"/>
+                <col id="docStatus" sortable="true"/>
+                <col id="expectedCloseDate" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

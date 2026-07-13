@@ -2,18 +2,21 @@
   "data": {
     "id": "2",
     "bundleId": 1,
-    "orgId": null,
-    "productId": null,
-    "quantity": null,
-    "unitPrice": null,
     "sequence": 0,
-    "remark": null,
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpCrmBundlePricingLine@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCrmBundlePricingLine@createTime"
+    "updateTime": "@var:ErpCrmBundlePricingLine@createTime",
+    "orgId": null,
+    "productId": null,
+    "quantity": null,
+    "unitPrice": null,
+    "remark": null,
+    "bundleName": "冒烟捆绑",
+    "materialName": null,
+    "orgName": null
   },
   "status": 0
 }

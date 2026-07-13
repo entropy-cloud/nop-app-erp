@@ -3,7 +3,20 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="funnelName" label="漏斗"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="stageName" sortable="true"/>
+                <col id="stageOrder" ui:number="true" sortable="true"/>
+                <col id="leadCountIn" ui:number="true" sortable="true"/>
+                <col id="leadCountOut" ui:number="true" sortable="true"/>
+                <col id="leadCountRemaining" ui:number="true" sortable="true"/>
+                <col id="conversionRate" ui:number="true" sortable="true"/>
+                <col id="avgDaysInStage" ui:number="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

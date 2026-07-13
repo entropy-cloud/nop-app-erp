@@ -3,7 +3,20 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="ruleName" sortable="true"/>
+                <col id="territoryName" label="销售区域"/>
+                <col id="teamName" label="销售团队"/>
+                <col id="priority" ui:number="true" sortable="true"/>
+                <col id="conditionType" sortable="true"/>
+                <col id="assignmentMethod" sortable="true"/>
+                <col id="isDefault" sortable="true"/>
+                <col id="isActive" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

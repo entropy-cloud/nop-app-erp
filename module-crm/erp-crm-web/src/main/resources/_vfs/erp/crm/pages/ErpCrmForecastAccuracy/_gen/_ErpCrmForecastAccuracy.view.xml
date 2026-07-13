@@ -77,6 +77,18 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
+
+                <!--预测期间-->
+                <col id="periodCode"/>
+
+                <!--销售团队-->
+                <col id="teamName"/>
+
+                <!--销售区域-->
+                <col id="territoryName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -94,7 +106,9 @@
  calculatedBy[计算人] calculatedAt[计算时间]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] orgName[业务组织]
+ periodCode[预测期间] teamName[销售团队]
+ territoryName[销售区域] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-预测准确率" i18n-en:title="Add Forecast Accuracy" x:prototype="edit"/>

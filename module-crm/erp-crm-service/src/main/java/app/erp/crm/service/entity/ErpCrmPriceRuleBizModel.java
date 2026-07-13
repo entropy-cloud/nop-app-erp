@@ -13,6 +13,11 @@ import app.erp.crm.service.ErpCrmErrors;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 价格规则 BizModel（plan 2026-07-07-1430-2 §Phase 1）。
@@ -77,4 +82,47 @@ public class ErpCrmPriceRuleBizModel extends CrudBizModel<ErpCrmPriceRule> imple
                     .param(ErpCrmErrors.ARG_DISCOUNT_TYPE, "discountAmount=" + amount);
         }
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCrmPriceRule.class)
+    public List<String> orgName(@ContextSource List<ErpCrmPriceRule> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmPriceRule row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmPriceRule.class)
+    public List<String> materialName(@ContextSource List<ErpCrmPriceRule> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("product"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmPriceRule row : rows) {
+            result.add(row.orm_attached() && row.getProduct() != null ? row.getProduct().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmPriceRule.class)
+    public List<String> customerName(@ContextSource List<ErpCrmPriceRule> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("customer"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmPriceRule row : rows) {
+            result.add(row.orm_attached() && row.getCustomer() != null ? row.getCustomer().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmPriceRule.class)
+    public List<String> currencyName(@ContextSource List<ErpCrmPriceRule> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("currency"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmPriceRule row : rows) {
+            result.add(row.orm_attached() && row.getCurrency() != null ? row.getCurrency().getName() : null);
+        }
+        return result;
+    }
+
 }

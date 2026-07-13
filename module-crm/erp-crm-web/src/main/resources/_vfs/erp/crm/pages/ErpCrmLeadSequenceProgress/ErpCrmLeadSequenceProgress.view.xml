@@ -3,7 +3,18 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="leadCode" label="关联线索"/>
+                <col id="sequenceName" label="销售序列"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="currentStepIndex" ui:number="true" sortable="true"/>
+                <col id="status" sortable="true"/>
+                <col id="startedAt" sortable="true"/>
+                <col id="completedAt" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

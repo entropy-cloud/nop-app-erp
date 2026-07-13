@@ -37,6 +37,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.Collections;
 
 /**
  * 销售漏斗 BizModel。{@link #refreshFunnel} 清旧重建快照（对齐 0700-1 forecast），委托 {@link FunnelAggregationEngine}
@@ -288,4 +291,47 @@ public class ErpCrmLeadFunnelBizModel extends CrudBizModel<ErpCrmLeadFunnel> imp
     protected IEntityDao<ErpCrmFunnelStageMetrics> stageMetricsDao() {
         return daoProvider().daoFor(ErpCrmFunnelStageMetrics.class);
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCrmLeadFunnel.class)
+    public List<String> orgName(@ContextSource List<ErpCrmLeadFunnel> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadFunnel row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmLeadFunnel.class)
+    public List<String> territoryName(@ContextSource List<ErpCrmLeadFunnel> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("territory"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadFunnel row : rows) {
+            result.add(row.orm_attached() && row.getTerritory() != null ? row.getTerritory().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmLeadFunnel.class)
+    public List<String> teamName(@ContextSource List<ErpCrmLeadFunnel> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("team"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadFunnel row : rows) {
+            result.add(row.orm_attached() && row.getTeam() != null ? row.getTeam().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmLeadFunnel.class)
+    public List<String> sourceName(@ContextSource List<ErpCrmLeadFunnel> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("source"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadFunnel row : rows) {
+            result.add(row.orm_attached() && row.getSource() != null ? row.getSource().getName() : null);
+        }
+        return result;
+    }
+
 }

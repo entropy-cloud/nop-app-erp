@@ -137,6 +137,33 @@
 
                 <!--销售区域-->
                 <col id="territoryId" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
+
+                <!--客户-->
+                <col id="partnerName"/>
+
+                <!--线索来源-->
+                <col id="sourceName"/>
+
+                <!--线索状态-->
+                <col id="leadStatusName"/>
+
+                <!--漏斗阶段-->
+                <col id="stageName"/>
+
+                <!--营销活动-->
+                <col id="campaignName"/>
+
+                <!--销售团队-->
+                <col id="teamName"/>
+
+                <!--丢单原因-->
+                <col id="lostReasonName"/>
+
+                <!--销售区域-->
+                <col id="territoryName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -164,7 +191,11 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- territoryId[销售区域] 
+ territoryId[销售区域] orgName[业务组织]
+ partnerName[客户] sourceName[线索来源]
+ leadStatusName[线索状态] stageName[漏斗阶段]
+ campaignName[营销活动] teamName[销售团队]
+ lostReasonName[丢单原因] territoryName[销售区域]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-线索/商机" i18n-en:title="Add Lead / Opportunity" x:prototype="edit"/>

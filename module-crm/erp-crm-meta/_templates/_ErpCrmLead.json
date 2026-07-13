@@ -53,5 +53,14 @@
   "org": null,
   "events": null,
   "activities": null,
-  "convLogs": null
+  "convLogs": null,
+  "orgName": "",
+  "partnerName": "",
+  "sourceName": "",
+  "leadStatusName": "",
+  "stageName": "",
+  "campaignName": "",
+  "teamName": "",
+  "lostReasonName": "",
+  "territoryName": ""
 }

@@ -29,5 +29,9 @@
   "org": null,
   "product": null,
   "customer": null,
-  "currency": null
+  "currency": null,
+  "orgName": "",
+  "materialName": "",
+  "customerName": "",
+  "currencyName": ""
 }

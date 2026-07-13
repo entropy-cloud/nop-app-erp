@@ -2,7 +2,17 @@
 <view x:extends="_gen/_ErpCrmLeadConvLog.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="leadCode" label="关联线索"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="fromStageName" label="原阶段"/>
+                <col id="toStageName" label="目标阶段"/>
+                <col id="changedAt" sortable="true"/>
+                <col id="changedBy" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

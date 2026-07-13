@@ -19,7 +19,8 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpCrmBundlePricing@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCrmBundlePricing@updateTime_1"
+    "updateTime": "@var:ErpCrmBundlePricing@updateTime_1",
+    "orgName": null
   },
   "status": 0
 }

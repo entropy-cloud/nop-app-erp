@@ -59,6 +59,15 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--关联线索-->
+                <col id="leadCode"/>
+
+                <!--销售序列-->
+                <col id="sequenceName"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -73,7 +82,8 @@
  completedAt[完成时间] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] leadCode[关联线索]
+ sequenceName[销售序列] orgName[业务组织]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-线索序列进度" i18n-en:title="Add Lead Sequence Progress" x:prototype="edit"/>

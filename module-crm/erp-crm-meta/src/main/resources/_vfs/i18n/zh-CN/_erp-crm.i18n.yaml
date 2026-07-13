@@ -45,9 +45,11 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       lead: null
+      leadCode: 关联线索
       leadId: 关联线索/商机
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       ownerId: 负责人
       remark: 备注
       summary: 内容摘要
@@ -72,6 +74,7 @@ prop:
       name: 名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -79,12 +82,15 @@ prop:
     ErpCrmBundlePricingLine:
       bundle: null
       bundleId: 所属捆绑包
+      bundleName: 捆绑定价
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
+      materialName: 产品
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       product: null
       productId: 产品
       quantity: 数量
@@ -108,6 +114,7 @@ prop:
       name: 名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       source: UTM Source
       startDate: 开始日期
@@ -118,12 +125,14 @@ prop:
       conditionExpression: 复杂条件表达式
       configurator: null
       configuratorId: 所属配置器
+      configuratorName: 配置器
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       ruleType: 规则类型
       ruleType_label: 规则类型
@@ -136,9 +145,11 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpCrmEvent:
+      categoryName: 活动类别
       code: 编码
       contact: null
       contactId: 联系人
+      contactName: 联系人
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -147,17 +158,21 @@ prop:
       endDateTime: 结束时间
       eventCategory: null
       eventCategoryId: 活动类别
+      eventCode: 父活动
       eventType: 事件类型
       eventType_label: 事件类型
       id: ID
       isRecurrent: 是否重复事件
+      leadCode: 关联线索
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       ownerId: 负责人
       parentEvent: null
       parentEventId: 父事件
       partner: null
       partnerId: 关联客户
+      partnerName: 客户
       priority: 优先级
       priority_label: 优先级
       relatedBillCode: 关联单据号
@@ -193,6 +208,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种
       delVersion: 逻辑删除版本
       expectedClosedRevenue: 实际已关闭收入
       id: ID
@@ -201,13 +217,17 @@ prop:
       opportunityCount: 商机总数
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       ownerId: 销售员
       period: null
+      periodCode: 预测期间
       periodId: 预测期间
       team: null
       teamId: 销售团队
+      teamName: 销售团队
       territory: null
       territoryId: 销售区域
+      territoryName: 销售区域
       updateTime: 修改时间
       updatedBy: 修改人
       upsideAmount: 乐观金额
@@ -228,13 +248,17 @@ prop:
       id: ID
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       ownerId: 销售员
       period: null
+      periodCode: 预测期间
       periodId: 预测期间
       team: null
       teamId: 销售团队
+      teamName: 销售团队
       territory: null
       territoryId: 销售区域
+      territoryName: 销售区域
       updateTime: 修改时间
       updatedBy: 修改人
       upsideAccuracy: 乐观准确率
@@ -252,9 +276,11 @@ prop:
       id: ID
       includedInCommit: 是否计入承诺
       lead: null
+      leadCode: 商机
       leadId: 商机
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       probability: 概率快照
       stageName: 阶段名快照
       updateTime: 修改时间
@@ -271,6 +297,7 @@ prop:
       label: 期间标签
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       periodEnd: 期间结束日期
       periodStart: 期间开始日期
       periodType: 期间类型
@@ -290,6 +317,7 @@ prop:
       dropOffRate: 流失率
       funnel: null
       funnelId: 所属漏斗
+      funnelName: 漏斗
       id: ID
       leadCountIn: 进入本阶段线索数
       leadCountOut: 流出本阶段线索数
@@ -299,6 +327,7 @@ prop:
       lostReasonTop: TOP丢失原因(JSON)
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       stage: null
       stageId: 阶段
@@ -312,6 +341,7 @@ prop:
       bestCaseAmount: 乐观预期
       campaign: null
       campaignId: 营销活动
+      campaignName: 营销活动
       code: 编码
       companyName: 公司名称
       contactEmail: 联系邮箱
@@ -332,17 +362,21 @@ prop:
       lastContactDate: 最后联系日期
       leadStatus: null
       leadStatusId: 线索状态
+      leadStatusName: 线索状态
       leadType: 线索/商机类型
       leadType_label: 线索/商机类型
       lostReason: null
       lostReasonDesc: 丢单描述
       lostReasonId: 丢单原因
+      lostReasonName: 丢单原因
       nextActivityDate: 下次活动日期
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       ownerId: 负责人
       partner: null
       partnerId: 客户
+      partnerName: 客户
       probability: 成交概率
       recurringPlan: 周期性计划
       recurringRevenue: 周期性收入
@@ -351,12 +385,16 @@ prop:
       remark: 备注
       source: null
       sourceId: 线索来源
+      sourceName: 线索来源
       stage: null
       stageId: 漏斗阶段
+      stageName: 漏斗阶段
       team: null
       teamId: 销售团队
+      teamName: 销售团队
       territory: null
       territoryId: 销售区域
+      territoryName: 销售区域
       updateTime: 修改时间
       updatedBy: 修改人
       utmMedium: UTM Medium
@@ -371,14 +409,18 @@ prop:
       delVersion: 逻辑删除版本
       fromStage: null
       fromStageId: 前阶段
+      fromStageName: 原阶段
       id: ID
       lead: null
+      leadCode: 关联线索
       leadId: 线索/商机
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       toStage: null
       toStageId: 后阶段
+      toStageName: 目标阶段
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -395,15 +437,19 @@ prop:
       lostRevenue: 丢失金额合计
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       periodEnd: 分析期间结束
       periodStart: 分析期间开始
       remark: 备注
       source: null
       sourceId: 来源维度
+      sourceName: 线索来源
       team: null
       teamId: 团队维度
+      teamName: 销售团队
       territory: null
       territoryId: 区域维度
+      territoryName: 销售区域
       totalLeadsAtTop: 漏斗顶部线索量
       totalLost: 丢单总量
       totalOpportunities: 商机总量
@@ -418,14 +464,17 @@ prop:
       calculatedAt: 计算时间
       config: null
       configId: 评分规则版本
+      configName: 评分配置
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
       lead: null
+      leadCode: 关联线索
       leadId: 线索/商机
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       scoreBreakdown: 评分快照(JSON)
       totalScore: 总分
@@ -450,6 +499,7 @@ prop:
       minScoreForFollowUp: 最低跟进分数
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -457,6 +507,7 @@ prop:
     ErpCrmLeadScoreConfigLine:
       config: null
       configId: 评分规则配置
+      configName: 评分配置
       createTime: 创建时间
       createdBy: 创建人
       criterionCode: 准则编码
@@ -468,6 +519,7 @@ prop:
       maxScore: 最高分
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       scoringMethod: 评分方法
       scoringMethod_label: 评分方法
@@ -488,6 +540,7 @@ prop:
       lookupValue: 匹配档次
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       rawScore: 原始得分
       rawValue: 原始值
       score: null
@@ -505,12 +558,15 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       lead: null
+      leadCode: 关联线索
       leadId: 线索/商机
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       sequence: null
       sequenceId: 应用序列
+      sequenceName: 销售序列
       startedAt: 开始时间
       status: 状态
       status_label: 状态
@@ -548,9 +604,11 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种
       customer: null
       customerCategory: 适用客户类别
       customerId: 适用客户
+      customerName: 客户
       delVersion: 逻辑删除版本
       discountAmount: 折扣固定金额
       discountPercent: 折扣百分比
@@ -558,11 +616,13 @@ prop:
       effectiveTo: 生效结束日期
       id: ID
       isActive: 是否启用
+      materialName: 产品
       maxQuantity: 最大数量
       minQuantity: 最小数量
       name: 名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       priceOverride: 覆盖单价
       priority: 优先级
       product: null
@@ -587,6 +647,7 @@ prop:
       name: 名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       productType: 适用产品品类
       remark: 备注
       updateTime: 修改时间
@@ -598,6 +659,7 @@ prop:
       createdBy: 创建人
       currency: null
       currencyId: 币种
+      currencyName: 币种
       delVersion: 逻辑删除版本
       fiscalYear: 财年
       id: ID
@@ -605,6 +667,7 @@ prop:
       notes: 备注
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       ownerId: 销售员
       periodLabel: 期间标签
       periodType: 配额期间类型
@@ -612,8 +675,10 @@ prop:
       quotaAmount: 配额金额
       team: null
       teamId: 团队
+      teamName: 销售团队
       territory: null
       territoryId: 区域
+      territoryName: 销售区域
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -643,6 +708,7 @@ prop:
       name: 名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       templateType: 序列模板类型
       templateType_label: 序列模板类型
@@ -661,10 +727,12 @@ prop:
       isDefault: 是否默认规则
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       priority: 优先级
       remark: 备注
       sequence: null
       sequenceId: 目标序列
+      sequenceName: 销售序列
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -682,9 +750,11 @@ prop:
       isMandatory: 是否必须完成
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       sequence: null
       sequenceId: 所属序列
+      sequenceName: 销售序列
       stepDescription: 步骤说明
       stepName: 步骤名称
       stepOrder: 步骤序号
@@ -713,11 +783,13 @@ prop:
       isWonStage: 是否赢单阶段
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       sequence: 排序
       stageName: 阶段名称
       team: null
       teamId: 团队作用域
+      teamName: 销售团队
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -730,6 +802,7 @@ prop:
       name: 名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       remark: 备注
       teamLeaderId: 团队负责人
       updateTime: 修改时间
@@ -750,8 +823,10 @@ prop:
       name: 名称
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       parent: null
       parentId: 父区域
+      parentName: 上级区域
       remark: 备注
       sortOrder: 排序
       territoryType: 区域类型
@@ -774,12 +849,15 @@ prop:
       isDefault: 是否默认规则
       org: null
       orgId: 业务组织
+      orgName: 业务组织
       priority: 优先级
       remark: 备注
       ruleName: 规则名称
       team: null
+      teamName: 销售团队
       territory: null
       territoryId: 目标区域
+      territoryName: 销售区域
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

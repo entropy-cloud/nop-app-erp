@@ -10,6 +10,11 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 线索评分 BizModel。config 驱动评分计算委托 {@link LeadScoringEngine}（归一化 totalScore + append-only 历史快照 +
@@ -35,4 +40,37 @@ public class ErpCrmLeadScoreBizModel extends CrudBizModel<ErpCrmLeadScore> imple
                                             IServiceContext context) {
         return scoringEngine.recalculateScore(leadId, triggerEvent, context);
     }
+
+    
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpCrmLeadScore.class)
+    public List<String> leadCode(@ContextSource List<ErpCrmLeadScore> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("lead"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadScore row : rows) {
+            result.add(row.orm_attached() && row.getLead() != null ? row.getLead().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmLeadScore.class)
+    public List<String> orgName(@ContextSource List<ErpCrmLeadScore> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadScore row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpCrmLeadScore.class)
+    public List<String> configName(@ContextSource List<ErpCrmLeadScore> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("config"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpCrmLeadScore row : rows) {
+            result.add(row.orm_attached() && row.getConfig() != null ? row.getConfig().getConfigName() : null);
+        }
+        return result;
+    }
+
 }

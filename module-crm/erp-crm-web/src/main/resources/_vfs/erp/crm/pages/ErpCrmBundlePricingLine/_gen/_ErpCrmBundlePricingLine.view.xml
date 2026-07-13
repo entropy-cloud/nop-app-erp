@@ -56,6 +56,15 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--捆绑定价-->
+                <col id="bundleName"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
+
+                <!--产品-->
+                <col id="materialName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -70,6 +79,8 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ bundleName[捆绑定价] orgName[业务组织]
+ materialName[产品] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-捆绑包明细" i18n-en:title="Add Bundle Pricing Line" x:prototype="edit"/>
