@@ -173,7 +173,7 @@ Exit Criteria:
 
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 本计划覆盖核心正向链 + 非法迁移守卫。MRP SUBCONTRACT_REQUEST 释放→自动建单、多行发料、部分收货、reverseProcess 红冲为增强面。
-- Successor Required: `yes`（触发条件：对应业务场景深化需求落地时）
+- Successor Required: `部分已解除`——MRP 释放→自动建单 / 多行发料 / 部分收货 / cancel 路径（正+负）已由 successor `2026-07-14-0035-2` 落地（completed）。仅 reverseProcess 红冲仍 Deferred（后端未实现，见 0035-2 Deferred）。
 
 ## Closure
 
