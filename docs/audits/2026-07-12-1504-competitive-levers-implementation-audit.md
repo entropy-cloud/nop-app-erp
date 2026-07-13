@@ -156,11 +156,13 @@
 
 ### 低（3 项，测试覆盖）
 
+> 闭合状态（2026-07-13）：L-1/L-2/L-3 三项测试缺口已由计划 `docs/plans/2026-07-13-0701-1-competitive-lever-test-gap-closure.md` 全部闭合（5 个新测试文件 / 25 个 @Test 方法全绿，详见该计划 Closure 证据）。
+
 | ID | 问题 |
 |----|------|
-| **L-1** | 多套账"1 事件→N 凭证"无专项集成测试（杠杆 B） |
-| **L-2** | LIFO/Batch/Specific/WAM 无独立成本测试文件（杠杆 E，FIFO/Standard/Dispatch 已覆盖） |
-| **L-3** | `DeferredPostingSweepJob.execute()` 无专项单测（杠杆 D） |
+| **L-1** | 多套账"1 事件→N 凭证"无专项集成测试（杠杆 B） — ✅ 已闭合：`TestErpFinMultiSchemaPosting`（4 场景） |
+| **L-2** | LIFO/Batch/Specific/WAM 无独立成本测试文件（杠杆 E，FIFO/Standard/Dispatch 已覆盖） — ✅ 已闭合：`TestErpInvLifoCosting`/`TestErpInvBatchCosting`/`TestErpInvSpecificCosting`/`TestErpInvWeightedAverageCosting`（各 4 方法） |
+| **L-3** | `DeferredPostingSweepJob.execute()` 无专项单测（杠杆 D） — ✅ 已闭合：`TestErpFinDeferredPostingSweepJob`（5 场景） |
 
 ---
 
