@@ -30,5 +30,11 @@
   "user": null,
   "activityType": null,
   "currency": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "projectName": "",
+  "taskName": "",
+  "userName": "",
+  "activityTypeName": "",
+  "currencyName": ""
 }

@@ -9,7 +9,7 @@
     "currencyId": null,
     "startDate": null,
     "endDate": null,
-    "budget": "0",
+    "budget": 0,
     "committedCost": 0,
     "actualCost": 0,
     "billedAmount": 0,
@@ -22,7 +22,12 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpPrjProject@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpPrjProject@createTime"
+    "updateTime": "@var:ErpPrjProject@createTime",
+    "currencyName": null,
+    "customerName": null,
+    "managerName": null,
+    "orgName": null,
+    "projectTypeName": null
   },
   "status": 0
 }

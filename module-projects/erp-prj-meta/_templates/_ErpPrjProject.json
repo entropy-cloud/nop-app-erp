@@ -31,5 +31,10 @@
   "budgets": null,
   "milestones": null,
   "customer": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "projectTypeName": "",
+  "customerName": "",
+  "currencyName": "",
+  "managerName": ""
 }

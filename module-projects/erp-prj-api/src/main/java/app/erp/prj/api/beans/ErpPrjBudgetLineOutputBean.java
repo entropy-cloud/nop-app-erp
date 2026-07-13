@@ -237,6 +237,42 @@
         }
 
 
+        private String _budgetCode;
+
+    
+        public String getBudgetCode(){
+            return _budgetCode;
+        }
+
+        public void setBudgetCode(String value){
+            this._budgetCode = value;
+        }
+
+
+        private String _subjectName;
+
+    
+        public String getSubjectName(){
+            return _subjectName;
+        }
+
+        public void setSubjectName(String value){
+            this._subjectName = value;
+        }
+
+
+        private String _taskName;
+
+    
+        public String getTaskName(){
+            return _taskName;
+        }
+
+        public void setTaskName(String value){
+            this._taskName = value;
+        }
+
+
         private Map<String,Object> _budget;
 
         public Map<String,Object> getBudget(){

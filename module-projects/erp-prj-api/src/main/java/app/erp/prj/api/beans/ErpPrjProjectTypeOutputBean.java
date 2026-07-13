@@ -167,6 +167,18 @@
         }
 
 
+        private String _defaultSubjectName;
+
+    
+        public String getDefaultSubjectName(){
+            return _defaultSubjectName;
+        }
+
+        public void setDefaultSubjectName(String value){
+            this._defaultSubjectName = value;
+        }
+
+
         private Map<String,Object> _defaultSubject;
 
         public Map<String,Object> getDefaultSubject(){

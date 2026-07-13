@@ -181,6 +181,18 @@
         }
 
 
+        private String _subjectName;
+
+    
+        public String getSubjectName(){
+            return _subjectName;
+        }
+
+        public void setSubjectName(String value){
+            this._subjectName = value;
+        }
+
+
         private Map<String,Object> _subject;
 
         public Map<String,Object> getSubject(){

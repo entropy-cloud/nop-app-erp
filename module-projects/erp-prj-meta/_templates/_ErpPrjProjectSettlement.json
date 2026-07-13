@@ -41,5 +41,9 @@
   "pnlSnapshot": null,
   "lines": null,
   "currency": null,
-  "org": null
+  "org": null,
+  "projectName": "",
+  "orgName": "",
+  "customerName": "",
+  "currencyName": ""
 }

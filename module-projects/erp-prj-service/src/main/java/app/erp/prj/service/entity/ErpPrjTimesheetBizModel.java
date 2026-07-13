@@ -10,8 +10,10 @@ import app.erp.prj.service.cost.CostRateResolver;
 import app.erp.prj.service.cost.BudgetChecker;
 import app.erp.prj.service.cost.ProjectCostAggregator;
 import app.erp.prj.service.posting.TimesheetPostingDispatcher;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.auth.IUserContext;
@@ -21,6 +23,9 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import java.math.BigDecimal;
@@ -234,5 +239,65 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
                 .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheet.getCode())
                 .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpPrjErrors.ARG_EXPECTED_STATUS, expected);
+    }
+
+    @BizLoader(forType = ErpPrjTimesheet.class)
+    public List<String> orgName(@ContextSource List<ErpPrjTimesheet> timesheets) {
+        orm().batchLoadProps(timesheets, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(timesheets.size());
+        for (ErpPrjTimesheet ts : timesheets) {
+            result.add(ts.getOrg() != null ? ts.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjTimesheet.class)
+    public List<String> projectName(@ContextSource List<ErpPrjTimesheet> timesheets) {
+        orm().batchLoadProps(timesheets, Collections.singleton("project"));
+        List<String> result = new ArrayList<>(timesheets.size());
+        for (ErpPrjTimesheet ts : timesheets) {
+            result.add(ts.getProject() != null ? ts.getProject().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjTimesheet.class)
+    public List<String> taskName(@ContextSource List<ErpPrjTimesheet> timesheets) {
+        orm().batchLoadProps(timesheets, Collections.singleton("task"));
+        List<String> result = new ArrayList<>(timesheets.size());
+        for (ErpPrjTimesheet ts : timesheets) {
+            result.add(ts.getTask() != null ? ts.getTask().getTitle() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjTimesheet.class)
+    public List<String> userName(@ContextSource List<ErpPrjTimesheet> timesheets) {
+        orm().batchLoadProps(timesheets, Collections.singleton("user"));
+        List<String> result = new ArrayList<>(timesheets.size());
+        for (ErpPrjTimesheet ts : timesheets) {
+            result.add(ts.getUser() != null ? ts.getUser().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjTimesheet.class)
+    public List<String> activityTypeName(@ContextSource List<ErpPrjTimesheet> timesheets) {
+        orm().batchLoadProps(timesheets, Collections.singleton("activityType"));
+        List<String> result = new ArrayList<>(timesheets.size());
+        for (ErpPrjTimesheet ts : timesheets) {
+            result.add(ts.getActivityType() != null ? ts.getActivityType().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjTimesheet.class)
+    public List<String> currencyName(@ContextSource List<ErpPrjTimesheet> timesheets) {
+        orm().batchLoadProps(timesheets, Collections.singleton("currency"));
+        List<String> result = new ArrayList<>(timesheets.size());
+        for (ErpPrjTimesheet ts : timesheets) {
+            result.add(ts.getCurrency() != null ? ts.getCurrency().getName() : null);
+        }
+        return result;
     }
 }

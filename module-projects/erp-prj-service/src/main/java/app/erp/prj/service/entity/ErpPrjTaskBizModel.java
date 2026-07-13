@@ -6,9 +6,11 @@ import app.erp.prj.service.ErpPrjConfigs;
 import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
 import app.erp.prj.service.validator.TaskDependencyValidator;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -260,5 +263,45 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
                 .param(ErpPrjErrors.ARG_TASK_ID, taskId)
                 .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpPrjErrors.ARG_TARGET_STATUS, target);
+    }
+
+    @BizLoader(forType = ErpPrjTask.class)
+    public List<String> projectName(@ContextSource List<ErpPrjTask> tasks) {
+        orm().batchLoadProps(tasks, Collections.singleton("project"));
+        List<String> result = new ArrayList<>(tasks.size());
+        for (ErpPrjTask task : tasks) {
+            result.add(task.getProject() != null ? task.getProject().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjTask.class)
+    public List<String> parentTaskName(@ContextSource List<ErpPrjTask> tasks) {
+        orm().batchLoadProps(tasks, Collections.singleton("parentTask"));
+        List<String> result = new ArrayList<>(tasks.size());
+        for (ErpPrjTask task : tasks) {
+            result.add(task.getParentTask() != null ? task.getParentTask().getTitle() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjTask.class)
+    public List<String> assigneeName(@ContextSource List<ErpPrjTask> tasks) {
+        orm().batchLoadProps(tasks, Collections.singleton("assignee"));
+        List<String> result = new ArrayList<>(tasks.size());
+        for (ErpPrjTask task : tasks) {
+            result.add(task.getAssignee() != null ? task.getAssignee().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjTask.class)
+    public List<String> dependsOnTaskName(@ContextSource List<ErpPrjTask> tasks) {
+        orm().batchLoadProps(tasks, Collections.singleton("dependsOn"));
+        List<String> result = new ArrayList<>(tasks.size());
+        for (ErpPrjTask task : tasks) {
+            result.add(task.getDependsOn() != null ? task.getDependsOn().getTitle() : null);
+        }
+        return result;
     }
 }

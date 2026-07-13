@@ -2,7 +2,19 @@
 <view x:extends="_gen/_ErpPrjMilestone.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="projectName" label="项目"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="plannedDate" mandatory="true" sortable="true"/>
+                <col id="actualDate" sortable="true"/>
+                <col id="billingAmount" sortable="true"/>
+                <col id="isBillingTrigger" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

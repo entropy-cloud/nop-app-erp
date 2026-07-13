@@ -29,5 +29,9 @@
   "assignee": null,
   "dependsOn": null,
   "childTasks": null,
-  "timesheets": null
+  "timesheets": null,
+  "projectName": "",
+  "parentTaskName": "",
+  "assigneeName": "",
+  "dependsOnTaskName": ""
 }

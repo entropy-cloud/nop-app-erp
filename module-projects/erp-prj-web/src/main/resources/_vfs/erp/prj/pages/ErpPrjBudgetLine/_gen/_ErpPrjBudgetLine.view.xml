@@ -62,6 +62,15 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--预算单号-->
+                <col id="budgetCode"/>
+
+                <!--科目名称-->
+                <col id="subjectName"/>
+
+                <!--任务名称-->
+                <col id="taskName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -77,6 +86,8 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ budgetCode[预算单号] subjectName[科目名称]
+ taskName[任务名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目预算行" i18n-en:title="Add Project Budget Line" x:prototype="edit"/>

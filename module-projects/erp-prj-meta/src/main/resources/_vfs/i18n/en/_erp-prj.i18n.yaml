@@ -32,6 +32,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       subject: Subject
+      subjectName: null
     ErpPrjBilling:
       id: ID
       code: Code
@@ -67,6 +68,11 @@ prop:
       lines: Lines
       currency: null
       org: null
+      projectName: null
+      orgName: null
+      customerName: null
+      milestoneName: null
+      currencyName: null
     ErpPrjBillingLine:
       id: ID
       billingId: Billing
@@ -85,6 +91,9 @@ prop:
       billing: Billing
       subject: Subject
       task: null
+      billingCode: null
+      taskName: null
+      subjectName: null
     ErpPrjBudget:
       id: ID
       code: Code
@@ -110,6 +119,9 @@ prop:
       lines: Lines
       currency: null
       org: null
+      projectName: null
+      orgName: null
+      currencyName: null
     ErpPrjBudgetLine:
       id: ID
       budgetId: Budget
@@ -130,6 +142,9 @@ prop:
       budget: Budget
       subject: Subject
       task: null
+      budgetCode: null
+      subjectName: null
+      taskName: null
     ErpPrjCostCollection:
       id: ID
       code: Code
@@ -161,6 +176,9 @@ prop:
       lines: Lines
       currency: null
       org: null
+      projectName: null
+      orgName: null
+      currencyName: null
     ErpPrjCostCollectionLine:
       id: ID
       costCollectionId: Cost Collection
@@ -181,6 +199,9 @@ prop:
       costCollection: Cost Collection
       subject: Subject
       task: null
+      costCollectionCode: null
+      subjectName: null
+      taskName: null
     ErpPrjMilestone:
       id: ID
       projectId: Project
@@ -200,6 +221,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       project: Project
+      projectName: null
     ErpPrjProject:
       id: ID
       code: Code
@@ -234,6 +256,11 @@ prop:
       milestones: Milestones
       customer: null
       org: null
+      orgName: null
+      projectTypeName: null
+      customerName: null
+      currencyName: null
+      managerName: null
     ErpPrjProjectPnl:
       id: ID
       code: Code
@@ -275,6 +302,9 @@ prop:
       project: Project
       currency: null
       org: null
+      projectName: null
+      orgName: null
+      currencyName: null
     ErpPrjProjectSettlement:
       id: ID
       code: Code
@@ -319,6 +349,10 @@ prop:
       lines: Lines
       currency: null
       org: null
+      projectName: null
+      orgName: null
+      customerName: null
+      currencyName: null
     ErpPrjProjectSettlementLine:
       id: ID
       settlementId: Settlement
@@ -337,6 +371,8 @@ prop:
       updateTime: Update Time
       settlement: Settlement
       subject: Subject
+      settlementCode: null
+      subjectName: null
     ErpPrjProjectType:
       id: ID
       code: Code
@@ -350,6 +386,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       defaultSubject: Default Subject
+      defaultSubjectName: null
     ErpPrjProjectUser:
       id: ID
       projectId: Project
@@ -365,6 +402,8 @@ prop:
       updateTime: Update Time
       project: Project
       user: User
+      projectName: null
+      userName: null
     ErpPrjTask:
       id: ID
       projectId: Project
@@ -397,6 +436,10 @@ prop:
       dependsOn: Depends On
       childTasks: Child Tasks
       timesheets: Timesheets
+      projectName: null
+      parentTaskName: null
+      assigneeName: null
+      dependsOnTaskName: null
     ErpPrjTimesheet:
       id: ID
       code: Code
@@ -430,6 +473,12 @@ prop:
       activityType: Activity Type
       currency: Currency
       org: null
+      orgName: null
+      projectName: null
+      taskName: null
+      userName: null
+      activityTypeName: null
+      currencyName: null
 dict:
   label:
     erp-prj/project-status: Project Status

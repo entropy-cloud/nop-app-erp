@@ -2,7 +2,19 @@
 <view x:extends="_gen/_ErpPrjBudgetLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="budgetCode" label="预算单号"/>
+                <col id="lineNo" mandatory="true" sortable="true"/>
+                <col id="costCategory" mandatory="true" sortable="true"/>
+                <col id="subjectName" label="科目"/>
+                <col id="taskName" label="任务"/>
+                <col id="plannedAmount" mandatory="true" sortable="true"/>
+                <col id="committedAmount" sortable="true"/>
+                <col id="actualAmount" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

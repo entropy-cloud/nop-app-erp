@@ -3,7 +3,18 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="settlementCode" label="结算单号"/>
+                <col id="lineNo" mandatory="true" sortable="true"/>
+                <col id="lineType" mandatory="true" sortable="true"/>
+                <col id="sourceBillType" sortable="true"/>
+                <col id="sourceBillCode" sortable="true"/>
+                <col id="subjectName" label="科目"/>
+                <col id="amount" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

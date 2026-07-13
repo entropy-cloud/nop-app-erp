@@ -2,7 +2,17 @@
 <view x:extends="_gen/_ErpPrjBillingLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="billingCode" label="开票单号"/>
+                <col id="lineNo" mandatory="true" sortable="true"/>
+                <col id="costCategory" sortable="true"/>
+                <col id="taskName" label="任务"/>
+                <col id="subjectName" label="科目"/>
+                <col id="amount" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

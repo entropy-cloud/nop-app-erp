@@ -237,6 +237,42 @@
         }
 
 
+        private String _costCollectionCode;
+
+    
+        public String getCostCollectionCode(){
+            return _costCollectionCode;
+        }
+
+        public void setCostCollectionCode(String value){
+            this._costCollectionCode = value;
+        }
+
+
+        private String _subjectName;
+
+    
+        public String getSubjectName(){
+            return _subjectName;
+        }
+
+        public void setSubjectName(String value){
+            this._subjectName = value;
+        }
+
+
+        private String _taskName;
+
+    
+        public String getTaskName(){
+            return _taskName;
+        }
+
+        public void setTaskName(String value){
+            this._taskName = value;
+        }
+
+
         private Map<String,Object> _costCollection;
 
         public Map<String,Object> getCostCollection(){

@@ -375,6 +375,78 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _projectName;
+
+    
+        public String getProjectName(){
+            return _projectName;
+        }
+
+        public void setProjectName(String value){
+            this._projectName = value;
+        }
+
+
+        private String _taskName;
+
+    
+        public String getTaskName(){
+            return _taskName;
+        }
+
+        public void setTaskName(String value){
+            this._taskName = value;
+        }
+
+
+        private String _userName;
+
+    
+        public String getUserName(){
+            return _userName;
+        }
+
+        public void setUserName(String value){
+            this._userName = value;
+        }
+
+
+        private String _activityTypeName;
+
+    
+        public String getActivityTypeName(){
+            return _activityTypeName;
+        }
+
+        public void setActivityTypeName(String value){
+            this._activityTypeName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
         private Map<String,Object> _project;
 
         public Map<String,Object> getProject(){

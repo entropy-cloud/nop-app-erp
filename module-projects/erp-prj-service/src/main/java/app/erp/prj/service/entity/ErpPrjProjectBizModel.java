@@ -7,14 +7,19 @@ import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
 import app.erp.prj.service.cost.ExpenseCostAggregator;
 import app.erp.prj.service.cost.ProjectCostAggregator;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import java.math.BigDecimal;
@@ -80,5 +85,55 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
         project.setStatus(ErpPrjConstants.PROJECT_STATUS_COMPLETED);
         updateEntity(project, null, context);
         return project;
+    }
+
+    @BizLoader(forType = ErpPrjProject.class)
+    public List<String> orgName(@ContextSource List<ErpPrjProject> projects) {
+        orm().batchLoadProps(projects, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(projects.size());
+        for (ErpPrjProject project : projects) {
+            result.add(project.getOrg() != null ? project.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjProject.class)
+    public List<String> projectTypeName(@ContextSource List<ErpPrjProject> projects) {
+        orm().batchLoadProps(projects, Collections.singleton("projectType"));
+        List<String> result = new ArrayList<>(projects.size());
+        for (ErpPrjProject project : projects) {
+            result.add(project.getProjectType() != null ? project.getProjectType().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjProject.class)
+    public List<String> customerName(@ContextSource List<ErpPrjProject> projects) {
+        orm().batchLoadProps(projects, Collections.singleton("customer"));
+        List<String> result = new ArrayList<>(projects.size());
+        for (ErpPrjProject project : projects) {
+            result.add(project.getCustomer() != null ? project.getCustomer().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjProject.class)
+    public List<String> currencyName(@ContextSource List<ErpPrjProject> projects) {
+        orm().batchLoadProps(projects, Collections.singleton("currency"));
+        List<String> result = new ArrayList<>(projects.size());
+        for (ErpPrjProject project : projects) {
+            result.add(project.getCurrency() != null ? project.getCurrency().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpPrjProject.class)
+    public List<String> managerName(@ContextSource List<ErpPrjProject> projects) {
+        orm().batchLoadProps(projects, Collections.singleton("manager"));
+        List<String> result = new ArrayList<>(projects.size());
+        for (ErpPrjProject project : projects) {
+            result.add(project.getManager() != null ? project.getManager().getName() : null);
+        }
+        return result;
     }
 }
