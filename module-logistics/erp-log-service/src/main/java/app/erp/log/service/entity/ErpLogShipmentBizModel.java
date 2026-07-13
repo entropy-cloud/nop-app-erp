@@ -1,6 +1,10 @@
 
 package app.erp.log.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.ArrayList;
+import java.util.Collections;
 import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
@@ -333,4 +337,56 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
     private String asString(Object value) {
         return value == null ? null : value.toString();
     }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
+    @BizLoader(forType = ErpLogShipment.class)
+    public List<String> carrierName(@ContextSource List<ErpLogShipment> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("carrier"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpLogShipment row : rows) {
+            result.add(row.orm_attached() && row.getCarrier() != null ? row.getCarrier().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpLogShipment.class)
+    public List<String> carrierConfigName(@ContextSource List<ErpLogShipment> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("carrierConfig"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpLogShipment row : rows) {
+            result.add(row.orm_attached() && row.getCarrierConfig() != null ? row.getCarrierConfig().getConfigCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpLogShipment.class)
+    public List<String> orgName(@ContextSource List<ErpLogShipment> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpLogShipment row : rows) {
+            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpLogShipment.class)
+    public List<String> shipperName(@ContextSource List<ErpLogShipment> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("shipper"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpLogShipment row : rows) {
+            result.add(row.orm_attached() && row.getShipper() != null ? row.getShipper().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpLogShipment.class)
+    public List<String> freightCurrencyName(@ContextSource List<ErpLogShipment> rows) {
+        orm().batchLoadProps(rows, Collections.singleton("freightCurrency"));
+        List<String> result = new ArrayList<>(rows.size());
+        for (ErpLogShipment row : rows) {
+            result.add(row.orm_attached() && row.getFreightCurrency() != null ? row.getFreightCurrency().getName() : null);
+        }
+        return result;
+    }
+
 }

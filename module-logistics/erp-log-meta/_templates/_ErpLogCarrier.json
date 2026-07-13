@@ -20,5 +20,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "partner": null,
   "org": null,
-  "configs": null
+  "configs": null,
+  "partnerName": "",
+  "orgName": ""
 }

@@ -50,5 +50,10 @@
   "lines": null,
   "parcels": null,
   "logs": null,
-  "freightCurrency": null
+  "freightCurrency": null,
+  "carrierName": "",
+  "carrierConfigName": "",
+  "orgName": "",
+  "shipperName": "",
+  "freightCurrencyName": ""
 }

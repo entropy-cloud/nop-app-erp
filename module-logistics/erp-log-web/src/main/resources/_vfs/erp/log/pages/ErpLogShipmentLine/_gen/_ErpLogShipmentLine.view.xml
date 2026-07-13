@@ -56,6 +56,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--发运单-->
+                <col id="shipmentName"/>
+
+                <!--物料-->
+                <col id="materialName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -70,6 +76,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ shipmentName[发运单] materialName[物料]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-发运明细" i18n-en:title="Add Shipment Line" x:prototype="edit"/>

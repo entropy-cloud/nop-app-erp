@@ -13,7 +13,9 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpLogShipmentLine@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpLogShipmentLine@updateTime"
+    "updateTime": "@var:ErpLogShipmentLine@updateTime",
+    "shipmentName": "SMOKE-LOG",
+    "materialName": null
   },
   "status": 0
 }

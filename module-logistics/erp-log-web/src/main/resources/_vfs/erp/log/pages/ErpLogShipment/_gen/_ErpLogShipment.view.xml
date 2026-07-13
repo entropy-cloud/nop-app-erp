@@ -137,6 +137,21 @@
 
                 <!--已过账-->
                 <col id="posted" sortable="true"/>
+
+                <!--承运商-->
+                <col id="carrierName"/>
+
+                <!--承运商配置-->
+                <col id="carrierConfigName"/>
+
+                <!--业务组织-->
+                <col id="orgName"/>
+
+                <!--发货员(职员)-->
+                <col id="shipperName"/>
+
+                <!--运费币种-->
+                <col id="freightCurrencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -164,7 +179,9 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] businessDate[业务日期]
- posted[已过账] 
+ posted[已过账] carrierName[承运商]
+ carrierConfigName[承运商配置] orgName[业务组织]
+ shipperName[发货员(职员)] freightCurrencyName[运费币种]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-发运单" i18n-en:title="Add Shipment" x:prototype="edit"/>

@@ -2,7 +2,28 @@
 <view x:extends="_gen/_ErpLogShipmentLog.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="shipmentName" label="发运单"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="gatewayId" mandatory="true" sortable="true"/>
+                <col id="actionType" mandatory="true" sortable="true"/>
+                <col id="requestBody" sortable="true"/>
+                <col id="responseBody" sortable="true"/>
+                <col id="httpStatus" ui:number="true" sortable="true"/>
+                <col id="errorCode" sortable="true"/>
+                <col id="errorMessage" sortable="true"/>
+                <col id="isSuccess" sortable="true"/>
+                <col id="executedAt" mandatory="true" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

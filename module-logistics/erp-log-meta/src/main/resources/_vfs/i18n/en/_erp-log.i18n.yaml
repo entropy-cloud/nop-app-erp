@@ -32,6 +32,8 @@ prop:
       partner: Partner
       org: Org
       configs: Configs
+      partnerName: null
+      orgName: null
     ErpLogCarrierConfig:
       id: ID
       carrierId: Carrier
@@ -55,6 +57,8 @@ prop:
       updateTime: Update Time
       carrier: Carrier
       org: Org
+      carrierName: null
+      orgName: null
     ErpLogDeliveryWindow:
       id: ID
       partnerId: Partner
@@ -77,6 +81,8 @@ prop:
       updateTime: Update Time
       partner: Partner
       org: Org
+      partnerName: null
+      orgName: null
     ErpLogShipment:
       id: ID
       code: Code
@@ -130,6 +136,11 @@ prop:
       parcels: Parcels
       logs: Logs
       freightCurrency: null
+      carrierName: null
+      carrierConfigName: null
+      orgName: null
+      shipperName: null
+      freightCurrencyName: null
     ErpLogShipmentLine:
       id: ID
       shipmentId: Shipment
@@ -147,6 +158,8 @@ prop:
       updateTime: Update Time
       shipment: Shipment
       material: Material
+      shipmentName: null
+      materialName: null
     ErpLogShipmentLog:
       id: ID
       shipmentId: Shipment
@@ -170,6 +183,8 @@ prop:
       updateTime: Update Time
       shipment: Shipment
       org: Org
+      shipmentName: null
+      orgName: null
     ErpLogShipmentParcel:
       id: ID
       shipmentId: Shipment
@@ -190,6 +205,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       shipment: Shipment
+      shipmentName: null
 dict:
   label:
     erp-log/carrier-type: Carrier Type

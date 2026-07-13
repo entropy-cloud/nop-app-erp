@@ -2,7 +2,50 @@
 <view x:extends="_gen/_ErpLogShipment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+                <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="carrierName" label="承运商"/>
+                <col id="carrierConfigName" label="承运商配置"/>
+                <col id="relatedBillType" sortable="true"/>
+                <col id="relatedBillCode" sortable="true"/>
+                <col id="shipmentDate" sortable="true"/>
+                <col id="trackingNo" sortable="true"/>
+                <col id="labelUrl" sortable="true"/>
+                <col id="freightAmount" ui:number="true" sortable="true"/>
+                <col id="freightCurrencyName" label="运费币种"/>
+                <col id="freightTerms" sortable="true"/>
+                <col id="freightSettlementStatus" sortable="true"/>
+                <col id="totalWeight" ui:number="true" sortable="true"/>
+                <col id="totalVolume" ui:number="true" sortable="true"/>
+                <col id="totalParcels" ui:number="true" sortable="true"/>
+                <col id="receiverName" sortable="true"/>
+                <col id="receiverPhone" sortable="true"/>
+                <col id="receiverAddress" sortable="true"/>
+                <col id="receiverCountry" sortable="true"/>
+                <col id="receiverProvince" sortable="true"/>
+                <col id="receiverCity" sortable="true"/>
+                <col id="receiverDistrict" sortable="true"/>
+                <col id="senderName" sortable="true"/>
+                <col id="senderPhone" sortable="true"/>
+                <col id="senderAddress" sortable="true"/>
+                <col id="estimatedDeliveryDate" sortable="true"/>
+                <col id="actualDeliveryDate" sortable="true"/>
+                <col id="signedBy" sortable="true"/>
+                <col id="shipperName" label="发货员(职员)"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="remark" sortable="true"/>
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="posted" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

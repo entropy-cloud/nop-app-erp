@@ -43,7 +43,12 @@
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpLogShipment@updateTime_1",
     "businessDate": "*",
-    "posted": false
+    "posted": false,
+    "freightCurrencyName": null,
+    "carrierConfigName": null,
+    "carrierName": "SMOKE-CAR",
+    "shipperName": null,
+    "orgName": null
   },
   "status": 0
 }
