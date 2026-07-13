@@ -251,6 +251,30 @@
         }
 
 
+        private String _routingCode;
+
+    
+        public String getRoutingCode(){
+            return _routingCode;
+        }
+
+        public void setRoutingCode(String value){
+            this._routingCode = value;
+        }
+
+
+        private String _workcenterName;
+
+    
+        public String getWorkcenterName(){
+            return _workcenterName;
+        }
+
+        public void setWorkcenterName(String value){
+            this._workcenterName = value;
+        }
+
+
         private Map<String,Object> _routing;
 
         public Map<String,Object> getRouting(){

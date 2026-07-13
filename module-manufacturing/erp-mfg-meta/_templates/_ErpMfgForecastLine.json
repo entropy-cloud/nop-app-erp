@@ -19,5 +19,9 @@
   "forecast": null,
   "material": null,
   "warehouse": null,
-  "uoM": null
+  "uoM": null,
+  "forecastCode": "",
+  "materialName": "",
+  "warehouseName": "",
+  "uomName": ""
 }

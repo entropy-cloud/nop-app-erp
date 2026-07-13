@@ -29,5 +29,8 @@
   "workOrder": null,
   "material": null,
   "workcenter": null,
-  "operation": null
+  "operation": null,
+  "workOrderNo": "",
+  "materialName": "",
+  "workcenterName": ""
 }

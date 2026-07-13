@@ -15,5 +15,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "workcenter": null,
   "workOrder": null,
-  "org": null
+  "org": null,
+  "workcenterName": "",
+  "orgName": "",
+  "workOrderNo": ""
 }

@@ -68,6 +68,18 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--滚算单单号-->
+                <col id="costRollupCode"/>
+
+                <!--产品名称-->
+                <col id="materialName"/>
+
+                <!--计量单位名称-->
+                <col id="uomName"/>
+
+                <!--币种名称-->
+                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -84,6 +96,8 @@
  currencyId[币种] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ costRollupCode[滚算单单号] materialName[产品名称]
+ uomName[计量单位名称] currencyName[币种名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-标准成本滚算行" i18n-en:title="Add Cost Rollup Line" x:prototype="edit"/>

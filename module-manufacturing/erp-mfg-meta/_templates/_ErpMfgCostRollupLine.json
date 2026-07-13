@@ -20,5 +20,9 @@
   "costRollup": null,
   "material": null,
   "uoM": null,
-  "currency": null
+  "currency": null,
+  "costRollupCode": "",
+  "materialName": "",
+  "uomName": "",
+  "currencyName": ""
 }

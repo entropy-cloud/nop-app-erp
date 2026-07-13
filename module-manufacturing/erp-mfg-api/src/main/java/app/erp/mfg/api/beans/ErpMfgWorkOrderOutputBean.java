@@ -678,6 +678,66 @@
         }
 
 
+        private String _productName;
+
+    
+        public String getProductName(){
+            return _productName;
+        }
+
+        public void setProductName(String value){
+            this._productName = value;
+        }
+
+
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
+        private String _bomCode;
+
+    
+        public String getBomCode(){
+            return _bomCode;
+        }
+
+        public void setBomCode(String value){
+            this._bomCode = value;
+        }
+
+
+        private String _routingCode;
+
+    
+        public String getRoutingCode(){
+            return _routingCode;
+        }
+
+        public void setRoutingCode(String value){
+            this._routingCode = value;
+        }
+
+
         private Map<String,Object> _bom;
 
         public Map<String,Object> getBom(){

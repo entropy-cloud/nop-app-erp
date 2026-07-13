@@ -41,5 +41,11 @@
   "org": null,
   "routing": null,
   "productionVersion": null,
-  "product": null
+  "product": null,
+  "orgName": "",
+  "workOrderNo": "",
+  "supplierName": "",
+  "workcenterName": "",
+  "productName": "",
+  "currencyName": ""
 }

@@ -14,8 +14,10 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.posting.ManufacturingIssuePostingDispatcher;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.biz.IErpInvStockLedgerBiz;
@@ -29,6 +31,7 @@ import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -200,5 +203,74 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
                 .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, issue.getCode())
                 .param(ErpMfgErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpMfgErrors.ARG_EXPECTED_STATUS, expected);
+    }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------
+    // 注意：confirm 等复杂 mutation 在响应序列化时 ORM 会话可能已关闭，
+    // batchLoadProps 会失败。此时安全降级返回 null（grid 列表页 findList 会话活跃不受影响）。
+
+    @BizLoader(forType = ErpMfgMaterialIssue.class)
+    public List<String> workOrderNo(@ContextSource List<ErpMfgMaterialIssue> issues) {
+        if (!safeBatchLoad(issues, "workOrder")) {
+            return nulls(issues);
+        }
+        List<String> result = new ArrayList<>(issues.size());
+        for (ErpMfgMaterialIssue issue : issues) {
+            result.add(issue.getWorkOrder() != null ? issue.getWorkOrder().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMfgMaterialIssue.class)
+    public List<String> warehouseName(@ContextSource List<ErpMfgMaterialIssue> issues) {
+        if (!safeBatchLoad(issues, "warehouse")) {
+            return nulls(issues);
+        }
+        List<String> result = new ArrayList<>(issues.size());
+        for (ErpMfgMaterialIssue issue : issues) {
+            result.add(issue.getWarehouse() != null ? issue.getWarehouse().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMfgMaterialIssue.class)
+    public List<String> orgName(@ContextSource List<ErpMfgMaterialIssue> issues) {
+        if (!safeBatchLoad(issues, "org")) {
+            return nulls(issues);
+        }
+        List<String> result = new ArrayList<>(issues.size());
+        for (ErpMfgMaterialIssue issue : issues) {
+            result.add(issue.getOrg() != null ? issue.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMfgMaterialIssue.class)
+    public List<String> currencyName(@ContextSource List<ErpMfgMaterialIssue> issues) {
+        if (!safeBatchLoad(issues, "currency")) {
+            return nulls(issues);
+        }
+        List<String> result = new ArrayList<>(issues.size());
+        for (ErpMfgMaterialIssue issue : issues) {
+            result.add(issue.getCurrency() != null ? issue.getCurrency().getName() : null);
+        }
+        return result;
+    }
+
+    private boolean safeBatchLoad(List<?> entities, String prop) {
+        try {
+            orm().batchLoadProps(entities, Collections.singleton(prop));
+            return true;
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
+    private static List<String> nulls(List<?> entities) {
+        List<String> result = new ArrayList<>(entities.size());
+        for (int i = 0, n = entities.size(); i < n; i++) {
+            result.add(null);
+        }
+        return result;
     }
 }

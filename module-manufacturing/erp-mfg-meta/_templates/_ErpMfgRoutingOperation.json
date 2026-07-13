@@ -17,5 +17,7 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "routing": null,
-  "workcenter": null
+  "workcenter": null,
+  "routingCode": "",
+  "workcenterName": ""
 }

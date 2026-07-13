@@ -484,6 +484,78 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _workOrderNo;
+
+    
+        public String getWorkOrderNo(){
+            return _workOrderNo;
+        }
+
+        public void setWorkOrderNo(String value){
+            this._workOrderNo = value;
+        }
+
+
+        private String _supplierName;
+
+    
+        public String getSupplierName(){
+            return _supplierName;
+        }
+
+        public void setSupplierName(String value){
+            this._supplierName = value;
+        }
+
+
+        private String _workcenterName;
+
+    
+        public String getWorkcenterName(){
+            return _workcenterName;
+        }
+
+        public void setWorkcenterName(String value){
+            this._workcenterName = value;
+        }
+
+
+        private String _productName;
+
+    
+        public String getProductName(){
+            return _productName;
+        }
+
+        public void setProductName(String value){
+            this._productName = value;
+        }
+
+
+        private String _currencyName;
+
+    
+        public String getCurrencyName(){
+            return _currencyName;
+        }
+
+        public void setCurrencyName(String value){
+            this._currencyName = value;
+        }
+
+
         private Map<String,Object> _workOrder;
 
         public Map<String,Object> getWorkOrder(){

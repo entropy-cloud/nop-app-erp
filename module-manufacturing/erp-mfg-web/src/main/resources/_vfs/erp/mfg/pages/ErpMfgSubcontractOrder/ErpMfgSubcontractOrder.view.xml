@@ -3,7 +3,23 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="workOrderNo" label="来源工单"/>
+                <col id="supplierName" label="委外供应商"/>
+                <col id="workcenterName" label="外协工作中心"/>
+                <col id="productName" label="产品"/>
+                <col id="currencyName" label="币种"/>
+                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="processingFee" ui:number="true" sortable="true"/>
+                <col id="totalAmount" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

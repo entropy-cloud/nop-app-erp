@@ -16,7 +16,9 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpMfgRoutingOperation@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMfgRoutingOperation@updateTime"
+    "updateTime": "@var:ErpMfgRoutingOperation@updateTime",
+    "routingCode": "SMOKE-MFG",
+    "workcenterName": null
   },
   "status": 0
 }

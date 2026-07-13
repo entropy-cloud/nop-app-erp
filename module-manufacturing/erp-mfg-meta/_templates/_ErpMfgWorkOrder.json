@@ -55,5 +55,10 @@
   "lines": null,
   "jobCards": null,
   "org": null,
-  "sourceMrpPlan": null
+  "sourceMrpPlan": null,
+  "productName": "",
+  "orgName": "",
+  "currencyName": "",
+  "bomCode": "",
+  "routingCode": ""
 }

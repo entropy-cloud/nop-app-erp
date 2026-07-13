@@ -1,9 +1,11 @@
 
 package app.erp.mfg.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -11,6 +13,8 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import app.erp.mfg.biz.BomExplosionNode;
@@ -64,5 +68,17 @@ public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMf
     @BizMutation
     public CostRollupResult rollupCost(@Name("bomId") Long bomId, IServiceContext context) {
         return costRollupService.rollup(bomId);
+    }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------
+
+    @BizLoader(forType = ErpMfgBom.class)
+    public List<String> productName(@ContextSource List<ErpMfgBom> boms) {
+        orm().batchLoadProps(boms, Collections.singleton("product"));
+        List<String> result = new ArrayList<>(boms.size());
+        for (ErpMfgBom bom : boms) {
+            result.add(bom.getProduct() != null ? bom.getProduct().getName() : null);
+        }
+        return result;
     }
 }

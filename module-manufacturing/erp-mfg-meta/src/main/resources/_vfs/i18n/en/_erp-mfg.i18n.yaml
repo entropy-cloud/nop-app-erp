@@ -89,6 +89,7 @@ prop:
       lines: Lines
       operations: Operations
       byproducts: Byproducts
+      productName: null
     ErpMfgBomByproduct:
       id: ID
       bomId: Bom
@@ -138,6 +139,10 @@ prop:
       operation: Operation
       warehouse: Warehouse
       alternativeMaterial: Alternative Material
+      bomCode: null
+      materialName: null
+      uomName: null
+      warehouseName: null
     ErpMfgBomOperation:
       id: ID
       bomId: Bom
@@ -174,6 +179,7 @@ prop:
       updateTime: Update Time
       lines: Lines
       org: Org
+      orgName: null
     ErpMfgCostRollupLine:
       id: ID
       costRollupId: Cost Rollup
@@ -197,6 +203,10 @@ prop:
       material: Material
       uoM: Uo M
       currency: Currency
+      costRollupCode: null
+      materialName: null
+      uomName: null
+      currencyName: null
     ErpMfgCostVariance:
       id: ID
       workOrderId: Work Order
@@ -229,6 +239,9 @@ prop:
       material: Material
       workcenter: Workcenter
       operation: Operation
+      workOrderNo: null
+      materialName: null
+      workcenterName: null
     ErpMfgCrpLoad:
       id: ID
       workcenterId: Workcenter
@@ -247,6 +260,9 @@ prop:
       workcenter: Workcenter
       workOrder: Work Order
       org: Org
+      workcenterName: null
+      orgName: null
+      workOrderNo: null
     ErpMfgForecast:
       id: ID
       code: Code
@@ -265,6 +281,7 @@ prop:
       updateTime: Update Time
       lines: Lines
       org: Org
+      orgName: null
     ErpMfgForecastLine:
       id: ID
       forecastId: Forecast
@@ -287,6 +304,10 @@ prop:
       material: Material
       warehouse: Warehouse
       uoM: Uo M
+      forecastCode: null
+      materialName: null
+      warehouseName: null
+      uomName: null
     ErpMfgJobCard:
       id: ID
       workOrderId: Work Order
@@ -312,6 +333,8 @@ prop:
       workOrder: Work Order
       workcenter: Workcenter
       operation: Operation
+      workOrderNo: null
+      workcenterName: null
     ErpMfgJobCardTimeLog:
       id: ID
       jobCardId: Job Card
@@ -371,6 +394,10 @@ prop:
       lines: Lines
       org: Org
       currency: Currency
+      workOrderNo: null
+      warehouseName: null
+      orgName: null
+      currencyName: null
     ErpMfgMaterialIssueLine:
       id: ID
       issueId: Issue
@@ -520,6 +547,8 @@ prop:
       updateTime: Update Time
       routing: Routing
       workcenter: Workcenter
+      routingCode: null
+      workcenterName: null
     ErpMfgSubcontractOrder:
       id: ID
       code: Code
@@ -564,6 +593,12 @@ prop:
       routing: Routing
       productionVersion: Production Version
       product: Product
+      orgName: null
+      workOrderNo: null
+      supplierName: null
+      workcenterName: null
+      productName: null
+      currencyName: null
     ErpMfgSubcontractOrderLine:
       id: ID
       subcontractOrderId: Subcontract Order
@@ -583,6 +618,9 @@ prop:
       subcontractOrder: Subcontract Order
       material: Material
       uoM: Uo M
+      subcontractOrderCode: null
+      materialName: null
+      uomName: null
     ErpMfgWorkOrder:
       id: ID
       code: Code
@@ -641,6 +679,11 @@ prop:
       jobCards: Job Cards
       org: Org
       sourceMrpPlan: Source MRP Plan
+      productName: null
+      orgName: null
+      currencyName: null
+      bomCode: null
+      routingCode: null
     ErpMfgWorkOrderLine:
       id: ID
       workOrderId: Work Order

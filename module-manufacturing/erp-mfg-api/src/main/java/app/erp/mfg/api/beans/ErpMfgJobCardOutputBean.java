@@ -305,6 +305,30 @@
         }
 
 
+        private String _workOrderNo;
+
+    
+        public String getWorkOrderNo(){
+            return _workOrderNo;
+        }
+
+        public void setWorkOrderNo(String value){
+            this._workOrderNo = value;
+        }
+
+
+        private String _workcenterName;
+
+    
+        public String getWorkcenterName(){
+            return _workcenterName;
+        }
+
+        public void setWorkcenterName(String value){
+            this._workcenterName = value;
+        }
+
+
         private Map<String,Object> _workOrder;
 
         public Map<String,Object> getWorkOrder(){

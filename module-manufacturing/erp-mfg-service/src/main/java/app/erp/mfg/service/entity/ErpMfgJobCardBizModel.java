@@ -5,13 +5,19 @@ import app.erp.mfg.biz.IErpMfgJobCardBiz;
 import app.erp.mfg.biz.JobCardWorkRecord;
 import app.erp.mfg.dao.entity.ErpMfgJobCard;
 import app.erp.mfg.service.processor.ErpMfgJobCardProcessor;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.biz.RequestBean;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 作业卡 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。
@@ -70,5 +76,27 @@ public class ErpMfgJobCardBizModel extends CrudBizModel<ErpMfgJobCard> implement
     @BizMutation
     public ErpMfgJobCard cancelJob(@Name("jobCardId") Long jobCardId, IServiceContext context) {
         return jobCardProcessor.cancelJob(jobCardId, context);
+    }
+
+    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------
+
+    @BizLoader(forType = ErpMfgJobCard.class)
+    public List<String> workOrderNo(@ContextSource List<ErpMfgJobCard> cards) {
+        orm().batchLoadProps(cards, Collections.singleton("workOrder"));
+        List<String> result = new ArrayList<>(cards.size());
+        for (ErpMfgJobCard card : cards) {
+            result.add(card.getWorkOrder() != null ? card.getWorkOrder().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMfgJobCard.class)
+    public List<String> workcenterName(@ContextSource List<ErpMfgJobCard> cards) {
+        orm().batchLoadProps(cards, Collections.singleton("workcenter"));
+        List<String> result = new ArrayList<>(cards.size());
+        for (ErpMfgJobCard card : cards) {
+            result.add(card.getWorkcenter() != null ? card.getWorkcenter().getName() : null);
+        }
+        return result;
     }
 }

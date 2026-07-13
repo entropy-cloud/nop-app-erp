@@ -2,7 +2,23 @@
 <view x:extends="_gen/_ErpMfgWorkOrder.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="业务组织"/>
+                <col id="productName" label="产品(主产出)"/>
+                <col id="bomCode" label="BOM"/>
+                <col id="routingCode" label="工艺路线"/>
+                <col id="currencyName" label="币种"/>
+                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="completedQuantity" ui:number="true" sortable="true"/>
+                <col id="scrappedQuantity" ui:number="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
+                <col id="approveStatus" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

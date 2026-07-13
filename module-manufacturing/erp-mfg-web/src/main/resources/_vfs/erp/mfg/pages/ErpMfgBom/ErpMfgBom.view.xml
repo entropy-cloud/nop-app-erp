@@ -2,7 +2,18 @@
 <view x:extends="_gen/_ErpMfgBom.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="productName" label="产品"/>
+                <col id="bomType" mandatory="true" sortable="true"/>
+                <col id="versionLabel" sortable="true"/>
+                <col id="qty" ui:number="true" sortable="true"/>
+                <col id="isActive" sortable="true"/>
+                <col id="isDefault" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

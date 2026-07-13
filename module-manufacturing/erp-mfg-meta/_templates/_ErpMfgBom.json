@@ -22,5 +22,6 @@
   "product": null,
   "lines": null,
   "operations": null,
-  "byproducts": null
+  "byproducts": null,
+  "productName": ""
 }

@@ -290,6 +290,18 @@
         }
 
 
+        private String _productName;
+
+    
+        public String getProductName(){
+            return _productName;
+        }
+
+        public void setProductName(String value){
+            this._productName = value;
+        }
+
+
         private Map<String,Object> _product;
 
         public Map<String,Object> getProduct(){

@@ -251,6 +251,54 @@
         }
 
 
+        private String _forecastCode;
+
+    
+        public String getForecastCode(){
+            return _forecastCode;
+        }
+
+        public void setForecastCode(String value){
+            this._forecastCode = value;
+        }
+
+
+        private String _materialName;
+
+    
+        public String getMaterialName(){
+            return _materialName;
+        }
+
+        public void setMaterialName(String value){
+            this._materialName = value;
+        }
+
+
+        private String _warehouseName;
+
+    
+        public String getWarehouseName(){
+            return _warehouseName;
+        }
+
+        public void setWarehouseName(String value){
+            this._warehouseName = value;
+        }
+
+
+        private String _uomName;
+
+    
+        public String getUomName(){
+            return _uomName;
+        }
+
+        public void setUomName(String value){
+            this._uomName = value;
+        }
+
+
         private Map<String,Object> _forecast;
 
         public Map<String,Object> getForecast(){
