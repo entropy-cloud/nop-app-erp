@@ -221,6 +221,18 @@
         }
 
 
+        private String _visitCode;
+
+    
+        public String getVisitCode(){
+            return _visitCode;
+        }
+
+        public void setVisitCode(String value){
+            this._visitCode = value;
+        }
+
+
         private Map<String,Object> _visit;
 
         public Map<String,Object> getVisit(){

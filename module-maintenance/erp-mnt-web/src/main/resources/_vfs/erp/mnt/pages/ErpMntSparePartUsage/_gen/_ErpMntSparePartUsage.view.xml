@@ -83,6 +83,21 @@
 
                 <!--审核时间-->
                 <col id="approvedAt" sortable="true"/>
+
+                <!--组织-->
+                <col id="orgName"/>
+
+                <!--维护访问-->
+                <col id="visitCode"/>
+
+                <!--维护请求-->
+                <col id="requestCode"/>
+
+                <!--设备-->
+                <col id="equipmentCode"/>
+
+                <!--仓库-->
+                <col id="warehouseName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -101,7 +116,9 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] approvedBy[审核人]
- approvedAt[审核时间] 
+ approvedAt[审核时间] orgName[组织]
+ visitCode[维护访问] requestCode[维护请求]
+ equipmentCode[设备] warehouseName[仓库]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-备件消耗" i18n-en:title="Add Spare Part Usage" x:prototype="edit"/>

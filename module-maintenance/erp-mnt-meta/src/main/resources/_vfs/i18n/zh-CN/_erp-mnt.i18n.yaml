@@ -29,12 +29,14 @@ prop:
       docStatus: 单据状态
       docStatus_label: 单据状态
       equipment: null
+      equipmentCode: 设备
       equipmentId: 被校设备/量具
       id: ID
       measuredValue: 测量值
       nextCalibrationDate: 下次校准日期
       org: null
       orgId: 业务组织
+      orgName: 组织
       remark: 备注
       result: 校准结果
       result_label: 校准结果
@@ -50,6 +52,7 @@ prop:
       delVersion: 逻辑删除版本
       endTime: 结束时间
       equipment: null
+      equipmentCode: 设备
       equipmentId: 设备ID
       id: ID
       reason: 原因
@@ -63,9 +66,11 @@ prop:
       version: 数据版本
     ErpMntEquipment:
       asset: null
+      assetCode: 资产
       assetId: 资产卡片(关联 assets 域)
       category: null
       categoryId: 分类ID
+      categoryName: 设备类别
       code: 设备编码
       createTime: 创建时间
       createdBy: 创建人
@@ -75,11 +80,13 @@ prop:
       installDate: 安装日期
       location: null
       locationId: 位置ID
+      locationName: 位置
       manufacturer: 制造商
       model: 型号
       name: 设备名称
       org: null
       orgId: 所属组织
+      orgName: 组织
       remark: 备注
       requests: null
       schedules: null
@@ -102,6 +109,7 @@ prop:
       name: 分类名称
       parent: null
       parentId: 上级分类ID
+      parentName: 上级类别
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -115,10 +123,12 @@ prop:
       id: ID
       leader: null
       leaderId: 负责人(职员)
+      leaderName: 负责人
       members: null
       name: 团队名称
       org: null
       orgId: 所属组织
+      orgName: 组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -129,12 +139,14 @@ prop:
       delVersion: 逻辑删除版本
       employee: null
       employeeId: 成员(职员)
+      employeeName: 成员
       id: ID
       joinedAt: 加入时间
       leftAt: 退出时间
       role: 角色
       team: null
       teamId: 团队ID
+      teamName: 维护团队
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -149,6 +161,7 @@ prop:
       delVersion: 逻辑删除版本
       description: 问题描述
       equipment: null
+      equipmentCode: 设备
       equipmentId: 设备ID
       id: ID
       priority: 优先级
@@ -169,6 +182,7 @@ prop:
       delVersion: 逻辑删除版本
       endDate: 结束日期
       equipment: null
+      equipmentCode: 设备
       equipmentId: 设备ID
       frequency: 频率
       id: ID
@@ -197,25 +211,30 @@ prop:
       docStatus: 单据状态
       docStatus_label: 单据状态
       equipment: null
+      equipmentCode: 设备
       equipmentId: 设备ID
       id: ID
       lines: null
       org: null
       orgId: 业务组织
+      orgName: 组织
       posted: 已过账(库存已出库)
       postedAt: 过账时间
       postedBy: 过账人
       remark: 备注
       request: null
+      requestCode: 维护请求
       requestId: 维护请求ID
       totalAmount: 金额合计
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       visit: null
+      visitCode: 维护访问
       visitId: 维护访问ID
       warehouse: null
       warehouseId: 领料仓库
+      warehouseName: 仓库
     ErpMntSparePartUsageLine:
       amount: 金额
       batchNo: 批号
@@ -226,13 +245,16 @@ prop:
       lineNo: 行号
       material: null
       materialId: 备件(物料)
+      materialName: 物料
       quantity: 消耗数量
       remark: 备注
       sparePartUsage: null
+      sparePartUsageCode: 备件消耗
       sparePartUsageId: 备件消耗单ID
       unitCost: 单位成本
       uoM: null
       uoMId: 计量单位
+      uomName: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -247,10 +269,12 @@ prop:
       delVersion: 逻辑删除版本
       endTime: 结束时间
       equipment: null
+      equipmentCode: 设备
       equipmentId: 设备ID
       id: ID
       org: null
       orgId: 业务组织
+      orgName: 组织
       posted: 是否已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -258,6 +282,7 @@ prop:
       result: 执行结果
       result_label: 执行结果
       schedule: null
+      scheduleCode: 维护计划
       scheduleId: 维护计划ID
       sparePartUsages: null
       startTime: 开始时间
@@ -287,4 +312,5 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       visit: null
+      visitCode: 维护访问
       visitId: 维护访问ID

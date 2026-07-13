@@ -62,6 +62,15 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--备件消耗-->
+                <col id="sparePartUsageCode"/>
+
+                <!--物料-->
+                <col id="materialName"/>
+
+                <!--计量单位-->
+                <col id="uomName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -77,6 +86,8 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ sparePartUsageCode[备件消耗] materialName[物料]
+ uomName[计量单位] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-备件消耗行" i18n-en:title="Add Spare Part Usage Line" x:prototype="edit"/>

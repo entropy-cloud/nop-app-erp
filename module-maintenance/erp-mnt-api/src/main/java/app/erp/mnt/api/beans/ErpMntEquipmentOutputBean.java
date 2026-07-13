@@ -320,6 +320,54 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _categoryName;
+
+    
+        public String getCategoryName(){
+            return _categoryName;
+        }
+
+        public void setCategoryName(String value){
+            this._categoryName = value;
+        }
+
+
+        private String _locationName;
+
+    
+        public String getLocationName(){
+            return _locationName;
+        }
+
+        public void setLocationName(String value){
+            this._locationName = value;
+        }
+
+
+        private String _assetCode;
+
+    
+        public String getAssetCode(){
+            return _assetCode;
+        }
+
+        public void setAssetCode(String value){
+            this._assetCode = value;
+        }
+
+
         private Map<String,Object> _location;
 
         public Map<String,Object> getLocation(){

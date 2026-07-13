@@ -28,7 +28,10 @@
     "businessDate": null,
     "posted": false,
     "postedAt": null,
-    "postedBy": null
+    "postedBy": null,
+    "scheduleCode": null,
+    "equipmentCode": "SMOKE-EQUIP",
+    "orgName": null
   },
   "status": 0
 }

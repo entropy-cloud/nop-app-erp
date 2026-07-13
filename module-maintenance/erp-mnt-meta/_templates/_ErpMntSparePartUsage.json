@@ -29,5 +29,10 @@
   "equipment": null,
   "lines": null,
   "org": null,
-  "warehouse": null
+  "warehouse": null,
+  "orgName": "",
+  "visitCode": "",
+  "requestCode": "",
+  "equipmentCode": "",
+  "warehouseName": ""
 }

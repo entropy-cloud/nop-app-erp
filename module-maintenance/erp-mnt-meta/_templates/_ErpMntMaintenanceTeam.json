@@ -14,5 +14,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "leader": null,
   "members": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "leaderName": ""
 }

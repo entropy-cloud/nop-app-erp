@@ -414,6 +414,42 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _scheduleCode;
+
+    
+        public String getScheduleCode(){
+            return _scheduleCode;
+        }
+
+        public void setScheduleCode(String value){
+            this._scheduleCode = value;
+        }
+
+
+        private String _equipmentCode;
+
+    
+        public String getEquipmentCode(){
+            return _equipmentCode;
+        }
+
+        public void setEquipmentCode(String value){
+            this._equipmentCode = value;
+        }
+
+
         private Map<String,Object> _schedule;
 
         public Map<String,Object> getSchedule(){

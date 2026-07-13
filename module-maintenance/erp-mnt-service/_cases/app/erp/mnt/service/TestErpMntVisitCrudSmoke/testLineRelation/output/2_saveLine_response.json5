@@ -14,7 +14,8 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpMntVisitTask@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMntVisitTask@createTime"
+    "updateTime": "@var:ErpMntVisitTask@createTime",
+    "visitCode": "SMOKE-MNT"
   },
   "status": 0
 }

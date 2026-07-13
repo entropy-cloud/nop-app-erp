@@ -5,6 +5,11 @@ import app.erp.mnt.dao.entity.ErpMntDowntimeEntry;
 import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.support.EquipmentStatusLinker;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
@@ -25,6 +30,16 @@ public class ErpMntDowntimeEntryBizModel extends CrudBizModel<ErpMntDowntimeEntr
 
     public ErpMntDowntimeEntryBizModel() {
         setEntityName(ErpMntDowntimeEntry.class.getName());
+    }
+
+    @BizLoader(forType = ErpMntDowntimeEntry.class)
+    public List<String> equipmentCode(@ContextSource List<ErpMntDowntimeEntry> list) {
+        orm().batchLoadProps(list, Collections.singleton("equipment"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpMntDowntimeEntry entity : list) {
+            result.add(entity.getEquipment() != null ? entity.getEquipment().getCode() : null);
+        }
+        return result;
     }
 
     @Override

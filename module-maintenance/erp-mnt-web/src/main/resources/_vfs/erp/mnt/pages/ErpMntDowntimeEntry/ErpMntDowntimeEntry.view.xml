@@ -3,7 +3,16 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="equipmentCode" label="设备"/>
+                <col id="startTime" mandatory="true" sortable="true"/>
+                <col id="endTime" sortable="true"/>
+                <col id="totalMinutes" ui:number="true" sortable="true"/>
+                <col id="reason" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

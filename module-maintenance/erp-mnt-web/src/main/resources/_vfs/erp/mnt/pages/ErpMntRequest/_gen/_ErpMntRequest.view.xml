@@ -71,6 +71,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--设备-->
+                <col id="equipmentCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -87,7 +90,7 @@
  completedAt[完成时间] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] equipmentCode[设备]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护请求" i18n-en:title="Add Maintenance Request" x:prototype="edit"/>

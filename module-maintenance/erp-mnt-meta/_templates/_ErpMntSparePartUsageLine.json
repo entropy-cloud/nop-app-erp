@@ -17,5 +17,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "sparePartUsage": null,
   "material": null,
-  "uoM": null
+  "uoM": null,
+  "sparePartUsageCode": "",
+  "materialName": "",
+  "uomName": ""
 }

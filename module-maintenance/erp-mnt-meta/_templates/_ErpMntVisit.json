@@ -32,5 +32,8 @@
   "equipment": null,
   "tasks": null,
   "sparePartUsages": null,
-  "org": null
+  "org": null,
+  "orgName": "",
+  "scheduleCode": "",
+  "equipmentCode": ""
 }

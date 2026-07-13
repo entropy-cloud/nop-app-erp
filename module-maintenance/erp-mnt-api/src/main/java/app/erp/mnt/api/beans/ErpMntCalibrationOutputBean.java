@@ -371,6 +371,30 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _equipmentCode;
+
+    
+        public String getEquipmentCode(){
+            return _equipmentCode;
+        }
+
+        public void setEquipmentCode(String value){
+            this._equipmentCode = value;
+        }
+
+
         private Map<String,Object> _equipment;
 
         public Map<String,Object> getEquipment(){

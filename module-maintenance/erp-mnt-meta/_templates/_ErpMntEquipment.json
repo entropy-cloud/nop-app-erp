@@ -29,5 +29,9 @@
   "schedules": null,
   "requests": null,
   "sparePartUsages": null,
-  "downtimeEntries": null
+  "downtimeEntries": null,
+  "orgName": "",
+  "categoryName": "",
+  "locationName": "",
+  "assetCode": ""
 }

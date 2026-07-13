@@ -53,6 +53,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--组织-->
+                <col id="orgName"/>
+
+                <!--负责人-->
+                <col id="leaderName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -66,7 +72,8 @@
  description[描述] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] orgName[组织]
+ leaderName[负责人] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护团队" i18n-en:title="Add Maintenance Team" x:prototype="edit"/>

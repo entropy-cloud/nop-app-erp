@@ -7,6 +7,11 @@ import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.support.EquipmentStatusLinker;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
@@ -33,6 +38,36 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
 
     public ErpMntVisitBizModel() {
         setEntityName(ErpMntVisit.class.getName());
+    }
+
+    @BizLoader(forType = ErpMntVisit.class)
+    public List<String> orgName(@ContextSource List<ErpMntVisit> list) {
+        orm().batchLoadProps(list, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpMntVisit entity : list) {
+            result.add(entity.getOrg() != null ? entity.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMntVisit.class)
+    public List<String> scheduleCode(@ContextSource List<ErpMntVisit> list) {
+        orm().batchLoadProps(list, Collections.singleton("schedule"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpMntVisit entity : list) {
+            result.add(entity.getSchedule() != null ? entity.getSchedule().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpMntVisit.class)
+    public List<String> equipmentCode(@ContextSource List<ErpMntVisit> list) {
+        orm().batchLoadProps(list, Collections.singleton("equipment"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpMntVisit entity : list) {
+            result.add(entity.getEquipment() != null ? entity.getEquipment().getCode() : null);
+        }
+        return result;
     }
 
     @Override

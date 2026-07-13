@@ -2,7 +2,22 @@
 <view x:extends="_gen/_ErpMntVisit.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="组织"/>
+                <col id="scheduleCode" label="维护计划"/>
+                <col id="equipmentCode" label="设备"/>
+                <col id="visitDate" mandatory="true" sortable="true"/>
+                <col id="visitType" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="startTime" sortable="true"/>
+                <col id="endTime" sortable="true"/>
+                <col id="totalMinutes" ui:number="true" sortable="true"/>
+                <col id="result" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

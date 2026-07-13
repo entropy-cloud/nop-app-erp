@@ -181,6 +181,30 @@
         }
 
 
+        private String _teamName;
+
+    
+        public String getTeamName(){
+            return _teamName;
+        }
+
+        public void setTeamName(String value){
+            this._teamName = value;
+        }
+
+
+        private String _employeeName;
+
+    
+        public String getEmployeeName(){
+            return _employeeName;
+        }
+
+        public void setEmployeeName(String value){
+            this._employeeName = value;
+        }
+
+
         private Map<String,Object> _team;
 
         public Map<String,Object> getTeam(){

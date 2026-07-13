@@ -44,6 +44,8 @@ prop:
       equipment: Equipment
       calibratedByEmployee: Calibrated By Employee
       org: null
+      orgName: null
+      equipmentCode: null
     ErpMntDowntimeEntry:
       id: ID
       equipmentId: Equipment
@@ -61,6 +63,7 @@ prop:
       updateTime: Update Time
       equipment: Equipment
       relatedJobOrder: null
+      equipmentCode: null
     ErpMntEquipment:
       id: ID
       code: Code
@@ -93,6 +96,10 @@ prop:
       requests: Requests
       sparePartUsages: Spare Part Usages
       downtimeEntries: Downtime Entries
+      orgName: null
+      categoryName: null
+      locationName: null
+      assetCode: null
     ErpMntEquipmentCategory:
       id: ID
       code: Code
@@ -106,6 +113,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       parent: Parent
+      parentName: null
     ErpMntMaintenanceTeam:
       id: ID
       code: Code
@@ -123,6 +131,8 @@ prop:
       leader: Leader
       members: Members
       org: null
+      orgName: null
+      leaderName: null
     ErpMntMaintenanceTeamMember:
       id: ID
       teamId: Team
@@ -138,6 +148,8 @@ prop:
       updateTime: Update Time
       team: Team
       employee: Employee
+      teamName: null
+      employeeName: null
     ErpMntRequest:
       id: ID
       code: Code
@@ -161,6 +173,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       equipment: Equipment
+      equipmentCode: null
     ErpMntSchedule:
       id: ID
       code: Code
@@ -184,6 +197,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       equipment: Equipment
+      equipmentCode: null
     ErpMntSparePartUsage:
       id: ID
       code: Code
@@ -216,6 +230,11 @@ prop:
       lines: Lines
       org: null
       warehouse: null
+      orgName: null
+      visitCode: null
+      requestCode: null
+      equipmentCode: null
+      warehouseName: null
     ErpMntSparePartUsageLine:
       id: ID
       sparePartUsageId: Spare Part Usage
@@ -236,6 +255,9 @@ prop:
       sparePartUsage: Spare Part Usage
       material: Material
       uoM: Uo M
+      sparePartUsageCode: null
+      materialName: null
+      uomName: null
     ErpMntVisit:
       id: ID
       code: Code
@@ -271,6 +293,9 @@ prop:
       tasks: Tasks
       sparePartUsages: Spare Part Usages
       org: null
+      orgName: null
+      scheduleCode: null
+      equipmentCode: null
     ErpMntVisitTask:
       id: ID
       visitId: Visit
@@ -288,6 +313,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       visit: Visit
+      visitCode: null
 dict:
   label:
     erp-mnt/schedule-type: Maintenance Schedule Type

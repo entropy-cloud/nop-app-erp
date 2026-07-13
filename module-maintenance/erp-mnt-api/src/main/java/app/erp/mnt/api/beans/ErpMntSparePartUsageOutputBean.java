@@ -360,6 +360,66 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _visitCode;
+
+    
+        public String getVisitCode(){
+            return _visitCode;
+        }
+
+        public void setVisitCode(String value){
+            this._visitCode = value;
+        }
+
+
+        private String _requestCode;
+
+    
+        public String getRequestCode(){
+            return _requestCode;
+        }
+
+        public void setRequestCode(String value){
+            this._requestCode = value;
+        }
+
+
+        private String _equipmentCode;
+
+    
+        public String getEquipmentCode(){
+            return _equipmentCode;
+        }
+
+        public void setEquipmentCode(String value){
+            this._equipmentCode = value;
+        }
+
+
+        private String _warehouseName;
+
+    
+        public String getWarehouseName(){
+            return _warehouseName;
+        }
+
+        public void setWarehouseName(String value){
+            this._warehouseName = value;
+        }
+
+
         private Map<String,Object> _visit;
 
         public Map<String,Object> getVisit(){
