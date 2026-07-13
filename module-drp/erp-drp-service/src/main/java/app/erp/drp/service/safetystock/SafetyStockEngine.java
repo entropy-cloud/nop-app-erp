@@ -209,7 +209,10 @@ public class SafetyStockEngine {
         mq.addFilter(ge("businessDate", since));
         List<ErpInvStockMove> moves = moveDao.findAllByQuery(mq);
         if (moves.isEmpty()) {
-            return new ArrayList<>();
+            // 无历史出库 → 视为零需求（与下方 byMonth 空集语义一致），避免 mean() 除零
+            List<BigDecimal> zero = new ArrayList<>();
+            zero.add(BigDecimal.ZERO);
+            return zero;
         }
         List<Long> moveIds = new ArrayList<>();
         Map<Long, ErpInvStockMove> moveById = new HashMap<>();
