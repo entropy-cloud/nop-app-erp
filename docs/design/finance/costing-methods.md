@@ -73,7 +73,15 @@
 - **overhead 制造费用（config-gated 分配率）**：`CostRollupService` 经 `erp-mfg.overhead-allocation-enabled`（默认 false 向后兼容）控制。关时 `overheadCost`=0（行为不变）；开时按 `erp-mfg.overhead-allocation-mode` 选择分配模式：`MACHINE_HOUR`=Σ(工序 standardTime/60)×`erp-mfg.overhead-allocation-rate`（机器工时×费率）；`LABOR_RATIO`=laborCost×rate（人工成本比例）。工作中心 schema 拆分（`ErpMfgWorkcenter` laborRate/overheadRate 分列）为 successor（ask-first ORM 保护区域，触发条件：产品要求工作中心级精确费率）。
 - **subcontract 委外费（归集源 = N=1 已过账委外订单）**：`CostRollupService` 经 `erp-mfg.subcontract-cost-aggregation-enabled`（默认 false）控制。关时 `subcontractCost`=0；开时按物料聚合 `docStatus=COMPLETED` 委外订单（`ErpMfgSubcontractOrder.productId`）的 `processingFee`，按委外行产量（`ErpMfgSubcontractOrderLine.quantity`）分摊为单位委外成本。
 - **CostBreakdown 四要素**：`unitCost = material + labor + overhead + subcontract`（`CostRollupLineView` 补 `subcontractCost` 字段，`ErpMfgCostRollupLine` schema 四要素列已存在）。FIRMED rollup 行 unitCost 含四要素后经 `StandardCostResolver` 传播进存货 STANDARD 成本法（costing-methods.md:56 链路）。
-- **本期 Non-Goal**：工作中心 laborRate/overheadRate schema 拆分（精确工作中心级费率，ask-first successor）/ subcontract 委外差异（`ProductionVarianceCalculator` SUBCONTRACT 差异类型 successor，5 类差异未含 SUBCONTRACT）。
+- **本期 Non-Goal**：工作中心 laborRate/overheadRate schema 拆分（精确工作中心级费率，ask-first successor）。~~subcontract 委外差异（`ProductionVarianceCalculator` SUBCONTRACT 差异类型 successor，5 类差异未含 SUBCONTRACT）~~（**已收口，见 plan 2026-07-14-0035-1 实现注记**：`ProductionVarianceCalculator` 第 6 类差异 SUBCONTRACT + `ProductionVarianceDispatcher` 第 4 要素桶 + 1416/1417 科目对已落地）。
+
+## 实现注记（计划 `2026-07-14-0035-1`）
+
+本节承接 `0455-2` Deferred「subcontract 委外差异」，触发条件「委外差异分析业务需求落地」已满足（委外引擎 0455-1 + 委外费归集 0455-2 已落地，标准侧 `ErpMfgCostRollupLine.subcontractCost` 与实际侧 `ErpMfgWorkOrder.subcontractCost` 列均就位，差异引擎此前从未消费）。
+
+- **第 6 类差异 SUBCONTRACT（`ProductionVarianceCalculator`）**：标准 = `rollupLine.subcontractCost × 完工量`；实际 = `wo.subcontractCost`；`costElement = SUBCONTRACT` / `varianceType = SUBCONTRACT`。沿用既有「零差异不生成行」范式——仅当标准侧或实际侧 subcontractCost 非零时生成行，两侧均为零时跳过（不污染既有 5 类差异输出）。
+- **字典 + 常量**：`erp-mfg/variance-type` 字典补 `SUBCONTRACT`（委外费差异）码；`ErpMfgConstants.VARIANCE_TYPE_SUBCONTRACT` 同步。
+- **过账第 4 要素桶（`ProductionVarianceDispatcher`）**：按 `costElement=SUBCONTRACT` 聚合净差异，组装进 `PRODUCTION_VARIANCE` PostingEvent。`ProductionVarianceAcctDocProvider` 新增科目对 1416（制造差异-委外）/ 1417（在制品-委外），方向与既有 3 要素一致（unfavorable Dr 差异/Cr 在制品，favorable Dr 在制品/Cr 差异）。
 
 ## 成本核算方法
 

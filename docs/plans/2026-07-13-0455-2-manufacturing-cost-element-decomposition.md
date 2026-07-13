@@ -139,11 +139,12 @@ Exit Criteria:
 - Why Not Blocking Closure: 本期 config-gated 全局/期间分配率交付 overhead 要素（粗放但可用），工作中心 schema 拆分为 ORM ask-first 保护区域，精确费率为增强面。
 - Successor Required: `yes`（触发条件：产品要求工作中心级精确人工/制造费率分列时——须 ask-first ORM 批准）
 
-### subcontract 委外差异（ProductionVarianceCalculator SUBCONTRACT 差异类型）
+### subcontract 委外差异（ProductionVarianceCalculator SUBCONTRACT 差异类型）✅ 已收口
 
 - Classification: `successor`
 - Why Not Blocking Closure: ProductionVarianceCalculator 当前 5 类差异未含 SUBCONTRACT（javadoc :63-64 明示），属差异分析增强面。
 - Successor Required: `yes`（触发条件：委外差异分析业务需求落地时——新增 erp-mfg/variance-type 字典码）
+- **已交付**：plan `2026-07-14-0035-1-manufacturing-subcontract-variance-type.md` 落地第 6 类差异 SUBCONTRACT（标准 = rollupLine.subcontractCost × 完工量；实际 = wo.subcontractCost）+ 字典码 + 常量 + Dispatcher 第 4 要素桶 + 1416/1417 科目对 + 测试。
 
 ## Closure
 

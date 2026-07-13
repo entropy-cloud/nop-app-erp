@@ -20,6 +20,7 @@
 | **人工费率差异** | (实际费率 - 标准费率) × 实际工时 | 工资变动 |
 | **制造费用差异** | 实际制造费用 - 标准制造费用 | 间接费偏差 |
 | **产量差异** | (实际产出 - 标准产出) × 标准单位成本 | 产出量影响 |
+| **委外费差异** | 实际委外费 - 标准委外费 | 委外加工费偏差（plan 2026-07-14-0035-1） |
 
 ## 数据模型
 
@@ -32,7 +33,7 @@
 | id | BIGINT | 主键 |
 | workOrderId | BIGINT | 工单ID |
 | lineNo | INT | 行号 |
-| varianceType | VARCHAR(50) | 差异类型：MATERIAL_USAGE / LABOR_EFFICIENCY / LABOR_RATE / OVERHEAD / VOLUME（实现偏离补注：材料价格差异归 PPV 在采购入库捕获，本期材料段仅算用量差异避免重复计入） |
+| varianceType | VARCHAR(50) | 差异类型：MATERIAL_USAGE / LABOR_EFFICIENCY / LABOR_RATE / OVERHEAD / VOLUME / SUBCONTRACT（实现偏离补注：材料价格差异归 PPV 在采购入库捕获，本期材料段仅算用量差异避免重复计入；SUBCONTRACT 委外费差异 plan 2026-07-14-0035-1 落地） |
 | costElement | VARCHAR(50) | 成本要素：MATERIAL / LABOR / OVERHEAD / SUBCONTRACT |
 | materialId | BIGINT | 物料（如涉及） |
 | operationId | BIGINT | 工序（如涉及） |
@@ -64,6 +65,7 @@
 人工费率差异 = (实际小时费率 - 标准小时费率) × 实际工时
 制造费用差异 = 实际制造费用 - 标准制造费用
 产量差异     = (实际产出 - 计划产出) × 标准单位成本
+委外费差异   = 实际委外费 - 标准委外费（标准 = rollupLine.subcontractCost × 完工量；实际 = wo.subcontractCost）
 ```
 
 ## 报表维度
@@ -81,7 +83,7 @@
 > **当前实现范围**：PPV（采购价差）在采购入库 DONE 时由 inventory 域 `InvPostingDispatcher.dispatchPurchasePriceVariance` 捕获并过账（`PURCHASE_PRICE_VARIANCE` 业务类型，plan 2026-07-05-0427-2）。生产差异（工单完工→差异计算→差异入账）由 plan 2026-07-05-1838-2 交付：`ErpMfgCostVariance` 实体已落地，差异引擎（`ProductionVarianceCalculator`）+ 完工触发（config-gated `erp-mfg.variance-auto-calc-enabled`）+ 过账（`ProductionVarianceDispatcher` + `PRODUCTION_VARIANCE` 业务类型）+ 手动入口（`ErpMfgCostVariance__calculateVariances`）均已实现。
 
 1. **工单完工** → config-gated 自动触发差异计算（`erp-mfg.variance-auto-calc-enabled` 默认关，开启时 `willFinish` 分支调用 `ProductionVarianceCalculator`）；亦可经手动入口 `ErpMfgCostVariance__calculateVariances` 重算（幂等：先删旧行再重算，仅 COMPLETED 工单允许）
-2. **差异计算** → `ProductionVarianceCalculator` 聚合实际成本（WorkOrder 四要素）与标准成本（FIRMED cost rollup）逐项对比，写 `ErpMfgCostVariance` 行（5 类差异）
+2. **差异计算** → `ProductionVarianceCalculator` 聚合实际成本（WorkOrder 四要素）与标准成本（FIRMED cost rollup）逐项对比，写 `ErpMfgCostVariance` 行（6 类差异：材料用量/人工效率/人工费率/制造费用/产量/委外费）
 3. **差异入账** → `ProductionVarianceDispatcher` 按成本要素汇总净差异组装 PostingEvent，经 `IErpFinVoucherBiz.post` 提交过账（`PRODUCTION_VARIANCE` 业务类型），成功回写 `posted=true`
 4. **分析报表** → 按维度查看差异分布（`ErpMfgCostVariance__findByWorkOrder` / `aggregateByType` 查询入口，报表渲染归 Deferred）
 5. **异常预警** → 差异超过阈值触发通知（Deferred，依赖通知派发通道）
