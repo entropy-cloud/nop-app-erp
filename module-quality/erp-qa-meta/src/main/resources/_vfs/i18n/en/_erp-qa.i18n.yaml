@@ -40,6 +40,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       ncr: Ncr
+      ncrCode: null
     ErpQaCalibration:
       id: ID
       code: Code
@@ -70,6 +71,7 @@ prop:
       approvedAt: Approved At
       calibratedByEmployee: Calibrated By Employee
       org: null
+      orgName: null
     ErpQaInspection:
       id: ID
       code: Code
@@ -114,6 +116,12 @@ prop:
       inspector: Inspector
       lines: Lines
       org: Org
+      materialName: null
+      templateCode: null
+      supplierName: null
+      warehouseName: null
+      inspectorName: null
+      orgName: null
     ErpQaInspectionLine:
       id: ID
       inspectionId: Inspection
@@ -134,6 +142,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       inspection: Inspection
+      inspectionCode: null
     ErpQaInspectionTemplate:
       id: ID
       code: Code
@@ -151,6 +160,7 @@ prop:
       updateTime: Update Time
       lines: Lines
       material: null
+      materialName: null
     ErpQaInspectionTemplateLine:
       id: ID
       templateId: Template
@@ -169,6 +179,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       template: Template
+      templateCode: null
     ErpQaNonConformance:
       id: ID
       code: Code
@@ -209,6 +220,9 @@ prop:
       inspection: Inspection
       material: null
       supplier: null
+      materialName: null
+      inspectionCode: null
+      supplierName: null
     ErpQaQualityGoal:
       id: ID
       code: Code
@@ -230,6 +244,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       responsiblePerson: Responsible Person
+      responsiblePersonName: null
     ErpQaRecall:
       id: ID
       code: Code
@@ -261,6 +276,8 @@ prop:
       sourceNcr: Source NCR
       material: Material
       targets: Targets
+      sourceNcrCode: null
+      materialName: null
     ErpQaRecallTarget:
       id: ID
       recallId: Recall
@@ -283,6 +300,8 @@ prop:
       updateTime: Update Time
       recall: Recall
       partner: Affected Customer
+      recallCode: null
+      partnerName: null
     ErpQaReview:
       id: ID
       code: Code
@@ -309,6 +328,7 @@ prop:
       approvedBy: Approved By
       approvedAt: Approved At
       org: null
+      orgName: null
     ErpQaRiskRegister:
       id: ID
       code: Code
@@ -377,6 +397,8 @@ prop:
       updateTime: Update Time
       chart: Chart
       org: Org
+      orgName: null
+      chartCode: null
     ErpQaSpcChart:
       id: ID
       code: Code
@@ -416,6 +438,9 @@ prop:
       inspectionType: Inspection Template
       org: Org
       samples: Samples
+      orgName: null
+      materialName: null
+      inspectionTemplateCode: null
     ErpQaSpcSample:
       id: ID
       chartId: SPC Chart
@@ -442,6 +467,9 @@ prop:
       chart: Chart
       inspector: Inspector
       org: Org
+      orgName: null
+      chartCode: null
+      inspectorName: null
 dict:
   label:
     erp-qa/inspection-type: Inspection Type

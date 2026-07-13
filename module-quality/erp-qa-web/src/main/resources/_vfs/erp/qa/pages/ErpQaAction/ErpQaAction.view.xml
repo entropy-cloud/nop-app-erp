@@ -2,7 +2,16 @@
 <view x:extends="_gen/_ErpQaAction.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="ncrCode" label="不合格品"/>
+                <col id="actionType" mandatory="true" sortable="true"/>
+                <col id="description" sortable="true"/>
+                <col id="dueDate" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

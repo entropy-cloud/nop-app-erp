@@ -480,6 +480,42 @@
         }
 
 
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
+        private String _materialName;
+
+    
+        public String getMaterialName(){
+            return _materialName;
+        }
+
+        public void setMaterialName(String value){
+            this._materialName = value;
+        }
+
+
+        private String _inspectionTemplateCode;
+
+    
+        public String getInspectionTemplateCode(){
+            return _inspectionTemplateCode;
+        }
+
+        public void setInspectionTemplateCode(String value){
+            this._inspectionTemplateCode = value;
+        }
+
+
         private Map<String,Object> _material;
 
         public Map<String,Object> getMaterial(){

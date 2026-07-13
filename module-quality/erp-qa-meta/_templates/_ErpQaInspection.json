@@ -41,5 +41,11 @@
   "warehouse": null,
   "inspector": null,
   "lines": null,
-  "org": null
+  "org": null,
+  "materialName": "",
+  "templateCode": "",
+  "supplierName": "",
+  "warehouseName": "",
+  "inspectorName": "",
+  "orgName": ""
 }

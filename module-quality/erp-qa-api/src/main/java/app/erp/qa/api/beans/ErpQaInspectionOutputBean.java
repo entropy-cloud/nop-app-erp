@@ -510,6 +510,78 @@
         }
 
 
+        private String _materialName;
+
+    
+        public String getMaterialName(){
+            return _materialName;
+        }
+
+        public void setMaterialName(String value){
+            this._materialName = value;
+        }
+
+
+        private String _templateCode;
+
+    
+        public String getTemplateCode(){
+            return _templateCode;
+        }
+
+        public void setTemplateCode(String value){
+            this._templateCode = value;
+        }
+
+
+        private String _supplierName;
+
+    
+        public String getSupplierName(){
+            return _supplierName;
+        }
+
+        public void setSupplierName(String value){
+            this._supplierName = value;
+        }
+
+
+        private String _warehouseName;
+
+    
+        public String getWarehouseName(){
+            return _warehouseName;
+        }
+
+        public void setWarehouseName(String value){
+            this._warehouseName = value;
+        }
+
+
+        private String _inspectorName;
+
+    
+        public String getInspectorName(){
+            return _inspectorName;
+        }
+
+        public void setInspectorName(String value){
+            this._inspectorName = value;
+        }
+
+
+        private String _orgName;
+
+    
+        public String getOrgName(){
+            return _orgName;
+        }
+
+        public void setOrgName(String value){
+            this._orgName = value;
+        }
+
+
         private Map<String,Object> _material;
 
         public Map<String,Object> getMaterial(){

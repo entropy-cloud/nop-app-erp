@@ -2,7 +2,19 @@
 <view x:extends="_gen/_ErpQaReview.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgName" label="组织"/>
+                <col id="reviewDate" mandatory="true" sortable="true"/>
+                <col id="reviewType" mandatory="true" sortable="true"/>
+                <col id="conclusion" sortable="true"/>
+                <col id="actionRequired" ui:number="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

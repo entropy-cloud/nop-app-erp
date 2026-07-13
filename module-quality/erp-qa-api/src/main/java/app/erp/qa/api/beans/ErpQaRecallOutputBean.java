@@ -384,6 +384,30 @@
         }
 
 
+        private String _sourceNcrCode;
+
+    
+        public String getSourceNcrCode(){
+            return _sourceNcrCode;
+        }
+
+        public void setSourceNcrCode(String value){
+            this._sourceNcrCode = value;
+        }
+
+
+        private String _materialName;
+
+    
+        public String getMaterialName(){
+            return _materialName;
+        }
+
+        public void setMaterialName(String value){
+            this._materialName = value;
+        }
+
+
         private Map<String,Object> _sourceNcr;
 
         public Map<String,Object> getSourceNcr(){

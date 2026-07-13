@@ -289,6 +289,18 @@
         }
 
 
+        private String _ncrCode;
+
+    
+        public String getNcrCode(){
+            return _ncrCode;
+        }
+
+        public void setNcrCode(String value){
+            this._ncrCode = value;
+        }
+
+
         private Map<String,Object> _ncr;
 
         public Map<String,Object> getNcr(){

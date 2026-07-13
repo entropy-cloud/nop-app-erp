@@ -2,7 +2,17 @@
 <view x:extends="_gen/_ErpQaRecallTarget.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="recallCode" label="召回事件"/>
+                <col id="partnerName" label="客户"/>
+                <col id="batchNo" sortable="true"/>
+                <col id="serialNo" sortable="true"/>
+                <col id="shippedQty" ui:number="true" sortable="true"/>
+                <col id="returnStatus" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

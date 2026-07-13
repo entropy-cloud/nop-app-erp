@@ -15,7 +15,8 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpQaInspectionTemplateLine@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpQaInspectionTemplateLine@createTime"
+    "updateTime": "@var:ErpQaInspectionTemplateLine@createTime",
+    "templateCode": "SMOKE-QA"
   },
   "status": 0
 }

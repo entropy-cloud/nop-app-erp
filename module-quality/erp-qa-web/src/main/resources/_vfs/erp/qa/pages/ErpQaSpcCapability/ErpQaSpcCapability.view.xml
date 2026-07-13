@@ -3,7 +3,22 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="chartCode" label="控制图"/>
+                <col id="orgName" label="组织"/>
+                <col id="periodFrom" mandatory="true" sortable="true"/>
+                <col id="periodTo" mandatory="true" sortable="true"/>
+                <col id="sampleCount" ui:number="true" sortable="true"/>
+                <col id="cp" ui:number="true" sortable="true"/>
+                <col id="cpk" ui:number="true" sortable="true"/>
+                <col id="pp" ui:number="true" sortable="true"/>
+                <col id="ppk" ui:number="true" sortable="true"/>
+                <col id="capabilityLevel" sortable="true"/>
+                <col id="isStable" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

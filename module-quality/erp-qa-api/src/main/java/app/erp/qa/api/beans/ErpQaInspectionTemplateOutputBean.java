@@ -208,6 +208,18 @@
         }
 
 
+        private String _materialName;
+
+    
+        public String getMaterialName(){
+            return _materialName;
+        }
+
+        public void setMaterialName(String value){
+            this._materialName = value;
+        }
+
+
         private List<Map<String,Object>> _lines;
 
         public List<Map<String,Object>> getLines(){

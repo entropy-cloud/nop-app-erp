@@ -36,5 +36,8 @@
   "material": null,
   "inspectionType": null,
   "org": null,
-  "samples": null
+  "samples": null,
+  "orgName": "",
+  "materialName": "",
+  "inspectionTemplateCode": ""
 }

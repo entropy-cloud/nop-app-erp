@@ -263,6 +263,18 @@
         }
 
 
+        private String _inspectionCode;
+
+    
+        public String getInspectionCode(){
+            return _inspectionCode;
+        }
+
+        public void setInspectionCode(String value){
+            this._inspectionCode = value;
+        }
+
+
         private Map<String,Object> _inspection;
 
         public Map<String,Object> getInspection(){

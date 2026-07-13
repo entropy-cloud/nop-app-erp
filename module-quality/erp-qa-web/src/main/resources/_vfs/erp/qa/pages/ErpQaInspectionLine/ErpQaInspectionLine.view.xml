@@ -3,7 +3,19 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="inspectionCode" label="质检单"/>
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="parameterName" sortable="true"/>
+                <col id="specMin" ui:number="true" sortable="true"/>
+                <col id="specMax" ui:number="true" sortable="true"/>
+                <col id="measuredValue" sortable="true"/>
+                <col id="unit" sortable="true"/>
+                <col id="result" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 

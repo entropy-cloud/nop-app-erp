@@ -498,6 +498,42 @@
         }
 
 
+        private String _materialName;
+
+    
+        public String getMaterialName(){
+            return _materialName;
+        }
+
+        public void setMaterialName(String value){
+            this._materialName = value;
+        }
+
+
+        private String _inspectionCode;
+
+    
+        public String getInspectionCode(){
+            return _inspectionCode;
+        }
+
+        public void setInspectionCode(String value){
+            this._inspectionCode = value;
+        }
+
+
+        private String _supplierName;
+
+    
+        public String getSupplierName(){
+            return _supplierName;
+        }
+
+        public void setSupplierName(String value){
+            this._supplierName = value;
+        }
+
+
         private List<Map<String,Object>> _actions;
 
         public List<Map<String,Object>> getActions(){

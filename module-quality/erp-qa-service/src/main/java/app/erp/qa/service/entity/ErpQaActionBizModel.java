@@ -6,11 +6,16 @@ import app.erp.qa.dao.entity.ErpQaAction;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import java.time.LocalDate;
@@ -28,6 +33,16 @@ public class ErpQaActionBizModel extends CrudBizModel<ErpQaAction> implements IE
 
     public ErpQaActionBizModel() {
         setEntityName(ErpQaAction.class.getName());
+    }
+
+    @BizLoader(forType = ErpQaAction.class)
+    public List<String> ncrCode(@ContextSource List<ErpQaAction> list) {
+        orm().batchLoadProps(list, Collections.singleton("ncr"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpQaAction entity : list) {
+            result.add(entity.getNcr() != null ? entity.getNcr().getCode() : null);
+        }
+        return result;
     }
 
     @Override

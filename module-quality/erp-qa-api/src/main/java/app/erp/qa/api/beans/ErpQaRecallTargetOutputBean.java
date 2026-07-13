@@ -277,6 +277,30 @@
         }
 
 
+        private String _recallCode;
+
+    
+        public String getRecallCode(){
+            return _recallCode;
+        }
+
+        public void setRecallCode(String value){
+            this._recallCode = value;
+        }
+
+
+        private String _partnerName;
+
+    
+        public String getPartnerName(){
+            return _partnerName;
+        }
+
+        public void setPartnerName(String value){
+            this._partnerName = value;
+        }
+
+
         private Map<String,Object> _recall;
 
         public Map<String,Object> getRecall(){

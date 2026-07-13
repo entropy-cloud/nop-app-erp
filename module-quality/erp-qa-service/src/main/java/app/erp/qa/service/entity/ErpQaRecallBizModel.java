@@ -14,6 +14,8 @@ import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
@@ -27,6 +29,7 @@ import java.util.Objects;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +68,26 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
 
     public ErpQaRecallBizModel() {
         setEntityName(ErpQaRecall.class.getName());
+    }
+
+    @BizLoader(forType = ErpQaRecall.class)
+    public List<String> sourceNcrCode(@ContextSource List<ErpQaRecall> list) {
+        orm().batchLoadProps(list, Collections.singleton("sourceNcr"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpQaRecall entity : list) {
+            result.add(entity.getSourceNcr() != null ? entity.getSourceNcr().getCode() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpQaRecall.class)
+    public List<String> materialName(@ContextSource List<ErpQaRecall> list) {
+        orm().batchLoadProps(list, Collections.singleton("material"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpQaRecall entity : list) {
+            result.add(entity.getMaterial() != null ? entity.getMaterial().getName() : null);
+        }
+        return result;
     }
 
     public void setRecallTargetBiz(IErpQaRecallTargetBiz recallTargetBiz) {

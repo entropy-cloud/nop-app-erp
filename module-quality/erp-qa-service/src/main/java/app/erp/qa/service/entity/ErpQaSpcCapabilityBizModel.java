@@ -4,12 +4,18 @@ import app.erp.qa.biz.IErpQaSpcCapabilityBiz;
 import app.erp.qa.dao.entity.ErpQaSpcCapability;
 import app.erp.qa.service.spc.SpcCapabilityCalculator;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import java.time.LocalDate;
 
@@ -24,6 +30,26 @@ public class ErpQaSpcCapabilityBizModel extends CrudBizModel<ErpQaSpcCapability>
 
     public ErpQaSpcCapabilityBizModel() {
         setEntityName(ErpQaSpcCapability.class.getName());
+    }
+
+    @BizLoader(forType = ErpQaSpcCapability.class)
+    public List<String> orgName(@ContextSource List<ErpQaSpcCapability> list) {
+        orm().batchLoadProps(list, Collections.singleton("org"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpQaSpcCapability entity : list) {
+            result.add(entity.getOrg() != null ? entity.getOrg().getName() : null);
+        }
+        return result;
+    }
+
+    @BizLoader(forType = ErpQaSpcCapability.class)
+    public List<String> chartCode(@ContextSource List<ErpQaSpcCapability> list) {
+        orm().batchLoadProps(list, Collections.singleton("chart"));
+        List<String> result = new ArrayList<>(list.size());
+        for (ErpQaSpcCapability entity : list) {
+            result.add(entity.getChart() != null ? entity.getChart().getCode() : null);
+        }
+        return result;
     }
 
     public void setSpcCapabilityCalculator(SpcCapabilityCalculator spcCapabilityCalculator) {
