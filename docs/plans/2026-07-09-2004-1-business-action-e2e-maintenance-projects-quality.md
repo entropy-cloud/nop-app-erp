@@ -141,6 +141,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 本计划 + 0814-2 共 6 代表域证明范式。其余 DIRECT 域（如 maintenance Request、finance voucher compute 动作 ErpFinVoucher.post/reverse）边际收益递减。
 - Successor Required: `yes`
 - Trigger Condition: 当需按域推进全 DIRECT 业务动作浏览器层覆盖时。
+- **进度更新**：assets 域 DIRECT 业务动作（折旧引擎 / CIP 转固 / 盘点 8 动作 / 维修费用化+资本化双路径）已由 plan `2026-07-14-0215-1` 覆盖（4 spec / 8 测试全绿）。inventory/crm/cs/maintenance/projects/quality/manufacturing/purchase/sales/finance/assets 11 域已覆盖。剩余 DIRECT 域（contract/drp/hr 等）由 sibling plan 推进。
 
 ### NCR resolve 经 CAPA 闭包门控路径
 
