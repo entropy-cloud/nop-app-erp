@@ -1,0 +1,1434 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>22 天，从空骨架到产品级 ERP — nop-app-erp AI 辅助开发实践</title>
+    <link rel="stylesheet" href="assets/css/all.min.css" />
+    <script src="assets/js/html2pdf.bundle.min.js"></script>
+    <script src="assets/js/mermaid.min.js"></script>
+    <script src="assets/js/lightbox.js"></script>
+    <style>
+      :root {
+        --color-primary: #2563eb;
+        --color-primary-dark: #1e40af;
+        --color-secondary: #059669;
+        --color-warning: #d97706;
+        --color-danger: #dc2626;
+        --color-text-dark: #1f2937;
+        --color-text-light: #4b5563;
+        --color-bg-main: #f4f6f9;
+        --color-bg-slide: #ffffff;
+        --color-border: #e5e7eb;
+        --color-code-bg: #f8fafc;
+        --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-code: 'Fira Code', monospace;
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --font-size-base: 1.25rem;
+        --line-height-base: 1.7;
+        --controls-area-height: 40px;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: var(--font-main);
+        background-color: var(--color-bg-main);
+        color: var(--color-text-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        line-height: var(--line-height-base);
+      }
+      #presentation-container {
+        width: 90vw; height: 90vh; max-width: 1200px;
+        background: var(--color-bg-slide);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+        display: flex; flex-direction: column;
+        overflow: hidden; position: relative;
+        padding-bottom: var(--controls-area-height);
+      }
+      .slides-viewport {
+        flex-grow: 1; position: relative; overflow: hidden;
+      }
+      .slide {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        padding: 50px 60px; opacity: 0; visibility: hidden;
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        transform: translateY(10px);
+        display: flex; flex-direction: column; justify-content: flex-start;
+        overflow-y: auto; background-color: var(--color-bg-slide);
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .slide.active {
+        opacity: 1; visibility: visible; transform: translateY(0); z-index: 1;
+      }
+      h1, h2, h3 { font-weight: 700; line-height: 1.2; }
+      h1 { font-size: 2.8rem; margin-bottom: 1rem; }
+      h2 {
+        font-size: 2.2rem; color: var(--color-text-dark);
+        border-bottom: 3px solid var(--color-primary);
+        padding-bottom: 0.75rem; margin-bottom: 1.5rem; font-weight: 600;
+      }
+      h3 { font-size: 1.4rem; color: var(--color-primary); margin-bottom: 0.8rem; }
+      h4 { font-size: 1.15rem; font-weight: 600; color: var(--color-text-dark); margin-bottom: 0.5rem; }
+      p, li { font-size: var(--font-size-base); color: var(--color-text-light); margin-bottom: 0.6rem; }
+      strong { color: var(--color-primary); font-weight: 600; }
+      ul { list-style: none; padding-left: 0; }
+      li p { margin-bottom: 0.25rem; }
+      #progress-bar {
+        position: absolute; top: 0; left: 0; height: 4px;
+        background-color: var(--color-primary); width: 0%;
+        transition: width 0.4s ease; z-index: 10;
+      }
+      .controls {
+        position: absolute; bottom: 20px; right: 20px;
+        display: flex; gap: 10px; z-index: 10;
+      }
+      .btn {
+        background-color: var(--color-primary); color: white; border: none;
+        padding: 10px 18px; border-radius: 8px; cursor: pointer;
+        font-weight: 600; display: flex; align-items: center; gap: 8px;
+        transition: all 0.2s ease; box-shadow: var(--shadow-md);
+      }
+      .btn:hover:not(:disabled) {
+        background-color: var(--color-primary-dark);
+        transform: translateY(-2px); box-shadow: var(--shadow-lg);
+      }
+      .btn:disabled {
+        background-color: #9ca3af; cursor: not-allowed;
+        transform: none; box-shadow: var(--shadow-md);
+      }
+      #pdf-btn { background-color: var(--color-secondary); }
+      #pdf-btn:hover:not(:disabled) { background-color: #047857; }
+      #print-btn { background-color: #6366f1; }
+      #print-btn:hover:not(:disabled) { background-color: #4f46e5; }
+      #slide-counter {
+        position: absolute; bottom: 20px; left: 20px;
+        background: rgba(255,255,255,0.8); backdrop-filter: blur(5px);
+        padding: 8px 14px; border-radius: 8px; font-size: 0.9rem;
+        font-weight: 600; color: var(--color-text-dark);
+        box-shadow: var(--shadow-md); z-index: 10;
+      }
+      .title-slide { text-align: center; align-items: center; }
+      .slide.title-slide { justify-content: center; align-items: center; }
+      .title-slide h1 { font-size: 2.8rem; color: var(--color-text-dark); line-height: 1.3; }
+      .title-slide .subtitle { font-size: 1.3rem; color: var(--color-text-light); font-weight: 400; margin-top: 0.5rem; }
+      .title-slide .author { font-size: 1.2rem; color: var(--color-text-light); margin-top: 1rem; font-weight: 400; }
+      .icon-list { list-style: none; padding: 0; margin: 0.8rem 0; }
+      .icon-bullet {
+        display: flex; gap: 14px;
+        background-color: var(--color-code-bg);
+        padding: 14px; border-radius: 10px; margin-bottom: 10px;
+        border: 1px solid var(--color-border);
+        transition: all 0.3s ease;
+      }
+      .icon-bullet:hover { transform: translateX(5px); box-shadow: var(--shadow-md); }
+      .icon-bullet i {
+        font-size: 1.15rem; color: var(--color-primary);
+        margin-top: 4px; flex-shrink: 0; width: 24px; text-align: center;
+      }
+      .icon-bullet div { flex-grow: 1; }
+      .icon-bullet p { margin-bottom: 0.2rem; color: var(--color-text-dark); font-weight: 500; font-size: 1.1rem; }
+      .icon-bullet .details { font-size: calc(var(--font-size-base) - 0.25rem); color: var(--color-text-light); font-weight: 400; }
+      .sub-items { margin-top: 0.4rem; margin-left: 1rem; }
+      .sub-item {
+        font-size: calc(var(--font-size-base) - 0.15rem); color: var(--color-text-light);
+        margin-bottom: 0.2rem; position: relative; padding-left: 1rem;
+      }
+      .sub-item::before { content: '\2022'; color: var(--color-secondary); position: absolute; left: 0; }
+      .two-column { display: flex; gap: 30px; align-items: flex-start; width: 100%; }
+      .column { flex: 1; }
+      .column-narrow { flex: 0.7; }
+      .column-wide { flex: 1.3; }
+      .highlight-box {
+        background-color: #eff6ff; border-left: 4px solid var(--color-primary);
+        padding: 16px 20px; margin: 1rem 0; border-radius: 0 8px 8px 0;
+      }
+      .highlight-box p { margin-bottom: 0.3rem; }
+      .quote {
+        background: #fffbeb; border-left: 4px solid var(--color-warning);
+        padding: 16px 20px; margin: 1rem 0; border-radius: 0 8px 8px 0;
+        font-style: italic; color: #92400e;
+      }
+      .quote p { font-size: calc(var(--font-size-base) + 0.05rem); }
+      .golden-quote {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-left: 4px solid #f59e0b;
+        padding: 18px 24px; margin: 1.2rem 0; border-radius: 0 12px 12px 0;
+        font-size: 1.15rem; font-weight: 500; color: #78350f;
+        box-shadow: var(--shadow-md); text-align: center;
+      }
+      .key-quote {
+        background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+        border: 2px solid var(--color-primary); border-radius: 12px;
+        padding: 1.2rem 1.5rem; margin: 1rem 0; text-align: center;
+      }
+      .key-quote p { font-size: 1.2rem; font-weight: 600; color: var(--color-primary-dark); margin: 0; }
+      .stat-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px; margin: 1.2rem 0;
+      }
+      .stat-card {
+        background: var(--color-code-bg); padding: 16px; border-radius: 12px;
+        text-align: center; border: 1px solid var(--color-border);
+        transition: all 0.3s ease;
+      }
+      .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+      .stat-number { font-size: 2.2rem; font-weight: 700; color: var(--color-primary); display: block; }
+      .stat-label { font-size: 0.85rem; color: var(--color-text-light); margin-top: 0.2rem; }
+      .mermaid-container {
+        background-color: var(--color-code-bg); padding: 1rem; border-radius: 8px;
+        border: 1px solid var(--color-border); margin: 1.5rem 0; overflow: auto;
+      }
+      .mermaid { display: flex; justify-content: center; width: 100%; }
+      .comparison-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: var(--font-size-base); }
+      .comparison-table th, .comparison-table td { padding: 10px 14px; text-align: left; border: 1px solid var(--color-border); }
+      .comparison-table th { background-color: var(--color-primary); color: white; font-weight: 600; }
+      .comparison-table tr:nth-child(even) { background-color: var(--color-code-bg); }
+      .flow-layout { display: flex; align-items: flex-start; gap: 1rem; margin-top: 1rem; width: 100%; flex-wrap: wrap; }
+      .flow-step {
+        flex: 1; min-width: 140px; background-color: var(--color-code-bg);
+        border: 1px solid var(--color-border); border-radius: 12px;
+        padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center;
+      }
+      .flow-step h4 { font-size: 1rem; color: var(--color-primary); margin-bottom: 0.5rem; }
+      .flow-step .details { font-size: 0.9rem; color: var(--color-text-light); line-height: 1.5; }
+      .flow-arrow { font-size: 2rem; color: var(--color-primary); margin-top: 50px; }
+      .card-grid { display: grid; gap: 1rem; margin-top: 1rem; }
+      .card-grid-2 { grid-template-columns: 1fr 1fr; }
+      .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+      .card {
+        background-color: var(--color-code-bg); border: 1px solid var(--color-border);
+        border-radius: 10px; padding: 1.1rem; transition: all 0.3s ease;
+      }
+      .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+      .card h4 { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+      .card h4 i { color: var(--color-primary); }
+      .card .details { font-size: 0.95rem; color: var(--color-text-light); line-height: 1.5; margin: 0; }
+      .timeline { position: relative; padding: 1rem 0; margin: 1rem 0; }
+      .timeline::before {
+        content: ''; position: absolute; top: 50%; left: 5%; right: 5%;
+        height: 4px; background: var(--color-border); border-radius: 2px;
+      }
+      .timeline-items { display: flex; justify-content: space-between; position: relative; }
+      .timeline-item { text-align: center; flex: 1; position: relative; padding-top: 20px; }
+      .timeline-item::before {
+        content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+        width: 16px; height: 16px; border-radius: 50%; background: var(--color-primary);
+        border: 3px solid white; box-shadow: var(--shadow-md); z-index: 1;
+      }
+      .timeline-item .label { font-size: 0.9rem; font-weight: 600; color: var(--color-text-dark); margin-bottom: 0.3rem; }
+      .timeline-item .desc { font-size: 0.8rem; color: var(--color-text-light); }
+      .tag { display: inline-block; background: #dbeafe; color: var(--color-primary); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; margin-right: 4px; }
+      .tag-warn { background: #fef3c7; color: #92400e; }
+      .tag-danger { background: #fee2e2; color: #991b1b; }
+      .tag-success { background: #dcfce7; color: #166534; }
+      code {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        padding: 2px 6px; border-radius: 4px; font-family: var(--font-code);
+        font-size: 0.9em; color: #0f172a; border: 1px solid #e2e8f0; white-space: nowrap;
+      }
+      .icon-bullet code, .details code, .sub-item code {
+        background: rgba(59,130,246,0.1); color: var(--color-primary-dark);
+        border-color: rgba(59,130,246,0.2);
+      }
+      .cycle-diagram { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; margin: 1.5rem 0; }
+      .cycle-step {
+        background: var(--color-code-bg); border: 2px solid var(--color-border);
+        padding: 12px 18px; border-radius: 10px; font-weight: 500;
+        text-align: center; min-width: 140px;
+      }
+      .cycle-step.highlight { background: var(--color-primary); color: white; border-color: var(--color-primary-dark); }
+      .cycle-arrow { font-size: 1.5rem; color: var(--color-primary); }
+      .slide.active .icon-bullet { animation: slideInLeft 0.4s ease-out both; }
+      .slide.active .icon-bullet:nth-child(1) { animation-delay: 0.1s; }
+      .slide.active .icon-bullet:nth-child(2) { animation-delay: 0.15s; }
+      .slide.active .icon-bullet:nth-child(3) { animation-delay: 0.2s; }
+      .slide.active .icon-bullet:nth-child(4) { animation-delay: 0.25s; }
+      .slide.active .icon-bullet:nth-child(5) { animation-delay: 0.3s; }
+      .slide.active .card { animation: fadeInUp 0.4s ease-out both; }
+      .slide.active .card:nth-child(1) { animation-delay: 0.1s; }
+      .slide.active .card:nth-child(2) { animation-delay: 0.15s; }
+      .slide.active .card:nth-child(3) { animation-delay: 0.2s; }
+      .slide.active .stat-card { animation: scaleIn 0.3s ease-out both; }
+      .slide.active .stat-card:nth-child(1) { animation-delay: 0.05s; }
+      .slide.active .stat-card:nth-child(2) { animation-delay: 0.1s; }
+      .slide.active .stat-card:nth-child(3) { animation-delay: 0.15s; }
+      .slide.active .stat-card:nth-child(4) { animation-delay: 0.2s; }
+      .slide.active .stat-card:nth-child(5) { animation-delay: 0.25s; }
+      .slide.active .stat-card:nth-child(6) { animation-delay: 0.3s; }
+      .slide.active .stat-card:nth-child(7) { animation-delay: 0.35s; }
+      .slide.active .stat-card:nth-child(8) { animation-delay: 0.4s; }
+      .slide.active .golden-quote { animation: fadeInUp 0.5s ease-out 0.3s both; }
+      .slide.active .highlight-box { animation: fadeInUp 0.4s ease-out 0.2s both; }
+      @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+      .keyboard-hint {
+        position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.7); color: white; padding: 6px 12px;
+        border-radius: 6px; font-size: 0.75rem; opacity: 0;
+        transition: opacity 0.3s; z-index: 100; pointer-events: none;
+      }
+      .keyboard-hint.show { opacity: 1; }
+      .keyboard-hint kbd {
+        background: rgba(255,255,255,0.2); padding: 2px 6px;
+        border-radius: 3px; margin: 0 2px; font-family: var(--font-code);
+      }
+      @media (max-width: 768px) {
+        .slide { padding: 30px; }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        .two-column, .stat-grid { flex-direction: column; grid-template-columns: 1fr; }
+        .controls { right: auto; left: 50%; transform: translateX(-50%); }
+        #slide-counter { display: none; }
+        .comparison-table { font-size: 0.9rem; }
+        .card-grid-2, .card-grid-3 { grid-template-columns: 1fr; }
+      }
+      @media print {
+        body { background: #fff !important; height: auto; overflow: visible; display: block; }
+        .controls, #progress-bar, #slide-counter { display: none !important; }
+        #presentation-container {
+          display: block; width: 100%; height: auto;
+          box-shadow: none; border: none; padding: 0;
+        }
+        .slides-viewport { overflow: visible; height: auto; }
+        .slide {
+          display: flex !important; opacity: 1 !important; visibility: visible !important;
+          transform: none !important; position: relative; page-break-after: always;
+          page-break-inside: avoid; width: 100%; height: auto; aspect-ratio: 16/12;
+          border: 1px solid #ddd; margin-bottom: 20px; box-shadow: none;
+          border-radius: 0; overflow: hidden;
+        }
+        .slide:last-of-type { page-break-after: avoid; }
+        svg * { animation-play-state: paused !important; }
+      }
+      .pdf-page-container { width: 100%; height: auto; background: white; color: black; box-shadow: none; }
+      .pdf-slide {
+        position: relative !important; opacity: 1 !important; visibility: visible !important;
+        transform: none !important; height: auto !important; width: 100%;
+        background: white; border: 1px solid #eee; padding: 40px 50px;
+        box-shadow: none; margin-bottom: 0; overflow: hidden;
+        page-break-after: always; break-inside: avoid; aspect-ratio: 16/12;
+      }
+      .pdf-slide:last-of-type { page-break-after: avoid; }
+      .pdf-slide, .pdf-slide * { animation: none !important; opacity: 1 !important; }
+      .slide-compact-print { font-size: 0.95rem; }
+      .code-compare { display: flex; gap: 12px; width: 100%; }
+      .code-block {
+        background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+        padding: 10px 14px; font-family: var(--font-code); font-size: 0.85rem;
+        flex: 1; overflow-x: auto;
+      }
+      .code-block.correct { background: #f0fdf4; border-color: #bbf7d0; }
+    </style>
+  </head>
+  <body>
+    <div id="presentation-container">
+      <div id="progress-bar"></div>
+      <div id="slide-counter">1 / 30</div>
+      <div id="keyboard-hint" class="keyboard-hint">
+        <kbd>&larr;</kbd><kbd>&rarr;</kbd> 翻页 &nbsp;|&nbsp; <kbd>Home</kbd> 首页 &nbsp;|&nbsp;
+        <kbd>F</kbd> 全屏 &nbsp;|&nbsp; <kbd>?</kbd> 帮助
+      </div>
+      <div class="slides-viewport">
+
+<!-- ===== SLIDES START ===== -->
+
+
+<!-- S01: 标题页 -->
+<section class="slide active title-slide" style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 40%,#0f172a 100%);color:#e2e8f0;">
+  <svg width="900" height="200" viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" style="width:85%;height:auto;max-width:900px;margin-bottom:20px;opacity:0.35;">
+    <defs>
+      <filter id="glow01"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <g stroke="#60a5fa" stroke-width="0.5" fill="none" opacity="0.6">
+      <rect x="100" y="20" width="80" height="30" rx="4"/>
+      <rect x="220" y="30" width="80" height="30" rx="4"/>
+      <rect x="340" y="15" width="80" height="30" rx="4"/>
+      <rect x="480" y="40" width="80" height="30" rx="4"/>
+      <rect x="620" y="25" width="80" height="30" rx="4"/>
+      <rect x="740" y="10" width="80" height="30" rx="4"/>
+      <rect x="100" y="90" width="80" height="30" rx="4"/>
+      <rect x="250" y="105" width="80" height="30" rx="4"/>
+      <rect x="400" y="85" width="80" height="30" rx="4"/>
+      <rect x="560" y="110" width="80" height="30" rx="4"/>
+      <rect x="700" y="95" width="80" height="30" rx="4"/>
+      <rect x="150" y="155" width="80" height="30" rx="4"/>
+      <rect x="330" y="170" width="80" height="30" rx="4"/>
+      <rect x="510" y="150" width="80" height="30" rx="4"/>
+      <rect x="650" y="165" width="80" height="30" rx="4"/>
+    </g>
+    <g stroke="#93c5fd" stroke-width="0.3" opacity="0.3">
+      <line x1="140" y1="50" x2="260" y2="60"/><line x1="300" y1="60" x2="380" y2="45"/>
+      <line x1="420" y1="45" x2="520" y2="70"/><line x1="560" y1="70" x2="660" y2="55"/>
+      <line x1="700" y1="55" x2="780" y2="40"/><line x1="140" y1="120" x2="290" y2="135"/>
+      <line x1="330" y1="135" x2="440" y2="115"/><line x1="480" y1="115" x2="600" y2="140"/>
+      <line x1="640" y1="140" x2="740" y2="125"/><line x1="110" y1="50" x2="150" y2="185"/>
+      <line x1="260" y1="60" x2="330" y2="200"/><line x1="380" y1="45" x2="370" y2="185"/>
+      <line x1="520" y1="70" x2="550" y2="180"/><line x1="660" y1="55" x2="690" y2="195"/>
+    </g>
+    <text x="450" y="130" text-anchor="middle" fill="#60a5fa" font-size="14" font-weight="700" filter="url(#glow01)">154 模块依赖拓扑</text>
+  </svg>
+  <h1 style="color:#f1f5f9;font-size:2.4rem;margin-bottom:0.5rem;">22 天，从空骨架到产品级 ERP</h1>
+  <p class="subtitle" style="color:#94a3b8;">nop-app-erp AI 辅助开发实践 —— 基于 Nop Platform · AGE 工作流</p>
+  <p style="color:#64748b;font-size:0.95rem;margin-top:1.5rem;">
+    <span style="margin:0 12px;"><i class="fa-solid fa-calendar-check"></i> 2026-07-13 基线</span>
+    <span style="margin:0 12px;"><i class="fa-solid fa-cubes"></i> 154 模块全绿</span>
+    <span style="margin:0 12px;"><i class="fa-solid fa-circle-check" style="color:#22c55e;"></i> 0 failure / 0 regression</span>
+  </p>
+</section>
+
+<!-- S02: 一句话命题 + 演讲地图 -->
+<section class="slide">
+  <div class="golden-quote">
+    <p style="font-size:1.3rem;font-weight:700;color:#78350f;margin:0;">"AI 辅助开发的本质，不是'让 AI 写更多代码'，而是<strong style="color:#b45309;">知识转移 + 系统化质量门控</strong>。"</p>
+  </div>
+  <div class="two-column" style="margin-top:1rem;">
+    <div class="column" style="background:#f0fdf4;border-radius:10px;padding:16px;border:1px solid #bbf7d0;">
+      <h4 style="color:#166534;"><i class="fa-solid fa-user-gear"></i> 主线一（人）</h4>
+      <p style="font-size:1rem;">用户把<strong>平台知识</strong>转移给 AI，转移完成后介入频率归零 → <strong>Act 2</strong></p>
+    </div>
+    <div class="column" style="background:#eff6ff;border-radius:10px;padding:16px;border:1px solid #bfdbfe;">
+      <h4 style="color:#1e40af;"><i class="fa-solid fa-robot"></i> 主线二（系统）</h4>
+      <p style="font-size:1rem;">AI 靠<strong>内部信息循环 + 对抗性审计</strong>自驱演化 → <strong>Act 3 / Act 4</strong></p>
+    </div>
+  </div>
+  <div style="margin-top:1.2rem;">
+    <p style="text-align:center;font-weight:600;margin-bottom:0.8rem;"><i class="fa-solid fa-map"></i> 今天的路线</p>
+    <div class="flow-layout">
+      <div class="flow-step"><h4><i class="fa-solid fa-play"></i> 开场</h4><div class="details">S01-S03</div></div>
+      <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="flow-step"><h4><i class="fa-solid fa-calendar-week"></i> 22天全景</h4><div class="details">S04-S07</div></div>
+      <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="flow-step"><h4><i class="fa-solid fa-handshake"></i> 协作边界</h4><div class="details">S08-S13</div></div>
+      <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="flow-step"><h4><i class="fa-solid fa-gears"></i> 自驱引擎</h4><div class="details">S14-S18</div></div>
+      <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="flow-step"><h4><i class="fa-solid fa-shield-halved"></i> 质量文化</h4><div class="details">S19-S24</div></div>
+      <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="flow-step"><h4><i class="fa-solid fa-code-branch"></i> 平台共生</h4><div class="details">S25-S27</div></div>
+      <div class="flow-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+      <div class="flow-step"><h4><i class="fa-solid fa-flag-checkered"></i> 收尾</h4><div class="details">S28-S30</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- S03: nop-app-erp 是什么 -->
+<section class="slide">
+  <h2>nop-app-erp 是什么</h2>
+  <div class="two-column">
+    <div class="column">
+      <div style="position:relative;width:300px;height:300px;margin:0 auto;">
+        <svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+          <circle cx="150" cy="120" r="80" fill="rgba(37,99,235,0.12)" stroke="#2563eb" stroke-width="2"/>
+          <text x="150" y="108" text-anchor="middle" fill="#1e40af" font-size="13" font-weight="600">Nop Platform</text>
+          <text x="150" y="126" text-anchor="middle" fill="#64748b" font-size="11">低代码平台</text>
+          <circle cx="90" cy="185" r="75" fill="rgba(5,150,105,0.12)" stroke="#059669" stroke-width="2"/>
+          <text x="90" y="173" text-anchor="middle" fill="#065f46" font-size="13" font-weight="600">AGE 工作流</text>
+          <text x="90" y="191" text-anchor="middle" fill="#64748b" font-size="11">AI 辅助方法论</text>
+          <circle cx="210" cy="185" r="75" fill="rgba(217,119,6,0.12)" stroke="#d97706" stroke-width="2"/>
+          <text x="210" y="173" text-anchor="middle" fill="#92400e" font-size="13" font-weight="600">ERP 应用层</text>
+          <text x="210" y="191" text-anchor="middle" fill="#64748b" font-size="11">业务产品</text>
+          <text x="150" y="155" text-anchor="middle" fill="#64748b" font-size="10" font-style="italic">三圈交叠</text>
+        </svg>
+      </div>
+      <div class="highlight-box" style="margin-top:0.5rem;">
+        <p style="font-size:1rem;"><strong>一句话定位：</strong>基于 Nop 平台的<strong>产品化通用 ERP 参考应用</strong>（应用层产品，非框架核心）</p>
+      </div>
+    </div>
+    <div class="column">
+      <div class="stat-grid" style="grid-template-columns:1fr 1fr;margin-top:1.5rem;">
+        <div class="stat-card"><span class="stat-number">18+1</span><span class="stat-label">业务域</span></div>
+        <div class="stat-card"><span class="stat-number">154</span><span class="stat-label">Reactor 模块</span></div>
+        <div class="stat-card"><span class="stat-number">352</span><span class="stat-label">自有实体</span></div>
+        <div class="stat-card"><span class="stat-number">22</span><span class="stat-label">天</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S04: 起点：06-22 上午的真实状态 -->
+<section class="slide">
+  <h2>起点：06-22 上午的真实状态</h2>
+  <div class="two-column">
+    <div class="column">
+      <svg width="420" height="340" viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <rect x="10" y="10" width="400" height="320" rx="8" fill="#f8fafc" stroke="#d1d5db" stroke-width="1"/>
+        <text x="30" y="38" fill="#6b7280" font-size="11" font-family="monospace">&#x1F4C1; nop-app-erp/</text>
+        <text x="50" y="58" fill="#6b7280" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-master-data/  <tspan fill="#f59e0b">[有结构，实体&#x2248;0]</tspan></text>
+        <text x="50" y="78" fill="#d1d5db" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-inventory/  <tspan fill="#9ca3af">[空]</tspan></text>
+        <text x="50" y="98" fill="#d1d5db" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-purchase/  <tspan fill="#9ca3af">[空]</tspan></text>
+        <text x="50" y="118" fill="#d1d5db" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-sales/  <tspan fill="#9ca3af">[空]</tspan></text>
+        <text x="50" y="138" fill="#d1d5db" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-finance/  <tspan fill="#9ca3af">[空]</tspan></text>
+        <text x="50" y="158" fill="#d1d5db" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-assets/  <tspan fill="#9ca3af">[空]</tspan></text>
+        <text x="50" y="178" fill="#d1d5db" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-projects/  <tspan fill="#9ca3af">[空]</tspan></text>
+        <text x="50" y="198" fill="#d1d5db" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-manufacturing/  <tspan fill="#9ca3af">[空]</tspan></text>
+        <text x="50" y="218" fill="#d1d5db" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; module-quality/  <tspan fill="#9ca3af">[空]</tspan></text>
+        <text x="50" y="238" fill="#6b7280" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C1; docs/  <tspan fill="#f59e0b">[模板占位符]</tspan></text>
+        <text x="50" y="258" fill="#6b7280" font-size="11" font-family="monospace">&#x251C;&#x2500; &#x1F4C4; pom.xml</text>
+        <rect x="30" y="272" width="360" height="18" rx="4" fill="#fef2f2"/>
+        <text x="40" y="285" fill="#dc2626" font-size="10" font-family="monospace">&#x26A0; 构建未闭环 / 测试数=0 / 竞品调研=空白 / i18n缺失</text>
+        <text x="30" y="310" fill="#6b7280" font-size="10" font-style="italic">AGE 模板初始化后的"空骨架"</text>
+      </svg>
+    </div>
+    <div class="column">
+      <h3 style="margin-top:0.5rem;">核心问题</h3>
+      <div class="icon-list">
+        <div class="icon-bullet">
+          <i class="fa-solid fa-file-circle-xmark"></i>
+          <div><p>10 域 ORM 有文件但多数实体为 0</p><div class="details">只有 master-data 等少数域有占位实体，其余域为空白模板</div></div>
+        </div>
+        <div class="icon-bullet">
+          <i class="fa-solid fa-link-slash"></i>
+          <div><p>构建未闭环</p><div class="details">无聚合 app，模块间依赖断裂，<code>mvn clean install</code> 失败</div></div>
+        </div>
+        <div class="icon-bullet">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <div><p>测试数 = 0</p><div class="details">无单元测试，无集成测试，无 E2E 基础设施</div></div>
+        </div>
+      </div>
+      <p style="font-size:1.2rem;font-weight:700;text-align:center;margin-top:1rem;color:var(--color-primary);">从这样一个空骨架到产品级 ERP，需要多久？靠什么？</p>
+    </div>
+  </div>
+</section>
+
+<!-- S05: 22 天后：关键规模指标 -->
+<section class="slide">
+  <h2>22 天后：关键规模指标</h2>
+  <p style="font-size:0.9rem;color:#6b7280;margin-bottom:1rem;">经审计校准的口径（为什么强调"校准"，Act 4 会揭晓）</p>
+  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card"><span class="stat-number">352+110</span><span class="stat-label">自有实体 + 引用桩 <span style="color:#059669;">&#x2248;16/天</span></span></div>
+    <div class="stat-card"><span class="stat-number">154</span><span class="stat-label">Reactor 模块 <span style="color:#059669;">81&#x2192;154</span></span></div>
+    <div class="stat-card"><span class="stat-number">~2,890</span><span class="stat-label">Java 测试 / 0 failure</span></div>
+    <div class="stat-card"><span class="stat-number">260</span><span class="stat-label">Playwright E2E / 0 reg.</span></div>
+    <div class="stat-card"><span class="stat-number">24</span><span class="stat-label">报表 / 10 看板</span></div>
+    <div class="stat-card"><span class="stat-number">19</span><span class="stat-label">可复用技能</span></div>
+    <div class="stat-card"><span class="stat-number">187+2</span><span class="stat-label">计划 + 指南</span></div>
+    <div class="stat-card"><span class="stat-number">9/78</span><span class="stat-label">审计记录 / 分析</span></div>
+  </div>
+  <div class="highlight-box" style="text-align:center;margin-top:1rem;">
+    <p style="margin:0;"><i class="fa-solid fa-circle-info"></i> 全程 <strong>06-22 &#x2192; 07-13</strong>（22 天），日均实体 &#x2248;16，日均测试 &#x2248;131</p>
+  </div>
+</section>
+
+<!-- S06: 8 阶段演进 Gantt -->
+<section class="slide">
+  <h2>8 阶段演进</h2>
+  <p style="font-size:0.95rem;color:var(--color-text-light);">时间线 06-22 &#x2192; 07-13（22 天），8 阶段叠加</p>
+  <svg width="1000" height="380" viewBox="0 0 1000 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+    <defs>
+      <linearGradient id="h1" x1="0%" x2="100%"><stop offset="0%" stop-color="#1e40af"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient>
+      <linearGradient id="h2" x1="0%" x2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient>
+      <linearGradient id="h3" x1="0%" x2="100%"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#93c5fd"/></linearGradient>
+      <linearGradient id="h4" x1="0%" x2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#93c5fd"/></linearGradient>
+      <linearGradient id="h5" x1="0%" x2="100%"><stop offset="0%" stop-color="#1e40af"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient>
+      <linearGradient id="h6" x1="0%" x2="100%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
+      <linearGradient id="h7" x1="0%" x2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#93c5fd"/></linearGradient>
+      <linearGradient id="h8" x1="0%" x2="100%"><stop offset="0%" stop-color="#1e40af"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient>
+    </defs>
+    <text x="100" y="25" fill="#6b7280" font-size="10">06-22</text><text x="230" y="25" fill="#6b7280" font-size="10">06-26</text>
+    <text x="360" y="25" fill="#6b7280" font-size="10">06-28</text><text x="460" y="25" fill="#6b7280" font-size="10">06-30</text>
+    <text x="560" y="25" fill="#6b7280" font-size="10">07-03</text><text x="660" y="25" fill="#6b7280" font-size="10">07-04</text>
+    <text x="760" y="25" fill="#6b7280" font-size="10">07-06</text><text x="920" y="25" fill="#6b7280" font-size="10">07-13</text>
+    <line x1="90" y1="30" x2="950" y2="30" stroke="#d1d5db" stroke-width="1"/>
+    <rect x="90" y="42" width="180" height="30" rx="6" fill="url(#h1)"/>
+    <text x="99" y="62" fill="white" font-size="11" font-weight="600">S1 设计期 (4d) — 调研+建模+codegen闭环</text>
+    <rect x="260" y="84" width="90" height="30" rx="6" fill="url(#h2)"/>
+    <text x="269" y="104" fill="white" font-size="11" font-weight="600">S2 深化 (2d) — 消除歧义再codegen</text>
+    <rect x="345" y="126" width="90" height="30" rx="6" fill="url(#h3)"/>
+    <text x="354" y="146" fill="white" font-size="11" font-weight="600">S3 核心逻辑 (2d) — 三层分离/Processor/SPI</text>
+    <rect x="430" y="168" width="90" height="30" rx="6" fill="url(#h4)"/>
+    <text x="439" y="188" fill="white" font-size="11" font-weight="600">S4 扩展域 (2d) — 模式复用批量深化</text>
+    <rect x="515" y="210" width="135" height="30" rx="6" fill="url(#h5)"/>
+    <text x="524" y="230" fill="white" font-size="11" font-weight="600">S5 业财+运营 (3d) — 核心价值链先完整</text>
+    <rect x="645" y="252" width="50" height="30" rx="6" fill="url(#h6)"/>
+    <text x="654" y="272" fill="white" font-size="11" font-weight="600">S6 (1d) — 强制纠偏</text>
+    <rect x="690" y="294" width="100" height="30" rx="6" fill="url(#h7)"/>
+    <text x="699" y="314" fill="white" font-size="11" font-weight="600">S7 E2E (2d) — 可观测性+回归</text>
+    <rect x="785" y="336" width="165" height="30" rx="6" fill="url(#h8)"/>
+    <text x="794" y="356" fill="white" font-size="11" font-weight="600">S8 深化收尾 (4d) — 竞争兑现核实+产品化</text>
+  </svg>
+  <p style="font-size:0.85rem;color:var(--color-warning);text-align:center;margin-top:0.5rem;"><strong>节奏特征：</strong>两头重 — 前 4 天调研+建模+codegen 闭环，后 4 天业务深化+竞争兑现核实</p>
+</section>
+
+<!-- S07: 阶段顺序不是随机的 -->
+<section class="slide">
+  <h2>阶段顺序不是随机的</h2>
+  <div class="two-column">
+    <div class="column">
+      <svg width="340" height="340" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <rect x="20" y="280" width="300" height="38" rx="6" fill="#bfdbfe"/><text x="170" y="303" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="600">S8 收尾 · 竞争兑现核实 + 产品化打磨</text>
+        <rect x="24" y="244" width="296" height="34" rx="6" fill="#dbeafe"/><text x="172" y="265" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="600">S7 E2E · 可观测性 + 回归保护</text>
+        <rect x="28" y="208" width="292" height="34" rx="6" fill="#93c5fd"/><text x="174" y="229" text-anchor="middle" fill="#1e3a5f" font-size="10" font-weight="600">S6 审计 · 密集期后强制纠偏</text>
+        <rect x="32" y="172" width="288" height="34" rx="6" fill="#60a5fa"/><text x="176" y="193" text-anchor="middle" fill="white" font-size="10" font-weight="600">S5 业财端到端 · 核心价值链必须先完整</text>
+        <rect x="36" y="136" width="284" height="34" rx="6" fill="#3b82f6"/><text x="178" y="157" text-anchor="middle" fill="white" font-size="10" font-weight="600">S4 扩展域铺开 · 模式复用、批量深化</text>
+        <rect x="40" y="100" width="280" height="34" rx="6" fill="#2563eb"/><text x="180" y="121" text-anchor="middle" fill="white" font-size="10" font-weight="600">S3 核心域逻辑 · 确立架构模式</text>
+        <rect x="44" y="64" width="276" height="34" rx="6" fill="#1d4ed8"/><text x="182" y="85" text-anchor="middle" fill="white" font-size="10" font-weight="600">S2 设计深化 · 消除重大歧义</text>
+        <rect x="48" y="28" width="272" height="34" rx="6" fill="#1e3a8a"/><text x="184" y="49" text-anchor="middle" fill="white" font-size="10" font-weight="600">S1 设计先行 · 不"边写边想"</text>
+      </svg>
+    </div>
+    <div class="column">
+      <h3>为什么是这个顺序</h3>
+      <div class="icon-list">
+        <div class="icon-bullet"><i class="fa-solid fa-1"></i><div><p>设计先行</p><div class="details">不"边写边想"，AGE 核心规则</div></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-2"></i><div><p>设计深化</p><div class="details">消除重大歧义再 codegen</div></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-3"></i><div><p>核心域逻辑</p><div class="details">确立架构模式（三层分离 / Processor / SPI）</div></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-4"></i><div><p>扩展域铺开</p><div class="details">模式复用、批量深化</div></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-5"></i><div><p>业财端到端</p><div class="details">核心价值链必须先完整</div></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-6"></i><div><p>审计</p><div class="details">密集期后强制纠偏</div></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-7"></i><div><p>E2E 基础设施</p><div class="details">可观测性 + 回归保护</div></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-8"></i><div><p>收尾</p><div class="details">竞争兑现核实 + 产品化打磨</div></div></div>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:center;font-weight:600;color:var(--color-primary);margin-top:0.5rem;">过渡 &#x2192; "22 天里，人到底做了什么、没做什么？"</p>
+</section>
+
+<!-- S08: 一个反直觉的问题 -->
+<section class="slide" style="justify-content:center;align-items:center;text-align:center;">
+  <h2 style="border:none;margin-bottom:2rem;">一个反直觉的问题</h2>
+  <p style="font-size:2rem;font-weight:700;color:var(--color-text-dark);margin-bottom:1rem;">整个过程里，用户（人）写了多少代码？</p>
+  <p style="font-size:3rem;font-weight:900;color:var(--color-primary);margin-bottom:1.5rem;">几乎为零</p>
+  <p style="font-size:1.3rem;color:var(--color-text-light);margin-bottom:2.5rem;">那他做了什么？</p>
+  <div style="display:flex;gap:30px;justify-content:center;">
+    <div style="background:var(--color-code-bg);padding:20px 30px;border-radius:12px;border:2px dashed var(--color-border);min-width:140px;"><p style="font-size:1.1rem;margin:0;">&#x2753;</p><p style="font-size:0.85rem;color:#6b7280;">待揭示 1</p></div>
+    <div style="background:var(--color-code-bg);padding:20px 30px;border-radius:12px;border:2px dashed var(--color-border);min-width:140px;"><p style="font-size:1.1rem;margin:0;">&#x2753;</p><p style="font-size:0.85rem;color:#6b7280;">待揭示 2</p></div>
+    <div style="background:var(--color-code-bg);padding:20px 30px;border-radius:12px;border:2px dashed var(--color-border);min-width:140px;"><p style="font-size:1.1rem;margin:0;">&#x2753;</p><p style="font-size:0.85rem;color:#6b7280;">待揭示 3</p></div>
+  </div>
+  <p style="font-style:italic;color:var(--color-warning);margin-top:1.5rem;">他在做三件事，且随时间<strong>主动退场</strong></p>
+</section>
+
+<!-- S09: 外部注入三层模型 -->
+<section class="slide">
+  <h2>外部注入三层模型</h2>
+  <p style="font-size:1rem;color:var(--color-text-light);">按"介入的具体程度"把用户每次介入分三层</p>
+  <div class="two-column">
+    <div class="column">
+      <svg width="320" height="300" viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <polygon points="160,15 300,280 20,280" fill="rgba(37,99,235,0.08)" stroke="#2563eb" stroke-width="2"/>
+        <polygon points="160,110 280,280 40,280" fill="rgba(37,99,235,0.12)" stroke="#2563eb" stroke-width="2"/>
+        <polygon points="160,200 250,280 70,280" fill="rgba(37,99,235,0.18)" stroke="#2563eb" stroke-width="2"/>
+        <text x="160" y="60" text-anchor="middle" fill="#dc2626" font-size="13" font-weight="700">A 类 · 平台机制</text>
+        <text x="160" y="78" text-anchor="middle" fill="#6b7280" font-size="10">9 次 · AI 自由度极低</text>
+        <text x="160" y="145" text-anchor="middle" fill="#d97706" font-size="13" font-weight="700">B 类 · 原则方向</text>
+        <text x="160" y="163" text-anchor="middle" fill="#6b7280" font-size="10">9 次 · AI 中等自由度</text>
+        <text x="160" y="235" text-anchor="middle" fill="#059669" font-size="13" font-weight="700">C 类 · 只提要求</text>
+        <text x="160" y="253" text-anchor="middle" fill="#6b7280" font-size="10">绝大多数 · AI 高自由度</text>
+      </svg>
+    </div>
+    <div class="column">
+      <div class="icon-list">
+        <div class="icon-bullet">
+          <i class="fa-solid fa-circle" style="color:#dc2626;"></i>
+          <div><p>A 类：明确指明 Nop 平台机制</p><div class="details">给机制名 + 配置项 + 源码位置。AI 自由度极低 &#x2192; 9 次，全在 06-22~07-03</div></div>
+        </div>
+        <div class="icon-bullet">
+          <i class="fa-solid fa-circle" style="color:#d97706;"></i>
+          <div><p>B 类：指明工程/设计原则方向</p><div class="details">给原则或质疑，不给 API。AI 中等自由度 &#x2192; 9 次，散布全程</div></div>
+        </div>
+        <div class="icon-bullet">
+          <i class="fa-solid fa-circle" style="color:#059669;"></i>
+          <div><p>C 类：只让 AI 自查/对比</p><div class="details">只提要求，不暗示答案。AI 高自由度 &#x2192; 绝大多数，尤其 07-04 后</div></div>
+        </div>
+      </div>
+      <div class="highlight-box">
+        <p style="font-size:0.95rem;"><strong>关键洞察：</strong>用户有清晰边界意识——<strong>平台机制明确介入，业务逻辑让 AI 对标开源自查</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S10: A 类案例：用户当"平台知识权威" -->
+<section class="slide">
+  <h2>A 类案例：用户当"平台知识权威"</h2>
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h4><i class="fa-solid fa-toggle-on"></i> 案例一 · 全局租户开关</h4>
+      <div style="margin:8px 0;">
+        <div class="code-block" style="margin-bottom:4px;">
+          <span style="color:#dc2626;font-size:0.8rem;">AI 写法：</span><br/>
+          <code>&lt;entity useTenant="true"&gt;</code> ...每个实体手写...
+        </div>
+        <div class="code-block correct" style="margin-top:4px;">
+          <span style="color:#059669;font-size:0.8rem;">用户校正：</span><br/>
+          <code>nop.orm.enable-tenant-by-default=true</code><br/>
+          + <code>TenantSupport</code> feature 标签
+        </div>
+      </div>
+      <p class="details">AI 查不到，因 <code>docs-for-ai</code> 当时未记录此全局开关</p>
+    </div>
+    <div class="card">
+      <h4><i class="fa-solid fa-puzzle-piece"></i> 案例二 · 跨模块引用机制</h4>
+      <div style="margin:8px 0;">
+        <div class="code-block" style="margin-bottom:4px;">
+          <span style="color:#dc2626;font-size:0.8rem;">AI 误以为：</span><br/>
+          "禁止跨模块引用"是硬规则
+        </div>
+        <div class="code-block correct" style="margin-top:4px;">
+          <span style="color:#059669;font-size:0.8rem;">用户纠正：</span><br/>
+          <code>notGenCode</code> 外部实体引用 &#x2260; Delta 扩展<br/>
+          平台自身 9 处内置用法
+        </div>
+      </div>
+      <p class="details">AI 漏看了 <code>entity.xdef</code> 注释 + <code>orm-gen.xlib:228</code></p>
+    </div>
+  </div>
+  <div class="highlight-box" style="text-align:center;">
+    <p style="margin:0;"><strong>共同模式：</strong>A 类全部命中 <code>docs-for-ai</code> 未覆盖或覆盖不全的平台细节（配置层/源码层隐藏机制）</p>
+  </div>
+</section>
+
+
+
+<!-- S11: B 类案例：用户当"方向指南针" -->
+<section class="slide">
+  <h2>B 类案例：用户当"方向指南针"</h2>
+  <div style="text-align:center;margin-bottom:1rem;">
+    <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:auto;">
+      <circle cx="40" cy="40" r="36" fill="none" stroke="#d97706" stroke-width="2"/>
+      <polygon points="40,8 48,38 40,35 32,38" fill="#d97706"/>
+      <polygon points="40,72 32,42 40,45 48,42" fill="#cbd5e1"/>
+      <circle cx="40" cy="40" r="4" fill="#1e293b"/>
+      <text x="40" y="78" text-anchor="middle" fill="#6b7280" font-size="7">07-01</text>
+    </svg>
+  </div>
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h4><i class="fa-solid fa-arrows-to-dot"></i> 过账引擎 DDD 聚合根原则</h4>
+      <div class="details">
+        <p>用户："产生记录应有主实体，方法挂聚合根 BizModel"</p>
+        <p style="margin-top:0.5rem;"><i class="fa-solid fa-arrow-right"></i> AI 自行裁定凭证=聚合根，<code>ErpFinPostingService</code> 降为 Processor，零 ORM 变更</p>
+      </div>
+    </div>
+    <div class="card">
+      <h4><i class="fa-solid fa-book-open"></i> 架构文档元规则</h4>
+      <div class="details">
+        <p>用户："架构文档只写通用设计原则，不针对具体业务做技术设计"</p>
+        <p style="margin-top:0.5rem;"><i class="fa-solid fa-arrow-right"></i> AI 自行产出 Processor 扩展模式 ADR</p>
+      </div>
+    </div>
+  </div>
+  <div class="key-quote" style="margin-top:1rem;">
+    <p>"用户不告诉答案，只告诉方向。"</p>
+  </div>
+</section>
+
+<!-- S12: 【全场高潮】知识转移曲线 -->
+<section class="slide">
+  <h2>知识转移曲线 — 全场高潮</h2>
+  <div class="golden-quote" style="margin-bottom:1rem;">
+    <p style="font-size:1.15rem;margin:0;">"用户不是在写代码，而是在<strong style="color:#b45309;">转移平台知识</strong>。一旦转移完成，他的介入频率自动归零。"</p>
+  </div>
+  <svg width="880" height="260" viewBox="0 0 880 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+    <defs>
+      <linearGradient id="areaA" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#ef4444" stop-opacity="0.3"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0.02"/></linearGradient>
+      <linearGradient id="areaC" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.3"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0.02"/></linearGradient>
+    </defs>
+    <line x1="80" y1="30" x2="80" y2="230" stroke="#e5e7eb" stroke-width="1"/>
+    <line x1="80" y1="230" x2="860" y2="230" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="70" y="50" text-anchor="end" fill="#ef4444" font-size="9" font-weight="700">A频次&#x2193;</text>
+    <text x="70" y="220" text-anchor="end" fill="#22c55e" font-size="9" font-weight="700">自主度&#x2191;</text>
+    <text x="120" y="248" fill="#6b7280" font-size="8">06-22</text><text x="260" y="248" fill="#6b7280" font-size="8">06-29</text>
+    <text x="370" y="248" fill="#6b7280" font-size="8">07-01</text><text x="430" y="248" fill="#6b7280" font-size="8">07-03</text>
+    <text x="580" y="248" fill="#6b7280" font-size="8">07-04+</text><text x="860" y="248" fill="#6b7280" font-size="8">07-13</text>
+    <polyline points="120,55 220,70 350,110 420,160 430,210 860,225" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="6,3"/>
+    <polyline points="120,210 200,180 350,140 420,100 450,60 860,45" fill="none" stroke="#22c55e" stroke-width="2.5"/>
+    <polygon points="120,55 220,70 350,110 420,160 430,210 860,225 860,230 120,230" fill="url(#areaA)"/>
+    <polygon points="120,230 120,210 200,180 350,140 420,100 450,60 860,45 860,230" fill="url(#areaC)"/>
+    <line x1="370" y1="35" x2="370" y2="225" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,4"/>
+    <rect x="300" y="30" width="140" height="18" rx="4" fill="#fef3c7"/>
+    <text x="370" y="43" text-anchor="middle" fill="#92400e" font-size="8" font-weight="700">07-01 转折：最后 A 类 + 关键 B 类</text>
+    <line x1="430" y1="35" x2="430" y2="225" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,4"/>
+    <rect x="360" y="50" width="140" height="18" rx="4" fill="#fef3c7"/>
+    <text x="430" y="63" text-anchor="middle" fill="#92400e" font-size="8" font-weight="700">07-03 最后一次 A 类</text>
+    <text x="200" y="120" text-anchor="middle" fill="#ef4444" font-size="9" font-weight="600">早期：A 类密集</text>
+    <text x="370" y="95" text-anchor="middle" fill="#d97706" font-size="9" font-weight="600">转折</text>
+    <text x="640" y="130" text-anchor="middle" fill="#059669" font-size="9" font-weight="600">后期：几乎全 C 类，用户放手</text>
+  </svg>
+  <div style="display:flex;gap:12px;margin-top:0.5rem;font-size:0.85rem;">
+    <span style="background:#fef2f2;padding:3px 10px;border-radius:4px;color:#dc2626;">A 类频次 &#x2193;</span>
+    <span style="background:#f0fdf4;padding:3px 10px;border-radius:4px;color:#059669;">AI 自主度 &#x2191;</span>
+    <span style="flex:1;text-align:right;color:#6b7280;">X = 日期（06-22 &#x2192; 07-13）</span>
+  </div>
+</section>
+
+<!-- S13: grill-with-docs：83 题设计审查如何印证边界 -->
+<section class="slide">
+  <h2>grill-with-docs：83 题设计审查如何印证边界</h2>
+  <div class="two-column">
+    <div class="column-narrow">
+      <svg width="260" height="300" viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <polygon points="30,20 230,20 200,60 60,60" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+        <text x="130" y="38" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="600">Q1-Q40 设计正确性</text>
+        <text x="130" y="52" text-anchor="middle" fill="#6b7280" font-size="7">状态机命名/会计期间/业财契约</text>
+        <polygon points="45,72 215,72 190,112 70,112" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5"/>
+        <text x="130" y="90" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="600">Q41-Q63 产品化可配置性</text>
+        <text x="130" y="104" text-anchor="middle" fill="#6b7280" font-size="7">11 个"写死"&#x2192;可配置</text>
+        <polygon points="60,124 200,124 180,164 80,164" fill="#93c5fd" stroke="#2563eb" stroke-width="1.5"/>
+        <text x="130" y="142" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="600">Q64-Q76 集成/迁移/ORM</text>
+        <text x="130" y="156" text-anchor="middle" fill="#6b7280" font-size="7">webhook / 数据迁移 / 种子数据</text>
+        <polygon points="75,176 185,176 170,216 90,216" fill="#60a5fa" stroke="#2563eb" stroke-width="1.5"/>
+        <text x="130" y="194" text-anchor="middle" fill="white" font-size="9" font-weight="600">Q77-Q83 横切缺口</text>
+        <text x="130" y="208" text-anchor="middle" fill="#dbeafe" font-size="7">金额精度/时区/审批委派/汇率来源</text>
+        <polygon points="90,228 170,228 158,268 102,268" fill="#2563eb" stroke="#1e40af" stroke-width="1.5"/>
+        <text x="130" y="246" text-anchor="middle" fill="white" font-size="9" font-weight="600">第五轮 Nop 复用</text>
+        <text x="130" y="260" text-anchor="middle" fill="#bfdbfe" font-size="7">三档 + 3 条反模式</text>
+      </svg>
+    </div>
+    <div class="column-wide">
+      <div class="highlight-box" style="margin-bottom:0.8rem;">
+        <p style="font-size:1rem;"><strong>关键数字：</strong>83 题中仅 <strong style="font-size:1.3rem;">4 题</strong>（Q71/Q77/Q78/Q79）需用户方向性纠正</p>
+        <p style="font-size:0.9rem;">其余 76 题 AI 自行审查发现并推荐 &#x2192; 用户=逐轮确认者，非指挥者</p>
+      </div>
+      <div class="quote">
+        <p style="font-size:0.95rem;"><i class="fa-solid fa-filter-circle-dollar"></i> <strong>用户纠正率：4/83 = 5%</strong> — 印证知识转移已完成</p>
+      </div>
+      <h4 style="margin-top:0.8rem;">3 条贯穿反模式</h4>
+      <div class="icon-list">
+        <div class="icon-bullet"><i class="fa-solid fa-ban"></i><div><p>禁止单据编号自建</p></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-ban"></i><div><p>禁止业务配置塞 <code>nop-config</code></p></div></div>
+        <div class="icon-bullet"><i class="fa-solid fa-ban"></i><div><p>禁止裸用 <code>LocalDateTime.now()</code></p></div></div>
+      </div>
+    </div>
+  </div>
+  <p style="text-align:center;font-weight:600;color:var(--color-primary);">过渡 &#x2192; "知识转移完成后，是什么让项目继续自己往前走？"</p>
+</section>
+
+<!-- S14: 六种自驱动机制总览 -->
+<section class="slide">
+  <h2>六种自驱动机制总览</h2>
+  <p style="font-size:1rem;color:var(--color-text-light);margin-bottom:1rem;">去掉外部输入后，项目靠六种内部机制自驱</p>
+  <div class="two-column">
+    <div class="column">
+      <svg width="350" height="350" viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <polygon points="175,30 290,115 260,255 90,255 60,115" fill="rgba(37,99,235,0.06)" stroke="#2563eb" stroke-width="2"/>
+        <line x1="175" y1="30" x2="175" y2="255" stroke="rgba(37,99,235,0.15)" stroke-width="1"/>
+        <line x1="60" y1="115" x2="290" y2="115" stroke="rgba(37,99,235,0.15)" stroke-width="1"/>
+        <text x="175" y="18" text-anchor="middle" fill="#2563eb" font-size="10" font-weight="700">&#x2460; 计划-审计闭环</text>
+        <text x="305" y="115" text-anchor="start" fill="#2563eb" font-size="9" font-weight="600">&#x2461; 路线图</text>
+        <text x="275" y="262" text-anchor="end" fill="#2563eb" font-size="9" font-weight="600">&#x2462; 审计整改</text>
+        <text x="65" y="262" text-anchor="start" fill="#2563eb" font-size="9" font-weight="600">&#x2463; 测试回归</text>
+        <text x="45" y="118" text-anchor="end" fill="#2563eb" font-size="9" font-weight="600">&#x2464; 竞品对标</text>
+        <text x="175" y="280" text-anchor="middle" fill="#2563eb" font-size="9" font-weight="600">&#x2465; 文档一致性</text>
+        <circle cx="175" cy="85" r="4" fill="#2563eb"/><circle cx="240" cy="115" r="4" fill="#2563eb"/>
+        <circle cx="215" cy="235" r="4" fill="#2563eb"/><circle cx="135" cy="235" r="4" fill="#2563eb"/>
+        <circle cx="110" cy="115" r="4" fill="#2563eb"/><circle cx="175" cy="160" r="4" fill="#2563eb"/>
+      </svg>
+    </div>
+    <div class="column">
+      <div class="card-grid" style="grid-template-columns:1fr;gap:8px;">
+        <div class="card" style="padding:10px 14px;"><h4 style="margin:0;font-size:1rem;"><i class="fa-solid fa-star" style="color:#f59e0b;"></i> 1. 计划-执行-审计闭环</h4><p class="details" style="margin:0;">187 计划，强制双审计 — 最核心</p></div>
+        <div class="card" style="padding:10px 14px;"><h4 style="margin:0;font-size:1rem;"><i class="fa-solid fa-list-check"></i> 2. 路线图驱动</h4><p class="details" style="margin:0;">3 子路线图逐项推进</p></div>
+        <div class="card" style="padding:10px 14px;"><h4 style="margin:0;font-size:1rem;"><i class="fa-solid fa-magnifying-glass"></i> 3. 审计-整改驱动</h4><p class="details" style="margin:0;">9 轮审计（Act 4 展开）</p></div>
+        <div class="card" style="padding:10px 14px;"><h4 style="margin:0;font-size:1rem;"><i class="fa-solid fa-shield"></i> 4. 测试回归防护</h4><p class="details" style="margin:0;">~2890 单元 + 260 E2E</p></div>
+        <div class="card" style="padding:10px 14px;"><h4 style="margin:0;font-size:1rem;"><i class="fa-solid fa-scale-balanced"></i> 5. 竞品对标驱动</h4><p class="details" style="margin:0;">24 项目作完整性参照系</p></div>
+        <div class="card" style="padding:10px 14px;"><h4 style="margin:0;font-size:1rem;"><i class="fa-solid fa-file-shield"></i> 6. 文档一致性驱动</h4><p class="details" style="margin:0;">ORM XML 唯一真相源</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S15: 机制 1 深展：计划-审计闭环 -->
+<section class="slide">
+  <h2>机制 1：计划-审计闭环</h2>
+  <svg width="880" height="260" viewBox="0 0 880 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+    <defs><marker id="aS15" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#2563eb"/></marker></defs>
+    <rect x="20" y="90" width="100" height="50" rx="8" fill="#dbeafe" stroke="#2563eb"/><text x="70" y="120" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600">需求/想法</text>
+    <line x1="120" y1="115" x2="155" y2="115" stroke="#2563eb" stroke-width="2" marker-end="url(#aS15)"/>
+    <rect x="160" y="90" width="95" height="50" rx="8" fill="#dbeafe" stroke="#2563eb"/><text x="208" y="120" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600">计划草案</text>
+    <line x1="255" y1="115" x2="290" y2="115" stroke="#2563eb" stroke-width="2" marker-end="url(#aS15)"/>
+    <rect x="295" y="90" width="100" height="50" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/><text x="345" y="108" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="700">&#x1F6E1; 草案审计</text><text x="345" y="126" text-anchor="middle" fill="#991b1b" font-size="8">拦方向性错误</text>
+    <line x1="395" y1="115" x2="430" y2="115" stroke="#2563eb" stroke-width="2" marker-end="url(#aS15)"/>
+    <rect x="435" y="90" width="70" height="50" rx="8" fill="#dbeafe" stroke="#2563eb"/><text x="470" y="120" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600">修订</text>
+    <line x1="505" y1="115" x2="540" y2="115" stroke="#2563eb" stroke-width="2" marker-end="url(#aS15)"/>
+    <rect x="545" y="90" width="70" height="50" rx="8" fill="#fef3c7" stroke="#f59e0b"/><text x="580" y="120" text-anchor="middle" fill="#92400e" font-size="11" font-weight="600">active</text>
+    <line x1="615" y1="115" x2="650" y2="115" stroke="#2563eb" stroke-width="2" marker-end="url(#aS15)"/>
+    <rect x="655" y="90" width="75" height="50" rx="8" fill="#dbeafe" stroke="#2563eb"/><text x="693" y="120" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="600">执行</text>
+    <line x1="693" y1="140" x2="693" y2="175" stroke="#2563eb" stroke-width="2" marker-end="url(#aS15)"/>
+    <rect x="618" y="180" width="100" height="50" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/><text x="668" y="198" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="700">&#x1F6E1; 结束审计</text><text x="668" y="216" text-anchor="middle" fill="#991b1b" font-size="8">验交付完整性+自省</text>
+    <line x1="618" y1="205" x2="500" y2="205" stroke="#2563eb" stroke-width="2" marker-end="url(#aS15)"/>
+    <rect x="405" y="180" width="90" height="50" rx="8" fill="#dcfce7" stroke="#059669" stroke-width="2"/><text x="450" y="210" text-anchor="middle" fill="#065f46" font-size="11" font-weight="700">completed</text>
+    <rect x="30" y="245" width="810" height="18" rx="6" fill="#f0fdf4"/>
+    <text x="435" y="258" text-anchor="middle" fill="#065f46" font-size="10" font-weight="600">&#x1F916; 独立子代理冷重放：全新会话，不继承主代理上下文，规避确认偏差</text>
+  </svg>
+  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-top:0;">
+    <div class="stat-card"><span class="stat-number" style="font-size:2.5rem;">187</span><span class="stat-label">计划（每份带状态/范围/退出标准/验证清单）</span></div>
+    <div class="stat-card"><span class="stat-number" style="font-size:1.6rem;color:#dc2626;">07-10</span><span class="stat-label">草案审计拦下 4 个 P0</span></div>
+    <div class="stat-card"><span class="stat-number" style="font-size:1.6rem;">强制双审计</span><span class="stat-label">草案审计 + 结束审计</span></div>
+  </div>
+</section>
+
+<!-- S16: 【核心架构图】内部信息循环 -->
+<section class="slide">
+  <h2>内部信息循环</h2>
+  <div style="display:flex;justify-content:center;">
+    <svg width="600" height="320" viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;max-width:600px;">
+      <defs><marker id="aCyc" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0,0 7,2.5 0,5" fill="#2563eb"/></marker></defs>
+      <ellipse cx="300" cy="140" rx="250" ry="80" fill="none" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="6,4"/>
+      <rect x="80" y="40" width="85" height="44" rx="8" fill="#dbeafe" stroke="#2563eb"/><text x="122" y="58" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="700">Backlog</text><text x="122" y="76" text-anchor="middle" fill="#6b7280" font-size="7">docs/backlog/</text>
+      <line x1="165" y1="62" x2="200" y2="62" stroke="#2563eb" stroke-width="2" marker-end="url(#aCyc)"/>
+      <rect x="205" y="40" width="80" height="44" rx="8" fill="#dbeafe" stroke="#2563eb"/><text x="245" y="58" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="700">Plan</text><text x="245" y="76" text-anchor="middle" fill="#6b7280" font-size="7">docs/plans/</text>
+      <line x1="285" y1="62" x2="320" y2="62" stroke="#2563eb" stroke-width="2" marker-end="url(#aCyc)"/>
+      <rect x="325" y="40" width="95" height="44" rx="8" fill="#fef2f2" stroke="#dc2626"/><text x="372" y="58" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="700">&#x1F6E1; 草案审计</text><text x="372" y="76" text-anchor="middle" fill="#6b7280" font-size="7">冷重放</text>
+      <line x1="420" y1="62" x2="455" y2="62" stroke="#2563eb" stroke-width="2" marker-end="url(#aCyc)"/>
+      <rect x="460" y="40" width="65" height="44" rx="8" fill="#dbeafe" stroke="#2563eb"/><text x="492" y="58" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="700">执行</text><text x="492" y="76" text-anchor="middle" fill="#6b7280" font-size="7">代码</text>
+      <line x1="492" y1="84" x2="492" y2="120" stroke="#2563eb" stroke-width="2" marker-end="url(#aCyc)"/>
+      <rect x="460" y="125" width="65" height="44" rx="8" fill="#dbeafe" stroke="#2563eb"/><text x="492" y="143" text-anchor="middle" fill="#1e40af" font-size="10" font-weight="700">Log</text><text x="492" y="161" text-anchor="middle" fill="#6b7280" font-size="7">docs/logs/</text>
+      <line x1="460" y1="147" x2="380" y2="147" stroke="#2563eb" stroke-width="2"/><line x1="380" y1="147" x2="380" y2="200" stroke="#ef4444" stroke-width="1.5" marker-end="url(#aCyc)"/>
+      <rect x="325" y="205" width="110" height="36" rx="6" fill="#fef2f2" stroke="#ef4444"/><text x="380" y="220" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="600">Bug</text><text x="380" y="234" text-anchor="middle" fill="#991b1b" font-size="7">docs/bugs/</text>
+      <line x1="380" y1="147" x2="380" y2="165" stroke="#2563eb" stroke-width="1.5"/><line x1="380" y1="165" x2="220" y2="165" stroke="#d97706" stroke-width="1.5" marker-end="url(#aCyc)"/>
+      <rect x="160" y="152" width="110" height="36" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="215" y="167" text-anchor="middle" fill="#92400e" font-size="9" font-weight="600">Audit</text><text x="215" y="181" text-anchor="middle" fill="#78350f" font-size="7">docs/audits/</text>
+      <line x1="380" y1="241" x2="380" y2="268" stroke="#ef4444" stroke-width="1.5"/><rect x="325" y="268" width="110" height="30" rx="6" fill="#fef2f2" stroke="#ef4444"/><text x="380" y="285" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="600">整改</text>
+      <line x1="220" y1="188" x2="220" y2="268" stroke="#d97706" stroke-width="1.5"/><rect x="140" y="268" width="160" height="30" rx="6" fill="#fef3c7" stroke="#d97706"/><text x="220" y="285" text-anchor="middle" fill="#92400e" font-size="9" font-weight="600">Skill / Lesson</text>
+      <line x1="380" y1="298" x2="380" y2="310" stroke="#059669" stroke-width="2"/><line x1="380" y1="310" x2="122" y2="310" stroke="#059669" stroke-width="2"/><line x1="122" y1="310" x2="122" y2="84" stroke="#059669" stroke-width="2" marker-end="url(#aCyc)"/>
+      <text x="250" y="305" text-anchor="middle" fill="#059669" font-size="9" font-weight="600">新 Plan &#x2192; ...</text>
+    </svg>
+  </div>
+  <p style="text-align:center;font-size:0.85rem;color:#6b7280;">每环节对应 <code>docs/</code> 子目录 + 写作指南 &#x2192; 信息不流失、决策可追溯</p>
+</section>
+
+<!-- S17: 机制 2 + 5：路线图 &#x00D7; 竞品对标 -->
+<section class="slide">
+  <h2>路线图 &#x00D7; 竞品对标</h2>
+  <div class="two-column">
+    <div class="column" style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0;">
+      <h4 style="margin-bottom:0.8rem;"><i class="fa-solid fa-map"></i> 路线图驱动"做什么"的顺序</h4>
+      <div style="border-left:3px solid #2563eb;padding-left:16px;">
+        <p style="font-size:0.95rem;"><span class="tag">crud-roadmap</span> 18 域全 done</p>
+        <p style="font-size:0.85rem;color:#6b7280;">&#x2193;</p>
+        <p style="font-size:0.95rem;"><span class="tag">core-business-roadmap</span> M1/M4/M5</p>
+        <p style="font-size:0.85rem;color:#6b7280;">&#x2193;</p>
+        <p style="font-size:0.95rem;"><span class="tag">extended-roadmap</span> M2/M3</p>
+      </div>
+    </div>
+    <div class="column" style="background:#f8fafc;border-radius:10px;padding:16px;border:1px solid #e2e8f0;">
+      <h4 style="margin-bottom:0.8rem;"><i class="fa-solid fa-scale-balanced"></i> 竞品对标驱动"做成什么样"</h4>
+      <p><span class="tag">24 项目</span> 源码实测（非 README 摘要）</p>
+      <p><span class="tag">10 大主题</span> + <span class="tag">14 场景</span> 首选参考</p>
+      <p style="font-size:0.85rem;color:var(--color-text-light);">每个功能前问："竞品有没有？没有为什么我们要？"</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:0.8rem;">
+    <p style="font-size:0.9rem;margin:0;"><strong>设计来源背书：</strong>凭证三件套 &#x2190; 赤龙 | 库存三层 &#x2190; Odoo | 异步过账 &#x2190; Metasfresh | 多币种双字段 &#x2190; iDempiere | 声明式状态机 &#x2190; Tryton</p>
+  </div>
+</section>
+
+<!-- S18: 竞品调研的厚度 -->
+<section class="slide">
+  <h2>竞品调研的厚度</h2>
+  <p style="font-size:1rem;color:var(--color-text-light);">约 24 个开源项目深度调研（浅克隆到 <code>~/sources/erp/</code> 源码实测）</p>
+  <div class="card-grid card-grid-3" style="margin-top:1rem;">
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-database"></i> Odoo</h4><p class="details">库存三层模型参考</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-industry"></i> ERPNext</h4><p class="details">制造业流程参考</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-coins"></i> iDempiere</h4><p class="details">多币种双字段</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-rocket"></i> Metasfresh</h4><p class="details">异步过账引擎</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-diagram-project"></i> Tryton</h4><p class="details">声明式状态机</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-building"></i> OFBiz</h4><p class="details">成熟企业级模型</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-cubes"></i> Axelor</h4><p class="details">现代低代码 ERP</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-bolt"></i> Carbon</h4><p class="details">轻量快速原型</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-store"></i> Dolibarr</h4><p class="details">简洁中小企业</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;border:2px solid #dc2626;"><h4 style="justify-content:center;font-size:0.95rem;color:#dc2626;"><i class="fa-solid fa-dragon"></i> 赤龙 ERP</h4><p class="details">凭证三件套参考</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-boxes-stacked"></i> 管伊佳</h4><p class="details">中文 ERP 参考</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-feather"></i> 若依</h4><p class="details">国内脚手架参考</p></div>
+    <div class="card" style="text-align:center;padding:12px 8px;"><h4 style="justify-content:center;font-size:0.95rem;"><i class="fa-solid fa-hat-wizard"></i> 悟空</h4><p class="details">轻量 ERP 参考</p></div>
+  </div>
+  <p style="text-align:center;font-size:0.85rem;color:var(--color-text-light);margin-top:0.8rem;">产出：10 大主题 + 14 场景首选参考 + 4 份横向分析 + 8 个"超越点"杠杆</p>
+  <p style="text-align:center;font-weight:600;color:var(--color-primary);margin-top:0.3rem;">过渡 &#x2192; "自转引擎会不会自我欺骗？我们用对抗性审计来回答。"</p>
+</section>
+
+<!-- S19: 【核心洞察图】审计体系的 8 阶段演进 -->
+<section class="slide slide-compact-print">
+  <h2>审计体系的 8 阶段演进</h2>
+  <table class="comparison-table" style="font-size:0.85rem;">
+    <tr><th>阶段</th><th>时间</th><th>方法</th><th>演进点</th></tr>
+    <tr><td>1</td><td>07-02</td><td>单代理 + rg 扫描 + 抽样精读</td><td>首次合规审计，引入复审修正机制</td></tr>
+    <tr><td>2</td><td>07-04</td><td>单代理 + 6 维度逐项证据</td><td>结束审计范式定型</td></tr>
+    <tr><td>3</td><td>07-05-1300</td><td>3 路并行子代理 + 主代理交叉</td><td><strong>首次多代理并行</strong></td></tr>
+    <tr style="background:#fef3c7;font-weight:600;"><td>4</td><td>07-05-1400</td><td>4 路对抗性子代理 + 主代理复核</td><td><strong style="color:#dc2626;">&#x2605; 方法论飞跃："方法存在"&#x2192;"语义保真"</strong></td></tr>
+    <tr><td>5</td><td>07-05-1500</td><td>工具化合规检查器</td><td><strong>人工经验固化为工具</strong>（15 条 R 规则）</td></tr>
+    <tr><td>6</td><td>07-06</td><td>单代理 + UC 断言对照</td><td><strong>粒度切换：代码合规 &#x2192; 业务实现率</strong></td></tr>
+    <tr><td>7</td><td>07-07</td><td>4 路并行 + 自省</td><td>综合审计 + 审计质量回顾</td></tr>
+    <tr><td>8</td><td>07-12</td><td>3 路并行 + 主代理实时复核</td><td>竞争兑现核实 + 纠正 2 处子代理误判</td></tr>
+  </table>
+  <div class="highlight-box" style="margin-top:0.5rem;">
+    <p style="font-size:0.85rem;margin:0;"><strong>5 个演进特征：</strong>单代理&#x2192;多路对抗 / "方法存在"&#x2192;"语义保真" / 人工&#x2192;工具化 / 代码合规&#x2192;业务实现率 / 子代理"缺失"断言须主代理复核</p>
+  </div>
+</section>
+
+<!-- S20: 转折故事：07-05 的"方法论飞跃" -->
+<section class="slide">
+  <h2>转折故事：07-05 的"方法论飞跃"</h2>
+  <p style="font-size:0.95rem;color:var(--color-text-light);margin-bottom:0.8rem;">一天内 3 轮审计（1300 三维 &#x2192; 1400 对抗性 &#x2192; 1500 工具化）</p>
+  <div class="card-grid card-grid-2">
+    <div class="card" style="border-left:4px solid #dc2626;">
+      <h4><i class="fa-solid fa-bolt"></i> 1400 飞跃时刻</h4>
+      <div class="details">
+        <p>4 路对抗性子代理不只看"方法是否存在"，而查<strong>"语义是否保真"</strong></p>
+        <p style="margin-top:0.5rem;"><span class="tag-danger">发现</span> C-2 信用额度多币种语义偏差，评分仅 <strong style="font-size:1.3rem;color:#dc2626;">4/10</strong></p>
+        <p style="font-size:0.85rem;color:#6b7280;">多币种绕过信用控制</p>
+      </div>
+    </div>
+    <div class="card" style="border-left:4px solid #d97706;">
+      <h4><i class="fa-solid fa-triangle-exclamation"></i> 暴露盲区 + 工具化反应</h4>
+      <div class="details">
+        <p>"扩展域是审计盲区" — 60 处时间获取蔓延 / DAG 违规 / 表名错误</p>
+        <p style="margin-top:0.5rem;"><span class="tag-success">当日固化</span> <code>nop-compliance-checker.sh</code></p>
+        <p style="font-size:0.85rem;color:#6b7280;">15 条 R 规则，人工模式 &#x2192; 可重复脚本</p>
+      </div>
+    </div>
+  </div>
+  <div class="card-grid card-grid-3" style="margin-top:0.8rem;">
+    <div class="card" style="text-align:center;padding:10px;"><p style="font-weight:700;color:var(--color-primary);margin:0;">子代理 A</p><p style="font-size:0.85rem;margin:2px 0;">扩展域扫描</p><p style="font-size:0.8rem;color:#dc2626;">60 处问题</p></div>
+    <div class="card" style="text-align:center;padding:10px;"><p style="font-weight:700;color:var(--color-primary);margin:0;">子代理 B</p><p style="font-size:0.85rem;margin:2px 0;">语义保真检查</p><p style="font-size:0.8rem;color:#dc2626;">C-2 评分 4/10</p></div>
+    <div class="card" style="text-align:center;padding:10px;"><p style="font-weight:700;color:var(--color-primary);margin:0;">子代理 C+D</p><p style="font-size:0.85rem;margin:2px 0;">DAG / 合规</p><p style="font-size:0.8rem;color:#dc2626;">违规确认</p></div>
+  </div>
+  <div class="quote" style="margin-top:0.8rem;"><p>教训：文档对比类审计必须与源码交叉验证；评分偏差事件必须回溯归因</p></div>
+</section>
+
+
+
+<!-- S21: 竞争兑现核实：8 个"超越点"的裁决 -->
+<section class="slide">
+  <h2>竞争兑现核实：8 个"超越点"的裁决</h2>
+  <p style="font-size:0.9rem;color:#6b7280;margin-bottom:0.5rem;">触发（07-12）："承诺的功能/优势是否已完整兑现？" &#x2192; 3 路并行子代理 + 主代理实时复核</p>
+  <table class="comparison-table" style="font-size:0.85rem;">
+    <tr><th style="width:35%;">超越点</th><th style="width:12%;">裁决</th><th style="width:53%;">说明</th></tr>
+    <tr><td>多套账 SchemaPropagator</td><td><span class="tag-success">完整兑现</span></td><td></td></tr>
+    <tr><td>业财一体三件套（过账·红字·反写）</td><td><span class="tag-success">完整兑现</span></td><td></td></tr>
+    <tr><td>7 种成本方法</td><td><span class="tag-success">完整兑现</span></td><td></td></tr>
+    <tr><td>AR-AP open-item</td><td><span class="tag-success">完整兑现</span></td><td></td></tr>
+    <tr><td>模型驱动 Delta 文档数据</td><td><span class="tag-warn">有缺口</span></td><td>数据错误</td></tr>
+    <tr><td>制造委外</td><td><span class="tag-warn">有缺口</span></td><td>15 行 CRUD（07-13 已补完整引擎）</td></tr>
+    <tr><td>多公司</td><td><span class="tag-danger">夸大</span></td><td>仅结构地基，无数据隔离/权限/公司间交易</td></tr>
+    <tr><td>域独立部署</td><td><span class="tag-danger">夸大</span></td><td>service 层跨域强耦合</td></tr>
+  </table>
+  <div class="highlight-box" style="margin-top:0.5rem;">
+    <p style="font-size:0.85rem;margin:0;"><strong>主代理纠正 2 处子代理误判：</strong>"零 Delta 使用"错（实测 338 个 view.xml 用 <code>x:extends</code>）/"finance&#x2194;inventory 循环依赖"错（reactor 无环）</p>
+  </div>
+</section>
+
+<!-- S22: 文档诚信事件：一个深度案例 -->
+<section class="slide">
+  <h2>文档诚信事件：一个深度案例</h2>
+  <div class="two-column">
+    <div class="column" style="background:#fef2f2;border-radius:10px;padding:16px;border:1px solid #fecaca;">
+      <h4 style="color:#dc2626;"><i class="fa-solid fa-triangle-exclamation"></i> 发现问题</h4>
+      <ul style="list-style:disc;padding-left:20px;">
+        <li style="font-size:1rem;">设计文档写 <strong>145</strong> 实体</li>
+        <li style="font-size:1rem;">架构文档写 <strong>447</strong> 实体</li>
+        <li style="font-size:1rem;">实际 <strong>352</strong> 自有 + <strong>110</strong> 引用桩</li>
+        <li style="font-size:0.95rem;">"10 份 orm.xml" &#x2192; 实为 <strong>19</strong> 份</li>
+        <li style="font-size:0.95rem;">"多公司 ERP" &#x2192; 仅结构地基</li>
+      </ul>
+    </div>
+    <div class="column" style="background:#f0fdf4;border-radius:10px;padding:16px;border:1px solid #bbf7d0;">
+      <h4 style="color:#059669;"><i class="fa-solid fa-circle-check"></i> 应对</h4>
+      <div style="border-left:3px solid #059669;padding-left:16px;">
+        <p style="font-size:0.95rem;">不掩盖</p>
+        <p style="font-size:0.85rem;color:#6b7280;">&#x2193;</p>
+        <p style="font-size:0.95rem;">独立审计识别</p>
+        <p style="font-size:0.85rem;color:#6b7280;">&#x2193;</p>
+        <p style="font-size:0.95rem;">要求勘误</p>
+        <p style="font-size:0.85rem;color:#6b7280;">&#x2193;</p>
+        <p style="font-size:0.95rem;">整改计划 1504-1 专门修正</p>
+      </div>
+    </div>
+  </div>
+  <div class="key-quote" style="margin-top:1rem;">
+    <p>最强的不是"零缺陷"，而是"<strong>暴露问题而非隐藏问题</strong>"的工程文化</p>
+  </div>
+</section>
+
+<!-- S23: 5 项风险 · 诚实声明 -->
+<section class="slide">
+  <h2>5 项风险 · 诚实声明</h2>
+  <div class="icon-list">
+    <div class="icon-bullet" style="border-left:4px solid #dc2626;">
+      <i class="fa-solid fa-exclamation-triangle" style="color:#dc2626;"></i>
+      <div><p><span class="tag-danger">已响应</span> 文档诚信（最突出）</p><div class="details">计数漂移 / "多公司"夸大 &#x2192; 审计识别 + 勘误 + 整改计划</div></div>
+    </div>
+    <div class="icon-bullet" style="border-left:4px solid #dc2626;">
+      <i class="fa-solid fa-exclamation-triangle" style="color:#dc2626;"></i>
+      <div><p><span class="tag-danger">已响应</span> 多组织行为层缺失</p><div class="details">仅 orgId 列 + 字典 + 树，无隔离/权限/公司间交易 &#x2192; 诚实降级为"结构地基"，排入后续</div></div>
+    </div>
+    <div class="icon-bullet" style="border-left:4px solid #059669;">
+      <i class="fa-solid fa-check-circle" style="color:#059669;"></i>
+      <div><p><span class="tag-success">已解决</span> 制造委外曾空壳</p><div class="details">15 行 CRUD &#x2192; 07-13 落地完整委外引擎（生命周期 + MRP + GL 过账）</div></div>
+    </div>
+    <div class="icon-bullet" style="border-left:4px solid #d97706;">
+      <i class="fa-solid fa-arrow-up-right-dots" style="color:#d97706;"></i>
+      <div><p><span class="tag-warn">持续改进</span> 审计方法论改进空间</p><div class="details">扩展域曾是盲区；子代理断言需复核 &#x2192; 单代理&#x2192;多路&#x2192;语义保真&#x2192;工具化</div></div>
+    </div>
+    <div class="icon-bullet" style="border-left:4px solid #d97706;">
+      <i class="fa-solid fa-pen-to-square" style="color:#d97706;"></i>
+      <div><p><span class="tag-warn">持续改进</span> logs 弱于"为什么"</p><div class="details">强于"做了什么"，弱于决策依据 &#x2192; 建议增"重大审计发现登记"约定</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- S24: defect-aware：健康度总结 -->
+<section class="slide">
+  <h2>健康度总结：defect-aware</h2>
+  <div class="icon-list">
+    <div class="icon-bullet">
+      <i class="fa-solid fa-clock" style="color:#059669;"></i>
+      <div><p>缺陷发现后几乎全在 1-3 天内闭合</p></div>
+    </div>
+    <div class="icon-bullet">
+      <i class="fa-solid fa-rotate" style="color:#059669;"></i>
+      <div><p>审计会自我纠偏</p><div class="details">纠正子代理误判 + 回顾评分偏差</div></div>
+    </div>
+    <div class="icon-bullet">
+      <i class="fa-solid fa-balance-scale" style="color:#059669;"></i>
+      <div><p>同时报告亮点与问题，避免单一偏差</p></div>
+    </div>
+    <div class="icon-bullet">
+      <i class="fa-solid fa-magnifying-glass" style="color:#059669;"></i>
+      <div><p>文档诚信问题被独立识别并要求勘误，而非掩盖</p></div>
+    </div>
+    <div class="icon-bullet">
+      <i class="fa-solid fa-code-branch" style="color:#059669;"></i>
+      <div><p>平台 bug 被主动发现并反哺 nop-entropy</p></div>
+    </div>
+  </div>
+  <div class="key-quote" style="margin-top:1.5rem;">
+    <p style="font-size:1.8rem;font-weight:800;">Not zero-defect — defect-aware.</p>
+  </div>
+  <p style="text-align:center;font-weight:600;color:var(--color-primary);margin-top:1rem;">过渡 &#x2192; "最后一个反哺——项目和平台之间发生了什么？"</p>
+</section>
+
+<!-- S25: 发现并反哺的 7 个平台问题 -->
+<section class="slide">
+  <h2>发现并反哺的 7 个平台问题</h2>
+  <table class="comparison-table" style="font-size:0.85rem;">
+    <tr><th style="width:38%;">发现</th><th style="width:35%;">影响</th><th style="width:12%;">日期</th><th style="width:15%;">类型</th></tr>
+    <tr><td><code>biz:moduleId</code> 必须显式设置</td><td>修跨域 picker 路径错误 + 补 docs-for-ai</td><td>06-23</td><td><span class="tag-warn">文档补充</span></td></tr>
+    <tr><td><code>SiteMapProviderImpl.init()</code> debug 模式不预加载</td><td>修 nop-entropy 源码</td><td>06-23</td><td><span class="tag-danger">源码修复</span></td></tr>
+    <tr><td><code>@Inject List&lt;T&gt;</code> 不自动收集</td><td>改用 <code>app-service.beans.xml</code> collect-beans</td><td>07-01</td><td><span class="tag-warn">文档补充</span></td></tr>
+    <tr><td><code>DataInitInitializer.init()</code> NPE</td><td>修 nop-entropy 源码</td><td>07-08</td><td><span class="tag-danger">源码修复</span></td></tr>
+    <tr><td><code>orm_readonly(boolean)</code> 无视入参</td><td>测试用 evict + requireEntityById 绕过</td><td>07-07</td><td><span class="tag-warn">规避方案</span></td></tr>
+    <tr><td>codegen 模板 <code>&lt;c:when&gt;</code> 标签前缀 bug</td><td>修 nop-entropy 源码</td><td>07-13</td><td><span class="tag-danger">源码修复</span></td></tr>
+    <tr><td>i18n 模板不遍历 dicts</td><td>改造模板</td><td>06-24</td><td><span class="tag-warn">模板改进</span></td></tr>
+  </table>
+  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-top:1rem;">
+    <div class="stat-card"><span class="stat-number" style="color:#dc2626;">3</span><span class="stat-label">源码修复</span></div>
+    <div class="stat-card"><span class="stat-number" style="color:#d97706;">3</span><span class="stat-label">文档/模板补充</span></div>
+    <div class="stat-card"><span class="stat-number" style="color:#6b7280;">1</span><span class="stat-label">规避方案</span></div>
+  </div>
+</section>
+
+<!-- S26: 共生关系图 -->
+<section class="slide">
+  <h2>共生关系图</h2>
+  <div class="two-column" style="align-items:center;">
+    <div class="column" style="background:#eff6ff;border-radius:12px;padding:20px;text-align:center;">
+      <h3 style="margin-top:0;"><i class="fa-solid fa-cube"></i> nop-entropy</h3>
+      <p style="font-size:1rem;color:var(--color-text-light);">平台层</p>
+      <div style="background:white;border-radius:8px;padding:10px;margin:8px 0;font-size:0.85rem;">
+        <p style="margin:2px 0;">codegen / ORM / IoC</p>
+        <p style="margin:2px 0;">GraphQL / AMIS</p>
+      </div>
+      <p style="font-size:0.8rem;color:#059669;margin-top:8px;"><i class="fa-solid fa-arrow-right"></i> 提供能力</p>
+    </div>
+    <div style="text-align:center;padding:0 10px;">
+      <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" style="width:80px;height:auto;">
+        <defs><marker id="aDual" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0,0 6,2.5 0,5" fill="#2563eb"/></marker></defs>
+        <line x1="5" y1="28" x2="70" y2="28" stroke="#2563eb" stroke-width="2.5" marker-end="url(#aDual)"/>
+        <text x="38" y="23" text-anchor="middle" fill="#1e40af" font-size="7" font-weight="600">能力提供</text>
+        <line x1="75" y1="48" x2="10" y2="48" stroke="#059669" stroke-width="2.5" marker-end="url(#aDual)"/>
+        <text x="42" y="58" text-anchor="middle" fill="#065f46" font-size="7" font-weight="600">bug/文档反哺</text>
+      </svg>
+    </div>
+    <div class="column" style="background:#f0fdf4;border-radius:12px;padding:20px;text-align:center;">
+      <h3 style="margin-top:0;"><i class="fa-solid fa-layer-group"></i> nop-app-erp</h3>
+      <p style="font-size:1rem;color:var(--color-text-light);">应用层</p>
+      <div style="background:white;border-radius:8px;padding:10px;margin:8px 0;font-size:0.85rem;">
+        <p style="margin:2px 0;">352 实体 / 154 模块</p>
+        <p style="margin:2px 0;">18+1 业务域</p>
+      </div>
+      <p style="font-size:0.8rem;color:#2563eb;margin-top:8px;"><i class="fa-solid fa-arrow-left"></i> 发现源码 bug 反哺</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="text-align:center;margin-top:1rem;">
+    <p style="margin:0;">不是单向消费，而是<strong>双向互动</strong>——AI 发现源码 bug、文档缺口、模板缺陷 &#x2192; 反哺修复 + docs 补充</p>
+  </div>
+</section>
+
+<!-- S27: 关键架构模式沉淀 -->
+<section class="slide">
+  <h2>关键架构模式沉淀</h2>
+  <div class="card-grid card-grid-3">
+    <div class="card"><h4><i class="fa-solid fa-layer-group"></i> 三层分离</h4><p class="details">BizModel GraphQL 门面 &#x2192; Processor 状态机/规则 &#x2192; DAO 持久化（全域复用）</p></div>
+    <div class="card"><h4><i class="fa-solid fa-plug"></i> 跨域 SPI + collect-beans</h4><p class="details">业财 Provider/Reversal/EDI/MFT（6+ 场景，零硬编码注册）</p></div>
+    <div class="card"><h4><i class="fa-solid fa-puzzle-piece"></i> Processor 扩展模式</h4><p class="details">protected step + IServiceContext 末参 &#x2192; Delta 就绪度 85%&#x2192;98%</p></div>
+    <div class="card"><h4><i class="fa-solid fa-link"></i> 机制 D 三层 FK</h4><p class="details">xmeta + BizLoader + view.xml bounded-merge</p></div>
+    <div class="card"><h4><i class="fa-solid fa-vial"></i> E2E 测试分层</h4><p class="details">冒烟 &#x2192; 数值断言 &#x2192; visual &#x2192; 业务动作 &#x2192; 跨域编排 &#x2192; 反向冲销</p></div>
+    <div class="card"><h4><i class="fa-solid fa-arrow-right-arrow-left"></i> 红字凭证同向取负</h4><p class="details">保持 dcDirection 不变，金额取负</p></div>
+  </div>
+  <p style="text-align:center;font-size:0.85rem;color:var(--color-text-light);margin-top:0.5rem;">上排：架构模式（4）&nbsp;&nbsp;|&nbsp;&nbsp;下排：工程模式（2）</p>
+</section>
+
+<!-- S28: 三个 Takeaway -->
+<section class="slide">
+  <h2>三个 Takeaway</h2>
+  <div class="golden-quote" style="margin-bottom:1.5rem;">
+    <p style="font-size:1rem;margin:0;color:#78350f;">AI 辅助开发的本质 = 知识转移 + 系统化质量门控</p>
+  </div>
+  <div class="card-grid card-grid-3">
+    <div class="card" style="border-top:4px solid #2563eb;">
+      <h4><i class="fa-solid fa-handshake"></i> 人机协作有边界</h4>
+      <div class="details">
+        <p>用户 = 平台权威（A 类）/ 方向指南（B 类）/ 非业务设计者（C 类）</p>
+        <p>早期密集介入 &#x2192; 知识转移完成 &#x2192; 后期放手</p>
+        <p>这不是"AI 自动写代码"，而是"AI 辅助 + 人类定向 + 系统化质量门控"</p>
+      </div>
+    </div>
+    <div class="card" style="border-top:4px solid #059669;">
+      <h4><i class="fa-solid fa-check-double"></i> AGE 工作流有效</h4>
+      <div class="details">
+        <p>八阶段递进，进入条件 + 退出门控明确</p>
+        <p>强制双审计：草案拦方向错误 + 结束验交付完整</p>
+        <p>内部信息循环 + 自我纠偏：评分偏差回顾、子代理误判纠正、方法论持续演进</p>
+      </div>
+    </div>
+    <div class="card" style="border-top:4px solid #d97706;">
+      <h4><i class="fa-solid fa-diagram-project"></i> 模型驱动的产品化路径可行</h4>
+      <div class="details">
+        <p>ORM XML 唯一真相源 &#x2192; codegen &#x2192; 154 模块全链构建</p>
+        <p>Delta 定制就绪度 98%（Processor protected 全面开放）</p>
+        <p>平台共生：发现 7 个平台问题 &#x2192; 反哺 nop-entropy</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S29: 给不同角色的一句建议 -->
+<section class="slide">
+  <h2>给不同角色的一句建议</h2>
+  <div class="icon-list" style="margin-top:1rem;">
+    <div class="icon-bullet">
+      <i class="fa-solid fa-user-tie" style="font-size:1.5rem;"></i>
+      <div>
+        <p>技术团队负责人</p>
+        <div class="details">投资质量门控（审计/测试/工具）比投资"让 AI 写更多代码"回报更高；知识转移前期投入，后期指数回报。</div>
+      </div>
+    </div>
+    <div class="icon-bullet">
+      <i class="fa-solid fa-laptop-code" style="font-size:1.5rem;"></i>
+      <div>
+        <p>Nop 平台用户 / 潜在用户</p>
+        <div class="details">模型驱动能构建产品级应用（非玩具），Delta 定制是差异化竞争力（~98% 纯 Delta）；但 docs-for-ai 有缺口，建议源码级验证。</div>
+      </div>
+    </div>
+    <div class="icon-bullet">
+      <i class="fa-solid fa-flask" style="font-size:1.5rem;"></i>
+      <div>
+        <p>AI 辅助开发研究者</p>
+        <div class="details">三层注入模型（A/B/C）可作组织级 AI 采用的分析框架；审计 8 阶段演进 + 内部信息循环是可复用工程模式。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S30: 结尾页 + 附录入口 -->
+<section class="slide title-slide" style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 40%,#0f172a 100%);">
+  <div class="golden-quote" style="background:rgba(254,243,199,0.15);border-left-color:rgba(245,158,11,0.6);margin-bottom:1.5rem;">
+    <p style="font-size:1.3rem;font-weight:700;color:#fde68a;margin:0;">"AI 辅助开发的本质 = <strong style="color:#fbbf24;">知识转移 + 系统化质量门控</strong>。"</p>
+  </div>
+  <p style="color:#94a3b8;font-size:1rem;margin-bottom:0.5rem;">项目：<strong style="color:#e2e8f0;">nop-app-erp</strong></p>
+  <p style="color:#64748b;font-size:0.9rem;margin-bottom:1.5rem;">相关：nop-entropy · AGE 工作流模板 · docs/ 体系</p>
+  <div style="margin-top:1rem;color:#94a3b8;font-size:0.85rem;">
+    <p style="margin-bottom:0.3rem;"><i class="fa-solid fa-bookmark"></i> 附录索引</p>
+    <p style="font-size:0.8rem;color:#64748b;margin:0;">
+      每日计划产出表 &nbsp;|&nbsp; 验证基线演进 &nbsp;|&nbsp; 审计体系演进 &nbsp;|&nbsp; 关键架构图
+    </p>
+  </div>
+  <div style="margin-top:2rem;">
+    <p style="color:#60a5fa;font-size:1.3rem;font-weight:700;">
+      <i class="fa-solid fa-qrcode"></i> 谢谢，Q&amp;A
+    </p>
+  </div>
+</section>
+
+
+
+<!-- ===== SLIDES END ===== -->
+
+      </div>
+      <div class="controls">
+        <button class="btn" id="home-btn" title="First Slide (Home)"><i class="fa-solid fa-home"></i></button>
+        <button class="btn" id="prev-btn" title="Previous (&larr;)"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="btn" id="next-btn" title="Next (&rarr; / Space)"><i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn" id="fullscreen-btn" title="Fullscreen (F)"><i class="fa-solid fa-expand"></i></button>
+        <button class="btn" id="print-btn" title="Print"><i class="fa-solid fa-print"></i></button>
+        <button class="btn" id="pdf-btn" title="Export to PDF"><i class="fa-solid fa-file-pdf"></i></button>
+      </div>
+    </div>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true, theme: 'default', securityLevel: 'loose',
+        fontFamily: 'var(--font-main)',
+        flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' }
+      });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('presentation-container');
+        const allSlides = document.querySelectorAll('.slide');
+        const homeBtn = document.getElementById('home-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const printBtn = document.getElementById('print-btn');
+        const pdfBtn = document.getElementById('pdf-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const keyboardHint = document.getElementById('keyboard-hint');
+        let currentSlide = 0;
+        const totalSlides = allSlides.length;
+        let hintTimeout = null;
+        function showKeyboardHint() {
+          if (keyboardHint) {
+            keyboardHint.classList.add('show');
+            clearTimeout(hintTimeout);
+            hintTimeout = setTimeout(() => keyboardHint.classList.remove('show'), 3000);
+          }
+        }
+        function showSlide(index, skipHashUpdate) {
+          if (index < 0 || index >= totalSlides) return;
+          allSlides.forEach((s, i) => s.classList.toggle('active', i === index));
+          currentSlide = index;
+          updateControls();
+          if (!skipHashUpdate) updateHash(index);
+        }
+        function updateControls() {
+          slideCounter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+          progressBar.style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+          prevBtn.disabled = currentSlide === 0;
+          nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+        function goToFirstSlide() { showSlide(0); }
+        function toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            container.requestFullscreen().catch(function(err) { alert('Cannot enter fullscreen: ' + err.message); });
+          } else { document.exitFullscreen(); }
+        }
+        function updateHash(index) {
+          var hash = '#slide-' + (index + 1);
+          if (location.hash !== hash) history.pushState(null, null, hash);
+        }
+        function parseHashToIndex() {
+          var m = location.hash.match(/slide-(\d+)/i);
+          if (m) { var idx = parseInt(m[1], 10) - 1; if (!isNaN(idx) && idx >= 0 && idx < totalSlides) return idx; }
+          return null;
+        }
+        function printPresentation() { window.print(); }
+        function hasExternalImages() {
+          return Array.from(document.querySelectorAll('.slide img')).some(function(img) {
+            var src = img.getAttribute('src') || '';
+            return src && !src.startsWith('data:');
+          });
+        }
+        function showLocalFileWarning() {
+          var overlay = document.createElement('div');
+          overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;';
+          var dialog = document.createElement('div');
+          dialog.style.cssText = 'background:white;border-radius:16px;padding:32px 40px;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,0.3);font-family:Inter,-apple-system,sans-serif;';
+          dialog.innerHTML = '<h3 style="margin:0 0 16px;font-size:1.3rem;color:#1f2937;">\u26a0\ufe0f 本地文件模式</h3><p style="color:#4b5563;font-size:1rem;line-height:1.7;margin:0 0 12px;">当前通过 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:0.9em;">file://</code> 协议直接打开，页面中的本地图片将无法嵌入 PDF。</p><div style="display:flex;gap:12px;justify-content:flex-end;"><button id="pdf-cancel-btn" style="padding:10px 20px;border:1px solid #d1d5db;border-radius:8px;background:white;cursor:pointer;font-size:1rem;font-weight:600;color:#4b5563;">取消</button><button id="pdf-continue-btn" style="padding:10px 20px;border:none;border-radius:8px;background:#2563eb;color:white;cursor:pointer;font-size:1rem;font-weight:600;">继续导出</button></div>';
+          overlay.appendChild(dialog);
+          document.body.appendChild(overlay);
+          return new Promise(function(resolve) {
+            dialog.querySelector('#pdf-cancel-btn').onclick = function() { document.body.removeChild(overlay); resolve(false); };
+            dialog.querySelector('#pdf-continue-btn').onclick = function() { document.body.removeChild(overlay); resolve(true); };
+            overlay.onclick = function(e) { if (e.target === overlay) { document.body.removeChild(overlay); resolve(false); } };
+          });
+        }
+        async function prepareForPdf() {
+          var pdfContainer = document.createElement('div');
+          pdfContainer.className = 'pdf-page-container';
+          allSlides.forEach(function(slide) {
+            var clone = slide.cloneNode(true);
+            clone.classList.remove('active');
+            clone.classList.add('pdf-slide');
+            pdfContainer.appendChild(clone);
+          });
+          document.body.appendChild(pdfContainer);
+          return pdfContainer;
+        }
+        async function exportToPDF() {
+          if (location.protocol === 'file:' && hasExternalImages()) {
+            var proceed = await showLocalFileWarning();
+            if (!proceed) return;
+          }
+          var originalButtonContent = pdfBtn.innerHTML;
+          pdfBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+          pdfBtn.disabled = true;
+          prepareForPdf().then(function(pdfContainer) {
+            var options = {
+              margin: 0,
+              filename: 'nop-erp-dev-journey-v2',
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, allowTaint: true, letterRendering: true, backgroundColor: '#ffffff' },
+              jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
+              pagebreak: { mode: ['css'] }
+            };
+            html2pdf()
+              .set(options)
+              .from(pdfContainer)
+              .save()
+              .then(function() {
+                document.body.removeChild(pdfContainer);
+                pdfBtn.innerHTML = originalButtonContent;
+                pdfBtn.disabled = false;
+              })
+              .catch(function(err) {
+                document.body.removeChild(pdfContainer);
+                pdfBtn.innerHTML = originalButtonContent;
+                pdfBtn.disabled = false;
+                alert('PDF export failed: ' + (err.message || err));
+              });
+          });
+        }
+        homeBtn.addEventListener('click', goToFirstSlide);
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        printBtn.addEventListener('click', printPresentation);
+        pdfBtn.addEventListener('click', exportToPDF);
+        document.addEventListener('keydown', function(e) {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+          if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+          if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+          if (e.key === 'Home') { e.preventDefault(); goToFirstSlide(); }
+          if (e.key === 'End') { e.preventDefault(); showSlide(totalSlides - 1); }
+          if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen(); }
+          if (e.key === '?' || e.key === 'h' || e.key === 'H') { e.preventDefault(); showKeyboardHint(); }
+        });
+        var touchStartX = 0;
+        container.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        container.addEventListener('touchend', function(e) {
+          var touchEndX = e.changedTouches[0].screenX;
+          if (touchStartX - touchEndX > 50) nextSlide();
+          if (touchEndX - touchStartX > 50) prevSlide();
+        });
+        window.addEventListener('popstate', function() {
+          var idx = parseHashToIndex();
+          if (idx !== null && idx !== currentSlide) showSlide(idx, true);
+        });
+        var initialIndex = parseHashToIndex();
+        if (initialIndex !== null) showSlide(initialIndex, true);
+        else showSlide(0);
+        setTimeout(function() {
+          if (window.enableContentLightboxForSelector)
+            window.enableContentLightboxForSelector('.mermaid svg, .column img, .slide svg');
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
