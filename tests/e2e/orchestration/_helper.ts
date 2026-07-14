@@ -1225,10 +1225,33 @@ export async function runSubcontractChain(page: Page, options?: MultiLineSubcont
 }
 
 /**
+ * 清理反向冲销移动单（reverseCompletion 红冲经 {@code IErpInvStockMoveBiz.reverse} 生成的 REVERSAL 移动单）。
+ *
+ * 库存域 {@code ErpInvStockMoveProcessor.reverse} 生成的反向冲销移动单为**独立实体**：
+ * relatedBillType=REVERSAL + relatedBillCode=原移动单 code（非原 relatedBillType/relatedBillCode）。
+ * 既有 {@link cleanupStockMove} 仅按 move.id 清理原移动单，REVERSAL 移动单的 ledgers/lines/move 须单独清理；
+ * balance 由原移动单清理整行删除覆盖（反向移动与原移动作用于同一 materialId+warehouseId 余额行），故此处不删 balance。
+ * 无反向冲销移动单时 findFirst 返回 null → no-op（普通正向链路调用安全）。
+ */
+async function cleanupReverseStockMoveIfExists(page: Page, originalMoveCode: string | undefined): Promise<void> {
+  if (!originalMoveCode) return;
+  const revMove = await findFirst<any>(
+    page, 'ErpInvStockMove',
+    andFilter(eqFilter('relatedBillType', 'REVERSAL'), eqFilter('relatedBillCode', originalMoveCode)),
+    'id code',
+  );
+  if (revMove) {
+    await cleanupStockMove(page, revMove);
+  }
+}
+
+/**
  * 清理委外链全部产物（下游不可逆产物优先，头最后）。逻辑删除，容忍部分结果。
  *
  * 清理顺序（依赖反向）：
- *   三段 GL 凭证（billHeadCode={code}-SF/-SR/-SI，与移动单 code 不同，需单独按 billHeadCode 清理）
+ *   三段 GL 凭证（billHeadCode={code}-SF/-SR/-SI，与移动单 code 不同，需单独按 billHeadCode 清理；含原 NORMAL + 红冲 REVERSAL，
+ *     cleanupVoucherByBillCode 无 postingType 过滤，同 billCode 的两类凭证一并删除）
+ *   → 反向冲销移动单（reverseCompletion 红冲生成的 REVERSAL 移动单，独立实体）
  *   → 收货入库移动（成品余额）→ 发料出库移动（组件余额）
  *   → 委外行 + 委外单头 → 前置备货移动（组件余额，issue 清理已删 → no-op）
  *   → 测试专用成品物料 + 组件物料。
@@ -1239,12 +1262,16 @@ export async function cleanupSubcontract(page: Page, r: SubcontractResult): Prom
   const componentIds: any[] = (r.componentMats || []).map((m) => m?.id).filter((v) => v != null);
   const productId = r.productMat?.id;
 
-  // 三段 GL 凭证（billHeadCode = order.code + 后缀，与移动单 code 不同）
+  // 三段 GL 凭证（billHeadCode = order.code + 后缀，与移动单 code 不同；含原 NORMAL + 红冲 REVERSAL）
   if (r.codes?.order) {
     await cleanupVoucherByBillCode(page, r.codes.order + '-SF');
     await cleanupVoucherByBillCode(page, r.codes.order + '-SR');
     await cleanupVoucherByBillCode(page, r.codes.order + '-SI');
   }
+
+  // 反向冲销移动单（reverseCompletion 红冲生成的 REVERSAL 移动单，独立实体；无红冲时 no-op）
+  await cleanupReverseStockMoveIfExists(page, r.issueMove?.code);
+  await cleanupReverseStockMoveIfExists(page, r.receiptMove?.code);
 
   // 收货入库移动 + 成品余额（测试专用成品无种子余额，整行删除安全）
   await cleanupStockMove(page, r.receiptMove, productId, SEED.WH_RAW);

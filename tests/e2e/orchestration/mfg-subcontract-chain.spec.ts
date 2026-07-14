@@ -410,6 +410,137 @@ test.describe('manufacturing SubcontractOrder full lifecycle orchestration brows
       await cleanupSubcontract(page, r);
     }
   });
+
+  // ===== plan 2026-07-14-1934-1: 委外红冲 reverseCompletion 浏览器层 E2E =====
+
+  /**
+   * 红冲正路径：COMPLETED→CANCELLED + posted=false + 三段 GL 红字凭证行同向取负 + 原 NORMAL 凭证 isReversed=true
+   * + issue OUTGOING 移动反向（REVERSAL 移动单）。
+   *
+   * reverseCompletion 经 GraphQL ErpMfgSubcontractOrder__reverseCompletion 浏览器层全栈可达（1825-1 后端落地）。
+   * 三段红字凭证行 dcDirection 不变、金额取负（对齐 0704-1/0730-2/1218-1 reverse voucher line 断言范式）。
+   * receipt（MANUFACTURE）移动反向为 best-effort（inventory 域 inverseMoveType 限制，canSafelyReverse 可能跳过），
+   * 仅硬断言 issue（OUTGOING）移动反向（Non-Goal）。
+   */
+  test('reverseCompletion: COMPLETED→CANCELLED + posted=false + 3 reversal GL vouchers (negated) + original isReversed + issue move reversed', async ({ page }) => {
+    test.setTimeout(120000);
+    await loginAndNavigate(page, '/ErpMfgSubcontractOrder-main');
+
+    const r = await runSubcontractChain(page);
+    try {
+      // ---- 前置态：COMPLETED + posted=true ----
+      let st = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus posted');
+      expect(st?.docStatus, 'pre: docStatus=COMPLETED').toBe('COMPLETED');
+      expect(st?.posted, 'pre: posted=true').toBe(true);
+
+      // ---- reverseCompletion（域级红冲）----
+      await callMutationOk(
+        page, 'ErpMfgSubcontractOrder', 'reverseCompletion',
+        { subcontractOrderId: r.order.id },
+        'id docStatus posted',
+      );
+
+      // ---- 状态回退：CANCELLED + posted=false（经 __get 独立断言）----
+      st = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus posted');
+      expect(st?.docStatus, 'after reverseCompletion: docStatus=CANCELLED').toBe('CANCELLED');
+      expect(st?.posted, 'after reverseCompletion: posted=false').toBe(false);
+
+      // ---- 三段 GL 红字凭证行精确数值断言（同向取负：dcDirection 不变，金额取负）----
+      // SUBCONTRACT_ISSUE 红字：Dr 1408=-issueCost / Cr 1401=-issueCost
+      const revIssueVid = await findVoucherIdByBillCode(page, r.codes.order + '-SI', 'REVERSAL');
+      expect(revIssueVid, 'SUBCONTRACT_ISSUE REVERSAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, revIssueVid, [
+        { subjectCode: '1408', dcDirection: 'DEBIT', debitAmount: -SUBCONTRACT_EXPECT.issueCost, creditAmount: 0 },
+        { subjectCode: '1401', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -SUBCONTRACT_EXPECT.issueCost },
+      ]);
+
+      // SUBCONTRACT_RECEIPT 红字：Dr 1405=-receiptCost / Cr 1408=-receiptCost
+      const revReceiptVid = await findVoucherIdByBillCode(page, r.codes.order + '-SR', 'REVERSAL');
+      expect(revReceiptVid, 'SUBCONTRACT_RECEIPT REVERSAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, revReceiptVid, [
+        { subjectCode: '1405', dcDirection: 'DEBIT', debitAmount: -SUBCONTRACT_EXPECT.receiptCost, creditAmount: 0 },
+        { subjectCode: '1408', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -SUBCONTRACT_EXPECT.receiptCost },
+      ]);
+
+      // SUBCONTRACT_FEE 红字：Dr 1408=-processingFee / Cr 2202=-processingFee
+      const revFeeVid = await findVoucherIdByBillCode(page, r.codes.order + '-SF', 'REVERSAL');
+      expect(revFeeVid, 'SUBCONTRACT_FEE REVERSAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, revFeeVid, [
+        { subjectCode: '1408', dcDirection: 'DEBIT', debitAmount: -SUBCONTRACT_EXPECT.processingFee, creditAmount: 0 },
+        { subjectCode: '2202', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -SUBCONTRACT_EXPECT.processingFee },
+      ]);
+
+      // ---- 原三段 NORMAL 凭证 isReversed=true（markOriginalVoucherReversed）----
+      for (const suffix of ['-SI', '-SR', '-SF']) {
+        const origVid = await findVoucherIdByBillCode(page, r.codes.order + suffix, 'NORMAL');
+        expect(origVid, `original NORMAL voucher ${suffix} should exist`).toBeTruthy();
+        const orig = await findFirst<any>(
+          page, 'ErpFinVoucher', eqFilter('id', Number(origVid)), 'id postingType isReversed',
+        );
+        expect(orig?.postingType, `original ${suffix} postingType=NORMAL`).toBe('NORMAL');
+        expect(orig?.isReversed, `original ${suffix} isReversed=true after reverseCompletion`).toBe(true);
+      }
+
+      // ---- issue OUTGOING 移动反向：REVERSAL 移动单（relatedBillCode=原 issue 移动单 code）存在 ----
+      // 库存域 ErpInvStockMoveProcessor.reverse 生成的反向冲销移动单 relatedBillType=REVERSAL +
+      // relatedBillCode=originalMove.code（非原 relatedBillType），故按 REVERSAL + 原移动单 code 反查。
+      const reverseIssueMove = await findFirst<any>(
+        page, 'ErpInvStockMove',
+        andFilter(eqFilter('relatedBillType', 'REVERSAL'), eqFilter('relatedBillCode', r.issueMove?.code)),
+        'id code',
+      );
+      expect(reverseIssueMove, 'issue OUTGOING move should be reversed (REVERSAL move linked to original issue move code)').toBeTruthy();
+    } finally {
+      await cleanupSubcontract(page, r);
+    }
+  });
+
+  /**
+   * 红冲非法状态守卫：RECEIVED（未 COMPLETED）调用 reverseCompletion 抛 ERR_SUBCONTRACT_CANNOT_REVERSE
+   * + docStatus 保持 RECEIVED 不变。
+   *
+   * validateCanReverse 前置守卫：仅 COMPLETED + posted==true 可红冲（Processor.validateCanReverse:247）。
+   */
+  test('reverseCompletion guard: RECEIVED (not COMPLETED) rejected with ERR_SUBCONTRACT_CANNOT_REVERSE', async ({ page }) => {
+    test.setTimeout(120000);
+    await loginAndNavigate(page, '/ErpMfgSubcontractOrder-main');
+
+    // stopAfterIssue → ISSUED，手动收货至 RECEIVED（未 COMPLETED，未过加工费）
+    const r = await runSubcontractChain(page, { stopAfterIssue: true });
+    try {
+      await callMutationOk(
+        page, 'ErpMfgSubcontractOrder', 'receiveFinished',
+        { subcontractOrderId: r.order.id, receivedQty: SUBCONTRACT_EXPECT.receivedQty, destWarehouseId: SEED.WH_RAW },
+        'id docStatus',
+      );
+      let st = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus');
+      expect(st?.docStatus, 'after manual receive: docStatus=RECEIVED').toBe('RECEIVED');
+      // 捕获 receipt 移动单供 cleanupSubcontract 清理（stopAfterIssue 链路 helper 未设此字段）
+      r.receiptMove = await findFirst<any>(
+        page, 'ErpInvStockMove',
+        andFilter(eqFilter('relatedBillType', 'ERP_MFG_SUBCONTRACT_RECEIPT'), eqFilter('relatedBillCode', r.codes.order)),
+        'id code docStatus posted',
+      );
+
+      // ---- 负路径：RECEIVED 红冲被守卫拒绝 ----
+      const rej = await callMutation(
+        page, 'ErpMfgSubcontractOrder', 'reverseCompletion',
+        { subcontractOrderId: r.order.id },
+        'id',
+      );
+      expect(rej.errors, 'RECEIVED→reverseCompletion should be rejected by guard').toBeTruthy();
+      // Nop GraphQL 在此配置下仅回传 i18n message（不序列化 extensions.errorCode），断言标志性语义 token。
+      // ERR_SUBCONTRACT_CANNOT_REVERSE message 含「不允许红冲」，唯一区分于状态迁移类错误。
+      const rejBody = JSON.stringify(rej.errors);
+      expect(rejBody, 'reject should carry cannot-reverse semantics').toContain('不允许红冲');
+
+      // ---- docStatus 不变（RECEIVED）----
+      st = await verifyState(page, 'ErpMfgSubcontractOrder', r.order.id, 'docStatus');
+      expect(st?.docStatus, 'docStatus unchanged (RECEIVED) after rejected reverseCompletion').toBe('RECEIVED');
+    } finally {
+      await cleanupSubcontract(page, r);
+    }
+  });
 });
 
 // 显式标注种子引用（供 lint/可读性）

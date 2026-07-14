@@ -53,6 +53,24 @@
             <artifactId>nop-xlang-debugger</artifactId>
             <scope>test</scope>
         </dependency>
+            <dependency>
+            <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-assets-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-projects-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
