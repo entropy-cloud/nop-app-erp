@@ -10,13 +10,17 @@ import {
   deleteByFilter,
   deleteById,
 } from './_helper';
-import { cleanupVoucherByBillCode } from '../orchestration/_helper';
+import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines } from '../orchestration/_helper';
 
 /**
  * assets ErpAstMaintenance 资产维修生命周期业务动作浏览器层 E2E（plan 2026-07-14-0215-1 Phase 2）。
  *
  * 验证维修工单 DIRECT @BizMutation 全链编排经 GraphQL /graphql 的全栈可达性 + 状态机迁移 +
  * 费用化/资本化双路径过账触发可观测性（posted 标志翻转）+ reverse 红冲 + cancel 异常路径。
+ *
+ * 0742-1 叠加双路径凭证行精确数值断言：
+ *   - MAINTENANCE_EXPENSE：Dr 6602 / Cr 1002，金额=totalCost=300；红冲同向取负。
+ *   - MAINTENANCE_CAPITALIZATION：Dr 1601 / Cr 1002，金额=capitalizedAmount=250；红冲同向取负。
  *
  * 权威状态机（ErpAstMaintenanceProcessor，maintenance-status 字典）：
  *   DRAFT → submit(SUBMITTED) → startWork(IN_PROGRESS) → completeWork(COMPLETED) →
@@ -125,6 +129,16 @@ test.describe('assets ErpAstMaintenance lifecycle (EXPENSE + CAPITALIZE dual pat
       expect(verified.status, '__get should confirm POSTED').toBe('POSTED');
       expect(verified.posted, '__get should confirm posted=true').toBe(true);
 
+      // MAINTENANCE_EXPENSE 正向凭证行精确数值断言（0742-1）：
+      //   Dr 6602(维修费用) / Cr 1002(银行存款，独立维修 linkedVisit=false)，金额=totalCost=300
+      // 金额派生：LABOR(200) + SPARE_PART(100) = totalCost 300。billHeadCode = mntCode。
+      const expNormalVoucherId = await findVoucherIdByBillCode(page, mntCode, 'NORMAL');
+      expect(expNormalVoucherId, 'MAINTENANCE_EXPENSE NORMAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, expNormalVoucherId, [
+        { subjectCode: '6602', dcDirection: 'DEBIT', debitAmount: 300, creditAmount: 0 },
+        { subjectCode: '1002', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: 300 },
+      ]);
+
       // reverse → COMPLETED + 红冲凭证 + posted=false
       const reversed = await callMutationOk(
         page, 'ErpAstMaintenance', 'reverse', { id: mnt.id }, 'id status posted reversed',
@@ -136,6 +150,14 @@ test.describe('assets ErpAstMaintenance lifecycle (EXPENSE + CAPITALIZE dual pat
       const verifiedRev = await verifyState(page, 'ErpAstMaintenance', mnt.id, 'status posted reversed');
       expect(verifiedRev.status, '__get should confirm COMPLETED after reverse').toBe('COMPLETED');
       expect(verifiedRev.posted, '__get should confirm posted=false').toBe(false);
+
+      // MAINTENANCE_EXPENSE 红冲凭证行断言（0742-1）：REVERSAL 同向取负（Dr 6602=-300 / Cr 1002=-300）
+      const expReversalVoucherId = await findVoucherIdByBillCode(page, mntCode, 'REVERSAL');
+      expect(expReversalVoucherId, 'MAINTENANCE_EXPENSE REVERSAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, expReversalVoucherId, [
+        { subjectCode: '6602', dcDirection: 'DEBIT', debitAmount: -300, creditAmount: 0 },
+        { subjectCode: '1002', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -300 },
+      ]);
 
       // 清理凭证（billHeadCode=mntCode，NORMAL+REVERSAL）
       await cleanupVoucherByBillCode(page, mntCode);
@@ -216,6 +238,16 @@ test.describe('assets ErpAstMaintenance lifecycle (EXPENSE + CAPITALIZE dual pat
       expect(Number(assetAfterPost.originalValue), 'asset originalValue=1000+250').toBe(1250);
       expect(Number(assetAfterPost.netBookValue), 'asset netBookValue=1000+250').toBe(1250);
 
+      // MAINTENANCE_CAPITALIZATION 正向凭证行精确数值断言（0742-1）：
+      //   Dr 1601(固定资产) / Cr 1002(银行存款)，金额=capitalizedAmount=250
+      // 金额派生：SUBCONTRACT(250) = totalCost 250；capitalizedAmount 默认=totalCost。billHeadCode = mntCode。
+      const capNormalVoucherId = await findVoucherIdByBillCode(page, mntCode, 'NORMAL');
+      expect(capNormalVoucherId, 'MAINTENANCE_CAPITALIZATION NORMAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, capNormalVoucherId, [
+        { subjectCode: '1601', dcDirection: 'DEBIT', debitAmount: 250, creditAmount: 0 },
+        { subjectCode: '1002', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: 250 },
+      ]);
+
       // reverse → COMPLETED + 资产原值回退 + 红冲凭证
       const reversed = await callMutationOk(
         page, 'ErpAstMaintenance', 'reverse', { id: mnt.id }, 'id status posted',
@@ -227,6 +259,14 @@ test.describe('assets ErpAstMaintenance lifecycle (EXPENSE + CAPITALIZE dual pat
       const assetAfterReverse = await verifyState(page, 'ErpAstAsset', asset.id, 'originalValue netBookValue');
       expect(Number(assetAfterReverse.originalValue), 'reverse should rollback originalValue=1000').toBe(1000);
       expect(Number(assetAfterReverse.netBookValue), 'reverse should rollback netBookValue=1000').toBe(1000);
+
+      // MAINTENANCE_CAPITALIZATION 红冲凭证行断言（0742-1）：REVERSAL 同向取负（Dr 1601=-250 / Cr 1002=-250）
+      const capReversalVoucherId = await findVoucherIdByBillCode(page, mntCode, 'REVERSAL');
+      expect(capReversalVoucherId, 'MAINTENANCE_CAPITALIZATION REVERSAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, capReversalVoucherId, [
+        { subjectCode: '1601', dcDirection: 'DEBIT', debitAmount: -250, creditAmount: 0 },
+        { subjectCode: '1002', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -250 },
+      ]);
 
       await cleanupVoucherByBillCode(page, mntCode);
     } finally {

@@ -9,13 +9,15 @@ import {
   deleteByFilter,
   deleteById,
 } from './_helper';
-import { findFirst, cleanupVoucherByBillCode } from '../orchestration/_helper';
+import { findFirst, cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines } from '../orchestration/_helper';
 
 /**
  * assets ErpAstCip 在建工程转固链业务动作浏览器层 E2E（plan 2026-07-14-0215-1 Phase 1）。
  *
  * 验证 CIP DIRECT @BizMutation 全链编排经 GraphQL /graphql 的全栈可达性 + 三态状态机迁移 +
  * 成本归集 + 完工转固（建卡 + CAPITALIZATION 业财过账触发可观测性）+ reverseTransfer 红冲回退。
+ *
+ * 0742-1 叠加 CAPITALIZATION 凭证行精确数值断言（Dr 1601 / Cr 1603，正向 + 红冲同向取负）。
  *
  * 权威状态机（ErpAstCipProcessor，cip-status 字典）：
  *   DRAFT --startConstruction--> IN_CONSTRUCTION --transferToAsset--> TRANSFERRED
@@ -142,6 +144,16 @@ test.describe('assets ErpAstCip capitalization (transfer-to-asset) lifecycle', (
       expect(cap, 'capitalization record should exist (sourceCode=cipCode)').toBeTruthy();
       expect(cap!.posted, 'CAPITALIZATION posting should succeed → cap.posted=true').toBe(true);
 
+      // CAPITALIZATION 正向凭证行精确数值断言（0742-1）：Dr 1601(固定资产) / Cr 1603(在建工程)，金额=800
+      // 金额派生：资产原值 = CostItem amountFunctional 汇总 = PURCHASE(500) + OTHER(300) = 800。
+      // billHeadCode = cap.code（CapitalizationPostingDispatcher）；sourceType=CIP → 贷 1603。
+      const capNormalVoucherId = await findVoucherIdByBillCode(page, cap!.code, 'NORMAL');
+      expect(capNormalVoucherId, 'CAPITALIZATION NORMAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, capNormalVoucherId, [
+        { subjectCode: '1601', dcDirection: 'DEBIT', debitAmount: 800, creditAmount: 0 },
+        { subjectCode: '1603', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: 800 },
+      ]);
+
       // reverseTransfer: TRANSFERRED → IN_CONSTRUCTION + 红冲凭证 + 资产回退 + cap 回退
       const reversed = await callMutationOk(
         page, 'ErpAstCip', 'reverseTransfer',
@@ -156,6 +168,15 @@ test.describe('assets ErpAstCip capitalization (transfer-to-asset) lifecycle', (
       );
       expect(verifiedReversed.status, '__get should confirm IN_CONSTRUCTION after reverse').toBe('IN_CONSTRUCTION');
       expect(verifiedReversed.isCompleted, '__get should confirm isCompleted=false').toBe(false);
+
+      // CAPITALIZATION 红冲凭证行断言（0742-1）：REVERSAL 凭证同向取负（Dr 1603=-800 / Cr 1601=-800）
+      // 反向科目对调镜像正向（buildReversalDraft 保持 dcDirection 不变、金额取负：原 Dr 1601→-800 / Cr 1603→-800）。
+      const capReversalVoucherId = await findVoucherIdByBillCode(page, cap!.code, 'REVERSAL');
+      expect(capReversalVoucherId, 'CAPITALIZATION REVERSAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, capReversalVoucherId, [
+        { subjectCode: '1601', dcDirection: 'DEBIT', debitAmount: -800, creditAmount: 0 },
+        { subjectCode: '1603', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -800 },
+      ]);
 
       // 清理：凭证（billHeadCode=cap.code，NORMAL+REVERSAL）→ 折旧计划（assetId）→
       // 资产（completedAssetId）→ 资本化单（cap.id）→ 成本行 + 进度付款（cipId）→ CIP

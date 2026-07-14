@@ -11,13 +11,15 @@ import {
   deleteByFilter,
   deleteById,
 } from './_helper';
-import { cleanupVoucherByBillCode } from '../orchestration/_helper';
+import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines } from '../orchestration/_helper';
 
 /**
  * assets ErpAstInventory 资产盘点生命周期业务动作浏览器层 E2E（plan 2026-07-14-0215-1 Phase 2）。
  *
  * 验证盘点 8 动作 DIRECT @BizMutation 状态机经 GraphQL /graphql 的全栈可达性 + 状态翻转 +
  * ASSET_INVENTORY_ADJUSTMENT 业财过账触发可观测性（posted 标志翻转）+ reverse 红冲 + cancel 异常路径。
+ *
+ * 0742-1 叠加 ASSET_INVENTORY_ADJUSTMENT(SHORTAGE) 凭证行精确数值断言（Dr 6711 / Cr 1601，正向 + 红冲同向取负）。
  *
  * 权威状态机（ErpAstInventoryProcessor，inventory-status 字典）：
  *   createInventory(DRAFT，范围展开为行) → submitForCount(COUNTING) → reconcile(RECONCILING，差异计算) →
@@ -172,6 +174,17 @@ test.describe('assets ErpAstInventory count lifecycle', () => {
       expect(verified.status, '__get should confirm POSTED').toBe('POSTED');
       expect(verified.posted, '__get should confirm posted=true').toBe(true);
 
+      // ASSET_INVENTORY_ADJUSTMENT(SHORTAGE) 正向凭证行精确数值断言（0742-1）：
+      //   Dr 6711(营业外支出) / Cr 1601(固定资产)，金额=shortageAmount=bookValue=500
+      // 金额派生：SHORTAGE 路径 actualQuantity(0) < bookQuantity(1) → varianceAmount=asset netBookValue(500)。
+      // billHeadCode = invCode（AssetInventoryPostingDispatcher）。
+      const invNormalVoucherId = await findVoucherIdByBillCode(page, invCode, 'NORMAL');
+      expect(invNormalVoucherId, 'ASSET_INVENTORY_ADJUSTMENT NORMAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, invNormalVoucherId, [
+        { subjectCode: '6711', dcDirection: 'DEBIT', debitAmount: 500, creditAmount: 0 },
+        { subjectCode: '1601', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: 500 },
+      ]);
+
       // reverse: POSTED → RECONCILING + 红冲凭证 + posted=false
       const reversed = await callMutationOk(
         page, 'ErpAstInventory', 'reverse', { id: inv.id }, 'id status posted',
@@ -182,6 +195,15 @@ test.describe('assets ErpAstInventory count lifecycle', () => {
       const verifiedRev = await verifyState(page, 'ErpAstInventory', inv.id, 'status posted');
       expect(verifiedRev.status, '__get should confirm RECONCILING after reverse').toBe('RECONCILING');
       expect(verifiedRev.posted, '__get should confirm posted=false after reverse').toBe(false);
+
+      // ASSET_INVENTORY_ADJUSTMENT(SHORTAGE) 红冲凭证行断言（0742-1）：
+      //   REVERSAL 凭证同向取负（Dr 6711=-500 / Cr 1601=-500）
+      const invReversalVoucherId = await findVoucherIdByBillCode(page, invCode, 'REVERSAL');
+      expect(invReversalVoucherId, 'ASSET_INVENTORY_ADJUSTMENT REVERSAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, invReversalVoucherId, [
+        { subjectCode: '6711', dcDirection: 'DEBIT', debitAmount: -500, creditAmount: 0 },
+        { subjectCode: '1601', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -500 },
+      ]);
 
       // 清理凭证（billHeadCode=invCode，NORMAL+REVERSAL）
       await cleanupVoucherByBillCode(page, invCode);

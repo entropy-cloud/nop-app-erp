@@ -10,13 +10,15 @@ import {
   deleteByFilter,
   deleteById,
 } from './_helper';
-import { cleanupVoucherByBillCode } from '../orchestration/_helper';
+import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines } from '../orchestration/_helper';
 
 /**
  * assets ErpAstDepreciationSchedule 折旧引擎业务动作浏览器层 E2E（plan 2026-07-14-0215-1 Phase 1）。
  *
  * 验证折旧引擎 @BizMutation（executeDepreciation / reverseDepreciation）经 GraphQL /graphql 的全栈可达性 +
  * 状态机迁移 + DEPRECIATION 业财过账触发可观测性（posted 标志翻转）。
+ *
+ * 0742-1 叠加 DEPRECIATION 凭证行精确数值断言（Dr 6602 / Cr 1602，正向 + 红冲同向取负）。
  *
  * 权威状态机（ErpAstDepreciationScheduleProcessor）：
  *   executeDepreciation(assetId, period) → 计算本期折旧 + 建/更新 schedule(status=EXECUTED) +
@@ -41,6 +43,13 @@ const ORG_ID = 2;
 const CATEGORY_ID = 1;
 const CURRENCY_ID = 1;
 const PERIOD = '2026-07';
+
+/**
+ * STRAIGHT_LINE 月折旧额（确定性派生，对齐 DepreciationCalculator SCALE=4 HALF_UP）：
+ *   amount = (originalValue - residualValue) / usefulLifeMonths = (12000 - 0) / 36 = 333.3333
+ * 凭证行金额取自 schedule.actualAmount（DepreciationPostingDispatcher 经 billData 透传）。
+ */
+const DEP_AMOUNT = 333.3333;
 
 test.describe('assets ErpAstDepreciationSchedule depreciation engine lifecycle', () => {
   test('executeDepreciation → schedule EXECUTED + posted=true + asset rollup → reverseDepreciation → REVERSED', async ({ page }) => {
@@ -82,6 +91,13 @@ test.describe('assets ErpAstDepreciationSchedule depreciation engine lifecycle',
       expect(executed.posted, 'DEPRECIATION posting should succeed → posted=true').toBe(true);
       expect(executed.voucherId, 'posted voucherId should be non-null').toBeTruthy();
 
+      // DEPRECIATION 正向凭证行精确数值断言（0742-1）：Dr 6602(折旧费用) / Cr 1602(累计折旧)，金额=DEP_AMOUNT
+      // executed.voucherId 即 schedule.voucherId（processor tryPost 写入的 NORMAL 凭证 id），可直用。
+      await assertVoucherLines(page, Number(executed.voucherId), [
+        { subjectCode: '6602', dcDirection: 'DEBIT', debitAmount: DEP_AMOUNT, creditAmount: 0 },
+        { subjectCode: '1602', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: DEP_AMOUNT },
+      ]);
+
       // __get 权威确认 schedule 终态
       const verifiedSchedule = await verifyState(
         page, 'ErpAstDepreciationSchedule', executed.id, 'status posted voucherId',
@@ -104,6 +120,15 @@ test.describe('assets ErpAstDepreciationSchedule depreciation engine lifecycle',
       );
       expect(reversed.status, 'reverseDepreciation should set schedule status=REVERSED').toBe('REVERSED');
       expect(reversed.posted, 'reverse should clear posted=false').toBe(false);
+
+      // DEPRECIATION 红冲凭证行断言（0742-1）：REVERSAL 凭证同向取负（Dr 6602=-DEP_AMOUNT / Cr 1602=-DEP_AMOUNT）
+      // 经 findVoucherIdByBillCode(assetCode#period, 'REVERSAL') 反查红字凭证（与原凭证共用 billHeadCode）。
+      const depReversalVoucherId = await findVoucherIdByBillCode(page, `${code}#${PERIOD}`, 'REVERSAL');
+      expect(depReversalVoucherId, 'DEPRECIATION REVERSAL voucher should exist').toBeTruthy();
+      await assertVoucherLines(page, depReversalVoucherId, [
+        { subjectCode: '6602', dcDirection: 'DEBIT', debitAmount: -DEP_AMOUNT, creditAmount: 0 },
+        { subjectCode: '1602', dcDirection: 'CREDIT', debitAmount: 0, creditAmount: -DEP_AMOUNT },
+      ]);
 
       const verifiedReversed = await verifyState(
         page, 'ErpAstDepreciationSchedule', executed.id, 'status posted',
