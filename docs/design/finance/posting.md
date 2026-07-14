@@ -395,6 +395,7 @@ ErpFinAcctDocRegistry
 | sales | `AR_INVOICE`（ErpSalInvoice）/`RECEIPT`（ErpSalReceipt）/`SAL_RETURN`（ErpSalReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | sales 域 `ErpSal*Processor.doReverseApprove` 同型镜像 purchase |
 | sales | `SALES_OUTPUT`（ErpSalDelivery） | 经库存 `ErpInvStockMove` 反冲已出库（delivery 自身仅 posted=false） | 同 purchase receive 语义 |
 | inventory | `OWNERSHIP_TRANSFER`（ErpInvOwnershipTransfer）/`INTER_TRANSFER`（ErpInvTransferOrder）/StockMove/StockTake | `posted=false`/`postedAt=null`/`postedBy=null`（inventory 单据无 approveStatus 状态机轴，仅 posted 翻转） | `ErpInvStockMoveProcessor` 既有 reversal 模式 |
+| manufacturing | `SUBCONTRACT_ISSUE`/`SUBCONTRACT_RECEIPT`/`SUBCONTRACT_FEE`（ErpMfgSubcontractOrder，三段共用同一委外单，billHeadCode = `orderCode + "-SI"/"-SR"/"-SF"`，监听者去后缀反查 code） | `docStatus`: COMPLETED → **CANCELLED**；`posted=false`/`postedAt=null`/`postedBy=null`（委外单为 docStatus 驱动，无 approveStatus 回退——COMPLETED 时 approveStatus 已 APPROVED 且 CANCELLED 为终态） | `MfgSubcontractReversalListener`（plan 2026-07-14-1825-1，镜像 `PurReversalListener` 范式，回退字段差异：docStatus vs approveStatus） |
 
 > **判定原则**：回退目标态由各域自治（设计 `posting.md §反写契约` "域自治、引擎不持有源实体"）。引擎只持 `VoucherReversedEvent` 快照（含 billType+billCode+businessType+traceId），不反向 import 业务域模块（保持 DAG 顶层约束）。
 
