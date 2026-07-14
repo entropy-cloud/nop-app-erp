@@ -1,12 +1,16 @@
 package app.erp.mfg.service.processor;
 
+import app.erp.fin.biz.IErpFinVoucherBiz;
+import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.inv.biz.IErpInvStockMoveBiz;
 import app.erp.inv.biz.StockMoveLineRequest;
 import app.erp.inv.biz.StockMoveRequest;
+import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.posting.MfgPostingExecutor;
 import app.erp.mfg.service.posting.SubcontractPostingDispatcher;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
@@ -19,6 +23,8 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -44,11 +50,14 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *   <li>{@link #issueMaterials}：APPROVED→ISSUED，发料出库（OUTGOING 移动单，材料成本出库）。</li>
  *   <li>{@link #receiveFinished}：ISSUED→RECEIVED，成品入库（INCOMING 移动单，含加工费成本）。</li>
  *   <li>{@link #postProcessingFee}：RECEIVED→COMPLETED，加工费过账（SUBCONTRACT_FEE 凭证，posted=true）。</li>
+ *   <li>{@link #reverseCompletion}：COMPLETED→CANCELLED，全量红冲（SI/SR/SF 凭证 + 两段库存移动 + posted=false）。</li>
  * </ul>
  *
  * <p>config-gated {@code erp-mfg.subcontract-posting-enabled}（默认 false 向后兼容）。
  */
 public class ErpMfgSubcontractOrderProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpMfgSubcontractOrderProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -56,6 +65,8 @@ public class ErpMfgSubcontractOrderProcessor {
     IErpInvStockMoveBiz stockMoveBiz;
     @Inject
     SubcontractPostingDispatcher subcontractPostingDispatcher;
+    @Inject
+    MfgPostingExecutor mfgPostingExecutor;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -67,6 +78,10 @@ public class ErpMfgSubcontractOrderProcessor {
 
     public void setSubcontractPostingDispatcher(SubcontractPostingDispatcher subcontractPostingDispatcher) {
         this.subcontractPostingDispatcher = subcontractPostingDispatcher;
+    }
+
+    public void setMfgPostingExecutor(MfgPostingExecutor mfgPostingExecutor) {
+        this.mfgPostingExecutor = mfgPostingExecutor;
     }
 
     // ---------- 审批轴 ----------
@@ -205,6 +220,120 @@ public class ErpMfgSubcontractOrderProcessor {
         order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED);
         orderDao().updateEntity(order);
         return order;
+    }
+
+    /**
+     * 红冲完工：COMPLETED→CANCELLED。全量撤销已落地的 GL 凭证（SI/SR/SF）+ 反向两段库存移动
+     * （issue/receipt）+ posted=false。镜像 {@code postProcessingFee} Facade→Processor 范式，
+     * protected step 方法拆分供下游派生覆盖。
+     *
+     * <p>config-gate 裁决：红冲 GL 以 {@code posted==true} 为前置（非 config flag），避免正向过账开启→
+     * 红冲前关闭 config→GL 红冲被跳过致孤儿凭证（设计 subcontracting.md §实现偏离补注 §红冲）。
+     */
+    public ErpMfgSubcontractOrder reverseCompletion(Long subcontractOrderId, IServiceContext context) {
+        ErpMfgSubcontractOrder order = requireOrder(String.valueOf(subcontractOrderId), context);
+        validateCanReverse(order, context);
+        reverseGlPostings(order, context);
+        reverseInventoryMoves(order, context);
+        doReverseCompletion(order, context);
+        return order;
+    }
+
+    // ---------- step：红冲完工（protected，下游可逐个覆盖） ----------
+
+    /**
+     * 红冲前置守卫：仅 COMPLETED 且 posted==true 的委外单可红冲。
+     */
+    protected void validateCanReverse(ErpMfgSubcontractOrder order, IServiceContext context) {
+        String status = order.getDocStatus();
+        if (!Objects.equals(status, ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED)
+                || !Boolean.TRUE.equals(order.getPosted())) {
+            throw new NopException(ErpMfgErrors.ERR_SUBCONTRACT_CANNOT_REVERSE)
+                    .param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode())
+                    .param(ErpMfgErrors.ARG_CURRENT_STATUS, status);
+        }
+    }
+
+    /**
+     * 红冲三段 GL 凭证（-SF/-SR/-SI）。posted==true 即有凭证须红冲（非 config flag），避免孤儿凭证；
+     * 逐段 try/catch 吞异常告警保持幂等（对齐 {@link SubcontractPostingDispatcher} 正向过账范式）。
+     */
+    protected void reverseGlPostings(ErpMfgSubcontractOrder order, IServiceContext context) {
+        String code = order.getCode();
+        reverseOneVoucher(code + "-SF", ErpFinBusinessType.SUBCONTRACT_FEE, order);
+        reverseOneVoucher(code + "-SR", ErpFinBusinessType.SUBCONTRACT_RECEIPT, order);
+        reverseOneVoucher(code + "-SI", ErpFinBusinessType.SUBCONTRACT_ISSUE, order);
+    }
+
+    protected void reverseOneVoucher(String billHeadCode, ErpFinBusinessType businessType, ErpMfgSubcontractOrder order) {
+        try {
+            mfgPostingExecutor.reverse(billHeadCode, businessType);
+        } catch (Exception e) {
+            if (e instanceof NopException) {
+                LOG.warn("委外红冲 GL 凭证失败（吞异常保持幂等），委外单 {} billHeadCode={}: {}",
+                        order.getCode(), billHeadCode, e.getMessage());
+            } else {
+                LOG.error("委外红冲 GL 凭证异常（吞异常保持幂等），委外单 {} billHeadCode={}",
+                        order.getCode(), billHeadCode, e);
+            }
+        }
+    }
+
+    /**
+     * 反向两段库存移动（issue OUTGOING + receipt MANUFACTURING）。经 {@code relatedBillType}+{@code relatedBillCode}
+     * 反查原移动单 → {@code IErpInvStockMoveBiz.reverse} 生成反向冲销移动单（余额自动回滚）。
+     * 仅反向仓库前置满足的移动单（{@link #canSafelyReverse}），找不到原移动单或反向失败时吞异常告警，
+     * 不阻断 GL 红冲与状态回退。
+     */
+    protected void reverseInventoryMoves(ErpMfgSubcontractOrder order, IServiceContext context) {
+        reverseOneMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_SUBCONTRACT_RECEIPT, order.getCode(), order, context);
+        reverseOneMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_SUBCONTRACT_ISSUE, order.getCode(), order, context);
+    }
+
+    protected void reverseOneMove(String relatedBillType, String relatedBillCode, ErpMfgSubcontractOrder order,
+                                  IServiceContext context) {
+        try {
+            ErpInvStockMove original = stockMoveBiz.findByRelatedBill(relatedBillType, relatedBillCode, context);
+            if (original == null) {
+                return;
+            }
+            if (!canSafelyReverse(original)) {
+                LOG.warn("委外红冲跳过库存移动反向（移动单仓库不满足反向前置，MANUFACTURE 移动单 sourceWarehouseId 为空时"
+                                + "其反向冲销的 bookkeeper destWarehouseId 为空），委外单 {} relatedBillType={} moveCode={}",
+                        order.getCode(), relatedBillType, original.getCode());
+                return;
+            }
+            stockMoveBiz.reverse(original.getId(), context);
+        } catch (Exception e) {
+            if (e instanceof NopException) {
+                LOG.warn("委外红冲反向库存移动失败（吞异常保持幂等），委外单 {} relatedBillType={}: {}",
+                        order.getCode(), relatedBillType, e.getMessage());
+            } else {
+                LOG.error("委外红冲反向库存移动异常（吞异常保持幂等），委外单 {} relatedBillType={}",
+                        order.getCode(), relatedBillType, e);
+            }
+        }
+    }
+
+    /**
+     * 判断移动单是否可安全反向。库存域 {@code inverseMoveType} 仅反转 INCOMING↔OUTGOING，
+     * MANUFACTURE 等类型保持不变；bookkeeper 对非 OUTGOING 类型走 onIncoming（用 destWarehouseId）。
+     * 故反向冲销的可用仓库取决于原单的 sourceWarehouseId（OUTGOING/MANUFACTURE 反向）或 destWarehouseId（INCOMING 反向）。
+     */
+    protected boolean canSafelyReverse(ErpInvStockMove original) {
+        String moveType = original.getMoveType();
+        if (Objects.equals(moveType, "INCOMING")) {
+            return original.getDestWarehouseId() != null;
+        }
+        return original.getSourceWarehouseId() != null;
+    }
+
+    protected void doReverseCompletion(ErpMfgSubcontractOrder order, IServiceContext context) {
+        order.setPosted(false);
+        order.setPostedAt(null);
+        order.setPostedBy(null);
+        order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_CANCELLED);
+        orderDao().updateEntity(order);
     }
 
     // ---------- step：审批迁移校验（protected，下游可逐个覆盖） ----------

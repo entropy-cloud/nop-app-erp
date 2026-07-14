@@ -62,4 +62,12 @@ public interface IErpMfgSubcontractOrderBiz extends ICrudBiz<ErpMfgSubcontractOr
      */
     @BizMutation
     ErpMfgSubcontractOrder postProcessingFee(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context);
+
+    /**
+     * 红冲完工。COMPLETED→CANCELLED，红冲三段 GL 凭证（SI/SR/SF 经 {@code IErpFinVoucherBiz.reverse}）
+     * + 反向两段库存移动（issue/receipt 经 {@code IErpInvStockMoveBiz.reverse}）+ posted=false。
+     * 仅 COMPLETED 且 posted==true 的委外单可红冲。
+     */
+    @BizMutation
+    ErpMfgSubcontractOrder reverseCompletion(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context);
 }

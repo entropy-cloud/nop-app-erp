@@ -50,6 +50,11 @@
     <bean id="app.erp.mfg.service.posting.SubcontractFeeAcctDocProvider"
           class="app.erp.mfg.service.posting.SubcontractFeeAcctDocProvider"/>
 
+    <!-- 委外域凭证红冲监听者（业财闭环方向二：财务侧红冲→委外单回退 posted=false + docStatus→CANCELLED，M5.2 覆盖 manufacturing 委外段）。
+         注册为 Bean 后由 finance ErpFinReversalListenerRegistry 自动聚合，处理 SUBCONTRACT_ISSUE/RECEIPT/FEE。 -->
+    <bean id="app.erp.mfg.service.posting.MfgSubcontractReversalListener"
+          class="app.erp.mfg.service.posting.MfgSubcontractReversalListener"/>
+
     <!-- 工单齐套校验服务（plan 2026-07-02-2237-1 Phase 2）：BOM 展开 × plannedQuantity 对照 inventory 余额可用量 -->
     <bean id="app.erp.mfg.service.workorder.KitAvailabilityChecker"
           class="app.erp.mfg.service.workorder.KitAvailabilityChecker"/>

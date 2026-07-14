@@ -22,7 +22,7 @@ import java.util.List;
  * 委外加工单 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。
  * 审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）由平台
  * {@code approval-support.xbiz} 标准 source 提供并委托 {@link ErpMfgSubcontractOrderProcessor}。
- * 委外生命周期三段（issueMaterials/receiveFinished/postProcessingFee）+ cancel 委托 Processor。
+ * 委外生命周期三段（issueMaterials/receiveFinished/postProcessingFee）+ cancel + reverseCompletion 委托 Processor。
  *
  * <p>语义见 {@code docs/design/manufacturing/subcontracting.md}。
  */
@@ -63,6 +63,12 @@ public class ErpMfgSubcontractOrderBizModel extends CrudBizModel<ErpMfgSubcontra
     @BizMutation
     public ErpMfgSubcontractOrder postProcessingFee(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context) {
         return subcontractOrderProcessor.postProcessingFee(subcontractOrderId, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpMfgSubcontractOrder reverseCompletion(@Name("subcontractOrderId") Long subcontractOrderId, IServiceContext context) {
+        return subcontractOrderProcessor.reverseCompletion(subcontractOrderId, context);
     }
 
     // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------

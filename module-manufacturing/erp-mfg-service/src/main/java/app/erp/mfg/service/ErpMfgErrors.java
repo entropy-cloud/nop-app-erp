@@ -243,4 +243,9 @@ public interface ErpMfgErrors {
             "erp.err.mfg.subcontract-release.missing-supplier",
             "释放委外建议行[{mrpLineId}]须提供供应商[supplierId]",
             ARG_MRP_LINE_ID);
+
+    ErrorCode ERR_SUBCONTRACT_CANNOT_REVERSE = ErrorCode.define(
+            "erp.err.mfg.subcontract-order.cannot-reverse",
+            "委外单[{subcontractOrderCode}]当前状态[{currentStatus}]不允许红冲，仅 COMPLETED 且已过账的委外单可红冲",
+            ARG_SUBCONTRACT_ORDER_CODE, ARG_CURRENT_STATUS);
 }
