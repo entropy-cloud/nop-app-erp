@@ -106,7 +106,10 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
         QueryBean query = new QueryBean();
         query.addFilter(le("planDate", asOfDate));
         query.addFilter(eq("isInvoiced", false));
-        List<ErpCtInvoicePlan> due = findList(query, null, context);
+        // 经 dao() 直查绕过 XMeta 查询算子白名单（planDate 仅允许 [eq,in,dateBetween,dateTimeBetween]，
+        // 不支持 le；findList 会经 meta 安全层校验报错）。对齐同模块 loadAccruedBillCodes /
+        // findPeriodInvoices 经 daoProvider 直查的范式——内部批量逻辑不经外部 GraphQL 查询算子约束。
+        List<ErpCtInvoicePlan> due = daoProvider().daoFor(ErpCtInvoicePlan.class).findAllByQuery(query);
         int triggered = 0;
         for (ErpCtInvoicePlan plan : due) {
             // 里程碑/完工条款需人工/上游事件确认；triggerInvoice 单点入口校验合同 ACTIVE
