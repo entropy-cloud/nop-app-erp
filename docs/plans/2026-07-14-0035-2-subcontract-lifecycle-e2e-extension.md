@@ -148,6 +148,8 @@ Closure Audit Evidence:
   - Phase 3：cancel 正路径 test（DRAFT/SUBMITTED/APPROVED→CANCELLED，3 场景）+ cancel 守卫 test（单链 ISSUED→RECEIVED→COMPLETED 逐态 cancel 拒绝+docStatus 不变）。
   - **种子数据修复（plan 0035-1 回归，非本计划范围但阻塞验证）**：`app-erp-all/src/main/resources/_vfs/_init-data/erp_md_subject.csv` 重复主键 id=24（1408 委外物资 与 1416 制造差异-委外 冲突，0035-1 commit 03a7d449 引入）导致 fresh-DB 初始化 `nop.err.orm.save-entity-replace-existing-entity` 启动失败。修复：1416 id 24→26（科目码引用不受影响，posting/voucher 按 subjectCode 匹配）。
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS**. All 3 phases verified: MRP release helper + multi-line/partial-receive/cancel-path tests with concrete assertions, config-gating, seed-data fix (1408/1416 subjects). Deferred item (红冲) honestly classified with backend blocker rationale. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - 委外红冲 E2E → 见 `Deferred But Adjudicated`（Successor Required: yes）。

@@ -264,6 +264,8 @@ Closure Audit Evidence:
 - Auditor / Agent: EXECUTE driver (2026-07-10)
 - Evidence: 全 4 Phase 完成。ORM 实体 `ErpInvLandedCost`/`ErpInvLandedCostLine` + 2 字典（landed-cost-alloc-method, cost-element）已生成。分摊引擎 `LandedCostAllocationEngine`（纯函数式，3 种方法）+ 单元测试 5 场景全绿。`ErpInvLandedCostProcessor`（审核编排：分摊→CostAdjust 成本层更新→LANDED_COST(490) 过账）+ `LandedCostAcctDocProvider`（借存货/贷应付）+ `LandedCostPostingDispatcher`。集成测试 `TestErpInvLandedCostEndToEnd` 4 场景全绿（BY_AMOUNT/BY_QUANTITY/多应付对象/防重复分摊）。前端 view.xml 含审核 + 分摊预览按钮，action-auth 菜单已生成。全 reactor `mvn clean install -DskipTests` BUILD SUCCESS。inventory-service `mvn test` 96/96 全绿。
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS**. All 4 phases verified: ErpInvLandedCost entities, LandedCostAllocationEngine (3 methods), LANDED_COST(490) businessType (not 430=PROJECT_SETTLEMENT), LandedCostAcctDocProvider, 9 tests green. Draft-review fixes confirmed applied. Deferred items honestly classified. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - ✅ logistics path-2 运费 → 到岸成本单自动编排（解除 `2026-07-04-1115-3` path-2 Deferred）—— 计划 `2026-07-11-2329-1` completed（config-gated `erp-log.path2-landed-cost-auto-create`，DELIVERED → `IErpInvLandedCostBiz.generateFreightLandedCost` 创建 DRAFT + FREIGHT 行 + 轮询路径修复）

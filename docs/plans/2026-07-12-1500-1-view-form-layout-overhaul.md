@@ -177,6 +177,8 @@ Closure Audit Evidence:
 - Auditor / Agent: main agent self-verification (2026-07-13)
 - Evidence: `mvn clean install -DskipTests` BUILD SUCCESS（含 codegen 增量重生成 154 模块）；`mvn test` BUILD SUCCESS（全 reactor 全绿）；39 实体 view.xml `xmllint --noout` 全 well-formed（仅 pre-existing ui:number namespace warning）；5+ 域抽样 _gen view.xml form layout 无 `id[ID]` 行确认；nop-entropy `view-gen.xlib` + `web-gen.xlib` 变更已 install 到本地 Maven 仓库。
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS_WITH_NOTES**. All 3 phases verified: codegen template fix (view-gen.xlib:46), 0/139 _gen files with id[ID], 39 custom view.xml with genuine grouping + filterOp, doc alignment. NOTE: 1/39 entities (ErpFinVoucherLine) has 0 filterOp (line entity, justified); Phase 0 execution-discovery codegen fixes documented externally. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - ~299 低频实体分组 + 查询表单 successor（触发条件见 Deferred）

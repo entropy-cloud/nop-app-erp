@@ -193,6 +193,8 @@ Closure Audit Evidence:
 - 脏工作树处置: ~885 个未提交 regen 产物确认为合法 codegen 增量，保留工作树供构建；提交决策 deferred
 - owner-doc 对齐: `crud-roadmap.md` Phase 3 done、`project-context.md` 18 域/279 实体、`codebase-map.md` 18 域表+纠正陈旧行
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS**. All Phase 1/2/3 exit criteria verified against live repo: pom.xml 8 new domain -app deps present with matching artifactIds; app.action-auth.xml x:extends 8 paths with correct short names; TestAppActionAuthMerge non-hollow (DslNodeLoader + 18 TOPM id assertions + duplicate detection); crud-roadmap Phase 3 done; no stale context refs. Deferred items honestly classified. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - CRUD 冒烟测试（见紧邻后续计划 `2026-06-30-2328-2-phase4-crud-smoke-tests.md`）

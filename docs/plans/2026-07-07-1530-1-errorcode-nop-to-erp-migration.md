@@ -119,3 +119,7 @@ Exit Criteria:
 ## Closure
 
 **Verdict: Accept closure.** Changes verified: 5 files all use `erp.err.*` prefix, zero `nop.err.*` residuals confirmed via grep and visual inspection. All 5 module tests pass (mfg=96/0/0, qa=91/0/0, cs=68/0/0, drp=22/0/0, notify=9/0/0). Full `mvn clean install -DskipTests` fails on pre-existing master-data build infra issue (missing generated ORM file `app.orm.xml` in module-master-data) — unrelated to this plan. QA test flakiness observed but confirmed pre-existing (not caused by ErrorCode prefix change). CRM `TestErpCrmSequenceAndFunnel` uses `IErpCrmEventBiz` from in-progress plan 1430-3 — not causally related. Text inconsistency (ErpQaErrors checkbox `[ ]→[x]`) corrected during audit.
+
+### Closure Audit Evidence
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS_WITH_NOTES**. Migration verified: zero nop.err.* residuals across 5 targeted domains; git commit confirms exactly 5 files with 87 symmetric insertions/deletions. NOTE: line/count drift from subsequent repo evolution (ErpCsErrors 17->23 codes from later plans); non-blocking, original migration complete. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2.)

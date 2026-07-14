@@ -320,6 +320,8 @@ Closure Audit Evidence:
 - Auditor / Agent: mission-driver execution
 - Evidence: mvn clean install -DskipTests BUILD SUCCESS (全 reactor 154 模块); mvn test 全 workspace 0 failures/0 errors; sales-service 110 tests 0 failures/0 errors (含新增 TestErpSalPricingRuleEngine 10 unit + TestErpSalPricingEndToEnd 7 E2E + TestErpSalPriceListCrud 2 + TestErpSalPricingRuleCrud 2)
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS_WITH_NOTES**. Backend implementation complete and correct: all entities, SPI wiring, pricing engine (4 rule types stackable/priority), config items, unit tests with strong assertions verified. NOTE: two unimplemented Phase 4 frontend items (pricingSource column and 取价 button missing from order view); minor test count arithmetic error (19 vs 21). (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - none（注：`core-business-roadmap.md:27` UC 编号标签漂移为已确认的 owner-doc 漂移，但属另一结果表面——roadmap 文档勘误，不属于本定价引擎计划的范围内项目；不在此处作为被动 follow-up 搁置，应作为独立 doc-alignment 修正项处理）

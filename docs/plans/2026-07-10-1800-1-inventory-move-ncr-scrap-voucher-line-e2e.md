@@ -147,6 +147,8 @@ Closure Audit Evidence:
   - 执行中修复的预存启动阻断（非本计划引入）：ErpFinBudgetScenario.view.xml confirmText 属性违规 / ErpHrLeaveRequest+ErpHrRecruitment.view.xml visibleOn 属性违规 / ErpInvLandedCost.view.xml reloadAfterSuccess 未定义子节点 / pricing-rule+sales-price-list 页面 view.xml 引用路径断裂
   - 执行中发现并解除的配置 gap：NcrPostingDispatcher.resolveAcctSchemaId 读 config erp-qua.ncr-default-acct-schema（默认空→null）致凭证行 acctSchemaId 非空约束失败，webServer JVM 属性增 -Derp-qua.ncr-default-acct-schema=1
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS**. All Phase 1+2 exit criteria verified: 3 voucher line assertions (PURCHASE_INPUT/SALES_OUTPUT/NCR_SCRAP) with exact subject codes and amounts, seed 6711 row exists, webServer config fixed, e2e-runbook.md aligned. No defects. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - NCR reverseNcr 红字凭证行断言（触发条件见 Deferred）

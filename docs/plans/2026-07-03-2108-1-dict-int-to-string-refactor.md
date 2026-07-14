@@ -238,6 +238,8 @@ Closure Audit Evidence:
 - Auditor / Agent: 独立结束审计（新会话）— _pending independent closure audit_
 - Evidence: `mvn clean install -DskipTests` BUILD SUCCESS（146 模块）；`mvn test` BUILD SUCCESS（全域全量测试通过）；grep 门控全部命中 0。
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS_WITH_NOTES**. All exit criteria verified: zero valueType=int, zero INTEGER ext:dict fields, zero dict-field numeric-literal setter calls, constants migrated to String, task.xml bug fixed, json5 inputs migrated, DECIMAL rollback correct. NOTE: 2 contract dicts (sign-status/sign-provider) have numeric values introduced by LATER plan 2200-2, not by this plan. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - 接入 use-approval（见 Deferred）

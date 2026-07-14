@@ -190,6 +190,8 @@ Closure Audit Evidence:
   - Docs sync：`docs/logs/2026/07-12.md` 在场；`docs/design/logistics/state-machine.md` path-2 补注在 §1(:17)/§7(:103,:110)。
   - Deferred honesty：两项 Deferred（真实承运商 HTTP / 汇率精细化）均带触发条件，非范围内缺陷隐藏。
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS**. Every exit criterion verified: SPI->BizModel->Processor chain complete and reachable, config-gated path-2 orchestration with 3 distinct branches, polling-path fix, dependency graph acyclic, 3 integration tests cover positive/skip/idempotent scenarios. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - 真实承运商 HTTP 集成 —— 触发条件：具体承运商接入需求 + 凭证就绪

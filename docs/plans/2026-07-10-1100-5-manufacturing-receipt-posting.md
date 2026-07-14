@@ -247,6 +247,8 @@ Closure Audit Evidence:
   - 验证：`mvn clean install -DskipTests` 全 154 reactor 模块 BUILD SUCCESS；`mvn test -pl mfg-service,inv-service` 102 tests 全绿
   - 文档对齐：state-machine.md §实现偏离补注 L175 标注已实现；0704-2/2237-1 Deferred 解除；core-business-roadmap.md S-5 + README.md P7 标 ✅ done
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS**. All 4 phases verified: MANUFACTURING_RECEIPT(500)/MANUFACTURING_ISSUE(501) business types, InvPostingDispatcher dispatch, ManufacturingIssuePostingDispatcher+AcctDocProvider (194+128 lines), 6 tests green (BUILD SUCCESS). WIP net balance=0 asserted. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - 直接人工/制造费用 GL 过账 successor

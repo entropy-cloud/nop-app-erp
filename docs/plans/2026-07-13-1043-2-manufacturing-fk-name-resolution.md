@@ -165,6 +165,8 @@ Closure Audit Evidence:
 
 - Auditor / Agent: 执行者自验证（mission-driver 自主执行）；独立结束审计待独立子代理补充。验证证据：`module-manufacturing/erp-mfg-service/target/surefire-reports/`（mfg-service 115 测试 0 失败，含 `TestErpMfgFkNameLoader` Tests run: 5, Failures: 0）；154 模块 `mvn clean install -DskipTests` 全绿。
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS_WITH_NOTES**. All 14 entities' mechanism-D wiring (BizModel @BizLoader + view.xml bounded-merge) verified; 5 test assertions green; xmllint passes; uoM relation + safeBatchLoad fix correct. NOTE: plan overstates xmeta layer as explicit file edit (props are runtime-registered via @BizLoader) — matches established codebase pattern, functional claims hold. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - manufacturing 域剩余低频/配置/追溯表 successor（见 Deferred 触发条件）

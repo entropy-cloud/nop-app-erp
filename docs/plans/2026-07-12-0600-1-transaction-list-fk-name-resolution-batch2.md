@@ -167,6 +167,8 @@ Closure Audit Evidence:
   - Finance 全域 185 tests 0 failures/0 errors
   - Pre-existing failures: purchase baseline 68→57、sales baseline 54→20（均减少，非本计划引入）
 
+
+- **Independent Closure Audit (2026-07-14-1449-1 batch)** — Auditor: independent closure audit subagent (fresh session, cold-replay, 2026-07-14). Verdict: **PASS_WITH_NOTES**. All 10 entities' three-layer FK name resolution + ErpSalOrder grid fix verified intact in HEAD. NOTE: post-closure commit (batch4 ede693ad) silently deleted testFinReconciliationFkNameResolution — attributable to batch4, not this plan; production code (xmeta/BizModel/view) remains live. (Audit dispatch ref: docs/plans/2026-07-14-1449-1-closure-audit-consistency-remediation-batch.md Phase 2; this evidence block appended by Phase 3 backfill.)
 Follow-up:
 
 - 全量 FK 名称解析 successor（见上方 Deferred）
