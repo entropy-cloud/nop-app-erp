@@ -1,5 +1,8 @@
 # Plan: 全域 FK 名称解析整改（tagSet="disp" 替换机制 D）
 
+> Plan Status: superseded
+> Superseded By: `2026-07-14-2256-2-fk-display-name-resolution-conformance.md`（本文件为非模板探索草案，范围由该正式计划统一承接并按模板重写）
+
 ## 问题
 
 整个项目 266+ 实体的 FK 名称解析全部采用**机制 D**（手写 xmeta 派生 `*Name` prop + `@BizLoader` Java 方法 + view.xml 列替换为 `*Name`），但这些 FK 引用全部已有 `<to-one>` 关系声明（无论是同模块还是 `notGenCode="true"` 跨模块桩）。

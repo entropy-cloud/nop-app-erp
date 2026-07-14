@@ -134,6 +134,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 后端 `reverseProcess` 未实现（`ErpMfgSubcontractOrderProcessor` 无 GL 红冲/库存反向编排，`SubcontractPostingDispatcher` 无 reverse 方法）。E2E 无可验证对象。
 - Successor Required: `yes`（触发条件：委外红冲后端 successor 落地时）
+- **RELEASED by `2026-07-14-1934-1`**（2026-07-14）：委外红冲后端 successor = 1825-1（completed）已满足触发条件，浏览器层 E2E 由本计划落地——reverseCompletion 正路径 + 守卫 2 测试全绿。
 
 ## Closure
 

@@ -157,6 +157,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 后端 reverseCompletion 落地后才有 E2E 可验证对象。Playwright spec（reverseCompletion → 断言 posted/docStatus/红字凭证/库存回退）为本计划 completed 后的独立 successor。
 - Successor Required: `yes`（触发条件：本计划 completed 后——对齐 0035-2 Deferred「委外红冲 E2E」原始触发条件）
+- **RELEASED by `2026-07-14-1934-1`**（2026-07-14）：委外红冲浏览器层 E2E 落地——`mfg-subcontract-chain.spec.ts` 新增 reverseCompletion 正路径（COMPLETED→CANCELLED + posted=false + 三段 GL 红字凭证行同向取负 + 原 NORMAL 凭证 isReversed=true + issue 移动反向）+ 守卫（RECEIVED→ERR_SUBCONTRACT_CANNOT_REVERSE），9 测试全绿。触发条件「本计划 completed 后」已满足。
 
 ### WorkOrder（非委外）红冲
 

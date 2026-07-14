@@ -1,5 +1,8 @@
 # Plan: BizModel @SingleSession 注解清理
 
+> Plan Status: superseded
+> Superseded By: `2026-07-14-2256-1-bizmodel-singlesession-cleanup.md`（本文件为非模板探索草案，范围由该正式计划统一承接并按模板重写）
+
 ## 问题
 
 49 个 BizModel 的 166 个 `@BizMutation` 方法上叠加了 `@SingleSession` 注解。根据 docs-for-ai：
