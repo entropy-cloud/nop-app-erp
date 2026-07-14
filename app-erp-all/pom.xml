@@ -17,6 +17,7 @@
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.install.skip>true</maven.install.skip>
+        <quarkus.package.type>uber-jar</quarkus.package.type>
     </properties>
 
     <dependencies>
@@ -26,119 +27,136 @@
             <artifactId>nop-quarkus-web-orm-starter</artifactId>
         </dependency>
 
-        <!-- 全部 18 个业务域 app(已传递依赖各自 service/web/dao):原 10 域 -->
+        <!-- 全部 19 个业务域 app(已传递依赖各自 service/web/dao) -->
         <dependency>
-            <artifactId>app-erp-master-data-app</artifactId>
+            <artifactId>app-erp-master-data-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-purchase-app</artifactId>
+            <artifactId>app-erp-purchase-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-sales-app</artifactId>
+            <artifactId>app-erp-sales-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-inventory-app</artifactId>
+            <artifactId>app-erp-inventory-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-finance-app</artifactId>
+            <artifactId>app-erp-finance-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-assets-app</artifactId>
+            <artifactId>app-erp-assets-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-projects-app</artifactId>
+            <artifactId>app-erp-projects-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-manufacturing-app</artifactId>
+            <artifactId>app-erp-manufacturing-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-quality-app</artifactId>
+            <artifactId>app-erp-quality-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <artifactId>app-erp-maintenance-app</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- 新增 8 业务域 app(2026-06-30):crm/cs/hr/aps/contract/drp/logistics/b2b -->
-        <dependency>
-            <artifactId>app-erp-crm-app</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <artifactId>app-erp-cs-app</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <artifactId>app-erp-hr-app</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <artifactId>app-erp-aps-app</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <artifactId>app-erp-contract-app</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <artifactId>app-erp-drp-app</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <artifactId>app-erp-logistics-app</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <artifactId>app-erp-b2b-app</artifactId>
+            <artifactId>app-erp-maintenance-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- 跨域 sys 子系统:通知派发(站内消息 + 经 nop-integration 派发邮件/短信) -->
+        <!-- 扩展 8 域 app -->
         <dependency>
-            <artifactId>app-erp-notify-app</artifactId>
+            <artifactId>app-erp-crm-web</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- 通知外发通道 API:邮件/短信 SPI(IEmailSender/ISmsSender),无供应商时 config-gated 跳过 -->
+        <dependency>
+            <artifactId>app-erp-cs-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-hr-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-aps-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-contract-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-drp-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-logistics-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>app-erp-b2b-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- 通知派发子系统 -->
+        <dependency>
+            <artifactId>app-erp-notify-web</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- 通知外发通道 API -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-integration-api</artifactId>
         </dependency>
 
-        <!-- 系统级模块:nop-auth(已通过业务 app 传递)+ nop-sys -->
+        <!-- 系统级模块 -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-auth-web</artifactId>
+        </dependency>
+
+        <!-- 系统级模块 -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-auth-service</artifactId>
+        </dependency>
+
+        <!-- 系统级模块 -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-sys-web</artifactId>
         </dependency>
 
-        <!-- 系统级模块:工作流 -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-sys-service</artifactId>
+        </dependency>
+
+        <!-- 工作流 -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-wf-service</artifactId>
@@ -148,7 +166,7 @@
             <artifactId>nop-wf-web</artifactId>
         </dependency>
 
-        <!-- 系统级模块:报表 -->
+        <!-- 报表 -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-report-service</artifactId>
@@ -158,18 +176,13 @@
             <artifactId>nop-report-web</artifactId>
         </dependency>
 
-        <!-- 系统级模块:定时任务(方案A:nop-job-local,本地 BeanMethod 调用,无需 RPC。
-             需要在线配置/失败重试台账/分布式时升级为 nop-job-service + nop-rpc-cluster) -->
+        <!-- 定时任务(本地) -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-job-local</artifactId>
         </dependency>
 
-        <!-- 前端支撑 -->
-        <dependency>
-            <groupId>io.github.entropy-cloud</groupId>
-            <artifactId>nop-web-amis-editor</artifactId>
-        </dependency>
+        <!-- 前端站点 -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-web-site</artifactId>
@@ -185,7 +198,7 @@
             <artifactId>quarkus-jdbc-h2</artifactId>
         </dependency>
 
-        <!-- 单元测试:加载 merged action-auth 验证 18 域菜单合并无冲突 -->
+        <!-- 测试 -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-autotest-junit</artifactId>
@@ -197,7 +210,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
@@ -208,7 +220,6 @@
             <plugin>
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
-                <version>${quarkus.platform.version}</version>
                 <executions>
                     <execution>
                         <goals>
