@@ -52,6 +52,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     ErpFinPostingProcessor postingProcessor;
 
     @Override
+    // nop-check: allow @Transactional(REQUIRES_NEW) — 过账独立事务边界，见 processor-extension-pattern.md 硬规则 1
     @BizMutation
     @BizAudit(auditType = AuditType.AUDIT_SUCCESS)
     @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
@@ -60,6 +61,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     }
 
     @Override
+    // nop-check: allow @Transactional(REQUIRES_NEW) — 红冲独立事务边界，与 post 一致
     @BizMutation
     @Transactional(propagation = TransactionPropagation.REQUIRES_NEW)
     public Long reverse(@Name("billHeadCode") String billHeadCode,
