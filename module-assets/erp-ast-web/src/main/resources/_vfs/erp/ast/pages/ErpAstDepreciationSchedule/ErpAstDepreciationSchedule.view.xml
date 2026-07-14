@@ -35,7 +35,6 @@
  plannedAmount[计划折旧额] actualAmount[实际折旧额]
  accumulatedDepreciation[累计折旧] netBookValue[净值]
 ==========^audit[审计信息]=========
- remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
@@ -52,7 +51,6 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
  plannedAmount[计划折旧额] actualAmount[实际折旧额]
  accumulatedDepreciation[累计折旧] netBookValue[净值]
- remark[备注](2)
             </layout>
         </form>
         <form id="add"/>
