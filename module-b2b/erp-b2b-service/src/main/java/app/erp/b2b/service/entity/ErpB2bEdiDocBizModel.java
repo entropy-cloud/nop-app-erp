@@ -17,7 +17,6 @@ import app.erp.b2b.service.spi.IErpB2bEdiProvider;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -67,10 +66,8 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bEdiDoc createOutbound(@Name("relatedBillType") String relatedBillType,
                                        @Name("relatedBillCode") String relatedBillCode,
                                        IServiceContext context) {
@@ -109,7 +106,6 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bEdiDoc markSent(@Name("ediDocId") Long ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String state = doc.getState();
@@ -126,7 +122,6 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bEdiDoc markAcknowledged(@Name("ediDocId") Long ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String state = doc.getState();
@@ -143,7 +138,6 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bEdiDoc markError(@Name("ediDocId") Long ediDocId,
                                   @Name("error") String error,
                                   IServiceContext context) {
@@ -159,7 +153,6 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bEdiDoc retry(@Name("ediDocId") Long ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String state = doc.getState();
@@ -178,7 +171,6 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bEdiDoc cancel(@Name("ediDocId") Long ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String state = doc.getState();
@@ -196,7 +188,6 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bEdiDoc createInbound(@Name("relatedBillType") String relatedBillType,
                                       @Name("relatedBillCode") String relatedBillCode,
                                       @Name("rawPayload") String rawPayload,
@@ -225,7 +216,6 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bEdiDoc archive(@Name("ediDocId") Long ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String state = doc.getState();

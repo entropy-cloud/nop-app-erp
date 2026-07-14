@@ -84,7 +84,7 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
             return null;
         });
 
-        BigDecimal added = collectionBiz.refreshExpenseCost(projectHolder[0], CTX);
+        BigDecimal added = ormTemplate.runInSession(session -> collectionBiz.refreshExpenseCost(projectHolder[0], CTX));
         assertEquals(0, added.compareTo(new BigDecimal("100")), "新增归集=不含税金额 100");
 
         // 归集行已生成
@@ -118,8 +118,8 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
             return null;
         });
 
-        collectionBiz.refreshExpenseCost(projectHolder[0], CTX);
-        BigDecimal secondCall = collectionBiz.refreshExpenseCost(projectHolder[0], CTX);
+        ormTemplate.runInSession(() -> collectionBiz.refreshExpenseCost(projectHolder[0], CTX));
+        BigDecimal secondCall = ormTemplate.runInSession(session -> collectionBiz.refreshExpenseCost(projectHolder[0], CTX));
         assertEquals(0, secondCall.compareTo(BigDecimal.ZERO), "第二次调用无新增（幂等去重）");
 
         List<ErpPrjCostCollectionLine> lines = findAllCollectionLines(
@@ -146,7 +146,7 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
                 return null;
             });
 
-            BigDecimal added = collectionBiz.refreshExpenseCost(projectHolder[0], CTX);
+            BigDecimal added = ormTemplate.runInSession(session -> collectionBiz.refreshExpenseCost(projectHolder[0], CTX));
             assertEquals(0, added.compareTo(BigDecimal.ZERO), "config-gated 关闭时返回 0");
             assertNull(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE, "EC-EXP-003"),
                     "config-gated 关闭时不生成归集行");
@@ -172,7 +172,7 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
             return null;
         });
 
-        ErpPrjProject closed = projectBiz.closeProject(projectHolder[0], CTX);
+        ErpPrjProject closed = ormTemplate.runInSession(session -> projectBiz.closeProject(projectHolder[0], CTX));
         assertEquals(ErpPrjConstants.PROJECT_STATUS_COMPLETED, closed.getStatus());
 
         // closeProject 前已刷新费用归集 → actualCost 含费用

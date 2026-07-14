@@ -77,13 +77,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long shiftId = ids[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
-        ErpHrShiftAssignment a1 = assignmentBiz.assignSingle(empId, shiftId, date, CTX);
+        ErpHrShiftAssignment a1 = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
         assertNotNull(a1.getId());
         assertEquals(ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED, a1.getStatus());
 
         // 同员工同日再次分配 → 冲突
         NopException ex = assertThrows(NopException.class,
-                () -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
+                () -> ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empId, shiftId, date, CTX)));
         assertEquals(ErpHrErrors.ERR_SHIFT_DUPLICATE_ASSIGNMENT.getErrorCode(), ex.getErrorCode());
     }
 
@@ -99,13 +99,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long empB = ids[1];
         Long shiftId = ids[2];
 
-        List<ErpHrShiftAssignment> created = assignmentBiz.assignBatch(
+        List<ErpHrShiftAssignment> created = ormTemplate.runInSession(session -> assignmentBiz.assignBatch(
                 Arrays.asList(empA, empB), shiftId,
-                LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 3), CTX);
+                LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 3), CTX));
         // 2 员工 × 3 天 = 6 条
         assertEquals(6, created.size());
-        assertNotNull(assignmentBiz.findByEmployeeAndDate(empA, LocalDate.of(2026, 7, 2), CTX));
-        assertNotNull(assignmentBiz.findByEmployeeAndDate(empB, LocalDate.of(2026, 7, 3), CTX));
+        assertNotNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empA, LocalDate.of(2026, 7, 2), CTX)));
+        assertNotNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empB, LocalDate.of(2026, 7, 3), CTX)));
     }
 
     @Test
@@ -118,15 +118,15 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long empId = ids[0];
         Long shiftId = ids[1];
 
-        assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 6, 1), CTX);
-        assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 6, 2), CTX);
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 6, 1), CTX));
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 6, 2), CTX));
 
-        List<ErpHrShiftAssignment> copied = assignmentBiz.copyFromPeriod(
+        List<ErpHrShiftAssignment> copied = ormTemplate.runInSession(session -> assignmentBiz.copyFromPeriod(
                 LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 2),
-                LocalDate.of(2026, 7, 1), CTX);
+                LocalDate.of(2026, 7, 1), CTX));
         assertEquals(2, copied.size());
-        assertNotNull(assignmentBiz.findByEmployeeAndDate(empId, LocalDate.of(2026, 7, 1), CTX));
-        assertNotNull(assignmentBiz.findByEmployeeAndDate(empId, LocalDate.of(2026, 7, 2), CTX));
+        assertNotNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empId, LocalDate.of(2026, 7, 1), CTX)));
+        assertNotNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empId, LocalDate.of(2026, 7, 2), CTX)));
     }
 
     @Test
@@ -145,22 +145,22 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long patternId = (Long) seeded[4];
 
         // 2 成员 × staggerDays=1 × 范围 2026-07-01~2026-07-04
-        List<ErpHrShiftAssignment> generated = rotationBiz.generateRotation(
+        List<ErpHrShiftAssignment> generated = ormTemplate.runInSession(session -> rotationBiz.generateRotation(
                 patternId, Arrays.asList(empA, empB), 1,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 4),
-                false, CTX);
+                false, CTX));
         assertFalse(generated.isEmpty(), "轮换应生成至少 1 条排班");
         // empA 起始日有班
-        assertNotNull(assignmentBiz.findByEmployeeAndDate(empA, LocalDate.of(2026, 7, 1), CTX));
+        assertNotNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empA, LocalDate.of(2026, 7, 1), CTX)));
         // empB 错峰 1 天 → 7-1 无班，7-2 有班
-        assertNull(assignmentBiz.findByEmployeeAndDate(empB, LocalDate.of(2026, 7, 1), CTX));
-        assertNotNull(assignmentBiz.findByEmployeeAndDate(empB, LocalDate.of(2026, 7, 2), CTX));
+        assertNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empB, LocalDate.of(2026, 7, 1), CTX)));
+        assertNotNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empB, LocalDate.of(2026, 7, 2), CTX)));
 
         // regenerate 同范围：旧的 SCHEDULELLED 应被取消，重新生成
         long countBefore = countAssignments(empA, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 4));
-        List<ErpHrShiftAssignment> regenerated = rotationBiz.generateRotation(patternId, Arrays.asList(empA, empB), 1,
+        List<ErpHrShiftAssignment> regenerated = ormTemplate.runInSession(session -> rotationBiz.generateRotation(patternId, Arrays.asList(empA, empB), 1,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 4),
-                true, CTX);
+                true, CTX));
         // regenerate 不增加有效排班数（同范围同成员）
         long countAfter = countAssignments(empA, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 4));
         assertEquals(countBefore, countAfter,
@@ -175,9 +175,9 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long patternId = ormTemplate.runInSession(session ->
                 seedRotationPattern("ROT-EMPTY", "[]"));
         NopException ex = assertThrows(NopException.class, () ->
-                rotationBiz.generateRotation(patternId, Arrays.asList(empId), 0,
+                ormTemplate.runInSession(session -> rotationBiz.generateRotation(patternId, Arrays.asList(empId), 0,
                         LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 2),
-                        false, CTX));
+                        false, CTX)));
         assertEquals(ErpHrErrors.ERR_SHIFT_ROTATION_PATTERN_INVALID.getErrorCode(), ex.getErrorCode());
     }
 
@@ -192,12 +192,12 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long shiftId = (Long) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
-        assignmentBiz.assignSingle(empId, shiftId, date, CTX);
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
         seedAttendance(empId, date,
                 LocalDateTime.of(2026, 7, 1, 8, 5),
                 LocalDateTime.of(2026, 7, 1, 17, 5));
 
-        ErpHrAttendance result = shiftBiz.calcAttendance(empId, date, CTX);
+        ErpHrAttendance result = ormTemplate.runInSession(session -> shiftBiz.calcAttendance(empId, date, CTX));
         assertNotNull(result);
         assertEquals(0, result.getLateMinutes().intValue(), "8:05 在 grace 15 内不算迟到");
         assertEquals(0, result.getEarlyLeaveMinutes().intValue(), "17:05 晚于 17:00 不算早退");
@@ -215,14 +215,14 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long shiftId = (Long) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
-        assignmentBiz.assignSingle(empId, shiftId, date, CTX);
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
         // 08:30 签到（迟到 30 分钟，超出 grace 15 → lateMinutes=30）
         // 16:00 签退（早退 60 分钟，超出 grace 15 → earlyLeaveMinutes=60）
         seedAttendance(empId, date,
                 LocalDateTime.of(2026, 7, 1, 8, 30),
                 LocalDateTime.of(2026, 7, 1, 16, 0));
 
-        ErpHrAttendance result = shiftBiz.calcAttendance(empId, date, CTX);
+        ErpHrAttendance result = ormTemplate.runInSession(session -> shiftBiz.calcAttendance(empId, date, CTX));
         assertEquals(30, result.getLateMinutes().intValue(), "08:30 - 08:00 = 30 分钟迟到");
         assertEquals(60, result.getEarlyLeaveMinutes().intValue(), "17:00 - 16:00 = 60 分钟早退");
     }
@@ -239,13 +239,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long shiftId = (Long) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
-        assignmentBiz.assignSingle(empId, shiftId, date, CTX);
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
         // 签到 23:00 当日（准时）+ 签退 08:00 次日（准时）
         seedAttendance(empId, date,
                 LocalDateTime.of(2026, 7, 1, 23, 0),
                 LocalDateTime.of(2026, 7, 2, 8, 0));
 
-        ErpHrAttendance result = shiftBiz.calcAttendance(empId, date, CTX);
+        ErpHrAttendance result = ormTemplate.runInSession(session -> shiftBiz.calcAttendance(empId, date, CTX));
         assertNotNull(result);
         assertEquals(0, result.getLateMinutes().intValue(), "23:00 准时");
         assertEquals(0, result.getEarlyLeaveMinutes().intValue(), "次日 08:00 准时（跨天基准）");
@@ -262,13 +262,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long shiftId = (Long) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
-        assignmentBiz.assignSingle(empId, shiftId, date, CTX);
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
         // 签退 06:00 次日 → 早退 120 分钟（08:00 - 06:00，超 grace 15）
         seedAttendance(empId, date,
                 LocalDateTime.of(2026, 7, 1, 23, 0),
                 LocalDateTime.of(2026, 7, 2, 6, 0));
 
-        ErpHrAttendance result = shiftBiz.calcAttendance(empId, date, CTX);
+        ErpHrAttendance result = ormTemplate.runInSession(session -> shiftBiz.calcAttendance(empId, date, CTX));
         assertEquals(120, result.getEarlyLeaveMinutes().intValue(), "次日 08:00 - 06:00 = 120 分钟早退");
     }
 
@@ -283,9 +283,9 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long shiftId = (Long) seeded[1];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
-        ErpHrShiftAssignment assignment = assignmentBiz.assignSingle(empId, shiftId, date, CTX);
+        ErpHrShiftAssignment assignment = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
         // 无 attendance 记录 → 缺勤
-        ErpHrAttendance result = shiftBiz.calcAttendance(empId, date, CTX);
+        ErpHrAttendance result = ormTemplate.runInSession(session -> shiftBiz.calcAttendance(empId, date, CTX));
         assertNotNull(result);
         assertTrue(result.getIsAbsent(), "requireClockIn=true 且无打卡 → 缺勤");
 
@@ -312,13 +312,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long afternoonId = (Long) seeded[3];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
-        ErpHrShiftAssignment src = assignmentBiz.assignSingle(empA, morningId, date, CTX);
-        ErpHrShiftAssignment tgt = assignmentBiz.assignSingle(empB, afternoonId, date, CTX);
+        ErpHrShiftAssignment src = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empA, morningId, date, CTX));
+        ErpHrShiftAssignment tgt = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empB, afternoonId, date, CTX));
 
-        ErpHrShiftSwapRequest req = swapBiz.submit(src.getId(), tgt.getId(), "测试调换", CTX);
+        ErpHrShiftSwapRequest req = ormTemplate.runInSession(session -> swapBiz.submit(src.getId(), tgt.getId(), "测试调换", CTX));
         assertEquals(ErpHrConstants.SWAP_STATUS_PENDING, req.getStatus());
 
-        ErpHrShiftSwapRequest approved = swapBiz.approve(req.getId(), CTX);
+        ErpHrShiftSwapRequest approved = ormTemplate.runInSession(session -> swapBiz.approve(req.getId(), CTX));
         assertEquals(ErpHrConstants.SWAP_STATUS_APPROVED, approved.getStatus());
 
         // 双方班次应已互换
@@ -345,13 +345,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long afternoonId = (Long) seeded[3];
         LocalDate date = LocalDate.of(2026, 7, 1);
 
-        ErpHrShiftAssignment src = assignmentBiz.assignSingle(empA, morningId, date, CTX);
-        ErpHrShiftAssignment tgt = assignmentBiz.assignSingle(empB, afternoonId, date, CTX);
-        ErpHrShiftSwapRequest req = swapBiz.submit(src.getId(), tgt.getId(), "测试", CTX);
-        swapBiz.reject(req.getId(), CTX);
+        ErpHrShiftAssignment src = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empA, morningId, date, CTX));
+        ErpHrShiftAssignment tgt = ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empB, afternoonId, date, CTX));
+        ErpHrShiftSwapRequest req = ormTemplate.runInSession(session -> swapBiz.submit(src.getId(), tgt.getId(), "测试", CTX));
+        ormTemplate.runInSession(() -> swapBiz.reject(req.getId(), CTX));
         // REJECTED 后再 approve → 非法
         NopException ex = assertThrows(NopException.class,
-                () -> swapBiz.approve(req.getId(), CTX));
+                () -> ormTemplate.runInSession(session -> swapBiz.approve(req.getId(), CTX)));
         assertEquals(ErpHrErrors.ERR_SHIFT_SWAP_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -366,13 +366,13 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         Long shiftId = (Long) seeded[1];
 
         // 排班 7-1 ~ 7-3
-        assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 1), CTX);
-        assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 2), CTX);
-        assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 3), CTX);
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 1), CTX));
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 2), CTX));
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 3), CTX));
         // 休假 7-2 ~ 7-3
         Long leaveId = seedLeaveRequest(empId, LocalDate.of(2026, 7, 2), LocalDate.of(2026, 7, 3));
 
-        shiftBiz.onLeaveApproved(leaveId, CTX);
+        ormTemplate.runInSession(() -> shiftBiz.onLeaveApproved(leaveId, CTX));
 
         // 7-1 仍 SCHEDULED，7-2/7-3 ABSENT
         ErpHrShiftAssignment a1 = daoProvider.daoFor(ErpHrShiftAssignment.class)
@@ -386,7 +386,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         assertEquals(leaveId, a2.getLeaveRequestId());
 
         // 取消休假 → 解除标记
-        shiftBiz.onLeaveCancelled(leaveId, CTX);
+        ormTemplate.runInSession(() -> shiftBiz.onLeaveCancelled(leaveId, CTX));
         ErpHrShiftAssignment a2After = daoProvider.daoFor(ErpHrShiftAssignment.class)
                 .findAllByQuery(buildEmployeeDateQuery(empId, LocalDate.of(2026, 7, 2))).get(0);
         assertEquals(ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED, a2After.getStatus());
@@ -413,7 +413,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
                         ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED,
                         ErpHrConstants.ASSIGNMENT_STATUS_PRESENT,
                         ErpHrConstants.ASSIGNMENT_STATUS_ABSENT))));
-        return assignmentBiz.findCount(q, CTX);
+        return ormTemplate.runInSession(session -> assignmentBiz.findCount(q, CTX));
     }
 
     private Long seedEmployee(String code) {

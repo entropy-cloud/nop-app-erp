@@ -45,7 +45,7 @@ public class TestErpFinAuxiliaryReconGate extends PeriodCloseTestSupport {
             return pid;
         });
 
-        NopException ex = assertThrows(NopException.class, () -> periodBiz.closePeriod(periodId, CTX),
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX)),
                 "辅助账与总账不一致时年度结账被阻止");
         assertTrue(ex.getErrorCode() != null
                         && ex.getErrorCode().contains("auxiliary-recon-mismatch"),

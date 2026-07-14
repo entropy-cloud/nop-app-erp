@@ -19,7 +19,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -87,7 +86,6 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpCtSignatureRequest initSignatureRequest(@Name("contractVersionId") Long contractVersionId,
                                                       @Name("signers") String signersJson,
                                                       @Name("providerCode") String providerCode,
@@ -137,7 +135,6 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpCtSignatureRequest handleSignatureCallback(@Name("providerCode") String providerCode,
                                                          @Name("signature") String signature,
                                                          @Name("eventId") String eventId,
@@ -180,7 +177,6 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpCtSignatureRequest queryAndUpdateStatus(@Name("requestId") Long requestId,
                                                       IServiceContext context) {
         ErpCtSignatureRequest request = requireEntity(String.valueOf(requestId), null, context);
@@ -199,7 +195,6 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpCtSignatureRequest cancelSignatureRequest(@Name("requestId") Long requestId,
                                                         IServiceContext context) {
         ErpCtSignatureRequest request = requireEntity(String.valueOf(requestId), null, context);
@@ -216,7 +211,6 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpCtSignatureRequest rejectSignature(@Name("requestId") Long requestId,
                                                  @Name("reason") String reason,
                                                  IServiceContext context) {

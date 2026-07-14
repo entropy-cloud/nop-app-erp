@@ -94,21 +94,21 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         });
 
         // 源期间 2026-06 正式薪酬
-        ErpHrSalary source = salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
+        ErpHrSalary source = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
         BigDecimal sourceGross = source.getGrossSalary();
         BigDecimal sourceNet = source.getNetSalary();
         assertTrue(sourceGross.signum() > 0, "源应发>0");
 
         // 创建模拟（源=2026-06，目标=2026-08）
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 8, "2026-08 调薪试算", null, CTX);
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 8, "2026-08 调薪试算", null, CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_DRAFT, simulation.getStatus());
         assertNotNull(simulation.getSourceSalaryId());
 
         // adjustItem：基本工资 +5000（覆盖重算：gross↑→tax↑→net↑）
-        ErpHrSalary sim1 = simulationBiz.adjustItem(simulation.getId(), employeeId,
+        ErpHrSalary sim1 = ormTemplate.runInSession(session -> simulationBiz.adjustItem(simulation.getId(), employeeId,
                 "basicSalary", new BigDecimal("15000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX);
+                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
         assertTrue(sim1.getGrossSalary().compareTo(sourceGross) > 0,
                 "调整后 gross 应高于源值");
         assertTrue(sim1.getBasicSalary().compareTo(new BigDecimal("15000")) == 0,
@@ -119,7 +119,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
         // 验证 ItemAdjustment 落库
         List<ErpHrSalarySimulationItemAdjustment> adjList =
-                simulationBiz.listAdjustments(simulation.getId(), employeeId, CTX);
+ ormTemplate.runInSession(session -> simulationBiz.listAdjustments(simulation.getId(), employeeId, CTX));
         assertEquals(1, adjList.size(), "1 条调整记录");
         assertEquals("basicSalary", adjList.get(0).getSalaryItemCode());
         assertEquals(0, adjList.get(0).getOriginalAmount().compareTo(nz(source.getBasicSalary())),
@@ -136,7 +136,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return null;
         });
         List<ErpHrSalarySimulationItemAdjustment> adjList2 =
-                simulationBiz.listAdjustments(simulation.getId(), employeeId, CTX);
+ ormTemplate.runInSession(session -> simulationBiz.listAdjustments(simulation.getId(), employeeId, CTX));
         assertEquals(0, frozenOriginal.compareTo(adjList2.get(0).getOriginalAmount()),
                 "ItemAdjustment.originalAmount 冻结在源快照值（不受源后续修改影响）");
 
@@ -149,8 +149,8 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return null;
         });
         NopException ex = assertThrows(NopException.class, () ->
-                simulationBiz.adjustItem(simulation.getId(), employeeId, "basicSalary",
-                        new BigDecimal("20000"), ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
+                ormTemplate.runInSession(session -> simulationBiz.adjustItem(simulation.getId(), employeeId, "basicSalary",
+                        new BigDecimal("20000"), ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX)));
         assertEquals(ErpHrErrors.ERR_HR_SIMULATION_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -169,16 +169,16 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 5, CTX);
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 5, CTX));
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
 
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 8, "对比测试", null, CTX);
-        simulationBiz.adjustItem(simulation.getId(), employeeId,
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 8, "对比测试", null, CTX));
+        ormTemplate.runInSession(() -> simulationBiz.adjustItem(simulation.getId(), employeeId,
                 "basicSalary", new BigDecimal("15000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX);
+                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
 
-        Map<String, Object> comparison = simulationBiz.getComparison(simulation.getId(), employeeId, CTX);
+        Map<String, Object> comparison = ormTemplate.runInSession(session -> simulationBiz.getComparison(simulation.getId(), employeeId, CTX));
         assertEquals(employeeId, comparison.get("employeeId"));
         assertNotNull(comparison.get("sourcePeriod"));
         assertNotNull(comparison.get("simulationPeriod"));
@@ -208,20 +208,20 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 8, "批量调薪", null, CTX);
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 8, "批量调薪", null, CTX));
 
-        Map<String, Object> result = simulationBiz.applyBatchAdjustment(
+        Map<String, Object> result = ormTemplate.runInSession(session -> simulationBiz.applyBatchAdjustment(
                 simulation.getId(), null, ErpHrConstants.BATCH_ADJUST_TYPE_FIXED,
-                new BigDecimal("3000"), CTX);
+                new BigDecimal("3000"), CTX));
         int affected = ((Number) result.get("affectedCount")).intValue();
         assertTrue(affected >= 1, "至少 1 人受影响");
         BigDecimal totalIncrease = (BigDecimal) result.get("totalGrossIncrease");
         assertTrue(totalIncrease.signum() > 0, "总应发增加>0");
 
         List<ErpHrSalarySimulationItemAdjustment> adjList =
-                simulationBiz.listAdjustments(simulation.getId(), employeeId, CTX);
+ ormTemplate.runInSession(session -> simulationBiz.listAdjustments(simulation.getId(), employeeId, CTX));
         assertFalse(adjList.isEmpty(), "批量调薪生成 ItemAdjustment");
         assertEquals("basicSalary", adjList.get(0).getSalaryItemCode());
     }
@@ -241,15 +241,15 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 8, "异常告警", null, CTX);
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 8, "异常告警", null, CTX));
         // 大幅调薪 +100%（远超 net-pay-change-threshold=0.2 / total-change-threshold=0.1）
-        simulationBiz.adjustItem(simulation.getId(), employeeId,
+        ormTemplate.runInSession(() -> simulationBiz.adjustItem(simulation.getId(), employeeId,
                 "basicSalary", new BigDecimal("20000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX);
+                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
 
-        List<Map<String, Object>> anomalies = simulationBiz.findAnomalies(simulation.getId(), CTX);
+        List<Map<String, Object>> anomalies = ormTemplate.runInSession(session -> simulationBiz.findAnomalies(simulation.getId(), CTX));
         assertFalse(anomalies.isEmpty(), "大幅调薪应触发异常告警");
         boolean hasTotalChange = anomalies.stream()
                 .anyMatch(a -> ErpHrConstants.ANOMALY_TOTAL_CHANGE.equals(a.get("anomalyType")));
@@ -271,13 +271,13 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 8, "无调整测试", null, CTX);
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 8, "无调整测试", null, CTX));
 
         // 无任何 ItemAdjustment → 提交审核被拒
         NopException ex = assertThrows(NopException.class,
-                () -> simulationBiz.submitForReview(simulation.getId(), CTX));
+                () -> ormTemplate.runInSession(session -> simulationBiz.submitForReview(simulation.getId(), CTX)));
         assertEquals(ErpHrErrors.ERR_HR_SIMULATION_NO_ADJUSTMENT.getErrorCode(), ex.getErrorCode());
     }
 
@@ -296,19 +296,22 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 8, "审批流", null, CTX);
-        simulationBiz.adjustItem(simulation.getId(), employeeId,
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 8, "审批流", null, CTX));
+        final Long simId1 = simulation.getId();
+        ormTemplate.runInSession(() -> simulationBiz.adjustItem(simId1, employeeId,
                 "basicSalary", new BigDecimal("12000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX);
+                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
 
         // DRAFT → IN_REVIEW
-        simulation = simulationBiz.submitForReview(simulation.getId(), CTX);
+        final Long simId2 = simulation.getId();
+        simulation = ormTemplate.runInSession(session -> simulationBiz.submitForReview(simId2, CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_IN_REVIEW, simulation.getStatus());
 
         // IN_REVIEW → APPROVED
-        simulation = simulationBiz.approve(simulation.getId(), 1L, CTX);
+        final Long simId3 = simulation.getId();
+        simulation = ormTemplate.runInSession(session -> simulationBiz.approve(simId3, 1L, CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_APPROVED, simulation.getStatus());
         assertEquals(1L, simulation.getReviewerId());
         assertNotNull(simulation.getReviewedAt());
@@ -316,7 +319,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         // 非法迁移：APPROVED 再 submitForReview（期望 DRAFT）→ 抛错
         Long approvedSimId = simulation.getId();
         NopException ex = assertThrows(NopException.class,
-                () -> simulationBiz.submitForReview(approvedSimId, CTX));
+                () -> ormTemplate.runInSession(session -> simulationBiz.submitForReview(approvedSimId, CTX)));
         assertEquals(ErpHrErrors.ERR_HR_SIMULATION_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -335,15 +338,18 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 8, "驳回测试", null, CTX);
-        simulationBiz.adjustItem(simulation.getId(), employeeId,
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 8, "驳回测试", null, CTX));
+        final Long simId1 = simulation.getId();
+        ormTemplate.runInSession(() -> simulationBiz.adjustItem(simId1, employeeId,
                 "basicSalary", new BigDecimal("11000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX);
-        simulation = simulationBiz.submitForReview(simulation.getId(), CTX);
+                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
+        final Long simId2 = simulation.getId();
+        simulation = ormTemplate.runInSession(session -> simulationBiz.submitForReview(simId2, CTX));
 
-        simulation = simulationBiz.reject(simulation.getId(), "调薪幅度不合理", CTX);
+        final Long simId3 = simulation.getId();
+        simulation = ormTemplate.runInSession(session -> simulationBiz.reject(simId3, "调薪幅度不合理", CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_REJECTED, simulation.getStatus());
         assertEquals("调薪幅度不合理", simulation.getNotes());
     }
@@ -363,16 +369,20 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 12, "转正式成功", null, CTX);
-        simulationBiz.adjustItem(simulation.getId(), employeeId,
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 12, "转正式成功", null, CTX));
+        final Long simId1 = simulation.getId();
+        ormTemplate.runInSession(() -> simulationBiz.adjustItem(simId1, employeeId,
                 "basicSalary", new BigDecimal("12000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX);
-        simulationBiz.submitForReview(simulation.getId(), CTX);
-        simulationBiz.approve(simulation.getId(), 1L, CTX);
+                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
+        final Long simId2 = simulation.getId();
+        ormTemplate.runInSession(() -> simulationBiz.submitForReview(simId2, CTX));
+        final Long simId3 = simulation.getId();
+        ormTemplate.runInSession(() -> simulationBiz.approve(simId3, 1L, CTX));
 
-        simulation = simulationBiz.convertToFormal(simulation.getId(), CTX);
+        final Long simId4 = simulation.getId();
+        simulation = ormTemplate.runInSession(session -> simulationBiz.convertToFormal(simId4, CTX));
         assertEquals(ErpHrConstants.SIMULATION_STATUS_CONVERTED, simulation.getStatus());
         assertNotNull(simulation.getConvertedSalaryId(), "回填 convertedSalaryId");
         assertNotNull(simulation.getConvertedAt(), "回填 convertedAt");
@@ -387,8 +397,9 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
                 "正式薪酬取模拟重算值");
 
         // 反向追溯
-        List<ErpHrSalarySimulation> traced = simulationBiz.findSimulationsByConvertedSalary(
-                simulation.getConvertedSalaryId(), CTX);
+        final Long convertedSalaryId1 = simulation.getConvertedSalaryId();
+        List<ErpHrSalarySimulation> traced = ormTemplate.runInSession(session -> simulationBiz.findSimulationsByConvertedSalary(
+                convertedSalaryId1, CTX));
         assertFalse(traced.isEmpty(), "反向追溯链完整");
         assertEquals(simulation.getId(), traced.get(0).getId());
     }
@@ -409,20 +420,20 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         });
 
         // 目标期间 2026-07 已有正式薪酬（重复）
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        salaryBiz.calculateSalary(employeeId, 2026, 7, CTX);
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 7, CTX));
 
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 7, "重复冲突", null, CTX);
-        simulationBiz.adjustItem(simulation.getId(), employeeId,
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 7, "重复冲突", null, CTX));
+        ormTemplate.runInSession(() -> simulationBiz.adjustItem(simulation.getId(), employeeId,
                 "basicSalary", new BigDecimal("11000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX);
-        simulationBiz.submitForReview(simulation.getId(), CTX);
-        simulationBiz.approve(simulation.getId(), 1L, CTX);
+                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
+        ormTemplate.runInSession(() -> simulationBiz.submitForReview(simulation.getId(), CTX));
+        ormTemplate.runInSession(() -> simulationBiz.approve(simulation.getId(), 1L, CTX));
 
         // 全员冲突 → 抛 EMPLOYEE_DUPLICATE
         NopException ex = assertThrows(NopException.class,
-                () -> simulationBiz.convertToFormal(simulation.getId(), CTX));
+                () -> ormTemplate.runInSession(session -> simulationBiz.convertToFormal(simulation.getId(), CTX)));
         assertEquals(ErpHrErrors.ERR_HR_SIMULATION_EMPLOYEE_DUPLICATE.getErrorCode(), ex.getErrorCode());
     }
 
@@ -442,21 +453,21 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
         });
 
         // 目标期间已有 PAID 薪酬
-        ErpHrSalary target = salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
+        ErpHrSalary target = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
         submitSalary(target.getId());
         approveSalary(target.getId());
-        salaryBiz.markPaid(target.getId(), CTX);
+        ormTemplate.runInSession(() -> salaryBiz.markPaid(target.getId(), CTX));
 
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 6, "PAID 冲突", null, CTX);
-        simulationBiz.adjustItem(simulation.getId(), employeeId,
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 6, "PAID 冲突", null, CTX));
+        ormTemplate.runInSession(() -> simulationBiz.adjustItem(simulation.getId(), employeeId,
                 "basicSalary", new BigDecimal("11000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX);
-        simulationBiz.submitForReview(simulation.getId(), CTX);
-        simulationBiz.approve(simulation.getId(), 1L, CTX);
+                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
+        ormTemplate.runInSession(() -> simulationBiz.submitForReview(simulation.getId(), CTX));
+        ormTemplate.runInSession(() -> simulationBiz.approve(simulation.getId(), 1L, CTX));
 
         NopException ex = assertThrows(NopException.class,
-                () -> simulationBiz.convertToFormal(simulation.getId(), CTX));
+                () -> ormTemplate.runInSession(session -> simulationBiz.convertToFormal(simulation.getId(), CTX)));
         assertEquals(ErpHrErrors.ERR_HR_SIMULATION_TARGET_PERIOD_CONFLICT.getErrorCode(), ex.getErrorCode());
     }
 
@@ -464,7 +475,7 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
     public void testSourceNotFoundThrows() {
         // 源期间无任何薪酬 → ERR_HR_SIMULATION_SOURCE_NOT_FOUND
         NopException ex = assertThrows(NopException.class, () ->
-                simulationBiz.createSimulation(2099, 12, 2099, 12, "空源", null, CTX));
+                ormTemplate.runInSession(session -> simulationBiz.createSimulation(2099, 12, 2099, 12, "空源", null, CTX)));
         assertEquals(ErpHrErrors.ERR_HR_SIMULATION_SOURCE_NOT_FOUND.getErrorCode(), ex.getErrorCode());
     }
 
@@ -483,12 +494,12 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 6, CTX);
-        ErpHrSalarySimulation simulation = simulationBiz.createSimulation(
-                2026, 6, 2026, 8, "只读查询", null, CTX);
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                2026, 6, 2026, 8, "只读查询", null, CTX));
 
         // 无调整时，模拟薪酬≈源值（社保/公积金沿用源；tax 按 2026-08 累计窗口重算可能略异）
-        ErpHrSalary sim = simulationBiz.getSimulatedSalary(simulation.getId(), employeeId, CTX);
+        ErpHrSalary sim = ormTemplate.runInSession(session -> simulationBiz.getSimulatedSalary(simulation.getId(), employeeId, CTX));
         assertNotNull(sim);
         assertEquals(employeeId, sim.getEmployeeId());
         assertEquals(Integer.valueOf(2026), sim.getYear());

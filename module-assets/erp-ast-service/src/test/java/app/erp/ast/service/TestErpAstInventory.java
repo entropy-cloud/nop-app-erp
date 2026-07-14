@@ -173,7 +173,7 @@ public class TestErpAstInventory extends JunitAutoTestCase {
         });
 
         createInventory(invId);
-        ErpAstInventory cancelled = inventoryBiz.cancel(invId, CTX);
+        ErpAstInventory cancelled = ormTemplate.runInSession(session -> inventoryBiz.cancel(invId, CTX));
         assertEquals(ErpAstConstants.INVENTORY_STATUS_CANCELLED, cancelled.getStatus(), "作废后 status=CANCELLED");
     }
 

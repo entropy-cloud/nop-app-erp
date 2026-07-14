@@ -6,7 +6,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
@@ -69,7 +68,6 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrRecruitment moveToScreening(@Name("id") String id, IServiceContext context) {
         ErpHrRecruitment rec = requireEntity(id, null, context);
         requireStatus(rec, ErpHrConstants.RECRUITMENT_STATUS_OPEN, ErpHrConstants.RECRUITMENT_STATUS_SCREENING);
@@ -80,7 +78,6 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrRecruitment scheduleInterview(@Name("id") String id,
                                               @Name("interviewerId") Long interviewerId,
                                               @Name("interviewDate") LocalDate interviewDate,
@@ -96,7 +93,6 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrRecruitment makeOffer(@Name("id") String id,
                                       @Name("offerSalary") BigDecimal offerSalary,
                                       IServiceContext context) {
@@ -110,7 +106,6 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrRecruitment hire(@Name("id") String id,
                                  @Name("hiredDate") LocalDate hiredDate,
                                  IServiceContext context) {
@@ -129,7 +124,6 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrRecruitment reject(@Name("id") String id, IServiceContext context) {
         ErpHrRecruitment rec = requireEntity(id, null, context);
         if (ErpHrConstants.RECRUITMENT_STATUS_HIRED.equals(rec.getStatus())
@@ -144,7 +138,6 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrRecruitment close(@Name("id") String id, IServiceContext context) {
         ErpHrRecruitment rec = requireEntity(id, null, context);
         rec.setStatus(ErpHrConstants.RECRUITMENT_STATUS_CLOSED);

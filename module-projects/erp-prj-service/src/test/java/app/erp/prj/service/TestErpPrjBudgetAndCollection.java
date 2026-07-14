@@ -87,7 +87,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         });
 
         // WARNING 模式：submit 应放行（不抛错）
-        ErpPrjTimesheet ts = timesheetBiz.submit(tsId, CTX);
+        ErpPrjTimesheet ts = ormTemplate.runInSession(session -> timesheetBiz.submit(tsId, CTX));
         assertEquals(ErpPrjConstants.APPROVE_STATUS_SUBMITTED, ts.getStatus());
     }
 
@@ -111,7 +111,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
             });
 
             // STRICT 模式：超预算应抛 ERR_BUDGET_EXCEEDED
-            NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(tsId, CTX));
+            NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> timesheetBiz.submit(tsId, CTX)));
             assertEquals(ErpPrjErrors.ERR_BUDGET_EXCEEDED.getErrorCode(), ex.getErrorCode());
         } finally {
             System.clearProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE);
@@ -137,8 +137,8 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        timesheetBiz.submit(tsId, CTX);
-        timesheetBiz.approve(tsId, CTX);
+        ormTemplate.runInSession(() -> timesheetBiz.submit(tsId, CTX));
+        ormTemplate.runInSession(() -> timesheetBiz.approve(tsId, CTX));
 
         // 归集行已生成
         ErpPrjCostCollectionLine line = findCollectionLine(
@@ -173,10 +173,10 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        timesheetBiz.submit(tsId, CTX);
-        timesheetBiz.approve(tsId, CTX);
+        ormTemplate.runInSession(() -> timesheetBiz.submit(tsId, CTX));
+        ormTemplate.runInSession(() -> timesheetBiz.approve(tsId, CTX));
         // 再次 approve（已是 APPROVED，幂等返回原对象，不重复归集）
-        timesheetBiz.approve(tsId, CTX);
+        ormTemplate.runInSession(() -> timesheetBiz.approve(tsId, CTX));
 
         // 仍然只有一条归集行
         List<ErpPrjCostCollectionLine> lines = findAllCollectionLines(
@@ -205,7 +205,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         });
 
         // 关闭项目
-        ErpPrjProject closed = projectBiz.closeProject(projectHolder[0], CTX);
+        ErpPrjProject closed = ormTemplate.runInSession(session -> projectBiz.closeProject(projectHolder[0], CTX));
         assertEquals(ErpPrjConstants.PROJECT_STATUS_COMPLETED, closed.getStatus());
 
         // 关闭后新工时 submit 应拒绝
@@ -218,7 +218,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
                     "5", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(newTsId, CTX));
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> timesheetBiz.submit(newTsId, CTX)));
         assertEquals(ErpPrjErrors.ERR_TIMESHEET_PROJECT_NOT_OPEN.getErrorCode(), ex.getErrorCode());
     }
 
@@ -234,7 +234,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
             return pid;
         });
 
-        NopException ex = assertThrows(NopException.class, () -> projectBiz.closeProject(projectId, CTX));
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> projectBiz.closeProject(projectId, CTX)));
         assertEquals(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE.getErrorCode(), ex.getErrorCode());
     }
 
@@ -250,7 +250,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
         });
 
         NopException ex = assertThrows(NopException.class,
-                () -> projectBiz.requireReferenceable(projectId, CTX));
+                () -> ormTemplate.runInSession(session -> projectBiz.requireReferenceable(projectId, CTX)));
         assertEquals(ErpPrjErrors.ERR_PROJECT_NOT_REFERENCEABLE.getErrorCode(), ex.getErrorCode());
     }
 

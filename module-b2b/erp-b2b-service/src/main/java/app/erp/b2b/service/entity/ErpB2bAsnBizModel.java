@@ -27,7 +27,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -88,10 +87,8 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public Long handleInboundWebhook(@Name("formatCode") String formatCode,
                                      @Name("partnerCode") String partnerCode,
                                      @Name("signature") String signature,
@@ -127,7 +124,6 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bAsn matchPurchaseOrder(@Name("asnId") Long asnId, IServiceContext context) {
         ErpB2bAsn asn = requireAsn(asnId);
         String status = asn.getStatus();
@@ -193,7 +189,6 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bAsn createReceiveFromAsn(@Name("asnId") Long asnId, IServiceContext context) {
         boolean enabled = AppConfig.var(ErpB2bConfigs.CONFIG_ASN_AUTO_CREATE_RECEIVE,
                 ErpB2bConfigs.DEFAULT_ASN_AUTO_CREATE_RECEIVE);
@@ -241,7 +236,6 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpB2bAsn retryMatch(@Name("asnId") Long asnId, IServiceContext context) {
         ErpB2bAsn asn = requireAsn(asnId);
         // 幂等：已 MATCHED/RECEIVED_TO_STOCK 直接返回

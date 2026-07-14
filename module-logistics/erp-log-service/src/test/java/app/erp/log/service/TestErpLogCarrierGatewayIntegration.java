@@ -48,12 +48,12 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
         Long sh1 = ormTemplate.runInSession(session -> seedShipmentWithTracking("GW-MULTI-1", carrierId, "MOCK-GW-MULTI-1"));
         Long sh2 = ormTemplate.runInSession(session -> seedShipmentWithTracking("GW-MULTI-2", carrierId, "MOCK-GW-MULTI-2"));
 
-        int advanced1 = shipmentBiz.scanForPolling(CTX);
+        int advanced1 = ormTemplate.runInSession(session -> shipmentBiz.scanForPolling(CTX));
         assertTrue(advanced1 >= 2);
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT, reload(sh1).getStatus());
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT, reload(sh2).getStatus());
 
-        shipmentBiz.scanForPolling(CTX);
+        ormTemplate.runInSession(() -> shipmentBiz.scanForPolling(CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, reload(sh1).getStatus());
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, reload(sh2).getStatus());
         assertNotNull(reload(sh1).getActualDeliveryDate());
@@ -67,12 +67,12 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
 
         String payload1 = "{\"trackingNo\":\"MOCK-GW-WH-IT-1\",\"eventType\":\"IN_TRANSIT\"}";
         String sig1 = hmacSha256(payload1, "MOCK-CAR");
-        ErpLogShipment result1 = shipmentBiz.handleTrackingWebhook("MOCK-CAR", sig1, payload1, CTX);
+        ErpLogShipment result1 = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-CAR", sig1, payload1, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT, result1.getStatus());
 
         String payload2 = "{\"trackingNo\":\"MOCK-GW-WH-IT-1\",\"eventType\":\"DELIVERED\",\"signedBy\":\"王五\"}";
         String sig2 = hmacSha256(payload2, "MOCK-CAR");
-        ErpLogShipment result2 = shipmentBiz.handleTrackingWebhook("MOCK-CAR", sig2, payload2, CTX);
+        ErpLogShipment result2 = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-CAR", sig2, payload2, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, result2.getStatus());
         assertNotNull(result2.getActualDeliveryDate());
     }
@@ -85,7 +85,7 @@ public class TestErpLogCarrierGatewayIntegration extends JunitAutoTestCase {
                 ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
-        ErpLogShipment result = shipmentBiz.cancelShipment(shipmentId, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.cancelShipment(shipmentId, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_CANCELLED, result.getStatus());
     }
 

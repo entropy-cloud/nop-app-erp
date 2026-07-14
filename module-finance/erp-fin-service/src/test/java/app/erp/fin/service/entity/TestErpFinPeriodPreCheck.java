@@ -57,7 +57,7 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
             return pid;
         });
 
-        PeriodPreCheckReport report = periodCloseBiz.preCheck(periodId, CTX);
+        PeriodPreCheckReport report = ormTemplate.runInSession(session -> periodCloseBiz.preCheck(periodId, CTX));
 
         assertTrue(report.hasIssues(), "应检出问题");
         assertEquals(1, report.getUnpostedVoucherCodes().size(), "1 张未过账凭证");
@@ -72,7 +72,7 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
                 LocalDate.of(2026, 11, 1), LocalDate.of(2026, 11, 30),
                 ErpFinConstants.PERIOD_STATUS_OPEN));
 
-        PeriodPreCheckReport report = periodCloseBiz.preCheck(periodId, CTX);
+        PeriodPreCheckReport report = ormTemplate.runInSession(session -> periodCloseBiz.preCheck(periodId, CTX));
 
         assertFalse(report.hasIssues(), "干净期间无问题");
     }
@@ -89,7 +89,7 @@ public class TestErpFinPeriodPreCheck extends JunitAutoTestCase {
             return pid;
         });
 
-        assertThrows(NopException.class, () -> periodCloseBiz.closePeriod(periodId, CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodCloseBiz.closePeriod(periodId, CTX)),
                 "阻断模式下未过账凭证应阻止结账");
 
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);

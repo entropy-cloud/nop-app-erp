@@ -59,12 +59,12 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
                 daoProvider.daoFor(ErpB2bEdiDoc.class).getEntityById(docId).getState());
         assertEquals(0, findLogs(docId).size());
 
-        ErpB2bEdiDoc sent = ediDocBiz.markSent(docId, CTX);
+        ErpB2bEdiDoc sent = ormTemplate.runInSession(session -> ediDocBiz.markSent(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_SENT, sent.getState());
         assertNotNull(sent.getSentAt());
         assertEquals(1, findLogs(docId).size());
 
-        ErpB2bEdiDoc acked = ediDocBiz.markAcknowledged(docId, CTX);
+        ErpB2bEdiDoc acked = ormTemplate.runInSession(session -> ediDocBiz.markAcknowledged(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_ACKNOWLEDGED, acked.getState());
         assertNotNull(acked.getAcknowledgedAt());
         assertEquals(2, findLogs(docId).size());
@@ -81,22 +81,22 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
             return doc.getId();
         });
 
-        ediDocBiz.markSent(docId, CTX);
+        ormTemplate.runInSession(() -> ediDocBiz.markSent(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_SENT,
                 daoProvider.daoFor(ErpB2bEdiDoc.class).getEntityById(docId).getState());
 
-        ErpB2bEdiDoc errored = ediDocBiz.markError(docId, "network timeout", CTX);
+        ErpB2bEdiDoc errored = ormTemplate.runInSession(session -> ediDocBiz.markError(docId, "network timeout", CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_ERROR, errored.getState());
         assertEquals("network timeout", errored.getError());
         assertEquals(ErpB2bConstants.BLOCKING_LEVEL_ERROR, errored.getBlockingLevel());
 
-        ErpB2bEdiDoc retried = ediDocBiz.retry(docId, CTX);
+        ErpB2bEdiDoc retried = ormTemplate.runInSession(session -> ediDocBiz.retry(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_TO_SEND, retried.getState());
         assertNotNull(retried.getRetryCount());
         assertTrue(retried.getRetryCount() >= 1);
         assertEquals(ErpB2bConstants.BLOCKING_LEVEL_INFO, retried.getBlockingLevel());
 
-        ErpB2bEdiDoc resent = ediDocBiz.markSent(docId, CTX);
+        ErpB2bEdiDoc resent = ormTemplate.runInSession(session -> ediDocBiz.markSent(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_SENT, resent.getState());
 
         assertTrue(findLogs(docId).size() >= 4);
@@ -111,12 +111,12 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
             return doc.getId();
         });
 
-        ediDocBiz.markSent(docId, CTX);
-        ediDocBiz.markAcknowledged(docId, CTX);
+        ormTemplate.runInSession(() -> ediDocBiz.markSent(docId, CTX));
+        ormTemplate.runInSession(() -> ediDocBiz.markAcknowledged(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_ACKNOWLEDGED,
                 daoProvider.daoFor(ErpB2bEdiDoc.class).getEntityById(docId).getState());
 
-        assertThrows(NopException.class, () -> ediDocBiz.archive(docId, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> ediDocBiz.archive(docId, CTX)));
 
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_ACKNOWLEDGED,
                 daoProvider.daoFor(ErpB2bEdiDoc.class).getEntityById(docId).getState());

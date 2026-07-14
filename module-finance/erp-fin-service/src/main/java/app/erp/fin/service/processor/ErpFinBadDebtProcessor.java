@@ -43,7 +43,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>审批门控：{@code erp-fin.bad-debt-write-off-require-approval}（默认 true）时核销/恢复强制审批；
  * 关闭时创建即自动审批执行。计提/释放（批量估计）不经本类，归 {@code BadDebtProvisionService}。
  *
- * <p>事务边界：跟随 Facade {@code @BizMutation}+{@code @SingleSession} 事务，本类不带 {@code @Transactional}。
+ * <p>事务边界：跟随 Facade {@code @BizMutation} 事务，本类不带 {@code @Transactional}。
  */
 public class ErpFinBadDebtProcessor {
 

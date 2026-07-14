@@ -87,8 +87,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_DRAFT);
 
         NopException ex = assertThrows(NopException.class,
-                () -> signatureRequestBiz.initSignatureRequest(versionId,
-                        "[{\"name\":\"张三\",\"email\":\"zhang@ex.com\"}]", null, CTX));
+                () -> ormTemplate.runInSession(session -> signatureRequestBiz.initSignatureRequest(versionId,
+                        "[{\"name\":\"张三\",\"email\":\"zhang@ex.com\"}]", null, CTX)));
         assertEquals(ErpCtErrors.ERR_CT_SIGNATURE_VERSION_NOT_FINALIZED.getErrorCode(), ex.getErrorCode());
     }
 
@@ -98,8 +98,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
         String signersJson = "[{\"name\":\"张三\",\"email\":\"zhang@ex.com\"},{\"name\":\"李四\",\"email\":\"li@ex.com\"}]";
 
-        ErpCtSignatureRequest request = signatureRequestBiz.initSignatureRequest(
-                versionId, signersJson, ErpCtConstants.SIGNATURE_PROVIDER_MOCK, CTX);
+        ErpCtSignatureRequest request = ormTemplate.runInSession(session -> signatureRequestBiz.initSignatureRequest(
+                versionId, signersJson, ErpCtConstants.SIGNATURE_PROVIDER_MOCK, CTX));
 
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_PENDING, request.getStatus());
         assertEquals(ErpCtConstants.SIGNATURE_PROVIDER_MOCK, request.getProvider());
@@ -116,7 +116,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         long versionId = seedVersion(contractId, 1, true, ErpCtConstants.VERSION_STATUS_FINALIZED);
 
         NopException ex = assertThrows(NopException.class,
-                () -> signatureRequestBiz.initSignatureRequest(versionId, "[]", null, CTX));
+                () -> ormTemplate.runInSession(session -> signatureRequestBiz.initSignatureRequest(versionId, "[]", null, CTX)));
         assertEquals(ErpCtErrors.ERR_CT_SIGNATURE_INIT_FAILED.getErrorCode(), ex.getErrorCode());
     }
 
@@ -129,8 +129,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
                 ErpCtConstants.SIGNATURE_EVENT_SIGNER_SIGNED, "zhang@ex.com", null);
 
         NopException ex = assertThrows(NopException.class,
-                () -> signatureRequestBiz.handleSignatureCallback(
-                        ErpCtConstants.SIGNATURE_PROVIDER_MOCK, "badsignature", "evt-1", payload, CTX));
+                () -> ormTemplate.runInSession(session -> signatureRequestBiz.handleSignatureCallback(
+                        ErpCtConstants.SIGNATURE_PROVIDER_MOCK, "badsignature", "evt-1", payload, CTX)));
         assertEquals(ErpCtErrors.ERR_CT_SIGNATURE_CALLBACK_SIGNATURE_INVALID.getErrorCode(), ex.getErrorCode());
     }
 
@@ -140,8 +140,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         String payload = buildPayload(request.getProviderRequestId(),
                 ErpCtConstants.SIGNATURE_EVENT_SIGNER_SIGNED, "zhang@ex.com", null);
 
-        signatureRequestBiz.handleSignatureCallback(
-                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-signed-1", payload, CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.handleSignatureCallback(
+                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-signed-1", payload, CTX));
 
         ErpCtSignatureRequest reloaded = reload(request.getId());
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_PARTIALLY, reloaded.getStatus());
@@ -156,8 +156,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         String payload = buildPayload(request.getProviderRequestId(),
                 ErpCtConstants.SIGNATURE_EVENT_COMPLETED, null, null);
 
-        signatureRequestBiz.handleSignatureCallback(
-                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-completed", payload, CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.handleSignatureCallback(
+                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-completed", payload, CTX));
 
         ErpCtSignatureRequest reloaded = reload(request.getId());
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_FULLY, reloaded.getStatus());
@@ -179,13 +179,13 @@ public class TestErpCtESignature extends JunitAutoTestCase {
                 ErpCtConstants.SIGNATURE_EVENT_SIGNER_SIGNED, "zhang@ex.com", null);
         String sig = hmac(payload);
 
-        signatureRequestBiz.handleSignatureCallback(
-                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, sig, "evt-dup-1", payload, CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.handleSignatureCallback(
+                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, sig, "evt-dup-1", payload, CTX));
 
         // 同 eventId 重复回调 → 抛 DUPLICATE_EVENT
         NopException ex = assertThrows(NopException.class,
-                () -> signatureRequestBiz.handleSignatureCallback(
-                        ErpCtConstants.SIGNATURE_PROVIDER_MOCK, sig, "evt-dup-1", payload, CTX));
+                () -> ormTemplate.runInSession(session -> signatureRequestBiz.handleSignatureCallback(
+                        ErpCtConstants.SIGNATURE_PROVIDER_MOCK, sig, "evt-dup-1", payload, CTX)));
         assertEquals(ErpCtErrors.ERR_CT_SIGNATURE_CALLBACK_DUPLICATE_EVENT.getErrorCode(), ex.getErrorCode());
     }
 
@@ -195,8 +195,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         String payload = buildPayload(request.getProviderRequestId(),
                 ErpCtConstants.SIGNATURE_EVENT_REJECTED, null, "missing stamp");
 
-        signatureRequestBiz.handleSignatureCallback(
-                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-rej", payload, CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.handleSignatureCallback(
+                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-rej", payload, CTX));
 
         ErpCtSignatureRequest reloaded = reload(request.getId());
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_REJECTED, reloaded.getStatus());
@@ -210,8 +210,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         String payload = buildPayload(request.getProviderRequestId(),
                 ErpCtConstants.SIGNATURE_EVENT_DECLINED, null, "declined reason");
 
-        signatureRequestBiz.handleSignatureCallback(
-                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-decl", payload, CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.handleSignatureCallback(
+                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-decl", payload, CTX));
 
         ErpCtSignatureRequest reloaded = reload(request.getId());
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_REJECTED, reloaded.getStatus());
@@ -223,8 +223,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         String payload = buildPayload(request.getProviderRequestId(),
                 ErpCtConstants.SIGNATURE_EVENT_EXPIRED, null, null);
 
-        signatureRequestBiz.handleSignatureCallback(
-                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-exp", payload, CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.handleSignatureCallback(
+                ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-exp", payload, CTX));
 
         ErpCtSignatureRequest reloaded = reload(request.getId());
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_EXPIRED, reloaded.getStatus());
@@ -239,11 +239,11 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         ErpCtSignatureRequest request = seedPendingRequestForVersion(versionId);
 
         // 首次轮询：mock 返回 PARTIALLY → PENDING→PARTIALLY
-        signatureRequestBiz.queryAndUpdateStatus(request.getId(), CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.queryAndUpdateStatus(request.getId(), CTX));
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_PARTIALLY, reload(request.getId()).getStatus());
 
         // 二次轮询：mock 返回 COMPLETED → PARTIALLY→FULLY + 调 signVersion
-        signatureRequestBiz.queryAndUpdateStatus(request.getId(), CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.queryAndUpdateStatus(request.getId(), CTX));
         ErpCtSignatureRequest fully = reload(request.getId());
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_FULLY, fully.getStatus());
 
@@ -256,7 +256,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         ErpCtSignatureRequest request = seedPendingRequestWithSigners();
         MockSignatureProvider.forceStatus = "REJECTED";
 
-        signatureRequestBiz.queryAndUpdateStatus(request.getId(), CTX);
+        ormTemplate.runInSession(() -> signatureRequestBiz.queryAndUpdateStatus(request.getId(), CTX));
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_REJECTED, reload(request.getId()).getStatus());
     }
 
@@ -272,8 +272,8 @@ public class TestErpCtESignature extends JunitAutoTestCase {
                 ErpCtConstants.SIGNATURE_EVENT_COMPLETED, null, null);
 
         NopException ex = assertThrows(NopException.class,
-                () -> signatureRequestBiz.handleSignatureCallback(
-                        ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-repeat", payload, CTX));
+                () -> ormTemplate.runInSession(session -> signatureRequestBiz.handleSignatureCallback(
+                        ErpCtConstants.SIGNATURE_PROVIDER_MOCK, hmac(payload), "evt-repeat", payload, CTX)));
         assertEquals(ErpCtErrors.ERR_CT_SIGNATURE_ALREADY_COMPLETED.getErrorCode(), ex.getErrorCode());
     }
 
@@ -283,7 +283,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
     public void testCancelSignatureRequest() {
         ErpCtSignatureRequest request = seedPendingRequestWithSigners();
 
-        ErpCtSignatureRequest result = signatureRequestBiz.cancelSignatureRequest(request.getId(), CTX);
+        ErpCtSignatureRequest result = ormTemplate.runInSession(session -> signatureRequestBiz.cancelSignatureRequest(request.getId(), CTX));
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_CANCELLED, result.getStatus());
     }
 
@@ -292,7 +292,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         ErpCtSignatureRequest request = seedRequest(ErpCtConstants.SIGNATURE_STATUS_CANCELLED);
 
         NopException ex = assertThrows(NopException.class,
-                () -> signatureRequestBiz.cancelSignatureRequest(request.getId(), CTX));
+                () -> ormTemplate.runInSession(session -> signatureRequestBiz.cancelSignatureRequest(request.getId(), CTX)));
         assertEquals(ErpCtErrors.ERR_CT_SIGNATURE_ILLEGAL_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -300,7 +300,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
     public void testRejectSignatureWritesReason() {
         ErpCtSignatureRequest request = seedPendingRequestWithSigners();
 
-        ErpCtSignatureRequest result = signatureRequestBiz.rejectSignature(request.getId(), "manual reject", CTX);
+        ErpCtSignatureRequest result = ormTemplate.runInSession(session -> signatureRequestBiz.rejectSignature(request.getId(), "manual reject", CTX));
         assertEquals(ErpCtConstants.SIGNATURE_STATUS_REJECTED, result.getStatus());
         assertEquals("manual reject", result.getErrorMsg());
     }
@@ -331,7 +331,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
         seedRequestWithDeadline(ErpCtConstants.SIGNATURE_STATUS_FULLY, CoreMetrics.currentDate().minusDays(2));
 
         List<ErpCtSignatureRequest> expiring =
-                signatureRequestBiz.findExpiringRequests(CoreMetrics.currentDate(), CTX);
+ ormTemplate.runInSession(session -> signatureRequestBiz.findExpiringRequests(CoreMetrics.currentDate(), CTX));
         assertEquals(1, expiring.size(), "仅 过期+非终态 的请求应命中");
     }
 

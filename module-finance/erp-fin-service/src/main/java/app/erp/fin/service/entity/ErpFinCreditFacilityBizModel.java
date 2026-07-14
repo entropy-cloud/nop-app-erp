@@ -7,7 +7,6 @@ import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
@@ -31,7 +30,6 @@ public class ErpFinCreditFacilityBizModel extends CrudBizModel<ErpFinCreditFacil
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinCreditFacility reserveCredit(@Name("creditFacilityId") Long creditFacilityId,
                                               @Name("amount") BigDecimal amount,
                                               IServiceContext context) {
@@ -53,7 +51,6 @@ public class ErpFinCreditFacilityBizModel extends CrudBizModel<ErpFinCreditFacil
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinCreditFacility releaseCredit(@Name("creditFacilityId") Long creditFacilityId,
                                               @Name("amount") BigDecimal amount,
                                               IServiceContext context) {

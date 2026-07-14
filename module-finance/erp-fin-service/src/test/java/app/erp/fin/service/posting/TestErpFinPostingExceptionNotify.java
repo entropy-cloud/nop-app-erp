@@ -83,7 +83,7 @@ public class TestErpFinPostingExceptionNotify extends JunitAutoTestCase {
         // 期间关闭 → post 失败 → 异常记录独立事务落 PENDING → notify 派发
         PostingEvent event = apInvoiceEvent("AP-NOTIFY-001", LocalDate.of(2026, 7, 15),
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
-        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)),
                 "期间关闭应抛 NopException");
 
         ErpFinPostingException ex = findException("AP-NOTIFY-001");
@@ -112,7 +112,7 @@ public class TestErpFinPostingExceptionNotify extends JunitAutoTestCase {
 
             PostingEvent event = apInvoiceEvent("AP-NOTIFY-OFF-001", LocalDate.of(2026, 7, 15),
                     new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
-            assertThrows(NopException.class, () -> voucherBiz.post(event, CTX));
+            assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)));
 
             ErpFinPostingException ex = findException("AP-NOTIFY-OFF-001");
             assertNotNull(ex, "config 关闭不影响异常记录落库");

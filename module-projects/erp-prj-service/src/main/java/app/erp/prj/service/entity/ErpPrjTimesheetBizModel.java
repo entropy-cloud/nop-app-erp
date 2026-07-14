@@ -15,7 +15,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -63,7 +62,6 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjTimesheet submit(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
@@ -95,7 +93,6 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjTimesheet approve(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
@@ -126,7 +123,6 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjTimesheet reject(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();
@@ -140,7 +136,6 @@ public class ErpPrjTimesheetBizModel extends CrudBizModel<ErpPrjTimesheet> imple
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjTimesheet cancel(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId, context);
         String status = timesheet.getStatus();

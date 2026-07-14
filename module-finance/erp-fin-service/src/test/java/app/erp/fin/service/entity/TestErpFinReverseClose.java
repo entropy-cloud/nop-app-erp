@@ -28,12 +28,12 @@ public class TestErpFinReverseClose extends PeriodCloseTestSupport {
         // 使用 6 月（非年末）期间隔离月度反结账行为；年度反结账由 TestErpFinAnnualClose 覆盖。
         Long periodId = seedFullPeriod("2024-06", 2024, 6);
 
-        periodBiz.closePeriod(periodId, CTX);
-        periodBiz.finalizePeriod(periodId, CTX);
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
+        ormTemplate.runInSession(() -> periodBiz.finalizePeriod(periodId, CTX));
         assertEquals(0, netCredit("6001", periodId).compareTo(BigDecimal.ZERO),
                 "结账后收入科目净额清零");
 
-        ErpFinAccountingPeriod period = periodBiz.reverseClose(periodId, CTX);
+        ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_OPEN, period.getStatus(), "反结账后期间回开 OPEN");
 
         assertEquals(0, netCredit("6001", periodId).compareTo(new BigDecimal("100")),
@@ -46,7 +46,7 @@ public class TestErpFinReverseClose extends PeriodCloseTestSupport {
         assertTrue(hasReversalVoucher("PERIOD-CLOSE-2024-06", ErpFinBusinessType.PERIOD_CLOSE.name()),
                 "结转凭证已红冲");
 
-        period = periodBiz.closePeriod(periodId, CTX);
+        period = ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "重新结账成功");
     }
 

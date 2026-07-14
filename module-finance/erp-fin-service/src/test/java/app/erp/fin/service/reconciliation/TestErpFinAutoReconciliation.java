@@ -52,8 +52,8 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         Long inv1 = seedInvoice(partnerId, "400", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
         Long inv2 = seedInvoice(partnerId, "700", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 10));
 
-        AutoReconResult result = reconciliationBiz.runAutoReconciliation(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX);
+        AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX));
 
         assertEquals(1, result.getReconciliationIds().size(), "FIFO 应生成一张核销单");
         // dueDate 6/1 < 6/10，inv1 全额核销 400；剩余 600 核销 inv2（open=700→剩 100）
@@ -74,8 +74,8 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         Long receipt = seedPayment(partnerId, "500", LocalDate.of(2026, 6, 15));
         Long inv = seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
 
-        AutoReconResult result = reconciliationBiz.runAutoReconciliation(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_AMOUNT, CTX);
+        AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_AMOUNT, CTX));
 
         assertEquals(1, result.getReconciliationIds().size());
         assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, item(inv).getStatus());
@@ -89,8 +89,8 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         Long receipt = seedPayment(partnerId, "300", LocalDate.of(2026, 6, 15));
         Long inv = seedInvoice(partnerId, "500", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
 
-        AutoReconResult result = reconciliationBiz.runAutoReconciliation(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_AMOUNT, CTX);
+        AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_AMOUNT, CTX));
 
         assertTrue(result.getReconciliationIds().isEmpty(), "无精确匹配 → 不生成核销单");
         assertFalse(result.getUnmatched().isEmpty(), "应产生未匹配项报告");
@@ -104,8 +104,8 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         Long inv2 = seedInvoice(partnerId, "700", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 10));
         Long receipt = seedPayment(partnerId, "500", LocalDate.of(2026, 6, 15));
 
-        AutoReconResult result = reconciliationBiz.runAutoReconciliation(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_RATIO, CTX);
+        AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_BY_RATIO, CTX));
 
         assertEquals(1, result.getReconciliationIds().size());
         BigDecimal i1Settled = item(inv1).getSettledAmountFunctional();
@@ -125,8 +125,8 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         seedPayment(partnerId, "100", LocalDate.of(2026, 6, 15));
         seedInvoice(partnerId, "100", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
 
-        AutoReconResult result = reconciliationBiz.runAutoReconciliation(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, null, CTX);
+        AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, null, CTX));
         assertFalse(result.getReconciliationIds().isEmpty(), "config-gated=true 时应正常执行");
     }
 
@@ -136,12 +136,12 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         Long receipt = seedPayment(partnerId, "100", LocalDate.of(2026, 6, 15));
         Long inv = seedInvoice(partnerId, "100", LocalDate.of(2026, 5, 20), LocalDate.of(2026, 6, 1));
 
-        AutoReconResult first = reconciliationBiz.runAutoReconciliation(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX);
+        AutoReconResult first = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX));
         assertEquals(1, first.getReconciliationIds().size());
 
-        AutoReconResult second = reconciliationBiz.runAutoReconciliation(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX);
+        AutoReconResult second = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX));
         assertTrue(second.getReconciliationIds().isEmpty(), "二次执行幂等：已 SETTLED 项不重复进入候选");
     }
 
@@ -151,8 +151,8 @@ public class TestErpFinAutoReconciliation extends JunitAutoTestCase {
         // 收款项无对侧发票 → NO_COUNTERPART
         Long receipt = seedPayment(partnerId, "200", LocalDate.of(2026, 6, 15));
 
-        AutoReconResult result = reconciliationBiz.runAutoReconciliation(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX);
+        AutoReconResult result = ormTemplate.runInSession(session -> reconciliationBiz.runAutoReconciliation(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, ErpFinConstants.AUTO_RECON_STRATEGY_FIFO, CTX));
 
         assertTrue(result.getReconciliationIds().isEmpty());
         assertEquals(1, result.getUnmatched().size());

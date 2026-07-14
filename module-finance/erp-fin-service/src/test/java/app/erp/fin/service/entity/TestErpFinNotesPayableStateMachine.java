@@ -52,7 +52,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
             return seedPayable("NP-001",
                     ErpFinConstants.NOTES_TYPE_COMMERCIAL_ACCEPTANCE, null, new BigDecimal("5000"));
         });
-        ErpFinNotesPayable note = notesPayableBiz.issue(noteId, CTX);
+        ErpFinNotesPayable note = ormTemplate.runInSession(session -> notesPayableBiz.issue(noteId, CTX));
         assertEquals(ErpFinConstants.NOTES_PAY_ISSUED, note.getStatus());
     }
 
@@ -62,7 +62,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-002",
                 ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE, facilityId, new BigDecimal("500")));
 
-        ErpFinNotesPayable note = notesPayableBiz.issue(noteId, CTX);
+        ErpFinNotesPayable note = ormTemplate.runInSession(session -> notesPayableBiz.issue(noteId, CTX));
         assertEquals(ErpFinConstants.NOTES_PAY_ISSUED, note.getStatus());
 
         ErpFinCreditFacility facility = reloadFacility(facilityId);
@@ -77,7 +77,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-003",
                 ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE, facilityId, new BigDecimal("500")));
 
-        NopException ex = assertThrows(NopException.class, () -> notesPayableBiz.issue(noteId, CTX));
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> notesPayableBiz.issue(noteId, CTX)));
         assertEquals(ErpFinErrors.ERR_CREDIT_FACILITY_INSUFFICIENT.getErrorCode(), ex.getErrorCode());
     }
 
@@ -87,8 +87,8 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-004",
                 ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE, facilityId, new BigDecimal("500")));
 
-        notesPayableBiz.issue(noteId, CTX);
-        notesPayableBiz.honor(noteId, CTX);
+        ormTemplate.runInSession(() -> notesPayableBiz.issue(noteId, CTX));
+        ormTemplate.runInSession(() -> notesPayableBiz.honor(noteId, CTX));
 
         ErpFinCreditFacility facility = reloadFacility(facilityId);
         assertEquals(0, BigDecimal.ZERO.compareTo(facility.getUsedAmount()), "兑付释放后已用归 0");
@@ -100,8 +100,8 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-005",
                 ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE, facilityId, new BigDecimal("500")));
 
-        notesPayableBiz.issue(noteId, CTX);
-        notesPayableBiz.writeOff(noteId, CTX);
+        ormTemplate.runInSession(() -> notesPayableBiz.issue(noteId, CTX));
+        ormTemplate.runInSession(() -> notesPayableBiz.writeOff(noteId, CTX));
 
         ErpFinCreditFacility facility = reloadFacility(facilityId);
         assertEquals(0, BigDecimal.ZERO.compareTo(facility.getUsedAmount()), "注销释放后已用归 0");
@@ -112,7 +112,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         Long noteId = ormTemplate.runInSession(s -> seedPayable("NP-006",
                 ErpFinConstants.NOTES_TYPE_COMMERCIAL_ACCEPTANCE, null, new BigDecimal("500"),
                 ErpFinConstants.NOTES_PAY_WRITE_OFF));
-        assertThrows(NopException.class, () -> notesPayableBiz.honor(noteId, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> notesPayableBiz.honor(noteId, CTX)));
     }
 
     // ---------- seed helpers ----------

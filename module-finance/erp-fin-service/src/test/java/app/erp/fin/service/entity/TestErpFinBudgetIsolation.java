@@ -86,7 +86,7 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
 
         Long periodId = findPeriodByCode("2024-05").getId();
 
-        periodBiz.closePeriod(periodId, CTX);
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
 
         // 结转凭证存在
         ErpFinVoucher closeVoucher = findCloseVoucher("PERIOD-CLOSE-2024-05",

@@ -109,8 +109,8 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
 
         // 2. 模拟 CALL Event 完成 → advanceStep → stepIndex=1
         ormTemplate.runInSession(() -> {
-            ErpCrmEvent evt = eventBiz.requireEntity(String.valueOf(plannedCall.getId()), null,
-                    new io.nop.core.context.ServiceContextImpl());
+            ErpCrmEvent evt = ormTemplate.runInSession(session -> eventBiz.requireEntity(String.valueOf(plannedCall.getId()), null,
+                    new io.nop.core.context.ServiceContextImpl()));
             evt.setStatus(ErpCrmConstants.EVENT_STATUS_COMPLETED);
             daoProvider.daoFor(ErpCrmEvent.class).updateEntity(evt);
         });
@@ -274,7 +274,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
             daoProvider.daoFor(ErpCrmLeadSequenceProgress.class).updateEntity(p);
         });
 
-        List<Map<String, Object>> overdue = progressBiz.scanOverdueSteps(new io.nop.core.context.ServiceContextImpl());
+        List<Map<String, Object>> overdue = ormTemplate.runInSession(session -> progressBiz.scanOverdueSteps(new io.nop.core.context.ServiceContextImpl()));
         assertFalse(overdue.isEmpty(), "应扫描到逾期进度（连续逾期 3 步 ≥ max-overdue-steps=3）");
         Map<String, Object> first = overdue.get(0);
         assertEquals(leadId, toLong(first.get("leadId")));

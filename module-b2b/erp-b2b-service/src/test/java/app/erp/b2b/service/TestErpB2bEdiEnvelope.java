@@ -69,12 +69,12 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
         });
 
         // TO_SEND → SENT
-        ErpB2bEdiDoc sent = ediDocBiz.markSent(docId, CTX);
+        ErpB2bEdiDoc sent = ormTemplate.runInSession(session -> ediDocBiz.markSent(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_SENT, sent.getState());
         assertNotNull(sent.getSentAt());
 
         // SENT → ACKNOWLEDGED
-        ErpB2bEdiDoc acked = ediDocBiz.markAcknowledged(docId, CTX);
+        ErpB2bEdiDoc acked = ormTemplate.runInSession(session -> ediDocBiz.markAcknowledged(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_ACKNOWLEDGED, acked.getState());
         assertNotNull(acked.getAcknowledgedAt());
 
@@ -92,13 +92,13 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
         });
 
         // TO_SEND → ERROR
-        ErpB2bEdiDoc errored = ediDocBiz.markError(docId, "send timeout", CTX);
+        ErpB2bEdiDoc errored = ormTemplate.runInSession(session -> ediDocBiz.markError(docId, "send timeout", CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_ERROR, errored.getState());
         assertEquals("send timeout", errored.getError());
         assertEquals(ErpB2bConstants.BLOCKING_LEVEL_ERROR, errored.getBlockingLevel());
 
         // ERROR → TO_SEND (retry)
-        ErpB2bEdiDoc retried = ediDocBiz.retry(docId, CTX);
+        ErpB2bEdiDoc retried = ormTemplate.runInSession(session -> ediDocBiz.retry(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_TO_SEND, retried.getState());
         assertNotNull(retried.getRetryCount());
         assertTrue(retried.getRetryCount() >= 1);
@@ -113,17 +113,17 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
             return doc.getId();
         });
 
-        ErpB2bEdiDoc cancelled = ediDocBiz.cancel(docId, CTX);
+        ErpB2bEdiDoc cancelled = ormTemplate.runInSession(session -> ediDocBiz.cancel(docId, CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_CANCELLED, cancelled.getState());
     }
 
     @Test
     public void testInboundReceivedToArchived() {
         Long formatId = seedFormat("UBL_DESPATCH_ADVICE", "UBL");
-        ErpB2bEdiDoc doc = ediDocBiz.createInbound("ASN_INBOUND", "PO-001", "<xml/>", "UBL_DESPATCH_ADVICE", CTX);
+        ErpB2bEdiDoc doc = ormTemplate.runInSession(session -> ediDocBiz.createInbound("ASN_INBOUND", "PO-001", "<xml/>", "UBL_DESPATCH_ADVICE", CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_RECEIVED, doc.getState());
 
-        ErpB2bEdiDoc archived = ediDocBiz.archive(doc.getId(), CTX);
+        ErpB2bEdiDoc archived = ormTemplate.runInSession(session -> ediDocBiz.archive(doc.getId(), CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_ARCHIVED, archived.getState());
     }
 
@@ -137,7 +137,7 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
         });
 
         // TO_SEND → ACKNOWLEDGED（非法：需要先 SENT）
-        assertThrows(NopException.class, () -> ediDocBiz.markAcknowledged(docId, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> ediDocBiz.markAcknowledged(docId, CTX)));
     }
 
     @Test

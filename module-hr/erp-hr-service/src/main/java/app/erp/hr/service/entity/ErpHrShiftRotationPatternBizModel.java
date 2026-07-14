@@ -14,7 +14,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -57,7 +56,6 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
 
     @Override
     @BizMutation
-    @SingleSession
     public List<ErpHrShiftAssignment> generateRotation(@Name("patternId") Long patternId,
                                                        @Name("groupMemberIds") List<Long> groupMemberIds,
                                                        @Name("staggerDays") int staggerDays,

@@ -19,7 +19,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -69,7 +68,6 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrEmployee transferEmployee(@Name("employeeId") Long employeeId,
                                           @Name("targetDepartmentId") Long targetDepartmentId,
                                           @Name("targetPositionId") Long targetPositionId,

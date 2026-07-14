@@ -83,7 +83,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        ErpPrjTimesheet ts = timesheetBiz.submit(tsId, CTX);
+        ErpPrjTimesheet ts = ormTemplate.runInSession(session -> timesheetBiz.submit(tsId, CTX));
         assertEquals(ErpPrjConstants.APPROVE_STATUS_SUBMITTED, ts.getStatus());
         // costAmount = 10 × 800 = 8000
         assertEquals(0, ts.getCostAmount().compareTo(new BigDecimal("8000.0000")),
@@ -110,7 +110,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
                     "10", null, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        ErpPrjTimesheet ts = timesheetBiz.submit(tsId, CTX);
+        ErpPrjTimesheet ts = ormTemplate.runInSession(session -> timesheetBiz.submit(tsId, CTX));
         // costAmount = 10 × 300 = 3000
         assertEquals(0, ts.getCostAmount().compareTo(new BigDecimal("3000.0000")),
                 "回退到活动类型费率 300");
@@ -135,7 +135,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
                     "10", null, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(tsId, CTX));
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> timesheetBiz.submit(tsId, CTX)));
         assertEquals(ErpPrjErrors.ERR_COST_RATE_NOT_AVAILABLE.getErrorCode(), ex.getErrorCode());
     }
 
@@ -156,7 +156,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(tsId, CTX));
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> timesheetBiz.submit(tsId, CTX)));
         assertEquals(ErpPrjErrors.ERR_TIMESHEET_PROJECT_NOT_OPEN.getErrorCode(), ex.getErrorCode());
     }
 
@@ -177,7 +177,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        NopException ex = assertThrows(NopException.class, () -> timesheetBiz.submit(tsId, CTX));
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> timesheetBiz.submit(tsId, CTX)));
         assertEquals(ErpPrjErrors.ERR_TIMESHEET_TASK_NOT_ALLOWED.getErrorCode(), ex.getErrorCode());
     }
 
@@ -199,8 +199,8 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         });
 
-        timesheetBiz.submit(tsId, CTX);
-        ErpPrjTimesheet ts = timesheetBiz.approve(tsId, CTX);
+        ormTemplate.runInSession(() -> timesheetBiz.submit(tsId, CTX));
+        ErpPrjTimesheet ts = ormTemplate.runInSession(session -> timesheetBiz.approve(tsId, CTX));
         assertEquals(ErpPrjConstants.APPROVE_STATUS_APPROVED, ts.getStatus());
         assertTrue(Boolean.TRUE.equals(ts.getPosted()), "过账成功 posted=true");
 
@@ -242,7 +242,7 @@ public class TestErpPrjTimesheetCost extends JunitAutoTestCase {
         });
 
         // 直接 approve（DRAFT 状态，未 submit）→ 应抛非法迁移
-        NopException ex = assertThrows(NopException.class, () -> timesheetBiz.approve(tsId, CTX));
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> timesheetBiz.approve(tsId, CTX)));
         assertEquals(ErpPrjErrors.ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 

@@ -77,10 +77,10 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
             holder[0] = seedProjectWithBillingAndCost("PRJ-STL-FINAL", "结算测试项目");
             return null;
         });
-        pnlBiz.refreshPnl(holder[0], null, null, CTX);
+        ormTemplate.runInSession(() -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
 
-        ErpPrjProjectSettlement settlement = settlementBiz.createSettlement(holder[0],
-                ErpPrjConstants.SETTLEMENT_TYPE_FINAL, CTX);
+        ErpPrjProjectSettlement settlement = ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                ErpPrjConstants.SETTLEMENT_TYPE_FINAL, CTX));
         assertEquals(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED, settlement.getApproveStatus());
 
         // 明细行含来源单据（Billing INCOME + CostCollection COST）
@@ -91,8 +91,8 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
         assertTrue(lines.stream().anyMatch(l -> ErpPrjConstants.SETTLEMENT_LINE_TYPE_COST.equals(l.getLineType())),
                 "含成本行");
 
-        settlementBiz.submit(settlement.getId(), CTX);
-        ErpPrjProjectSettlement approved = settlementBiz.approve(settlement.getId(), CTX);
+        ormTemplate.runInSession(() -> settlementBiz.submit(settlement.getId(), CTX));
+        ErpPrjProjectSettlement approved = ormTemplate.runInSession(session -> settlementBiz.approve(settlement.getId(), CTX));
 
         assertEquals(ErpPrjConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
         assertEquals(ErpPrjConstants.DOC_STATUS_APPROVED, approved.getDocStatus());
@@ -109,15 +109,15 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
             holder[0] = seedProjectWithBillingAndCost("PRJ-STL-CLOSE", "转固测试项目");
             return null;
         });
-        pnlBiz.refreshPnl(holder[0], null, null, CTX);
+        ormTemplate.runInSession(() -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
 
-        ErpPrjProjectSettlement settlement = settlementBiz.createSettlement(holder[0],
-                ErpPrjConstants.SETTLEMENT_TYPE_CLOSE, CTX);
+        ErpPrjProjectSettlement settlement = ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                ErpPrjConstants.SETTLEMENT_TYPE_CLOSE, CTX));
         assertTrue(Boolean.TRUE.equals(settlement.getTransferToAsset()), "CLOSE 结算 transferToAsset=true");
         assertNull(settlement.getAssetCardId(), "审批前无资产卡片");
 
-        settlementBiz.submit(settlement.getId(), CTX);
-        ErpPrjProjectSettlement approved = settlementBiz.approve(settlement.getId(), CTX);
+        ormTemplate.runInSession(() -> settlementBiz.submit(settlement.getId(), CTX));
+        ErpPrjProjectSettlement approved = ormTemplate.runInSession(session -> settlementBiz.approve(settlement.getId(), CTX));
 
         assertEquals(ErpPrjConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
         // CLOSE 转固：资产卡片已创建（assetCardId 非空）
@@ -137,14 +137,14 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
             holder[0] = seedProjectWithBillingAndCost("PRJ-STL-ILL", "非法迁移项目");
             return null;
         });
-        pnlBiz.refreshPnl(holder[0], null, null, CTX);
+        ormTemplate.runInSession(() -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
 
-        ErpPrjProjectSettlement settlement = settlementBiz.createSettlement(holder[0],
-                ErpPrjConstants.SETTLEMENT_TYPE_FINAL, CTX);
+        ErpPrjProjectSettlement settlement = ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                ErpPrjConstants.SETTLEMENT_TYPE_FINAL, CTX));
 
         // 强制审批默认开启（erp-prj.settlement-require-approval=true）：未经 submit 直接 approve 应拒绝
         NopException ex = assertThrows(NopException.class,
-                () -> settlementBiz.approve(settlement.getId(), CTX));
+                () -> ormTemplate.runInSession(session -> settlementBiz.approve(settlement.getId(), CTX)));
         assertEquals(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -156,18 +156,18 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
             holder[0] = seedProjectWithBillingAndCost("PRJ-STL-REV", "红冲测试项目");
             return null;
         });
-        pnlBiz.refreshPnl(holder[0], null, null, CTX);
+        ormTemplate.runInSession(() -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
 
-        ErpPrjProjectSettlement settlement = settlementBiz.createSettlement(holder[0],
-                ErpPrjConstants.SETTLEMENT_TYPE_CLOSE, CTX);
-        settlementBiz.submit(settlement.getId(), CTX);
-        ErpPrjProjectSettlement approved = settlementBiz.approve(settlement.getId(), CTX);
+        ErpPrjProjectSettlement settlement = ormTemplate.runInSession(session -> settlementBiz.createSettlement(holder[0],
+                ErpPrjConstants.SETTLEMENT_TYPE_CLOSE, CTX));
+        ormTemplate.runInSession(() -> settlementBiz.submit(settlement.getId(), CTX));
+        ErpPrjProjectSettlement approved = ormTemplate.runInSession(session -> settlementBiz.approve(settlement.getId(), CTX));
         Long assetCardId = approved.getAssetCardId();
         assertNotNull(assetCardId, "转固卡片已创建");
 
         // 若已过账，reverseSettlement 应红冲 + 回退卡片；若未过账（过账失败隔离），reverseSettlement 抛非法状态
         if (Boolean.TRUE.equals(approved.getPosted())) {
-            ErpPrjProjectSettlement reversed = settlementBiz.reverseSettlement(approved.getId(), CTX);
+            ErpPrjProjectSettlement reversed = ormTemplate.runInSession(session -> settlementBiz.reverseSettlement(approved.getId(), CTX));
             assertFalse(Boolean.TRUE.equals(reversed.getPosted()), "红冲后 posted=false");
 
             ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetCardId);
@@ -175,7 +175,7 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
         } else {
             // 过账失败隔离场景：posted=false 时 reverseSettlement 抛非法状态
             NopException ex = assertThrows(NopException.class,
-                    () -> settlementBiz.reverseSettlement(approved.getId(), CTX));
+                    () -> ormTemplate.runInSession(session -> settlementBiz.reverseSettlement(approved.getId(), CTX)));
             assertEquals(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
         }
     }

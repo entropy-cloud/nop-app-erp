@@ -88,7 +88,7 @@ public class TestErpFinDeferredPostingSweepJob extends JunitAutoTestCase {
 
         // 期间关闭 → post 失败 → 异常记录以独立事务写入 PENDING（含有效 eventData）
         PostingEvent event = apInvoiceEvent("AP-SWEEP-001");
-        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX), "期间关闭应抛 NopException");
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)), "期间关闭应抛 NopException");
         ErpFinPostingException ex = findException("AP-SWEEP-001");
         assertNotNull(ex, "失败应留下 PENDING 异常记录");
         assertNotNull(ex.getEventData(), "异常记录含有效 eventData（重试重建用）");
@@ -121,7 +121,7 @@ public class TestErpFinDeferredPostingSweepJob extends JunitAutoTestCase {
         });
 
         PostingEvent event = apInvoiceEvent("AP-SWEEP-002");
-        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)));
         ErpFinPostingException ex = findException("AP-SWEEP-002");
         assertNotNull(ex);
 
@@ -153,7 +153,7 @@ public class TestErpFinDeferredPostingSweepJob extends JunitAutoTestCase {
         });
 
         PostingEvent event = apInvoiceEvent("AP-SWEEP-003");
-        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)));
         ErpFinPostingException ex = findException("AP-SWEEP-003");
         assertNotNull(ex);
         int retryBefore = ex.getRetryCount();
@@ -178,7 +178,7 @@ public class TestErpFinDeferredPostingSweepJob extends JunitAutoTestCase {
         });
 
         // 前置：先成功过账原凭证（供 reverse 反查）
-        Long originalId = voucherBiz.post(apInvoiceEvent("AP-SWEEP-004"), CTX);
+        Long originalId = ormTemplate.runInSession(session -> voucherBiz.post(apInvoiceEvent("AP-SWEEP-004"), CTX));
         assertNotNull(originalId, "前置：原凭证已过账");
 
         // 手工落一条 REVERSAL PENDING 异常（模拟红冲过账失败被记录）
@@ -212,7 +212,7 @@ public class TestErpFinDeferredPostingSweepJob extends JunitAutoTestCase {
 
         // 记录 A：有效 eventData（来自真实失败过账）
         PostingEvent eventA = apInvoiceEvent("AP-SWEEP-005A");
-        assertThrows(NopException.class, () -> voucherBiz.post(eventA, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(eventA, CTX)));
         ErpFinPostingException exA = findException("AP-SWEEP-005A");
         assertNotNull(exA, "记录 A 已落 PENDING");
 

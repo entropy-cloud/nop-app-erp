@@ -27,7 +27,7 @@ import java.math.BigDecimal;
  * <p>配置余地：每个 {@code public} 动作方法只编排步骤顺序，各步骤为 {@code protected} 方法、单一职责、
  * 以 {@link IServiceContext} 为末参。
  *
- * <p>事务边界：跟随 Facade {@code @BizMutation}+{@code @SingleSession} 事务，本类不带 {@code @Transactional}。
+ * <p>事务边界：跟随 Facade {@code @BizMutation} 事务，本类不带 {@code @Transactional}。
  */
 public class ErpFinNotesPayableProcessor {
 

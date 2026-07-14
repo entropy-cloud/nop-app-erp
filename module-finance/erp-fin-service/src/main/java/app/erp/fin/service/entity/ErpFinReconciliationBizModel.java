@@ -20,7 +20,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -69,7 +68,6 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinReconciliation create(@Name("direction") String direction,
                                        @Name("partnerId") Long partnerId,
                                        @Name("businessDate") LocalDate businessDate,
@@ -116,7 +114,6 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinReconciliation post(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
         if (!ErpFinConstants.RECON_STATUS_DRAFT.equals(head.getDocStatus())) {
@@ -145,7 +142,6 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
         if (!ErpFinConstants.RECON_STATUS_POSTED.equals(head.getDocStatus())) {

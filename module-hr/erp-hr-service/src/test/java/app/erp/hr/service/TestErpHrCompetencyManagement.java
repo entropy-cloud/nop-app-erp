@@ -89,7 +89,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
                 ErpHrConstants.ASSESSMENT_STATUS_DRAFT);
 
         NopException ex = assertThrows(NopException.class,
-                () -> employeeAssessmentBiz.submitAssessment(assessmentId, CTX));
+                () -> ormTemplate.runInSession(session -> employeeAssessmentBiz.submitAssessment(assessmentId, CTX)));
         assertEquals(ErpHrErrors.ERR_ASSESSMENT_NO_DETAILS.getErrorCode(), ex.getErrorCode());
     }
 
@@ -111,8 +111,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
                 ErpHrConstants.ASSESSMENT_STATUS_DRAFT);
         seedDetail(assessmentId, competencyId, 2, ErpHrConstants.ASSESSMENT_TYPE_SELF);
 
-        employeeAssessmentBiz.submitAssessment(assessmentId, CTX);
-        ErpHrEmployeeAssessment completed = employeeAssessmentBiz.completeAssessment(assessmentId, CTX);
+        ormTemplate.runInSession(() -> employeeAssessmentBiz.submitAssessment(assessmentId, CTX));
+        ErpHrEmployeeAssessment completed = ormTemplate.runInSession(session -> employeeAssessmentBiz.completeAssessment(assessmentId, CTX));
         assertEquals(ErpHrConstants.ASSESSMENT_STATUS_COMPLETED, completed.getStatus());
 
         // 差距应已刷新：required=4, actual=2, gap=2 (MODERATE)
@@ -145,7 +145,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         Long assessmentId1 = seedAssessmentOn(empId, ErpHrConstants.ASSESSMENT_TYPE_SELF,
                 ErpHrConstants.ASSESSMENT_STATUS_COMPLETED, LocalDate.of(2026, 6, 1));
         seedDetail(assessmentId1, competencyId, 0, ErpHrConstants.ASSESSMENT_TYPE_SELF);
-        gapAnalysisBiz.refreshGapAnalysis(empId, CTX);
+        ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
         assertEquals(1, findGaps(empId).size());
 
         // 第二次刷新：删除第一次 detail，新建更晚日期的评估（actual=3）→ gap=2 MODERATE
@@ -161,7 +161,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         });
         seedDetail(assessmentId2, competencyId, 3, ErpHrConstants.ASSESSMENT_TYPE_SELF);
 
-        gapAnalysisBiz.refreshGapAnalysis(empId, CTX);
+        ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
 
         List<ErpHrGapAnalysis> gaps = findGaps(empId);
         assertEquals(1, gaps.size(), "清旧重建：不应残留旧快照");
@@ -175,7 +175,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         Long empId = ormTemplate.runInSession(session ->
                 seedEmployeeWithPosition("EMP-NOROLE", null));
         NopException ex = assertThrows(NopException.class,
-                () -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
+                () -> ormTemplate.runInSession(session -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX)));
         assertEquals(ErpHrErrors.ERR_GAP_NO_ROLE_REQUIREMENT.getErrorCode(), ex.getErrorCode());
     }
 
@@ -202,8 +202,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         seedDetail(assessmentId, competencyId, 5, ErpHrConstants.ASSESSMENT_TYPE_PEER);
         seedDetail(assessmentId, competencyId, 4, ErpHrConstants.ASSESSMENT_TYPE_SUBORDINATE);
 
-        employeeAssessmentBiz.submitAssessment(assessmentId, CTX);
-        ErpHrEmployeeAssessment completed = employeeAssessmentBiz.completeAssessment(assessmentId, CTX);
+        ormTemplate.runInSession(() -> employeeAssessmentBiz.submitAssessment(assessmentId, CTX));
+        ErpHrEmployeeAssessment completed = ormTemplate.runInSession(session -> employeeAssessmentBiz.completeAssessment(assessmentId, CTX));
 
         // 各 detail actualLevel 应被聚合写回为 4
         IEntityDao<ErpHrAssessmentDetail> detailDao = daoProvider.daoFor(ErpHrAssessmentDetail.class);
@@ -248,9 +248,9 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         Long compModerate = (Long) seeded[2];
 
         // 先刷新差距
-        gapAnalysisBiz.refreshGapAnalysis(empId, CTX);
+        ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
 
-        ErpHrDevelopmentPlan plan = developmentPlanBiz.generateDevelopmentPlan(empId, CTX);
+        ErpHrDevelopmentPlan plan = ormTemplate.runInSession(session -> developmentPlanBiz.generateDevelopmentPlan(empId, CTX));
         assertNotNull(plan);
         assertEquals(ErpHrConstants.DEV_PLAN_STATUS_IN_PROGRESS, plan.getStatus());
 
@@ -284,8 +284,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
             return new Object[]{empId};
         });
         Long empId = (Long) seeded[0];
-        gapAnalysisBiz.refreshGapAnalysis(empId, CTX);
-        ErpHrDevelopmentPlan plan = developmentPlanBiz.generateDevelopmentPlan(empId, CTX);
+        ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
+        ErpHrDevelopmentPlan plan = ormTemplate.runInSession(session -> developmentPlanBiz.generateDevelopmentPlan(empId, CTX));
         assertNull(plan, "无 CRITICAL/MODERATE 差距时返回 null");
     }
 
@@ -296,13 +296,13 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         Long[] ids = preparePlanItemForStatusTest();
         Long planItemId = ids[0];
 
-        ErpHrDevelopmentPlanItem started = developmentPlanBiz.updatePlanItemStatus(
-                planItemId, ErpHrConstants.PLAN_ITEM_STATUS_IN_PROGRESS, CTX);
+        ErpHrDevelopmentPlanItem started = ormTemplate.runInSession(session -> developmentPlanBiz.updatePlanItemStatus(
+                planItemId, ErpHrConstants.PLAN_ITEM_STATUS_IN_PROGRESS, CTX));
         assertEquals(ErpHrConstants.PLAN_ITEM_STATUS_IN_PROGRESS, started.getStatus());
         assertNotNull(started.getStartDate());
 
-        ErpHrDevelopmentPlanItem achieved = developmentPlanBiz.updatePlanItemStatus(
-                planItemId, ErpHrConstants.PLAN_ITEM_STATUS_ACHIEVED, CTX);
+        ErpHrDevelopmentPlanItem achieved = ormTemplate.runInSession(session -> developmentPlanBiz.updatePlanItemStatus(
+                planItemId, ErpHrConstants.PLAN_ITEM_STATUS_ACHIEVED, CTX));
         assertEquals(ErpHrConstants.PLAN_ITEM_STATUS_ACHIEVED, achieved.getStatus());
         assertNotNull(achieved.getEndDate());
     }
@@ -314,8 +314,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
 
         // NOT_STARTED → ACHIEVED 跳过 IN_PROGRESS：非法
         NopException ex = assertThrows(NopException.class, () ->
-                developmentPlanBiz.updatePlanItemStatus(
-                        planItemId, ErpHrConstants.PLAN_ITEM_STATUS_ACHIEVED, CTX));
+                ormTemplate.runInSession(session -> developmentPlanBiz.updatePlanItemStatus(
+                        planItemId, ErpHrConstants.PLAN_ITEM_STATUS_ACHIEVED, CTX)));
         assertEquals(ErpHrErrors.ERR_DEV_PLAN_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -324,12 +324,12 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         Long[] ids = preparePlanItemForStatusTest();
         Long planId = ids[1];
 
-        ErpHrDevelopmentPlan completed = developmentPlanBiz.completePlan(planId, CTX);
+        ErpHrDevelopmentPlan completed = ormTemplate.runInSession(session -> developmentPlanBiz.completePlan(planId, CTX));
         assertEquals(ErpHrConstants.DEV_PLAN_STATUS_COMPLETED, completed.getStatus());
 
         // 已 COMPLETED 再 complete：非法
         NopException ex = assertThrows(NopException.class,
-                () -> developmentPlanBiz.completePlan(planId, CTX));
+                () -> ormTemplate.runInSession(session -> developmentPlanBiz.completePlan(planId, CTX)));
         assertEquals(ErpHrErrors.ERR_DEV_PLAN_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -345,8 +345,8 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
             return new Object[]{empId};
         });
         Long empId = (Long) seeded[0];
-        gapAnalysisBiz.refreshGapAnalysis(empId, CTX);
-        ErpHrDevelopmentPlan plan = developmentPlanBiz.generateDevelopmentPlan(empId, CTX);
+        ormTemplate.runInSession(() -> gapAnalysisBiz.refreshGapAnalysis(empId, CTX));
+        ErpHrDevelopmentPlan plan = ormTemplate.runInSession(session -> developmentPlanBiz.generateDevelopmentPlan(empId, CTX));
         List<ErpHrDevelopmentPlanItem> items = findPlanItems(plan.getId());
         assertFalse(items.isEmpty());
         return new Long[]{items.get(0).getId(), plan.getId()};
@@ -362,7 +362,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         data.put("id", compId);
         data.put("parentId", compId);
         NopException ex = assertThrows(NopException.class,
-                () -> competencyBiz.update(data, CTX));
+                () -> ormTemplate.runInSession(session -> competencyBiz.update(data, CTX)));
         assertEquals(ErpHrErrors.ERR_COMPETENCY_PARENT_CYCLE.getErrorCode(), ex.getErrorCode());
     }
 
@@ -378,7 +378,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         data.put("id", aId);
         data.put("parentId", cId);
         NopException ex = assertThrows(NopException.class,
-                () -> competencyBiz.update(data, CTX));
+                () -> ormTemplate.runInSession(session -> competencyBiz.update(data, CTX)));
         assertEquals(ErpHrErrors.ERR_COMPETENCY_PARENT_CYCLE.getErrorCode(), ex.getErrorCode());
     }
 
@@ -390,7 +390,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         data.put("name", "COMP-CHILD");
         data.put("category", "SKILL");
         data.put("parentId", parentId);
-        ErpHrCompetency child = competencyBiz.save(data, CTX);
+        ErpHrCompetency child = ormTemplate.runInSession(session -> competencyBiz.save(data, CTX));
         assertEquals(parentId, child.getParentId());
     }
 
@@ -403,7 +403,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         data.put("competencyId", compId);
         data.put("requiredLevel", 6); // 超出 1-5
         NopException ex = assertThrows(NopException.class,
-                () -> roleCompetencyBiz.save(data, CTX));
+                () -> ormTemplate.runInSession(session -> roleCompetencyBiz.save(data, CTX)));
         assertEquals(ErpHrErrors.ERR_ROLE_COMPETENCY_INVALID_LEVEL.getErrorCode(), ex.getErrorCode());
     }
 
@@ -416,7 +416,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         data.put("competencyId", compId);
         data.put("requiredLevel", 0); // 低于 1
         NopException ex = assertThrows(NopException.class,
-                () -> roleCompetencyBiz.save(data, CTX));
+                () -> ormTemplate.runInSession(session -> roleCompetencyBiz.save(data, CTX)));
         assertEquals(ErpHrErrors.ERR_ROLE_COMPETENCY_INVALID_LEVEL.getErrorCode(), ex.getErrorCode());
     }
 
@@ -428,7 +428,7 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
         data.put("positionId", posId);
         data.put("competencyId", compId);
         data.put("requiredLevel", 3);
-        ErpHrRoleCompetency rc = roleCompetencyBiz.save(data, CTX);
+        ErpHrRoleCompetency rc = ormTemplate.runInSession(session -> roleCompetencyBiz.save(data, CTX));
         assertNotNull(rc.getId());
         assertEquals(3, rc.getRequiredLevel().intValue());
     }
@@ -438,14 +438,14 @@ public class TestErpHrCompetencyManagement extends JunitAutoTestCase {
     List<ErpHrGapAnalysis> findGaps(Long employeeId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));
-        return gapAnalysisBiz.findList(q, null, CTX);
+        return ormTemplate.runInSession(session -> gapAnalysisBiz.findList(q, null, CTX));
     }
 
     List<ErpHrDevelopmentPlanItem> findPlanItems(Long planId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("planId", planId));
         q.addOrderField("id", false);
-        return planItemBiz.findList(q, null, CTX);
+        return ormTemplate.runInSession(session -> planItemBiz.findList(q, null, CTX));
     }
 
     String lookupGapSeverity(Long gapId) {

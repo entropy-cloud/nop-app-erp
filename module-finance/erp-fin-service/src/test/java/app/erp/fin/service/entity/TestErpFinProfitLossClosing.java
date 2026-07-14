@@ -76,7 +76,7 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
             return pid;
         });
 
-        periodBiz.closePeriod(periodId, CTX);
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
 
         // 结转凭证存在（PERIOD_CLOSE，billCode=PERIOD-CLOSE-2024-03）。
         ErpFinVoucher closeVoucher = findCloseVoucher("PERIOD-CLOSE-2024-03",

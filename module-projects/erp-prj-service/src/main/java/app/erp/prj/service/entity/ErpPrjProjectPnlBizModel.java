@@ -9,7 +9,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -38,7 +37,6 @@ public class ErpPrjProjectPnlBizModel extends CrudBizModel<ErpPrjProjectPnl> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProjectPnl refreshPnl(@Name("projectId") Long projectId,
                                        @Name("periodFrom") LocalDate periodFrom,
                                        @Name("periodTo") LocalDate periodTo,
@@ -48,7 +46,6 @@ public class ErpPrjProjectPnlBizModel extends CrudBizModel<ErpPrjProjectPnl> imp
 
     @Override
     @BizQuery
-    @SingleSession
     public ErpPrjProjectPnl getProjectPnl(@Name("projectId") Long projectId, IServiceContext context) {
         return pnlCalculator.findLatestCalculated(projectId);
     }

@@ -12,7 +12,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
@@ -105,7 +104,6 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjTask startTask(@Name("taskId") Long taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
@@ -121,7 +119,6 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjTask completeTask(@Name("taskId") Long taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
@@ -136,7 +133,6 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjTask blockTask(@Name("taskId") Long taskId,
                                 @Name("blockReason") String blockReason,
                                 IServiceContext context) {
@@ -157,7 +153,6 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjTask unblockTask(@Name("taskId") Long taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();

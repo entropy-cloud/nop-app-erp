@@ -9,7 +9,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -34,7 +33,6 @@ public class ErpFinExpenseClaimBizModel extends CrudBizModel<ErpFinExpenseClaim>
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinExpenseClaim cancel(@Name("claimId") Long claimId, IServiceContext context) {
         return claimProcessor.cancel(claimId, context);
     }

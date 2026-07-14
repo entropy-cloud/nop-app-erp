@@ -6,7 +6,6 @@ import app.erp.inv.service.processor.ErpInvCostAdjustProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -31,14 +30,12 @@ public class ErpInvCostAdjustBizModel extends CrudBizModel<ErpInvCostAdjust> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpInvCostAdjust applyCostAdjust(@Name("id") Long id, IServiceContext context) {
         return costAdjustProcessor.applyCostAdjust(id, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpInvCostAdjust reverseCostAdjust(@Name("id") Long id, IServiceContext context) {
         return costAdjustProcessor.reverseCostAdjust(id, context);
     }

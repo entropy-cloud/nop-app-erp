@@ -9,7 +9,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -65,7 +64,6 @@ public class ErpAstValueAdjustmentBizModel extends CrudBizModel<ErpAstValueAdjus
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpAstValueAdjustment cancel(@Name("id") Long id, IServiceContext context) {
         return adjustmentProcessor.cancel(id, context);
     }

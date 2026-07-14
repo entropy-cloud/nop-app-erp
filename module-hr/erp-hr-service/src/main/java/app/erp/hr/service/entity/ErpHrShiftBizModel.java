@@ -18,7 +18,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -58,7 +57,6 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrAttendance calcAttendance(@Name("employeeId") Long employeeId,
                                           @Name("assignmentDate") LocalDate assignmentDate,
                                           IServiceContext context) {
@@ -128,7 +126,6 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
 
     @Override
     @BizMutation
-    @SingleSession
     public void onLeaveApproved(@Name("leaveRequestId") Long leaveRequestId, IServiceContext context) {
         ErpHrLeaveRequest leave = requireLeaveRequest(leaveRequestId, context);
         List<ErpHrShiftAssignment> assignments = findAssignmentsByEmployeeRange(
@@ -144,7 +141,6 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
 
     @Override
     @BizMutation
-    @SingleSession
     public void onLeaveCancelled(@Name("leaveRequestId") Long leaveRequestId, IServiceContext context) {
         ErpHrLeaveRequest leave = requireLeaveRequest(leaveRequestId, context);
         List<ErpHrShiftAssignment> assignments = findAssignmentsByEmployeeRange(

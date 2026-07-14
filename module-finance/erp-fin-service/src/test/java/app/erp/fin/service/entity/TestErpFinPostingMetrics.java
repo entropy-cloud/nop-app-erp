@@ -80,12 +80,12 @@ public class TestErpFinPostingMetrics extends JunitAutoTestCase {
         });
 
         // 成功过账 2 笔（喂时延采样 + 计入凭证分母）
-        voucherBiz.post(apInvoiceEvent("AP-METRIC-OK-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX);
-        voucherBiz.post(apInvoiceEvent("AP-METRIC-OK-002", voucherDate,
-                new BigDecimal("200"), new BigDecimal("26"), new BigDecimal("226")), CTX);
+        ormTemplate.runInSession(() -> voucherBiz.post(apInvoiceEvent("AP-METRIC-OK-001", voucherDate,
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX));
+        ormTemplate.runInSession(() -> voucherBiz.post(apInvoiceEvent("AP-METRIC-OK-002", voucherDate,
+                new BigDecimal("200"), new BigDecimal("26"), new BigDecimal("226")), CTX));
 
-        ErpFinPostingMetricsSnapshot snapshot = postingExceptionBiz.getRuntimeMetrics(null, CTX);
+        ErpFinPostingMetricsSnapshot snapshot = ormTemplate.runInSession(session -> postingExceptionBiz.getRuntimeMetrics(null, CTX));
         assertNotNull(snapshot);
         assertTrue(snapshot.getVoucherCount() >= 2, "窗口内凭证数 ≥ 2");
         assertEquals(0, snapshot.getExceptionCount(), "无失败样本时异常数为 0");
@@ -129,15 +129,16 @@ public class TestErpFinPostingMetrics extends JunitAutoTestCase {
         });
 
         // 1 笔成功（7 月期间）
-        voucherBiz.post(apInvoiceEvent("AP-METRIC-OK-010", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX);
+        ormTemplate.runInSession(() -> voucherBiz.post(apInvoiceEvent("AP-METRIC-OK-010", voucherDate,
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX));
 
         // 3 笔失败（8 月期间关闭 → 抛 NopException → 异常工作台 PENDING）
         for (int i = 0; i < 3; i++) {
+            final int fi = i;
             try {
-                voucherBiz.post(apInvoiceEvent("AP-METRIC-FAIL-" + i,
+                ormTemplate.runInSession(() -> voucherBiz.post(apInvoiceEvent("AP-METRIC-FAIL-" + fi,
                         LocalDate.of(2026, 8, 10),
-                        new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX);
+                        new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX));
             } catch (NopException e) {
                 // 预期失败
             }
@@ -146,9 +147,9 @@ public class TestErpFinPostingMetrics extends JunitAutoTestCase {
         // 1 笔失败 → 手工补录（resolution=MANUAL，计入自动化记账率分母）
         ErpFinPostingException toManual = findException("AP-METRIC-FAIL-0");
         assertNotNull(toManual);
-        postingExceptionBiz.manualEntry(toManual.getId(), 8888L, "财务手工补录", CTX);
+        ormTemplate.runInSession(() -> postingExceptionBiz.manualEntry(toManual.getId(), 8888L, "财务手工补录", CTX));
 
-        ErpFinPostingMetricsSnapshot snapshot = postingExceptionBiz.getRuntimeMetrics(null, CTX);
+        ErpFinPostingMetricsSnapshot snapshot = ormTemplate.runInSession(session -> postingExceptionBiz.getRuntimeMetrics(null, CTX));
         assertTrue(snapshot.getVoucherCount() >= 1, "凭证数 ≥ 1");
         assertTrue(snapshot.getExceptionCount() >= 3, "异常数 ≥ 3");
         assertTrue(snapshot.getManualResolutionCount() >= 1, "手工补录数 ≥ 1");

@@ -92,7 +92,7 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
                 "前置：发票已过账 posted=true");
 
         // 3) 财务侧直接红冲凭证（方向二）—— 采购域监听者应被动回退发票状态。
-        Long redVoucherId = voucherBiz.reverse(invoice.getCode(), ErpFinBusinessType.AP_INVOICE, CTX);
+        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(invoice.getCode(), ErpFinBusinessType.AP_INVOICE, CTX));
 
         assertNotNull(redVoucherId, "财务侧红冲应生成红字凭证");
         assertNotEquals(originalVoucherId, redVoucherId);
@@ -117,7 +117,7 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
 
         // 2) 财务侧红冲——监听者反查不到源单应静默（不抛错，因 posted 标志未翻转为 true），
         //    红字凭证照常落库，无告警记录（监听者未抛错即视为成功）。
-        Long redVoucherId = voucherBiz.reverse(ghostBillCode, ErpFinBusinessType.AP_INVOICE, CTX);
+        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(ghostBillCode, ErpFinBusinessType.AP_INVOICE, CTX));
         assertNotNull(redVoucherId, "源单不存在时红字凭证仍应过账（法律效力）");
 
         // 无 ErpFinPostingException 记录（监听者 findByCode 返回 null，不抛错即静默成功）

@@ -70,9 +70,9 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         Long posId = (Long) ids[3];
         Long superiorId = (Long) ids[4];
 
-        ErpHrEmployee result = employeeBiz.transferEmployee(
+        ErpHrEmployee result = ormTemplate.runInSession(session -> employeeBiz.transferEmployee(
                 empId, deptToId, posId, superiorId,
-                LocalDate.of(2026, 7, 8), ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX);
+                LocalDate.of(2026, 7, 8), ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX));
 
         assertEquals(deptToId, result.getDepartmentId(), "部门应更新为目标部门");
         assertEquals(posId, result.getPositionId(), "职位应更新为目标职位");
@@ -95,9 +95,9 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         Long deptId = (Long) ids[1];
 
         NopException ex = assertThrows(NopException.class, () ->
-                employeeBiz.transferEmployee(empId, deptId, null, null,
+                ormTemplate.runInSession(session -> employeeBiz.transferEmployee(empId, deptId, null, null,
                         LocalDate.of(2026, 7, 8),
-                        ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX));
+                        ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX)));
         assertEquals(ErpHrErrors.ERR_EMPLOYEE_NOT_TRANSFERABLE.getErrorCode(), ex.getErrorCode());
     }
 
@@ -110,9 +110,9 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         Long empId = (Long) ids[0];
 
         NopException ex = assertThrows(NopException.class, () ->
-                employeeBiz.transferEmployee(empId, 99999999L, null, null,
+                ormTemplate.runInSession(session -> employeeBiz.transferEmployee(empId, 99999999L, null, null,
                         LocalDate.of(2026, 7, 8),
-                        ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX));
+                        ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX)));
         assertEquals(ErpHrErrors.ERR_TRANSFER_TARGET_DEPT_NOT_FOUND.getErrorCode(), ex.getErrorCode());
     }
 
@@ -130,9 +130,9 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         Long posInBId = (Long) ids[2];
 
         NopException ex = assertThrows(NopException.class, () ->
-                employeeBiz.transferEmployee(empId, deptAId, posInBId, null,
+                ormTemplate.runInSession(session -> employeeBiz.transferEmployee(empId, deptAId, posInBId, null,
                         LocalDate.of(2026, 7, 8),
-                        ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX));
+                        ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX)));
         assertEquals(ErpHrErrors.ERR_TRANSFER_TARGET_POSITION_NOT_FOUND.getErrorCode(), ex.getErrorCode());
     }
 
@@ -151,8 +151,8 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         Long oldContractId = (Long) ids[2];
         LocalDate effective = LocalDate.of(2026, 7, 8);
 
-        employeeBiz.transferEmployee(empId, deptId, null, null, effective,
-                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_AUTO, CTX);
+        ormTemplate.runInSession(() -> employeeBiz.transferEmployee(empId, deptId, null, null, effective,
+                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_AUTO, CTX));
 
         ErpHrEmploymentContract oldContract = daoProvider.daoFor(ErpHrEmploymentContract.class)
                 .getEntityById(oldContractId);
@@ -181,9 +181,9 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         Long deptId = (Long) ids[1];
         Long oldContractId = (Long) ids[2];
 
-        employeeBiz.transferEmployee(empId, deptId, null, null,
+        ormTemplate.runInSession(() -> employeeBiz.transferEmployee(empId, deptId, null, null,
                 LocalDate.of(2026, 7, 8),
-                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX);
+                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX));
 
         ErpHrEmploymentContract oldContract = daoProvider.daoFor(ErpHrEmploymentContract.class)
                 .getEntityById(oldContractId);
@@ -204,8 +204,8 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
 
         assertNull(findActiveContract(empId), "前置：员工无 ACTIVE 合同");
 
-        employeeBiz.transferEmployee(empId, deptId, null, null, effective,
-                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_YES, CTX);
+        ormTemplate.runInSession(() -> employeeBiz.transferEmployee(empId, deptId, null, null, effective,
+                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_YES, CTX));
 
         ErpHrEmploymentContract created = findActiveContract(empId);
         assertNotNull(created, "YES 模式即使无 ACTIVE 合同也应新建");
@@ -224,10 +224,10 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         Long empId = (Long) ids[0];
         Long deptId = (Long) ids[1];
 
-        ErpHrEmployee result = employeeBiz.transferEmployee(
+        ErpHrEmployee result = ormTemplate.runInSession(session -> employeeBiz.transferEmployee(
                 empId, deptId, null, null,
                 LocalDate.of(2026, 7, 10),
-                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX);
+                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX));
 
         assertNotNull(result, "调动日期落入 APPROVED 休假区间应仅告警不阻塞");
         assertEquals(deptId, result.getDepartmentId());
@@ -243,10 +243,10 @@ public class TestErpHrEmployeeTransfer extends JunitAutoTestCase {
         Long empId = (Long) ids[0];
         Long deptId = (Long) ids[1];
 
-        ErpHrEmployee result = employeeBiz.transferEmployee(
+        ErpHrEmployee result = ormTemplate.runInSession(session -> employeeBiz.transferEmployee(
                 empId, deptId, null, null,
                 LocalDate.of(2026, 7, 8),
-                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX);
+                ErpHrConstants.TRANSFER_HANDLE_CONTRACT_NO, CTX));
         assertEquals(deptId, result.getDepartmentId(), "PROBATION 状态员工应允许调动");
     }
 

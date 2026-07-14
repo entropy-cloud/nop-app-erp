@@ -241,11 +241,11 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         assertEquals(0, new BigDecimal("113").compareTo(openBefore), "核销前 PAYABLE 方向未核销合计=113");
 
         // 经财务正式核销单 ErpFinReconciliation 核销（付款项↔发票项，全额 56.5）
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, SUPPLIER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(paymentItem.getId(), invoiceItem.getId(), "56.5")), CTX);
+                Collections.singletonList(reconLine(paymentItem.getId(), invoiceItem.getId(), "56.5")), CTX));
         assertEquals(ErpFinConstants.RECON_STATUS_DRAFT, head.getDocStatus());
-        reconciliationBiz.post(head.getId(), CTX);
+        ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
 
         // 核销后：双方辅助账 openAmount 回减至零，status=SETTLED
         ErpFinArApItem settledInvoice = reloadItem(invoiceItem.getId());
@@ -269,8 +269,8 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
                 "核销后 PAYABLE 方向未核销合计=0");
 
         // 账龄查询可用且与核销结果一致（核销后无未核销项 → totalOpen=0）
-        List<ArApAgingRow> aging = arApItemBiz.aging(ErpFinConstants.DIRECTION_PAYABLE,
-                LocalDate.of(2026, 7, 31), CTX);
+        List<ArApAgingRow> aging = ormTemplate.runInSession(session -> arApItemBiz.aging(ErpFinConstants.DIRECTION_PAYABLE,
+                LocalDate.of(2026, 7, 31), CTX));
         BigDecimal agingTotal = aging.stream().map(ArApAgingRow::getTotalOpen)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         assertEquals(0, BigDecimal.ZERO.compareTo(agingTotal), "账龄 totalOpen=0（已全额核销）");
@@ -299,9 +299,9 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         assertNull(findApItem(ErpFinConstants.SOURCE_BILL_AP_INVOICE, "PI-FEX-001"),
                 "未审核发票不应生成辅助账项");
         // 引用不存在的辅助账创建核销单 → 抛 NopException（sample 加载失败）
-        assertThrows(NopException.class, () -> reconciliationBiz.create(
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, SUPPLIER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(999001L, 999002L, "56.5")), CTX),
+                Collections.singletonList(reconLine(999001L, 999002L, "56.5")), CTX)),
                 "引用不存在的辅助账应拒绝");
 
         // (b) 审核发票 + 付款，核销金额超过 openAmount 拒绝
@@ -316,10 +316,10 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         assertNotNull(invoiceItem);
         assertNotNull(paymentItem);
 
-        ErpFinReconciliation over = reconciliationBiz.create(
+        ErpFinReconciliation over = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, SUPPLIER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(paymentItem.getId(), invoiceItem.getId(), "999")), CTX);
-        assertThrows(NopException.class, () -> reconciliationBiz.post(over.getId(), CTX),
+                Collections.singletonList(reconLine(paymentItem.getId(), invoiceItem.getId(), "999")), CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(over.getId(), CTX)),
                 "核销金额超过未核销余额应拒绝");
         // 拒绝后核销单仍 DRAFT，辅助账未被改写
         assertEquals(ErpFinConstants.RECON_STATUS_DRAFT,

@@ -68,17 +68,17 @@ public class TestErpLogShipmentPostingEnd extends JunitAutoTestCase {
                 ErpLogConstants.FREIGHT_TERMS_PREPAID, new BigDecimal("150"),
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
-        ErpLogShipment afterAdvise = shipmentBiz.advise(shipmentId, CTX);
+        ErpLogShipment afterAdvise = ormTemplate.runInSession(session -> shipmentBiz.advise(shipmentId, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_ADVISED, afterAdvise.getStatus());
 
-        ErpLogShipment afterComplete = shipmentBiz.completeShipment(shipmentId, CTX);
+        ErpLogShipment afterComplete = ormTemplate.runInSession(session -> shipmentBiz.completeShipment(shipmentId, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED, afterComplete.getStatus());
         assertNotNull(afterComplete.getTrackingNo());
 
         String trackingNo = afterComplete.getTrackingNo();
         String payload = "{\"trackingNo\":\"" + trackingNo + "\",\"eventType\":\"DELIVERED\",\"signedBy\":\"张三\"}";
         String sig = hmacSha256(payload, carrierCode);
-        ErpLogShipment result = shipmentBiz.handleTrackingWebhook(carrierCode, sig, payload, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook(carrierCode, sig, payload, CTX));
 
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, result.getStatus());
         assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, result.getFreightSettlementStatus());
@@ -99,17 +99,17 @@ public class TestErpLogShipmentPostingEnd extends JunitAutoTestCase {
                 ErpLogConstants.FREIGHT_TERMS_COLLECT, new BigDecimal("300"),
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
-        ErpLogShipment afterAdvise = shipmentBiz.advise(shipmentId, CTX);
+        ErpLogShipment afterAdvise = ormTemplate.runInSession(session -> shipmentBiz.advise(shipmentId, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_ADVISED, afterAdvise.getStatus());
 
-        ErpLogShipment afterComplete = shipmentBiz.completeShipment(shipmentId, CTX);
+        ErpLogShipment afterComplete = ormTemplate.runInSession(session -> shipmentBiz.completeShipment(shipmentId, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED, afterComplete.getStatus());
         assertNotNull(afterComplete.getTrackingNo());
 
         String trackingNo = afterComplete.getTrackingNo();
         String payload = "{\"trackingNo\":\"" + trackingNo + "\",\"eventType\":\"DELIVERED\"}";
         String sig = hmacSha256(payload, carrierCode);
-        ErpLogShipment result = shipmentBiz.handleTrackingWebhook(carrierCode, sig, payload, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook(carrierCode, sig, payload, CTX));
 
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, result.getStatus());
         assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, result.getFreightSettlementStatus());

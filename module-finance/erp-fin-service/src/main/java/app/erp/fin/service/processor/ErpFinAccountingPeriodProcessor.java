@@ -60,7 +60,7 @@ import static io.nop.api.core.beans.FilterBeans.or;
  * <p>配置余地：模块关账各步（{@link #closeInvModule}/{@link #closeAssetModule}/{@link #closeGlModule}）、
  * 状态机迁移、试算平衡快照均为 {@code protected} 方法、以 {@link IServiceContext} 为末参，下游可逐 step 覆盖。
  *
- * <p>事务边界：跟随 Facade {@code @BizMutation}+{@code @SingleSession} 事务；ORM Session 由本类 {@link #orm()}
+ * <p>事务边界：跟随 Facade {@code @BizMutation} 事务；ORM Session 由本类 {@link #orm()}
  * 获取（与 CrudBizModel.orm() 同源），期末凭证生成完成后再做状态簿记 + flush。
  */
 public class ErpFinAccountingPeriodProcessor {

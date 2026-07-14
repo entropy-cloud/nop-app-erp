@@ -36,7 +36,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>提供单资产 {@link #executeDepreciation} 与批量 {@link #executeBatchDepreciation}，按折旧方法计算本期折旧，
  * 更新计划条目与资产卡片汇总列，触发 DEPRECIATION 业财过账。期间控制 + 幂等重执行 + 批量错误隔离。
  *
- * <p>事务边界：跟随 Facade {@code @BizMutation}+{@code @SingleSession} 事务；{@code executeBatchDepreciation}
+ * <p>事务边界：跟随 Facade {@code @BizMutation} 事务；{@code executeBatchDepreciation}
  * 声明于 dao 层 IBiz，供期末结账经 I*Biz 跨模块调用。
  */
 public class ErpAstDepreciationScheduleProcessor {

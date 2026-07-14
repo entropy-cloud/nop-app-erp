@@ -84,7 +84,7 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
             return null;
         });
 
-        ErpPrjProjectPnl pnl = pnlBiz.refreshPnl(holder[0], null, null, CTX);
+        ErpPrjProjectPnl pnl = ormTemplate.runInSession(session -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
 
         assertEquals(0, pnl.getRevenueAmount().compareTo(new BigDecimal("10000")), "收入合计=10000");
         assertEquals(0, pnl.getCostLabor().compareTo(new BigDecimal("2000")), "人工成本=2000");
@@ -115,7 +115,7 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
             return null;
         });
 
-        ErpPrjProjectPnl pnl = pnlBiz.refreshPnl(holder[0], null, null, CTX);
+        ErpPrjProjectPnl pnl = ormTemplate.runInSession(session -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
 
         assertEquals(0, pnl.getRevenueAmount().compareTo(BigDecimal.ZERO), "收入=0");
         assertEquals(0, pnl.getTotalCost().compareTo(BigDecimal.ZERO), "成本=0");
@@ -139,7 +139,7 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
         });
 
         NopException ex = assertThrows(NopException.class, () ->
-                pnlBiz.refreshPnl(holder[0], LocalDate.of(2026, 7, 31), LocalDate.of(2026, 7, 1), CTX));
+                ormTemplate.runInSession(session -> pnlBiz.refreshPnl(holder[0], LocalDate.of(2026, 7, 31), LocalDate.of(2026, 7, 1), CTX)));
         assertEquals(ErpPrjErrors.ERR_PRJ_PNL_PERIOD_INVALID.getErrorCode(), ex.getErrorCode());
     }
 
@@ -159,8 +159,8 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
             return null;
         });
 
-        ErpPrjProjectPnl first = pnlBiz.refreshPnl(holder[0], null, null, CTX);
-        ErpPrjProjectPnl second = pnlBiz.refreshPnl(holder[0], null, null, CTX);
+        ErpPrjProjectPnl first = ormTemplate.runInSession(session -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
+        ErpPrjProjectPnl second = ormTemplate.runInSession(session -> pnlBiz.refreshPnl(holder[0], null, null, CTX));
 
         assertEquals(first.getId(), second.getId(), "重算幂等：同期间不产生重复行");
         assertEquals(1, countPnlForProject(holder[0]), "仅一行汇总");

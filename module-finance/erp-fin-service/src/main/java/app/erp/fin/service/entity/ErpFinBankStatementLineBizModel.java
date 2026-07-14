@@ -13,7 +13,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
@@ -37,14 +36,12 @@ public class ErpFinBankStatementLineBizModel extends CrudBizModel<ErpFinBankStat
 
     @Override
     @BizMutation
-    @SingleSession
     public BankStatementMatchResult autoMatch(@Name("statementId") Long statementId, IServiceContext context) {
         return bankStatementMatcher.autoMatch(statementId);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinBankStatementLine manualMatch(@Name("lineId") Long lineId,
                                                 @Name("voucherLineId") Long voucherLineId,
                                                 IServiceContext context) {

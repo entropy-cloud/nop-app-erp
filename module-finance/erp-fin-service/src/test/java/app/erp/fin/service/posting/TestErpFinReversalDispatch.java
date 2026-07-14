@@ -101,14 +101,14 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        Long originalId = voucherBiz.post(apInvoiceEvent("AP-DISP-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX);
+        Long originalId = ormTemplate.runInSession(session -> voucherBiz.post(apInvoiceEvent("AP-DISP-001", voucherDate,
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX));
         assertNotNull(originalId, "前置：先 happy 过账生成原凭证");
 
         CapturingListener capturing = new CapturingListener();
         reversalListenerRegistry.addListener(capturing);
 
-        Long redId = voucherBiz.reverse("AP-DISP-001", ErpFinBusinessType.AP_INVOICE, CTX);
+        Long redId = ormTemplate.runInSession(session -> voucherBiz.reverse("AP-DISP-001", ErpFinBusinessType.AP_INVOICE, CTX));
 
         assertNotNull(redId, "红冲应生成红字凭证");
         assertNotEquals(originalId, redId);
@@ -136,12 +136,12 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        Long originalId = voucherBiz.post(apInvoiceEvent("AP-NOOP-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX);
+        Long originalId = ormTemplate.runInSession(session -> voucherBiz.post(apInvoiceEvent("AP-NOOP-001", voucherDate,
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX));
         assertNotNull(originalId);
 
         // 不注册任何监听者——reverse() 应正常完成不报错。
-        Long redId = voucherBiz.reverse("AP-NOOP-001", ErpFinBusinessType.AP_INVOICE, CTX);
+        Long redId = ormTemplate.runInSession(session -> voucherBiz.reverse("AP-NOOP-001", ErpFinBusinessType.AP_INVOICE, CTX));
 
         assertNotNull(redId, "无监听者时 reverse() 应正常返回红字凭证 ID");
     }
@@ -158,8 +158,8 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        Long originalId = voucherBiz.post(apInvoiceEvent("AP-FAIL-001", voucherDate,
-                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX);
+        Long originalId = ormTemplate.runInSession(session -> voucherBiz.post(apInvoiceEvent("AP-FAIL-001", voucherDate,
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")), CTX));
         assertNotNull(originalId);
 
         CapturingListener goodListener = new CapturingListener();
@@ -168,7 +168,7 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
         reversalListenerRegistry.addListener(goodListener);
 
         // reverse() 不抛错（监听者失败被隔离），红字凭证成功落库。
-        Long redId = voucherBiz.reverse("AP-FAIL-001", ErpFinBusinessType.AP_INVOICE, CTX);
+        Long redId = ormTemplate.runInSession(session -> voucherBiz.reverse("AP-FAIL-001", ErpFinBusinessType.AP_INVOICE, CTX));
         assertNotNull(redId, "监听者抛错时红字凭证仍应过账（法律效力）");
         assertEquals(1, goodListener.callCount.get(),
                 "正常监听者应仍被回调（失败监听者不阻断其他监听者）");

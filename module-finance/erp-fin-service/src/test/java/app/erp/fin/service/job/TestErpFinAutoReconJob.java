@@ -53,7 +53,7 @@ public class TestErpFinAutoReconJob extends JunitAutoTestCase {
                 new BigDecimal("100"), LocalDate.of(2026, 5, 20));
 
         CountingJob job = new CountingJob(reconciliationBiz, "0 0 1 * * ?");
-        job.execute();
+        ormTemplate.runInSession(() -> job.execute());
 
         assertEquals(1, job.recvCalls, "RECEIVABLE 方向应被调用 1 次");
         assertEquals(1, job.payableCalls, "PAYABLE 方向应被调用 1 次");

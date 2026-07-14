@@ -49,15 +49,15 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
     public void testClockInClockOutComputesWorkHours() {
         Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-CLOCK"));
 
-        ErpHrAttendance afterIn = attendanceBiz.clockIn(empId, CTX);
+        ErpHrAttendance afterIn = ormTemplate.runInSession(session -> attendanceBiz.clockIn(empId, CTX));
         assertNotNull(afterIn.getClockIn(), "签到后 clockIn 应有值");
         assertNull(afterIn.getClockOut(), "签到后 clockOut 应为空");
 
-        ErpHrAttendance afterOut = attendanceBiz.clockOut(empId, CTX);
+        ErpHrAttendance afterOut = ormTemplate.runInSession(session -> attendanceBiz.clockOut(empId, CTX));
         assertNotNull(afterOut.getClockOut(), "签退后 clockOut 应有值");
         assertNotNull(afterOut.getWorkHours(), "签退后 workHours 应已计算");
 
-        ErpHrAttendance today = attendanceBiz.getTodayAttendance(empId, CTX);
+        ErpHrAttendance today = ormTemplate.runInSession(session -> attendanceBiz.getTodayAttendance(empId, CTX));
         assertNotNull(today);
         assertEquals(today.getClockIn(), afterIn.getClockIn());
     }
@@ -66,10 +66,10 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
     public void testDuplicateClockInBlocked() {
         Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-DUP"));
 
-        attendanceBiz.clockIn(empId, CTX);
+        ormTemplate.runInSession(() -> attendanceBiz.clockIn(empId, CTX));
 
         NopException ex = assertThrows(NopException.class,
-                () -> attendanceBiz.clockIn(empId, CTX));
+                () -> ormTemplate.runInSession(session -> attendanceBiz.clockIn(empId, CTX)));
         assertEquals(ErpHrErrors.ERR_ALREADY_CLOCKED_IN.getErrorCode(), ex.getErrorCode());
     }
 
@@ -78,7 +78,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
         Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-NOIN"));
 
         NopException ex = assertThrows(NopException.class,
-                () -> attendanceBiz.clockOut(empId, CTX));
+                () -> ormTemplate.runInSession(session -> attendanceBiz.clockOut(empId, CTX)));
         assertEquals(ErpHrErrors.ERR_NOT_CLOCKED_IN.getErrorCode(), ex.getErrorCode());
     }
 
@@ -86,7 +86,7 @@ public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
     public void testGetTodayAttendanceReturnsNullWhenAbsent() {
         Long empId = ormTemplate.runInSession(session -> seedEmployee("EMP-NULL"));
 
-        ErpHrAttendance result = attendanceBiz.getTodayAttendance(empId, CTX);
+        ErpHrAttendance result = ormTemplate.runInSession(session -> attendanceBiz.getTodayAttendance(empId, CTX));
         assertNull(result, "无打卡记录应返回 null");
     }
 

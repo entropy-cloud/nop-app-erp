@@ -12,7 +12,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
@@ -45,7 +44,6 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProject requireReferenceable(@Name("projectId") Long projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
         String status = project.getStatus();
@@ -59,14 +57,12 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
 
     @Override
     @BizMutation
-    @SingleSession
     public BigDecimal refreshActualCost(@Name("projectId") Long projectId, IServiceContext context) {
         return costAggregator.refreshActualCost(projectId);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProject closeProject(@Name("projectId") Long projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
         String status = project.getStatus();

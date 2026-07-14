@@ -88,7 +88,7 @@ public class TestErpInvFinanceReversalWriteback extends JunitAutoTestCase {
         assertTrue(Boolean.TRUE.equals(reload(transfer).getPosted()),
                 "前置：所有权转移单已过账 posted=true");
 
-        Long redVoucherId = voucherBiz.reverse(transfer.getCode(), ErpFinBusinessType.OWNERSHIP_TRANSFER, CTX);
+        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(transfer.getCode(), ErpFinBusinessType.OWNERSHIP_TRANSFER, CTX));
 
         assertNotNull(redVoucherId);
         assertNotEquals(originalVoucherId, redVoucherId);

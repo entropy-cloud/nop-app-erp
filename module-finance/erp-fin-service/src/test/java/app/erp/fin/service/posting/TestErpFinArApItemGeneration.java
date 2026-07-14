@@ -71,7 +71,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-ARAP-001", voucherDate, 2L,
                 new BigDecimal("113"));
 
-        Long voucherId = voucherBiz.post(event, CTX);
+        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "前置：过账成功");
 
         List<ErpFinArApItem> items = findItems("AP_INVOICE", "AP-ARAP-001");
@@ -109,7 +109,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         event.getBillData().put("AMOUNT", new BigDecimal("200"));
         event.getBillData().put("businessDate", voucherDate);
 
-        Long voucherId = voucherBiz.post(event, CTX);
+        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "前置：收款过账成功");
 
         List<ErpFinArApItem> items = findItems("RECEIPT", "RC-ARAP-001");
@@ -134,8 +134,8 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-ARAP-IDEM", voucherDate, 1L, new BigDecimal("100"));
 
-        voucherBiz.post(event, CTX);
-        voucherBiz.post(event, CTX);
+        ormTemplate.runInSession(() -> voucherBiz.post(event, CTX));
+        ormTemplate.runInSession(() -> voucherBiz.post(event, CTX));
 
         List<ErpFinArApItem> items = findItems("AP_INVOICE", "AP-ARAP-IDEM");
         assertEquals(1, items.size(), "幂等：重复过账不应重复生成辅助账项");
@@ -152,13 +152,13 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        voucherBiz.post(apInvoiceEvent("AP-ARAP-REV", voucherDate, 1L, new BigDecimal("150")), CTX);
+        ormTemplate.runInSession(() -> voucherBiz.post(apInvoiceEvent("AP-ARAP-REV", voucherDate, 1L, new BigDecimal("150")), CTX));
 
         List<ErpFinArApItem> before = findItems("AP_INVOICE", "AP-ARAP-REV");
         assertEquals(1, before.size());
         assertEquals(ErpFinConstants.AR_AP_STATUS_OPEN, before.get(0).getStatus());
 
-        voucherBiz.reverse("AP-ARAP-REV", ErpFinBusinessType.AP_INVOICE, CTX);
+        ormTemplate.runInSession(() -> voucherBiz.reverse("AP-ARAP-REV", ErpFinBusinessType.AP_INVOICE, CTX));
 
         List<ErpFinArApItem> after = findItems("AP_INVOICE", "AP-ARAP-REV");
         assertEquals(1, after.size(), "红冲不新增辅助账项，而是取消原项");
@@ -187,7 +187,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", new BigDecimal("500"));
 
-        Long voucherId = voucherBiz.post(event, CTX);
+        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId);
         // PURCHASE_INPUT 非 AR/AP 类型，不应生成辅助账
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);

@@ -100,7 +100,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
         event.setTraceId(null);
 
-        Long voucherId = voucherBiz.post(event, CTX);
+        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
 
         assertNotNull(voucherId, "happy path 应生成凭证");
         assertNotNull(event.getTraceId(), "traceId 缺失时应由引擎入口生成");
@@ -128,7 +128,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
         event.setTraceId("TRACE-FIXED-NOPL");
 
-        NopException ex = assertThrows(NopException.class, () -> voucherBiz.post(event, CTX),
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)),
                 "模板缺失应抛 NopException");
         assertEquals("erp.err.fin.posting.template-not-found", ex.getErrorCode());
 
@@ -156,7 +156,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("200"));
         event.setTraceId("TRACE-FIXED-UNBAL");
 
-        NopException ex = assertThrows(NopException.class, () -> voucherBiz.post(event, CTX),
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)),
                 "借贷不平衡应抛 NopException");
         assertEquals("erp.err.fin.posting.unbalanced", ex.getErrorCode());
 
@@ -183,7 +183,7 @@ public class TestErpFinPostingObservability extends JunitAutoTestCase {
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
         event.setTraceId("TRACE-FIXED-CLSD");
 
-        NopException ex = assertThrows(NopException.class, () -> voucherBiz.post(event, CTX),
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)),
                 "期间已结账应抛 NopException");
         assertEquals("erp.err.fin.posting.period-closed", ex.getErrorCode());
 

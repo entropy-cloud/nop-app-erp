@@ -91,7 +91,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
             return empId;
         });
 
-        ErpHrSalary salary = salaryBiz.calculateSalary(employeeId, 2026, 7, CTX);
+        ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 7, CTX));
         // 钳制后基数 = 32694；社保个人 = 32694 × 8% = 2615.52
         assertEquals(0, salary.getSocialInsurance().compareTo(new BigDecimal("2615.52")),
                 "社保个人扣款=基数×个人比例（钳制后）");
@@ -125,8 +125,8 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
             return empId;
         });
 
-        ErpHrSalary jan = salaryBiz.calculateSalary(employeeId, 2026, 1, CTX);
-        ErpHrSalary feb = salaryBiz.calculateSalary(employeeId, 2026, 2, CTX);
+        ErpHrSalary jan = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 1, CTX));
+        ErpHrSalary feb = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 2, CTX));
 
         assertNotNull(jan.getCumulativeData(), "1 月写回累计数据");
         assertNotNull(feb.getCumulativeData(), "2 月写回累计数据");
@@ -152,10 +152,10 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
             return empId;
         });
 
-        salaryBiz.calculateSalary(employeeId, 2026, 8, CTX);
+        ormTemplate.runInSession(() -> salaryBiz.calculateSalary(employeeId, 2026, 8, CTX));
         // 再次直接核算同员工同期 → 应抛 ERR_SALARY_ALREADY_EXISTS
         NopException ex = assertThrows(NopException.class,
-                () -> salaryBiz.calculateSalary(employeeId, 2026, 8, CTX));
+                () -> ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 8, CTX)));
         assertEquals(ErpHrErrors.ERR_SALARY_ALREADY_EXISTS.getErrorCode(), ex.getErrorCode());
     }
 
@@ -174,7 +174,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
             return empId;
         });
 
-        ErpHrSalary salary = salaryBiz.calculateSalary(employeeId, 2026, 9, CTX);
+        ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 9, CTX));
         Long salaryId = salary.getId();
 
         // 标准审批轴：UNSUBMITTED → SUBMITTED → APPROVED
@@ -184,12 +184,12 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         assertEquals(ErpHrConstants.APPROVE_STATUS_APPROVED, approved.getApproveStatus());
 
         // 支付轴：APPROVED + paymentStatus=PENDING → PAID
-        ErpHrSalary paid = salaryBiz.markPaid(salaryId, CTX);
+        ErpHrSalary paid = ormTemplate.runInSession(session -> salaryBiz.markPaid(salaryId, CTX));
         assertEquals(ErpHrConstants.PAYMENT_PAID, paid.getPaymentStatus());
 
         // PAID 后再 voidSalary → 应抛锁定异常
         NopException lockEx = assertThrows(NopException.class,
-                () -> salaryBiz.voidSalary(salaryId, CTX));
+                () -> ormTemplate.runInSession(session -> salaryBiz.voidSalary(salaryId, CTX)));
         assertEquals(ErpHrErrors.ERR_SALARY_LOCKED_AFTER_PAID.getErrorCode(), lockEx.getErrorCode());
     }
 
@@ -208,7 +208,7 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
             return empId;
         });
 
-        ErpHrSalary salary = salaryBiz.calculateSalary(employeeId, 2026, 10, CTX);
+        ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 10, CTX));
         Long salaryId = salary.getId();
         // UNSUBMITTED 直接 approve（跳过 submit）→ 平台守卫拒绝
         ApiResponse<?> bad = approveSalary(salaryId);
@@ -231,12 +231,12 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
             return empId;
         });
 
-        ErpHrSalary salary = salaryBiz.calculateSalary(employeeId, 2026, 11, CTX);
+        ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 11, CTX));
         Long salaryId = salary.getId();
         submitSalary(salaryId);
         approveSalary(salaryId);
 
-        ErpHrPayrollBankFile bankFile = salaryBiz.generateBankFile(2026, 11, 1L, CTX);
+        ErpHrPayrollBankFile bankFile = ormTemplate.runInSession(session -> salaryBiz.generateBankFile(2026, 11, 1L, CTX));
         assertNotNull(bankFile.getId(), "银行文件已落库");
         assertNotNull(bankFile.getFileContent(), "文件内容已生成");
         assertEquals(ErpHrConstants.BANK_FILE_STATUS_GENERATED, bankFile.getStatus());

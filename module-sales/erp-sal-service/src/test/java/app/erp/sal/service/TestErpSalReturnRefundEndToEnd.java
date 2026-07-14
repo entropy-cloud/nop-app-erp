@@ -147,10 +147,10 @@ public class TestErpSalReturnRefundEndToEnd extends JunitAutoTestCase {
         assertEquals(0, new BigDecimal("113").compareTo(invoiceItem.getOpenAmountFunctional()));
 
         // 退款核销（财务正式核销单，收款项↔发票项，全额 113）→ 双方归零 SETTLED
-        ErpFinReconciliation received = reconciliationBiz.create(
+        ErpFinReconciliation received = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX);
-        reconciliationBiz.post(received.getId(), CTX);
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(received.getId(), CTX));
         assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED,
                 reloadItem(invoiceItem.getId()).getStatus(), "发票辅助账核销归零 SETTLED");
         assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED,
@@ -266,10 +266,10 @@ public class TestErpSalReturnRefundEndToEnd extends JunitAutoTestCase {
         assertNotNull(negReturn);
         assertNotNull(posInvoice);
 
-        ErpFinReconciliation over = reconciliationBiz.create(
+        ErpFinReconciliation over = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(negReturn.getId(), posInvoice.getId(), "999")), CTX);
-        assertThrows(NopException.class, () -> reconciliationBiz.post(over.getId(), CTX),
+                Collections.singletonList(reconLine(negReturn.getId(), posInvoice.getId(), "999")), CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(over.getId(), CTX)),
                 "退款核销金额超过负 openAmount 应拒绝");
     }
 

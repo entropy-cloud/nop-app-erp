@@ -13,7 +13,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -59,10 +58,8 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrShiftAssignment assignSingle(@Name("employeeId") Long employeeId,
                                              @Name("shiftId") Long shiftId,
                                              @Name("assignmentDate") LocalDate assignmentDate,
@@ -74,7 +71,6 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
 
     @Override
     @BizMutation
-    @SingleSession
     public List<ErpHrShiftAssignment> assignBatch(@Name("employeeIds") List<Long> employeeIds,
                                                    @Name("shiftId") Long shiftId,
                                                    @Name("startDate") LocalDate startDate,
@@ -98,7 +94,6 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
 
     @Override
     @BizMutation
-    @SingleSession
     public List<ErpHrShiftAssignment> copyFromPeriod(@Name("sourceStartDate") LocalDate sourceStartDate,
                                                       @Name("sourceEndDate") LocalDate sourceEndDate,
                                                       @Name("targetStartDate") LocalDate targetStartDate,

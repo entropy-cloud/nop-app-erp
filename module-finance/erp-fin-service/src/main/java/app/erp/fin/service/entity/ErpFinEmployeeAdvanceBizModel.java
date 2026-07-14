@@ -9,7 +9,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -34,7 +33,6 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinEmployeeAdvance cancel(@Name("advanceId") Long advanceId, IServiceContext context) {
         return advanceProcessor.cancel(advanceId, context);
     }

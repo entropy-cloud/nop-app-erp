@@ -16,7 +16,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.beans.TreeBean;
 import io.nop.api.core.exceptions.NopException;
@@ -69,10 +68,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalarySimulation createSimulation(@Name("sourceYear") int sourceYear,
                                                    @Name("sourceMonth") int sourceMonth,
                                                    @Name("simulationPeriodYear") int simulationPeriodYear,
@@ -101,7 +98,6 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalary adjustItem(@Name("simulationId") Long simulationId,
                                   @Name("employeeId") Long employeeId,
                                   @Name("salaryItemCode") String salaryItemCode,
@@ -283,7 +279,6 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    @SingleSession
     public Map<String, Object> applyBatchAdjustment(@Name("simulationId") Long simulationId,
                                                      @Name("scope") Map<String, Object> scope,
                                                      @Name("adjustType") String adjustType,
@@ -390,7 +385,6 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalarySimulation submitForReview(@Name("simulationId") Long simulationId,
                                                  IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
@@ -411,7 +405,6 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalarySimulation approve(@Name("simulationId") Long simulationId,
                                          @Name("reviewerId") Long reviewerId,
                                          IServiceContext context) {
@@ -431,7 +424,6 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalarySimulation reject(@Name("simulationId") Long simulationId,
                                         @Name("reason") String reason,
                                         IServiceContext context) {
@@ -450,7 +442,6 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalarySimulation convertToFormal(@Name("simulationId") Long simulationId,
                                                  IServiceContext context) {
         ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);

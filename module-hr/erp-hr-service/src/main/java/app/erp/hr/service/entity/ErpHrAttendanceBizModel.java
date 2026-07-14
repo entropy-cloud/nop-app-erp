@@ -7,7 +7,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -55,7 +54,6 @@ public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> imple
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrAttendance clockIn(@Name("employeeId") Long employeeId, IServiceContext context) {
         LocalDate today = CoreMetrics.today();
         ErpHrAttendance attendance = findAttendance(employeeId, today, context);
@@ -80,7 +78,6 @@ public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> imple
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrAttendance clockOut(@Name("employeeId") Long employeeId, IServiceContext context) {
         LocalDate today = CoreMetrics.today();
         ErpHrAttendance attendance = findAttendance(employeeId, today, context);

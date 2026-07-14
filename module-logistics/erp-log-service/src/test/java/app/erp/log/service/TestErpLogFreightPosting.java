@@ -71,7 +71,7 @@ public class TestErpLogFreightPosting extends JunitAutoTestCase {
 
         String payload = "{\"trackingNo\":\"MOCK-FRT-SAL-1\",\"eventType\":\"DELIVERED\",\"signedBy\":\"李四\"}";
         String sig = hmacSha256(payload, "MOCK-FRT-CAR");
-        ErpLogShipment result = shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig, payload, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig, payload, CTX));
 
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, result.getStatus());
         assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, result.getFreightSettlementStatus(),
@@ -99,7 +99,7 @@ public class TestErpLogFreightPosting extends JunitAutoTestCase {
         String sig = hmacSha256(payload, "MOCK-FRT-CAR");
         // DISPATCHED→DELIVERED 推进成功 → onDelivered 见 SETTLED → 抛 ERR_LOG_SHIPMENT_ALREADY_DELIVERED
         NopException ex = assertThrows(NopException.class,
-                () -> shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig, payload, CTX));
+                () -> ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig, payload, CTX)));
         assertEquals(ErpLogErrors.ERR_LOG_SHIPMENT_ALREADY_DELIVERED.getErrorCode(), ex.getErrorCode());
     }
 
@@ -118,7 +118,7 @@ public class TestErpLogFreightPosting extends JunitAutoTestCase {
 
         String payload = "{\"trackingNo\":\"MOCK-FRT-PUR-1\",\"eventType\":\"DELIVERED\"}";
         String sig = hmacSha256(payload, "MOCK-FRT-CAR");
-        ErpLogShipment result = shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig, payload, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig, payload, CTX));
 
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, result.getStatus());
         assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, result.getFreightSettlementStatus(),

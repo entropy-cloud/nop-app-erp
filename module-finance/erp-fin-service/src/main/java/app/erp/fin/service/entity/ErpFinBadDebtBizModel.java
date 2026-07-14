@@ -11,7 +11,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -25,7 +24,7 @@ import java.util.List;
  * 三轴审批状态机 + ArApItem 变异 + 坏账凭证生成委托 {@link ErpFinBadDebtProcessor}；
  * 期末计提/释放委托 {@link BadDebtProvisionService}。
  *
- * <p>语义与配置门控见 {@code bad-debt.md}；{@code @BizMutation}+{@code @SingleSession} 钉事务/会话边界。
+ * <p>语义与配置门控见 {@code bad-debt.md}；{@code @BizMutation} 钉事务/会话边界。
  */
 @BizModel("ErpFinBadDebt")
 public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implements IErpFinBadDebtBiz {
@@ -41,7 +40,6 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinBadDebt writeOff(@Name("arApItemId") Long arApItemId,
                                   @Name("reason") String reason,
                                   IServiceContext context) {
@@ -50,7 +48,6 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinBadDebt recover(@Name("arApItemId") Long arApItemId,
                                  @Name("reason") String reason,
                                  IServiceContext context) {
@@ -59,28 +56,24 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinBadDebt submit(@Name("id") Long id, IServiceContext context) {
         return badDebtProcessor.submit(id, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinBadDebt approve(@Name("id") Long id, IServiceContext context) {
         return badDebtProcessor.approve(id, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinBadDebt reject(@Name("id") Long id, IServiceContext context) {
         return badDebtProcessor.reject(id, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public BadDebtProvisionResult runBadDebtProvision(@Name("periodId") Long periodId, IServiceContext context) {
         return badDebtProvisionService.runBadDebtProvision(periodId, context);
     }

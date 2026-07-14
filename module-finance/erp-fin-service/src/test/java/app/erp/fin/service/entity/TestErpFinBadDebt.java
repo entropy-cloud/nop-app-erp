@@ -91,7 +91,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
             holder[0] = pid;
         });
 
-        BadDebtProvisionResult result = badDebtBiz.runBadDebtProvision(holder[0], CTX);
+        BadDebtProvisionResult result = ormTemplate.runInSession(session -> badDebtBiz.runBadDebtProvision(holder[0], CTX));
 
         // 必需 = 1000*(0.005+0.02+0.05+0.15+0.40) = 625
         assertEquals(0, result.getRequiredProvision().compareTo(new BigDecimal("625.000")), "必需准备 625");
@@ -150,7 +150,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         });
 
         // write-off-require-approval=false → 创建即自动审批执行
-        ErpFinBadDebt debt = badDebtBiz.writeOff(itemId[0], "客户破产", CTX);
+        ErpFinBadDebt debt = ormTemplate.runInSession(session -> badDebtBiz.writeOff(itemId[0], "客户破产", CTX));
 
         assertEquals(ErpFinConstants.APPROVE_STATUS_APPROVED, debt.getApprovalStatus(), "自动审批通过");
         assertNotNull(debt.getVoucherId(), "生成核销凭证");
@@ -185,8 +185,8 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
             holder[0] = pid;
         });
 
-        badDebtBiz.writeOff(itemId[0], "核销", CTX);
-        ErpFinBadDebt recovery = badDebtBiz.recover(itemId[0], "事后回款", CTX);
+        ormTemplate.runInSession(() -> badDebtBiz.writeOff(itemId[0], "核销", CTX));
+        ErpFinBadDebt recovery = ormTemplate.runInSession(session -> badDebtBiz.recover(itemId[0], "事后回款", CTX));
 
         assertEquals(ErpFinConstants.BAD_DEBT_TYPE_RECOVERY, recovery.getDocType(), "恢复单类型");
         assertNotNull(recovery.getVoucherId(), "生成恢复凭证");
@@ -217,7 +217,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
             holder[0] = pid;
         });
 
-        BadDebtProvisionResult result = badDebtBiz.runBadDebtProvision(holder[0], CTX);
+        BadDebtProvisionResult result = ormTemplate.runInSession(session -> badDebtBiz.runBadDebtProvision(holder[0], CTX));
 
         assertEquals("RELEASE", result.getAction(), "超额→释放");
         // 释放 = 500 − 5 = 495
@@ -245,7 +245,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
             holder[0] = pid;
         });
 
-        BadDebtProvisionResult result = badDebtBiz.runBadDebtProvision(holder[0], CTX);
+        BadDebtProvisionResult result = ormTemplate.runInSession(session -> badDebtBiz.runBadDebtProvision(holder[0], CTX));
 
         assertEquals("NONE", result.getAction(), "精度内相等→无动作");
         assertNull(result.getVoucherId(), "无凭证生成");
@@ -274,7 +274,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         assertEquals(0, calc.getRequiredProvision().compareTo(new BigDecimal("400.000")), "必需 400");
 
         // 期末门控经 preCheck 报告 shortfall
-        PeriodPreCheckReport report = periodCloseBiz.preCheck(holder[0], CTX);
+        PeriodPreCheckReport report = ormTemplate.runInSession(session -> periodCloseBiz.preCheck(holder[0], CTX));
         assertTrue(report.getAllowanceShortfall().compareTo(BigDecimal.ZERO) > 0, "Allowance 缺口阻断");
         assertTrue(report.hasIssues(), "前置检查未通过");
     }

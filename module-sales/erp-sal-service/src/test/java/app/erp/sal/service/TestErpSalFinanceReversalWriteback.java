@@ -81,7 +81,7 @@ public class TestErpSalFinanceReversalWriteback extends JunitAutoTestCase {
         assertTrue(Boolean.TRUE.equals(reload(invoice).getPosted()),
                 "前置：发票已过账 posted=true");
 
-        Long redVoucherId = voucherBiz.reverse(invoice.getCode(), ErpFinBusinessType.AR_INVOICE, CTX);
+        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(invoice.getCode(), ErpFinBusinessType.AR_INVOICE, CTX));
 
         assertNotNull(redVoucherId);
         assertNotEquals(originalVoucherId, redVoucherId);

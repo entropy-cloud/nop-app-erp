@@ -13,7 +13,6 @@ import app.erp.aps.service.ErpApsErrors;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
@@ -43,10 +42,8 @@ public class ErpApsScheduleBizModel extends CrudBizModel<ErpApsSchedule> impleme
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public ErpApsSchedule publish(@Name("id") Long id, IServiceContext context) {
         ErpApsSchedule schedule = this.get(String.valueOf(id), false, context);
         if (schedule == null) {
@@ -65,7 +62,6 @@ public class ErpApsScheduleBizModel extends CrudBizModel<ErpApsSchedule> impleme
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpApsSchedule archive(@Name("id") Long id, IServiceContext context) {
         ErpApsSchedule schedule = this.get(String.valueOf(id), false, context);
         if (schedule == null) {

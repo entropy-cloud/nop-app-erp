@@ -58,7 +58,7 @@ public class TestErpFinAging extends JunitAutoTestCase {
             newItem(PARTNER, "AP-AG-5", asOf.minusDays(200), null, "500");
         });
 
-        List<ArApAgingRow> rows = arApItemBiz.aging(ErpFinConstants.DIRECTION_PAYABLE, asOf, CTX);
+        List<ArApAgingRow> rows = ormTemplate.runInSession(session -> arApItemBiz.aging(ErpFinConstants.DIRECTION_PAYABLE, asOf, CTX));
         assertEquals(1, rows.size(), "单 partner 一行");
         ArApAgingRow row = rows.get(0);
         assertEquals(0, row.getBucket030().compareTo(new BigDecimal("100")), "0-30 桶");
@@ -81,7 +81,7 @@ public class TestErpFinAging extends JunitAutoTestCase {
             newItem(PARTNER, "AP-AG-DUE", asOf.minusDays(100), asOf.minusDays(10), "150");
         });
 
-        List<ArApAgingRow> rows = arApItemBiz.aging(ErpFinConstants.DIRECTION_PAYABLE, asOf, CTX);
+        List<ArApAgingRow> rows = ormTemplate.runInSession(session -> arApItemBiz.aging(ErpFinConstants.DIRECTION_PAYABLE, asOf, CTX));
         ArApAgingRow row = rows.get(0);
         assertEquals(0, row.getBucket030().compareTo(new BigDecimal("150")),
                 "due_date 基准：dueDate 早 10 天 → 0-30 桶");
@@ -100,7 +100,7 @@ public class TestErpFinAging extends JunitAutoTestCase {
             newItem(PARTNER, "AP-AG-FB", asOf.minusDays(100), null, "250");
         });
 
-        List<ArApAgingRow> rows = arApItemBiz.aging(ErpFinConstants.DIRECTION_PAYABLE, asOf, CTX);
+        List<ArApAgingRow> rows = ormTemplate.runInSession(session -> arApItemBiz.aging(ErpFinConstants.DIRECTION_PAYABLE, asOf, CTX));
         ArApAgingRow row = rows.get(0);
         assertTrue(row.getBucket91180().compareTo(new BigDecimal("250")) == 0,
                 "dueDate 为 null 时回退 invoice_date 分桶");

@@ -86,7 +86,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         // 期间关闭 → post 失败 → 异常记录以独立事务写入 PENDING（不随主过账回滚丢失）
         PostingEvent event = apInvoiceEvent("AP-EXC-CLOSED-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
-        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)),
                 "期间关闭应抛 NopException");
 
         ErpFinPostingException ex = findException("AP-EXC-CLOSED-001");
@@ -98,8 +98,8 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         assertNotNull(ex.getEventData(), "异常记录含原始事件数据（重试重建用）");
 
         // 期末结账前置检查扫描到未处置异常 → 阻止结账
-        assertTrue(postingExceptionBiz.countUnresolved(CTX) >= 1, "存在未处置异常");
-        PeriodPreCheckReport report = periodBiz.preCheck(periodId, CTX);
+        assertTrue(ormTemplate.runInSession(session -> postingExceptionBiz.countUnresolved(CTX)) >= 1, "存在未处置异常");
+        PeriodPreCheckReport report = ormTemplate.runInSession(session -> periodBiz.preCheck(periodId, CTX));
         assertTrue(report.getUnresolvedPostingExceptionKeys().stream()
                         .anyMatch(k -> "AP-EXC-CLOSED-001".equals(k)),
                 "前置检查应列出未处置异常单据号");
@@ -123,7 +123,7 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-EXC-RETRY-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
-        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)),
                 "期间关闭应抛 NopException");
         ErpFinPostingException ex = findException("AP-EXC-RETRY-001");
         assertNotNull(ex, "前置：异常记录已落 PENDING");
@@ -135,14 +135,15 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
         });
 
         // 重试 → 重新过账成功 → 状态翻 RETRIED
-        ErpFinPostingException resolved = postingExceptionBiz.retry(ex.getId(), CTX);
+        ErpFinPostingException resolved = ormTemplate.runInSession(session -> postingExceptionBiz.retry(ex.getId(), CTX));
         assertEquals(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED, resolved.getStatus(),
                 "重试成功后状态翻 RETRIED");
         assertNotNull(resolved.getVoucherId(), "RETRIED 记录关联新生成的凭证");
         assertTrue(resolved.getRetryCount() >= 1, "重试次数递增");
 
         // 前置检查此时放行（无未处置异常）
-        assertEquals(0, postingExceptionBiz.countUnresolved(CTX), "处置完后无未处置异常");
+        long unresolvedCount = ormTemplate.runInSession(session -> postingExceptionBiz.countUnresolved(CTX));
+        assertEquals(0, unresolvedCount, "处置完后无未处置异常");
     }
 
     @Test
@@ -159,20 +160,20 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-EXC-IGNORE-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
-        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)));
         ErpFinPostingException ex = findException("AP-EXC-IGNORE-001");
         assertNotNull(ex);
 
         // 忽略须填写原因 → 缺原因抛 ErrorCode
-        assertThrows(NopException.class, () -> postingExceptionBiz.ignore(ex.getId(), null, CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> postingExceptionBiz.ignore(ex.getId(), null, CTX)),
                 "忽略缺原因应抛 ErrorCode");
 
         // 正常忽略 → IGNORED
-        ErpFinPostingException ignored = postingExceptionBiz.ignore(ex.getId(), "内部调拨不跨法人，无需记账", CTX);
+        ErpFinPostingException ignored = ormTemplate.runInSession(session -> postingExceptionBiz.ignore(ex.getId(), "内部调拨不跨法人，无需记账", CTX));
         assertEquals(ErpFinConstants.POSTING_EXCEPTION_STATUS_IGNORED, ignored.getStatus());
 
         // 已处置（IGNORED）再处置 → 状态机守门抛 not-pending
-        assertThrows(NopException.class, () -> postingExceptionBiz.ignore(ex.getId(), "再次", CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> postingExceptionBiz.ignore(ex.getId(), "再次", CTX)),
                 "非 PENDING 状态再处置应抛 ErrorCode");
     }
 
@@ -190,16 +191,16 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-EXC-MANUAL-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
-        assertThrows(NopException.class, () -> voucherBiz.post(event, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)));
         ErpFinPostingException ex = findException("AP-EXC-MANUAL-001");
         assertNotNull(ex);
 
         // 手工补录须关联凭证 → 缺 voucherId 抛 ErrorCode
-        assertThrows(NopException.class, () -> postingExceptionBiz.manualEntry(ex.getId(), null, "备注", CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> postingExceptionBiz.manualEntry(ex.getId(), null, "备注", CTX)),
                 "手工补录缺 voucherId 应抛 ErrorCode");
 
         // 关联凭证后 → MANUAL
-        ErpFinPostingException manual = postingExceptionBiz.manualEntry(ex.getId(), 9999L, "财务手工补录", CTX);
+        ErpFinPostingException manual = ormTemplate.runInSession(session -> postingExceptionBiz.manualEntry(ex.getId(), 9999L, "财务手工补录", CTX));
         assertEquals(ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL, manual.getStatus());
         assertEquals(9999L, manual.getVoucherId());
     }

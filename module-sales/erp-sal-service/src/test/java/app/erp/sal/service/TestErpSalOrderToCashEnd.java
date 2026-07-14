@@ -297,10 +297,10 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
                 "核销前 RECEIVABLE 方向未核销合计=226");
 
         // 经财务正式核销单 ErpFinReconciliation 核销（收款项↔发票项，全额 113）
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX);
-        reconciliationBiz.post(head.getId(), CTX);
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
 
         // 核销后：双方 openAmount 回减至零，status=SETTLED
         ErpFinArApItem settledInvoice = reloadItem(invoiceItem.getId());
@@ -324,8 +324,8 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
                 "核销后 RECEIVABLE 方向未核销合计=0");
 
         // 账龄查询与核销结果一致（已全额核销 → totalOpen=0）
-        List<ArApAgingRow> aging = arApItemBiz.aging(ErpFinConstants.DIRECTION_RECEIVABLE,
-                LocalDate.of(2026, 7, 31), CTX);
+        List<ArApAgingRow> aging = ormTemplate.runInSession(session -> arApItemBiz.aging(ErpFinConstants.DIRECTION_RECEIVABLE,
+                LocalDate.of(2026, 7, 31), CTX));
         BigDecimal agingTotal = aging.stream().map(ArApAgingRow::getTotalOpen)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         assertEquals(0, BigDecimal.ZERO.compareTo(agingTotal), "账龄 totalOpen=0（已全额核销）");
@@ -381,25 +381,25 @@ public class TestErpSalOrderToCashEnd extends JunitAutoTestCase {
         assertNotNull(receiptItem);
 
         // (a) 核销金额超过 openAmount 拒绝
-        ErpFinReconciliation over = reconciliationBiz.create(
+        ErpFinReconciliation over = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "999")), CTX);
-        assertThrows(NopException.class, () -> reconciliationBiz.post(over.getId(), CTX),
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "999")), CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(over.getId(), CTX)),
                 "核销金额超过未核销余额应拒绝");
         assertEquals(ErpFinConstants.RECON_STATUS_DRAFT,
                 daoProvider.daoFor(ErpFinReconciliation.class).getEntityById(over.getId()).getDocStatus());
 
         // (b) 全额核销后，再创建第二张核销单引用同一对已 SETTLED 辅助账 → 过账被拒（item 不再 OPEN）
-        ErpFinReconciliation first = reconciliationBiz.create(
+        ErpFinReconciliation first = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX);
-        reconciliationBiz.post(first.getId(), CTX);
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(first.getId(), CTX));
         assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, reloadItem(invoiceItem.getId()).getStatus());
 
-        ErpFinReconciliation second = reconciliationBiz.create(
+        ErpFinReconciliation second = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_RECEIVABLE, CUSTOMER_ID, LocalDate.of(2026, 7, 5),
-                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX);
-        assertThrows(NopException.class, () -> reconciliationBiz.post(second.getId(), CTX),
+                Collections.singletonList(reconLine(receiptItem.getId(), invoiceItem.getId(), "113")), CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(second.getId(), CTX)),
                 "已核销辅助账不应被重复核销");
     }
 

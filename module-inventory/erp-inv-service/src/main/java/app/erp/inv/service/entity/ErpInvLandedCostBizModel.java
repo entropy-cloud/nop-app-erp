@@ -8,7 +8,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -38,7 +37,6 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpInvLandedCost approve(@Name("id") Long id, IServiceContext context) {
         return landedCostProcessor.approve(id, context);
     }
@@ -51,7 +49,6 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpInvLandedCost generateFreightLandedCost(@Name("receiveCode") String receiveCode,
                                                        @Name("freightAmount") BigDecimal freightAmount,
                                                        @Name("freightCurrencyId") Long freightCurrencyId,

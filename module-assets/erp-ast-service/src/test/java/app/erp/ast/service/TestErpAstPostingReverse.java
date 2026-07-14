@@ -118,11 +118,11 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
                     ErpAstConstants.ASSET_STATUS_IN_SERVICE);
         });
 
-        scheduleBiz.executeDepreciation(assetId, "2026-07", CTX);
+        ormTemplate.runInSession(() -> scheduleBiz.executeDepreciation(assetId, "2026-07", CTX));
         ErpAstAsset afterExec = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
         assertEquals(0, nz(afterExec.getAccumulatedDepreciation()).compareTo(new BigDecimal("1000")), "执行后累计=1000");
 
-        ErpAstDepreciationSchedule reversed = scheduleBiz.reverseDepreciation(assetId, "2026-07", CTX);
+        ErpAstDepreciationSchedule reversed = ormTemplate.runInSession(session -> scheduleBiz.reverseDepreciation(assetId, "2026-07", CTX));
         assertEquals(ErpAstConstants.SCHEDULE_STATUS_REVERSED, reversed.getStatus(), "计划条目 REVERSED");
         assertFalse(Boolean.TRUE.equals(reversed.getPosted()), "posted=false");
 
@@ -247,8 +247,8 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
                 daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId).getPosted()));
 
         // 2. 两期折旧（每期 1000）
-        scheduleBiz.executeDepreciation(assetIdHolder[0], "2026-07", CTX);
-        scheduleBiz.executeDepreciation(assetIdHolder[0], "2026-08", CTX);
+        ormTemplate.runInSession(() -> scheduleBiz.executeDepreciation(assetIdHolder[0], "2026-07", CTX));
+        ormTemplate.runInSession(() -> scheduleBiz.executeDepreciation(assetIdHolder[0], "2026-08", CTX));
         asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetIdHolder[0]);
         assertEquals(0, nz(asset.getAccumulatedDepreciation()).compareTo(new BigDecimal("2000")), "两期累计折旧=2000");
         assertEquals(0, nz(asset.getNetBookValue()).compareTo(new BigDecimal("10000")), "净值=10000");

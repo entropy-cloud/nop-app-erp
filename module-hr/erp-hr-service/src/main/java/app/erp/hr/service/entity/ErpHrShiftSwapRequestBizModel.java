@@ -12,7 +12,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
@@ -50,10 +49,8 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrShiftSwapRequest submit(@Name("sourceAssignmentId") Long sourceAssignmentId,
                                         @Name("targetAssignmentId") Long targetAssignmentId,
                                         @Name("reason") String reason,
@@ -83,7 +80,6 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrShiftSwapRequest approve(@Name("swapRequestId") Long swapRequestId, IServiceContext context) {
         ErpHrShiftSwapRequest req = requireEntity(String.valueOf(swapRequestId), null, context);
         assertTransition(req, ErpHrConstants.SWAP_STATUS_PENDING, ErpHrConstants.SWAP_STATUS_APPROVED);
@@ -119,7 +115,6 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrShiftSwapRequest reject(@Name("swapRequestId") Long swapRequestId, IServiceContext context) {
         ErpHrShiftSwapRequest req = requireEntity(String.valueOf(swapRequestId), null, context);
         assertTransition(req, ErpHrConstants.SWAP_STATUS_PENDING, ErpHrConstants.SWAP_STATUS_REJECTED);
@@ -130,7 +125,6 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrShiftSwapRequest cancel(@Name("swapRequestId") Long swapRequestId, IServiceContext context) {
         ErpHrShiftSwapRequest req = requireEntity(String.valueOf(swapRequestId), null, context);
         assertTransition(req, ErpHrConstants.SWAP_STATUS_PENDING, ErpHrConstants.SWAP_STATUS_CANCELLED);

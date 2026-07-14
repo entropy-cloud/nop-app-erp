@@ -8,7 +8,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -37,7 +36,6 @@ public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectS
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProjectSettlement createSettlement(@Name("projectId") Long projectId,
                                                     @Name("settlementType") String settlementType,
                                                     IServiceContext context) {
@@ -46,35 +44,30 @@ public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectS
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProjectSettlement submit(@Name("id") Long id, IServiceContext context) {
         return settlementProcessor.submit(id, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProjectSettlement approve(@Name("id") Long id, IServiceContext context) {
         return settlementProcessor.approve(id, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProjectSettlement reject(@Name("id") Long id, IServiceContext context) {
         return settlementProcessor.reject(id, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProjectSettlement cancel(@Name("id") Long id, IServiceContext context) {
         return settlementProcessor.cancel(id, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpPrjProjectSettlement reverseSettlement(@Name("settlementId") Long settlementId, IServiceContext context) {
         return settlementProcessor.reverseSettlement(settlementId, context);
     }

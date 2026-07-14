@@ -62,7 +62,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
         });
         Long contractId = (Long) seeded[1];
 
-        List<ErpHrEmploymentContract> expiring = contractBiz.scanExpiringContracts(30, CTX);
+        List<ErpHrEmploymentContract> expiring = ormTemplate.runInSession(session -> contractBiz.scanExpiringContracts(30, CTX));
         boolean found = expiring.stream().anyMatch(c -> contractId.equals(c.getId()));
         assertTrue(found, "endDate=today+15 应在 warningDays=30 窗口内命中");
     }
@@ -78,7 +78,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
         });
         Long contractId = (Long) seeded[1];
 
-        List<ErpHrEmploymentContract> expired = contractBiz.expireOverdueContracts(CTX);
+        List<ErpHrEmploymentContract> expired = ormTemplate.runInSession(session -> contractBiz.expireOverdueContracts(CTX));
         boolean found = expired.stream().anyMatch(c -> contractId.equals(c.getId()));
         assertTrue(found, "endDate=today-1 应被推进为 EXPIRED");
 
@@ -98,7 +98,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
         Long contractId = (Long) seeded[1];
         LocalDate newEndDate = LocalDate.now().plusYears(1);
 
-        ErpHrEmploymentContract renewed = contractBiz.renew(String.valueOf(contractId), newEndDate, CTX);
+        ErpHrEmploymentContract renewed = ormTemplate.runInSession(session -> contractBiz.renew(String.valueOf(contractId), newEndDate, CTX));
         assertEquals(ErpHrConstants.CONTRACT_STATUS_ACTIVE, renewed.getStatus());
         assertEquals(newEndDate, renewed.getEndDate());
 
@@ -119,7 +119,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
         Long contractId = (Long) seeded[1];
 
         NopException ex = assertThrows(NopException.class,
-                () -> contractBiz.renew(String.valueOf(contractId), LocalDate.now().plusYears(1), CTX));
+                () -> ormTemplate.runInSession(session -> contractBiz.renew(String.valueOf(contractId), LocalDate.now().plusYears(1), CTX)));
         assertEquals(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 

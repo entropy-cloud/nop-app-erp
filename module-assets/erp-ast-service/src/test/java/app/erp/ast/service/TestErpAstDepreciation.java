@@ -67,7 +67,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         BigDecimal total = BigDecimal.ZERO;
         for (int i = 0; i < 12; i++) {
             String period = periodAt(i);
-            ErpAstDepreciationSchedule s = scheduleBiz.executeDepreciation(assetId, period, CTX);
+            ErpAstDepreciationSchedule s = ormTemplate.runInSession(session -> scheduleBiz.executeDepreciation(assetId, period, CTX));
             assertEquals(0, s.getActualAmount().compareTo(new BigDecimal("1000")),
                     "期间 " + period + " 直线法每期等额 1000");
             assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, s.getStatus());
@@ -97,12 +97,13 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         });
 
         // 首期 DDB = 2 × 48000 / 48 = 2000
-        ErpAstDepreciationSchedule first = scheduleBiz.executeDepreciation(assetId, periodAt(0), CTX);
+        ErpAstDepreciationSchedule first = ormTemplate.runInSession(session -> scheduleBiz.executeDepreciation(assetId, periodAt(0), CTX));
         assertEquals(0, first.getActualAmount().compareTo(new BigDecimal("2000")), "首期 DDB=2000");
 
         // 执行剩余各期，残值约束：净值不低于残值 0（不出现负数）
         for (int i = 1; i < 48; i++) {
-            ErpAstDepreciationSchedule s = scheduleBiz.executeDepreciation(assetId, periodAt(i), CTX);
+            final int fi = i;
+            ErpAstDepreciationSchedule s = ormTemplate.runInSession(session -> scheduleBiz.executeDepreciation(assetId, periodAt(fi), CTX));
             assertTrue(s.getActualAmount().signum() >= 0, "期间 " + i + " 折旧非负");
             assertTrue(nz(s.getNetBookValue()).signum() >= 0, "期间 " + i + " 净值不低于残值");
         }
@@ -129,7 +130,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
             return null;
         });
 
-        int processed = scheduleBiz.executeBatchDepreciation(START_PERIOD, CTX);
+        int processed = ormTemplate.runInSession(session -> scheduleBiz.executeBatchDepreciation(START_PERIOD, CTX));
         assertEquals(2, processed, "批量折旧处理 2 个使用中资产");
 
         ErpAstDepreciationSchedule s1 = findSchedule("AST-BAT-1", START_PERIOD);
@@ -160,12 +161,12 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
 
         // 已结账期间拒绝补提折旧
         NopException closed = assertThrows(NopException.class,
-                () -> scheduleBiz.executeDepreciation(assetId, "2026-05", CTX));
+                () -> ormTemplate.runInSession(session -> scheduleBiz.executeDepreciation(assetId, "2026-05", CTX)));
         assertEquals(ErpAstErrors.ERR_DEPRECIATION_PERIOD_CLOSED.getErrorCode(), closed.getErrorCode());
 
         // 未找到期间拒绝
         NopException notFound = assertThrows(NopException.class,
-                () -> scheduleBiz.executeDepreciation(assetId, "2099-01", CTX));
+                () -> ormTemplate.runInSession(session -> scheduleBiz.executeDepreciation(assetId, "2099-01", CTX)));
         assertEquals(ErpAstErrors.ERR_DEPRECIATION_PERIOD_NOT_FOUND.getErrorCode(), notFound.getErrorCode());
     }
 
@@ -182,9 +183,9 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         });
 
         String period = START_PERIOD;
-        scheduleBiz.executeDepreciation(assetId, period, CTX);
+        ormTemplate.runInSession(() -> scheduleBiz.executeDepreciation(assetId, period, CTX));
         // 同期间重复执行：先红冲再重新生成（幂等，不双计）
-        ErpAstDepreciationSchedule second = scheduleBiz.executeDepreciation(assetId, period, CTX);
+        ErpAstDepreciationSchedule second = ormTemplate.runInSession(session -> scheduleBiz.executeDepreciation(assetId, period, CTX));
 
         assertEquals(0, second.getActualAmount().compareTo(new BigDecimal("1000")), "重生成金额=1000");
         assertTrue(Boolean.TRUE.equals(second.getPosted()), "重生成后 posted=true");

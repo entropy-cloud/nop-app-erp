@@ -92,8 +92,8 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "webhook-secret-1");
 
-        Long asnId = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-1",
-                sig, "EVT-001", payload, CTX);
+        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-1",
+                sig, "EVT-001", payload, CTX));
 
         assertNotNull(asnId, "应创建 ASN 并返回 ID");
         ErpB2bAsn asn = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);
@@ -120,8 +120,8 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
         seedPartnerProfile("PARTNER-ASN-2", partnerId, "webhook-secret-2");
 
         assertThrows(NopException.class,
-                () -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-2",
-                        "badsignature", "EVT-002", UBL_DESPATCH_ADVICE_XML, CTX),
+                () -> ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-2",
+                        "badsignature", "EVT-002", UBL_DESPATCH_ADVICE_XML, CTX)),
                 "错误签名应抛 ERR_B2B_WEBHOOK_SIGNATURE_INVALID");
     }
 
@@ -133,14 +133,14 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "webhook-secret-3");
 
-        Long asnId1 = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-3",
-                sig, "EVT-DUP-001", payload, CTX);
+        Long asnId1 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-3",
+                sig, "EVT-DUP-001", payload, CTX));
         assertNotNull(asnId1);
 
         // 重复 eventId → 抛异常
         assertThrows(NopException.class,
-                () -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-3",
-                        sig, "EVT-DUP-001", payload, CTX),
+                () -> ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-3",
+                        sig, "EVT-DUP-001", payload, CTX)),
                 "重复 eventId 应抛 ERR_B2B_WEBHOOK_DUPLICATE_EVENT");
     }
 
@@ -152,11 +152,11 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "webhook-secret-4");
 
-        Long asnId = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-4",
-                sig, "EVT-003", payload, CTX);
+        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-4",
+                sig, "EVT-003", payload, CTX));
 
         // 尝试匹配 PO（无 PO seed → 保留 RECEIVED）
-        ErpB2bAsn result = asnBiz.matchPurchaseOrder(asnId, CTX);
+        ErpB2bAsn result = ormTemplate.runInSession(session -> asnBiz.matchPurchaseOrder(asnId, CTX));
         assertEquals(ErpB2bConstants.ASN_STATUS_RECEIVED, result.getStatus(),
                 "无 PO 时 ASN 应保留 RECEIVED（不阻断）");
     }
@@ -167,8 +167,8 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
         Long partnerId = seedPartner();
         seedPartnerProfile("PARTNER-ASN-5", partnerId, "webhook-secret-5");
 
-        Long asnId = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-5",
-                null, "EVT-004", UBL_DESPATCH_ADVICE_XML, CTX);
+        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-5",
+                null, "EVT-004", UBL_DESPATCH_ADVICE_XML, CTX));
         assertNotNull(asnId, "签名非必填时应正常创建 ASN");
     }
 

@@ -165,7 +165,7 @@ public class TestErpAstValueAdjustment extends JunitAutoTestCase {
                     new BigDecimal("1000"), LocalDate.of(2026, 7, 15));
         });
 
-        ErpAstValueAdjustment cancelled = adjustmentBiz.cancel(adjustmentId, CTX);
+        ErpAstValueAdjustment cancelled = ormTemplate.runInSession(session -> adjustmentBiz.cancel(adjustmentId, CTX));
         assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus(), "作废后 docStatus=CANCELLED");
     }
 

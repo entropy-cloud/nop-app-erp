@@ -16,7 +16,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -47,24 +46,20 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public SchedulingResult scheduleForward(@Name("scheduleId") Long scheduleId, IServiceContext context) {
         return schedulingProcessor.scheduleForward(scheduleId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public SchedulingResult scheduleBackward(@Name("scheduleId") Long scheduleId, IServiceContext context) {
         return schedulingProcessor.scheduleBackward(scheduleId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public SchedulingResult insertRushOrder(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
         return schedulingProcessor.insertRushOrder(operationOrderId, context);
     }

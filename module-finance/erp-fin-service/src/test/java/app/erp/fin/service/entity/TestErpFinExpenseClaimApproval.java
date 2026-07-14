@@ -90,7 +90,7 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
     @Test
     public void testCancel() {
         Long claimId = seedValidClaim("EC-APP-003", ErpFinConstants.APPROVE_STATUS_SUBMITTED, null);
-        ErpFinExpenseClaim claim = claimBiz.cancel(claimId, CTX);
+        ErpFinExpenseClaim claim = ormTemplate.runInSession(session -> claimBiz.cancel(claimId, CTX));
         assertEquals(ErpFinConstants.DOC_STATUS_CANCELLED, claim.getDocStatus());
     }
 

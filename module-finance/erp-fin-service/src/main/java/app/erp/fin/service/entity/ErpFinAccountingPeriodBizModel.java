@@ -9,7 +9,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -19,7 +18,7 @@ import jakarta.inject.Inject;
  * 期末结账全流程编排（{@code period-close.md §期末结账步骤 / §反结账流程}）委托
  * {@link ErpFinAccountingPeriodProcessor}（protected step 方法，下游可逐 step 覆盖）。
  *
- * <p>事务/会话边界：{@code @BizMutation}+{@code @SingleSession} 钉在 Facade；
+ * <p>事务/会话边界：{@code @BizMutation} 钉在 Facade；
  * ORM Session 由编排层 {@link ErpFinAccountingPeriodProcessor} 获取，期末凭证生成完成后再做状态簿记 + flush。
  */
 @BizModel("ErpFinAccountingPeriod")
@@ -41,28 +40,24 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinAccountingPeriod closePeriod(@Name("periodId") Long periodId, IServiceContext context) {
         return periodProcessor.closePeriod(periodId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinAccountingPeriod finalizePeriod(@Name("periodId") Long periodId, IServiceContext context) {
         return periodProcessor.finalizePeriod(periodId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId, IServiceContext context) {
         return periodProcessor.reverseClose(periodId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public Integer generateNextYearPeriods(@Name("year") Integer year, IServiceContext context) {
         return periodProcessor.generateNextYearPeriods(year, context);
     }

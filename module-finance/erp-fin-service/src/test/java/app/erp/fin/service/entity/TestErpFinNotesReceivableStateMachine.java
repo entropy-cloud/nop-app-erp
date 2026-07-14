@@ -47,7 +47,7 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
     @Test
     public void testReceive() {
         Long noteId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-001", null, new BigDecimal("10000")); });
-        ErpFinNotesReceivable note = notesBiz.receive(noteId, CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.receive(noteId, CTX));
         assertEquals(ErpFinConstants.NOTES_RECV_RECEIVED, note.getStatus());
     }
 
@@ -60,7 +60,7 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
                     LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 30));
         });
 
-        ErpFinNotesReceivable note = notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), CTX));
         assertEquals(ErpFinConstants.NOTES_RECV_DISCOUNTED, note.getStatus());
 
         ErpFinNotesDiscount discount = findDiscount(note.getId());
@@ -72,51 +72,51 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
     @Test
     public void testEndorse() {
         Long noteId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-003", ErpFinConstants.NOTES_RECV_RECEIVED, new BigDecimal("5000")); });
-        ErpFinNotesReceivable note = notesBiz.endorse(noteId, null, CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.endorse(noteId, null, CTX));
         assertEquals(ErpFinConstants.NOTES_RECV_ENDORSED, note.getStatus());
     }
 
     @Test
     public void testCollectFromReceived() {
         Long noteId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-004", ErpFinConstants.NOTES_RECV_RECEIVED, new BigDecimal("5000")); });
-        ErpFinNotesReceivable note = notesBiz.collect(noteId, CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.collect(noteId, CTX));
         assertEquals(ErpFinConstants.NOTES_RECV_COLLECTION_PENDING, note.getStatus());
     }
 
     @Test
     public void testCollectFromDiscounted() {
         Long noteId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-005", ErpFinConstants.NOTES_RECV_DISCOUNTED, new BigDecimal("5000")); });
-        ErpFinNotesReceivable note = notesBiz.collect(noteId, CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.collect(noteId, CTX));
         assertEquals(ErpFinConstants.NOTES_RECV_COLLECTION_PENDING, note.getStatus());
     }
 
     @Test
     public void testHonorAndDishonor() {
         Long honoredId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-006", ErpFinConstants.NOTES_RECV_COLLECTION_PENDING, new BigDecimal("5000")); });
-        assertEquals(ErpFinConstants.NOTES_RECV_HONORED, notesBiz.honor(honoredId, CTX).getStatus());
+        assertEquals(ErpFinConstants.NOTES_RECV_HONORED, ormTemplate.runInSession(session -> notesBiz.honor(honoredId, CTX)).getStatus());
 
         Long dishonoredId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-007", ErpFinConstants.NOTES_RECV_COLLECTION_PENDING, new BigDecimal("5000")); });
-        assertEquals(ErpFinConstants.NOTES_RECV_DISHONORED, notesBiz.dishonor(dishonoredId, CTX).getStatus());
+        assertEquals(ErpFinConstants.NOTES_RECV_DISHONORED, ormTemplate.runInSession(session -> notesBiz.dishonor(dishonoredId, CTX)).getStatus());
     }
 
     @Test
     public void testWriteOffFromReceived() {
         Long noteId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-008", ErpFinConstants.NOTES_RECV_RECEIVED, new BigDecimal("5000")); });
-        assertEquals(ErpFinConstants.NOTES_RECV_WRITE_OFF, notesBiz.writeOff(noteId, CTX).getStatus());
+        assertEquals(ErpFinConstants.NOTES_RECV_WRITE_OFF, ormTemplate.runInSession(session -> notesBiz.writeOff(noteId, CTX)).getStatus());
     }
 
     @Test
     public void testIllegalTransitionHonorFromReceived() {
         Long noteId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-009", ErpFinConstants.NOTES_RECV_RECEIVED, new BigDecimal("5000")); });
         // 承兑须从托收中迁入，从 RECEIVED 直接承兑为非法迁移。
-        assertThrows(NopException.class, () -> notesBiz.honor(noteId, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> notesBiz.honor(noteId, CTX)));
     }
 
     @Test
     public void testIllegalTransitionWriteOffFromTerminal() {
         Long noteId = ormTemplate.runInSession(s -> { seedBase(); return seedReceivable("NR-010", ErpFinConstants.NOTES_RECV_HONORED, new BigDecimal("5000")); });
         // HONORED 为终态，不可再注销。
-        assertThrows(NopException.class, () -> notesBiz.writeOff(noteId, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> notesBiz.writeOff(noteId, CTX)));
     }
 
     // ---------- seed helpers ----------

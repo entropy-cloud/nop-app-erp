@@ -66,7 +66,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
             return seedReceivable("NR-POST-001", null, new BigDecimal("10000"), partnerId);
         });
 
-        ErpFinNotesReceivable note = notesBiz.receive(noteId, CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.receive(noteId, CTX));
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "过账成功 posted=true");
         assertFalse(findBillLinks("NR-POST-001", ErpFinBusinessType.NOTES_RECEIVABLE_RECEIVED.name()).isEmpty(), "RECEIVED 凭证回链已落库");
 
@@ -88,7 +88,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
                     new BigDecimal("36000"), partnerId, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 30));
         });
 
-        ErpFinNotesReceivable note = notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), CTX));
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "贴现过账成功 posted=true");
         assertFalse(findBillLinks("NR-POST-002", ErpFinBusinessType.NOTES_RECEIVABLE_DISCOUNTED.name()).isEmpty(), "DISCOUNTED 凭证回链已落库");
     }
@@ -104,7 +104,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
                     new BigDecimal("8000"), partnerId);
         });
 
-        ErpFinNotesReceivable note = notesBiz.endorse(noteId, null, CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.endorse(noteId, null, CTX));
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "背书过账成功 posted=true");
         assertFalse(findBillLinks("NR-POST-003", ErpFinBusinessType.NOTES_RECEIVABLE_ENDORSED.name()).isEmpty(), "ENDORSED 凭证回链已落库");
 
@@ -127,7 +127,7 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         Long arItemId = ormTemplate.runInSession(s -> seedArApItem(partnerId,
                 app.erp.fin.service.ErpFinConstants.DIRECTION_RECEIVABLE, "AR_INVOICE", "AR-001", new BigDecimal("5000")));
 
-        notesBiz.receive(noteId, CTX);
+        ormTemplate.runInSession(() -> notesBiz.receive(noteId, CTX));
         ErpFinArApItem notesItem = findItem("NOTES_RECEIVABLE", "NR-RECON-001");
 
         ReconciliationLineInput line = new ReconciliationLineInput();
@@ -136,10 +136,10 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         line.setSettledAmountSource(new BigDecimal("5000"));
         line.setSettledAmountFunctional(new BigDecimal("5000"));
 
-        ErpFinReconciliation recon = reconciliationBiz.create(
+        ErpFinReconciliation recon = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 app.erp.fin.service.ErpFinConstants.DIRECTION_RECEIVABLE, partnerId,
-                LocalDate.of(2026, 7, 15), Collections.singletonList(line), CTX);
-        reconciliationBiz.post(recon.getId(), CTX);
+                LocalDate.of(2026, 7, 15), Collections.singletonList(line), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(recon.getId(), CTX));
 
         ErpFinArApItem settledNotes = findItem("NOTES_RECEIVABLE", "NR-RECON-001");
         assertEquals(app.erp.fin.service.ErpFinConstants.AR_AP_STATUS_SETTLED, settledNotes.getStatus(),
@@ -156,10 +156,10 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
             return seedReceivable("NR-POST-004", null, new BigDecimal("3000"), partnerId);
         });
 
-        notesBiz.receive(noteId, CTX);
+        ormTemplate.runInSession(() -> notesBiz.receive(noteId, CTX));
         assertTrue(!findBillLinks("NR-POST-004", ErpFinBusinessType.NOTES_RECEIVABLE_RECEIVED.name()).isEmpty(), "过账凭证已存在");
 
-        ErpFinNotesReceivable note = notesBiz.writeOff(noteId, CTX);
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.writeOff(noteId, CTX));
         assertFalse(Boolean.TRUE.equals(note.getPosted()), "注销红冲后 posted=false");
         // 红冲后辅助账 CANCELLED
         ErpFinArApItem item = findItem("NOTES_RECEIVABLE", "NR-POST-004");

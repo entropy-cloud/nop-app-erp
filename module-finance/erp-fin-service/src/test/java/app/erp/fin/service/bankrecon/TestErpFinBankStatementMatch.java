@@ -76,10 +76,10 @@ public class TestErpFinBankStatementMatch extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-UNIQ-" + seed,
                 DC_CREDIT, new BigDecimal("500"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        BankStatementMatchResult result = bankStatementLineBiz.autoMatch(head.getId(), CTX);
+        BankStatementMatchResult result = ormTemplate.runInSession(session -> bankStatementLineBiz.autoMatch(head.getId(), CTX));
         assertEquals(1, result.getMatched(), "唯一命中应 MATCHED");
         assertEquals(0, result.getUnmatched());
         assertEquals(0, result.getSuspense());
@@ -106,10 +106,10 @@ public class TestErpFinBankStatementMatch extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 11), "REF-MULTI-" + seed,
                 DC_CREDIT, new BigDecimal("300"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        BankStatementMatchResult result = bankStatementLineBiz.autoMatch(head.getId(), CTX);
+        BankStatementMatchResult result = ormTemplate.runInSession(session -> bankStatementLineBiz.autoMatch(head.getId(), CTX));
         assertEquals(0, result.getMatched(), "多候选不应自动匹配");
         // 多候选金额一致 → SUSPENSE
         assertEquals(1, result.getSuspense());
@@ -132,10 +132,10 @@ public class TestErpFinBankStatementMatch extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 12), "REF-NOPE-" + seed,
                 DC_CREDIT, new BigDecimal("777"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        BankStatementMatchResult result = bankStatementLineBiz.autoMatch(head.getId(), CTX);
+        BankStatementMatchResult result = ormTemplate.runInSession(session -> bankStatementLineBiz.autoMatch(head.getId(), CTX));
         assertEquals(0, result.getMatched());
         assertEquals(1, result.getUnmatched(), "无候选 → UNMATCHED");
         assertEquals(0, result.getSuspense());
@@ -159,10 +159,10 @@ public class TestErpFinBankStatementMatch extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-DIR-" + seed,
                 DC_CREDIT, new BigDecimal("500"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        BankStatementMatchResult result = bankStatementLineBiz.autoMatch(head.getId(), CTX);
+        BankStatementMatchResult result = ormTemplate.runInSession(session -> bankStatementLineBiz.autoMatch(head.getId(), CTX));
         assertEquals(0, result.getMatched(), "同向不应匹配");
         assertEquals(1, result.getUnmatched());
     }
@@ -184,11 +184,11 @@ public class TestErpFinBankStatementMatch extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 13), "REF-MAN-" + seed,
                 DC_CREDIT, new BigDecimal("123"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
         Long lineId = firstLine(head.getId()).getId();
 
-        ErpFinBankStatementLine updated = bankStatementLineBiz.manualMatch(lineId, voucherLineId[0], CTX);
+        ErpFinBankStatementLine updated = ormTemplate.runInSession(session -> bankStatementLineBiz.manualMatch(lineId, voucherLineId[0], CTX));
         assertEquals(ErpFinConstants.BANK_MATCH_MANUAL_MATCHED, updated.getMatchStatus());
         assertEquals(voucherLineId[0], updated.getMatchedLineId());
     }
@@ -210,13 +210,13 @@ public class TestErpFinBankStatementMatch extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 14), "REF-MAN2-" + seed,
                 DC_CREDIT, new BigDecimal("999"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
         Long lineId = firstLine(head.getId()).getId();
-        bankStatementLineBiz.manualMatch(lineId, voucherLineId[0], CTX);
+        ormTemplate.runInSession(() -> bankStatementLineBiz.manualMatch(lineId, voucherLineId[0], CTX));
 
         assertThrows(NopException.class, () ->
-                        bankStatementLineBiz.manualMatch(lineId, voucherLineId[0], CTX),
+                        ormTemplate.runInSession(session -> bankStatementLineBiz.manualMatch(lineId, voucherLineId[0], CTX)),
                 "已勾对行不可重复勾对");
     }
 
@@ -235,17 +235,17 @@ public class TestErpFinBankStatementMatch extends JunitAutoTestCase {
         // 先导入一笔并自动勾对（占唯一分录）
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 15), "REF-OCC-1-" + seed,
                 DC_CREDIT, new BigDecimal("600"));
-        ErpFinBankStatement h1 = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
-        BankStatementMatchResult r1 = bankStatementLineBiz.autoMatch(h1.getId(), CTX);
+        ErpFinBankStatement h1 = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
+        BankStatementMatchResult r1 = ormTemplate.runInSession(session -> bankStatementLineBiz.autoMatch(h1.getId(), CTX));
         assertEquals(1, r1.getMatched());
 
         // 再导入同额行，此时唯一候选已被占用 → 应无候选 → UNMATCHED
         BankStatementLineInput l2 = line(LocalDate.of(2026, 6, 15), "REF-OCC-2-" + seed,
                 DC_CREDIT, new BigDecimal("600"));
-        ErpFinBankStatement h2 = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l2), CTX);
-        BankStatementMatchResult r2 = bankStatementLineBiz.autoMatch(h2.getId(), CTX);
+        ErpFinBankStatement h2 = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l2), CTX));
+        BankStatementMatchResult r2 = ormTemplate.runInSession(session -> bankStatementLineBiz.autoMatch(h2.getId(), CTX));
         assertEquals(0, r2.getMatched(), "已占用分录不应再被勾对");
         assertEquals(1, r2.getUnmatched());
         assertNotEquals(h1.getId(), h2.getId());

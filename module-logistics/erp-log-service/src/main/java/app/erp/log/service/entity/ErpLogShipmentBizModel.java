@@ -22,7 +22,6 @@ import app.erp.md.dao.AcctSchemaResolver;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -73,7 +72,6 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
         }
     }
 
-
     @Inject
     GatewayDispatcher gatewayDispatcher;
     @Inject
@@ -83,28 +81,24 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpLogShipment advise(@Name("shipmentId") Long shipmentId, IServiceContext context) {
         return gatewayDispatcher.advise(shipmentId);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpLogShipment completeShipment(@Name("shipmentId") Long shipmentId, IServiceContext context) {
         return gatewayDispatcher.completeShipment(shipmentId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpLogShipment cancelShipment(@Name("shipmentId") Long shipmentId, IServiceContext context) {
         return gatewayDispatcher.cancelShipment(shipmentId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpLogShipment handleTrackingWebhook(@Name("carrierCode") String carrierCode,
                                                 @Name("signature") String signature,
                                                 @Name("payload") String payload,
@@ -143,7 +137,6 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
 
     @Override
     @BizMutation
-    @SingleSession
     public int scanForPolling(IServiceContext context) {
         List<ErpLogShipment> advanced = gatewayDispatcher.scanForPolling(context);
         for (ErpLogShipment shipment : advanced) {

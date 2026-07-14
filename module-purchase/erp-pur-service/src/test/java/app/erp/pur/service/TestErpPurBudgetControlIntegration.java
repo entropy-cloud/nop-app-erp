@@ -78,8 +78,8 @@ public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
                     ErpFinConstants.BUDGET_CONTROL_HARD);
         });
         // 审批预算方案（生成 BUDGET 影子凭证）—— 在 seed session 提交后调用，避免嵌套会话 update-entity-not-managed
-        scenarioBiz.submit(scenarioId, CTX);
-        scenarioBiz.approve(scenarioId, CTX);
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
 
         ErpPurOrder order = newOrder("PO-BUD-HARD", new BigDecimal("200"));
         ormTemplate.runInSession(() -> saveOrderWithLine(order));
@@ -101,8 +101,8 @@ public class TestErpPurBudgetControlIntegration extends JunitAutoTestCase {
             return seedDraftBudgetScenario("BUD-WARN", periodId, expense, income, new BigDecimal("100"),
                     ErpFinConstants.BUDGET_CONTROL_WARN);
         });
-        scenarioBiz.submit(scenarioId, CTX);
-        scenarioBiz.approve(scenarioId, CTX);
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
 
         ErpPurOrder order = newOrderWithDate("PO-BUD-WARN", new BigDecimal("200"), LocalDate.of(2026, 8, 15));
         ormTemplate.runInSession(() -> saveOrderWithLine(order));

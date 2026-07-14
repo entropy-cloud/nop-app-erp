@@ -52,10 +52,10 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
     public void testFullRecruitmentFlowCreatesEmployeeAndContract() {
         Long recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-FULL"));
 
-        recruitmentBiz.moveToScreening(String.valueOf(recId), CTX);
-        recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX);
-        recruitmentBiz.makeOffer(String.valueOf(recId), new BigDecimal("15000"), CTX);
-        recruitmentBiz.hire(String.valueOf(recId), LocalDate.of(2026, 7, 20), CTX);
+        ormTemplate.runInSession(() -> recruitmentBiz.moveToScreening(String.valueOf(recId), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.makeOffer(String.valueOf(recId), new BigDecimal("15000"), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.hire(String.valueOf(recId), LocalDate.of(2026, 7, 20), CTX));
 
         ErpHrRecruitment refreshed = daoProvider.daoFor(ErpHrRecruitment.class).getEntityById(recId);
         assertEquals(ErpHrConstants.RECRUITMENT_STATUS_HIRED, refreshed.getStatus());
@@ -79,7 +79,7 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
         Long recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-ILLEGAL"));
 
         NopException ex = assertThrows(NopException.class,
-                () -> recruitmentBiz.hire(String.valueOf(recId), LocalDate.of(2026, 7, 20), CTX));
+                () -> ormTemplate.runInSession(session -> recruitmentBiz.hire(String.valueOf(recId), LocalDate.of(2026, 7, 20), CTX)));
         assertEquals(ErpHrErrors.ERR_RECRUITMENT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -87,9 +87,9 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
     public void testRejectFromInterview() {
         Long recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-REJECT"));
 
-        recruitmentBiz.moveToScreening(String.valueOf(recId), CTX);
-        recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX);
-        recruitmentBiz.reject(String.valueOf(recId), CTX);
+        ormTemplate.runInSession(() -> recruitmentBiz.moveToScreening(String.valueOf(recId), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.reject(String.valueOf(recId), CTX));
 
         ErpHrRecruitment refreshed = daoProvider.daoFor(ErpHrRecruitment.class).getEntityById(recId);
         assertEquals(ErpHrConstants.RECRUITMENT_STATUS_REJECTED, refreshed.getStatus());
@@ -99,11 +99,11 @@ public class TestErpHrRecruitmentEngine extends JunitAutoTestCase {
     public void testCloseFromHired() {
         Long recId = ormTemplate.runInSession(session -> seedRecruitment("CAND-CLOSE"));
 
-        recruitmentBiz.moveToScreening(String.valueOf(recId), CTX);
-        recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX);
-        recruitmentBiz.makeOffer(String.valueOf(recId), new BigDecimal("12000"), CTX);
-        recruitmentBiz.hire(String.valueOf(recId), LocalDate.of(2026, 7, 20), CTX);
-        recruitmentBiz.close(String.valueOf(recId), CTX);
+        ormTemplate.runInSession(() -> recruitmentBiz.moveToScreening(String.valueOf(recId), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.scheduleInterview(String.valueOf(recId), null, LocalDate.of(2026, 7, 15), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.makeOffer(String.valueOf(recId), new BigDecimal("12000"), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.hire(String.valueOf(recId), LocalDate.of(2026, 7, 20), CTX));
+        ormTemplate.runInSession(() -> recruitmentBiz.close(String.valueOf(recId), CTX));
 
         ErpHrRecruitment refreshed = daoProvider.daoFor(ErpHrRecruitment.class).getEntityById(recId);
         assertEquals(ErpHrConstants.RECRUITMENT_STATUS_CLOSED, refreshed.getStatus());

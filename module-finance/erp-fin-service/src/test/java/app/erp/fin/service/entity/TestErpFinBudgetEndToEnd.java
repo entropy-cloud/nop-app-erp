@@ -79,8 +79,8 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         Long periodId = ids[0];
         Long scenarioId = ids[1];
 
-        scenarioBiz.submit(scenarioId, CTX);
-        ErpFinBudgetScenario approved = scenarioBiz.approve(scenarioId, CTX);
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ErpFinBudgetScenario approved = ormTemplate.runInSession(session -> scenarioBiz.approve(scenarioId, CTX));
 
         assertEquals(ErpFinConstants.BUDGET_STATUS_APPROVED, approved.getDocStatus());
         assertTrue(approved.getVoucherId() != null, "审批后应回写预算凭证 ID");
@@ -106,13 +106,13 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         Long scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
-        scenarioBiz.submit(scenarioId, CTX);
-        scenarioBiz.approve(scenarioId, CTX);
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
 
         // 余量 = 1000 − 800 = 200 < 300 → HARD 拦截
         assertThrows(NopException.class, () ->
-                budgetControlBiz.check(expense.getId(), null, periodId, new BigDecimal("300"),
-                        "PURCHASE_ORDER", "PO-001", CTX),
+                ormTemplate.runInSession(session -> budgetControlBiz.check(expense.getId(), null, periodId, new BigDecimal("300"),
+                        "PURCHASE_ORDER", "PO-001", CTX)),
                 "HARD 级别余量不足应抛 NopException(ERR_BUDGET_EXCEEDED)");
     }
 
@@ -131,11 +131,11 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         Long scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
-        scenarioBiz.submit(scenarioId, CTX);
-        scenarioBiz.approve(scenarioId, CTX);
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
 
-        BudgetCheckResult result = budgetControlBiz.check(expense.getId(), null, periodId,
-                new BigDecimal("300"), "PURCHASE_ORDER", "PO-002", CTX);
+        BudgetCheckResult result = ormTemplate.runInSession(session -> budgetControlBiz.check(expense.getId(), null, periodId,
+                new BigDecimal("300"), "PURCHASE_ORDER", "PO-002", CTX));
 
         assertEquals(BudgetCheckResult.ACTION_WARNED, result.getActionResult());
         assertEquals(0, result.getAvailableAmount().compareTo(new BigDecimal("200")));
@@ -156,11 +156,11 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         Long scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
-        scenarioBiz.submit(scenarioId, CTX);
-        scenarioBiz.approve(scenarioId, CTX);
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
 
-        BudgetCheckResult result = budgetControlBiz.check(expense.getId(), null, periodId,
-                new BigDecimal("9999"), "PURCHASE_ORDER", "PO-003", CTX);
+        BudgetCheckResult result = ormTemplate.runInSession(session -> budgetControlBiz.check(expense.getId(), null, periodId,
+                new BigDecimal("9999"), "PURCHASE_ORDER", "PO-003", CTX));
         assertEquals(BudgetCheckResult.ACTION_PASS, result.getActionResult());
     }
 
@@ -177,12 +177,12 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         Long periodId = ids[0];
         Long scenarioId = ids[1];
 
-        scenarioBiz.submit(scenarioId, CTX);
-        scenarioBiz.approve(scenarioId, CTX);
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
         assertEquals(0, budgetAmountForSubject(periodId, "6601").compareTo(new BigDecimal("1000")),
                 "审批后预算余额为 1000");
 
-        ErpFinBudgetScenario cancelled = scenarioBiz.cancel(scenarioId, CTX);
+        ErpFinBudgetScenario cancelled = ormTemplate.runInSession(session -> scenarioBiz.cancel(scenarioId, CTX));
         assertEquals(ErpFinConstants.BUDGET_STATUS_CANCELLED, cancelled.getDocStatus());
 
         // 红冲后净预算余额归零（原凭证 isReversed=true 不计入，红冲凭证 isReversed=true 也不计入）
@@ -206,10 +206,10 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         Long scenarioId = ids[1];
         ErpMdSubject expense = findSubjectByCode("6601");
 
-        scenarioBiz.submit(scenarioId, CTX);
-        scenarioBiz.approve(scenarioId, CTX);
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
 
-        List<BudgetVsActualRow> rows = budgetLineBiz.getBudgetVsActual(1L, periodId, expense.getId(), CTX);
+        List<BudgetVsActualRow> rows = ormTemplate.runInSession(session -> budgetLineBiz.getBudgetVsActual(1L, periodId, expense.getId(), CTX));
         assertEquals(1, rows.size(), "应返回 1 行（费用科目×期间×成本中心）");
         BudgetVsActualRow row = rows.get(0);
         assertEquals(0, row.getBudgetAmount().compareTo(new BigDecimal("1000")), "预算数=1000");

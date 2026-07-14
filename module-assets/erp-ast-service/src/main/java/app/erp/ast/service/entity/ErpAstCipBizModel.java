@@ -12,7 +12,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -81,14 +80,12 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpAstCip startConstruction(@Name("cipId") Long cipId, IServiceContext context) {
         return cipProcessor.startConstruction(cipId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpAstCipCostItem addCostItem(@Name("cipId") Long cipId,
                                          @Name("costType") String costType,
                                          @Name("amountFunctional") BigDecimal amountFunctional,
@@ -102,7 +99,6 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpAstCipProgressBilling addProgressBilling(@Name("cipId") Long cipId,
                                                        @Name("billingDate") LocalDate billingDate,
                                                        @Name("billingMilestone") String billingMilestone,
@@ -130,7 +126,6 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpAstCip transferToAsset(@Name("cipId") Long cipId,
                                      @Name("costItemIds") List<Long> costItemIds,
                                      @Name("transferDate") LocalDate transferDate,
@@ -140,7 +135,6 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpAstCip reverseTransfer(@Name("cipId") Long cipId,
                                      @Name("capitalizationId") Long capitalizationId,
                                      IServiceContext context) {

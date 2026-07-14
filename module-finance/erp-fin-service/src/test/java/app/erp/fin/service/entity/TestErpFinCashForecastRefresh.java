@@ -67,7 +67,7 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
             return Boolean.TRUE;
         });
 
-        Integer count = cashForecastBiz.refreshForecast(LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 31), CTX);
+        Integer count = ormTemplate.runInSession(session -> cashForecastBiz.refreshForecast(LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 31), CTX));
         assertEquals(Integer.valueOf(4), count, "聚合 4 行（2 AR/AP + 2 票据）");
 
         List<ErpFinCashForecast> inflows = findByDirection(ErpFinConstants.CASH_FLOW_INFLOW);
@@ -76,7 +76,7 @@ public class TestErpFinCashForecastRefresh extends JunitAutoTestCase {
         assertEquals(2, outflows.size(), "2 笔流出（应付发票 + 应付票据）");
 
         // 幂等：再次刷新区间，行数不变（先清后写）。
-        Integer count2 = cashForecastBiz.refreshForecast(LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 31), CTX);
+        Integer count2 = ormTemplate.runInSession(session -> cashForecastBiz.refreshForecast(LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 31), CTX));
         assertEquals(Integer.valueOf(4), count2, "幂等刷新仍 4 行");
         assertEquals(4, countAll(), "区间内总行数仍 4");
     }

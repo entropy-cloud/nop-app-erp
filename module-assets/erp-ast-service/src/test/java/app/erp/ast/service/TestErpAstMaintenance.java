@@ -258,7 +258,7 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
             return createMaintenanceEntity(assetId, "MNT-CANC-001", "作废维修单", null);
         });
 
-        ErpAstMaintenance cancelled = maintenanceBiz.cancel(mntId, CTX);
+        ErpAstMaintenance cancelled = ormTemplate.runInSession(session -> maintenanceBiz.cancel(mntId, CTX));
         assertEquals(ErpAstConstants.MAINTENANCE_STATUS_CANCELLED, cancelled.getStatus(), "作废后 status=CANCELLED");
     }
 

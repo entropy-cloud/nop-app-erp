@@ -61,8 +61,8 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
         BankStatementLineInput l2 = line(LocalDate.of(2026, 6, 12), "REF-A-2",
                 ErpFinConstants.DC_DEBIT, new BigDecimal("300"));
 
-        ErpFinBankStatement head = bankStatementBiz.importStatement(accountId[0],
-                LocalDate.of(2026, 6, 30), Arrays.asList(l1, l2), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(accountId[0],
+                LocalDate.of(2026, 6, 30), Arrays.asList(l1, l2), CTX));
 
         assertNotNull(head.getId(), "对账单应已落库");
         assertEquals(ErpFinConstants.VOUCHER_STATUS_DRAFT, head.getDocStatus(), "导入后 DRAFT");
@@ -86,14 +86,14 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-DUP-1",
                 ErpFinConstants.DC_CREDIT, new BigDecimal("100"));
 
-        bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ormTemplate.runInSession(() -> bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
         BankStatementLineInput dup = line(LocalDate.of(2026, 6, 10), "REF-DUP-1",
                 ErpFinConstants.DC_CREDIT, new BigDecimal("100"));
         assertThrows(NopException.class, () ->
-                        bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
-                                Collections.singletonList(dup), CTX),
+                        ormTemplate.runInSession(session -> bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
+                                Collections.singletonList(dup), CTX)),
                 "同 refNo 重复导入应拒绝");
     }
 
@@ -106,8 +106,8 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
                 ErpFinConstants.DC_CREDIT, new BigDecimal("100"));
 
         assertThrows(NopException.class, () ->
-                        bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
-                                Collections.singletonList(l1), CTX),
+                        ormTemplate.runInSession(session -> bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
+                                Collections.singletonList(l1), CTX)),
                 "CASH 账户不可导入银行对账单");
     }
 
@@ -124,8 +124,8 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
                     ErpFinConstants.DC_CREDIT, new BigDecimal("100"));
 
             assertThrows(NopException.class, () ->
-                            bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
-                                    Collections.singletonList(l1), CTX),
+                            ormTemplate.runInSession(session -> bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
+                                    Collections.singletonList(l1), CTX)),
                     "strict-refno=true 缺 refNo 应拒绝");
         } finally {
             AppConfig.getConfigProvider().assignConfigValue(
@@ -141,14 +141,14 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), null,
                 ErpFinConstants.DC_CREDIT, new BigDecimal("200"));
-        bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ormTemplate.runInSession(() -> bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
         BankStatementLineInput dup = line(LocalDate.of(2026, 6, 10), null,
                 ErpFinConstants.DC_CREDIT, new BigDecimal("200"));
         assertThrows(NopException.class, () ->
-                        bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
-                                Collections.singletonList(dup), CTX),
+                        ormTemplate.runInSession(session -> bankStatementBiz.importStatement(accountId[0], LocalDate.of(2026, 6, 30),
+                                Collections.singletonList(dup), CTX)),
                 "无 refNo 时同 (date, amount, dc) 组合应拒绝");
     }
 
@@ -163,14 +163,14 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-X-ACCT",
                 ErpFinConstants.DC_CREDIT, new BigDecimal("100"));
-        ErpFinBankStatement h1 = bankStatementBiz.importStatement(a1[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement h1 = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(a1[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
         // 不同账户允许同 refNo
         BankStatementLineInput l2 = line(LocalDate.of(2026, 6, 10), "REF-X-ACCT",
                 ErpFinConstants.DC_CREDIT, new BigDecimal("100"));
-        ErpFinBankStatement h2 = bankStatementBiz.importStatement(a2[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l2), CTX);
+        ErpFinBankStatement h2 = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(a2[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l2), CTX));
 
         assertNotNull(h1.getId());
         assertNotNull(h2.getId());

@@ -64,7 +64,7 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         Long facilityId = ids[0];
         Long noteId = ids[1];
 
-        ErpFinNotesPayable note = notesPayableBiz.issue(noteId, CTX);
+        ErpFinNotesPayable note = ormTemplate.runInSession(session -> notesPayableBiz.issue(noteId, CTX));
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "开出过账成功 posted=true");
         assertFalse(findBillLinks("NP-POST-001", ErpFinBusinessType.NOTES_PAYABLE_ISSUED.name()).isEmpty(), "ISSUED 凭证回链已落库");
 
@@ -88,8 +88,8 @@ public class TestErpFinNotesPayablePosting extends JunitAutoTestCase {
         Long facilityId = ids[0];
         Long noteId = ids[1];
 
-        notesPayableBiz.issue(noteId, CTX);
-        ErpFinNotesPayable note = notesPayableBiz.honor(noteId, CTX);
+        ormTemplate.runInSession(() -> notesPayableBiz.issue(noteId, CTX));
+        ErpFinNotesPayable note = ormTemplate.runInSession(session -> notesPayableBiz.honor(noteId, CTX));
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "兑付过账成功 posted=true");
         assertFalse(findBillLinks("NP-POST-002", ErpFinBusinessType.NOTES_PAYABLE_HONORED.name()).isEmpty(), "HONORED 凭证回链已落库");
 

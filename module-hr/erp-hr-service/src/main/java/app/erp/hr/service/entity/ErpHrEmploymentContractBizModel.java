@@ -8,7 +8,6 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -74,7 +73,6 @@ public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymen
 
     @Override
     @BizMutation
-    @SingleSession
     public List<ErpHrEmploymentContract> expireOverdueContracts(IServiceContext context) {
         LocalDate now = CoreMetrics.today();
         QueryBean q = new QueryBean();
@@ -96,7 +94,6 @@ public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymen
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrEmploymentContract renew(@Name("id") String id,
                                          @Name("newEndDate") LocalDate newEndDate,
                                          IServiceContext context) {

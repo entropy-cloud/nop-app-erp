@@ -18,7 +18,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -69,7 +68,6 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinPostingException retry(@Name("exceptionId") Long exceptionId, IServiceContext context) {
         ErpFinPostingException entity = requirePending(exceptionId);
         // 翻 RETRYING 并记重试次数；重新触发过账（独立事务，失败回滚不污染本事务）。
@@ -106,7 +104,6 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinPostingException ignore(@Name("exceptionId") Long exceptionId,
                                          @Name("resolutionNote") String resolutionNote,
                                          IServiceContext context) {
@@ -126,7 +123,6 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinPostingException manualEntry(@Name("exceptionId") Long exceptionId,
                                               @Name("voucherId") Long voucherId,
                                               @Name("resolutionNote") String resolutionNote,

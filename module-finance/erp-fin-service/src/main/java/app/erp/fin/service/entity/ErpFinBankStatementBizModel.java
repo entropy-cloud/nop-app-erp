@@ -10,7 +10,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
@@ -30,7 +29,6 @@ public class ErpFinBankStatementBizModel extends CrudBizModel<ErpFinBankStatemen
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinBankStatement importStatement(@Name("fundAccountId") Long fundAccountId,
                                                 @Name("statementDate") LocalDate statementDate,
                                                 @Name("lines") List<BankStatementLineInput> lines,

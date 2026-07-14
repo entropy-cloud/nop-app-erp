@@ -86,7 +86,7 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
 
         String payload = "{\"trackingNo\":\"MOCK-PATH2-A-T\",\"eventType\":\"DELIVERED\",\"signedBy\":\"王五\"}";
         String sig = hmacSha256(payload, "MOCK-PATH2-A");
-        ErpLogShipment result = shipmentBiz.handleTrackingWebhook("MOCK-PATH2-A", sig, payload, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-PATH2-A", sig, payload, CTX));
 
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, result.getStatus());
         assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, result.getFreightSettlementStatus(),
@@ -123,7 +123,7 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
 
         String payload = "{\"trackingNo\":\"MOCK-PATH2-B-T\",\"eventType\":\"DELIVERED\"}";
         String sig = hmacSha256(payload, "MOCK-PATH2-B");
-        ErpLogShipment result = shipmentBiz.handleTrackingWebhook("MOCK-PATH2-B", sig, payload, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-PATH2-B", sig, payload, CTX));
 
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, result.getStatus());
         assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, result.getFreightSettlementStatus(),
@@ -148,7 +148,7 @@ public class TestErpLogPath2LandedCost extends JunitAutoTestCase {
         String payload = "{\"trackingNo\":\"MOCK-PATH2-C-T\",\"eventType\":\"DELIVERED\"}";
         String sig = hmacSha256(payload, "MOCK-PATH2-C");
         NopException ex = assertThrows(NopException.class,
-                () -> shipmentBiz.handleTrackingWebhook("MOCK-PATH2-C", sig, payload, CTX));
+                () -> ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-PATH2-C", sig, payload, CTX)));
         assertEquals(ErpLogErrors.ERR_LOG_SHIPMENT_ALREADY_DELIVERED.getErrorCode(), ex.getErrorCode());
     }
 

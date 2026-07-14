@@ -13,7 +13,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -68,10 +67,8 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrDevelopmentPlan generateDevelopmentPlan(@Name("employeeId") Long employeeId,
                                                          IServiceContext context) {
         List<ErpHrGapAnalysis> gaps = findActionableGaps(employeeId, context);
@@ -98,7 +95,6 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrDevelopmentPlanItem updatePlanItemStatus(@Name("planItemId") Long planItemId,
                                                           @Name("status") String status,
                                                           IServiceContext context) {
@@ -120,7 +116,6 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrDevelopmentPlan completePlan(@Name("planId") Long planId, IServiceContext context) {
         ErpHrDevelopmentPlan plan = requireEntity(String.valueOf(planId), null, context);
         String status = plan.getStatus();

@@ -51,16 +51,16 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
                 "核销前 partner 应付余额缓存为 0（仅核销触发重算）");
 
         ReconciliationLineInput line = line(fixture[0], fixture[1], "200");
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partner, LocalDate.of(2026, 6, 20),
-                Collections.singletonList(line), CTX);
-        reconciliationBiz.post(head.getId(), CTX);
+                Collections.singletonList(line), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
 
         // 核销后：发票 open 800 + 付款 open 0 = 800
         assertEquals(0, partner(partner).getPayableBalance().compareTo(new BigDecimal("800")),
                 "核销后 partner 应付余额 = Σ 未核销 openAmount");
 
-        reconciliationBiz.reverse(head.getId(), CTX);
+        ormTemplate.runInSession(() -> reconciliationBiz.reverse(head.getId(), CTX));
         // 红冲恢复后：发票 open 1000 + 付款 open 200 = 1200
         assertEquals(0, partner(partner).getPayableBalance().compareTo(new BigDecimal("1200")),
                 "红冲后 partner 应付余额恢复");
@@ -71,10 +71,10 @@ public class TestErpFinPartnerBalance extends JunitAutoTestCase {
         long partner = 81L;
         Long[] fixture = setupReceivable(partner, new BigDecimal("500"), new BigDecimal("500"));
 
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_RECEIVABLE, partner, LocalDate.of(2026, 6, 20),
-                Collections.singletonList(line(fixture[0], fixture[1], "500")), CTX);
-        reconciliationBiz.post(head.getId(), CTX);
+                Collections.singletonList(line(fixture[0], fixture[1], "500")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
 
         assertEquals(0, partner(partner).getReceivableBalance().compareTo(BigDecimal.ZERO),
                 "应收全额核销后应收余额为 0");

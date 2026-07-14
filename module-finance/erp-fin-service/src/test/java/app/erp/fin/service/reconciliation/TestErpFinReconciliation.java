@@ -51,10 +51,11 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         Long[] fixture = setup(partnerId, new BigDecimal("300"), new BigDecimal("1000"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
-                java.util.Collections.singletonList(line(fixture[0], fixture[1], "300")), CTX);
-        reconciliationBiz.post(head.getId(), CTX);
+                java.util.Collections.singletonList(line(fixture[0], fixture[1], "300")), CTX));
+        final Long headId = head.getId();
+        ormTemplate.runInSession(() -> reconciliationBiz.post(headId, CTX));
 
         ErpFinArApItem payment = item(fixture[0]);
         ErpFinArApItem invoice = item(fixture[1]);
@@ -75,10 +76,10 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         Long[] fixture = setup(partnerId, new BigDecimal("500"), new BigDecimal("500"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
-                java.util.Collections.singletonList(line(fixture[0], fixture[1], "500")), CTX);
-        reconciliationBiz.post(head.getId(), CTX);
+                java.util.Collections.singletonList(line(fixture[0], fixture[1], "500")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
 
         assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, item(fixture[0]).getStatus());
         assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, item(fixture[1]).getStatus());
@@ -92,10 +93,10 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         Long[] b = setup(partnerB, "100", "100", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
         // 用 A 的付款核销 B 的发票 → 跨 partner
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerA, LocalDate.of(2026, 6, 20),
-                java.util.Collections.singletonList(line(a[0], b[1], "100")), CTX);
-        assertThrows(NopException.class, () -> reconciliationBiz.post(head.getId(), CTX),
+                java.util.Collections.singletonList(line(a[0], b[1], "100")), CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(head.getId(), CTX)),
                 "跨往来单位核销应拒绝");
     }
 
@@ -106,10 +107,10 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         Long[] fixture = setup(partnerId, new BigDecimal("100"), new BigDecimal("50"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
-                java.util.Collections.singletonList(line(fixture[0], fixture[1], "100")), CTX);
-        assertThrows(NopException.class, () -> reconciliationBiz.post(head.getId(), CTX),
+                java.util.Collections.singletonList(line(fixture[0], fixture[1], "100")), CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(head.getId(), CTX)),
                 "核销金额超过未核销余额应拒绝");
     }
 
@@ -119,10 +120,10 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         // 发票业务日期 6-25，核销日期 6-20 → 早于发票
         Long[] fixture = setup(partnerId, "100", "100", LocalDate.of(2026, 6, 25), LocalDate.of(2026, 6, 8));
 
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
-                java.util.Collections.singletonList(line(fixture[0], fixture[1], "100")), CTX);
-        assertThrows(NopException.class, () -> reconciliationBiz.post(head.getId(), CTX),
+                java.util.Collections.singletonList(line(fixture[0], fixture[1], "100")), CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(head.getId(), CTX)),
                 "核销日期早于发票业务日期应拒绝");
     }
 
@@ -132,13 +133,13 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
         Long[] fixture = setup(partnerId, new BigDecimal("400"), new BigDecimal("400"),
                 LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
 
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
-                java.util.Collections.singletonList(line(fixture[0], fixture[1], "400")), CTX);
-        reconciliationBiz.post(head.getId(), CTX);
+                java.util.Collections.singletonList(line(fixture[0], fixture[1], "400")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
         assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, item(fixture[1]).getStatus());
 
-        reconciliationBiz.reverse(head.getId(), CTX);
+        ormTemplate.runInSession(() -> reconciliationBiz.reverse(head.getId(), CTX));
 
         assertEquals(ErpFinConstants.RECON_STATUS_REVERSED, recon(head.getId()).getDocStatus());
         ErpFinArApItem invoice = item(fixture[1]);
@@ -154,11 +155,11 @@ public class TestErpFinReconciliation extends JunitAutoTestCase {
     public void testPostPostedAgainRejected() {
         long partnerId = 70L;
         Long[] fixture = setup(partnerId, "100", "100", LocalDate.of(2026, 6, 10), LocalDate.of(2026, 6, 8));
-        ErpFinReconciliation head = reconciliationBiz.create(
+        ErpFinReconciliation head = ormTemplate.runInSession(session -> reconciliationBiz.create(
                 ErpFinConstants.DIRECTION_PAYABLE, partnerId, LocalDate.of(2026, 6, 20),
-                java.util.Collections.singletonList(line(fixture[0], fixture[1], "100")), CTX);
-        reconciliationBiz.post(head.getId(), CTX);
-        assertThrows(NopException.class, () -> reconciliationBiz.post(head.getId(), CTX),
+                java.util.Collections.singletonList(line(fixture[0], fixture[1], "100")), CTX));
+        ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> reconciliationBiz.post(head.getId(), CTX)),
                 "已过账核销单不应再次过账");
         assertNotEquals(ErpFinConstants.RECON_STATUS_DRAFT, recon(head.getId()).getDocStatus());
     }

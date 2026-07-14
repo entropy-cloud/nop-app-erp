@@ -50,7 +50,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
                 LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31),
                 ErpFinConstants.PERIOD_STATUS_OPEN));
 
-        periodCloseBiz.closePeriod(periodId, CTX);
+        ormTemplate.runInSession(() -> periodCloseBiz.closePeriod(periodId, CTX));
 
         ErpFinAccountingPeriodStatus status = loadStatus(periodId);
         assertEquals(ErpFinConstants.MODULE_CLOSE_CLOSED, status.getArStatus(), "AR 已关账");
@@ -82,7 +82,7 @@ public class TestErpFinModuleCloseOrder extends JunitAutoTestCase {
                 LocalDate.of(2025, 3, 1), LocalDate.of(2025, 3, 31),
                 ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL));
 
-        assertThrows(NopException.class, () -> periodCloseBiz.reverseClose(periodId, CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodCloseBiz.reverseClose(periodId, CTX)),
                 "审批门控默认开启，反结账应被阻止");
 
         ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);

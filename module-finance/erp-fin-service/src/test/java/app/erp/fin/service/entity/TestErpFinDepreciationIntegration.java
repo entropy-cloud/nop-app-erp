@@ -47,7 +47,7 @@ public class TestErpFinDepreciationIntegration extends JunitAutoTestCase {
         // 默认 auto-depreciation-on-close=true：折旧集成尝试执行；finance 单域无 ast-service → 告警跳过，不阻断。
         Long periodId = seedReturn(() -> seedOpenPeriod("2024-09", 2024, 9));
 
-        ErpFinAccountingPeriod period = periodBiz.closePeriod(periodId, CTX);
+        ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX));
 
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "折旧不可用不阻断结账");
 

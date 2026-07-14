@@ -222,7 +222,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
 
         assertTrue(Boolean.TRUE.equals(reload(orderId).getPosted()), "前置：委外单 posted=true");
 
-        Long redVoucherId = voucherBiz.reverse(feeBillHeadCode, ErpFinBusinessType.SUBCONTRACT_FEE, CTX);
+        Long redVoucherId = ormTemplate.runInSession(session -> voucherBiz.reverse(feeBillHeadCode, ErpFinBusinessType.SUBCONTRACT_FEE, CTX));
         assertNotNull(redVoucherId, "财务侧红冲应生成红字凭证");
 
         ErpMfgSubcontractOrder rolled = reload(orderId);

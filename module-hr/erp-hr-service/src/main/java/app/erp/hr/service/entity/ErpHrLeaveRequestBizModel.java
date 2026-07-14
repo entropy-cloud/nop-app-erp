@@ -7,7 +7,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -76,7 +75,6 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrLeaveRequest submit(@Name("id") String id, IServiceContext context) {
         ErpHrLeaveRequest leave = requireEntity(id, null, context);
         requireStatus(leave, ErpHrConstants.LEAVE_STATUS_DRAFT, ErpHrConstants.LEAVE_STATUS_SUBMITTED);
@@ -90,7 +88,6 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrLeaveRequest approve(@Name("id") String id, IServiceContext context) {
         ErpHrLeaveRequest leave = requireEntity(id, null, context);
         requireStatus(leave, ErpHrConstants.LEAVE_STATUS_SUBMITTED, ErpHrConstants.LEAVE_STATUS_APPROVED);
@@ -106,7 +103,6 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrLeaveRequest reject(@Name("id") String id, IServiceContext context) {
         ErpHrLeaveRequest leave = requireEntity(id, null, context);
         requireStatus(leave, ErpHrConstants.LEAVE_STATUS_SUBMITTED, ErpHrConstants.LEAVE_STATUS_REJECTED);
@@ -117,7 +113,6 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrLeaveRequest cancel(@Name("id") String id, IServiceContext context) {
         ErpHrLeaveRequest leave = requireEntity(id, null, context);
         requireStatus(leave, ErpHrConstants.LEAVE_STATUS_APPROVED, ErpHrConstants.LEAVE_STATUS_CANCELLED);

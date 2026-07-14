@@ -51,8 +51,8 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
         seedArApInvoice(partnerId, "AP-3100", new BigDecimal("100"), new BigDecimal("80"));
         seedPurInvoice(partnerId, "AP-3100", new BigDecimal("100"), new BigDecimal("80"));
 
-        DualSideDiffReport report = reconciliationBiz.checkDualSideConsistency(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, CTX);
+        DualSideDiffReport report = ormTemplate.runInSession(session -> reconciliationBiz.checkDualSideConsistency(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, CTX));
 
         assertTrue(report.isConsistent(), "双面一致应返回 consistent=true");
         assertEquals(1, report.getRows().size());
@@ -67,8 +67,8 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
         seedArApInvoice(partnerId, "AP-3200", new BigDecimal("100"), new BigDecimal("90"));
         seedPurInvoice(partnerId, "AP-3200", new BigDecimal("100"), new BigDecimal("50"));
 
-        DualSideDiffReport report = reconciliationBiz.checkDualSideConsistency(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, CTX);
+        DualSideDiffReport report = ormTemplate.runInSession(session -> reconciliationBiz.checkDualSideConsistency(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, CTX));
 
         assertTrue(!report.isConsistent(), "finance 多核销应返回 consistent=false");
         DualSideDiffRow row = report.getRows().get(0);
@@ -85,8 +85,8 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
         seedArApInvoice(partnerId, "AP-3300", new BigDecimal("100"), new BigDecimal("30"));
         seedPurInvoice(partnerId, "AP-3300", new BigDecimal("100"), new BigDecimal("70"));
 
-        DualSideDiffReport report = reconciliationBiz.checkDualSideConsistency(
-                ErpFinConstants.DIRECTION_PAYABLE, partnerId, CTX);
+        DualSideDiffReport report = ormTemplate.runInSession(session -> reconciliationBiz.checkDualSideConsistency(
+                ErpFinConstants.DIRECTION_PAYABLE, partnerId, CTX));
 
         assertTrue(!report.isConsistent(), "域级多核销应返回 consistent=false");
         DualSideDiffRow row = report.getRows().get(0);
@@ -103,8 +103,8 @@ public class TestErpFinDualSideConsistency extends JunitAutoTestCase {
         seedArApInvoice(partnerB, "AP-3401", new BigDecimal("100"), new BigDecimal("80"));
         seedPurInvoice(partnerB, "AP-3401", new BigDecimal("100"), new BigDecimal("20"));
 
-        DualSideDiffReport report = reconciliationBiz.checkDualSideConsistency(
-                ErpFinConstants.DIRECTION_PAYABLE, null, CTX);
+        DualSideDiffReport report = ormTemplate.runInSession(session -> reconciliationBiz.checkDualSideConsistency(
+                ErpFinConstants.DIRECTION_PAYABLE, null, CTX));
 
         assertEquals(2, report.getRows().size(), "应包含两个 partner 的差异行");
         assertTrue(report.getRows().stream().anyMatch(r -> Long.valueOf(partnerA).equals(r.getPartnerId())

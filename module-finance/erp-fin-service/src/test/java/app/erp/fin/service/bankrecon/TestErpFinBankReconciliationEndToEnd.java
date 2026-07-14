@@ -100,24 +100,24 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         BankStatementLineInput b3 = line(LocalDate.of(2026, 6, 15), "REF-E2E-3-" + seed,
                 DC_CREDIT, new BigDecimal("100"), new BigDecimal("1100"));
 
-        ErpFinBankStatement statement = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Arrays.asList(b1, b2, b3), CTX);
+        ErpFinBankStatement statement = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Arrays.asList(b1, b2, b3), CTX));
         assertEquals(3, countLines(statement.getId()), "应导入 3 行");
 
         // 2. autoMatch 应自动勾对前两笔（每笔唯一候选账面 DEBIT）
-        BankStatementMatchResult matchResult = bankStatementLineBiz.autoMatch(statement.getId(), CTX);
+        BankStatementMatchResult matchResult = ormTemplate.runInSession(session -> bankStatementLineBiz.autoMatch(statement.getId(), CTX));
         assertEquals(2, matchResult.getMatched(), "前两笔应自动勾对");
         assertEquals(1, matchResult.getUnmatched(), "第三笔 CREDIT 100 应留 UNMATCHED（无账面候选）");
 
         // 3. manualMatch 余项无对应凭证行可勾对，本场景跳过（autoMatch 已正确推导 UNMATCHED）
 
         // 4. generate 调节表应平衡
-        ErpFinBankReconciliation recon = bankReconciliationBiz.generate(statement.getId(), CTX);
+        ErpFinBankReconciliation recon = ormTemplate.runInSession(session -> bankReconciliationBiz.generate(statement.getId(), CTX));
         assertTrue(recon.getIsBalanced(), "应平衡：账面 1000 + 未达 100 = 对账单 1100");
         assertEquals(ErpFinConstants.VOUCHER_STATUS_DRAFT, recon.getDocStatus());
 
         // 5. post 应生成未达调整凭证（BANK_RECON_ADJ）
-        bankReconciliationBiz.post(recon.getId(), CTX);
+        ormTemplate.runInSession(() -> bankReconciliationBiz.post(recon.getId(), CTX));
         assertEquals(ErpFinConstants.VOUCHER_STATUS_POSTED, reloadRecon(recon.getId()).getDocStatus());
         long links = countBillLinks(recon.getCode());
         assertTrue(links >= 1, "应生成 BANK_RECON_ADJ 调整凭证");
@@ -127,7 +127,7 @@ public class TestErpFinBankReconciliationEndToEnd extends JunitAutoTestCase {
         assertEquals(VOUCHER_STATUS_POSTED, adj.getDocStatus());
 
         // 6. reverse 红冲
-        bankReconciliationBiz.reverse(recon.getId(), CTX);
+        ormTemplate.runInSession(() -> bankReconciliationBiz.reverse(recon.getId(), CTX));
         assertEquals(ErpFinConstants.VOUCHER_STATUS_CANCELLED, reloadRecon(recon.getId()).getDocStatus());
         assertTrue(countReversalVouchers(adjVoucherId) >= 1, "应生成红字调整凭证");
     }

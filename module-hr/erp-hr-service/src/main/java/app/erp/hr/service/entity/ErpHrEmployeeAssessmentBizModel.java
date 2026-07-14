@@ -13,7 +13,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -61,10 +60,8 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrEmployeeAssessment submitAssessment(@Name("assessmentId") Long assessmentId,
                                                      IServiceContext context) {
         ErpHrEmployeeAssessment assessment = requireAssessment(assessmentId, context);
@@ -84,7 +81,6 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrEmployeeAssessment completeAssessment(@Name("assessmentId") Long assessmentId,
                                                        IServiceContext context) {
         ErpHrEmployeeAssessment assessment = requireAssessment(assessmentId, context);

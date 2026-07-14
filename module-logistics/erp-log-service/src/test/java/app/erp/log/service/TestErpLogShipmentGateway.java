@@ -68,24 +68,24 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
         // DRAFT→ADVISED
-        ErpLogShipment afterAdvise = shipmentBiz.advise(shipmentId, CTX);
+        ErpLogShipment afterAdvise = ormTemplate.runInSession(session -> shipmentBiz.advise(shipmentId, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_ADVISED, afterAdvise.getStatus());
 
         // ADVISED→DISPATCHED（completeDeliveryOrder 回写 trackingNo/labelUrl）
-        ErpLogShipment afterComplete = shipmentBiz.completeShipment(shipmentId, CTX);
+        ErpLogShipment afterComplete = ormTemplate.runInSession(session -> shipmentBiz.completeShipment(shipmentId, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED, afterComplete.getStatus());
         assertEquals("MOCK-GW-FULL-1", afterComplete.getTrackingNo());
         assertNotNull(afterComplete.getLabelUrl());
         assertTrue(afterComplete.getLabelUrl().contains("MOCK-GW-FULL-1"));
 
         // 轮询推进 DISPATCHED→IN_TRANSIT（mock 首次 trackShipment 返回 IN_TRANSIT）
-        int advanced1 = shipmentBiz.scanForPolling(CTX);
+        int advanced1 = ormTemplate.runInSession(session -> shipmentBiz.scanForPolling(CTX));
         assertTrue(advanced1 >= 1);
         ErpLogShipment inTransit = reload(shipmentId);
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT, inTransit.getStatus());
 
         // 再次轮询 IN_TRANSIT→DELIVERED（mock 第二次 trackShipment 返回 DELIVERED）
-        shipmentBiz.scanForPolling(CTX);
+        ormTemplate.runInSession(() -> shipmentBiz.scanForPolling(CTX));
         ErpLogShipment delivered = reload(shipmentId);
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, delivered.getStatus());
         assertNotNull(delivered.getActualDeliveryDate());
@@ -102,7 +102,7 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
         MockCarrierGatewayClientFactory.failureMode = MockCarrierGatewayClientFactory.FAILURE_MODE_5XX;
-        ErpLogShipment result = shipmentBiz.completeShipment(shipmentId, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.completeShipment(shipmentId, CTX));
 
         // 死信：保留 ADVISED + remark 错误
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_ADVISED, result.getStatus());
@@ -122,7 +122,7 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
         MockCarrierGatewayClientFactory.failureMode = MockCarrierGatewayClientFactory.FAILURE_MODE_4XX;
-        ErpLogShipment result = shipmentBiz.completeShipment(shipmentId, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.completeShipment(shipmentId, CTX));
 
         // 4xx 不重试直接死信：保留 ADVISED
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_ADVISED, result.getStatus());
@@ -147,7 +147,7 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
         String payload = "{\"trackingNo\":\"MOCK-GW-WH-1\",\"eventType\":\"IN_TRANSIT\"}";
         // 错误签名
         assertThrows(NopException.class,
-                () -> shipmentBiz.handleTrackingWebhook("MOCK-CAR", "badsignature", payload, CTX));
+                () -> ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-CAR", "badsignature", payload, CTX)));
     }
 
     @Test
@@ -165,11 +165,11 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
 
         String payload = "{\"trackingNo\":\"MOCK-GW-WH-2\",\"eventType\":\"IN_TRANSIT\"}";
         String sig = hmacSha256(payload, "MOCK-CAR");
-        shipmentBiz.handleTrackingWebhook("MOCK-CAR", sig, payload, CTX);
+        ormTemplate.runInSession(() -> shipmentBiz.handleTrackingWebhook("MOCK-CAR", sig, payload, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT, reload(shipmentId).getStatus());
 
         // 重复回调不重复推进（仍 IN_TRANSIT，不报错）
-        shipmentBiz.handleTrackingWebhook("MOCK-CAR", sig, payload, CTX);
+        ormTemplate.runInSession(() -> shipmentBiz.handleTrackingWebhook("MOCK-CAR", sig, payload, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT, reload(shipmentId).getStatus());
     }
 
@@ -180,7 +180,7 @@ public class TestErpLogShipmentGateway extends JunitAutoTestCase {
                 ErpLogConstants.SHIPMENT_STATUS_ADVISED, ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY,
                 ErpLogConstants.SETTLEMENT_STATUS_PENDING));
 
-        ErpLogShipment result = shipmentBiz.cancelShipment(shipmentId, CTX);
+        ErpLogShipment result = ormTemplate.runInSession(session -> shipmentBiz.cancelShipment(shipmentId, CTX));
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_CANCELLED, result.getStatus());
     }
 

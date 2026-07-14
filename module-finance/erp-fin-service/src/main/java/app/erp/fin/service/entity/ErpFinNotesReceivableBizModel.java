@@ -9,7 +9,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -25,7 +24,7 @@ import java.util.List;
  * 7 态状态机 + NOTES_RECEIVABLE 业财过账编排委托
  * {@link ErpFinNotesReceivableProcessor}（protected step 方法，下游可逐 step 覆盖）。
  *
- * <p>语义与配置门控见 {@code treasury.md}；{@code @BizMutation}+{@code @SingleSession} 钉事务/会话边界。
+ * <p>语义与配置门控见 {@code treasury.md}；{@code @BizMutation} 钉事务/会话边界。
  */
 @BizModel("ErpFinNotesReceivable")
 public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesReceivable> implements IErpFinNotesReceivableBiz {
@@ -39,14 +38,12 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinNotesReceivable receive(@Name("notesId") Long notesId, IServiceContext context) {
         return notesReceivableProcessor.receive(notesId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinNotesReceivable discount(@Name("notesId") Long notesId,
                                            @Name("discountDate") LocalDate discountDate,
                                            @Name("bankId") Long bankId,
@@ -57,7 +54,6 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinNotesReceivable endorse(@Name("notesId") Long notesId,
                                           @Name("endorsementFromId") Long endorsementFromId,
                                           IServiceContext context) {
@@ -66,28 +62,24 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinNotesReceivable collect(@Name("notesId") Long notesId, IServiceContext context) {
         return notesReceivableProcessor.collect(notesId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinNotesReceivable honor(@Name("notesId") Long notesId, IServiceContext context) {
         return notesReceivableProcessor.honor(notesId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinNotesReceivable dishonor(@Name("notesId") Long notesId, IServiceContext context) {
         return notesReceivableProcessor.dishonor(notesId, context);
     }
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpFinNotesReceivable writeOff(@Name("notesId") Long notesId, IServiceContext context) {
         return notesReceivableProcessor.writeOff(notesId, context);
     }

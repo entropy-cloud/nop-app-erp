@@ -73,12 +73,12 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
         Long empId = (Long) seeded[0];
         Long shiftId = (Long) seeded[1];
 
-        assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 2), CTX);
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 2), CTX));
         Long leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 2), LocalDate.of(2026, 7, 2), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
-        leaveRequestBiz.submit(String.valueOf(leaveId), CTX);
-        leaveRequestBiz.approve(String.valueOf(leaveId), CTX);
+        ormTemplate.runInSession(() -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
+        ormTemplate.runInSession(() -> leaveRequestBiz.approve(String.valueOf(leaveId), CTX));
 
         ErpHrLeaveRequest refreshed = daoProvider.daoFor(ErpHrLeaveRequest.class).getEntityById(leaveId);
         assertEquals(ErpHrConstants.LEAVE_STATUS_APPROVED, refreshed.getStatus());
@@ -107,7 +107,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
                 LocalDate.of(2026, 7, 10), LocalDate.of(2026, 7, 13), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
         NopException ex = assertThrows(NopException.class,
-                () -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
+                () -> ormTemplate.runInSession(session -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX)));
         assertEquals(ErpHrErrors.ERR_LEAVE_BALANCE_INSUFFICIENT.getErrorCode(), ex.getErrorCode());
     }
 
@@ -128,7 +128,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
                 LocalDate.of(2026, 1, 2), LocalDate.of(2026, 1, 4), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
         NopException ex = assertThrows(NopException.class,
-                () -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
+                () -> ormTemplate.runInSession(session -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX)));
         assertEquals(ErpHrErrors.ERR_LEAVE_DATE_OVERLAP.getErrorCode(), ex.getErrorCode());
     }
 
@@ -143,17 +143,17 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
         Long empId = (Long) seeded[0];
         Long shiftId = (Long) seeded[1];
 
-        assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 5), CTX);
+        ormTemplate.runInSession(() -> assignmentBiz.assignSingle(empId, shiftId, LocalDate.of(2026, 7, 5), CTX));
         Long leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 5), LocalDate.of(2026, 7, 5), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
-        leaveRequestBiz.submit(String.valueOf(leaveId), CTX);
-        leaveRequestBiz.approve(String.valueOf(leaveId), CTX);
+        ormTemplate.runInSession(() -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
+        ormTemplate.runInSession(() -> leaveRequestBiz.approve(String.valueOf(leaveId), CTX));
 
         ErpHrShiftAssignment afterApprove = findAssignment(empId, LocalDate.of(2026, 7, 5));
         assertTrue(afterApprove.getIsAbsent(), "审批后应标记缺席");
 
-        leaveRequestBiz.cancel(String.valueOf(leaveId), CTX);
+        ormTemplate.runInSession(() -> leaveRequestBiz.cancel(String.valueOf(leaveId), CTX));
 
         ErpHrLeaveRequest refreshed = daoProvider.daoFor(ErpHrLeaveRequest.class).getEntityById(leaveId);
         assertEquals(ErpHrConstants.LEAVE_STATUS_CANCELLED, refreshed.getStatus());
@@ -163,7 +163,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
         assertEquals(ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED, afterCancel.getStatus());
 
         // 余额恢复——getBalance 应回到全额
-        BigDecimal remaining = leaveRequestBiz.getBalance(empId, "ANNUAL", 2026, CTX);
+        BigDecimal remaining = ormTemplate.runInSession(session -> leaveRequestBiz.getBalance(empId, "ANNUAL", 2026, CTX));
         assertEquals(0, remaining.compareTo(new BigDecimal("10")), "取消后余额应恢复为 10");
     }
 
@@ -179,7 +179,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
         Long leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 5), ErpHrConstants.LEAVE_STATUS_DRAFT);
 
-        leaveRequestBiz.submit(String.valueOf(leaveId), CTX);
+        ormTemplate.runInSession(() -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
 
         ErpHrLeaveRequest refreshed = daoProvider.daoFor(ErpHrLeaveRequest.class).getEntityById(leaveId);
         assertEquals(0, refreshed.getDurationDays().compareTo(new BigDecimal("5")),
@@ -197,8 +197,8 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
 
         Long leaveId = seedLeaveRequest(empId, "ANNUAL",
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 1), ErpHrConstants.LEAVE_STATUS_DRAFT);
-        leaveRequestBiz.submit(String.valueOf(leaveId), CTX);
-        leaveRequestBiz.reject(String.valueOf(leaveId), CTX);
+        ormTemplate.runInSession(() -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
+        ormTemplate.runInSession(() -> leaveRequestBiz.reject(String.valueOf(leaveId), CTX));
 
         ErpHrLeaveRequest refreshed = daoProvider.daoFor(ErpHrLeaveRequest.class).getEntityById(leaveId);
         assertEquals(ErpHrConstants.LEAVE_STATUS_REJECTED, refreshed.getStatus());
@@ -217,7 +217,7 @@ public class TestErpHrLeaveEngine extends JunitAutoTestCase {
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 1), ErpHrConstants.LEAVE_STATUS_APPROVED);
 
         NopException ex = assertThrows(NopException.class,
-                () -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX));
+                () -> ormTemplate.runInSession(session -> leaveRequestBiz.submit(String.valueOf(leaveId), CTX)));
         assertEquals(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 

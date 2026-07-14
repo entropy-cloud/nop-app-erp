@@ -82,7 +82,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-MS-PROP-001", PRIMARY_SCHEMA_ID);
 
-        Long primaryVoucherId = voucherBiz.post(event, CTX);
+        Long primaryVoucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(primaryVoucherId, "主账套应返回凭证 ID");
 
         List<ErpFinVoucher> vouchers = findVouchers("AP-MS-PROP-001");
@@ -104,7 +104,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-MS-NOPROP-001", PRIMARY_SCHEMA_ID);
 
-        Long voucherId = voucherBiz.post(event, CTX);
+        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "应生成主账套凭证");
 
         List<ErpFinVoucher> vouchers = findVouchers("AP-MS-NOPROP-001");
@@ -120,7 +120,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
 
         PostingEvent event = apInvoiceEvent("AP-MS-DISABLED-001", PRIMARY_SCHEMA_ID);
 
-        Long voucherId = voucherBiz.post(event, CTX);
+        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "应生成主账套凭证");
 
         List<ErpFinVoucher> vouchers = findVouchers("AP-MS-DISABLED-001");
@@ -133,7 +133,7 @@ public class TestErpFinMultiSchemaPosting extends JunitAutoTestCase {
         seedBaseline(true);
 
         PostingEvent event = apInvoiceEvent("AP-MS-SUBJ-001", PRIMARY_SCHEMA_ID);
-        voucherBiz.post(event, CTX);
+        ormTemplate.runInSession(() -> voucherBiz.post(event, CTX));
 
         ErpFinVoucher primary = findVoucher(PRIMARY_SCHEMA_ID, "AP-MS-SUBJ-001");
         ErpFinVoucher secondary = findVoucher(SECONDARY_SCHEMA_ID, "AP-MS-SUBJ-001");

@@ -83,14 +83,14 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "secret-rcv-1");
 
-        Long asnId = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-1",
-                sig, "EVT-RCV-001", payload, CTX);
+        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-1",
+                sig, "EVT-RCV-001", payload, CTX));
         assertNotNull(asnId);
 
-        ErpB2bAsn matched = asnBiz.matchPurchaseOrder(asnId, CTX);
+        ErpB2bAsn matched = ormTemplate.runInSession(session -> asnBiz.matchPurchaseOrder(asnId, CTX));
         assertEquals(ErpB2bConstants.ASN_STATUS_MATCHED, matched.getStatus());
 
-        ErpB2bAsn afterReceive = asnBiz.createReceiveFromAsn(asnId, CTX);
+        ErpB2bAsn afterReceive = ormTemplate.runInSession(session -> asnBiz.createReceiveFromAsn(asnId, CTX));
         assertEquals(ErpB2bConstants.ASN_STATUS_RECEIVED_TO_STOCK, afterReceive.getStatus());
 
         List<app.erp.pur.dao.entity.ErpPurReceive> receives = findReceivesByOrderId(poId);
@@ -111,14 +111,14 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "secret-rcv-2");
 
-        Long asnId = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-2",
-                sig, "EVT-RCV-002", payload, CTX);
+        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-2",
+                sig, "EVT-RCV-002", payload, CTX));
         assertNotNull(asnId);
 
-        ErpB2bAsn result = asnBiz.matchPurchaseOrder(asnId, CTX);
+        ErpB2bAsn result = ormTemplate.runInSession(session -> asnBiz.matchPurchaseOrder(asnId, CTX));
         assertEquals(ErpB2bConstants.ASN_STATUS_RECEIVED, result.getStatus());
 
-        assertThrows(NopException.class, () -> asnBiz.createReceiveFromAsn(asnId, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> asnBiz.createReceiveFromAsn(asnId, CTX)));
 
         ErpB2bAsn unchanged = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);
         assertEquals(ErpB2bConstants.ASN_STATUS_RECEIVED, unchanged.getStatus());
@@ -130,21 +130,21 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         seedPartnerProfile("PARTNER-RCV-3", partnerId, "secret-rcv-3");
         seedPurchaseOrder("PO-TEST-001", 7001L, 7101L);
 
-        Long asnId1 = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-3",
+        Long asnId1 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-3",
                 hmacSha256(UBL_DESPATCH_ADVICE_XML, "secret-rcv-3"), "EVT-FIND-001",
-                UBL_DESPATCH_ADVICE_XML, CTX);
-        Long asnId2 = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-3",
+                UBL_DESPATCH_ADVICE_XML, CTX));
+        Long asnId2 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-3",
                 hmacSha256(ublDespatchAdvice("PO-TEST-002"), "secret-rcv-3"), "EVT-FIND-002",
-                ublDespatchAdvice("PO-TEST-002"), CTX);
-        Long asnId3 = asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-3",
+                ublDespatchAdvice("PO-TEST-002"), CTX));
+        Long asnId3 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-RCV-3",
                 hmacSha256(ublDespatchAdvice("PO-TEST-003"), "secret-rcv-3"), "EVT-FIND-003",
-                ublDespatchAdvice("PO-TEST-003"), CTX);
+                ublDespatchAdvice("PO-TEST-003"), CTX));
 
         assertNotNull(asnId1);
         assertNotNull(asnId2);
         assertNotNull(asnId3);
 
-        asnBiz.matchPurchaseOrder(asnId1, CTX);
+        ormTemplate.runInSession(() -> asnBiz.matchPurchaseOrder(asnId1, CTX));
         assertEquals(ErpB2bConstants.ASN_STATUS_MATCHED,
                 daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId1).getStatus());
         assertEquals(ErpB2bConstants.ASN_STATUS_RECEIVED,
@@ -152,7 +152,7 @@ public class TestErpB2bAsnInventoryIntegration extends JunitAutoTestCase {
         assertEquals(ErpB2bConstants.ASN_STATUS_RECEIVED,
                 daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId3).getStatus());
 
-        List<ErpB2bAsn> unmatched = asnBiz.findUnmatchedAsns(null, CTX);
+        List<ErpB2bAsn> unmatched = ormTemplate.runInSession(session -> asnBiz.findUnmatchedAsns(null, CTX));
         assertEquals(2, unmatched.size());
         assertTrue(unmatched.stream().noneMatch(a -> a.getId().equals(asnId1)));
     }

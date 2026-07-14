@@ -47,7 +47,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
         // 12 月期间：收入 1000 / 费用 400 → 月度结转后本年利润 4103 贷方净额 600（净利润）。
         Long periodId = seedDecemberPeriod();
 
-        ErpFinAccountingPeriod period = periodBiz.closePeriod(periodId, CTX);
+        ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "12 月结账后 CLOSED");
 
         // 本年利润 4103 年度结转后净额为零（已清零转出）。
@@ -76,11 +76,11 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
     @Test
     public void testReverseCloseBlockedWhenNextYearExists() {
         Long periodId = seedDecemberPeriod();
-        periodBiz.closePeriod(periodId, CTX);
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
 
         // 最终锁定后尝试反结账：次年期间已创建 → 阻止。
-        periodBiz.finalizePeriod(periodId, CTX);
-        assertThrows(NopException.class, () -> periodBiz.reverseClose(periodId, CTX),
+        ormTemplate.runInSession(() -> periodBiz.finalizePeriod(periodId, CTX));
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, CTX)),
                 "次年期间已存在时反结账被阻止");
     }
 
@@ -90,7 +90,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
         // annual-close-enabled=true 但 auto-generate-next-year-periods=false → 年度结转执行但不创建次年期间。
         // 用独立 yaml 覆盖；此处以默认配置先验证年度结转凭证生成后可被红冲（关闭次年创建场景）。
         Long periodId = seedDecemberPeriod();
-        periodBiz.closePeriod(periodId, CTX);
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
         assertTrue(countVouchersByBillCode("ANNUAL-CLOSE-2025-12",
                 ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS.name()) >= 1, "年度结转凭证已生成");
     }
@@ -100,7 +100,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
     public void testGenerateNextYearPeriodsIdempotentThrows() {
         // 先建 2027 年 1 条。
         seedOpenPeriod("2027-01", 2027, 1);
-        assertThrows(NopException.class, () -> periodBiz.generateNextYearPeriods(2027, CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodBiz.generateNextYearPeriods(2027, CTX)),
                 "已存在同年期间时重复生成抛错");
     }
 
@@ -125,7 +125,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
             return pid;
         });
 
-        periodBiz.closePeriod(periodId, CTX);
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
 
         // 银行存款外币重估凭证（与 AR/AP 共用 FX-REVAL 前缀，业务类型 EXCHANGE_GAIN_LOSS）。
         assertTrue(countVouchersByBillCode("FX-REVAL-2025-08",
@@ -152,7 +152,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
             return pid;
         });
 
-        periodBiz.closePeriod(periodId, CTX);
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
         // 本位币账户不重估 + 无外币 AR/AP → 无 FX 凭证。
         assertEquals(0, countVouchersByBillCode("FX-REVAL-2025-09",
                 ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()), "本位币账户无外币重估凭证");

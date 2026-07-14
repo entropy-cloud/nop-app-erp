@@ -80,7 +80,7 @@ public class TestErpFinEmployeeAdvanceApproval extends JunitAutoTestCase {
     public void testCancel() {
         Long advanceId = seedValidAdvance("ADV-003", ErpFinConstants.APPROVE_STATUS_SUBMITTED,
                 new BigDecimal("200"));
-        ErpFinEmployeeAdvance advance = advanceBiz.cancel(advanceId, CTX);
+        ErpFinEmployeeAdvance advance = ormTemplate.runInSession(session -> advanceBiz.cancel(advanceId, CTX));
         assertEquals(ErpFinConstants.DOC_STATUS_CANCELLED, advance.getDocStatus());
     }
 

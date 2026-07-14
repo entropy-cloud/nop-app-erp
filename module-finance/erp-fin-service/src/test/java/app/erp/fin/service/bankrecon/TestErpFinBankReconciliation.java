@@ -80,10 +80,10 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         // 账户余额 1000，对账单 1 笔 0 元行（endingBalance=currentBalance=1000），无未达 → 平衡
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-BAL-" + seed,
                 DC_CREDIT, new BigDecimal("0"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        ErpFinBankReconciliation recon = bankReconciliationBiz.generate(head.getId(), CTX);
+        ErpFinBankReconciliation recon = ormTemplate.runInSession(session -> bankReconciliationBiz.generate(head.getId(), CTX));
         assertTrue(recon.getIsBalanced(), "应平衡");
         assertEquals(0, recon.getUnreconciledDiff().compareTo(BigDecimal.ZERO));
         assertEquals(ErpFinConstants.VOUCHER_STATUS_DRAFT, recon.getDocStatus());
@@ -103,10 +103,10 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         // 恒等式：(1000 - 1000) - (500 - 0) = -500 ≠ 0 → 不平衡
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-UNBAL-" + seed,
                 DC_CREDIT, new BigDecimal("500"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        assertThrows(NopException.class, () -> bankReconciliationBiz.generate(head.getId(), CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> bankReconciliationBiz.generate(head.getId(), CTX)),
                 "未达账项不平衡应拒绝生成");
     }
 
@@ -122,11 +122,11 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-NOADJ-" + seed,
                 DC_CREDIT, new BigDecimal("0"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        ErpFinBankReconciliation recon = bankReconciliationBiz.generate(head.getId(), CTX);
-        bankReconciliationBiz.post(recon.getId(), CTX);
+        ErpFinBankReconciliation recon = ormTemplate.runInSession(session -> bankReconciliationBiz.generate(head.getId(), CTX));
+        ormTemplate.runInSession(() -> bankReconciliationBiz.post(recon.getId(), CTX));
         assertEquals(ErpFinConstants.VOUCHER_STATUS_POSTED, reloadRecon(recon.getId()).getDocStatus());
         assertEquals(0, countBillLinks(recon.getCode()),
                 "无未达项时不应生成调整凭证");
@@ -151,13 +151,13 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         // 1 笔未达 CREDIT：恒等式 (1500-1000) - (500-0) = 0 ✓ 平衡且含未达
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-ADJ-" + seed,
                 DC_CREDIT, new BigDecimal("500"), new BigDecimal("1500"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        ErpFinBankReconciliation recon = bankReconciliationBiz.generate(head.getId(), CTX);
+        ErpFinBankReconciliation recon = ormTemplate.runInSession(session -> bankReconciliationBiz.generate(head.getId(), CTX));
         assertTrue(recon.getIsBalanced());
 
-        bankReconciliationBiz.post(recon.getId(), CTX);
+        ormTemplate.runInSession(() -> bankReconciliationBiz.post(recon.getId(), CTX));
         assertTrue(countBillLinks(recon.getCode()) >= 1, "存在未达项时应生成 BANK_RECON_ADJ 调整凭证");
 
         Long adjVoucherId = findAdjVoucherId(recon.getCode());
@@ -165,7 +165,7 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
         ErpFinVoucher adj = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(adjVoucherId);
         assertEquals(VOUCHER_STATUS_POSTED, adj.getDocStatus(), "调整凭证已过账");
 
-        bankReconciliationBiz.reverse(recon.getId(), CTX);
+        ormTemplate.runInSession(() -> bankReconciliationBiz.reverse(recon.getId(), CTX));
         assertEquals(ErpFinConstants.VOUCHER_STATUS_CANCELLED, reloadRecon(recon.getId()).getDocStatus());
         assertTrue(countReversalVouchers(adjVoucherId) >= 1, "应生成红字调整凭证");
     }
@@ -186,10 +186,10 @@ public class TestErpFinBankReconciliation extends JunitAutoTestCase {
 
         BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-CLOSED-" + seed,
                 DC_CREDIT, new BigDecimal("0"));
-        ErpFinBankStatement head = bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
-                Collections.singletonList(l1), CTX);
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(ctx[0], LocalDate.of(2026, 6, 30),
+                Collections.singletonList(l1), CTX));
 
-        assertThrows(NopException.class, () -> bankReconciliationBiz.generate(head.getId(), CTX),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> bankReconciliationBiz.generate(head.getId(), CTX)),
                 "期间 CLOSED 应拒绝生成调节表");
     }
 

@@ -10,7 +10,6 @@ import app.erp.fin.service.ErpFinConstants;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
@@ -41,7 +40,6 @@ public class ErpFinCashForecastBizModel extends CrudBizModel<ErpFinCashForecast>
 
     @Override
     @BizMutation
-    @SingleSession
     public Integer refreshForecast(@Name("fromDate") LocalDate fromDate,
                                    @Name("toDate") LocalDate toDate,
                                    IServiceContext context) {

@@ -18,7 +18,6 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -67,7 +66,6 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
 
     @Override
     @BizMutation
-    @SingleSession
     public List<ErpHrGapAnalysis> refreshGapAnalysis(@Name("employeeId") Long employeeId,
                                                       IServiceContext context) {
         Map<Long, Integer> aggregatedLevels = aggregateLatestAssessment(employeeId, context);
@@ -76,7 +74,6 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
 
     @Override
     @BizMutation
-    @SingleSession
     public List<ErpHrGapAnalysis> refreshGapAnalysisWithLevels(@Name("employeeId") Long employeeId,
                                                                 @Name("aggregatedLevels") Map<Long, Integer> aggregatedLevels,
                                                                 IServiceContext context) {

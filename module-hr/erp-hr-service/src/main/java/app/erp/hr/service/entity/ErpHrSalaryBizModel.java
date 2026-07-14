@@ -14,7 +14,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -67,10 +66,8 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
         }
     }
 
-
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalary calculateSalary(@Name("employeeId") Long employeeId,
                                        @Name("year") int year,
                                        @Name("month") int month,
@@ -83,7 +80,6 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     @Override
     @BizMutation
-    @SingleSession
     public List<ErpHrSalary> runPayroll(@Name("year") int year,
                                         @Name("month") int month,
                                         IServiceContext context) {
@@ -102,7 +98,6 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalary markPaid(@Name("salaryId") Long salaryId, IServiceContext context) {
         ErpHrSalary salary = requireSalary(salaryId, context);
         if (!ErpHrConstants.APPROVE_STATUS_APPROVED.equals(salary.getApproveStatus())) {
@@ -127,7 +122,6 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrSalary voidSalary(@Name("salaryId") Long salaryId, IServiceContext context) {
         ErpHrSalary salary = requireSalary(salaryId, context);
         if (ErpHrConstants.PAYMENT_PAID.equals(salary.getPaymentStatus())) {
@@ -141,7 +135,6 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     @Override
     @BizMutation
-    @SingleSession
     public ErpHrPayrollBankFile generateBankFile(@Name("year") int year,
                                                  @Name("month") int month,
                                                  @Name("bankId") Long bankId,

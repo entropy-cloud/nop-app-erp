@@ -27,11 +27,11 @@ public class TestErpFinPeriodCloseEndToEnd extends PeriodCloseTestSupport {
         Long periodId = seedFullPeriod("2025-06", 2025, 6);
 
         // 前置检查（auto-post-on-close=true，未核销 AR 仅提示不阻断）。
-        PeriodPreCheckReport report = periodBiz.preCheck(periodId, CTX);
+        PeriodPreCheckReport report = ormTemplate.runInSession(session -> periodBiz.preCheck(periodId, CTX));
         assertTrue(report.getUnsettledArApCodes().size() >= 1, "前置检查列出未核销外币应收");
 
         // 模块关账 + 汇兑重估 + 损益结转 → 期间 CLOSED。
-        ErpFinAccountingPeriod period = periodBiz.closePeriod(periodId, CTX);
+        ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "结账后 CLOSED");
 
         // 汇兑重估 + 损益结转凭证均已生成。
@@ -45,15 +45,15 @@ public class TestErpFinPeriodCloseEndToEnd extends PeriodCloseTestSupport {
         assertEquals(ErpFinConstants.MODULE_CLOSE_CLOSED, status.getAssetStatus(), "AST 模块已关账");
 
         // 最终锁定。
-        period = periodBiz.finalizePeriod(periodId, CTX);
+        period = ormTemplate.runInSession(session -> periodBiz.finalizePeriod(periodId, CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL, period.getStatus(), "最终锁定 CLOSED_FINAL");
 
         // 反结账 → OPEN。
-        period = periodBiz.reverseClose(periodId, CTX);
+        period = ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_OPEN, period.getStatus(), "反结账后 OPEN");
 
         // 重新结账（生成新凭证，幂等）。
-        period = periodBiz.closePeriod(periodId, CTX);
+        period = ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED, period.getStatus(), "重新结账成功");
         assertTrue(countVouchersByBillCode("PERIOD-CLOSE-2025-06", ErpFinBusinessType.PERIOD_CLOSE.name()) >= 2,
                 "重新结账生成新的结转凭证");

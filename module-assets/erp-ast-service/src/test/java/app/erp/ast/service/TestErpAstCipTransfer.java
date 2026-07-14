@@ -76,19 +76,19 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         Long categoryId = holders[0];
         Long cipId = holders[1];
 
-        cipBiz.startConstruction(cipId, CTX);
-        ErpAstCipCostItem item1 = cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
-                new BigDecimal("8000"), null, null, "采购归集", CTX);
-        ErpAstCipCostItem item2 = cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_LABOR,
-                new BigDecimal("4000"), null, null, "人工归集", CTX);
-        cipBiz.addProgressBilling(cipId, LocalDate.of(2026, 3, 15), "基础完工",
-                new BigDecimal("5000"), "PAY-001", CTX);
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
+        ErpAstCipCostItem item1 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("8000"), null, null, "采购归集", CTX));
+        ErpAstCipCostItem item2 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_LABOR,
+                new BigDecimal("4000"), null, null, "人工归集", CTX));
+        ormTemplate.runInSession(() -> cipBiz.addProgressBilling(cipId, LocalDate.of(2026, 3, 15), "基础完工",
+                new BigDecimal("5000"), "PAY-001", CTX));
 
         ErpAstCip beforeTransfer = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipId);
         assertEquals(0, nz(beforeTransfer.getAccumulatedCost()).compareTo(new BigDecimal("12000")),
                 "累计归集成本=12000");
 
-        cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX);
+        ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX));
 
         ErpAstCip afterTransfer = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipId);
         assertEquals(ErpAstConstants.CIP_STATUS_TRANSFERRED, afterTransfer.getStatus(),
@@ -103,7 +103,7 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
                 "资产原值=Σ CostItem amountFunctional");
         assertEquals(ErpAstConstants.ASSET_STATUS_IN_SERVICE, asset.getStatus());
 
-        List<ErpAstCipCostItem> items = cipBiz.findCostItems(cipId, false, CTX);
+        List<ErpAstCipCostItem> items = ormTemplate.runInSession(session -> cipBiz.findCostItems(cipId, false, CTX));
         for (ErpAstCipCostItem item : items) {
             assertTrue(Boolean.TRUE.equals(item.getPostedTransferFlag()),
                     "CostItem " + item.getLineNo() + " postedTransferFlag=true");
@@ -133,14 +133,14 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         });
         Long cipId = holders[1];
 
-        cipBiz.startConstruction(cipId, CTX);
-        ErpAstCipCostItem item1 = cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
-                new BigDecimal("5000"), null, null, null, CTX);
-        ErpAstCipCostItem item2 = cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_LABOR,
-                new BigDecimal("3000"), null, null, null, CTX);
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
+        ErpAstCipCostItem item1 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("5000"), null, null, null, CTX));
+        ErpAstCipCostItem item2 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_LABOR,
+                new BigDecimal("3000"), null, null, null, CTX));
 
-        cipBiz.transferToAsset(cipId, Collections.singletonList(item1.getId()),
-                LocalDate.of(2026, 6, 1), CTX);
+        ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipId, Collections.singletonList(item1.getId()),
+                LocalDate.of(2026, 6, 1), CTX));
 
         ErpAstCip cip = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipId);
         assertEquals(ErpAstConstants.CIP_STATUS_IN_CONSTRUCTION, cip.getStatus(),
@@ -178,7 +178,7 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         Long cipId = holders[0];
 
         NopException ex = assertThrows(NopException.class,
-                () -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX));
+                () -> ormTemplate.runInSession(session -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX)));
         assertEquals(ErpAstErrors.ERR_CIP_NOT_IN_CONSTRUCTION.getErrorCode(), ex.getErrorCode(),
                 "DRAFT 直接 transferToAsset 抛 ERR_CIP_NOT_IN_CONSTRUCTION");
     }
@@ -196,13 +196,13 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         });
         Long cipId = holders[0];
 
-        cipBiz.startConstruction(cipId, CTX);
-        cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
-                new BigDecimal("1000"), null, null, null, CTX);
-        cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX);
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
+        ormTemplate.runInSession(() -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("1000"), null, null, null, CTX));
+        ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX));
 
         NopException ex = assertThrows(NopException.class,
-                () -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 2), CTX));
+                () -> ormTemplate.runInSession(session -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 2), CTX)));
         assertEquals(ErpAstErrors.ERR_CIP_ALREADY_COMPLETED.getErrorCode(), ex.getErrorCode(),
                 "终态再 transferToAsset 抛 ERR_CIP_ALREADY_COMPLETED");
     }
@@ -223,18 +223,18 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         });
         Long cipId = holders[1];
 
-        cipBiz.startConstruction(cipId, CTX);
-        ErpAstCipCostItem item1 = cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
-                new BigDecimal("2000"), null, null, null, CTX);
-        ErpAstCipCostItem item2 = cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_LABOR,
-                new BigDecimal("3000"), null, null, null, CTX);
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
+        ErpAstCipCostItem item1 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("2000"), null, null, null, CTX));
+        ErpAstCipCostItem item2 = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_LABOR,
+                new BigDecimal("3000"), null, null, null, CTX));
 
-        cipBiz.transferToAsset(cipId, Collections.singletonList(item1.getId()),
-                LocalDate.of(2026, 6, 1), CTX);
+        ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipId, Collections.singletonList(item1.getId()),
+                LocalDate.of(2026, 6, 1), CTX));
 
         NopException ex = assertThrows(NopException.class,
-                () -> cipBiz.transferToAsset(cipId, Arrays.asList(item1.getId(), item2.getId()),
-                        LocalDate.of(2026, 7, 1), CTX));
+                () -> ormTemplate.runInSession(session -> cipBiz.transferToAsset(cipId, Arrays.asList(item1.getId(), item2.getId()),
+                        LocalDate.of(2026, 7, 1), CTX)));
         assertEquals(ErpAstErrors.ERR_CIP_COST_ITEM_ALREADY_TRANSFERRED.getErrorCode(), ex.getErrorCode(),
                 "重复转固已转固 CostItem 抛 ERR_CIP_COST_ITEM_ALREADY_TRANSFERRED");
     }
@@ -254,16 +254,16 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         });
         Long cipId = holders[0];
 
-        cipBiz.startConstruction(cipId, CTX);
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
 
         NopException ex = assertThrows(NopException.class,
-                () -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_INTEREST_CAPITALIZATION,
-                        new BigDecimal("500"), null, null, null, CTX));
+                () -> ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_INTEREST_CAPITALIZATION,
+                        new BigDecimal("500"), null, null, null, CTX)));
         assertEquals(ErpAstErrors.ERR_CIP_INTEREST_CAPITALIZATION_DISABLED.getErrorCode(), ex.getErrorCode(),
                 "config=false 时 INTEREST_CAPITALIZATION 拒收");
 
-        ErpAstCipCostItem other = cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
-                new BigDecimal("1000"), null, null, null, CTX);
+        ErpAstCipCostItem other = ormTemplate.runInSession(session -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("1000"), null, null, null, CTX));
         assertNotNull(other, "其他类型不受 config 影响");
     }
 
@@ -282,13 +282,13 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         });
         Long cipId = holders[0];
 
-        cipBiz.startConstruction(cipId, CTX);
-        cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
-                new BigDecimal("6000"), null, null, null, CTX);
-        cipBiz.addProgressBilling(cipId, LocalDate.of(2026, 2, 15), "里程碑1",
-                new BigDecimal("9000"), "PAY-BIG", CTX);
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
+        ormTemplate.runInSession(() -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("6000"), null, null, null, CTX));
+        ormTemplate.runInSession(() -> cipBiz.addProgressBilling(cipId, LocalDate.of(2026, 2, 15), "里程碑1",
+                new BigDecimal("9000"), "PAY-BIG", CTX));
 
-        cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX);
+        ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX));
 
         ErpAstCip cip = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipId);
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(cip.getCompletedAssetId());
@@ -312,16 +312,16 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         });
         Long cipId = holders[1];
 
-        cipBiz.startConstruction(cipId, CTX);
-        cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
-                new BigDecimal("7000"), null, null, null, CTX);
-        cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX);
+        ormTemplate.runInSession(() -> cipBiz.startConstruction(cipId, CTX));
+        ormTemplate.runInSession(() -> cipBiz.addCostItem(cipId, ErpAstConstants.CIP_COST_TYPE_PURCHASE,
+                new BigDecimal("7000"), null, null, null, CTX));
+        ormTemplate.runInSession(() -> cipBiz.transferToAsset(cipId, null, LocalDate.of(2026, 7, 1), CTX));
 
         ErpAstCip cipBeforeReverse = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipId);
         Long capitalizationId = findCapitalizationByCip(cipBeforeReverse.getCode());
         assertNotNull(capitalizationId, "找到资本化单");
 
-        cipBiz.reverseTransfer(cipId, capitalizationId, CTX);
+        ormTemplate.runInSession(() -> cipBiz.reverseTransfer(cipId, capitalizationId, CTX));
 
         ErpAstCip cipAfterReverse = daoProvider.daoFor(ErpAstCip.class).getEntityById(cipId);
         assertEquals(ErpAstConstants.CIP_STATUS_IN_CONSTRUCTION, cipAfterReverse.getStatus(),
@@ -329,7 +329,7 @@ public class TestErpAstCipTransfer extends JunitAutoTestCase {
         assertFalse(Boolean.TRUE.equals(cipAfterReverse.getIsCompleted()), "isCompleted=false");
         assertEquals(null, cipAfterReverse.getCompletedAssetId(), "completedAssetId 清空");
 
-        List<ErpAstCipCostItem> items = cipBiz.findCostItems(cipId, false, CTX);
+        List<ErpAstCipCostItem> items = ormTemplate.runInSession(session -> cipBiz.findCostItems(cipId, false, CTX));
         for (ErpAstCipCostItem item : items) {
             assertFalse(Boolean.TRUE.equals(item.getPostedTransferFlag()),
                     "CostItem postedTransferFlag 回 false");
