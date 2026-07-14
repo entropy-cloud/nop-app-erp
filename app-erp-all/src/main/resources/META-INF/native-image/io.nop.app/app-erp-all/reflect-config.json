@@ -1637,6 +1637,12 @@
         "parameterTypes": []
       },
       {
+        "name": "clearPosted",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
+        ]
+      },
+      {
         "name": "createAndActivateAsset",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
@@ -1699,6 +1705,12 @@
         "name": "loadCategory",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "markPosted",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization"
         ]
       },
       {
@@ -7671,6 +7683,25 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.cs.service.dashboard.ErpCsQualityDashboardBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
     "fields": [],
     "methods": [],
     "name": "app.erp.cs.service.entity.ErpCsAgentRateBizModel"
@@ -7691,7 +7722,20 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "mdPartnerBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "ticketActionBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "ticketBiz"
+      }
+    ],
     "methods": [],
     "name": "app.erp.cs.service.entity.ErpCsCannedResponseBizModel"
   },
@@ -10071,6 +10115,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "schemaPropagator"
       }
     ],
     "methods": [],
@@ -10119,6 +10167,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "schemaPropagator"
       }
     ],
     "methods": [
@@ -10512,10 +10564,22 @@
         ]
       },
       {
+        "name": "requireScenario",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
         "name": "reverseBudgetVoucher",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinBudgetScenario",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "save",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBudgetScenario"
         ]
       },
       {
@@ -11187,6 +11251,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "schemaPropagator"
       }
     ],
     "methods": [],
@@ -11512,6 +11580,14 @@
       },
       {
         "allowWrite": true,
+        "name": "schemaPropagator"
+      },
+      {
+        "allowWrite": true,
+        "name": "subjectMappingResolver"
+      },
+      {
+        "allowWrite": true,
         "name": "transactionTemplate"
       }
     ],
@@ -11520,6 +11596,14 @@
         "name": "alreadyPosted",
         "parameterTypes": [
           "app.erp.fin.dao.PostingEvent",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "alreadyPosted",
+        "parameterTypes": [
+          "app.erp.fin.dao.PostingEvent",
+          "java.lang.Long",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -11572,6 +11656,14 @@
         ]
       },
       {
+        "name": "findAllPostedVouchers",
+        "parameterTypes": [
+          "java.lang.String",
+          "app.erp.fin.dao.ErpFinBusinessType",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "findBillLinks",
         "parameterTypes": [
           "java.lang.String",
@@ -11601,6 +11693,13 @@
         "parameterTypes": [
           "java.lang.Long",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "logFailure",
+        "parameterTypes": [
+          "app.erp.fin.service.posting.ErpFinPostingProcessor$PostingRun",
+          "java.lang.RuntimeException"
         ]
       },
       {
@@ -11668,6 +11767,21 @@
         ]
       },
       {
+        "name": "recordPostFailure",
+        "parameterTypes": [
+          "app.erp.fin.service.posting.ErpFinPostingProcessor$PostingRun",
+          "app.erp.fin.dao.PostingEvent",
+          "java.lang.RuntimeException"
+        ]
+      },
+      {
+        "name": "recordReverseFailure",
+        "parameterTypes": [
+          "app.erp.fin.service.posting.ErpFinPostingProcessor$PostingRun",
+          "java.lang.RuntimeException"
+        ]
+      },
+      {
         "name": "resolveDispatchMode",
         "parameterTypes": []
       },
@@ -11689,6 +11803,31 @@
         "name": "resolveSubjects",
         "parameterTypes": [
           "java.util.List",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "timeStage",
+        "parameterTypes": [
+          "java.lang.String",
+          "app.erp.fin.service.posting.ErpFinPostingProcessor$PostingRun",
+          "java.util.function.Supplier"
+        ]
+      },
+      {
+        "name": "timeStageVoid",
+        "parameterTypes": [
+          "java.lang.String",
+          "app.erp.fin.service.posting.ErpFinPostingProcessor$PostingRun",
+          "java.lang.Runnable"
+        ]
+      },
+      {
+        "name": "translateFactsForSchema",
+        "parameterTypes": [
+          "java.util.List",
+          "java.lang.Long",
+          "java.lang.Long",
           "io.nop.core.context.IServiceContext"
         ]
       }
@@ -11767,6 +11906,21 @@
     ],
     "methods": [],
     "name": "app.erp.fin.service.posting.NotesPostingDispatcher"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.fin.service.posting.SchemaPropagator"
   },
   {
     "allDeclaredConstructors": true,
@@ -11856,6 +12010,10 @@
       },
       {
         "allowWrite": true,
+        "name": "schemaPropagator"
+      },
+      {
+        "allowWrite": true,
         "name": "voucherBiz"
       }
     ],
@@ -11906,6 +12064,30 @@
       },
       {
         "name": "findOrCreatePeriodStatus",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriod"
+        ]
+      },
+      {
+        "name": "findPostedVoucherIds",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "findUnpostedVoucherCodes",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriod"
+        ]
+      },
+      {
+        "name": "findUnresolvedPostingExceptionKeys",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriod"
+        ]
+      },
+      {
+        "name": "findUnsettledArApCodes",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinAccountingPeriod"
         ]
@@ -11967,6 +12149,13 @@
         ]
       },
       {
+        "name": "moduleStatusOf",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus",
+          "app.erp.fin.service.processor.ErpFinAccountingPeriodProcessor$Module"
+        ]
+      },
+      {
         "name": "orm",
         "parameterTypes": []
       },
@@ -11979,6 +12168,12 @@
       },
       {
         "name": "populateTrialBalance",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriod"
+        ]
+      },
+      {
+        "name": "populateTrialBalanceForAllSchemas",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinAccountingPeriod"
         ]
@@ -12003,6 +12198,31 @@
         ]
       },
       {
+        "name": "resolveAcctSchemaId",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriod"
+        ]
+      },
+      {
+        "name": "resolveAcctSchemaId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "resolveDefaultOrgId",
+        "parameterTypes": []
+      },
+      {
+        "name": "reverseCloseVoucher",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriod",
+          "java.lang.String",
+          "app.erp.fin.dao.ErpFinBusinessType",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "reverseDepreciation",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinAccountingPeriod",
@@ -12014,6 +12234,14 @@
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinAccountingPeriod",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "setModuleStatus",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus",
+          "app.erp.fin.service.processor.ErpFinAccountingPeriodProcessor$Module",
+          "java.lang.String"
         ]
       }
     ],
@@ -12213,6 +12441,12 @@
         "parameterTypes": []
       },
       {
+        "name": "clearPosted",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
+        ]
+      },
+      {
         "name": "currentApproveStatus",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
@@ -12298,6 +12532,12 @@
       },
       {
         "name": "isAlreadyRejected",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
+        ]
+      },
+      {
+        "name": "markPosted",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
         ]
@@ -13001,6 +13241,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "schemaPropagator"
       }
     ],
     "methods": [],
@@ -15902,6 +16146,25 @@
       {
         "allowWrite": true,
         "name": "ormTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.inv.service.costing.BatchCostingStrategy"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
       },
       {
         "allowWrite": true,
@@ -15984,9 +16247,47 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.inv.service.costing.LifoCostingStrategy"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
     "fields": [],
     "methods": [],
     "name": "app.erp.inv.service.costing.MovingAverageCostingStrategy"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.inv.service.costing.SpecificCostingStrategy"
   },
   {
     "allDeclaredConstructors": true,
@@ -16021,6 +16322,16 @@
     ],
     "methods": [],
     "name": "app.erp.inv.service.costing.StandardCostingStrategy"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.inv.service.costing.WeightedAverageCostingStrategy"
   },
   {
     "allDeclaredConstructors": true,
@@ -16641,6 +16952,23 @@
         ]
       },
       {
+        "name": "createFreightLine",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvLandedCost",
+          "java.math.BigDecimal",
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "createLandedCostHead",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive",
+          "java.math.BigDecimal",
+          "java.lang.Long",
+          "java.math.BigDecimal"
+        ]
+      },
+      {
         "name": "currentUserId",
         "parameterTypes": []
       },
@@ -16679,6 +17007,12 @@
         ]
       },
       {
+        "name": "loadReceiveByCode",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "loadReceiveLines",
         "parameterTypes": [
           "java.lang.Long"
@@ -16698,6 +17032,14 @@
         ]
       },
       {
+        "name": "resolveExchangeRate",
+        "parameterTypes": [
+          "java.math.BigDecimal",
+          "java.lang.Long",
+          "app.erp.pur.dao.entity.ErpPurReceive"
+        ]
+      },
+      {
         "name": "sumCostLines",
         "parameterTypes": [
           "java.util.List"
@@ -16707,6 +17049,12 @@
         "name": "toInputs",
         "parameterTypes": [
           "java.util.List"
+        ]
+      },
+      {
+        "name": "validateNoDraftExists",
+        "parameterTypes": [
+          "java.lang.Long"
         ]
       },
       {
@@ -16807,6 +17155,10 @@
           "app.erp.inv.dao.entity.ErpInvOwnershipTransfer",
           "java.lang.String"
         ]
+      },
+      {
+        "name": "transferDao",
+        "parameterTypes": []
       },
       {
         "name": "upsertTargetBalance",
@@ -17015,6 +17367,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "batchCostingStrategy"
+      },
+      {
+        "allowWrite": true,
         "name": "costMethodResolver"
       },
       {
@@ -17027,6 +17383,10 @@
       },
       {
         "allowWrite": true,
+        "name": "lifoCostingStrategy"
+      },
+      {
+        "allowWrite": true,
         "name": "movingAverageCostingStrategy"
       },
       {
@@ -17035,10 +17395,18 @@
       },
       {
         "allowWrite": true,
+        "name": "specificCostingStrategy"
+      },
+      {
+        "allowWrite": true,
         "name": "standardCostingStrategy"
       },
       {
         "name": "strategyByMethod"
+      },
+      {
+        "allowWrite": true,
+        "name": "weightedAverageCostingStrategy"
       }
     ],
     "methods": [],
@@ -17287,6 +17655,10 @@
       },
       {
         "allowWrite": true,
+        "name": "landedCostBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "voucherBiz"
       }
     ],
@@ -17295,6 +17667,13 @@
         "name": "defaultPrepareSave",
         "parameterTypes": [
           "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "handlePurchaseReceiptDelivered",
+        "parameterTypes": [
+          "app.erp.log.dao.entity.ErpLogShipment",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -17431,6 +17810,31 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.md.biz.IErpMdSupplierApprovalBiz"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.md.biz.SettlementAllocation"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.md.dao.SubjectMappingResolver"
   },
   {
     "allDeclaredConstructors": true,
@@ -17621,6 +18025,16 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.md.dao.entity.ErpMdSubject"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.md.dao.entity.ErpMdSubjectMapping"
   },
   {
     "allDeclaredConstructors": true,
@@ -17936,6 +18350,21 @@
       }
     ],
     "name": "app.erp.md.dao.entity._gen._ErpMdSubject"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "newInstance",
+        "parameterTypes": []
+      }
+    ],
+    "name": "app.erp.md.dao.entity._gen._ErpMdSubjectMapping"
   },
   {
     "allDeclaredConstructors": true,
@@ -18325,6 +18754,16 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.md.service.entity.ErpMdSubjectBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.md.service.entity.ErpMdSubjectMappingBizModel"
   },
   {
     "allDeclaredConstructors": true,
@@ -19706,7 +20145,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "subcontractOrderProcessor"
+      }
+    ],
     "methods": [],
     "name": "app.erp.mfg.service.entity.ErpMfgSubcontractOrderBizModel"
   },
@@ -20109,6 +20553,63 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.posting.SubcontractFeeAcctDocProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.posting.SubcontractIssueAcctDocProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "executor"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "stockLedgerBiz"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.mfg.service.posting.SubcontractPostingDispatcher"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.posting.SubcontractReceiptAcctDocProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
     "fields": [
       {
         "allowWrite": true,
@@ -20268,6 +20769,191 @@
       }
     ],
     "name": "app.erp.mfg.service.processor.ErpMfgScheduleToJobCardProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stockMoveBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "subcontractPostingDispatcher"
+      }
+    ],
+    "methods": [
+      {
+        "name": "computeReceiptUnitCost",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "currentUserId",
+        "parameterTypes": []
+      },
+      {
+        "name": "doApprove",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "doReject",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "doReverseApprove",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "doSubmit",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "doWithdrawSubmit",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "generateIssueMove",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.util.List",
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "generateReceiptMove",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.math.BigDecimal",
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "isSubcontractPostingEnabled",
+        "parameterTypes": []
+      },
+      {
+        "name": "loadLines",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "orderDao",
+        "parameterTypes": []
+      },
+      {
+        "name": "readBoolConfig",
+        "parameterTypes": [
+          "java.lang.String",
+          "boolean"
+        ]
+      },
+      {
+        "name": "requireOrder",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "requireStatus",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "resolveAcctSchemaId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "resolveProductUomId",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "sumLineQuantity",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
+    "name": "app.erp.mfg.service.processor.ErpMfgSubcontractOrderProcessor"
   },
   {
     "allDeclaredConstructors": true,
@@ -22599,7 +23285,63 @@
         ]
       },
       {
+        "name": "findBillings",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "findCostCollections",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.prj.dao.entity.ErpPrjProjectSettlement",
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "loadProject",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "nz",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "parseAmount",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "requireSettlement",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "resolveUserId",
+        "parameterTypes": [
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "rollbackAssetIfNeeded",
+        "parameterTypes": [
+          "app.erp.prj.dao.entity.ErpPrjProjectSettlement"
+        ]
+      },
+      {
+        "name": "save",
         "parameterTypes": [
           "app.erp.prj.dao.entity.ErpPrjProjectSettlement"
         ]
@@ -24494,6 +25236,13 @@
       }
     ],
     "methods": [
+      {
+        "name": "addLineQuantities",
+        "parameterTypes": [
+          "java.util.Map",
+          "java.util.List"
+        ]
+      },
       {
         "name": "applyPostingResult",
         "parameterTypes": [
@@ -27402,6 +28151,13 @@
     ],
     "methods": [
       {
+        "name": "addLineQuantities",
+        "parameterTypes": [
+          "java.util.Map",
+          "java.util.List"
+        ]
+      },
+      {
         "name": "applyPostingResult",
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalDelivery",
@@ -27667,6 +28423,14 @@
       {
         "name": "currentUserId",
         "parameterTypes": []
+      },
+      {
+        "name": "doApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalInvoice",
+          "boolean",
+          "io.nop.core.context.IServiceContext"
+        ]
       },
       {
         "name": "doApprove",
@@ -32268,6 +33032,21 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
+    "methods": [
+      {
+        "name": "checkAllowChange",
+        "parameterTypes": []
+      }
+    ],
+    "name": "io.nop.core.model.table.impl.ProxyCell"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
     "methods": [],
     "name": "io.nop.core.module.ModuleModel"
   },
@@ -36311,6 +37090,16 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "io.nop.sys.dao.entity.NopSysBroadcastEvent"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "io.nop.sys.dao.entity.NopSysChangeLog"
   },
   {
@@ -36482,6 +37271,21 @@
     "fields": [],
     "methods": [],
     "name": "io.nop.sys.dao.entity.NopSysVariable"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "newInstance",
+        "parameterTypes": []
+      }
+    ],
+    "name": "io.nop.sys.dao.entity._gen._NopSysBroadcastEvent"
   },
   {
     "allDeclaredConstructors": true,
@@ -36831,6 +37635,16 @@
       }
     ],
     "name": "io.nop.sys.dao.seq.SysSequenceGenerator"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.sys.service.entity.NopSysBroadcastEventBizModel"
   },
   {
     "allDeclaredConstructors": true,
