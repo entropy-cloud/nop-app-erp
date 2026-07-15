@@ -195,16 +195,16 @@
         }
 
 
-        private java.time.LocalDateTime _productionTime;
+        private java.sql.Timestamp _productionTime;
 
     
         @PropMeta(propId=14)
     
-        public java.time.LocalDateTime getProductionTime(){
+        public java.sql.Timestamp getProductionTime(){
             return _productionTime;
         }
 
-        public void setProductionTime(java.time.LocalDateTime value){
+        public void setProductionTime(java.sql.Timestamp value){
             this._productionTime = value;
         }
 

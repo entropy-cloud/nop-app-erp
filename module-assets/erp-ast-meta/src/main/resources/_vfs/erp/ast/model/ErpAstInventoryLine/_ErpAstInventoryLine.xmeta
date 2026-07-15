@@ -40,7 +40,7 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="assetCodeSnapshot" displayName="资产编码快照" propId="6" i18n-en:displayName="Asset Code Snapshot"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              tagSet="var" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="assetNameSnapshot" displayName="资产名称快照" propId="7" i18n-en:displayName="Asset Name Snapshot"
@@ -133,9 +133,12 @@
             <schema bizObjName="ErpAstInventory"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="asset" i18n-en:displayName="Asset" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="assetId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">

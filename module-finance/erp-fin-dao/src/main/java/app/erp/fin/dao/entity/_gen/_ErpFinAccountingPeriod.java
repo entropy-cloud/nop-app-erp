@@ -69,7 +69,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     public static final String PROP_NAME_closedBy = "closedBy";
     public static final int PROP_ID_closedBy = 12;
     
-    /* 结账时间: CLOSED_AT DATETIME */
+    /* 结账时间: CLOSED_AT TIMESTAMP */
     public static final String PROP_NAME_closedAt = "closedAt";
     public static final int PROP_ID_closedAt = 13;
     
@@ -212,7 +212,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     private java.lang.String _closedBy;
     
     /* 结账时间: CLOSED_AT */
-    private java.time.LocalDateTime _closedAt;
+    private java.sql.Timestamp _closedAt;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -495,9 +495,9 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
             }
         
             case PROP_ID_closedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_closedAt));
                }
                setClosedAt(typedValue);
@@ -659,7 +659,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
         
             case PROP_ID_closedAt:{
                onInitProp(propId);
-               this._closedAt = (java.time.LocalDateTime)value;
+               this._closedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -943,7 +943,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     /**
      * 结账时间: CLOSED_AT
      */
-    public final java.time.LocalDateTime getClosedAt(){
+    public final java.sql.Timestamp getClosedAt(){
          onPropGet(PROP_ID_closedAt);
          return _closedAt;
     }
@@ -951,7 +951,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     /**
      * 结账时间: CLOSED_AT
      */
-    public final void setClosedAt(java.time.LocalDateTime value){
+    public final void setClosedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_closedAt,value)){
             this._closedAt = value;
             internalClearRefs(PROP_ID_closedAt);

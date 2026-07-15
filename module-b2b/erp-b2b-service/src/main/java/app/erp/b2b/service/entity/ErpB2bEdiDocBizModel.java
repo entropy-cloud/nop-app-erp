@@ -1,10 +1,6 @@
 
 package app.erp.b2b.service.entity;
 
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import app.erp.b2b.biz.IErpB2bEdiDocBiz;
 import app.erp.b2b.dao.entity.ErpB2bEdiDoc;
 import app.erp.b2b.dao.entity.ErpB2bEdiFormat;
@@ -113,7 +109,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
             throw illegalTransition(doc, state, ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
         }
         doc.setState(ErpB2bConstants.EDI_DOC_STATE_SENT);
-        doc.setSentAt(CoreMetrics.currentDateTime());
+        doc.setSentAt(CoreMetrics.currentTimestamp());
         daoProvider().daoFor(ErpB2bEdiDoc.class).saveOrUpdateEntity(doc);
         writeLog(doc, ErpB2bConstants.DIRECTION_OUTBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
                 "SEND: 报文已发送", null, null);
@@ -129,7 +125,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
             throw illegalTransition(doc, state, ErpB2bConstants.EDI_DOC_STATE_SENT);
         }
         doc.setState(ErpB2bConstants.EDI_DOC_STATE_ACKNOWLEDGED);
-        doc.setAcknowledgedAt(CoreMetrics.currentDateTime());
+        doc.setAcknowledgedAt(CoreMetrics.currentTimestamp());
         daoProvider().daoFor(ErpB2bEdiDoc.class).saveOrUpdateEntity(doc);
         writeLog(doc, ErpB2bConstants.DIRECTION_OUTBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
                 "ACKNOWLEDGE: 对方已确认", null, null);
@@ -282,29 +278,8 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
         log.setResponsePayload(responsePayload);
         log.setResultCode(resultCode);
         log.setResultMsg(resultMsg);
-        log.setLogTime(CoreMetrics.currentDateTime());
+        log.setLogTime(CoreMetrics.currentTimestamp());
         dao.saveEntity(log);
-    }
-
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpB2bEdiDoc.class)
-    public List<String> formatName(@ContextSource List<ErpB2bEdiDoc> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("format"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpB2bEdiDoc row : rows) {
-            result.add(row.orm_attached() && row.getFormat() != null ? row.getFormat().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpB2bEdiDoc.class)
-    public List<String> orgName(@ContextSource List<ErpB2bEdiDoc> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpB2bEdiDoc row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
     }
 
 }

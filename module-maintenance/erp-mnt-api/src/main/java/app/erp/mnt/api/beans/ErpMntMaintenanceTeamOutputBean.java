@@ -196,30 +196,6 @@
         }
 
 
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _leaderName;
-
-    
-        public String getLeaderName(){
-            return _leaderName;
-        }
-
-        public void setLeaderName(String value){
-            this._leaderName = value;
-        }
-
-
         private Map<String,Object> _leader;
 
         public Map<String,Object> getLeader(){

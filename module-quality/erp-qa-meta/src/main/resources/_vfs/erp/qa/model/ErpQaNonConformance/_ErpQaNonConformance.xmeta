@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="ncrDate" displayName="报告日期" propId="3" i18n-en:displayName="Ncr Date" mandatory="true"
@@ -97,9 +97,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="resolvedAt" displayName="解决时间" propId="20" i18n-en:displayName="Resolved At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="resolvedAt" displayName="解决时间" propId="20" i18n-en:displayName="Resolved At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="resolution" displayName="解决措施" propId="21" i18n-en:displayName="Resolution" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -137,9 +137,9 @@
               sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="postedAt" displayName="过账时间" propId="31" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="postedAt" displayName="过账时间" propId="31" i18n-en:displayName="Posted At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="postedBy" displayName="过账人" propId="32" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="false" updatable="false" ui:show="R">
@@ -163,14 +163,20 @@
             <schema bizObjName="ErpQaInspection"/>
         </prop>
         <prop name="material" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+              ext:joinLeftProp="materialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
+        <prop name="material.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="supplier" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="supplierId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+              ext:joinLeftProp="supplierId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="supplier.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

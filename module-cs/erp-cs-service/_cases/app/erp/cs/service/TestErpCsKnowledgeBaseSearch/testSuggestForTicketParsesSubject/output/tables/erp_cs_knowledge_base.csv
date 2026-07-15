@@ -1,0 +1,7 @@
+_chgType,ID,CODE,TITLE,CONTENT,CATEGORY_ID,IS_PUBLISHED,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9204,@var:ErpCsKnowledgeBase@code,发票申请流程,客户可在线申请发票,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9205,@var:ErpCsKnowledgeBase@code_1,发票邮寄说明,发票通过EMS邮寄,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9206,@var:ErpCsKnowledgeBase@code_2,发票内容规范,发票内容需与订单一致,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9207,@var:ErpCsKnowledgeBase@code_3,发票税率说明,不同商品税率不同,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9208,@var:ErpCsKnowledgeBase@code_4,发票作废流程,发票作废需联系客服,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9209,@var:ErpCsKnowledgeBase@code_5,发票归档,发票归档流程,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*

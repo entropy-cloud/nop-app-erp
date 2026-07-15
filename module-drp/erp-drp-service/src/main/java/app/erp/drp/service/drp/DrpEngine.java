@@ -109,7 +109,7 @@ public class DrpEngine {
         }
 
         plan.setTotalReplenishmentQty(totalReplenishment);
-        plan.setRunAt(CoreMetrics.currentDateTime());
+        plan.setRunAt(CoreMetrics.currentTimestamp());
         // runBy（运行人）由 BizModel 层从 IServiceContext 注入用户身份后回写；helper 引擎不持有用户上下文
         plan.setStatus(ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED);
         daoProvider.daoFor(ErpDrpPlan.class).updateEntity(plan);

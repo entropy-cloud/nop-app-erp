@@ -3,17 +3,10 @@
     "extData": null,
     "hasNext": null,
     "hasPrev": null,
-    "limit": 10,
-    "nextCursor": null,
-    "offset": 0,
-    "page": 1,
-    "pageCount": 1,
-    "prevCursor": null,
-    "total": 1,
     "items": [
       {
         "id": "2",
-        "code": "SMOKE-MNT",
+        "code": "@var:ErpMntVisit@code",
         "scheduleId": null,
         "equipmentId": 1,
         "visitDate": "2026-07-01",
@@ -40,12 +33,16 @@
         "businessDate": null,
         "posted": false,
         "postedAt": null,
-        "postedBy": null,
-        "scheduleCode": null,
-        "equipmentCode": "SMOKE-EQUIP",
-        "orgName": null
+        "postedBy": null
       }
-    ]
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
   },
   "status": 0
 }

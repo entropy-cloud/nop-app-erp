@@ -192,42 +192,6 @@
         }
 
 
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _acctSchemaCode;
-
-    
-        public String getAcctSchemaCode(){
-            return _acctSchemaCode;
-        }
-
-        public void setAcctSchemaCode(String value){
-            this._acctSchemaCode = value;
-        }
-
-
-        private String _periodCode;
-
-    
-        public String getPeriodCode(){
-            return _periodCode;
-        }
-
-        public void setPeriodCode(String value){
-            this._periodCode = value;
-        }
-
-
         private Boolean _isReversed;
 
     
@@ -296,16 +260,16 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=16)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 

@@ -26,8 +26,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="事务编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="事务编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
@@ -42,7 +42,7 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="relatedBillCode" displayName="关联单据号" propId="6" i18n-en:displayName="Related Bill Code"
+        <prop name="relatedBillCode" displayName="关联单据号" propId="6" i18n-en:displayName="Related Bill Code" tagSet="var"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
@@ -63,16 +63,16 @@
             <schema type="java.lang.Integer"/>
         </prop>
         <prop name="attachmentFileId" displayName="附件（EDI 报文文件）" propId="11" i18n-en:displayName="Attachment"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+              tagSet="var" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
-        <prop name="sentAt" displayName="发送时间" propId="12" i18n-en:displayName="Sent At" queryable="true"
+        <prop name="sentAt" displayName="发送时间" propId="12" i18n-en:displayName="Sent At" tagSet="clock" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="acknowledgedAt" displayName="确认时间" propId="13" i18n-en:displayName="Acknowledged At"
+        <prop name="acknowledgedAt" displayName="确认时间" propId="13" i18n-en:displayName="Acknowledged At" tagSet="clock"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="remark" displayName="备注" propId="14" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -111,9 +111,12 @@
             <schema bizObjName="ErpB2bEdiFormat"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
               internal="true" lazy="true">

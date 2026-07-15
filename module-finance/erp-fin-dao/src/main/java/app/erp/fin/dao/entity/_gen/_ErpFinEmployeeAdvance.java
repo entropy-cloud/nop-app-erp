@@ -85,19 +85,19 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 16;
     
-    /* 审核时间: APPROVED_AT DATETIME */
+    /* 审核时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 17;
     
-    /* 是否已过账: POSTED BOOLEAN */
-    public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 18;
-    
     /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 19;
+    public static final int PROP_ID_postedBy = 18;
     
-    /* 过账时间: POSTED_AT DATETIME */
+    /* 是否已过账: POSTED BOOLEAN */
+    public static final String PROP_NAME_posted = "posted";
+    public static final int PROP_ID_posted = 19;
+    
+    /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 20;
     
@@ -204,11 +204,11 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
           PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
       
-          PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
-          PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
-      
           PROP_ID_TO_NAME[PROP_ID_postedBy] = PROP_NAME_postedBy;
           PROP_NAME_TO_ID.put(PROP_NAME_postedBy, PROP_ID_postedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
+          PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
       
           PROP_ID_TO_NAME[PROP_ID_postedAt] = PROP_NAME_postedAt;
           PROP_NAME_TO_ID.put(PROP_NAME_postedAt, PROP_ID_postedAt);
@@ -286,16 +286,16 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     private java.lang.String _approvedBy;
     
     /* 审核时间: APPROVED_AT */
-    private java.time.LocalDateTime _approvedAt;
-    
-    /* 是否已过账: POSTED */
-    private java.lang.Boolean _posted;
+    private java.sql.Timestamp _approvedAt;
     
     /* 过账人: POSTED_BY */
     private java.lang.String _postedBy;
     
+    /* 是否已过账: POSTED */
+    private java.lang.Boolean _posted;
+    
     /* 过账时间: POSTED_AT */
-    private java.time.LocalDateTime _postedAt;
+    private java.sql.Timestamp _postedAt;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -443,11 +443,11 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
             case PROP_ID_approvedAt:
                return getApprovedAt();
         
-            case PROP_ID_posted:
-               return getPosted();
-        
             case PROP_ID_postedBy:
                return getPostedBy();
+        
+            case PROP_ID_posted:
+               return getPosted();
         
             case PROP_ID_postedAt:
                return getPostedAt();
@@ -645,22 +645,12 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_approvedAt));
                }
                setApprovedAt(typedValue);
-               break;
-            }
-        
-            case PROP_ID_posted:{
-               java.lang.Boolean typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBoolean(value,
-                       err-> newTypeConversionError(PROP_NAME_posted));
-               }
-               setPosted(typedValue);
                break;
             }
         
@@ -674,10 +664,20 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_postedAt:{
-               java.time.LocalDateTime typedValue = null;
+            case PROP_ID_posted:{
+               java.lang.Boolean typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_posted));
+               }
+               setPosted(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_postedAt));
                }
                setPostedAt(typedValue);
@@ -877,14 +877,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
         
             case PROP_ID_approvedAt:{
                onInitProp(propId);
-               this._approvedAt = (java.time.LocalDateTime)value;
-               
-               break;
-            }
-        
-            case PROP_ID_posted:{
-               onInitProp(propId);
-               this._posted = (java.lang.Boolean)value;
+               this._approvedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -896,9 +889,16 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_posted:{
+               onInitProp(propId);
+               this._posted = (java.lang.Boolean)value;
+               
+               break;
+            }
+        
             case PROP_ID_postedAt:{
                onInitProp(propId);
-               this._postedAt = (java.time.LocalDateTime)value;
+               this._postedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1265,7 +1265,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final java.time.LocalDateTime getApprovedAt(){
+    public final java.sql.Timestamp getApprovedAt(){
          onPropGet(PROP_ID_approvedAt);
          return _approvedAt;
     }
@@ -1273,29 +1273,10 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final void setApprovedAt(java.time.LocalDateTime value){
+    public final void setApprovedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_approvedAt,value)){
             this._approvedAt = value;
             internalClearRefs(PROP_ID_approvedAt);
-            
-        }
-    }
-    
-    /**
-     * 是否已过账: POSTED
-     */
-    public final java.lang.Boolean getPosted(){
-         onPropGet(PROP_ID_posted);
-         return _posted;
-    }
-
-    /**
-     * 是否已过账: POSTED
-     */
-    public final void setPosted(java.lang.Boolean value){
-        if(onPropSet(PROP_ID_posted,value)){
-            this._posted = value;
-            internalClearRefs(PROP_ID_posted);
             
         }
     }
@@ -1320,9 +1301,28 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     }
     
     /**
+     * 是否已过账: POSTED
+     */
+    public final java.lang.Boolean getPosted(){
+         onPropGet(PROP_ID_posted);
+         return _posted;
+    }
+
+    /**
+     * 是否已过账: POSTED
+     */
+    public final void setPosted(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_posted,value)){
+            this._posted = value;
+            internalClearRefs(PROP_ID_posted);
+            
+        }
+    }
+    
+    /**
      * 过账时间: POSTED_AT
      */
-    public final java.time.LocalDateTime getPostedAt(){
+    public final java.sql.Timestamp getPostedAt(){
          onPropGet(PROP_ID_postedAt);
          return _postedAt;
     }
@@ -1330,7 +1330,7 @@ public class _ErpFinEmployeeAdvance extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final void setPostedAt(java.time.LocalDateTime value){
+    public final void setPostedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_postedAt,value)){
             this._postedAt = value;
             internalClearRefs(PROP_ID_postedAt);

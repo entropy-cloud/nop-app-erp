@@ -8,8 +8,8 @@
                 <col id="budgetCode" label="预算单号"/>
                 <col id="lineNo" mandatory="true" sortable="true"/>
                 <col id="costCategory" mandatory="true" sortable="true"/>
-                <col id="subjectName" label="科目"/>
-                <col id="taskName" label="任务"/>
+                <col id="subjectId" label="科目"/>
+                <col id="taskId" label="任务"/>
                 <col id="plannedAmount" mandatory="true" sortable="true"/>
                 <col id="committedAmount" sortable="true"/>
                 <col id="actualAmount" sortable="true"/>

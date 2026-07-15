@@ -40,15 +40,16 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "supplier": null,
+  "supplier.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "currency": null,
+  "currency.name": "",
   "settlementMethod": null,
+  "settlementMethod.name": "",
   "org": null,
+  "org.name": "",
   "requisition": null,
   "quotation": null,
-  "lines": null,
-  "supplierName": "",
-  "warehouseName": "",
-  "currencyName": "",
-  "orgName": ""
+  "lines": null
 }

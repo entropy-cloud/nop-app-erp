@@ -1,21 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpAstAssetCategory.xmeta">
 
-    <props>
-        <prop name="subjectName" displayName="折旧科目" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="depreciationSubjectName" displayName="折旧费用科目" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="expenseSubjectName" displayName="费用科目" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="disposalGainLossSubjectName" displayName="处置损益科目" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="cipSubjectName" displayName="在建工程科目" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-    </props>
+    <props/>
 </meta>

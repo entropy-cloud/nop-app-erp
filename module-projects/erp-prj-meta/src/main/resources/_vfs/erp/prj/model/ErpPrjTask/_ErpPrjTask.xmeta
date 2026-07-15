@@ -122,9 +122,13 @@
             <schema bizObjName="ErpPrjTask"/>
         </prop>
         <prop name="assignee" i18n-en:displayName="Assignee" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="assigneeId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="assigneeId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="assignee.name" i18n-en:displayName="Assignee" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="dependsOn" i18n-en:displayName="Depends On" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="dependsOnId" ext:joinRightProp="id" insertable="false"

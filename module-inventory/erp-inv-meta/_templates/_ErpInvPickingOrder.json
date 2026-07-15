@@ -17,7 +17,10 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "warehouse": null,
+  "warehouse.name": "",
   "org": null,
+  "org.name": "",
   "picker": null,
+  "picker.name": "",
   "lines": null
 }

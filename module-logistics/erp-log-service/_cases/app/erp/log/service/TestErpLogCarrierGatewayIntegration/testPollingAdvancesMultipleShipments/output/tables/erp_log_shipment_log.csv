@@ -1,0 +1,5 @@
+_chgType,ID,SHIPMENT_ID,ORG_ID,GATEWAY_ID,ACTION_TYPE,REQUEST_BODY,RESPONSE_BODY,HTTP_STATUS,ERROR_CODE,ERROR_MESSAGE,IS_SUCCESS,EXECUTED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,4,2,,mock,TRACK,@var:ErpLogShipmentLog@requestBody_2,@var:ErpLogShipmentLog@responseBody,200,,,true,@var:ErpLogShipmentLog@executedAt,,@var:ErpLogShipmentLog@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,5,3,,mock,TRACK,@var:ErpLogShipmentLog@requestBody_1,@var:ErpLogShipmentLog@responseBody_1,200,,,true,@var:ErpLogShipmentLog@executedAt_1,,@var:ErpLogShipmentLog@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,6,2,,mock,TRACK,@var:ErpLogShipmentLog@requestBody_2,@var:ErpLogShipmentLog@responseBody_2,200,,,true,@var:ErpLogShipmentLog@executedAt_2,,@var:ErpLogShipmentLog@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,7,3,,mock,TRACK,@var:ErpLogShipmentLog@requestBody_1,@var:ErpLogShipmentLog@responseBody_3,200,,,true,@var:ErpLogShipmentLog@executedAt_3,,@var:ErpLogShipmentLog@delVersion_3,0,autotest-ref,*,autotest-ref,*

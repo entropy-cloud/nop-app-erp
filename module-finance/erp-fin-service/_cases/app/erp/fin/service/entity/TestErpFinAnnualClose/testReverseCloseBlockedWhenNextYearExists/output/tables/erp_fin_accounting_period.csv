@@ -1,0 +1,14 @@
+_chgType,ID,CODE,NAME,ORG_ID,YEAR,MONTH,START_DATE,END_DATE,QUARTER,IS_ADJUSTMENT,STATUS,CLOSED_BY,CLOSED_AT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpFinAccountingPeriod@code,2025-12,1,2025,12,2025-12-01,2025-12-28,,false,CLOSED_FINAL,,@var:ErpFinAccountingPeriod@closedAt,@var:ErpFinAccountingPeriod@delVersion_7,2,autotest-ref,*,autotest-ref,*
+A,23,@var:ErpFinAccountingPeriod@code_1,2026-01,1,2026,1,2026-01-01,2026-01-31,1,false,OPEN,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,24,@var:ErpFinAccountingPeriod@code_2,2026-02,1,2026,2,2026-02-01,2026-02-28,1,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,25,@var:ErpFinAccountingPeriod@code_3,2026-03,1,2026,3,2026-03-01,2026-03-31,1,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,26,@var:ErpFinAccountingPeriod@code_4,2026-04,1,2026,4,2026-04-01,2026-04-30,2,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,27,@var:ErpFinAccountingPeriod@code_5,2026-05,1,2026,5,2026-05-01,2026-05-31,2,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,28,@var:ErpFinAccountingPeriod@code_6,2026-06,1,2026,6,2026-06-01,2026-06-30,2,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,29,@var:ErpFinAccountingPeriod@code_7,2026-07,1,2026,7,2026-07-01,2026-07-31,3,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,30,@var:ErpFinAccountingPeriod@code_8,2026-08,1,2026,8,2026-08-01,2026-08-31,3,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,31,@var:ErpFinAccountingPeriod@code_9,2026-09,1,2026,9,2026-09-01,2026-09-30,3,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,32,@var:ErpFinAccountingPeriod@code_10,2026-10,1,2026,10,2026-10-01,2026-10-31,4,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,33,@var:ErpFinAccountingPeriod@code_11,2026-11,1,2026,11,2026-11-01,2026-11-30,4,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*
+A,34,@var:ErpFinAccountingPeriod@code_12,2026-12,1,2026,12,2026-12-01,2026-12-31,4,false,NEVER_OPENED,,,@var:ErpFinAccountingPeriod@delVersion_7,0,autotest-ref,*,autotest-ref,*

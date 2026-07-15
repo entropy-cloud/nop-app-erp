@@ -89,7 +89,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     public static final String PROP_NAME_avgSalesCycleDays = "avgSalesCycleDays";
     public static final int PROP_ID_avgSalesCycleDays = 17;
     
-    /* 聚合计算时间: CALCULATED_AT DATETIME */
+    /* 聚合计算时间: CALCULATED_AT TIMESTAMP */
     public static final String PROP_NAME_calculatedAt = "calculatedAt";
     public static final int PROP_ID_calculatedAt = 18;
     
@@ -282,7 +282,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     private java.lang.Double _avgSalesCycleDays;
     
     /* 聚合计算时间: CALCULATED_AT */
-    private java.time.LocalDateTime _calculatedAt;
+    private java.sql.Timestamp _calculatedAt;
     
     /* 聚合计算人: CALCULATED_BY */
     private java.lang.String _calculatedBy;
@@ -642,9 +642,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_calculatedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_calculatedAt));
                }
                setCalculatedAt(typedValue);
@@ -861,7 +861,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
         
             case PROP_ID_calculatedAt:{
                onInitProp(propId);
-               this._calculatedAt = (java.time.LocalDateTime)value;
+               this._calculatedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1254,7 +1254,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 聚合计算时间: CALCULATED_AT
      */
-    public final java.time.LocalDateTime getCalculatedAt(){
+    public final java.sql.Timestamp getCalculatedAt(){
          onPropGet(PROP_ID_calculatedAt);
          return _calculatedAt;
     }
@@ -1262,7 +1262,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 聚合计算时间: CALCULATED_AT
      */
-    public final void setCalculatedAt(java.time.LocalDateTime value){
+    public final void setCalculatedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_calculatedAt,value)){
             this._calculatedAt = value;
             internalClearRefs(PROP_ID_calculatedAt);

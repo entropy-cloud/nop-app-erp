@@ -27,8 +27,7 @@
   "amountFunctional": 0.0,
   "targetAsset": null,
   "org": null,
+  "org.name": "",
   "currency": null,
-  "orgName": "",
-  "targetAssetCode": "",
-  "currencyName": ""
+  "currency.name": ""
 }

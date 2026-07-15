@@ -1,0 +1,3 @@
+_chgType,ID,CODE,ORG_ID,PROJECT_ID,TASK_ID,USER_ID,WORK_DATE,HOURS,ACTIVITY_TYPE_ID,CURRENCY_ID,COST_RATE,COST_AMOUNT,STATUS,POSTED,POSTED_AT,POSTED_BY,APPROVED_BY,APPROVED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,@var:ErpPrjTimesheet@code,1,6,8,9,2026-07-15,10,7,1,800,,UNSUBMITTED,false,,,,,,@var:ErpPrjTimesheet@delVersion,0,autotest-ref,*,autotest-ref,*
+A,12,@var:ErpPrjTimesheet@code_1,1,6,8,11,2026-07-15,5,7,1,800,,UNSUBMITTED,false,,,,,,@var:ErpPrjTimesheet@delVersion,0,autotest-ref,*,autotest-ref,*

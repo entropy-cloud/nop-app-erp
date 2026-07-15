@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
@@ -49,7 +49,7 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="sourceBillCode" displayName="来源单据号" propId="8" i18n-en:displayName="Source Bill Code"
+        <prop name="sourceBillCode" displayName="来源单据号" propId="8" i18n-en:displayName="Source Bill Code" tagSet="var"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
@@ -73,21 +73,21 @@
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="stagingLocation">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="dockSlotTime" displayName="月台时间窗口" propId="14" i18n-en:displayName="Dock Slot Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="dockSlotTime" displayName="月台时间窗口" propId="14" i18n-en:displayName="Dock Slot Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="status" displayName="状态" propId="15" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="20" dict="erp-inv/drp-xdock-status"/>
         </prop>
-        <prop name="matchedAt" displayName="匹配时间" propId="16" i18n-en:displayName="Matched At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="matchedAt" displayName="匹配时间" propId="16" i18n-en:displayName="Matched At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="loadedAt" displayName="装车完成时间" propId="17" i18n-en:displayName="Loaded At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="loadedAt" displayName="装车完成时间" propId="17" i18n-en:displayName="Loaded At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="remark" displayName="备注" propId="18" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -123,29 +123,40 @@
             <schema bizObjName="ErpDrpLine"/>
         </prop>
         <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="material.name" i18n-en:displayName="Material" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="stagingLocation" i18n-en:displayName="Staging Location" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="stagingLocationId" ext:joinRightProp="id"
-              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdLocation"/>
         </prop>
+        <prop name="stagingLocation.name" i18n-en:displayName="Staging Location" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="inboundMove" i18n-en:displayName="Inbound Move" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="inboundMoveId" ext:joinRightProp="id" biz:moduleId="erp/inv" lazy="true"
-              published="false">
+              ext:joinLeftProp="inboundMoveId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/inv" lazy="true" published="false">
             <schema bizObjName="ErpInvStockMove"/>
         </prop>
         <prop name="outboundMove" i18n-en:displayName="Outbound Move" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="outboundMoveId" ext:joinRightProp="id" biz:moduleId="erp/inv" lazy="true"
-              published="false">
+              ext:joinLeftProp="outboundMoveId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/inv" lazy="true" published="false">
             <schema bizObjName="ErpInvStockMove"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

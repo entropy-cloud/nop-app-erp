@@ -36,7 +36,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpCtApprovalRecord:
       id: ID
       contractId: Contract
@@ -58,10 +58,8 @@ prop:
       updateTime: Update Time
       contract: Contract
       org: Org
+      org.name: Org
       approvalMatrix: null
-      contractName: null
-      orgName: null
-      approvalMatrixName: null
     ErpCtConsumptionLine:
       id: ID
       contractLineId: Contract Line
@@ -79,7 +77,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       contractLine: Contract Line
-      contractLineName: null
     ErpCtContract:
       id: ID
       code: Code
@@ -110,18 +107,16 @@ prop:
       updateTime: Update Time
       businessDate: Business Date
       partner: Partner
+      partner.name: Partner
       template: Template
       parentContract: Parent Contract
       org: Org
+      org.name: Org
       lines: Lines
       versions: Versions
       currency: null
+      currency.name: null
       attachmentFileIdComponentFileStatus: null
-      partnerName: null
-      templateName: null
-      parentContractName: null
-      orgName: null
-      currencyName: null
     ErpCtContractLine:
       id: ID
       contractId: Contract
@@ -142,8 +137,7 @@ prop:
       invoicePlans: Invoice Plans
       consumptionLines: Consumption Lines
       material: null
-      contractName: null
-      materialName: null
+      material.name: null
     ErpCtContractVersion:
       id: ID
       contractId: Contract
@@ -165,7 +159,6 @@ prop:
       updateTime: Update Time
       contract: Contract
       attachmentFileIdComponentFileStatus: null
-      contractName: null
     ErpCtDocument:
       id: ID
       orgId: Organization
@@ -195,9 +188,8 @@ prop:
       updateTime: Update Time
       contract: Contract
       org: Org
+      org.name: Org
       attachmentFileIdComponentFileStatus: null
-      contractName: null
-      orgName: null
     ErpCtInvoicePlan:
       id: ID
       contractLineId: Contract Line
@@ -216,7 +208,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       contractLine: Contract Line
-      contractLineName: null
     ErpCtRebateAccrual:
       id: ID
       rebateAgreementId: Rebate Agreement
@@ -237,8 +228,7 @@ prop:
       updateTime: Update Time
       rebateAgreement: Rebate Agreement
       org: Org
-      rebateAgreementName: null
-      orgName: null
+      org.name: Org
     ErpCtRebateAgreement:
       id: ID
       code: Code
@@ -266,10 +256,9 @@ prop:
       businessDate: Business Date
       contract: Contract
       org: Org
+      org.name: Org
       partner: null
-      contractName: null
-      orgName: null
-      partnerName: null
+      partner.name: null
     ErpCtRebateSettlement:
       id: ID
       rebateAgreementId: Rebate Agreement
@@ -293,8 +282,7 @@ prop:
       posted: Posted
       rebateAgreement: Rebate Agreement
       org: Org
-      rebateAgreementName: null
-      orgName: null
+      org.name: Org
     ErpCtRebateTier:
       id: ID
       rebateAgreementId: Rebate Agreement
@@ -310,7 +298,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       rebateAgreement: Rebate Agreement
-      rebateAgreementName: null
     ErpCtSignatureRequest:
       id: ID
       orgId: Organization
@@ -336,10 +323,9 @@ prop:
       updateTime: Update Time
       contractVersion: Contract Version
       org: Org
+      org.name: Org
       providerRequest: null
       attachmentFileIdComponentFileStatus: null
-      orgName: null
-      providerRequestName: null
     ErpCtTemplate:
       id: ID
       code: Code
@@ -372,8 +358,7 @@ prop:
       updateTime: Update Time
       contractLine: Contract Line
       org: Org
-      contractLineName: null
-      orgName: null
+      org.name: Org
 dict:
   label:
     erp-ct/contract-status: Contract Status

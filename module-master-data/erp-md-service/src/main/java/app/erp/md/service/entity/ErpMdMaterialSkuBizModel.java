@@ -1,10 +1,6 @@
 
 package app.erp.md.service.entity;
 
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
@@ -403,36 +399,4 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
     private BigDecimal nullSafe(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
     }
-
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpMdMaterialSku.class)
-    public List<String> materialName(@ContextSource List<ErpMdMaterialSku> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpMdMaterialSku row : rows) {
-            result.add(row.orm_attached() && row.getMaterial() != null ? row.getMaterial().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMdMaterialSku.class)
-    public List<String> uomName(@ContextSource List<ErpMdMaterialSku> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("uoM"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpMdMaterialSku row : rows) {
-            result.add(row.orm_attached() && row.getUoM() != null ? row.getUoM().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMdMaterialSku.class)
-    public List<String> taxRateName(@ContextSource List<ErpMdMaterialSku> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("taxRate"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpMdMaterialSku row : rows) {
-            result.add(row.orm_attached() && row.getTaxRate() != null ? row.getTaxRate().getName() : null);
-        }
-        return result;
-    }
-
 }

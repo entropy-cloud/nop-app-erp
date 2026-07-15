@@ -1,4 +1,4 @@
 _chgType,ID,CODE,MOVE_TYPE,ORG_ID,BUSINESS_DATE,SOURCE_WAREHOUSE_ID,SOURCE_LOCATION_ID,DEST_WAREHOUSE_ID,DEST_LOCATION_ID,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,RELATED_BILL_TYPE,RELATED_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,ORIGIN_MOVE_ID,ORIGIN_RETURNED_MOVE_ID
-A,13,*,OUTGOING,3101,2026-07-02,5101,,,,DONE,UNSUBMITTED,false,,,ERP_PUR_RETURN,RT-SM-001,,*,2,autotest-ref,*,autotest-ref,*,,5
-A,25,*,INCOMING,3101,*,,,5101,,DONE,UNSUBMITTED,false,,,REVERSAL,*,*,*,1,autotest-ref,*,autotest-ref,*,,13
-A,5,*,INCOMING,3101,2026-07-01,,,5101,,DONE,UNSUBMITTED,true,*,,ERP_PUR_RECEIVE,PR-SM-001,,*,2,autotest-ref,*,autotest-ref,*,,
+A,13,@var:ErpInvStockMove@code_1,OUTGOING,3101,2026-07-02,5101,,,,DONE,UNSUBMITTED,false,,,ERP_PUR_RETURN,@var:ErpInvStockMove@relatedBillCode_1,,@var:ErpInvStockMove@delVersion,2,autotest-ref,*,autotest-ref,*,,5
+A,25,@var:ErpInvStockMove@code_2,INCOMING,3101,2026-07-15,,,5101,,DONE,UNSUBMITTED,false,,,REVERSAL,@var:ErpInvStockMove@relatedBillCode_2,冲销,@var:ErpInvStockMove@delVersion,1,autotest-ref,*,autotest-ref,*,,13
+A,5,@var:ErpInvStockMove@code,INCOMING,3101,2026-07-01,,,5101,,DONE,UNSUBMITTED,true,@var:ErpInvStockMove@postedAt,,ERP_PUR_RECEIVE,@var:ErpInvStockMove@relatedBillCode,,@var:ErpInvStockMove@delVersion,2,autotest-ref,*,autotest-ref,*,,

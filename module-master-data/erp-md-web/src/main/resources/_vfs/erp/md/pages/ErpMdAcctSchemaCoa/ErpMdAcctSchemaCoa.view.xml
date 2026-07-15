@@ -6,7 +6,7 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="acctSchemaName" label="账套"/>
+                <col id="acctSchemaId" label="账套"/>
                 <col id="name" mandatory="true" sortable="true"/>
                 <col id="isPrimary" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

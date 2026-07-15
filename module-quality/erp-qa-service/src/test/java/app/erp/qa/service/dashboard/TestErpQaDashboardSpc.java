@@ -136,7 +136,7 @@ public class TestErpQaDashboardSpc extends JunitAutoTestCase {
         s.orm_propValueByName("id", id);
         s.setChartId(chartId);
         s.setSubgroupNo(subgroupNo);
-        s.setSampleTime(CoreMetrics.currentDateTime());
+        s.setSampleTime(CoreMetrics.currentTimestamp());
         s.setMeasuredValues("[10]");
         s.setMean(BigDecimal.TEN);
         s.setRange(BigDecimal.ZERO);

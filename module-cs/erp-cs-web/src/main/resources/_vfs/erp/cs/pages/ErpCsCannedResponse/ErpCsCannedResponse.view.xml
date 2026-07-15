@@ -7,10 +7,10 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="title" sortable="true"/>
-                <col id="categoryName" label="分类"/>
-                <col id="ticketTypeName" label="工单类型"/>
+                <col id="categoryId" label="分类"/>
+                <col id="ticketTypeId" label="工单类型"/>
                 <col id="macroPriority" sortable="true"/>
                 <col id="sequence" ui:number="true" sortable="true"/>
                 <col id="isActive" sortable="true"/>

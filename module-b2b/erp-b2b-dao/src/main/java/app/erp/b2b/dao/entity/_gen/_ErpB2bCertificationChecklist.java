@@ -49,7 +49,7 @@ public class _ErpB2bCertificationChecklist extends DynamicOrmEntity{
     public static final String PROP_NAME_checkedBy = "checkedBy";
     public static final int PROP_ID_checkedBy = 7;
     
-    /* 检查时间: CHECKED_AT DATETIME */
+    /* 检查时间: CHECKED_AT TIMESTAMP */
     public static final String PROP_NAME_checkedAt = "checkedAt";
     public static final int PROP_ID_checkedAt = 8;
     
@@ -173,7 +173,7 @@ public class _ErpB2bCertificationChecklist extends DynamicOrmEntity{
     private java.lang.String _checkedBy;
     
     /* 检查时间: CHECKED_AT */
-    private java.time.LocalDateTime _checkedAt;
+    private java.sql.Timestamp _checkedAt;
     
     /* 检查证据: EVIDENCE */
     private java.lang.String _evidence;
@@ -403,9 +403,9 @@ public class _ErpB2bCertificationChecklist extends DynamicOrmEntity{
             }
         
             case PROP_ID_checkedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_checkedAt));
                }
                setCheckedAt(typedValue);
@@ -552,7 +552,7 @@ public class _ErpB2bCertificationChecklist extends DynamicOrmEntity{
         
             case PROP_ID_checkedAt:{
                onInitProp(propId);
-               this._checkedAt = (java.time.LocalDateTime)value;
+               this._checkedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -755,7 +755,7 @@ public class _ErpB2bCertificationChecklist extends DynamicOrmEntity{
     /**
      * 检查时间: CHECKED_AT
      */
-    public final java.time.LocalDateTime getCheckedAt(){
+    public final java.sql.Timestamp getCheckedAt(){
          onPropGet(PROP_ID_checkedAt);
          return _checkedAt;
     }
@@ -763,7 +763,7 @@ public class _ErpB2bCertificationChecklist extends DynamicOrmEntity{
     /**
      * 检查时间: CHECKED_AT
      */
-    public final void setCheckedAt(java.time.LocalDateTime value){
+    public final void setCheckedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_checkedAt,value)){
             this._checkedAt = value;
             internalClearRefs(PROP_ID_checkedAt);

@@ -81,7 +81,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
     public static final String PROP_NAME_posted = "posted";
     public static final int PROP_ID_posted = 15;
     
-    /* 过账时间: POSTED_AT DATETIME */
+    /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 16;
     
@@ -93,7 +93,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 18;
     
-    /* 审核时间: APPROVED_AT DATETIME */
+    /* 审核时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 19;
     
@@ -297,7 +297,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
     private java.lang.Boolean _posted;
     
     /* 过账时间: POSTED_AT */
-    private java.time.LocalDateTime _postedAt;
+    private java.sql.Timestamp _postedAt;
     
     /* 过账人: POSTED_BY */
     private java.lang.String _postedBy;
@@ -306,7 +306,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
     private java.lang.String _approvedBy;
     
     /* 审核时间: APPROVED_AT */
-    private java.time.LocalDateTime _approvedAt;
+    private java.sql.Timestamp _approvedAt;
     
     /* 已红冲: REVERSED */
     private java.lang.Boolean _reversed;
@@ -661,9 +661,9 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_postedAt));
                }
                setPostedAt(typedValue);
@@ -691,9 +691,9 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_approvedAt));
                }
                setApprovedAt(typedValue);
@@ -916,7 +916,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
         
             case PROP_ID_postedAt:{
                onInitProp(propId);
-               this._postedAt = (java.time.LocalDateTime)value;
+               this._postedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -937,7 +937,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
         
             case PROP_ID_approvedAt:{
                onInitProp(propId);
-               this._approvedAt = (java.time.LocalDateTime)value;
+               this._approvedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1306,7 +1306,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final java.time.LocalDateTime getPostedAt(){
+    public final java.sql.Timestamp getPostedAt(){
          onPropGet(PROP_ID_postedAt);
          return _postedAt;
     }
@@ -1314,7 +1314,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final void setPostedAt(java.time.LocalDateTime value){
+    public final void setPostedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_postedAt,value)){
             this._postedAt = value;
             internalClearRefs(PROP_ID_postedAt);
@@ -1363,7 +1363,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final java.time.LocalDateTime getApprovedAt(){
+    public final java.sql.Timestamp getApprovedAt(){
          onPropGet(PROP_ID_approvedAt);
          return _approvedAt;
     }
@@ -1371,7 +1371,7 @@ public class _ErpAstMaintenance extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final void setApprovedAt(java.time.LocalDateTime value){
+    public final void setApprovedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_approvedAt,value)){
             this._approvedAt = value;
             internalClearRefs(PROP_ID_approvedAt);

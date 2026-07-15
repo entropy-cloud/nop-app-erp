@@ -30,11 +30,8 @@
                 <!--关联伙伴-->
                 <col id="partnerId" ui:number="true" sortable="true"/>
 
-                <!--关联伙伴-->
-                <col id="partnerName" mandatory="true"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
+                <!--伙伴名称-->
+                <col id="partnerName" mandatory="true" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" sortable="true"/>
@@ -104,25 +101,24 @@
         <form id="view" editMode="view" title="查看-合作伙伴档案" i18n-en:title="View Partner Profile">
             <layout>
  code[编码] orgId[业务组织]
- partnerId[关联伙伴] partnerName[关联伙伴]
- orgName[业务组织] status[状态]
- protocol[传输协议] transportEndpoint[传输端点]
- authMethod[认证方式] webhookSecret[Webhook密钥]
- certExpiry[证书过期日期] certFingerprint[证书指纹]
- allowedFormats[支持格式(JSON)] timezone[时区]
- contactName[联系人姓名] contactEmail[联系邮箱]
- contactPhone[联系电话] notes[备注]
- goLiveDate[上线日期] archivedAt[归档日期]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ partnerId[关联伙伴] partnerName[伙伴名称]
+ status[状态] protocol[传输协议]
+ transportEndpoint[传输端点] authMethod[认证方式]
+ webhookSecret[Webhook密钥] certExpiry[证书过期日期]
+ certFingerprint[证书指纹] allowedFormats[支持格式(JSON)]
+ timezone[时区] contactName[联系人姓名]
+ contactEmail[联系邮箱] contactPhone[联系电话]
+ notes[备注] goLiveDate[上线日期]
+ archivedAt[归档日期] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-合作伙伴档案" i18n-en:title="Add Partner Profile" x:prototype="edit"/>
         <form id="edit" editMode="edit" title="编辑-合作伙伴档案" i18n-en:title="Edit Partner Profile">
             <layout>
  code[编码] orgId[业务组织]
- partnerId[关联伙伴] partnerName[关联伙伴]
+ partnerId[关联伙伴] partnerName[伙伴名称]
  status[状态] protocol[传输协议]
  transportEndpoint[传输端点] authMethod[认证方式]
  webhookSecret[Webhook密钥] certExpiry[证书过期日期]

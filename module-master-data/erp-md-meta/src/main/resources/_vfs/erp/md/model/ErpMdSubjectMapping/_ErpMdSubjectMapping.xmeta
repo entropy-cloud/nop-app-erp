@@ -63,19 +63,31 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="sourceSubject" i18n-en:displayName="Source Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="sourceSubjectId" ext:joinRightProp="id" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="sourceSubjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="sourceSubject.name" i18n-en:displayName="Source Subject" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="targetAcctSchema" i18n-en:displayName="Target Acct Schema" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="targetAcctSchemaId" ext:joinRightProp="id"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              ext:joinRightDisplayProp="name" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdAcctSchema"/>
         </prop>
+        <prop name="targetAcctSchema.name" i18n-en:displayName="Target Acct Schema" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="targetSubject" i18n-en:displayName="Target Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="targetSubjectId" ext:joinRightProp="id" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="targetSubjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="targetSubject.name" i18n-en:displayName="Target Subject" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

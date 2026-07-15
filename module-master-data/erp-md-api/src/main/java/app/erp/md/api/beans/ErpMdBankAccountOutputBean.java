@@ -221,18 +221,6 @@
         }
 
 
-        private String _partnerName;
-
-    
-        public String getPartnerName(){
-            return _partnerName;
-        }
-
-        public void setPartnerName(String value){
-            this._partnerName = value;
-        }
-
-
         private Map<String,Object> _partner;
 
         public Map<String,Object> getPartner(){

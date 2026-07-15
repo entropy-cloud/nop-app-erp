@@ -7,10 +7,10 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="employeeDisplayName" label="员工"/>
-                <col id="planName" sortable="true"/>
+                <col id="planId" sortable="true"/>
                 <col id="targetDate" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="businessDate" mandatory="true" sortable="true"/>
             </cols>
         </grid>

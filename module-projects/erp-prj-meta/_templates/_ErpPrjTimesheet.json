@@ -28,13 +28,10 @@
   "project": null,
   "task": null,
   "user": null,
+  "user.name": "",
   "activityType": null,
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "orgName": "",
-  "projectName": "",
-  "taskName": "",
-  "userName": "",
-  "activityTypeName": "",
-  "currencyName": ""
+  "org.name": ""
 }

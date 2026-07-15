@@ -37,7 +37,7 @@ public class _ErpHrSurveyResponse extends DynamicOrmEntity{
     public static final String PROP_NAME_respondentHash = "respondentHash";
     public static final int PROP_ID_respondentHash = 4;
     
-    /* 提交时间: SUBMITTED_AT DATETIME */
+    /* 提交时间: SUBMITTED_AT TIMESTAMP */
     public static final String PROP_NAME_submittedAt = "submittedAt";
     public static final int PROP_ID_submittedAt = 5;
     
@@ -159,7 +159,7 @@ public class _ErpHrSurveyResponse extends DynamicOrmEntity{
     private java.lang.String _respondentHash;
     
     /* 提交时间: SUBMITTED_AT */
-    private java.time.LocalDateTime _submittedAt;
+    private java.sql.Timestamp _submittedAt;
     
     /* 填写耗时: TIME_SPENT_SECONDS */
     private java.lang.Integer _timeSpentSeconds;
@@ -356,9 +356,9 @@ public class _ErpHrSurveyResponse extends DynamicOrmEntity{
             }
         
             case PROP_ID_submittedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_submittedAt));
                }
                setSubmittedAt(typedValue);
@@ -494,7 +494,7 @@ public class _ErpHrSurveyResponse extends DynamicOrmEntity{
         
             case PROP_ID_submittedAt:{
                onInitProp(propId);
-               this._submittedAt = (java.time.LocalDateTime)value;
+               this._submittedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -647,7 +647,7 @@ public class _ErpHrSurveyResponse extends DynamicOrmEntity{
     /**
      * 提交时间: SUBMITTED_AT
      */
-    public final java.time.LocalDateTime getSubmittedAt(){
+    public final java.sql.Timestamp getSubmittedAt(){
          onPropGet(PROP_ID_submittedAt);
          return _submittedAt;
     }
@@ -655,7 +655,7 @@ public class _ErpHrSurveyResponse extends DynamicOrmEntity{
     /**
      * 提交时间: SUBMITTED_AT
      */
-    public final void setSubmittedAt(java.time.LocalDateTime value){
+    public final void setSubmittedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_submittedAt,value)){
             this._submittedAt = value;
             internalClearRefs(PROP_ID_submittedAt);

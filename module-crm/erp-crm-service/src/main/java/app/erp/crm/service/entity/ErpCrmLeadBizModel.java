@@ -27,10 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * 线索/商机 BizModel（Facade）。docStatus 状态机（qualify/lose/cancel）+ 漏斗阶段流转（moveStage）+ 线索查重
@@ -243,95 +239,5 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> orgName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> partnerName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("partner"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getPartner() != null ? row.getPartner().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> sourceName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("source"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getSource() != null ? row.getSource().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> leadStatusName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("leadStatus"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getLeadStatus() != null ? row.getLeadStatus().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> stageName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("stage"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getStage() != null ? row.getStage().getStageName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> campaignName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("campaign"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getCampaign() != null ? row.getCampaign().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> teamName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("team"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getTeam() != null ? row.getTeam().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> lostReasonName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("lostReason"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getLostReason() != null ? row.getLostReason().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLead.class)
-    public List<String> territoryName(@ContextSource List<ErpCrmLead> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("territory"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLead row : rows) {
-            result.add(row.orm_attached() && row.getTerritory() != null ? row.getTerritory().getName() : null);
-        }
-        return result;
-    }
 
 }

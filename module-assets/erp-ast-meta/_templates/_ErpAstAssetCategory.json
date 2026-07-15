@@ -18,13 +18,13 @@
   "disposalGainLossSubjectId": 0,
   "cipSubjectId": 0,
   "subject": null,
+  "subject.name": "",
   "depreciationSubject": null,
+  "depreciationSubject.name": "",
   "expenseSubject": null,
+  "expenseSubject.name": "",
   "disposalGainLossSubject": null,
+  "disposalGainLossSubject.name": "",
   "cipSubject": null,
-  "subjectName": "",
-  "depreciationSubjectName": "",
-  "expenseSubjectName": "",
-  "disposalGainLossSubjectName": "",
-  "cipSubjectName": ""
+  "cipSubject.name": ""
 }

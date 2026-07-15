@@ -5,9 +5,9 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="contractName" label="合同"/>
+                <col id="contractId" label="合同"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
+                <col id="materialId" label="物料"/>
                 <col id="description" sortable="true"/>
                 <col id="quantity" ui:number="true" sortable="true"/>
                 <col id="unitPrice" ui:number="true" sortable="true"/>

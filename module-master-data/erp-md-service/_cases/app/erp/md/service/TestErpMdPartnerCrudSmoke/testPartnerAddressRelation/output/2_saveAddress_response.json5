@@ -13,8 +13,7 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpMdPartnerAddress@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMdPartnerAddress@updateTime",
-    "partnerName": "冒烟测试-关系导航头实体"
+    "updateTime": "@var:ErpMdPartnerAddress@updateTime"
   },
   "status": 0
 }

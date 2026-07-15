@@ -1,0 +1,3 @@
+_chgType,ID,CODE,NAME,UOM_GROUP,IS_BASE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8001,@var:ErpMdUoM@code,瓶,,false,@var:ErpMdUoM@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8002,@var:ErpMdUoM@code_1,箱,,false,@var:ErpMdUoM@delVersion,0,autotest-ref,*,autotest-ref,*

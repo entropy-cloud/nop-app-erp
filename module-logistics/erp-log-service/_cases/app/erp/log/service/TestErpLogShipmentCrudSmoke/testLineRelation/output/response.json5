@@ -3,13 +3,6 @@
     "extData": null,
     "hasNext": null,
     "hasPrev": null,
-    "limit": 10,
-    "nextCursor": null,
-    "offset": 0,
-    "page": 1,
-    "pageCount": 1,
-    "prevCursor": null,
-    "total": 1,
     "items": [
       {
         "id": "3",
@@ -23,13 +16,18 @@
         "delVersion": 0,
         "version": 0,
         "createdBy": "autotest-ref",
-        "createTime": "@var:ErpLogShipmentLine@updateTime",
+        "createTime": "@var:ErpLogShipmentLine@createTime",
         "updatedBy": "autotest-ref",
-        "updateTime": "@var:ErpLogShipmentLine@updateTime",
-        "shipmentName": "SMOKE-LOG",
-        "materialName": null
+        "updateTime": "@var:ErpLogShipmentLine@createTime"
       }
-    ]
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
   },
   "status": 0
 }

@@ -11,11 +11,9 @@
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpLogShipmentLine@updateTime",
+    "createTime": "@var:ErpLogShipmentLine@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpLogShipmentLine@updateTime",
-    "shipmentName": "SMOKE-LOG",
-    "materialName": null
+    "updateTime": "@var:ErpLogShipmentLine@createTime"
   },
   "status": 0
 }

@@ -7,11 +7,11 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="orgName" label="所属组织/部门"/>
+                <col id="orgId" label="所属组织/部门"/>
                 <col id="position" sortable="true"/>
                 <col id="phone" sortable="true"/>
                 <col id="email" sortable="true"/>
-                <col id="partnerName" label="对应内部往来单位"/>
+                <col id="partnerId" label="对应内部往来单位"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

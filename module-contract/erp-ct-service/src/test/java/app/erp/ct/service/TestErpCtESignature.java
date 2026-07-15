@@ -419,7 +419,7 @@ public class TestErpCtESignature extends JunitAutoTestCase {
             r.setSigners("[{\"name\":\"张三\",\"email\":\"zhang@ex.com\"}]");
             r.setSigningDeadline(CoreMetrics.currentDate().plusDays(15));
             if (ErpCtConstants.SIGNATURE_STATUS_FULLY.equals(status)) {
-                r.setCompletedAt(CoreMetrics.currentDateTime());
+                r.setCompletedAt(CoreMetrics.currentTimestamp());
             }
             daoProvider.daoFor(ErpCtSignatureRequest.class).saveEntity(r);
             return r;

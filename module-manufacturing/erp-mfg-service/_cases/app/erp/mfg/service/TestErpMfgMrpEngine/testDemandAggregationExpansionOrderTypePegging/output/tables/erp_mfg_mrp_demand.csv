@@ -1,0 +1,4 @@
+_chgType,ID,MRP_PLAN_ID,LINE_NO,MATERIAL_ID,UO_M_ID,DEMAND_SOURCE,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,QUANTITY,REQUIREMENT_DATE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,7304,20,7101,7501,SALES_ORDER,ERP_SAL_ORDER,@var:ErpMfgMrpDemand@sourceBillCode_1,10.0000,2026-07-15,@var:ErpMfgMrpDemand@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,2,7304,30,7103,7501,SAFETY_STOCK,ERP_MD_MATERIAL,@var:ErpMfgMrpDemand@sourceBillCode_2,5.0000,2026-07-01,@var:ErpMfgMrpDemand@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,9360,7304,10,7102,7501,MANUAL,ERP_MFG_MRP_DEMAND,@var:ErpMfgMrpDemand@sourceBillCode,3,2026-07-15,@var:ErpMfgMrpDemand@delVersion_1,0,autotest-ref,*,autotest-ref,*

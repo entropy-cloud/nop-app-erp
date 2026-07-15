@@ -7,9 +7,9 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="orgName" label="所属组织"/>
-                <col id="managerName" label="负责人"/>
-                <col id="parentName" label="上级成本中心"/>
+                <col id="orgId" label="所属组织"/>
+                <col id="managerId" label="负责人"/>
+                <col id="parentId" label="上级成本中心"/>
                 <col id="isBudgetable" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

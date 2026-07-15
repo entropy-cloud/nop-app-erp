@@ -4,16 +4,12 @@ import app.erp.hr.biz.IErpHrRoleCompetencyBiz;
 import app.erp.hr.dao.entity.ErpHrRoleCompetency;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -51,23 +47,4 @@ public class ErpHrRoleCompetencyBizModel extends CrudBizModel<ErpHrRoleCompetenc
         }
     }
 
-    @BizLoader(forType = ErpHrRoleCompetency.class)
-    public List<String> positionName(@ContextSource List<ErpHrRoleCompetency> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("position"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpHrRoleCompetency row : rows) {
-            result.add(row.orm_attached() && row.getPosition() != null ? row.getPosition().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpHrRoleCompetency.class)
-    public List<String> competencyName(@ContextSource List<ErpHrRoleCompetency> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("competency"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpHrRoleCompetency row : rows) {
-            result.add(row.orm_attached() && row.getCompetency() != null ? row.getCompetency().getName() : null);
-        }
-        return result;
-    }
 }

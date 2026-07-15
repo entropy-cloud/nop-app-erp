@@ -5,16 +5,16 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
+                <col id="materialId" label="物料"/>
                 <col id="skuCode" mandatory="true" sortable="true"/>
                 <col id="barcode" sortable="true"/>
-                <col id="uomName" label="计量单位"/>
+                <col id="uoMId" label="计量单位"/>
                 <col id="conversionRate" ui:number="true" sortable="true"/>
                 <col id="purchasePrice" ui:number="true" sortable="true"/>
                 <col id="salePrice" ui:number="true" sortable="true"/>
                 <col id="wholesalePrice" ui:number="true" sortable="true"/>
                 <col id="retailPrice" ui:number="true" sortable="true"/>
-                <col id="taxRateName" label="默认税率"/>
+                <col id="taxRateId" label="默认税率"/>
                 <col id="isDefault" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

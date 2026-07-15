@@ -73,7 +73,7 @@ public class _ErpFinTrialBalance extends DynamicOrmEntity{
     public static final String PROP_NAME_closingCredit = "closingCredit";
     public static final int PROP_ID_closingCredit = 13;
     
-    /* 生成时间: GENERATED_AT DATETIME */
+    /* 生成时间: GENERATED_AT TIMESTAMP */
     public static final String PROP_NAME_generatedAt = "generatedAt";
     public static final int PROP_ID_generatedAt = 14;
     
@@ -228,7 +228,7 @@ public class _ErpFinTrialBalance extends DynamicOrmEntity{
     private java.math.BigDecimal _closingCredit;
     
     /* 生成时间: GENERATED_AT */
-    private java.time.LocalDateTime _generatedAt;
+    private java.sql.Timestamp _generatedAt;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -524,9 +524,9 @@ public class _ErpFinTrialBalance extends DynamicOrmEntity{
             }
         
             case PROP_ID_generatedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_generatedAt));
                }
                setGeneratedAt(typedValue);
@@ -695,7 +695,7 @@ public class _ErpFinTrialBalance extends DynamicOrmEntity{
         
             case PROP_ID_generatedAt:{
                onInitProp(propId);
-               this._generatedAt = (java.time.LocalDateTime)value;
+               this._generatedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -998,7 +998,7 @@ public class _ErpFinTrialBalance extends DynamicOrmEntity{
     /**
      * 生成时间: GENERATED_AT
      */
-    public final java.time.LocalDateTime getGeneratedAt(){
+    public final java.sql.Timestamp getGeneratedAt(){
          onPropGet(PROP_ID_generatedAt);
          return _generatedAt;
     }
@@ -1006,7 +1006,7 @@ public class _ErpFinTrialBalance extends DynamicOrmEntity{
     /**
      * 生成时间: GENERATED_AT
      */
-    public final void setGeneratedAt(java.time.LocalDateTime value){
+    public final void setGeneratedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_generatedAt,value)){
             this._generatedAt = value;
             internalClearRefs(PROP_ID_generatedAt);

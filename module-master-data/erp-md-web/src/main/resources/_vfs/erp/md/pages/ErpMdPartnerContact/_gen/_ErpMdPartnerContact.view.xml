@@ -56,9 +56,6 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
-
-                <!--往来单位-->
-                <col id="partnerName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -73,7 +70,6 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
- partnerName[往来单位] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-往来单位联系人" i18n-en:title="Add Partner Contact" x:prototype="edit"/>

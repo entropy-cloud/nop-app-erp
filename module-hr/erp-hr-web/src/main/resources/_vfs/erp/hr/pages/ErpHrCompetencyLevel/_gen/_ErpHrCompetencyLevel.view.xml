@@ -50,9 +50,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--胜任力-->
-                <col id="competencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -66,7 +63,6 @@
  sortOrder[排序号] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- competencyName[胜任力] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-胜任力等级" i18n-en:title="Add Competency Level" x:prototype="edit"/>

@@ -36,8 +36,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
 
 /**
  * 预设应答 BizModel（{@code canned-response.md} §一~§三）。
@@ -283,35 +281,5 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCsCannedResponse.class)
-    public List<String> orgName(@ContextSource List<ErpCsCannedResponse> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsCannedResponse row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsCannedResponse.class)
-    public List<String> categoryName(@ContextSource List<ErpCsCannedResponse> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("category"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsCannedResponse row : rows) {
-            result.add(row.orm_attached() && row.getCategory() != null ? row.getCategory().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsCannedResponse.class)
-    public List<String> ticketTypeName(@ContextSource List<ErpCsCannedResponse> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("macroTicketType"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsCannedResponse row : rows) {
-            result.add(row.orm_attached() && row.getMacroTicketType() != null ? row.getMacroTicketType().getName() : null);
-        }
-        return result;
-    }
 
 }

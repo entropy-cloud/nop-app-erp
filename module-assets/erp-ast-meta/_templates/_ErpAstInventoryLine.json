@@ -30,15 +30,10 @@
   "remark": "",
   "inventory": null,
   "org": null,
+  "org.name": "",
   "asset": null,
   "category": null,
   "newAsset": null,
   "capitalization": null,
-  "disposal": null,
-  "inventoryCode": "",
-  "orgName": "",
-  "categoryName": "",
-  "newAssetCode": "",
-  "capitalizationCode": "",
-  "disposalCode": ""
+  "disposal": null
 }

@@ -27,7 +27,10 @@
   "scenario": null,
   "budgetLine": null,
   "subject": null,
+  "subject.code": "",
   "costCenter": null,
+  "costCenter.name": "",
   "period": null,
-  "org": null
+  "org": null,
+  "org.name": ""
 }

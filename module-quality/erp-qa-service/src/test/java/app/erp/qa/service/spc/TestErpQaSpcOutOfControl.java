@@ -201,7 +201,7 @@ public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
             sample.orm_propValueByName("id", id);
             sample.setChartId(chartId);
             sample.setSubgroupNo(subgroupNo);
-            sample.setSampleTime(CoreMetrics.currentDateTime());
+            sample.setSampleTime(CoreMetrics.currentTimestamp());
             sample.setMeasuredValues("[" + mean.toPlainString() + "]");
             sample.setMean(mean);
             sample.setRange(BigDecimal.ZERO);

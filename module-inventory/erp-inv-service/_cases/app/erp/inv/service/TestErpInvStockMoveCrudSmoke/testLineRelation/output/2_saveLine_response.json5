@@ -20,8 +20,7 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpInvStockMoveLine@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpInvStockMoveLine@createTime",
-    "materialName": "冒烟物料"
+    "updateTime": "@var:ErpInvStockMoveLine@createTime"
   },
   "status": 0
 }

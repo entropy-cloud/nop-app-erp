@@ -18,6 +18,8 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -84,10 +86,10 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
 
         // 派生回写 Lead：lastContactDate = 最近 COMPLETED 事件 startDateTime = 2026-07-01 10:00
         ErpCrmLead lead = reloadLead(leadId);
-        assertEquals(LocalDateTime.of(2026, 7, 1, 10, 0), lead.getLastContactDate(),
+        assertEquals(LocalDate.of(2026, 7, 1), lead.getLastContactDate(),
                 "lastContactDate = 最近 COMPLETED 事件 startDateTime 最大值");
         // nextActivityDate = 最近 PLANNED 事件 startDateTime 最小值 = 2026-07-03 09:00（取消的已不计入）
-        assertEquals(LocalDateTime.of(2026, 7, 3, 9, 0), lead.getNextActivityDate(),
+        assertEquals(LocalDate.of(2026, 7, 3), lead.getNextActivityDate(),
                 "nextActivityDate = 最近 PLANNED 事件 startDateTime 最小值（CANCELLED 不计入）");
     }
 
@@ -214,8 +216,8 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
         event.setSubject("事件-" + code);
         event.setStatus(status);
         event.setPriority("NORMAL");
-        event.setStartDateTime(startDateTime);
-        event.setEndDateTime(startDateTime != null ? startDateTime.plusMinutes(30) : null);
+        event.setStartDateTime(startDateTime != null ? Timestamp.valueOf(startDateTime) : null);
+        event.setEndDateTime(startDateTime != null ? Timestamp.valueOf(startDateTime.plusMinutes(30)) : null);
         event.setRelatedLeadId(relatedLeadId);
         daoProvider.daoFor(ErpCrmEvent.class).saveEntity(event);
     }
@@ -227,7 +229,7 @@ public class TestErpCrmEventReminderTimeline extends JunitAutoTestCase {
         activity.setOrgId(ORG_ID);
         activity.setActivityType("NOTE");
         activity.setSummary(summary);
-        activity.setActivityDate(activityDate);
+        activity.setActivityDate(activityDate.toLocalDate());
         daoProvider.daoFor(ErpCrmActivity.class).saveEntity(activity);
     }
 

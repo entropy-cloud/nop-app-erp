@@ -13,9 +13,7 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpB2bAsnLine@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpB2bAsnLine@updateTime",
-    "asnName": "SMOKE-B2B",
-    "materialName": null
+    "updateTime": "@var:ErpB2bAsnLine@updateTime"
   },
   "status": 0
 }

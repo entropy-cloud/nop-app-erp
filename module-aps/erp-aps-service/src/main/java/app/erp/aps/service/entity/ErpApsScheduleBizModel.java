@@ -2,10 +2,6 @@
 package app.erp.aps.service.entity;
 
 import java.util.List;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import app.erp.aps.biz.IErpApsScheduleBiz;
 import app.erp.aps.dao.entity.ErpApsSchedule;
 import app.erp.aps.service.ErpApsConstants;
@@ -81,17 +77,6 @@ public class ErpApsScheduleBizModel extends CrudBizModel<ErpApsSchedule> impleme
         schedule.setStatus(ErpApsConstants.SCHEDULE_STATUS_ARCHIVED);
         this.updateEntity(schedule, null, context);
         return schedule;
-    }
-
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpApsSchedule.class)
-    public List<String> orgName(@ContextSource List<ErpApsSchedule> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpApsSchedule row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
     }
 
 }

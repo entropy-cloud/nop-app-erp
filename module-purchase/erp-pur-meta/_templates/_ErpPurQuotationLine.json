@@ -17,5 +17,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "quotation": null,
   "material": null,
-  "uoM": null
+  "material.name": "",
+  "uoM": null,
+  "uoM.name": ""
 }

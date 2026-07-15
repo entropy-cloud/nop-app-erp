@@ -15,6 +15,7 @@ CREATE TABLE erp_md_bank_account(
 
 CREATE TABLE erp_md_organization(
   id INT8 NOT NULL ,
+  name VARCHAR(200)  ,
   constraint PK_erp_md_organization primary key (id)
 );
 
@@ -36,6 +37,7 @@ CREATE TABLE erp_prj_task(
   id INT8  ,
   code VARCHAR(50)  ,
   name VARCHAR(200)  ,
+  title VARCHAR(200)  ,
   constraint PK_erp_prj_task primary key (id)
 );
 
@@ -623,7 +625,7 @@ CREATE TABLE erp_hr_gap_analysis(
   gap_value INT4  ,
   gap_severity VARCHAR(20)  ,
   assessment_date DATE  ,
-  analysis_date TIMESTAMP  ,
+  analysis_date DATE  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,

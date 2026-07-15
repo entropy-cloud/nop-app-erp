@@ -3,13 +3,6 @@
     "extData": null,
     "hasNext": null,
     "hasPrev": null,
-    "limit": 10,
-    "nextCursor": null,
-    "offset": 0,
-    "page": 1,
-    "pageCount": 1,
-    "prevCursor": null,
-    "total": 1,
     "items": [
       {
         "id": "3",
@@ -24,13 +17,18 @@
         "delVersion": 0,
         "version": 0,
         "createdBy": "autotest-ref",
-        "createTime": "@var:ErpCtContractLine@createTime",
+        "createTime": "@var:ErpCtContractLine@updateTime",
         "updatedBy": "autotest-ref",
-        "updateTime": "@var:ErpCtContractLine@createTime",
-        "materialName": null,
-        "contractName": "SMOKE-CT"
+        "updateTime": "@var:ErpCtContractLine@updateTime"
       }
-    ]
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
   },
   "status": 0
 }

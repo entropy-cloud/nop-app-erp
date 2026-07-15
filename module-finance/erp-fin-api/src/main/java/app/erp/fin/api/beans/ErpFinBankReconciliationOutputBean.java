@@ -154,16 +154,16 @@
         }
 
 
-        private java.time.LocalDateTime _reconciledAt;
+        private java.sql.Timestamp _reconciledAt;
 
     
         @PropMeta(propId=11)
     
-        public java.time.LocalDateTime getReconciledAt(){
+        public java.sql.Timestamp getReconciledAt(){
             return _reconciledAt;
         }
 
-        public void setReconciledAt(java.time.LocalDateTime value){
+        public void setReconciledAt(java.sql.Timestamp value){
             this._reconciledAt = value;
         }
 
@@ -303,42 +303,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _fundAccountName;
-
-    
-        public String getFundAccountName(){
-            return _fundAccountName;
-        }
-
-        public void setFundAccountName(String value){
-            this._fundAccountName = value;
-        }
-
-
-        private String _statementCode;
-
-    
-        public String getStatementCode(){
-            return _statementCode;
-        }
-
-        public void setStatementCode(String value){
-            this._statementCode = value;
         }
 
 

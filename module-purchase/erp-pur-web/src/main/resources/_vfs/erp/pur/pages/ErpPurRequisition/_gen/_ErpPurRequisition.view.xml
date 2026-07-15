@@ -68,15 +68,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--请购人名称-->
-                <col id="requesterName"/>
-
-                <!--请购部门名称-->
-                <col id="departmentName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -93,8 +84,6 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- orgName[业务组织名称] requesterName[请购人名称]
- departmentName[请购部门名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-采购请购单" i18n-en:title="Add Purchase Requisition" x:prototype="edit"/>

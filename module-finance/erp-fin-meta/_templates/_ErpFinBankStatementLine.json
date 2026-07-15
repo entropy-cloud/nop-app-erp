@@ -23,6 +23,5 @@
   "statement": null,
   "matchedLine": null,
   "currency": null,
-  "statementCode": "",
-  "currencyName": ""
+  "currency.name": ""
 }

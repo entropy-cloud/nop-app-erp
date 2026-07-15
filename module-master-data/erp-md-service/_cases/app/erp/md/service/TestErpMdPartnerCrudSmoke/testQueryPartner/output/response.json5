@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "1",
-        "code": "P-SMOKE-QUERY",
+        "code": "@var:ErpMdPartner@code",
         "name": "冒烟测试-查询往来单位",
         "partnerType": "CUSTOMER",
         "partnerType_label": "CUSTOMER-客户",
@@ -27,7 +27,8 @@
         "createTime": "@var:ErpMdPartner@createTime",
         "updatedBy": "autotest-ref",
         "updateTime": "@var:ErpMdPartner@createTime",
-        "remark": null
+        "remark": null,
+        "customerGroup": null
       }
     ],
     "limit": 10,

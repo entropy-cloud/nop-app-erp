@@ -203,7 +203,7 @@ public class ErpPurReceiveProcessor {
     protected void doApprove(ErpPurReceive receive, ErpInvStockMove move, IServiceContext context) {
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         receive.setApprovedBy(currentUserId());
-        receive.setApprovedAt(CoreMetrics.currentDateTime());
+        receive.setApprovedAt(CoreMetrics.currentTimestamp());
         applyPostingResult(receive, move);
         receive.setReceiveStatus(ErpPurConstants.RECEIVE_STATUS_RECEIVED);
         receiveDao().updateEntity(receive);
@@ -241,7 +241,7 @@ public class ErpPurReceiveProcessor {
     protected void applyPostingResult(ErpPurReceive receive, ErpInvStockMove move) {
         receive.setPosted(Boolean.TRUE.equals(move.getPosted()));
         if (Boolean.TRUE.equals(receive.getPosted())) {
-            receive.setPostedAt(CoreMetrics.currentDateTime());
+            receive.setPostedAt(CoreMetrics.currentTimestamp());
             receive.setPostedBy(currentUserId());
         }
     }

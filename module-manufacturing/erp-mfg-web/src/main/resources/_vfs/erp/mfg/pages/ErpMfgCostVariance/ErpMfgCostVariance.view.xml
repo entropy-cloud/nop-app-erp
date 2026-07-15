@@ -10,8 +10,8 @@
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="varianceType" mandatory="true" sortable="true"/>
                 <col id="costElement" mandatory="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
-                <col id="workcenterName" label="工作中心"/>
+                <col id="materialId" label="物料"/>
+                <col id="workcenterId" label="工作中心"/>
                 <col id="varianceAmount" ui:number="true" sortable="true"/>
                 <col id="businessDate" mandatory="true" sortable="true"/>
             </cols>

@@ -41,11 +41,11 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     public static final String PROP_NAME_assignmentDate = "assignmentDate";
     public static final int PROP_ID_assignmentDate = 5;
     
-    /* 实际签到时间: ACTUAL_START_TIME DATETIME */
+    /* 实际签到时间: ACTUAL_START_TIME TIMESTAMP */
     public static final String PROP_NAME_actualStartTime = "actualStartTime";
     public static final int PROP_ID_actualStartTime = 6;
     
-    /* 实际签退时间: ACTUAL_END_TIME DATETIME */
+    /* 实际签退时间: ACTUAL_END_TIME TIMESTAMP */
     public static final String PROP_NAME_actualEndTime = "actualEndTime";
     public static final int PROP_ID_actualEndTime = 7;
     
@@ -210,10 +210,10 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     private java.time.LocalDate _assignmentDate;
     
     /* 实际签到时间: ACTUAL_START_TIME */
-    private java.time.LocalDateTime _actualStartTime;
+    private java.sql.Timestamp _actualStartTime;
     
     /* 实际签退时间: ACTUAL_END_TIME */
-    private java.time.LocalDateTime _actualEndTime;
+    private java.sql.Timestamp _actualEndTime;
     
     /* 是否缺勤: IS_ABSENT */
     private java.lang.Boolean _isAbsent;
@@ -450,9 +450,9 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualStartTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_actualStartTime));
                }
                setActualStartTime(typedValue);
@@ -460,9 +460,9 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
             }
         
             case PROP_ID_actualEndTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_actualEndTime));
                }
                setActualEndTime(typedValue);
@@ -645,14 +645,14 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
         
             case PROP_ID_actualStartTime:{
                onInitProp(propId);
-               this._actualStartTime = (java.time.LocalDateTime)value;
+               this._actualStartTime = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_actualEndTime:{
                onInitProp(propId);
-               this._actualEndTime = (java.time.LocalDateTime)value;
+               this._actualEndTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -852,7 +852,7 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     /**
      * 实际签到时间: ACTUAL_START_TIME
      */
-    public final java.time.LocalDateTime getActualStartTime(){
+    public final java.sql.Timestamp getActualStartTime(){
          onPropGet(PROP_ID_actualStartTime);
          return _actualStartTime;
     }
@@ -860,7 +860,7 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     /**
      * 实际签到时间: ACTUAL_START_TIME
      */
-    public final void setActualStartTime(java.time.LocalDateTime value){
+    public final void setActualStartTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_actualStartTime,value)){
             this._actualStartTime = value;
             internalClearRefs(PROP_ID_actualStartTime);
@@ -871,7 +871,7 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     /**
      * 实际签退时间: ACTUAL_END_TIME
      */
-    public final java.time.LocalDateTime getActualEndTime(){
+    public final java.sql.Timestamp getActualEndTime(){
          onPropGet(PROP_ID_actualEndTime);
          return _actualEndTime;
     }
@@ -879,7 +879,7 @@ public class _ErpHrShiftAssignment extends DynamicOrmEntity{
     /**
      * 实际签退时间: ACTUAL_END_TIME
      */
-    public final void setActualEndTime(java.time.LocalDateTime value){
+    public final void setActualEndTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_actualEndTime,value)){
             this._actualEndTime = value;
             internalClearRefs(PROP_ID_actualEndTime);

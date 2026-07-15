@@ -65,7 +65,6 @@ public class CostAdjustmentAcctDocProvider implements IErpFinAcctDocProvider {
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMaterialId(materialId);
         fact.setWarehouseId(warehouseId);
-        fact.setMemo(event.getBillHeadCode());
         return fact;
     }
 

@@ -24,6 +24,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -468,8 +469,8 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         a.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         a.setEmployeeId(employeeId);
         a.setDate(date);
-        a.setClockIn(clockIn);
-        a.setClockOut(clockOut);
+        a.setClockIn(clockIn != null ? Timestamp.valueOf(clockIn) : null);
+        a.setClockOut(clockOut != null ? Timestamp.valueOf(clockOut) : null);
         a.setIsAbsent(false);
         a.setLateMinutes(0);
         a.setEarlyLeaveMinutes(0);

@@ -4,16 +4,12 @@ package app.erp.sal.service.entity;
 import app.erp.sal.biz.IErpSalOrderLineBiz;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.config.AppConfig;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @BizModel("ErpSalOrderLine")
@@ -50,23 +46,4 @@ public class ErpSalOrderLineBizModel extends CrudBizModel<ErpSalOrderLine> imple
         }
     }
 
-    @BizLoader(forType = ErpSalOrderLine.class)
-    public List<String> materialName(@ContextSource List<ErpSalOrderLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpSalOrderLine line : lines) {
-            result.add(line.getMaterial() != null ? line.getMaterial().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpSalOrderLine.class)
-    public List<String> warehouseName(@ContextSource List<ErpSalOrderLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("warehouse"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpSalOrderLine line : lines) {
-            result.add(line.getWarehouse() != null ? line.getWarehouse().getName() : null);
-        }
-        return result;
-    }
 }

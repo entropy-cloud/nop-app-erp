@@ -215,7 +215,7 @@ public class ErpSalReturnProcessor {
         returnOrder = returnDao().getEntityById(returnOrder.getId());
         returnOrder.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         returnOrder.setApprovedBy(currentUserId());
-        returnOrder.setApprovedAt(CoreMetrics.currentDateTime());
+        returnOrder.setApprovedAt(CoreMetrics.currentTimestamp());
         applyPosted(returnOrder, posted);
         returnDao().updateEntity(returnOrder);
     }
@@ -289,7 +289,7 @@ public class ErpSalReturnProcessor {
     protected void applyPosted(ErpSalReturn returnOrder, boolean posted) {
         if (posted) {
             returnOrder.setPosted(true);
-            returnOrder.setPostedAt(CoreMetrics.currentDateTime());
+            returnOrder.setPostedAt(CoreMetrics.currentTimestamp());
             returnOrder.setPostedBy(currentUserId());
         }
     }

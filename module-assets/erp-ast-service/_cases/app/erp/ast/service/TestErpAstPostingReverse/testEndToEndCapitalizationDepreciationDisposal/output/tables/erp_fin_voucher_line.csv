@@ -1,0 +1,10 @@
+_chgType,ID,VOUCHER_ID,LINE_NO,SUBJECT_ID,SUBJECT_CODE,SUBJECT_NAME,DC_DIRECTION,DEBIT_AMOUNT,CREDIT_AMOUNT,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,ACCT_SCHEMA_ID,ORG_ID,MEMO,PARTNER_ID,DEPARTMENT_ID,PROJECT_ID,WAREHOUSE_ID,MATERIAL_ID,BUSINESS_TYPE,COST_CENTER_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,26,25,1,6,1601,固定资产,DEBIT,12000.0000,0,1,1.00000000,12000.0000,12000.0000,1,,,,,,,,CAPITALIZATION,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,27,25,2,2,1002,银行存款,CREDIT,0,12000.0000,1,1.00000000,12000.0000,12000.0000,1,,,,,,,,CAPITALIZATION,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,30,29,1,8,6602,折旧费用,DEBIT,1000.0000,0,1,1,1000.0000,1000.0000,1,,,,,,,,DEPRECIATION,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,31,29,2,7,1602,累计折旧,CREDIT,0,1000.0000,1,1,1000.0000,1000.0000,1,,,,,,,,DEPRECIATION,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,34,33,1,8,6602,折旧费用,DEBIT,1000.0000,0,1,1,1000.0000,1000.0000,1,,,,,,,,DEPRECIATION,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,35,33,2,7,1602,累计折旧,CREDIT,0,1000.0000,1,1,1000.0000,1000.0000,1,,,,,,,,DEPRECIATION,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,39,38,1,7,1602,累计折旧,DEBIT,2000.0000,0,1,1.00000000,2000.0000,2000.0000,1,,,,,,,,DISPOSAL,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,40,38,2,9,6711,营业外支出,DEBIT,10000.0000,0,1,1.00000000,10000.0000,10000.0000,1,,,,,,,,DISPOSAL,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,41,38,3,6,1601,固定资产,CREDIT,0,12000.0000,1,1.00000000,12000.0000,12000.0000,1,,,,,,,,DISPOSAL,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*

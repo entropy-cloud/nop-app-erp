@@ -35,13 +35,13 @@
               insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="joinedAt" displayName="加入时间" propId="5" i18n-en:displayName="Joined At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="joinedAt" displayName="加入时间" propId="5" i18n-en:displayName="Joined At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="leftAt" displayName="退出时间" propId="6" i18n-en:displayName="Left At" queryable="true" sortable="true"
-              insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="leftAt" displayName="退出时间" propId="6" i18n-en:displayName="Left At" tagSet="clock" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="7" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
@@ -73,9 +73,13 @@
             <schema bizObjName="ErpMntMaintenanceTeam"/>
         </prop>
         <prop name="employee" i18n-en:displayName="Employee" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="employeeId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="employeeId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="employee.name" i18n-en:displayName="Employee" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

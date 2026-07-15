@@ -1,0 +1,5 @@
+_chgType,ID,TICKET_ID,ACTION_TYPE,FROM_STATUS,TO_STATUS,OPERATOR_ID,CONTENT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,7846,ASSIGN,NEW,ASSIGNED,autotest,分派处理人: user-zhang,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,2,7846,NOTE,ASSIGNED,IN_PROGRESS,autotest,开始处理,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,3,7846,NOTE,IN_PROGRESS,RESOLVED,autotest,标记解决: 已修复,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,5,7846,CLOSE,RESOLVED,CLOSED,autotest,关闭工单,@var:ErpCsTicketAction@delVersion_1,0,autotest-ref,*,autotest-ref,*

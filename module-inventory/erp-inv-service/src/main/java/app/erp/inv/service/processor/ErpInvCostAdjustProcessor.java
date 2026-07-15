@@ -18,7 +18,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
@@ -87,7 +87,7 @@ public class ErpInvCostAdjustProcessor {
         validateTransitionForApprove(adjust);
         adjust.setApproveStatus(APPROVE_STATUS_APPROVED);
         adjust.setApprovedBy(currentUserId());
-        adjust.setApprovedAt(CoreMetrics.currentDateTime());
+        adjust.setApprovedAt(CoreMetrics.currentTimestamp());
         adjustDao().updateEntity(adjust);
         return adjust;
     }
@@ -137,7 +137,7 @@ public class ErpInvCostAdjustProcessor {
         Long voucherId = postingDispatcher.tryPost(adjust, lines, totalAdjustAmount);
 
         adjust = reload(id);
-        LocalDateTime now = CoreMetrics.currentDateTime();
+        Timestamp now = CoreMetrics.currentTimestamp();
         adjust.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
         if (voucherId != null) {
             adjust.setPosted(true);

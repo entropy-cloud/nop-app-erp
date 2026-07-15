@@ -25,7 +25,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpApsDispatchLog:
       id: ID
       orgId: Organization
@@ -49,9 +49,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      org.name: Org
       operationOrder: null
-      orgName: null
-      operationOrderName: null
     ErpApsDispatchRule:
       id: ID
       orgId: Organization
@@ -77,7 +76,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpApsOpRouting:
       id: ID
       orgId: Organization
@@ -100,7 +99,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpApsOperationOrder:
       id: ID
       code: Code
@@ -133,7 +132,7 @@ prop:
       latestEndDateT: Latest End Date
       businessDate: Business Date
       org: Org
-      orgName: null
+      org.name: Org
     ErpApsSchedule:
       id: ID
       code: Code
@@ -155,7 +154,7 @@ prop:
       updateTime: Update Time
       businessDate: Business Date
       org: Org
-      orgName: null
+      org.name: Org
 dict:
   label:
     erp-aps/operation-order-status: Operation Order Status

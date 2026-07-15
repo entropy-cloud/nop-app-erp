@@ -207,10 +207,10 @@ public class ErpSalInvoiceProcessor {
     protected void doApprove(ErpSalInvoice invoice, boolean posted, IServiceContext context) {
         invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         invoice.setApprovedBy(currentUserId());
-        invoice.setApprovedAt(CoreMetrics.currentDateTime());
+        invoice.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
             invoice.setPosted(true);
-            invoice.setPostedAt(CoreMetrics.currentDateTime());
+            invoice.setPostedAt(CoreMetrics.currentTimestamp());
             invoice.setPostedBy(currentUserId());
         }
         invoiceDao().updateEntity(invoice);

@@ -24,6 +24,7 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,8 +38,6 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
 import java.util.Collections;
 
 /**
@@ -106,7 +105,7 @@ public class ErpCrmLeadFunnelBizModel extends CrudBizModel<ErpCrmLeadFunnel> imp
         funnel.setWeightedRevenue(snapshot.getWeightedRevenue());
         funnel.setAvgDealSize(snapshot.getAvgDealSize());
         funnel.setAvgSalesCycleDays(snapshot.getAvgSalesCycleDays());
-        funnel.setCalculatedAt(snapshot.getCalculatedAt());
+        funnel.setCalculatedAt(snapshot.getCalculatedAt() != null ? Timestamp.valueOf(snapshot.getCalculatedAt()) : null);
         saveEntity(funnel, null, context);
 
         // 持久化 FunnelStageMetrics 明细（upsert by funnelId + stageId）
@@ -293,45 +292,5 @@ public class ErpCrmLeadFunnelBizModel extends CrudBizModel<ErpCrmLeadFunnel> imp
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCrmLeadFunnel.class)
-    public List<String> orgName(@ContextSource List<ErpCrmLeadFunnel> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLeadFunnel row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLeadFunnel.class)
-    public List<String> territoryName(@ContextSource List<ErpCrmLeadFunnel> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("territory"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLeadFunnel row : rows) {
-            result.add(row.orm_attached() && row.getTerritory() != null ? row.getTerritory().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLeadFunnel.class)
-    public List<String> teamName(@ContextSource List<ErpCrmLeadFunnel> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("team"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLeadFunnel row : rows) {
-            result.add(row.orm_attached() && row.getTeam() != null ? row.getTeam().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLeadFunnel.class)
-    public List<String> sourceName(@ContextSource List<ErpCrmLeadFunnel> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("source"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLeadFunnel row : rows) {
-            result.add(row.orm_attached() && row.getSource() != null ? row.getSource().getName() : null);
-        }
-        return result;
-    }
 
 }

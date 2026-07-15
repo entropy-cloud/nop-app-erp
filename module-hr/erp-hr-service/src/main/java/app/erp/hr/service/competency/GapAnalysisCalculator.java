@@ -11,7 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public class GapAnalysisCalculator {
         if (roleCompetencies == null) return result;
 
         int criticalThreshold = ErpHrConfigs.gapCriticalThreshold();
-        LocalDateTime analysisDate = CoreMetrics.currentDateTime();
+        LocalDate analysisDate = CoreMetrics.today();
 
         for (ErpHrRoleCompetency rc : roleCompetencies) {
             if (rc.getCompetencyId() == null || rc.getRequiredLevel() == null) continue;

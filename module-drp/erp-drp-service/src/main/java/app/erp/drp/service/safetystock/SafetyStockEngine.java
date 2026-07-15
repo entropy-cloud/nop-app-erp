@@ -131,7 +131,7 @@ public class SafetyStockEngine {
 
         calc.setCalculatedSafetyStock(safetyStock);
         calc.setCalculatedRop(rop);
-        calc.setLastCalculatedAt(CoreMetrics.currentDateTime());
+        calc.setLastCalculatedAt(CoreMetrics.currentTimestamp());
         daoProvider.daoFor(ErpInvDrpSafetyStockCalc.class).updateEntity(calc);
         return calc;
     }

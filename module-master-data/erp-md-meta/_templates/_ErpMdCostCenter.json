@@ -16,10 +16,10 @@
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
   "organization": null,
+  "organization.name": "",
   "manager": null,
+  "manager.name": "",
   "parent": null,
-  "children": null,
-  "orgName": "",
-  "managerName": "",
-  "parentName": ""
+  "parent.name": "",
+  "children": null
 }

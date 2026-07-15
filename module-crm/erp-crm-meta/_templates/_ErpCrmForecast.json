@@ -25,10 +25,7 @@
   "territory": null,
   "team": null,
   "org": null,
+  "org.name": "",
   "currency": null,
-  "orgName": "",
-  "periodCode": "",
-  "territoryName": "",
-  "teamName": "",
-  "currencyName": ""
+  "currency.name": ""
 }

@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NAME,ORG_ID,PROJECT_TYPE_ID,CUSTOMER_ID,CURRENCY_ID,START_DATE,END_DATE,BUDGET,COMMITTED_COST,ACTUAL_COST,BILLED_AMOUNT,STATUS,MANAGER_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,101,@var:ErpPrjProject@code,项目-P-1,1,,,1,2026-01-01,,0,0,0,0,OPEN,,,@var:ErpPrjProject@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,102,@var:ErpPrjProject@code_1,项目-P-2,1,,,1,2026-01-01,,0,0,0,0,OPEN,,,@var:ErpPrjProject@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,103,@var:ErpPrjProject@code_2,项目-P-3,1,,,1,2026-01-01,,0,0,0,0,COMPLETED,,,@var:ErpPrjProject@delVersion_2,0,autotest-ref,*,autotest-ref,*

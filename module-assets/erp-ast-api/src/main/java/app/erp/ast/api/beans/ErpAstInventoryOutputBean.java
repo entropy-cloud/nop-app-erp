@@ -278,16 +278,16 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=19)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 
@@ -320,16 +320,16 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=22)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
         }
 
@@ -457,78 +457,6 @@
 
         public void setRemark(String value){
             this._remark = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _rangeDepartmentName;
-
-    
-        public String getRangeDepartmentName(){
-            return _rangeDepartmentName;
-        }
-
-        public void setRangeDepartmentName(String value){
-            this._rangeDepartmentName = value;
-        }
-
-
-        private String _rangeCategoryName;
-
-    
-        public String getRangeCategoryName(){
-            return _rangeCategoryName;
-        }
-
-        public void setRangeCategoryName(String value){
-            this._rangeCategoryName = value;
-        }
-
-
-        private String _rangeLocationName;
-
-    
-        public String getRangeLocationName(){
-            return _rangeLocationName;
-        }
-
-        public void setRangeLocationName(String value){
-            this._rangeLocationName = value;
-        }
-
-
-        private String _responsibleByName;
-
-    
-        public String getResponsibleByName(){
-            return _responsibleByName;
-        }
-
-        public void setResponsibleByName(String value){
-            this._responsibleByName = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
         }
 
 

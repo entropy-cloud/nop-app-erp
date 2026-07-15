@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.commons.util.DateHelper;
 
 /**
  * APS 有限产能排产引擎（贪心启发式，{@code scheduling.md §二/三/四/五}）。
@@ -87,8 +88,8 @@ public class ErpApsSchedulingEngine {
                 continue;
             }
             LocalDateTime end = start.plusMinutes(duration);
-            op.setPlannedStartDateT(start);
-            op.setPlannedEndDateT(end);
+            op.setPlannedStartDateT(DateHelper.dateTimeToTimestamp(start));
+            op.setPlannedEndDateT(DateHelper.dateTimeToTimestamp(end));
             op.setStatus(ErpApsConstants.OP_STATUS_PLANNED);
             tl.addBusy(start, end, "op:" + (op.getCode() == null ? op.getId() : op.getCode()));
             recordChain(chainByWorkOrder, op, end);
@@ -116,7 +117,7 @@ public class ErpApsSchedulingEngine {
             op.setTotalDuration(BigDecimal.valueOf(duration));
 
             WorkCenterTimeline tl = timelines.computeIfAbsent(op.getMachineId(), WorkCenterTimeline::new);
-            LocalDateTime before = op.getLatestEndDateT() != null ? op.getLatestEndDateT() : horizonEnd;
+            LocalDateTime before = op.getLatestEndDateT() != null ? op.getLatestEndDateT().toLocalDateTime() : horizonEnd;
             if (before == null) {
                 op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
                 result.addConflict(op.getId(), "NO_DEADLINE",
@@ -143,8 +144,8 @@ public class ErpApsSchedulingEngine {
                 continue;
             }
             LocalDateTime end = start.plusMinutes(duration);
-            op.setPlannedStartDateT(start);
-            op.setPlannedEndDateT(end);
+            op.setPlannedStartDateT(DateHelper.dateTimeToTimestamp(start));
+            op.setPlannedEndDateT(DateHelper.dateTimeToTimestamp(end));
             op.setStatus(ErpApsConstants.OP_STATUS_PLANNED);
             tl.addBusy(start, end, "op:" + (op.getCode() == null ? op.getId() : op.getCode()));
             recordChainBackward(chainByWorkOrder, op, start);
@@ -163,7 +164,7 @@ public class ErpApsSchedulingEngine {
                     continue;
                 }
                 timelines.computeIfAbsent(c.getMachineId(), WorkCenterTimeline::new)
-                        .addBusy(c.getStartTime(), c.getEndTime(), "maintenance");
+                        .addBusy(c.getStartTime().toLocalDateTime(), c.getEndTime().toLocalDateTime(), "maintenance");
             }
         }
         return timelines;
@@ -180,7 +181,7 @@ public class ErpApsSchedulingEngine {
                 continue;
             }
             timelines.computeIfAbsent(op.getMachineId(), WorkCenterTimeline::new)
-                    .addBusy(op.getPlannedStartDateT(), op.getPlannedEndDateT(),
+                    .addBusy(op.getPlannedStartDateT().toLocalDateTime(), op.getPlannedEndDateT().toLocalDateTime(),
                             "frozen:" + (op.getCode() == null ? op.getId() : op.getCode()));
         }
     }
@@ -267,9 +268,9 @@ public class ErpApsSchedulingEngine {
     }
 
     private LocalDateTime effectiveEarliestStart(ErpApsOperationOrder op, LocalDateTime floor) {
-        LocalDateTime base = op.getEarliestStartDateT();
+        LocalDateTime base = op.getEarliestStartDateT() == null ? null : op.getEarliestStartDateT().toLocalDateTime();
         if (base == null) {
-            base = op.getPlannedStartDateT();
+            base = op.getPlannedStartDateT() == null ? null : op.getPlannedStartDateT().toLocalDateTime();
         }
         if (base == null) {
             base = floor;
@@ -319,7 +320,7 @@ public class ErpApsSchedulingEngine {
                     continue;
                 }
                 timelines.computeIfAbsent(op.getMachineId(), WorkCenterTimeline::new)
-                        .addBusy(op.getPlannedStartDateT(), op.getPlannedEndDateT(),
+                        .addBusy(op.getPlannedStartDateT().toLocalDateTime(), op.getPlannedEndDateT().toLocalDateTime(),
                                 "op:" + (op.getCode() == null ? op.getId() : op.getCode()));
             }
         }

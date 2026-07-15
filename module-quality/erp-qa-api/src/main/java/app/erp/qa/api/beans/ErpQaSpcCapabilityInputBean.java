@@ -264,16 +264,16 @@
         }
 
 
-        private java.time.LocalDateTime _calculatedAt;
+        private java.sql.Timestamp _calculatedAt;
 
     
         @PropMeta(propId=19)
     
-        public java.time.LocalDateTime getCalculatedAt(){
+        public java.sql.Timestamp getCalculatedAt(){
             return _calculatedAt;
         }
 
-        public void setCalculatedAt(java.time.LocalDateTime value){
+        public void setCalculatedAt(java.sql.Timestamp value){
             this._calculatedAt = value;
         }
 

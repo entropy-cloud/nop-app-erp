@@ -1,0 +1,4 @@
+_chgType,ID,WORKCENTER_ID,ORG_ID,WORK_ORDER_ID,LOAD_DATE,LOAD_HOURS,SETUP_HOURS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,7902,,8565,2026-07-03,2.00,0.00,,@var:ErpMfgCrpLoad@delVersion_3,1,autotest-ref,*,autotest-ref,*
+A,2,7902,,8565,2026-07-03,2.0000,0,,@var:ErpMfgCrpLoad@delVersion,0,autotest-ref,*,autotest-ref,*
+A,63402,7902,,,2026-07-03,99.00,0.00,,@var:ErpMfgCrpLoad@delVersion_4,1,autotest-ref,*,autotest-ref,*

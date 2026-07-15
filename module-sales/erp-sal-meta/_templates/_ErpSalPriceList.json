@@ -17,6 +17,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
   "currency": null,
+  "currency.name": "",
   "partner": null,
+  "partner.name": "",
   "lines": null
 }

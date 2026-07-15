@@ -52,9 +52,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="20" dict="erp-ct/settlement-status"/>
         </prop>
-        <prop name="postedAt" displayName="过账时间" propId="9" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="postedAt" displayName="过账时间" propId="9" i18n-en:displayName="Posted At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="postedBy" displayName="过账人" propId="10" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="false" updatable="false" ui:show="R">
@@ -102,9 +102,12 @@
             <schema bizObjName="ErpCtRebateAgreement"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

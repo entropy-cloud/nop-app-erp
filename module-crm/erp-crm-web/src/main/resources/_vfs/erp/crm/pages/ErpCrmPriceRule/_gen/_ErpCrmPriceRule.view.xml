@@ -92,18 +92,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
-
-                <!--产品-->
-                <col id="materialName"/>
-
-                <!--客户-->
-                <col id="customerName"/>
-
-                <!--币种-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -124,8 +112,6 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- orgName[业务组织] materialName[产品]
- customerName[客户] currencyName[币种]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-价格规则" i18n-en:title="Add Price Rule" x:prototype="edit"/>

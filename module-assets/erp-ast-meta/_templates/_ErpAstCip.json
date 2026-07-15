@@ -29,10 +29,8 @@
   "amountFunctional": 0.0,
   "category": null,
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "completedAsset": null,
-  "orgName": "",
-  "categoryName": "",
-  "currencyName": "",
-  "completedAssetCode": ""
+  "org.name": "",
+  "completedAsset": null
 }

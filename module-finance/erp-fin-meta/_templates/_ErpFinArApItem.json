@@ -18,11 +18,6 @@
   "settledAmountFunctional": 0.0,
   "openAmountSource": 0.0,
   "openAmountFunctional": 0.0,
-  "orgName": "",
-  "acctSchemaCode": "",
-  "partnerName": "",
-  "currencyName": "",
-  "periodCode": "",
   "status": "",
   "status_label": "",
   "periodId": 0,
@@ -34,8 +29,12 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "partner": null,
+  "partner.name": "",
   "acctSchema": null,
+  "acctSchema.name": "",
   "currency": null,
+  "currency.name": "",
   "period": null,
-  "org": null
+  "org": null,
+  "org.name": ""
 }

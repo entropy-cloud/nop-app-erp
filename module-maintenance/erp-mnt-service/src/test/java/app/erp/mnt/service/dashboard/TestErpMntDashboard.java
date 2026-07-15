@@ -21,6 +21,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -186,8 +187,8 @@ public class TestErpMntDashboard extends JunitAutoTestCase {
         ErpMntDowntimeEntry d = dao.newEntity();
         d.orm_propValue(1, id);
         d.setEquipmentId(equipmentId);
-        d.setStartTime(CoreMetrics.currentDateTime().minusHours(2));
-        d.setEndTime(endTime);
+        d.setStartTime(Timestamp.valueOf(CoreMetrics.currentDateTime().minusHours(2)));
+        d.setEndTime(endTime != null ? Timestamp.valueOf(endTime) : null);
         dao.saveEntity(d);
     }
 

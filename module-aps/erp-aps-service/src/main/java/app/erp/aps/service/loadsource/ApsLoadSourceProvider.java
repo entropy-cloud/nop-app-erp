@@ -81,8 +81,8 @@ public class ApsLoadSourceProvider implements IErpApsLoadSourceProvider {
             slot.setWorkOrderId(op.getWorkOrderId());
             slot.setSequence(op.getSequence());
             slot.setWorkcenterId(op.getMachineId());
-            slot.setPlannedStartT(op.getPlannedStartDateT());
-            slot.setPlannedEndT(op.getPlannedEndDateT());
+            slot.setPlannedStartT(op.getPlannedStartDateT().toLocalDateTime());
+            slot.setPlannedEndT(op.getPlannedEndDateT().toLocalDateTime());
             slot.setSetupTime(op.getSetupTime());
             slots.add(slot);
         }

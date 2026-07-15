@@ -251,16 +251,16 @@
         }
 
 
-        private String _grossMarginPct;
+        private java.math.BigDecimal _grossMarginPct;
 
     
         @PropMeta(propId=18)
     
-        public String getGrossMarginPct(){
+        public java.math.BigDecimal getGrossMarginPct(){
             return _grossMarginPct;
         }
 
-        public void setGrossMarginPct(String value){
+        public void setGrossMarginPct(java.math.BigDecimal value){
             this._grossMarginPct = value;
         }
 
@@ -399,16 +399,16 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=26)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 
@@ -522,42 +522,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _projectName;
-
-    
-        public String getProjectName(){
-            return _projectName;
-        }
-
-        public void setProjectName(String value){
-            this._projectName = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
         }
 
 

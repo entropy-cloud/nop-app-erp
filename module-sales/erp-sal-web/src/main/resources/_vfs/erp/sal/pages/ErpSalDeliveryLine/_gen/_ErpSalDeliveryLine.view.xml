@@ -77,12 +77,6 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
-
-                <!--物料名称-->
-                <col id="materialName"/>
-
-                <!--出库库位名称-->
-                <col id="warehouseName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -100,8 +94,7 @@
  batchNo[批号] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] materialName[物料名称]
- warehouseName[出库库位名称] 
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-销售出库单行" i18n-en:title="Add Sales Delivery Line" x:prototype="edit"/>

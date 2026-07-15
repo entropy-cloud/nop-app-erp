@@ -35,13 +35,13 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="startTime" displayName="开始时间" propId="5" i18n-en:displayName="Start Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="startTime" displayName="开始时间" propId="5" i18n-en:displayName="Start Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="endTime" displayName="结束时间" propId="6" i18n-en:displayName="End Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="endTime" displayName="结束时间" propId="6" i18n-en:displayName="End Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="duration" displayName="时长(分钟)" propId="7" i18n-en:displayName="Duration" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -71,9 +71,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
-        <prop name="approvedAt" displayName="审批时间" propId="14" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="approvedAt" displayName="审批时间" propId="14" i18n-en:displayName="Approved At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="projectId" displayName="关联项目" propId="15" i18n-en:displayName="Project" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -117,8 +117,12 @@
             <schema bizObjName="ErpCsTicket"/>
         </prop>
         <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

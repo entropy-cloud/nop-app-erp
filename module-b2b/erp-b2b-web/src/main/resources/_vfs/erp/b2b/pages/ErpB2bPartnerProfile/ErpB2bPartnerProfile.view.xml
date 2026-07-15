@@ -7,9 +7,9 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="partnerName" label="关联伙伴"/>
-                <col id="partnerName" mandatory="true" sortable="true"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="partnerId" label="关联伙伴"/>
+                <col id="partnerId" mandatory="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="protocol" mandatory="true" sortable="true"/>
                 <col id="transportEndpoint" sortable="true"/>
@@ -18,7 +18,7 @@
                 <col id="certFingerprint" sortable="true"/>
                 <col id="allowedFormats" sortable="true"/>
                 <col id="timezone" sortable="true"/>
-                <col id="contactName" sortable="true"/>
+                <col id="contactId" sortable="true"/>
                 <col id="contactEmail" sortable="true"/>
                 <col id="contactPhone" sortable="true"/>
                 <col id="notes" sortable="true"/>

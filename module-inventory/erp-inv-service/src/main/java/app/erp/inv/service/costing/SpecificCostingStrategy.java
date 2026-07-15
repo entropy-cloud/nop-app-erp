@@ -1,5 +1,8 @@
 package app.erp.inv.service.costing;
 
+import app.erp.inv.service.ErpInvConfigs;
+
+
 import app.erp.inv.dao.entity.ErpInvCostLayer;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
@@ -120,7 +123,7 @@ public class SpecificCostingStrategy implements CostingStrategy {
 
         BigDecimal weightedUnitCost = qty.signum() != 0
                 ? totalCost.divide(qty, SCALE, RoundingMode.HALF_UP) : BigDecimal.ZERO;
-        line.setUnitCost(weightedUnitCost);
+        line.setUnitCost(ErpInvConfigs.roundCost(weightedUnitCost));
         daoProvider.daoFor(ErpInvStockMoveLine.class).saveOrUpdateEntity(line);
 
         final BigDecimal specificTotalCost = totalCost;
@@ -149,7 +152,7 @@ public class SpecificCostingStrategy implements CostingStrategy {
         layer.setCostMethod(ErpInvConstants.COST_METHOD_INDIVIDUAL);
         layer.setIncomingQuantity(qty);
         layer.setRemainingQuantity(qty);
-        layer.setUnitCost(unitCost);
+        layer.setUnitCost(ErpInvConfigs.roundCost(unitCost));
         layer.setTotalCost(totalCost);
         layer.setCurrencyId(line.getCurrencyId());
         layer.setIncomingDate(move.getBusinessDate() != null ? move.getBusinessDate() : CoreMetrics.today());

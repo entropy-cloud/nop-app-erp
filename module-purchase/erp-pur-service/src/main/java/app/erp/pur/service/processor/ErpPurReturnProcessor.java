@@ -209,10 +209,10 @@ public class ErpPurReturnProcessor {
     protected void doApprove(ErpPurReturn returnOrder, boolean posted, IServiceContext context) {
         returnOrder.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         returnOrder.setApprovedBy(currentUserId());
-        returnOrder.setApprovedAt(CoreMetrics.currentDateTime());
+        returnOrder.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
             returnOrder.setPosted(true);
-            returnOrder.setPostedAt(CoreMetrics.currentDateTime());
+            returnOrder.setPostedAt(CoreMetrics.currentTimestamp());
             returnOrder.setPostedBy(currentUserId());
         }
         returnDao().updateEntity(returnOrder);

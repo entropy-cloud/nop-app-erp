@@ -237,42 +237,6 @@
         }
 
 
-        private String _mergeCode;
-
-    
-        public String getMergeCode(){
-            return _mergeCode;
-        }
-
-        public void setMergeCode(String value){
-            this._mergeCode = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _sourceAssetCode;
-
-    
-        public String getSourceAssetCode(){
-            return _sourceAssetCode;
-        }
-
-        public void setSourceAssetCode(String value){
-            this._sourceAssetCode = value;
-        }
-
-
         private Map<String,Object> _merge;
 
         public Map<String,Object> getMerge(){

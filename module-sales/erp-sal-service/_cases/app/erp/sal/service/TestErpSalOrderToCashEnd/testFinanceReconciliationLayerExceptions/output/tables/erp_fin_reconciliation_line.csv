@@ -1,0 +1,4 @@
+_chgType,ID,RECONCILIATION_ID,LINE_NO,PAYMENT_ITEM_ID,INVOICE_ITEM_ID,SETTLED_AMOUNT_SOURCE,SETTLED_AMOUNT_FUNCTIONAL,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,33,32,1,31,26,999,999,,@var:ErpFinReconciliationLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,35,34,1,31,26,113,113,,@var:ErpFinReconciliationLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,37,36,1,31,26,113,113,,@var:ErpFinReconciliationLine@delVersion,0,autotest-ref,*,autotest-ref,*

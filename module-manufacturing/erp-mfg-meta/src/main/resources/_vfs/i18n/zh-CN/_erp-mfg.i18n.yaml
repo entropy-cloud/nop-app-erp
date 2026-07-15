@@ -36,11 +36,14 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       inputLot: null
+      inputLot.name: null
       inputLotId: 输入批次
       inputMaterial: null
+      inputMaterial.name: null
       inputMaterialId: 输入物料
       inputQty: 投入数量
       inputUoM: null
+      inputUoM.name: null
       inputUoMId: 投入计量单位
       isInputConsumed: 输入是否已消耗
       jobCard: null
@@ -50,11 +53,14 @@ prop:
       operation: null
       operationId: 工序
       outputLot: null
+      outputLot.name: null
       outputLotId: 产出批次
       outputMaterial: null
+      outputMaterial.name: null
       outputMaterialId: 产出物料
       outputQty: 产出数量
       outputUoM: null
+      outputUoM.name: null
       outputUoMId: 产出计量单位
       productionDate: 生产日期
       productionTime: 生产时间
@@ -81,8 +87,8 @@ prop:
       lines: null
       operations: null
       product: null
+      product.name: null
       productId: 产品
-      productName: 产品名称
       qty: BOM数量
       remark: 备注
       updateTime: 修改时间
@@ -102,12 +108,15 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       quantity: 数量
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -115,9 +124,9 @@ prop:
       yieldRate: 产出率(%)
     ErpMfgBomLine:
       alternativeMaterial: null
+      alternativeMaterial.name: null
       alternativeMaterialId: 替代物料
       bom: null
-      bomCode: BOM编码
       bomId: BOM ID
       createTime: 创建时间
       createdBy: 创建人
@@ -125,24 +134,25 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       operation: null
       operationId: 工序ID
       quantity: 数量
       remark: 备注
       scrapRate: 损耗率(%)
       sku: null
+      sku.name: null
       skuId: SKU
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
-      uomName: 计量单位名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 发货仓库
-      warehouseName: 发货仓库名称
     ErpMfgBomOperation:
       bom: null
       bomId: BOM ID
@@ -172,8 +182,8 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       remark: 备注
       status: 状态
       status_label: 状态
@@ -182,28 +192,27 @@ prop:
       version: 数据版本
     ErpMfgCostRollupLine:
       costRollup: null
-      costRollupCode: 滚算单单号
       costRollupId: 滚算单ID
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       id: ID
       laborCost: 人工成本
       lineNo: 行号
       material: null
+      material.name: null
       materialCost: 材料成本
       materialId: 产品
-      materialName: 产品名称
       overheadCost: 制造费用
       subcontractCost: 委外成本
       totalCost: 总成本
       unitCost: 单位标准成本
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
-      uomName: 计量单位名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -220,8 +229,8 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       operation: null
       operationId: 工序
       posted: 已过账
@@ -238,10 +247,8 @@ prop:
       version: 数据版本
       workOrder: null
       workOrderId: 工单
-      workOrderNo: 工单号
       workcenter: null
       workcenterId: 工作中心
-      workcenterName: 工作中心名称
     ErpMfgCrpLoad:
       createTime: 创建时间
       createdBy: 创建人
@@ -250,8 +257,8 @@ prop:
       loadDate: 负荷日期
       loadHours: 占用工时
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       remark: 备注
       setupHours: 换模工时
       updateTime: 修改时间
@@ -259,10 +266,8 @@ prop:
       version: 数据版本
       workOrder: null
       workOrderId: 工单(弱指针)
-      workOrderNo: 工单号
       workcenter: null
       workcenterId: 工作中心
-      workcenterName: 工作中心名称
     ErpMfgForecast:
       code: 单号
       createTime: 创建时间
@@ -271,8 +276,8 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       periodFrom: 预测区间起
       periodTo: 预测区间止
       planName: 预测名称
@@ -287,27 +292,26 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       forecast: null
-      forecastCode: 预测单号
       forecastId: 需求预测ID
       forecastQty: 预测数量
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       periodEnd: 桶结束日期
       periodStart: 桶起始日期
       remark: 备注
       sourcedFlag: 来源标记
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
-      uomName: 计量单位名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库（可选，空=产品级 MRP 消费，填=仓级 DRP 消费）
-      warehouseName: 仓库名称
     ErpMfgJobCard:
       actualEndTime: 实际结束时间
       actualStartTime: 实际开始时间
@@ -331,10 +335,8 @@ prop:
       version: 数据版本
       workOrder: null
       workOrderId: 工单ID
-      workOrderNo: 工单号
       workcenter: null
       workcenterId: 工作中心
-      workcenterName: 工作中心名称
     ErpMfgJobCardTimeLog:
       completedQuantity: 本班完工数量
       createTime: 创建时间
@@ -348,6 +350,7 @@ prop:
       jobCardId: 作业卡ID
       laborCost: 人工成本
       operator: null
+      operator.name: null
       operatorId: 操作员(职员)
       remark: 备注
       runMins: 加工时间(分钟)
@@ -372,8 +375,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -383,8 +386,8 @@ prop:
       jobCardId: 作业卡
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -393,11 +396,10 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 发料仓库
-      warehouseName: 发料仓库名称
       workOrder: null
       workOrderId: 工单
-      workOrderNo: 工单号
     ErpMfgMaterialIssueLine:
       batchNo: 批号
       createTime: 创建时间
@@ -409,17 +411,20 @@ prop:
       issuedQuantity: 实领数量
       lineNo: 行号
       location: null
+      location.name: null
       locationId: 库位
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       remark: 备注
       requiredQuantity: 应领数量
       sku: null
+      sku.name: null
       skuId: SKU
       totalCost: 总成本
       unitCost: 单位成本
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -435,6 +440,7 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       mrpPlan: null
       mrpPlanId: MRP计划ID
@@ -443,6 +449,7 @@ prop:
       sourceBillCode: 来源单据号
       sourceBillType: 来源单据类型
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -457,6 +464,7 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       planningHorizonDays: 计划区间(天)
       remark: 备注
@@ -475,6 +483,7 @@ prop:
       isFirmed: 是否已转正式单据
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       mrpPlan: null
       mrpPlanId: MRP计划ID
@@ -488,6 +497,7 @@ prop:
       plannedQuantity: 计划数量
       scheduledReceipt: 预计入库
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -505,6 +515,7 @@ prop:
       lotSizeFrom: 批量下限
       lotSizeTo: 批量上限
       product: null
+      product.name: null
       productId: 产品
       remark: 备注
       routing: null
@@ -537,7 +548,6 @@ prop:
       operationName: 工序名称
       remark: 备注
       routing: null
-      routingCode: 工艺路线编码
       routingId: 工艺路线ID
       runTime: 加工时间
       setupTime: 准备时间
@@ -548,7 +558,6 @@ prop:
       version: 数据版本
       workcenter: null
       workcenterId: 工作中心
-      workcenterName: 工作中心名称
     ErpMfgSubcontractOrder:
       amountFunctional: 本位币金额
       amountSource: 源币种金额
@@ -561,8 +570,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -570,8 +579,8 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -579,26 +588,24 @@ prop:
       postedStatus_label: 过账状态
       processingFee: 加工费
       product: null
+      product.name: null
       productId: 产品
-      productName: 产品名称
       productionVersion: null
       productionVersionId: 生产版本
       remark: 备注
       routing: null
       routingId: 工艺路线
       supplier: null
+      supplier.name: null
       supplierId: 委外供应商
-      supplierName: 委外供应商名称
       totalAmount: 合计金额
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       workOrder: null
       workOrderId: 来源工单
-      workOrderNo: 来源工单号
       workcenter: null
       workcenterId: 外协工作中心
-      workcenterName: 外协工作中心名称
     ErpMfgSubcontractOrderLine:
       amount: 金额
       createTime: 创建时间
@@ -607,17 +614,16 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       quantity: 委外数量
       remark: 备注
       subcontractOrder: null
-      subcontractOrderCode: 委外单号
       subcontractOrderId: 委外单ID
       unitProcessingFee: 单位加工费
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
-      uomName: 计量单位名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -631,7 +637,6 @@ prop:
       approvedAt: 审核时间
       approvedBy: 审核人
       bom: null
-      bomCode: BOM编码
       bomId: BOM
       businessDate: 工单日期
       code: 工单号
@@ -639,8 +644,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -651,8 +656,8 @@ prop:
       lines: null
       materialCost: 材料成本
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       overheadCost: 制造费用
       plannedEndDate: 计划完工日期
       plannedQuantity: 计划数量
@@ -663,13 +668,12 @@ prop:
       priority: 优先级
       priority_label: 优先级
       product: null
+      product.name: null
       productId: 产品(主产出)
-      productName: 产品名称
       productionVersion: null
       productionVersionId: 生产版本
       remark: 备注
       routing: null
-      routingCode: 工艺路线编码
       routingId: 工艺路线
       scrappedQuantity: 报废数量
       sourceMrpPlan: null
@@ -690,23 +694,25 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       destWarehouse: null
+      destWarehouse.name: null
       destWarehouseId: 入库仓库(产出用)
-      destWarehouseName: 入库仓库名称
       id: ID
       lineNo: 行号
       lineType: 行类型(OUTPUT 产出/INPUT 投入/BYPRODUCT 联副)
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       plannedQuantity: 计划数量
       remark: 备注
       scrappedQuantity: 报废数量
       sku: null
+      sku.name: null
       skuId: SKU
       sourceWarehouse: null
+      sourceWarehouse.name: null
       sourceWarehouseId: 领料仓库(投入用)
-      sourceWarehouseName: 领料仓库名称
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -740,6 +746,7 @@ prop:
       id: ID
       isActive: 是否有效
       org: null
+      org.name: null
       orgId: 业务组织
       remark: 备注
       shiftType: 班次类型
@@ -762,8 +769,10 @@ prop:
       id: ID
       isActive: 是否有效
       material: null
+      material.name: null
       materialId: 关联物料
       org: null
+      org.name: null
       orgId: 业务组织
       remark: 备注
       setupTime: 换模时间(分钟)

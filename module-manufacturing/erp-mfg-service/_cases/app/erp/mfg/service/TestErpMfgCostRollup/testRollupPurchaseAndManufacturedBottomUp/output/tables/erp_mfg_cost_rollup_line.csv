@@ -1,0 +1,5 @@
+_chgType,ID,COST_ROLLUP_ID,LINE_NO,MATERIAL_ID,UO_M_ID,MATERIAL_COST,LABOR_COST,OVERHEAD_COST,SUBCONTRACT_COST,TOTAL_COST,UNIT_COST,CURRENCY_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2,1,10,1003,5101,10.0000,0.0000,0.0000,0.0000,10.0000,10.0000,,@var:ErpMfgCostRollupLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,3,1,20,1002,5101,30.0000,10.0000,0.0000,0.0000,40.0000,40.0000,,@var:ErpMfgCostRollupLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,4,1,30,1004,5101,5.0000,0.0000,0.0000,0.0000,5.0000,5.0000,,@var:ErpMfgCostRollupLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5,1,40,1001,5101,85.0000,20.0000,0.0000,0.0000,105.0000,105.0000,,@var:ErpMfgCostRollupLine@delVersion,0,autotest-ref,*,autotest-ref,*

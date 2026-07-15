@@ -316,16 +316,16 @@
         }
 
 
-        private java.time.LocalDateTime _resolvedAt;
+        private java.sql.Timestamp _resolvedAt;
 
     
         @PropMeta(propId=20)
     
-        public java.time.LocalDateTime getResolvedAt(){
+        public java.sql.Timestamp getResolvedAt(){
             return _resolvedAt;
         }
 
-        public void setResolvedAt(java.time.LocalDateTime value){
+        public void setResolvedAt(java.sql.Timestamp value){
             this._resolvedAt = value;
         }
 
@@ -456,16 +456,16 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=31)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 
@@ -495,42 +495,6 @@
 
         public void setReturnCode(String value){
             this._returnCode = value;
-        }
-
-
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _inspectionCode;
-
-    
-        public String getInspectionCode(){
-            return _inspectionCode;
-        }
-
-        public void setInspectionCode(String value){
-            this._inspectionCode = value;
-        }
-
-
-        private String _supplierName;
-
-    
-        public String getSupplierName(){
-            return _supplierName;
-        }
-
-        public void setSupplierName(String value){
-            this._supplierName = value;
         }
 
 

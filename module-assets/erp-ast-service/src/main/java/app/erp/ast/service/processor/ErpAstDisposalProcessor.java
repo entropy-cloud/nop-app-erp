@@ -20,7 +20,7 @@ import jakarta.inject.Inject;
 import java.util.Objects;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -82,7 +82,7 @@ public class ErpAstDisposalProcessor {
         disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
         disposal.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
         disposal.setApprovedBy(currentUserId());
-        disposal.setApprovedAt(CoreMetrics.currentDateTime());
+        disposal.setApprovedAt(CoreMetrics.currentTimestamp());
         disposalDao().updateEntity(disposal);
         orm().flushSession();
 
@@ -91,7 +91,7 @@ public class ErpAstDisposalProcessor {
         Long voucherId = postingDispatcher.tryPost(disposal, asset, category);
 
         disposal = reload(id);
-        LocalDateTime now = CoreMetrics.currentDateTime();
+        Timestamp now = CoreMetrics.currentTimestamp();
         if (voucherId != null) {
             disposal.setPosted(true);
             disposal.setPostedAt(now);

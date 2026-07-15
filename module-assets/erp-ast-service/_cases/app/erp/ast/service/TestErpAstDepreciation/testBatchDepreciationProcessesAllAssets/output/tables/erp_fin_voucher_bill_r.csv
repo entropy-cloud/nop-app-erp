@@ -1,0 +1,3 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,61,58,DEPRECIATION,@var:ErpFinVoucherBillR@billCode,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,66,63,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_1,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_1,0,autotest-ref,*,autotest-ref,*

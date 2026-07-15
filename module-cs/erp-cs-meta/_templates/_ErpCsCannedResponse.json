@@ -21,7 +21,5 @@
   "category": null,
   "macroTicketType": null,
   "org": null,
-  "orgName": "",
-  "categoryName": "",
-  "ticketTypeName": ""
+  "org.name": ""
 }

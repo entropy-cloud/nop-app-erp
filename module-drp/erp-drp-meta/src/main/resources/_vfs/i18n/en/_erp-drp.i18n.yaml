@@ -40,14 +40,13 @@ prop:
       updateTime: Update Time
       plan: Plan
       material: Material
+      material.name: Material
       warehouse: Warehouse
+      warehouse.name: Warehouse
       sourceWarehouse: Source Warehouse
+      sourceWarehouse.name: Source Warehouse
       org: Org
-      planName: null
-      materialName: null
-      warehouseName: null
-      sourceWarehouseName: null
-      orgName: null
+      org.name: Org
     ErpDrpParameter:
       id: ID
       warehouseId: Warehouse
@@ -71,15 +70,15 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       warehouse: Warehouse
+      warehouse.name: Warehouse
       material: Material
+      material.name: Material
       preferredSourceWarehouse: Preferred Source Warehouse
+      preferredSourceWarehouse.name: Preferred Source Warehouse
       preferredSupplier: Preferred Supplier
+      preferredSupplier.name: Preferred Supplier
       org: Org
-      warehouseName: null
-      materialName: null
-      preferredSourceWarehouseName: null
-      preferredSupplierName: null
-      orgName: null
+      org.name: Org
     ErpDrpPlan:
       id: ID
       code: Code
@@ -102,7 +101,7 @@ prop:
       businessDate: Business Date
       lines: Lines
       org: Org
-      orgName: null
+      org.name: Org
     ErpInvDrpCrossDock:
       id: ID
       code: Code
@@ -131,16 +130,13 @@ prop:
       updateTime: Update Time
       drpLine: DRP Line
       material: Material
+      material.name: Material
       stagingLocation: Staging Location
+      stagingLocation.name: Staging Location
       inboundMove: Inbound Move
       outboundMove: Outbound Move
       org: Org
-      drpLineName: null
-      materialName: null
-      stagingLocationName: null
-      inboundMoveName: null
-      outboundMoveName: null
-      orgName: null
+      org.name: Org
     ErpInvDrpDockAppointment:
       id: ID
       warehouseId: Warehouse
@@ -160,13 +156,11 @@ prop:
       updateTime: Update Time
       orgId: Organization
       warehouse: Warehouse
+      warehouse.name: Warehouse
       dock: Dock
       crossDock: Cross Dock
       org: Org
-      warehouseName: null
-      dockName: null
-      crossDockName: null
-      orgName: null
+      org.name: Org
     ErpInvDrpLeadTimeRecord:
       id: ID
       orgId: Organization
@@ -188,11 +182,11 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       supplier: Supplier
+      supplier.name: Supplier
       material: Material
+      material.name: Material
       org: Org
-      supplierName: null
-      materialName: null
-      orgName: null
+      org.name: Org
     ErpInvDrpSafetyStockCalc:
       id: ID
       code: Code
@@ -218,11 +212,11 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       material: Material
+      material.name: Material
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
-      materialName: null
-      warehouseName: null
-      orgName: null
+      org.name: Org
 dict:
   label:
     erp-drp/drp-plan-status: DRP Plan Status

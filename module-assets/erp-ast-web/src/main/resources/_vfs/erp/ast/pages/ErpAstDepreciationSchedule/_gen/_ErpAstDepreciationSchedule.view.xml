@@ -82,22 +82,13 @@
                 <col id="currencyId" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" mandatory="true" sortable="true"/>
+                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--源币种金额-->
-                <col id="amountSource" sortable="true"/>
+                <col id="amountSource" ui:number="true" sortable="true"/>
 
                 <!--本位币金额-->
-                <col id="amountFunctional" sortable="true"/>
-
-                <!--资产编码-->
-                <col id="assetCode"/>
-
-                <!--所属组织-->
-                <col id="orgName"/>
-
-                <!--币种-->
-                <col id="currencyName"/>
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -117,8 +108,7 @@
  updatedBy[修改人] updateTime[修改时间]
  businessDate[业务日期] currencyId[币种]
  exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] assetCode[资产编码]
- orgName[所属组织] currencyName[币种]
+ amountFunctional[本位币金额] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-折旧计划" i18n-en:title="Add Depreciation Schedule" x:prototype="edit"/>

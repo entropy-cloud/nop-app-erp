@@ -36,16 +36,15 @@
   "updateTime": "2000-01-01 14:00:00",
   "businessDate": "2000-01-01",
   "material": null,
+  "material.name": "",
   "template": null,
   "supplier": null,
+  "supplier.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "inspector": null,
+  "inspector.name": "",
   "lines": null,
   "org": null,
-  "materialName": "",
-  "templateCode": "",
-  "supplierName": "",
-  "warehouseName": "",
-  "inspectorName": "",
-  "orgName": ""
+  "org.name": ""
 }

@@ -59,15 +59,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--委外单号-->
-                <col id="subcontractOrderCode"/>
-
-                <!--物料名称-->
-                <col id="materialName"/>
-
-                <!--计量单位名称-->
-                <col id="uomName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -82,8 +73,7 @@
  amount[金额] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] subcontractOrderCode[委外单号]
- materialName[物料名称] uomName[计量单位名称]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-委外加工单行" i18n-en:title="Add Subcontract Order Line" x:prototype="edit"/>

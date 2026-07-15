@@ -33,9 +33,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
-        <prop name="readTime" displayName="阅读时间" propId="4" i18n-en:displayName="Read Time" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="readTime" displayName="阅读时间" propId="4" i18n-en:displayName="Read Time" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="5" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">

@@ -1,0 +1,3 @@
+_chgType,ID,TEMPLATE_ID,NOTIFICATION_TYPE,RECIPIENT_USER_ID,RECIPIENT_PARTNER_ID,RECIPIENT_DEPT_ID,CHANNEL,SUBJECT,BODY,PAYLOAD_JSON,STATUS,MERGE_GROUP_ID,MERGE_COUNT,SENT_AT,ERROR_MSG,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,7203,cross-event-a,cross-test-user-3,,,IN_APP,事件A通知,事件A正文,,SENT,cross-event-a#cross-test-user-3,1,@var:ErpSysNotification@sentAt,,@var:ErpSysNotification@delVersion,0,autotest-ref,*,autotest-ref,*
+A,2,7204,cross-event-b,cross-test-user-3,,,IN_APP,事件B通知,事件B正文,,SENT,cross-event-b#cross-test-user-3,1,@var:ErpSysNotification@sentAt_1,,@var:ErpSysNotification@delVersion,0,autotest-ref,*,autotest-ref,*

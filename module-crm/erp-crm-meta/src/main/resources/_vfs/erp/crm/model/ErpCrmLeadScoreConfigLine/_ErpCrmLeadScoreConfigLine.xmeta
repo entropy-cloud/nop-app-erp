@@ -31,8 +31,8 @@
               sortable="true" insertable="true" updatable="true" ext:relation="org">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="criterionCode" displayName="准则编码" propId="4" i18n-en:displayName="Criterion Code" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="criterionCode" displayName="准则编码" propId="4" i18n-en:displayName="Criterion Code" tagSet="var"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="code" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="criterionName" displayName="准则名称" propId="5" i18n-en:displayName="Criterion Name" queryable="true"
@@ -97,9 +97,12 @@
             <schema bizObjName="ErpCrmLeadScoreConfig"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

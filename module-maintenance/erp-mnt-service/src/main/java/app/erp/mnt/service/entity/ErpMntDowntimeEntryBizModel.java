@@ -5,10 +5,6 @@ import app.erp.mnt.dao.entity.ErpMntDowntimeEntry;
 import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.support.EquipmentStatusLinker;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -17,6 +13,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -30,16 +27,6 @@ public class ErpMntDowntimeEntryBizModel extends CrudBizModel<ErpMntDowntimeEntr
 
     public ErpMntDowntimeEntryBizModel() {
         setEntityName(ErpMntDowntimeEntry.class.getName());
-    }
-
-    @BizLoader(forType = ErpMntDowntimeEntry.class)
-    public List<String> equipmentCode(@ContextSource List<ErpMntDowntimeEntry> list) {
-        orm().batchLoadProps(list, Collections.singleton("equipment"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntDowntimeEntry entity : list) {
-            result.add(entity.getEquipment() != null ? entity.getEquipment().getCode() : null);
-        }
-        return result;
     }
 
     @Override
@@ -91,16 +78,16 @@ public class ErpMntDowntimeEntryBizModel extends CrudBizModel<ErpMntDowntimeEntr
 
     protected void doRecord(ErpMntDowntimeEntry downtime, IServiceContext context) {
         if (downtime.getStartTime() == null) {
-            downtime.setStartTime(CoreMetrics.currentDateTime());
+            downtime.setStartTime(CoreMetrics.currentTimestamp());
         }
         updateEntity(downtime, null, context);
     }
 
     protected void doComplete(ErpMntDowntimeEntry downtime, IServiceContext context) {
-        LocalDateTime endTime = downtime.getEndTime() == null ? CoreMetrics.currentDateTime() : downtime.getEndTime();
+        Timestamp endTime = downtime.getEndTime() == null ? CoreMetrics.currentTimestamp() : downtime.getEndTime();
         downtime.setEndTime(endTime);
         if (downtime.getStartTime() != null) {
-            long minutes = Duration.between(downtime.getStartTime(), endTime).toMinutes();
+            long minutes = Duration.between(downtime.getStartTime().toLocalDateTime(), endTime.toLocalDateTime()).toMinutes();
             downtime.setTotalMinutes(BigDecimal.valueOf(minutes));
         }
         updateEntity(downtime, null, context);

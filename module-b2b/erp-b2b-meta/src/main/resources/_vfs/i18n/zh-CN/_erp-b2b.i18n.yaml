@@ -25,18 +25,17 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 发货方（供应商）
-      partnerName: 发货方（供应商）
       relatedBillCode: 关联采购订单号
       relatedBillType: 关联采购订单类型
       remark: 备注
       shipmentDate: 发货日期
       sourceEdiDoc: null
       sourceEdiDocId: 来源 EDI 文档
-      sourceEdiDocName: 来源 EDI 文档
       status: 状态
       status_label: 状态
       trackingNo: 物流单号
@@ -46,15 +45,14 @@ prop:
     ErpB2bAsnLine:
       asn: null
       asnId: ASN ID
-      asnName: ASN
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料
       quantity: 订单数量
       remark: 备注
       shippedQty: 发货数量
@@ -75,7 +73,6 @@ prop:
       isPassed: 通过
       partnerProfile: null
       partnerProfileId: 伙伴档案
-      partnerProfileName: 伙伴档案
       remark: 备注
       requiredDocType: 对应文档类型
       updateTime: 修改时间
@@ -91,11 +88,11 @@ prop:
       mappingType: 映射类型
       mappingType_label: 映射类型
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: Trading Partner
-      partnerName: Trading Partner
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -114,11 +111,10 @@ prop:
       error: 错误信息
       format: null
       formatId: EDI 格式
-      formatName: EDI 格式
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       relatedBillCode: 关联单据号
       relatedBillType: 关联单据类型
       remark: 备注
@@ -143,8 +139,8 @@ prop:
       isActive: 是否启用
       needsWebService: 需要 WebService
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -157,12 +153,11 @@ prop:
       direction_label: 方向
       ediDoc: null
       ediDocId: EDI 事务 ID
-      ediDocName: EDI 事务
       id: ID
       logTime: 日志时间
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       requestPayload: 请求报文
       responsePayload: 响应报文
@@ -186,11 +181,11 @@ prop:
       issuerName: 颁发者
       keySize: 密钥长度
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 合作伙伴
-      partnerName: 合作伙伴
       remark: 备注
       serialNo: 序列号
       subjectName: 主题
@@ -201,7 +196,6 @@ prop:
       active: 启用
       cert: null
       certId: 关联证书
-      certName: 关联证书
       compression: 启用压缩
       createTime: 创建时间
       createdBy: 创建人
@@ -217,11 +211,11 @@ prop:
       monitorDirectory: 监控目录
       monitorIntervalSec: 监控间隔(秒)
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 合作伙伴
-      partnerName: 合作伙伴
       protocol: 传输协议
       protocol_label: 传输协议
       remark: 备注
@@ -238,7 +232,6 @@ prop:
     ErpB2bMftLog:
       config: null
       configId: MFT配置
-      configName: MFT配置
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -257,8 +250,8 @@ prop:
       mdnStatus: MDN状态
       messageId: AS2 Message-ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       protocol: 传输协议
       protocol_label: 传输协议
       relatedBillCode: 关联单据号
@@ -285,7 +278,6 @@ prop:
       issuedAt: 颁发日期
       partnerProfile: null
       partnerProfileId: 伙伴档案
-      partnerProfileName: 伙伴档案
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -308,11 +300,12 @@ prop:
       id: ID
       notes: 备注
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 关联伙伴
-      partnerName: 关联伙伴
+      partnerName: 伙伴名称
       protocol: 传输协议
       protocol_label: 传输协议
       status: 状态
@@ -336,7 +329,6 @@ prop:
       notes: 备注
       partnerProfile: null
       partnerProfileId: 伙伴档案
-      partnerProfileName: 伙伴档案
       passed: 测试通过
       receivedPayload: 接收报文
       sentPayload: 发送报文

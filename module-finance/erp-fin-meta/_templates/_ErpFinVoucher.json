@@ -12,9 +12,6 @@
   "periodId": 0,
   "totalDebit": 0.0,
   "totalCredit": 0.0,
-  "orgName": "",
-  "acctSchemaCode": "",
-  "periodCode": "",
   "isReversed": false,
   "reversalOfVoucherId": 0,
   "docStatus": "",
@@ -30,8 +27,10 @@
   "updateTime": "2000-01-01 14:00:00",
   "period": null,
   "acctSchema": null,
+  "acctSchema.name": "",
   "lines": null,
   "billLinks": null,
   "org": null,
+  "org.name": "",
   "reversalOfVoucher": null
 }

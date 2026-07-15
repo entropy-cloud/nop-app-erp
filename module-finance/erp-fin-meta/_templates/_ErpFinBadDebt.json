@@ -24,16 +24,14 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "partner": null,
+  "partner.name": "",
   "acctSchema": null,
+  "acctSchema.name": "",
   "currency": null,
+  "currency.name": "",
   "sourceArApItem": null,
   "period": null,
   "voucher": null,
   "org": null,
-  "orgName": "",
-  "acctSchemaCode": "",
-  "partnerName": "",
-  "currencyName": "",
-  "periodCode": "",
-  "voucherCode": ""
+  "org.name": ""
 }

@@ -33,14 +33,13 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "claimant": null,
+  "claimant.name": "",
   "department": null,
+  "department.name": "",
   "currency": null,
+  "currency.name": "",
   "org": null,
+  "org.name": "",
   "settleAdvance": null,
-  "lines": null,
-  "orgName": "",
-  "claimantName": "",
-  "departmentName": "",
-  "currencyName": "",
-  "employeeAdvanceCode": ""
+  "lines": null
 }

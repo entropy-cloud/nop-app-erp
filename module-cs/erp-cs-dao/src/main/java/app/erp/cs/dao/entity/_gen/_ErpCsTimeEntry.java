@@ -37,11 +37,11 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     public static final String PROP_NAME_agentId = "agentId";
     public static final int PROP_ID_agentId = 4;
     
-    /* 开始时间: START_TIME DATETIME */
+    /* 开始时间: START_TIME TIMESTAMP */
     public static final String PROP_NAME_startTime = "startTime";
     public static final int PROP_ID_startTime = 5;
     
-    /* 结束时间: END_TIME DATETIME */
+    /* 结束时间: END_TIME TIMESTAMP */
     public static final String PROP_NAME_endTime = "endTime";
     public static final int PROP_ID_endTime = 6;
     
@@ -73,7 +73,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     public static final String PROP_NAME_approvedById = "approvedById";
     public static final int PROP_ID_approvedById = 13;
     
-    /* 审批时间: APPROVED_AT DATETIME */
+    /* 审批时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 14;
     
@@ -216,10 +216,10 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     private java.lang.Long _agentId;
     
     /* 开始时间: START_TIME */
-    private java.time.LocalDateTime _startTime;
+    private java.sql.Timestamp _startTime;
     
     /* 结束时间: END_TIME */
-    private java.time.LocalDateTime _endTime;
+    private java.sql.Timestamp _endTime;
     
     /* 时长(分钟): DURATION */
     private java.lang.Integer _duration;
@@ -243,7 +243,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     private java.lang.String _approvedById;
     
     /* 审批时间: APPROVED_AT */
-    private java.time.LocalDateTime _approvedAt;
+    private java.sql.Timestamp _approvedAt;
     
     /* 关联项目: PROJECT_ID */
     private java.lang.Long _projectId;
@@ -467,9 +467,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_startTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_startTime));
                }
                setStartTime(typedValue);
@@ -477,9 +477,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_endTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_endTime));
                }
                setEndTime(typedValue);
@@ -557,9 +557,9 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_approvedAt));
                }
                setApprovedAt(typedValue);
@@ -695,14 +695,14 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_startTime:{
                onInitProp(propId);
-               this._startTime = (java.time.LocalDateTime)value;
+               this._startTime = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_endTime:{
                onInitProp(propId);
-               this._endTime = (java.time.LocalDateTime)value;
+               this._endTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -758,7 +758,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
         
             case PROP_ID_approvedAt:{
                onInitProp(propId);
-               this._approvedAt = (java.time.LocalDateTime)value;
+               this._approvedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -911,7 +911,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 开始时间: START_TIME
      */
-    public final java.time.LocalDateTime getStartTime(){
+    public final java.sql.Timestamp getStartTime(){
          onPropGet(PROP_ID_startTime);
          return _startTime;
     }
@@ -919,7 +919,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 开始时间: START_TIME
      */
-    public final void setStartTime(java.time.LocalDateTime value){
+    public final void setStartTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_startTime,value)){
             this._startTime = value;
             internalClearRefs(PROP_ID_startTime);
@@ -930,7 +930,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 结束时间: END_TIME
      */
-    public final java.time.LocalDateTime getEndTime(){
+    public final java.sql.Timestamp getEndTime(){
          onPropGet(PROP_ID_endTime);
          return _endTime;
     }
@@ -938,7 +938,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 结束时间: END_TIME
      */
-    public final void setEndTime(java.time.LocalDateTime value){
+    public final void setEndTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_endTime,value)){
             this._endTime = value;
             internalClearRefs(PROP_ID_endTime);
@@ -1082,7 +1082,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 审批时间: APPROVED_AT
      */
-    public final java.time.LocalDateTime getApprovedAt(){
+    public final java.sql.Timestamp getApprovedAt(){
          onPropGet(PROP_ID_approvedAt);
          return _approvedAt;
     }
@@ -1090,7 +1090,7 @@ public class _ErpCsTimeEntry extends DynamicOrmEntity{
     /**
      * 审批时间: APPROVED_AT
      */
-    public final void setApprovedAt(java.time.LocalDateTime value){
+    public final void setApprovedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_approvedAt,value)){
             this._approvedAt = value;
             internalClearRefs(PROP_ID_approvedAt);

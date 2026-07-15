@@ -1,24 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpAstInventory.xmeta">
 
-    <props>
-        <prop name="orgName" displayName="所属组织" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="rangeDepartmentName" displayName="盘点部门" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="rangeCategoryName" displayName="盘点类别" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="rangeLocationName" displayName="盘点地点" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="responsibleByName" displayName="负责人" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="currencyName" displayName="币种" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-    </props>
+    <props/>
 </meta>

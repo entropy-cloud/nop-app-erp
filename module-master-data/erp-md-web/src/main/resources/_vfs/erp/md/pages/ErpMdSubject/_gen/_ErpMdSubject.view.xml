@@ -86,12 +86,6 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
-
-                <!--父级科目-->
-                <col id="parentName"/>
-
-                <!--核算币种-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -111,7 +105,6 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
- parentName[父级科目] currencyName[核算币种]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-会计科目" i18n-en:title="Add Accounting Subject" x:prototype="edit"/>

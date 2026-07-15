@@ -30,8 +30,7 @@
   "amountFunctional": 0.0,
   "asset": null,
   "org": null,
+  "org.name": "",
   "currency": null,
-  "orgName": "",
-  "assetCode": "",
-  "currencyName": ""
+  "currency.name": ""
 }

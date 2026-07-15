@@ -13,6 +13,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.commons.util.DateHelper;
 import io.nop.dao.api.IEntityDao;
 import io.nop.dao.api.IDaoProvider;
 import jakarta.inject.Inject;
@@ -91,7 +92,7 @@ public class TransportManager {
         long durationMs = (CoreMetrics.nanoTime() - startNanos) / 1_000_000;
         String errorCode = retryable ? "MFT_RETRY_EXHAUSTED" : "MFT_NON_RETRYABLE";
         String errorMsg = (retryable ? "[传输重试耗尽] " : "[传输不可重试错误] ")
-                + (lastFailure != null ? lastFailure.getMessage() : "unknown");
+                + (lastFailure != null ? lastFailure.getDescription() : "unknown");
 
         String status = config.getDeadLetterEnabled() != null && config.getDeadLetterEnabled()
                 ? ErpB2bConstants.MFT_STATUS_DEAD_LETTER
@@ -120,7 +121,7 @@ public class TransportManager {
             ErpB2bEdiDoc doc = dao.getEntityById(ediDocId);
             if (doc != null && ErpB2bConstants.EDI_DOC_STATE_TO_SEND.equals(doc.getState())) {
                 doc.setState(ErpB2bConstants.EDI_DOC_STATE_SENT);
-                doc.setSentAt(CoreMetrics.currentDateTime());
+                doc.setSentAt(CoreMetrics.currentTimestamp());
                 dao.saveOrUpdateEntity(doc);
             }
         } catch (Exception e) {
@@ -137,8 +138,8 @@ public class TransportManager {
         log.setDirection(direction);
         log.setProtocol(config.getProtocol());
         log.setStatus(status);
-        log.setStartTime(startTime);
-        log.setEndTime(CoreMetrics.currentDateTime());
+        log.setStartTime(DateHelper.dateTimeToTimestamp(startTime));
+        log.setEndTime(CoreMetrics.currentTimestamp());
         log.setDurationMs(durationMs);
         log.setRetryCount(retryCount);
         log.setIsCompressed(config.getCompression());
@@ -154,7 +155,7 @@ public class TransportManager {
             }
         }
         if (failure != null && log.getErrorMsg() == null) {
-            log.setErrorMsg(failure.getMessage());
+            log.setErrorMsg(failure.getDescription());
         }
         dao.saveEntity(log);
     }

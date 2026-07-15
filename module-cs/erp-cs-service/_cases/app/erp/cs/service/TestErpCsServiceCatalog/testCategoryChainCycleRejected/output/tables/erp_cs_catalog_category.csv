@@ -1,0 +1,3 @@
+_chgType,ID,CODE,NAME,ORG_ID,PARENT_ID,ICON,SEQUENCE,IS_ACTIVE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,5010,@var:ErpCsCatalogCategory@code,A,,,,0,true,@var:ErpCsCatalogCategory@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5011,@var:ErpCsCatalogCategory@code_1,B,,5010,,0,true,@var:ErpCsCatalogCategory@delVersion,0,autotest-ref,*,autotest-ref,*

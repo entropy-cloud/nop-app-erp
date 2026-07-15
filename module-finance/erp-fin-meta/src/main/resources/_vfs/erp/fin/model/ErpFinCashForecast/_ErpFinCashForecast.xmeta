@@ -39,7 +39,7 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="sourceBillCode" displayName="来源单据号" propId="6" i18n-en:displayName="Source Bill Code"
+        <prop name="sourceBillCode" displayName="来源单据号" propId="6" i18n-en:displayName="Source Bill Code" tagSet="var"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
@@ -93,9 +93,13 @@
             <schema bizObjName="ErpFinFundAccount"/>
         </prop>
         <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="partner.name" i18n-en:displayName="Partner" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

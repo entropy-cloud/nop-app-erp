@@ -24,7 +24,6 @@
   "businessDate": "2000-01-01",
   "format": null,
   "org": null,
-  "attachmentFileIdComponentFileStatus": null,
-  "formatName": "",
-  "orgName": ""
+  "org.name": "",
+  "attachmentFileIdComponentFileStatus": null
 }

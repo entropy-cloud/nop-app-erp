@@ -38,9 +38,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.Collections;
 
 /**
  * 产品配置器 BizModel（plan 2026-07-07-1430-2 §Phase 2）。
@@ -342,15 +339,5 @@ public class ErpCrmProductConfiguratorBizModel extends CrudBizModel<ErpCrmProduc
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCrmProductConfigurator.class)
-    public List<String> orgName(@ContextSource List<ErpCrmProductConfigurator> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmProductConfigurator row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
 
 }

@@ -43,9 +43,9 @@ prop:
       approvedAt: Approved At
       equipment: Equipment
       calibratedByEmployee: Calibrated By Employee
+      calibratedByEmployee.name: Calibrated By Employee
       org: null
-      orgName: null
-      equipmentCode: null
+      org.code: null
     ErpMntDowntimeEntry:
       id: ID
       equipmentId: Equipment
@@ -63,7 +63,6 @@ prop:
       updateTime: Update Time
       equipment: Equipment
       relatedJobOrder: null
-      equipmentCode: null
     ErpMntEquipment:
       id: ID
       code: Code
@@ -88,18 +87,16 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       location: Location
+      location.name: Location
       category: Category
       asset: Asset
       org: Org
+      org.code: Org
       visits: Visits
       schedules: Schedules
       requests: Requests
       sparePartUsages: Spare Part Usages
       downtimeEntries: Downtime Entries
-      orgName: null
-      categoryName: null
-      locationName: null
-      assetCode: null
     ErpMntEquipmentCategory:
       id: ID
       code: Code
@@ -113,7 +110,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       parent: Parent
-      parentName: null
     ErpMntMaintenanceTeam:
       id: ID
       code: Code
@@ -129,10 +125,10 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       leader: Leader
+      leader.name: Leader
       members: Members
       org: null
-      orgName: null
-      leaderName: null
+      org.code: null
     ErpMntMaintenanceTeamMember:
       id: ID
       teamId: Team
@@ -148,8 +144,7 @@ prop:
       updateTime: Update Time
       team: Team
       employee: Employee
-      teamName: null
-      employeeName: null
+      employee.name: Employee
     ErpMntRequest:
       id: ID
       code: Code
@@ -173,7 +168,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       equipment: Equipment
-      equipmentCode: null
     ErpMntSchedule:
       id: ID
       code: Code
@@ -197,7 +191,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       equipment: Equipment
-      equipmentCode: null
     ErpMntSparePartUsage:
       id: ID
       code: Code
@@ -229,12 +222,9 @@ prop:
       equipment: Equipment
       lines: Lines
       org: null
+      org.code: null
       warehouse: null
-      orgName: null
-      visitCode: null
-      requestCode: null
-      equipmentCode: null
-      warehouseName: null
+      warehouse.name: null
     ErpMntSparePartUsageLine:
       id: ID
       sparePartUsageId: Spare Part Usage
@@ -254,10 +244,9 @@ prop:
       updateTime: Update Time
       sparePartUsage: Spare Part Usage
       material: Material
+      material.name: Material
       uoM: Uo M
-      sparePartUsageCode: null
-      materialName: null
-      uomName: null
+      uoM.name: Uo M
     ErpMntVisit:
       id: ID
       code: Code
@@ -293,9 +282,7 @@ prop:
       tasks: Tasks
       sparePartUsages: Spare Part Usages
       org: null
-      orgName: null
-      scheduleCode: null
-      equipmentCode: null
+      org.code: null
     ErpMntVisitTask:
       id: ID
       visitId: Visit
@@ -313,7 +300,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       visit: Visit
-      visitCode: null
 dict:
   label:
     erp-mnt/schedule-type: Maintenance Schedule Type

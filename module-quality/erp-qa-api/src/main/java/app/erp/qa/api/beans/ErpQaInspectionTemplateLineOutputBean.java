@@ -237,18 +237,6 @@
         }
 
 
-        private String _templateCode;
-
-    
-        public String getTemplateCode(){
-            return _templateCode;
-        }
-
-        public void setTemplateCode(String value){
-            this._templateCode = value;
-        }
-
-
         private Map<String,Object> _template;
 
         public Map<String,Object> getTemplate(){

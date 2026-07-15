@@ -286,7 +286,7 @@ public class ErpFinNotesReceivableProcessor {
     protected void markPosted(ErpFinNotesReceivable note, boolean posted) {
         if (posted) {
             note.setPosted(true);
-            note.setPostedAt(CoreMetrics.currentDateTime());
+            note.setPostedAt(CoreMetrics.currentTimestamp());
             note.setPostedBy(currentUserId());
         } else {
             note.setPosted(false);

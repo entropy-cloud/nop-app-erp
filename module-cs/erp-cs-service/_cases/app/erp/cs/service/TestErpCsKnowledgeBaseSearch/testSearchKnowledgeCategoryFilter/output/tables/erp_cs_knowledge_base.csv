@@ -1,0 +1,4 @@
+_chgType,ID,CODE,TITLE,CONTENT,CATEGORY_ID,IS_PUBLISHED,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9332,@var:ErpCsKnowledgeBase@code,退货流程指南,客户退货操作步骤,1001,true,,@var:ErpCsKnowledgeBase@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,9333,@var:ErpCsKnowledgeBase@code_1,退货物流说明,退货物流费用说明,1002,true,,@var:ErpCsKnowledgeBase@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,9334,@var:ErpCsKnowledgeBase@code_2,退货政策摘要,7天无理由退货政策,1001,true,,@var:ErpCsKnowledgeBase@delVersion_2,0,autotest-ref,*,autotest-ref,*

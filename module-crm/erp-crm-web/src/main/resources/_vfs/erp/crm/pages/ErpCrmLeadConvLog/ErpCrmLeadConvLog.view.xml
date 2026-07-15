@@ -6,9 +6,9 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="leadCode" label="关联线索"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="fromStageName" label="原阶段"/>
-                <col id="toStageName" label="目标阶段"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="fromStageId" label="原阶段"/>
+                <col id="toStageId" label="目标阶段"/>
                 <col id="changedAt" sortable="true"/>
                 <col id="changedBy" sortable="true"/>
             </cols>

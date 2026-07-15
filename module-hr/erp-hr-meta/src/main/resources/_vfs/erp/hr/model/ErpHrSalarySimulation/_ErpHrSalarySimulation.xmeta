@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="code" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
@@ -57,13 +57,13 @@
               sortable="true" insertable="true" updatable="true" ext:relation="reviewer">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="reviewedAt" displayName="审批时间" propId="10" i18n-en:displayName="Reviewed At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="reviewedAt" displayName="审批时间" propId="10" i18n-en:displayName="Reviewed At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="convertedAt" displayName="转正式时间" propId="11" i18n-en:displayName="Converted At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="convertedAt" displayName="转正式时间" propId="11" i18n-en:displayName="Converted At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="convertedSalaryId" displayName="转正式薪酬ID" propId="12" i18n-en:displayName="Converted Salary"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="convertedSalary">
@@ -117,9 +117,12 @@
             <schema bizObjName="ErpHrSalary"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

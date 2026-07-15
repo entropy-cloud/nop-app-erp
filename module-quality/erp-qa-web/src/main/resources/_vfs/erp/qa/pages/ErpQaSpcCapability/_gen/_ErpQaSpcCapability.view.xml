@@ -92,12 +92,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--组织-->
-                <col id="orgName"/>
-
-                <!--控制图-->
-                <col id="chartCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -118,7 +112,6 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- orgName[组织] chartCode[控制图]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-SPC 过程能力分析" i18n-en:title="Add SPC Capability" x:prototype="edit"/>

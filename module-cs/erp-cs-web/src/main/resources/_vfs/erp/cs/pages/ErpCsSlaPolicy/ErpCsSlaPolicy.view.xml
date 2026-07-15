@@ -7,9 +7,9 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" sortable="true"/>
-                <col id="ticketTypeName" label="工单类型"/>
+                <col id="ticketTypeId" label="工单类型"/>
                 <col id="minPriority" sortable="true"/>
-                <col id="teamName" label="客服团队"/>
+                <col id="teamId" label="客服团队"/>
                 <col id="resolveHours" ui:number="true" sortable="true"/>
                 <col id="resolveDays" ui:number="true" sortable="true"/>
                 <col id="isWorkingDays" sortable="true"/>

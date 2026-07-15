@@ -1,2 +1,2 @@
 _chgType,ID,CODE,NAME,IS_ACTIVE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,1,SMOKE-MFG,,true,冒烟-已修改,*,1,autotest-ref,*,autotest-ref,*
+A,1,@var:ErpMfgRouting@code,,true,冒烟-已修改,@var:ErpMfgRouting@delVersion,1,autotest-ref,*,autotest-ref,*

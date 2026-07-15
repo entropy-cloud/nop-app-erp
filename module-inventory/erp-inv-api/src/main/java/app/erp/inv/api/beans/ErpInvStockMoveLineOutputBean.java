@@ -307,18 +307,6 @@
         }
 
 
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
         private Map<String,Object> _move;
 
         public Map<String,Object> getMove(){

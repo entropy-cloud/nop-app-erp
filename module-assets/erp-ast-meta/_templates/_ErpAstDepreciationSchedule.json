@@ -22,13 +22,12 @@
   "updateTime": "2000-01-01 14:00:00",
   "businessDate": "2000-01-01",
   "currencyId": 0,
-  "exchangeRate": "",
-  "amountSource": "",
-  "amountFunctional": "",
+  "exchangeRate": 0.0,
+  "amountSource": 0.0,
+  "amountFunctional": 0.0,
   "asset": null,
   "org": null,
+  "org.name": "",
   "currency": null,
-  "assetCode": "",
-  "orgName": "",
-  "currencyName": ""
+  "currency.name": ""
 }

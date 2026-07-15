@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpB2bCertificationChecklist.xmeta">
 
-        <props>
-        <prop name="partnerProfileName" displayName="伙伴档案" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-    </props>
+        <props/>
 </meta>

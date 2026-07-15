@@ -178,7 +178,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         if (context != null && context.getUserContext() != null) {
             logEntry.setOperatorId(context.getUserContext().getUserId());
         }
-        logEntry.setOperatedAt(CoreMetrics.currentDateTime());
+        logEntry.setOperatedAt(CoreMetrics.currentTimestamp());
         logEntry.setReason(actionResult.equals(BudgetCheckResult.ACTION_BLOCKED) ? "预算超支拦截" : "预算超支告警");
         dao.saveEntity(logEntry);
     }

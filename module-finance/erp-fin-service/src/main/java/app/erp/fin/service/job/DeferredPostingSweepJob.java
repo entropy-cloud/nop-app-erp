@@ -174,7 +174,7 @@ public class DeferredPostingSweepJob {
     protected void markRetried(ErpFinPostingException ex) {
         ex.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
         ex.setResolution(ErpFinConstants.POSTING_EXCEPTION_RESOLUTION_RETRY);
-        ex.setResolvedAt(CoreMetrics.currentDateTime());
+        ex.setResolvedAt(CoreMetrics.currentTimestamp());
         ex.setResolvedBy("deferred-posting-sweep-job");
         daoProvider.daoFor(ErpFinPostingException.class).updateEntity(ex);
     }

@@ -90,14 +90,21 @@
             <schema bizObjName="ErpHrEmployee"/>
         </prop>
         <prop name="project" i18n-en:displayName="Project" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/prj" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpPrjProject"/>
         </prop>
+        <prop name="project.name" i18n-en:displayName="Project" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="task" i18n-en:displayName="Task" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="taskId" ext:joinRightProp="id" biz:moduleId="erp/prj" insertable="false"
-              updatable="false" lazy="true">
+              ext:joinLeftProp="taskId" ext:joinRightProp="id" ext:joinRightDisplayProp="title" biz:moduleId="erp/prj"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpPrjTask"/>
+        </prop>
+        <prop name="task.title" i18n-en:displayName="Task" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

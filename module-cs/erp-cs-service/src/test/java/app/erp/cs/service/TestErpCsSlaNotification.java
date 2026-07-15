@@ -20,6 +20,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -186,7 +187,7 @@ public class TestErpCsSlaNotification extends JunitAutoTestCase {
             t.setApproveStatus(ErpCsConstants.APPROVE_STATUS_UNSUBMITTED);
             t.setIsSlaCompleted(false);
             if (deadline != null) {
-                t.setDeadlineDateTime(deadline);
+                t.setDeadlineDateTime(deadline != null ? Timestamp.valueOf(deadline) : null);
             }
             dao.saveEntity(t);
         });

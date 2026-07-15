@@ -29,8 +29,10 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       customer: null
+      customer.name: null
       customerId: 客户
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -38,6 +40,7 @@ prop:
       exchangeRate: 汇率
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
       remark: 备注
       signedBy: 签约人(职员)
@@ -61,11 +64,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -75,8 +78,8 @@ prop:
       order: null
       orderId: 销售订单
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -88,8 +91,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 出库仓库
-      warehouseName: 出库仓库名称
     ErpSalDeliveryLine:
       amount: 金额(不含税)
       batchNo: 批号
@@ -101,25 +104,27 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       orderLine: null
       orderLineId: 订单行ID
       quantity: 实发数量
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       taxAmount: 税额
       taxRate: 税率(%)
       unitPrice: 单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 出库库位
-      warehouseName: 出库库位名称
     ErpSalInvoice:
       amountFunctional: 合计金额(本位币)
       amountSource: 合计金额(源币)
@@ -132,11 +137,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -147,8 +152,8 @@ prop:
       invoiceType_label: 发票类型
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -174,14 +179,15 @@ prop:
       invoiceId: 发票ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       quantity: 数量
       remark: 备注
       taxAmount: 税额
       taxRate: 税率(%)
       unitPrice: 单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -200,11 +206,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       deliveryDate: 交货日期
       deliveryStatus: 发货进度
@@ -217,8 +223,8 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -229,6 +235,7 @@ prop:
       receivedStatus_label: 收款进度
       remark: 备注
       settlementMethod: null
+      settlementMethod.name: null
       settlementMethodId: 结算方式
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
@@ -237,8 +244,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 发货仓库
-      warehouseName: 仓库名称
     ErpSalOrderLine:
       amount: 金额(不含税)
       amountWithTax: 金额(含税)
@@ -252,35 +259,40 @@ prop:
       invoicedQuantity: 已开票数量
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       order: null
       orderId: 订单ID
       pricingSource: 取价来源
       project: null
+      project.name: null
       projectId: 项目
       quantity: 数量
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       taxAmount: 税额
       taxRate: 税率(%)
       taxRateId: 税率主数据
       taxRateMd: null
+      taxRateMd.name: null
       unitPrice: 单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 发货仓库
-      warehouseName: 发货仓库名称
     ErpSalPriceList:
       code: 编码
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       customerGroupCode: 客户组
       delVersion: 逻辑删除版本
@@ -289,6 +301,7 @@ prop:
       lines: null
       name: 名称
       partner: null
+      partner.name: null
       partnerId: 指定客户
       priority: 优先级
       remark: 备注
@@ -303,6 +316,7 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       material: null
+      material.name: null
       materialId: 物料
       maxQuantity: 数量上限
       minQuantity: 数量下限
@@ -310,9 +324,11 @@ prop:
       priceListId: 价格清单ID
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       unitPrice: 单价
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -323,23 +339,28 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       customerGroupCode: 客户组
       delVersion: 逻辑删除版本
       discountAmount: 折扣金额
       discountPercent: 折扣率(%)
       giftMaterial: null
+      giftMaterial.name: null
       giftMaterialId: 赠品物料
       giftQuantity: 赠品数量
       giftSku: null
+      giftSku.name: null
       giftSkuId: 赠品SKU
       id: ID
       isActive: 启用
       material: null
+      material.name: null
       materialCategoryId: 物料分类
       materialId: 物料
       minOrderAmount: 满减门槛
       partner: null
+      partner.name: null
       partnerId: 指定客户
       priceOverride: 覆盖单价
       priority: 优先级
@@ -366,11 +387,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -379,8 +400,8 @@ prop:
       isAccepted: 是否已转订单
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       remark: 备注
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
@@ -401,8 +422,8 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       pricingSource: 取价来源
       quantity: 数量
       quotation: null
@@ -412,6 +433,7 @@ prop:
       taxRate: 税率(%)
       unitPrice: 报价单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -424,17 +446,18 @@ prop:
       approvedAt: 审核时间
       approvedBy: 审核人
       bankAccount: null
+      bankAccount.bankName: null
       bankAccountId: 收款账户(资金账户)
       businessDate: 收款日期
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -443,9 +466,10 @@ prop:
       lines: null
       nopFlowId: 工作流实例
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       partnerBankAccount: null
+      partnerBankAccount.bankName: null
       partnerBankAccountId: 客户付款账户(银行账户主数据)
       posted: 已过账
       postedAt: 过账时间
@@ -453,6 +477,7 @@ prop:
       receiptMethod: 收款方式
       remark: 备注
       settlementMethod: null
+      settlementMethod.name: null
       settlementMethodId: 结算方式
       totalAmount: 合计金额
       updateTime: 修改时间
@@ -486,11 +511,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       delivery: null
       deliveryId: 出库单
@@ -500,8 +525,8 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -513,8 +538,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 入库仓库
-      warehouseName: 入库仓库名称
     ErpSalReturnLine:
       amount: 金额(不含税)
       createTime: 创建时间
@@ -525,19 +550,21 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       quantity: 退货数量
       reason: 退货原因
       remark: 备注
       return: null
       returnId: 退货单ID
       sku: null
+      sku.name: null
       skuId: SKU
       taxAmount: 税额
       taxRate: 税率(%)
       unitPrice: 单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人

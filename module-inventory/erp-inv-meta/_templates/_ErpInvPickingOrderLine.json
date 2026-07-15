@@ -18,7 +18,11 @@
   "updateTime": "2000-01-01 14:00:00",
   "picking": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "uoM": null,
-  "sourceLocation": null
+  "uoM.name": "",
+  "sourceLocation": null,
+  "sourceLocation.name": ""
 }

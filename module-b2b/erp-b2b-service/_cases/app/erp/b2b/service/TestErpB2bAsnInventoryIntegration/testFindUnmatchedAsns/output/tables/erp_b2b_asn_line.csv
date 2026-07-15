@@ -1,0 +1,4 @@
+_chgType,ID,ASN_ID,LINE_NO,MATERIAL_ID,SUPPLIER_PART_NO,QUANTITY,SHIPPED_QTY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,12,11,1,,SUP-PART-001,100,100,SUP-PART-001,@var:ErpB2bAsnLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,17,16,1,,SUP-PART-001,100,100,SUP-PART-001,@var:ErpB2bAsnLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,7,6,1,,SUP-PART-001,100,100,SUP-PART-001,@var:ErpB2bAsnLine@delVersion_1,0,autotest-ref,*,autotest-ref,*

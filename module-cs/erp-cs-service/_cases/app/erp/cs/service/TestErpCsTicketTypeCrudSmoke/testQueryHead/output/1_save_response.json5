@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "1",
-    "code": "SMOKE-CS",
+    "code": "@var:ErpCsTicketType@code",
     "name": "冒烟工单类型",
     "sequence": 0,
     "delVersion": 0,
@@ -10,7 +10,6 @@
     "createTime": "@var:ErpCsTicketType@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpCsTicketType@createTime",
-    "slaPolicyName": null,
     "defaultPriority": null,
     "defaultPriority_label": null,
     "defaultSlaPolicyId": null,

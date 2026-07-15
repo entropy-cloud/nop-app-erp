@@ -236,16 +236,16 @@
         }
 
 
-        private java.time.LocalDateTime _operatedAt;
+        private java.sql.Timestamp _operatedAt;
 
     
         @PropMeta(propId=17)
     
-        public java.time.LocalDateTime getOperatedAt(){
+        public java.sql.Timestamp getOperatedAt(){
             return _operatedAt;
         }
 
-        public void setOperatedAt(java.time.LocalDateTime value){
+        public void setOperatedAt(java.sql.Timestamp value){
             this._operatedAt = value;
         }
 

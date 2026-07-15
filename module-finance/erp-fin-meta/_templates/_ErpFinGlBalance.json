@@ -24,12 +24,20 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "acctSchema": null,
+  "acctSchema.name": "",
   "period": null,
   "subject": null,
+  "subject.code": "",
   "currency": null,
+  "currency.name": "",
   "org": null,
+  "org.name": "",
   "partner": null,
+  "partner.name": "",
   "department": null,
+  "department.name": "",
   "warehouse": null,
-  "project": null
+  "warehouse.name": "",
+  "project": null,
+  "project.name": ""
 }

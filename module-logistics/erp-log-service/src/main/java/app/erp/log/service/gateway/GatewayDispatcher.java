@@ -240,7 +240,7 @@ public class GatewayDispatcher {
         log.setHttpStatus(200);
         log.setIsSuccess(advanced ? Boolean.TRUE : Boolean.FALSE);
         log.setErrorCode(eventType);
-        log.setExecutedAt(CoreMetrics.currentDateTime());
+        log.setExecutedAt(CoreMetrics.currentTimestamp());
         dao.saveEntity(log);
     }
 
@@ -323,7 +323,7 @@ public class GatewayDispatcher {
 
     private void deadLetter(ErpLogShipment shipment, String actionType, Object request,
                             NopException failure, boolean retryable) {
-        String errMsg = (retryable ? "[网关重试耗尽] " : "[网关不可重试错误] ") + failure.getMessage();
+        String errMsg = (retryable ? "[网关重试耗尽] " : "[网关不可重试错误] ") + failure.getDescription();
         shipment.setRemark(errMsg);
         daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
         String code = retryable ? "GATEWAY_RETRY_EXHAUSTED" : "GATEWAY_NON_RETRYABLE";
@@ -344,7 +344,7 @@ public class GatewayDispatcher {
         log.setErrorCode(errorCode != null && errorCode.length() > 100 ? errorCode.substring(0, 100) : errorCode);
         log.setErrorMessage(errorMessage);
         log.setIsSuccess(success ? Boolean.TRUE : Boolean.FALSE);
-        log.setExecutedAt(CoreMetrics.currentDateTime());
+        log.setExecutedAt(CoreMetrics.currentTimestamp());
         dao.saveEntity(log);
     }
 

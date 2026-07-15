@@ -1,3 +1,3 @@
 _chgType,ID,CODE,NAME,PARTNER_TYPE,STATUS,CONTACT_PERSON,PHONE,EMAIL,ADDRESS,TAX_NO,CREDIT_LIMIT,CREDIT_PERIOD_DAYS,RECEIVABLE_BALANCE,PAYABLE_BALANCE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK,CUSTOMER_GROUP
-A,2101,SUP-2101,供应商2101,CUSTOMER,ACTIVE,,,,,,,,0,0,*,0,autotest-ref,*,autotest-ref,*,,
-A,2102,SUP-2102,供应商2102,CUSTOMER,ACTIVE,,,,,,,,0,0,*,0,autotest-ref,*,autotest-ref,*,,
+A,2101,@var:ErpMdPartner@code,供应商2101,CUSTOMER,ACTIVE,,,,,,,,0,0,@var:ErpMdPartner@delVersion_1,0,autotest-ref,*,autotest-ref,*,,
+A,2102,@var:ErpMdPartner@code_1,供应商2102,CUSTOMER,ACTIVE,,,,,,,,0,0,@var:ErpMdPartner@delVersion_1,0,autotest-ref,*,autotest-ref,*,,

@@ -11,8 +11,8 @@
                 <col id="category" mandatory="true" sortable="true"/>
                 <col id="competencyGroup" sortable="true"/>
                 <col id="isTechnical" sortable="true"/>
-                <col id="parentName" label="上级"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="parentId" label="上级"/>
+                <col id="orgId" label="业务组织"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

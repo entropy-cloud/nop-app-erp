@@ -49,7 +49,7 @@ public class _ErpDrpPlan extends DynamicOrmEntity{
     public static final String PROP_NAME_totalReplenishmentQty = "totalReplenishmentQty";
     public static final int PROP_ID_totalReplenishmentQty = 7;
     
-    /* 运行时间: RUN_AT DATETIME */
+    /* 运行时间: RUN_AT TIMESTAMP */
     public static final String PROP_NAME_runAt = "runAt";
     public static final int PROP_ID_runAt = 8;
     
@@ -190,7 +190,7 @@ public class _ErpDrpPlan extends DynamicOrmEntity{
     private java.math.BigDecimal _totalReplenishmentQty;
     
     /* 运行时间: RUN_AT */
-    private java.time.LocalDateTime _runAt;
+    private java.sql.Timestamp _runAt;
     
     /* 运行人: RUN_BY */
     private java.lang.String _runBy;
@@ -432,9 +432,9 @@ public class _ErpDrpPlan extends DynamicOrmEntity{
             }
         
             case PROP_ID_runAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_runAt));
                }
                setRunAt(typedValue);
@@ -601,7 +601,7 @@ public class _ErpDrpPlan extends DynamicOrmEntity{
         
             case PROP_ID_runAt:{
                onInitProp(propId);
-               this._runAt = (java.time.LocalDateTime)value;
+               this._runAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -818,7 +818,7 @@ public class _ErpDrpPlan extends DynamicOrmEntity{
     /**
      * 运行时间: RUN_AT
      */
-    public final java.time.LocalDateTime getRunAt(){
+    public final java.sql.Timestamp getRunAt(){
          onPropGet(PROP_ID_runAt);
          return _runAt;
     }
@@ -826,7 +826,7 @@ public class _ErpDrpPlan extends DynamicOrmEntity{
     /**
      * 运行时间: RUN_AT
      */
-    public final void setRunAt(java.time.LocalDateTime value){
+    public final void setRunAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_runAt,value)){
             this._runAt = value;
             internalClearRefs(PROP_ID_runAt);

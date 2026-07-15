@@ -103,7 +103,8 @@ public class ErpFinReversalListenerRegistry {
                 }
                 String errorCode = e instanceof io.nop.api.core.exceptions.NopException
                         ? ((io.nop.api.core.exceptions.NopException) e).getErrorCode() : null;
-                String errorMsg = e.getMessage();
+                String errorMsg = e instanceof io.nop.api.core.exceptions.NopException
+                        ? ((io.nop.api.core.exceptions.NopException) e).getDescription() : e.getMessage();
                 String listenerName = listener.getClass().getName();
                 failures.add(new ListenerFailure(listenerName, errorCode, errorMsg));
                 LOG.warn("凭证红冲监听者回退失败（隔离，不阻断其他监听者/不回滚红字凭证）：traceId={}, listener={}, billHeadCode={}, businessType={}, errorCode={}, errorMsg={}",

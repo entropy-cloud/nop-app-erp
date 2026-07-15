@@ -7,8 +7,8 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="partnerName" label="客户"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="partnerId" label="客户"/>
                 <col id="contractType" sortable="true"/>
                 <col id="startDate" sortable="true"/>
                 <col id="endDate" sortable="true"/>

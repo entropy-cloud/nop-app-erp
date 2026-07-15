@@ -2,11 +2,8 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpLogCarrierConfig.xmeta">
 
         <props>
-        <prop name="carrierName" displayName="承运商" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="orgName" displayName="业务组织" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-    </props>
+                <prop name="apiKey" published="false" queryable="false" sortable="false"/>
+                <prop name="apiSecret" published="false" queryable="false" sortable="false"/>
+                <prop name="credentials" published="false" queryable="false" sortable="false"/>
+        </props>
 </meta>

@@ -53,8 +53,8 @@ public class MockTransportAdapter implements IErpB2bTransportAdapter {
                     .param(ErpB2bErrors.ARG_PROTOCOL, config.getProtocol())
                     .param("httpStatus", 401);
         }
-        String messageId = "MOCK-MSG-" + UUID.randomUUID();
         String fileHash = sha256(payload);
+        String messageId = "MOCK-MSG-" + fileHash.substring(0, 16);
         return TransportResult.success(messageId, fileHash);
     }
 

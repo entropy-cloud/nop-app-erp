@@ -5,8 +5,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="configuratorName" label="配置器"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="configuratorId" label="配置器"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="ruleType" sortable="true"/>
                 <col id="sourceFeatureCode" sortable="true"/>
                 <col id="targetFeatureCode" sortable="true"/>

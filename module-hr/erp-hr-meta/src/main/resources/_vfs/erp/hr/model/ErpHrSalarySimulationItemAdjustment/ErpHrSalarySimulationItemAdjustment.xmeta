@@ -2,15 +2,5 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef"
       x:extends="_ErpHrSalarySimulationItemAdjustment.xmeta">
 
-    <props>
-        <prop name="simulationCode" displayName="薪资模拟" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="employeeDisplayName" displayName="员工" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="orgName" displayName="业务组织" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-    </props>
+    <props/>
 </meta>

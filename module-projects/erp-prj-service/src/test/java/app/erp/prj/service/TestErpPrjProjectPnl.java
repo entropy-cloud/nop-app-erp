@@ -93,7 +93,7 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
         assertEquals(0, pnl.getCostSubcontract().compareTo(new BigDecimal("1500")), "分包成本=1500");
         assertEquals(0, pnl.getTotalCost().compareTo(new BigDecimal("6000")), "成本合计=6000");
         assertEquals(0, pnl.getGrossProfit().compareTo(new BigDecimal("4000")), "毛利=4000");
-        assertEquals("40.0000", pnl.getGrossMarginPct(), "毛利率=40%");
+        assertEquals(0, pnl.getGrossMarginPct().compareTo(new BigDecimal("40.0000")), "毛利率=40%");
         assertEquals(0, pnl.getCommittedCost().compareTo(new BigDecimal("3000")), "已承诺成本=3000");
         assertEquals(0, pnl.getBudgetAmount().compareTo(new BigDecimal("20000")), "预算=20000");
         // EAC = totalCost + max(budget - committed, 0) = 6000 + 17000 = 23000
@@ -120,7 +120,7 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
         assertEquals(0, pnl.getRevenueAmount().compareTo(BigDecimal.ZERO), "收入=0");
         assertEquals(0, pnl.getTotalCost().compareTo(BigDecimal.ZERO), "成本=0");
         assertEquals(0, pnl.getGrossProfit().compareTo(BigDecimal.ZERO), "毛利=0");
-        assertEquals("0", pnl.getGrossMarginPct(), "毛利率=0（收入为零）");
+        assertEquals(0, pnl.getGrossMarginPct().compareTo(BigDecimal.ZERO), "毛利率=0（收入为零）");
         assertEquals(ErpPrjConstants.PNL_CALC_STATUS_CALCULATED, pnl.getCalcStatus());
     }
 
@@ -198,9 +198,9 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
         cc.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
         cc.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
         cc.setPosted(false);
-        cc.setExchangeRate("1");
-        cc.setAmountSource("0");
-        cc.setAmountFunctional("0");
+        cc.setExchangeRate(BigDecimal.ONE);
+        cc.setAmountSource(BigDecimal.ZERO);
+        cc.setAmountFunctional(BigDecimal.ZERO);
         dao.saveEntity(cc);
         return cc.getId();
     }
@@ -209,7 +209,7 @@ public class TestErpPrjProjectPnl extends JunitAutoTestCase {
         IEntityDao<ErpPrjCostCollectionLine> dao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
         ErpPrjCostCollectionLine line = new ErpPrjCostCollectionLine();
         line.setCostCollectionId(costCollectionId);
-        line.setLineNo((int) (Math.random() * 1000) + 1);
+        line.setLineNo(1);
         line.setCostCategory(category);
         line.setAmount(new BigDecimal(amount));
         dao.saveEntity(line);

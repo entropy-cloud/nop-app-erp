@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -155,7 +156,7 @@ public class TestErpCsReportRendering extends JunitAutoTestCase {
         s.setTicketId(ticketId);
         s.setCsatScore(csat);
         s.setNpsScore(nps);
-        s.setRespondedAt(LocalDateTime.of(2026, 7, 10, 12, 0));
+        s.setRespondedAt(Timestamp.valueOf(LocalDateTime.of(2026, 7, 10, 12, 0)));
         dao.saveEntity(s);
     }
 

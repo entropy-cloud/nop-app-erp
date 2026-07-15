@@ -1,0 +1,4 @@
+_chgType,ID,TEMPLATE_ID,LINE_NO,SUBJECT_CODE,DC_DIRECTION,AMOUNT_EXPRESSION,ACCOUNT_KEY,AMOUNT_KEY,MEMO_TEMPLATE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6,5,1,6602,DEBIT,,X,AMOUNT,,@var:ErpFinVoucherTemplateLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,7,5,2,2221,DEBIT,,X,TAX,,@var:ErpFinVoucherTemplateLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8,5,3,2202,CREDIT,,X,TOTAL,,@var:ErpFinVoucherTemplateLine@delVersion,0,autotest-ref,*,autotest-ref,*

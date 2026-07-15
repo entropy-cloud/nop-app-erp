@@ -7,7 +7,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" sortable="true"/>
                 <col id="workOrderNo" label="工单"/>
-                <col id="workcenterName" label="工作中心"/>
+                <col id="workcenterId" label="工作中心"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="completedQuantity" ui:number="true" sortable="true"/>

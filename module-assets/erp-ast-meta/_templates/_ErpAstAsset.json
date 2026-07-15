@@ -31,16 +31,15 @@
   "netBookValue": 0.0,
   "category": null,
   "department": null,
+  "department.name": "",
   "location": null,
+  "location.name": "",
   "employee": null,
+  "employee.name": "",
   "currency": null,
+  "currency.name": "",
   "org": null,
+  "org.name": "",
   "staff": null,
-  "orgName": "",
-  "categoryName": "",
-  "currencyName": "",
-  "departmentName": "",
-  "locationName": "",
-  "employeeName": "",
-  "staffName": ""
+  "staff.name": ""
 }

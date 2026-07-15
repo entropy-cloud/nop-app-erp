@@ -18,6 +18,5 @@
   "invoicePlans": null,
   "consumptionLines": null,
   "material": null,
-  "contractName": "",
-  "materialName": ""
+  "material.name": ""
 }

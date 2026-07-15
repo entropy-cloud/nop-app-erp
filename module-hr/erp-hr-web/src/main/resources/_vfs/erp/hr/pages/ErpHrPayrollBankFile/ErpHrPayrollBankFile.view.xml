@@ -13,7 +13,7 @@
                 <col id="fileFormat" mandatory="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="bankDisplayName" label="开户银行"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

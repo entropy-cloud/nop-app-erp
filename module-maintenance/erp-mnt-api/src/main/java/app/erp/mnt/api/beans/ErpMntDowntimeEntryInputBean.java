@@ -40,30 +40,30 @@
         }
 
 
-        private java.time.LocalDateTime _startTime;
+        private java.sql.Timestamp _startTime;
 
     
         @PropMeta(propId=3)
     
-        public java.time.LocalDateTime getStartTime(){
+        public java.sql.Timestamp getStartTime(){
             return _startTime;
         }
 
-        public void setStartTime(java.time.LocalDateTime value){
+        public void setStartTime(java.sql.Timestamp value){
             this._startTime = value;
         }
 
 
-        private java.time.LocalDateTime _endTime;
+        private java.sql.Timestamp _endTime;
 
     
         @PropMeta(propId=4)
     
-        public java.time.LocalDateTime getEndTime(){
+        public java.sql.Timestamp getEndTime(){
             return _endTime;
         }
 
-        public void setEndTime(java.time.LocalDateTime value){
+        public void setEndTime(java.sql.Timestamp value){
             this._endTime = value;
         }
 

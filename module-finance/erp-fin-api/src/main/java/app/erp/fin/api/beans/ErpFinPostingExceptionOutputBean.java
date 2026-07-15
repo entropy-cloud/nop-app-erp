@@ -285,16 +285,16 @@
         }
 
 
-        private java.time.LocalDateTime _resolvedAt;
+        private java.sql.Timestamp _resolvedAt;
 
     
         @PropMeta(propId=17)
     
-        public java.time.LocalDateTime getResolvedAt(){
+        public java.sql.Timestamp getResolvedAt(){
             return _resolvedAt;
         }
 
-        public void setResolvedAt(java.time.LocalDateTime value){
+        public void setResolvedAt(java.sql.Timestamp value){
             this._resolvedAt = value;
         }
 
@@ -450,54 +450,6 @@
 
         public void setEventData(String value){
             this._eventData = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _acctSchemaCode;
-
-    
-        public String getAcctSchemaCode(){
-            return _acctSchemaCode;
-        }
-
-        public void setAcctSchemaCode(String value){
-            this._acctSchemaCode = value;
-        }
-
-
-        private String _voucherCode;
-
-    
-        public String getVoucherCode(){
-            return _voucherCode;
-        }
-
-        public void setVoucherCode(String value){
-            this._voucherCode = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
         }
 
 

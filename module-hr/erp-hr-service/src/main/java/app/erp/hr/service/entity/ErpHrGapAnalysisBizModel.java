@@ -13,10 +13,8 @@ import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.competency.AssessmentAggregator;
 import app.erp.hr.service.competency.GapAnalysisCalculator;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -28,7 +26,6 @@ import jakarta.inject.Inject;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,23 +165,4 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
         }
     }
 
-    @BizLoader(forType = ErpHrGapAnalysis.class)
-    public List<String> employeeDisplayName(@ContextSource List<ErpHrGapAnalysis> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("employee"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpHrGapAnalysis row : rows) {
-            result.add(row.orm_attached() && row.getEmployee() != null ? row.getEmployee().getFullName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpHrGapAnalysis.class)
-    public List<String> competencyName(@ContextSource List<ErpHrGapAnalysis> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("competency"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpHrGapAnalysis row : rows) {
-            result.add(row.orm_attached() && row.getCompetency() != null ? row.getCompetency().getName() : null);
-        }
-        return result;
-    }
 }

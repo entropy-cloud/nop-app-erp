@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,DEPARTMENT_ID,JOB_GRADE,JOB_CATEGORY,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpHrPosition@code,POS-OKLEVEL,,,,,,@var:ErpHrPosition@delVersion,0,autotest-ref,*,autotest-ref,*

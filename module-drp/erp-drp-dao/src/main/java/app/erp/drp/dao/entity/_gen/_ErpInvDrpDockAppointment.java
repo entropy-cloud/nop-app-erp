@@ -37,11 +37,11 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     public static final String PROP_NAME_appointmentDate = "appointmentDate";
     public static final int PROP_ID_appointmentDate = 4;
     
-    /* 时间窗口开始: SLOT_START DATETIME */
+    /* 时间窗口开始: SLOT_START TIMESTAMP */
     public static final String PROP_NAME_slotStart = "slotStart";
     public static final int PROP_ID_slotStart = 5;
     
-    /* 时间窗口结束: SLOT_END DATETIME */
+    /* 时间窗口结束: SLOT_END TIMESTAMP */
     public static final String PROP_NAME_slotEnd = "slotEnd";
     public static final int PROP_ID_slotEnd = 6;
     
@@ -180,10 +180,10 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     private java.time.LocalDate _appointmentDate;
     
     /* 时间窗口开始: SLOT_START */
-    private java.time.LocalDateTime _slotStart;
+    private java.sql.Timestamp _slotStart;
     
     /* 时间窗口结束: SLOT_END */
-    private java.time.LocalDateTime _slotEnd;
+    private java.sql.Timestamp _slotEnd;
     
     /* 关联越库: CROSS_DOCK_ID */
     private java.lang.Long _crossDockId;
@@ -395,9 +395,9 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
             }
         
             case PROP_ID_slotStart:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_slotStart));
                }
                setSlotStart(typedValue);
@@ -405,9 +405,9 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
             }
         
             case PROP_ID_slotEnd:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_slotEnd));
                }
                setSlotEnd(typedValue);
@@ -563,14 +563,14 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
         
             case PROP_ID_slotStart:{
                onInitProp(propId);
-               this._slotStart = (java.time.LocalDateTime)value;
+               this._slotStart = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_slotEnd:{
                onInitProp(propId);
-               this._slotEnd = (java.time.LocalDateTime)value;
+               this._slotEnd = (java.sql.Timestamp)value;
                
                break;
             }
@@ -737,7 +737,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 时间窗口开始: SLOT_START
      */
-    public final java.time.LocalDateTime getSlotStart(){
+    public final java.sql.Timestamp getSlotStart(){
          onPropGet(PROP_ID_slotStart);
          return _slotStart;
     }
@@ -745,7 +745,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 时间窗口开始: SLOT_START
      */
-    public final void setSlotStart(java.time.LocalDateTime value){
+    public final void setSlotStart(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_slotStart,value)){
             this._slotStart = value;
             internalClearRefs(PROP_ID_slotStart);
@@ -756,7 +756,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 时间窗口结束: SLOT_END
      */
-    public final java.time.LocalDateTime getSlotEnd(){
+    public final java.sql.Timestamp getSlotEnd(){
          onPropGet(PROP_ID_slotEnd);
          return _slotEnd;
     }
@@ -764,7 +764,7 @@ public class _ErpInvDrpDockAppointment extends DynamicOrmEntity{
     /**
      * 时间窗口结束: SLOT_END
      */
-    public final void setSlotEnd(java.time.LocalDateTime value){
+    public final void setSlotEnd(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_slotEnd,value)){
             this._slotEnd = value;
             internalClearRefs(PROP_ID_slotEnd);

@@ -58,19 +58,19 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="actualStartTime" displayName="实际开始时间" propId="10" i18n-en:displayName="Actual Start Time"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+              tagSet="clock" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="actualEndTime" displayName="实际结束时间" propId="11" i18n-en:displayName="Actual End Time"
+        <prop name="actualEndTime" displayName="实际结束时间" propId="11" i18n-en:displayName="Actual End Time" tagSet="clock"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="remark" displayName="备注" propId="12" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="code" displayName="作业卡编号" propId="13" i18n-en:displayName="Code" queryable="true" sortable="true"
-              insertable="true" updatable="true">
+        <prop name="code" displayName="作业卡编号" propId="13" i18n-en:displayName="Code" tagSet="var" queryable="true"
+              sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="14" i18n-en:displayName="Del Flag" mandatory="true"

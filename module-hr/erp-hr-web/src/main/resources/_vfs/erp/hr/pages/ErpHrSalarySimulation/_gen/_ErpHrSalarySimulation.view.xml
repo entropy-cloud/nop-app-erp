@@ -74,12 +74,6 @@
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
-
-                <!--审核人-->
-                <col id="reviewerDisplayName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -97,7 +91,6 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] businessDate[业务日期]
- orgName[业务组织] reviewerDisplayName[审核人]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-薪酬模拟" i18n-en:title="Add Salary Simulation" x:prototype="edit"/>

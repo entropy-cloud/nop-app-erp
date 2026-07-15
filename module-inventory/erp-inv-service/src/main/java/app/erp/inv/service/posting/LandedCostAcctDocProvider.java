@@ -62,7 +62,6 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
             fact.setBusinessType(event.getBusinessType().name());
             fact.setMaterialId(toLong(alloc.get("materialId")));
             fact.setWarehouseId(toLong(alloc.get("warehouseId")));
-            fact.setMemo(billHeadCode);
             facts.add(fact);
         }
 
@@ -80,7 +79,6 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
             fact.setAmount(amount);
             fact.setBusinessType(event.getBusinessType().name());
             fact.setPartnerId(toLong(elem.get("apPartnerId")));
-            fact.setMemo(billHeadCode);
             facts.add(fact);
         }
 

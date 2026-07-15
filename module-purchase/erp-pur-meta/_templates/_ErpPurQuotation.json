@@ -25,7 +25,10 @@
   "approvedAt": "2000-01-01 14:00:00",
   "rfq": null,
   "supplier": null,
+  "supplier.name": "",
   "currency": null,
+  "currency.name": "",
   "org": null,
+  "org.name": "",
   "lines": null
 }

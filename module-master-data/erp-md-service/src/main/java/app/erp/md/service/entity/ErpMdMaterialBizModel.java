@@ -1,10 +1,6 @@
 
 package app.erp.md.service.entity;
 
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
@@ -15,8 +11,6 @@ import app.erp.md.biz.IErpMdMaterialBiz;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdMaterialSku;
 import app.erp.md.service.ErpMdConstants;
-
-import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -61,46 +55,4 @@ public class ErpMdMaterialBizModel extends CrudBizModel<ErpMdMaterial> implement
     protected void onMaterialDeactivated(ErpMdMaterial material, IServiceContext context) {
         // 默认无操作：联动经 SKU 侧 isMaterialActive 过滤实现，此处仅作扩展点。
     }
-
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpMdMaterial.class)
-    public List<String> categoryName(@ContextSource List<ErpMdMaterial> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("category"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpMdMaterial row : rows) {
-            result.add(row.orm_attached() && row.getCategory() != null ? row.getCategory().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMdMaterial.class)
-    public List<String> uomName(@ContextSource List<ErpMdMaterial> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("uoM"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpMdMaterial row : rows) {
-            result.add(row.orm_attached() && row.getUoM() != null ? row.getUoM().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMdMaterial.class)
-    public List<String> defaultWarehouseName(@ContextSource List<ErpMdMaterial> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("defaultWarehouse"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpMdMaterial row : rows) {
-            result.add(row.orm_attached() && row.getDefaultWarehouse() != null ? row.getDefaultWarehouse().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMdMaterial.class)
-    public List<String> defaultTaxRateName(@ContextSource List<ErpMdMaterial> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("defaultTaxRate"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpMdMaterial row : rows) {
-            result.add(row.orm_attached() && row.getDefaultTaxRate() != null ? row.getDefaultTaxRate().getName() : null);
-        }
-        return result;
-    }
-
 }

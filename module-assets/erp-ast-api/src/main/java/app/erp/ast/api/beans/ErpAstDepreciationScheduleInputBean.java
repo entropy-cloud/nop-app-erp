@@ -138,16 +138,16 @@
         }
 
 
-        private java.time.LocalDateTime _executedAt;
+        private java.sql.Timestamp _executedAt;
 
     
         @PropMeta(propId=10)
     
-        public java.time.LocalDateTime getExecutedAt(){
+        public java.sql.Timestamp getExecutedAt(){
             return _executedAt;
         }
 
-        public void setExecutedAt(java.time.LocalDateTime value){
+        public void setExecutedAt(java.sql.Timestamp value){
             this._executedAt = value;
         }
 
@@ -194,44 +194,44 @@
         }
 
 
-        private String _exchangeRate;
+        private java.math.BigDecimal _exchangeRate;
 
     
         @PropMeta(propId=23)
     
-        public String getExchangeRate(){
+        public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
         }
 
-        public void setExchangeRate(String value){
+        public void setExchangeRate(java.math.BigDecimal value){
             this._exchangeRate = value;
         }
 
 
-        private String _amountSource;
+        private java.math.BigDecimal _amountSource;
 
     
         @PropMeta(propId=24)
     
-        public String getAmountSource(){
+        public java.math.BigDecimal getAmountSource(){
             return _amountSource;
         }
 
-        public void setAmountSource(String value){
+        public void setAmountSource(java.math.BigDecimal value){
             this._amountSource = value;
         }
 
 
-        private String _amountFunctional;
+        private java.math.BigDecimal _amountFunctional;
 
     
         @PropMeta(propId=25)
     
-        public String getAmountFunctional(){
+        public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
         }
 
-        public void setAmountFunctional(String value){
+        public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
         }
 

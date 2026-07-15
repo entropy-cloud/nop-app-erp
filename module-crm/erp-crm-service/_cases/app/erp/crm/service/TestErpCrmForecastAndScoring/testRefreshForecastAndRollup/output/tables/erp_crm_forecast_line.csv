@@ -1,0 +1,4 @@
+_chgType,ID,FORECAST_ID,ORG_ID,LEAD_ID,PROBABILITY,EXPECTED_REVENUE,WEIGHTED_REVENUE,FORECAST_CATEGORY,INCLUDED_IN_COMMIT,STAGE_NAME,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2,1,1301,5411,90,1000.0000,900.00,COMMIT,true,,@var:ErpCrmForecastLine@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,3,1,1301,5413,20,500.0000,100.00,BEST_CASE,false,,@var:ErpCrmForecastLine@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,5,4,1301,5412,50,2000.0000,1000.00,UPSIDE,false,,@var:ErpCrmForecastLine@delVersion_2,0,autotest-ref,*,autotest-ref,*

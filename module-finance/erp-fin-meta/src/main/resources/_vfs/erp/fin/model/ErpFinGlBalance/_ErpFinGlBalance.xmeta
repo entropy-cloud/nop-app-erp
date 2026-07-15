@@ -116,9 +116,13 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="acctSchema" i18n-en:displayName="Acct Schema" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdAcctSchema"/>
+        </prop>
+        <prop name="acctSchema.name" i18n-en:displayName="Acct Schema" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="period" i18n-en:displayName="Period" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="periodId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
@@ -126,39 +130,62 @@
             <schema bizObjName="ErpFinAccountingPeriod"/>
         </prop>
         <prop name="subject" i18n-en:displayName="Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="code"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
+        <prop name="subject.code" i18n-en:displayName="Subject" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="currency" i18n-en:displayName="Currency" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
         </prop>
-        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
+        <prop name="currency.name" i18n-en:displayName="Currency" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="partner" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+              ext:joinLeftProp="partnerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
         </prop>
+        <prop name="partner.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="department" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="departmentId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+              ext:joinLeftProp="departmentId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
         </prop>
+        <prop name="department.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="warehouse" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="warehouseId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+              ext:joinLeftProp="warehouseId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
         </prop>
+        <prop name="warehouse.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="project" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj" insertable="false"
-              updatable="false" lazy="true">
+              ext:joinLeftProp="projectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/prj"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpPrjProject"/>
+        </prop>
+        <prop name="project.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

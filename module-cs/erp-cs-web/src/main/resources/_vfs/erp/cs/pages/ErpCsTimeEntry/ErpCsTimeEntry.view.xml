@@ -5,7 +5,7 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="ticketCode" label="工单"/>
                 <col id="agentId" sortable="true"/>
                 <col id="startTime" sortable="true"/>

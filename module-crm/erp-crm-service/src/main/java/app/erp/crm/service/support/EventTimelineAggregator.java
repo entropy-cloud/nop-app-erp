@@ -8,6 +8,8 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,7 +53,8 @@ public class EventTimelineAggregator {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("sourceType", ErpCrmConstants.TIMELINE_SOURCE_EVENT);
         m.put("id", event.getId());
-        m.put("timestamp", event.getStartDateTime());
+        Timestamp ts = event.getStartDateTime();
+        m.put("timestamp", ts != null ? ts.toLocalDateTime() : null);
         m.put("title", event.getSubject());
         m.put("typeCode", event.getEventType());
         m.put("status", event.getStatus());
@@ -65,7 +68,8 @@ public class EventTimelineAggregator {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("sourceType", ErpCrmConstants.TIMELINE_SOURCE_ACTIVITY);
         m.put("id", activity.getId());
-        m.put("timestamp", activity.getActivityDate());
+        LocalDate d = activity.getActivityDate();
+        m.put("timestamp", d != null ? d.atStartOfDay() : null);
         m.put("title", activity.getSummary());
         m.put("typeCode", activity.getActivityType());
         m.put("status", null);

@@ -1,2 +1,2 @@
 _chgType,ID,PAYMENT_ID,INVOICE_ID,AMOUNT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,3,2,1,113,,*,0,autotest-ref,*,autotest-ref,*
+A,3,2,1,113,,@var:ErpPurPaymentLine@delVersion,0,autotest-ref,*,autotest-ref,*

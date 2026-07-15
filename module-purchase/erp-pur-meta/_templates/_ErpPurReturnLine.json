@@ -21,8 +21,10 @@
   "updateTime": "2000-01-01 14:00:00",
   "return": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "uoM": null,
-  "receiveLine": null,
-  "materialName": ""
+  "uoM.name": "",
+  "receiveLine": null
 }

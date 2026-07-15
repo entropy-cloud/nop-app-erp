@@ -15,7 +15,7 @@
                 <col id="isAbsent" sortable="true"/>
                 <col id="source" sortable="true"/>
                 <col id="leaveRequestCode" label="请假申请"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

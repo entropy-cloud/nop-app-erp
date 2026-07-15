@@ -71,9 +71,9 @@
               sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
-        <prop name="generatedAt" displayName="生成时间" propId="14" i18n-en:displayName="Generated At" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="generatedAt" displayName="生成时间" propId="14" i18n-en:displayName="Generated At" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="15" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
@@ -100,9 +100,13 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="acctSchema" i18n-en:displayName="Acct Schema" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdAcctSchema"/>
+        </prop>
+        <prop name="acctSchema.name" i18n-en:displayName="Acct Schema" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="period" i18n-en:displayName="Period" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="periodId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
@@ -110,14 +114,21 @@
             <schema bizObjName="ErpFinAccountingPeriod"/>
         </prop>
         <prop name="subject" i18n-en:displayName="Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="code"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
-        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
+        <prop name="subject.code" i18n-en:displayName="Subject" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

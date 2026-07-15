@@ -68,9 +68,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--发运单-->
-                <col id="shipmentName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -87,7 +84,6 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- shipmentName[发运单] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-包裹" i18n-en:title="Add Shipment Parcel" x:prototype="edit"/>

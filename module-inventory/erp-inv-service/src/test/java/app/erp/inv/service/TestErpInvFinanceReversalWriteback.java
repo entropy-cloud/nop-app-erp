@@ -78,7 +78,7 @@ public class TestErpInvFinanceReversalWriteback extends JunitAutoTestCase {
         transfer.setCurrencyId(CURRENCY_ID);
         transfer.setDocStatus(ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED);
         transfer.setPosted(true);
-        transfer.setPostedAt(CoreMetrics.currentDateTime());
+        transfer.setPostedAt(CoreMetrics.currentTimestamp());
         transfer.setPostedBy("test-user");
         ormTemplate.runInSession(() -> daoProvider.daoFor(ErpInvOwnershipTransfer.class).saveEntity(transfer));
 
@@ -130,7 +130,7 @@ public class TestErpInvFinanceReversalWriteback extends JunitAutoTestCase {
             voucher.setTotalCredit(total);
             voucher.setIsReversed(false);
             voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
-            voucher.setPostedAt(CoreMetrics.currentDateTime());
+            voucher.setPostedAt(CoreMetrics.currentTimestamp());
             vDao.saveEntity(voucher);
 
             ErpFinVoucherBillR billR = new ErpFinVoucherBillR();

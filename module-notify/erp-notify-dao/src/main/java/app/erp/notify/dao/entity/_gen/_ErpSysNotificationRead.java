@@ -33,7 +33,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
     public static final String PROP_NAME_userId = "userId";
     public static final int PROP_ID_userId = 3;
     
-    /* 阅读时间: READ_TIME DATETIME */
+    /* 阅读时间: READ_TIME TIMESTAMP */
     public static final String PROP_NAME_readTime = "readTime";
     public static final int PROP_ID_readTime = 4;
     
@@ -119,7 +119,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
     private java.lang.String _userId;
     
     /* 阅读时间: READ_TIME */
-    private java.time.LocalDateTime _readTime;
+    private java.sql.Timestamp _readTime;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -285,9 +285,9 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
             }
         
             case PROP_ID_readTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_readTime));
                }
                setReadTime(typedValue);
@@ -386,7 +386,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
         
             case PROP_ID_readTime:{
                onInitProp(propId);
-               this._readTime = (java.time.LocalDateTime)value;
+               this._readTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -499,7 +499,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
     /**
      * 阅读时间: READ_TIME
      */
-    public final java.time.LocalDateTime getReadTime(){
+    public final java.sql.Timestamp getReadTime(){
          onPropGet(PROP_ID_readTime);
          return _readTime;
     }
@@ -507,7 +507,7 @@ public class _ErpSysNotificationRead extends DynamicOrmEntity{
     /**
      * 阅读时间: READ_TIME
      */
-    public final void setReadTime(java.time.LocalDateTime value){
+    public final void setReadTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_readTime,value)){
             this._readTime = value;
             internalClearRefs(PROP_ID_readTime);

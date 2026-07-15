@@ -8,8 +8,8 @@
                 <col id="billingCode" label="开票单号"/>
                 <col id="lineNo" mandatory="true" sortable="true"/>
                 <col id="costCategory" sortable="true"/>
-                <col id="taskName" label="任务"/>
-                <col id="subjectName" label="科目"/>
+                <col id="taskId" label="任务"/>
+                <col id="subjectId" label="科目"/>
                 <col id="amount" mandatory="true" sortable="true"/>
             </cols>
         </grid>

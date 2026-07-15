@@ -14,8 +14,6 @@ import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
@@ -68,26 +66,6 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
 
     public ErpQaRecallBizModel() {
         setEntityName(ErpQaRecall.class.getName());
-    }
-
-    @BizLoader(forType = ErpQaRecall.class)
-    public List<String> sourceNcrCode(@ContextSource List<ErpQaRecall> list) {
-        orm().batchLoadProps(list, Collections.singleton("sourceNcr"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaRecall entity : list) {
-            result.add(entity.getSourceNcr() != null ? entity.getSourceNcr().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpQaRecall.class)
-    public List<String> materialName(@ContextSource List<ErpQaRecall> list) {
-        orm().batchLoadProps(list, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaRecall entity : list) {
-            result.add(entity.getMaterial() != null ? entity.getMaterial().getName() : null);
-        }
-        return result;
     }
 
     public void setRecallTargetBiz(IErpQaRecallTargetBiz recallTargetBiz) {
@@ -155,7 +133,7 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
         ErpQaRecall recall = requireRecall(recallId, context);
         requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_IN_PROGRESS, "IN_PROGRESS");
         for (ErpQaRecallTarget target : loadTargets(recallId, null, context)) {
-            target.setNotifiedAt(CoreMetrics.currentDateTime());
+            target.setNotifiedAt(CoreMetrics.currentTimestamp());
             target.setNotifiedBy(context.getUserId());
             target.setReturnStatus(ErpQaConstants.RECALL_TARGET_RETURN_NOTIFIED);
             recallTargetBiz.updateEntity(target, null, context);

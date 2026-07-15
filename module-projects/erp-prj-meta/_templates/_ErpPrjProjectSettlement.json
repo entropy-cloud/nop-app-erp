@@ -38,12 +38,11 @@
   "approvedAt": "2000-01-01 14:00:00",
   "project": null,
   "customer": null,
+  "customer.name": "",
   "pnlSnapshot": null,
   "lines": null,
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "projectName": "",
-  "orgName": "",
-  "customerName": "",
-  "currencyName": ""
+  "org.name": ""
 }

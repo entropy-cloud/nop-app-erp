@@ -6,8 +6,8 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="planName" label="发展计划"/>
-                <col id="competencyName" label="胜任力"/>
+                <col id="planId" label="发展计划"/>
+                <col id="competencyId" label="胜任力"/>
                 <col id="gapId" ui:number="true" sortable="true"/>
                 <col id="targetLevel" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="developmentAction" sortable="true"/>

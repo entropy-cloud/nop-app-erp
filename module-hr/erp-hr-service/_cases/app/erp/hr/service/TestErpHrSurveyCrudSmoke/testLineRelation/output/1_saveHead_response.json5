@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "1",
-    "code": "SMOKE-HR",
+    "code": "@var:ErpHrSurvey@code",
     "title": "冒烟调查",
     "surveyType": "ANNUAL_ENGAGEMENT",
     "surveyType_label": "ANNUAL_ENGAGEMENT-年度敬业度调研",
@@ -18,7 +18,6 @@
     "createTime": "@var:ErpHrSurvey@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpHrSurvey@updateTime",
-    "orgName": null,
     "description": null,
     "startDate": null,
     "endDate": null,
@@ -28,8 +27,7 @@
     "avgScore": null,
     "eNpsScore": null,
     "orgId": null,
-    "remark": null,
-    "targetDepartmentName": null
+    "remark": null
   },
   "status": 0
 }

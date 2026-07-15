@@ -92,21 +92,6 @@
 
                 <!--本位币金额-->
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
-
-                <!--项目名称-->
-                <col id="projectName"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--客户名称-->
-                <col id="customerName"/>
-
-                <!--里程碑名称-->
-                <col id="milestoneName"/>
-
-                <!--币种名称-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -127,9 +112,6 @@
  updatedBy[修改人] updateTime[修改时间]
  approvedBy[审核人] approvedAt[审核时间]
  amountSource[源币种金额] amountFunctional[本位币金额]
- projectName[项目名称] orgName[业务组织名称]
- customerName[客户名称] milestoneName[里程碑名称]
- currencyName[币种名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目开票" i18n-en:title="Add Project Billing" x:prototype="edit"/>

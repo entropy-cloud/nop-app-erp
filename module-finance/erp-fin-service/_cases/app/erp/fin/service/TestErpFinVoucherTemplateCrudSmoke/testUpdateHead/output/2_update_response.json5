@@ -1,10 +1,10 @@
 {
   "data": {
-    "id": "1",
-    "code": "SMOKE-FIN",
-    "name": "冒烟-已修改模板",
+    "id": "@var:NopSysChangeLog@newValue",
+    "code": "@var:ErpFinVoucherTemplate@code",
+    "name": "@var:NopSysChangeLog@newValue_10",
     "acctSchemaId": null,
-    "businessType": "PURCHASE_INPUT",
+    "businessType": "@var:NopSysChangeLog@newValue_3",
     "businessType_label": "PURCHASE_INPUT-采购入库",
     "voucherType": null,
     "voucherType_label": null,
@@ -14,10 +14,10 @@
     "validTo": null,
     "delVersion": 0,
     "version": 1,
-    "createdBy": "autotest-ref",
-    "createTime": "@var:ErpFinVoucherTemplate@createTime",
-    "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpFinVoucherTemplate@updateTime_1"
+    "createdBy": "@var:NopSysChangeLog@newValue_8",
+    "createTime": "@var:NopSysChangeLog@oldValue_1",
+    "updatedBy": "@var:NopSysChangeLog@newValue_8",
+    "updateTime": "@var:NopSysChangeLog@newValue_11"
   },
   "status": 0
 }

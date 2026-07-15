@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpPrjTask.xmeta">
 
-    <props>
-        <prop name="projectName" displayName="项目名称" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="parentTaskName" displayName="父任务名称" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="assigneeName" displayName="负责人名称" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="dependsOnTaskName" displayName="依赖任务名称" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-    </props>
+    <props/>
 </meta>

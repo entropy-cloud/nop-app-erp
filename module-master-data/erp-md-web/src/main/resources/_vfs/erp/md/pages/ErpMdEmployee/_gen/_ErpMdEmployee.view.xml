@@ -59,12 +59,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--所属组织/部门-->
-                <col id="orgName"/>
-
-                <!--对应内部往来单位-->
-                <col id="partnerName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -79,8 +73,7 @@
  partnerId[对应内部往来单位] status[状态]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] orgName[所属组织/部门]
- partnerName[对应内部往来单位] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-职员" i18n-en:title="Add Employee" x:prototype="edit"/>

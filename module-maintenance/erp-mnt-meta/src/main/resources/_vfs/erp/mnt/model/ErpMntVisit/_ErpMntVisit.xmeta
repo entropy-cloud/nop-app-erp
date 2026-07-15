@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="访问编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="访问编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="visitCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="scheduleId" displayName="维护计划ID" propId="3" i18n-en:displayName="Schedule" queryable="true"
@@ -53,17 +53,17 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="completedAt" displayName="完成时间" propId="9" i18n-en:displayName="Completed At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="completedAt" displayName="完成时间" propId="9" i18n-en:displayName="Completed At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="startTime" displayName="开始时间" propId="10" i18n-en:displayName="Start Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="startTime" displayName="开始时间" propId="10" i18n-en:displayName="Start Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="endTime" displayName="结束时间" propId="11" i18n-en:displayName="End Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="endTime" displayName="结束时间" propId="11" i18n-en:displayName="End Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="totalMinutes" displayName="总分钟数" propId="12" i18n-en:displayName="Total Minutes" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -117,8 +117,8 @@
               sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="postedAt" displayName="过账时间" propId="25" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
+        <prop name="postedAt" displayName="过账时间" propId="25" i18n-en:displayName="Posted At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="postedBy" displayName="过账人" propId="26" i18n-en:displayName="Posted By" queryable="true"
@@ -150,8 +150,12 @@
             </schema>
         </prop>
         <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightProp="id" ext:joinRightDisplayProp="code" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.code" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

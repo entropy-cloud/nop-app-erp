@@ -21,9 +21,8 @@
   "businessDate": "2000-01-01",
   "sourceEdiDoc": null,
   "partner": null,
+  "partner.name": "",
   "org": null,
-  "lines": null,
-  "sourceEdiDocName": "",
-  "partnerName": "",
-  "orgName": ""
+  "org.name": "",
+  "lines": null
 }

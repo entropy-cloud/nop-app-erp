@@ -7,9 +7,9 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="moveType" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="sourceWarehouseName" label="源仓库"/>
-                <col id="destWarehouseName" label="目标仓库"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="sourceWarehouseId" label="源仓库"/>
+                <col id="destWarehouseId" label="目标仓库"/>
                 <col id="businessDate" mandatory="true" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true"/>
                 <col id="approveStatus" mandatory="true" sortable="true"/>

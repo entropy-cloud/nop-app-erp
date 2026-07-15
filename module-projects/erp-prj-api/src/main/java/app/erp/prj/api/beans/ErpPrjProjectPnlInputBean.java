@@ -250,16 +250,16 @@
         }
 
 
-        private String _grossMarginPct;
+        private java.math.BigDecimal _grossMarginPct;
 
     
         @PropMeta(propId=18)
     
-        public String getGrossMarginPct(){
+        public java.math.BigDecimal getGrossMarginPct(){
             return _grossMarginPct;
         }
 
-        public void setGrossMarginPct(String value){
+        public void setGrossMarginPct(java.math.BigDecimal value){
             this._grossMarginPct = value;
         }
 

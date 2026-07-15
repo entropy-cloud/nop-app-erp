@@ -33,8 +33,8 @@
               sortable="true" insertable="true" updatable="true" ext:relation="contract">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="文档编码" propId="4" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="文档编码" propId="4" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="docName" displayName="文档名称" propId="5" i18n-en:displayName="Document Name" mandatory="true"
@@ -45,8 +45,8 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="attachmentFileId" displayName="附件" propId="7" i18n-en:displayName="Attachment" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="attachmentFileId" displayName="附件" propId="7" i18n-en:displayName="Attachment" tagSet="var"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="fileSize" displayName="文件大小(字节)" propId="8" i18n-en:displayName="File Size" queryable="true"
@@ -131,9 +131,12 @@
             <schema bizObjName="ErpCtContract"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
               internal="true" lazy="true">

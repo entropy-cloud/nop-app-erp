@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,UOM_GROUP,IS_BASE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9401,@var:ErpMdUoM@code,个,,false,@var:ErpMdUoM@delVersion,0,autotest-ref,*,autotest-ref,*

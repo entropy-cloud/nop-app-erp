@@ -8,11 +8,9 @@ import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.costing.ProductionVarianceCalculator;
 import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.exceptions.NopException;
@@ -21,8 +19,6 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,35 +113,4 @@ public class ErpMfgCostVarianceBizModel extends CrudBizModel<ErpMfgCostVariance>
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------
-
-    @BizLoader(forType = ErpMfgCostVariance.class)
-    public List<String> workOrderNo(@ContextSource List<ErpMfgCostVariance> variances) {
-        orm().batchLoadProps(variances, Collections.singleton("workOrder"));
-        List<String> result = new ArrayList<>(variances.size());
-        for (ErpMfgCostVariance v : variances) {
-            result.add(v.getWorkOrder() != null ? v.getWorkOrder().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMfgCostVariance.class)
-    public List<String> materialName(@ContextSource List<ErpMfgCostVariance> variances) {
-        orm().batchLoadProps(variances, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(variances.size());
-        for (ErpMfgCostVariance v : variances) {
-            result.add(v.getMaterial() != null ? v.getMaterial().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMfgCostVariance.class)
-    public List<String> workcenterName(@ContextSource List<ErpMfgCostVariance> variances) {
-        orm().batchLoadProps(variances, Collections.singleton("workcenter"));
-        List<String> result = new ArrayList<>(variances.size());
-        for (ErpMfgCostVariance v : variances) {
-            result.add(v.getWorkcenter() != null ? v.getWorkcenter().getName() : null);
-        }
-        return result;
-    }
 }

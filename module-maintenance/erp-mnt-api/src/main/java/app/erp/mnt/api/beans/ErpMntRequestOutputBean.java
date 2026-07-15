@@ -191,16 +191,16 @@
         }
 
 
-        private java.time.LocalDateTime _completedAt;
+        private java.sql.Timestamp _completedAt;
 
     
         @PropMeta(propId=12)
     
-        public java.time.LocalDateTime getCompletedAt(){
+        public java.sql.Timestamp getCompletedAt(){
             return _completedAt;
         }
 
-        public void setCompletedAt(java.time.LocalDateTime value){
+        public void setCompletedAt(java.sql.Timestamp value){
             this._completedAt = value;
         }
 
@@ -300,18 +300,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _equipmentCode;
-
-    
-        public String getEquipmentCode(){
-            return _equipmentCode;
-        }
-
-        public void setEquipmentCode(String value){
-            this._equipmentCode = value;
         }
 
 

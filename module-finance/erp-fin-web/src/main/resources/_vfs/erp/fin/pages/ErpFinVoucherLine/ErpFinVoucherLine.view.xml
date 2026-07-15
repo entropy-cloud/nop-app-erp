@@ -8,19 +8,19 @@
                 <col id="voucherCode" label="凭证号"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="subjectCode" mandatory="true" sortable="true"/>
-                <col id="subjectName" sortable="true"/>
+                <col id="subjectId" sortable="true"/>
                 <col id="dcDirection" mandatory="true" sortable="true"/>
                 <col id="debitAmount" ui:number="true" sortable="true"/>
                 <col id="creditAmount" ui:number="true" sortable="true"/>
-                <col id="currencyName" label="币种"/>
+                <col id="currencyId" label="币种"/>
                 <col id="acctSchemaCode" label="账套"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="partnerName" label="往来单位"/>
-                <col id="departmentName" label="部门"/>
-                <col id="projectName" label="项目"/>
-                <col id="warehouseName" label="仓库"/>
-                <col id="materialName" label="物料"/>
-                <col id="costCenterName" label="成本中心"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="partnerId" label="往来单位"/>
+                <col id="departmentId" label="部门"/>
+                <col id="projectId" label="项目"/>
+                <col id="warehouseId" label="仓库"/>
+                <col id="materialId" label="物料"/>
+                <col id="costCenterId" label="成本中心"/>
                 <col id="memo" sortable="true"/>
             </cols>
         </grid>

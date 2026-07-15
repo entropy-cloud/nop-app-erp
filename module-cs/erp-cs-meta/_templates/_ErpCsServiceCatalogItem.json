@@ -26,9 +26,5 @@
   "ticketType": null,
   "slaPolicy": null,
   "org": null,
-  "orgName": "",
-  "categoryName": "",
-  "parentName": "",
-  "ticketTypeName": "",
-  "slaPolicyName": ""
+  "org.name": ""
 }

@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="请求编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="请求编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="requestCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="equipmentId" displayName="设备ID" propId="3" i18n-en:displayName="Equipment" mandatory="true"
@@ -65,9 +65,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="completedAt" displayName="完成时间" propId="12" i18n-en:displayName="Completed At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="completedAt" displayName="完成时间" propId="12" i18n-en:displayName="Completed At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="remark" displayName="备注" propId="13" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

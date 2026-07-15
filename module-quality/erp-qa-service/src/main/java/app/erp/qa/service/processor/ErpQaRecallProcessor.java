@@ -132,7 +132,7 @@ public class ErpQaRecallProcessor {
         recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_APPROVED);
         recall.setStatus(ErpQaConstants.RECALL_STATUS_APPROVED);
         recall.setApprovedBy(currentUserId(context));
-        recall.setApprovedAt(CoreMetrics.currentDateTime());
+        recall.setApprovedAt(CoreMetrics.currentTimestamp());
         recallDao().updateEntity(recall);
     }
 
@@ -140,7 +140,7 @@ public class ErpQaRecallProcessor {
         recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_REJECTED);
         recall.setStatus(ErpQaConstants.RECALL_STATUS_CANCELLED);
         recall.setApprovedBy(currentUserId(context));
-        recall.setApprovedAt(CoreMetrics.currentDateTime());
+        recall.setApprovedAt(CoreMetrics.currentTimestamp());
         recallDao().updateEntity(recall);
     }
 

@@ -264,10 +264,10 @@ public class ErpFinExpenseClaimProcessor {
         claim = reload(id);
         claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
         claim.setApprovedBy(currentUserId());
-        claim.setApprovedAt(CoreMetrics.currentDateTime());
+        claim.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
             claim.setPosted(true);
-            claim.setPostedAt(CoreMetrics.currentDateTime());
+            claim.setPostedAt(CoreMetrics.currentTimestamp());
             claim.setPostedBy(currentUserId());
             offsetOrchestrator.offset(claim);
             claim = reload(id);

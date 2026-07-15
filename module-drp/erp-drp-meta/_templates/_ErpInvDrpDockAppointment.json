@@ -17,11 +17,9 @@
   "updateTime": "2000-01-01 14:00:00",
   "orgId": 0,
   "warehouse": null,
+  "warehouse.name": "",
   "dock": null,
   "crossDock": null,
   "org": null,
-  "warehouseName": "",
-  "dockName": "",
-  "crossDockName": "",
-  "orgName": ""
+  "org.name": ""
 }

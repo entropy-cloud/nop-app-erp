@@ -1,6 +1,7 @@
 
 CREATE TABLE erp_md_organization(
   id INT8 NOT NULL ,
+  name VARCHAR(200)  ,
   constraint PK_erp_md_organization primary key (id)
 );
 
@@ -35,6 +36,7 @@ CREATE TABLE erp_md_location(
 CREATE TABLE erp_inv_stock_move(
   id INT8  ,
   code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
   constraint PK_erp_inv_stock_move primary key (id)
 );
 

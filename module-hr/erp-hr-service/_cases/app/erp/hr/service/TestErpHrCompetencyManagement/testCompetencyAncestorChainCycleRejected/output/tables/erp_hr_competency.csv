@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NAME,DESCRIPTION,CATEGORY,COMPETENCY_GROUP,IS_TECHNICAL,PARENT_ID,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpHrCompetency@code,COMP-A,,BASIC,,false,,,,@var:ErpHrCompetency@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpHrCompetency@code_1,COMP-B,,BASIC,,false,1,,,@var:ErpHrCompetency@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,3,@var:ErpHrCompetency@code_2,COMP-C,,BASIC,,false,2,,,@var:ErpHrCompetency@delVersion_1,0,autotest-ref,*,autotest-ref,*

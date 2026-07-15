@@ -71,12 +71,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--客户-->
-                <col id="partnerName"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -93,8 +87,7 @@
  allowedShipmentTypes[允许发运类型] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] partnerName[客户]
- orgName[业务组织] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-配送时间窗口" i18n-en:title="Add Delivery Window" x:prototype="edit"/>

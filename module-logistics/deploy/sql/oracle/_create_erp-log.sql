@@ -1,16 +1,19 @@
 
 CREATE TABLE erp_md_partner(
   ID NUMBER(20) NOT NULL ,
+  NAME VARCHAR2(200)  ,
   constraint PK_erp_md_partner primary key (ID)
 );
 
 CREATE TABLE erp_md_organization(
   ID NUMBER(20) NOT NULL ,
+  NAME VARCHAR2(200)  ,
   constraint PK_erp_md_organization primary key (ID)
 );
 
 CREATE TABLE erp_md_employee(
   ID NUMBER(20) NOT NULL ,
+  NAME VARCHAR2(200)  ,
   constraint PK_erp_md_employee primary key (ID)
 );
 
@@ -23,6 +26,7 @@ CREATE TABLE erp_md_currency(
 
 CREATE TABLE erp_md_material(
   ID NUMBER(20) NOT NULL ,
+  NAME VARCHAR2(200)  ,
   constraint PK_erp_md_material primary key (ID)
 );
 
@@ -192,7 +196,7 @@ CREATE TABLE erp_log_shipment_log(
   ERROR_CODE VARCHAR2(100)  ,
   ERROR_MESSAGE VARCHAR2(2000)  ,
   IS_SUCCESS CHAR(1) default 1   ,
-  EXECUTED_AT DATE NOT NULL ,
+  EXECUTED_AT TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,

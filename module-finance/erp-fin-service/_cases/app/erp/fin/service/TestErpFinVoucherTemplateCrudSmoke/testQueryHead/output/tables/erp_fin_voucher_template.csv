@@ -1,2 +1,2 @@
 _chgType,ID,CODE,NAME,ACCT_SCHEMA_ID,BUSINESS_TYPE,VOUCHER_TYPE,TEMPLATE_TYPE,IS_ACTIVE,VALID_FROM,VALID_TO,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,1,SMOKE-FIN,冒烟凭证模板,,PURCHASE_INPUT,,,true,,,*,0,autotest-ref,*,autotest-ref,*
+A,1,@var:ErpFinVoucherTemplate@code,冒烟凭证模板,,PURCHASE_INPUT,,,true,,,@var:ErpFinVoucherTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

@@ -14,11 +14,9 @@ import app.erp.fin.service.reconciliation.AutoReconciliationEngine;
 import app.erp.fin.service.reconciliation.DualSideConsistencyChecker;
 import app.erp.fin.service.reconciliation.PartnerBalanceUpdater;
 import app.erp.fin.service.reconciliation.ReconciliationSettler;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -132,7 +130,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
 
         settler.settle(head, lines);
         head.setDocStatus(ErpFinConstants.RECON_STATUS_POSTED);
-        head.setPostedAt(CoreMetrics.currentDateTime());
+        head.setPostedAt(CoreMetrics.currentTimestamp());
         head.setPostedBy(context.getUserContext() != null ? context.getUserContext().getUserId() : null);
 
         flushBeforeBalance();
@@ -201,38 +199,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
         return dualSideConsistencyChecker.check(direction, partnerId, ctx);
     }
 
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。
-
-    @BizLoader(forType = ErpFinReconciliation.class)
-    public List<String> partnerName(@ContextSource List<ErpFinReconciliation> reconciliations) {
-        orm().batchLoadProps(reconciliations, Collections.singleton("partner"));
-        List<String> result = new ArrayList<>(reconciliations.size());
-        for (ErpFinReconciliation recon : reconciliations) {
-            result.add(recon.getPartner() != null ? recon.getPartner().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinReconciliation.class)
-    public List<String> currencyName(@ContextSource List<ErpFinReconciliation> reconciliations) {
-        orm().batchLoadProps(reconciliations, Collections.singleton("currency"));
-        List<String> result = new ArrayList<>(reconciliations.size());
-        for (ErpFinReconciliation recon : reconciliations) {
-            result.add(recon.getCurrency() != null ? recon.getCurrency().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinReconciliation.class)
-    public List<String> orgName(@ContextSource List<ErpFinReconciliation> reconciliations) {
-        orm().batchLoadProps(reconciliations, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(reconciliations.size());
-        for (ErpFinReconciliation recon : reconciliations) {
-            result.add(recon.getOrg() != null ? recon.getOrg().getName() : null);
-        }
-        return result;
-    }
 
     // ---------- helpers ----------
 

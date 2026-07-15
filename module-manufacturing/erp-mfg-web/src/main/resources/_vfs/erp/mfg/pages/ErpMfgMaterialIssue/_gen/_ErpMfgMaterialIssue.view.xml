@@ -82,25 +82,13 @@
                 <col id="currencyId" ui:number="true" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" mandatory="true" sortable="true"/>
+                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--源币种金额-->
-                <col id="amountSource" sortable="true"/>
+                <col id="amountSource" ui:number="true" sortable="true"/>
 
                 <!--本位币金额-->
-                <col id="amountFunctional" sortable="true"/>
-
-                <!--工单号-->
-                <col id="workOrderNo"/>
-
-                <!--发料仓库名称-->
-                <col id="warehouseName"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--币种名称-->
-                <col id="currencyName"/>
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -120,9 +108,7 @@
  updateTime[修改时间] approvedBy[审核人]
  approvedAt[审核时间] currencyId[币种]
  exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] workOrderNo[工单号]
- warehouseName[发料仓库名称] orgName[业务组织名称]
- currencyName[币种名称] 
+ amountFunctional[本位币金额] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-领料单" i18n-en:title="Add Material Issue" x:prototype="edit"/>

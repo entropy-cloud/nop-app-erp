@@ -10,13 +10,13 @@
                 <col id="ncrDate" mandatory="true" sortable="true"/>
                 <col id="sourceType" sortable="true"/>
                 <col id="sourceCode" sortable="true"/>
-                <col id="materialName" label="物料"/>
+                <col id="materialId" label="物料"/>
                 <col id="inspectionCode" label="质检单"/>
                 <col id="quantity" ui:number="true" sortable="true"/>
                 <col id="severity" mandatory="true" sortable="true"/>
                 <col id="dispositionType" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="supplierName" label="供应商"/>
+                <col id="supplierId" label="供应商"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

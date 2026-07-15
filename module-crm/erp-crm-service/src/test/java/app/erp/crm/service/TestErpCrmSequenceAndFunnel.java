@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -269,7 +270,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         // → 连续逾期 = 3（step 0,1,2 全部逾期）≥ max-overdue-steps(3)
         ormTemplate.runInSession(() -> {
             ErpCrmLeadSequenceProgress p = reloadActiveProgress(leadId);
-            p.setStartedAt(CoreMetrics.currentDateTime().minusDays(10));
+            p.setStartedAt(Timestamp.valueOf(CoreMetrics.currentDateTime().minusDays(10)));
             p.setCurrentStepIndex(2);
             daoProvider.daoFor(ErpCrmLeadSequenceProgress.class).updateEntity(p);
         });
@@ -302,8 +303,8 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             ErpCrmLeadSequenceProgress p = reloadActiveProgress(leadId);
             p.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_COMPLETED);
-            p.setStartedAt(CoreMetrics.currentDateTime().minusDays(5));
-            p.setCompletedAt(CoreMetrics.currentDateTime());
+            p.setStartedAt(Timestamp.valueOf(CoreMetrics.currentDateTime().minusDays(5)));
+            p.setCompletedAt(CoreMetrics.currentTimestamp());
             daoProvider.daoFor(ErpCrmLeadSequenceProgress.class).updateEntity(p);
         });
 
@@ -536,8 +537,8 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         event.setRelatedLeadId(leadId);
         event.setStatus(ErpCrmConstants.EVENT_STATUS_COMPLETED);
         event.setPriority("NORMAL");
-        event.setStartDateTime(CoreMetrics.currentDateTime());
-        event.setEndDateTime(CoreMetrics.currentDateTime().plusHours(1));
+        event.setStartDateTime(CoreMetrics.currentTimestamp());
+        event.setEndDateTime(Timestamp.valueOf(CoreMetrics.currentDateTime().plusHours(1)));
         return event;
     }
 
@@ -547,7 +548,7 @@ public class TestErpCrmSequenceAndFunnel extends JunitAutoTestCase {
         log.setLeadId(leadId);
         log.setFromStageId(fromStage);
         log.setToStageId(toStage);
-        log.setChangedAt(changedAt);
+        log.setChangedAt(Timestamp.valueOf(changedAt));
         daoProvider.daoFor(ErpCrmLeadConvLog.class).saveEntity(log);
     }
 

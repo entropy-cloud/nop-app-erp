@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "1",
-    "code": "SMOKE-APS",
+    "code": "@var:ErpApsOperationOrder@code",
     "workOrderId": 1,
     "operationName": "冒烟工序",
     "sequence": 10,
@@ -29,7 +29,7 @@
     "updateTime": "@var:ErpApsOperationOrder@updateTime_1",
     "earliestStartDateT": null,
     "latestEndDateT": null,
-    "businessDate": "*"
+    "businessDate": "2026-07-15"
   },
   "status": 0
 }

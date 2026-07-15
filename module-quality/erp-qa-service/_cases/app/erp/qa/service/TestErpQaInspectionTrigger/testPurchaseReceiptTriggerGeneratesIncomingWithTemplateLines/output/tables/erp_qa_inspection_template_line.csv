@@ -1,0 +1,3 @@
+_chgType,ID,TEMPLATE_ID,LINE_NO,PARAMETER_NAME,SPEC_MIN,SPEC_MAX,UNIT,IS_REQUIRED,INSPECTION_METHOD,SORT_NUM,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,506901,5069,1,长度,10,20,,1,,0,@var:ErpQaInspectionTemplateLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,506902,5069,2,重量,0,100,,1,,0,@var:ErpQaInspectionTemplateLine@delVersion_1,0,autotest-ref,*,autotest-ref,*

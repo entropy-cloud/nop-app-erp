@@ -32,13 +32,16 @@ prop:
       expiryDate: 有效期至
       id: ID
       material: null
+      material.name: null
       materialId: 物料
       org: null
+      org.name: null
       orgId: 业务组织
       productionDate: 生产日期
       remark: 备注
       shelfLifeDays: 保质期(天)
       sku: null
+      sku.name: null
       skuId: SKU
       status: 状态
       status_label: 状态
@@ -47,6 +50,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库
     ErpInvCostAdjust:
       adjustType: 调整类型
@@ -60,6 +64,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -67,6 +72,7 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -86,11 +92,13 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       newUnitCost: 新单位成本
       oldUnitCost: 原单位成本
@@ -99,9 +107,11 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库
     ErpInvCostLayer:
       acctSchema: null
+      acctSchema.name: null
       acctSchemaId: 账套
       batchNo: 批号
       costMethod: 计价方法
@@ -109,6 +119,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       id: ID
@@ -117,11 +128,14 @@ prop:
       incomingMoveId: 入库移动单
       incomingQuantity: 入库数量
       material: null
+      material.name: null
       materialId: 物料
       org: null
+      org.name: null
       orgId: 业务组织
       remainingQuantity: 剩余数量
       sku: null
+      sku.name: null
       skuId: SKU
       totalCost: 总成本
       unitCost: 单位成本
@@ -129,6 +143,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库
     ErpInvLandedCost:
       allocationMethod: 分摊方法
@@ -142,6 +157,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -150,6 +166,7 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -157,6 +174,7 @@ prop:
       receiveId: 采购入库单
       remark: 备注
       supplier: null
+      supplier.name: null
       supplierId: 采购供应商
       totalCostAmount: 到岸成本合计
       updateTime: 修改时间
@@ -165,6 +183,7 @@ prop:
     ErpInvLandedCostLine:
       amount: 金额
       apPartner: null
+      apPartner.name: null
       apPartnerId: 应付对象
       costElement: 费用要素
       costElement_label: 费用要素
@@ -185,9 +204,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       destLoc: null
+      destLoc.name: null
       destLocId: 目的库位(=源库位)
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -196,14 +217,17 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       partner: null
+      partner.name: null
       partnerId: 所有权对方(往来单位)
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
       remark: 备注
       sourceLoc: null
+      sourceLoc.name: null
       sourceLocId: 源库位(=目的库位)
       toOwnershipType: 转后所有权类型
       toOwnershipType_label: 转后所有权类型
@@ -213,6 +237,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库
     ErpInvOwnershipTransferLine:
       batchNo: 批号
@@ -222,10 +247,12 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       quantity: 数量
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       sourceBillCode: 来源单据号
       sourceBillType: 来源单据类型
@@ -247,8 +274,10 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       picker: null
+      picker.name: null
       pickerId: 拣货人(职员)
       relatedBillCode: 关联单据号
       relatedBillType: 关联单据类型(SALES_DELIVERY/WORK_ORDER_ISSUE)
@@ -257,6 +286,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 拣货仓库
     ErpInvPickingOrderLine:
       batchNo: 批号
@@ -266,6 +296,7 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       pickedQuantity: 已拣数量
       picking: null
@@ -273,10 +304,13 @@ prop:
       quantity: 应拣数量
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       sourceLocation: null
+      sourceLocation.name: null
       sourceLocationId: 拣货库位
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -290,9 +324,11 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       remark: 备注
       reservedForPartner: null
+      reservedForPartner.name: null
       reservedForPartnerId: 为谁预留(往来单位)
       sourceBillCode: 来源单据号
       sourceBillType: 来源单据类型(如 SALES_ORDER/WORK_ORDER)
@@ -311,21 +347,26 @@ prop:
       id: ID
       lineNo: 行号
       location: null
+      location.name: null
       locationId: 库位
       material: null
+      material.name: null
       materialId: 物料
       reservation: null
       reservationId: 预留单ID
       reservedQuantity: 预留数量
       sku: null
+      sku.name: null
       skuId: SKU
       sourceLineCode: 来源行号
       uom: null
+      uom.name: null
       uomId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库
     ErpInvSerialNumber:
       createTime: 创建时间
@@ -335,16 +376,20 @@ prop:
       inBillCode: 入库单号
       inBillType: 入库单类型
       location: null
+      location.name: null
       locationId: 当前库位
       material: null
+      material.name: null
       materialId: 物料
       org: null
+      org.name: null
       orgId: 业务组织
       outBillCode: 出库单号
       outBillType: 出库单类型
       remark: 备注
       serialNo: 序列号
       sku: null
+      sku.name: null
       skuId: SKU
       status: 状态
       status_label: 状态
@@ -352,6 +397,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 当前仓库
     ErpInvStockBalance:
       availableQuantity: 可用数量
@@ -362,22 +408,28 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       id: ID
       location: null
+      location.name: null
       locationId: 库位
       lockedQuantity: 冻结数量
       material: null
+      material.name: null
       materialId: 物料
       org: null
+      org.name: null
       orgId: 业务组织
       owner: null
+      owner.name: null
       ownerId: 所有权往来单位
       ownershipType: 所有权类型
       ownershipType_label: 所有权类型
       reservedQuantity: 预留数量
       sku: null
+      sku.name: null
       skuId: SKU
       totalCost: 总成本
       totalQuantity: 总数量
@@ -385,9 +437,11 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库
     ErpInvStockLedger:
       acctSchema: null
+      acctSchema.name: null
       acctSchemaId: 账套
       balanceQuantity: 结存数量
       balanceTotalCost: 结存总成本
@@ -399,26 +453,32 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       id: ID
       location: null
+      location.name: null
       locationId: 库位
       material: null
+      material.name: null
       materialId: 物料
       move: null
       moveId: 移动单ID
       moveLine: null
       moveLineId: 移动单行ID
       org: null
+      org.name: null
       orgId: 业务组织
       owner: null
+      owner.name: null
       ownerId: 所有权往来单位
       ownershipType: 所有权类型
       ownershipType_label: 所有权类型
       quantity: 数量
       serialNo: 序列号
       sku: null
+      sku.name: null
       skuId: SKU
       totalCost: 总成本
       unitCost: 单位成本
@@ -426,6 +486,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库
     ErpInvStockMove:
       approveStatus: 审核状态
@@ -436,10 +497,11 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       destLocation: null
+      destLocation.name: null
       destLocationId: 目标库位
       destWarehouse: null
+      destWarehouse.name: null
       destWarehouseId: 目标仓库
-      destWarehouseName: 目标仓库名称
       docStatus: 单据状态
       docStatus_label: 单据状态
       id: ID
@@ -447,8 +509,8 @@ prop:
       moveType: 作业类型
       moveType_label: 作业类型
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       originMove: null
       originMoveId: 上游移动单
       originReturnedMove: null
@@ -460,10 +522,11 @@ prop:
       relatedBillType: 关联单据类型
       remark: 备注
       sourceLocation: null
+      sourceLocation.name: null
       sourceLocationId: 源库位
       sourceWarehouse: null
+      sourceWarehouse.name: null
       sourceWarehouseId: 源仓库
-      sourceWarehouseName: 源仓库名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -472,27 +535,32 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       destLocation: null
+      destLocation.name: null
       destLocationId: 目标库位
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       move: null
       moveId: 移动单ID
       quantity: 数量
       remark: 备注
       serialNo: 序列号
       sku: null
+      sku.name: null
       skuId: SKU
       sourceLocation: null
+      sourceLocation.name: null
       sourceLocationId: 源库位
       totalCost: 总成本
       unitCost: 单位成本
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -510,6 +578,7 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
@@ -521,6 +590,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 盘点仓库
     ErpInvStockTakeLine:
       actualQuantity: 实盘数量
@@ -534,16 +604,20 @@ prop:
       id: ID
       lineNo: 行号
       location: null
+      location.name: null
       locationId: 库位
       material: null
+      material.name: null
       materialId: 物料
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       take: null
       takeId: 盘点单ID
       unitCost: 单位成本
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -561,18 +635,22 @@ prop:
       docStatus: 单据状态
       docStatus_label: 单据状态
       fromWarehouse: null
+      fromWarehouse.name: null
       fromWarehouseId: 调出仓库
       id: ID
       inTransitWarehouse: null
+      inTransitWarehouse.name: null
       inTransitWarehouseId: 在途仓库
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
       remark: 备注
       toWarehouse: null
+      toWarehouse.name: null
       toWarehouseId: 调入仓库
       updateTime: 修改时间
       updatedBy: 修改人
@@ -585,14 +663,17 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       quantity: 数量
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       transfer: null
       transferId: 调拨单ID
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人

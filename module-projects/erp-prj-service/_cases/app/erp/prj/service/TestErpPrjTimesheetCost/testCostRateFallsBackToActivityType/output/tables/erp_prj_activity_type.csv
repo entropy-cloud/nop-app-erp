@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,COST_RATE,SUBJECT_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7,@var:ErpPrjActivityType@code,开发,300,,,@var:ErpPrjActivityType@delVersion,0,autotest-ref,*,autotest-ref,*

@@ -23,7 +23,7 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="batchNo" displayName="批次号" propId="2" i18n-en:displayName="Batch No" mandatory="true"
+        <prop name="batchNo" displayName="批次号" propId="2" i18n-en:displayName="Batch No" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="code" type="java.lang.String" precision="50"/>
         </prop>
@@ -43,8 +43,8 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="20" dict="erp-hr/bank-file-format"/>
         </prop>
-        <prop name="fileContent" displayName="文件内容" propId="7" i18n-en:displayName="File Content" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="fileContent" displayName="文件内容" propId="7" i18n-en:displayName="File Content" tagSet="var"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="状态" propId="8" i18n-en:displayName="Status" mandatory="true" queryable="true"
@@ -88,14 +88,21 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="bank" i18n-en:displayName="Bank" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="bankId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+              ext:joinLeftProp="bankId" ext:joinRightProp="id" ext:joinRightDisplayProp="bankName" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdBankAccount"/>
         </prop>
-        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+        <prop name="bank.bankName" i18n-en:displayName="Bank" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

@@ -22,10 +22,12 @@
   "remark": "",
   "delivery": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "uoM": null,
+  "uoM.name": "",
   "orderLine": null,
   "warehouse": null,
-  "materialName": "",
-  "warehouseName": ""
+  "warehouse.name": ""
 }

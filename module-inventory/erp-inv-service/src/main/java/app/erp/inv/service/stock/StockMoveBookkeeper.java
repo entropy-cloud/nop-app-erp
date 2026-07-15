@@ -1,5 +1,7 @@
 package app.erp.inv.service.stock;
 
+import app.erp.inv.service.ErpInvConfigs;
+
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockLedger;
 import app.erp.inv.dao.entity.ErpInvStockMove;
@@ -185,7 +187,7 @@ public class StockMoveBookkeeper implements BookingContext {
         ledger.setWarehouseId(warehouseId);
         ledger.setLocationId(locationId);
         ledger.setQuantity(signedQty);
-        ledger.setUnitCost(unitCost);
+        ledger.setUnitCost(ErpInvConfigs.roundCost(unitCost));
         ledger.setTotalCost(signedTotalCost);
         ledger.setBalanceQuantity(balance.getTotalQuantity());
         ledger.setBalanceTotalCost(balance.getTotalCost());

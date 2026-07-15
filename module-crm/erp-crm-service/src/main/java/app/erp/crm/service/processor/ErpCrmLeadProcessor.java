@@ -148,7 +148,7 @@ public class ErpCrmLeadProcessor {
         log.setOrgId(lead.getOrgId());
         log.setFromStageId(fromStageId);
         log.setToStageId(toStageId);
-        log.setChangedAt(CoreMetrics.currentDateTime());
+        log.setChangedAt(CoreMetrics.currentTimestamp());
         log.setChangedBy(currentUser(context));
         convLogDao().saveEntity(log);
     }

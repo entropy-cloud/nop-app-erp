@@ -22,10 +22,16 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "currency": null,
+  "currency.name": "",
   "org": null,
+  "org.name": "",
   "incomingMove": null,
-  "acctSchema": null
+  "acctSchema": null,
+  "acctSchema.name": ""
 }

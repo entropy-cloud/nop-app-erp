@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "2",
-    "code": "SMOKE-LOG",
+    "code": "@var:ErpLogShipment@code",
     "orgId": null,
     "carrierId": 1,
     "carrierConfigId": null,
@@ -42,13 +42,8 @@
     "createTime": "@var:ErpLogShipment@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpLogShipment@createTime",
-    "businessDate": "*",
-    "posted": false,
-    "freightCurrencyName": null,
-    "carrierConfigName": null,
-    "carrierName": "SMOKE-CAR",
-    "shipperName": null,
-    "orgName": null
+    "businessDate": "2026-07-15",
+    "posted": false
   },
   "status": 0
 }

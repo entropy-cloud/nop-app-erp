@@ -12,11 +12,9 @@
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpCtContractLine@createTime",
+    "createTime": "@var:ErpCtContractLine@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCtContractLine@createTime",
-    "materialName": null,
-    "contractName": "SMOKE-CT"
+    "updateTime": "@var:ErpCtContractLine@updateTime"
   },
   "status": 0
 }

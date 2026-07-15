@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NAME,ORG_ID,PARENT_ID,ICON,SEQUENCE,IS_ACTIVE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpCsCatalogCategory@code_2,L3,,5031,,0,true,@var:ErpCsCatalogCategory@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5030,@var:ErpCsCatalogCategory@code,L1,,,,0,true,@var:ErpCsCatalogCategory@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5031,@var:ErpCsCatalogCategory@code_1,L2,,5030,,0,true,@var:ErpCsCatalogCategory@delVersion,0,autotest-ref,*,autotest-ref,*

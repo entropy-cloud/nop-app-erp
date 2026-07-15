@@ -305,7 +305,7 @@ public class ErpMfgWorkOrderProcessor {
         wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED);
         wo.setApprovedBy(currentUserId());
-        wo.setApprovedAt(CoreMetrics.currentDateTime());
+        wo.setApprovedAt(CoreMetrics.currentTimestamp());
         workOrderDao().updateEntity(wo);
     }
 

@@ -71,6 +71,7 @@ CREATE TABLE erp_md_material_sku(
   material_id INT8  ,
   sku_code VARCHAR(50)  ,
   barcode VARCHAR(50)  ,
+  name VARCHAR(200)  ,
   constraint PK_erp_md_material_sku primary key (id)
 );
 

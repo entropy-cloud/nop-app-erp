@@ -6,7 +6,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="surveyTitle" label="问卷"/>
+                <col id="surveyId" label="问卷"/>
                 <col id="sortOrder" ui:number="true" sortable="true"/>
                 <col id="questionText" mandatory="true" sortable="true"/>
                 <col id="questionType" mandatory="true" sortable="true"/>

@@ -307,18 +307,6 @@
         }
 
 
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
         private Map<String,Object> _quotation;
 
         public Map<String,Object> getQuotation(){

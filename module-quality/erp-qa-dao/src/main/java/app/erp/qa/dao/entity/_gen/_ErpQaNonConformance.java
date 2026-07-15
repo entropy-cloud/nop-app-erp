@@ -97,7 +97,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     public static final String PROP_NAME_resolvedBy = "resolvedBy";
     public static final int PROP_ID_resolvedBy = 19;
     
-    /* 解决时间: RESOLVED_AT DATETIME */
+    /* 解决时间: RESOLVED_AT TIMESTAMP */
     public static final String PROP_NAME_resolvedAt = "resolvedAt";
     public static final int PROP_ID_resolvedAt = 20;
     
@@ -137,7 +137,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     public static final String PROP_NAME_posted = "posted";
     public static final int PROP_ID_posted = 30;
     
-    /* 过账时间: POSTED_AT DATETIME */
+    /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 31;
     
@@ -330,7 +330,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     private java.lang.Long _resolvedBy;
     
     /* 解决时间: RESOLVED_AT */
-    private java.time.LocalDateTime _resolvedAt;
+    private java.sql.Timestamp _resolvedAt;
     
     /* 解决措施: RESOLUTION */
     private java.lang.String _resolution;
@@ -360,7 +360,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     private java.lang.Boolean _posted;
     
     /* 过账时间: POSTED_AT */
-    private java.time.LocalDateTime _postedAt;
+    private java.sql.Timestamp _postedAt;
     
     /* 过账人: POSTED_BY */
     private java.lang.String _postedBy;
@@ -740,9 +740,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_resolvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_resolvedAt));
                }
                setResolvedAt(typedValue);
@@ -840,9 +840,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_postedAt));
                }
                setPostedAt(typedValue);
@@ -1013,7 +1013,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_resolvedAt:{
                onInitProp(propId);
-               this._resolvedAt = (java.time.LocalDateTime)value;
+               this._resolvedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1083,7 +1083,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_postedAt:{
                onInitProp(propId);
-               this._postedAt = (java.time.LocalDateTime)value;
+               this._postedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1472,7 +1472,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 解决时间: RESOLVED_AT
      */
-    public final java.time.LocalDateTime getResolvedAt(){
+    public final java.sql.Timestamp getResolvedAt(){
          onPropGet(PROP_ID_resolvedAt);
          return _resolvedAt;
     }
@@ -1480,7 +1480,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 解决时间: RESOLVED_AT
      */
-    public final void setResolvedAt(java.time.LocalDateTime value){
+    public final void setResolvedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_resolvedAt,value)){
             this._resolvedAt = value;
             internalClearRefs(PROP_ID_resolvedAt);
@@ -1662,7 +1662,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final java.time.LocalDateTime getPostedAt(){
+    public final java.sql.Timestamp getPostedAt(){
          onPropGet(PROP_ID_postedAt);
          return _postedAt;
     }
@@ -1670,7 +1670,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final void setPostedAt(java.time.LocalDateTime value){
+    public final void setPostedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_postedAt,value)){
             this._postedAt = value;
             internalClearRefs(PROP_ID_postedAt);

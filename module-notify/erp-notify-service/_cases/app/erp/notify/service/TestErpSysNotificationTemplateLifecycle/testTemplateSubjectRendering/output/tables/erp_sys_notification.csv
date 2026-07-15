@@ -1,0 +1,2 @@
+_chgType,ID,TEMPLATE_ID,NOTIFICATION_TYPE,RECIPIENT_USER_ID,RECIPIENT_PARTNER_ID,RECIPIENT_DEPT_ID,CHANNEL,SUBJECT,BODY,PAYLOAD_JSON,STATUS,MERGE_GROUP_ID,MERGE_COUNT,SENT_AT,ERROR_MSG,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,7303,lc-event-3,lc-test-user-3,,,IN_APP,订单 ORD-001 已确认,客户 ACME 的订单 ORD-001 已确认，金额 1000,"{""amount"":""1000"",""customerName"":""ACME"",""orderNo"":""ORD-001""}",SENT,lc-event-3#lc-test-user-3,1,@var:ErpSysNotification@sentAt,,@var:ErpSysNotification@delVersion,0,autotest-ref,*,autotest-ref,*

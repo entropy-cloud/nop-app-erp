@@ -1,0 +1,6 @@
+_chgType,ID,INSPECTION_ID,LINE_NO,PARAMETER_ID,PARAMETER_NAME,SPEC_MIN,SPEC_MAX,MEASURED_VALUE,UNIT,RESULT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8795401,87954,1,8801,尺寸,,,10,,ACCEPTED,,@var:ErpQaInspectionLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8795501,87955,1,8801,尺寸,,,11,,ACCEPTED,,@var:ErpQaInspectionLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8795601,87956,1,8801,尺寸,,,12,,ACCEPTED,,@var:ErpQaInspectionLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8795701,87957,1,8801,尺寸,,,13,,ACCEPTED,,@var:ErpQaInspectionLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8795801,87958,1,8801,尺寸,,,14,,ACCEPTED,,@var:ErpQaInspectionLine@delVersion,0,autotest-ref,*,autotest-ref,*

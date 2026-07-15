@@ -12,7 +12,7 @@
                 <col id="assessmentDate" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="overallScore" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="businessDate" mandatory="true" sortable="true"/>
             </cols>
         </grid>

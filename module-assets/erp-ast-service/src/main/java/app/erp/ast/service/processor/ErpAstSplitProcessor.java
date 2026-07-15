@@ -23,7 +23,7 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -118,9 +118,9 @@ public class ErpAstSplitProcessor {
         split.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
         split.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
         split.setApprovedBy(currentUserId());
-        split.setApprovedAt(CoreMetrics.currentDateTime());
+        split.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
-            LocalDateTime now = CoreMetrics.currentDateTime();
+            Timestamp now = CoreMetrics.currentTimestamp();
             split.setPosted(true);
             split.setPostedAt(now);
             split.setPostedBy(currentUserId());

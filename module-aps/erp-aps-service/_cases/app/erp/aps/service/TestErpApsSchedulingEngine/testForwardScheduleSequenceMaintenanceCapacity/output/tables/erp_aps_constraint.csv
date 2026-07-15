@@ -1,0 +1,2 @@
+_chgType,ID,MACHINE_ID,CONSTRAINT_TYPE,START_TIME,END_TIME,DESCRIPTION,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2,100,MAINTENANCE,@var:ErpApsConstraint@startTime,@var:ErpApsConstraint@endTime,test-maintenance,,,@var:ErpApsConstraint@delVersion,0,autotest-ref,*,autotest-ref,*

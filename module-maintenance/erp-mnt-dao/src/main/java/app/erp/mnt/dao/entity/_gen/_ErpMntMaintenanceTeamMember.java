@@ -37,11 +37,11 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
     public static final String PROP_NAME_role = "role";
     public static final int PROP_ID_role = 4;
     
-    /* 加入时间: JOINED_AT DATETIME */
+    /* 加入时间: JOINED_AT TIMESTAMP */
     public static final String PROP_NAME_joinedAt = "joinedAt";
     public static final int PROP_ID_joinedAt = 5;
     
-    /* 退出时间: LEFT_AT DATETIME */
+    /* 退出时间: LEFT_AT TIMESTAMP */
     public static final String PROP_NAME_leftAt = "leftAt";
     public static final int PROP_ID_leftAt = 6;
     
@@ -139,10 +139,10 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
     private java.lang.String _role;
     
     /* 加入时间: JOINED_AT */
-    private java.time.LocalDateTime _joinedAt;
+    private java.sql.Timestamp _joinedAt;
     
     /* 退出时间: LEFT_AT */
-    private java.time.LocalDateTime _leftAt;
+    private java.sql.Timestamp _leftAt;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -324,9 +324,9 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
             }
         
             case PROP_ID_joinedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_joinedAt));
                }
                setJoinedAt(typedValue);
@@ -334,9 +334,9 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
             }
         
             case PROP_ID_leftAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_leftAt));
                }
                setLeftAt(typedValue);
@@ -442,14 +442,14 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
         
             case PROP_ID_joinedAt:{
                onInitProp(propId);
-               this._joinedAt = (java.time.LocalDateTime)value;
+               this._joinedAt = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_leftAt:{
                onInitProp(propId);
-               this._leftAt = (java.time.LocalDateTime)value;
+               this._leftAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -581,7 +581,7 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
     /**
      * 加入时间: JOINED_AT
      */
-    public final java.time.LocalDateTime getJoinedAt(){
+    public final java.sql.Timestamp getJoinedAt(){
          onPropGet(PROP_ID_joinedAt);
          return _joinedAt;
     }
@@ -589,7 +589,7 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
     /**
      * 加入时间: JOINED_AT
      */
-    public final void setJoinedAt(java.time.LocalDateTime value){
+    public final void setJoinedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_joinedAt,value)){
             this._joinedAt = value;
             internalClearRefs(PROP_ID_joinedAt);
@@ -600,7 +600,7 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
     /**
      * 退出时间: LEFT_AT
      */
-    public final java.time.LocalDateTime getLeftAt(){
+    public final java.sql.Timestamp getLeftAt(){
          onPropGet(PROP_ID_leftAt);
          return _leftAt;
     }
@@ -608,7 +608,7 @@ public class _ErpMntMaintenanceTeamMember extends DynamicOrmEntity{
     /**
      * 退出时间: LEFT_AT
      */
-    public final void setLeftAt(java.time.LocalDateTime value){
+    public final void setLeftAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_leftAt,value)){
             this._leftAt = value;
             internalClearRefs(PROP_ID_leftAt);

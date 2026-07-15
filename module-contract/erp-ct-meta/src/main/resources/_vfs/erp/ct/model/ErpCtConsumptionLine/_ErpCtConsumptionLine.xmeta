@@ -47,7 +47,7 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="sourceBillCode" displayName="来源单据号" propId="8" i18n-en:displayName="Source Bill Code"
+        <prop name="sourceBillCode" displayName="来源单据号" propId="8" i18n-en:displayName="Source Bill Code" tagSet="var"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>

@@ -1,0 +1,6 @@
+_chgType,ID,ORG_ID,TERRITORY_ID,TEAM_ID,OWNER_ID,PERIOD_TYPE,FISCAL_YEAR,PERIOD_LABEL,QUOTA_AMOUNT,CURRENCY_ID,IS_FINALIZED,NOTES,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,1301,9400,,,QUARTERLY,2026,2026-Q1,300.00,,false,,@var:ErpCrmQuota@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,2,1301,9400,,,QUARTERLY,2026,2026-Q2,300.00,,false,,@var:ErpCrmQuota@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,3,1301,9400,,,QUARTERLY,2026,2026-Q3,300.00,,false,,@var:ErpCrmQuota@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,4,1301,9400,,,QUARTERLY,2026,2026-Q4,300.00,,false,,@var:ErpCrmQuota@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,9401,1301,9400,,,ANNUAL,2026,2026,1200,,false,,@var:ErpCrmQuota@delVersion_1,0,autotest-ref,*,autotest-ref,*

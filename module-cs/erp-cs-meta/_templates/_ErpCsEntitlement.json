@@ -22,11 +22,9 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "partner": null,
+  "partner.name": "",
   "contract": null,
   "slaPolicy": null,
   "org": null,
-  "orgName": "",
-  "partnerName": "",
-  "contractName": "",
-  "slaPolicyName": ""
+  "org.name": ""
 }

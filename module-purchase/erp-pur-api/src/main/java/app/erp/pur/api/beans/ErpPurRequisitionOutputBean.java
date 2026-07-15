@@ -178,16 +178,16 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=11)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
         }
 
@@ -287,42 +287,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _requesterName;
-
-    
-        public String getRequesterName(){
-            return _requesterName;
-        }
-
-        public void setRequesterName(String value){
-            this._requesterName = value;
-        }
-
-
-        private String _departmentName;
-
-    
-        public String getDepartmentName(){
-            return _departmentName;
-        }
-
-        public void setDepartmentName(String value){
-            this._departmentName = value;
         }
 
 

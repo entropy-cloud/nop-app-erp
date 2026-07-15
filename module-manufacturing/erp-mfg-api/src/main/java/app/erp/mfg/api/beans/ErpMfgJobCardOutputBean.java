@@ -151,30 +151,30 @@
         }
 
 
-        private java.time.LocalDateTime _actualStartTime;
+        private java.sql.Timestamp _actualStartTime;
 
     
         @PropMeta(propId=10)
     
-        public java.time.LocalDateTime getActualStartTime(){
+        public java.sql.Timestamp getActualStartTime(){
             return _actualStartTime;
         }
 
-        public void setActualStartTime(java.time.LocalDateTime value){
+        public void setActualStartTime(java.sql.Timestamp value){
             this._actualStartTime = value;
         }
 
 
-        private java.time.LocalDateTime _actualEndTime;
+        private java.sql.Timestamp _actualEndTime;
 
     
         @PropMeta(propId=11)
     
-        public java.time.LocalDateTime getActualEndTime(){
+        public java.sql.Timestamp getActualEndTime(){
             return _actualEndTime;
         }
 
-        public void setActualEndTime(java.time.LocalDateTime value){
+        public void setActualEndTime(java.sql.Timestamp value){
             this._actualEndTime = value;
         }
 
@@ -302,30 +302,6 @@
 
         public void setSourceScheduleId(Long value){
             this._sourceScheduleId = value;
-        }
-
-
-        private String _workOrderNo;
-
-    
-        public String getWorkOrderNo(){
-            return _workOrderNo;
-        }
-
-        public void setWorkOrderNo(String value){
-            this._workOrderNo = value;
-        }
-
-
-        private String _workcenterName;
-
-    
-        public String getWorkcenterName(){
-            return _workcenterName;
-        }
-
-        public void setWorkcenterName(String value){
-            this._workcenterName = value;
         }
 
 

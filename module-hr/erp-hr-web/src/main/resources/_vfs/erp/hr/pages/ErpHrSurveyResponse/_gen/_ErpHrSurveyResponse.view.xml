@@ -56,15 +56,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--问卷-->
-                <col id="surveyTitle"/>
-
-                <!--员工-->
-                <col id="employeeDisplayName"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -79,8 +70,6 @@
  orgId[业务组织] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- surveyTitle[问卷] employeeDisplayName[员工]
- orgName[业务组织] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-答卷" i18n-en:title="Add Survey Response" x:prototype="edit"/>

@@ -1,0 +1,6 @@
+_chgType,ID,CODE,NAME,PARENT_ID,SUBJECT_CLASS,DIRECTION,BALANCE_TYPE,CURRENCY_ID,IS_AUXILIARY_PARTNER,IS_AUXILIARY_DEPARTMENT,IS_AUXILIARY_PROJECT,IS_AUXILIARY_WAREHOUSE,IS_AUXILIARY_PRODUCT,IS_AUXILIARY_COST_CENTER,IS_BUDGETABLE,IS_LEAF,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
+A,3,@var:ErpMdSubject@code,应收票据,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_4,0,autotest-ref,*,autotest-ref,*,
+A,4,@var:ErpMdSubject@code_1,应收账款,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_4,0,autotest-ref,*,autotest-ref,*,
+A,5,@var:ErpMdSubject@code_2,应付账款,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_4,0,autotest-ref,*,autotest-ref,*,
+A,6,@var:ErpMdSubject@code_3,银行存款,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_4,0,autotest-ref,*,autotest-ref,*,
+A,7,@var:ErpMdSubject@code_4,财务费用-利息支出,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_4,0,autotest-ref,*,autotest-ref,*,

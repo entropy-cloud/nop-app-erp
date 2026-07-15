@@ -22,7 +22,5 @@
   "territory": null,
   "team": null,
   "org": null,
-  "orgName": "",
-  "territoryName": "",
-  "teamName": ""
+  "org.name": ""
 }

@@ -1,0 +1,2 @@
+_chgType,ID,SHIPMENT_ID,ORG_ID,GATEWAY_ID,ACTION_TYPE,REQUEST_BODY,RESPONSE_BODY,HTTP_STATUS,ERROR_CODE,ERROR_MESSAGE,IS_SUCCESS,EXECUTED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,3,2,,mock,COMPLETE_DELIVERY,@var:ErpLogShipmentLog@requestBody,,500,GATEWAY_RETRY_EXHAUSTED,[网关重试耗尽] 承运商网关调用失败：发运单 {shipmentCode} / 动作 {actionType},false,@var:ErpLogShipmentLog@executedAt,,@var:ErpLogShipmentLog@delVersion,0,autotest-ref,*,autotest-ref,*

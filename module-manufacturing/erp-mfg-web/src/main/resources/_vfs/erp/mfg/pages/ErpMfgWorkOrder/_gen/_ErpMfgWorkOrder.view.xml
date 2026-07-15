@@ -139,28 +139,13 @@
                 <col id="approvedAt" sortable="true"/>
 
                 <!--汇率-->
-                <col id="exchangeRate" mandatory="true" sortable="true"/>
+                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--源币种金额-->
-                <col id="amountSource" sortable="true"/>
+                <col id="amountSource" ui:number="true" sortable="true"/>
 
                 <!--本位币金额-->
-                <col id="amountFunctional" sortable="true"/>
-
-                <!--产品名称-->
-                <col id="productName"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--币种名称-->
-                <col id="currencyName"/>
-
-                <!--BOM编码-->
-                <col id="bomCode"/>
-
-                <!--工艺路线编码-->
-                <col id="routingCode"/>
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -190,9 +175,6 @@
  sourceScheduleId[APS排程来源(弱参照)] approvedBy[审核人]
  approvedAt[审核时间] exchangeRate[汇率]
  amountSource[源币种金额] amountFunctional[本位币金额]
- productName[产品名称] orgName[业务组织名称]
- currencyName[币种名称] bomCode[BOM编码]
- routingCode[工艺路线编码] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工单" i18n-en:title="Add Work Order" x:prototype="edit"/>

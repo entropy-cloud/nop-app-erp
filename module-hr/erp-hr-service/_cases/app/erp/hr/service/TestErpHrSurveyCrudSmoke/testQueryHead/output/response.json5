@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "1",
-        "code": "SMOKE-HR",
+        "code": "@var:ErpHrSurvey@code",
         "title": "冒烟调查",
         "description": null,
         "surveyType": "ANNUAL_ENGAGEMENT",

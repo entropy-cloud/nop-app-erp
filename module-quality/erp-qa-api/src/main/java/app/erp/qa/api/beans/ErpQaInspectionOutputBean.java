@@ -342,16 +342,16 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=22)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 
@@ -384,16 +384,16 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=25)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
         }
 
@@ -507,78 +507,6 @@
 
         public void setBusinessDate(java.time.LocalDate value){
             this._businessDate = value;
-        }
-
-
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _templateCode;
-
-    
-        public String getTemplateCode(){
-            return _templateCode;
-        }
-
-        public void setTemplateCode(String value){
-            this._templateCode = value;
-        }
-
-
-        private String _supplierName;
-
-    
-        public String getSupplierName(){
-            return _supplierName;
-        }
-
-        public void setSupplierName(String value){
-            this._supplierName = value;
-        }
-
-
-        private String _warehouseName;
-
-    
-        public String getWarehouseName(){
-            return _warehouseName;
-        }
-
-        public void setWarehouseName(String value){
-            this._warehouseName = value;
-        }
-
-
-        private String _inspectorName;
-
-    
-        public String getInspectorName(){
-            return _inspectorName;
-        }
-
-        public void setInspectorName(String value){
-            this._inspectorName = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
         }
 
 

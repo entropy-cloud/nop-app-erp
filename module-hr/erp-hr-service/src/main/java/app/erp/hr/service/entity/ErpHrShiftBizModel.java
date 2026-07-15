@@ -12,11 +12,9 @@ import app.erp.hr.dao.entity.ErpHrShiftAssignment;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.scheduling.ShiftAttendanceCalculator;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -26,8 +24,6 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.and;
@@ -80,7 +76,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
             return attendance;
         }
 
-        java.time.LocalDateTime clockIn = attendance != null ? attendance.getClockIn() : null;
+        java.time.LocalDateTime clockIn = attendance != null && attendance.getClockIn() != null ? attendance.getClockIn().toLocalDateTime() : null;
         boolean absentByNoClock = shift != null
                 && ShiftAttendanceCalculator.isAbsentByNoClockIn(shift, clockIn);
         if (absentByNoClock) {
@@ -95,8 +91,8 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
         int lateMinutes = 0;
         int earlyLeaveMinutes = 0;
         if (attendance != null && shift != null) {
-            lateMinutes = ShiftAttendanceCalculator.calcLateMinutes(shift, attendance.getClockIn(), assignmentDate);
-            earlyLeaveMinutes = ShiftAttendanceCalculator.calcEarlyLeaveMinutes(shift, attendance.getClockOut(), assignmentDate);
+            lateMinutes = ShiftAttendanceCalculator.calcLateMinutes(shift, attendance.getClockIn() != null ? attendance.getClockIn().toLocalDateTime() : null, assignmentDate);
+            earlyLeaveMinutes = ShiftAttendanceCalculator.calcEarlyLeaveMinutes(shift, attendance.getClockOut() != null ? attendance.getClockOut().toLocalDateTime() : null, assignmentDate);
             attendance.setLateMinutes(lateMinutes);
             attendance.setEarlyLeaveMinutes(earlyLeaveMinutes);
             attendance.setIsAbsent(false);
@@ -236,13 +232,4 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
         return assignmentBiz.findList(q, null, context);
     }
 
-    @BizLoader(forType = ErpHrShift.class)
-    public List<String> orgName(@ContextSource List<ErpHrShift> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpHrShift row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
 }

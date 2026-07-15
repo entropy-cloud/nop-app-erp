@@ -1,6 +1,6 @@
 _chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,15,12,PURCHASE_INPUT,*,,PURCHASE_INPUT,*,0,autotest-ref,*,autotest-ref,*
-A,22,19,PURCHASE_RETURN,RT-EXC-001,,PURCHASE_RETURN,*,0,autotest-ref,*,autotest-ref,*
-A,27,24,PURCHASE_RETURN,RT-EXC-001,,PURCHASE_RETURN,*,0,autotest-ref,*,autotest-ref,*
-A,37,33,AP_INVOICE,PI-EXC-003,,AP_INVOICE,*,0,autotest-ref,*,autotest-ref,*
-A,45,42,PURCHASE_RETURN,RT-EXC-003,,PURCHASE_RETURN,*,0,autotest-ref,*,autotest-ref,*
+A,15,12,PURCHASE_INPUT,@var:ErpFinVoucherBillR@billCode,,PURCHASE_INPUT,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,22,19,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_2,,PURCHASE_RETURN,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,27,24,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_2,,PURCHASE_RETURN,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,37,33,AP_INVOICE,@var:ErpFinVoucherBillR@billCode_3,,AP_INVOICE,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,45,42,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_4,,PURCHASE_RETURN,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*

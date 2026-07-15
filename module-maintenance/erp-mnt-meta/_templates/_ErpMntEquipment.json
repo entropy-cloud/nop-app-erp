@@ -22,16 +22,14 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "location": null,
+  "location.name": "",
   "category": null,
   "asset": null,
   "org": null,
+  "org.code": "",
   "visits": null,
   "schedules": null,
   "requests": null,
   "sparePartUsages": null,
-  "downtimeEntries": null,
-  "orgName": "",
-  "categoryName": "",
-  "locationName": "",
-  "assetCode": ""
+  "downtimeEntries": null
 }

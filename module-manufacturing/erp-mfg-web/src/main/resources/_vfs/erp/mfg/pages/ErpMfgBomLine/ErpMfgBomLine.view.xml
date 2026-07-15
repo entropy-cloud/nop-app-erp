@@ -7,9 +7,9 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="bomCode" label="BOM"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
-                <col id="uomName" label="计量单位"/>
-                <col id="warehouseName" label="发货仓库"/>
+                <col id="materialId" label="物料"/>
+                <col id="uomId" label="计量单位"/>
+                <col id="warehouseId" label="发货仓库"/>
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="scrapRate" ui:number="true" sortable="true"/>
             </cols>

@@ -223,7 +223,7 @@ public class ErpSalDeliveryProcessor {
         applyPostingResult(delivery, move);
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         delivery.setApprovedBy(currentUserId());
-        delivery.setApprovedAt(CoreMetrics.currentDateTime());
+        delivery.setApprovedAt(CoreMetrics.currentTimestamp());
         deliveryDao().updateEntity(delivery);
         postProcessApprove(delivery, context);
     }
@@ -262,7 +262,7 @@ public class ErpSalDeliveryProcessor {
     protected void applyPostingResult(ErpSalDelivery delivery, ErpInvStockMove move) {
         delivery.setPosted(Boolean.TRUE.equals(move.getPosted()));
         if (Boolean.TRUE.equals(delivery.getPosted())) {
-            delivery.setPostedAt(CoreMetrics.currentDateTime());
+            delivery.setPostedAt(CoreMetrics.currentTimestamp());
             delivery.setPostedBy(currentUserId());
         }
     }

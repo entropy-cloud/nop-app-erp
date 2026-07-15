@@ -37,7 +37,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     public static final String PROP_NAME_subgroupNo = "subgroupNo";
     public static final int PROP_ID_subgroupNo = 4;
     
-    /* 采样时间: SAMPLE_TIME DATETIME */
+    /* 采样时间: SAMPLE_TIME TIMESTAMP */
     public static final String PROP_NAME_sampleTime = "sampleTime";
     public static final int PROP_ID_sampleTime = 5;
     
@@ -212,7 +212,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     private java.lang.Integer _subgroupNo;
     
     /* 采样时间: SAMPLE_TIME */
-    private java.time.LocalDateTime _sampleTime;
+    private java.sql.Timestamp _sampleTime;
     
     /* 子组实测值(JSON 数组): MEASURED_VALUES */
     private java.lang.String _measuredValues;
@@ -457,9 +457,9 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
             }
         
             case PROP_ID_sampleTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_sampleTime));
                }
                setSampleTime(typedValue);
@@ -675,7 +675,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
         
             case PROP_ID_sampleTime:{
                onInitProp(propId);
-               this._sampleTime = (java.time.LocalDateTime)value;
+               this._sampleTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -884,7 +884,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * 采样时间: SAMPLE_TIME
      */
-    public final java.time.LocalDateTime getSampleTime(){
+    public final java.sql.Timestamp getSampleTime(){
          onPropGet(PROP_ID_sampleTime);
          return _sampleTime;
     }
@@ -892,7 +892,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     /**
      * 采样时间: SAMPLE_TIME
      */
-    public final void setSampleTime(java.time.LocalDateTime value){
+    public final void setSampleTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_sampleTime,value)){
             this._sampleTime = value;
             internalClearRefs(PROP_ID_sampleTime);

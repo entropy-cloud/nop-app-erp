@@ -173,7 +173,7 @@ public class TestErpPrjDashboard extends JunitAutoTestCase {
         c.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
         c.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
         c.setPosted(true);
-        c.setExchangeRate("1");
+        c.setExchangeRate(BigDecimal.ONE);
         dao.saveEntity(c);
     }
 }

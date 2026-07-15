@@ -20,7 +20,5 @@
   "simulation": null,
   "employee": null,
   "org": null,
-  "simulationCode": "",
-  "employeeDisplayName": "",
-  "orgName": ""
+  "org.name": ""
 }

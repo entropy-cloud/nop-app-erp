@@ -1,0 +1,5 @@
+_chgType,ID,ORG_ID,PERIOD_ID,TERRITORY_ID,TEAM_ID,OWNER_ID,CURRENCY_ID,COMMIT_AMOUNT,UPSIDE_AMOUNT,WEIGHTED_AMOUNT,BEST_CASE_AMOUNT,OPPORTUNITY_COUNT,COMMIT_OPPORTUNITY_COUNT,EXPECTED_CLOSED_REVENUE,LAST_CALCULATED_AT,NOTES,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,1301,5101,,5501,userA,,1000.0000,0,1000.00,1500.0000,2,1,0,@var:ErpCrmForecast@lastCalculatedAt,,@var:ErpCrmForecast@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,4,1301,5101,,5501,userB,,0,2000.0000,1000.00,2000.0000,1,0,0,@var:ErpCrmForecast@lastCalculatedAt_1,,@var:ErpCrmForecast@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,6,1301,5101,,5501,,,1000.0000,2000.0000,2000.00,3500.0000,3,1,0,@var:ErpCrmForecast@lastCalculatedAt_2,,@var:ErpCrmForecast@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,7,1301,5101,,,,,1000.0000,2000.0000,2000.00,3500.0000,3,1,0,@var:ErpCrmForecast@lastCalculatedAt_3,,@var:ErpCrmForecast@delVersion_1,0,autotest-ref,*,autotest-ref,*

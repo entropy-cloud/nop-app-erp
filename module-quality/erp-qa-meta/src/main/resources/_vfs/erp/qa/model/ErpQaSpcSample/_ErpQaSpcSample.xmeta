@@ -37,9 +37,9 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Integer"/>
         </prop>
-        <prop name="sampleTime" displayName="采样时间" propId="5" i18n-en:displayName="Sample Time" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="sampleTime" displayName="采样时间" propId="5" i18n-en:displayName="Sample Time" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="measuredValues" displayName="子组实测值(JSON 数组)" propId="6" i18n-en:displayName="Measured Values"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -115,14 +115,21 @@
             <schema bizObjName="ErpQaSpcChart"/>
         </prop>
         <prop name="inspector" i18n-en:displayName="Inspector" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="inspectorId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="inspectorId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
         </prop>
-        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+        <prop name="inspector.name" i18n-en:displayName="Inspector" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

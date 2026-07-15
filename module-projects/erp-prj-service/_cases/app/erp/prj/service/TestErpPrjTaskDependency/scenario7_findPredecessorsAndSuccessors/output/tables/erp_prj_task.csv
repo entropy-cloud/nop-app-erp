@@ -1,0 +1,5 @@
+_chgType,ID,PROJECT_ID,PARENT_TASK_ID,TITLE,ASSIGNEE_ID,PLANNED_START_DATE,PLANNED_END_DATE,ACTUAL_START_DATE,ACTUAL_END_DATE,ESTIMATED_HOURS,ACTUAL_HOURS,DEPENDS_ON_ID,STATUS,PRIORITY,BLOCK_REASON,SORT_NUM,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2,1,,C,,,,,,,,,DONE,,,,,@var:ErpPrjTask@delVersion,0,autotest-ref,*,autotest-ref,*
+A,3,1,,B,,,,,,,,2,DONE,,,,,@var:ErpPrjTask@delVersion,0,autotest-ref,*,autotest-ref,*
+A,4,1,,A,,,,,,,,3,TODO,,,,,@var:ErpPrjTask@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5,1,,D,,,,,,,,4,TODO,,,,,@var:ErpPrjTask@delVersion,0,autotest-ref,*,autotest-ref,*

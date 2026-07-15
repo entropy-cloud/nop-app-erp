@@ -1,0 +1,3 @@
+_chgType,ID,CODE,NAME,ORG_ID,NATURE,FUNCTIONAL_CURRENCY_ID,COSTING_METHOD,IS_ADJUST_CURRENCY,IS_PROPAGATE,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,14,@var:ErpMdAcctSchema@code,账套-1,1,FINANCIAL,1,,true,false,ACTIVE,@var:ErpMdAcctSchema@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpMdAcctSchema@code,账套-1,1,FINANCIAL,1,,true,false,ACTIVE,@var:ErpMdAcctSchema@delVersion_1,0,autotest-ref,*,autotest-ref,*

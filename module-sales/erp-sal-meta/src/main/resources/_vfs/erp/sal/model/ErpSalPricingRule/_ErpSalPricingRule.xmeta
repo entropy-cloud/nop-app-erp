@@ -29,8 +29,8 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="name" type="java.lang.String" precision="200"/>
         </prop>
-        <prop name="ruleCode" displayName="规则编码" propId="3" i18n-en:displayName="Rule Code" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="ruleCode" displayName="规则编码" propId="3" i18n-en:displayName="Rule Code" tagSet="var"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="code" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="ruleType" displayName="规则类型" propId="4" i18n-en:displayName="Rule Type" mandatory="true"
@@ -97,12 +97,12 @@
               sortable="true" insertable="true" updatable="true" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="validFrom" displayName="生效时间" propId="20" i18n-en:displayName="Valid From" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="validFrom" displayName="生效时间" propId="20" i18n-en:displayName="Valid From" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="validTo" displayName="失效时间" propId="21" i18n-en:displayName="Valid To" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="validTo" displayName="失效时间" propId="21" i18n-en:displayName="Valid To" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="isActive" displayName="启用" propId="22" i18n-en:displayName="Is Active" queryable="true"
@@ -138,29 +138,49 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="material.name" i18n-en:displayName="Material" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="giftMaterial" i18n-en:displayName="Gift Material" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="giftMaterialId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="giftMaterialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
+        <prop name="giftMaterial.name" i18n-en:displayName="Gift Material" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="giftSku" i18n-en:displayName="Gift Sku" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="giftSkuId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="giftSkuId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdMaterialSku"/>
         </prop>
+        <prop name="giftSku.name" i18n-en:displayName="Gift Sku" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="currency" i18n-en:displayName="Currency" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
         </prop>
+        <prop name="currency.name" i18n-en:displayName="Currency" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="partner.name" i18n-en:displayName="Partner" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

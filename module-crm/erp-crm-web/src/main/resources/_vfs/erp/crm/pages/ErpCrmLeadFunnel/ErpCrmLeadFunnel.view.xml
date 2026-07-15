@@ -5,13 +5,13 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="funnelName" sortable="true"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="funnelId" sortable="true"/>
                 <col id="periodStart" sortable="true"/>
                 <col id="periodEnd" sortable="true"/>
-                <col id="territoryName" label="销售区域"/>
-                <col id="teamName" label="销售团队"/>
-                <col id="sourceName" label="线索来源"/>
+                <col id="territoryId" label="销售区域"/>
+                <col id="teamId" label="销售团队"/>
+                <col id="sourceId" label="线索来源"/>
                 <col id="totalLeadsAtTop" ui:number="true" sortable="true"/>
                 <col id="totalOpportunities" ui:number="true" sortable="true"/>
                 <col id="totalWon" ui:number="true" sortable="true"/>

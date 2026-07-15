@@ -9,30 +9,27 @@ import app.erp.md.dao.entity.ErpMdUoM;
 import app.erp.md.dao.entity.ErpMdWarehouse;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
-import io.nop.api.core.beans.ApiRequest;
-import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.FieldSelectionBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
-import io.nop.graphql.core.IGraphQLExecutionContext;
-import io.nop.graphql.core.ast.GraphQLOperationType;
 import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
+import io.nop.api.core.util.FutureHelper;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * 高价值外键名称解析 BizLoader 测试（机制 D：xmeta 派生 *Name + @BizLoader 批量加载）。
+ * FK 显示名解析测试（平台自动管线：tagSet="disp" → {relation}.{dispCol} 路径属性）。
  *
- * <p>覆盖 master-data 域核心实体。经 {@link IGraphQLEngine} findList + {@link FieldSelectionBean}
- * 请求派生字段触发 @BizLoader，验证批量加载名称正确（防 N+1 + 名称对齐）。
+ * <p>验证 ORM tagSet="disp" 标记后，代码生成器在 xmeta 中自动生成路径属性，
+ * GraphQL 引擎在 session 内可通过路径属性访问关联实体的显示列。
+ * 列表批量加载由 XuiViewAnalyzer 在 view.xml 渲染时自动注入（E2E 覆盖）。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
@@ -60,17 +57,22 @@ public class TestErpMdFkNameLoader extends JunitAutoTestCase {
             seedUoM(UOM_ID, "个");
             seedWarehouse(WAREHOUSE_ID, "中央仓");
             seedMaterial(8001L);
-        });
 
-        List<Map<String, Object>> rows = queryWithSelection(
-                "ErpMdMaterial__findList",
-                "id", "categoryName", "uomName", "defaultWarehouseName");
-        assertNotNull(rows);
-        assertEquals(false, rows.isEmpty(), "至少 1 条物料");
-        Map<String, Object> first = rows.get(0);
-        assertEquals("原材料", first.get("categoryName"));
-        assertEquals("个", first.get("uomName"));
-        assertEquals("中央仓", first.get("defaultWarehouseName"));
+            ErpMdMaterial m = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(8001L);
+            assertNotNull(m, "物料应存在");
+
+            FieldSelectionBean selection = new FieldSelectionBean();
+            selection.addField("id");
+            selection.addCompositeField("category.name", false);
+            selection.addCompositeField("uoM.name", false);
+            selection.addCompositeField("defaultWarehouse.name", false);
+
+            Map<String, Object> result = (Map<String, Object>) FutureHelper.syncGet(
+                    graphQLEngine.fetchResultWithSelection(m, "ErpMdMaterial", selection, null));
+            assertEquals("原材料", nestedGet(result, "category.name"));
+            assertEquals("个", nestedGet(result, "uoM.name"));
+            assertEquals("中央仓", nestedGet(result, "defaultWarehouse.name"));
+        });
     }
 
     @Test
@@ -79,40 +81,35 @@ public class TestErpMdFkNameLoader extends JunitAutoTestCase {
             seedOrg(ORG_ID, "MD测试组织");
             seedPartner(PARTNER_ID, "员工关联伙伴");
             seedEmployee(8101L);
+
+            ErpMdEmployee e = daoProvider.daoFor(ErpMdEmployee.class).getEntityById(8101L);
+            assertNotNull(e, "员工应存在");
+
+            FieldSelectionBean selection = new FieldSelectionBean();
+            selection.addField("id");
+            selection.addCompositeField("organization.name", false);
+            selection.addCompositeField("partner.name", false);
+
+            Map<String, Object> result = (Map<String, Object>) FutureHelper.syncGet(
+                    graphQLEngine.fetchResultWithSelection(e, "ErpMdEmployee", selection, null));
+            assertEquals("MD测试组织", nestedGet(result, "organization.name"));
+            assertEquals("员工关联伙伴", nestedGet(result, "partner.name"));
         });
-
-        List<Map<String, Object>> rows = queryWithSelection(
-                "ErpMdEmployee__findList",
-                "id", "orgName", "partnerName");
-        assertNotNull(rows);
-        assertEquals(false, rows.isEmpty(), "至少 1 条员工");
-        Map<String, Object> first = rows.get(0);
-        assertEquals("MD测试组织", first.get("orgName"));
-        assertEquals("员工关联伙伴", first.get("partnerName"));
     }
-
-    // ---------- query helper ----------
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, Object>> queryWithSelection(String action, String... fields) {
-        FieldSelectionBean selection = new FieldSelectionBean();
-        for (String f : fields) {
-            selection.addField(f);
+    private Object nestedGet(Map<String, Object> map, String dotPath) {
+        String[] parts = dotPath.split("\\.");
+        Object current = map;
+        for (String part : parts) {
+            if (current instanceof Map) {
+                current = ((Map<String, Object>) current).get(part);
+            } else {
+                return null;
+            }
         }
-        ApiRequest<?> request = ApiRequest.build(Map.of());
-        request.setSelection(selection);
-        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(
-                GraphQLOperationType.query, action, request);
-        ApiResponse<?> resp = graphQLEngine.executeRpc(ctx);
-        assertEquals(0, resp.getStatus(), action + " 查询成功");
-        Object data = resp.getData();
-        if (data instanceof List) {
-            return (List<Map<String, Object>>) data;
-        }
-        return (List<Map<String, Object>>) ((Map<?, ?>) data).get("items");
+        return current;
     }
-
-    // ---------- seed helpers ----------
 
     private void seedOrg(long id, String name) {
         IEntityDao<ErpMdOrganization> dao = daoProvider.daoFor(ErpMdOrganization.class);

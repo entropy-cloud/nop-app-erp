@@ -10,9 +10,6 @@ import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.posting.MaintenanceIssuePostingDispatcher;
 import app.erp.mnt.service.support.SparePartIssueService;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.Collections;
 import java.util.List;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -42,56 +39,6 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
 
     public ErpMntSparePartUsageBizModel() {
         setEntityName(ErpMntSparePartUsage.class.getName());
-    }
-
-    @BizLoader(forType = ErpMntSparePartUsage.class)
-    public List<String> orgName(@ContextSource List<ErpMntSparePartUsage> list) {
-        orm().batchLoadProps(list, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntSparePartUsage entity : list) {
-            result.add(entity.getOrg() != null ? entity.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMntSparePartUsage.class)
-    public List<String> visitCode(@ContextSource List<ErpMntSparePartUsage> list) {
-        orm().batchLoadProps(list, Collections.singleton("visit"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntSparePartUsage entity : list) {
-            result.add(entity.getVisit() != null ? entity.getVisit().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMntSparePartUsage.class)
-    public List<String> requestCode(@ContextSource List<ErpMntSparePartUsage> list) {
-        orm().batchLoadProps(list, Collections.singleton("request"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntSparePartUsage entity : list) {
-            result.add(entity.getRequest() != null ? entity.getRequest().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMntSparePartUsage.class)
-    public List<String> equipmentCode(@ContextSource List<ErpMntSparePartUsage> list) {
-        orm().batchLoadProps(list, Collections.singleton("equipment"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntSparePartUsage entity : list) {
-            result.add(entity.getEquipment() != null ? entity.getEquipment().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMntSparePartUsage.class)
-    public List<String> warehouseName(@ContextSource List<ErpMntSparePartUsage> list) {
-        orm().batchLoadProps(list, Collections.singleton("warehouse"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntSparePartUsage entity : list) {
-            result.add(entity.getWarehouse() != null ? entity.getWarehouse().getName() : null);
-        }
-        return result;
     }
 
     @Override
@@ -154,7 +101,7 @@ public class ErpMntSparePartUsageBizModel extends CrudBizModel<ErpMntSparePartUs
         usage.setApproveStatus(ErpMntConstants.APPROVE_STATUS_APPROVED);
         usage.setPosted(isStockIssued(move));
         if (Boolean.TRUE.equals(usage.getPosted())) {
-            usage.setPostedAt(CoreMetrics.currentDateTime());
+            usage.setPostedAt(CoreMetrics.currentTimestamp());
         }
         usage.setTotalAmount(aggregateAmount(lines));
     }

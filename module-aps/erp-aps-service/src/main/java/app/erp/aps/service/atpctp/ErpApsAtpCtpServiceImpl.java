@@ -222,7 +222,7 @@ public class ErpApsAtpCtpServiceImpl implements IErpApsAtpCtpService {
             shadow.setRuntimePerUnit(bo.getStandardTime() == null ? BigDecimal.ZERO : bo.getStandardTime());
             shadow.setQty(qty);
             shadow.setPriority(50);
-            shadow.setEarliestStartDateT(CoreMetrics.currentDateTime());
+            shadow.setEarliestStartDateT(CoreMetrics.currentTimestamp());
             shadow.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
             shadows.add(shadow);
             seq += 10;

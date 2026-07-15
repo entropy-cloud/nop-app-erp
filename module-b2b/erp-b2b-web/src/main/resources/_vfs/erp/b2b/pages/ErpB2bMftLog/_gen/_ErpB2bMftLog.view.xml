@@ -101,12 +101,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--MFT配置-->
-                <col id="configName"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -128,8 +122,7 @@
  isSigned[签名] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] configName[MFT配置]
- orgName[业务组织] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-MFT 传输日志" i18n-en:title="Add MFT Log" x:prototype="edit"/>

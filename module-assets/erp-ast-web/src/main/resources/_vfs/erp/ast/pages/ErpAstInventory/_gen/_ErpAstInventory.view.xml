@@ -107,24 +107,6 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
-
-                <!--所属组织-->
-                <col id="orgName"/>
-
-                <!--盘点部门-->
-                <col id="rangeDepartmentName"/>
-
-                <!--盘点类别-->
-                <col id="rangeCategoryName"/>
-
-                <!--盘点地点-->
-                <col id="rangeLocationName"/>
-
-                <!--负责人-->
-                <col id="responsibleByName"/>
-
-                <!--币种-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -147,10 +129,7 @@
  amountFunctional[本位币金额] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] orgName[所属组织]
- rangeDepartmentName[盘点部门] rangeCategoryName[盘点类别]
- rangeLocationName[盘点地点] responsibleByName[负责人]
- currencyName[币种] 
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产盘点单" i18n-en:title="Add Asset Inventory" x:prototype="edit"/>

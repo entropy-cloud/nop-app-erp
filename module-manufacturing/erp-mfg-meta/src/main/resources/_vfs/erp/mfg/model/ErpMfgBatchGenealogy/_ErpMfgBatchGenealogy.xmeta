@@ -72,9 +72,9 @@
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="productionTime" displayName="生产时间" propId="14" i18n-en:displayName="Production Time"
+        <prop name="productionTime" displayName="生产时间" propId="14" i18n-en:displayName="Production Time" tagSet="clock"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="lineNo" displayName="行号" propId="15" i18n-en:displayName="Line No" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -127,14 +127,23 @@
             <schema bizObjName="ErpMfgJobCard"/>
         </prop>
         <prop name="inputMaterial" i18n-en:displayName="Input Material" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="inputMaterialId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="inputMaterialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
+        <prop name="inputMaterial.name" i18n-en:displayName="Input Material" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="outputMaterial" i18n-en:displayName="Output Material" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="outputMaterialId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="outputMaterialId" ext:joinRightProp="id"
+              ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="outputMaterial.name" i18n-en:displayName="Output Material" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="operation" i18n-en:displayName="Operation" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="operationId" ext:joinRightProp="id" insertable="false"
@@ -142,24 +151,40 @@
             <schema bizObjName="ErpMfgBomOperation"/>
         </prop>
         <prop name="inputLot" i18n-en:displayName="Input Lot" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="inputLotId" ext:joinRightProp="id" biz:moduleId="erp/inv"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="inputLotId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/inv" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpInvBatch"/>
+        </prop>
+        <prop name="inputLot.name" i18n-en:displayName="Input Lot" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="inputUoM" i18n-en:displayName="Input UoM" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="inputUoMId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="inputUoMId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="inputUoM.name" i18n-en:displayName="Input UoM" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="outputLot" i18n-en:displayName="Output Lot" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="outputLotId" ext:joinRightProp="id" biz:moduleId="erp/inv"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="outputLotId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/inv" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpInvBatch"/>
         </prop>
+        <prop name="outputLot.name" i18n-en:displayName="Output Lot" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="outputUoM" i18n-en:displayName="Output UoM" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="outputUoMId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="outputUoMId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="outputUoM.name" i18n-en:displayName="Output UoM" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

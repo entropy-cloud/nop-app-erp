@@ -23,7 +23,5 @@
   "employee": null,
   "leaveRequest": null,
   "org": null,
-  "employeeDisplayName": "",
-  "leaveRequestCode": "",
-  "orgName": ""
+  "org.name": ""
 }

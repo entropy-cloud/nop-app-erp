@@ -79,7 +79,6 @@ public class ValueAdjustmentAcctDocProvider implements IErpFinAcctDocProvider {
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
         fact.setBusinessType(event.getBusinessType().name());
-        fact.setMemo(event.getBillHeadCode());
         return fact;
     }
 

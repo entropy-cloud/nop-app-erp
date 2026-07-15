@@ -37,16 +37,13 @@
   "approvedAt": "2000-01-01 14:00:00",
   "businessDate": "2000-01-01",
   "customer": null,
+  "customer.name": "",
   "contact": null,
+  "contact.name": "",
   "ticketType": null,
   "slaPolicy": null,
   "org": null,
+  "org.name": "",
   "catalogItem": null,
-  "actions": null,
-  "orgName": "",
-  "customerName": "",
-  "contactName": "",
-  "ticketTypeName": "",
-  "slaPolicyName": "",
-  "catalogItemName": ""
+  "actions": null
 }

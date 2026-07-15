@@ -37,7 +37,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
     public static final String PROP_NAME_activityType = "activityType";
     public static final int PROP_ID_activityType = 4;
     
-    /* 活动日期: ACTIVITY_DATE DATETIME */
+    /* 活动日期: ACTIVITY_DATE DATE */
     public static final String PROP_NAME_activityDate = "activityDate";
     public static final int PROP_ID_activityDate = 5;
     
@@ -153,7 +153,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
     private java.lang.String _activityType;
     
     /* 活动日期: ACTIVITY_DATE */
-    private java.time.LocalDateTime _activityDate;
+    private java.time.LocalDate _activityDate;
     
     /* 内容摘要: SUMMARY */
     private java.lang.String _summary;
@@ -350,9 +350,9 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
             }
         
             case PROP_ID_activityDate:{
-               java.time.LocalDateTime typedValue = null;
+               java.time.LocalDate typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toLocalDate(value,
                        err-> newTypeConversionError(PROP_NAME_activityDate));
                }
                setActivityDate(typedValue);
@@ -488,7 +488,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
         
             case PROP_ID_activityDate:{
                onInitProp(propId);
-               this._activityDate = (java.time.LocalDateTime)value;
+               this._activityDate = (java.time.LocalDate)value;
                
                break;
             }
@@ -641,7 +641,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
     /**
      * 活动日期: ACTIVITY_DATE
      */
-    public final java.time.LocalDateTime getActivityDate(){
+    public final java.time.LocalDate getActivityDate(){
          onPropGet(PROP_ID_activityDate);
          return _activityDate;
     }
@@ -649,7 +649,7 @@ public class _ErpCrmActivity extends DynamicOrmEntity{
     /**
      * 活动日期: ACTIVITY_DATE
      */
-    public final void setActivityDate(java.time.LocalDateTime value){
+    public final void setActivityDate(java.time.LocalDate value){
         if(onPropSet(PROP_ID_activityDate,value)){
             this._activityDate = value;
             internalClearRefs(PROP_ID_activityDate);

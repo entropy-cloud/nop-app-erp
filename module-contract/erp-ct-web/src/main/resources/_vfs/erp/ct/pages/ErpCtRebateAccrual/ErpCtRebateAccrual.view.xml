@@ -6,8 +6,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="rebateAgreementName" label="返利协议"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="rebateAgreementId" label="返利协议"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="sourceBillType" sortable="true"/>
                 <col id="sourceBillCode" sortable="true"/>
                 <col id="billAmountSource" ui:number="true" sortable="true"/>

@@ -80,15 +80,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--往来单位名称-->
-                <col id="partnerName"/>
-
-                <!--币种名称-->
-                <col id="currencyName"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -107,8 +98,6 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- partnerName[往来单位名称] currencyName[币种名称]
- orgName[业务组织名称] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-核销单" i18n-en:title="Add Reconciliation" x:prototype="edit"/>

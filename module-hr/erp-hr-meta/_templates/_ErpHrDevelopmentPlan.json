@@ -17,6 +17,5 @@
   "employee": null,
   "items": null,
   "org": null,
-  "employeeDisplayName": "",
-  "orgName": ""
+  "org.name": ""
 }

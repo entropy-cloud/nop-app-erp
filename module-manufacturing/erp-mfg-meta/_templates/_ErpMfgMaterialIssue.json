@@ -23,17 +23,16 @@
   "approvedBy": "",
   "approvedAt": "2000-01-01 14:00:00",
   "currencyId": 0,
-  "exchangeRate": "",
-  "amountSource": "",
-  "amountFunctional": "",
+  "exchangeRate": 0.0,
+  "amountSource": 0.0,
+  "amountFunctional": 0.0,
   "workOrder": null,
   "jobCard": null,
   "warehouse": null,
+  "warehouse.name": "",
   "lines": null,
   "org": null,
+  "org.name": "",
   "currency": null,
-  "workOrderNo": "",
-  "warehouseName": "",
-  "orgName": "",
-  "currencyName": ""
+  "currency.name": ""
 }

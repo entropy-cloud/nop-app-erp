@@ -44,9 +44,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--账套-->
-                <col id="acctSchemaName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -63,7 +60,6 @@
  createTime[创建时间]
  updatedBy[修改人]
  updateTime[修改时间]
- acctSchemaName[账套]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-账套科目表" i18n-en:title="Add Chart of Accounts" x:prototype="edit"/>

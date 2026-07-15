@@ -19,8 +19,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "contract": null,
   "org": null,
-  "approvalMatrix": null,
-  "contractName": "",
-  "orgName": "",
-  "approvalMatrixName": ""
+  "org.name": "",
+  "approvalMatrix": null
 }

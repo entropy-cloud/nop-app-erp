@@ -97,7 +97,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     public static final String PROP_NAME_goLiveDate = "goLiveDate";
     public static final int PROP_ID_goLiveDate = 19;
     
-    /* 归档日期: ARCHIVED_AT DATETIME */
+    /* 归档日期: ARCHIVED_AT TIMESTAMP */
     public static final String PROP_NAME_archivedAt = "archivedAt";
     public static final int PROP_ID_archivedAt = 20;
     
@@ -282,7 +282,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     private java.time.LocalDate _goLiveDate;
     
     /* 归档日期: ARCHIVED_AT */
-    private java.time.LocalDateTime _archivedAt;
+    private java.sql.Timestamp _archivedAt;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -656,9 +656,9 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
             }
         
             case PROP_ID_archivedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_archivedAt));
                }
                setArchivedAt(typedValue);
@@ -869,7 +869,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
         
             case PROP_ID_archivedAt:{
                onInitProp(propId);
-               this._archivedAt = (java.time.LocalDateTime)value;
+               this._archivedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1286,7 +1286,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     /**
      * 归档日期: ARCHIVED_AT
      */
-    public final java.time.LocalDateTime getArchivedAt(){
+    public final java.sql.Timestamp getArchivedAt(){
          onPropGet(PROP_ID_archivedAt);
          return _archivedAt;
     }
@@ -1294,7 +1294,7 @@ public class _ErpB2bPartnerProfile extends DynamicOrmEntity{
     /**
      * 归档日期: ARCHIVED_AT
      */
-    public final void setArchivedAt(java.time.LocalDateTime value){
+    public final void setArchivedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_archivedAt,value)){
             this._archivedAt = value;
             internalClearRefs(PROP_ID_archivedAt);

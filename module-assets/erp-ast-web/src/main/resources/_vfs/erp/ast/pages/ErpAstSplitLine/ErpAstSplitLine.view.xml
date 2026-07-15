@@ -6,11 +6,11 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="splitCode" label="拆分单编码"/>
-                <col id="orgName" label="所属组织"/>
+                <col id="orgId" label="所属组织"/>
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="targetAssetCode" label="目标资产编码"/>
-                <col id="targetAssetName" sortable="true"/>
-                <col id="categoryName" label="资产类别"/>
+                <col id="targetAssetId" sortable="true"/>
+                <col id="categoryId" label="资产类别"/>
                 <col id="allocationMethod" sortable="true"/>
                 <col id="proportion" sortable="true"/>
                 <col id="netBookValue" sortable="true"/>

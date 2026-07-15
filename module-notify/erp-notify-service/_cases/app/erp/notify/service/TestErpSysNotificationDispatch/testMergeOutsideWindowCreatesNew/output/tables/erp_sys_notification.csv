@@ -1,0 +1,3 @@
+_chgType,ID,TEMPLATE_ID,NOTIFICATION_TYPE,RECIPIENT_USER_ID,RECIPIENT_PARTNER_ID,RECIPIENT_DEPT_ID,CHANNEL,SUBJECT,BODY,PAYLOAD_JSON,STATUS,MERGE_GROUP_ID,MERGE_COUNT,SENT_AT,ERROR_MSG,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,7003,outside-win,notify-test-user-1,,,IN_APP,窗口外测试,窗口外实例,,SENT,outside-win#notify-test-user-1,1,@var:ErpSysNotification@sentAt,,@var:ErpSysNotification@delVersion,1,autotest-ref,*,autotest-ref,*
+A,2,7003,outside-win,notify-test-user-1,,,IN_APP,窗口外测试,窗口外实例,,SENT,outside-win#notify-test-user-1,1,@var:ErpSysNotification@sentAt_1,,@var:ErpSysNotification@delVersion,0,autotest-ref,*,autotest-ref,*

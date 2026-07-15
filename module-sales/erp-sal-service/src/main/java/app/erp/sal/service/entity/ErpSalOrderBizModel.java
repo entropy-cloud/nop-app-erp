@@ -13,10 +13,8 @@ import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.processor.ErpSalOrderProcessor;
 import app.erp.sal.service.support.ErpSalPricingRuleEngine;
 import io.nop.api.core.annotations.biz.BizAction;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
@@ -28,7 +26,6 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -225,46 +222,6 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         updateEntity(order, null, context);
     }
 
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。
 
-    @BizLoader(forType = ErpSalOrder.class)
-    public List<String> customerName(@ContextSource List<ErpSalOrder> orders) {
-        orm().batchLoadProps(orders, Collections.singleton("customer"));
-        List<String> result = new ArrayList<>(orders.size());
-        for (ErpSalOrder order : orders) {
-            result.add(order.getCustomer() != null ? order.getCustomer().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpSalOrder.class)
-    public List<String> warehouseName(@ContextSource List<ErpSalOrder> orders) {
-        orm().batchLoadProps(orders, Collections.singleton("warehouse"));
-        List<String> result = new ArrayList<>(orders.size());
-        for (ErpSalOrder order : orders) {
-            result.add(order.getWarehouse() != null ? order.getWarehouse().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpSalOrder.class)
-    public List<String> currencyName(@ContextSource List<ErpSalOrder> orders) {
-        orm().batchLoadProps(orders, Collections.singleton("currency"));
-        List<String> result = new ArrayList<>(orders.size());
-        for (ErpSalOrder order : orders) {
-            result.add(order.getCurrency() != null ? order.getCurrency().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpSalOrder.class)
-    public List<String> orgName(@ContextSource List<ErpSalOrder> orders) {
-        orm().batchLoadProps(orders, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(orders.size());
-        for (ErpSalOrder order : orders) {
-            result.add(order.getOrg() != null ? order.getOrg().getName() : null);
-        }
-        return result;
-    }
 }

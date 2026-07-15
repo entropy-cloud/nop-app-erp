@@ -33,8 +33,7 @@
   "amountFunctional": 0.0,
   "category": null,
   "org": null,
+  "org.name": "",
   "currency": null,
-  "orgName": "",
-  "categoryName": "",
-  "currencyName": ""
+  "currency.name": ""
 }

@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,PARENT_ID,ORG_TYPE,FUNCTIONAL_CURRENCY_ID,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1301,@var:ErpMdOrganization@code,测试组织,,COMPANY,,ACTIVE,@var:ErpMdOrganization@delVersion,0,autotest-ref,*,autotest-ref,*

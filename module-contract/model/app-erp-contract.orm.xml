@@ -124,7 +124,7 @@
                 tableName="erp_ct_contract" tagSet="gid,erp.contract" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="合同编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="合同编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="contractName" displayName="合同名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="CONTRACT_NAME" propId="4" stdDataType="string" i18n-en:displayName='Contract Name' />
                 <column name="contractType" displayName="合同类型" ext:dict="erp-ct/contract-type" mandatory="true" code="CONTRACT_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Contract Type' />
@@ -132,14 +132,14 @@
                 <column name="partnerId" displayName="合作方" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="7" stdDataType="long" i18n-en:displayName='Partner' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="totalAmount" displayName="合同总额" domain="amount" code="TOTAL_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amount' />
-                <column name="startDate" displayName="生效日期" stdSqlType="DATE" mandatory="true" code="START_DATE" propId="10" stdDataType="date" i18n-en:displayName='Start Date' />
-                <column name="endDate" displayName="到期日期" stdSqlType="DATE" mandatory="true" code="END_DATE" propId="11" stdDataType="date" i18n-en:displayName='End Date' />
-                <column name="signDate" displayName="签署日期" stdSqlType="DATE" code="SIGN_DATE" propId="12" stdDataType="date" i18n-en:displayName='Sign Date' />
+                <column name="startDate" displayName="生效日期" stdSqlType="DATE" mandatory="true" code="START_DATE" propId="10" i18n-en:displayName='Start Date' />
+                <column name="endDate" displayName="到期日期" stdSqlType="DATE" mandatory="true" code="END_DATE" propId="11" i18n-en:displayName='End Date' />
+                <column name="signDate" displayName="签署日期" stdSqlType="DATE" code="SIGN_DATE" propId="12" i18n-en:displayName='Sign Date' />
                 <column name="status" displayName="合同状态" ext:dict="erp-ct/contract-status" mandatory="true" code="STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="templateId" displayName="合同模板" stdSqlType="BIGINT" code="TEMPLATE_ID" propId="14" stdDataType="long" i18n-en:displayName='Template' />
                 <column name="parentContractId" displayName="父合同" stdSqlType="BIGINT" code="PARENT_CONTRACT_ID" propId="15" stdDataType="long" i18n-en:displayName='Parent Contract' />
                 <column name="description" displayName="描述" domain="content" code="DESCRIPTION" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Description' />
-                <column name="attachmentFileId" displayName="合同附件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="17" i18n-en:displayName='Attachment' stdDomain="file"/>
+                <column name="attachmentFileId" displayName="合同附件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="17" i18n-en:displayName='Attachment' stdDomain="file" tagSet="var"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="18" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="19" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="20" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -147,7 +147,7 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="22" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="23" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="24" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
-                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="25" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="25" i18n-en:displayName='Business Date' />
             </columns>
             <relations>
                 <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Partner'><join><on leftProp="partnerId" rightProp="id"/></join></to-one>
@@ -159,7 +159,7 @@
                 <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub">
                     <join><on leftProp="currencyId" rightProp="id"/></join>
                 </to-one>
-                
+
             </relations>
             <unique-keys>
                 <unique-key name="UK_CT_CONTRACT_CODE_ORG" columns="code,orgId"/>
@@ -238,13 +238,13 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="contractId" displayName="合同ID" stdSqlType="BIGINT" mandatory="true" code="CONTRACT_ID" propId="2" stdDataType="long" i18n-en:displayName='Contract' />
                 <column name="versionNo" displayName="版本号" stdSqlType="INTEGER" mandatory="true" code="VERSION_NO" propId="3" stdDataType="int" i18n-en:displayName='Version No' />
-                <column name="versionDate" displayName="版本日期" stdSqlType="DATE" mandatory="true" code="VERSION_DATE" propId="4" stdDataType="date" i18n-en:displayName='Version Date' />
+                <column name="versionDate" displayName="版本日期" stdSqlType="DATE" mandatory="true" code="VERSION_DATE" propId="4" i18n-en:displayName='Version Date' />
                 <column name="content" displayName="版本内容" domain="content" code="CONTENT" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Content' />
-                <column name="attachmentFileId" displayName="版本附件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="6" i18n-en:displayName='Attachment' stdDomain="file"/>
+                <column name="attachmentFileId" displayName="版本附件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="6" i18n-en:displayName='Attachment' stdDomain="file" tagSet="var"/>
                 <column name="isCurrent" displayName="是否当前版本" stdSqlType="BOOLEAN" defaultValue="false" code="IS_CURRENT" propId="7" stdDataType="boolean" i18n-en:displayName='Is Current' />
                 <column name="status" displayName="版本状态" ext:dict="erp-ct/version-status" mandatory="true" code="STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="批准人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="9" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
-                <column name="approvedAt" displayName="批准时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="10" stdDataType="datetime" i18n-en:displayName='Approved At'  ui:show="R"/>
+                <column name="approvedAt" displayName="批准时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="10" i18n-en:displayName='Approved At'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -255,7 +255,7 @@
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub" i18n-en:displayName='Contract'><join><on leftProp="contractId" rightProp="id"/></join></to-one>
-                
+
             </relations>
             <indexes>
                 <index name="IDX_CT_CONTRACT_VERSION_STATUS" unique="false">
@@ -277,11 +277,11 @@
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="contractLineId" displayName="合同行ID" stdSqlType="BIGINT" mandatory="true" code="CONTRACT_LINE_ID" propId="2" stdDataType="long" i18n-en:displayName='Contract Line' />
-                <column name="planDate" displayName="计划开票日期" stdSqlType="DATE" code="PLAN_DATE" propId="3" stdDataType="date" i18n-en:displayName='Plan Date' />
+                <column name="planDate" displayName="计划开票日期" stdSqlType="DATE" code="PLAN_DATE" propId="3" i18n-en:displayName='Plan Date' />
                 <column name="amount" displayName="开票金额" domain="amount" code="AMOUNT" propId="4" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="isInvoiced" displayName="是否已开票" stdSqlType="BOOLEAN" defaultValue="false" code="IS_INVOICED" propId="5" stdDataType="boolean" i18n-en:displayName='Is Invoiced' />
                 <column name="invoiceBillCode" displayName="关联发票号" stdSqlType="VARCHAR" precision="50" code="INVOICE_BILL_CODE" propId="6" stdDataType="string" i18n-en:displayName='Invoice Bill Code' />
-                <column name="invoiceDate" displayName="实际开票日期" stdSqlType="DATE" code="INVOICE_DATE" propId="7" stdDataType="date" i18n-en:displayName='Invoice Date' />
+                <column name="invoiceDate" displayName="实际开票日期" stdSqlType="DATE" code="INVOICE_DATE" propId="7" i18n-en:displayName='Invoice Date' />
                 <column name="invoiceTerm" displayName="开票条款" ext:dict="erp-ct/invoice-term" mandatory="true" code="INVOICE_TERM" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Invoice Term' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="10" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
@@ -308,12 +308,12 @@
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="contractLineId" displayName="合同行ID" stdSqlType="BIGINT" mandatory="true" code="CONTRACT_LINE_ID" propId="2" stdDataType="long" i18n-en:displayName='Contract Line' />
-                <column name="consumptionDate" displayName="消耗日期" stdSqlType="DATE" mandatory="true" code="CONSUMPTION_DATE" propId="3" stdDataType="date" i18n-en:displayName='Consumption Date' />
+                <column name="consumptionDate" displayName="消耗日期" stdSqlType="DATE" mandatory="true" code="CONSUMPTION_DATE" propId="3" i18n-en:displayName='Consumption Date' />
                 <column name="quantity" displayName="消耗数量" domain="quantity" code="QUANTITY" propId="4" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Quantity' />
                 <column name="unitPrice" displayName="单价" domain="unitPrice" code="UNIT_PRICE" propId="5" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Unit Price' />
                 <column name="amount" displayName="金额" domain="amount" code="AMOUNT" propId="6" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="sourceBillType" displayName="来源单据类型" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_TYPE" propId="7" stdDataType="string" i18n-en:displayName='Source Bill Type' />
-                <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="8" stdDataType="string" i18n-en:displayName='Source Bill Code' />
+                <column name="sourceBillCode" displayName="来源单据号" tagSet="var" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="8" stdDataType="string" i18n-en:displayName='Source Bill Code' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="10" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="11" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -338,7 +338,7 @@
                 tableName="erp_ct_template" tagSet="gid,erp.contract" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="contractType" displayName="适用合同类型" ext:dict="erp-ct/contract-type" mandatory="true" code="CONTRACT_TYPE" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Contract Type' />
                 <column name="contentTemplate" displayName="模板内容" domain="content" code="CONTENT_TEMPLATE" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Content Template' />
@@ -355,14 +355,14 @@
                 <unique-key name="UK_CT_TEMPLATE_CODE" columns="code"/>
             </unique-keys>
         </entity>
-    
+
         <!-- 审批矩阵 -->
         <entity className="app.erp.contract.dao.entity.ErpCtApprovalMatrix"
                 displayName="审批矩阵" ext:icon="check-square" i18n-en:displayName="Approval Matrix" name="app.erp.contract.dao.entity.ErpCtApprovalMatrix"
                 tableName="erp_ct_approval_matrix" tagSet="gid,erp.contract" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="minAmount" displayName="最小金额" domain="amount" code="MIN_AMOUNT" propId="4" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Min Amount' />
                 <column name="maxAmount" displayName="最大金额" domain="amount" code="MAX_AMOUNT" propId="5" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Max Amount' />
@@ -400,8 +400,8 @@
                 <column name="approverId" stdDomain="userId" displayName="审批人" stdSqlType="VARCHAR" precision="36" code="APPROVER_ID" propId="6" stdDataType="string" i18n-en:displayName='Approver' />
                 <column name="approvalStatus" displayName="审批状态" ext:dict="erp-ct/approval-status" mandatory="true" code="APPROVAL_STATUS" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approval Status' />
                 <column name="comment" displayName="审批意见" stdSqlType="VARCHAR" precision="1000" code="COMMENT" propId="8" stdDataType="string" i18n-en:displayName='Comment' />
-                <column name="approvedAt" displayName="通过时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="9" stdDataType="datetime" i18n-en:displayName='Approved At'  ui:show="R"/>
-                <column name="rejectedAt" displayName="驳回时间" stdSqlType="DATETIME" code="REJECTED_AT" propId="10" stdDataType="datetime" i18n-en:displayName='Rejected At' />
+                <column name="approvedAt" displayName="通过时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="9" i18n-en:displayName='Approved At'  ui:show="R"/>
+                <column name="rejectedAt" displayName="驳回时间" tagSet="clock" stdSqlType="TIMESTAMP" code="REJECTED_AT" propId="10" i18n-en:displayName='Rejected At' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -467,14 +467,14 @@
                 tableName="erp_ct_rebate_agreement" tagSet="gid,erp.contract" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="协议编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="协议编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="contractId" displayName="关联合同" stdSqlType="BIGINT" code="CONTRACT_ID" propId="4" stdDataType="long" i18n-en:displayName='Contract' />
                 <column name="partnerId" displayName="对方伙伴" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="5" stdDataType="long" i18n-en:displayName='Partner' />
                 <column name="rebateType" displayName="返利类型" ext:dict="erp-ct/rebate-type" mandatory="true" code="REBATE_TYPE" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Rebate Type' />
-                <column name="agreementDate" displayName="签订日期" stdSqlType="DATE" code="AGREEMENT_DATE" propId="7" stdDataType="date" i18n-en:displayName='Agreement Date' />
-                <column name="startDate" displayName="有效期开始" stdSqlType="DATE" mandatory="true" code="START_DATE" propId="8" stdDataType="date" i18n-en:displayName='Start Date' />
-                <column name="endDate" displayName="有效期结束" stdSqlType="DATE" mandatory="true" code="END_DATE" propId="9" stdDataType="date" i18n-en:displayName='End Date' />
+                <column name="agreementDate" displayName="签订日期" stdSqlType="DATE" code="AGREEMENT_DATE" propId="7" i18n-en:displayName='Agreement Date' />
+                <column name="startDate" displayName="有效期开始" stdSqlType="DATE" mandatory="true" code="START_DATE" propId="8" i18n-en:displayName='Start Date' />
+                <column name="endDate" displayName="有效期结束" stdSqlType="DATE" mandatory="true" code="END_DATE" propId="9" i18n-en:displayName='End Date' />
                 <column name="accrualMethod" displayName="计提方法" ext:dict="erp-ct/accrual-method" mandatory="true" code="ACCRUAL_METHOD" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Accrual Method' />
                 <column name="status" displayName="状态" ext:dict="erp-ct/rebate-agreement-status" mandatory="true" code="STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="totalAccumulatedAmount" displayName="当前累计金额" domain="amount" code="TOTAL_ACCUMULATED_AMOUNT" propId="12" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Total Accumulated Amount' />
@@ -486,7 +486,7 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="18" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="19" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="20" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
-                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="21" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="21" i18n-en:displayName='Business Date' />
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub" i18n-en:displayName='Contract'><join><on leftProp="contractId" rightProp="id"/></join></to-one>
@@ -554,12 +554,12 @@
                 <column name="rebateAgreementId" displayName="返利协议" stdSqlType="BIGINT" mandatory="true" code="REBATE_AGREEMENT_ID" propId="2" stdDataType="long" i18n-en:displayName='Rebate Agreement' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="sourceBillType" displayName="来源单据类型" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Source Bill Type' />
-                <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="5" stdDataType="string" i18n-en:displayName='Source Bill Code' />
+                <column name="sourceBillCode" displayName="来源单据号" tagSet="var" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="5" stdDataType="string" i18n-en:displayName='Source Bill Code' />
                 <column name="billAmountSource" displayName="单据金额(源币种)" domain="amount" code="BILL_AMOUNT_SOURCE" propId="6" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Bill Amount Source' />
                 <column name="accruedRebate" displayName="计提返利金额" domain="amount" code="ACCRUED_REBATE" propId="7" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Accrued Rebate' />
-                <column name="accrualDate" displayName="计提日期" stdSqlType="DATE" code="ACCRUAL_DATE" propId="8" stdDataType="date" i18n-en:displayName='Accrual Date' />
+                <column name="accrualDate" displayName="计提日期" stdSqlType="DATE" code="ACCRUAL_DATE" propId="8" i18n-en:displayName='Accrual Date' />
                 <column name="isSettled" displayName="已结算" stdSqlType="BOOLEAN" defaultValue="false" code="IS_SETTLED" propId="9" stdDataType="boolean" i18n-en:displayName='Is Settled' />
-                <column name="settledDate" displayName="结算日期" stdSqlType="DATE" code="SETTLED_DATE" propId="10" stdDataType="date" i18n-en:displayName='Settled Date' />
+                <column name="settledDate" displayName="结算日期" stdSqlType="DATE" code="SETTLED_DATE" propId="10" i18n-en:displayName='Settled Date' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="13" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -587,12 +587,12 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="rebateAgreementId" displayName="返利协议" stdSqlType="BIGINT" mandatory="true" code="REBATE_AGREEMENT_ID" propId="2" stdDataType="long" i18n-en:displayName='Rebate Agreement' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="settlementDate" displayName="结算日期" stdSqlType="DATE" mandatory="true" code="SETTLEMENT_DATE" propId="4" stdDataType="date" i18n-en:displayName='Settlement Date' />
+                <column name="settlementDate" displayName="结算日期" stdSqlType="DATE" mandatory="true" code="SETTLEMENT_DATE" propId="4" i18n-en:displayName='Settlement Date' />
                 <column name="totalRebateAmount" displayName="结算返利总额" domain="amount" code="TOTAL_REBATE_AMOUNT" propId="5" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Total Rebate Amount' />
                 <column name="creditMemoBillType" displayName="信用单类型" stdSqlType="VARCHAR" precision="50" code="CREDIT_MEMO_BILL_TYPE" propId="6" stdDataType="string" i18n-en:displayName='Credit Memo Bill Type' />
                 <column name="creditMemoBillCode" displayName="信用单号" stdSqlType="VARCHAR" precision="50" code="CREDIT_MEMO_BILL_CODE" propId="7" stdDataType="string" i18n-en:displayName='Credit Memo Bill Code' />
                 <column name="status" displayName="状态" ext:dict="erp-ct/settlement-status" mandatory="true" code="STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="9" stdDataType="datetime" i18n-en:displayName='Posted At'  ui:show="R"/>
+                <column name="postedAt" displayName="过账时间" tagSet="clock" stdSqlType="TIMESTAMP" code="POSTED_AT" propId="9" i18n-en:displayName='Posted At'  ui:show="R"/>
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="50" code="POSTED_BY" propId="10" stdDataType="string" i18n-en:displayName='Posted By'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="11" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="12" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
@@ -601,7 +601,7 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
-                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="18" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="18" i18n-en:displayName='Business Date' />
                 <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="19" stdDataType="boolean" i18n-en:displayName='Posted'  ui:show="R"/>
             </columns>
             <relations>
@@ -632,14 +632,14 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="contractVersionId" displayName="合同版本" stdSqlType="BIGINT" mandatory="true" code="CONTRACT_VERSION_ID" propId="3" stdDataType="long" i18n-en:displayName='Contract Version' />
                 <column name="provider" displayName="签名提供商" ext:dict="erp-ct/sign-provider" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PROVIDER" propId="4" stdDataType="string" i18n-en:displayName='Provider' />
-                <column name="providerRequestId" displayName="提供商请求ID" stdSqlType="VARCHAR" precision="200" code="PROVIDER_REQUEST_ID" propId="5" stdDataType="string" i18n-en:displayName='Provider Request ID' />
+                <column name="providerRequestId" displayName="提供商请求ID" stdSqlType="VARCHAR" precision="200" code="PROVIDER_REQUEST_ID" propId="5" tagSet="var" i18n-en:displayName='Provider Request ID' />
                 <column name="status" displayName="签章状态" ext:dict="erp-ct/sign-status" stdSqlType="VARCHAR" precision="50" mandatory="true" code="STATUS" propId="6" stdDataType="string" i18n-en:displayName='Status' />
-                <column name="signers" displayName="签署人(JSON)" stdSqlType="VARCHAR" precision="2000" code="SIGNERS" propId="7" stdDataType="string" i18n-en:displayName='Signers' />
-                <column name="signingDeadline" displayName="签署截止日期" stdSqlType="DATE" code="SIGNING_DEADLINE" propId="8" stdDataType="date" i18n-en:displayName='Signing Deadline' />
-                <column name="completedAt" displayName="签署完成时间" stdSqlType="DATETIME" code="COMPLETED_AT" propId="9" stdDataType="datetime" i18n-en:displayName='Completed At' />
-                <column name="certificateUrl" displayName="完成证书URL" stdSqlType="VARCHAR" precision="1000" code="CERTIFICATE_URL" propId="10" stdDataType="string" i18n-en:displayName='Certificate URL' />
-                <column name="evidenceNo" displayName="存证编号" stdSqlType="VARCHAR" precision="200" code="EVIDENCE_NO" propId="11" stdDataType="string" i18n-en:displayName='Evidence No' />
-                <column name="attachmentFileId" displayName="已签署文件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="12" i18n-en:displayName='Attachment' stdDomain="file"/>
+                <column name="signers" displayName="签署人(JSON)" stdSqlType="VARCHAR" precision="2000" code="SIGNERS" propId="7" stdDataType="string" i18n-en:displayName='Signers' tagSet="var" />
+                <column name="signingDeadline" displayName="签署截止日期" stdSqlType="DATE" code="SIGNING_DEADLINE" propId="8" i18n-en:displayName='Signing Deadline' />
+                <column name="completedAt" displayName="签署完成时间" tagSet="clock" stdSqlType="TIMESTAMP" code="COMPLETED_AT" propId="9" i18n-en:displayName='Completed At' />
+                <column name="certificateUrl" displayName="完成证书URL" stdSqlType="VARCHAR" precision="1000" code="CERTIFICATE_URL" propId="10" stdDataType="string" i18n-en:displayName='Certificate URL' tagSet="var" />
+                <column name="evidenceNo" displayName="存证编号" stdSqlType="VARCHAR" precision="200" code="EVIDENCE_NO" propId="11" stdDataType="string" i18n-en:displayName='Evidence No' tagSet="var" />
+                <column name="attachmentFileId" displayName="已签署文件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="12" i18n-en:displayName='Attachment' stdDomain="file" tagSet="var"/>
                 <column name="errorMsg" displayName="错误信息" stdSqlType="VARCHAR" precision="1000" code="ERROR_MSG" propId="13" stdDataType="string" i18n-en:displayName='Error Message' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="14" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="15" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
@@ -655,7 +655,7 @@
                 <to-one name="providerRequest" refEntityName="app.erp.contract.dao.entity.ErpCtSignatureRequest" tagSet="pub">
                     <join><on leftProp="providerRequestId" rightProp="id"/></join>
                 </to-one>
-                
+
             </relations>
             <indexes>
                 <index name="IDX_CT_SIGNATURE_REQUEST_ORG_STATUS" unique="false">
@@ -682,10 +682,10 @@
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="contractId" displayName="关联合同" stdSqlType="BIGINT" code="CONTRACT_ID" propId="3" stdDataType="long" i18n-en:displayName='Contract' />
-                <column name="code" displayName="文档编码" domain="orderCode" mandatory="true" code="CODE" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="文档编码" domain="orderCode" mandatory="true" code="CODE" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="docName" displayName="文档名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="DOC_NAME" propId="5" stdDataType="string" i18n-en:displayName='Document Name' />
                 <column name="docType" displayName="文档类型" stdSqlType="VARCHAR" precision="50" mandatory="true" code="DOC_TYPE" propId="6" stdDataType="string" i18n-en:displayName='Document Type' />
-                <column name="attachmentFileId" displayName="附件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="7" i18n-en:displayName='Attachment' stdDomain="file"/>
+                <column name="attachmentFileId" displayName="附件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="7" i18n-en:displayName='Attachment' stdDomain="file" tagSet="var"/>
                 <column name="fileSize" displayName="文件大小(字节)" stdSqlType="BIGINT" code="FILE_SIZE" propId="8" stdDataType="long" i18n-en:displayName='File Size' />
                 <column name="fileHash" displayName="文件哈希" stdSqlType="VARCHAR" precision="100" code="FILE_HASH" propId="9" stdDataType="string" i18n-en:displayName='File Hash' />
                 <column name="mimeType" displayName="MIME类型" stdSqlType="VARCHAR" precision="100" code="MIME_TYPE" propId="10" stdDataType="string" i18n-en:displayName='MIME Type' />
@@ -693,9 +693,9 @@
                 <column name="ocrStatus" displayName="OCR状态" stdSqlType="VARCHAR" precision="50" code="OCR_STATUS" propId="12" stdDataType="string" i18n-en:displayName='OCR Status' />
                 <column name="fullTextSearch" displayName="全文检索" stdSqlType="VARCHAR" precision="4000" code="FULL_TEXT_SEARCH" propId="13" stdDataType="string" i18n-en:displayName='Full Text Search' />
                 <column name="metadataTags" displayName="元数据标签(JSON)" stdSqlType="VARCHAR" precision="2000" code="METADATA_TAGS" propId="14" stdDataType="string" i18n-en:displayName='Metadata Tags' />
-                <column name="retentionDate" displayName="保留截止日期" stdSqlType="DATE" code="RETENTION_DATE" propId="15" stdDataType="date" i18n-en:displayName='Retention Date' />
-                <column name="archiveDate" displayName="归档日期" stdSqlType="DATE" code="ARCHIVE_DATE" propId="16" stdDataType="date" i18n-en:displayName='Archive Date' />
-                <column name="purgeDate" displayName="销毁日期" stdSqlType="DATE" code="PURGE_DATE" propId="17" stdDataType="date" i18n-en:displayName='Purge Date' />
+                <column name="retentionDate" displayName="保留截止日期" stdSqlType="DATE" code="RETENTION_DATE" propId="15" i18n-en:displayName='Retention Date' />
+                <column name="archiveDate" displayName="归档日期" stdSqlType="DATE" code="ARCHIVE_DATE" propId="16" i18n-en:displayName='Archive Date' />
+                <column name="purgeDate" displayName="销毁日期" stdSqlType="DATE" code="PURGE_DATE" propId="17" i18n-en:displayName='Purge Date' />
                 <column name="isArchived" displayName="已归档" stdSqlType="BOOLEAN" defaultValue="false" code="IS_ARCHIVED" propId="18" stdDataType="boolean" i18n-en:displayName='Is Archived' />
                 <column name="versionNo" displayName="文档版本" stdSqlType="INTEGER" defaultValue="1" code="VERSION_NO" propId="19" stdDataType="int" i18n-en:displayName='Version No' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="20" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -709,7 +709,7 @@
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub" i18n-en:displayName='Contract'><join><on leftProp="contractId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
-                
+
             </relations>
             <unique-keys>
                 <unique-key name="UK_CT_DOCUMENT_CODE_ORG" columns="code,orgId"/>
@@ -729,20 +729,22 @@
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+                            <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
         <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+                            <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
         <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name'  tagSet="disp"/>
             </columns>
         </entity>
 
@@ -750,8 +752,8 @@
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name'  tagSet="disp"/>
             </columns>
         </entity>
     </entities>

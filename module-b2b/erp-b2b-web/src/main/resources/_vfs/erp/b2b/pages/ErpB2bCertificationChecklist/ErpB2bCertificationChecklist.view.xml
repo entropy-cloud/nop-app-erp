@@ -6,7 +6,7 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="partnerProfileName" label="伙伴档案"/>
+                <col id="partnerProfileId" label="伙伴档案"/>
                 <col id="checklistItem" mandatory="true" sortable="true"/>
                 <col id="requiredDocType" sortable="true"/>
                 <col id="isMandatory" sortable="true"/>

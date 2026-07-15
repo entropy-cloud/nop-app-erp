@@ -24,7 +24,5 @@
   "employee": null,
   "approver": null,
   "org": null,
-  "employeeDisplayName": "",
-  "approverDisplayName": "",
-  "orgName": ""
+  "org.name": ""
 }

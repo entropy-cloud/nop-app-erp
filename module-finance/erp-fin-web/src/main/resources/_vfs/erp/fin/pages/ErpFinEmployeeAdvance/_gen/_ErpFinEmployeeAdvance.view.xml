@@ -69,11 +69,11 @@
                 <!--审核时间-->
                 <col id="approvedAt" sortable="true"/>
 
-                <!--是否已过账-->
-                <col id="posted" sortable="true"/>
-
                 <!--过账人-->
                 <col id="postedBy" sortable="true"/>
+
+                <!--是否已过账-->
+                <col id="posted" sortable="true"/>
 
                 <!--过账时间-->
                 <col id="postedAt" sortable="true"/>
@@ -95,18 +95,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--员工名称-->
-                <col id="employeeName"/>
-
-                <!--币种名称-->
-                <col id="currencyName"/>
-
-                <!--项目名称-->
-                <col id="projectName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -123,13 +111,11 @@
  outstandingAmount[未还金额] projectId[关联项目]
  docStatus[单据状态] approveStatus[审核状态]
  approvedBy[审核人] approvedAt[审核时间]
- posted[是否已过账] postedBy[过账人]
+ postedBy[过账人] posted[是否已过账]
  postedAt[过账时间] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] orgName[业务组织名称]
- employeeName[员工名称] currencyName[币种名称]
- projectName[项目名称] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-员工借款单" i18n-en:title="Add Employee Advance" x:prototype="edit"/>

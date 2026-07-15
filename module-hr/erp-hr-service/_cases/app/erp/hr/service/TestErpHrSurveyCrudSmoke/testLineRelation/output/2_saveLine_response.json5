@@ -14,7 +14,6 @@
     "createTime": "@var:ErpHrSurveyQuestion@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpHrSurveyQuestion@updateTime",
-    "surveyTitle": "冒烟调查",
     "sortOrder": null,
     "ratingLabelMin": null,
     "ratingLabelMax": null,

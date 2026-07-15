@@ -20,6 +20,5 @@
   "updateTime": "2000-01-01 14:00:00",
   "fundAccount": null,
   "org": null,
-  "orgName": "",
-  "fundAccountName": ""
+  "org.name": ""
 }

@@ -177,7 +177,7 @@ public class ErpFinEmployeeAdvanceProcessor {
         advance = reload(id);
         advance.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
         advance.setApprovedBy(currentUserId());
-        advance.setApprovedAt(CoreMetrics.currentDateTime());
+        advance.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
             markPosted(advance);
         }
@@ -237,7 +237,7 @@ public class ErpFinEmployeeAdvanceProcessor {
 
     protected void markPosted(ErpFinEmployeeAdvance advance) {
         advance.setPosted(true);
-        advance.setPostedAt(CoreMetrics.currentDateTime());
+        advance.setPostedAt(CoreMetrics.currentTimestamp());
         advance.setPostedBy(currentUserId());
     }
 

@@ -5,10 +5,10 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="projectName" label="项目"/>
-                <col id="parentTaskName" label="父任务"/>
+                <col id="projectId" label="项目"/>
+                <col id="parentTaskId" label="父任务"/>
                 <col id="title" mandatory="true" sortable="true"/>
-                <col id="assigneeName" label="负责人"/>
+                <col id="assigneeId" label="负责人"/>
                 <col id="dependsOnTaskName" label="依赖任务"/>
                 <col id="plannedStartDate" sortable="true"/>
                 <col id="plannedEndDate" sortable="true"/>

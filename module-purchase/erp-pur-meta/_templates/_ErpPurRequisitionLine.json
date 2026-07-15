@@ -17,8 +17,11 @@
   "updateTime": "2000-01-01 14:00:00",
   "requisition": null,
   "material": null,
+  "material.name": "",
   "uoM": null,
+  "uoM.name": "",
   "suggestedSupplier": null,
+  "suggestedSupplier.name": "",
   "project": null,
-  "materialName": ""
+  "project.name": ""
 }

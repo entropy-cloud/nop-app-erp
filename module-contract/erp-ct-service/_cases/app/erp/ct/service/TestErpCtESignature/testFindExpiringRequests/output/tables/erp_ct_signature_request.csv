@@ -1,0 +1,4 @@
+_chgType,ID,ORG_ID,CONTRACT_VERSION_ID,PROVIDER,PROVIDER_REQUEST_ID,STATUS,SIGNERS,SIGNING_DEADLINE,COMPLETED_AT,CERTIFICATE_URL,EVIDENCE_NO,ATTACHMENT_FILE_ID,ERROR_MSG,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,12,,11,MOCK,@var:ErpCtSignatureRequest@providerRequestId_2,FULLY_SIGNED,@var:ErpCtSignatureRequest@signers_1,2026-07-13,,,,,,,@var:ErpCtSignatureRequest@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,4,,3,MOCK,@var:ErpCtSignatureRequest@providerRequestId,PENDING_SIGNATURE,@var:ErpCtSignatureRequest@signers_1,2026-07-14,,,,,,,@var:ErpCtSignatureRequest@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8,,7,MOCK,@var:ErpCtSignatureRequest@providerRequestId_1,PENDING_SIGNATURE,@var:ErpCtSignatureRequest@signers_1,2026-07-25,,,,,,,@var:ErpCtSignatureRequest@delVersion_1,0,autotest-ref,*,autotest-ref,*

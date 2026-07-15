@@ -69,30 +69,30 @@
         }
 
 
-        private java.time.LocalDateTime _joinedAt;
+        private java.sql.Timestamp _joinedAt;
 
     
         @PropMeta(propId=5)
     
-        public java.time.LocalDateTime getJoinedAt(){
+        public java.sql.Timestamp getJoinedAt(){
             return _joinedAt;
         }
 
-        public void setJoinedAt(java.time.LocalDateTime value){
+        public void setJoinedAt(java.sql.Timestamp value){
             this._joinedAt = value;
         }
 
 
-        private java.time.LocalDateTime _leftAt;
+        private java.sql.Timestamp _leftAt;
 
     
         @PropMeta(propId=6)
     
-        public java.time.LocalDateTime getLeftAt(){
+        public java.sql.Timestamp getLeftAt(){
             return _leftAt;
         }
 
-        public void setLeftAt(java.time.LocalDateTime value){
+        public void setLeftAt(java.sql.Timestamp value){
             this._leftAt = value;
         }
 
@@ -178,30 +178,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _teamName;
-
-    
-        public String getTeamName(){
-            return _teamName;
-        }
-
-        public void setTeamName(String value){
-            this._teamName = value;
-        }
-
-
-        private String _employeeName;
-
-    
-        public String getEmployeeName(){
-            return _employeeName;
-        }
-
-        public void setEmployeeName(String value){
-            this._employeeName = value;
         }
 
 

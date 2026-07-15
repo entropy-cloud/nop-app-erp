@@ -55,6 +55,7 @@ prop:
       updateTime: Update Time
       statusRecords: Status Records
       org: null
+      org.name: null
     ErpFinAccountingPeriodStatus:
       id: ID
       periodId: Period
@@ -80,6 +81,7 @@ prop:
       updateTime: Update Time
       period: Period
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
     ErpFinArApItem:
       id: ID
       code: Code
@@ -100,11 +102,6 @@ prop:
       settledAmountFunctional: Settled Amount Functional
       openAmountSource: Open Amount Source
       openAmountFunctional: Open Amount Functional
-      orgName: null
-      acctSchemaCode: null
-      partnerName: null
-      currencyName: null
-      periodCode: null
       status: Status
       status_label: null
       periodId: Period
@@ -116,10 +113,14 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+      partner.name: Partner
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       currency: Currency
+      currency.name: Currency
       period: null
       org: null
+      org.name: null
     ErpFinBadDebt:
       id: ID
       code: Code
@@ -146,18 +147,16 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+      partner.name: Partner
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       currency: Currency
+      currency.name: Currency
       sourceArApItem: Source AR/AP Item
       period: Period
       voucher: Voucher
       org: null
-      orgName: null
-      acctSchemaCode: null
-      partnerName: null
-      currencyName: null
-      periodCode: null
-      voucherCode: null
+      org.name: null
     ErpFinBankReconciliation:
       id: ID
       code: Code
@@ -184,9 +183,7 @@ prop:
       statement: Bank Statement
       adjustmentLines: Adjustment Lines
       org: null
-      orgName: null
-      fundAccountName: null
-      statementCode: null
+      org.name: null
     ErpFinBankReconciliationLine:
       id: ID
       reconciliationId: Reconciliation
@@ -227,8 +224,7 @@ prop:
       updateTime: Update Time
       fundAccount: Fund Account
       org: null
-      orgName: null
-      fundAccountName: null
+      org.name: null
     ErpFinBankStatementLine:
       id: ID
       statementId: Statement
@@ -254,8 +250,7 @@ prop:
       statement: Statement
       matchedLine: Matched Voucher Line
       currency: Currency
-      statementCode: null
-      currencyName: null
+      currency.name: Currency
     ErpFinBudgetControlLog:
       id: ID
       orgId: Organization
@@ -285,9 +280,12 @@ prop:
       scenario: Scenario
       budgetLine: Budget Line
       subject: Subject
+      subject.code: Subject
       costCenter: Cost Center
+      costCenter.name: Cost Center
       period: Period
       org: Org
+      org.name: Org
     ErpFinBudgetLine:
       id: ID
       scenarioId: Scenario
@@ -316,28 +314,26 @@ prop:
       updateTime: Update Time
       scenario: Scenario
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       period: Period
       subject: Subject
+      subject.code: Subject
       costCenter: Cost Center
+      costCenter.name: Cost Center
       department: Department
+      department.name: Department
       project: Project
+      project.name: Project
       partner: Partner
+      partner.name: Partner
       warehouse: Warehouse
+      warehouse.name: Warehouse
       material: Material
+      material.name: Material
       currency: Currency
+      currency.name: Currency
       org: Org
-      scenarioCode: null
-      orgName: null
-      acctSchemaCode: null
-      periodCode: null
-      subjectName: null
-      costCenterName: null
-      departmentName: null
-      projectName: null
-      partnerName: null
-      warehouseName: null
-      materialName: null
-      currencyName: null
+      org.name: Org
     ErpFinBudgetScenario:
       id: ID
       code: Code
@@ -369,8 +365,11 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       parentScenario: Parent Scenario
       voucher: Voucher
       lines: Lines
@@ -395,6 +394,7 @@ prop:
       updateTime: Update Time
       fundAccount: Fund Account
       partner: Partner
+      partner.name: Partner
     ErpFinCreditFacility:
       id: ID
       code: Code
@@ -418,6 +418,7 @@ prop:
       updateTime: Update Time
       fundAccount: Fund Account
       org: Org
+      org.name: Org
     ErpFinEmployeeAdvance:
       id: ID
       code: Code
@@ -439,8 +440,8 @@ prop:
       approveStatus_label: null
       approvedBy: Approved By
       approvedAt: Approved At
-      posted: Posted
       postedBy: Posted By
+      posted: Posted
       postedAt: Posted At
       remark: Remark
       delVersion: Del Flag
@@ -450,13 +451,13 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       employee: Employee
+      employee.name: Employee
       currency: Currency
+      currency.name: Currency
       project: Project
+      project.name: Project
       org: Org
-      orgName: null
-      employeeName: null
-      currencyName: null
-      projectName: null
+      org.name: Org
     ErpFinExpenseClaim:
       id: ID
       code: Code
@@ -492,16 +493,15 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       claimant: Claimant
+      claimant.name: Claimant
       department: Department
+      department.name: Department
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       settleAdvance: Settle Advance
       lines: Lines
-      orgName: null
-      claimantName: null
-      departmentName: null
-      currencyName: null
-      employeeAdvanceCode: null
     ErpFinExpenseClaimLine:
       id: ID
       claimId: Claim
@@ -525,8 +525,11 @@ prop:
       updateTime: Update Time
       claim: Claim
       project: Project
+      project.name: Project
       costCenter: Cost Center
+      costCenter.name: Cost Center
       subject: Subject
+      subject.code: Subject
     ErpFinFundAccount:
       id: ID
       code: Code
@@ -550,11 +553,11 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       currency: Currency
+      currency.name: Currency
       subject: Subject
+      subject.code: Subject
       org: null
-      orgName: null
-      subjectName: null
-      currencyName: null
+      org.name: null
     ErpFinGlBalance:
       id: ID
       orgId: Organization
@@ -581,14 +584,22 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       period: Period
       subject: Subject
+      subject.code: Subject
       currency: Currency
+      currency.name: Currency
       org: null
+      org.name: null
       partner: null
+      partner.name: null
       department: null
+      department.name: null
       warehouse: null
+      warehouse.name: null
       project: null
+      project.name: null
     ErpFinNotesDiscount:
       id: ID
       notesReceivableId: Notes Receivable
@@ -614,6 +625,7 @@ prop:
       notesReceivable: Notes Receivable
       bank: Bank Account
       org: Org
+      org.name: Org
     ErpFinNotesPayable:
       id: ID
       code: Code
@@ -646,13 +658,12 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+      partner.name: Partner
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       creditFacility: Credit Facility
-      orgName: null
-      currencyName: null
-      partnerName: null
-      creditFacilityCode: null
     ErpFinNotesReceivable:
       id: ID
       code: Code
@@ -687,12 +698,12 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+      partner.name: Partner
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       endorsementFrom: Endorsement From
-      orgName: null
-      currencyName: null
-      partnerName: null
     ErpFinPostingException:
       id: ID
       traceId: Trace ID
@@ -727,13 +738,12 @@ prop:
       exchangeRate: Exchange Rate
       eventData: Event Data
       org: Organization
+      org.name: Organization
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       voucher: Voucher
       currency: Currency
-      orgName: null
-      acctSchemaCode: null
-      voucherCode: null
-      currencyName: null
+      currency.name: Currency
     ErpFinReconciliation:
       id: ID
       code: Code
@@ -760,13 +770,14 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       partner: Partner
+      partner.name: Partner
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       currency: Currency
+      currency.name: Currency
       lines: Lines
       org: null
-      partnerName: null
-      currencyName: null
-      orgName: null
+      org.name: null
     ErpFinReconciliationLine:
       id: ID
       reconciliationId: Reconciliation
@@ -807,9 +818,12 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       period: Period
       subject: Subject
+      subject.code: Subject
       org: null
+      org.name: null
     ErpFinVoucher:
       id: ID
       code: Code
@@ -824,9 +838,6 @@ prop:
       periodId: Period
       totalDebit: Total Debit
       totalCredit: Total Credit
-      orgName: null
-      acctSchemaCode: null
-      periodCode: null
       isReversed: Is Reversed
       reversalOfVoucherId: Reversal Of Voucher
       docStatus: Doc Status
@@ -842,9 +853,11 @@ prop:
       updateTime: Update Time
       period: Period
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       lines: Lines
       billLinks: Bill Links
       org: null
+      org.name: null
       reversalOfVoucher: null
     ErpFinVoucherBillR:
       id: ID
@@ -861,7 +874,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       voucher: Voucher
-      voucherCode: null
     ErpFinVoucherLine:
       id: ID
       voucherId: Voucher
@@ -896,25 +908,25 @@ prop:
       updateTime: Update Time
       voucher: Voucher
       subject: Subject
+      subject.code: Subject
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       currency: Currency
+      currency.name: Currency
       partner: Partner
+      partner.name: Partner
       department: Department
+      department.name: Department
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
+      org.name: Org
       material: Material
+      material.name: Material
       project: Project
+      project.name: Project
       costCenter: Cost Center
-      voucherCode: null
-      currencyName: null
-      acctSchemaCode: null
-      orgName: null
-      partnerName: null
-      departmentName: null
-      projectName: null
-      warehouseName: null
-      materialName: null
-      costCenterName: null
+      costCenter.name: Cost Center
     ErpFinVoucherTemplate:
       id: ID
       code: Code
@@ -935,6 +947,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       lines: Lines
     ErpFinVoucherTemplateLine:
       id: ID

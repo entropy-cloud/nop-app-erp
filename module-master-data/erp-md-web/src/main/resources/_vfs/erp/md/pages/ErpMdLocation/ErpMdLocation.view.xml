@@ -5,10 +5,10 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="warehouseName" label="仓库"/>
+                <col id="warehouseId" label="仓库"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="parentName" label="父级库位"/>
+                <col id="parentId" label="父级库位"/>
                 <col id="isActive" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

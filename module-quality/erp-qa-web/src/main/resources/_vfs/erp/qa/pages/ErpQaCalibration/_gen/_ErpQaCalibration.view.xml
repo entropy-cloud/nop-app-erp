@@ -86,9 +86,6 @@
 
                 <!--审核时间-->
                 <col id="approvedAt" sortable="true"/>
-
-                <!--组织-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -108,7 +105,6 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
  approvedBy[审核人] approvedAt[审核时间]
- orgName[组织] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-量具校准" i18n-en:title="Add Gauge Calibration" x:prototype="edit"/>

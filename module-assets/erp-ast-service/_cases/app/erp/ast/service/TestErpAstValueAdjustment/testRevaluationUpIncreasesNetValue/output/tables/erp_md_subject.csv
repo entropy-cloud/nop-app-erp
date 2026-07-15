@@ -1,0 +1,8 @@
+_chgType,ID,CODE,NAME,PARENT_ID,SUBJECT_CLASS,DIRECTION,BALANCE_TYPE,CURRENCY_ID,IS_AUXILIARY_PARTNER,IS_AUXILIARY_DEPARTMENT,IS_AUXILIARY_PROJECT,IS_AUXILIARY_WAREHOUSE,IS_AUXILIARY_PRODUCT,IS_AUXILIARY_COST_CENTER,IS_BUDGETABLE,IS_LEAF,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
+A,3,@var:ErpMdSubject@code,银行存款,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,4,@var:ErpMdSubject@code_1,资产减值损失,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,5,@var:ErpMdSubject@code_2,固定资产减值准备,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,6,@var:ErpMdSubject@code_3,资本公积,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,7,@var:ErpMdSubject@code_4,固定资产,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,8,@var:ErpMdSubject@code_5,累计折旧,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,9,@var:ErpMdSubject@code_6,管理费用,,ASSET,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,

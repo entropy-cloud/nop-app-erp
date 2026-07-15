@@ -51,7 +51,7 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
         BigDecimal finalCost = readDecimal(event, ErpPrjConstants.BILL_DATA_FINAL_COST);
         Long projectId = readLong(event, ErpPrjConstants.BILL_DATA_PROJECT_ID);
         boolean transferToAsset = readBoolean(event, ErpPrjConstants.BILL_DATA_TRANSFER_TO_ASSET);
-        String memo = event.getBillHeadCode();
+        String memo = null;
 
         List<VoucherFact> facts = new ArrayList<>();
 

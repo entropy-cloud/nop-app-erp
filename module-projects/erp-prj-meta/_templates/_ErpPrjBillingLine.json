@@ -15,8 +15,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "billing": null,
   "subject": null,
-  "task": null,
-  "billingCode": "",
-  "taskName": "",
-  "subjectName": ""
+  "subject.name": "",
+  "task": null
 }

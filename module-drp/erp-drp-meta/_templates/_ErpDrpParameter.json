@@ -21,13 +21,13 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "warehouse": null,
+  "warehouse.name": "",
   "material": null,
+  "material.name": "",
   "preferredSourceWarehouse": null,
+  "preferredSourceWarehouse.name": "",
   "preferredSupplier": null,
+  "preferredSupplier.name": "",
   "org": null,
-  "warehouseName": "",
-  "materialName": "",
-  "preferredSourceWarehouseName": "",
-  "preferredSupplierName": "",
-  "orgName": ""
+  "org.name": ""
 }

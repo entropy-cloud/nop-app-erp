@@ -6,7 +6,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="productName" label="产品"/>
+                <col id="productId" label="产品"/>
                 <col id="bomType" mandatory="true" sortable="true"/>
                 <col id="versionLabel" sortable="true"/>
                 <col id="qty" ui:number="true" sortable="true"/>

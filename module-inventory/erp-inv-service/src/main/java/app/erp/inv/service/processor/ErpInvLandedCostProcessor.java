@@ -22,7 +22,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -280,7 +280,7 @@ public class ErpInvLandedCostProcessor {
         Long voucherId = postingDispatcher.tryPost(landedCost, costLines, allocations);
 
         landedCost = reload(landedCost.getId());
-        LocalDateTime now = CoreMetrics.currentDateTime();
+        Timestamp now = CoreMetrics.currentTimestamp();
         landedCost.setApproveStatus(APPROVE_STATUS_APPROVED);
         landedCost.setApprovedBy(currentUserId());
         landedCost.setApprovedAt(now);

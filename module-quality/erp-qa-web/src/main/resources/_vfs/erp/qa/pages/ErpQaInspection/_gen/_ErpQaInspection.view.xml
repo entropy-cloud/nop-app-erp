@@ -110,24 +110,6 @@
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
-
-                <!--物料-->
-                <col id="materialName"/>
-
-                <!--检验模板-->
-                <col id="templateCode"/>
-
-                <!--供应商-->
-                <col id="supplierName"/>
-
-                <!--仓库-->
-                <col id="warehouseName"/>
-
-                <!--检验员-->
-                <col id="inspectorName"/>
-
-                <!--组织-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -151,9 +133,6 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] businessDate[业务日期]
- materialName[物料] templateCode[检验模板]
- supplierName[供应商] warehouseName[仓库]
- inspectorName[检验员] orgName[组织]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-质检单" i18n-en:title="Add Inspection" x:prototype="edit"/>

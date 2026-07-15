@@ -180,7 +180,7 @@ public class ErpSalOrderProcessor {
     protected void doApprove(ErpSalOrder order, IServiceContext context) {
         order.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
-        order.setApprovedAt(CoreMetrics.currentDateTime());
+        order.setApprovedAt(CoreMetrics.currentTimestamp());
         orderDao().updateEntity(order);
     }
 

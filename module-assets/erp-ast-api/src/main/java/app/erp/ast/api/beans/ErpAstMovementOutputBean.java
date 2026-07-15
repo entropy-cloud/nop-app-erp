@@ -275,16 +275,16 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=18)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 
@@ -429,16 +429,16 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=201)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
         }
 
@@ -496,126 +496,6 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _assetCode;
-
-    
-        public String getAssetCode(){
-            return _assetCode;
-        }
-
-        public void setAssetCode(String value){
-            this._assetCode = value;
-        }
-
-
-        private String _fromDepartmentName;
-
-    
-        public String getFromDepartmentName(){
-            return _fromDepartmentName;
-        }
-
-        public void setFromDepartmentName(String value){
-            this._fromDepartmentName = value;
-        }
-
-
-        private String _toDepartmentName;
-
-    
-        public String getToDepartmentName(){
-            return _toDepartmentName;
-        }
-
-        public void setToDepartmentName(String value){
-            this._toDepartmentName = value;
-        }
-
-
-        private String _fromStaffName;
-
-    
-        public String getFromStaffName(){
-            return _fromStaffName;
-        }
-
-        public void setFromStaffName(String value){
-            this._fromStaffName = value;
-        }
-
-
-        private String _toStaffName;
-
-    
-        public String getToStaffName(){
-            return _toStaffName;
-        }
-
-        public void setToStaffName(String value){
-            this._toStaffName = value;
-        }
-
-
-        private String _fromLocationName;
-
-    
-        public String getFromLocationName(){
-            return _fromLocationName;
-        }
-
-        public void setFromLocationName(String value){
-            this._fromLocationName = value;
-        }
-
-
-        private String _toLocationName;
-
-    
-        public String getToLocationName(){
-            return _toLocationName;
-        }
-
-        public void setToLocationName(String value){
-            this._toLocationName = value;
-        }
-
-
-        private String _handlerName;
-
-    
-        public String getHandlerName(){
-            return _handlerName;
-        }
-
-        public void setHandlerName(String value){
-            this._handlerName = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
         }
 
 

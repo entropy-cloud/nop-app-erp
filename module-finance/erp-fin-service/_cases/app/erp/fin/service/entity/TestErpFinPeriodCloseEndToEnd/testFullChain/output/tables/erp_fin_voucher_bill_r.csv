@@ -1,0 +1,7 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,17,14,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@billCode,,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,21,18,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode_5,,PERIOD_CLOSE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,27,24,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode_5,,PERIOD_CLOSE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,31,28,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@billCode,,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,35,32,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@billCode,,EXCHANGE_GAIN_LOSS,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,39,36,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode_5,,PERIOD_CLOSE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

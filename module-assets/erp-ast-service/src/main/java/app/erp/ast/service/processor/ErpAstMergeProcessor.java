@@ -23,7 +23,7 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -120,9 +120,9 @@ public class ErpAstMergeProcessor {
         merge.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
         merge.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
         merge.setApprovedBy(currentUserId());
-        merge.setApprovedAt(CoreMetrics.currentDateTime());
+        merge.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
-            LocalDateTime now = CoreMetrics.currentDateTime();
+            Timestamp now = CoreMetrics.currentTimestamp();
             merge.setPosted(true);
             merge.setPostedAt(now);
             merge.setPostedBy(currentUserId());

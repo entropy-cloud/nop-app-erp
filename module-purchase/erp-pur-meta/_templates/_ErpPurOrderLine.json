@@ -25,11 +25,14 @@
   "updateTime": "2000-01-01 14:00:00",
   "order": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "uoM": null,
+  "uoM.name": "",
   "taxRateMd": null,
+  "taxRateMd.name": "",
   "warehouse": null,
-  "project": null,
-  "materialName": "",
-  "warehouseName": ""
+  "warehouse.name": "",
+  "project": null
 }

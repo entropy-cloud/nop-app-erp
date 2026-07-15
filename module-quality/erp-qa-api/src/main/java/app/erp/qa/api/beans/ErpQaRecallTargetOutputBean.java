@@ -111,16 +111,16 @@
         }
 
 
-        private java.time.LocalDateTime _notifiedAt;
+        private java.sql.Timestamp _notifiedAt;
 
     
         @PropMeta(propId=8)
     
-        public java.time.LocalDateTime getNotifiedAt(){
+        public java.sql.Timestamp getNotifiedAt(){
             return _notifiedAt;
         }
 
-        public void setNotifiedAt(java.time.LocalDateTime value){
+        public void setNotifiedAt(java.sql.Timestamp value){
             this._notifiedAt = value;
         }
 
@@ -274,30 +274,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _recallCode;
-
-    
-        public String getRecallCode(){
-            return _recallCode;
-        }
-
-        public void setRecallCode(String value){
-            this._recallCode = value;
-        }
-
-
-        private String _partnerName;
-
-    
-        public String getPartnerName(){
-            return _partnerName;
-        }
-
-        public void setPartnerName(String value){
-            this._partnerName = value;
         }
 
 

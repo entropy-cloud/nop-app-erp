@@ -89,24 +89,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--项目名称-->
-                <col id="projectName"/>
-
-                <!--任务名称-->
-                <col id="taskName"/>
-
-                <!--用户名称-->
-                <col id="userName"/>
-
-                <!--活动类型名称-->
-                <col id="activityTypeName"/>
-
-                <!--币种名称-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -126,10 +108,7 @@
  approvedAt[审批时间] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] orgName[业务组织名称]
- projectName[项目名称] taskName[任务名称]
- userName[用户名称] activityTypeName[活动类型名称]
- currencyName[币种名称] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工时记录" i18n-en:title="Add Timesheet" x:prototype="edit"/>

@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="编号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="planName" displayName="计划名称" propId="3" i18n-en:displayName="Plan Name" mandatory="true"
@@ -49,9 +49,9 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
-        <prop name="runAt" displayName="运行时间" propId="8" i18n-en:displayName="Run At" queryable="true" sortable="true"
-              insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="runAt" displayName="运行时间" propId="8" i18n-en:displayName="Run At" tagSet="clock" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="runBy" displayName="运行人" propId="9" i18n-en:displayName="Run By" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -101,9 +101,12 @@
             </schema>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

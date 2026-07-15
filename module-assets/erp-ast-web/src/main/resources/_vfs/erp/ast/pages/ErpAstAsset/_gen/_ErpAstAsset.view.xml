@@ -98,27 +98,6 @@
 
                 <!--净值-->
                 <col id="netBookValue" ui:number="true" sortable="true"/>
-
-                <!--所属组织-->
-                <col id="orgName"/>
-
-                <!--资产类别-->
-                <col id="categoryName"/>
-
-                <!--币种-->
-                <col id="currencyName"/>
-
-                <!--使用部门-->
-                <col id="departmentName"/>
-
-                <!--使用地点-->
-                <col id="locationName"/>
-
-                <!--使用人(职员)-->
-                <col id="employeeName"/>
-
-                <!--使用人(往来单位)-->
-                <col id="staffName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -140,10 +119,6 @@
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] remark[备注]
  accumulatedDepreciation[累计折旧] netBookValue[净值]
- orgName[所属组织] categoryName[资产类别]
- currencyName[币种] departmentName[使用部门]
- locationName[使用地点] employeeName[使用人(职员)]
- staffName[使用人(往来单位)] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-固定资产" i18n-en:title="Add Fixed Asset" x:prototype="edit"/>

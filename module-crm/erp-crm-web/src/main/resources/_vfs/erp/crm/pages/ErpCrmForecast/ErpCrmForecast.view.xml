@@ -5,11 +5,11 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="periodCode" label="预测期间"/>
-                <col id="territoryName" label="销售区域"/>
-                <col id="teamName" label="销售团队"/>
-                <col id="currencyName" label="币种"/>
+                <col id="territoryId" label="销售区域"/>
+                <col id="teamId" label="销售团队"/>
+                <col id="currencyId" label="币种"/>
                 <col id="commitAmount" ui:number="true" sortable="true"/>
                 <col id="upsideAmount" ui:number="true" sortable="true"/>
                 <col id="weightedAmount" ui:number="true" sortable="true"/>

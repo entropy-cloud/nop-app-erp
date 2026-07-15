@@ -34,8 +34,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -46,8 +46,8 @@ prop:
       invoiceType_label: 发票类型
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       paidAmount: 已付金额
       paidStatus: 付款进度
       paidStatus_label: 付款进度
@@ -56,8 +56,8 @@ prop:
       postedBy: 过账人
       remark: 备注
       supplier: null
+      supplier.name: null
       supplierId: 供应商
-      supplierName: 供应商名称
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额
@@ -74,8 +74,8 @@ prop:
       invoiceId: 发票ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       quantity: 数量
       receiveLine: null
       receiveLineId: 入库行ID
@@ -84,6 +84,7 @@ prop:
       taxRate: 税率(%)
       unitPrice: 单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -100,8 +101,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       deliveryDate: 交货日期
       discountAmount: 折扣金额
@@ -112,8 +113,8 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       paidAmount: 已付金额
       paidStatus: 付款进度
       paidStatus_label: 付款进度
@@ -128,10 +129,11 @@ prop:
       requisition: null
       requisitionId: 请购单
       settlementMethod: null
+      settlementMethod.name: null
       settlementMethodId: 结算方式
       supplier: null
+      supplier.name: null
       supplierId: 供应商
-      supplierName: 供应商名称
       totalAmount: 合计金额(本位币不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额
@@ -139,8 +141,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 收货仓库
-      warehouseName: 收货仓库名称
     ErpPurOrderLine:
       amount: 金额(不含税)
       amountWithTax: 金额(含税)
@@ -151,8 +153,8 @@ prop:
       invoicedQuantity: 已开票数量
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       order: null
       orderId: 订单ID
       project: null
@@ -161,20 +163,23 @@ prop:
       receivedQuantity: 已收货数量
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       taxAmount: 税额
       taxRate: 税率(%)
       taxRateId: 税率主数据
       taxRateMd: null
+      taxRateMd.name: null
       unitPrice: 单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 收货仓库
-      warehouseName: 收货仓库名称
     ErpPurPayment:
       amountFunctional: 合计金额(本位币)
       amountSource: 合计金额(源币)
@@ -183,14 +188,15 @@ prop:
       approvedAt: 审核时间
       approvedBy: 审核人
       bankAccount: null
+      bankAccount.bankName: null
       bankAccountId: 付款账户(资金账户)
       businessDate: 付款日期
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -199,9 +205,10 @@ prop:
       lines: null
       nopFlowId: 工作流实例
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       partnerBankAccount: null
+      partnerBankAccount.bankName: null
       partnerBankAccountId: 供应商收款账户(银行账户主数据)
       paymentMethod: 付款方式
       posted: 已过账
@@ -209,10 +216,11 @@ prop:
       postedBy: 过账人
       remark: 备注
       settlementMethod: null
+      settlementMethod.name: null
       settlementMethodId: 结算方式
       supplier: null
+      supplier.name: null
       supplierId: 供应商
-      supplierName: 供应商名称
       totalAmount: 合计金额
       updateTime: 修改时间
       updatedBy: 修改人
@@ -243,6 +251,7 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       docStatus: 单据状态
@@ -252,11 +261,13 @@ prop:
       isAccepted: 是否中标
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       remark: 备注
       rfq: null
       rfqId: 询价单
       supplier: null
+      supplier.name: null
       supplierId: 供应商
       updateTime: 修改时间
       updatedBy: 修改人
@@ -271,6 +282,7 @@ prop:
       leadTimeDays: 交货周期(天)
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       quantity: 数量
       quotation: null
@@ -279,6 +291,7 @@ prop:
       taxRate: 税率(%)
       unitPrice: 报价单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -295,8 +308,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -306,8 +319,8 @@ prop:
       order: null
       orderId: 采购订单
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -317,8 +330,8 @@ prop:
       receiveType_label: 入库类型
       remark: 备注
       supplier: null
+      supplier.name: null
       supplierId: 供应商
-      supplierName: 供应商名称
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额
@@ -326,8 +339,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 入库仓库
-      warehouseName: 入库仓库名称
     ErpPurReceiveLine:
       amount: 金额(不含税)
       batchNo: 批号
@@ -337,8 +350,8 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       orderLine: null
       orderLineId: 订单行ID
       quantity: 实收数量
@@ -347,18 +360,20 @@ prop:
       rejectedQuantity: 拒收数量
       remark: 备注
       sku: null
+      sku.name: null
       skuId: SKU
       taxAmount: 税额
       taxRate: 税率(%)
       unitPrice: 单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 入库库位
-      warehouseName: 入库库位名称
     ErpPurRequisition:
       approveStatus: 审核状态
       approveStatus_label: 审核状态
@@ -370,19 +385,19 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       department: null
+      department.name: null
       departmentId: 请购部门
-      departmentName: 请购部门名称
       docStatus: 单据状态
       docStatus_label: 单据状态
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       remark: 备注
       requester: null
+      requester.name: null
       requesterId: 请购人(职员)
-      requesterName: 请购人名称
       requiredDate: 需求日期
       updateTime: 修改时间
       updatedBy: 修改人
@@ -394,9 +409,10 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       project: null
+      project.name: null
       projectId: 项目
       quantity: 请购数量
       remark: 备注
@@ -404,8 +420,10 @@ prop:
       requisition: null
       requisitionId: 请购单ID
       suggestedSupplier: null
+      suggestedSupplier.name: null
       suggestedSupplierId: 建议供应商
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -422,8 +440,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -431,8 +449,8 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
@@ -440,8 +458,8 @@ prop:
       receiveId: 入库单
       remark: 备注
       supplier: null
+      supplier.name: null
       supplierId: 供应商
-      supplierName: 供应商名称
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额
@@ -449,8 +467,8 @@ prop:
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 出库仓库
-      warehouseName: 出库仓库名称
     ErpPurReturnLine:
       amount: 金额(不含税)
       createTime: 创建时间
@@ -459,8 +477,8 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料名称
       quantity: 退货数量
       reason: 退货原因
       receiveLine: null
@@ -469,11 +487,13 @@ prop:
       return: null
       returnId: 退货单ID
       sku: null
+      sku.name: null
       skuId: SKU
       taxAmount: 税额
       taxRate: 税率(%)
       unitPrice: 单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -493,6 +513,7 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
       quotations: null
       remark: 备注
@@ -509,12 +530,14 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
       quantity: 询价数量
       remark: 备注
       rfq: null
       rfqId: 询价单ID
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -523,20 +546,24 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
       delVersion: 逻辑删除版本
       id: ID
       isActive: 是否启用
       leadTimeDays: 交货周期(天)
       material: null
+      material.name: null
       materialId: 物料
       minOrderQuantity: 最小起订量
       priority: 优先级(数字小优先)
       supplier: null
+      supplier.name: null
       supplierId: 供应商
       taxRate: 税率(%)
       unitPrice: 协议单价(不含税)
       uoM: null
+      uoM.name: null
       uoMId: 计量单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -551,6 +578,7 @@ prop:
       holdThreshold: hold阈值
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
       partnerId: 供应商
       periodFrom: 评分周期起
@@ -562,6 +590,7 @@ prop:
       status: 周期状态
       status_label: 周期状态
       supplier: null
+      supplier.name: null
       totalScore: 总分(派生)
       updateTime: 修改时间
       updatedBy: 修改人

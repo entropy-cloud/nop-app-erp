@@ -31,12 +31,12 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="billCode" displayName="单据编号" propId="4" i18n-en:displayName="Bill Code" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="billCode" displayName="单据编号" propId="4" i18n-en:displayName="Bill Code" tagSet="var"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="billLineCode" displayName="单据行号" propId="5" i18n-en:displayName="Bill Line Code" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="billLineCode" displayName="单据行号" propId="5" i18n-en:displayName="Bill Line Code" tagSet="var"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="businessType" displayName="业务类型" propId="6" i18n-en:displayName="Business Type" queryable="true"

@@ -19,9 +19,9 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "supplier": null,
+  "supplier.name": "",
   "material": null,
+  "material.name": "",
   "org": null,
-  "supplierName": "",
-  "materialName": "",
-  "orgName": ""
+  "org.name": ""
 }

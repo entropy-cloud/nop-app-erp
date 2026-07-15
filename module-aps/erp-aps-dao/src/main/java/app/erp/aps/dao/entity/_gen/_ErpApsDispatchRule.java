@@ -77,7 +77,7 @@ public class _ErpApsDispatchRule extends DynamicOrmEntity{
     public static final String PROP_NAME_enabledHours = "enabledHours";
     public static final int PROP_ID_enabledHours = 14;
     
-    /* 暂停到: HOLD_UNTIL DATETIME */
+    /* 暂停到: HOLD_UNTIL TIMESTAMP */
     public static final String PROP_NAME_holdUntil = "holdUntil";
     public static final int PROP_ID_holdUntil = 15;
     
@@ -243,7 +243,7 @@ public class _ErpApsDispatchRule extends DynamicOrmEntity{
     private java.lang.String _enabledHours;
     
     /* 暂停到: HOLD_UNTIL */
-    private java.time.LocalDateTime _holdUntil;
+    private java.sql.Timestamp _holdUntil;
     
     /* 暂停原因: HOLD_REASON */
     private java.lang.String _holdReason;
@@ -564,9 +564,9 @@ public class _ErpApsDispatchRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_holdUntil:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_holdUntil));
                }
                setHoldUntil(typedValue);
@@ -762,7 +762,7 @@ public class _ErpApsDispatchRule extends DynamicOrmEntity{
         
             case PROP_ID_holdUntil:{
                onInitProp(propId);
-               this._holdUntil = (java.time.LocalDateTime)value;
+               this._holdUntil = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1098,7 +1098,7 @@ public class _ErpApsDispatchRule extends DynamicOrmEntity{
     /**
      * 暂停到: HOLD_UNTIL
      */
-    public final java.time.LocalDateTime getHoldUntil(){
+    public final java.sql.Timestamp getHoldUntil(){
          onPropGet(PROP_ID_holdUntil);
          return _holdUntil;
     }
@@ -1106,7 +1106,7 @@ public class _ErpApsDispatchRule extends DynamicOrmEntity{
     /**
      * 暂停到: HOLD_UNTIL
      */
-    public final void setHoldUntil(java.time.LocalDateTime value){
+    public final void setHoldUntil(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_holdUntil,value)){
             this._holdUntil = value;
             internalClearRefs(PROP_ID_holdUntil);

@@ -49,7 +49,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     public static final String PROP_NAME_shippedQty = "shippedQty";
     public static final int PROP_ID_shippedQty = 7;
     
-    /* 通知时间: NOTIFIED_AT DATETIME */
+    /* 通知时间: NOTIFIED_AT TIMESTAMP */
     public static final String PROP_NAME_notifiedAt = "notifiedAt";
     public static final int PROP_ID_notifiedAt = 8;
     
@@ -190,7 +190,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     private java.math.BigDecimal _shippedQty;
     
     /* 通知时间: NOTIFIED_AT */
-    private java.time.LocalDateTime _notifiedAt;
+    private java.sql.Timestamp _notifiedAt;
     
     /* 通知人: NOTIFIED_BY */
     private java.lang.String _notifiedBy;
@@ -432,9 +432,9 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
             }
         
             case PROP_ID_notifiedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_notifiedAt));
                }
                setNotifiedAt(typedValue);
@@ -601,7 +601,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
         
             case PROP_ID_notifiedAt:{
                onInitProp(propId);
-               this._notifiedAt = (java.time.LocalDateTime)value;
+               this._notifiedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -818,7 +818,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 通知时间: NOTIFIED_AT
      */
-    public final java.time.LocalDateTime getNotifiedAt(){
+    public final java.sql.Timestamp getNotifiedAt(){
          onPropGet(PROP_ID_notifiedAt);
          return _notifiedAt;
     }
@@ -826,7 +826,7 @@ public class _ErpQaRecallTarget extends DynamicOrmEntity{
     /**
      * 通知时间: NOTIFIED_AT
      */
-    public final void setNotifiedAt(java.time.LocalDateTime value){
+    public final void setNotifiedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_notifiedAt,value)){
             this._notifiedAt = value;
             internalClearRefs(PROP_ID_notifiedAt);

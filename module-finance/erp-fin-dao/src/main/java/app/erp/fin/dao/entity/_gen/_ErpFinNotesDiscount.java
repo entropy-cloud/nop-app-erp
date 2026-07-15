@@ -73,7 +73,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     public static final String PROP_NAME_postedBy = "postedBy";
     public static final int PROP_ID_postedBy = 13;
     
-    /* 过账时间: POSTED_AT DATETIME */
+    /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 14;
     
@@ -232,7 +232,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     private java.lang.String _postedBy;
     
     /* 过账时间: POSTED_AT */
-    private java.time.LocalDateTime _postedAt;
+    private java.sql.Timestamp _postedAt;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -534,9 +534,9 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_postedAt));
                }
                setPostedAt(typedValue);
@@ -715,7 +715,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
         
             case PROP_ID_postedAt:{
                onInitProp(propId);
-               this._postedAt = (java.time.LocalDateTime)value;
+               this._postedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1025,7 +1025,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final java.time.LocalDateTime getPostedAt(){
+    public final java.sql.Timestamp getPostedAt(){
          onPropGet(PROP_ID_postedAt);
          return _postedAt;
     }
@@ -1033,7 +1033,7 @@ public class _ErpFinNotesDiscount extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final void setPostedAt(java.time.LocalDateTime value){
+    public final void setPostedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_postedAt,value)){
             this._postedAt = value;
             internalClearRefs(PROP_ID_postedAt);

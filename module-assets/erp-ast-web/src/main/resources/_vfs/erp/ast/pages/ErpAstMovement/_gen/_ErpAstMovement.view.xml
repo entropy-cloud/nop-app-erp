@@ -113,36 +113,6 @@
 
                 <!--本位币金额-->
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
-
-                <!--所属组织-->
-                <col id="orgName"/>
-
-                <!--资产编码-->
-                <col id="assetCode"/>
-
-                <!--源部门-->
-                <col id="fromDepartmentName"/>
-
-                <!--目标部门-->
-                <col id="toDepartmentName"/>
-
-                <!--源使用人-->
-                <col id="fromStaffName"/>
-
-                <!--目标使用人-->
-                <col id="toStaffName"/>
-
-                <!--源地点-->
-                <col id="fromLocationName"/>
-
-                <!--目标地点-->
-                <col id="toLocationName"/>
-
-                <!--经办人-->
-                <col id="handlerName"/>
-
-                <!--币种-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -166,12 +136,7 @@
  remark[备注] approvedBy[审核人]
  approvedAt[审核时间] currencyId[币种]
  exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] orgName[所属组织]
- assetCode[资产编码] fromDepartmentName[源部门]
- toDepartmentName[目标部门] fromStaffName[源使用人]
- toStaffName[目标使用人] fromLocationName[源地点]
- toLocationName[目标地点] handlerName[经办人]
- currencyName[币种] 
+ amountFunctional[本位币金额] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产移动" i18n-en:title="Add Asset Movement" x:prototype="edit"/>

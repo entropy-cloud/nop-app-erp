@@ -89,15 +89,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--工单号-->
-                <col id="workOrderNo"/>
-
-                <!--物料名称-->
-                <col id="materialName"/>
-
-                <!--工作中心名称-->
-                <col id="workcenterName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -117,8 +108,7 @@
  posted[已过账] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] workOrderNo[工单号]
- materialName[物料名称] workcenterName[工作中心名称]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-成本差异记录" i18n-en:title="Add Cost Variance" x:prototype="edit"/>

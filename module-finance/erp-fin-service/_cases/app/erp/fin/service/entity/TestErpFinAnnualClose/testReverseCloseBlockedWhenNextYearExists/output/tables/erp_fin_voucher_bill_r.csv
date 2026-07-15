@@ -1,0 +1,3 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,19,14,PERIOD_CLOSE,@var:ErpFinVoucherBillR@billCode,,PERIOD_CLOSE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,38,35,PROFIT_TO_RETAINED_EARNINGS,@var:ErpFinVoucherBillR@billCode_1,,PROFIT_TO_RETAINED_EARNINGS,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

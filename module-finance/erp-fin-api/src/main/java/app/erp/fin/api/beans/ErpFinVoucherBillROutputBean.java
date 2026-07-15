@@ -193,18 +193,6 @@
         }
 
 
-        private String _voucherCode;
-
-    
-        public String getVoucherCode(){
-            return _voucherCode;
-        }
-
-        public void setVoucherCode(String value){
-            this._voucherCode = value;
-        }
-
-
         private Map<String,Object> _voucher;
 
         public Map<String,Object> getVoucher(){

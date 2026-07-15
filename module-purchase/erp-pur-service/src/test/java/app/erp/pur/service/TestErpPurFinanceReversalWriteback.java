@@ -79,7 +79,7 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             invoice.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
             invoice.setPosted(true);
-            invoice.setPostedAt(CoreMetrics.currentDateTime());
+            invoice.setPostedAt(CoreMetrics.currentTimestamp());
             invoice.setPostedBy("test-user");
             saveInvoiceWithLine(invoice);
         });
@@ -186,7 +186,7 @@ public class TestErpPurFinanceReversalWriteback extends JunitAutoTestCase {
             voucher.setTotalCredit(total);
             voucher.setIsReversed(false);
             voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
-            voucher.setPostedAt(CoreMetrics.currentDateTime());
+            voucher.setPostedAt(CoreMetrics.currentTimestamp());
             vDao.saveEntity(voucher);
 
             ErpFinVoucherBillR billR = new ErpFinVoucherBillR();

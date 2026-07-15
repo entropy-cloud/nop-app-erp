@@ -56,12 +56,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--合同行-->
-                <col id="contractLineName"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -76,7 +70,6 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- contractLineName[合同行] orgName[业务组织]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-批量折扣" i18n-en:title="Add Volume Discount" x:prototype="edit"/>

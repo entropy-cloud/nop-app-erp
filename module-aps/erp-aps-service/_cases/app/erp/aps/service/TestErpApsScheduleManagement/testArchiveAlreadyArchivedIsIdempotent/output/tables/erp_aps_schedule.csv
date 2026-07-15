@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,SCHEDULE_DATE,SCHEDULING_MODE,HORIZON_START,HORIZON_END,STATUS,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
+A,1,@var:ErpApsSchedule@code,S-AI,2026-07-10,FORWARD,@var:ErpApsSchedule@horizonStart,@var:ErpApsSchedule@horizonEnd,ARCHIVED,,,@var:ErpApsSchedule@delVersion,2,autotest-ref,*,autotest-ref,*,2026-07-15

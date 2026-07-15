@@ -30,11 +30,10 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "partner": null,
+  "partner.name": "",
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "creditFacility": null,
-  "orgName": "",
-  "currencyName": "",
-  "partnerName": "",
-  "creditFacilityCode": ""
+  "org.name": "",
+  "creditFacility": null
 }

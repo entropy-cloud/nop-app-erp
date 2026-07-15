@@ -65,12 +65,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--工单类型-->
-                <col id="ticketTypeName"/>
-
-                <!--客服团队-->
-                <col id="teamName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -86,8 +80,7 @@
  escalationUserId[升级通知人] description[说明]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] ticketTypeName[工单类型]
- teamName[客服团队] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-SLA 策略" i18n-en:title="Add SLA Policy" x:prototype="edit"/>

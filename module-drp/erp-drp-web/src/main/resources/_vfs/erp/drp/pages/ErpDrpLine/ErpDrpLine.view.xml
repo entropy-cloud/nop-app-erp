@@ -5,11 +5,11 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="planName" label="计划"/>
+                <col id="planId" label="计划"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
-                <col id="warehouseName" label="目标仓库"/>
-                <col id="sourceWarehouseName" label="来源仓库"/>
+                <col id="materialId" label="物料"/>
+                <col id="warehouseId" label="目标仓库"/>
+                <col id="sourceWarehouseId" label="来源仓库"/>
                 <col id="replenishmentType" mandatory="true" sortable="true"/>
                 <col id="currentStock" ui:number="true" sortable="true"/>
                 <col id="allocatedQty" ui:number="true" sortable="true"/>
@@ -22,7 +22,7 @@
                 <col id="orderBillType" sortable="true"/>
                 <col id="orderBillCode" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

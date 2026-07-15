@@ -27,10 +27,16 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "org": null,
+  "org.name": "",
   "partner": null,
+  "partner.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "sourceLoc": null,
+  "sourceLoc.name": "",
   "destLoc": null,
+  "destLoc.name": "",
   "currency": null,
+  "currency.name": "",
   "lines": null
 }

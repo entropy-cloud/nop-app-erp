@@ -24,11 +24,7 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpPrjTask@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpPrjTask@updateTime",
-    "dependsOnTaskName": null,
-    "parentTaskName": null,
-    "projectName": "冒烟项目",
-    "assigneeName": null
+    "updateTime": "@var:ErpPrjTask@updateTime"
   },
   "status": 0
 }

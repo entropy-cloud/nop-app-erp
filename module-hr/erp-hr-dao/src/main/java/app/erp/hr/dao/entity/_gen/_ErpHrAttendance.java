@@ -33,11 +33,11 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     public static final String PROP_NAME_date = "date";
     public static final int PROP_ID_date = 3;
     
-    /* 签到时间: CLOCK_IN DATETIME */
+    /* 签到时间: CLOCK_IN TIMESTAMP */
     public static final String PROP_NAME_clockIn = "clockIn";
     public static final int PROP_ID_clockIn = 4;
     
-    /* 签退时间: CLOCK_OUT DATETIME */
+    /* 签退时间: CLOCK_OUT TIMESTAMP */
     public static final String PROP_NAME_clockOut = "clockOut";
     public static final int PROP_ID_clockOut = 5;
     
@@ -195,10 +195,10 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     private java.time.LocalDate _date;
     
     /* 签到时间: CLOCK_IN */
-    private java.time.LocalDateTime _clockIn;
+    private java.sql.Timestamp _clockIn;
     
     /* 签退时间: CLOCK_OUT */
-    private java.time.LocalDateTime _clockOut;
+    private java.sql.Timestamp _clockOut;
     
     /* 出勤时长: WORK_HOURS */
     private java.math.BigDecimal _workHours;
@@ -421,9 +421,9 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
             }
         
             case PROP_ID_clockIn:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_clockIn));
                }
                setClockIn(typedValue);
@@ -431,9 +431,9 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
             }
         
             case PROP_ID_clockOut:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_clockOut));
                }
                setClockOut(typedValue);
@@ -622,14 +622,14 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
         
             case PROP_ID_clockIn:{
                onInitProp(propId);
-               this._clockIn = (java.time.LocalDateTime)value;
+               this._clockIn = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_clockOut:{
                onInitProp(propId);
-               this._clockOut = (java.time.LocalDateTime)value;
+               this._clockOut = (java.sql.Timestamp)value;
                
                break;
             }
@@ -805,7 +805,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     /**
      * 签到时间: CLOCK_IN
      */
-    public final java.time.LocalDateTime getClockIn(){
+    public final java.sql.Timestamp getClockIn(){
          onPropGet(PROP_ID_clockIn);
          return _clockIn;
     }
@@ -813,7 +813,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     /**
      * 签到时间: CLOCK_IN
      */
-    public final void setClockIn(java.time.LocalDateTime value){
+    public final void setClockIn(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_clockIn,value)){
             this._clockIn = value;
             internalClearRefs(PROP_ID_clockIn);
@@ -824,7 +824,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     /**
      * 签退时间: CLOCK_OUT
      */
-    public final java.time.LocalDateTime getClockOut(){
+    public final java.sql.Timestamp getClockOut(){
          onPropGet(PROP_ID_clockOut);
          return _clockOut;
     }
@@ -832,7 +832,7 @@ public class _ErpHrAttendance extends DynamicOrmEntity{
     /**
      * 签退时间: CLOCK_OUT
      */
-    public final void setClockOut(java.time.LocalDateTime value){
+    public final void setClockOut(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_clockOut,value)){
             this._clockOut = value;
             internalClearRefs(PROP_ID_clockOut);

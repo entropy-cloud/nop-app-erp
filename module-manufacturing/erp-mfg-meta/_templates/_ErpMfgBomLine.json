@@ -19,13 +19,14 @@
   "updateTime": "2000-01-01 14:00:00",
   "bom": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "uoM": null,
+  "uoM.name": "",
   "operation": null,
   "warehouse": null,
+  "warehouse.name": "",
   "alternativeMaterial": null,
-  "bomCode": "",
-  "materialName": "",
-  "uomName": "",
-  "warehouseName": ""
+  "alternativeMaterial.name": ""
 }

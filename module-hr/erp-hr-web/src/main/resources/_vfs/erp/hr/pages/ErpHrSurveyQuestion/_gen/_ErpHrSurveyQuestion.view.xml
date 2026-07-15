@@ -68,9 +68,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--问卷-->
-                <col id="surveyTitle"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -87,7 +84,6 @@
  isRequired[是否必填] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- surveyTitle[问卷] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-问卷题目" i18n-en:title="Add Survey Question" x:prototype="edit"/>

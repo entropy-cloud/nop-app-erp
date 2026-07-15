@@ -57,11 +57,11 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     public static final String PROP_NAME_reviewerId = "reviewerId";
     public static final int PROP_ID_reviewerId = 9;
     
-    /* 审批时间: REVIEWED_AT DATETIME */
+    /* 审批时间: REVIEWED_AT TIMESTAMP */
     public static final String PROP_NAME_reviewedAt = "reviewedAt";
     public static final int PROP_ID_reviewedAt = 10;
     
-    /* 转正式时间: CONVERTED_AT DATETIME */
+    /* 转正式时间: CONVERTED_AT TIMESTAMP */
     public static final String PROP_NAME_convertedAt = "convertedAt";
     public static final int PROP_ID_convertedAt = 11;
     
@@ -216,10 +216,10 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     private java.lang.Long _reviewerId;
     
     /* 审批时间: REVIEWED_AT */
-    private java.time.LocalDateTime _reviewedAt;
+    private java.sql.Timestamp _reviewedAt;
     
     /* 转正式时间: CONVERTED_AT */
-    private java.time.LocalDateTime _convertedAt;
+    private java.sql.Timestamp _convertedAt;
     
     /* 转正式薪酬ID: CONVERTED_SALARY_ID */
     private java.lang.Long _convertedSalaryId;
@@ -484,9 +484,9 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
             }
         
             case PROP_ID_reviewedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_reviewedAt));
                }
                setReviewedAt(typedValue);
@@ -494,9 +494,9 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
             }
         
             case PROP_ID_convertedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_convertedAt));
                }
                setConvertedAt(typedValue);
@@ -667,14 +667,14 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
         
             case PROP_ID_reviewedAt:{
                onInitProp(propId);
-               this._reviewedAt = (java.time.LocalDateTime)value;
+               this._reviewedAt = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_convertedAt:{
                onInitProp(propId);
-               this._convertedAt = (java.time.LocalDateTime)value;
+               this._convertedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -922,7 +922,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 审批时间: REVIEWED_AT
      */
-    public final java.time.LocalDateTime getReviewedAt(){
+    public final java.sql.Timestamp getReviewedAt(){
          onPropGet(PROP_ID_reviewedAt);
          return _reviewedAt;
     }
@@ -930,7 +930,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 审批时间: REVIEWED_AT
      */
-    public final void setReviewedAt(java.time.LocalDateTime value){
+    public final void setReviewedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_reviewedAt,value)){
             this._reviewedAt = value;
             internalClearRefs(PROP_ID_reviewedAt);
@@ -941,7 +941,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 转正式时间: CONVERTED_AT
      */
-    public final java.time.LocalDateTime getConvertedAt(){
+    public final java.sql.Timestamp getConvertedAt(){
          onPropGet(PROP_ID_convertedAt);
          return _convertedAt;
     }
@@ -949,7 +949,7 @@ public class _ErpHrSalarySimulation extends DynamicOrmEntity{
     /**
      * 转正式时间: CONVERTED_AT
      */
-    public final void setConvertedAt(java.time.LocalDateTime value){
+    public final void setConvertedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_convertedAt,value)){
             this._convertedAt = value;
             internalClearRefs(PROP_ID_convertedAt);

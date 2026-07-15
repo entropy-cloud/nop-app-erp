@@ -8,7 +8,7 @@
   "gapSeverity": "",
   "gapSeverity_label": "",
   "assessmentDate": "2000-01-01",
-  "analysisDate": "2000-01-01 14:00:00",
+  "analysisDate": "2000-01-01",
   "delVersion": 0,
   "version": 0,
   "createdBy": "",
@@ -16,7 +16,5 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "employee": null,
-  "competency": null,
-  "employeeDisplayName": "",
-  "competencyName": ""
+  "competency": null
 }

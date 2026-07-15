@@ -216,7 +216,7 @@ public class ErpPurRequisitionProcessor {
     protected void doApprove(ErpPurRequisition req, IServiceContext context) {
         req.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         req.setApprovedBy(currentUserId());
-        req.setApprovedAt(CoreMetrics.currentDateTime());
+        req.setApprovedAt(CoreMetrics.currentTimestamp());
         requisitionDao().updateEntity(req);
     }
 

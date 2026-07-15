@@ -20,7 +20,10 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "acctSchema": null,
+  "acctSchema.name": "",
   "period": null,
   "subject": null,
-  "org": null
+  "subject.code": "",
+  "org": null,
+  "org.name": ""
 }

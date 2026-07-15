@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -103,7 +103,7 @@ public class BatchGenealogyWriter {
         }
 
         LocalDate productionDate = wo.getBusinessDate() != null ? wo.getBusinessDate() : CoreMetrics.today();
-        LocalDateTime productionTime = CoreMetrics.currentDateTime();
+        Timestamp productionTime = CoreMetrics.currentTimestamp();
         BigDecimal plannedQty = nz(wo.getPlannedQuantity());
         BigDecimal ratio = plannedQty.signum() > 0
                 ? completedQty.divide(plannedQty, 6, RoundingMode.HALF_UP)

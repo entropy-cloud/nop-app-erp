@@ -6,9 +6,9 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="requesterName" label="请购人"/>
-                <col id="departmentName" label="请购部门"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="requesterId" label="请购人"/>
+                <col id="departmentId" label="请购部门"/>
                 <col id="businessDate" mandatory="true" sortable="true"/>
                 <col id="requiredDate" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true"/>

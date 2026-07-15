@@ -65,7 +65,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
     public static final String PROP_NAME_isSuccess = "isSuccess";
     public static final int PROP_ID_isSuccess = 11;
     
-    /* 执行时间: EXECUTED_AT DATETIME */
+    /* 执行时间: EXECUTED_AT TIMESTAMP */
     public static final String PROP_NAME_executedAt = "executedAt";
     public static final int PROP_ID_executedAt = 12;
     
@@ -209,7 +209,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
     private java.lang.Boolean _isSuccess;
     
     /* 执行时间: EXECUTED_AT */
-    private java.time.LocalDateTime _executedAt;
+    private java.sql.Timestamp _executedAt;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -485,9 +485,9 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_executedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_executedAt));
                }
                setExecutedAt(typedValue);
@@ -652,7 +652,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
         
             case PROP_ID_executedAt:{
                onInitProp(propId);
-               this._executedAt = (java.time.LocalDateTime)value;
+               this._executedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -924,7 +924,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
     /**
      * 执行时间: EXECUTED_AT
      */
-    public final java.time.LocalDateTime getExecutedAt(){
+    public final java.sql.Timestamp getExecutedAt(){
          onPropGet(PROP_ID_executedAt);
          return _executedAt;
     }
@@ -932,7 +932,7 @@ public class _ErpLogShipmentLog extends DynamicOrmEntity{
     /**
      * 执行时间: EXECUTED_AT
      */
-    public final void setExecutedAt(java.time.LocalDateTime value){
+    public final void setExecutedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_executedAt,value)){
             this._executedAt = value;
             internalClearRefs(PROP_ID_executedAt);

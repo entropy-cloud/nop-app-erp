@@ -247,8 +247,8 @@ CREATE TABLE erp_fin_employee_advance(
   approve_status VARCHAR(20) NOT NULL ,
   approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
-  posted BOOLEAN default false   ,
   posted_by VARCHAR(36)  ,
+  posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
@@ -1147,9 +1147,9 @@ CREATE TABLE erp_fin_budget_control_log(
                     
       COMMENT ON COLUMN erp_fin_employee_advance.approved_at IS '审核时间';
                     
-      COMMENT ON COLUMN erp_fin_employee_advance.posted IS '是否已过账';
-                    
       COMMENT ON COLUMN erp_fin_employee_advance.posted_by IS '过账人';
+                    
+      COMMENT ON COLUMN erp_fin_employee_advance.posted IS '是否已过账';
                     
       COMMENT ON COLUMN erp_fin_employee_advance.posted_at IS '过账时间';
                     

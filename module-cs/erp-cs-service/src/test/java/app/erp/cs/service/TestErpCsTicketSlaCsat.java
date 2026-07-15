@@ -19,6 +19,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -120,8 +121,8 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         assertNotNull(t.getSlaPolicyId(), "匹配到 SLA 策略");
         assertNotNull(t.getDeadlineDateTime(), "计算 deadlineDateTime");
         // deadline ≈ now + 8h（允许少量时间偏移）
-        assertTrue(t.getDeadlineDateTime().isAfter(before.plusHours(7)));
-        assertTrue(t.getDeadlineDateTime().isBefore(before.plusHours(9)));
+        assertTrue(t.getDeadlineDateTime().toLocalDateTime().isAfter(before.plusHours(7)));
+        assertTrue(t.getDeadlineDateTime().toLocalDateTime().isBefore(before.plusHours(9)));
     }
 
     @Test
@@ -134,7 +135,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         ErpCsTicket t = reload(ticketId);
         assertNotNull(t.getDeadlineDateTime(), "工作日模式计算 deadline");
         // deadline 不应为 null，且应在 now 之后
-        assertTrue(t.getDeadlineDateTime().isAfter(CoreMetrics.currentDateTime()));
+        assertTrue(t.getDeadlineDateTime().toLocalDateTime().isAfter(CoreMetrics.currentDateTime()));
     }
 
     @Test
@@ -331,7 +332,7 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
             t.setApproveStatus(ErpCsConstants.APPROVE_STATUS_UNSUBMITTED);
             t.setIsSlaCompleted(false);
             if (deadline != null) {
-                t.setDeadlineDateTime(deadline);
+                t.setDeadlineDateTime(deadline != null ? Timestamp.valueOf(deadline) : null);
             }
             dao.saveEntity(t);
         });

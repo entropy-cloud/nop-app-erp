@@ -28,8 +28,8 @@ prop:
       name: 类型名称
       remark: 备注
       subject: null
+      subject.name: null
       subjectId: 科目
-      subjectName: 科目名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -45,11 +45,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -58,16 +58,14 @@ prop:
       lines: null
       milestone: null
       milestoneId: 关联里程碑
-      milestoneName: 里程碑名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
       project: null
       projectId: 项目
-      projectName: 项目名称
       remark: 备注
       totalAmount: 开票金额
       updateTime: 修改时间
@@ -76,7 +74,6 @@ prop:
     ErpPrjBillingLine:
       amount: 金额
       billing: null
-      billingCode: 开票单号
       billingId: 开票单ID
       costCategory: 成本类别
       createTime: 创建时间
@@ -86,11 +83,10 @@ prop:
       lineNo: 行号
       remark: 备注
       subject: null
+      subject.name: null
       subjectId: 科目
-      subjectName: 科目名称
       task: null
       taskId: 任务
-      taskName: 任务名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -104,19 +100,18 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       project: null
       projectId: 项目
-      projectName: 项目名称
       remark: 备注
       totalAmount: 预算总额
       updateTime: 修改时间
@@ -125,7 +120,6 @@ prop:
     ErpPrjBudgetLine:
       actualAmount: 实际金额
       budget: null
-      budgetCode: 预算单号
       budgetId: 预算ID
       committedAmount: 已承诺金额
       costCategory: 成本类别(人工/材料/费用/分包)
@@ -137,11 +131,10 @@ prop:
       plannedAmount: 预算金额
       remark: 备注
       subject: null
+      subject.name: null
       subjectId: 科目
-      subjectName: 科目名称
       task: null
       taskId: 任务
-      taskName: 任务名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -157,8 +150,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -166,14 +159,13 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账(已转成本凭证)
       postedAt: 过账时间
       postedBy: 过账人
       project: null
       projectId: 项目
-      projectName: 项目名称
       remark: 备注
       totalAmount: 归集金额合计
       updateTime: 修改时间
@@ -183,7 +175,6 @@ prop:
       amount: 金额
       costCategory: 成本类别(人工/材料/费用/分包)
       costCollection: null
-      costCollectionCode: 归集单号
       costCollectionId: 归集单ID
       createTime: 创建时间
       createdBy: 创建人
@@ -194,11 +185,10 @@ prop:
       sourceBillCode: 来源单据号
       sourceBillType: 来源单据类型(TIMESHEET/PURCHASE/EXPENSE)
       subject: null
+      subject.name: null
       subjectId: 科目
-      subjectName: 科目名称
       task: null
       taskId: 任务
-      taskName: 任务名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -215,7 +205,6 @@ prop:
       plannedDate: 计划完成日期
       project: null
       projectId: 项目
-      projectName: 项目名称
       remark: 备注
       status: 状态
       status_label: 状态
@@ -232,26 +221,25 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       endDate: 结束日期
       id: ID
       manager: null
+      manager.name: null
       managerId: 项目经理(职员)
-      managerName: 项目经理名称
       members: null
       milestones: null
       name: 项目名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       projectType: null
       projectTypeId: 项目类型
-      projectTypeName: 项目类型名称
       remark: 备注
       startDate: 开始日期
       status: 状态
@@ -278,8 +266,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -289,8 +277,8 @@ prop:
       grossProfit: 毛利
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       periodFrom: 汇总期间起
       periodTo: 汇总期间止
       posted: 已过账
@@ -298,7 +286,6 @@ prop:
       postedBy: 过账人
       project: null
       projectId: 项目
-      projectName: 项目名称
       remark: 备注
       revenueAmount: 收入合计
       totalCost: 成本合计
@@ -318,11 +305,11 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户名称
       delVersion: 逻辑删除版本
       docStatus: 单据状态
       docStatus_label: 单据状态
@@ -333,8 +320,8 @@ prop:
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       pnlSnapshot: null
       pnlSnapshotId: 关联损益汇总
       posted: 已过账
@@ -342,7 +329,6 @@ prop:
       postedBy: 过账人
       project: null
       projectId: 项目
-      projectName: 项目名称
       remark: 备注
       retentionAmount: 质保金/保留款
       retentionDueDate: 质保金到期
@@ -363,13 +349,12 @@ prop:
       lineType: 行类型(INCOME/COST)
       remark: 备注
       settlement: null
-      settlementCode: 结算单号
       settlementId: 结算单ID
       sourceBillCode: 来源单据号
       sourceBillType: 来源单据类型(BILLING/COST_COLLECTION)
       subject: null
+      subject.name: null
       subjectId: 科目
-      subjectName: 科目名称
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -378,8 +363,8 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       defaultSubject: null
+      defaultSubject.name: null
       defaultSubjectId: 默认科目
-      defaultSubjectName: 默认科目名称
       delVersion: 逻辑删除版本
       id: ID
       name: 类型名称
@@ -395,22 +380,21 @@ prop:
       id: ID
       project: null
       projectId: 项目
-      projectName: 项目名称
       role: 角色
       startDate: 加入日期
       updateTime: 修改时间
       updatedBy: 修改人
       user: null
+      user.name: null
       userId: 用户
-      userName: 用户名称
       version: 数据版本
     ErpPrjTask:
       actualEndDate: 实际结束日期
       actualHours: 实际工时
       actualStartDate: 实际开始日期
       assignee: null
+      assignee.name: null
       assigneeId: 负责人
-      assigneeName: 负责人名称
       blockReason: 阻塞原因
       childTasks: null
       createTime: 创建时间
@@ -418,19 +402,16 @@ prop:
       delVersion: 逻辑删除版本
       dependsOn: null
       dependsOnId: 依赖任务
-      dependsOnTaskName: 依赖任务名称
       estimatedHours: 预估工时
       id: ID
       parentTask: null
       parentTaskId: 父任务
-      parentTaskName: 父任务名称
       plannedEndDate: 计划结束日期
       plannedStartDate: 计划开始日期
       priority: 优先级
       priority_label: 优先级
       project: null
       projectId: 项目
-      projectName: 项目名称
       remark: 备注
       sortNum: 排序号
       status: 状态
@@ -443,7 +424,6 @@ prop:
     ErpPrjTimesheet:
       activityType: null
       activityTypeId: 活动类型
-      activityTypeName: 活动类型名称
       approvedAt: 审批时间
       approvedBy: 审批人
       code: 单号
@@ -452,30 +432,28 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种名称
       delVersion: 逻辑删除版本
       hours: 工时
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织名称
       posted: 已过账(已转成本凭证)
       postedAt: 过账时间
       postedBy: 过账人
       project: null
       projectId: 项目
-      projectName: 项目名称
       remark: 备注
       status: 状态
       status_label: 状态
       task: null
       taskId: 任务
-      taskName: 任务名称
       updateTime: 修改时间
       updatedBy: 修改人
       user: null
+      user.name: null
       userId: 用户(职员)
-      userName: 用户名称
       version: 数据版本
       workDate: 工作日期

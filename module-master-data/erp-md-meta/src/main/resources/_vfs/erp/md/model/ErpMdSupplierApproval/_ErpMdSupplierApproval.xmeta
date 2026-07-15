@@ -60,9 +60,9 @@
               sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="approvedAt" displayName="批准时间" propId="11" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="approvedAt" displayName="批准时间" propId="11" i18n-en:displayName="Approved At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="12" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
@@ -93,19 +93,31 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
         </prop>
-        <prop name="organization" i18n-en:displayName="Organization" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="orgId" ext:joinRightProp="id" insertable="false" updatable="false"
+        <prop name="partner.name" i18n-en:displayName="Partner" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="organization" i18n-en:displayName="Organization" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="organization.name" i18n-en:displayName="Organization" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="materialCategory" i18n-en:displayName="Material Category" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="materialCategoryId" ext:joinRightProp="id"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              ext:joinRightDisplayProp="name" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterialCategory"/>
+        </prop>
+        <prop name="materialCategory.name" i18n-en:displayName="Material Category" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

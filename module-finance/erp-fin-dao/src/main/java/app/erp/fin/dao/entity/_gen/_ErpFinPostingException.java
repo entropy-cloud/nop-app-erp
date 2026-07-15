@@ -85,7 +85,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     public static final String PROP_NAME_resolvedBy = "resolvedBy";
     public static final int PROP_ID_resolvedBy = 16;
     
-    /* 处置时间: RESOLVED_AT DATETIME */
+    /* 处置时间: RESOLVED_AT TIMESTAMP */
     public static final String PROP_NAME_resolvedAt = "resolvedAt";
     public static final int PROP_ID_resolvedAt = 17;
     
@@ -293,7 +293,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     private java.lang.String _resolvedBy;
     
     /* 处置时间: RESOLVED_AT */
-    private java.time.LocalDateTime _resolvedAt;
+    private java.sql.Timestamp _resolvedAt;
     
     /* 关联凭证ID: VOUCHER_ID */
     private java.lang.Long _voucherId;
@@ -658,9 +658,9 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
             }
         
             case PROP_ID_resolvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_resolvedAt));
                }
                setResolvedAt(typedValue);
@@ -900,7 +900,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
         
             case PROP_ID_resolvedAt:{
                onInitProp(propId);
-               this._resolvedAt = (java.time.LocalDateTime)value;
+               this._resolvedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1295,7 +1295,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 处置时间: RESOLVED_AT
      */
-    public final java.time.LocalDateTime getResolvedAt(){
+    public final java.sql.Timestamp getResolvedAt(){
          onPropGet(PROP_ID_resolvedAt);
          return _resolvedAt;
     }
@@ -1303,7 +1303,7 @@ public class _ErpFinPostingException extends DynamicOrmEntity{
     /**
      * 处置时间: RESOLVED_AT
      */
-    public final void setResolvedAt(java.time.LocalDateTime value){
+    public final void setResolvedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_resolvedAt,value)){
             this._resolvedAt = value;
             internalClearRefs(PROP_ID_resolvedAt);

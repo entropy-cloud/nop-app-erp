@@ -65,11 +65,11 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     public static final String PROP_NAME_attachmentFileId = "attachmentFileId";
     public static final int PROP_ID_attachmentFileId = 11;
     
-    /* 发送时间: SENT_AT DATETIME */
+    /* 发送时间: SENT_AT TIMESTAMP */
     public static final String PROP_NAME_sentAt = "sentAt";
     public static final int PROP_ID_sentAt = 12;
     
-    /* 确认时间: ACKNOWLEDGED_AT DATETIME */
+    /* 确认时间: ACKNOWLEDGED_AT TIMESTAMP */
     public static final String PROP_NAME_acknowledgedAt = "acknowledgedAt";
     public static final int PROP_ID_acknowledgedAt = 13;
     
@@ -226,10 +226,10 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     private java.lang.String _attachmentFileId;
     
     /* 发送时间: SENT_AT */
-    private java.time.LocalDateTime _sentAt;
+    private java.sql.Timestamp _sentAt;
     
     /* 确认时间: ACKNOWLEDGED_AT */
-    private java.time.LocalDateTime _acknowledgedAt;
+    private java.sql.Timestamp _acknowledgedAt;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -514,9 +514,9 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
             }
         
             case PROP_ID_sentAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_sentAt));
                }
                setSentAt(typedValue);
@@ -524,9 +524,9 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
             }
         
             case PROP_ID_acknowledgedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_acknowledgedAt));
                }
                setAcknowledgedAt(typedValue);
@@ -701,14 +701,14 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
         
             case PROP_ID_sentAt:{
                onInitProp(propId);
-               this._sentAt = (java.time.LocalDateTime)value;
+               this._sentAt = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_acknowledgedAt:{
                onInitProp(propId);
-               this._acknowledgedAt = (java.time.LocalDateTime)value;
+               this._acknowledgedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -987,7 +987,7 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /**
      * 发送时间: SENT_AT
      */
-    public final java.time.LocalDateTime getSentAt(){
+    public final java.sql.Timestamp getSentAt(){
          onPropGet(PROP_ID_sentAt);
          return _sentAt;
     }
@@ -995,7 +995,7 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /**
      * 发送时间: SENT_AT
      */
-    public final void setSentAt(java.time.LocalDateTime value){
+    public final void setSentAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_sentAt,value)){
             this._sentAt = value;
             internalClearRefs(PROP_ID_sentAt);
@@ -1006,7 +1006,7 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /**
      * 确认时间: ACKNOWLEDGED_AT
      */
-    public final java.time.LocalDateTime getAcknowledgedAt(){
+    public final java.sql.Timestamp getAcknowledgedAt(){
          onPropGet(PROP_ID_acknowledgedAt);
          return _acknowledgedAt;
     }
@@ -1014,7 +1014,7 @@ public class _ErpB2bEdiDoc extends DynamicOrmEntity{
     /**
      * 确认时间: ACKNOWLEDGED_AT
      */
-    public final void setAcknowledgedAt(java.time.LocalDateTime value){
+    public final void setAcknowledgedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_acknowledgedAt,value)){
             this._acknowledgedAt = value;
             internalClearRefs(PROP_ID_acknowledgedAt);

@@ -17,5 +17,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "workcenter": null,
   "material": null,
-  "org": null
+  "material.name": "",
+  "org": null,
+  "org.name": ""
 }

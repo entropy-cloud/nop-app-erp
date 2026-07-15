@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_ID,USER_ID,READ_TIME,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2,1,notify-test-user-1,@var:ErpSysNotificationRead@readTime,@var:ErpSysNotificationRead@delVersion,0,autotest-ref,*,autotest-ref,*

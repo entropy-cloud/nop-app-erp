@@ -181,16 +181,16 @@
         }
 
 
-        private java.time.LocalDateTime _closedAt;
+        private java.sql.Timestamp _closedAt;
 
     
         @PropMeta(propId=13)
     
-        public java.time.LocalDateTime getClosedAt(){
+        public java.sql.Timestamp getClosedAt(){
             return _closedAt;
         }
 
-        public void setClosedAt(java.time.LocalDateTime value){
+        public void setClosedAt(java.sql.Timestamp value){
             this._closedAt = value;
         }
 

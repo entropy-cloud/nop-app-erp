@@ -279,42 +279,6 @@
         }
 
 
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _sourceWarehouseName;
-
-    
-        public String getSourceWarehouseName(){
-            return _sourceWarehouseName;
-        }
-
-        public void setSourceWarehouseName(String value){
-            this._sourceWarehouseName = value;
-        }
-
-
-        private String _destWarehouseName;
-
-    
-        public String getDestWarehouseName(){
-            return _destWarehouseName;
-        }
-
-        public void setDestWarehouseName(String value){
-            this._destWarehouseName = value;
-        }
-
-
         private Map<String,Object> _workOrder;
 
         public Map<String,Object> getWorkOrder(){

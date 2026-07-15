@@ -53,7 +53,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     public static final String PROP_NAME_resultMsg = "resultMsg";
     public static final int PROP_ID_resultMsg = 8;
     
-    /* 日志时间: LOG_TIME DATETIME */
+    /* 日志时间: LOG_TIME TIMESTAMP */
     public static final String PROP_NAME_logTime = "logTime";
     public static final int PROP_ID_logTime = 9;
     
@@ -179,7 +179,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     private java.lang.String _resultMsg;
     
     /* 日志时间: LOG_TIME */
-    private java.time.LocalDateTime _logTime;
+    private java.sql.Timestamp _logTime;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -416,9 +416,9 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_logTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_logTime));
                }
                setLogTime(typedValue);
@@ -562,7 +562,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
         
             case PROP_ID_logTime:{
                onInitProp(propId);
-               this._logTime = (java.time.LocalDateTime)value;
+               this._logTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -777,7 +777,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     /**
      * 日志时间: LOG_TIME
      */
-    public final java.time.LocalDateTime getLogTime(){
+    public final java.sql.Timestamp getLogTime(){
          onPropGet(PROP_ID_logTime);
          return _logTime;
     }
@@ -785,7 +785,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     /**
      * 日志时间: LOG_TIME
      */
-    public final void setLogTime(java.time.LocalDateTime value){
+    public final void setLogTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_logTime,value)){
             this._logTime = value;
             internalClearRefs(PROP_ID_logTime);

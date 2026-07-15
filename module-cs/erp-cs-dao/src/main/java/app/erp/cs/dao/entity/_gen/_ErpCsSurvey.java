@@ -53,11 +53,11 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     public static final String PROP_NAME_comment = "comment";
     public static final int PROP_ID_comment = 8;
     
-    /* 响应时间: RESPONDED_AT DATETIME */
+    /* 响应时间: RESPONDED_AT TIMESTAMP */
     public static final String PROP_NAME_respondedAt = "respondedAt";
     public static final int PROP_ID_respondedAt = 9;
     
-    /* 调查发送时间: SURVEY_SENT_AT DATETIME */
+    /* 调查发送时间: SURVEY_SENT_AT TIMESTAMP */
     public static final String PROP_NAME_surveySentAt = "surveySentAt";
     public static final int PROP_ID_surveySentAt = 10;
     
@@ -186,10 +186,10 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     private java.lang.String _comment;
     
     /* 响应时间: RESPONDED_AT */
-    private java.time.LocalDateTime _respondedAt;
+    private java.sql.Timestamp _respondedAt;
     
     /* 调查发送时间: SURVEY_SENT_AT */
-    private java.time.LocalDateTime _surveySentAt;
+    private java.sql.Timestamp _surveySentAt;
     
     /* 发送渠道: SURVEY_CHANNEL */
     private java.lang.String _surveyChannel;
@@ -429,9 +429,9 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
             }
         
             case PROP_ID_respondedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_respondedAt));
                }
                setRespondedAt(typedValue);
@@ -439,9 +439,9 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
             }
         
             case PROP_ID_surveySentAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_surveySentAt));
                }
                setSurveySentAt(typedValue);
@@ -585,14 +585,14 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
         
             case PROP_ID_respondedAt:{
                onInitProp(propId);
-               this._respondedAt = (java.time.LocalDateTime)value;
+               this._respondedAt = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_surveySentAt:{
                onInitProp(propId);
-               this._surveySentAt = (java.time.LocalDateTime)value;
+               this._surveySentAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -807,7 +807,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     /**
      * 响应时间: RESPONDED_AT
      */
-    public final java.time.LocalDateTime getRespondedAt(){
+    public final java.sql.Timestamp getRespondedAt(){
          onPropGet(PROP_ID_respondedAt);
          return _respondedAt;
     }
@@ -815,7 +815,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     /**
      * 响应时间: RESPONDED_AT
      */
-    public final void setRespondedAt(java.time.LocalDateTime value){
+    public final void setRespondedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_respondedAt,value)){
             this._respondedAt = value;
             internalClearRefs(PROP_ID_respondedAt);
@@ -826,7 +826,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     /**
      * 调查发送时间: SURVEY_SENT_AT
      */
-    public final java.time.LocalDateTime getSurveySentAt(){
+    public final java.sql.Timestamp getSurveySentAt(){
          onPropGet(PROP_ID_surveySentAt);
          return _surveySentAt;
     }
@@ -834,7 +834,7 @@ public class _ErpCsSurvey extends DynamicOrmEntity{
     /**
      * 调查发送时间: SURVEY_SENT_AT
      */
-    public final void setSurveySentAt(java.time.LocalDateTime value){
+    public final void setSurveySentAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_surveySentAt,value)){
             this._surveySentAt = value;
             internalClearRefs(PROP_ID_surveySentAt);

@@ -82,7 +82,7 @@ public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
     }
 
     private String buildMemo(PostingEvent event, String sourceBillType) {
-        return (sourceBillType == null ? "" : sourceBillType) + ":" + event.getBillHeadCode();
+        return sourceBillType == null ? null : sourceBillType;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,

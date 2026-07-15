@@ -93,7 +93,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_postedStatus = "postedStatus";
     public static final int PROP_ID_postedStatus = 18;
     
-    /* 过账时间: POSTED_AT DATETIME */
+    /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 19;
     
@@ -141,7 +141,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 200;
     
-    /* 审核时间: APPROVED_AT DATETIME */
+    /* 审核时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 201;
     
@@ -335,7 +335,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     private java.lang.String _postedStatus;
     
     /* 过账时间: POSTED_AT */
-    private java.time.LocalDateTime _postedAt;
+    private java.sql.Timestamp _postedAt;
     
     /* 过账人: POSTED_BY */
     private java.lang.String _postedBy;
@@ -344,10 +344,10 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     private java.lang.String _remark;
     
     /* 源币种金额: AMOUNT_SOURCE */
-    private java.lang.String _amountSource;
+    private java.math.BigDecimal _amountSource;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.lang.String _amountFunctional;
+    private java.math.BigDecimal _amountFunctional;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -371,7 +371,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     private java.lang.String _approvedBy;
     
     /* 审核时间: APPROVED_AT */
-    private java.time.LocalDateTime _approvedAt;
+    private java.sql.Timestamp _approvedAt;
     
 
     public _ErpMfgSubcontractOrder(){
@@ -732,9 +732,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_postedAt));
                }
                setPostedAt(typedValue);
@@ -762,9 +762,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountSource:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountSource));
                }
                setAmountSource(typedValue);
@@ -772,9 +772,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountFunctional:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountFunctional));
                }
                setAmountFunctional(typedValue);
@@ -852,9 +852,9 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_approvedAt));
                }
                setApprovedAt(typedValue);
@@ -998,7 +998,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_postedAt:{
                onInitProp(propId);
-               this._postedAt = (java.time.LocalDateTime)value;
+               this._postedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1019,14 +1019,14 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_amountSource:{
                onInitProp(propId);
-               this._amountSource = (java.lang.String)value;
+               this._amountSource = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountFunctional:{
                onInitProp(propId);
-               this._amountFunctional = (java.lang.String)value;
+               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1082,7 +1082,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
         
             case PROP_ID_approvedAt:{
                onInitProp(propId);
-               this._approvedAt = (java.time.LocalDateTime)value;
+               this._approvedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1438,7 +1438,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final java.time.LocalDateTime getPostedAt(){
+    public final java.sql.Timestamp getPostedAt(){
          onPropGet(PROP_ID_postedAt);
          return _postedAt;
     }
@@ -1446,7 +1446,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final void setPostedAt(java.time.LocalDateTime value){
+    public final void setPostedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_postedAt,value)){
             this._postedAt = value;
             internalClearRefs(PROP_ID_postedAt);
@@ -1495,7 +1495,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final java.lang.String getAmountSource(){
+    public final java.math.BigDecimal getAmountSource(){
          onPropGet(PROP_ID_amountSource);
          return _amountSource;
     }
@@ -1503,7 +1503,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final void setAmountSource(java.lang.String value){
+    public final void setAmountSource(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountSource,value)){
             this._amountSource = value;
             internalClearRefs(PROP_ID_amountSource);
@@ -1514,7 +1514,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final java.lang.String getAmountFunctional(){
+    public final java.math.BigDecimal getAmountFunctional(){
          onPropGet(PROP_ID_amountFunctional);
          return _amountFunctional;
     }
@@ -1522,7 +1522,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final void setAmountFunctional(java.lang.String value){
+    public final void setAmountFunctional(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountFunctional,value)){
             this._amountFunctional = value;
             internalClearRefs(PROP_ID_amountFunctional);
@@ -1666,7 +1666,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final java.time.LocalDateTime getApprovedAt(){
+    public final java.sql.Timestamp getApprovedAt(){
          onPropGet(PROP_ID_approvedAt);
          return _approvedAt;
     }
@@ -1674,7 +1674,7 @@ public class _ErpMfgSubcontractOrder extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final void setApprovedAt(java.time.LocalDateTime value){
+    public final void setApprovedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_approvedAt,value)){
             this._approvedAt = value;
             internalClearRefs(PROP_ID_approvedAt);

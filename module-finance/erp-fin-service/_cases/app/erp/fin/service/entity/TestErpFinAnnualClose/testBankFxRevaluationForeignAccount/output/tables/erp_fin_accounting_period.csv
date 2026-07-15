@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,ORG_ID,YEAR,MONTH,START_DATE,END_DATE,QUARTER,IS_ADJUSTMENT,STATUS,CLOSED_BY,CLOSED_AT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpFinAccountingPeriod@code,2025-08,1,2025,8,2025-08-01,2025-08-28,,false,CLOSED,,@var:ErpFinAccountingPeriod@closedAt,@var:ErpFinAccountingPeriod@delVersion,1,autotest-ref,*,autotest-ref,*

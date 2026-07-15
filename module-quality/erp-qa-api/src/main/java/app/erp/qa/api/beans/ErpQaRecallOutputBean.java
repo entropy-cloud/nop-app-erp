@@ -272,16 +272,16 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=16)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
         }
 
@@ -381,30 +381,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _sourceNcrCode;
-
-    
-        public String getSourceNcrCode(){
-            return _sourceNcrCode;
-        }
-
-        public void setSourceNcrCode(String value){
-            this._sourceNcrCode = value;
-        }
-
-
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
         }
 
 

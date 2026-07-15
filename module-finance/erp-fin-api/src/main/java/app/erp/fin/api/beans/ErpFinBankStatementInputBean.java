@@ -138,16 +138,16 @@
         }
 
 
-        private java.time.LocalDateTime _importTime;
+        private java.sql.Timestamp _importTime;
 
     
         @PropMeta(propId=10)
     
-        public java.time.LocalDateTime getImportTime(){
+        public java.sql.Timestamp getImportTime(){
             return _importTime;
         }
 
-        public void setImportTime(java.time.LocalDateTime value){
+        public void setImportTime(java.sql.Timestamp value){
             this._importTime = value;
         }
 

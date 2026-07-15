@@ -6,13 +6,13 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="eventType" sortable="true"/>
-                <col id="categoryName" label="活动类别"/>
+                <col id="categoryId" label="活动类别"/>
                 <col id="subject" sortable="true"/>
                 <col id="leadCode" label="关联线索"/>
-                <col id="partnerName" label="客户"/>
-                <col id="contactName" label="联系人"/>
+                <col id="partnerId" label="客户"/>
+                <col id="contactId" label="联系人"/>
                 <col id="eventCode" label="父活动"/>
                 <col id="startDateTime" sortable="true"/>
                 <col id="endDateTime" sortable="true"/>

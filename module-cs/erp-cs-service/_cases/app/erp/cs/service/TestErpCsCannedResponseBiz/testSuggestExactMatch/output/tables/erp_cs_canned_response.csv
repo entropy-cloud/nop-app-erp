@@ -1,0 +1,4 @@
+_chgType,ID,CODE,ORG_ID,TITLE,CONTENT,CATEGORY_ID,VARIABLE_DEFS,MACRO_TICKET_TYPE_ID,MACRO_PRIORITY,SEQUENCE,IS_ACTIVE,USAGE_COUNT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9310,@var:ErpCsCannedResponse@code,,CR-EXACT,精确匹配,,,6201,NORMAL,0,true,10,@var:ErpCsCannedResponse@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,9311,@var:ErpCsCannedResponse@code_1,,CR-TYPE,类型匹配,,,6201,,0,true,20,@var:ErpCsCannedResponse@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,9312,@var:ErpCsCannedResponse@code_2,,CR-GLOBAL,全局兜底,,,,,0,true,30,@var:ErpCsCannedResponse@delVersion_1,0,autotest-ref,*,autotest-ref,*

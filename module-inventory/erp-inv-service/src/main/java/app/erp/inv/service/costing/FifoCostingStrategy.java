@@ -1,5 +1,8 @@
 package app.erp.inv.service.costing;
 
+import app.erp.inv.service.ErpInvConfigs;
+
+
 import app.erp.inv.dao.entity.ErpInvCostLayer;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
@@ -125,7 +128,7 @@ public class FifoCostingStrategy implements CostingStrategy {
         BigDecimal weightedUnitCost = qty.signum() != 0
                 ? totalCost.divide(qty, SCALE, RoundingMode.HALF_UP) : BigDecimal.ZERO;
         // 将加权 unitCost 刷回行，供 reverse 流程透传给反向入库（红冲语义 Decision (a)：成本回加对齐）
-        line.setUnitCost(weightedUnitCost);
+        line.setUnitCost(ErpInvConfigs.roundCost(weightedUnitCost));
         daoProvider.daoFor(ErpInvStockMoveLine.class).saveOrUpdateEntity(line);
 
         final BigDecimal fifoTotalCost = totalCost;
@@ -158,7 +161,7 @@ public class FifoCostingStrategy implements CostingStrategy {
         layer.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
         layer.setIncomingQuantity(qty);
         layer.setRemainingQuantity(qty);
-        layer.setUnitCost(unitCost);
+        layer.setUnitCost(ErpInvConfigs.roundCost(unitCost));
         layer.setTotalCost(totalCost);
         layer.setCurrencyId(line.getCurrencyId());
         layer.setIncomingDate(move.getBusinessDate() != null ? move.getBusinessDate() : CoreMetrics.today());

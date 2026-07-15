@@ -16,9 +16,6 @@
   "taxAmount": 0.0,
   "otherDeductions": 0.0,
   "netSalary": 0.0,
-  "employeeDisplayName": "",
-  "bankFileBatchNo": "",
-  "orgName": "",
   "paymentStatus": "",
   "paymentStatus_label": "",
   "paymentDate": "2000-01-01",
@@ -48,5 +45,6 @@
   "nopFlowId": "",
   "employee": null,
   "org": null,
+  "org.name": "",
   "bankFile": null
 }

@@ -29,12 +29,11 @@
   "updateTime": "2000-01-01 14:00:00",
   "plan": null,
   "material": null,
+  "material.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "sourceWarehouse": null,
+  "sourceWarehouse.name": "",
   "org": null,
-  "planName": "",
-  "materialName": "",
-  "warehouseName": "",
-  "sourceWarehouseName": "",
-  "orgName": ""
+  "org.name": ""
 }

@@ -64,9 +64,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="testedAt" displayName="测试时间" propId="12" i18n-en:displayName="Tested At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="testedAt" displayName="测试时间" propId="12" i18n-en:displayName="Tested At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="notes" displayName="备注" propId="13" i18n-en:displayName="Notes" queryable="true" sortable="true"
               insertable="true" updatable="true">

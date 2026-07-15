@@ -21,9 +21,7 @@
   "territory": null,
   "team": null,
   "org": null,
+  "org.name": "",
   "currency": null,
-  "orgName": "",
-  "territoryName": "",
-  "teamName": "",
-  "currencyName": ""
+  "currency.name": ""
 }

@@ -65,7 +65,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
     public static final String PROP_NAME_testedBy = "testedBy";
     public static final int PROP_ID_testedBy = 11;
     
-    /* 测试时间: TESTED_AT DATETIME */
+    /* 测试时间: TESTED_AT TIMESTAMP */
     public static final String PROP_NAME_testedAt = "testedAt";
     public static final int PROP_ID_testedAt = 12;
     
@@ -206,7 +206,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
     private java.lang.String _testedBy;
     
     /* 测试时间: TESTED_AT */
-    private java.time.LocalDateTime _testedAt;
+    private java.sql.Timestamp _testedAt;
     
     /* 备注: NOTES */
     private java.lang.String _notes;
@@ -482,9 +482,9 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
             }
         
             case PROP_ID_testedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_testedAt));
                }
                setTestedAt(typedValue);
@@ -649,7 +649,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
         
             case PROP_ID_testedAt:{
                onInitProp(propId);
-               this._testedAt = (java.time.LocalDateTime)value;
+               this._testedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -921,7 +921,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
     /**
      * 测试时间: TESTED_AT
      */
-    public final java.time.LocalDateTime getTestedAt(){
+    public final java.sql.Timestamp getTestedAt(){
          onPropGet(PROP_ID_testedAt);
          return _testedAt;
     }
@@ -929,7 +929,7 @@ public class _ErpB2bTestExchange extends DynamicOrmEntity{
     /**
      * 测试时间: TESTED_AT
      */
-    public final void setTestedAt(java.time.LocalDateTime value){
+    public final void setTestedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_testedAt,value)){
             this._testedAt = value;
             internalClearRefs(PROP_ID_testedAt);

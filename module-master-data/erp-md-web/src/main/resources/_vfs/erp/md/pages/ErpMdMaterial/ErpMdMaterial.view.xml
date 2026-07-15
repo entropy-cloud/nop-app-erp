@@ -8,20 +8,20 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
                 <col id="materialType" mandatory="true" sortable="true"/>
-                <col id="categoryName" label="分类"/>
-                <col id="uomName" label="主计量单位"/>
+                <col id="categoryId" label="分类"/>
+                <col id="uoMId" label="主计量单位"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="costMethod" sortable="true"/>
                 <col id="isBatchManaged" sortable="true"/>
                 <col id="isSerialManaged" sortable="true"/>
-                <col id="defaultWarehouseName" label="默认仓库"/>
+                <col id="defaultWarehouseId" label="默认仓库"/>
                 <col id="minStock" ui:number="true" sortable="true"/>
                 <col id="maxStock" ui:number="true" sortable="true"/>
                 <col id="safetyStock" ui:number="true" sortable="true"/>
                 <col id="leadTimeDays" ui:number="true" sortable="true"/>
                 <col id="weight" ui:number="true" sortable="true"/>
                 <col id="volume" ui:number="true" sortable="true"/>
-                <col id="defaultTaxRateName" label="默认税率"/>
+                <col id="defaultTaxRateId" label="默认税率"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
                 <col id="createTime" mandatory="true" sortable="true"/>

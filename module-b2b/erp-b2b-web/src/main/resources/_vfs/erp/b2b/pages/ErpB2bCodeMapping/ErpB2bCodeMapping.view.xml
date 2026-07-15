@@ -5,11 +5,11 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="mappingType" mandatory="true" sortable="true"/>
                 <col id="internalCode" mandatory="true" sortable="true"/>
                 <col id="externalCode" mandatory="true" sortable="true"/>
-                <col id="partnerName" label="Trading Partner"/>
+                <col id="partnerId" label="Trading Partner"/>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

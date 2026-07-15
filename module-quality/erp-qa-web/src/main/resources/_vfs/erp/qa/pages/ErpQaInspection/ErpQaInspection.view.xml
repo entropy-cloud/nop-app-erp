@@ -6,12 +6,12 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="组织"/>
+                <col id="orgId" label="组织"/>
                 <col id="inspectionType" mandatory="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
+                <col id="materialId" label="物料"/>
                 <col id="templateCode" label="检验模板"/>
-                <col id="supplierName" label="供应商"/>
-                <col id="warehouseName" label="仓库"/>
+                <col id="supplierId" label="供应商"/>
+                <col id="warehouseId" label="仓库"/>
                 <col id="batchNo" sortable="true"/>
                 <col id="inspectionDate" mandatory="true" sortable="true"/>
                 <col id="lotQuantity" ui:number="true" sortable="true"/>

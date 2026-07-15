@@ -92,14 +92,21 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="supplier" i18n-en:displayName="Supplier" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
         </prop>
-        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+        <prop name="supplier.name" i18n-en:displayName="Supplier" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="criterias" i18n-en:displayName="Criteria" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="scorecardId" insertable="true"

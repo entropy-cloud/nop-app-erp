@@ -29,8 +29,8 @@
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="project">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="编码" propId="3" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="编码" propId="3" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="projectCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="name" displayName="里程碑名称" propId="4" i18n-en:displayName="Name" mandatory="true" queryable="true"

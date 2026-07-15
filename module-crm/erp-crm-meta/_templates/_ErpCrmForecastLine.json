@@ -19,6 +19,5 @@
   "forecast": null,
   "lead": null,
   "org": null,
-  "leadCode": "",
-  "orgName": ""
+  "org.name": ""
 }

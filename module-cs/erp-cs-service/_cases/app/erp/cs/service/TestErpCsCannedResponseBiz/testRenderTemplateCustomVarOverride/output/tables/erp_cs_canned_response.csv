@@ -1,0 +1,2 @@
+_chgType,ID,CODE,ORG_ID,TITLE,CONTENT,CATEGORY_ID,VARIABLE_DEFS,MACRO_TICKET_TYPE_ID,MACRO_PRIORITY,SEQUENCE,IS_ACTIVE,USAGE_COUNT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9302,@var:ErpCsCannedResponse@code,,CR-RENDER-002,{customer_name},,"{""variables"":[{""key"":""{customer_name}"",""required"":false}]}",,,0,true,0,@var:ErpCsCannedResponse@delVersion,0,autotest-ref,*,autotest-ref,*

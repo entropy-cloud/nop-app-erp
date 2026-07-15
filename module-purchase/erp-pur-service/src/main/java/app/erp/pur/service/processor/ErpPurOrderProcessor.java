@@ -226,7 +226,7 @@ public class ErpPurOrderProcessor {
     protected void doApprove(ErpPurOrder order, IServiceContext context) {
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
-        order.setApprovedAt(CoreMetrics.currentDateTime());
+        order.setApprovedAt(CoreMetrics.currentTimestamp());
         orderDao().updateEntity(order);
     }
 

@@ -1,6 +1,6 @@
 _chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,15,12,PURCHASE_INPUT,*,,PURCHASE_INPUT,*,0,autotest-ref,*,autotest-ref,*
-A,22,18,AP_INVOICE,PI-REV-001,,AP_INVOICE,*,0,autotest-ref,*,autotest-ref,*
-A,28,25,PAYMENT,PY-REV-001,,PAYMENT,*,0,autotest-ref,*,autotest-ref,*
-A,35,32,PAYMENT,PY-REV-001,,PAYMENT,*,0,autotest-ref,*,autotest-ref,*
-A,40,36,AP_INVOICE,PI-REV-001,,AP_INVOICE,*,0,autotest-ref,*,autotest-ref,*
+A,15,12,PURCHASE_INPUT,@var:ErpFinVoucherBillR@billCode,,PURCHASE_INPUT,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,22,18,AP_INVOICE,@var:ErpFinVoucherBillR@billCode_4,,AP_INVOICE,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,28,25,PAYMENT,@var:ErpFinVoucherBillR@billCode_3,,PAYMENT,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,35,32,PAYMENT,@var:ErpFinVoucherBillR@billCode_3,,PAYMENT,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,40,36,AP_INVOICE,@var:ErpFinVoucherBillR@billCode_4,,AP_INVOICE,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*

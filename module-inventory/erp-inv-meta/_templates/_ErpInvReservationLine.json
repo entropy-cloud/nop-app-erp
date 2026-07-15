@@ -19,8 +19,13 @@
   "updateTime": "2000-01-01 14:00:00",
   "reservation": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "location": null,
-  "uom": null
+  "location.name": "",
+  "uom": null,
+  "uom.name": ""
 }

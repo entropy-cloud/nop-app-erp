@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "1",
-    "code": "SMOKE-PUR",
+    "code": "@var:ErpPurRequisition@code",
     "requesterId": 1,
     "businessDate": "2026-07-01",
     "docStatus": "DRAFT",
@@ -14,15 +14,12 @@
     "createTime": "@var:ErpPurRequisition@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpPurRequisition@updateTime",
-    "departmentName": null,
-    "requesterName": "冒烟职员",
     "orgId": null,
     "departmentId": null,
     "requiredDate": null,
     "approvedBy": null,
     "approvedAt": null,
-    "remark": null,
-    "orgName": null
+    "remark": null
   },
   "status": 0
 }

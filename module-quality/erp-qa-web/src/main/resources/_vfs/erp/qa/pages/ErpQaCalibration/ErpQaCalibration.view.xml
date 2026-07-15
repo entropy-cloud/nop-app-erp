@@ -6,7 +6,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="组织"/>
+                <col id="orgId" label="组织"/>
                 <col id="instrumentName" mandatory="true" sortable="true"/>
                 <col id="instrumentCode" sortable="true"/>
                 <col id="businessDate" mandatory="true" sortable="true"/>

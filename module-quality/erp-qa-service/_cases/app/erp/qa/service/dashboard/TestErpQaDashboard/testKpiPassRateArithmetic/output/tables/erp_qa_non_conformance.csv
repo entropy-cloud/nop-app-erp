@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NCR_DATE,SOURCE_TYPE,SOURCE_CODE,MATERIAL_ID,INSPECTION_ID,QUANTITY,DESCRIPTION,SEVERITY,DISPOSITION_TYPE,STATUS,SUPPLIER_ID,PARAMETER_NAME,MEASURED_VALUE,SPEC_MIN,SPEC_MAX,ASSIGNED_TO,RESOLVED_BY,RESOLVED_AT,RESOLUTION,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,POSTED,POSTED_AT,POSTED_BY,RETURN_CODE
+A,201,@var:ErpQaNonConformance@code,2026-07-15,,,1,,,,MAJOR,SCRAP,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_2,0,autotest-ref,*,autotest-ref,*,false,,,
+A,202,@var:ErpQaNonConformance@code_1,2026-07-15,,,1,,,,MAJOR,RETURN,IN_REVIEW,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_2,0,autotest-ref,*,autotest-ref,*,false,,,
+A,203,@var:ErpQaNonConformance@code_2,2026-07-15,,,1,,,,MAJOR,SCRAP,RESOLVED,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_2,0,autotest-ref,*,autotest-ref,*,false,,,

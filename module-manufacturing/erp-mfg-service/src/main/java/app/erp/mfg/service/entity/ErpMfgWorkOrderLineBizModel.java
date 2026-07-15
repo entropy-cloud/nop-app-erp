@@ -1,16 +1,12 @@
 
 package app.erp.mfg.service.entity;
 
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.biz.crud.CrudBizModel;
 
 import app.erp.mfg.biz.IErpMfgWorkOrderLineBiz;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @BizModel("ErpMfgWorkOrderLine")
@@ -19,33 +15,4 @@ public class ErpMfgWorkOrderLineBizModel extends CrudBizModel<ErpMfgWorkOrderLin
         setEntityName(ErpMfgWorkOrderLine.class.getName());
     }
 
-    @BizLoader(forType = ErpMfgWorkOrderLine.class)
-    public List<String> materialName(@ContextSource List<ErpMfgWorkOrderLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpMfgWorkOrderLine line : lines) {
-            result.add(line.getMaterial() != null ? line.getMaterial().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMfgWorkOrderLine.class)
-    public List<String> sourceWarehouseName(@ContextSource List<ErpMfgWorkOrderLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("sourceWarehouse"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpMfgWorkOrderLine line : lines) {
-            result.add(line.getSourceWarehouse() != null ? line.getSourceWarehouse().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMfgWorkOrderLine.class)
-    public List<String> destWarehouseName(@ContextSource List<ErpMfgWorkOrderLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("destWarehouse"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpMfgWorkOrderLine line : lines) {
-            result.add(line.getDestWarehouse() != null ? line.getDestWarehouse().getName() : null);
-        }
-        return result;
-    }
 }

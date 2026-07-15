@@ -5,8 +5,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="ediDocName" label="EDI 事务"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="ediDocId" label="EDI 事务"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="direction" mandatory="true" sortable="true"/>
                 <col id="requestPayload" sortable="true"/>
                 <col id="responsePayload" sortable="true"/>

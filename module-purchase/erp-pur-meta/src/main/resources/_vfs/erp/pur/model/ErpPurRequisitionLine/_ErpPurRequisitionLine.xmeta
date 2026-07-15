@@ -89,24 +89,39 @@
             <schema bizObjName="ErpPurRequisition"/>
         </prop>
         <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
+        <prop name="material.name" i18n-en:displayName="Material" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="uoM" i18n-en:displayName="Uo M" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="uoMId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+              ext:joinLeftProp="uoMId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="uoM.name" i18n-en:displayName="Uo M" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="suggestedSupplier" i18n-en:displayName="Suggested Supplier" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="suggestedSupplierId" ext:joinRightProp="id"
-              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
         </prop>
+        <prop name="suggestedSupplier.name" i18n-en:displayName="Suggested Supplier" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="project" i18n-en:displayName="Project" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" biz:moduleId="erp/prj"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/prj" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpPrjProject"/>
+        </prop>
+        <prop name="project.name" i18n-en:displayName="Project" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

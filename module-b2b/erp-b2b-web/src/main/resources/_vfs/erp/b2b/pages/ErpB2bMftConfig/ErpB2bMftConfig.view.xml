@@ -5,8 +5,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="partnerName" label="合作伙伴"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="partnerId" label="合作伙伴"/>
                 <col id="protocol" mandatory="true" sortable="true"/>
                 <col id="transportEndpoint" mandatory="true" sortable="true"/>
                 <col id="localAs2Id" sortable="true"/>
@@ -20,7 +20,7 @@
                 <col id="encryptionAlgo" sortable="true"/>
                 <col id="signature" sortable="true"/>
                 <col id="signatureAlgo" sortable="true"/>
-                <col id="certName" label="关联证书"/>
+                <col id="certId" label="关联证书"/>
                 <col id="active" sortable="true"/>
                 <col id="maxRetries" ui:number="true" sortable="true"/>
                 <col id="retryIntervalMin" ui:number="true" sortable="true"/>

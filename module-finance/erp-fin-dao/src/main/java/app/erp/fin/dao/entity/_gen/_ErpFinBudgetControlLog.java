@@ -85,7 +85,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     public static final String PROP_NAME_operatorId = "operatorId";
     public static final int PROP_ID_operatorId = 16;
     
-    /* 操作时间: OPERATED_AT DATETIME */
+    /* 操作时间: OPERATED_AT TIMESTAMP */
     public static final String PROP_NAME_operatedAt = "operatedAt";
     public static final int PROP_ID_operatedAt = 17;
     
@@ -271,7 +271,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     private java.lang.String _operatorId;
     
     /* 操作时间: OPERATED_AT */
-    private java.time.LocalDateTime _operatedAt;
+    private java.sql.Timestamp _operatedAt;
     
     /* 原因: REASON */
     private java.lang.String _reason;
@@ -612,9 +612,9 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_operatedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_operatedAt));
                }
                setOperatedAt(typedValue);
@@ -814,7 +814,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
         
             case PROP_ID_operatedAt:{
                onInitProp(propId);
-               this._operatedAt = (java.time.LocalDateTime)value;
+               this._operatedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1181,7 +1181,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 操作时间: OPERATED_AT
      */
-    public final java.time.LocalDateTime getOperatedAt(){
+    public final java.sql.Timestamp getOperatedAt(){
          onPropGet(PROP_ID_operatedAt);
          return _operatedAt;
     }
@@ -1189,7 +1189,7 @@ public class _ErpFinBudgetControlLog extends DynamicOrmEntity{
     /**
      * 操作时间: OPERATED_AT
      */
-    public final void setOperatedAt(java.time.LocalDateTime value){
+    public final void setOperatedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_operatedAt,value)){
             this._operatedAt = value;
             internalClearRefs(PROP_ID_operatedAt);

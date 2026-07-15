@@ -6,9 +6,9 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialName" label="物料(空表示通用)"/>
-                <col id="fromUoMName" label="源单位"/>
-                <col id="toUoMName" label="目标单位"/>
+                <col id="materialId" label="物料(空表示通用)"/>
+                <col id="fromUoMId" label="源单位"/>
+                <col id="toUoMId" label="目标单位"/>
                 <col id="conversionRate" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

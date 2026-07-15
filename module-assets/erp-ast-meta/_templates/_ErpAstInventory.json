@@ -32,16 +32,15 @@
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
   "org": null,
+  "org.name": "",
   "rangeDepartment": null,
+  "rangeDepartment.name": "",
   "rangeCategory": null,
   "rangeLocation": null,
+  "rangeLocation.name": "",
   "responsibleBy": null,
+  "responsibleBy.name": "",
   "currency": null,
-  "lines": null,
-  "orgName": "",
-  "rangeDepartmentName": "",
-  "rangeCategoryName": "",
-  "rangeLocationName": "",
-  "responsibleByName": "",
-  "currencyName": ""
+  "currency.name": "",
+  "lines": null
 }

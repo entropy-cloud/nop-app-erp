@@ -1,0 +1,6 @@
+_chgType,ID,CODE,NAME,ORG_ID,PARENT_ID,TERRITORY_TYPE,MANAGER_ID,DESCRIPTION,FULL_PATH,LEVEL,IS_ACTIVE,IS_LEAF,SORT_ORDER,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpCrmTerritory@code_4,L4OK,1301,7204,TEAM,,,/T-ROOT-C/T-L1/T-L2/T-L3/T-L4-OK,4,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,7201,@var:ErpCrmTerritory@code,公司C,1301,,REGION,,,/,0,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,7202,@var:ErpCrmTerritory@code_1,L1,1301,7201,REGION,,,/T-ROOT-C/T-L1,1,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,7203,@var:ErpCrmTerritory@code_2,L2,1301,7202,AREA,,,/T-ROOT-C/T-L1/T-L2,2,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,7204,@var:ErpCrmTerritory@code_3,L3,1301,7203,BRANCH,,,/T-ROOT-C/T-L1/T-L2/T-L3,3,true,false,0,,@var:ErpCrmTerritory@delVersion_4,1,autotest-ref,*,autotest-ref,*

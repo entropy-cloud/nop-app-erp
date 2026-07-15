@@ -9,7 +9,7 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
                 <col id="inspectionType" mandatory="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
+                <col id="materialId" label="物料"/>
                 <col id="isActive" mandatory="true" ui:number="true" sortable="true"/>
             </cols>
         </grid>

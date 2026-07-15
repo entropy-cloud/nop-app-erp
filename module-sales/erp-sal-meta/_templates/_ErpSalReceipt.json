@@ -33,13 +33,16 @@
   "remark": "",
   "nopFlowId": "",
   "customer": null,
+  "customer.name": "",
   "currency": null,
+  "currency.name": "",
   "settlementMethod": null,
+  "settlementMethod.name": "",
   "org": null,
+  "org.name": "",
   "bankAccount": null,
+  "bankAccount.bankName": "",
   "partnerBankAccount": null,
-  "lines": null,
-  "customerName": "",
-  "currencyName": "",
-  "orgName": ""
+  "partnerBankAccount.bankName": "",
+  "lines": null
 }

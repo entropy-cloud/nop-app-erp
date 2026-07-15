@@ -7,10 +7,6 @@ import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.support.EquipmentStatusLinker;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -23,6 +19,7 @@ import java.math.BigDecimal;
 import io.nop.core.context.IServiceContext;
 import java.util.Objects;
 
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -38,36 +35,6 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
 
     public ErpMntVisitBizModel() {
         setEntityName(ErpMntVisit.class.getName());
-    }
-
-    @BizLoader(forType = ErpMntVisit.class)
-    public List<String> orgName(@ContextSource List<ErpMntVisit> list) {
-        orm().batchLoadProps(list, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntVisit entity : list) {
-            result.add(entity.getOrg() != null ? entity.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMntVisit.class)
-    public List<String> scheduleCode(@ContextSource List<ErpMntVisit> list) {
-        orm().batchLoadProps(list, Collections.singleton("schedule"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntVisit entity : list) {
-            result.add(entity.getSchedule() != null ? entity.getSchedule().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpMntVisit.class)
-    public List<String> equipmentCode(@ContextSource List<ErpMntVisit> list) {
-        orm().batchLoadProps(list, Collections.singleton("equipment"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntVisit entity : list) {
-            result.add(entity.getEquipment() != null ? entity.getEquipment().getCode() : null);
-        }
-        return result;
     }
 
     @Override
@@ -179,20 +146,20 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
     protected void doStart(ErpMntVisit visit, IServiceContext context) {
         visit.setStatus(ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS);
         if (visit.getStartTime() == null) {
-            visit.setStartTime(CoreMetrics.currentDateTime());
+            visit.setStartTime(CoreMetrics.currentTimestamp());
         }
         updateEntity(visit, null, context);
     }
 
     protected void doComplete(ErpMntVisit visit, IServiceContext context) {
         visit.setStatus(ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
-        LocalDateTime endTime = visit.getEndTime() == null ? CoreMetrics.currentDateTime() : visit.getEndTime();
+        Timestamp endTime = visit.getEndTime() == null ? CoreMetrics.currentTimestamp() : visit.getEndTime();
         visit.setEndTime(endTime);
         if (visit.getStartTime() != null) {
-            long minutes = Duration.between(visit.getStartTime(), endTime).toMinutes();
+            long minutes = Duration.between(visit.getStartTime().toLocalDateTime(), endTime.toLocalDateTime()).toMinutes();
             visit.setTotalMinutes(BigDecimal.valueOf(minutes));
         }
-        visit.setCompletedAt(CoreMetrics.currentDateTime());
+        visit.setCompletedAt(CoreMetrics.currentTimestamp());
         updateEntity(visit, null, context);
     }
 

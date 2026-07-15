@@ -1,0 +1,8 @@
+_chgType,ID,CODE,NAME,PARENT_ID,SUBJECT_CLASS,DIRECTION,BALANCE_TYPE,CURRENCY_ID,IS_AUXILIARY_PARTNER,IS_AUXILIARY_DEPARTMENT,IS_AUXILIARY_PROJECT,IS_AUXILIARY_WAREHOUSE,IS_AUXILIARY_PRODUCT,IS_AUXILIARY_COST_CENTER,IS_BUDGETABLE,IS_LEAF,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
+A,10,@var:ErpMdSubject@code_4,本年利润,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,11,@var:ErpMdSubject@code_5,应付职工薪酬,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,12,@var:ErpMdSubject@code_6,项目成本,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,6,@var:ErpMdSubject@code,主营业务收入,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,7,@var:ErpMdSubject@code_1,项目成本,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,8,@var:ErpMdSubject@code_2,固定资产,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,
+A,9,@var:ErpMdSubject@code_3,在建工程,,EXPENSE,DEBIT,,,false,false,false,false,false,false,false,true,ACTIVE,@var:ErpMdSubject@delVersion_6,0,autotest-ref,*,autotest-ref,*,

@@ -8,8 +8,6 @@ import app.erp.qa.dao.entity.ErpQaInspectionLine;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
@@ -22,8 +20,6 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import java.util.Objects;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,66 +46,6 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
 
     public ErpQaInspectionBizModel() {
         setEntityName(ErpQaInspection.class.getName());
-    }
-
-    @BizLoader(forType = ErpQaInspection.class)
-    public List<String> materialName(@ContextSource List<ErpQaInspection> list) {
-        orm().batchLoadProps(list, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaInspection entity : list) {
-            result.add(entity.getMaterial() != null ? entity.getMaterial().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpQaInspection.class)
-    public List<String> templateCode(@ContextSource List<ErpQaInspection> list) {
-        orm().batchLoadProps(list, Collections.singleton("template"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaInspection entity : list) {
-            result.add(entity.getTemplate() != null ? entity.getTemplate().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpQaInspection.class)
-    public List<String> supplierName(@ContextSource List<ErpQaInspection> list) {
-        orm().batchLoadProps(list, Collections.singleton("supplier"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaInspection entity : list) {
-            result.add(entity.getSupplier() != null ? entity.getSupplier().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpQaInspection.class)
-    public List<String> warehouseName(@ContextSource List<ErpQaInspection> list) {
-        orm().batchLoadProps(list, Collections.singleton("warehouse"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaInspection entity : list) {
-            result.add(entity.getWarehouse() != null ? entity.getWarehouse().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpQaInspection.class)
-    public List<String> inspectorName(@ContextSource List<ErpQaInspection> list) {
-        orm().batchLoadProps(list, Collections.singleton("inspector"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaInspection entity : list) {
-            result.add(entity.getInspector() != null ? entity.getInspector().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpQaInspection.class)
-    public List<String> orgName(@ContextSource List<ErpQaInspection> list) {
-        orm().batchLoadProps(list, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaInspection entity : list) {
-            result.add(entity.getOrg() != null ? entity.getOrg().getName() : null);
-        }
-        return result;
     }
 
     public void setNcrLifecycleService(NcrLifecycleService ncrLifecycleService) {
@@ -149,7 +85,7 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
         if (concession && Objects.equals(aggregated, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL)) {
             inspection.setApproveStatus(ErpQaConstants.APPROVE_STATUS_APPROVED);
             inspection.setApprovedBy(context.getUserId());
-            inspection.setApprovedAt(CoreMetrics.currentDateTime());
+            inspection.setApprovedAt(CoreMetrics.currentTimestamp());
         }
         updateEntity(inspection, null, context);
 

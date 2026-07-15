@@ -130,7 +130,7 @@ public class ForecastAggregator {
         forecast.setOpportunityCount(totals.opportunityCount);
         forecast.setCommitOpportunityCount(totals.commitOpportunityCount);
         forecast.setExpectedClosedRevenue(BigDecimal.ZERO);
-        forecast.setLastCalculatedAt(CoreMetrics.currentDateTime());
+        forecast.setLastCalculatedAt(CoreMetrics.currentTimestamp());
         return forecast;
     }
 
@@ -196,7 +196,7 @@ public class ForecastAggregator {
         accuracy.setCommitAccuracy(commitAccuracy.doubleValue());
         accuracy.setUpsideAccuracy(upsideAccuracy.doubleValue());
         accuracy.setDeviationAmount(deviation);
-        accuracy.setCalculatedAt(CoreMetrics.currentDateTime());
+        accuracy.setCalculatedAt(CoreMetrics.currentTimestamp());
         return accuracy;
     }
 

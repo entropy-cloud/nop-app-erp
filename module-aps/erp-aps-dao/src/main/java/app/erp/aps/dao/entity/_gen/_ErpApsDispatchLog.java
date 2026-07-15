@@ -57,7 +57,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
     public static final String PROP_NAME_dispatchedBy = "dispatchedBy";
     public static final int PROP_ID_dispatchedBy = 9;
     
-    /* 派工时间: DISPATCHED_AT DATETIME */
+    /* 派工时间: DISPATCHED_AT TIMESTAMP */
     public static final String PROP_NAME_dispatchedAt = "dispatchedAt";
     public static final int PROP_ID_dispatchedAt = 10;
     
@@ -210,7 +210,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
     private java.lang.String _dispatchedBy;
     
     /* 派工时间: DISPATCHED_AT */
-    private java.time.LocalDateTime _dispatchedAt;
+    private java.sql.Timestamp _dispatchedAt;
     
     /* 物料齐套: MATERIAL_AVAILABLE */
     private java.lang.Boolean _materialAvailable;
@@ -478,9 +478,9 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_dispatchedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_dispatchedAt));
                }
                setDispatchedAt(typedValue);
@@ -661,7 +661,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
         
             case PROP_ID_dispatchedAt:{
                onInitProp(propId);
-               this._dispatchedAt = (java.time.LocalDateTime)value;
+               this._dispatchedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -916,7 +916,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
     /**
      * 派工时间: DISPATCHED_AT
      */
-    public final java.time.LocalDateTime getDispatchedAt(){
+    public final java.sql.Timestamp getDispatchedAt(){
          onPropGet(PROP_ID_dispatchedAt);
          return _dispatchedAt;
     }
@@ -924,7 +924,7 @@ public class _ErpApsDispatchLog extends DynamicOrmEntity{
     /**
      * 派工时间: DISPATCHED_AT
      */
-    public final void setDispatchedAt(java.time.LocalDateTime value){
+    public final void setDispatchedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_dispatchedAt,value)){
             this._dispatchedAt = value;
             internalClearRefs(PROP_ID_dispatchedAt);

@@ -6,7 +6,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="recallCode" label="召回事件"/>
-                <col id="partnerName" label="客户"/>
+                <col id="partnerId" label="客户"/>
                 <col id="batchNo" sortable="true"/>
                 <col id="serialNo" sortable="true"/>
                 <col id="shippedQty" ui:number="true" sortable="true"/>

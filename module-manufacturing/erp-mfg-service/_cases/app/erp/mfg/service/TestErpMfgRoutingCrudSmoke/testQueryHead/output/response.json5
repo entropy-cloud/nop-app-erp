@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "1",
-        "code": "SMOKE-MFG",
+        "code": "@var:ErpMfgRouting@code",
         "name": null,
         "isActive": true,
         "remark": null,

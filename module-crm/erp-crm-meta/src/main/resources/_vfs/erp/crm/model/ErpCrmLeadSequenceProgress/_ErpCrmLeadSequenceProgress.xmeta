@@ -43,13 +43,13 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="20" dict="erp-crm/sequence-progress-status"/>
         </prop>
-        <prop name="startedAt" displayName="开始时间" propId="7" i18n-en:displayName="Started At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="startedAt" displayName="开始时间" propId="7" i18n-en:displayName="Started At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="completedAt" displayName="完成时间" propId="8" i18n-en:displayName="Completed At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="completedAt" displayName="完成时间" propId="8" i18n-en:displayName="Completed At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="remark" displayName="备注" propId="9" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -90,9 +90,12 @@
             <schema bizObjName="ErpCrmSequence"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

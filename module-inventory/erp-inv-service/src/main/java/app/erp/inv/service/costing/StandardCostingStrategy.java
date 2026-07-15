@@ -1,5 +1,7 @@
 package app.erp.inv.service.costing;
 
+import app.erp.inv.service.ErpInvConfigs;
+
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;

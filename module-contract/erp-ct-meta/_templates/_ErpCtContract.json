@@ -28,16 +28,14 @@
   "updateTime": "2000-01-01 14:00:00",
   "businessDate": "2000-01-01",
   "partner": null,
+  "partner.name": "",
   "template": null,
   "parentContract": null,
   "org": null,
+  "org.name": "",
   "lines": null,
   "versions": null,
   "currency": null,
-  "attachmentFileIdComponentFileStatus": null,
-  "partnerName": "",
-  "templateName": "",
-  "parentContractName": "",
-  "orgName": "",
-  "currencyName": ""
+  "currency.name": "",
+  "attachmentFileIdComponentFileStatus": null
 }

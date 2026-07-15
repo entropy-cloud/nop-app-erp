@@ -19,7 +19,11 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "supplier": null,
+  "supplier.name": "",
   "material": null,
+  "material.name": "",
   "uoM": null,
-  "currency": null
+  "uoM.name": "",
+  "currency": null,
+  "currency.name": ""
 }

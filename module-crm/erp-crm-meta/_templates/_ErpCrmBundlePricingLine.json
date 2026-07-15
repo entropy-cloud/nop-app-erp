@@ -15,8 +15,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "bundle": null,
   "org": null,
+  "org.name": "",
   "product": null,
-  "bundleName": "",
-  "orgName": "",
-  "materialName": ""
+  "product.name": ""
 }

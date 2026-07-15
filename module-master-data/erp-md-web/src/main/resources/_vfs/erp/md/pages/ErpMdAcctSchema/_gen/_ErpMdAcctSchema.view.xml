@@ -62,12 +62,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--核算组织-->
-                <col id="orgName"/>
-
-                <!--本位币-->
-                <col id="functionalCurrencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -83,7 +77,6 @@
  status[状态] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- orgName[核算组织] functionalCurrencyName[本位币]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-会计核算表(账套)" i18n-en:title="Add Accounting Schema" x:prototype="edit"/>

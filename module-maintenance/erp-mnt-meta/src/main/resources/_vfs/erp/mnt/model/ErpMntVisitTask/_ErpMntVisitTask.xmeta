@@ -43,9 +43,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="completedAt" displayName="完成时间" propId="7" i18n-en:displayName="Completed At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="completedAt" displayName="完成时间" propId="7" i18n-en:displayName="Completed At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="remark" displayName="备注" propId="8" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

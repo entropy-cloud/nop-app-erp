@@ -265,54 +265,6 @@
         }
 
 
-        private String _costRollupCode;
-
-    
-        public String getCostRollupCode(){
-            return _costRollupCode;
-        }
-
-        public void setCostRollupCode(String value){
-            this._costRollupCode = value;
-        }
-
-
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _uomName;
-
-    
-        public String getUomName(){
-            return _uomName;
-        }
-
-        public void setUomName(String value){
-            this._uomName = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
-        }
-
-
         private Map<String,Object> _costRollup;
 
         public Map<String,Object> getCostRollup(){

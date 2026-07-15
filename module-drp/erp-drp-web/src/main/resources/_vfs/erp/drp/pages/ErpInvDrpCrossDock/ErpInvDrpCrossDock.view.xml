@@ -7,17 +7,17 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="drpLineName" label="DRP行"/>
-                <col id="inboundMoveName" label="入站移动单"/>
-                <col id="outboundMoveName" label="出站移动单"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="drpLineId" label="DRP行"/>
+                <col id="inboundMoveId" label="入站移动单"/>
+                <col id="outboundMoveId" label="出站移动单"/>
                 <col id="sourceBillType" sortable="true"/>
                 <col id="sourceBillCode" sortable="true"/>
                 <col id="targetBillType" sortable="true"/>
                 <col id="targetBillCode" sortable="true"/>
-                <col id="materialName" label="物料"/>
+                <col id="materialId" label="物料"/>
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="stagingLocationName" label="暂存库位"/>
+                <col id="stagingLocationId" label="暂存库位"/>
                 <col id="dockSlotTime" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="matchedAt" sortable="true"/>

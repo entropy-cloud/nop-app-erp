@@ -18,7 +18,5 @@
   "lead": null,
   "sequence": null,
   "org": null,
-  "leadCode": "",
-  "sequenceName": "",
-  "orgName": ""
+  "org.name": ""
 }

@@ -93,14 +93,14 @@
                 tableName="erp_prj_project" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="项目编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="项目编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="项目名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="projectTypeId" displayName="项目类型" stdSqlType="BIGINT" code="PROJECT_TYPE_ID" propId="5" stdDataType="long" i18n-en:displayName='Project Type' />
                 <column name="customerId" displayName="客户" stdSqlType="BIGINT" code="CUSTOMER_ID" propId="6" stdDataType="long" i18n-en:displayName='Customer' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="7" stdDataType="long" i18n-en:displayName='Currency' />
-                <column name="startDate" displayName="开始日期" stdSqlType="DATE" code="START_DATE" propId="8" stdDataType="date" i18n-en:displayName='Start Date' />
-                <column name="endDate" displayName="结束日期" stdSqlType="DATE" code="END_DATE" propId="9" stdDataType="date" i18n-en:displayName='End Date' />
+                <column name="startDate" displayName="开始日期" stdSqlType="DATE" code="START_DATE" propId="8" i18n-en:displayName='Start Date' />
+                <column name="endDate" displayName="结束日期" stdSqlType="DATE" code="END_DATE" propId="9" i18n-en:displayName='End Date' />
                 <column name="budget" displayName="预算总额" domain="budget" defaultValue="0" code="BUDGET" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" i18n-en:displayName='Budget' />
                 <column name="committedCost" displayName="已承诺成本" domain="amount" defaultValue="0" code="COMMITTED_COST" propId="11" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Committed Cost' />
                 <column name="actualCost" displayName="实际成本" domain="amount" defaultValue="0" code="ACTUAL_COST" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Actual Cost' />
@@ -164,10 +164,10 @@
                 <column name="parentTaskId" displayName="父任务" stdSqlType="BIGINT" code="PARENT_TASK_ID" propId="3" stdDataType="long" i18n-en:displayName='Parent Task' />
                 <column name="title" displayName="任务标题" domain="taskTitle" mandatory="true" code="TITLE" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Title' />
                 <column name="assigneeId" displayName="负责人" stdSqlType="BIGINT" code="ASSIGNEE_ID" propId="5" stdDataType="long" i18n-en:displayName='Assignee' />
-                <column name="plannedStartDate" displayName="计划开始日期" stdSqlType="DATE" code="PLANNED_START_DATE" propId="6" stdDataType="date" i18n-en:displayName='Planned Start Date' />
-                <column name="plannedEndDate" displayName="计划结束日期" stdSqlType="DATE" code="PLANNED_END_DATE" propId="7" stdDataType="date" i18n-en:displayName='Planned End Date' />
-                <column name="actualStartDate" displayName="实际开始日期" stdSqlType="DATE" code="ACTUAL_START_DATE" propId="8" stdDataType="date" i18n-en:displayName='Actual Start Date' />
-                <column name="actualEndDate" displayName="实际结束日期" stdSqlType="DATE" code="ACTUAL_END_DATE" propId="9" stdDataType="date" i18n-en:displayName='Actual End Date' />
+                <column name="plannedStartDate" displayName="计划开始日期" stdSqlType="DATE" code="PLANNED_START_DATE" propId="6" i18n-en:displayName='Planned Start Date' />
+                <column name="plannedEndDate" displayName="计划结束日期" stdSqlType="DATE" code="PLANNED_END_DATE" propId="7" i18n-en:displayName='Planned End Date' />
+                <column name="actualStartDate" displayName="实际开始日期" stdSqlType="DATE" code="ACTUAL_START_DATE" propId="8" i18n-en:displayName='Actual Start Date' />
+                <column name="actualEndDate" displayName="实际结束日期" stdSqlType="DATE" code="ACTUAL_END_DATE" propId="9" i18n-en:displayName='Actual End Date' />
                 <column name="estimatedHours" displayName="预估工时" domain="hours" code="ESTIMATED_HOURS" propId="10" stdSqlType="DECIMAL" precision="10" scale="2" stdDataType="decimal" i18n-en:displayName='Estimated Hours' />
                 <column name="actualHours" displayName="实际工时" domain="hours" code="ACTUAL_HOURS" propId="11" stdSqlType="DECIMAL" precision="10" scale="2" stdDataType="decimal" i18n-en:displayName='Actual Hours' />
                 <column name="dependsOnId" displayName="依赖任务" stdSqlType="BIGINT" code="DEPENDS_ON_ID" propId="12" stdDataType="long" i18n-en:displayName='Depends On' />
@@ -216,12 +216,12 @@
                 tableName="erp_prj_timesheet" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="4" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="taskId" displayName="任务" stdSqlType="BIGINT" code="TASK_ID" propId="5" stdDataType="long" i18n-en:displayName='Task' />
                 <column name="userId" displayName="用户(职员)" stdSqlType="BIGINT" mandatory="true" code="USER_ID" propId="6" stdDataType="long" i18n-en:displayName='User' />
-                <column name="workDate" displayName="工作日期" stdSqlType="DATE" mandatory="true" code="WORK_DATE" propId="7" stdDataType="date" i18n-en:displayName='Work Date' />
+                <column name="workDate" displayName="工作日期" stdSqlType="DATE" mandatory="true" code="WORK_DATE" propId="7" i18n-en:displayName='Work Date' />
                 <column name="hours" displayName="工时" domain="hours" mandatory="true" code="HOURS" propId="8" stdSqlType="DECIMAL" precision="10" scale="2" stdDataType="decimal" i18n-en:displayName='Hours' />
                 <column name="activityTypeId" displayName="活动类型" stdSqlType="BIGINT" code="ACTIVITY_TYPE_ID" propId="9" stdDataType="long" i18n-en:displayName='Activity Type' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="10" stdDataType="long" i18n-en:displayName='Currency' />
@@ -229,10 +229,10 @@
                 <column name="costAmount" displayName="成本金额" domain="costAmount" code="COST_AMOUNT" propId="12" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" i18n-en:displayName='Cost Amount' />
                 <column name="status" displayName="状态" ext:dict="wf/approve-status" mandatory="true" code="STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="posted" displayName="已过账(已转成本凭证)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="14" stdDataType="boolean" i18n-en:displayName='Posted'  ui:show="R"/>
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="15" stdDataType="datetime" i18n-en:displayName='Posted At'  ui:show="R"/>
+                <column name="postedAt" displayName="过账时间" tagSet="clock" stdSqlType="TIMESTAMP" code="POSTED_AT" propId="15" i18n-en:displayName='Posted At'  ui:show="R"/>
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="16" stdDataType="string" i18n-en:displayName='Posted By'  ui:show="R"/>
                 <column name="approvedBy" stdDomain="userId" displayName="审批人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="17" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
-                <column name="approvedAt" displayName="审批时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="18" stdDataType="datetime" i18n-en:displayName='Approved At'  ui:show="R"/>
+                <column name="approvedAt" displayName="审批时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="18" i18n-en:displayName='Approved At'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="19" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="20" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="21" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -283,7 +283,7 @@
                 tableName="erp_prj_project_type" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="类型编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="类型编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="类型名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="defaultSubjectId" displayName="默认科目" stdSqlType="BIGINT" code="DEFAULT_SUBJECT_ID" propId="4" stdDataType="long" i18n-en:displayName='Default Subject' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -313,7 +313,7 @@
                 tableName="erp_prj_activity_type" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="类型编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="类型编码" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="类型名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="3" stdDataType="string" i18n-en:displayName='Name' />
                 <column name="costRate" displayName="成本费率" domain="costRate" code="COST_RATE" propId="4" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" i18n-en:displayName='Cost Rate' />
                 <column name="subjectId" displayName="科目" stdSqlType="BIGINT" code="SUBJECT_ID" propId="5" stdDataType="long" i18n-en:displayName='Subject' />
@@ -347,8 +347,8 @@
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="2" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="userId" displayName="用户" stdSqlType="BIGINT" mandatory="true" code="USER_ID" propId="3" stdDataType="long" i18n-en:displayName='User' />
                 <column name="role" displayName="角色" stdSqlType="VARCHAR" precision="50" code="ROLE" propId="4" stdDataType="string" i18n-en:displayName='Role' />
-                <column name="startDate" displayName="加入日期" stdSqlType="DATE" code="START_DATE" propId="5" stdDataType="date" i18n-en:displayName='Start Date' />
-                <column name="endDate" displayName="退出日期" stdSqlType="DATE" code="END_DATE" propId="6" stdDataType="date" i18n-en:displayName='End Date' />
+                <column name="startDate" displayName="加入日期" stdSqlType="DATE" code="START_DATE" propId="5" i18n-en:displayName='Start Date' />
+                <column name="endDate" displayName="退出日期" stdSqlType="DATE" code="END_DATE" propId="6" i18n-en:displayName='End Date' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="7" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="8" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="9" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -376,16 +376,16 @@
                 tableName="erp_prj_budget" tagSet="gid,erp.projects,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="3" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="businessDate" displayName="预算日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="预算日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="6" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="totalAmount" displayName="预算总额" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-prj/project-status" mandatory="true" code="DOC_STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
-                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="201" stdDataType="datetime" i18n-en:displayName='Approved At'  ui:show="R"/>
+                <column name="approvedAt" displayName="审核时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="201" i18n-en:displayName='Approved At'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="12" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -473,23 +473,23 @@
                 tableName="erp_prj_cost_collection" tagSet="gid,erp.projects,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="3" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="businessDate" displayName="归集日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="归集日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="6" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="totalAmount" displayName="归集金额合计" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-prj/project-status" mandatory="true" code="DOC_STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
-                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="201" stdDataType="datetime" i18n-en:displayName='Approved At'  ui:show="R"/>
+                <column name="approvedAt" displayName="审核时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="201" i18n-en:displayName='Approved At'  ui:show="R"/>
                 <column name="posted" displayName="已过账(已转成本凭证)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="10" stdDataType="boolean" i18n-en:displayName='Posted'  ui:show="R"/>
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="11" stdDataType="datetime" i18n-en:displayName='Posted At'  ui:show="R"/>
+                <column name="postedAt" displayName="过账时间" tagSet="clock" stdSqlType="TIMESTAMP" code="POSTED_AT" propId="11" i18n-en:displayName='Posted At'  ui:show="R"/>
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="12" stdDataType="string" i18n-en:displayName='Posted By'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
-                <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1" mandatory="true" stdDataType="string" code="EXCHANGE_RATE" i18n-en:displayName='Exchange Rate' />
-                <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_SOURCE" i18n-en:displayName='Amt (Source)' />
-                <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" stdDataType="string" code="AMOUNT_FUNCTIONAL" i18n-en:displayName='Amt (Functional)' />
+                <column name="exchangeRate" displayName="汇率" stdSqlType="DECIMAL" precision="20" scale="8" defaultValue="1" mandatory="true"  code="EXCHANGE_RATE" i18n-en:displayName='Exchange Rate' />
+                <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0"  code="AMOUNT_SOURCE" i18n-en:displayName='Amt (Source)' />
+                <column name="amountFunctional" displayName="本位币金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0"  code="AMOUNT_FUNCTIONAL" i18n-en:displayName='Amt (Functional)' />
 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -538,7 +538,7 @@
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="costCategory" displayName="成本类别(人工/材料/费用/分包)" stdSqlType="VARCHAR" precision="50" mandatory="true" code="COST_CATEGORY" propId="4" stdDataType="string" i18n-en:displayName='Cost Category' />
                 <column name="sourceBillType" displayName="来源单据类型(TIMESHEET/PURCHASE/EXPENSE)" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_TYPE" propId="5" stdDataType="string" i18n-en:displayName='Source Bill Type' />
-                <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="6" stdDataType="string" i18n-en:displayName='Source Bill Code' />
+                <column name="sourceBillCode" displayName="来源单据号" tagSet="var" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="6" stdDataType="string" i18n-en:displayName='Source Bill Code' />
                 <column name="subjectId" displayName="科目" stdSqlType="BIGINT" code="SUBJECT_ID" propId="7" stdDataType="long" i18n-en:displayName='Subject' />
                 <column name="taskId" displayName="任务" stdSqlType="BIGINT" code="TASK_ID" propId="8" stdDataType="long" i18n-en:displayName='Task' />
                 <column name="amount" displayName="金额" domain="amount" mandatory="true" code="AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
@@ -577,10 +577,10 @@
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="2" stdDataType="long" i18n-en:displayName='Project' />
-                <column name="code" displayName="编码" domain="projectCode" mandatory="true" code="CODE" propId="3" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="编码" domain="projectCode" mandatory="true" code="CODE" propId="3" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" displayName="里程碑名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="NAME" propId="4" stdDataType="string" i18n-en:displayName='Name' />
-                <column name="plannedDate" displayName="计划完成日期" stdSqlType="DATE" mandatory="true" code="PLANNED_DATE" propId="5" stdDataType="date" i18n-en:displayName='Planned Date' />
-                <column name="actualDate" displayName="实际完成日期" stdSqlType="DATE" code="ACTUAL_DATE" propId="6" stdDataType="date" i18n-en:displayName='Actual Date' />
+                <column name="plannedDate" displayName="计划完成日期" stdSqlType="DATE" mandatory="true" code="PLANNED_DATE" propId="5" i18n-en:displayName='Planned Date' />
+                <column name="actualDate" displayName="实际完成日期" stdSqlType="DATE" code="ACTUAL_DATE" propId="6" i18n-en:displayName='Actual Date' />
                 <column name="billingAmount" displayName="应结算金额" domain="amount" defaultValue="0" code="BILLING_AMOUNT" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Billing Amount' />
                 <column name="isBillingTrigger" displayName="是否触发开票节点" stdSqlType="BOOLEAN" defaultValue="false" code="IS_BILLING_TRIGGER" propId="8" stdDataType="boolean" i18n-en:displayName='Is Billing Trigger' />
                 <column name="status" displayName="状态" ext:dict="erp-prj/task-status" mandatory="true" code="STATUS" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
@@ -614,21 +614,21 @@
                 tableName="erp_prj_billing" tagSet="gid,erp.projects,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="3" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="customerId" displayName="客户" stdSqlType="BIGINT" mandatory="true" code="CUSTOMER_ID" propId="5" stdDataType="long" i18n-en:displayName='Customer' />
                 <column name="milestoneId" displayName="关联里程碑" stdSqlType="BIGINT" code="MILESTONE_ID" propId="6" stdDataType="long" i18n-en:displayName='Milestone' />
-                <column name="businessDate" displayName="开票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="开票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="totalAmount" displayName="开票金额" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-prj/project-status" mandatory="true" code="DOC_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
-                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="201" stdDataType="datetime" i18n-en:displayName='Approved At'  ui:show="R"/>
+                <column name="approvedAt" displayName="审核时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="201" i18n-en:displayName='Approved At'  ui:show="R"/>
                 <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="13" stdDataType="boolean" i18n-en:displayName='Posted'  ui:show="R"/>
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="14" stdDataType="datetime" i18n-en:displayName='Posted At'  ui:show="R"/>
+                <column name="postedAt" displayName="过账时间" tagSet="clock" stdSqlType="TIMESTAMP" code="POSTED_AT" propId="14" i18n-en:displayName='Posted At'  ui:show="R"/>
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="15" stdDataType="string" i18n-en:displayName='Posted By'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                                             <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" code="AMOUNT_SOURCE" i18n-en:displayName='Amt (Source)' />
@@ -725,11 +725,11 @@
                 tableName="erp_prj_project_pnl" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="3" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="periodFrom" displayName="汇总期间起" stdSqlType="DATE" mandatory="true" code="PERIOD_FROM" propId="5" stdDataType="date" i18n-en:displayName='Period From' />
-                <column name="periodTo" displayName="汇总期间止" stdSqlType="DATE" mandatory="true" code="PERIOD_TO" propId="6" stdDataType="date" i18n-en:displayName='Period To' />
+                <column name="periodFrom" displayName="汇总期间起" stdSqlType="DATE" mandatory="true" code="PERIOD_FROM" propId="5" i18n-en:displayName='Period From' />
+                <column name="periodTo" displayName="汇总期间止" stdSqlType="DATE" mandatory="true" code="PERIOD_TO" propId="6" i18n-en:displayName='Period To' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="7" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" mandatory="true" code="EXCHANGE_RATE" propId="8" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="amountSource" displayName="源币种金额" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" code="AMOUNT_SOURCE" propId="9" i18n-en:displayName='Amt (Source)' />
@@ -741,7 +741,7 @@
                 <column name="costSubcontract" displayName="分包成本" domain="amount" defaultValue="0" code="COST_SUBCONTRACT" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Cost Subcontract' />
                 <column name="totalCost" displayName="成本合计" domain="amount" defaultValue="0" code="TOTAL_COST" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Cost' />
                 <column name="grossProfit" displayName="毛利" domain="amount" defaultValue="0" code="GROSS_PROFIT" propId="17" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Gross Profit' />
-                <column name="grossMarginPct" displayName="毛利率%" stdSqlType="DECIMAL" precision="10" scale="4" defaultValue="0" code="GROSS_MARGIN_PCT" propId="18" stdDataType="string" i18n-en:displayName='Gross Margin %' />
+                <column name="grossMarginPct" displayName="毛利率%" stdSqlType="DECIMAL" precision="10" scale="4" defaultValue="0" code="GROSS_MARGIN_PCT" propId="18"  i18n-en:displayName='Gross Margin %' />
                 <column name="committedCost" displayName="已承诺成本" domain="amount" defaultValue="0" code="COMMITTED_COST" propId="19" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Committed Cost' />
                 <column name="budgetAmount" displayName="预算" domain="amount" defaultValue="0" code="BUDGET_AMOUNT" propId="20" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Budget Amount' />
                 <column name="forecastCompleteCost" displayName="完工预测成本(EAC)" domain="amount" defaultValue="0" code="FORECAST_COMPLETE_COST" propId="21" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Forecast Complete Cost' />
@@ -749,7 +749,7 @@
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-prj/project-status" mandatory="true" code="DOC_STATUS" propId="23" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="24" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="25" stdDataType="boolean" i18n-en:displayName='Posted'  ui:show="R"/>
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="26" stdDataType="datetime" i18n-en:displayName='Posted At'  ui:show="R"/>
+                <column name="postedAt" displayName="过账时间" tagSet="clock" stdSqlType="TIMESTAMP" code="POSTED_AT" propId="26" i18n-en:displayName='Posted At'  ui:show="R"/>
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="27" stdDataType="string" i18n-en:displayName='Posted By'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="28" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="29" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
@@ -786,11 +786,11 @@
                 tableName="erp_prj_project_settlement" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
+                <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="3" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="customerId" displayName="客户" stdSqlType="BIGINT" code="CUSTOMER_ID" propId="5" stdDataType="long" i18n-en:displayName='Customer' />
-                <column name="businessDate" displayName="结算日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" stdDataType="date" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="结算日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" i18n-en:displayName='Business Date' />
                 <column name="settlementType" displayName="结算类型" ext:dict="erp-prj/settlement-type" mandatory="true" code="SETTLEMENT_TYPE" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Settlement Type' />
                 <column name="pnlSnapshotId" displayName="关联损益汇总" stdSqlType="BIGINT" code="PNL_SNAPSHOT_ID" propId="8" stdDataType="long" i18n-en:displayName='PnL Snapshot' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="9" stdDataType="long" i18n-en:displayName='Currency' />
@@ -801,16 +801,16 @@
                 <column name="finalCost" displayName="最终结算成本" domain="amount" defaultValue="0" code="FINAL_COST" propId="14" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Final Cost' />
                 <column name="finalProfit" displayName="最终损益" domain="amount" defaultValue="0" code="FINAL_PROFIT" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Final Profit' />
                 <column name="retentionAmount" displayName="质保金/保留款" domain="amount" defaultValue="0" code="RETENTION_AMOUNT" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Retention Amount' />
-                <column name="retentionDueDate" displayName="质保金到期" stdSqlType="DATE" code="RETENTION_DUE_DATE" propId="17" stdDataType="date" i18n-en:displayName='Retention Due Date' />
+                <column name="retentionDueDate" displayName="质保金到期" stdSqlType="DATE" code="RETENTION_DUE_DATE" propId="17" i18n-en:displayName='Retention Due Date' />
                 <column name="transferToAsset" displayName="是否转固定资产" stdSqlType="BOOLEAN" defaultValue="false" code="TRANSFER_TO_ASSET" propId="18" stdDataType="boolean" i18n-en:displayName='Transfer To Asset' />
                 <column name="assetCardId" displayName="转固资产卡片" stdSqlType="BIGINT" code="ASSET_CARD_ID" propId="19" stdDataType="long" i18n-en:displayName='Asset Card' />
                 <column name="settlementVoucherCode" displayName="结算凭证号" stdSqlType="VARCHAR" precision="50" code="SETTLEMENT_VOUCHER_CODE" propId="20" stdDataType="string" i18n-en:displayName='Settlement Voucher Code' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-prj/project-status" mandatory="true" code="DOC_STATUS" propId="21" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="22" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
-                <column name="approvedAt" displayName="审核时间" stdSqlType="DATETIME" code="APPROVED_AT" propId="201" stdDataType="datetime" i18n-en:displayName='Approved At'  ui:show="R"/>
+                <column name="approvedAt" displayName="审核时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="201" i18n-en:displayName='Approved At'  ui:show="R"/>
                 <column name="posted" displayName="已过账" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="23" stdDataType="boolean" i18n-en:displayName='Posted'  ui:show="R"/>
-                <column name="postedAt" displayName="过账时间" stdSqlType="DATETIME" code="POSTED_AT" propId="24" stdDataType="datetime" i18n-en:displayName='Posted At'  ui:show="R"/>
+                <column name="postedAt" displayName="过账时间" tagSet="clock" stdSqlType="TIMESTAMP" code="POSTED_AT" propId="24" i18n-en:displayName='Posted At'  ui:show="R"/>
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="25" stdDataType="string" i18n-en:displayName='Posted By'  ui:show="R"/>
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="26" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="27" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
@@ -861,7 +861,7 @@
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
                 <column name="lineType" displayName="行类型(INCOME/COST)" stdSqlType="VARCHAR" precision="50" mandatory="true" code="LINE_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Line Type' />
                 <column name="sourceBillType" displayName="来源单据类型(BILLING/COST_COLLECTION)" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_TYPE" propId="5" stdDataType="string" i18n-en:displayName='Source Bill Type' />
-                <column name="sourceBillCode" displayName="来源单据号" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="6" stdDataType="string" i18n-en:displayName='Source Bill Code' />
+                <column name="sourceBillCode" displayName="来源单据号" tagSet="var" stdSqlType="VARCHAR" precision="50" code="SOURCE_BILL_CODE" propId="6" stdDataType="string" i18n-en:displayName='Source Bill Code' />
                 <column name="subjectId" displayName="科目" stdSqlType="BIGINT" code="SUBJECT_ID" propId="7" stdDataType="long" i18n-en:displayName='Subject' />
                 <column name="amount" displayName="金额" domain="amount" mandatory="true" code="AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amount' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="9" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
@@ -895,8 +895,8 @@
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name'  tagSet="disp"/>
                 <column name="orgType" code="ORG_TYPE" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Org Type' />
                 <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Parent' />
                 <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
@@ -907,8 +907,8 @@
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name'  tagSet="disp"/>
                 <column name="symbol" code="SYMBOL" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Symbol' />
                 <column name="decimalPlaces" code="DECIMAL_PLACES" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Decimal Places' />
                 <column name="isFunctional" code="IS_FUNCTIONAL" stdSqlType="BOOLEAN" stdDataType="boolean" i18n-en:displayName='Is Functional' />
@@ -919,8 +919,8 @@
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name'  tagSet="disp"/>
                 <column name="orgId" code="ORG_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
             </columns>
@@ -930,8 +930,8 @@
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name'  tagSet="disp"/>
                 <column name="partnerType" code="PARTNER_TYPE" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Partner Type' />
                 <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
                 <column name="creditLimit" code="CREDIT_LIMIT" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Credit Limit' />
@@ -942,8 +942,8 @@
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_subject">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' />
-                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name'  tagSet="disp"/>
                 <column name="parentId" code="PARENT_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Parent' />
                 <column name="subjectClass" code="SUBJECT_CLASS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Subject Class' />
                 <column name="direction" code="DIRECTION" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Direction' />

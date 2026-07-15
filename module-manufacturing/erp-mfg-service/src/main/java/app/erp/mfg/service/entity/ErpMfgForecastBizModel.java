@@ -5,17 +5,13 @@ import app.erp.mfg.biz.IErpMfgForecastBiz;
 import app.erp.mfg.dao.entity.ErpMfgForecast;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,15 +63,4 @@ public class ErpMfgForecastBizModel extends CrudBizModel<ErpMfgForecast> impleme
         return forecast;
     }
 
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name 字段 + BizLoader 批量加载防 N+1）----------
-
-    @BizLoader(forType = ErpMfgForecast.class)
-    public List<String> orgName(@ContextSource List<ErpMfgForecast> forecasts) {
-        orm().batchLoadProps(forecasts, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(forecasts.size());
-        for (ErpMfgForecast forecast : forecasts) {
-            result.add(forecast.getOrg() != null ? forecast.getOrg().getName() : null);
-        }
-        return result;
-    }
 }

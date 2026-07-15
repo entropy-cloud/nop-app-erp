@@ -77,18 +77,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--组织-->
-                <col id="orgName"/>
-
-                <!--设备类别-->
-                <col id="categoryName"/>
-
-                <!--位置-->
-                <col id="locationName"/>
-
-                <!--资产-->
-                <col id="assetCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -106,9 +94,7 @@
  warrantyExpiry[保修到期] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] orgName[组织]
- categoryName[设备类别] locationName[位置]
- assetCode[资产] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-设备" i18n-en:title="Add Equipment" x:prototype="edit"/>

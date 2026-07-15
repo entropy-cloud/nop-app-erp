@@ -110,15 +110,6 @@
 
                 <!--关联退货单号(RETURN 处置编排退货域后登记)-->
                 <col id="returnCode" sortable="true"/>
-
-                <!--物料-->
-                <col id="materialName"/>
-
-                <!--质检单-->
-                <col id="inspectionCode"/>
-
-                <!--供应商-->
-                <col id="supplierName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -142,8 +133,6 @@
  updatedBy[修改人] updateTime[修改时间]
  posted[已过账(报废处置已生成凭证)] postedAt[过账时间]
  postedBy[过账人] returnCode[关联退货单号(RETURN 处置编排退货域后登记)]
- materialName[物料] inspectionCode[质检单]
- supplierName[供应商] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-不合格品报告" i18n-en:title="Add Non-Conformance Report" x:prototype="edit"/>

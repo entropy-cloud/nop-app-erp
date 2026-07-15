@@ -12,8 +12,8 @@
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="startDate" sortable="true"/>
                 <col id="endDate" sortable="true"/>
-                <col id="targetDepartmentName" label="目标部门"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="targetDepartmentId" label="目标部门"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="totalQuestions" ui:number="true" sortable="true"/>
                 <col id="totalResponses" ui:number="true" sortable="true"/>
                 <col id="completionRate" ui:number="true" sortable="true"/>

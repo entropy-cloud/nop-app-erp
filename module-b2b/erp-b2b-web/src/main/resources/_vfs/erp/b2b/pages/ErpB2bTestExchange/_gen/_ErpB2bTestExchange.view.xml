@@ -71,9 +71,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--伙伴档案-->
-                <col id="partnerProfileName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -90,7 +87,7 @@
  testedAt[测试时间] notes[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] partnerProfileName[伙伴档案]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-测试消息交换" i18n-en:title="Add Test Exchange" x:prototype="edit"/>

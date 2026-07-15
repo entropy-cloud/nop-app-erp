@@ -195,16 +195,16 @@
         }
 
 
-        private java.time.LocalDateTime _generatedAt;
+        private java.sql.Timestamp _generatedAt;
 
     
         @PropMeta(propId=14)
     
-        public java.time.LocalDateTime getGeneratedAt(){
+        public java.sql.Timestamp getGeneratedAt(){
             return _generatedAt;
         }
 
-        public void setGeneratedAt(java.time.LocalDateTime value){
+        public void setGeneratedAt(java.sql.Timestamp value){
             this._generatedAt = value;
         }
 

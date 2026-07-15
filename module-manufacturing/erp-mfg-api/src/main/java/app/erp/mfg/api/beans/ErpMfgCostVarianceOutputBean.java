@@ -387,42 +387,6 @@
         }
 
 
-        private String _workOrderNo;
-
-    
-        public String getWorkOrderNo(){
-            return _workOrderNo;
-        }
-
-        public void setWorkOrderNo(String value){
-            this._workOrderNo = value;
-        }
-
-
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _workcenterName;
-
-    
-        public String getWorkcenterName(){
-            return _workcenterName;
-        }
-
-        public void setWorkcenterName(String value){
-            this._workcenterName = value;
-        }
-
-
         private Map<String,Object> _workOrder;
 
         public Map<String,Object> getWorkOrder(){

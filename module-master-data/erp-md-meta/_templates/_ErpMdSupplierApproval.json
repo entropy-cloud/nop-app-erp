@@ -20,9 +20,9 @@
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
   "partner": null,
+  "partner.name": "",
   "organization": null,
+  "organization.name": "",
   "materialCategory": null,
-  "partnerName": "",
-  "orgName": "",
-  "materialCategoryName": ""
+  "materialCategory.name": ""
 }

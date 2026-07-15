@@ -51,9 +51,9 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="20" dict="erp-crm/scoring-triggered-action"/>
         </prop>
-        <prop name="calculatedAt" displayName="计算时间" propId="9" i18n-en:displayName="Calculated At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="calculatedAt" displayName="计算时间" propId="9" i18n-en:displayName="Calculated At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="triggerEvent" displayName="触发计算事件" propId="10" i18n-en:displayName="Trigger Event" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -97,9 +97,12 @@
             <schema bizObjName="ErpCrmLeadScoreConfig"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

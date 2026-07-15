@@ -110,24 +110,6 @@
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
-
-                <!--客户-->
-                <col id="customerName"/>
-
-                <!--联系人-->
-                <col id="contactName"/>
-
-                <!--工单类型-->
-                <col id="ticketTypeName"/>
-
-                <!--SLA策略-->
-                <col id="slaPolicyName"/>
-
-                <!--目录项-->
-                <col id="catalogItemName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -151,9 +133,6 @@
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] approvedBy[审核人]
  approvedAt[审核时间] businessDate[业务日期]
- orgName[业务组织] customerName[客户]
- contactName[联系人] ticketTypeName[工单类型]
- slaPolicyName[SLA策略] catalogItemName[目录项]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-客服工单" i18n-en:title="Add Ticket" x:prototype="edit"/>

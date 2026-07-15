@@ -65,18 +65,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--预测单号-->
-                <col id="forecastCode"/>
-
-                <!--物料名称-->
-                <col id="materialName"/>
-
-                <!--仓库名称-->
-                <col id="warehouseName"/>
-
-                <!--计量单位名称-->
-                <col id="uomName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -92,9 +80,7 @@
  sourcedFlag[来源标记] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] forecastCode[预测单号]
- materialName[物料名称] warehouseName[仓库名称]
- uomName[计量单位名称] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-需求预测行" i18n-en:title="Add Demand Forecast Line" x:prototype="edit"/>

@@ -8,6 +8,8 @@
 
     <primaryKey>id</primaryKey>
 
+    <displayProp>name</displayProp>
+
     <x:gen-extends>
         <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
     </x:gen-extends>
@@ -25,12 +27,12 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="物料编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="物料编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="code" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="name" displayName="物料名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="name" displayName="物料名称" propId="3" i18n-en:displayName="Name" tagSet="disp" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="name" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="materialType" displayName="物料类型" propId="4" i18n-en:displayName="Material Type" mandatory="true"
@@ -122,24 +124,39 @@
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
         <prop name="category" i18n-en:displayName="Category" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="categoryId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              queryable="true" ext:joinLeftProp="categoryId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdMaterialCategory"/>
         </prop>
-        <prop name="uoM" i18n-en:displayName="Uo M" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="uoMId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+        <prop name="category.name" i18n-en:displayName="Category" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="uoM" i18n-en:displayName="Uo M" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="uoMId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="uoM.name" i18n-en:displayName="Uo M" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="defaultWarehouse" i18n-en:displayName="Default Warehouse" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="defaultWarehouseId" ext:joinRightProp="id"
-              insertable="false" updatable="false" lazy="true">
+              ext:joinRightDisplayProp="name" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="defaultWarehouse.name" i18n-en:displayName="Default Warehouse" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="defaultTaxRate" i18n-en:displayName="Default Tax Rate" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="defaultTaxRateId" ext:joinRightProp="id"
-              insertable="false" updatable="false" lazy="true">
+              ext:joinRightDisplayProp="name" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdTaxRate"/>
+        </prop>
+        <prop name="defaultTaxRate.name" i18n-en:displayName="Default Tax Rate" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="skus" i18n-en:displayName="Skus" tagSet="pub,cascade-delete,insertable,updatable" ext:kind="to-many"
               internal="true" ext:joinLeftProp="id" ext:joinRightProp="materialId" insertable="true" updatable="true"

@@ -214,7 +214,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
             ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
             order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED);
             order.setPosted(true);
-            order.setPostedAt(CoreMetrics.currentDateTime());
+            order.setPostedAt(CoreMetrics.currentTimestamp());
             daoProvider.daoFor(ErpMfgSubcontractOrder.class).updateEntity(order);
         });
 
@@ -413,7 +413,7 @@ public class TestErpMfgSubcontractReverse extends JunitAutoTestCase {
             voucher.setTotalCredit(total);
             voucher.setIsReversed(false);
             voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
-            voucher.setPostedAt(CoreMetrics.currentDateTime());
+            voucher.setPostedAt(CoreMetrics.currentTimestamp());
             vDao.saveEntity(voucher);
 
             ErpFinVoucherBillR billR = new ErpFinVoucherBillR();

@@ -1,0 +1,5 @@
+_chgType,ID,CODE,ORG_ID,LEAD_TYPE,PARTNER_ID,CONTACT_NAME,CONTACT_PHONE,CONTACT_EMAIL,COMPANY_NAME,JOB_TITLE,DEPARTMENT,SOURCE_ID,LEAD_STATUS_ID,STAGE_ID,EXPECTED_REVENUE,BEST_CASE_AMOUNT,WORST_CASE_AMOUNT,RECURRING_REVENUE,RECURRING_PLAN,EXPECTED_CLOSE_DATE,PROBABILITY,CAMPAIGN_ID,UTM_MEDIUM,UTM_SOURCE,OWNER_ID,TEAM_ID,LOST_REASON_ID,LOST_REASON_DESC,LAST_CONTACT_DATE,NEXT_ACTIVITY_DATE,RELATED_BILL_TYPE,RELATED_BILL_CODE,DOC_STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,TERRITORY_ID
+A,8201,@var:ErpCrmLead@code,1301,LEAD,,,,,上海某制造,,manufacturing,,,,500.0000,,,,,,,,,baidu,,,,,,,,,NEW,,@var:ErpCrmLead@delVersion_3,1,autotest-ref,*,autotest-ref,*,8001
+A,8202,@var:ErpCrmLead@code_1,1301,LEAD,,,,,某公司,,manufacturing,,,,500.0000,,,,,,,,,,,,,,,,,,NEW,,@var:ErpCrmLead@delVersion_3,1,autotest-ref,*,autotest-ref,*,8002
+A,8203,@var:ErpCrmLead@code_2,1301,LEAD,,,,,无关键地名,,其他,,,,5000.0000,,,,,,,,,,,,,,,,,,NEW,,@var:ErpCrmLead@delVersion_3,1,autotest-ref,*,autotest-ref,*,8003
+A,8204,@var:ErpCrmLead@code_3,1301,LEAD,,,,,无关键地名,,其他,,,,10.0000,,,,,,,,,baidu,,,,,,,,,NEW,,@var:ErpCrmLead@delVersion_3,1,autotest-ref,*,autotest-ref,*,8004

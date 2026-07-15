@@ -9,8 +9,8 @@
                 <col id="timesheetCode" label="工时表"/>
                 <col id="employeeDisplayName" label="员工"/>
                 <col id="workDate" mandatory="true" sortable="true"/>
-                <col id="projectName" label="项目"/>
-                <col id="taskName" label="任务"/>
+                <col id="projectId" label="项目"/>
+                <col id="taskId" label="任务"/>
                 <col id="activityType" sortable="true"/>
                 <col id="hours" mandatory="true" ui:number="true" sortable="true"/>
             </cols>

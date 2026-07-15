@@ -85,6 +85,7 @@ CREATE TABLE erp_md_partner_contact(
   contact_name VARCHAR(100)  ,
   phone VARCHAR(50)  ,
   email VARCHAR(200)  ,
+  contact_person VARCHAR(200)  ,
   constraint PK_erp_md_partner_contact primary key (id)
 );
 
@@ -564,8 +565,8 @@ CREATE TABLE erp_crm_lead(
   team_id INT8  ,
   lost_reason_id INT8  ,
   lost_reason_desc VARCHAR(500)  ,
-  last_contact_date TIMESTAMP  ,
-  next_activity_date TIMESTAMP  ,
+  last_contact_date DATE  ,
+  next_activity_date DATE  ,
   related_bill_type VARCHAR(50)  ,
   related_bill_code VARCHAR(50)  ,
   doc_status VARCHAR(20) NOT NULL ,
@@ -668,7 +669,7 @@ CREATE TABLE erp_crm_activity(
   lead_id INT8 NOT NULL ,
   org_id INT8  ,
   activity_type VARCHAR(20) NOT NULL ,
-  activity_date TIMESTAMP NOT NULL ,
+  activity_date DATE NOT NULL ,
   summary VARCHAR(500)  ,
   owner_id VARCHAR(36)  ,
   remark VARCHAR(1000)  ,

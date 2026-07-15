@@ -1,0 +1,4 @@
+_chgType,ID,SEQUENCE_ID,ORG_ID,STEP_NAME,STEP_ORDER,DUE_DAYS,ACTIVITY_TYPE,STEP_DESCRIPTION,COMPLETION_CONDITION,IS_MANDATORY,AUTO_CREATE_EVENT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6651,6501,1301,Step-1,1,1,CALL,,CALL_COMPLETED,true,false,,@var:ErpCrmSequenceStep@delVersion,0,autotest-ref,*,autotest-ref,*
+A,6652,6501,1301,Step-2,2,1,EMAIL,,EMAIL_OPENED,true,false,,@var:ErpCrmSequenceStep@delVersion,0,autotest-ref,*,autotest-ref,*
+A,6653,6501,1301,Step-3,3,1,MEETING,,MEETING_HELD,true,false,,@var:ErpCrmSequenceStep@delVersion,0,autotest-ref,*,autotest-ref,*

@@ -22,5 +22,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "jobCard": null,
   "workOrder": null,
-  "operator": null
+  "operator": null,
+  "operator.name": ""
 }

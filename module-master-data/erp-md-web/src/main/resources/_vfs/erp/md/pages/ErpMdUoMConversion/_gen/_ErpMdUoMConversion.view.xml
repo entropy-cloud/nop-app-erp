@@ -47,15 +47,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--物料(空表示通用)-->
-                <col id="materialName"/>
-
-                <!--源单位-->
-                <col id="fromUoMName"/>
-
-                <!--目标单位-->
-                <col id="toUoMName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -64,12 +55,15 @@
     <forms>
         <form id="view" editMode="view" title="查看-单位换算" i18n-en:title="View UoM Conversion">
             <layout>
- materialId[物料(空表示通用)] fromUoMId[源单位]
- toUoMId[目标单位] conversionRate[换算系数]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] materialName[物料(空表示通用)]
- fromUoMName[源单位] toUoMName[目标单位]
+ materialId[物料(空表示通用)]
+ fromUoMId[源单位]
+ toUoMId[目标单位]
+ conversionRate[换算系数]
+ delVersion[逻辑删除版本]
+ createdBy[创建人]
+ createTime[创建时间]
+ updatedBy[修改人]
+ updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-单位换算" i18n-en:title="Add UoM Conversion" x:prototype="edit"/>

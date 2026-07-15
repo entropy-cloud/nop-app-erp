@@ -1,2 +1,2 @@
 _chgType,ID,CODE,NAME,SYMBOL,DECIMAL_PLACES,IS_FUNCTIONAL,IS_ACTIVE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,6101,CNY,人民币,,2,false,true,*,0,autotest-ref,*,autotest-ref,*
+A,6101,@var:ErpMdCurrency@code,人民币,,2,false,true,@var:ErpMdCurrency@delVersion,0,autotest-ref,*,autotest-ref,*

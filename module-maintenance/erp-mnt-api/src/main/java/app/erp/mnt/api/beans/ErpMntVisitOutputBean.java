@@ -138,44 +138,44 @@
         }
 
 
-        private java.time.LocalDateTime _completedAt;
+        private java.sql.Timestamp _completedAt;
 
     
         @PropMeta(propId=9)
     
-        public java.time.LocalDateTime getCompletedAt(){
+        public java.sql.Timestamp getCompletedAt(){
             return _completedAt;
         }
 
-        public void setCompletedAt(java.time.LocalDateTime value){
+        public void setCompletedAt(java.sql.Timestamp value){
             this._completedAt = value;
         }
 
 
-        private java.time.LocalDateTime _startTime;
+        private java.sql.Timestamp _startTime;
 
     
         @PropMeta(propId=10)
     
-        public java.time.LocalDateTime getStartTime(){
+        public java.sql.Timestamp getStartTime(){
             return _startTime;
         }
 
-        public void setStartTime(java.time.LocalDateTime value){
+        public void setStartTime(java.sql.Timestamp value){
             this._startTime = value;
         }
 
 
-        private java.time.LocalDateTime _endTime;
+        private java.sql.Timestamp _endTime;
 
     
         @PropMeta(propId=11)
     
-        public java.time.LocalDateTime getEndTime(){
+        public java.sql.Timestamp getEndTime(){
             return _endTime;
         }
 
-        public void setEndTime(java.time.LocalDateTime value){
+        public void setEndTime(java.sql.Timestamp value){
             this._endTime = value;
         }
 
@@ -411,42 +411,6 @@
 
         public void setPostedBy(String value){
             this._postedBy = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _scheduleCode;
-
-    
-        public String getScheduleCode(){
-            return _scheduleCode;
-        }
-
-        public void setScheduleCode(String value){
-            this._scheduleCode = value;
-        }
-
-
-        private String _equipmentCode;
-
-    
-        public String getEquipmentCode(){
-            return _equipmentCode;
-        }
-
-        public void setEquipmentCode(String value){
-            this._equipmentCode = value;
         }
 
 

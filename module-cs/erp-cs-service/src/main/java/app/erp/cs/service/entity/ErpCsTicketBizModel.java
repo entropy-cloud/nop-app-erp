@@ -26,6 +26,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,9 +39,6 @@ import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.lt;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.EntityData;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.Collections;
 
 /**
  * 客服工单 BizModel。权威：{@code docs/design/customer-service/state-machine.md}、
@@ -84,7 +82,6 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         }
     }
-
 
     public void setTicketActionBiz(IErpCsTicketActionBiz ticketActionBiz) {
         this.ticketActionBiz = ticketActionBiz;
@@ -136,7 +133,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         }
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
         // 计时起点：首次进入 IN_PROGRESS（见 plan Decision：startDateTime=首次 IN_PROGRESS 时间）
-        ticket.setStartDateTime(CoreMetrics.currentDateTime());
+        ticket.setStartDateTime(CoreMetrics.currentTimestamp());
         updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS,
                 "开始处理", context);
@@ -156,11 +153,11 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         LocalDateTime now = CoreMetrics.currentDateTime();
         // 停 SLA 计时算 duration（分钟）；startDateTime 为空时 duration 留空
         if (ticket.getStartDateTime() != null) {
-            long minutes = SlaDeadlineCalculator.minutesBetween(ticket.getStartDateTime(), now);
+            long minutes = SlaDeadlineCalculator.minutesBetween(ticket.getStartDateTime().toLocalDateTime(), now);
             ticket.setDuration((int) minutes);
         }
         // 标记 isSlaCompleted = resolvedAt <= deadlineDateTime
-        LocalDateTime deadline = ticket.getDeadlineDateTime();
+        LocalDateTime deadline = ticket.getDeadlineDateTime() != null ? ticket.getDeadlineDateTime().toLocalDateTime() : null;
         boolean completed = deadline == null || !now.isAfter(deadline);
         ticket.setIsSlaCompleted(completed);
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_RESOLVED);
@@ -194,7 +191,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
                     .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode());
         }
         ticket.setStatus(ErpCsConstants.TICKET_STATUS_CLOSED);
-        ticket.setEndDateTime(CoreMetrics.currentDateTime());
+        ticket.setEndDateTime(CoreMetrics.currentTimestamp());
         updateEntity(ticket, null, context);
         writeAction(ticket, ErpCsConstants.ACTION_TYPE_CLOSE, from, ErpCsConstants.TICKET_STATUS_CLOSED,
                 "关闭工单", context);
@@ -289,7 +286,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             ticket.setSlaPolicyId(policy.getId());
         }
         LocalDateTime deadline = SlaDeadlineCalculator.calculate(CoreMetrics.currentDateTime(), policy);
-        ticket.setDeadlineDateTime(deadline);
+        ticket.setDeadlineDateTime(Timestamp.valueOf(deadline));
         // priority 变更重算时保留原 startDateTime（plan Phase 1 item 3）
         updateEntity(ticket, null, context);
         return ticket;
@@ -333,7 +330,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             LocalDateTime base = CoreMetrics.currentDateTime();
             LocalDateTime overrideDeadline = base.plusMinutes(overrideMinutes);
             // 权益级覆盖优先于 SLA 策略计算的 deadline（entitlement.md §三 优先级 1）
-            ticket.setDeadlineDateTime(overrideDeadline);
+            ticket.setDeadlineDateTime(Timestamp.valueOf(overrideDeadline));
         }
     }
 
@@ -404,7 +401,6 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             ctx.put("ticketCode", ticket.getCode());
             ctx.put("customerName", resolveCustomerName(ticket.getCustomerId(), context));
             ctx.put("escalationUserId", ticket.getAssignedToId());
-            ctx.put("deadlineDateTime", ticket.getDeadlineDateTime());
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_SLA_OVERDUE, ctx, context);
         } catch (Exception e) {
             // 通知派发失败不阻断 SLA 升级主流程（config-gated 降级语义）
@@ -465,65 +461,5 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCsTicket.class)
-    public List<String> orgName(@ContextSource List<ErpCsTicket> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsTicket row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsTicket.class)
-    public List<String> customerName(@ContextSource List<ErpCsTicket> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("customer"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsTicket row : rows) {
-            result.add(row.orm_attached() && row.getCustomer() != null ? row.getCustomer().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsTicket.class)
-    public List<String> contactName(@ContextSource List<ErpCsTicket> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("contact"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsTicket row : rows) {
-            result.add(row.orm_attached() && row.getContact() != null ? row.getContact().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsTicket.class)
-    public List<String> ticketTypeName(@ContextSource List<ErpCsTicket> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("ticketType"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsTicket row : rows) {
-            result.add(row.orm_attached() && row.getTicketType() != null ? row.getTicketType().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsTicket.class)
-    public List<String> slaPolicyName(@ContextSource List<ErpCsTicket> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("slaPolicy"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsTicket row : rows) {
-            result.add(row.orm_attached() && row.getSlaPolicy() != null ? row.getSlaPolicy().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsTicket.class)
-    public List<String> catalogItemName(@ContextSource List<ErpCsTicket> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("catalogItem"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsTicket row : rows) {
-            result.add(row.orm_attached() && row.getCatalogItem() != null ? row.getCatalogItem().getName() : null);
-        }
-        return result;
-    }
 
 }

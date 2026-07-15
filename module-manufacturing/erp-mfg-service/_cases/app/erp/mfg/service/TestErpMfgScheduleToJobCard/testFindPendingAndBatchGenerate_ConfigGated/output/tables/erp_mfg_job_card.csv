@@ -1,0 +1,5 @@
+_chgType,ID,WORK_ORDER_ID,OPERATION_ID,LINE_NO,PLANNED_QUANTITY,COMPLETED_QUANTITY,SCRAPPED_QUANTITY,STATUS,WORKCENTER_ID,ACTUAL_START_TIME,ACTUAL_END_TIME,REMARK,CODE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,SOURCE_SCHEDULE_ID
+A,1,8302,,1,3.0000,0,0,OPEN,7002,,,APS排程自动生成,@var:ErpMfgJobCard@code,@var:ErpMfgJobCard@delVersion_1,0,autotest-ref,*,autotest-ref,*,7500
+A,2,8302,,2,3.0000,0,0,OPEN,7003,,,APS排程自动生成,@var:ErpMfgJobCard@code_1,@var:ErpMfgJobCard@delVersion_1,0,autotest-ref,*,autotest-ref,*,7501
+A,3,8301,,1,2.0000,0,0,OPEN,7002,,,APS排程自动生成,@var:ErpMfgJobCard@code_2,@var:ErpMfgJobCard@delVersion_1,0,autotest-ref,*,autotest-ref,*,7500
+A,7700,8884,,1,1,0,0,OPEN,,,,,,@var:ErpMfgJobCard@delVersion_1,0,autotest-ref,*,autotest-ref,*,

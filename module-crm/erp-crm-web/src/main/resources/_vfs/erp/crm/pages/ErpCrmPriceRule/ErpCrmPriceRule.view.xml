@@ -7,12 +7,12 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="ruleType" sortable="true"/>
                 <col id="priority" ui:number="true" sortable="true"/>
-                <col id="materialName" label="产品"/>
-                <col id="customerName" label="客户"/>
-                <col id="currencyName" label="币种"/>
+                <col id="materialId" label="产品"/>
+                <col id="customerId" label="客户"/>
+                <col id="currencyId" label="币种"/>
                 <col id="discountPercent" ui:number="true" sortable="true"/>
                 <col id="effectiveFrom" sortable="true"/>
                 <col id="effectiveTo" sortable="true"/>

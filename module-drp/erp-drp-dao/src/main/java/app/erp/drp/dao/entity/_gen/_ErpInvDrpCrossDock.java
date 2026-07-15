@@ -73,7 +73,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     public static final String PROP_NAME_stagingLocationId = "stagingLocationId";
     public static final int PROP_ID_stagingLocationId = 13;
     
-    /* 月台时间窗口: DOCK_SLOT_TIME DATETIME */
+    /* 月台时间窗口: DOCK_SLOT_TIME TIMESTAMP */
     public static final String PROP_NAME_dockSlotTime = "dockSlotTime";
     public static final int PROP_ID_dockSlotTime = 14;
     
@@ -81,11 +81,11 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 15;
     
-    /* 匹配时间: MATCHED_AT DATETIME */
+    /* 匹配时间: MATCHED_AT TIMESTAMP */
     public static final String PROP_NAME_matchedAt = "matchedAt";
     public static final int PROP_ID_matchedAt = 16;
     
-    /* 装车完成时间: LOADED_AT DATETIME */
+    /* 装车完成时间: LOADED_AT TIMESTAMP */
     public static final String PROP_NAME_loadedAt = "loadedAt";
     public static final int PROP_ID_loadedAt = 17;
     
@@ -262,16 +262,16 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     private java.lang.Long _stagingLocationId;
     
     /* 月台时间窗口: DOCK_SLOT_TIME */
-    private java.time.LocalDateTime _dockSlotTime;
+    private java.sql.Timestamp _dockSlotTime;
     
     /* 状态: STATUS */
     private java.lang.String _status;
     
     /* 匹配时间: MATCHED_AT */
-    private java.time.LocalDateTime _matchedAt;
+    private java.sql.Timestamp _matchedAt;
     
     /* 装车完成时间: LOADED_AT */
-    private java.time.LocalDateTime _loadedAt;
+    private java.sql.Timestamp _loadedAt;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -582,9 +582,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_dockSlotTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_dockSlotTime));
                }
                setDockSlotTime(typedValue);
@@ -602,9 +602,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_matchedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_matchedAt));
                }
                setMatchedAt(typedValue);
@@ -612,9 +612,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             }
         
             case PROP_ID_loadedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_loadedAt));
                }
                setLoadedAt(typedValue);
@@ -793,7 +793,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         
             case PROP_ID_dockSlotTime:{
                onInitProp(propId);
-               this._dockSlotTime = (java.time.LocalDateTime)value;
+               this._dockSlotTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -807,14 +807,14 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         
             case PROP_ID_matchedAt:{
                onInitProp(propId);
-               this._matchedAt = (java.time.LocalDateTime)value;
+               this._matchedAt = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_loadedAt:{
                onInitProp(propId);
-               this._loadedAt = (java.time.LocalDateTime)value;
+               this._loadedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1124,7 +1124,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 月台时间窗口: DOCK_SLOT_TIME
      */
-    public final java.time.LocalDateTime getDockSlotTime(){
+    public final java.sql.Timestamp getDockSlotTime(){
          onPropGet(PROP_ID_dockSlotTime);
          return _dockSlotTime;
     }
@@ -1132,7 +1132,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 月台时间窗口: DOCK_SLOT_TIME
      */
-    public final void setDockSlotTime(java.time.LocalDateTime value){
+    public final void setDockSlotTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_dockSlotTime,value)){
             this._dockSlotTime = value;
             internalClearRefs(PROP_ID_dockSlotTime);
@@ -1162,7 +1162,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 匹配时间: MATCHED_AT
      */
-    public final java.time.LocalDateTime getMatchedAt(){
+    public final java.sql.Timestamp getMatchedAt(){
          onPropGet(PROP_ID_matchedAt);
          return _matchedAt;
     }
@@ -1170,7 +1170,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 匹配时间: MATCHED_AT
      */
-    public final void setMatchedAt(java.time.LocalDateTime value){
+    public final void setMatchedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_matchedAt,value)){
             this._matchedAt = value;
             internalClearRefs(PROP_ID_matchedAt);
@@ -1181,7 +1181,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 装车完成时间: LOADED_AT
      */
-    public final java.time.LocalDateTime getLoadedAt(){
+    public final java.sql.Timestamp getLoadedAt(){
          onPropGet(PROP_ID_loadedAt);
          return _loadedAt;
     }
@@ -1189,7 +1189,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     /**
      * 装车完成时间: LOADED_AT
      */
-    public final void setLoadedAt(java.time.LocalDateTime value){
+    public final void setLoadedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_loadedAt,value)){
             this._loadedAt = value;
             internalClearRefs(PROP_ID_loadedAt);

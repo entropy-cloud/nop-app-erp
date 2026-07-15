@@ -1,0 +1,13 @@
+_chgType,ID,ASSET_ID,ORG_ID,PERIOD,PLANNED_AMOUNT,ACTUAL_AMOUNT,ACCUMULATED_DEPRECIATION,NET_BOOK_VALUE,STATUS,EXECUTED_AT,POSTED,POSTED_AT,POSTED_BY,VOUCHER_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL
+A,10,9,1,2026-08,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2026-08-01,,1.00000000,0.0000,0.0000
+A,11,9,1,2026-09,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2026-09-01,,1.00000000,0.0000,0.0000
+A,12,9,1,2026-10,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2026-10-01,,1.00000000,0.0000,0.0000
+A,13,9,1,2026-11,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2026-11-01,,1.00000000,0.0000,0.0000
+A,14,9,1,2026-12,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2026-12-01,,1.00000000,0.0000,0.0000
+A,15,9,1,2027-01,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2027-01-01,,1.00000000,0.0000,0.0000
+A,16,9,1,2027-02,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2027-02-01,,1.00000000,0.0000,0.0000
+A,17,9,1,2027-03,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2027-03-01,,1.00000000,0.0000,0.0000
+A,18,9,1,2027-04,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2027-04-01,,1.00000000,0.0000,0.0000
+A,19,9,1,2027-05,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2027-05-01,,1.00000000,0.0000,0.0000
+A,20,9,1,2027-06,583.3333,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2027-06-01,,1.00000000,0.0000,0.0000
+A,21,9,1,2027-07,583.3337,0.0000,0.0000,7000.0000,CANCELLED,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,1,autotest-ref,*,autotest-ref,*,2027-07-01,,1.00000000,0.0000,0.0000

@@ -1,0 +1,11 @@
+_chgType,ID,VOUCHER_ID,LINE_NO,SUBJECT_ID,SUBJECT_CODE,SUBJECT_NAME,DC_DIRECTION,DEBIT_AMOUNT,CREDIT_AMOUNT,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,ACCT_SCHEMA_ID,ORG_ID,MEMO,PARTNER_ID,DEPARTMENT_ID,PROJECT_ID,WAREHOUSE_ID,MATERIAL_ID,BUSINESS_TYPE,COST_CENTER_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,9,1,4,6601,销售费用,DEBIT,80,0,1,1,80,80,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,11,9,2,2,1001,库存现金,CREDIT,0,80,1,1,80,80,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,13,12,1,4,6601,销售费用,DEBIT,500,0,1,1,500,500,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,14,12,2,3,6001,主营业务收入,CREDIT,0,500,1,1,500,500,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,17,16,1,3,6001,主营业务收入,DEBIT,200.0000,0,1,1,200.0000,200.0000,1,,期末损益结转,,,,,,PERIOD_CLOSE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,18,16,2,4,6601,销售费用,CREDIT,0,80.0000,1,1,80.0000,80.0000,1,,期末损益结转,,,,,,PERIOD_CLOSE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,19,16,3,5,4103,本年利润,CREDIT,0,200.0000,1,1,200.0000,200.0000,1,,期末损益结转,,,,,,PERIOD_CLOSE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,20,16,4,5,4103,本年利润,DEBIT,80.0000,0,1,1,80.0000,80.0000,1,,期末损益结转,,,,,,PERIOD_CLOSE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,7,6,1,2,1001,库存现金,DEBIT,200,0,1,1,200,200,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8,6,2,3,6001,主营业务收入,CREDIT,0,200,1,1,200,200,1,,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*

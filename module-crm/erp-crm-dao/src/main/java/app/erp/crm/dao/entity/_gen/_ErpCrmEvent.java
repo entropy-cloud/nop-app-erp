@@ -49,11 +49,11 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     public static final String PROP_NAME_description = "description";
     public static final int PROP_ID_description = 7;
     
-    /* 开始时间: START_DATE_TIME DATETIME */
+    /* 开始时间: START_DATE_TIME TIMESTAMP */
     public static final String PROP_NAME_startDateTime = "startDateTime";
     public static final int PROP_ID_startDateTime = 8;
     
-    /* 结束时间: END_DATE_TIME DATETIME */
+    /* 结束时间: END_DATE_TIME TIMESTAMP */
     public static final String PROP_NAME_endDateTime = "endDateTime";
     public static final int PROP_ID_endDateTime = 9;
     
@@ -272,10 +272,10 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     private java.lang.String _description;
     
     /* 开始时间: START_DATE_TIME */
-    private java.time.LocalDateTime _startDateTime;
+    private java.sql.Timestamp _startDateTime;
     
     /* 结束时间: END_DATE_TIME */
-    private java.time.LocalDateTime _endDateTime;
+    private java.sql.Timestamp _endDateTime;
     
     /* 时长(分钟): DURATION */
     private java.lang.Integer _duration;
@@ -574,9 +574,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_startDateTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_startDateTime));
                }
                setStartDateTime(typedValue);
@@ -584,9 +584,9 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
             }
         
             case PROP_ID_endDateTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_endDateTime));
                }
                setEndDateTime(typedValue);
@@ -843,14 +843,14 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
         
             case PROP_ID_startDateTime:{
                onInitProp(propId);
-               this._startDateTime = (java.time.LocalDateTime)value;
+               this._startDateTime = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_endDateTime:{
                onInitProp(propId);
-               this._endDateTime = (java.time.LocalDateTime)value;
+               this._endDateTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1130,7 +1130,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 开始时间: START_DATE_TIME
      */
-    public final java.time.LocalDateTime getStartDateTime(){
+    public final java.sql.Timestamp getStartDateTime(){
          onPropGet(PROP_ID_startDateTime);
          return _startDateTime;
     }
@@ -1138,7 +1138,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 开始时间: START_DATE_TIME
      */
-    public final void setStartDateTime(java.time.LocalDateTime value){
+    public final void setStartDateTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_startDateTime,value)){
             this._startDateTime = value;
             internalClearRefs(PROP_ID_startDateTime);
@@ -1149,7 +1149,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 结束时间: END_DATE_TIME
      */
-    public final java.time.LocalDateTime getEndDateTime(){
+    public final java.sql.Timestamp getEndDateTime(){
          onPropGet(PROP_ID_endDateTime);
          return _endDateTime;
     }
@@ -1157,7 +1157,7 @@ public class _ErpCrmEvent extends DynamicOrmEntity{
     /**
      * 结束时间: END_DATE_TIME
      */
-    public final void setEndDateTime(java.time.LocalDateTime value){
+    public final void setEndDateTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_endDateTime,value)){
             this._endDateTime = value;
             internalClearRefs(PROP_ID_endDateTime);

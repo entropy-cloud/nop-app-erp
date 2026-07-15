@@ -7,9 +7,9 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="materialName" label="物料"/>
-                <col id="warehouseName" label="仓库"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="materialId" label="物料"/>
+                <col id="warehouseId" label="仓库"/>
                 <col id="method" mandatory="true" sortable="true"/>
                 <col id="serviceLevel" mandatory="true" sortable="true"/>
                 <col id="historyMonths" ui:number="true" sortable="true"/>

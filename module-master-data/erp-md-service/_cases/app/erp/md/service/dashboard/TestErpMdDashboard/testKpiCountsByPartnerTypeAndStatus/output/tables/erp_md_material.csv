@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NAME,MATERIAL_TYPE,CATEGORY_ID,UOM_ID,STATUS,COST_METHOD,IS_BATCH_MANAGED,IS_SERIAL_MANAGED,DEFAULT_WAREHOUSE_ID,MIN_STOCK,MAX_STOCK,SAFETY_STOCK,LEAD_TIME_DAYS,WEIGHT,VOLUME,DEFAULT_TAX_RATE_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
+A,101,@var:ErpMdMaterial@code,物料-M-A,GOODS,,1,ACTIVE,MOVING_AVERAGE,false,false,,,,,,,,,@var:ErpMdMaterial@delVersion_2,0,autotest-ref,*,autotest-ref,*,
+A,102,@var:ErpMdMaterial@code_1,物料-M-B,GOODS,,1,INACTIVE,MOVING_AVERAGE,false,false,,,,,,,,,@var:ErpMdMaterial@delVersion_2,0,autotest-ref,*,autotest-ref,*,
+A,103,@var:ErpMdMaterial@code_2,物料-M-C,GOODS,,1,INACTIVE,MOVING_AVERAGE,false,false,,,,,,,,,@var:ErpMdMaterial@delVersion_2,0,autotest-ref,*,autotest-ref,*,

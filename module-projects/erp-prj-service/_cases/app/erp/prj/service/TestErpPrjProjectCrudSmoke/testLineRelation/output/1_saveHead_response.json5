@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "1",
-    "code": "SMOKE-PRJ",
+    "code": "@var:ErpPrjProject@code",
     "name": "冒烟项目",
     "orgId": null,
     "projectTypeId": null,
@@ -22,12 +22,7 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpPrjProject@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpPrjProject@createTime",
-    "currencyName": null,
-    "customerName": null,
-    "managerName": null,
-    "orgName": null,
-    "projectTypeName": null
+    "updateTime": "@var:ErpPrjProject@createTime"
   },
   "status": 0
 }

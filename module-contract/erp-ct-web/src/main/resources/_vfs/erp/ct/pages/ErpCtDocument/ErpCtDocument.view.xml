@@ -5,8 +5,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="contractName" label="关联合同"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="contractId" label="关联合同"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="docName" mandatory="true" sortable="true"/>
                 <col id="docType" mandatory="true" sortable="true"/>

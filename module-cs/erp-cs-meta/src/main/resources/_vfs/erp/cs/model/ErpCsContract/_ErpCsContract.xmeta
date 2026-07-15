@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="name" displayName="名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
@@ -65,8 +65,8 @@
               insertable="true" updatable="true">
             <schema type="java.lang.String" precision="20" dict="erp-cs/contract-status"/>
         </prop>
-        <prop name="attachmentFileId" displayName="合同附件" propId="12" i18n-en:displayName="Attachment" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="attachmentFileId" displayName="合同附件" propId="12" i18n-en:displayName="Attachment" tagSet="var"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema stdDomain="file" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
@@ -98,13 +98,21 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="partner" i18n-en:displayName="Partner" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
         </prop>
+        <prop name="partner.name" i18n-en:displayName="Partner" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="attachmentFileIdComponentFileStatus" mapToProp="attachmentFileIdComponent.fileStatus"
               internal="true" lazy="true">

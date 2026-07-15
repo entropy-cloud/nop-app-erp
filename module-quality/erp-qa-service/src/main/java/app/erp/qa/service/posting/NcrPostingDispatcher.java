@@ -76,7 +76,7 @@ public class NcrPostingDispatcher {
         Long voucherId = executor.postEvent(event);
         if (voucherId != null) {
             ncr.setPosted(Boolean.TRUE);
-            ncr.setPostedAt(CoreMetrics.currentDateTime());
+            ncr.setPostedAt(CoreMetrics.currentTimestamp());
             ncr.setPostedBy(resolveUserId(context));
         }
         return voucherId;

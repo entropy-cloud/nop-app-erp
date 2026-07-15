@@ -31,6 +31,5 @@
   "responses": null,
   "targetDepartment": null,
   "org": null,
-  "orgName": "",
-  "targetDepartmentName": ""
+  "org.name": ""
 }

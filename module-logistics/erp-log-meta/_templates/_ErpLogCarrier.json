@@ -19,8 +19,8 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "partner": null,
+  "partner.name": "",
   "org": null,
-  "configs": null,
-  "partnerName": "",
-  "orgName": ""
+  "org.name": "",
+  "configs": null
 }

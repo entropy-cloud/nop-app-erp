@@ -23,8 +23,12 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "fromWarehouse": null,
+  "fromWarehouse.name": "",
   "toWarehouse": null,
+  "toWarehouse.name": "",
   "inTransitWarehouse": null,
+  "inTransitWarehouse.name": "",
   "org": null,
+  "org.name": "",
   "lines": null
 }

@@ -30,6 +30,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,8 +42,6 @@ import java.util.stream.Collectors;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
 import java.util.Collections;
 
 /**
@@ -109,7 +108,7 @@ public class ErpCrmLeadSequenceProgressBizModel
         progress.setOrgId(lead.getOrgId());
         progress.setCurrentStepIndex(0);
         progress.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_IN_PROGRESS);
-        progress.setStartedAt(CoreMetrics.currentDateTime());
+        progress.setStartedAt(CoreMetrics.currentTimestamp());
         saveEntity(progress, null, context);
 
         // 首步若 autoCreateEvent → 建排程 ErpCrmEvent
@@ -138,7 +137,7 @@ public class ErpCrmLeadSequenceProgressBizModel
         progress.setCurrentStepIndex(result.getNewStepIndex());
         if (result.isSequenceCompleted()) {
             progress.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_COMPLETED);
-            progress.setCompletedAt(result.getCompletedAt());
+            progress.setCompletedAt(result.getCompletedAt() != null ? Timestamp.valueOf(result.getCompletedAt()) : null);
         }
         updateEntity(progress, null, context);
 
@@ -168,7 +167,7 @@ public class ErpCrmLeadSequenceProgressBizModel
         ErpCrmLeadSequenceProgress old = findActiveProgress(leadId);
         if (old != null) {
             old.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_SKIPPED);
-            old.setCompletedAt(CoreMetrics.currentDateTime());
+            old.setCompletedAt(CoreMetrics.currentTimestamp());
             updateEntity(old, null, context);
         }
 
@@ -179,7 +178,7 @@ public class ErpCrmLeadSequenceProgressBizModel
         progress.setOrgId(lead.getOrgId());
         progress.setCurrentStepIndex(0);
         progress.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_IN_PROGRESS);
-        progress.setStartedAt(CoreMetrics.currentDateTime());
+        progress.setStartedAt(CoreMetrics.currentTimestamp());
         saveEntity(progress, null, context);
 
         // 首步 autoCreateEvent
@@ -255,7 +254,7 @@ public class ErpCrmLeadSequenceProgressBizModel
         for (ErpCrmLeadSequenceProgress p : all) {
             if (ErpCrmConstants.SEQUENCE_PROGRESS_COMPLETED.equals(p.getStatus())
                     && p.getStartedAt() != null && p.getCompletedAt() != null) {
-                long days = java.time.Duration.between(p.getStartedAt(), p.getCompletedAt()).toDays();
+                long days = java.time.Duration.between(p.getStartedAt().toLocalDateTime(), p.getCompletedAt().toLocalDateTime()).toDays();
                 avgCompletionDays += days;
                 counted++;
             }
@@ -354,7 +353,7 @@ public class ErpCrmLeadSequenceProgressBizModel
             if (step.getDueDays() != null) {
                 cumulativeDays += step.getDueDays();
             }
-            LocalDateTime dueAt = progress.getStartedAt().plusDays(cumulativeDays + grace);
+            LocalDateTime dueAt = progress.getStartedAt().toLocalDateTime().plusDays(cumulativeDays + grace);
             if (now.isAfter(dueAt)) {
                 count++;
             } else {
@@ -375,8 +374,8 @@ public class ErpCrmLeadSequenceProgressBizModel
         event.setDescription(step.getStepDescription());
         LocalDateTime start = CoreMetrics.currentDateTime().plusDays(
                 step.getDueDays() != null ? step.getDueDays() : 0);
-        event.setStartDateTime(start);
-        event.setEndDateTime(start.plusHours(1));
+        event.setStartDateTime(Timestamp.valueOf(start));
+        event.setEndDateTime(Timestamp.valueOf(start.plusHours(1)));
         event.setRelatedLeadId(lead.getId());
         event.setRelatedBillType(ErpCrmConstants.RELATED_BILL_TYPE_CRM_LEAD);
         event.setRelatedBillCode(lead.getCode());
@@ -413,35 +412,5 @@ public class ErpCrmLeadSequenceProgressBizModel
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCrmLeadSequenceProgress.class)
-    public List<String> leadCode(@ContextSource List<ErpCrmLeadSequenceProgress> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("lead"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLeadSequenceProgress row : rows) {
-            result.add(row.orm_attached() && row.getLead() != null ? row.getLead().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLeadSequenceProgress.class)
-    public List<String> sequenceName(@ContextSource List<ErpCrmLeadSequenceProgress> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("sequence"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLeadSequenceProgress row : rows) {
-            result.add(row.orm_attached() && row.getSequence() != null ? row.getSequence().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmLeadSequenceProgress.class)
-    public List<String> orgName(@ContextSource List<ErpCrmLeadSequenceProgress> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmLeadSequenceProgress row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
 
 }

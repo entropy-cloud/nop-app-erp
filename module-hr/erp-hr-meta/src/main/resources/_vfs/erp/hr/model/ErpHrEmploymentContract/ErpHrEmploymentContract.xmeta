@@ -3,20 +3,5 @@
 
     <!-- 安全：合同薪资相关金额字段对 GraphQL/REST 默认隐藏（internal=true），
          防止合同薪资数据通过开放 API 泄露。完整 @DataAuth 体系见 deferred 项。请勿删除此屏蔽。 -->
-    <props>
-        <prop name="annualSalary" internal="true" x:override="merge"/>
-        <prop name="monthlySalary" internal="true" x:override="merge"/>
-        <prop name="socialInsuranceBase" internal="true" x:override="merge"/>
-        <prop name="housingFundBase" internal="true" x:override="merge"/>
-
-        <prop name="employeeDisplayName" displayName="员工" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="currencyName" displayName="币种" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-        <prop name="orgName" displayName="业务组织" queryable="false" sortable="false">
-            <schema type="java.lang.String"/>
-        </prop>
-    </props>
+    <props/>
 </meta>

@@ -249,7 +249,7 @@ public class SubcontractPostingDispatcher {
         ErpMfgSubcontractOrder managed = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
         if (managed != null) {
             managed.setPosted(true);
-            managed.setPostedAt(CoreMetrics.currentDateTime());
+            managed.setPostedAt(CoreMetrics.currentTimestamp());
         }
     }
 

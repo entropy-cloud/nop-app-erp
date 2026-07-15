@@ -4,10 +4,8 @@ package app.erp.ast.service.entity;
 import app.erp.ast.biz.IErpAstMaintenanceBiz;
 import app.erp.ast.dao.entity.ErpAstMaintenance;
 import app.erp.ast.service.processor.ErpAstMaintenanceProcessor;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
@@ -15,8 +13,6 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,36 +30,6 @@ public class ErpAstMaintenanceBizModel extends CrudBizModel<ErpAstMaintenance>
 
     public ErpAstMaintenanceBizModel() {
         setEntityName(ErpAstMaintenance.class.getName());
-    }
-
-    @BizLoader(forType = ErpAstMaintenance.class)
-    public List<String> orgName(@ContextSource List<ErpAstMaintenance> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstMaintenance row : rows) {
-            result.add(row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstMaintenance.class)
-    public List<String> assetCode(@ContextSource List<ErpAstMaintenance> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("asset"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstMaintenance row : rows) {
-            result.add(row.getAsset() != null ? row.getAsset().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstMaintenance.class)
-    public List<String> currencyName(@ContextSource List<ErpAstMaintenance> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("currency"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstMaintenance row : rows) {
-            result.add(row.getCurrency() != null ? row.getCurrency().getName() : null);
-        }
-        return result;
     }
 
     @Override

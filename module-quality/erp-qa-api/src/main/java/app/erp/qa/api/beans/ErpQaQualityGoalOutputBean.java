@@ -277,18 +277,6 @@
         }
 
 
-        private String _responsiblePersonName;
-
-    
-        public String getResponsiblePersonName(){
-            return _responsiblePersonName;
-        }
-
-        public void setResponsiblePersonName(String value){
-            this._responsiblePersonName = value;
-        }
-
-
         private Map<String,Object> _responsiblePerson;
 
         public Map<String,Object> getResponsiblePerson(){

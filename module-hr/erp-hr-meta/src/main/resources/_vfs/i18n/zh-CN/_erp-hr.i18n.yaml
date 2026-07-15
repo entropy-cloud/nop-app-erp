@@ -45,7 +45,6 @@ prop:
       comment: 评语
       competency: null
       competencyId: 胜任力
-      competencyName: 胜任力
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -65,17 +64,15 @@ prop:
       delVersion: 逻辑删除版本
       earlyLeaveMinutes: 早退分钟数
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       id: ID
       isAbsent: 是否旷工
       lateMinutes: 迟到分钟数
       leaveRequest: null
-      leaveRequestCode: 请假申请
       leaveRequestId: 关联休假
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       source: 来源
       source_label: 来源
@@ -97,11 +94,10 @@ prop:
       levels: null
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       parent: null
       parentId: 上级胜任力
-      parentName: 上级
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -110,7 +106,6 @@ prop:
       behavioralAnchor: 行为锚定
       competency: null
       competencyId: 胜任力
-      competencyName: 胜任力
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -124,22 +119,20 @@ prop:
     ErpHrDepartment:
       code: 编码
       costCenter: null
+      costCenter.name: null
       costCenterId: 成本中心
-      costCenterName: 成本中心
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
       manager: null
-      managerDisplayName: 负责人
       managerId: 部门负责人
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       parent: null
       parentId: 上级部门
-      parentName: 上级
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -150,13 +143,12 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       id: ID
       items: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       planName: 计划名称
       remark: 备注
       status: 状态
@@ -168,7 +160,6 @@ prop:
     ErpHrDevelopmentPlanItem:
       competency: null
       competencyId: 目标胜任力
-      competencyName: 胜任力
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -178,11 +169,9 @@ prop:
       gapId: 关联差距分析
       id: ID
       mentor: null
-      mentorDisplayName: 导师
       mentorId: 导师
       plan: null
       planId: 发展计划
-      planName: 发展计划
       progressNote: 进度说明
       startDate: 开始日期
       status: 状态
@@ -193,19 +182,18 @@ prop:
       version: 数据版本
     ErpHrEmployee:
       bankAccount: null
+      bankAccount.bankName: null
       bankAccountId: 工资卡账户
-      bankAccountName: 工资卡账户
       birthDate: 出生日期
       code: 工号
       costCenter: null
+      costCenter.name: null
       costCenterId: 默认成本中心
-      costCenterName: 默认成本中心
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       department: null
       departmentId: 部门
-      departmentName: 部门
       email: 电子邮箱
       emergencyContact: 紧急联系人
       emergencyPhone: 紧急联系电话
@@ -228,11 +216,10 @@ prop:
       mobilePhone: 手机号
       nationality: 国籍
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       position: null
       positionId: 职位
-      positionName: 职位
       probationEndDate: 试用期截止
       regularDate: 转正日期
       remark: 备注
@@ -240,7 +227,6 @@ prop:
       resignationReason: 离职原因
       socialSecurityNo: 社保号
       superior: null
-      superiorDisplayName: 直接上级
       superiorId: 直接上级
       taxFileNo: 个税档案号
       updateTime: 修改时间
@@ -252,7 +238,6 @@ prop:
       assessmentType: 评估类型
       assessmentType_label: 评估类型
       assessor: null
-      assessorDisplayName: 评估人
       assessorId: 评估人
       businessDate: 业务日期
       createTime: 创建时间
@@ -260,12 +245,11 @@ prop:
       delVersion: 逻辑删除版本
       details: null
       employee: null
-      employeeDisplayName: 员工
       employeeId: 被评估员工
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       overallScore: 综合评分
       remark: 备注
       status: 状态
@@ -283,21 +267,20 @@ prop:
       contractType_label: 合同类型
       createTime: 创建时间
       createdBy: 创建人
-      currencyName: 币种
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       endDate: 到期日期
       housingFundBase: 公积金基数
       id: ID
       monthlySalary: 月薪(税前)
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       probationMonths: 试用期月数
       remark: 备注
       salaryCurrency: null
+      salaryCurrency.name: null
       salaryCurrencyId: 薪资币种
       salaryPayMethod: 发薪方式
       signDate: 签订日期
@@ -315,12 +298,10 @@ prop:
       assessmentDate: 评估日期
       competency: null
       competencyId: 胜任力
-      competencyName: 胜任力
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       gapSeverity: 差距严重程度
       gapSeverity_label: 差距严重程度
@@ -337,7 +318,6 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       entitledDays: 应休额度(天)
       fiscalYear: 福利年度
@@ -345,8 +325,8 @@ prop:
       leaveType: 休假类型
       leaveType_label: 休假类型
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -354,7 +334,6 @@ prop:
     ErpHrLeaveRequest:
       approvedAt: 审批时间
       approver: null
-      approverDisplayName: 审批人
       approverId: 审批人
       businessDate: 业务日期
       code: 单号
@@ -363,15 +342,14 @@ prop:
       delVersion: 逻辑删除版本
       durationDays: 天数
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       endDate: 结束日期
       id: ID
       leaveType: 休假类型
       leaveType_label: 休假类型
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       reason: 请假原因
       remark: 备注
       startDate: 开始日期
@@ -382,7 +360,7 @@ prop:
       version: 数据版本
     ErpHrPayrollBankFile:
       bank: null
-      bankDisplayName: 开户银行
+      bank.bankName: null
       bankId: 开户银行
       batchNo: 批次号
       createTime: 创建时间
@@ -393,8 +371,8 @@ prop:
       fileFormat_label: 文件格式
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       paymentDate: 发放日期
       recordCount: 记录数
       remark: 备注
@@ -411,14 +389,13 @@ prop:
       delVersion: 逻辑删除版本
       department: null
       departmentId: 所属部门
-      departmentName: 部门
       id: ID
       jobCategory: 职位类别
       jobGrade: 职级
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -434,24 +411,20 @@ prop:
       delVersion: 逻辑删除版本
       department: null
       departmentId: 招聘部门
-      departmentName: 部门
       employee: null
-      employeeDisplayName: 员工
       employeeId: 关联员工
       headcount: 招聘人数
       hiredDate: 入职日期
       id: ID
       interviewDate: 面试日期
       interviewer: null
-      interviewerDisplayName: 面试官
       interviewerId: 面试官
       offerSalary: Offer薪资
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       position: null
       positionId: 招聘职位
-      positionName: 职位
       remark: 备注
       resumeAttachmentFileId: 简历附件
       resumeAttachmentFileIdComponentFileStatus: null
@@ -465,7 +438,6 @@ prop:
     ErpHrRoleCompetency:
       competency: null
       competencyId: 胜任力
-      competencyName: 胜任力
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -473,7 +445,6 @@ prop:
       isCritical: 是否关键
       position: null
       positionId: 岗位
-      positionName: 职位
       requiredLevel: 要求等级
       updateTime: 修改时间
       updatedBy: 修改人
@@ -486,7 +457,6 @@ prop:
       approvedAt: 审核时间
       approvedBy: 审核人
       bankFile: null
-      bankFileBatchNo: 银行代发文件
       bankFileId: 银行文件
       basicSalary: 基本工资
       businessDate: 业务日期
@@ -495,7 +465,6 @@ prop:
       cumulativeData: 累计个税数据
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       grossSalary: 应发合计
       housingFund: 公积金个人部分
@@ -505,8 +474,8 @@ prop:
       netSalary: 实发合计
       nopFlowId: 工作流实例
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       otherAllowance: 其他补贴
       otherDeductions: 其他扣款
       overtimePay: 加班费
@@ -548,8 +517,8 @@ prop:
       itemGroup_label: 分组
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       sortOrder: 排序号
       updateTime: 修改时间
@@ -567,11 +536,10 @@ prop:
       id: ID
       notes: 备注
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       reviewedAt: 审批时间
       reviewer: null
-      reviewerDisplayName: 审核人
       reviewerId: 审批人
       simulationName: 模拟名称
       simulationPeriodMonth: 模拟月份
@@ -593,17 +561,15 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       originalAmount: 源值
       remark: 备注
       salaryItemCode: 薪酬项目编码
       simulation: null
-      simulationCode: 薪资模拟
       simulationId: 模拟
       updateTime: 修改时间
       updatedBy: 修改人
@@ -622,8 +588,8 @@ prop:
       id: ID
       name: 班次名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       requireClockIn: 需签到
       requireClockOut: 需签退
       restEndTime: 休息结束
@@ -646,24 +612,20 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       id: ID
       isAbsent: 是否缺勤
       leaveRequest: null
-      leaveRequestCode: 关联休假
       leaveRequestId: 关联休假
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       replacedByAssignment: null
       replacedByAssignmentId: 被替换排班
       shift: null
       shiftId: 班次
-      shiftName: 班次
       status: 状态
       swapRequest: null
-      swapRequestCode: 关联调换
       swapRequestId: 关联调换
       updateTime: 修改时间
       updatedBy: 修改人
@@ -675,12 +637,11 @@ prop:
       delVersion: 逻辑删除版本
       group: null
       groupId: 轮换组
-      groupName: 轮换组
       id: ID
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       patternData: 轮换序列
       patternType: 轮换类型
       rotateInterval: 轮换间隔(天)
@@ -697,11 +658,10 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       reason: 调换原因
       requester: null
-      requesterDisplayName: 申请人
       requesterId: 申请人
       sourceAssignment: null
       sourceAssignmentId: 原排班
@@ -711,7 +671,6 @@ prop:
       targetAssignment: null
       targetAssignmentId: 目标排班
       targetEmployee: null
-      targetEmployeeDisplayName: 目标员工
       targetEmployeeId: 目标员工
       updateTime: 修改时间
       updatedBy: 修改人
@@ -725,13 +684,12 @@ prop:
       effectiveFrom: 生效日期
       effectiveTo: 失效日期
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       housingFundBase: 公积金基数
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       socialInsuranceBase: 社保基数
       updateTime: 修改时间
@@ -753,8 +711,8 @@ prop:
       insuranceType: 险种
       insuranceType_label: 险种
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -774,8 +732,8 @@ prop:
       includeENps: 包含eNPS
       isAnonymous: 是否匿名
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       questions: null
       remark: 备注
       reminderDays: 催填间隔天数
@@ -787,7 +745,6 @@ prop:
       surveyType_label: 调研类型
       targetDepartment: null
       targetDepartmentId: 目标部门
-      targetDepartmentName: 目标部门
       title: 问卷标题
       totalQuestions: 总题数
       totalResponses: 总答卷数
@@ -802,7 +759,6 @@ prop:
       openText: 文本回答
       question: null
       questionId: 题目
-      questionText: 题目
       ratingValue: 评分值
       response: null
       responseId: 答卷
@@ -829,7 +785,6 @@ prop:
       sortOrder: 排序号
       survey: null
       surveyId: 所属问卷
-      surveyTitle: 问卷
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -839,18 +794,16 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 填写员工
       id: ID
       isComplete: 是否完整
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       respondentHash: 匿名哈希
       submittedAt: 提交时间
       survey: null
       surveyId: 所属问卷
-      surveyTitle: 问卷
       timeSpentSeconds: 填写耗时
       updateTime: 修改时间
       updatedBy: 修改人
@@ -862,7 +815,6 @@ prop:
       delVersion: 逻辑删除版本
       department: null
       departmentId: 部门
-      departmentName: 部门
       driverScores: 驱动因子得分
       eNpsScore: eNPS得分
       id: ID
@@ -870,7 +822,6 @@ prop:
       questionBreakdown: 每题得分
       survey: null
       surveyId: 所属问卷
-      surveyTitle: 问卷
       totalResponses: 答卷数
       trendData: 历史趋势
       updateTime: 修改时间
@@ -882,8 +833,8 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       specialDeductionItems: 专项附加扣除项配置
       taxBrackets: 税率表
@@ -899,14 +850,13 @@ prop:
       deductionType_label: 扣除项目
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       id: ID
       month: 月份
       monthlyAmount: 每月扣除金额
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -920,13 +870,12 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       periodFrom: 周期开始
       periodTo: 周期结束
       remark: 备注
@@ -943,18 +892,16 @@ prop:
       delVersion: 逻辑删除版本
       description: 工作内容
       employee: null
-      employeeDisplayName: 员工
       employeeId: 员工
       hours: 小时数
       id: ID
       project: null
+      project.name: null
       projectId: 项目
-      projectName: 项目
       task: null
+      task.title: null
       taskId: 任务
-      taskName: 任务
       timesheet: null
-      timesheetCode: 工时表
       timesheetId: 工时表ID
       updateTime: 修改时间
       updatedBy: 修改人

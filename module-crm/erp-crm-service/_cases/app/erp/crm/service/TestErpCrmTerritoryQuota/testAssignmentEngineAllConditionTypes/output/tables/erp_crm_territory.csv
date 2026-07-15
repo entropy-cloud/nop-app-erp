@@ -1,0 +1,7 @@
+_chgType,ID,CODE,NAME,ORG_ID,PARENT_ID,TERRITORY_TYPE,MANAGER_ID,DESCRIPTION,FULL_PATH,LEVEL,IS_ACTIVE,IS_LEAF,SORT_ORDER,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8000,@var:ErpCrmTerritory@code,公司E,1301,,REGION,,,/,0,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,8001,@var:ErpCrmTerritory@code_1,地理区,1301,8000,AREA,,,/T-ROOT-E/T-GEO,1,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,8002,@var:ErpCrmTerritory@code_2,行业区,1301,8000,AREA,,,/T-ROOT-E/T-IND,1,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,8003,@var:ErpCrmTerritory@code_3,规模区,1301,8000,AREA,,,/T-ROOT-E/T-SIZE,1,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,8004,@var:ErpCrmTerritory@code_4,自定义区,1301,8000,AREA,,,/T-ROOT-E/T-CUST,1,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,8005,@var:ErpCrmTerritory@code_5,默认区,1301,8000,AREA,,,/T-ROOT-E/T-DEF,1,true,true,0,,@var:ErpCrmTerritory@delVersion_4,0,autotest-ref,*,autotest-ref,*

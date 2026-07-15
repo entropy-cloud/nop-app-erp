@@ -265,10 +265,10 @@ public class ErpPurPaymentProcessor {
     protected void doApprove(ErpPurPayment payment, boolean posted, IServiceContext context) {
         payment.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         payment.setApprovedBy(currentUserId());
-        payment.setApprovedAt(CoreMetrics.currentDateTime());
+        payment.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
             payment.setPosted(true);
-            payment.setPostedAt(CoreMetrics.currentDateTime());
+            payment.setPostedAt(CoreMetrics.currentTimestamp());
             payment.setPostedBy(currentUserId());
         }
         paymentDao().updateEntity(payment);

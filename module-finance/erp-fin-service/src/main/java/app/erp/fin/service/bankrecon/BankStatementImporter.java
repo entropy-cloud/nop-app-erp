@@ -68,7 +68,7 @@ public class BankStatementImporter {
         head.setEndingBalance(account.getCurrentBalance() != null ? account.getCurrentBalance() : BigDecimal.ZERO);
         head.setTotalDebit(BigDecimal.ZERO);
         head.setTotalCredit(BigDecimal.ZERO);
-        head.setImportTime(CoreMetrics.currentDateTime());
+        head.setImportTime(CoreMetrics.currentTimestamp());
         head.setDocStatus(ErpFinConstants.VOUCHER_STATUS_DRAFT);
         headDao.saveEntity(head);
 

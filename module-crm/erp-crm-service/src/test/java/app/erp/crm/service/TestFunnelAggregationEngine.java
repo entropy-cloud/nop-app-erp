@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -282,7 +283,7 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
         log.setLeadId(leadId);
         log.setFromStageId(fromStageId);
         log.setToStageId(toStageId);
-        log.setChangedAt(changedAt);
+        log.setChangedAt(Timestamp.valueOf(changedAt));
         return log;
     }
 

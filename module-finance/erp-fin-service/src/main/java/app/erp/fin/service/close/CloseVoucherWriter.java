@@ -100,7 +100,7 @@ public final class CloseVoucherWriter {
         voucher.setTotalCredit(totalCredit);
         voucher.setIsReversed(false);
         voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
-        voucher.setPostedAt(CoreMetrics.currentDateTime());
+        voucher.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(voucher);
         Long voucherId = voucher.getId();
 

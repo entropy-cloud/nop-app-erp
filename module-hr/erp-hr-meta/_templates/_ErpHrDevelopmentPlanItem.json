@@ -20,8 +20,5 @@
   "plan": null,
   "competency": null,
   "gap": null,
-  "mentor": null,
-  "planName": "",
-  "competencyName": "",
-  "mentorDisplayName": ""
+  "mentor": null
 }

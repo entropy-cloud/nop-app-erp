@@ -8,6 +8,8 @@
 
     <primaryKey>id</primaryKey>
 
+    <displayProp>name</displayProp>
+
     <x:gen-extends>
         <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
     </x:gen-extends>
@@ -25,12 +27,12 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="code" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="name" displayName="名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="name" displayName="名称" propId="3" i18n-en:displayName="Name" tagSet="disp" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="name" type="java.lang.String" precision="200"/>
         </prop>
         <prop name="warehouseType" displayName="仓库类型" propId="4" i18n-en:displayName="Warehouse Type" queryable="true"
@@ -87,18 +89,26 @@
             <schema type="java.lang.String" precision="20" dict="erp-md/batch-strategy"/>
         </prop>
         <prop name="organization" i18n-en:displayName="Organization" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="orgId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              queryable="true" ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
         </prop>
+        <prop name="organization.name" i18n-en:displayName="Organization" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="manager" i18n-en:displayName="Manager" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="managerId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              queryable="true" ext:joinLeftProp="managerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
         </prop>
+        <prop name="manager.name" i18n-en:displayName="Manager" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="locations" i18n-en:displayName="Locations" tagSet="pub,cascade-delete,insertable,updatable"
-              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="warehouseId" insertable="true"
-              updatable="true" lazy="true">
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="warehouseId"
+              ext:joinRightDisplayProp="name" insertable="true" updatable="true" lazy="true">
             <schema>
                 <item bizObjName="ErpMdLocation"/>
             </schema>

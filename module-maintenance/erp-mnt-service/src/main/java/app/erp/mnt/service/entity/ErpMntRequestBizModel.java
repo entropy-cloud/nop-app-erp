@@ -7,10 +7,6 @@ import app.erp.mnt.dao.entity.ErpMntRequest;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.ErpMntErrors;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -31,16 +27,6 @@ public class ErpMntRequestBizModel extends CrudBizModel<ErpMntRequest> implement
 
     public ErpMntRequestBizModel() {
         setEntityName(ErpMntRequest.class.getName());
-    }
-
-    @BizLoader(forType = ErpMntRequest.class)
-    public List<String> equipmentCode(@ContextSource List<ErpMntRequest> list) {
-        orm().batchLoadProps(list, Collections.singleton("equipment"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntRequest entity : list) {
-            result.add(entity.getEquipment() != null ? entity.getEquipment().getCode() : null);
-        }
-        return result;
     }
 
     @Override
@@ -139,7 +125,7 @@ public class ErpMntRequestBizModel extends CrudBizModel<ErpMntRequest> implement
 
     protected void doComplete(ErpMntRequest request, IServiceContext context) {
         request.setStatus(ErpMntDaoConstants.REQUEST_STATUS_COMPLETED);
-        request.setCompletedAt(CoreMetrics.currentDateTime());
+        request.setCompletedAt(CoreMetrics.currentTimestamp());
         updateEntity(request, null, context);
     }
 

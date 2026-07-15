@@ -35,12 +35,12 @@
   "updateTime": "2000-01-01 14:00:00",
   "order": null,
   "supplier": null,
+  "supplier.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "org": null,
+  "org.name": "",
   "currency": null,
-  "lines": null,
-  "supplierName": "",
-  "warehouseName": "",
-  "currencyName": "",
-  "orgName": ""
+  "currency.name": "",
+  "lines": null
 }

@@ -24,17 +24,16 @@
   "updateTime": "2000-01-01 14:00:00",
   "projectType": null,
   "manager": null,
+  "manager.name": "",
   "currency": null,
+  "currency.name": "",
   "tasks": null,
   "timesheets": null,
   "members": null,
   "budgets": null,
   "milestones": null,
   "customer": null,
+  "customer.name": "",
   "org": null,
-  "orgName": "",
-  "projectTypeName": "",
-  "customerName": "",
-  "currencyName": "",
-  "managerName": ""
+  "org.name": ""
 }

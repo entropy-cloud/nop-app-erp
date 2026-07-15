@@ -11,8 +11,8 @@
                 <col id="paymentStatus" mandatory="true" sortable="true"/>
                 <col id="paymentDate" sortable="true"/>
                 <col id="approveStatus" mandatory="true" sortable="true"/>
-                <col id="bankFileBatchNo" label="银行代发文件"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="bankFileId" label="银行代发文件"/>
+                <col id="orgId" label="业务组织"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

@@ -133,7 +133,7 @@ public class ErpInvStockMoveProcessor {
         reverseReq.setRelatedBillType("REVERSAL");
         reverseReq.setRelatedBillCode(original.getCode());
         reverseReq.setOriginReturnedMoveId(original.getId());
-        reverseReq.setRemark("冲销 " + original.getCode());
+        reverseReq.setRemark("冲销");
         List<StockMoveLineRequest> reverseLines = new ArrayList<>(originalLines.size());
         for (ErpInvStockMoveLine ol : originalLines) {
             StockMoveLineRequest rl = new StockMoveLineRequest();

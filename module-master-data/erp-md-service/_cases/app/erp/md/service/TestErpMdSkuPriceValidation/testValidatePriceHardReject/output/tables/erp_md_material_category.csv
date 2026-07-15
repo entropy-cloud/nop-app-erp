@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,PARENT_ID,SORT_NUM,PRICE_VALIDATION_LEVEL,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,3,@var:ErpMdMaterialCategory@code,分类-CAT-VH-1,,,HARD,@var:ErpMdMaterialCategory@delVersion,0,autotest-ref,*,autotest-ref,*

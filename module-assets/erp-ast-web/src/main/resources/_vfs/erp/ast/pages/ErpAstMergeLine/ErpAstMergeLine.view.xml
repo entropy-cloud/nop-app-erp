@@ -6,7 +6,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="mergeCode" label="合并单编码"/>
-                <col id="orgName" label="所属组织"/>
+                <col id="orgId" label="所属组织"/>
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="sourceAssetCode" label="源资产编码"/>
                 <col id="contributionProportion" sortable="true"/>

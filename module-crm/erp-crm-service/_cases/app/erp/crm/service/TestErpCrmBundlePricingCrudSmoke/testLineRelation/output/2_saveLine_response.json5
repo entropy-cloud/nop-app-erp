@@ -13,10 +13,7 @@
     "productId": null,
     "quantity": null,
     "unitPrice": null,
-    "remark": null,
-    "bundleName": "冒烟捆绑",
-    "materialName": null,
-    "orgName": null
+    "remark": null
   },
   "status": 0
 }

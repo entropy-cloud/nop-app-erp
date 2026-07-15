@@ -1,0 +1,8 @@
+_chgType,ID,LEAD_ID,ORG_ID,FROM_STAGE_ID,TO_STAGE_ID,CHANGED_AT,CHANGED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7001,6011,,,6301,@var:ErpCrmLeadConvLog@changedAt,,,@var:ErpCrmLeadConvLog@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,7002,6011,,6301,6302,@var:ErpCrmLeadConvLog@changedAt_1,,,@var:ErpCrmLeadConvLog@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,7003,6011,,6302,6303,@var:ErpCrmLeadConvLog@changedAt_2,,,@var:ErpCrmLeadConvLog@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,7004,6012,,,6301,@var:ErpCrmLeadConvLog@changedAt,,,@var:ErpCrmLeadConvLog@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,7005,6012,,6301,6302,@var:ErpCrmLeadConvLog@changedAt_4,,,@var:ErpCrmLeadConvLog@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,7006,6013,,,6301,@var:ErpCrmLeadConvLog@changedAt,,,@var:ErpCrmLeadConvLog@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,7007,6013,,6301,6302,@var:ErpCrmLeadConvLog@changedAt_6,,,@var:ErpCrmLeadConvLog@delVersion_2,0,autotest-ref,*,autotest-ref,*

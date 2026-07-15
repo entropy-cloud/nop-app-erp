@@ -4,7 +4,7 @@
   "orgId": 0,
   "activityType": "",
   "activityType_label": "",
-  "activityDate": "2000-01-01 14:00:00",
+  "activityDate": "2000-01-01",
   "summary": "",
   "ownerId": "",
   "remark": "",
@@ -16,6 +16,5 @@
   "updateTime": "2000-01-01 14:00:00",
   "lead": null,
   "org": null,
-  "leadCode": "",
-  "orgName": ""
+  "org.name": ""
 }

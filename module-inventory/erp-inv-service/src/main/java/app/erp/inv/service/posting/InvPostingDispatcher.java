@@ -88,7 +88,7 @@ public class InvPostingDispatcher {
         ErpInvStockMove managed = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(moveId);
         if (managed != null) {
             managed.setPosted(true);
-            managed.setPostedAt(CoreMetrics.currentDateTime());
+            managed.setPostedAt(CoreMetrics.currentTimestamp());
         }
     }
 

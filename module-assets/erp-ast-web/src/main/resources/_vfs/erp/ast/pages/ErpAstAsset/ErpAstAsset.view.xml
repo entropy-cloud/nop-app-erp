@@ -7,17 +7,17 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="orgName" label="所属组织"/>
-                <col id="categoryName" label="资产类别"/>
+                <col id="orgId" label="所属组织"/>
+                <col id="categoryId" label="资产类别"/>
                 <col id="acquisitionDate" mandatory="true" sortable="true"/>
-                <col id="currencyName" label="币种"/>
+                <col id="currencyId" label="币种"/>
                 <col id="originalValue" sortable="true"/>
                 <col id="netBookValue" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="departmentName" label="使用部门"/>
-                <col id="locationName" label="使用地点"/>
-                <col id="employeeName" label="使用人(职员)"/>
-                <col id="staffName" label="使用人(往来单位)"/>
+                <col id="departmentId" label="使用部门"/>
+                <col id="locationId" label="使用地点"/>
+                <col id="employeeId" label="使用人(职员)"/>
+                <col id="staffId" label="使用人(往来单位)"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

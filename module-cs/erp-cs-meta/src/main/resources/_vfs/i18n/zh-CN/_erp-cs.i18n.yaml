@@ -27,8 +27,8 @@ prop:
       id: ID
       isActive: 是否启用
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       rate: 费率(元/小时)
       serviceType: 服务类型
       serviceType_label: 服务类型
@@ -44,11 +44,10 @@ prop:
       id: ID
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       parent: null
       parentId: 父分类
-      parentName: 上级分类
       sequence: 排序
       updateTime: 修改时间
       updatedBy: 修改人
@@ -56,7 +55,6 @@ prop:
     ErpCsCannedResponse:
       category: null
       categoryId: 应答分类
-      categoryName: 分类
       code: 编码
       content: 模板正文
       createTime: 创建时间
@@ -69,10 +67,9 @@ prop:
       macroTicketType: null
       macroTicketTypeId: 自动匹配工单类型
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       sequence: 排序
-      ticketTypeName: 工单类型
       title: 模板标题
       updateTime: 修改时间
       updatedBy: 修改人
@@ -89,11 +86,10 @@ prop:
       isActive: 是否启用
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       parent: null
       parentId: 父分类
-      parentName: 上级分类
       sequence: 排序
       updateTime: 修改时间
       updatedBy: 修改人
@@ -105,7 +101,6 @@ prop:
       assignToRole: 执行角色
       catalogItem: null
       catalogItemId: 目录项
-      catalogItemName: 目录项
       code: 编码
       createTime: 创建时间
       createdBy: 创建人
@@ -114,8 +109,8 @@ prop:
       id: ID
       isMandatory: 是否必须执行
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       sequence: 执行顺序
       updateTime: 修改时间
       updatedBy: 修改人
@@ -136,11 +131,11 @@ prop:
       id: ID
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 签约客户
-      partnerName: 客户
       startDate: 生效日期
       status: 合同状态
       status_label: 合同状态
@@ -152,7 +147,6 @@ prop:
       code: 编码
       contract: null
       contractId: 支持合同
-      contractName: 合同
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -164,16 +158,15 @@ prop:
       maxTickets: 最大工单数
       notes: 备注
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 客户
-      partnerName: 客户
       serviceType: 服务类型
       serviceType_label: 服务类型
       slaPolicy: null
       slaPolicyId: SLA策略
-      slaPolicyName: SLA策略
       startDate: 生效日期
       updateTime: 修改时间
       updatedBy: 修改人
@@ -182,7 +175,6 @@ prop:
     ErpCsKnowledgeBase:
       category: null
       categoryId: 分类
-      categoryName: 分类
       code: 编码
       content: 正文
       createTime: 创建时间
@@ -198,7 +190,6 @@ prop:
     ErpCsServiceCatalogItem:
       category: null
       categoryId: 目录分类
-      categoryName: 分类
       code: 编码
       createTime: 创建时间
       createdBy: 创建人
@@ -211,20 +202,17 @@ prop:
       isPublic: 是否客户可见
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       parent: null
       parentId: 父项
-      parentName: 上级项
       requestFormConfig: 请求表单配置
       sequence: 排序
       shortDescription: 简短描述
       slaPolicy: null
       slaPolicyId: 默认SLA策略
-      slaPolicyName: SLA策略
       ticketType: null
       ticketTypeId: 关联工单类型
-      ticketTypeName: 工单类型
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -244,10 +232,8 @@ prop:
       resolveHours: 解决时限(小时)
       team: null
       teamId: 适用团队
-      teamName: 客服团队
       ticketType: null
       ticketTypeId: 适用工单类型
-      ticketTypeName: 工单类型
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -261,15 +247,14 @@ prop:
       id: ID
       npsScore: NPS评分
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       respondedAt: 响应时间
       surveyChannel: 发送渠道
       surveyChannel_label: 发送渠道
       surveySentAt: 调查发送时间
       surveyToken: 调查令牌
       ticket: null
-      ticketCode: 工单
       ticketId: 关联工单
       updateTime: 修改时间
       updatedBy: 修改人
@@ -296,16 +281,15 @@ prop:
       businessDate: 业务日期
       catalogItem: null
       catalogItemId: 服务目录项
-      catalogItemName: 目录项
       code: 单号
       contact: null
+      contact.name: null
       contactId: 联系人
-      contactName: 联系人
       createTime: 创建时间
       createdBy: 创建人
       customer: null
+      customer.name: null
       customerId: 客户
-      customerName: 客户
       deadlineDateTime: SLA 截止时间
       delVersion: 逻辑删除版本
       description: 问题描述
@@ -316,15 +300,14 @@ prop:
       id: ID
       isSlaCompleted: SLA 是否完成
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       priority: 优先级
       priority_label: 优先级
       progress: 进度(%)
       remark: 备注
       slaPolicy: null
       slaPolicyId: SLA 策略
-      slaPolicyName: SLA策略
       source: 来源
       source_label: 来源
       startDateTime: 开始处理时间
@@ -333,7 +316,6 @@ prop:
       subject: 工单主题
       ticketType: null
       ticketTypeId: 工单类型
-      ticketTypeName: 工单类型
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -349,7 +331,6 @@ prop:
       id: ID
       operatorId: 操作人
       ticket: null
-      ticketCode: 工单
       ticketId: 工单ID
       toStatus: 目标状态
       toStatus_label: 目标状态
@@ -369,7 +350,6 @@ prop:
       name: 名称
       remark: 备注
       sequence: 排序
-      slaPolicyName: 默认SLA策略
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -390,15 +370,14 @@ prop:
       id: ID
       isBillable: 是否可计费
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       projectId: 关联项目
       source: 来源
       source_label: 来源
       startTime: 开始时间
       taskId: 关联任务
       ticket: null
-      ticketCode: 工单
       ticketId: 关联工单
       updateTime: 修改时间
       updatedBy: 修改人

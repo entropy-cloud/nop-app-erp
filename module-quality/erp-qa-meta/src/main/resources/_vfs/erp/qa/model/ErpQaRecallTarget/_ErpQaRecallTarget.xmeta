@@ -47,9 +47,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
-        <prop name="notifiedAt" displayName="通知时间" propId="8" i18n-en:displayName="Notified At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="notifiedAt" displayName="通知时间" propId="8" i18n-en:displayName="Notified At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="notifiedBy" displayName="通知人" propId="9" i18n-en:displayName="Notified By" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -97,9 +97,13 @@
             <schema bizObjName="ErpQaRecall"/>
         </prop>
         <prop name="partner" i18n-en:displayName="Affected Customer" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="partnerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="partner.name" i18n-en:displayName="Affected Customer" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

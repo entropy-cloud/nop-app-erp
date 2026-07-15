@@ -209,42 +209,6 @@
         }
 
 
-        private String _workcenterName;
-
-    
-        public String getWorkcenterName(){
-            return _workcenterName;
-        }
-
-        public void setWorkcenterName(String value){
-            this._workcenterName = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _workOrderNo;
-
-    
-        public String getWorkOrderNo(){
-            return _workOrderNo;
-        }
-
-        public void setWorkOrderNo(String value){
-            this._workOrderNo = value;
-        }
-
-
         private Map<String,Object> _workcenter;
 
         public Map<String,Object> getWorkcenter(){

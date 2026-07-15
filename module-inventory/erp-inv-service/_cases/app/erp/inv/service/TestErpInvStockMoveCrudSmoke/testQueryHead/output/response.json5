@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "3",
-        "code": "SMOKE-INV",
+        "code": "@var:ErpInvStockMove@code",
         "moveType": "INCOMING",
         "moveType_label": "INCOMING-入库",
         "orgId": null,

@@ -1,0 +1,5 @@
+_chgType,ID,CODE,VOUCHER_TYPE,POSTING_TYPE,VOUCHER_DATE,VOUCHER_NO,ORG_ID,ACCT_SCHEMA_ID,PERIOD_ID,TOTAL_DEBIT,TOTAL_CREDIT,IS_REVERSED,REVERSAL_OF_VOUCHER_ID,DOC_STATUS,POSTED_BY,POSTED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,13,@var:ErpFinVoucher@code_2,TRANSFER,NORMAL,2026-06-30,,1,1,2,100.0000,100.0000,true,,POSTED,,@var:ErpFinVoucher@postedAt,,@var:ErpFinVoucher@delVersion,1,autotest-ref,*,autotest-ref,*
+A,17,@var:ErpFinVoucher@code_3,TRANSFER,REVERSAL,2026-06-30,,1,1,2,-100.0000,-100.0000,true,13,POSTED,,@var:ErpFinVoucher@postedAt_1,,@var:ErpFinVoucher@delVersion,0,autotest-ref,*,autotest-ref,*
+A,3,@var:ErpFinVoucher@code,TRANSFER,,2026-06-10,,1,1,1,300,300,false,,POSTED,,,,@var:ErpFinVoucher@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5,@var:ErpFinVoucher@code_1,TRANSFER,,2026-06-12,,1,1,1,200,200,false,,POSTED,,,,@var:ErpFinVoucher@delVersion,0,autotest-ref,*,autotest-ref,*

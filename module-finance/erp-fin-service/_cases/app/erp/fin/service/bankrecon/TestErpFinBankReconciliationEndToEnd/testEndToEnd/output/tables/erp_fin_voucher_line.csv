@@ -1,0 +1,7 @@
+_chgType,ID,VOUCHER_ID,LINE_NO,SUBJECT_ID,SUBJECT_CODE,SUBJECT_NAME,DC_DIRECTION,DEBIT_AMOUNT,CREDIT_AMOUNT,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,ACCT_SCHEMA_ID,ORG_ID,MEMO,PARTNER_ID,DEPARTMENT_ID,PROJECT_ID,WAREHOUSE_ID,MATERIAL_ID,BUSINESS_TYPE,COST_CENTER_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,14,13,1,9101,1002,银行存款,DEBIT,100.0000,0,1,1,100.0000,100.0000,1,,银行对账未达账项调整,,,,,,BANK_RECON_ADJ,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,15,13,2,9102,2240OTHER,未达账项调整,CREDIT,0,100.0000,1,1,100.0000,100.0000,1,,银行对账未达账项调整,,,,,,BANK_RECON_ADJ,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,18,17,1,9101,1002,银行存款,DEBIT,-100.0000,0,1,1.00000000,-100.0000,-100.0000,1,,银行对账未达账项调整,,,,,,BANK_RECON_ADJ,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,19,17,2,9102,2240OTHER,未达账项调整,CREDIT,0,-100.0000,1,1.00000000,-100.0000,-100.0000,1,,银行对账未达账项调整,,,,,,BANK_RECON_ADJ,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,4,3,1,9101,1002,银行存款,DEBIT,300,0,1,1,300,300,1,1,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,6,5,1,9101,1002,银行存款,DEBIT,200,0,1,1,200,200,1,1,,,,,,,,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*

@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -358,7 +359,7 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         ErpMntDowntimeEntry downtime = new ErpMntDowntimeEntry();
         downtime.setId(id);
         downtime.setEquipmentId(equipmentId);
-        downtime.setStartTime(startTime);
+        downtime.setStartTime(Timestamp.valueOf(startTime));
         downtime.setReason(reason);
         downtime.setRelatedJobOrderId(relatedJobOrderId);
         dao.saveEntity(downtime);

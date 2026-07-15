@@ -19,10 +19,9 @@
   "updateTime": "2000-01-01 14:00:00",
   "costRollup": null,
   "material": null,
+  "material.name": "",
   "uoM": null,
+  "uoM.name": "",
   "currency": null,
-  "costRollupCode": "",
-  "materialName": "",
-  "uomName": "",
-  "currencyName": ""
+  "currency.name": ""
 }

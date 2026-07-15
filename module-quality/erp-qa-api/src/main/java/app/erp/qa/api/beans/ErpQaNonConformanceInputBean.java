@@ -279,16 +279,16 @@
         }
 
 
-        private java.time.LocalDateTime _resolvedAt;
+        private java.sql.Timestamp _resolvedAt;
 
     
         @PropMeta(propId=20)
     
-        public java.time.LocalDateTime getResolvedAt(){
+        public java.sql.Timestamp getResolvedAt(){
             return _resolvedAt;
         }
 
-        public void setResolvedAt(java.time.LocalDateTime value){
+        public void setResolvedAt(java.sql.Timestamp value){
             this._resolvedAt = value;
         }
 

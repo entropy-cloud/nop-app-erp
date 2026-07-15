@@ -61,7 +61,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     public static final String PROP_NAME_isBalanced = "isBalanced";
     public static final int PROP_ID_isBalanced = 10;
     
-    /* 对账完成时间: RECONCILED_AT DATETIME */
+    /* 对账完成时间: RECONCILED_AT TIMESTAMP */
     public static final String PROP_NAME_reconciledAt = "reconciledAt";
     public static final int PROP_ID_reconciledAt = 11;
     
@@ -219,7 +219,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     private java.lang.Boolean _isBalanced;
     
     /* 对账完成时间: RECONCILED_AT */
-    private java.time.LocalDateTime _reconciledAt;
+    private java.sql.Timestamp _reconciledAt;
     
     /* 对账人: RECONCILED_BY */
     private java.lang.Long _reconciledBy;
@@ -494,9 +494,9 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
             }
         
             case PROP_ID_reconciledAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_reconciledAt));
                }
                setReconciledAt(typedValue);
@@ -674,7 +674,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
         
             case PROP_ID_reconciledAt:{
                onInitProp(propId);
-               this._reconciledAt = (java.time.LocalDateTime)value;
+               this._reconciledAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -941,7 +941,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 对账完成时间: RECONCILED_AT
      */
-    public final java.time.LocalDateTime getReconciledAt(){
+    public final java.sql.Timestamp getReconciledAt(){
          onPropGet(PROP_ID_reconciledAt);
          return _reconciledAt;
     }
@@ -949,7 +949,7 @@ public class _ErpFinBankReconciliation extends DynamicOrmEntity{
     /**
      * 对账完成时间: RECONCILED_AT
      */
-    public final void setReconciledAt(java.time.LocalDateTime value){
+    public final void setReconciledAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_reconciledAt,value)){
             this._reconciledAt = value;
             internalClearRefs(PROP_ID_reconciledAt);

@@ -89,7 +89,7 @@ public class ErpCsQualityDashboardBizModel {
                     durationCount++;
                 }
                 if (t.getCreateTime() != null && t.getStartDateTime() != null) {
-                    long diff = durationMsBetween(t.getCreateTime().toLocalDateTime(), t.getStartDateTime());
+                    long diff = durationMsBetween(t.getCreateTime().toLocalDateTime(), t.getStartDateTime().toLocalDateTime());
                     if (diff >= 0) {
                         firstResponseSumMs += diff;
                         firstResponseCount++;

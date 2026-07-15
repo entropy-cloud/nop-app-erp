@@ -1,0 +1,3 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,11,7,AR_INVOICE,@var:ErpFinVoucherBillR@billCode_1,,AR_INVOICE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,17,13,AR_INVOICE,@var:ErpFinVoucherBillR@billCode_1,,AR_INVOICE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

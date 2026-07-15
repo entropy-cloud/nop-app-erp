@@ -1,4 +1,4 @@
 _chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,15,12,PURCHASE_INPUT,*,,PURCHASE_INPUT,*,0,autotest-ref,*,autotest-ref,*
-A,22,18,AP_INVOICE,PI-FEX-001,,AP_INVOICE,*,0,autotest-ref,*,autotest-ref,*
-A,28,25,PAYMENT,PY-FEX-001,,PAYMENT,*,0,autotest-ref,*,autotest-ref,*
+A,15,12,PURCHASE_INPUT,@var:ErpFinVoucherBillR@billCode,,PURCHASE_INPUT,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,22,18,AP_INVOICE,@var:ErpFinVoucherBillR@billCode_1,,AP_INVOICE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,28,25,PAYMENT,@var:ErpFinVoucherBillR@billCode_2,,PAYMENT,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

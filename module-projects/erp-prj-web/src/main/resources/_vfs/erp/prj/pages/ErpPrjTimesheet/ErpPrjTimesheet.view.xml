@@ -6,14 +6,14 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="projectName" label="项目"/>
-                <col id="taskName" label="任务"/>
-                <col id="userName" label="用户"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="projectId" label="项目"/>
+                <col id="taskId" label="任务"/>
+                <col id="userId" label="用户"/>
                 <col id="workDate" mandatory="true" sortable="true"/>
                 <col id="hours" mandatory="true" sortable="true"/>
-                <col id="activityTypeName" label="活动类型"/>
-                <col id="currencyName" label="币种"/>
+                <col id="activityTypeId" label="活动类型"/>
+                <col id="currencyId" label="币种"/>
                 <col id="costRate" sortable="true"/>
                 <col id="costAmount" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>

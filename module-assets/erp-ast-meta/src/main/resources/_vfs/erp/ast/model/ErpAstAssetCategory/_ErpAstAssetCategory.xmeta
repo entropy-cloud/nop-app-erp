@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="类别编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="类别编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="assetCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="name" displayName="类别名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
@@ -91,29 +91,50 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="subject" i18n-en:displayName="Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
-            <schema bizObjName="ErpMdSubject"/>
-        </prop>
-        <prop name="depreciationSubject" i18n-en:displayName="Depreciation Subject" tagSet="pub" ext:kind="to-one"
-              internal="true" queryable="true" ext:joinLeftProp="depreciationSubjectId" ext:joinRightProp="id"
+              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
               biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
-        <prop name="expenseSubject" i18n-en:displayName="Expense Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="expenseSubjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+        <prop name="subject.name" i18n-en:displayName="Subject" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="depreciationSubject" i18n-en:displayName="Depreciation Subject" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="depreciationSubjectId" ext:joinRightProp="id"
+              ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="depreciationSubject.name" i18n-en:displayName="Depreciation Subject" internal="true"
+              queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="expenseSubject" i18n-en:displayName="Expense Subject" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="expenseSubjectId" ext:joinRightProp="id"
+              ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="expenseSubject.name" i18n-en:displayName="Expense Subject" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="disposalGainLossSubject" i18n-en:displayName="Disposal Gain/Loss Subject" tagSet="pub"
               ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="disposalGainLossSubjectId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
+        <prop name="disposalGainLossSubject.name" i18n-en:displayName="Disposal Gain/Loss Subject" internal="true"
+              queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="cipSubject" i18n-en:displayName="CIP Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="cipSubjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="cipSubjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="cipSubject.name" i18n-en:displayName="CIP Subject" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

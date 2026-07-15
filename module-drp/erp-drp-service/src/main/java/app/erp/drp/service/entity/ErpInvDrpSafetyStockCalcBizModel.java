@@ -1,10 +1,6 @@
 package app.erp.drp.service.entity;
 
 import java.util.List;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import app.erp.drp.biz.IErpInvDrpSafetyStockCalcBiz;
 import app.erp.drp.dao.entity.ErpInvDrpSafetyStockCalc;
 import app.erp.drp.service.ErpDrpConfigs;
@@ -59,37 +55,6 @@ public class ErpInvDrpSafetyStockCalcBizModel extends CrudBizModel<ErpInvDrpSafe
                 ErpDrpConfigs.DEFAULT_DRP_SS_AUTO_WRITEBACK);
         safetyStockEngine.confirmWriteback(calcId);
         return get(String.valueOf(calcId), false, context);
-    }
-
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpInvDrpSafetyStockCalc.class)
-    public List<String> materialName(@ContextSource List<ErpInvDrpSafetyStockCalc> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpInvDrpSafetyStockCalc row : rows) {
-            result.add(row.orm_attached() && row.getMaterial() != null ? row.getMaterial().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpInvDrpSafetyStockCalc.class)
-    public List<String> warehouseName(@ContextSource List<ErpInvDrpSafetyStockCalc> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("warehouse"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpInvDrpSafetyStockCalc row : rows) {
-            result.add(row.orm_attached() && row.getWarehouse() != null ? row.getWarehouse().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpInvDrpSafetyStockCalc.class)
-    public List<String> orgName(@ContextSource List<ErpInvDrpSafetyStockCalc> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpInvDrpSafetyStockCalc row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
     }
 
 }

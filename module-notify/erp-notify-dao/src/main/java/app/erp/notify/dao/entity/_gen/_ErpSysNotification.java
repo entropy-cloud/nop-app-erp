@@ -73,7 +73,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     public static final String PROP_NAME_mergeCount = "mergeCount";
     public static final int PROP_ID_mergeCount = 13;
     
-    /* 发送时间: SENT_AT DATETIME */
+    /* 发送时间: SENT_AT TIMESTAMP */
     public static final String PROP_NAME_sentAt = "sentAt";
     public static final int PROP_ID_sentAt = 14;
     
@@ -226,7 +226,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     private java.lang.Integer _mergeCount;
     
     /* 发送时间: SENT_AT */
-    private java.time.LocalDateTime _sentAt;
+    private java.sql.Timestamp _sentAt;
     
     /* 错误信息: ERROR_MSG */
     private java.lang.String _errorMsg;
@@ -528,9 +528,9 @@ public class _ErpSysNotification extends DynamicOrmEntity{
             }
         
             case PROP_ID_sentAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_sentAt));
                }
                setSentAt(typedValue);
@@ -709,7 +709,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
         
             case PROP_ID_sentAt:{
                onInitProp(propId);
-               this._sentAt = (java.time.LocalDateTime)value;
+               this._sentAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1019,7 +1019,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * 发送时间: SENT_AT
      */
-    public final java.time.LocalDateTime getSentAt(){
+    public final java.sql.Timestamp getSentAt(){
          onPropGet(PROP_ID_sentAt);
          return _sentAt;
     }
@@ -1027,7 +1027,7 @@ public class _ErpSysNotification extends DynamicOrmEntity{
     /**
      * 发送时间: SENT_AT
      */
-    public final void setSentAt(java.time.LocalDateTime value){
+    public final void setSentAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_sentAt,value)){
             this._sentAt = value;
             internalClearRefs(PROP_ID_sentAt);

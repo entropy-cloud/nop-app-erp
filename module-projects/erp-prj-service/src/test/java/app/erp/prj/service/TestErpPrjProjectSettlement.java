@@ -235,9 +235,9 @@ public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
         cc.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
         cc.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
         cc.setPosted(false);
-        cc.setExchangeRate("1");
-        cc.setAmountSource("0");
-        cc.setAmountFunctional("0");
+        cc.setExchangeRate(BigDecimal.ONE);
+        cc.setAmountSource(BigDecimal.ZERO);
+        cc.setAmountFunctional(BigDecimal.ZERO);
         dao.saveEntity(cc);
         return cc.getId();
     }

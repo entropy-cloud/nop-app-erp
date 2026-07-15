@@ -57,7 +57,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
     public static final String PROP_NAME_totalCredit = "totalCredit";
     public static final int PROP_ID_totalCredit = 9;
     
-    /* 导入时间: IMPORT_TIME DATETIME */
+    /* 导入时间: IMPORT_TIME TIMESTAMP */
     public static final String PROP_NAME_importTime = "importTime";
     public static final int PROP_ID_importTime = 10;
     
@@ -196,7 +196,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
     private java.math.BigDecimal _totalCredit;
     
     /* 导入时间: IMPORT_TIME */
-    private java.time.LocalDateTime _importTime;
+    private java.sql.Timestamp _importTime;
     
     /* 状态: DOC_STATUS */
     private java.lang.String _docStatus;
@@ -452,9 +452,9 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
             }
         
             case PROP_ID_importTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_importTime));
                }
                setImportTime(typedValue);
@@ -615,7 +615,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
         
             case PROP_ID_importTime:{
                onInitProp(propId);
-               this._importTime = (java.time.LocalDateTime)value;
+               this._importTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -856,7 +856,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
     /**
      * 导入时间: IMPORT_TIME
      */
-    public final java.time.LocalDateTime getImportTime(){
+    public final java.sql.Timestamp getImportTime(){
          onPropGet(PROP_ID_importTime);
          return _importTime;
     }
@@ -864,7 +864,7 @@ public class _ErpFinBankStatement extends DynamicOrmEntity{
     /**
      * 导入时间: IMPORT_TIME
      */
-    public final void setImportTime(java.time.LocalDateTime value){
+    public final void setImportTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_importTime,value)){
             this._importTime = value;
             internalClearRefs(PROP_ID_importTime);

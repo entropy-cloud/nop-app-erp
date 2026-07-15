@@ -23,11 +23,11 @@ prop:
       isActive: 是否启用
       maxParcelWeight: 最大包裹重量(kg)
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 承运商往来单位ID
-      partnerName: 承运商往来单位
       remark: 备注
       supportedServiceTypes: 支持服务类型
       trackingUrlTemplate: 追踪URL模板
@@ -41,7 +41,6 @@ prop:
       apiSecret: API密钥
       carrier: null
       carrierId: 承运商ID
-      carrierName: 承运商
       configCode: 配置编码
       createTime: 创建时间
       createdBy: 创建人
@@ -50,8 +49,8 @@ prop:
       id: ID
       isActive: 是否启用
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       printFormat: 面单打印格式
       remark: 备注
       serviceType: 服务类型
@@ -72,11 +71,11 @@ prop:
       isActive: 是否启用
       maxCapacity: 最大预约数
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 客户
-      partnerName: 客户
       remark: 备注
       startTime: 开始时间
       updateTime: 修改时间
@@ -89,9 +88,7 @@ prop:
       carrier: null
       carrierConfig: null
       carrierConfigId: 承运商配置ID
-      carrierConfigName: 承运商配置
       carrierId: 承运商ID
-      carrierName: 承运商
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
@@ -99,8 +96,8 @@ prop:
       estimatedDeliveryDate: 预计送达日期
       freightAmount: 运费
       freightCurrency: null
+      freightCurrency.name: null
       freightCurrencyId: 运费币种
-      freightCurrencyName: 运费币种
       freightSettlementStatus: 运费结算状态
       freightSettlementStatus_label: 运费结算状态
       freightTerms: 运费条款
@@ -110,8 +107,8 @@ prop:
       lines: null
       logs: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       parcels: null
       posted: 已过账
       receiverAddress: 收货地址
@@ -129,8 +126,8 @@ prop:
       senderPhone: 发货人电话
       shipmentDate: 发运日期
       shipper: null
+      shipper.name: null
       shipperId: 发货员(职员)
-      shipperName: 发货员(职员)
       signedBy: 签收人
       status: 状态
       status_label: 状态
@@ -148,14 +145,13 @@ prop:
       id: ID
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料
       packageDescription: 包装说明
       quantity: 数量
       remark: 备注
       shipment: null
       shipmentId: 发运单ID
-      shipmentName: 发运单
       unit: 单位
       updateTime: 修改时间
       updatedBy: 修改人
@@ -174,14 +170,13 @@ prop:
       id: ID
       isSuccess: 是否成功
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       requestBody: 请求报文
       responseBody: 响应报文
       shipment: null
       shipmentId: 发运单ID
-      shipmentName: 发运单
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -199,7 +194,6 @@ prop:
       remark: 备注
       shipment: null
       shipmentId: 发运单ID
-      shipmentName: 发运单
       trackingNo: 运单号
       updateTime: 修改时间
       updatedBy: 修改人

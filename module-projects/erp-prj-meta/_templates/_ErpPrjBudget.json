@@ -22,8 +22,7 @@
   "project": null,
   "lines": null,
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "projectName": "",
-  "orgName": "",
-  "currencyName": ""
+  "org.name": ""
 }

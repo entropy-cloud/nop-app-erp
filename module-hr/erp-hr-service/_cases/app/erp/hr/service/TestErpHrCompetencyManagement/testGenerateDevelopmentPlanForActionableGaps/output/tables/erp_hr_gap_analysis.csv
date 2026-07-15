@@ -1,0 +1,4 @@
+_chgType,ID,EMPLOYEE_ID,COMPETENCY_ID,REQUIRED_LEVEL,ACTUAL_LEVEL,GAP_VALUE,GAP_SEVERITY,ASSESSMENT_DATE,ANALYSIS_DATE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,13,2,3,5,2,3,CRITICAL,2026-07-01,@var:ErpHrGapAnalysis@analysisDate_1,@var:ErpHrGapAnalysis@delVersion,0,autotest-ref,*,autotest-ref,*
+A,14,2,4,4,2,2,MODERATE,2026-07-01,@var:ErpHrGapAnalysis@analysisDate_1,@var:ErpHrGapAnalysis@delVersion,0,autotest-ref,*,autotest-ref,*
+A,15,2,5,3,2,1,MINOR,2026-07-01,@var:ErpHrGapAnalysis@analysisDate_1,@var:ErpHrGapAnalysis@delVersion,0,autotest-ref,*,autotest-ref,*

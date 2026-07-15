@@ -1,9 +1,5 @@
 package app.erp.drp.service.entity;
 
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import app.erp.drp.biz.IErpDrpLineBiz;
 import app.erp.drp.biz.IErpDrpPlanBiz;
 import app.erp.drp.dao.entity.ErpDrpLine;
@@ -52,7 +48,6 @@ public class ErpDrpPlanBizModel extends CrudBizModel<ErpDrpPlan> implements IErp
             entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         }
     }
-
 
     public void setDrpEngine(DrpEngine drpEngine) {
         this.drpEngine = drpEngine;
@@ -108,17 +103,6 @@ public class ErpDrpPlanBizModel extends CrudBizModel<ErpDrpPlan> implements IErp
         q.addFilter(eq("planId", planId));
         q.addFilter(eq("status", ErpDrpConstants.DRP_LINE_STATUS_SUGGESTED));
         return drpLineBiz.findList(q, null, context);
-    }
-
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpDrpPlan.class)
-    public List<String> orgName(@ContextSource List<ErpDrpPlan> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpDrpPlan row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
     }
 
 }

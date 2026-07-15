@@ -1,0 +1,3 @@
+_chgType,ID,TEMPLATE_ID,NOTIFICATION_TYPE,RECIPIENT_USER_ID,RECIPIENT_PARTNER_ID,RECIPIENT_DEPT_ID,CHANNEL,SUBJECT,BODY,PAYLOAD_JSON,STATUS,MERGE_GROUP_ID,MERGE_COUNT,SENT_AT,ERROR_MSG,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,7102,fin.posting-exception,seed-finance-user,,,IN_APP,过账异常告警,"过账异常: 单据 P-9003 金额 5000，请立即处置
+[合并 +2]","{""amount"":""12000"",""postingNo"":""P-9001""}",MERGED,fin.posting-exception#seed-finance-user,3,@var:ErpSysNotification@sentAt,,@var:ErpSysNotification@delVersion,2,autotest-ref,*,autotest-ref,*

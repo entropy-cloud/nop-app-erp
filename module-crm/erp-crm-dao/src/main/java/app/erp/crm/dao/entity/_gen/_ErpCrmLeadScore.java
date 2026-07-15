@@ -53,7 +53,7 @@ public class _ErpCrmLeadScore extends DynamicOrmEntity{
     public static final String PROP_NAME_triggeredAction = "triggeredAction";
     public static final int PROP_ID_triggeredAction = 8;
     
-    /* 计算时间: CALCULATED_AT DATETIME */
+    /* 计算时间: CALCULATED_AT TIMESTAMP */
     public static final String PROP_NAME_calculatedAt = "calculatedAt";
     public static final int PROP_ID_calculatedAt = 9;
     
@@ -189,7 +189,7 @@ public class _ErpCrmLeadScore extends DynamicOrmEntity{
     private java.lang.String _triggeredAction;
     
     /* 计算时间: CALCULATED_AT */
-    private java.time.LocalDateTime _calculatedAt;
+    private java.sql.Timestamp _calculatedAt;
     
     /* 触发计算事件: TRIGGER_EVENT */
     private java.lang.String _triggerEvent;
@@ -432,9 +432,9 @@ public class _ErpCrmLeadScore extends DynamicOrmEntity{
             }
         
             case PROP_ID_calculatedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_calculatedAt));
                }
                setCalculatedAt(typedValue);
@@ -588,7 +588,7 @@ public class _ErpCrmLeadScore extends DynamicOrmEntity{
         
             case PROP_ID_calculatedAt:{
                onInitProp(propId);
-               this._calculatedAt = (java.time.LocalDateTime)value;
+               this._calculatedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -810,7 +810,7 @@ public class _ErpCrmLeadScore extends DynamicOrmEntity{
     /**
      * 计算时间: CALCULATED_AT
      */
-    public final java.time.LocalDateTime getCalculatedAt(){
+    public final java.sql.Timestamp getCalculatedAt(){
          onPropGet(PROP_ID_calculatedAt);
          return _calculatedAt;
     }
@@ -818,7 +818,7 @@ public class _ErpCrmLeadScore extends DynamicOrmEntity{
     /**
      * 计算时间: CALCULATED_AT
      */
-    public final void setCalculatedAt(java.time.LocalDateTime value){
+    public final void setCalculatedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_calculatedAt,value)){
             this._calculatedAt = value;
             internalClearRefs(PROP_ID_calculatedAt);

@@ -62,12 +62,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--问卷-->
-                <col id="surveyTitle"/>
-
-                <!--部门-->
-                <col id="departmentName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -83,7 +77,6 @@
  lastCalculatedAt[最后计算时间] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- surveyTitle[问卷] departmentName[部门]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-调研结果" i18n-en:title="Add Survey Result" x:prototype="edit"/>

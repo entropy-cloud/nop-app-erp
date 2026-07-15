@@ -28,9 +28,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "workOrder": null,
   "material": null,
+  "material.name": "",
   "workcenter": null,
-  "operation": null,
-  "workOrderNo": "",
-  "materialName": "",
-  "workcenterName": ""
+  "operation": null
 }

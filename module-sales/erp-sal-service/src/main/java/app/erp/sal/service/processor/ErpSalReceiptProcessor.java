@@ -195,10 +195,10 @@ public class ErpSalReceiptProcessor {
         receipt = receiptDao().getEntityById(receipt.getId());
         receipt.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         receipt.setApprovedBy(currentUserId());
-        receipt.setApprovedAt(CoreMetrics.currentDateTime());
+        receipt.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
             receipt.setPosted(true);
-            receipt.setPostedAt(CoreMetrics.currentDateTime());
+            receipt.setPostedAt(CoreMetrics.currentTimestamp());
             receipt.setPostedBy(currentUserId());
         }
         receiptDao().updateEntity(receipt);

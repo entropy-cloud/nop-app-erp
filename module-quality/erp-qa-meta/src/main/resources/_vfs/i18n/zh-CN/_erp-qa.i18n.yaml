@@ -30,7 +30,6 @@ prop:
       dueDate: 计划完成日期
       id: ID
       ncr: null
-      ncrCode: 不合格品
       ncrId: 不合格品报告ID
       remark: 备注
       responsiblePerson: 负责人
@@ -49,6 +48,7 @@ prop:
       businessDate: 校准日期
       calibratedBy: 校准人(职员)
       calibratedByEmployee: null
+      calibratedByEmployee.name: null
       code: 单号
       createTime: 创建时间
       createdBy: 创建人
@@ -61,8 +61,8 @@ prop:
       measuredValue: 测量值
       nextCalibrationDate: 下次校准日期
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 组织
       remark: 备注
       result: 校准结果
       result_label: 校准结果
@@ -90,16 +90,16 @@ prop:
       inspectionType: 检验类型
       inspectionType_label: 检验类型
       inspector: null
+      inspector.name: null
       inspectorId: 检验员(职员)
-      inspectorName: 检验员
       lines: null
       lotQuantity: 批量
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 组织
       posted: 已过账(质量结论已回写业务单据)
       postedAt: 过账时间
       postedBy: 过账人
@@ -111,24 +111,22 @@ prop:
       result_label: 质检结果
       sampleQuantity: 抽样数量
       supplier: null
+      supplier.name: null
       supplierId: 供应商
-      supplierName: 供应商
       template: null
-      templateCode: 检验模板
       templateId: 质检模板
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
       warehouse: null
+      warehouse.name: null
       warehouseId: 仓库
-      warehouseName: 仓库
     ErpQaInspectionLine:
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
       inspection: null
-      inspectionCode: 质检单
       inspectionId: 质检单ID
       lineNo: 行号
       measuredValue: 实测值
@@ -154,8 +152,8 @@ prop:
       isActive: 是否启用
       lines: null
       material: null
+      material.name: null
       materialId: 适用物料
-      materialName: 物料
       name: 名称
       remark: 备注
       updateTime: 修改时间
@@ -174,7 +172,6 @@ prop:
       specMax: 规格上限
       specMin: 规格下限
       template: null
-      templateCode: 检验模板
       templateId: 模板ID
       unit: 计量单位
       updateTime: 修改时间
@@ -192,11 +189,10 @@ prop:
       dispositionType_label: 处理决定
       id: ID
       inspection: null
-      inspectionCode: 质检单
       inspectionId: 质检单ID
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料
       measuredValue: 实测值
       ncrDate: 报告日期
       parameterName: 不合格参数
@@ -218,8 +214,8 @@ prop:
       status: 状态
       status_label: 状态
       supplier: null
+      supplier.name: null
       supplierId: 供应商
-      supplierName: 供应商
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -235,8 +231,8 @@ prop:
       name: 名称
       remark: 备注
       responsiblePerson: null
+      responsiblePerson.name: null
       responsiblePersonId: 责任人
-      responsiblePersonName: 负责人
       startDate: 开始日期
       status: 状态
       status_label: 状态
@@ -258,8 +254,8 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       material: null
+      material.name: null
       materialId: 召回物料
-      materialName: 物料
       notifyCustomer: 已通知客户
       recallName: 召回名称
       remark: 备注
@@ -268,7 +264,6 @@ prop:
       severityLevel: 严重程度
       severityLevel_label: 严重程度
       sourceNcr: null
-      sourceNcrCode: 源不合格品
       sourceNcrId: 来源NCR(弱指针)
       status: 召回状态
       status_label: 召回状态
@@ -288,10 +283,9 @@ prop:
       notifiedAt: 通知时间
       notifiedBy: 通知人
       partner: null
+      partner.name: null
       partnerId: 受影响客户
-      partnerName: 客户
       recall: null
-      recallCode: 召回事件
       recallId: 召回事件
       remark: 备注
       returnStatus: 退货状态
@@ -317,8 +311,8 @@ prop:
       docStatus_label: 单据状态
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 组织
       participants: 参与人员
       relatedBillCode: 关联单据号
       relatedBillType: 关联单据类型
@@ -373,7 +367,6 @@ prop:
       capabilityLevel: 能力等级评定
       capabilityLevel_label: 能力等级评定
       chart: null
-      chartCode: 控制图
       chartId: 控制图ID
       cp: 过程能力指数 Cp
       cpk: 过程能力指数 Cpk
@@ -385,8 +378,8 @@ prop:
       id: ID
       isStable: 过程是否统计受控
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 组织
       overallStdDev: 总体标准差(用于 Pp/Ppk)
       periodFrom: 分析周期起
       periodTo: 分析周期止
@@ -417,18 +410,17 @@ prop:
       docStatus: 单据状态
       docStatus_label: 单据状态
       id: ID
-      inspectionTemplateCode: 检验模板
       inspectionType: null
       inspectionTypeId: 质检模板
       isActive: 是否启用
       lcl: 控制下限(LCL)
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料
       name: 名称
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 组织
       parameterId: 关键检验参数
       remark: 备注
       ruleSet: 判异规则集(逗号分隔)
@@ -443,21 +435,20 @@ prop:
       version: 数据版本
     ErpQaSpcSample:
       chart: null
-      chartCode: 控制图
       chartId: 控制图ID
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
       inspector: null
+      inspector.name: null
       inspectorId: 检验员
-      inspectorName: 检验员
       isOutOfControl: 是否失控
       mean: 子组均值 X̄
       measuredValues: 子组实测值(JSON 数组)
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 组织
       range: 子组极差 R
       remark: 备注
       sampleTime: 采样时间

@@ -15,6 +15,5 @@
   "updateTime": "2000-01-01 14:00:00",
   "department": null,
   "org": null,
-  "departmentName": "",
-  "orgName": ""
+  "org.name": ""
 }

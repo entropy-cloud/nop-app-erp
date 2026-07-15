@@ -41,11 +41,11 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
     public static final String PROP_NAME_schedulingMode = "schedulingMode";
     public static final int PROP_ID_schedulingMode = 5;
     
-    /* 展望期开始: HORIZON_START DATETIME */
+    /* 展望期开始: HORIZON_START TIMESTAMP */
     public static final String PROP_NAME_horizonStart = "horizonStart";
     public static final int PROP_ID_horizonStart = 6;
     
-    /* 展望期结束: HORIZON_END DATETIME */
+    /* 展望期结束: HORIZON_END TIMESTAMP */
     public static final String PROP_NAME_horizonEnd = "horizonEnd";
     public static final int PROP_ID_horizonEnd = 7;
     
@@ -174,10 +174,10 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
     private java.lang.String _schedulingMode;
     
     /* 展望期开始: HORIZON_START */
-    private java.time.LocalDateTime _horizonStart;
+    private java.sql.Timestamp _horizonStart;
     
     /* 展望期结束: HORIZON_END */
-    private java.time.LocalDateTime _horizonEnd;
+    private java.sql.Timestamp _horizonEnd;
     
     /* 状态: STATUS */
     private java.lang.String _status;
@@ -396,9 +396,9 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_horizonStart:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_horizonStart));
                }
                setHorizonStart(typedValue);
@@ -406,9 +406,9 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_horizonEnd:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_horizonEnd));
                }
                setHorizonEnd(typedValue);
@@ -561,14 +561,14 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
         
             case PROP_ID_horizonStart:{
                onInitProp(propId);
-               this._horizonStart = (java.time.LocalDateTime)value;
+               this._horizonStart = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_horizonEnd:{
                onInitProp(propId);
-               this._horizonEnd = (java.time.LocalDateTime)value;
+               this._horizonEnd = (java.sql.Timestamp)value;
                
                break;
             }
@@ -747,7 +747,7 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
     /**
      * 展望期开始: HORIZON_START
      */
-    public final java.time.LocalDateTime getHorizonStart(){
+    public final java.sql.Timestamp getHorizonStart(){
          onPropGet(PROP_ID_horizonStart);
          return _horizonStart;
     }
@@ -755,7 +755,7 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
     /**
      * 展望期开始: HORIZON_START
      */
-    public final void setHorizonStart(java.time.LocalDateTime value){
+    public final void setHorizonStart(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_horizonStart,value)){
             this._horizonStart = value;
             internalClearRefs(PROP_ID_horizonStart);
@@ -766,7 +766,7 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
     /**
      * 展望期结束: HORIZON_END
      */
-    public final java.time.LocalDateTime getHorizonEnd(){
+    public final java.sql.Timestamp getHorizonEnd(){
          onPropGet(PROP_ID_horizonEnd);
          return _horizonEnd;
     }
@@ -774,7 +774,7 @@ public class _ErpApsSchedule extends DynamicOrmEntity{
     /**
      * 展望期结束: HORIZON_END
      */
-    public final void setHorizonEnd(java.time.LocalDateTime value){
+    public final void setHorizonEnd(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_horizonEnd,value)){
             this._horizonEnd = value;
             internalClearRefs(PROP_ID_horizonEnd);

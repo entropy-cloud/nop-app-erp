@@ -27,6 +27,7 @@
   "approvedBy": "",
   "approvedAt": "2000-01-01 14:00:00",
   "calibratedByEmployee": null,
+  "calibratedByEmployee.name": "",
   "org": null,
-  "orgName": ""
+  "org.name": ""
 }

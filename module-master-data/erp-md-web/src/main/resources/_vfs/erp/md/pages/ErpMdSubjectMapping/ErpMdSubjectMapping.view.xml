@@ -6,9 +6,9 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="sourceSubjectName" label="源科目"/>
-                <col id="targetAcctSchemaName" label="目标账套"/>
-                <col id="targetSubjectName" label="目标科目"/>
+                <col id="sourceSubjectId" label="源科目"/>
+                <col id="targetAcctSchemaId" label="目标账套"/>
+                <col id="targetSubjectId" label="目标科目"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
                 <col id="createTime" mandatory="true" sortable="true"/>

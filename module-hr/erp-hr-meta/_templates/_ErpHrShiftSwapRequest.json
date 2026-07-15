@@ -23,7 +23,5 @@
   "sourceAssignment": null,
   "targetAssignment": null,
   "org": null,
-  "orgName": "",
-  "requesterDisplayName": "",
-  "targetEmployeeDisplayName": ""
+  "org.name": ""
 }

@@ -17,10 +17,6 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.util.List;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * 销售配额 BizModel。在标准 CRUD 之上扩展：
@@ -117,45 +113,5 @@ public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IE
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCrmQuota.class)
-    public List<String> orgName(@ContextSource List<ErpCrmQuota> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmQuota row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmQuota.class)
-    public List<String> territoryName(@ContextSource List<ErpCrmQuota> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("territory"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmQuota row : rows) {
-            result.add(row.orm_attached() && row.getTerritory() != null ? row.getTerritory().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmQuota.class)
-    public List<String> teamName(@ContextSource List<ErpCrmQuota> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("team"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmQuota row : rows) {
-            result.add(row.orm_attached() && row.getTeam() != null ? row.getTeam().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmQuota.class)
-    public List<String> currencyName(@ContextSource List<ErpCrmQuota> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("currency"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmQuota row : rows) {
-            result.add(row.orm_attached() && row.getCurrency() != null ? row.getCurrency().getName() : null);
-        }
-        return result;
-    }
 
 }

@@ -6,18 +6,18 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="所属组织"/>
+                <col id="orgId" label="所属组织"/>
                 <col id="assetCode" label="资产编码"/>
                 <col id="businessDate" sortable="true"/>
-                <col id="fromDepartmentName" label="源部门"/>
-                <col id="toDepartmentName" label="目标部门"/>
-                <col id="fromStaffName" label="源使用人"/>
-                <col id="toStaffName" label="目标使用人"/>
-                <col id="fromLocationName" label="源地点"/>
-                <col id="toLocationName" label="目标地点"/>
-                <col id="handlerName" label="经办人"/>
+                <col id="fromDepartmentId" label="源部门"/>
+                <col id="toDepartmentId" label="目标部门"/>
+                <col id="fromStaffId" label="源使用人"/>
+                <col id="toStaffId" label="目标使用人"/>
+                <col id="fromLocationId" label="源地点"/>
+                <col id="toLocationId" label="目标地点"/>
+                <col id="handlerId" label="经办人"/>
                 <col id="docStatus" mandatory="true" sortable="true"/>
-                <col id="currencyName" label="币种"/>
+                <col id="currencyId" label="币种"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

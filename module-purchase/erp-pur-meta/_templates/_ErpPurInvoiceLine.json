@@ -19,7 +19,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "invoice": null,
   "material": null,
+  "material.name": "",
   "receiveLine": null,
   "uoM": null,
-  "materialName": ""
+  "uoM.name": ""
 }

@@ -149,16 +149,16 @@
         }
 
 
-        private java.time.LocalDateTime _completedAt;
+        private java.sql.Timestamp _completedAt;
 
     
         @PropMeta(propId=9)
     
-        public java.time.LocalDateTime getCompletedAt(){
+        public java.sql.Timestamp getCompletedAt(){
             return _completedAt;
         }
 
-        public void setCompletedAt(java.time.LocalDateTime value){
+        public void setCompletedAt(java.sql.Timestamp value){
             this._completedAt = value;
         }
 
@@ -286,18 +286,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _ncrCode;
-
-    
-        public String getNcrCode(){
-            return _ncrCode;
-        }
-
-        public void setNcrCode(String value){
-            this._ncrCode = value;
         }
 
 

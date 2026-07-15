@@ -109,9 +109,9 @@ public class ExpenseCostAggregator {
             newHead.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
             newHead.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
             newHead.setPosted(false);
-            newHead.setExchangeRate("1");
-            newHead.setAmountSource(addedTotal.toPlainString());
-            newHead.setAmountFunctional(addedTotal.toPlainString());
+            newHead.setExchangeRate(BigDecimal.ONE);
+            newHead.setAmountSource(addedTotal);
+            newHead.setAmountFunctional(addedTotal);
             daoProvider.daoFor(ErpPrjCostCollection.class).saveEntity(newHead);
             int lineNo = 0;
             for (PendingExpenseLine p : pending) {

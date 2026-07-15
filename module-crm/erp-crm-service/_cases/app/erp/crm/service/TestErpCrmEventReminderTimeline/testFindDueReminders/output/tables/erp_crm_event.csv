@@ -1,0 +1,4 @@
+_chgType,ID,CODE,ORG_ID,EVENT_TYPE,EVENT_CATEGORY_ID,SUBJECT,DESCRIPTION,START_DATE_TIME,END_DATE_TIME,DURATION,RELATED_LEAD_ID,RELATED_BILL_TYPE,RELATED_BILL_CODE,PARTNER_ID,CONTACT_ID,OWNER_ID,STATUS,PRIORITY,IS_RECURRENT,PARENT_EVENT_ID,REMINDER_MINUTES_BEFORE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,3501,@var:ErpCrmEvent@code,1301,CALL,,事件-EVT-DUE-001,,@var:ErpCrmEvent@startDateTime,@var:ErpCrmEvent@endDateTime,,,,,,,,PLANNED,NORMAL,false,,,,@var:ErpCrmEvent@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,3502,@var:ErpCrmEvent@code_1,1301,CALL,,事件-EVT-DUE-002,,@var:ErpCrmEvent@startDateTime_1,@var:ErpCrmEvent@endDateTime_1,,,,,,,,PLANNED,NORMAL,false,,,,@var:ErpCrmEvent@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,3503,@var:ErpCrmEvent@code_2,1301,CALL,,事件-EVT-DUE-003,,@var:ErpCrmEvent@startDateTime_2,@var:ErpCrmEvent@endDateTime_2,,,,,,,,COMPLETED,NORMAL,false,,,,@var:ErpCrmEvent@delVersion_1,0,autotest-ref,*,autotest-ref,*

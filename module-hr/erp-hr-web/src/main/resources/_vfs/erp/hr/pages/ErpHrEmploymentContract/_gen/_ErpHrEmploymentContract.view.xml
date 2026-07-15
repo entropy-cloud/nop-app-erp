@@ -45,20 +45,23 @@
                 <!--每周工时-->
                 <col id="workingHoursPerWeek" ui:number="true" sortable="true"/>
 
+                <!--年薪(税前)-->
+                <col id="annualSalary" ui:number="true" sortable="true"/>
+
+                <!--月薪(税前)-->
+                <col id="monthlySalary" ui:number="true" sortable="true"/>
+
                 <!--薪资币种-->
                 <col id="salaryCurrencyId" ui:number="true" sortable="true"/>
 
                 <!--发薪方式-->
                 <col id="salaryPayMethod" sortable="true"/>
 
-                <!--员工-->
-                <col id="employeeDisplayName"/>
+                <!--社保基数-->
+                <col id="socialInsuranceBase" ui:number="true" sortable="true"/>
 
-                <!--币种-->
-                <col id="currencyName"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
+                <!--公积金基数-->
+                <col id="housingFundBase" ui:number="true" sortable="true"/>
 
                 <!--合同状态-->
                 <col id="status" mandatory="true" sortable="true"/>
@@ -101,14 +104,14 @@
  contractType[合同类型] signDate[签订日期]
  startDate[生效日期] endDate[到期日期]
  probationMonths[试用期月数] workingHoursPerWeek[每周工时]
+ annualSalary[年薪(税前)] monthlySalary[月薪(税前)]
  salaryCurrencyId[薪资币种] salaryPayMethod[发薪方式]
- employeeDisplayName[员工] currencyName[币种]
- orgName[业务组织] status[合同状态]
- attachmentFileId[合同文件] orgId[业务组织]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- businessDate[业务日期] 
+ socialInsuranceBase[社保基数] housingFundBase[公积金基数]
+ status[合同状态] attachmentFileId[合同文件]
+ orgId[业务组织] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] businessDate[业务日期]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-劳动合同" i18n-en:title="Add Employment Contract" x:prototype="edit"/>
@@ -118,7 +121,9 @@
  contractType[合同类型] signDate[签订日期]
  startDate[生效日期] endDate[到期日期]
  probationMonths[试用期月数] workingHoursPerWeek[每周工时]
+ annualSalary[年薪(税前)] monthlySalary[月薪(税前)]
  salaryCurrencyId[薪资币种] salaryPayMethod[发薪方式]
+ socialInsuranceBase[社保基数] housingFundBase[公积金基数]
  status[合同状态] attachmentFileId[合同文件]
  orgId[业务组织] remark[备注]
  businessDate[业务日期] 

@@ -28,7 +28,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "sourceNcr": null,
   "material": null,
-  "targets": null,
-  "sourceNcrCode": "",
-  "materialName": ""
+  "material.name": "",
+  "targets": null
 }

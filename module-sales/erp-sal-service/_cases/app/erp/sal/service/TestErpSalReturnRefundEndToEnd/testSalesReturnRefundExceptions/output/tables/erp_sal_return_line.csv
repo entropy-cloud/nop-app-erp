@@ -1,0 +1,4 @@
+_chgType,ID,RETURN_ID,DELIVERY_LINE_ID,LINE_NO,MATERIAL_ID,SKU_ID,UOM_ID,QUANTITY,UNIT_PRICE,TAX_RATE,TAX_AMOUNT,AMOUNT,REASON,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
+A,870006,870005,870004,1,6701,,7701,2,5,,,10,质量不合格,@var:ErpSalReturnLine@delVersion,0,autotest-ref,*,autotest-ref,*,
+A,870013,870012,870008,1,6701,,7701,2,5,,,10,质量不合格,@var:ErpSalReturnLine@delVersion,0,autotest-ref,*,autotest-ref,*,
+A,870017,870016,870004,1,6701,,7701,4,5,,,20,质量不合格,@var:ErpSalReturnLine@delVersion,0,autotest-ref,*,autotest-ref,*,

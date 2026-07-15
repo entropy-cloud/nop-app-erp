@@ -1,0 +1,11 @@
+_chgType,ID,CODE,TITLE,CONTENT,CATEGORY_ID,IS_PUBLISHED,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9071,@var:ErpCsKnowledgeBase@code_9,测试文章10,测试内容10,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9561,@var:ErpCsKnowledgeBase@code,测试文章1,测试内容1,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9562,@var:ErpCsKnowledgeBase@code_1,测试文章2,测试内容2,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9563,@var:ErpCsKnowledgeBase@code_2,测试文章3,测试内容3,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9564,@var:ErpCsKnowledgeBase@code_3,测试文章4,测试内容4,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9565,@var:ErpCsKnowledgeBase@code_4,测试文章5,测试内容5,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9566,@var:ErpCsKnowledgeBase@code_5,测试文章6,测试内容6,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9567,@var:ErpCsKnowledgeBase@code_6,测试文章7,测试内容7,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9568,@var:ErpCsKnowledgeBase@code_7,测试文章8,测试内容8,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9569,@var:ErpCsKnowledgeBase@code_8,测试文章9,测试内容9,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*

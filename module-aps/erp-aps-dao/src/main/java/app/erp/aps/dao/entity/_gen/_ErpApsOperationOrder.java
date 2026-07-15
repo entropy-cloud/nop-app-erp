@@ -49,19 +49,19 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_priority = "priority";
     public static final int PROP_ID_priority = 7;
     
-    /* 计划开工时间: PLANNED_START_DATE_T DATETIME */
+    /* 计划开工时间: PLANNED_START_DATE_T TIMESTAMP */
     public static final String PROP_NAME_plannedStartDateT = "plannedStartDateT";
     public static final int PROP_ID_plannedStartDateT = 8;
     
-    /* 计划完工时间: PLANNED_END_DATE_T DATETIME */
+    /* 计划完工时间: PLANNED_END_DATE_T TIMESTAMP */
     public static final String PROP_NAME_plannedEndDateT = "plannedEndDateT";
     public static final int PROP_ID_plannedEndDateT = 9;
     
-    /* 实际开工时间: REAL_START_DATE_T DATETIME */
+    /* 实际开工时间: REAL_START_DATE_T TIMESTAMP */
     public static final String PROP_NAME_realStartDateT = "realStartDateT";
     public static final int PROP_ID_realStartDateT = 10;
     
-    /* 实际完工时间: REAL_END_DATE_T DATETIME */
+    /* 实际完工时间: REAL_END_DATE_T TIMESTAMP */
     public static final String PROP_NAME_realEndDateT = "realEndDateT";
     public static final int PROP_ID_realEndDateT = 11;
     
@@ -125,11 +125,11 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 26;
     
-    /* 最早开工时间: EARLIEST_START_DATE_T DATETIME */
+    /* 最早开工时间: EARLIEST_START_DATE_T TIMESTAMP */
     public static final String PROP_NAME_earliestStartDateT = "earliestStartDateT";
     public static final int PROP_ID_earliestStartDateT = 27;
     
-    /* 最晚完工时间: LATEST_END_DATE_T DATETIME */
+    /* 最晚完工时间: LATEST_END_DATE_T TIMESTAMP */
     public static final String PROP_NAME_latestEndDateT = "latestEndDateT";
     public static final int PROP_ID_latestEndDateT = 28;
     
@@ -264,16 +264,16 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     private java.lang.Integer _priority;
     
     /* 计划开工时间: PLANNED_START_DATE_T */
-    private java.time.LocalDateTime _plannedStartDateT;
+    private java.sql.Timestamp _plannedStartDateT;
     
     /* 计划完工时间: PLANNED_END_DATE_T */
-    private java.time.LocalDateTime _plannedEndDateT;
+    private java.sql.Timestamp _plannedEndDateT;
     
     /* 实际开工时间: REAL_START_DATE_T */
-    private java.time.LocalDateTime _realStartDateT;
+    private java.sql.Timestamp _realStartDateT;
     
     /* 实际完工时间: REAL_END_DATE_T */
-    private java.time.LocalDateTime _realEndDateT;
+    private java.sql.Timestamp _realEndDateT;
     
     /* 准备时间(分钟): SETUP_TIME */
     private java.math.BigDecimal _setupTime;
@@ -321,10 +321,10 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     private java.sql.Timestamp _updateTime;
     
     /* 最早开工时间: EARLIEST_START_DATE_T */
-    private java.time.LocalDateTime _earliestStartDateT;
+    private java.sql.Timestamp _earliestStartDateT;
     
     /* 最晚完工时间: LATEST_END_DATE_T */
-    private java.time.LocalDateTime _latestEndDateT;
+    private java.sql.Timestamp _latestEndDateT;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -572,9 +572,9 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_plannedStartDateT:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_plannedStartDateT));
                }
                setPlannedStartDateT(typedValue);
@@ -582,9 +582,9 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_plannedEndDateT:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_plannedEndDateT));
                }
                setPlannedEndDateT(typedValue);
@@ -592,9 +592,9 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_realStartDateT:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_realStartDateT));
                }
                setRealStartDateT(typedValue);
@@ -602,9 +602,9 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_realEndDateT:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_realEndDateT));
                }
                setRealEndDateT(typedValue);
@@ -762,9 +762,9 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_earliestStartDateT:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_earliestStartDateT));
                }
                setEarliestStartDateT(typedValue);
@@ -772,9 +772,9 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_latestEndDateT:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_latestEndDateT));
                }
                setLatestEndDateT(typedValue);
@@ -851,28 +851,28 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
         
             case PROP_ID_plannedStartDateT:{
                onInitProp(propId);
-               this._plannedStartDateT = (java.time.LocalDateTime)value;
+               this._plannedStartDateT = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_plannedEndDateT:{
                onInitProp(propId);
-               this._plannedEndDateT = (java.time.LocalDateTime)value;
+               this._plannedEndDateT = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_realStartDateT:{
                onInitProp(propId);
-               this._realStartDateT = (java.time.LocalDateTime)value;
+               this._realStartDateT = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_realEndDateT:{
                onInitProp(propId);
-               this._realEndDateT = (java.time.LocalDateTime)value;
+               this._realEndDateT = (java.sql.Timestamp)value;
                
                break;
             }
@@ -984,14 +984,14 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
         
             case PROP_ID_earliestStartDateT:{
                onInitProp(propId);
-               this._earliestStartDateT = (java.time.LocalDateTime)value;
+               this._earliestStartDateT = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_latestEndDateT:{
                onInitProp(propId);
-               this._latestEndDateT = (java.time.LocalDateTime)value;
+               this._latestEndDateT = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1145,7 +1145,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 计划开工时间: PLANNED_START_DATE_T
      */
-    public final java.time.LocalDateTime getPlannedStartDateT(){
+    public final java.sql.Timestamp getPlannedStartDateT(){
          onPropGet(PROP_ID_plannedStartDateT);
          return _plannedStartDateT;
     }
@@ -1153,7 +1153,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 计划开工时间: PLANNED_START_DATE_T
      */
-    public final void setPlannedStartDateT(java.time.LocalDateTime value){
+    public final void setPlannedStartDateT(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_plannedStartDateT,value)){
             this._plannedStartDateT = value;
             internalClearRefs(PROP_ID_plannedStartDateT);
@@ -1164,7 +1164,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 计划完工时间: PLANNED_END_DATE_T
      */
-    public final java.time.LocalDateTime getPlannedEndDateT(){
+    public final java.sql.Timestamp getPlannedEndDateT(){
          onPropGet(PROP_ID_plannedEndDateT);
          return _plannedEndDateT;
     }
@@ -1172,7 +1172,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 计划完工时间: PLANNED_END_DATE_T
      */
-    public final void setPlannedEndDateT(java.time.LocalDateTime value){
+    public final void setPlannedEndDateT(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_plannedEndDateT,value)){
             this._plannedEndDateT = value;
             internalClearRefs(PROP_ID_plannedEndDateT);
@@ -1183,7 +1183,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 实际开工时间: REAL_START_DATE_T
      */
-    public final java.time.LocalDateTime getRealStartDateT(){
+    public final java.sql.Timestamp getRealStartDateT(){
          onPropGet(PROP_ID_realStartDateT);
          return _realStartDateT;
     }
@@ -1191,7 +1191,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 实际开工时间: REAL_START_DATE_T
      */
-    public final void setRealStartDateT(java.time.LocalDateTime value){
+    public final void setRealStartDateT(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_realStartDateT,value)){
             this._realStartDateT = value;
             internalClearRefs(PROP_ID_realStartDateT);
@@ -1202,7 +1202,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 实际完工时间: REAL_END_DATE_T
      */
-    public final java.time.LocalDateTime getRealEndDateT(){
+    public final java.sql.Timestamp getRealEndDateT(){
          onPropGet(PROP_ID_realEndDateT);
          return _realEndDateT;
     }
@@ -1210,7 +1210,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 实际完工时间: REAL_END_DATE_T
      */
-    public final void setRealEndDateT(java.time.LocalDateTime value){
+    public final void setRealEndDateT(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_realEndDateT,value)){
             this._realEndDateT = value;
             internalClearRefs(PROP_ID_realEndDateT);
@@ -1506,7 +1506,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 最早开工时间: EARLIEST_START_DATE_T
      */
-    public final java.time.LocalDateTime getEarliestStartDateT(){
+    public final java.sql.Timestamp getEarliestStartDateT(){
          onPropGet(PROP_ID_earliestStartDateT);
          return _earliestStartDateT;
     }
@@ -1514,7 +1514,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 最早开工时间: EARLIEST_START_DATE_T
      */
-    public final void setEarliestStartDateT(java.time.LocalDateTime value){
+    public final void setEarliestStartDateT(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_earliestStartDateT,value)){
             this._earliestStartDateT = value;
             internalClearRefs(PROP_ID_earliestStartDateT);
@@ -1525,7 +1525,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 最晚完工时间: LATEST_END_DATE_T
      */
-    public final java.time.LocalDateTime getLatestEndDateT(){
+    public final java.sql.Timestamp getLatestEndDateT(){
          onPropGet(PROP_ID_latestEndDateT);
          return _latestEndDateT;
     }
@@ -1533,7 +1533,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     /**
      * 最晚完工时间: LATEST_END_DATE_T
      */
-    public final void setLatestEndDateT(java.time.LocalDateTime value){
+    public final void setLatestEndDateT(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_latestEndDateT,value)){
             this._latestEndDateT = value;
             internalClearRefs(PROP_ID_latestEndDateT);

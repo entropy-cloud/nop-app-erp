@@ -23,6 +23,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "mrpPlan": null,
   "material": null,
+  "material.name": "",
   "uoM": null,
+  "uoM.name": "",
   "parentLine": null
 }

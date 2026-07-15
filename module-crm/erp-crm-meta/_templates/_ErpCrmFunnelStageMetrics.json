@@ -24,6 +24,5 @@
   "funnel": null,
   "stage": null,
   "org": null,
-  "funnelName": "",
-  "orgName": ""
+  "org.name": ""
 }

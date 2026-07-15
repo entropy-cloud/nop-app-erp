@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "1",
-        "code": "SMOKE-PRJ",
+        "code": "@var:ErpPrjProject@code",
         "name": "冒烟项目",
         "orgId": null,
         "projectTypeId": null,
@@ -14,7 +14,7 @@
         "currencyId": null,
         "startDate": null,
         "endDate": null,
-        "budget": "0.0000",
+        "budget": 0.0000,
         "committedCost": 0.0000,
         "actualCost": 0.0000,
         "billedAmount": 0.0000,

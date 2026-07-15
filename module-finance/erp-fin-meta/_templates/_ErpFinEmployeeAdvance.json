@@ -19,8 +19,8 @@
   "approveStatus_label": "",
   "approvedBy": "",
   "approvedAt": "2000-01-01 14:00:00",
-  "posted": false,
   "postedBy": "",
+  "posted": false,
   "postedAt": "2000-01-01 14:00:00",
   "remark": "",
   "delVersion": 0,
@@ -30,11 +30,11 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "employee": null,
+  "employee.name": "",
   "currency": null,
+  "currency.name": "",
   "project": null,
+  "project.name": "",
   "org": null,
-  "orgName": "",
-  "employeeName": "",
-  "currencyName": "",
-  "projectName": ""
+  "org.name": ""
 }

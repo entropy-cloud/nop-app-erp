@@ -40,12 +40,12 @@
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="actualStartTime" displayName="实际签到时间" propId="6" i18n-en:displayName="Actual Start Time"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+              tagSet="clock" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="actualEndTime" displayName="实际签退时间" propId="7" i18n-en:displayName="Actual End Time"
+        <prop name="actualEndTime" displayName="实际签退时间" propId="7" i18n-en:displayName="Actual End Time" tagSet="clock"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="isAbsent" displayName="是否缺勤" propId="8" i18n-en:displayName="Is Absent" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="false">
@@ -125,9 +125,12 @@
             <schema bizObjName="ErpHrShiftAssignment"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

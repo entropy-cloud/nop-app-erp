@@ -20,11 +20,13 @@
   "updateTime": "2000-01-01 14:00:00",
   "workOrder": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "uoM": null,
+  "uoM.name": "",
   "sourceWarehouse": null,
+  "sourceWarehouse.name": "",
   "destWarehouse": null,
-  "materialName": "",
-  "sourceWarehouseName": "",
-  "destWarehouseName": ""
+  "destWarehouse.name": ""
 }

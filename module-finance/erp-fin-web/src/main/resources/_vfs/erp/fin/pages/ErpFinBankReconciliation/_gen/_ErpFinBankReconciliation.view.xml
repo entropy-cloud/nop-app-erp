@@ -74,15 +74,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--资金账户名称-->
-                <col id="fundAccountName"/>
-
-                <!--对账单号-->
-                <col id="statementCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -100,8 +91,6 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- orgName[业务组织名称] fundAccountName[资金账户名称]
- statementCode[对账单号] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-银行对账(余额调节表)" i18n-en:title="Add Bank Reconciliation" x:prototype="edit"/>

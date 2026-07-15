@@ -116,18 +116,6 @@
 
                 <!--审核时间-->
                 <col id="approvedAt" sortable="true"/>
-
-                <!--项目名称-->
-                <col id="projectName"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--客户名称-->
-                <col id="customerName"/>
-
-                <!--币种名称-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -152,8 +140,6 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
  approvedBy[审核人] approvedAt[审核时间]
- projectName[项目名称] orgName[业务组织名称]
- customerName[客户名称] currencyName[币种名称]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目结算单" i18n-en:title="Add Project Settlement" x:prototype="edit"/>

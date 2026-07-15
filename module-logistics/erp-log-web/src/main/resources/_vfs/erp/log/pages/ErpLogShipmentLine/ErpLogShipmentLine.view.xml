@@ -6,9 +6,9 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="shipmentName" label="发运单"/>
+                <col id="shipmentId" label="发运单"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
+                <col id="materialId" label="物料"/>
                 <col id="quantity" ui:number="true" sortable="true"/>
                 <col id="unit" sortable="true"/>
                 <col id="packageDescription" sortable="true"/>

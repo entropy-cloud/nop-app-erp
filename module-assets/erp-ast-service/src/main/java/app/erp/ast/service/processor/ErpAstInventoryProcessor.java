@@ -22,7 +22,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -108,7 +108,7 @@ public class ErpAstInventoryProcessor {
         ErpAstInventory inv = requireInventory(id, context);
         validateReconciling(inv);
         inv.setApprovedBy(currentUserId());
-        inv.setApprovedAt(CoreMetrics.currentDateTime());
+        inv.setApprovedAt(CoreMetrics.currentTimestamp());
         inventoryDao().updateEntity(inv);
         return inv;
     }
@@ -127,7 +127,7 @@ public class ErpAstInventoryProcessor {
         Long voucherId = postingDispatcher.tryPost(inv);
         inv = reload(id);
         if (voucherId != null) {
-            LocalDateTime now = CoreMetrics.currentDateTime();
+            Timestamp now = CoreMetrics.currentTimestamp();
             inv.setPosted(true);
             inv.setPostedAt(now);
             inv.setPostedBy(currentUserId());

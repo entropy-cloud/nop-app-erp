@@ -20,8 +20,8 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "product": null,
+  "product.name": "",
   "lines": null,
   "operations": null,
-  "byproducts": null,
-  "productName": ""
+  "byproducts": null
 }

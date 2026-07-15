@@ -23,7 +23,7 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
@@ -144,7 +144,7 @@ public class ErpAstMaintenanceProcessor {
             throw illegalTransition(m, m.getStatus(), "COMPLETED");
         }
         m.setApprovedBy(currentUserId());
-        m.setApprovedAt(CoreMetrics.currentDateTime());
+        m.setApprovedAt(CoreMetrics.currentTimestamp());
         maintenanceDao().updateEntity(m);
         return m;
     }
@@ -188,7 +188,7 @@ public class ErpAstMaintenanceProcessor {
 
         m = reload(id);
         m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_POSTED);
-        LocalDateTime now = CoreMetrics.currentDateTime();
+        Timestamp now = CoreMetrics.currentTimestamp();
         if (voucherId != null) {
             m.setPosted(true);
             m.setPostedAt(now);

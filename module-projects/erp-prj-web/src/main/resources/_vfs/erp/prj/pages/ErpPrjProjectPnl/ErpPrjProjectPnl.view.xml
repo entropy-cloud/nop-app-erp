@@ -6,11 +6,11 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="projectName" label="项目"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="projectId" label="项目"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="periodFrom" mandatory="true" sortable="true"/>
                 <col id="periodTo" mandatory="true" sortable="true"/>
-                <col id="currencyName" label="币种"/>
+                <col id="currencyId" label="币种"/>
                 <col id="revenueAmount" sortable="true"/>
                 <col id="totalCost" sortable="true"/>
                 <col id="grossProfit" sortable="true"/>

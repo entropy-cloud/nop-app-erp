@@ -30,14 +30,44 @@
                 <!--月份-->
                 <col id="month" mandatory="true" ui:number="true" sortable="true"/>
 
-                <!--员工-->
-                <col id="employeeDisplayName"/>
+                <!--基本工资-->
+                <col id="basicSalary" ui:number="true" sortable="true"/>
 
-                <!--银行代发文件-->
-                <col id="bankFileBatchNo"/>
+                <!--岗位津贴-->
+                <col id="positionAllowance" ui:number="true" sortable="true"/>
 
-                <!--业务组织-->
-                <col id="orgName"/>
+                <!--绩效奖金-->
+                <col id="performanceBonus" ui:number="true" sortable="true"/>
+
+                <!--加班费-->
+                <col id="overtimePay" ui:number="true" sortable="true"/>
+
+                <!--餐补-->
+                <col id="mealAllowance" ui:number="true" sortable="true"/>
+
+                <!--交通补贴-->
+                <col id="transportAllowance" ui:number="true" sortable="true"/>
+
+                <!--其他补贴-->
+                <col id="otherAllowance" ui:number="true" sortable="true"/>
+
+                <!--应发合计-->
+                <col id="grossSalary" ui:number="true" sortable="true"/>
+
+                <!--社保个人部分-->
+                <col id="socialInsurance" ui:number="true" sortable="true"/>
+
+                <!--公积金个人部分-->
+                <col id="housingFund" ui:number="true" sortable="true"/>
+
+                <!--个税-->
+                <col id="taxAmount" ui:number="true" sortable="true"/>
+
+                <!--其他扣款-->
+                <col id="otherDeductions" ui:number="true" sortable="true"/>
+
+                <!--实发合计-->
+                <col id="netSalary" ui:number="true" sortable="true"/>
 
                 <!--支付状态-->
                 <col id="paymentStatus" mandatory="true" sortable="true"/>
@@ -119,8 +149,13 @@
         <form id="view" editMode="view" title="查看-薪酬记录" i18n-en:title="View Salary Record">
             <layout>
  employeeId[员工] year[年份]
- month[月份] employeeDisplayName[员工]
- bankFileBatchNo[银行代发文件] orgName[业务组织]
+ month[月份] basicSalary[基本工资]
+ positionAllowance[岗位津贴] performanceBonus[绩效奖金]
+ overtimePay[加班费] mealAllowance[餐补]
+ transportAllowance[交通补贴] otherAllowance[其他补贴]
+ grossSalary[应发合计] socialInsurance[社保个人部分]
+ housingFund[公积金个人部分] taxAmount[个税]
+ otherDeductions[其他扣款] netSalary[实发合计]
  paymentStatus[支付状态] paymentDate[实发日期]
  approveStatus[审核状态] performanceFactor[绩效系数]
  actualWorkDays[实际出勤日] requiredWorkDays[应出勤日]
@@ -139,14 +174,21 @@
         <form id="edit" editMode="edit" title="编辑-薪酬记录" i18n-en:title="Edit Salary Record">
             <layout>
  employeeId[员工] year[年份]
- month[月份] paymentStatus[支付状态]
- paymentDate[实发日期] approveStatus[审核状态]
- performanceFactor[绩效系数] actualWorkDays[实际出勤日]
- requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
- unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
- reviewNote[审核备注] paymentBatchNo[发放批次号]
- bankFileId[银行文件] orgId[业务组织]
- remark[备注] businessDate[业务日期]
+ month[月份] basicSalary[基本工资]
+ positionAllowance[岗位津贴] performanceBonus[绩效奖金]
+ overtimePay[加班费] mealAllowance[餐补]
+ transportAllowance[交通补贴] otherAllowance[其他补贴]
+ grossSalary[应发合计] socialInsurance[社保个人部分]
+ housingFund[公积金个人部分] taxAmount[个税]
+ otherDeductions[其他扣款] netSalary[实发合计]
+ paymentStatus[支付状态] paymentDate[实发日期]
+ approveStatus[审核状态] performanceFactor[绩效系数]
+ actualWorkDays[实际出勤日] requiredWorkDays[应出勤日]
+ totalOvertimeHours[月总加班小时] unpaidLeaveDays[无薪假天数]
+ cumulativeData[累计个税数据] reviewNote[审核备注]
+ paymentBatchNo[发放批次号] bankFileId[银行文件]
+ orgId[业务组织] remark[备注]
+ businessDate[业务日期] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

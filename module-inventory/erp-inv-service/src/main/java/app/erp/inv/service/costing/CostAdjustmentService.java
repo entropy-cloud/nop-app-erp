@@ -1,5 +1,8 @@
 package app.erp.inv.service.costing;
 
+import app.erp.inv.service.ErpInvConfigs;
+
+
 import app.erp.inv.dao.entity.ErpInvCostAdjust;
 import app.erp.inv.dao.entity.ErpInvCostAdjustLine;
 import app.erp.inv.dao.entity.ErpInvCostLayer;
@@ -156,7 +159,7 @@ public class CostAdjustmentService {
         layer.setCostMethod(ErpInvConstants.COST_METHOD_FIFO);
         layer.setIncomingQuantity(qty);
         layer.setRemainingQuantity(qty);
-        layer.setUnitCost(deltaUnitCost);
+        layer.setUnitCost(ErpInvConfigs.roundCost(deltaUnitCost));
         layer.setTotalCost(adjustAmount);
         layer.setCurrencyId(line.getCurrencyId() != null ? line.getCurrencyId() : balance.getCurrencyId());
         LocalDate incomingDate = adjust.getBusinessDate() != null ? adjust.getBusinessDate() : CoreMetrics.today();
@@ -211,7 +214,7 @@ public class CostAdjustmentService {
         header.setOrgId(adjust.getOrgId());
         header.setBusinessDate(adjust.getBusinessDate() != null ? adjust.getBusinessDate() : CoreMetrics.today());
         header.orm_propValueByName("status", StandardCostResolver.STATUS_FIRMED);
-        header.setRemark("由成本调整单 " + adjust.getCode() + " 自动发布");
+        header.setRemark("由成本调整单自动发布");
         headerDao.saveEntity(header);
 
         IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
@@ -220,7 +223,7 @@ public class CostAdjustmentService {
         rollupLine.setLineNo(1);
         rollupLine.setMaterialId(line.getMaterialId());
         rollupLine.setUoMId(uomId);
-        rollupLine.setUnitCost(newUnitCost);
+        rollupLine.setUnitCost(ErpInvConfigs.roundCost(newUnitCost));
         rollupLine.setTotalCost(newUnitCost);
         rollupLine.setMaterialCost(newUnitCost);
         rollupLine.setCurrencyId(line.getCurrencyId() != null ? line.getCurrencyId() : adjust.getCurrencyId());
@@ -256,7 +259,7 @@ public class CostAdjustmentService {
         ledger.setWarehouseId(line.getWarehouseId());
         ledger.setLocationId(balance.getLocationId());
         ledger.setQuantity(BigDecimal.ZERO);
-        ledger.setUnitCost(newUnitCost);
+        ledger.setUnitCost(ErpInvConfigs.roundCost(newUnitCost));
         ledger.setTotalCost(adjustAmount);
         ledger.setBalanceQuantity(balance.getTotalQuantity());
         ledger.setBalanceTotalCost(balance.getTotalCost());

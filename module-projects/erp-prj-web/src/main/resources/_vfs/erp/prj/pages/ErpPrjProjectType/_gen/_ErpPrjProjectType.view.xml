@@ -47,9 +47,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--默认科目名称-->
-                <col id="defaultSubjectName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -58,11 +55,15 @@
     <forms>
         <form id="view" editMode="view" title="查看-项目类型" i18n-en:title="View Project Type">
             <layout>
- code[类型编码] name[类型名称]
- defaultSubjectId[默认科目] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] defaultSubjectName[默认科目名称]
+ code[类型编码]
+ name[类型名称]
+ defaultSubjectId[默认科目]
+ remark[备注]
+ delVersion[逻辑删除版本]
+ createdBy[创建人]
+ createTime[创建时间]
+ updatedBy[修改人]
+ updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目类型" i18n-en:title="Add Project Type" x:prototype="edit"/>

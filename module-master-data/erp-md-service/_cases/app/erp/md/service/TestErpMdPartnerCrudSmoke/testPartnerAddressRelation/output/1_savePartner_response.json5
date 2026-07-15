@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "1",
-    "code": "P-SMOKE-REL",
+    "code": "@var:ErpMdPartner@code",
     "name": "冒烟测试-关系导航头实体",
     "partnerType": "CUSTOMER",
     "partnerType_label": "CUSTOMER-客户",
@@ -22,7 +22,8 @@
     "createTime": "@var:ErpMdPartner@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpMdPartner@createTime",
-    "remark": null
+    "remark": null,
+    "customerGroup": null
   },
   "status": 0
 }

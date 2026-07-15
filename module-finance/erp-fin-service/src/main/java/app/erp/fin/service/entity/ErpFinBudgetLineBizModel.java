@@ -8,10 +8,8 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdSubject;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
@@ -22,7 +20,6 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,126 +125,6 @@ public class ErpFinBudgetLineBizModel extends CrudBizModel<ErpFinBudgetLine> imp
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    // ---------- 高价值外键名称解析（机制 D）----------
     // subjectCode 为预算行已持久化冗余列；subjectName 派生读取 ErpMdSubject.name。
 
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> scenarioCode(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("scenario"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getScenario() != null ? line.getScenario().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> orgName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getOrg() != null ? line.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> acctSchemaCode(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("acctSchema"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getAcctSchema() != null ? line.getAcctSchema().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> periodCode(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("period"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getPeriod() != null ? line.getPeriod().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> subjectName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("subject"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getSubject() != null ? line.getSubject().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> costCenterName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("costCenter"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getCostCenter() != null ? line.getCostCenter().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> departmentName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("department"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getDepartment() != null ? line.getDepartment().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> projectName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("project"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getProject() != null ? line.getProject().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> partnerName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("partner"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getPartner() != null ? line.getPartner().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> warehouseName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("warehouse"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getWarehouse() != null ? line.getWarehouse().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> materialName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getMaterial() != null ? line.getMaterial().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpFinBudgetLine.class)
-    public List<String> currencyName(@ContextSource List<ErpFinBudgetLine> lines) {
-        orm().batchLoadProps(lines, Collections.singleton("currency"));
-        List<String> result = new ArrayList<>(lines.size());
-        for (ErpFinBudgetLine line : lines) {
-            result.add(line.getCurrency() != null ? line.getCurrency().getName() : null);
-        }
-        return result;
-    }
 }

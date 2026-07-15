@@ -1,0 +1,3 @@
+_chgType,ID,ORG_ID,RULE_NAME,PRIORITY,TERRITORY_ID,CONDITION_TYPE,CONDITION_VALUE,ASSIGNMENT_METHOD,GROUP_ID,IS_DEFAULT,IS_ACTIVE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8311,1301,GEO-RULE-F,10,8301,GEOGRAPHY,"{""province"":[""上海""]}",MANUAL,,false,true,,@var:ErpCrmTerritoryAssignmentRule@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8312,1301,DEFAULT-RULE-F,100,8301,CUSTOM_FIELD,{},MANUAL,,true,true,,@var:ErpCrmTerritoryAssignmentRule@delVersion,0,autotest-ref,*,autotest-ref,*

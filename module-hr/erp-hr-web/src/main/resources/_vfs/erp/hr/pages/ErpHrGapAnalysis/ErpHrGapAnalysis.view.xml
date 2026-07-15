@@ -6,7 +6,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="employeeDisplayName" label="员工"/>
-                <col id="competencyName" label="胜任力"/>
+                <col id="competencyId" label="胜任力"/>
                 <col id="requiredLevel" ui:number="true" sortable="true"/>
                 <col id="actualLevel" ui:number="true" sortable="true"/>
                 <col id="gapValue" ui:number="true" sortable="true"/>

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -156,7 +156,7 @@ public class ErpFinAccountingPeriodProcessor {
         // 期末凭证生成完成（期间仍 OPEN）后，状态簿记：CLOSING→CLOSED。flush 落库。
         period.setStatus(ErpFinConstants.PERIOD_STATUS_CLOSING);
         period.setStatus(ErpFinConstants.PERIOD_STATUS_CLOSED);
-        period.setClosedAt(CoreMetrics.currentDateTime());
+        period.setClosedAt(CoreMetrics.currentTimestamp());
         period.setClosedBy(currentUserId());
         orm().flushSession();
         return period;
@@ -491,7 +491,7 @@ public class ErpFinAccountingPeriodProcessor {
             a.credit = a.credit.add(l.getCreditAmount() == null ? BigDecimal.ZERO : l.getCreditAmount());
         }
 
-        LocalDateTime generatedAt = CoreMetrics.currentDateTime();
+        Timestamp generatedAt = CoreMetrics.currentTimestamp();
         for (Map.Entry<Long, Map<Long, TbAgg>> schemaEntry : bySchema.entrySet()) {
             Long acctSchemaId = schemaEntry.getKey();
             for (TbAgg a : schemaEntry.getValue().values()) {

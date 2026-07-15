@@ -39,8 +39,8 @@
               sortable="true" insertable="true" updatable="true">
             <schema domain="memo" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="refNo" displayName="银行参考号" propId="6" i18n-en:displayName="Reference No" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="refNo" displayName="银行参考号" propId="6" i18n-en:displayName="Reference No" tagSet="var"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
         <prop name="dcDirection" displayName="借贷方向" propId="7" i18n-en:displayName="Dc Direction" mandatory="true"
@@ -106,9 +106,13 @@
             <schema bizObjName="ErpFinVoucherLine"/>
         </prop>
         <prop name="currency" i18n-en:displayName="Currency" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="currency.name" i18n-en:displayName="Currency" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

@@ -1,0 +1,4 @@
+_chgType,ID,STATEMENT_ID,LINE_NO,TRANSACTION_DATE,DESCRIPTION,REF_NO,DC_DIRECTION,AMOUNT,CURRENCY_ID,BALANCE_AFTER,MATCH_STATUS,MATCHED_LINE_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,7,3,2026-06-15,,@var:ErpFinBankStatementLine@refNo_2,CREDIT,100,1,1100,UNMATCHED,,,@var:ErpFinBankStatementLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8,7,1,2026-06-10,,@var:ErpFinBankStatementLine@refNo,CREDIT,300.0000,1,1300.0000,MATCHED,4,,@var:ErpFinBankStatementLine@delVersion_1,1,autotest-ref,*,autotest-ref,*
+A,9,7,2,2026-06-12,,@var:ErpFinBankStatementLine@refNo_1,CREDIT,200.0000,1,1500.0000,MATCHED,6,,@var:ErpFinBankStatementLine@delVersion_1,1,autotest-ref,*,autotest-ref,*

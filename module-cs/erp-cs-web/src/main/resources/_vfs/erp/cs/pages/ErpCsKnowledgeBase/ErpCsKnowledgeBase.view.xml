@@ -8,7 +8,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="title" sortable="true"/>
-                <col id="categoryName" label="分类"/>
+                <col id="categoryId" label="分类"/>
                 <col id="isPublished" sortable="true"/>
             </cols>
         </grid>

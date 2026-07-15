@@ -153,16 +153,16 @@
         }
 
 
-        private java.time.LocalDateTime _reconciledAt;
+        private java.sql.Timestamp _reconciledAt;
 
     
         @PropMeta(propId=11)
     
-        public java.time.LocalDateTime getReconciledAt(){
+        public java.sql.Timestamp getReconciledAt(){
             return _reconciledAt;
         }
 
-        public void setReconciledAt(java.time.LocalDateTime value){
+        public void setReconciledAt(java.sql.Timestamp value){
             this._reconciledAt = value;
         }
 

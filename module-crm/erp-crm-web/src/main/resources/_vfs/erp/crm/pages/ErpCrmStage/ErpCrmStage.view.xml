@@ -6,10 +6,10 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="stageName" sortable="true"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="stageId" sortable="true"/>
                 <col id="sequence" ui:number="true" sortable="true"/>
-                <col id="teamName" label="销售团队"/>
+                <col id="teamId" label="销售团队"/>
                 <col id="defaultProbability" ui:number="true" sortable="true"/>
                 <col id="isWonStage" sortable="true"/>
             </cols>

@@ -209,42 +209,6 @@
         }
 
 
-        private String _billingCode;
-
-    
-        public String getBillingCode(){
-            return _billingCode;
-        }
-
-        public void setBillingCode(String value){
-            this._billingCode = value;
-        }
-
-
-        private String _taskName;
-
-    
-        public String getTaskName(){
-            return _taskName;
-        }
-
-        public void setTaskName(String value){
-            this._taskName = value;
-        }
-
-
-        private String _subjectName;
-
-    
-        public String getSubjectName(){
-            return _subjectName;
-        }
-
-        public void setSubjectName(String value){
-            this._subjectName = value;
-        }
-
-
         private Map<String,Object> _billing;
 
         public Map<String,Object> getBilling(){

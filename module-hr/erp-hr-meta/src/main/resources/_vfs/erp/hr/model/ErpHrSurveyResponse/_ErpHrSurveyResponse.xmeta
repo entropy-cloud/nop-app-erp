@@ -35,9 +35,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="100"/>
         </prop>
-        <prop name="submittedAt" displayName="提交时间" propId="5" i18n-en:displayName="Submitted At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="submittedAt" displayName="提交时间" propId="5" i18n-en:displayName="Submitted At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="timeSpentSeconds" displayName="填写耗时" propId="6" i18n-en:displayName="Time Spent Seconds"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -93,9 +93,12 @@
             </schema>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

@@ -77,7 +77,7 @@ public class _ErpCrmForecast extends DynamicOrmEntity{
     public static final String PROP_NAME_expectedClosedRevenue = "expectedClosedRevenue";
     public static final int PROP_ID_expectedClosedRevenue = 14;
     
-    /* 最近计算时间: LAST_CALCULATED_AT DATETIME */
+    /* 最近计算时间: LAST_CALCULATED_AT TIMESTAMP */
     public static final String PROP_NAME_lastCalculatedAt = "lastCalculatedAt";
     public static final int PROP_ID_lastCalculatedAt = 15;
     
@@ -248,7 +248,7 @@ public class _ErpCrmForecast extends DynamicOrmEntity{
     private java.math.BigDecimal _expectedClosedRevenue;
     
     /* 最近计算时间: LAST_CALCULATED_AT */
-    private java.time.LocalDateTime _lastCalculatedAt;
+    private java.sql.Timestamp _lastCalculatedAt;
     
     /* 备注: NOTES */
     private java.lang.String _notes;
@@ -563,9 +563,9 @@ public class _ErpCrmForecast extends DynamicOrmEntity{
             }
         
             case PROP_ID_lastCalculatedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_lastCalculatedAt));
                }
                setLastCalculatedAt(typedValue);
@@ -751,7 +751,7 @@ public class _ErpCrmForecast extends DynamicOrmEntity{
         
             case PROP_ID_lastCalculatedAt:{
                onInitProp(propId);
-               this._lastCalculatedAt = (java.time.LocalDateTime)value;
+               this._lastCalculatedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1080,7 +1080,7 @@ public class _ErpCrmForecast extends DynamicOrmEntity{
     /**
      * 最近计算时间: LAST_CALCULATED_AT
      */
-    public final java.time.LocalDateTime getLastCalculatedAt(){
+    public final java.sql.Timestamp getLastCalculatedAt(){
          onPropGet(PROP_ID_lastCalculatedAt);
          return _lastCalculatedAt;
     }
@@ -1088,7 +1088,7 @@ public class _ErpCrmForecast extends DynamicOrmEntity{
     /**
      * 最近计算时间: LAST_CALCULATED_AT
      */
-    public final void setLastCalculatedAt(java.time.LocalDateTime value){
+    public final void setLastCalculatedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_lastCalculatedAt,value)){
             this._lastCalculatedAt = value;
             internalClearRefs(PROP_ID_lastCalculatedAt);

@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "1",
-    "code": "SMOKE-CRM",
+    "code": "@var:ErpCrmBundlePricing@code",
     "name": "冒烟-已修改套餐",
     "orgId": null,
     "bundleName": "冒烟套餐",
@@ -19,8 +19,7 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpCrmBundlePricing@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCrmBundlePricing@updateTime_1",
-    "orgName": null
+    "updateTime": "@var:ErpCrmBundlePricing@updateTime_1"
   },
   "status": 0
 }

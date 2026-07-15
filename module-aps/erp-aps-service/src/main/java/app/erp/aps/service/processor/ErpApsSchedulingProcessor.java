@@ -67,10 +67,10 @@ public class ErpApsSchedulingProcessor {
                 ErpApsConfigs.DEFAULT_MAX_RESCHEDULE_WINDOW_DAYS);
 
         LocalDateTime windowStart = rush.getEarliestStartDateT() != null
-                ? rush.getEarliestStartDateT()
+                ? rush.getEarliestStartDateT().toLocalDateTime()
                 : currentDateTime();
         LocalDateTime deadline = rush.getLatestEndDateT() != null
-                ? rush.getLatestEndDateT()
+                ? rush.getLatestEndDateT().toLocalDateTime()
                 : windowStart.plusDays(maxWindowDays);
         LocalDateTime windowEnd = deadline.plusMinutes(buffer);
 
@@ -128,8 +128,8 @@ public class ErpApsSchedulingProcessor {
         List<ErpApsConstraint> maintenance = loadMaintenanceConstraints(schedule);
         int buffer = AppConfig.var(ErpApsConfigs.CONFIG_BUFFER_MINUTES_BETWEEN_OPS,
                 ErpApsConfigs.DEFAULT_BUFFER_MINUTES_BETWEEN_OPS);
-        LocalDateTime horizonStart = schedule.getHorizonStart();
-        LocalDateTime horizonEnd = schedule.getHorizonEnd();
+        LocalDateTime horizonStart = schedule.getHorizonStart() == null ? null : schedule.getHorizonStart().toLocalDateTime();
+        LocalDateTime horizonEnd = schedule.getHorizonEnd() == null ? null : schedule.getHorizonEnd().toLocalDateTime();
 
         ErpApsSchedulingEngine engine = newEngine(buffer, horizonStart, horizonEnd);
         SchedulingResult result = ErpApsConstants.SCHEDULING_MODE_BACKWARD.equals(mode)

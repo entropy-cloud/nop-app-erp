@@ -15,6 +15,7 @@ import io.nop.core.lang.json.JsonTool;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -177,6 +178,7 @@ public class FunnelAggregationEngine {
         List<LocalDateTime> times = convLogs.stream()
                 .filter(l -> leadId.equals(l.getLeadId()) && l.getChangedAt() != null)
                 .map(ErpCrmLeadConvLog::getChangedAt)
+                .map(Timestamp::toLocalDateTime)
                 .sorted()
                 .collect(Collectors.toList());
         if (times.size() < 2) {
@@ -321,7 +323,7 @@ public class FunnelAggregationEngine {
             for (int i = 0; i < logs.size() - 1; i++) {
                 ErpCrmLeadConvLog cur = logs.get(i);
                 ErpCrmLeadConvLog next = logs.get(i + 1);
-                long days = java.time.Duration.between(cur.getChangedAt(), next.getChangedAt()).toDays();
+                long days = java.time.Duration.between(cur.getChangedAt().toLocalDateTime(), next.getChangedAt().toLocalDateTime()).toDays();
                 stageDays.merge(cur.getToStageId(), days, Long::sum);
             }
             result.put(entry.getKey(), stageDays);

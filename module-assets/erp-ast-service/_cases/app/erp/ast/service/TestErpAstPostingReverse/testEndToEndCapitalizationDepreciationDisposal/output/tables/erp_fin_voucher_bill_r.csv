@@ -1,0 +1,5 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,28,25,CAPITALIZATION,@var:ErpFinVoucherBillR@billCode,,CAPITALIZATION,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,32,29,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_1,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,36,33,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_2,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,42,38,DISPOSAL,@var:ErpFinVoucherBillR@billCode_3,,DISPOSAL,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*

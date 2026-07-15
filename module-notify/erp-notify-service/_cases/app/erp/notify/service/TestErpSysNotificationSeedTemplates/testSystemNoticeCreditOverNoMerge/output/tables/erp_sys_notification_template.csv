@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7103,sal.credit-over-limit,TPL-sal.credit-over-limit,IN_APP,信用超额度通知: ${customerName},客户 ${customerName} 信用额度超限 ${overAmount}，订单 ${orderNo} 已挂起,USER_LIST,"{""userIds"":[""seed-sales-user""]}",0,NONE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

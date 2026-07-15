@@ -1,0 +1,5 @@
+_chgType,ID,CHART_ID,ORG_ID,PERIOD_FROM,PERIOD_TO,SAMPLE_COUNT,TOTAL_OBSERVATIONS,GRAND_MEAN,OVERALL_STD_DEV,WITHIN_STD_DEV,CP,CPK,PP,PPK,CPM,CAPABILITY_LEVEL,IS_STABLE,CALCULATED_BY,CALCULATED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8601,601,,2026-01-01,2026-01-31,,,,,,,,,,,INADEQUATE,,,,,@var:ErpQaSpcCapability@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8602,602,,2026-01-01,2026-01-31,,,,,,,,,,,INADEQUATE,,,,,@var:ErpQaSpcCapability@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8603,603,,2026-01-01,2026-01-31,,,,,,,,,,,ACCEPTABLE,,,,,@var:ErpQaSpcCapability@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8604,601,,2026-02-01,2026-02-28,,,,,,,,,,,INADEQUATE,,,,,@var:ErpQaSpcCapability@delVersion,0,autotest-ref,*,autotest-ref,*

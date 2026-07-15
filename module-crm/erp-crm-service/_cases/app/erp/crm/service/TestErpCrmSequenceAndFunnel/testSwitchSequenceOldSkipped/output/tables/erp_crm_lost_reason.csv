@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,SEQUENCE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6401,@var:ErpCrmLostReason@code,价格太高,10,,@var:ErpCrmLostReason@delVersion,0,autotest-ref,*,autotest-ref,*

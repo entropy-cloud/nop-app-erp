@@ -79,7 +79,6 @@ public class PurchasePriceVarianceAcctDocProvider implements IErpFinAcctDocProvi
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMaterialId(materialId);
         fact.setWarehouseId(warehouseId);
-        fact.setMemo(event.getBillHeadCode());
         return fact;
     }
 

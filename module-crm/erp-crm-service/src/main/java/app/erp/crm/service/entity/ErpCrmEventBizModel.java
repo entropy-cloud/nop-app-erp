@@ -27,9 +27,6 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
 import java.util.Collections;
 
 /**
@@ -141,65 +138,5 @@ public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IE
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCrmEvent.class)
-    public List<String> orgName(@ContextSource List<ErpCrmEvent> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmEvent row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmEvent.class)
-    public List<String> categoryName(@ContextSource List<ErpCrmEvent> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("eventCategory"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmEvent row : rows) {
-            result.add(row.orm_attached() && row.getEventCategory() != null ? row.getEventCategory().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmEvent.class)
-    public List<String> leadCode(@ContextSource List<ErpCrmEvent> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("relatedLead"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmEvent row : rows) {
-            result.add(row.orm_attached() && row.getRelatedLead() != null ? row.getRelatedLead().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmEvent.class)
-    public List<String> partnerName(@ContextSource List<ErpCrmEvent> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("partner"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmEvent row : rows) {
-            result.add(row.orm_attached() && row.getPartner() != null ? row.getPartner().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmEvent.class)
-    public List<String> contactName(@ContextSource List<ErpCrmEvent> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("contact"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmEvent row : rows) {
-            result.add(row.orm_attached() && row.getContact() != null ? row.getContact().getContactPerson() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmEvent.class)
-    public List<String> eventCode(@ContextSource List<ErpCrmEvent> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("parentEvent"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmEvent row : rows) {
-            result.add(row.orm_attached() && row.getParentEvent() != null ? row.getParentEvent().getCode() : null);
-        }
-        return result;
-    }
 
 }

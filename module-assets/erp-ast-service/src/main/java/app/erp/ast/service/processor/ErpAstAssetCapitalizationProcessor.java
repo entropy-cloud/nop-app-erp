@@ -77,7 +77,7 @@ public class ErpAstAssetCapitalizationProcessor {
         cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
         cap.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
         cap.setApprovedBy(currentUserId());
-        cap.setApprovedAt(CoreMetrics.currentDateTime());
+        cap.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
             markPosted(cap);
         }
@@ -318,7 +318,7 @@ public class ErpAstAssetCapitalizationProcessor {
 
     protected void markPosted(ErpAstAssetCapitalization cap) {
         cap.setPosted(true);
-        cap.setPostedAt(CoreMetrics.currentDateTime());
+        cap.setPostedAt(CoreMetrics.currentTimestamp());
         cap.setPostedBy(currentUserId());
     }
 

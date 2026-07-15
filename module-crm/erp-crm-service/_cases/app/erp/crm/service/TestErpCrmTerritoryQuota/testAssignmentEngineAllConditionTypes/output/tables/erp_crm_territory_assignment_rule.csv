@@ -1,0 +1,6 @@
+_chgType,ID,ORG_ID,RULE_NAME,PRIORITY,TERRITORY_ID,CONDITION_TYPE,CONDITION_VALUE,ASSIGNMENT_METHOD,GROUP_ID,IS_DEFAULT,IS_ACTIVE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8101,1301,GEO-RULE,10,8001,GEOGRAPHY,"{""province"":[""上海""]}",MANUAL,,false,true,,@var:ErpCrmTerritoryAssignmentRule@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8102,1301,IND-RULE,20,8002,INDUSTRY,"{""industryCode"":[""manufacturing""]}",MANUAL,,false,true,,@var:ErpCrmTerritoryAssignmentRule@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8103,1301,SIZE-RULE,30,8003,CUSTOMER_SIZE,"{""minEmployees"":1000,""maxEmployees"":100000}",MANUAL,,false,true,,@var:ErpCrmTerritoryAssignmentRule@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8104,1301,CUST-RULE,40,8004,CUSTOM_FIELD,"{""utmSource"":""baidu""}",MANUAL,,false,true,,@var:ErpCrmTerritoryAssignmentRule@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8105,1301,DEFAULT-RULE,100,8005,CUSTOM_FIELD,{},MANUAL,,true,true,,@var:ErpCrmTerritoryAssignmentRule@delVersion,0,autotest-ref,*,autotest-ref,*

@@ -177,16 +177,16 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=11)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
         }
 
@@ -286,42 +286,6 @@
 
         public void setRemark(String value){
             this._remark = value;
-        }
-
-
-        private String _partnerName;
-
-    
-        public String getPartnerName(){
-            return _partnerName;
-        }
-
-        public void setPartnerName(String value){
-            this._partnerName = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _materialCategoryName;
-
-    
-        public String getMaterialCategoryName(){
-            return _materialCategoryName;
-        }
-
-        public void setMaterialCategoryName(String value){
-            this._materialCategoryName = value;
         }
 
 

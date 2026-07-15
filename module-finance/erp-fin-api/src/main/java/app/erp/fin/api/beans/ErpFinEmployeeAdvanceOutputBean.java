@@ -273,38 +273,24 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=17)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
-        }
-
-
-        private Boolean _posted;
-
-    
-        @PropMeta(propId=18)
-    
-        public Boolean getPosted(){
-            return _posted;
-        }
-
-        public void setPosted(Boolean value){
-            this._posted = value;
         }
 
 
         private String _postedBy;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=18)
     
         public String getPostedBy(){
             return _postedBy;
@@ -315,16 +301,30 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private Boolean _posted;
+
+    
+        @PropMeta(propId=19)
+    
+        public Boolean getPosted(){
+            return _posted;
+        }
+
+        public void setPosted(Boolean value){
+            this._posted = value;
+        }
+
+
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=20)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 
@@ -424,54 +424,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _employeeName;
-
-    
-        public String getEmployeeName(){
-            return _employeeName;
-        }
-
-        public void setEmployeeName(String value){
-            this._employeeName = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
-        }
-
-
-        private String _projectName;
-
-    
-        public String getProjectName(){
-            return _projectName;
-        }
-
-        public void setProjectName(String value){
-            this._projectName = value;
         }
 
 

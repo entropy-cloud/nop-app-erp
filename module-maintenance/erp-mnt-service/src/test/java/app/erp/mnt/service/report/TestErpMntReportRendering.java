@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -241,8 +242,8 @@ public class TestErpMntReportRendering extends JunitAutoTestCase {
         ErpMntDowntimeEntry d = new ErpMntDowntimeEntry();
         d.orm_propValueByName("id", id);
         d.setEquipmentId(equipmentId);
-        d.setStartTime(startTime);
-        d.setEndTime(startTime.plusMinutes(totalMinutes.longValue()));
+        d.setStartTime(Timestamp.valueOf(startTime));
+        d.setEndTime(Timestamp.valueOf(startTime.plusMinutes(totalMinutes.longValue())));
         d.setTotalMinutes(totalMinutes);
         d.orm_propValueByName("reason", reason);
         dao.saveEntity(d);

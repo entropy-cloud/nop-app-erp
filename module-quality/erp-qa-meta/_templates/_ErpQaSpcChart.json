@@ -34,10 +34,9 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "material": null,
+  "material.name": "",
   "inspectionType": null,
   "org": null,
-  "samples": null,
-  "orgName": "",
-  "materialName": "",
-  "inspectionTemplateCode": ""
+  "org.name": "",
+  "samples": null
 }

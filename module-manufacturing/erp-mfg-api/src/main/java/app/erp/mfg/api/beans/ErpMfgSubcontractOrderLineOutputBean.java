@@ -223,42 +223,6 @@
         }
 
 
-        private String _subcontractOrderCode;
-
-    
-        public String getSubcontractOrderCode(){
-            return _subcontractOrderCode;
-        }
-
-        public void setSubcontractOrderCode(String value){
-            this._subcontractOrderCode = value;
-        }
-
-
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _uomName;
-
-    
-        public String getUomName(){
-            return _uomName;
-        }
-
-        public void setUomName(String value){
-            this._uomName = value;
-        }
-
-
         private Map<String,Object> _subcontractOrder;
 
         public Map<String,Object> getSubcontractOrder(){

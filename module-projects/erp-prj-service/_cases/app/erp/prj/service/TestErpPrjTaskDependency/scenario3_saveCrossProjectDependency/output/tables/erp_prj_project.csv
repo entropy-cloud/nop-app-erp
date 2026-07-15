@@ -1,0 +1,3 @@
+_chgType,ID,CODE,NAME,ORG_ID,PROJECT_TYPE_ID,CUSTOMER_ID,CURRENCY_ID,START_DATE,END_DATE,BUDGET,COMMITTED_COST,ACTUAL_COST,BILLED_AMOUNT,STATUS,MANAGER_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpPrjProject@code,DAG 测试项目,1,,,1,,,0,0,0,0,OPEN,,,@var:ErpPrjProject@delVersion,0,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpPrjProject@code_1,DAG 测试项目,1,,,1,,,0,0,0,0,OPEN,,,@var:ErpPrjProject@delVersion,0,autotest-ref,*,autotest-ref,*

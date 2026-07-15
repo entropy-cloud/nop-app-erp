@@ -59,12 +59,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--员工-->
-                <col id="employeeDisplayName"/>
-
-                <!--胜任力-->
-                <col id="competencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -79,8 +73,7 @@
  assessmentDate[评估日期] analysisDate[分析日期]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] employeeDisplayName[员工]
- competencyName[胜任力] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-差距分析" i18n-en:title="Add Gap Analysis" x:prototype="edit"/>

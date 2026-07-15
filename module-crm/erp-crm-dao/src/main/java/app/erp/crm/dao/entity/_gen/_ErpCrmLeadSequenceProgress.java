@@ -45,11 +45,11 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 6;
     
-    /* 开始时间: STARTED_AT DATETIME */
+    /* 开始时间: STARTED_AT TIMESTAMP */
     public static final String PROP_NAME_startedAt = "startedAt";
     public static final int PROP_ID_startedAt = 7;
     
-    /* 完成时间: COMPLETED_AT DATETIME */
+    /* 完成时间: COMPLETED_AT TIMESTAMP */
     public static final String PROP_NAME_completedAt = "completedAt";
     public static final int PROP_ID_completedAt = 8;
     
@@ -169,10 +169,10 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
     private java.lang.String _status;
     
     /* 开始时间: STARTED_AT */
-    private java.time.LocalDateTime _startedAt;
+    private java.sql.Timestamp _startedAt;
     
     /* 完成时间: COMPLETED_AT */
-    private java.time.LocalDateTime _completedAt;
+    private java.sql.Timestamp _completedAt;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -386,9 +386,9 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
             }
         
             case PROP_ID_startedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_startedAt));
                }
                setStartedAt(typedValue);
@@ -396,9 +396,9 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
             }
         
             case PROP_ID_completedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_completedAt));
                }
                setCompletedAt(typedValue);
@@ -528,14 +528,14 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
         
             case PROP_ID_startedAt:{
                onInitProp(propId);
-               this._startedAt = (java.time.LocalDateTime)value;
+               this._startedAt = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_completedAt:{
                onInitProp(propId);
-               this._completedAt = (java.time.LocalDateTime)value;
+               this._completedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -712,7 +712,7 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
     /**
      * 开始时间: STARTED_AT
      */
-    public final java.time.LocalDateTime getStartedAt(){
+    public final java.sql.Timestamp getStartedAt(){
          onPropGet(PROP_ID_startedAt);
          return _startedAt;
     }
@@ -720,7 +720,7 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
     /**
      * 开始时间: STARTED_AT
      */
-    public final void setStartedAt(java.time.LocalDateTime value){
+    public final void setStartedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_startedAt,value)){
             this._startedAt = value;
             internalClearRefs(PROP_ID_startedAt);
@@ -731,7 +731,7 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
     /**
      * 完成时间: COMPLETED_AT
      */
-    public final java.time.LocalDateTime getCompletedAt(){
+    public final java.sql.Timestamp getCompletedAt(){
          onPropGet(PROP_ID_completedAt);
          return _completedAt;
     }
@@ -739,7 +739,7 @@ public class _ErpCrmLeadSequenceProgress extends DynamicOrmEntity{
     /**
      * 完成时间: COMPLETED_AT
      */
-    public final void setCompletedAt(java.time.LocalDateTime value){
+    public final void setCompletedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_completedAt,value)){
             this._completedAt = value;
             internalClearRefs(PROP_ID_completedAt);

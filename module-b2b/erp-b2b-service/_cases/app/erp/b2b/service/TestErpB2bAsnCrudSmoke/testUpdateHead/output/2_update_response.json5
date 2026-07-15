@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "1",
-    "code": "SMOKE-B2B",
+    "code": "@var:ErpB2bAsn@code",
     "orgId": null,
     "sourceEdiDocId": null,
     "partnerId": null,
@@ -19,10 +19,7 @@
     "createTime": "@var:ErpB2bAsn@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpB2bAsn@updateTime_1",
-    "businessDate": "*",
-    "sourceEdiDocName": null,
-    "orgName": null,
-    "partnerName": null
+    "businessDate": "2026-07-15"
   },
   "status": 0
 }

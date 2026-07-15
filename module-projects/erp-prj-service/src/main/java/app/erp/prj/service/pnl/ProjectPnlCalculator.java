@@ -85,7 +85,7 @@ public class ProjectPnlCalculator {
         CostBreakdown cost = sumCostByCategory(projectId, from, to);
         BigDecimal totalCost = cost.total();
         BigDecimal grossProfit = revenue.subtract(totalCost);
-        String grossMarginPct = marginPct(grossProfit, revenue);
+        BigDecimal grossMarginPct = marginPct(grossProfit, revenue);
 
         BigDecimal committedCost = sumCommittedCost(projectId);
         BigDecimal budgetAmount = sumBudgetAmount(projectId);
@@ -259,13 +259,12 @@ public class ProjectPnlCalculator {
         return list.isEmpty() ? null : list.get(0);
     }
 
-    private String marginPct(BigDecimal grossProfit, BigDecimal revenue) {
+    private BigDecimal marginPct(BigDecimal grossProfit, BigDecimal revenue) {
         if (revenue == null || revenue.signum() == 0) {
-            return "0";
+            return BigDecimal.ZERO;
         }
         return grossProfit.multiply(BigDecimal.valueOf(100))
-                .divide(revenue, 4, RoundingMode.HALF_UP)
-                .toPlainString();
+                .divide(revenue, 4, RoundingMode.HALF_UP);
     }
 
     private ErpPrjProject loadProject(Long projectId) {

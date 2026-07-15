@@ -262,7 +262,7 @@ public class LeadScoringEngine {
         score.setAutoQualified(autoQualified);
         score.setTriggeredAction(triggeredAction);
         score.setTriggerEvent(triggerEvent != null ? triggerEvent : ErpCrmConstants.TRIGGER_EVENT_MANUAL);
-        score.setCalculatedAt(CoreMetrics.currentDateTime());
+        score.setCalculatedAt(CoreMetrics.currentTimestamp());
         return score;
     }
 

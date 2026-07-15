@@ -137,7 +137,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_posted = "posted";
     public static final int PROP_ID_posted = 29;
     
-    /* 过账时间: POSTED_AT DATETIME */
+    /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 30;
     
@@ -181,7 +181,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 200;
     
-    /* 审核时间: APPROVED_AT DATETIME */
+    /* 审核时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 201;
     
@@ -459,7 +459,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     private java.lang.Boolean _posted;
     
     /* 过账时间: POSTED_AT */
-    private java.time.LocalDateTime _postedAt;
+    private java.sql.Timestamp _postedAt;
     
     /* 过账人: POSTED_BY */
     private java.lang.String _postedBy;
@@ -492,16 +492,16 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     private java.lang.String _approvedBy;
     
     /* 审核时间: APPROVED_AT */
-    private java.time.LocalDateTime _approvedAt;
+    private java.sql.Timestamp _approvedAt;
     
     /* 汇率: EXCHANGE_RATE */
-    private java.lang.String _exchangeRate;
+    private java.math.BigDecimal _exchangeRate;
     
     /* 源币种金额: AMOUNT_SOURCE */
-    private java.lang.String _amountSource;
+    private java.math.BigDecimal _amountSource;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.lang.String _amountFunctional;
+    private java.math.BigDecimal _amountFunctional;
     
 
     public _ErpMfgWorkOrder(){
@@ -1011,9 +1011,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_postedAt));
                }
                setPostedAt(typedValue);
@@ -1121,9 +1121,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_approvedAt));
                }
                setApprovedAt(typedValue);
@@ -1131,9 +1131,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_exchangeRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_exchangeRate));
                }
                setExchangeRate(typedValue);
@@ -1141,9 +1141,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountSource:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountSource));
                }
                setAmountSource(typedValue);
@@ -1151,9 +1151,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountFunctional:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountFunctional));
                }
                setAmountFunctional(typedValue);
@@ -1374,7 +1374,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_postedAt:{
                onInitProp(propId);
-               this._postedAt = (java.time.LocalDateTime)value;
+               this._postedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1451,28 +1451,28 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_approvedAt:{
                onInitProp(propId);
-               this._approvedAt = (java.time.LocalDateTime)value;
+               this._approvedAt = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_exchangeRate:{
                onInitProp(propId);
-               this._exchangeRate = (java.lang.String)value;
+               this._exchangeRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountSource:{
                onInitProp(propId);
-               this._amountSource = (java.lang.String)value;
+               this._amountSource = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountFunctional:{
                onInitProp(propId);
-               this._amountFunctional = (java.lang.String)value;
+               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -2037,7 +2037,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final java.time.LocalDateTime getPostedAt(){
+    public final java.sql.Timestamp getPostedAt(){
          onPropGet(PROP_ID_postedAt);
          return _postedAt;
     }
@@ -2045,7 +2045,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final void setPostedAt(java.time.LocalDateTime value){
+    public final void setPostedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_postedAt,value)){
             this._postedAt = value;
             internalClearRefs(PROP_ID_postedAt);
@@ -2246,7 +2246,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final java.time.LocalDateTime getApprovedAt(){
+    public final java.sql.Timestamp getApprovedAt(){
          onPropGet(PROP_ID_approvedAt);
          return _approvedAt;
     }
@@ -2254,7 +2254,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final void setApprovedAt(java.time.LocalDateTime value){
+    public final void setApprovedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_approvedAt,value)){
             this._approvedAt = value;
             internalClearRefs(PROP_ID_approvedAt);
@@ -2265,7 +2265,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final java.lang.String getExchangeRate(){
+    public final java.math.BigDecimal getExchangeRate(){
          onPropGet(PROP_ID_exchangeRate);
          return _exchangeRate;
     }
@@ -2273,7 +2273,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final void setExchangeRate(java.lang.String value){
+    public final void setExchangeRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_exchangeRate,value)){
             this._exchangeRate = value;
             internalClearRefs(PROP_ID_exchangeRate);
@@ -2284,7 +2284,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final java.lang.String getAmountSource(){
+    public final java.math.BigDecimal getAmountSource(){
          onPropGet(PROP_ID_amountSource);
          return _amountSource;
     }
@@ -2292,7 +2292,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final void setAmountSource(java.lang.String value){
+    public final void setAmountSource(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountSource,value)){
             this._amountSource = value;
             internalClearRefs(PROP_ID_amountSource);
@@ -2303,7 +2303,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final java.lang.String getAmountFunctional(){
+    public final java.math.BigDecimal getAmountFunctional(){
          onPropGet(PROP_ID_amountFunctional);
          return _amountFunctional;
     }
@@ -2311,7 +2311,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final void setAmountFunctional(java.lang.String value){
+    public final void setAmountFunctional(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountFunctional,value)){
             this._amountFunctional = value;
             internalClearRefs(PROP_ID_amountFunctional);

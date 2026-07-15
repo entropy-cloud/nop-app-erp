@@ -6,10 +6,10 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="partnerName" label="供应商"/>
-                <col id="orgName" label="所属组织"/>
+                <col id="partnerId" label="供应商"/>
+                <col id="orgId" label="所属组织"/>
                 <col id="approvalType" mandatory="true" sortable="true"/>
-                <col id="materialCategoryName" label="准入物料类别"/>
+                <col id="materialCategoryId" label="准入物料类别"/>
                 <col id="validFrom" sortable="true"/>
                 <col id="validTo" sortable="true"/>
                 <col id="qualificationDoc" sortable="true"/>

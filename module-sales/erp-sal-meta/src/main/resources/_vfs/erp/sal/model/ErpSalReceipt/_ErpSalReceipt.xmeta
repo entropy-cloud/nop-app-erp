@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
@@ -94,9 +94,9 @@
               insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="postedAt" displayName="过账时间" propId="19" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="postedAt" displayName="过账时间" propId="19" i18n-en:displayName="Posted At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="postedBy" displayName="过账人" propId="20" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="false" updatable="false" ui:show="R">
@@ -106,9 +106,9 @@
               sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
-        <prop name="approvedAt" displayName="审核时间" propId="22" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="approvedAt" displayName="审核时间" propId="22" i18n-en:displayName="Approved At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="23" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
@@ -138,39 +138,62 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="nopFlowId" displayName="工作流实例" propId="30" i18n-en:displayName="Workflow Flow Id" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
+        <prop name="nopFlowId" displayName="工作流实例" propId="30" i18n-en:displayName="Workflow Flow Id" tagSet="var"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.lang.String" precision="32"/>
         </prop>
         <prop name="customer" i18n-en:displayName="Customer" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="customerId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="customerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
         </prop>
+        <prop name="customer.name" i18n-en:displayName="Customer" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="currency" i18n-en:displayName="Currency" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="currencyId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="currency.name" i18n-en:displayName="Currency" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="settlementMethod" i18n-en:displayName="Settlement Method" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="settlementMethodId" ext:joinRightProp="id"
-              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSettlementMethod"/>
         </prop>
+        <prop name="settlementMethod.name" i18n-en:displayName="Settlement Method" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
         </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="bankAccount" i18n-en:displayName="Bank Account" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="bankAccountId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="bankAccountId" ext:joinRightProp="id"
+              ext:joinRightDisplayProp="bankName" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdBankAccount"/>
+        </prop>
+        <prop name="bankAccount.bankName" i18n-en:displayName="Bank Account" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="partnerBankAccount" i18n-en:displayName="Partner Bank Account" tagSet="pub" ext:kind="to-one"
               internal="true" queryable="true" ext:joinLeftProp="partnerBankAccountId" ext:joinRightProp="id"
-              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightDisplayProp="bankName" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdBankAccount"/>
+        </prop>
+        <prop name="partnerBankAccount.bankName" i18n-en:displayName="Partner Bank Account" internal="true"
+              queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="receiptId" insertable="true"

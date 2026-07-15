@@ -50,12 +50,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--维护团队-->
-                <col id="teamName"/>
-
-                <!--成员-->
-                <col id="employeeName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -69,7 +63,6 @@
  leftAt[退出时间] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- teamName[维护团队] employeeName[成员]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护团队成员" i18n-en:title="Add Maintenance Team Member" x:prototype="edit"/>

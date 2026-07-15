@@ -1,0 +1,15 @@
+_chgType,ID,ORG_ID,EMPLOYEE_ID,SHIFT_ID,ASSIGNMENT_DATE,ACTUAL_START_TIME,ACTUAL_END_TIME,IS_ABSENT,ABSENCE_REASON,LEAVE_REQUEST_ID,SWAP_REQUEST_ID,REPLACED_BY_ASSIGNMENT_ID,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
+A,10,,2,3,2026-07-02,,,false,,,,,CANCELLED,@var:ErpHrShiftAssignment@delVersion_13,1,autotest-ref,*,autotest-ref,*,2026-07-15
+A,11,,2,4,2026-07-03,,,false,,,,,CANCELLED,@var:ErpHrShiftAssignment@delVersion_13,1,autotest-ref,*,autotest-ref,*,2026-07-15
+A,12,,2,3,2026-07-04,,,false,,,,,CANCELLED,@var:ErpHrShiftAssignment@delVersion_13,1,autotest-ref,*,autotest-ref,*,2026-07-15
+A,13,,1,3,2026-07-01,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_13,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,14,,1,4,2026-07-02,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_13,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,15,,1,3,2026-07-03,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_13,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,16,,1,4,2026-07-04,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_13,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,17,,2,3,2026-07-02,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_13,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,18,,2,4,2026-07-03,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_13,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,19,,2,3,2026-07-04,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_13,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,6,,1,3,2026-07-01,,,false,,,,,CANCELLED,@var:ErpHrShiftAssignment@delVersion_13,1,autotest-ref,*,autotest-ref,*,2026-07-15
+A,7,,1,4,2026-07-02,,,false,,,,,CANCELLED,@var:ErpHrShiftAssignment@delVersion_13,1,autotest-ref,*,autotest-ref,*,2026-07-15
+A,8,,1,3,2026-07-03,,,false,,,,,CANCELLED,@var:ErpHrShiftAssignment@delVersion_13,1,autotest-ref,*,autotest-ref,*,2026-07-15
+A,9,,1,4,2026-07-04,,,false,,,,,CANCELLED,@var:ErpHrShiftAssignment@delVersion_13,1,autotest-ref,*,autotest-ref,*,2026-07-15

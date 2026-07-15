@@ -249,18 +249,6 @@
         }
 
 
-        private String _projectName;
-
-    
-        public String getProjectName(){
-            return _projectName;
-        }
-
-        public void setProjectName(String value){
-            this._projectName = value;
-        }
-
-
         private Map<String,Object> _project;
 
         public Map<String,Object> getProject(){

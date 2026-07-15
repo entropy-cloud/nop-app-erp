@@ -58,12 +58,12 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       supplier: Supplier
+      supplier.name: Supplier
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       lines: Lines
-      supplierName: null
-      currencyName: null
-      orgName: null
     ErpPurInvoiceLine:
       id: ID
       invoiceId: Invoice
@@ -85,9 +85,10 @@ prop:
       updateTime: Update Time
       invoice: Invoice
       material: Material
+      material.name: Material
       receiveLine: Receive Line
       uoM: Uo M
-      materialName: null
+      uoM.name: Uo M
     ErpPurOrder:
       id: ID
       code: Code
@@ -130,17 +131,18 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       supplier: Supplier
+      supplier.name: Supplier
       warehouse: Warehouse
+      warehouse.name: Warehouse
       currency: Currency
+      currency.name: Currency
       settlementMethod: Settlement Method
+      settlementMethod.name: Settlement Method
       org: Org
+      org.name: Org
       requisition: Requisition
       quotation: Quotation
       lines: Lines
-      supplierName: null
-      warehouseName: null
-      currencyName: null
-      orgName: null
     ErpPurOrderLine:
       id: ID
       orderId: Order
@@ -168,13 +170,16 @@ prop:
       updateTime: Update Time
       order: Order
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       taxRateMd: Tax Rate Md
+      taxRateMd.name: Tax Rate Md
       warehouse: Warehouse
+      warehouse.name: Warehouse
       project: Project
-      materialName: null
-      warehouseName: null
     ErpPurPayment:
       id: ID
       code: Code
@@ -210,15 +215,18 @@ prop:
       updateTime: Update Time
       nopFlowId: Workflow Flow Id
       supplier: Supplier
+      supplier.name: Supplier
       currency: Currency
+      currency.name: Currency
       settlementMethod: Settlement Method
+      settlementMethod.name: Settlement Method
       org: Org
+      org.name: Org
       bankAccount: Bank Account
+      bankAccount.bankName: Bank Account
       partnerBankAccount: Partner Bank Account
+      partnerBankAccount.bankName: Partner Bank Account
       lines: Lines
-      supplierName: null
-      currencyName: null
-      orgName: null
     ErpPurPaymentLine:
       id: ID
       paymentId: Payment
@@ -260,8 +268,11 @@ prop:
       approvedAt: Approved At
       rfq: Rfq
       supplier: Supplier
+      supplier.name: Supplier
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       lines: Lines
     ErpPurQuotationLine:
       id: ID
@@ -282,7 +293,9 @@ prop:
       updateTime: Update Time
       quotation: Quotation
       material: Material
+      material.name: Material
       uoM: Uo M
+      uoM.name: Uo M
     ErpPurReceive:
       id: ID
       code: Code
@@ -320,14 +333,14 @@ prop:
       updateTime: Update Time
       order: Order
       supplier: Supplier
+      supplier.name: Supplier
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
+      org.name: Org
       currency: Currency
+      currency.name: Currency
       lines: Lines
-      supplierName: null
-      warehouseName: null
-      currencyName: null
-      orgName: null
     ErpPurReceiveLine:
       id: ID
       receiveId: Receive
@@ -353,12 +366,14 @@ prop:
       updateTime: Update Time
       receive: Receive
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       orderLine: Order Line
       warehouse: Warehouse
-      materialName: null
-      warehouseName: null
+      warehouse.name: Warehouse
     ErpPurRequisition:
       id: ID
       code: Code
@@ -381,12 +396,12 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      org.name: Org
       requester: Requester
+      requester.name: Requester
       department: Department
+      department.name: Department
       lines: Lines
-      orgName: null
-      requesterName: null
-      departmentName: null
     ErpPurRequisitionLine:
       id: ID
       requisitionId: Requisition
@@ -406,10 +421,13 @@ prop:
       updateTime: Update Time
       requisition: Requisition
       material: Material
+      material.name: Material
       uoM: Uo M
+      uoM.name: Uo M
       suggestedSupplier: Suggested Supplier
+      suggestedSupplier.name: Suggested Supplier
       project: Project
-      materialName: null
+      project.name: Project
     ErpPurReturn:
       id: ID
       code: Code
@@ -443,14 +461,14 @@ prop:
       updateTime: Update Time
       receive: Receive
       supplier: Supplier
+      supplier.name: Supplier
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
+      org.name: Org
       currency: Currency
+      currency.name: Currency
       lines: Lines
-      supplierName: null
-      warehouseName: null
-      currencyName: null
-      orgName: null
     ErpPurReturnLine:
       id: ID
       returnId: Return
@@ -474,10 +492,12 @@ prop:
       updateTime: Update Time
       return: Return
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       receiveLine: Receive Line
-      materialName: null
     ErpPurRfq:
       id: ID
       code: Code
@@ -500,6 +520,7 @@ prop:
       approvedAt: Approved At
       requisition: Requisition
       org: Org
+      org.name: Org
       lines: Lines
       quotations: Quotations
     ErpPurRfqLine:
@@ -518,7 +539,9 @@ prop:
       updateTime: Update Time
       rfq: Rfq
       material: Material
+      material.name: Material
       uoM: Uo M
+      uoM.name: Uo M
     ErpPurSupplierPriceList:
       id: ID
       supplierId: Supplier
@@ -540,9 +563,13 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       supplier: Supplier
+      supplier.name: Supplier
       material: Material
+      material.name: Material
       uoM: Uo M
+      uoM.name: Uo M
       currency: Currency
+      currency.name: Currency
     ErpPurSupplierScorecard:
       id: ID
       partnerId: Supplier
@@ -565,7 +592,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       supplier: Supplier
+      supplier.name: Supplier
       org: Org
+      org.name: Org
       criterias: Criteria
     ErpPurSupplierScorecardCriteria:
       id: ID

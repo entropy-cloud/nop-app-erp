@@ -12,7 +12,7 @@
                 <col id="horizonStart" mandatory="true" sortable="true"/>
                 <col id="horizonEnd" mandatory="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

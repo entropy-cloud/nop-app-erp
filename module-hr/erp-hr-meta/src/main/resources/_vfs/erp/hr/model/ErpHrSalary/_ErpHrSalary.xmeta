@@ -127,7 +127,7 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="paymentBatchNo" displayName="发放批次号" propId="36" i18n-en:displayName="Payment Batch No"
+        <prop name="paymentBatchNo" displayName="发放批次号" propId="36" i18n-en:displayName="Payment Batch No" tagSet="var"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="100"/>
         </prop>
@@ -171,9 +171,9 @@
               sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
-        <prop name="approvedAt" displayName="审核时间" propId="91" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="approvedAt" displayName="审核时间" propId="91" i18n-en:displayName="Approved At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="92" i18n-en:displayName="Business Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -183,8 +183,8 @@
               insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="nopFlowId" displayName="工作流实例" propId="94" i18n-en:displayName="Workflow Flow Id" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
+        <prop name="nopFlowId" displayName="工作流实例" propId="94" i18n-en:displayName="Workflow Flow Id" tagSet="var"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.lang.String" precision="32"/>
         </prop>
         <prop name="employee" i18n-en:displayName="Employee" tagSet="pub" ext:kind="to-one" internal="true"
@@ -193,9 +193,12 @@
             <schema bizObjName="ErpHrEmployee"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="bankFile" i18n-en:displayName="Bank File" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="bankFileId" ext:joinRightProp="id" insertable="false" updatable="false"

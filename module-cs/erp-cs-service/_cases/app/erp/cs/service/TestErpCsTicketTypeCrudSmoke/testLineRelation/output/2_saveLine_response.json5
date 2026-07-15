@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "2",
-    "code": "SMOKE-SLA",
+    "code": "@var:ErpCsSlaPolicy@code",
     "name": "冒烟SLA",
     "ticketTypeId": 1,
     "isWorkingDays": true,
@@ -11,8 +11,6 @@
     "createTime": "@var:ErpCsSlaPolicy@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpCsSlaPolicy@updateTime",
-    "ticketTypeName": "冒烟工单类型",
-    "teamName": null,
     "minPriority": null,
     "minPriority_label": null,
     "teamId": null,

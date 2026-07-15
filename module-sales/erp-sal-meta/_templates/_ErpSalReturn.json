@@ -31,12 +31,12 @@
   "remark": "",
   "delivery": null,
   "customer": null,
+  "customer.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "org": null,
+  "org.name": "",
   "currency": null,
-  "lines": null,
-  "customerName": "",
-  "warehouseName": "",
-  "currencyName": "",
-  "orgName": ""
+  "currency.name": "",
+  "lines": null
 }

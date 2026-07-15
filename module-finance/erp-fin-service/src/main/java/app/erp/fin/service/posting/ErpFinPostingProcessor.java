@@ -720,7 +720,7 @@ public class ErpFinPostingProcessor {
             voucher.setReversalOfVoucherId(reversalOfVoucherId);
         }
         voucher.setDocStatus(VOUCHER_STATUS_POSTED);
-        voucher.setPostedAt(CoreMetrics.currentDateTime());
+        voucher.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(voucher);
         Long voucherId = voucher.getId();
 

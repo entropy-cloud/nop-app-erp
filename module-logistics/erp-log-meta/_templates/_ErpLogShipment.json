@@ -46,14 +46,12 @@
   "carrier": null,
   "carrierConfig": null,
   "org": null,
+  "org.name": "",
   "shipper": null,
+  "shipper.name": "",
   "lines": null,
   "parcels": null,
   "logs": null,
   "freightCurrency": null,
-  "carrierName": "",
-  "carrierConfigName": "",
-  "orgName": "",
-  "shipperName": "",
-  "freightCurrencyName": ""
+  "freightCurrency.name": ""
 }

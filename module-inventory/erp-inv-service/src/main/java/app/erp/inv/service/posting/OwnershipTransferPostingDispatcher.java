@@ -56,7 +56,7 @@ public class OwnershipTransferPostingDispatcher {
             Long voucherId = executor.postEvent(event);
             if (voucherId != null) {
                 transfer.setPosted(true);
-                transfer.setPostedAt(CoreMetrics.currentDateTime());
+                transfer.setPostedAt(CoreMetrics.currentTimestamp());
                 daoProvider.daoFor(ErpInvOwnershipTransfer.class).saveOrUpdateEntity(transfer);
             }
         } catch (Exception e) {

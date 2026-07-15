@@ -45,14 +45,11 @@
                 <!--会计期间-->
                 <col id="periodId" mandatory="true" ui:number="true" sortable="true"/>
 
-                <!--业务组织名称-->
-                <col id="orgName"/>
+                <!--借方合计(本位币)-->
+                <col id="totalDebit" ui:number="true" sortable="true"/>
 
-                <!--账套编码-->
-                <col id="acctSchemaCode"/>
-
-                <!--会计期间编码-->
-                <col id="periodCode"/>
+                <!--贷方合计(本位币)-->
+                <col id="totalCredit" ui:number="true" sortable="true"/>
 
                 <!--是否红字冲销凭证-->
                 <col id="isReversed" sortable="true"/>
@@ -98,13 +95,13 @@
  postingType[过账类型] voucherDate[凭证日期]
  voucherNo[凭证编号] orgId[核算组织]
  acctSchemaId[账套] periodId[会计期间]
- orgName[业务组织名称] acctSchemaCode[账套编码]
- periodCode[会计期间编码] isReversed[是否红字冲销凭证]
- reversalOfVoucherId[原冲销凭证ID] docStatus[凭证状态]
- postedBy[过账人] postedAt[过账时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ totalDebit[借方合计(本位币)] totalCredit[贷方合计(本位币)]
+ isReversed[是否红字冲销凭证] reversalOfVoucherId[原冲销凭证ID]
+ docStatus[凭证状态] postedBy[过账人]
+ postedAt[过账时间] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-会计凭证" i18n-en:title="Add Accounting Voucher" x:prototype="edit"/>
@@ -114,6 +111,7 @@
  postingType[过账类型] voucherDate[凭证日期]
  voucherNo[凭证编号] orgId[核算组织]
  acctSchemaId[账套] periodId[会计期间]
+ totalDebit[借方合计(本位币)] totalCredit[贷方合计(本位币)]
  isReversed[是否红字冲销凭证] reversalOfVoucherId[原冲销凭证ID]
  docStatus[凭证状态] remark[备注]
 </layout>

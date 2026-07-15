@@ -5,18 +5,18 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="warehouseName" label="仓库"/>
-                <col id="materialName" label="物料"/>
+                <col id="warehouseId" label="仓库"/>
+                <col id="materialId" label="物料"/>
                 <col id="safetyStock" ui:number="true" sortable="true"/>
                 <col id="replenishmentLeadTime" ui:number="true" sortable="true"/>
                 <col id="orderMultiple" ui:number="true" sortable="true"/>
-                <col id="preferredSourceWarehouseName" label="首选调出仓库"/>
-                <col id="preferredSupplierName" label="首选供应商"/>
+                <col id="preferredSourceWarehouseId" label="首选调出仓库"/>
+                <col id="preferredSupplierId" label="首选供应商"/>
                 <col id="replenishmentMethod" mandatory="true" sortable="true"/>
                 <col id="minStockLevel" ui:number="true" sortable="true"/>
                 <col id="maxStockLevel" ui:number="true" sortable="true"/>
                 <col id="reviewPeriodDays" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

@@ -56,8 +56,8 @@
             <schema type="java.lang.String" precision="4000"/>
         </prop>
         <prop name="lastCalculatedAt" displayName="最后计算时间" propId="10" i18n-en:displayName="Last Calculated At"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+              tagSet="clock" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="11" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">

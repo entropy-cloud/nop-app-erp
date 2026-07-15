@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="单号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="orderCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
@@ -70,20 +70,20 @@
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="deadlineDateTime" displayName="SLA 截止时间" propId="13" i18n-en:displayName="SLA Deadline"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+              tagSet="clock" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="isSlaCompleted" displayName="SLA 是否完成" propId="14" i18n-en:displayName="SLA Completed"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="startDateTime" displayName="开始处理时间" propId="15" i18n-en:displayName="Start Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="startDateTime" displayName="开始处理时间" propId="15" i18n-en:displayName="Start Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="endDateTime" displayName="关闭时间" propId="16" i18n-en:displayName="End Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="endDateTime" displayName="关闭时间" propId="16" i18n-en:displayName="End Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="duration" displayName="处理时长(分钟)" propId="17" i18n-en:displayName="Duration(min)" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -141,23 +141,31 @@
               sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
-        <prop name="approvedAt" displayName="审核时间" propId="201" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="approvedAt" displayName="审核时间" propId="201" i18n-en:displayName="Approved At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="businessDate" displayName="业务日期" propId="202" i18n-en:displayName="Business Date" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="customer" i18n-en:displayName="Customer" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="customerId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="customerId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
         </prop>
+        <prop name="customer.name" i18n-en:displayName="Customer" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="contact" i18n-en:displayName="Contact" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="contactId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="contactId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="contact.name" i18n-en:displayName="Contact" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="ticketType" i18n-en:displayName="Ticket Type" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="ticketTypeId" ext:joinRightProp="id" insertable="false"
@@ -170,9 +178,12 @@
             <schema bizObjName="ErpCsSlaPolicy"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="catalogItem" i18n-en:displayName="Catalog Item" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="catalogItemId" ext:joinRightProp="id" insertable="false"

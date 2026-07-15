@@ -7,9 +7,9 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="orgName" label="组织"/>
-                <col id="categoryName" label="设备类别"/>
-                <col id="locationName" label="位置"/>
+                <col id="orgId" label="组织"/>
+                <col id="categoryId" label="设备类别"/>
+                <col id="locationId" label="位置"/>
                 <col id="assetCode" label="资产"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="serialNo" sortable="true"/>

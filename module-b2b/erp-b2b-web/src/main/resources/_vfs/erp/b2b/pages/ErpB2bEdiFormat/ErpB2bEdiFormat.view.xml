@@ -6,8 +6,8 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="formatName" mandatory="true" sortable="true"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="formatId" mandatory="true" sortable="true"/>
                 <col id="formatStandard" mandatory="true" sortable="true"/>
                 <col id="direction" mandatory="true" sortable="true"/>
                 <col id="needsWebService" mandatory="true" ui:number="true" sortable="true"/>

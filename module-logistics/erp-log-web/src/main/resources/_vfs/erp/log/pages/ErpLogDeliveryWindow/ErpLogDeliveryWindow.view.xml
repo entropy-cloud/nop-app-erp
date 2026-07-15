@@ -6,8 +6,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="partnerName" label="客户"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="partnerId" label="客户"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="weekday" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="startTime" mandatory="true" sortable="true"/>
                 <col id="endTime" mandatory="true" sortable="true"/>

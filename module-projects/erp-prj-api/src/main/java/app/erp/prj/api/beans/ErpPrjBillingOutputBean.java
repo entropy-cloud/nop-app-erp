@@ -220,16 +220,16 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=14)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 
@@ -360,16 +360,16 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=201)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
         }
 
@@ -399,66 +399,6 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
-        }
-
-
-        private String _projectName;
-
-    
-        public String getProjectName(){
-            return _projectName;
-        }
-
-        public void setProjectName(String value){
-            this._projectName = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _customerName;
-
-    
-        public String getCustomerName(){
-            return _customerName;
-        }
-
-        public void setCustomerName(String value){
-            this._customerName = value;
-        }
-
-
-        private String _milestoneName;
-
-    
-        public String getMilestoneName(){
-            return _milestoneName;
-        }
-
-        public void setMilestoneName(String value){
-            this._milestoneName = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
         }
 
 

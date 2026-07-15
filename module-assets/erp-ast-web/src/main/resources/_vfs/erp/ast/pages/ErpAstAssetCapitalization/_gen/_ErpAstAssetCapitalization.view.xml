@@ -101,15 +101,6 @@
 
                 <!--本位币金额-->
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
-
-                <!--所属组织-->
-                <col id="orgName"/>
-
-                <!--资产类别-->
-                <col id="categoryName"/>
-
-                <!--币种-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -131,8 +122,7 @@
  updatedBy[修改人] updateTime[修改时间]
  remark[备注] businessDate[业务日期]
  exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] orgName[所属组织]
- categoryName[资产类别] currencyName[币种]
+ amountFunctional[本位币金额] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产资本化" i18n-en:title="Add Asset Capitalization" x:prototype="edit"/>

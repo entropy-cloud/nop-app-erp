@@ -92,15 +92,6 @@
 
                 <!--过账人-->
                 <col id="postedBy" sortable="true"/>
-
-                <!--组织-->
-                <col id="orgName"/>
-
-                <!--维护计划-->
-                <col id="scheduleCode"/>
-
-                <!--设备-->
-                <col id="equipmentCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -121,8 +112,6 @@
  updateTime[修改时间] orgId[业务组织]
  businessDate[业务日期] posted[是否已过账]
  postedAt[过账时间] postedBy[过账人]
- orgName[组织] scheduleCode[维护计划]
- equipmentCode[设备] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护访问" i18n-en:title="Add Maintenance Visit" x:prototype="edit"/>

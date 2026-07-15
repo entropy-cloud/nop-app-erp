@@ -5,8 +5,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="fromCurrencyName" label="源币种"/>
-                <col id="toCurrencyName" label="目标币种"/>
+                <col id="fromCurrencyId" label="源币种"/>
+                <col id="toCurrencyId" label="目标币种"/>
                 <col id="rateType" sortable="true"/>
                 <col id="rate" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="validFrom" mandatory="true" sortable="true"/>

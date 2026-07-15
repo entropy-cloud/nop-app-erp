@@ -220,7 +220,7 @@ public class ErpSalQuotationProcessor {
     protected void doApprove(ErpSalQuotation quotation, IServiceContext context) {
         quotation.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         quotation.setApprovedBy(currentUserId());
-        quotation.setApprovedAt(CoreMetrics.currentDateTime());
+        quotation.setApprovedAt(CoreMetrics.currentTimestamp());
         quotationDao().updateEntity(quotation);
     }
 

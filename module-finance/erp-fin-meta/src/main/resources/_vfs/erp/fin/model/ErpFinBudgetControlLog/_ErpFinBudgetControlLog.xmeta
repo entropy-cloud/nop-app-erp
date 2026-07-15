@@ -43,7 +43,7 @@
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="sourceBillCode" displayName="触发单据号" propId="7" i18n-en:displayName="Source Bill Code"
+        <prop name="sourceBillCode" displayName="触发单据号" propId="7" i18n-en:displayName="Source Bill Code" tagSet="var"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
@@ -83,9 +83,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
-        <prop name="operatedAt" displayName="操作时间" propId="17" i18n-en:displayName="Operated At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="operatedAt" displayName="操作时间" propId="17" i18n-en:displayName="Operated At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="reason" displayName="原因" propId="18" i18n-en:displayName="Reason" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -126,23 +126,34 @@
             <schema bizObjName="ErpFinBudgetLine"/>
         </prop>
         <prop name="subject" i18n-en:displayName="Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="code"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
         </prop>
+        <prop name="subject.code" i18n-en:displayName="Subject" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="costCenter" i18n-en:displayName="Cost Center" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="costCenterId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="costCenterId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdCostCenter"/>
+        </prop>
+        <prop name="costCenter.name" i18n-en:displayName="Cost Center" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="period" i18n-en:displayName="Period" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="periodId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpFinAccountingPeriod"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

@@ -16,6 +16,5 @@
   "updateTime": "2000-01-01 14:00:00",
   "team": null,
   "org": null,
-  "orgName": "",
-  "teamName": ""
+  "org.name": ""
 }

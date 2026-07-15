@@ -17,8 +17,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "costCollection": null,
   "subject": null,
-  "task": null,
-  "costCollectionCode": "",
-  "subjectName": "",
-  "taskName": ""
+  "subject.name": "",
+  "task": null
 }

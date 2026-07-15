@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "2",
-    "code": "SMOKE-CT",
+    "code": "@var:ErpCtContract@code",
     "orgId": null,
     "contractName": "冒烟合同",
     "contractType": "PURCHASE",
@@ -27,12 +27,7 @@
     "createTime": "@var:ErpCtContract@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpCtContract@updateTime",
-    "businessDate": "*",
-    "orgName": null,
-    "parentContractName": null,
-    "templateName": null,
-    "partnerName": "冒烟客户",
-    "currencyName": null
+    "businessDate": "2026-07-15"
   },
   "status": 0
 }

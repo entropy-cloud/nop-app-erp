@@ -53,7 +53,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     public static final String PROP_NAME_signingDeadline = "signingDeadline";
     public static final int PROP_ID_signingDeadline = 8;
     
-    /* 签署完成时间: COMPLETED_AT DATETIME */
+    /* 签署完成时间: COMPLETED_AT TIMESTAMP */
     public static final String PROP_NAME_completedAt = "completedAt";
     public static final int PROP_ID_completedAt = 9;
     
@@ -213,7 +213,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     private java.time.LocalDate _signingDeadline;
     
     /* 签署完成时间: COMPLETED_AT */
-    private java.time.LocalDateTime _completedAt;
+    private java.sql.Timestamp _completedAt;
     
     /* 完成证书URL: CERTIFICATE_URL */
     private java.lang.String _certificateUrl;
@@ -474,9 +474,9 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
             }
         
             case PROP_ID_completedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_completedAt));
                }
                setCompletedAt(typedValue);
@@ -660,7 +660,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
         
             case PROP_ID_completedAt:{
                onInitProp(propId);
-               this._completedAt = (java.time.LocalDateTime)value;
+               this._completedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -903,7 +903,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     /**
      * 签署完成时间: COMPLETED_AT
      */
-    public final java.time.LocalDateTime getCompletedAt(){
+    public final java.sql.Timestamp getCompletedAt(){
          onPropGet(PROP_ID_completedAt);
          return _completedAt;
     }
@@ -911,7 +911,7 @@ public class _ErpCtSignatureRequest extends DynamicOrmEntity{
     /**
      * 签署完成时间: COMPLETED_AT
      */
-    public final void setCompletedAt(java.time.LocalDateTime value){
+    public final void setCompletedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_completedAt,value)){
             this._completedAt = value;
             internalClearRefs(PROP_ID_completedAt);

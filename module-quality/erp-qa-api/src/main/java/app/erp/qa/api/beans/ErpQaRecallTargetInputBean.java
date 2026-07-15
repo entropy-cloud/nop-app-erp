@@ -110,16 +110,16 @@
         }
 
 
-        private java.time.LocalDateTime _notifiedAt;
+        private java.sql.Timestamp _notifiedAt;
 
     
         @PropMeta(propId=8)
     
-        public java.time.LocalDateTime getNotifiedAt(){
+        public java.sql.Timestamp getNotifiedAt(){
             return _notifiedAt;
         }
 
-        public void setNotifiedAt(java.time.LocalDateTime value){
+        public void setNotifiedAt(java.sql.Timestamp value){
             this._notifiedAt = value;
         }
 

@@ -35,7 +35,7 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="relatedBillCode" displayName="关联单据号" propId="5" i18n-en:displayName="Related Bill Code"
+        <prop name="relatedBillCode" displayName="关联单据号" propId="5" i18n-en:displayName="Related Bill Code" tagSet="var"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
@@ -71,16 +71,16 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50" dict="erp-b2b/mft-status"/>
         </prop>
-        <prop name="startTime" displayName="开始时间" propId="14" i18n-en:displayName="Start Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="startTime" displayName="开始时间" propId="14" i18n-en:displayName="Start Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="endTime" displayName="结束时间" propId="15" i18n-en:displayName="End Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="endTime" displayName="结束时间" propId="15" i18n-en:displayName="End Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="durationMs" displayName="耗时(毫秒)" propId="16" i18n-en:displayName="Duration Ms" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="durationMs" displayName="耗时(毫秒)" propId="16" i18n-en:displayName="Duration Ms" tagSet="var"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
         <prop name="errorCode" displayName="错误码" propId="17" i18n-en:displayName="Error Code" queryable="true"
@@ -141,9 +141,12 @@
             <schema bizObjName="ErpB2bMftConfig"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

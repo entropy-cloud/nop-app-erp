@@ -7,7 +7,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="visitCode" label="维护访问"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="taskDescription" mandatory="true" sortable="true"/>
+                <col id="taskId" mandatory="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="completedAt" sortable="true"/>
             </cols>

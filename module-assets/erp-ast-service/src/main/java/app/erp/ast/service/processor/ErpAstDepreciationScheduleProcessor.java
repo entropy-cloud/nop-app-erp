@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.and;
@@ -101,7 +101,7 @@ public class ErpAstDepreciationScheduleProcessor {
             schedule.setPlannedAmount(BigDecimal.ZERO);
             schedule.setBusinessDate(periodFirstDay(period));
         }
-        LocalDateTime now = CoreMetrics.currentDateTime();
+        Timestamp now = CoreMetrics.currentTimestamp();
         schedule.setActualAmount(amount);
         schedule.setAccumulatedDepreciation(newAccum);
         schedule.setNetBookValue(newNbv);

@@ -71,9 +71,9 @@
               sortable="true" insertable="true" updatable="true" defaultValue="1">
             <schema type="java.lang.Integer"/>
         </prop>
-        <prop name="sentAt" displayName="发送时间" propId="14" i18n-en:displayName="Sent At" queryable="true"
+        <prop name="sentAt" displayName="发送时间" propId="14" i18n-en:displayName="Sent At" tagSet="clock" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="errorMsg" displayName="错误信息" propId="15" i18n-en:displayName="Error Msg" queryable="true"
               sortable="true" insertable="true" updatable="true">

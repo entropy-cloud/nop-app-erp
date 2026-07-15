@@ -6,13 +6,13 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="chartCode" label="控制图"/>
-                <col id="orgName" label="组织"/>
+                <col id="orgId" label="组织"/>
                 <col id="subgroupNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="sampleTime" mandatory="true" sortable="true"/>
                 <col id="mean" ui:number="true" sortable="true"/>
                 <col id="range" ui:number="true" sortable="true"/>
                 <col id="stdDev" ui:number="true" sortable="true"/>
-                <col id="inspectorName" label="检验员"/>
+                <col id="inspectorId" label="检验员"/>
                 <col id="isOutOfControl" sortable="true"/>
             </cols>
         </grid>

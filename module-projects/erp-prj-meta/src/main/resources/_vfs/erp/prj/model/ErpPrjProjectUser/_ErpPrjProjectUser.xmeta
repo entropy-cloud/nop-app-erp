@@ -73,9 +73,12 @@
             <schema bizObjName="ErpPrjProject"/>
         </prop>
         <prop name="user" i18n-en:displayName="User" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="userId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+              ext:joinLeftProp="userId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="user.name" i18n-en:displayName="User" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

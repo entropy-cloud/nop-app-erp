@@ -31,8 +31,8 @@ prop:
       maxAmount: 最大金额
       minAmount: 最小金额
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       updateTime: 修改时间
       updatedBy: 修改人
@@ -40,7 +40,6 @@ prop:
     ErpCtApprovalRecord:
       approvalMatrix: null
       approvalMatrixId: 审批矩阵
-      approvalMatrixName: 审批矩阵
       approvalOrder: 顺序号
       approvalStatus: 审批状态
       approvalStatus_label: 审批状态
@@ -49,14 +48,13 @@ prop:
       comment: 审批意见
       contract: null
       contractId: 合同
-      contractName: 合同
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       rejectedAt: 驳回时间
       remark: 备注
       updateTime: 修改时间
@@ -67,7 +65,6 @@ prop:
       consumptionDate: 消耗日期
       contractLine: null
       contractLineId: 合同行ID
-      contractLineName: 合同行
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -93,22 +90,21 @@ prop:
       createTime: 创建时间
       createdBy: 创建人
       currency: null
+      currency.name: null
       currencyId: 币种
-      currencyName: 币种
       delVersion: 逻辑删除版本
       description: 描述
       endDate: 到期日期
       id: ID
       lines: null
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       parentContract: null
       parentContractId: 父合同
-      parentContractName: 父合同
       partner: null
+      partner.name: null
       partnerId: 合作方
-      partnerName: 合作方
       remark: 备注
       signDate: 签署日期
       startDate: 生效日期
@@ -116,7 +112,6 @@ prop:
       status_label: 合同状态
       template: null
       templateId: 合同模板
-      templateName: 合同模板
       totalAmount: 合同总额
       updateTime: 修改时间
       updatedBy: 修改人
@@ -127,7 +122,6 @@ prop:
       consumptionLines: null
       contract: null
       contractId: 合同ID
-      contractName: 合同
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -136,8 +130,8 @@ prop:
       invoicePlans: null
       lineNo: 行号
       material: null
+      material.name: null
       materialId: 物料
-      materialName: 物料
       quantity: 数量
       remark: 备注
       unitPrice: 单价
@@ -152,7 +146,6 @@ prop:
       content: 版本内容
       contract: null
       contractId: 合同ID
-      contractName: 合同
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -173,7 +166,6 @@ prop:
       code: 文档编码
       contract: null
       contractId: 关联合同
-      contractName: 关联合同
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -189,8 +181,8 @@ prop:
       ocrStatus: OCR状态
       ocrText: OCR文本
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       purgeDate: 销毁日期
       remark: 备注
       retentionDate: 保留截止日期
@@ -202,7 +194,6 @@ prop:
       amount: 开票金额
       contractLine: null
       contractLineId: 合同行ID
-      contractLineName: 合同行
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -227,11 +218,10 @@ prop:
       id: ID
       isSettled: 已结算
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       rebateAgreement: null
       rebateAgreementId: 返利协议
-      rebateAgreementName: 返利协议
       remark: 备注
       settledDate: 结算日期
       sourceBillCode: 来源单据号
@@ -247,7 +237,6 @@ prop:
       code: 协议编号
       contract: null
       contractId: 关联合同
-      contractName: 关联合同
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -255,11 +244,11 @@ prop:
       estimatedRebateAmount: 预估返利金额
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       partner: null
+      partner.name: null
       partnerId: 对方伙伴
-      partnerName: 对方伙伴
       rebateType: 返利类型
       rebateType_label: 返利类型
       remark: 备注
@@ -279,14 +268,13 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       posted: 已过账
       postedAt: 过账时间
       postedBy: 过账人
       rebateAgreement: null
       rebateAgreementId: 返利协议
-      rebateAgreementName: 返利协议
       remark: 备注
       settlementDate: 结算日期
       status: 状态
@@ -303,7 +291,6 @@ prop:
       id: ID
       rebateAgreement: null
       rebateAgreementId: 返利协议
-      rebateAgreementName: 返利协议
       rebateAmount: 固定返利金额
       rebatePercent: 返利比例
       remark: 备注
@@ -325,12 +312,11 @@ prop:
       evidenceNo: 存证编号
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       provider: 签名提供商
       providerRequest: null
       providerRequestId: 提供商请求ID
-      providerRequestName: 提供商请求
       provider_label: 签名提供商
       remark: 备注
       signers: 签署人(JSON)
@@ -358,7 +344,6 @@ prop:
     ErpCtVolumeDiscount:
       contractLine: null
       contractLineId: 合同行
-      contractLineName: 合同行
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -366,8 +351,8 @@ prop:
       fromQty: 起始数量
       id: ID
       org: null
+      org.name: null
       orgId: 业务组织
-      orgName: 业务组织
       remark: 备注
       toQty: 截止数量
       unitPrice: 覆盖单价

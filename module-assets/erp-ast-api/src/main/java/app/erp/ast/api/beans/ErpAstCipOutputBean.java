@@ -403,54 +403,6 @@
         }
 
 
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _categoryName;
-
-    
-        public String getCategoryName(){
-            return _categoryName;
-        }
-
-        public void setCategoryName(String value){
-            this._categoryName = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
-        }
-
-
-        private String _completedAssetCode;
-
-    
-        public String getCompletedAssetCode(){
-            return _completedAssetCode;
-        }
-
-        public void setCompletedAssetCode(String value){
-            this._completedAssetCode = value;
-        }
-
-
         private Map<String,Object> _category;
 
         public Map<String,Object> getCategory(){

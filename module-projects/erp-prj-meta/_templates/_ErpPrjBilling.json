@@ -29,13 +29,11 @@
   "amountFunctional": 0.0,
   "project": null,
   "customer": null,
+  "customer.name": "",
   "milestone": null,
   "lines": null,
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "projectName": "",
-  "orgName": "",
-  "customerName": "",
-  "milestoneName": "",
-  "currencyName": ""
+  "org.name": ""
 }

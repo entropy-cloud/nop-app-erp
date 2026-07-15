@@ -21,9 +21,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.Collections;
 
 /**
  * 目录项履行映射 BizModel（{@code docs/design/customer-service/service-catalog.md §三}）。
@@ -144,25 +141,5 @@ public class ErpCsCatalogFulfillmentBizModel extends CrudBizModel<ErpCsCatalogFu
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCsCatalogFulfillment.class)
-    public List<String> orgName(@ContextSource List<ErpCsCatalogFulfillment> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsCatalogFulfillment row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsCatalogFulfillment.class)
-    public List<String> catalogItemName(@ContextSource List<ErpCsCatalogFulfillment> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("catalogItem"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsCatalogFulfillment row : rows) {
-            result.add(row.orm_attached() && row.getCatalogItem() != null ? row.getCatalogItem().getName() : null);
-        }
-        return result;
-    }
 
 }

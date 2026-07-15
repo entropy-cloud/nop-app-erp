@@ -6,8 +6,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="configName" label="评分配置"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="configId" label="评分配置"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="criterionCode" sortable="true"/>
                 <col id="criterionName" sortable="true"/>
                 <col id="weight" ui:number="true" sortable="true"/>

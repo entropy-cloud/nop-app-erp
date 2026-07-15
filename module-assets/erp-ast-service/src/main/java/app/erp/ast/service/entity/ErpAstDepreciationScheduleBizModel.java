@@ -4,18 +4,14 @@ package app.erp.ast.service.entity;
 import app.erp.ast.biz.IErpAstDepreciationScheduleBiz;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.service.processor.ErpAstDepreciationScheduleProcessor;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,36 +30,6 @@ public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepre
 
     public ErpAstDepreciationScheduleBizModel() {
         setEntityName(ErpAstDepreciationSchedule.class.getName());
-    }
-
-    @BizLoader(forType = ErpAstDepreciationSchedule.class)
-    public List<String> assetCode(@ContextSource List<ErpAstDepreciationSchedule> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("asset"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstDepreciationSchedule row : rows) {
-            result.add(row.getAsset() != null ? row.getAsset().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstDepreciationSchedule.class)
-    public List<String> orgName(@ContextSource List<ErpAstDepreciationSchedule> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstDepreciationSchedule row : rows) {
-            result.add(row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstDepreciationSchedule.class)
-    public List<String> currencyName(@ContextSource List<ErpAstDepreciationSchedule> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("currency"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstDepreciationSchedule row : rows) {
-            result.add(row.getCurrency() != null ? row.getCurrency().getName() : null);
-        }
-        return result;
     }
 
     @Override

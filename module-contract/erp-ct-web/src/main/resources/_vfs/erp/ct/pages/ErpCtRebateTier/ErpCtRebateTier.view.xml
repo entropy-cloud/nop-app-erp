@@ -5,7 +5,7 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="rebateAgreementName" label="返利协议"/>
+                <col id="rebateAgreementId" label="返利协议"/>
                 <col id="fromAmount" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="toAmount" ui:number="true" sortable="true"/>
                 <col id="rebatePercent" ui:number="true" sortable="true"/>

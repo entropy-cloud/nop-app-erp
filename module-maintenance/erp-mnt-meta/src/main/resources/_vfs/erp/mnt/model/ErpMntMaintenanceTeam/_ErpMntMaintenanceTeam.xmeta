@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="团队编码" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="团队编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="equipmentCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="name" displayName="团队名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
@@ -74,9 +74,13 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="leader" i18n-en:displayName="Leader" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="leaderId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false"
-              updatable="false" lazy="true">
+              ext:joinLeftProp="leaderId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdEmployee"/>
+        </prop>
+        <prop name="leader.name" i18n-en:displayName="Leader" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="members" i18n-en:displayName="Members" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="teamId" insertable="true"
@@ -86,8 +90,12 @@
             </schema>
         </prop>
         <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+              ext:joinRightProp="id" ext:joinRightDisplayProp="code" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.code" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

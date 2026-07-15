@@ -6,7 +6,7 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="contractName" label="合同"/>
+                <col id="contractId" label="合同"/>
                 <col id="versionNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="versionDate" mandatory="true" sortable="true"/>
                 <col id="content" sortable="true"/>

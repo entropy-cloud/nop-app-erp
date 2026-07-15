@@ -53,11 +53,11 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     public static final String PROP_NAME_comment = "comment";
     public static final int PROP_ID_comment = 8;
     
-    /* 通过时间: APPROVED_AT DATETIME */
+    /* 通过时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 9;
     
-    /* 驳回时间: REJECTED_AT DATETIME */
+    /* 驳回时间: REJECTED_AT TIMESTAMP */
     public static final String PROP_NAME_rejectedAt = "rejectedAt";
     public static final int PROP_ID_rejectedAt = 10;
     
@@ -189,10 +189,10 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     private java.lang.String _comment;
     
     /* 通过时间: APPROVED_AT */
-    private java.time.LocalDateTime _approvedAt;
+    private java.sql.Timestamp _approvedAt;
     
     /* 驳回时间: REJECTED_AT */
-    private java.time.LocalDateTime _rejectedAt;
+    private java.sql.Timestamp _rejectedAt;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -432,9 +432,9 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_approvedAt));
                }
                setApprovedAt(typedValue);
@@ -442,9 +442,9 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
             }
         
             case PROP_ID_rejectedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_rejectedAt));
                }
                setRejectedAt(typedValue);
@@ -588,14 +588,14 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
         
             case PROP_ID_approvedAt:{
                onInitProp(propId);
-               this._approvedAt = (java.time.LocalDateTime)value;
+               this._approvedAt = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_rejectedAt:{
                onInitProp(propId);
-               this._rejectedAt = (java.time.LocalDateTime)value;
+               this._rejectedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -810,7 +810,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     /**
      * 通过时间: APPROVED_AT
      */
-    public final java.time.LocalDateTime getApprovedAt(){
+    public final java.sql.Timestamp getApprovedAt(){
          onPropGet(PROP_ID_approvedAt);
          return _approvedAt;
     }
@@ -818,7 +818,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     /**
      * 通过时间: APPROVED_AT
      */
-    public final void setApprovedAt(java.time.LocalDateTime value){
+    public final void setApprovedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_approvedAt,value)){
             this._approvedAt = value;
             internalClearRefs(PROP_ID_approvedAt);
@@ -829,7 +829,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     /**
      * 驳回时间: REJECTED_AT
      */
-    public final java.time.LocalDateTime getRejectedAt(){
+    public final java.sql.Timestamp getRejectedAt(){
          onPropGet(PROP_ID_rejectedAt);
          return _rejectedAt;
     }
@@ -837,7 +837,7 @@ public class _ErpCtApprovalRecord extends DynamicOrmEntity{
     /**
      * 驳回时间: REJECTED_AT
      */
-    public final void setRejectedAt(java.time.LocalDateTime value){
+    public final void setRejectedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_rejectedAt,value)){
             this._rejectedAt = value;
             internalClearRefs(PROP_ID_rejectedAt);

@@ -1,0 +1,4 @@
+_chgType,ID,CODE,ORG_ID,PLAN_NAME,PERIOD_FROM,PERIOD_TO,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9278,@var:ErpMfgForecast@code_1,9401,预测-FCST-DRAFT,2026-07-01,2026-07-10,DRAFT,,@var:ErpMfgForecast@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9397,@var:ErpMfgForecast@code,9401,预测-FCST-OK,2026-07-01,2026-07-20,APPROVED,,@var:ErpMfgForecast@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9521,@var:ErpMfgForecast@code_2,9401,预测-FCST-OUT,2026-08-01,2026-08-10,APPROVED,,@var:ErpMfgForecast@delVersion,0,autotest-ref,*,autotest-ref,*

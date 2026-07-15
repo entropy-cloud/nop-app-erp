@@ -3,6 +3,12 @@
     "id": "2",
     "routingId": 1,
     "lineNo": 1,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMfgRoutingOperation@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMfgRoutingOperation@updateTime",
     "operationCode": null,
     "operationName": null,
     "workcenterId": null,
@@ -10,15 +16,7 @@
     "timeUnit": null,
     "setupTime": null,
     "runTime": null,
-    "remark": null,
-    "delVersion": 0,
-    "version": 0,
-    "createdBy": "autotest-ref",
-    "createTime": "@var:ErpMfgRoutingOperation@updateTime",
-    "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMfgRoutingOperation@updateTime",
-    "routingCode": "SMOKE-MFG",
-    "workcenterName": null
+    "remark": null
   },
   "status": 0
 }

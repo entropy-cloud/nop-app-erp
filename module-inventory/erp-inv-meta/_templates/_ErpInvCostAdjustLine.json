@@ -20,6 +20,9 @@
   "updateTime": "2000-01-01 14:00:00",
   "adjust": null,
   "material": null,
+  "material.name": "",
   "warehouse": null,
-  "currency": null
+  "warehouse.name": "",
+  "currency": null,
+  "currency.name": ""
 }

@@ -1,11 +1,13 @@
 
 CREATE TABLE erp_md_partner(
   id INT8 NOT NULL ,
+  name VARCHAR(200)  ,
   constraint PK_erp_md_partner primary key (id)
 );
 
 CREATE TABLE erp_md_organization(
   id INT8 NOT NULL ,
+  name VARCHAR(200)  ,
   constraint PK_erp_md_organization primary key (id)
 );
 

@@ -41,7 +41,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
     public static final String PROP_NAME_toStageId = "toStageId";
     public static final int PROP_ID_toStageId = 5;
     
-    /* 变更时间: CHANGED_AT DATETIME */
+    /* 变更时间: CHANGED_AT TIMESTAMP */
     public static final String PROP_NAME_changedAt = "changedAt";
     public static final int PROP_ID_changedAt = 6;
     
@@ -162,7 +162,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
     private java.lang.Long _toStageId;
     
     /* 变更时间: CHANGED_AT */
-    private java.time.LocalDateTime _changedAt;
+    private java.sql.Timestamp _changedAt;
     
     /* 变更人: CHANGED_BY */
     private java.lang.String _changedBy;
@@ -366,9 +366,9 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_changedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_changedAt));
                }
                setChangedAt(typedValue);
@@ -501,7 +501,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
         
             case PROP_ID_changedAt:{
                onInitProp(propId);
-               this._changedAt = (java.time.LocalDateTime)value;
+               this._changedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -666,7 +666,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
     /**
      * 变更时间: CHANGED_AT
      */
-    public final java.time.LocalDateTime getChangedAt(){
+    public final java.sql.Timestamp getChangedAt(){
          onPropGet(PROP_ID_changedAt);
          return _changedAt;
     }
@@ -674,7 +674,7 @@ public class _ErpCrmLeadConvLog extends DynamicOrmEntity{
     /**
      * 变更时间: CHANGED_AT
      */
-    public final void setChangedAt(java.time.LocalDateTime value){
+    public final void setChangedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_changedAt,value)){
             this._changedAt = value;
             internalClearRefs(PROP_ID_changedAt);

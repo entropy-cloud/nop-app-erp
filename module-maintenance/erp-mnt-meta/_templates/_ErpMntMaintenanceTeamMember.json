@@ -13,6 +13,5 @@
   "updateTime": "2000-01-01 14:00:00",
   "team": null,
   "employee": null,
-  "teamName": "",
-  "employeeName": ""
+  "employee.name": ""
 }

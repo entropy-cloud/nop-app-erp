@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "1",
-        "code": "SMOKE-AST",
+        "code": "@var:ErpAstAsset@code",
         "name": "冒烟资产",
         "orgId": null,
         "categoryId": null,

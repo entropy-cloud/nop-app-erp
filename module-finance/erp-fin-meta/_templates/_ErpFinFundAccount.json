@@ -21,9 +21,9 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "currency": null,
+  "currency.name": "",
   "subject": null,
+  "subject.code": "",
   "org": null,
-  "orgName": "",
-  "subjectName": "",
-  "currencyName": ""
+  "org.name": ""
 }

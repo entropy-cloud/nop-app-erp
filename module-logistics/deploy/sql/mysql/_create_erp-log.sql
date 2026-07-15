@@ -1,16 +1,19 @@
 
 CREATE TABLE erp_md_partner(
   ID BIGINT NOT NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
   constraint PK_erp_md_partner primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_organization(
   ID BIGINT NOT NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
   constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_md_employee(
   ID BIGINT NOT NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
   constraint PK_erp_md_employee primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -23,6 +26,7 @@ CREATE TABLE erp_md_currency(
 
 CREATE TABLE erp_md_material(
   ID BIGINT NOT NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
   constraint PK_erp_md_material primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -192,7 +196,7 @@ CREATE TABLE erp_log_shipment_log(
   ERROR_CODE VARCHAR(100) NULL    COMMENT '错误码',
   ERROR_MESSAGE VARCHAR(2000) NULL    COMMENT '错误信息',
   IS_SUCCESS BOOLEAN default 1  NULL    COMMENT '是否成功',
-  EXECUTED_AT DATETIME NOT NULL    COMMENT '执行时间',
+  EXECUTED_AT DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '执行时间',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',

@@ -1,0 +1,9 @@
+_chgType,ID,ORG_ID,FUND_ACCOUNT_ID,FORECAST_DATE,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,DIRECTION,PARTNER_ID,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,1,,2026-08-10,AR_INVOICE,@var:ErpFinCashForecast@sourceBillCode,INFLOW,5001,1000.0000,1000.0000,,@var:ErpFinCashForecast@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,11,1,,2026-08-20,AP_INVOICE,@var:ErpFinCashForecast@sourceBillCode_5,OUTFLOW,5002,600.0000,600.0000,,@var:ErpFinCashForecast@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,12,1,,2026-08-15,NOTES_RECEIVABLE,@var:ErpFinCashForecast@sourceBillCode_6,INFLOW,,2000.0000,2000.0000,,@var:ErpFinCashForecast@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,13,1,,2026-08-25,NOTES_ENDORSED,@var:ErpFinCashForecast@sourceBillCode_7,OUTFLOW,,800.0000,800.0000,,@var:ErpFinCashForecast@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,6,1,,2026-08-10,AR_INVOICE,@var:ErpFinCashForecast@sourceBillCode,INFLOW,5001,1000.0000,1000.0000,,@var:ErpFinCashForecast@delVersion_8,1,autotest-ref,*,autotest-ref,*
+A,7,1,,2026-08-20,AP_INVOICE,@var:ErpFinCashForecast@sourceBillCode_5,OUTFLOW,5002,600.0000,600.0000,,@var:ErpFinCashForecast@delVersion_9,1,autotest-ref,*,autotest-ref,*
+A,8,1,,2026-08-15,NOTES_RECEIVABLE,@var:ErpFinCashForecast@sourceBillCode_6,INFLOW,,2000.0000,2000.0000,,@var:ErpFinCashForecast@delVersion_10,1,autotest-ref,*,autotest-ref,*
+A,9,1,,2026-08-25,NOTES_ENDORSED,@var:ErpFinCashForecast@sourceBillCode_7,OUTFLOW,,800.0000,800.0000,,@var:ErpFinCashForecast@delVersion_11,1,autotest-ref,*,autotest-ref,*

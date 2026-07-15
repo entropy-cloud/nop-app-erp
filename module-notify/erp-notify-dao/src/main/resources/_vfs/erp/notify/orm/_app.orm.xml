@@ -160,8 +160,8 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Merge Group"/>
                 <column code="MERGE_COUNT" defaultValue="1" displayName="合并次数" name="mergeCount" propId="13"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Merge Count"/>
-                <column code="SENT_AT" displayName="发送时间" name="sentAt" propId="14" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Sent At"/>
+                <column code="SENT_AT" displayName="发送时间" name="sentAt" propId="14" stdDataType="timestamp"
+                        stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Sent At"/>
                 <column code="ERROR_MSG" displayName="错误信息" name="errorMsg" precision="1000" propId="15"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Error Msg"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -216,7 +216,7 @@
                 <column code="USER_ID" displayName="用户" mandatory="true" name="userId" precision="36" propId="3"
                         stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="User"/>
                 <column code="READ_TIME" displayName="阅读时间" mandatory="true" name="readTime" propId="4"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Read Time"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Read Time"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="5" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag" ui:show="R"/>

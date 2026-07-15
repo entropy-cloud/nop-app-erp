@@ -53,7 +53,7 @@ public class _ErpHrSalarySimulationItemAdjustment extends DynamicOrmEntity{
     public static final String PROP_NAME_adjustedBy = "adjustedBy";
     public static final int PROP_ID_adjustedBy = 8;
     
-    /* 调整时间: ADJUSTED_AT DATETIME */
+    /* 调整时间: ADJUSTED_AT TIMESTAMP */
     public static final String PROP_NAME_adjustedAt = "adjustedAt";
     public static final int PROP_ID_adjustedAt = 9;
     
@@ -189,7 +189,7 @@ public class _ErpHrSalarySimulationItemAdjustment extends DynamicOrmEntity{
     private java.lang.String _adjustedBy;
     
     /* 调整时间: ADJUSTED_AT */
-    private java.time.LocalDateTime _adjustedAt;
+    private java.sql.Timestamp _adjustedAt;
     
     /* 业务组织: ORG_ID */
     private java.lang.Long _orgId;
@@ -432,9 +432,9 @@ public class _ErpHrSalarySimulationItemAdjustment extends DynamicOrmEntity{
             }
         
             case PROP_ID_adjustedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_adjustedAt));
                }
                setAdjustedAt(typedValue);
@@ -588,7 +588,7 @@ public class _ErpHrSalarySimulationItemAdjustment extends DynamicOrmEntity{
         
             case PROP_ID_adjustedAt:{
                onInitProp(propId);
-               this._adjustedAt = (java.time.LocalDateTime)value;
+               this._adjustedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -810,7 +810,7 @@ public class _ErpHrSalarySimulationItemAdjustment extends DynamicOrmEntity{
     /**
      * 调整时间: ADJUSTED_AT
      */
-    public final java.time.LocalDateTime getAdjustedAt(){
+    public final java.sql.Timestamp getAdjustedAt(){
          onPropGet(PROP_ID_adjustedAt);
          return _adjustedAt;
     }
@@ -818,7 +818,7 @@ public class _ErpHrSalarySimulationItemAdjustment extends DynamicOrmEntity{
     /**
      * 调整时间: ADJUSTED_AT
      */
-    public final void setAdjustedAt(java.time.LocalDateTime value){
+    public final void setAdjustedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_adjustedAt,value)){
             this._adjustedAt = value;
             internalClearRefs(PROP_ID_adjustedAt);

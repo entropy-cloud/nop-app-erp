@@ -16,7 +16,7 @@
   "costSubcontract": 0.0,
   "totalCost": 0.0,
   "grossProfit": 0.0,
-  "grossMarginPct": "",
+  "grossMarginPct": 0.0,
   "committedCost": 0.0,
   "budgetAmount": 0.0,
   "forecastCompleteCost": 0.0,
@@ -38,8 +38,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "project": null,
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "projectName": "",
-  "orgName": "",
-  "currencyName": ""
+  "org.name": ""
 }

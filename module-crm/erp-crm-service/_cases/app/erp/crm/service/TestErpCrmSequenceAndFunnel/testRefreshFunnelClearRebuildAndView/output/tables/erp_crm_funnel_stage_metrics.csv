@@ -1,0 +1,7 @@
+_chgType,ID,FUNNEL_ID,ORG_ID,STAGE_ID,STAGE_ORDER,STAGE_NAME,LEAD_COUNT_IN,LEAD_COUNT_OUT,LEAD_COUNT_REMAINING,CONVERSION_RATE,DROP_OFF_RATE,AVG_DAYS_IN_STAGE,LOST_COUNT,LOST_AMOUNT,LOST_REASON_TOP,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2,1,,6301,10,新线索,3,3,0,1.0,0.0,2.0,0,0.0000,,,@var:ErpCrmFunnelStageMetrics@delVersion_6,1,autotest-ref,*,autotest-ref,*
+A,3,1,,6302,20,已验证,3,1,1,0.3333,0.3333,5.0,1,500.0000,"[{""lostReasonId"":6401,""reasonName"":""价格太高"",""count"":1}]",,@var:ErpCrmFunnelStageMetrics@delVersion_7,1,autotest-ref,*,autotest-ref,*
+A,4,1,,6303,30,赢单,1,0,1,0.0,0.0,0.0,0,0.0000,,,@var:ErpCrmFunnelStageMetrics@delVersion_8,1,autotest-ref,*,autotest-ref,*
+A,6,5,,6301,10,新线索,3,3,0,1.0,0.0,2.0,0,0,,,@var:ErpCrmFunnelStageMetrics@delVersion,0,autotest-ref,*,autotest-ref,*
+A,7,5,,6302,20,已验证,3,1,1,0.3333,0.3333,5.0,1,500.0000,"[{""lostReasonId"":6401,""reasonName"":""价格太高"",""count"":1}]",,@var:ErpCrmFunnelStageMetrics@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8,5,,6303,30,赢单,1,0,1,0.0,0.0,0.0,0,0,,,@var:ErpCrmFunnelStageMetrics@delVersion,0,autotest-ref,*,autotest-ref,*

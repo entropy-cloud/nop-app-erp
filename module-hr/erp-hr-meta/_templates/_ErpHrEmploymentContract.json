@@ -15,9 +15,6 @@
   "salaryPayMethod": "",
   "socialInsuranceBase": 0.0,
   "housingFundBase": 0.0,
-  "employeeDisplayName": "",
-  "currencyName": "",
-  "orgName": "",
   "status": "",
   "status_label": "",
   "attachmentFileId": "",
@@ -32,6 +29,8 @@
   "businessDate": "2000-01-01",
   "employee": null,
   "salaryCurrency": null,
+  "salaryCurrency.name": "",
   "org": null,
+  "org.name": "",
   "attachmentFileIdComponentFileStatus": null
 }

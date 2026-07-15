@@ -1,4 +1,4 @@
 _chgType,ID,RETURN_ID,RECEIVE_LINE_ID,LINE_NO,MATERIAL_ID,SKU_ID,UO_M_ID,QUANTITY,UNIT_PRICE,TAX_RATE,TAX_AMOUNT,AMOUNT,REASON,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,700005,700004,700003,1,6301,,7301,6,5,,,30,质量不合格,,*,0,autotest-ref,*,autotest-ref,*
-A,700007,700006,700003,1,6301,,7301,6,5,,,30,质量不合格,,*,0,autotest-ref,*,autotest-ref,*
-A,700009,700008,700003,1,6301,,7301,4,5,,,20,质量不合格,,*,0,autotest-ref,*,autotest-ref,*
+A,700005,700004,700003,1,6301,,7301,6,5,,,30,质量不合格,,@var:ErpPurReturnLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,700007,700006,700003,1,6301,,7301,6,5,,,30,质量不合格,,@var:ErpPurReturnLine@delVersion,0,autotest-ref,*,autotest-ref,*
+A,700009,700008,700003,1,6301,,7301,4,5,,,20,质量不合格,,@var:ErpPurReturnLine@delVersion,0,autotest-ref,*,autotest-ref,*

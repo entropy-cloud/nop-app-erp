@@ -26,14 +26,11 @@
   "updateTime": "2000-01-01 14:00:00",
   "drpLine": null,
   "material": null,
+  "material.name": "",
   "stagingLocation": null,
+  "stagingLocation.name": "",
   "inboundMove": null,
   "outboundMove": null,
   "org": null,
-  "drpLineName": "",
-  "materialName": "",
-  "stagingLocationName": "",
-  "inboundMoveName": "",
-  "outboundMoveName": "",
-  "orgName": ""
+  "org.name": ""
 }

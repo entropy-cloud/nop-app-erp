@@ -58,12 +58,18 @@ prop:
       workOrder: Work Order
       jobCard: Job Card
       inputMaterial: Input Material
+      inputMaterial.name: Input Material
       outputMaterial: Output Material
+      outputMaterial.name: Output Material
       operation: Operation
       inputLot: Input Lot
+      inputLot.name: Input Lot
       inputUoM: Input UoM
+      inputUoM.name: Input UoM
       outputLot: Output Lot
+      outputLot.name: Output Lot
       outputUoM: Output UoM
+      outputUoM.name: Output UoM
     ErpMfgBom:
       id: ID
       code: Code
@@ -86,10 +92,10 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       product: Product
+      product.name: Product
       lines: Lines
       operations: Operations
       byproducts: Byproducts
-      productName: null
     ErpMfgBomByproduct:
       id: ID
       bomId: Bom
@@ -111,8 +117,11 @@ prop:
       updateTime: Update Time
       bom: Bom
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
     ErpMfgBomLine:
       id: ID
       bomId: Bom
@@ -134,15 +143,16 @@ prop:
       updateTime: Update Time
       bom: Bom
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       operation: Operation
       warehouse: Warehouse
+      warehouse.name: Warehouse
       alternativeMaterial: Alternative Material
-      bomCode: null
-      materialName: null
-      uomName: null
-      warehouseName: null
+      alternativeMaterial.name: Alternative Material
     ErpMfgBomOperation:
       id: ID
       bomId: Bom
@@ -179,7 +189,7 @@ prop:
       updateTime: Update Time
       lines: Lines
       org: Org
-      orgName: null
+      org.name: Org
     ErpMfgCostRollupLine:
       id: ID
       costRollupId: Cost Rollup
@@ -201,12 +211,11 @@ prop:
       updateTime: Update Time
       costRollup: Cost Rollup
       material: Material
+      material.name: Material
       uoM: Uo M
+      uoM.name: Uo M
       currency: Currency
-      costRollupCode: null
-      materialName: null
-      uomName: null
-      currencyName: null
+      currency.name: Currency
     ErpMfgCostVariance:
       id: ID
       workOrderId: Work Order
@@ -237,11 +246,9 @@ prop:
       updateTime: Update Time
       workOrder: Work Order
       material: Material
+      material.name: Material
       workcenter: Workcenter
       operation: Operation
-      workOrderNo: null
-      materialName: null
-      workcenterName: null
     ErpMfgCrpLoad:
       id: ID
       workcenterId: Workcenter
@@ -260,9 +267,7 @@ prop:
       workcenter: Workcenter
       workOrder: Work Order
       org: Org
-      workcenterName: null
-      orgName: null
-      workOrderNo: null
+      org.name: Org
     ErpMfgForecast:
       id: ID
       code: Code
@@ -281,7 +286,7 @@ prop:
       updateTime: Update Time
       lines: Lines
       org: Org
-      orgName: null
+      org.name: Org
     ErpMfgForecastLine:
       id: ID
       forecastId: Forecast
@@ -302,12 +307,11 @@ prop:
       updateTime: Update Time
       forecast: Forecast
       material: Material
+      material.name: Material
       warehouse: Warehouse
+      warehouse.name: Warehouse
       uoM: Uo M
-      forecastCode: null
-      materialName: null
-      warehouseName: null
-      uomName: null
+      uoM.name: Uo M
     ErpMfgJobCard:
       id: ID
       workOrderId: Work Order
@@ -333,8 +337,6 @@ prop:
       workOrder: Work Order
       workcenter: Workcenter
       operation: Operation
-      workOrderNo: null
-      workcenterName: null
     ErpMfgJobCardTimeLog:
       id: ID
       jobCardId: Job Card
@@ -360,6 +362,7 @@ prop:
       jobCard: Job Card
       workOrder: Work Order
       operator: Operator
+      operator.name: Operator
     ErpMfgMaterialIssue:
       id: ID
       code: Code
@@ -391,13 +394,12 @@ prop:
       workOrder: Work Order
       jobCard: Job Card
       warehouse: Warehouse
+      warehouse.name: Warehouse
       lines: Lines
       org: Org
+      org.name: Org
       currency: Currency
-      workOrderNo: null
-      warehouseName: null
-      orgName: null
-      currencyName: null
+      currency.name: Currency
     ErpMfgMaterialIssueLine:
       id: ID
       issueId: Issue
@@ -421,11 +423,14 @@ prop:
       updateTime: Update Time
       issue: Issue
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       workOrderLine: Work Order Line
       location: Location
-      materialName: null
+      location.name: Location
     ErpMfgMrpDemand:
       id: ID
       mrpPlanId: Mrp Plan
@@ -446,7 +451,9 @@ prop:
       updateTime: Update Time
       mrpPlan: Mrp Plan
       material: Material
+      material.name: Material
       uoM: Uo M
+      uoM.name: Uo M
     ErpMfgMrpPlan:
       id: ID
       code: Code
@@ -465,6 +472,7 @@ prop:
       lines: Lines
       demands: Demands
       org: Org
+      org.name: Org
     ErpMfgMrpPlanLine:
       id: ID
       mrpPlanId: Mrp Plan
@@ -490,7 +498,9 @@ prop:
       updateTime: Update Time
       mrpPlan: Mrp Plan
       material: Material
+      material.name: Material
       uoM: Uo M
+      uoM.name: Uo M
       parentLine: Parent Line
     ErpMfgProductionVersion:
       id: ID
@@ -512,6 +522,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       product: Product
+      product.name: Product
       bom: Bom
       routing: Routing
     ErpMfgRouting:
@@ -547,8 +558,6 @@ prop:
       updateTime: Update Time
       routing: Routing
       workcenter: Workcenter
-      routingCode: null
-      workcenterName: null
     ErpMfgSubcontractOrder:
       id: ID
       code: Code
@@ -586,19 +595,17 @@ prop:
       approvedAt: Approved At
       workOrder: Work Order
       supplier: Supplier
+      supplier.name: Supplier
       workcenter: Workcenter
       currency: Currency
+      currency.name: Currency
       lines: Lines
       org: Org
+      org.name: Org
       routing: Routing
       productionVersion: Production Version
       product: Product
-      orgName: null
-      workOrderNo: null
-      supplierName: null
-      workcenterName: null
-      productName: null
-      currencyName: null
+      product.name: Product
     ErpMfgSubcontractOrderLine:
       id: ID
       subcontractOrderId: Subcontract Order
@@ -617,10 +624,9 @@ prop:
       updateTime: Update Time
       subcontractOrder: Subcontract Order
       material: Material
+      material.name: Material
       uoM: Uo M
-      subcontractOrderCode: null
-      materialName: null
-      uomName: null
+      uoM.name: Uo M
     ErpMfgWorkOrder:
       id: ID
       code: Code
@@ -674,16 +680,14 @@ prop:
       routing: Routing
       productionVersion: Production Version
       product: Product
+      product.name: Product
       currency: Currency
+      currency.name: Currency
       lines: Lines
       jobCards: Job Cards
       org: Org
+      org.name: Org
       sourceMrpPlan: Source MRP Plan
-      productName: null
-      orgName: null
-      currencyName: null
-      bomCode: null
-      routingCode: null
     ErpMfgWorkOrderLine:
       id: ID
       workOrderId: Work Order
@@ -706,13 +710,15 @@ prop:
       updateTime: Update Time
       workOrder: Work Order
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       sourceWarehouse: Source Warehouse
+      sourceWarehouse.name: Source Warehouse
       destWarehouse: Dest Warehouse
-      materialName: null
-      sourceWarehouseName: null
-      destWarehouseName: null
+      destWarehouse.name: Dest Warehouse
     ErpMfgWorkcenter:
       id: ID
       code: Code
@@ -752,6 +758,7 @@ prop:
       updateTime: Update Time
       workcenter: Workcenter
       org: Org
+      org.name: Org
     ErpMfgWorkcenterCapacity:
       id: ID
       workcenterId: Workcenter
@@ -771,7 +778,9 @@ prop:
       updateTime: Update Time
       workcenter: Workcenter
       material: Material
+      material.name: Material
       org: Org
+      org.name: Org
 dict:
   label:
     erp-mfg/work-order-status: Work Order Status

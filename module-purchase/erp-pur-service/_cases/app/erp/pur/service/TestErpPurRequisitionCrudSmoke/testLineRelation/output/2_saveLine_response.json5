@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "2",
-    "code": "SMOKE-PUR-RFQ",
+    "code": "@var:ErpPurRfq@code",
     "requisitionId": 1,
     "businessDate": "2026-07-01",
     "docStatus": "DRAFT",
@@ -11,9 +11,9 @@
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpPurRfq@updateTime",
+    "createTime": "@var:ErpPurRfq@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpPurRfq@updateTime",
+    "updateTime": "@var:ErpPurRfq@createTime",
     "orgId": null,
     "validUntil": null,
     "remark": null,

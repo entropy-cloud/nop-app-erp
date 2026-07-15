@@ -6,8 +6,8 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="positionName" label="职位"/>
-                <col id="competencyName" label="胜任力"/>
+                <col id="positionId" label="职位"/>
+                <col id="competencyId" label="胜任力"/>
                 <col id="requiredLevel" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="weight" ui:number="true" sortable="true"/>
                 <col id="isCritical" sortable="true"/>

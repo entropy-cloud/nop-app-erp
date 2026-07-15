@@ -1,7 +1,7 @@
 {
   "data": {
     "id": "2",
-    "code": "SMOKE-CT",
+    "code": "@var:ErpCtContract@code",
     "orgId": null,
     "contractName": "冒烟合同",
     "contractType": "PURCHASE",
@@ -24,15 +24,10 @@
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpCtContract@updateTime",
+    "createTime": "@var:ErpCtContract@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCtContract@updateTime",
-    "businessDate": "*",
-    "orgName": null,
-    "parentContractName": null,
-    "templateName": null,
-    "partnerName": "冒烟客户",
-    "currencyName": null
+    "updateTime": "@var:ErpCtContract@createTime",
+    "businessDate": "2026-07-15"
   },
   "status": 0
 }

@@ -77,15 +77,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--物料-->
-                <col id="materialName"/>
-
-                <!--仓库-->
-                <col id="warehouseName"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -103,8 +94,7 @@
  overwrittenBy[覆盖人] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] materialName[物料]
- warehouseName[仓库] orgName[业务组织]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-安全库存计算" i18n-en:title="Add Safety Stock Calc" x:prototype="edit"/>

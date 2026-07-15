@@ -1,0 +1,4 @@
+_chgType,ID,CODE,ORG_ID,STAGE_NAME,SEQUENCE,TEAM_ID,DEFAULT_PROBABILITY,IS_WON_STAGE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6301,@var:ErpCrmStage@code,,新线索,10,,,false,,@var:ErpCrmStage@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,6302,@var:ErpCrmStage@code_1,,已验证,20,,,false,,@var:ErpCrmStage@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,6303,@var:ErpCrmStage@code_2,,赢单,30,,,false,,@var:ErpCrmStage@delVersion_1,0,autotest-ref,*,autotest-ref,*

@@ -28,12 +28,12 @@
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
   "category": null,
+  "category.name": "",
   "uoM": null,
+  "uoM.name": "",
   "defaultWarehouse": null,
+  "defaultWarehouse.name": "",
   "defaultTaxRate": null,
-  "skus": null,
-  "categoryName": "",
-  "uomName": "",
-  "defaultWarehouseName": "",
-  "defaultTaxRateName": ""
+  "defaultTaxRate.name": "",
+  "skus": null
 }

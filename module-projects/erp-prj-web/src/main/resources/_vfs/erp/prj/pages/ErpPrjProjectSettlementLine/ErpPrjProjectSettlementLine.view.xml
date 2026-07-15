@@ -11,7 +11,7 @@
                 <col id="lineType" mandatory="true" sortable="true"/>
                 <col id="sourceBillType" sortable="true"/>
                 <col id="sourceBillCode" sortable="true"/>
-                <col id="subjectName" label="科目"/>
+                <col id="subjectId" label="科目"/>
                 <col id="amount" mandatory="true" sortable="true"/>
             </cols>
         </grid>

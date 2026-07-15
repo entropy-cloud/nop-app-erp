@@ -1,5 +1,8 @@
 package app.erp.inv.service.costing;
 
+import app.erp.inv.service.ErpInvConfigs;
+
+
 import app.erp.inv.biz.CostingRecloseReport;
 import app.erp.inv.biz.IErpInvCostingBiz;
 import app.erp.inv.dao.entity.ErpInvCostLayer;
@@ -167,8 +170,8 @@ public class ErpInvCostingBizModel implements IErpInvCostingBiz {
         if (remaining.signum() > 0) {
             return false;
         }
-        ledger.setUnitCost(qty.signum() != 0 ? totalCost.divide(qty, FifoCostingStrategy.SCALE,
-                RoundingMode.HALF_UP) : BigDecimal.ZERO);
+        ledger.setUnitCost(qty.signum() != 0 ? ErpInvConfigs.roundCost(totalCost.divide(qty, FifoCostingStrategy.SCALE,
+                RoundingMode.HALF_UP)) : BigDecimal.ZERO);
         ledger.setTotalCost(totalCost);
         ledger.setCostMethod(costMethod);
         daoProvider.daoFor(ErpInvStockLedger.class).saveOrUpdateEntity(ledger);
@@ -206,7 +209,7 @@ public class ErpInvCostingBizModel implements IErpInvCostingBiz {
                 && nz(ledger.getUnitCost()).compareTo(monthlyWa) == 0) {
             return false;
         }
-        ledger.setUnitCost(monthlyWa);
+        ledger.setUnitCost(ErpInvConfigs.roundCost(monthlyWa));
         ledger.setTotalCost(newTotalCost.negate());
         daoProvider.daoFor(ErpInvStockLedger.class).saveOrUpdateEntity(ledger);
 
@@ -309,7 +312,7 @@ public class ErpInvCostingBizModel implements IErpInvCostingBiz {
         layer.setCostMethod(costMethod);
         layer.setIncomingQuantity(qty);
         layer.setRemainingQuantity(qty);
-        layer.setUnitCost(unitCost);
+        layer.setUnitCost(ErpInvConfigs.roundCost(unitCost));
         layer.setTotalCost(totalCost);
         layer.setCurrencyId(line.getCurrencyId());
         layer.setIncomingDate(move.getBusinessDate() != null ? move.getBusinessDate() : CoreMetrics.today());

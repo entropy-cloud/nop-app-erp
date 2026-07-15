@@ -1,10 +1,6 @@
 
 package app.erp.b2b.service.entity;
 
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import app.erp.b2b.biz.IErpB2bAsnBiz;
 import app.erp.b2b.biz.IErpB2bEdiDocBiz;
 import app.erp.b2b.dao.entity.ErpB2bAsn;
@@ -223,7 +219,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         receive.setDocStatus("UNSUBMITTED");
         receive.setApproveStatus("UNSUBMITTED");
         receive.setReceiveStatus("NOT_RECEIVED");
-        receive.setRemark("由 ASN " + asn.getCode() + " 自动创建（B2B_ASN 弱指针）");
+        receive.setRemark("由 ASN 自动创建（B2B_ASN 弱指针）");
         daoProvider().daoFor(ErpPurReceive.class).saveEntity(receive);
 
         // ASN → RECEIVED_TO_STOCK
@@ -424,7 +420,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         log.setRequestPayload(requestPayload);
         log.setResultCode(error ? ErpB2bConstants.EDI_RESULT_ERROR : ErpB2bConstants.EDI_RESULT_SUCCESS);
         log.setResultMsg(error ? ("PARSE_FAILED: " + errorMsg) : "RECEIVE: 入站报文解析成功");
-        log.setLogTime(CoreMetrics.currentDateTime());
+        log.setLogTime(CoreMetrics.currentTimestamp());
         dao.saveEntity(log);
     }
 
@@ -450,37 +446,6 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
 
     /** 内部占位接口，用于 writeEdiLog 的 errorCode 参数标记。 */
     private interface ErrorCodeHolder {
-    }
-
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpB2bAsn.class)
-    public List<String> sourceEdiDocName(@ContextSource List<ErpB2bAsn> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("sourceEdiDoc"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpB2bAsn row : rows) {
-            result.add(row.orm_attached() && row.getSourceEdiDoc() != null ? row.getSourceEdiDoc().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpB2bAsn.class)
-    public List<String> partnerName(@ContextSource List<ErpB2bAsn> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("partner"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpB2bAsn row : rows) {
-            result.add(row.orm_attached() && row.getPartner() != null ? row.getPartner().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpB2bAsn.class)
-    public List<String> orgName(@ContextSource List<ErpB2bAsn> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpB2bAsn row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
     }
 
 }

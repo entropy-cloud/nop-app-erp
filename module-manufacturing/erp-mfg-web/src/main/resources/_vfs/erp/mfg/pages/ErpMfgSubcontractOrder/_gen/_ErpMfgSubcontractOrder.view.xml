@@ -82,10 +82,10 @@
                 <col id="remark" sortable="true"/>
 
                 <!--源币种金额-->
-                <col id="amountSource" sortable="true"/>
+                <col id="amountSource" ui:number="true" sortable="true"/>
 
                 <!--本位币金额-->
-                <col id="amountFunctional" sortable="true"/>
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -107,24 +107,6 @@
 
                 <!--审核时间-->
                 <col id="approvedAt" sortable="true"/>
-
-                <!--业务组织名称-->
-                <col id="orgName"/>
-
-                <!--来源工单号-->
-                <col id="workOrderNo"/>
-
-                <!--委外供应商名称-->
-                <col id="supplierName"/>
-
-                <!--外协工作中心名称-->
-                <col id="workcenterName"/>
-
-                <!--产品名称-->
-                <col id="productName"/>
-
-                <!--币种名称-->
-                <col id="currencyName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -147,10 +129,7 @@
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
  updateTime[修改时间] approvedBy[审核人]
- approvedAt[审核时间] orgName[业务组织名称]
- workOrderNo[来源工单号] supplierName[委外供应商名称]
- workcenterName[外协工作中心名称] productName[产品名称]
- currencyName[币种名称] 
+ approvedAt[审核时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-委外加工单" i18n-en:title="Add Subcontract Order" x:prototype="edit"/>

@@ -27,11 +27,8 @@
   "project": null,
   "parentTask": null,
   "assignee": null,
+  "assignee.name": "",
   "dependsOn": null,
   "childTasks": null,
-  "timesheets": null,
-  "projectName": "",
-  "parentTaskName": "",
-  "assigneeName": "",
-  "dependsOnTaskName": ""
+  "timesheets": null
 }

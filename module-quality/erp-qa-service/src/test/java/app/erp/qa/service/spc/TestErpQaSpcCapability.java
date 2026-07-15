@@ -161,7 +161,7 @@ public class TestErpQaSpcCapability extends JunitAutoTestCase {
             sample.orm_propValueByName("id", id);
             sample.setChartId(chartId);
             sample.setSubgroupNo(subgroupNo);
-            sample.setSampleTime(CoreMetrics.currentDateTime());
+            sample.setSampleTime(CoreMetrics.currentTimestamp());
             sample.setMeasuredValues("[" + min + "," + max + "]");
             sample.setMean(mean);
             sample.setRange(range);

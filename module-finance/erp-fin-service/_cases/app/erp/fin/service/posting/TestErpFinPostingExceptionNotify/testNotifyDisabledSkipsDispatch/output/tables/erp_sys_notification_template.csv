@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7112,fin.posting-exception,过账异常告警,IN_APP,过账异常告警,过账异常: 单据 ${postingNo} 金额 ${amount}，请立即处置,USER_LIST,"{""userIds"":[""fin-posting-recipient""]}",60,MERGE_BY_USER_TYPE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

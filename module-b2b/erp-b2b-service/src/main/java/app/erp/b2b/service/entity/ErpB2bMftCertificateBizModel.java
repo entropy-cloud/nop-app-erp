@@ -1,10 +1,6 @@
 
 package app.erp.b2b.service.entity;
 
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import app.erp.b2b.biz.IErpB2bMftCertificateBiz;
 import app.erp.b2b.dao.entity.ErpB2bMftCertificate;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -51,27 +47,6 @@ public class ErpB2bMftCertificateBizModel extends CrudBizModel<ErpB2bMftCertific
         q.addFilter(le("expiresAt", threshold));
         q.setLimit(200);
         return dao.findAllByQuery(q);
-    }
-
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpB2bMftCertificate.class)
-    public List<String> partnerName(@ContextSource List<ErpB2bMftCertificate> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("partner"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpB2bMftCertificate row : rows) {
-            result.add(row.orm_attached() && row.getPartner() != null ? row.getPartner().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpB2bMftCertificate.class)
-    public List<String> orgName(@ContextSource List<ErpB2bMftCertificate> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpB2bMftCertificate row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
     }
 
 }

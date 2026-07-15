@@ -151,7 +151,7 @@ public class TestErpMfgDashboard extends JunitAutoTestCase {
         o.setCurrencyId(1L);
         o.setDocStatus(docStatus);
         o.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
-        o.setExchangeRate("1");
+        o.setExchangeRate(BigDecimal.ONE);
         dao.saveEntity(o);
     }
 }

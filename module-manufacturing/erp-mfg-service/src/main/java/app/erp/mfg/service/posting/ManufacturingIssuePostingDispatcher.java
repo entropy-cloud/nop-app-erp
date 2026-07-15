@@ -159,7 +159,7 @@ public class ManufacturingIssuePostingDispatcher {
         ErpMfgMaterialIssue managed = daoProvider.daoFor(ErpMfgMaterialIssue.class).getEntityById(issueId);
         if (managed != null) {
             managed.setPosted(true);
-            managed.setPostedAt(CoreMetrics.currentDateTime());
+            managed.setPostedAt(CoreMetrics.currentTimestamp());
         }
     }
 

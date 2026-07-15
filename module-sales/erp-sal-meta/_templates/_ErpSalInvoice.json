@@ -34,10 +34,10 @@
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
   "customer": null,
+  "customer.name": "",
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "lines": null,
-  "customerName": null,
-  "currencyName": null,
-  "orgName": null
+  "org.name": "",
+  "lines": null
 }

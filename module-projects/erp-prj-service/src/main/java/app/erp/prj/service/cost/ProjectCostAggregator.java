@@ -79,9 +79,9 @@ public class ProjectCostAggregator {
             newHead.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
             newHead.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
             newHead.setPosted(false);
-            newHead.setExchangeRate("1");
-            newHead.setAmountSource(amount.toPlainString());
-            newHead.setAmountFunctional(amount.toPlainString());
+            newHead.setExchangeRate(BigDecimal.ONE);
+            newHead.setAmountSource(amount);
+            newHead.setAmountFunctional(amount);
             daoProvider.daoFor(ErpPrjCostCollection.class).saveEntity(newHead);
 
             line.setCostCollectionId(newHead.getId());

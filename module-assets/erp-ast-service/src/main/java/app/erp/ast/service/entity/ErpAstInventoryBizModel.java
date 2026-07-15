@@ -4,17 +4,13 @@ package app.erp.ast.service.entity;
 import app.erp.ast.biz.IErpAstInventoryBiz;
 import app.erp.ast.dao.entity.ErpAstInventory;
 import app.erp.ast.service.processor.ErpAstInventoryProcessor;
-import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,66 +25,6 @@ public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> imple
 
     public ErpAstInventoryBizModel() {
         setEntityName(ErpAstInventory.class.getName());
-    }
-
-    @BizLoader(forType = ErpAstInventory.class)
-    public List<String> orgName(@ContextSource List<ErpAstInventory> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstInventory row : rows) {
-            result.add(row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstInventory.class)
-    public List<String> rangeDepartmentName(@ContextSource List<ErpAstInventory> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("rangeDepartment"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstInventory row : rows) {
-            result.add(row.getRangeDepartment() != null ? row.getRangeDepartment().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstInventory.class)
-    public List<String> rangeCategoryName(@ContextSource List<ErpAstInventory> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("rangeCategory"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstInventory row : rows) {
-            result.add(row.getRangeCategory() != null ? row.getRangeCategory().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstInventory.class)
-    public List<String> rangeLocationName(@ContextSource List<ErpAstInventory> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("rangeLocation"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstInventory row : rows) {
-            result.add(row.getRangeLocation() != null ? row.getRangeLocation().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstInventory.class)
-    public List<String> responsibleByName(@ContextSource List<ErpAstInventory> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("responsibleBy"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstInventory row : rows) {
-            result.add(row.getResponsibleBy() != null ? row.getResponsibleBy().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpAstInventory.class)
-    public List<String> currencyName(@ContextSource List<ErpAstInventory> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("currency"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpAstInventory row : rows) {
-            result.add(row.getCurrency() != null ? row.getCurrency().getName() : null);
-        }
-        return result;
     }
 
     @Override

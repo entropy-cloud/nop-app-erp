@@ -66,9 +66,13 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="organization" i18n-en:displayName="Organization" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="orgId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              queryable="true" ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="organization.name" i18n-en:displayName="Organization" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

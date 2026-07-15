@@ -1,0 +1,3 @@
+_chgType,ID,LEAD_ID,SEQUENCE_ID,ORG_ID,CURRENT_STEP_INDEX,STATUS,STARTED_AT,COMPLETED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,6002,6501,1301,0,SKIPPED,@var:ErpCrmLeadSequenceProgress@startedAt,@var:ErpCrmLeadSequenceProgress@completedAt,,@var:ErpCrmLeadSequenceProgress@delVersion_1,1,autotest-ref,*,autotest-ref,*
+A,2,6002,6502,1301,0,IN_PROGRESS,@var:ErpCrmLeadSequenceProgress@startedAt_1,,,@var:ErpCrmLeadSequenceProgress@delVersion_1,0,autotest-ref,*,autotest-ref,*

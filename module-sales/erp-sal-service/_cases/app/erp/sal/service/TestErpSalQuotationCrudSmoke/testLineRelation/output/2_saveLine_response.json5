@@ -13,7 +13,6 @@
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpSalQuotationLine@updateTime",
     "discountAmount": 0,
-    "materialName": "冒烟物料",
     "quantity": null,
     "taxRate": null,
     "taxAmount": null,

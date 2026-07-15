@@ -1,0 +1,5 @@
+_chgType,ID,ASSESSMENT_ID,COMPETENCY_ID,ACTUAL_LEVEL,COMMENT,SOURCE_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6,5,3,4,,SELF,@var:ErpHrAssessmentDetail@delVersion_1,1,autotest-ref,*,autotest-ref,*
+A,7,5,3,4,,MANAGER,@var:ErpHrAssessmentDetail@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8,5,3,4,,PEER,@var:ErpHrAssessmentDetail@delVersion_1,1,autotest-ref,*,autotest-ref,*
+A,9,5,3,4,,SUBORDINATE,@var:ErpHrAssessmentDetail@delVersion_1,0,autotest-ref,*,autotest-ref,*

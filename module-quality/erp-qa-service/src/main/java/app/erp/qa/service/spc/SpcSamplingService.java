@@ -166,7 +166,7 @@ public class SpcSamplingService {
             sample.setChartId(chartId);
             sample.setOrgId(chart.getOrgId());
             sample.setSubgroupNo(nextSubgroupNo++);
-            sample.setSampleTime(CoreMetrics.currentDateTime());
+            sample.setSampleTime(CoreMetrics.currentTimestamp());
 
             List<BigDecimal> values = new ArrayList<>(subgroup.size());
             SamplePoint first = subgroup.get(0);

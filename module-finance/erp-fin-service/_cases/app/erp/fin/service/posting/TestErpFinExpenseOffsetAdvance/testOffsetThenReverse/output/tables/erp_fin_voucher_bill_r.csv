@@ -1,0 +1,6 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,15,12,EMPLOYEE_ADVANCE,@var:ErpFinVoucherBillR@billCode,,EMPLOYEE_ADVANCE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,21,17,EXPENSE_CLAIM,@var:ErpFinVoucherBillR@billCode_4,,EXPENSE_CLAIM,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,26,23,EMPLOYEE_ADVANCE_SETTLE,@var:ErpFinVoucherBillR@billCode_4,,EMPLOYEE_ADVANCE_SETTLE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,30,27,EMPLOYEE_ADVANCE_SETTLE,@var:ErpFinVoucherBillR@billCode_4,,EMPLOYEE_ADVANCE_SETTLE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,35,31,EXPENSE_CLAIM,@var:ErpFinVoucherBillR@billCode_4,,EXPENSE_CLAIM,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

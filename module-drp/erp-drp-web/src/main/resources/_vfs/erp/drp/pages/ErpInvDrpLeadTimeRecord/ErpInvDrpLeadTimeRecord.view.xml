@@ -6,9 +6,9 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="supplierName" label="供应商"/>
-                <col id="materialName" label="物料"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="supplierId" label="供应商"/>
+                <col id="materialId" label="物料"/>
                 <col id="orderDate" mandatory="true" sortable="true"/>
                 <col id="receiptDate" mandatory="true" sortable="true"/>
                 <col id="actualLeadTime" mandatory="true" ui:number="true" sortable="true"/>

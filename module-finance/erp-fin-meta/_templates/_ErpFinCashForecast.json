@@ -18,5 +18,6 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "fundAccount": null,
-  "partner": null
+  "partner": null,
+  "partner.name": ""
 }

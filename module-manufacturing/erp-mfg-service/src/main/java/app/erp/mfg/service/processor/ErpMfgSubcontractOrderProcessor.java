@@ -394,7 +394,7 @@ public class ErpMfgSubcontractOrderProcessor {
         order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
         order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
-        order.setApprovedAt(CoreMetrics.currentDateTime());
+        order.setApprovedAt(CoreMetrics.currentTimestamp());
         orderDao().updateEntity(order);
     }
 

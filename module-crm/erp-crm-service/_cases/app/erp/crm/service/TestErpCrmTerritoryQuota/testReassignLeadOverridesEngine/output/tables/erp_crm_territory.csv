@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NAME,ORG_ID,PARENT_ID,TERRITORY_TYPE,MANAGER_ID,DESCRIPTION,FULL_PATH,LEVEL,IS_ACTIVE,IS_LEAF,SORT_ORDER,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8500,@var:ErpCrmTerritory@code,公司G,1301,,REGION,,,/,0,true,true,0,,@var:ErpCrmTerritory@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,8501,@var:ErpCrmTerritory@code_1,区A,1301,8500,AREA,,,/T-ROOT-G/T-A,1,true,true,0,,@var:ErpCrmTerritory@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,8502,@var:ErpCrmTerritory@code_2,区B,1301,8500,AREA,,,/T-ROOT-G/T-B,1,true,true,0,,@var:ErpCrmTerritory@delVersion_2,0,autotest-ref,*,autotest-ref,*

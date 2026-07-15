@@ -65,15 +65,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--发展计划-->
-                <col id="planName"/>
-
-                <!--胜任力-->
-                <col id="competencyName"/>
-
-                <!--导师-->
-                <col id="mentorDisplayName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -89,8 +80,7 @@
  status[状态] progressNote[进度说明]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] planName[发展计划]
- competencyName[胜任力] mentorDisplayName[导师]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-发展计划项" i18n-en:title="Add Development Plan Item" x:prototype="edit"/>

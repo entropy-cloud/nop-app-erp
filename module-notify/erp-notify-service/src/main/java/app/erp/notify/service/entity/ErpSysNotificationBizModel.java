@@ -101,7 +101,7 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
             ErpSysNotificationRead read = new ErpSysNotificationRead();
             read.setNotificationId(notificationId);
             read.setUserId(userId);
-            read.setReadTime(CoreMetrics.currentDateTime());
+            read.setReadTime(CoreMetrics.currentTimestamp());
             readDao.saveEntity(read);
         }
         return n;
@@ -118,7 +118,7 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
                 ErpSysNotificationRead read = new ErpSysNotificationRead();
                 read.setNotificationId(n.getId());
                 read.setUserId(userId);
-                read.setReadTime(CoreMetrics.currentDateTime());
+                read.setReadTime(CoreMetrics.currentTimestamp());
                 readDao.saveEntity(read);
                 count++;
             }

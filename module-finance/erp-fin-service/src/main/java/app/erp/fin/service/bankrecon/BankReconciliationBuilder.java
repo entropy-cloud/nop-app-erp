@@ -92,7 +92,7 @@ public class BankReconciliationBuilder {
         recon.setStatementBalance(statementBalance);
         recon.setUnreconciledDiff(BigDecimal.ZERO);
         recon.setIsBalanced(true);
-        recon.setReconciledAt(CoreMetrics.currentDateTime());
+        recon.setReconciledAt(CoreMetrics.currentTimestamp());
         recon.setDocStatus(ErpFinConstants.VOUCHER_STATUS_DRAFT);
         reconDao.saveEntity(recon);
 

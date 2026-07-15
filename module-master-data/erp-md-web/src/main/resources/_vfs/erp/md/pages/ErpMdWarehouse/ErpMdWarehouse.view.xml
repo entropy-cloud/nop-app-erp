@@ -8,9 +8,9 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
                 <col id="warehouseType" sortable="true"/>
-                <col id="orgName" label="所属组织"/>
+                <col id="orgId" label="所属组织"/>
                 <col id="address" sortable="true"/>
-                <col id="managerName" label="负责人(职员)"/>
+                <col id="managerId" label="负责人(职员)"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

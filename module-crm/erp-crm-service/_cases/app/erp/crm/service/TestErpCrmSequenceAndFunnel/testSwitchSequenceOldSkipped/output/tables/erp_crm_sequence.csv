@@ -1,0 +1,3 @@
+_chgType,ID,CODE,NAME,ORG_ID,TEMPLATE_TYPE,DESCRIPTION,EXPECTED_DURATION,IS_ACTIVE,IS_DEFAULT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6501,@var:ErpCrmSequence@code,SEQ-SW-1,1301,NEW_LEAD,,,true,false,,@var:ErpCrmSequence@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,6502,@var:ErpCrmSequence@code_1,SEQ-SW-2,1301,QUALIFICATION,,,true,false,,@var:ErpCrmSequence@delVersion_1,0,autotest-ref,*,autotest-ref,*

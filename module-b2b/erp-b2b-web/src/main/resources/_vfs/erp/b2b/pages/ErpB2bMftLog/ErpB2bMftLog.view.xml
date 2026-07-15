@@ -5,8 +5,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="configName" label="MFT配置"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="configId" label="MFT配置"/>
                 <col id="relatedBillType" sortable="true"/>
                 <col id="relatedBillCode" sortable="true"/>
                 <col id="direction" mandatory="true" sortable="true"/>

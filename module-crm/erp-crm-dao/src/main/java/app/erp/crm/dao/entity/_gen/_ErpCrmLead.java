@@ -133,11 +133,11 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     public static final String PROP_NAME_lostReasonDesc = "lostReasonDesc";
     public static final int PROP_ID_lostReasonDesc = 28;
     
-    /* 最后联系日期: LAST_CONTACT_DATE DATETIME */
+    /* 最后联系日期: LAST_CONTACT_DATE DATE */
     public static final String PROP_NAME_lastContactDate = "lastContactDate";
     public static final int PROP_ID_lastContactDate = 29;
     
-    /* 下次活动日期: NEXT_ACTIVITY_DATE DATETIME */
+    /* 下次活动日期: NEXT_ACTIVITY_DATE DATE */
     public static final String PROP_NAME_nextActivityDate = "nextActivityDate";
     public static final int PROP_ID_nextActivityDate = 30;
     
@@ -444,10 +444,10 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     private java.lang.String _lostReasonDesc;
     
     /* 最后联系日期: LAST_CONTACT_DATE */
-    private java.time.LocalDateTime _lastContactDate;
+    private java.time.LocalDate _lastContactDate;
     
     /* 下次活动日期: NEXT_ACTIVITY_DATE */
-    private java.time.LocalDateTime _nextActivityDate;
+    private java.time.LocalDate _nextActivityDate;
     
     /* 转化结果单据类型: RELATED_BILL_TYPE */
     private java.lang.String _relatedBillType;
@@ -971,9 +971,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_lastContactDate:{
-               java.time.LocalDateTime typedValue = null;
+               java.time.LocalDate typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toLocalDate(value,
                        err-> newTypeConversionError(PROP_NAME_lastContactDate));
                }
                setLastContactDate(typedValue);
@@ -981,9 +981,9 @@ public class _ErpCrmLead extends DynamicOrmEntity{
             }
         
             case PROP_ID_nextActivityDate:{
-               java.time.LocalDateTime typedValue = null;
+               java.time.LocalDate typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toLocalDate(value,
                        err-> newTypeConversionError(PROP_NAME_nextActivityDate));
                }
                setNextActivityDate(typedValue);
@@ -1307,14 +1307,14 @@ public class _ErpCrmLead extends DynamicOrmEntity{
         
             case PROP_ID_lastContactDate:{
                onInitProp(propId);
-               this._lastContactDate = (java.time.LocalDateTime)value;
+               this._lastContactDate = (java.time.LocalDate)value;
                
                break;
             }
         
             case PROP_ID_nextActivityDate:{
                onInitProp(propId);
-               this._nextActivityDate = (java.time.LocalDateTime)value;
+               this._nextActivityDate = (java.time.LocalDate)value;
                
                break;
             }
@@ -1937,7 +1937,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 最后联系日期: LAST_CONTACT_DATE
      */
-    public final java.time.LocalDateTime getLastContactDate(){
+    public final java.time.LocalDate getLastContactDate(){
          onPropGet(PROP_ID_lastContactDate);
          return _lastContactDate;
     }
@@ -1945,7 +1945,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 最后联系日期: LAST_CONTACT_DATE
      */
-    public final void setLastContactDate(java.time.LocalDateTime value){
+    public final void setLastContactDate(java.time.LocalDate value){
         if(onPropSet(PROP_ID_lastContactDate,value)){
             this._lastContactDate = value;
             internalClearRefs(PROP_ID_lastContactDate);
@@ -1956,7 +1956,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 下次活动日期: NEXT_ACTIVITY_DATE
      */
-    public final java.time.LocalDateTime getNextActivityDate(){
+    public final java.time.LocalDate getNextActivityDate(){
          onPropGet(PROP_ID_nextActivityDate);
          return _nextActivityDate;
     }
@@ -1964,7 +1964,7 @@ public class _ErpCrmLead extends DynamicOrmEntity{
     /**
      * 下次活动日期: NEXT_ACTIVITY_DATE
      */
-    public final void setNextActivityDate(java.time.LocalDateTime value){
+    public final void setNextActivityDate(java.time.LocalDate value){
         if(onPropSet(PROP_ID_nextActivityDate,value)){
             this._nextActivityDate = value;
             internalClearRefs(PROP_ID_nextActivityDate);

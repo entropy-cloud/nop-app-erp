@@ -16,7 +16,5 @@
   "workcenter": null,
   "workOrder": null,
   "org": null,
-  "workcenterName": "",
-  "orgName": "",
-  "workOrderNo": ""
+  "org.name": ""
 }

@@ -1,0 +1,5 @@
+_chgType,ID,CODE,ORG_ID,CATALOG_ITEM_ID,SEQUENCE,ACTION_TYPE,ACTION_CONFIG,ASSIGN_TO_ROLE,ESTIMATED_DURATION,IS_MANDATORY,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6201,@var:ErpCsCatalogFulfillment@code,,6101,1,CREATE_TICKET,,,,false,@var:ErpCsCatalogFulfillment@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,6202,@var:ErpCsCatalogFulfillment@code_1,,6101,2,INVOKE_WORKFLOW,,,,false,@var:ErpCsCatalogFulfillment@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,6203,@var:ErpCsCatalogFulfillment@code_2,,6101,3,ASSIGN_TEAM,,,,false,@var:ErpCsCatalogFulfillment@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,6204,@var:ErpCsCatalogFulfillment@code_3,,6101,4,NOTIFY_CUSTOMER,,,,false,@var:ErpCsCatalogFulfillment@delVersion_3,0,autotest-ref,*,autotest-ref,*

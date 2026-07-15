@@ -3,9 +3,6 @@
   "splitId": 0,
   "orgId": 0,
   "lineNo": 0,
-  "splitCode": "",
-  "orgName": "",
-  "categoryName": "",
   "targetAssetCode": "",
   "targetAssetName": "",
   "categoryId": 0,
@@ -25,6 +22,7 @@
   "remark": "",
   "split": null,
   "org": null,
+  "org.name": "",
   "category": null,
   "targetAsset": null
 }

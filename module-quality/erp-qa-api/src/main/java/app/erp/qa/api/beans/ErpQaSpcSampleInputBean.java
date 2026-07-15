@@ -68,16 +68,16 @@
         }
 
 
-        private java.time.LocalDateTime _sampleTime;
+        private java.sql.Timestamp _sampleTime;
 
     
         @PropMeta(propId=5)
     
-        public java.time.LocalDateTime getSampleTime(){
+        public java.sql.Timestamp getSampleTime(){
             return _sampleTime;
         }
 
-        public void setSampleTime(java.time.LocalDateTime value){
+        public void setSampleTime(java.sql.Timestamp value){
             this._sampleTime = value;
         }
 

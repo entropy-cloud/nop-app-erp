@@ -66,7 +66,6 @@ public class InvOwnershipTransferProvider implements IErpFinAcctDocProvider {
         fact.setMaterialId(materialId);
         fact.setWarehouseId(warehouseId);
         fact.setPartnerId(partnerId);
-        fact.setMemo(event.getBillHeadCode());
         return fact;
     }
 

@@ -25,10 +25,17 @@
   "ownershipType": "",
   "ownershipType_label": "",
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "currency": null,
+  "currency.name": "",
   "location": null,
+  "location.name": "",
   "org": null,
-  "owner": null
+  "org.name": "",
+  "owner": null,
+  "owner.name": ""
 }

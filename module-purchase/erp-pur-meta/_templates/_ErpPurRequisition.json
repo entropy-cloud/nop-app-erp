@@ -20,10 +20,10 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "org": null,
+  "org.name": "",
   "requester": null,
+  "requester.name": "",
   "department": null,
-  "lines": null,
-  "orgName": "",
-  "requesterName": "",
-  "departmentName": ""
+  "department.name": "",
+  "lines": null
 }

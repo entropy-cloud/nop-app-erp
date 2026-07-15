@@ -19,7 +19,8 @@
   "remark": "",
   "invoice": null,
   "material": null,
+  "material.name": "",
   "deliveryLine": null,
   "uoM": null,
-  "materialName": ""
+  "uoM.name": ""
 }

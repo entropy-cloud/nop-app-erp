@@ -72,14 +72,22 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="fromCurrency" i18n-en:displayName="From Currency" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="fromCurrencyId" ext:joinRightProp="id" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="fromCurrencyId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
         </prop>
+        <prop name="fromCurrency.name" i18n-en:displayName="From Currency" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="toCurrency" i18n-en:displayName="To Currency" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="toCurrencyId" ext:joinRightProp="id" insertable="false"
-              updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="toCurrencyId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdCurrency"/>
+        </prop>
+        <prop name="toCurrency.name" i18n-en:displayName="To Currency" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

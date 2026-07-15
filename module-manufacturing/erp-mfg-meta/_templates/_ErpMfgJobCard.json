@@ -22,7 +22,5 @@
   "sourceScheduleId": 0,
   "workOrder": null,
   "workcenter": null,
-  "operation": null,
-  "workOrderNo": "",
-  "workcenterName": ""
+  "operation": null
 }

@@ -27,7 +27,6 @@
   "updateTime": "2000-01-01 14:00:00",
   "contract": null,
   "org": null,
-  "attachmentFileIdComponentFileStatus": null,
-  "contractName": "",
-  "orgName": ""
+  "org.name": "",
+  "attachmentFileIdComponentFileStatus": null
 }

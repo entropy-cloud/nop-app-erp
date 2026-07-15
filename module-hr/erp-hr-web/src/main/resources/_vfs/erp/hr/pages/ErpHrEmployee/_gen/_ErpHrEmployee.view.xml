@@ -131,24 +131,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
-
-                <!--部门-->
-                <col id="departmentName"/>
-
-                <!--职位-->
-                <col id="positionName"/>
-
-                <!--直接上级-->
-                <col id="superiorDisplayName"/>
-
-                <!--默认成本中心-->
-                <col id="costCenterName"/>
-
-                <!--工资卡账户-->
-                <col id="bankAccountName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -175,10 +157,7 @@
  orgId[业务组织] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] orgName[业务组织]
- departmentName[部门] positionName[职位]
- superiorDisplayName[直接上级] costCenterName[默认成本中心]
- bankAccountName[工资卡账户] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-员工" i18n-en:title="Add Employee" x:prototype="edit"/>

@@ -69,16 +69,16 @@
         }
 
 
-        private java.time.LocalDateTime _sampleTime;
+        private java.sql.Timestamp _sampleTime;
 
     
         @PropMeta(propId=5)
     
-        public java.time.LocalDateTime getSampleTime(){
+        public java.sql.Timestamp getSampleTime(){
             return _sampleTime;
         }
 
-        public void setSampleTime(java.time.LocalDateTime value){
+        public void setSampleTime(java.sql.Timestamp value){
             this._sampleTime = value;
         }
 
@@ -318,42 +318,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _chartCode;
-
-    
-        public String getChartCode(){
-            return _chartCode;
-        }
-
-        public void setChartCode(String value){
-            this._chartCode = value;
-        }
-
-
-        private String _inspectorName;
-
-    
-        public String getInspectorName(){
-            return _inspectorName;
-        }
-
-        public void setInspectorName(String value){
-            this._inspectorName = value;
         }
 
 

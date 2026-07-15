@@ -53,18 +53,17 @@ prop:
       netBookValue: Net Book Value
       category: Category
       department: Department
+      department.name: Department
       location: Location
+      location.name: Location
       employee: Employee
+      employee.name: Employee
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       staff: Staff
-      orgName: null
-      categoryName: null
-      currencyName: null
-      departmentName: null
-      locationName: null
-      employeeName: null
-      staffName: null
+      staff.name: Staff
     ErpAstAssetCapitalization:
       id: ID
       code: Code
@@ -100,10 +99,9 @@ prop:
       amountFunctional: Amt (Functional)
       category: Category
       org: Org
+      org.name: Org
       currency: Currency
-      orgName: null
-      categoryName: null
-      currencyName: null
+      currency.name: Currency
     ErpAstAssetCategory:
       id: ID
       code: Code
@@ -124,15 +122,15 @@ prop:
       disposalGainLossSubjectId: Disposal Gain/Loss Subject
       cipSubjectId: CIP Subject
       subject: Subject
+      subject.name: Subject
       depreciationSubject: Depreciation Subject
+      depreciationSubject.name: Depreciation Subject
       expenseSubject: Expense Subject
+      expenseSubject.name: Expense Subject
       disposalGainLossSubject: Disposal Gain/Loss Subject
+      disposalGainLossSubject.name: Disposal Gain/Loss Subject
       cipSubject: CIP Subject
-      subjectName: null
-      depreciationSubjectName: null
-      expenseSubjectName: null
-      disposalGainLossSubjectName: null
-      cipSubjectName: null
+      cipSubject.name: CIP Subject
     ErpAstCip:
       id: ID
       code: Code
@@ -164,12 +162,10 @@ prop:
       amountFunctional: Amt (Functional)
       category: Category
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       completedAsset: Completed Asset
-      orgName: null
-      categoryName: null
-      currencyName: null
-      completedAssetCode: null
     ErpAstCipCostItem:
       id: ID
       cipId: CIP
@@ -195,10 +191,9 @@ prop:
       remark: Remark
       cip: CIP
       org: Org
+      org.name: Org
       currency: Currency
-      cipCode: null
-      orgName: null
-      currencyName: null
+      currency.name: Currency
     ErpAstCipProgressBilling:
       id: ID
       cipId: CIP
@@ -221,10 +216,9 @@ prop:
       remark: Remark
       cip: CIP
       org: Org
+      org.name: Org
       currency: Currency
-      cipCode: null
-      orgName: null
-      currencyName: null
+      currency.name: Currency
     ErpAstDepreciationSchedule:
       id: ID
       assetId: Asset
@@ -254,10 +248,9 @@ prop:
       amountFunctional: Amt (Functional)
       asset: Asset
       org: Org
+      org.name: Org
       currency: Currency
-      assetCode: null
-      orgName: null
-      currencyName: null
+      currency.name: Currency
     ErpAstDisposal:
       id: ID
       code: Code
@@ -293,10 +286,9 @@ prop:
       amountFunctional: Amt (Functional)
       asset: Asset
       org: Org
+      org.name: Org
       currency: Currency
-      orgName: null
-      assetCode: null
-      currencyName: null
+      currency.name: Currency
     ErpAstInventory:
       id: ID
       code: Code
@@ -331,18 +323,17 @@ prop:
       updateTime: Update Time
       remark: Remark
       org: Org
+      org.name: Org
       rangeDepartment: Range Department
+      rangeDepartment.name: Range Department
       rangeCategory: Range Category
       rangeLocation: Range Location
+      rangeLocation.name: Range Location
       responsibleBy: Responsible By
+      responsibleBy.name: Responsible By
       currency: Currency
+      currency.name: Currency
       lines: Lines
-      orgName: null
-      rangeDepartmentName: null
-      rangeCategoryName: null
-      rangeLocationName: null
-      responsibleByName: null
-      currencyName: null
     ErpAstInventoryLine:
       id: ID
       inventoryId: Inventory
@@ -375,17 +366,12 @@ prop:
       remark: Remark
       inventory: Inventory
       org: Org
+      org.name: Org
       asset: Asset
       category: Category
       newAsset: New Asset
       capitalization: Capitalization
       disposal: Disposal
-      inventoryCode: null
-      orgName: null
-      categoryName: null
-      newAssetCode: null
-      capitalizationCode: null
-      disposalCode: null
     ErpAstMaintenance:
       id: ID
       code: Code
@@ -420,11 +406,10 @@ prop:
       remark: Remark
       asset: Asset
       org: Org
+      org.name: Org
       currency: Currency
+      currency.name: Currency
       costLines: Cost Lines
-      orgName: null
-      assetCode: null
-      currencyName: null
     ErpAstMaintenanceCost:
       id: ID
       maintenanceId: Maintenance
@@ -444,10 +429,9 @@ prop:
       remark: Remark
       maintenance: Maintenance
       org: Org
+      org.name: Org
       currency: Currency
-      maintenanceCode: null
-      orgName: null
-      currencyName: null
+      currency.name: Currency
     ErpAstMerge:
       id: ID
       code: Code
@@ -477,10 +461,9 @@ prop:
       amountFunctional: Amt (Functional)
       targetAsset: Target Asset
       org: Org
+      org.name: Org
       currency: Currency
-      orgName: null
-      targetAssetCode: null
-      currencyName: null
+      currency.name: Currency
     ErpAstMergeLine:
       id: ID
       mergeId: Merge
@@ -500,10 +483,8 @@ prop:
       remark: Remark
       merge: Merge
       org: Org
+      org.name: Org
       sourceAsset: Source Asset
-      mergeCode: null
-      orgName: null
-      sourceAssetCode: null
     ErpAstMovement:
       id: ID
       code: Code
@@ -542,24 +523,23 @@ prop:
       amountFunctional: Amt (Functional)
       asset: Asset
       org: Org
+      org.name: Org
       fromDepartment: From Department
+      fromDepartment.name: From Department
       toDepartment: To Department
+      toDepartment.name: To Department
       fromStaff: From Staff
+      fromStaff.name: From Staff
       toStaff: To Staff
+      toStaff.name: To Staff
       fromLocation: From Location
+      fromLocation.name: From Location
       toLocation: To Location
+      toLocation.name: To Location
       handler: Handler
+      handler.name: Handler
       currency: Currency
-      orgName: null
-      assetCode: null
-      fromDepartmentName: null
-      toDepartmentName: null
-      fromStaffName: null
-      toStaffName: null
-      fromLocationName: null
-      toLocationName: null
-      handlerName: null
-      currencyName: null
+      currency.name: Currency
     ErpAstSplit:
       id: ID
       code: Code
@@ -589,18 +569,14 @@ prop:
       amountFunctional: Amt (Functional)
       sourceAsset: Source Asset
       org: Org
+      org.name: Org
       currency: Currency
-      orgName: null
-      sourceAssetCode: null
-      currencyName: null
+      currency.name: Currency
     ErpAstSplitLine:
       id: ID
       splitId: Split
       orgId: Organization
       lineNo: Line No
-      splitCode: null
-      orgName: null
-      categoryName: null
       targetAssetCode: Target Asset Code
       targetAssetName: Target Asset Name
       categoryId: Category
@@ -620,6 +596,7 @@ prop:
       remark: Remark
       split: Split
       org: Org
+      org.name: Org
       category: Category
       targetAsset: Target Asset
     ErpAstValueAdjustment:
@@ -654,10 +631,9 @@ prop:
       amountFunctional: Amt (Functional)
       asset: Asset
       org: Org
+      org.name: Org
       currency: Currency
-      orgName: null
-      assetCode: null
-      currencyName: null
+      currency.name: Currency
 dict:
   label:
     erp-ast/asset-status: Asset Status

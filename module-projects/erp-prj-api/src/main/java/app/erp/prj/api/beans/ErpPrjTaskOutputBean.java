@@ -360,54 +360,6 @@
         }
 
 
-        private String _projectName;
-
-    
-        public String getProjectName(){
-            return _projectName;
-        }
-
-        public void setProjectName(String value){
-            this._projectName = value;
-        }
-
-
-        private String _parentTaskName;
-
-    
-        public String getParentTaskName(){
-            return _parentTaskName;
-        }
-
-        public void setParentTaskName(String value){
-            this._parentTaskName = value;
-        }
-
-
-        private String _assigneeName;
-
-    
-        public String getAssigneeName(){
-            return _assigneeName;
-        }
-
-        public void setAssigneeName(String value){
-            this._assigneeName = value;
-        }
-
-
-        private String _dependsOnTaskName;
-
-    
-        public String getDependsOnTaskName(){
-            return _dependsOnTaskName;
-        }
-
-        public void setDependsOnTaskName(String value){
-            this._dependsOnTaskName = value;
-        }
-
-
         private Map<String,Object> _project;
 
         public Map<String,Object> getProject(){

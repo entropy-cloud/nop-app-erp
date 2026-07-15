@@ -7,9 +7,9 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="orgName" label="组织"/>
+                <col id="orgId" label="组织"/>
                 <col id="chartType" mandatory="true" sortable="true"/>
-                <col id="materialName" label="物料"/>
+                <col id="materialId" label="物料"/>
                 <col id="inspectionTemplateCode" label="检验模板"/>
                 <col id="specMin" ui:number="true" sortable="true"/>
                 <col id="specMax" ui:number="true" sortable="true"/>

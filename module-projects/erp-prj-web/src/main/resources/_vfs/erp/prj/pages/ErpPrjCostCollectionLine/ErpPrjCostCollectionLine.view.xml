@@ -11,8 +11,8 @@
                 <col id="costCategory" mandatory="true" sortable="true"/>
                 <col id="sourceBillType" sortable="true"/>
                 <col id="sourceBillCode" sortable="true"/>
-                <col id="subjectName" label="科目"/>
-                <col id="taskName" label="任务"/>
+                <col id="subjectId" label="科目"/>
+                <col id="taskId" label="任务"/>
                 <col id="amount" mandatory="true" sortable="true"/>
             </cols>
         </grid>

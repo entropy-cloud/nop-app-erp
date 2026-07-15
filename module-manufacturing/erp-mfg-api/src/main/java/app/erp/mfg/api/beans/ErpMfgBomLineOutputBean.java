@@ -265,54 +265,6 @@
         }
 
 
-        private String _bomCode;
-
-    
-        public String getBomCode(){
-            return _bomCode;
-        }
-
-        public void setBomCode(String value){
-            this._bomCode = value;
-        }
-
-
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _uomName;
-
-    
-        public String getUomName(){
-            return _uomName;
-        }
-
-        public void setUomName(String value){
-            this._uomName = value;
-        }
-
-
-        private String _warehouseName;
-
-    
-        public String getWarehouseName(){
-            return _warehouseName;
-        }
-
-        public void setWarehouseName(String value){
-            this._warehouseName = value;
-        }
-
-
         private Map<String,Object> _bom;
 
         public Map<String,Object> getBom(){

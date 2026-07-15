@@ -13,6 +13,7 @@ CREATE TABLE erp_md_material_sku(
   material_id INT8  ,
   sku_code VARCHAR(50)  ,
   barcode VARCHAR(50)  ,
+  name VARCHAR(200)  ,
   constraint PK_erp_md_material_sku primary key (id)
 );
 
@@ -118,6 +119,7 @@ CREATE TABLE erp_md_employee(
 CREATE TABLE erp_inv_batch(
   id INT8  ,
   code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
   constraint PK_erp_inv_batch primary key (id)
 );
 

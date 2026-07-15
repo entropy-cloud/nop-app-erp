@@ -32,11 +32,10 @@
   "exchangeRate": 0.0,
   "eventData": "",
   "org": null,
+  "org.name": "",
   "acctSchema": null,
+  "acctSchema.name": "",
   "voucher": null,
   "currency": null,
-  "orgName": "",
-  "acctSchemaCode": "",
-  "voucherCode": "",
-  "currencyName": ""
+  "currency.name": ""
 }

@@ -27,11 +27,11 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "org": null,
+  "org.name": "",
   "product": null,
+  "product.name": "",
   "customer": null,
+  "customer.name": "",
   "currency": null,
-  "orgName": "",
-  "materialName": "",
-  "customerName": "",
-  "currencyName": ""
+  "currency.name": ""
 }

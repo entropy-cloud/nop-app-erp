@@ -153,42 +153,6 @@
         }
 
 
-        private String _sourceSubjectName;
-
-    
-        public String getSourceSubjectName(){
-            return _sourceSubjectName;
-        }
-
-        public void setSourceSubjectName(String value){
-            this._sourceSubjectName = value;
-        }
-
-
-        private String _targetAcctSchemaName;
-
-    
-        public String getTargetAcctSchemaName(){
-            return _targetAcctSchemaName;
-        }
-
-        public void setTargetAcctSchemaName(String value){
-            this._targetAcctSchemaName = value;
-        }
-
-
-        private String _targetSubjectName;
-
-    
-        public String getTargetSubjectName(){
-            return _targetSubjectName;
-        }
-
-        public void setTargetSubjectName(String value){
-            this._targetSubjectName = value;
-        }
-
-
         private Map<String,Object> _sourceSubject;
 
         public Map<String,Object> getSourceSubject(){

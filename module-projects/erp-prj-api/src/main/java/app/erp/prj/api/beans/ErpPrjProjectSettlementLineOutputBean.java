@@ -223,30 +223,6 @@
         }
 
 
-        private String _settlementCode;
-
-    
-        public String getSettlementCode(){
-            return _settlementCode;
-        }
-
-        public void setSettlementCode(String value){
-            this._settlementCode = value;
-        }
-
-
-        private String _subjectName;
-
-    
-        public String getSubjectName(){
-            return _subjectName;
-        }
-
-        public void setSubjectName(String value){
-            this._subjectName = value;
-        }
-
-
         private Map<String,Object> _settlement;
 
         public Map<String,Object> getSettlement(){

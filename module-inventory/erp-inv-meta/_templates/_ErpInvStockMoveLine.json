@@ -22,10 +22,15 @@
   "updateTime": "2000-01-01 14:00:00",
   "move": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "uoM": null,
+  "uoM.name": "",
   "currency": null,
+  "currency.name": "",
   "sourceLocation": null,
+  "sourceLocation.name": "",
   "destLocation": null,
-  "materialName": ""
+  "destLocation.name": ""
 }

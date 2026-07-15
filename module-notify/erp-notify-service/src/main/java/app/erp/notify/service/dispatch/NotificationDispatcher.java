@@ -135,11 +135,12 @@ public class NotificationDispatcher {
                 ? ErpNotifyConstants.CHANNEL_IN_APP : channels.iterator().next());
         n.setSubject(subject);
         n.setBody(body);
-        n.setPayloadJson(context == null || context.isEmpty() ? null : JsonTool.serialize(context, false));
+        n.setPayloadJson(context == null || context.isEmpty() ? null
+                : JsonTool.serialize(new java.util.TreeMap<>(context), false));
         n.setStatus(ErpNotifyConstants.STATUS_SENT);
         n.setMergeGroupId(template.getNotificationType() + ErpNotifyConstants.MERGE_GROUP_SEP + userId);
         n.setMergeCount(1);
-        n.setSentAt(CoreMetrics.currentDateTime());
+        n.setSentAt(CoreMetrics.currentTimestamp());
         return n;
     }
 

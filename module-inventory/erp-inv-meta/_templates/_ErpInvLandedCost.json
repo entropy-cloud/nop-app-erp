@@ -27,7 +27,10 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "org": null,
+  "org.name": "",
   "currency": null,
+  "currency.name": "",
   "supplier": null,
+  "supplier.name": "",
   "lines": null
 }

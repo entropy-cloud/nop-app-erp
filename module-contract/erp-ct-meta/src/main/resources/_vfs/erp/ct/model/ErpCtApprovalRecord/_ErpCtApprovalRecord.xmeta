@@ -51,13 +51,13 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="approvedAt" displayName="通过时间" propId="9" i18n-en:displayName="Approved At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="approvedAt" displayName="通过时间" propId="9" i18n-en:displayName="Approved At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="rejectedAt" displayName="驳回时间" propId="10" i18n-en:displayName="Rejected At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="rejectedAt" displayName="驳回时间" propId="10" i18n-en:displayName="Rejected At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="remark" displayName="备注" propId="11" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -93,9 +93,12 @@
             <schema bizObjName="ErpCtContract"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="approvalMatrix" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="approvalMatrixId" ext:joinRightProp="id" insertable="false" updatable="false"

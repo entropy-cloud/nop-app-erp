@@ -64,19 +64,31 @@
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
         <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" insertable="false" updatable="false"
-              lazy="true">
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
+        <prop name="material.name" i18n-en:displayName="Material" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
         <prop name="fromUoM" i18n-en:displayName="From Uo M" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="fromUoMId" ext:joinRightProp="id" insertable="false" updatable="false"
-              mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="fromUoMId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
         </prop>
-        <prop name="toUoM" i18n-en:displayName="To Uo M" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="toUoMId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+        <prop name="fromUoM.name" i18n-en:displayName="From Uo M" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="toUoM" i18n-en:displayName="To Uo M" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="toUoMId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdUoM"/>
+        </prop>
+        <prop name="toUoM.name" i18n-en:displayName="To Uo M" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

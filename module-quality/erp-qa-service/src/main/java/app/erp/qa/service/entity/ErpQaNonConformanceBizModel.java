@@ -11,8 +11,6 @@ import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.posting.NcrPostingDispatcher;
 import app.erp.qa.service.posting.NcrReturnOrchestrator;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
@@ -21,8 +19,6 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 import java.util.Objects;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,36 +52,6 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
 
     public ErpQaNonConformanceBizModel() {
         setEntityName(ErpQaNonConformance.class.getName());
-    }
-
-    @BizLoader(forType = ErpQaNonConformance.class)
-    public List<String> materialName(@ContextSource List<ErpQaNonConformance> list) {
-        orm().batchLoadProps(list, Collections.singleton("material"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaNonConformance entity : list) {
-            result.add(entity.getMaterial() != null ? entity.getMaterial().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpQaNonConformance.class)
-    public List<String> inspectionCode(@ContextSource List<ErpQaNonConformance> list) {
-        orm().batchLoadProps(list, Collections.singleton("inspection"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaNonConformance entity : list) {
-            result.add(entity.getInspection() != null ? entity.getInspection().getCode() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpQaNonConformance.class)
-    public List<String> supplierName(@ContextSource List<ErpQaNonConformance> list) {
-        orm().batchLoadProps(list, Collections.singleton("supplier"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpQaNonConformance entity : list) {
-            result.add(entity.getSupplier() != null ? entity.getSupplier().getName() : null);
-        }
-        return result;
     }
 
     public void setNcrLifecycleService(NcrLifecycleService ncrLifecycleService) {
@@ -127,7 +93,7 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
         if (resolution != null) {
             ncr.setResolution(resolution);
         }
-        ncr.setResolvedAt(CoreMetrics.currentDateTime());
+        ncr.setResolvedAt(CoreMetrics.currentTimestamp());
         updateEntity(ncr, null, context);
 
         // 财务过账分派（plan 2026-07-05-2352-2）

@@ -7,7 +7,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="configKey" mandatory="true" sortable="true"/>
                 <col id="configValue" mandatory="true" sortable="true"/>
-                <col id="orgName" label="所属组织"/>
+                <col id="orgId" label="所属组织"/>
                 <col id="description" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

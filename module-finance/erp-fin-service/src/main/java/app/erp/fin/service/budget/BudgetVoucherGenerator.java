@@ -135,7 +135,7 @@ public class BudgetVoucherGenerator {
             voucher.setReversalOfVoucherId(reversalOfVoucherId);
         }
         voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
-        voucher.setPostedAt(CoreMetrics.currentDateTime());
+        voucher.setPostedAt(CoreMetrics.currentTimestamp());
         voucherDao.saveEntity(voucher);
         Long voucherId = voucher.getId();
 

@@ -10,7 +10,7 @@
                 <col id="targetValue" ui:number="true" sortable="true"/>
                 <col id="currentValue" ui:number="true" sortable="true"/>
                 <col id="unit" sortable="true"/>
-                <col id="responsiblePersonName" label="负责人"/>
+                <col id="responsiblePersonId" label="负责人"/>
                 <col id="startDate" sortable="true"/>
                 <col id="endDate" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>

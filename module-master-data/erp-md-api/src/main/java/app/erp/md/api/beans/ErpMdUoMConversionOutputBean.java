@@ -167,42 +167,6 @@
         }
 
 
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _fromUoMName;
-
-    
-        public String getFromUoMName(){
-            return _fromUoMName;
-        }
-
-        public void setFromUoMName(String value){
-            this._fromUoMName = value;
-        }
-
-
-        private String _toUoMName;
-
-    
-        public String getToUoMName(){
-            return _toUoMName;
-        }
-
-        public void setToUoMName(String value){
-            this._toUoMName = value;
-        }
-
-
         private Map<String,Object> _material;
 
         public Map<String,Object> getMaterial(){

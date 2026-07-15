@@ -32,14 +32,10 @@
   "updateTime": "2000-01-01 14:00:00",
   "relatedLead": null,
   "partner": null,
+  "partner.name": "",
   "parentEvent": null,
   "org": null,
+  "org.name": "",
   "eventCategory": null,
-  "contact": null,
-  "orgName": "",
-  "categoryName": "",
-  "leadCode": "",
-  "partnerName": "",
-  "contactName": "",
-  "eventCode": ""
+  "contact": null
 }

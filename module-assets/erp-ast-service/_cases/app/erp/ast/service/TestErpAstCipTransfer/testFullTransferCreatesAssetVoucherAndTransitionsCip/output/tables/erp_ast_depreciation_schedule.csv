@@ -1,0 +1,13 @@
+_chgType,ID,ASSET_ID,ORG_ID,PERIOD,PLANNED_AMOUNT,ACTUAL_AMOUNT,ACCUMULATED_DEPRECIATION,NET_BOOK_VALUE,STATUS,EXECUTED_AT,POSTED,POSTED_AT,POSTED_BY,VOUCHER_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL
+A,12,11,1,2026-08,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2026-08-01,,1,0,0
+A,13,11,1,2026-09,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2026-09-01,,1,0,0
+A,14,11,1,2026-10,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2026-10-01,,1,0,0
+A,15,11,1,2026-11,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2026-11-01,,1,0,0
+A,16,11,1,2026-12,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2026-12-01,,1,0,0
+A,17,11,1,2027-01,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2027-01-01,,1,0,0
+A,18,11,1,2027-02,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2027-02-01,,1,0,0
+A,19,11,1,2027-03,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2027-03-01,,1,0,0
+A,20,11,1,2027-04,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2027-04-01,,1,0,0
+A,21,11,1,2027-05,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2027-05-01,,1,0,0
+A,22,11,1,2027-06,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2027-06-01,,1,0,0
+A,23,11,1,2027-07,1000.0000,0,0,12000.0000,PENDING,,false,,,,@var:ErpAstDepreciationSchedule@delVersion_9,0,autotest-ref,*,autotest-ref,*,2027-07-01,,1,0,0

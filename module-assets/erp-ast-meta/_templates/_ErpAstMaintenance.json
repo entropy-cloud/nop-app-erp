@@ -32,9 +32,8 @@
   "remark": "",
   "asset": null,
   "org": null,
+  "org.name": "",
   "currency": null,
-  "costLines": null,
-  "orgName": "",
-  "assetCode": "",
-  "currencyName": ""
+  "currency.name": "",
+  "costLines": null
 }

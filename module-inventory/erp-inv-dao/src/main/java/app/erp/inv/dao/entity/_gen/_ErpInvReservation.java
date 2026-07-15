@@ -53,7 +53,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 8;
     
-    /* 预留有效期至: VALID_UNTIL DATETIME */
+    /* 预留有效期至: VALID_UNTIL TIMESTAMP */
     public static final String PROP_NAME_validUntil = "validUntil";
     public static final int PROP_ID_validUntil = 9;
     
@@ -182,7 +182,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     private java.lang.String _status;
     
     /* 预留有效期至: VALID_UNTIL */
-    private java.time.LocalDateTime _validUntil;
+    private java.sql.Timestamp _validUntil;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -419,9 +419,9 @@ public class _ErpInvReservation extends DynamicOrmEntity{
             }
         
             case PROP_ID_validUntil:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_validUntil));
                }
                setValidUntil(typedValue);
@@ -565,7 +565,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
         
             case PROP_ID_validUntil:{
                onInitProp(propId);
-               this._validUntil = (java.time.LocalDateTime)value;
+               this._validUntil = (java.sql.Timestamp)value;
                
                break;
             }
@@ -780,7 +780,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * 预留有效期至: VALID_UNTIL
      */
-    public final java.time.LocalDateTime getValidUntil(){
+    public final java.sql.Timestamp getValidUntil(){
          onPropGet(PROP_ID_validUntil);
          return _validUntil;
     }
@@ -788,7 +788,7 @@ public class _ErpInvReservation extends DynamicOrmEntity{
     /**
      * 预留有效期至: VALID_UNTIL
      */
-    public final void setValidUntil(java.time.LocalDateTime value){
+    public final void setValidUntil(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_validUntil,value)){
             this._validUntil = value;
             internalClearRefs(PROP_ID_validUntil);

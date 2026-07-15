@@ -237,42 +237,6 @@
         }
 
 
-        private String _sparePartUsageCode;
-
-    
-        public String getSparePartUsageCode(){
-            return _sparePartUsageCode;
-        }
-
-        public void setSparePartUsageCode(String value){
-            this._sparePartUsageCode = value;
-        }
-
-
-        private String _materialName;
-
-    
-        public String getMaterialName(){
-            return _materialName;
-        }
-
-        public void setMaterialName(String value){
-            this._materialName = value;
-        }
-
-
-        private String _uomName;
-
-    
-        public String getUomName(){
-            return _uomName;
-        }
-
-        public void setUomName(String value){
-            this._uomName = value;
-        }
-
-
         private Map<String,Object> _sparePartUsage;
 
         public Map<String,Object> getSparePartUsage(){

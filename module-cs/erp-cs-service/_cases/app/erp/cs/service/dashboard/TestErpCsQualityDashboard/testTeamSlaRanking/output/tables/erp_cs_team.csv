@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,TEAM_LEADER_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9601,@var:ErpCsTeam@code,技术支持组,,,@var:ErpCsTeam@delVersion,0,autotest-ref,*,autotest-ref,*

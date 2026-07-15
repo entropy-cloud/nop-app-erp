@@ -54,8 +54,7 @@ prop:
       updateTime: Update Time
       lead: Lead
       org: Org
-      leadCode: null
-      orgName: null
+      org.name: Org
     ErpCrmBundlePricing:
       id: ID
       code: Code
@@ -78,7 +77,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpCrmBundlePricingLine:
       id: ID
       bundleId: Bundle
@@ -96,10 +95,9 @@ prop:
       updateTime: Update Time
       bundle: Bundle
       org: Org
+      org.name: Org
       product: null
-      bundleName: null
-      orgName: null
-      materialName: null
+      product.name: null
     ErpCrmCampaign:
       id: ID
       code: Code
@@ -120,7 +118,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpCrmConfigRule:
       id: ID
       configuratorId: Configurator
@@ -142,8 +140,7 @@ prop:
       updateTime: Update Time
       configurator: Configurator
       org: Org
-      configuratorName: null
-      orgName: null
+      org.name: Org
     ErpCrmEvent:
       id: ID
       code: Code
@@ -178,16 +175,12 @@ prop:
       updateTime: Update Time
       relatedLead: Related Lead
       partner: Partner
+      partner.name: Partner
       parentEvent: Parent Event
       org: Org
+      org.name: Org
       eventCategory: Event Category
       contact: Contact
-      orgName: null
-      categoryName: null
-      leadCode: null
-      partnerName: null
-      contactName: null
-      eventCode: null
     ErpCrmEventCategory:
       id: ID
       code: Code
@@ -227,12 +220,9 @@ prop:
       territory: Territory
       team: Team
       org: Org
+      org.name: Org
       currency: null
-      orgName: null
-      periodCode: null
-      territoryName: null
-      teamName: null
-      currencyName: null
+      currency.name: null
     ErpCrmForecastAccuracy:
       id: ID
       forecastId: Forecast
@@ -258,12 +248,9 @@ prop:
       forecast: Forecast
       period: Period
       org: Org
+      org.name: Org
       team: null
       territory: null
-      orgName: null
-      periodCode: null
-      teamName: null
-      territoryName: null
     ErpCrmForecastLine:
       id: ID
       forecastId: Forecast
@@ -285,8 +272,7 @@ prop:
       forecast: Forecast
       lead: Lead
       org: Org
-      leadCode: null
-      orgName: null
+      org.name: Org
     ErpCrmForecastPeriod:
       id: ID
       code: Code
@@ -307,7 +293,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpCrmFunnelStageMetrics:
       id: ID
       funnelId: Funnel
@@ -334,8 +320,7 @@ prop:
       funnel: Funnel
       stage: Stage
       org: Org
-      funnelName: null
-      orgName: null
+      org.name: Org
     ErpCrmLead:
       id: ID
       code: Code
@@ -381,6 +366,7 @@ prop:
       updateTime: Update Time
       territoryId: Territory
       partner: Partner
+      partner.name: Partner
       source: Source
       leadStatus: Lead Status
       stage: Stage
@@ -389,18 +375,10 @@ prop:
       territory: Territory
       lostReason: Lost Reason
       org: Org
+      org.name: Org
       events: Events
       activities: Activities
       convLogs: Conv Logs
-      orgName: null
-      partnerName: null
-      sourceName: null
-      leadStatusName: null
-      stageName: null
-      campaignName: null
-      teamName: null
-      lostReasonName: null
-      territoryName: null
     ErpCrmLeadConvLog:
       id: ID
       leadId: Lead
@@ -420,10 +398,7 @@ prop:
       fromStage: From Stage
       toStage: To Stage
       org: Org
-      leadCode: null
-      orgName: null
-      fromStageName: null
-      toStageName: null
+      org.name: Org
     ErpCrmLeadFunnel:
       id: ID
       orgId: Organization
@@ -452,13 +427,10 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      org.name: Org
       territory: Territory
       team: Team
       source: Source
-      orgName: null
-      territoryName: null
-      teamName: null
-      sourceName: null
     ErpCrmLeadScore:
       id: ID
       leadId: Lead
@@ -482,9 +454,7 @@ prop:
       lead: Lead
       config: Config
       org: Org
-      leadCode: null
-      orgName: null
-      configName: null
+      org.name: Org
     ErpCrmLeadScoreConfig:
       id: ID
       code: Code
@@ -503,7 +473,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpCrmLeadScoreConfigLine:
       id: ID
       configId: Config
@@ -526,8 +496,7 @@ prop:
       updateTime: Update Time
       config: Config
       org: Org
-      configName: null
-      orgName: null
+      org.name: Org
     ErpCrmLeadScoreLine:
       id: ID
       scoreId: Score
@@ -549,7 +518,7 @@ prop:
       score: Score
       configLine: Config Line
       org: Org
-      orgName: null
+      org.name: Org
     ErpCrmLeadSequenceProgress:
       id: ID
       leadId: Lead
@@ -570,9 +539,7 @@ prop:
       lead: Lead
       sequence: Sequence
       org: Org
-      leadCode: null
-      sequenceName: null
-      orgName: null
+      org.name: Org
     ErpCrmLeadStatus:
       id: ID
       code: Code
@@ -627,13 +594,13 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      org.name: Org
       product: null
+      product.name: null
       customer: null
+      customer.name: null
       currency: null
-      orgName: null
-      materialName: null
-      customerName: null
-      currencyName: null
+      currency.name: null
     ErpCrmProductConfigurator:
       id: ID
       code: Code
@@ -653,7 +620,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpCrmQuota:
       id: ID
       orgId: Organization
@@ -677,11 +644,9 @@ prop:
       territory: Territory
       team: Team
       org: Org
+      org.name: Org
       currency: null
-      orgName: null
-      territoryName: null
-      teamName: null
-      currencyName: null
+      currency.name: null
     ErpCrmQuoteTemplate:
       id: ID
       code: Code
@@ -714,7 +679,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpCrmSequenceAssignment:
       id: ID
       orgId: Organization
@@ -734,8 +699,7 @@ prop:
       updateTime: Update Time
       sequence: Sequence
       org: Org
-      orgName: null
-      sequenceName: null
+      org.name: Org
     ErpCrmSequenceStep:
       id: ID
       sequenceId: Sequence
@@ -759,8 +723,7 @@ prop:
       updateTime: Update Time
       sequence: Sequence
       org: Org
-      sequenceName: null
-      orgName: null
+      org.name: Org
     ErpCrmSource:
       id: ID
       code: Code
@@ -791,8 +754,7 @@ prop:
       updateTime: Update Time
       team: Team
       org: Org
-      orgName: null
-      teamName: null
+      org.name: Org
     ErpCrmTeam:
       id: ID
       code: Code
@@ -807,7 +769,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
-      orgName: null
+      org.name: Org
     ErpCrmTerritory:
       id: ID
       code: Code
@@ -832,8 +794,7 @@ prop:
       updateTime: Update Time
       parent: Parent
       org: Org
-      orgName: null
-      parentName: null
+      org.name: Org
     ErpCrmTerritoryAssignmentRule:
       id: ID
       orgId: Organization
@@ -858,9 +819,7 @@ prop:
       territory: Territory
       team: Team
       org: Org
-      orgName: null
-      territoryName: null
-      teamName: null
+      org.name: Org
 dict:
   label:
     erp-crm/lead-type: Lead/Opportunity Type

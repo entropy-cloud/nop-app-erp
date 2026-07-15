@@ -30,17 +30,8 @@
                 <!--行号-->
                 <col id="lineNo" ui:number="true" sortable="true"/>
 
-                <!--拆分单编码-->
-                <col id="splitCode"/>
-
-                <!--所属组织-->
-                <col id="orgName"/>
-
-                <!--资产类别-->
-                <col id="categoryName"/>
-
                 <!--目标资产编码-->
-                <col id="targetAssetCode" mandatory="true"/>
+                <col id="targetAssetCode" mandatory="true" sortable="true"/>
 
                 <!--目标资产名称-->
                 <col id="targetAssetName" sortable="true"/>
@@ -92,16 +83,14 @@
         <form id="view" editMode="view" title="查看-资产拆分行" i18n-en:title="View Asset Split Line">
             <layout>
  splitId[拆分单] orgId[所属组织]
- lineNo[行号] splitCode[拆分单编码]
- orgName[所属组织] categoryName[资产类别]
- targetAssetCode[目标资产编码] targetAssetName[目标资产名称]
- categoryId[目标资产类别] allocationMethod[分摊方式]
- proportion[比例] originalCostAmount[原值金额]
- accumulatedDepreciationAmount[累计折旧金额] netBookValue[账面净值]
- targetAssetId[目标资产] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ lineNo[行号] targetAssetCode[目标资产编码]
+ targetAssetName[目标资产名称] categoryId[目标资产类别]
+ allocationMethod[分摊方式] proportion[比例]
+ originalCostAmount[原值金额] accumulatedDepreciationAmount[累计折旧金额]
+ netBookValue[账面净值] targetAssetId[目标资产]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] remark[备注]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产拆分行" i18n-en:title="Add Asset Split Line" x:prototype="edit"/>

@@ -10,7 +10,7 @@
                 <col id="fiscalYear" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="entitledDays" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="carriedForwardDays" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

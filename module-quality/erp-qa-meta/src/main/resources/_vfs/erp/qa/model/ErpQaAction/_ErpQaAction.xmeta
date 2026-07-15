@@ -51,9 +51,9 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="completedAt" displayName="完成时间" propId="9" i18n-en:displayName="Completed At" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="completedAt" displayName="完成时间" propId="9" i18n-en:displayName="Completed At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="verificationPerson" displayName="验证人" propId="10" i18n-en:displayName="Verification Person"
               queryable="true" sortable="true" insertable="true" updatable="true">

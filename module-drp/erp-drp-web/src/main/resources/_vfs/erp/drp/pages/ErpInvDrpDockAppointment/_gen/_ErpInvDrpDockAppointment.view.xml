@@ -65,18 +65,6 @@
 
                 <!--业务组织-->
                 <col id="orgId" ui:number="true" sortable="true"/>
-
-                <!--仓库-->
-                <col id="warehouseName"/>
-
-                <!--月台-->
-                <col id="dockName"/>
-
-                <!--关联越库-->
-                <col id="crossDockName"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -92,9 +80,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- orgId[业务组织] warehouseName[仓库]
- dockName[月台] crossDockName[关联越库]
- orgName[业务组织] 
+ orgId[业务组织] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-月台预约" i18n-en:title="Add Dock Appointment" x:prototype="edit"/>

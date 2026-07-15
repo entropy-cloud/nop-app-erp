@@ -73,7 +73,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     public static final String PROP_NAME_productionDate = "productionDate";
     public static final int PROP_ID_productionDate = 13;
     
-    /* 生产时间: PRODUCTION_TIME DATETIME */
+    /* 生产时间: PRODUCTION_TIME TIMESTAMP */
     public static final String PROP_NAME_productionTime = "productionTime";
     public static final int PROP_ID_productionTime = 14;
     
@@ -271,7 +271,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     private java.time.LocalDate _productionDate;
     
     /* 生产时间: PRODUCTION_TIME */
-    private java.time.LocalDateTime _productionTime;
+    private java.sql.Timestamp _productionTime;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
@@ -591,9 +591,9 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
             }
         
             case PROP_ID_productionTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_productionTime));
                }
                setProductionTime(typedValue);
@@ -802,7 +802,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
         
             case PROP_ID_productionTime:{
                onInitProp(propId);
-               this._productionTime = (java.time.LocalDateTime)value;
+               this._productionTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1133,7 +1133,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 生产时间: PRODUCTION_TIME
      */
-    public final java.time.LocalDateTime getProductionTime(){
+    public final java.sql.Timestamp getProductionTime(){
          onPropGet(PROP_ID_productionTime);
          return _productionTime;
     }
@@ -1141,7 +1141,7 @@ public class _ErpMfgBatchGenealogy extends DynamicOrmEntity{
     /**
      * 生产时间: PRODUCTION_TIME
      */
-    public final void setProductionTime(java.time.LocalDateTime value){
+    public final void setProductionTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_productionTime,value)){
             this._productionTime = value;
             internalClearRefs(PROP_ID_productionTime);

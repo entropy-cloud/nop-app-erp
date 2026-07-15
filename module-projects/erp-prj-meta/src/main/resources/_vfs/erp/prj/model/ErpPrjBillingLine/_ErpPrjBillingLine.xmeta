@@ -81,9 +81,13 @@
             <schema bizObjName="ErpPrjBilling"/>
         </prop>
         <prop name="subject" i18n-en:displayName="Subject" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" lazy="true">
+              queryable="true" ext:joinLeftProp="subjectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdSubject"/>
+        </prop>
+        <prop name="subject.name" i18n-en:displayName="Subject" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="task" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="taskId"
               ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">

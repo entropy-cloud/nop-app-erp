@@ -21,7 +21,5 @@
   "lead": null,
   "config": null,
   "org": null,
-  "leadCode": "",
-  "orgName": "",
-  "configName": ""
+  "org.name": ""
 }

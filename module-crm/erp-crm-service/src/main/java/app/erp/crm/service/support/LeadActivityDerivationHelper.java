@@ -6,8 +6,11 @@ import app.erp.crm.service.ErpCrmConstants;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.commons.util.DateHelper;
+
 import jakarta.inject.Inject;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -40,8 +43,8 @@ public class LeadActivityDerivationHelper {
             return;
         }
 
-        lead.setLastContactDate(latestCompletedStartDateTime(leadId));
-        lead.setNextActivityDate(earliestPlannedStartDateTime(leadId));
+        lead.setLastContactDate(DateHelper.toLocalDate(latestCompletedStartDateTime(leadId)));
+        lead.setNextActivityDate(DateHelper.toLocalDate(earliestPlannedStartDateTime(leadId)));
         leadDao.updateEntity(lead);
     }
 
@@ -53,6 +56,7 @@ public class LeadActivityDerivationHelper {
         return completed.stream()
                 .map(ErpCrmEvent::getStartDateTime)
                 .filter(java.util.Objects::nonNull)
+                .map(Timestamp::toLocalDateTime)
                 .max(Comparator.naturalOrder())
                 .orElse(null);
     }
@@ -66,6 +70,7 @@ public class LeadActivityDerivationHelper {
         return planned.stream()
                 .map(ErpCrmEvent::getStartDateTime)
                 .filter(java.util.Objects::nonNull)
+                .map(Timestamp::toLocalDateTime)
                 .min(Comparator.naturalOrder())
                 .orElse(null);
     }

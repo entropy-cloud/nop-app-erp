@@ -17,8 +17,5 @@
   "fromStage": null,
   "toStage": null,
   "org": null,
-  "leadCode": "",
-  "orgName": "",
-  "fromStageName": "",
-  "toStageName": ""
+  "org.name": ""
 }

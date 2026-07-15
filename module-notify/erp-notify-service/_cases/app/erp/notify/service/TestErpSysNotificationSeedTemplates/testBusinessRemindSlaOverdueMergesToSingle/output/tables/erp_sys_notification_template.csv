@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7101,cs.sla-overdue,TPL-cs.sla-overdue,IN_APP,SLA超期预警: ${customerName},客户 ${customerName} 工单 ${ticketCode} 已超 SLA，请跟进,USER_LIST,"{""userIds"":[""seed-cs-user""]}",300,MERGE_BY_USER_TYPE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

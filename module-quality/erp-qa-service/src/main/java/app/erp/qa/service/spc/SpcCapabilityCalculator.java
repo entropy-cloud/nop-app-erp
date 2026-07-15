@@ -131,7 +131,7 @@ public class SpcCapabilityCalculator {
         cap.setCpm(scale(cpm));
         cap.setCapabilityLevel(capabilityLevel);
         cap.setIsStable(isStable);
-        cap.setCalculatedAt(CoreMetrics.currentDateTime());
+        cap.setCalculatedAt(CoreMetrics.currentTimestamp());
         capDao.saveEntity(cap);
 
         // 等级 < ACCEPTABLE（INADEQUATE）触发 QualityGoal 回写 + RiskRegister 登记

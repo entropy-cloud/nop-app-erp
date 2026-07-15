@@ -45,9 +45,13 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
+      org.name: Org
     ErpInvCostAdjust:
       id: ID
       code: Code
@@ -74,7 +78,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      org.name: Org
       currency: Currency
+      currency.name: Currency
       lines: Lines
     ErpInvCostAdjustLine:
       id: ID
@@ -98,8 +104,11 @@ prop:
       updateTime: Update Time
       adjust: Cost Adjust
       material: Material
+      material.name: Material
       warehouse: Warehouse
+      warehouse.name: Warehouse
       currency: Currency
+      currency.name: Currency
     ErpInvCostLayer:
       id: ID
       orgId: Organization
@@ -124,12 +133,18 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       warehouse: Warehouse
+      warehouse.name: Warehouse
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       incomingMove: Incoming Move
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
     ErpInvLandedCost:
       id: ID
       code: Code
@@ -159,8 +174,11 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      org.name: Org
       currency: Currency
+      currency.name: Currency
       supplier: Supplier
+      supplier.name: Supplier
       lines: Lines
     ErpInvLandedCostLine:
       id: ID
@@ -179,6 +197,7 @@ prop:
       updateTime: Update Time
       landedCost: Landed Cost
       apPartner: AP Partner
+      apPartner.name: AP Partner
     ErpInvOwnershipTransfer:
       id: ID
       code: Code
@@ -208,11 +227,17 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      org.name: Org
       partner: Partner
+      partner.name: Partner
       warehouse: Warehouse
+      warehouse.name: Warehouse
       sourceLoc: Source Location
+      sourceLoc.name: Source Location
       destLoc: Dest Location
+      destLoc.name: Dest Location
       currency: Currency
+      currency.name: Currency
       lines: Lines
     ErpInvOwnershipTransferLine:
       id: ID
@@ -235,7 +260,9 @@ prop:
       updateTime: Update Time
       transfer: Transfer
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
     ErpInvPickingOrder:
       id: ID
       code: Code
@@ -255,8 +282,11 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
+      org.name: Org
       picker: Picker
+      picker.name: Picker
       lines: Lines
     ErpInvPickingOrderLine:
       id: ID
@@ -278,9 +308,13 @@ prop:
       updateTime: Update Time
       picking: Picking
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       sourceLocation: Source Location
+      sourceLocation.name: Source Location
     ErpInvReservation:
       id: ID
       code: Code
@@ -300,7 +334,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       org: Org
+      org.name: Org
       reservedForPartner: Reserved For Partner
+      reservedForPartner.name: Reserved For Partner
       lines: Lines
     ErpInvReservationLine:
       id: ID
@@ -323,10 +359,15 @@ prop:
       updateTime: Update Time
       reservation: Reservation
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       warehouse: Warehouse
+      warehouse.name: Warehouse
       location: Location
+      location.name: Location
       uom: Uo M
+      uom.name: Uo M
     ErpInvSerialNumber:
       id: ID
       orgId: Organization
@@ -349,10 +390,15 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       org: Org
+      org.name: Org
       warehouse: Warehouse
+      warehouse.name: Warehouse
       location: Location
+      location.name: Location
     ErpInvStockBalance:
       id: ID
       orgId: Organization
@@ -380,12 +426,19 @@ prop:
       ownershipType: Ownership Type
       ownershipType_label: null
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       warehouse: Warehouse
+      warehouse.name: Warehouse
       currency: Currency
+      currency.name: Currency
       location: Location
+      location.name: Location
       org: Org
+      org.name: Org
       owner: Owner
+      owner.name: Owner
     ErpInvStockLedger:
       id: ID
       code: Code
@@ -420,13 +473,21 @@ prop:
       move: Move
       moveLine: Move Line
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       warehouse: Warehouse
+      warehouse.name: Warehouse
       location: Location
+      location.name: Location
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
       owner: Owner
+      owner.name: Owner
     ErpInvStockMove:
       id: ID
       code: Code
@@ -457,16 +518,18 @@ prop:
       originMoveId: Origin Move
       originReturnedMoveId: Origin Returned Move
       sourceWarehouse: Source Warehouse
+      sourceWarehouse.name: Source Warehouse
       destWarehouse: Dest Warehouse
+      destWarehouse.name: Dest Warehouse
       org: Org
+      org.name: Org
       sourceLocation: Source Location
+      sourceLocation.name: Source Location
       destLocation: Dest Location
+      destLocation.name: Dest Location
       originMove: Origin Move
       originReturnedMove: Origin Returned Move
       lines: Lines
-      sourceWarehouseName: null
-      destWarehouseName: null
-      orgName: null
     ErpInvStockMoveLine:
       id: ID
       moveId: Move
@@ -491,12 +554,17 @@ prop:
       updateTime: Update Time
       move: Move
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       currency: Currency
+      currency.name: Currency
       sourceLocation: Source Location
+      sourceLocation.name: Source Location
       destLocation: Dest Location
-      materialName: null
+      destLocation.name: Dest Location
     ErpInvStockTake:
       id: ID
       code: Code
@@ -520,7 +588,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
+      org.name: Org
       lines: Lines
     ErpInvStockTakeLine:
       id: ID
@@ -545,9 +615,13 @@ prop:
       updateTime: Update Time
       take: Take
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       location: Location
+      location.name: Location
     ErpInvTransferOrder:
       id: ID
       code: Code
@@ -573,9 +647,13 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       fromWarehouse: From Warehouse
+      fromWarehouse.name: From Warehouse
       toWarehouse: To Warehouse
+      toWarehouse.name: To Warehouse
       inTransitWarehouse: In Transit Warehouse
+      inTransitWarehouse.name: In Transit Warehouse
       org: Org
+      org.name: Org
       lines: Lines
     ErpInvTransferOrderLine:
       id: ID
@@ -595,8 +673,11 @@ prop:
       updateTime: Update Time
       transfer: Transfer
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
 dict:
   label:
     erp-inv/move-status: Inventory Move Status

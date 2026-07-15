@@ -19,7 +19,7 @@ import jakarta.inject.Inject;
 import java.util.Objects;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 public class ErpAstValueAdjustmentProcessor {
 
@@ -66,7 +66,7 @@ public class ErpAstValueAdjustmentProcessor {
         adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
         adjustment.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
         adjustment.setApprovedBy(currentUserId());
-        adjustment.setApprovedAt(CoreMetrics.currentDateTime());
+        adjustment.setApprovedAt(CoreMetrics.currentTimestamp());
         adjustmentDao().updateEntity(adjustment);
         orm().flushSession();
 
@@ -79,7 +79,7 @@ public class ErpAstValueAdjustmentProcessor {
         }
 
         adjustment = reload(id);
-        LocalDateTime now = CoreMetrics.currentDateTime();
+        Timestamp now = CoreMetrics.currentTimestamp();
         if (voucherId != null) {
             adjustment.setPosted(true);
             adjustment.setPostedAt(now);
@@ -278,7 +278,7 @@ public class ErpAstValueAdjustmentProcessor {
         adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
         adjustment.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
         adjustment.setApprovedBy(currentUserId());
-        adjustment.setApprovedAt(CoreMetrics.currentDateTime());
+        adjustment.setApprovedAt(CoreMetrics.currentTimestamp());
         adjustmentDao().updateEntity(adjustment);
         orm().flushSession();
 
@@ -291,7 +291,7 @@ public class ErpAstValueAdjustmentProcessor {
         }
 
         adjustment = reload(id);
-        LocalDateTime now = CoreMetrics.currentDateTime();
+        Timestamp now = CoreMetrics.currentTimestamp();
         if (voucherId != null) {
             adjustment.setPosted(true);
             adjustment.setPostedAt(now);

@@ -4,10 +4,6 @@ import app.erp.mnt.biz.IErpMntScheduleBiz;
 import app.erp.mnt.dao.entity.ErpMntSchedule;
 import app.erp.mnt.service.support.ScheduleDueGenerator;
 import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -24,16 +20,6 @@ public class ErpMntScheduleBizModel extends CrudBizModel<ErpMntSchedule> impleme
 
     public ErpMntScheduleBizModel() {
         setEntityName(ErpMntSchedule.class.getName());
-    }
-
-    @BizLoader(forType = ErpMntSchedule.class)
-    public List<String> equipmentCode(@ContextSource List<ErpMntSchedule> list) {
-        orm().batchLoadProps(list, Collections.singleton("equipment"));
-        List<String> result = new ArrayList<>(list.size());
-        for (ErpMntSchedule entity : list) {
-            result.add(entity.getEquipment() != null ? entity.getEquipment().getCode() : null);
-        }
-        return result;
     }
 
     @Override

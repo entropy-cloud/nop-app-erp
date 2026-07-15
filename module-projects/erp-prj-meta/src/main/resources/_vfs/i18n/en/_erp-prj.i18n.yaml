@@ -32,7 +32,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       subject: Subject
-      subjectName: null
+      subject.name: Subject
     ErpPrjBilling:
       id: ID
       code: Code
@@ -64,15 +64,13 @@ prop:
       amountFunctional: Amt (Functional)
       project: Project
       customer: Customer
+      customer.name: Customer
       milestone: Milestone
       lines: Lines
       currency: null
+      currency.name: null
       org: null
-      projectName: null
-      orgName: null
-      customerName: null
-      milestoneName: null
-      currencyName: null
+      org.name: null
     ErpPrjBillingLine:
       id: ID
       billingId: Billing
@@ -90,10 +88,8 @@ prop:
       updateTime: Update Time
       billing: Billing
       subject: Subject
+      subject.name: Subject
       task: null
-      billingCode: null
-      taskName: null
-      subjectName: null
     ErpPrjBudget:
       id: ID
       code: Code
@@ -118,10 +114,9 @@ prop:
       project: Project
       lines: Lines
       currency: null
+      currency.name: null
       org: null
-      projectName: null
-      orgName: null
-      currencyName: null
+      org.name: null
     ErpPrjBudgetLine:
       id: ID
       budgetId: Budget
@@ -141,10 +136,8 @@ prop:
       updateTime: Update Time
       budget: Budget
       subject: Subject
+      subject.name: Subject
       task: null
-      budgetCode: null
-      subjectName: null
-      taskName: null
     ErpPrjCostCollection:
       id: ID
       code: Code
@@ -175,10 +168,9 @@ prop:
       project: Project
       lines: Lines
       currency: null
+      currency.name: null
       org: null
-      projectName: null
-      orgName: null
-      currencyName: null
+      org.name: null
     ErpPrjCostCollectionLine:
       id: ID
       costCollectionId: Cost Collection
@@ -198,10 +190,8 @@ prop:
       updateTime: Update Time
       costCollection: Cost Collection
       subject: Subject
+      subject.name: Subject
       task: null
-      costCollectionCode: null
-      subjectName: null
-      taskName: null
     ErpPrjMilestone:
       id: ID
       projectId: Project
@@ -221,7 +211,6 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       project: Project
-      projectName: null
     ErpPrjProject:
       id: ID
       code: Code
@@ -248,19 +237,18 @@ prop:
       updateTime: Update Time
       projectType: Project Type
       manager: Manager
+      manager.name: Manager
       currency: Currency
+      currency.name: Currency
       tasks: Tasks
       timesheets: Timesheets
       members: Members
       budgets: Budgets
       milestones: Milestones
       customer: null
+      customer.name: null
       org: null
-      orgName: null
-      projectTypeName: null
-      customerName: null
-      currencyName: null
-      managerName: null
+      org.name: null
     ErpPrjProjectPnl:
       id: ID
       code: Code
@@ -301,10 +289,9 @@ prop:
       updateTime: Update Time
       project: Project
       currency: null
+      currency.name: null
       org: null
-      projectName: null
-      orgName: null
-      currencyName: null
+      org.name: null
     ErpPrjProjectSettlement:
       id: ID
       code: Code
@@ -345,14 +332,13 @@ prop:
       approvedAt: Approved At
       project: Project
       customer: Customer
+      customer.name: Customer
       pnlSnapshot: PnL Snapshot
       lines: Lines
       currency: null
+      currency.name: null
       org: null
-      projectName: null
-      orgName: null
-      customerName: null
-      currencyName: null
+      org.name: null
     ErpPrjProjectSettlementLine:
       id: ID
       settlementId: Settlement
@@ -371,8 +357,7 @@ prop:
       updateTime: Update Time
       settlement: Settlement
       subject: Subject
-      settlementCode: null
-      subjectName: null
+      subject.name: Subject
     ErpPrjProjectType:
       id: ID
       code: Code
@@ -386,7 +371,7 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       defaultSubject: Default Subject
-      defaultSubjectName: null
+      defaultSubject.name: Default Subject
     ErpPrjProjectUser:
       id: ID
       projectId: Project
@@ -402,8 +387,7 @@ prop:
       updateTime: Update Time
       project: Project
       user: User
-      projectName: null
-      userName: null
+      user.name: User
     ErpPrjTask:
       id: ID
       projectId: Project
@@ -433,13 +417,10 @@ prop:
       project: Project
       parentTask: Parent Task
       assignee: Assignee
+      assignee.name: Assignee
       dependsOn: Depends On
       childTasks: Child Tasks
       timesheets: Timesheets
-      projectName: null
-      parentTaskName: null
-      assigneeName: null
-      dependsOnTaskName: null
     ErpPrjTimesheet:
       id: ID
       code: Code
@@ -470,15 +451,12 @@ prop:
       project: Project
       task: Task
       user: User
+      user.name: User
       activityType: Activity Type
       currency: Currency
+      currency.name: Currency
       org: null
-      orgName: null
-      projectName: null
-      taskName: null
-      userName: null
-      activityTypeName: null
-      currencyName: null
+      org.name: null
 dict:
   label:
     erp-prj/project-status: Project Status

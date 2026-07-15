@@ -23,8 +23,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "contractVersion": null,
   "org": null,
+  "org.name": "",
   "providerRequest": null,
-  "attachmentFileIdComponentFileStatus": null,
-  "orgName": "",
-  "providerRequestName": ""
+  "attachmentFileIdComponentFileStatus": null
 }

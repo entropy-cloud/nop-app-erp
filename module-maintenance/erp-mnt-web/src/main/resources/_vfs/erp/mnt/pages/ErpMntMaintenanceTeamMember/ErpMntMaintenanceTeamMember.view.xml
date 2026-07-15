@@ -6,8 +6,8 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="teamName" label="维护团队"/>
-                <col id="employeeName" label="成员"/>
+                <col id="teamId" label="维护团队"/>
+                <col id="employeeId" label="成员"/>
                 <col id="role" sortable="true"/>
                 <col id="joinedAt" sortable="true"/>
                 <col id="leftAt" sortable="true"/>

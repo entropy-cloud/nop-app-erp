@@ -7,11 +7,11 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="inventoryCode" label="盘点单编码"/>
-                <col id="orgName" label="所属组织"/>
+                <col id="orgId" label="所属组织"/>
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="assetCodeSnapshot" sortable="true"/>
                 <col id="assetNameSnapshot" sortable="true"/>
-                <col id="categoryName" label="资产类别"/>
+                <col id="categoryId" label="资产类别"/>
                 <col id="bookQuantity" ui:number="true" sortable="true"/>
                 <col id="actualQuantity" ui:number="true" sortable="true"/>
                 <col id="varianceQuantity" ui:number="true" sortable="true"/>

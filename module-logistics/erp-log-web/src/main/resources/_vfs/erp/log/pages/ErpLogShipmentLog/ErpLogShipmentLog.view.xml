@@ -5,8 +5,8 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="shipmentName" label="发运单"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="shipmentId" label="发运单"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="gatewayId" mandatory="true" sortable="true"/>
                 <col id="actionType" mandatory="true" sortable="true"/>
                 <col id="requestBody" sortable="true"/>

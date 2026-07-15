@@ -7,11 +7,11 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgName" label="组织"/>
+                <col id="orgId" label="组织"/>
                 <col id="visitCode" label="维护访问"/>
                 <col id="requestCode" label="维护请求"/>
                 <col id="equipmentCode" label="设备"/>
-                <col id="warehouseName" label="仓库"/>
+                <col id="warehouseId" label="仓库"/>
                 <col id="businessDate" mandatory="true" sortable="true"/>
                 <col id="totalAmount" ui:number="true" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true"/>

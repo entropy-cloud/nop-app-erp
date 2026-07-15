@@ -47,8 +47,11 @@ prop:
       approvedBy: Approved By
       approvedAt: Approved At
       customer: Customer
+      customer.name: Customer
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
     ErpSalDelivery:
       id: ID
       code: Code
@@ -82,14 +85,14 @@ prop:
       remark: Remark
       order: Order
       customer: Customer
+      customer.name: Customer
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
+      org.name: Org
       currency: Currency
+      currency.name: Currency
       lines: Lines
-      customerName: null
-      warehouseName: null
-      currencyName: null
-      orgName: null
     ErpSalDeliveryLine:
       id: ID
       deliveryId: Delivery
@@ -114,12 +117,14 @@ prop:
       remark: Remark
       delivery: Delivery
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       orderLine: Order Line
       warehouse: Warehouse
-      materialName: null
-      warehouseName: null
+      warehouse.name: Warehouse
     ErpSalInvoice:
       id: ID
       code: Code
@@ -156,12 +161,12 @@ prop:
       updateTime: Update Time
       remark: Remark
       customer: Customer
+      customer.name: Customer
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       lines: Lines
-      customerName: null
-      currencyName: null
-      orgName: null
     ErpSalInvoiceLine:
       id: ID
       invoiceId: Invoice
@@ -183,9 +188,10 @@ prop:
       remark: Remark
       invoice: Invoice
       material: Material
+      material.name: Material
       deliveryLine: Delivery Line
       uoM: Uo M
-      materialName: null
+      uoM.name: Uo M
     ErpSalOrder:
       id: ID
       code: Code
@@ -228,17 +234,18 @@ prop:
       updateTime: Update Time
       remark: Remark
       customer: Customer
+      customer.name: Customer
       warehouse: Warehouse
+      warehouse.name: Warehouse
       currency: Currency
+      currency.name: Currency
       settlementMethod: Settlement Method
+      settlementMethod.name: Settlement Method
       lines: Lines
       org: Org
+      org.name: Org
       quotation: Quotation
       contract: Contract
-      customerName: null
-      warehouseName: null
-      currencyName: null
-      orgName: null
     ErpSalOrderLine:
       id: ID
       orderId: Order
@@ -269,13 +276,17 @@ prop:
       pricingSource: Pricing Source
       order: Order
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       taxRateMd: Tax Rate Md
+      taxRateMd.name: Tax Rate Md
       warehouse: Warehouse
+      warehouse.name: Warehouse
       project: Project
-      materialName: null
-      warehouseName: null
+      project.name: Project
     ErpSalPriceList:
       id: ID
       name: Name
@@ -295,7 +306,9 @@ prop:
       updateTime: Update Time
       remark: Remark
       currency: Currency
+      currency.name: Currency
       partner: Partner
+      partner.name: Partner
       lines: Lines
     ErpSalPriceListLine:
       id: ID
@@ -317,8 +330,11 @@ prop:
       remark: Remark
       priceList: Price List
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
     ErpSalPricingRule:
       id: ID
       ruleName: Rule Name
@@ -352,10 +368,15 @@ prop:
       updateTime: Update Time
       remark: Remark
       material: Material
+      material.name: Material
       giftMaterial: Gift Material
+      giftMaterial.name: Gift Material
       giftSku: Gift Sku
+      giftSku.name: Gift Sku
       currency: Currency
+      currency.name: Currency
       partner: Partner
+      partner.name: Partner
     ErpSalQuotation:
       id: ID
       code: Code
@@ -384,12 +405,12 @@ prop:
       approvedBy: Approved By
       approvedAt: Approved At
       customer: Customer
+      customer.name: Customer
       currency: Currency
+      currency.name: Currency
       org: Org
+      org.name: Org
       lines: Lines
-      customerName: null
-      currencyName: null
-      orgName: null
     ErpSalQuotationLine:
       id: ID
       quotationId: Quotation
@@ -414,8 +435,9 @@ prop:
       pricingSource: Pricing Source
       quotation: Quotation
       material: Material
+      material.name: Material
       uoM: Uo M
-      materialName: null
+      uoM.name: Uo M
     ErpSalReceipt:
       id: ID
       code: Code
@@ -451,15 +473,18 @@ prop:
       remark: Remark
       nopFlowId: Workflow Flow Id
       customer: Customer
+      customer.name: Customer
       currency: Currency
+      currency.name: Currency
       settlementMethod: Settlement Method
+      settlementMethod.name: Settlement Method
       org: Org
+      org.name: Org
       bankAccount: Bank Account
+      bankAccount.bankName: Bank Account
       partnerBankAccount: Partner Bank Account
+      partnerBankAccount.bankName: Partner Bank Account
       lines: Lines
-      customerName: null
-      currencyName: null
-      orgName: null
     ErpSalReceiptLine:
       id: ID
       receiptId: Receipt
@@ -507,14 +532,14 @@ prop:
       remark: Remark
       delivery: Delivery
       customer: Customer
+      customer.name: Customer
       warehouse: Warehouse
+      warehouse.name: Warehouse
       org: Org
+      org.name: Org
       currency: Currency
+      currency.name: Currency
       lines: Lines
-      customerName: null
-      warehouseName: null
-      currencyName: null
-      orgName: null
     ErpSalReturnLine:
       id: ID
       returnId: Return
@@ -538,10 +563,12 @@ prop:
       remark: Remark
       return: Return
       material: Material
+      material.name: Material
       sku: Sku
+      sku.name: Sku
       uoM: Uo M
+      uoM.name: Uo M
       deliveryLine: Delivery Line
-      materialName: null
 dict:
   label:
     erp-sal/doc-status: Doc Status

@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7126,mfg.production-variance,生产差异超阈值告警,IN_APP,生产差异超阈值告警: ${workOrderCode},工单 ${workOrderCode}（产品 ${productCode}）${varianceType} 差异金额 ${varianceAmount} 已超阈值 ${threshold}，请核查,USER_LIST,"{""userIds"":[""mfg-variance-recipient""]}",60,MERGE_BY_USER_TYPE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

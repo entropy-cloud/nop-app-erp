@@ -28,14 +28,16 @@
   "originMoveId": 0,
   "originReturnedMoveId": 0,
   "sourceWarehouse": null,
+  "sourceWarehouse.name": "",
   "destWarehouse": null,
+  "destWarehouse.name": "",
   "org": null,
+  "org.name": "",
   "sourceLocation": null,
+  "sourceLocation.name": "",
   "destLocation": null,
+  "destLocation.name": "",
   "originMove": null,
   "originReturnedMove": null,
-  "lines": null,
-  "sourceWarehouseName": "",
-  "destWarehouseName": "",
-  "orgName": ""
+  "lines": null
 }

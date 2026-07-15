@@ -181,30 +181,6 @@
         }
 
 
-        private String _projectName;
-
-    
-        public String getProjectName(){
-            return _projectName;
-        }
-
-        public void setProjectName(String value){
-            this._projectName = value;
-        }
-
-
-        private String _userName;
-
-    
-        public String getUserName(){
-            return _userName;
-        }
-
-        public void setUserName(String value){
-            this._userName = value;
-        }
-
-
         private Map<String,Object> _project;
 
         public Map<String,Object> getProject(){

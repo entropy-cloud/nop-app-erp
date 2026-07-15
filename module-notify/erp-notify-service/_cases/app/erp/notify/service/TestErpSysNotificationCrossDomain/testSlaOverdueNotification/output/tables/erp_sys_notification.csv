@@ -1,0 +1,2 @@
+_chgType,ID,TEMPLATE_ID,NOTIFICATION_TYPE,RECIPIENT_USER_ID,RECIPIENT_PARTNER_ID,RECIPIENT_DEPT_ID,CHANNEL,SUBJECT,BODY,PAYLOAD_JSON,STATUS,MERGE_GROUP_ID,MERGE_COUNT,SENT_AT,ERROR_MSG,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,7202,sla-overdue,cross-test-user-2,,,IN_APP,SLA超期预警: ACME Corp 工单 T-200,客户 ACME Corp 的工单 T-200 已超期，请处理,"{""customerName"":""ACME Corp"",""ticketCode"":""T-200""}",SENT,sla-overdue#cross-test-user-2,1,@var:ErpSysNotification@sentAt,,@var:ErpSysNotification@delVersion,0,autotest-ref,*,autotest-ref,*

@@ -3,13 +3,6 @@
     "extData": null,
     "hasNext": null,
     "hasPrev": null,
-    "limit": 10,
-    "nextCursor": null,
-    "offset": 0,
-    "page": 1,
-    "pageCount": 1,
-    "prevCursor": null,
-    "total": 1,
     "items": [
       {
         "id": "3",
@@ -26,10 +19,16 @@
         "createdBy": "autotest-ref",
         "createTime": "@var:ErpMntVisitTask@createTime",
         "updatedBy": "autotest-ref",
-        "updateTime": "@var:ErpMntVisitTask@createTime",
-        "visitCode": "SMOKE-MNT"
+        "updateTime": "@var:ErpMntVisitTask@createTime"
       }
-    ]
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
   },
   "status": 0
 }

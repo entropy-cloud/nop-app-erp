@@ -57,7 +57,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 9;
     
-    /* 执行时间: EXECUTED_AT DATETIME */
+    /* 执行时间: EXECUTED_AT TIMESTAMP */
     public static final String PROP_NAME_executedAt = "executedAt";
     public static final int PROP_ID_executedAt = 10;
     
@@ -65,7 +65,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     public static final String PROP_NAME_posted = "posted";
     public static final int PROP_ID_posted = 11;
     
-    /* 过账时间: POSTED_AT DATETIME */
+    /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
     public static final int PROP_ID_postedAt = 12;
     
@@ -248,13 +248,13 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     private java.lang.String _status;
     
     /* 执行时间: EXECUTED_AT */
-    private java.time.LocalDateTime _executedAt;
+    private java.sql.Timestamp _executedAt;
     
     /* 已过账: POSTED */
     private java.lang.Boolean _posted;
     
     /* 过账时间: POSTED_AT */
-    private java.time.LocalDateTime _postedAt;
+    private java.sql.Timestamp _postedAt;
     
     /* 过账人: POSTED_BY */
     private java.lang.String _postedBy;
@@ -287,13 +287,13 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     private java.lang.Long _currencyId;
     
     /* 汇率: EXCHANGE_RATE */
-    private java.lang.String _exchangeRate;
+    private java.math.BigDecimal _exchangeRate;
     
     /* 源币种金额: AMOUNT_SOURCE */
-    private java.lang.String _amountSource;
+    private java.math.BigDecimal _amountSource;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.lang.String _amountFunctional;
+    private java.math.BigDecimal _amountFunctional;
     
 
     public _ErpAstDepreciationSchedule(){
@@ -546,9 +546,9 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_executedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_executedAt));
                }
                setExecutedAt(typedValue);
@@ -566,9 +566,9 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_postedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_postedAt));
                }
                setPostedAt(typedValue);
@@ -676,9 +676,9 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_exchangeRate:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_exchangeRate));
                }
                setExchangeRate(typedValue);
@@ -686,9 +686,9 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountSource:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountSource));
                }
                setAmountSource(typedValue);
@@ -696,9 +696,9 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
             }
         
             case PROP_ID_amountFunctional:{
-               java.lang.String typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toString(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_amountFunctional));
                }
                setAmountFunctional(typedValue);
@@ -779,7 +779,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
         
             case PROP_ID_executedAt:{
                onInitProp(propId);
-               this._executedAt = (java.time.LocalDateTime)value;
+               this._executedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -793,7 +793,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
         
             case PROP_ID_postedAt:{
                onInitProp(propId);
-               this._postedAt = (java.time.LocalDateTime)value;
+               this._postedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -870,21 +870,21 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
         
             case PROP_ID_exchangeRate:{
                onInitProp(propId);
-               this._exchangeRate = (java.lang.String)value;
+               this._exchangeRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountSource:{
                onInitProp(propId);
-               this._amountSource = (java.lang.String)value;
+               this._amountSource = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_amountFunctional:{
                onInitProp(propId);
-               this._amountFunctional = (java.lang.String)value;
+               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1069,7 +1069,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 执行时间: EXECUTED_AT
      */
-    public final java.time.LocalDateTime getExecutedAt(){
+    public final java.sql.Timestamp getExecutedAt(){
          onPropGet(PROP_ID_executedAt);
          return _executedAt;
     }
@@ -1077,7 +1077,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 执行时间: EXECUTED_AT
      */
-    public final void setExecutedAt(java.time.LocalDateTime value){
+    public final void setExecutedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_executedAt,value)){
             this._executedAt = value;
             internalClearRefs(PROP_ID_executedAt);
@@ -1107,7 +1107,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final java.time.LocalDateTime getPostedAt(){
+    public final java.sql.Timestamp getPostedAt(){
          onPropGet(PROP_ID_postedAt);
          return _postedAt;
     }
@@ -1115,7 +1115,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 过账时间: POSTED_AT
      */
-    public final void setPostedAt(java.time.LocalDateTime value){
+    public final void setPostedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_postedAt,value)){
             this._postedAt = value;
             internalClearRefs(PROP_ID_postedAt);
@@ -1316,7 +1316,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final java.lang.String getExchangeRate(){
+    public final java.math.BigDecimal getExchangeRate(){
          onPropGet(PROP_ID_exchangeRate);
          return _exchangeRate;
     }
@@ -1324,7 +1324,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 汇率: EXCHANGE_RATE
      */
-    public final void setExchangeRate(java.lang.String value){
+    public final void setExchangeRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_exchangeRate,value)){
             this._exchangeRate = value;
             internalClearRefs(PROP_ID_exchangeRate);
@@ -1335,7 +1335,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final java.lang.String getAmountSource(){
+    public final java.math.BigDecimal getAmountSource(){
          onPropGet(PROP_ID_amountSource);
          return _amountSource;
     }
@@ -1343,7 +1343,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 源币种金额: AMOUNT_SOURCE
      */
-    public final void setAmountSource(java.lang.String value){
+    public final void setAmountSource(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountSource,value)){
             this._amountSource = value;
             internalClearRefs(PROP_ID_amountSource);
@@ -1354,7 +1354,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final java.lang.String getAmountFunctional(){
+    public final java.math.BigDecimal getAmountFunctional(){
          onPropGet(PROP_ID_amountFunctional);
          return _amountFunctional;
     }
@@ -1362,7 +1362,7 @@ public class _ErpAstDepreciationSchedule extends DynamicOrmEntity{
     /**
      * 本位币金额: AMOUNT_FUNCTIONAL
      */
-    public final void setAmountFunctional(java.lang.String value){
+    public final void setAmountFunctional(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_amountFunctional,value)){
             this._amountFunctional = value;
             internalClearRefs(PROP_ID_amountFunctional);

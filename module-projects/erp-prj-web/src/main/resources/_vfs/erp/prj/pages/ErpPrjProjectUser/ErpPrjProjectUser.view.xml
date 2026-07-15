@@ -5,8 +5,8 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="projectName" label="项目"/>
-                <col id="userName" label="用户"/>
+                <col id="projectId" label="项目"/>
+                <col id="userId" label="用户"/>
                 <col id="role" sortable="true"/>
                 <col id="startDate" sortable="true"/>
                 <col id="endDate" sortable="true"/>

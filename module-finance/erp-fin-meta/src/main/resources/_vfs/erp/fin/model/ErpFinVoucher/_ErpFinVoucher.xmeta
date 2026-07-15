@@ -25,8 +25,8 @@
               queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="code" displayName="凭证号" propId="2" i18n-en:displayName="Code" mandatory="true" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="code" displayName="凭证号" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="voucherCode" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="voucherType" displayName="凭证字" propId="3" i18n-en:displayName="Voucher Type" mandatory="true"
@@ -41,8 +41,8 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
-        <prop name="voucherNo" displayName="凭证编号" propId="6" i18n-en:displayName="Voucher No" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="voucherNo" displayName="凭证编号" propId="6" i18n-en:displayName="Voucher No" tagSet="var"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema domain="voucherNo" type="java.lang.String" precision="50"/>
         </prop>
         <prop name="orgId" displayName="核算组织" propId="7" i18n-en:displayName="Organization" mandatory="true"
@@ -81,9 +81,9 @@
               sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
-        <prop name="postedAt" displayName="过账时间" propId="16" i18n-en:displayName="Posted At" queryable="true"
-              sortable="true" insertable="false" updatable="false" ui:show="R">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="postedAt" displayName="过账时间" propId="16" i18n-en:displayName="Posted At" tagSet="clock"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="remark" displayName="备注" propId="17" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -119,9 +119,13 @@
             <schema bizObjName="ErpFinAccountingPeriod"/>
         </prop>
         <prop name="acctSchema" i18n-en:displayName="Acct Schema" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdAcctSchema"/>
+        </prop>
+        <prop name="acctSchema.name" i18n-en:displayName="Acct Schema" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="lines" i18n-en:displayName="Lines" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="voucherId" insertable="true"
@@ -138,9 +142,12 @@
             </schema>
         </prop>
         <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
-              ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true"
-              lazy="true">
+              ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
         <prop name="reversalOfVoucher" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="reversalOfVoucherId" ext:joinRightProp="id" insertable="false" updatable="false"

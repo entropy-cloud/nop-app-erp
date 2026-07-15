@@ -20,8 +20,13 @@
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "org": null,
+  "org.name": "",
   "warehouse": null,
-  "location": null
+  "warehouse.name": "",
+  "location": null,
+  "location.name": ""
 }

@@ -59,7 +59,7 @@
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="sourceBillCode" displayName="来源单据号" propId="11" i18n-en:displayName="Source Bill Code"
+        <prop name="sourceBillCode" displayName="来源单据号" propId="11" i18n-en:displayName="Source Bill Code" tagSet="var"
               queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
@@ -97,14 +97,21 @@
             <schema bizObjName="ErpInvOwnershipTransfer"/>
         </prop>
         <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
-              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" biz:moduleId="erp/md"
-              insertable="false" updatable="false" mandatory="true" lazy="true">
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
             <schema bizObjName="ErpMdMaterial"/>
         </prop>
-        <prop name="sku" i18n-en:displayName="Sku" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="skuId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
+        <prop name="material.name" i18n-en:displayName="Material" internal="true" queryable="true" sortable="true"
               lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="sku" i18n-en:displayName="Sku" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="skuId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdMaterialSku"/>
+        </prop>
+        <prop name="sku.name" i18n-en:displayName="Sku" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

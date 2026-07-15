@@ -6,9 +6,9 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="funnelName" label="漏斗"/>
-                <col id="orgName" label="业务组织"/>
-                <col id="stageName" sortable="true"/>
+                <col id="funnelId" label="漏斗"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="stageId" sortable="true"/>
                 <col id="stageOrder" ui:number="true" sortable="true"/>
                 <col id="leadCountIn" ui:number="true" sortable="true"/>
                 <col id="leadCountOut" ui:number="true" sortable="true"/>

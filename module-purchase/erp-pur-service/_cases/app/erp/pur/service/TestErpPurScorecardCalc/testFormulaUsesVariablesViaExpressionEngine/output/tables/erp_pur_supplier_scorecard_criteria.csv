@@ -1,2 +1,2 @@
 _chgType,ID,SCORECARD_ID,CRITERIA_NAME,WEIGHT,FORMULA,SCORE,WEIGHTED_SCORE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,1,综合质量,100.00,pass_rate * 0.6 + bonus * 0.4,84.0000000,84.00,*,1,autotest-ref,*,autotest-ref,*
+A,2,1,综合质量,100.00,pass_rate * 0.6 + bonus * 0.4,84.0000000,84.00,@var:ErpPurSupplierScorecardCriteria@delVersion,1,autotest-ref,*,autotest-ref,*

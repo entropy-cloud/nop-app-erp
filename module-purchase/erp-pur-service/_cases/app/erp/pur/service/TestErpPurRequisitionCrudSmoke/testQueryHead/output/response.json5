@@ -3,17 +3,10 @@
     "extData": null,
     "hasNext": null,
     "hasPrev": null,
-    "limit": 10,
-    "nextCursor": null,
-    "offset": 0,
-    "page": 1,
-    "pageCount": 1,
-    "prevCursor": null,
-    "total": 1,
     "items": [
       {
         "id": "1",
-        "code": "SMOKE-PUR",
+        "code": "@var:ErpPurRequisition@code",
         "orgId": null,
         "requesterId": 1,
         "departmentId": null,
@@ -31,12 +24,16 @@
         "createdBy": "autotest-ref",
         "createTime": "@var:ErpPurRequisition@updateTime",
         "updatedBy": "autotest-ref",
-        "updateTime": "@var:ErpPurRequisition@updateTime",
-        "departmentName": null,
-        "orgName": null,
-        "requesterName": "冒烟职员"
+        "updateTime": "@var:ErpPurRequisition@updateTime"
       }
-    ]
+    ],
+    "limit": 10,
+    "nextCursor": null,
+    "offset": 0,
+    "page": 1,
+    "pageCount": 1,
+    "prevCursor": null,
+    "total": 1
   },
   "status": 0
 }

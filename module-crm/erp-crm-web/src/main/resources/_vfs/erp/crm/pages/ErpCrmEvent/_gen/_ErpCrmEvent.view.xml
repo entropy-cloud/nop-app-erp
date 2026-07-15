@@ -98,24 +98,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--业务组织-->
-                <col id="orgName"/>
-
-                <!--活动类别-->
-                <col id="categoryName"/>
-
-                <!--关联线索-->
-                <col id="leadCode"/>
-
-                <!--客户-->
-                <col id="partnerName"/>
-
-                <!--联系人-->
-                <col id="contactName"/>
-
-                <!--父活动-->
-                <col id="eventCode"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -137,9 +119,6 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- orgName[业务组织] categoryName[活动类别]
- leadCode[关联线索] partnerName[客户]
- contactName[联系人] eventCode[父活动]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-活动/事件" i18n-en:title="Add Event" x:prototype="edit"/>

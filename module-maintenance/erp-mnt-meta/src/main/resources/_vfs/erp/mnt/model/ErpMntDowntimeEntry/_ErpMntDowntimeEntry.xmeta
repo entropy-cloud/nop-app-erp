@@ -27,13 +27,13 @@
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="equipment">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="startTime" displayName="开始时间" propId="3" i18n-en:displayName="Start Time" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="startTime" displayName="开始时间" propId="3" i18n-en:displayName="Start Time" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="endTime" displayName="结束时间" propId="4" i18n-en:displayName="End Time" queryable="true"
-              sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="endTime" displayName="结束时间" propId="4" i18n-en:displayName="End Time" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="totalMinutes" displayName="总分钟数" propId="5" i18n-en:displayName="Total Minutes" queryable="true"
               sortable="true" insertable="true" updatable="true">

@@ -69,7 +69,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_slaPolicyId = "slaPolicyId";
     public static final int PROP_ID_slaPolicyId = 12;
     
-    /* SLA 截止时间: DEADLINE_DATE_TIME DATETIME */
+    /* SLA 截止时间: DEADLINE_DATE_TIME TIMESTAMP */
     public static final String PROP_NAME_deadlineDateTime = "deadlineDateTime";
     public static final int PROP_ID_deadlineDateTime = 13;
     
@@ -77,11 +77,11 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_isSlaCompleted = "isSlaCompleted";
     public static final int PROP_ID_isSlaCompleted = 14;
     
-    /* 开始处理时间: START_DATE_TIME DATETIME */
+    /* 开始处理时间: START_DATE_TIME TIMESTAMP */
     public static final String PROP_NAME_startDateTime = "startDateTime";
     public static final int PROP_ID_startDateTime = 15;
     
-    /* 关闭时间: END_DATE_TIME DATETIME */
+    /* 关闭时间: END_DATE_TIME TIMESTAMP */
     public static final String PROP_NAME_endDateTime = "endDateTime";
     public static final int PROP_ID_endDateTime = 16;
     
@@ -141,7 +141,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_approvedBy = "approvedBy";
     public static final int PROP_ID_approvedBy = 200;
     
-    /* 审核时间: APPROVED_AT DATETIME */
+    /* 审核时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 201;
     
@@ -318,16 +318,16 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     private java.lang.Long _slaPolicyId;
     
     /* SLA 截止时间: DEADLINE_DATE_TIME */
-    private java.time.LocalDateTime _deadlineDateTime;
+    private java.sql.Timestamp _deadlineDateTime;
     
     /* SLA 是否完成: IS_SLA_COMPLETED */
     private java.lang.Boolean _isSlaCompleted;
     
     /* 开始处理时间: START_DATE_TIME */
-    private java.time.LocalDateTime _startDateTime;
+    private java.sql.Timestamp _startDateTime;
     
     /* 关闭时间: END_DATE_TIME */
-    private java.time.LocalDateTime _endDateTime;
+    private java.sql.Timestamp _endDateTime;
     
     /* 处理时长(分钟): DURATION */
     private java.lang.Integer _duration;
@@ -372,7 +372,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     private java.lang.String _approvedBy;
     
     /* 审核时间: APPROVED_AT */
-    private java.time.LocalDateTime _approvedAt;
+    private java.sql.Timestamp _approvedAt;
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
@@ -679,9 +679,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_deadlineDateTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_deadlineDateTime));
                }
                setDeadlineDateTime(typedValue);
@@ -699,9 +699,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_startDateTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_startDateTime));
                }
                setStartDateTime(typedValue);
@@ -709,9 +709,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_endDateTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_endDateTime));
                }
                setEndDateTime(typedValue);
@@ -859,9 +859,9 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             }
         
             case PROP_ID_approvedAt:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_approvedAt));
                }
                setApprovedAt(typedValue);
@@ -973,7 +973,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_deadlineDateTime:{
                onInitProp(propId);
-               this._deadlineDateTime = (java.time.LocalDateTime)value;
+               this._deadlineDateTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -987,14 +987,14 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_startDateTime:{
                onInitProp(propId);
-               this._startDateTime = (java.time.LocalDateTime)value;
+               this._startDateTime = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_endDateTime:{
                onInitProp(propId);
-               this._endDateTime = (java.time.LocalDateTime)value;
+               this._endDateTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1099,7 +1099,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_approvedAt:{
                onInitProp(propId);
-               this._approvedAt = (java.time.LocalDateTime)value;
+               this._approvedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1348,7 +1348,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * SLA 截止时间: DEADLINE_DATE_TIME
      */
-    public final java.time.LocalDateTime getDeadlineDateTime(){
+    public final java.sql.Timestamp getDeadlineDateTime(){
          onPropGet(PROP_ID_deadlineDateTime);
          return _deadlineDateTime;
     }
@@ -1356,7 +1356,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * SLA 截止时间: DEADLINE_DATE_TIME
      */
-    public final void setDeadlineDateTime(java.time.LocalDateTime value){
+    public final void setDeadlineDateTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_deadlineDateTime,value)){
             this._deadlineDateTime = value;
             internalClearRefs(PROP_ID_deadlineDateTime);
@@ -1386,7 +1386,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 开始处理时间: START_DATE_TIME
      */
-    public final java.time.LocalDateTime getStartDateTime(){
+    public final java.sql.Timestamp getStartDateTime(){
          onPropGet(PROP_ID_startDateTime);
          return _startDateTime;
     }
@@ -1394,7 +1394,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 开始处理时间: START_DATE_TIME
      */
-    public final void setStartDateTime(java.time.LocalDateTime value){
+    public final void setStartDateTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_startDateTime,value)){
             this._startDateTime = value;
             internalClearRefs(PROP_ID_startDateTime);
@@ -1405,7 +1405,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 关闭时间: END_DATE_TIME
      */
-    public final java.time.LocalDateTime getEndDateTime(){
+    public final java.sql.Timestamp getEndDateTime(){
          onPropGet(PROP_ID_endDateTime);
          return _endDateTime;
     }
@@ -1413,7 +1413,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 关闭时间: END_DATE_TIME
      */
-    public final void setEndDateTime(java.time.LocalDateTime value){
+    public final void setEndDateTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_endDateTime,value)){
             this._endDateTime = value;
             internalClearRefs(PROP_ID_endDateTime);
@@ -1690,7 +1690,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final java.time.LocalDateTime getApprovedAt(){
+    public final java.sql.Timestamp getApprovedAt(){
          onPropGet(PROP_ID_approvedAt);
          return _approvedAt;
     }
@@ -1698,7 +1698,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     /**
      * 审核时间: APPROVED_AT
      */
-    public final void setApprovedAt(java.time.LocalDateTime value){
+    public final void setApprovedAt(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_approvedAt,value)){
             this._approvedAt = value;
             internalClearRefs(PROP_ID_approvedAt);

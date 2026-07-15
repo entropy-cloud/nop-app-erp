@@ -72,7 +72,7 @@
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="编号" domain="orderCode" mandatory="true" name="code" precision="50"
-                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="WORK_ORDER_ID" displayName="主工单" mandatory="true" name="workOrderId" propId="3"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Work Order"/>
                 <column code="OPERATION_NAME" displayName="工序名称" mandatory="true" name="operationName" precision="200"
@@ -84,13 +84,17 @@
                 <column code="PRIORITY" defaultValue="50" displayName="优先级" name="priority" propId="7" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Priority"/>
                 <column code="PLANNED_START_DATE_T" displayName="计划开工时间" name="plannedStartDateT" propId="8"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Planned Start Date"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
+                        i18n-en:displayName="Planned Start Date"/>
                 <column code="PLANNED_END_DATE_T" displayName="计划完工时间" name="plannedEndDateT" propId="9"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Planned End Date"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
+                        i18n-en:displayName="Planned End Date"/>
                 <column code="REAL_START_DATE_T" displayName="实际开工时间" name="realStartDateT" propId="10"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Real Start Date"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
+                        i18n-en:displayName="Real Start Date"/>
                 <column code="REAL_END_DATE_T" displayName="实际完工时间" name="realEndDateT" propId="11"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Real End Date"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
+                        i18n-en:displayName="Real End Date"/>
                 <column code="SETUP_TIME" displayName="准备时间(分钟)" domain="duration" name="setupTime" precision="10"
                         propId="12" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Setup Time"/>
@@ -129,9 +133,11 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="EARLIEST_START_DATE_T" displayName="最早开工时间" name="earliestStartDateT" propId="27"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Earliest Start Date"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
+                        i18n-en:displayName="Earliest Start Date"/>
                 <column code="LATEST_END_DATE_T" displayName="最晚完工时间" name="latestEndDateT" propId="28"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Latest End Date"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
+                        i18n-en:displayName="Latest End Date"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="29"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
             </columns>
@@ -175,7 +181,7 @@
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
                 <column code="CODE" displayName="编号" domain="orderCode" mandatory="true" name="code" precision="50"
-                        propId="2" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Code"/>
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" displayName="方案名称" domain="name" mandatory="true" name="name" precision="200"
                         propId="3" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
                 <column code="SCHEDULE_DATE" displayName="排产日期" mandatory="true" name="scheduleDate" propId="4"
@@ -184,9 +190,10 @@
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-aps/scheduling-mode"
                         i18n-en:displayName="Scheduling Mode"/>
                 <column code="HORIZON_START" displayName="展望期开始" mandatory="true" name="horizonStart" propId="6"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Horizon Start"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
+                        i18n-en:displayName="Horizon Start"/>
                 <column code="HORIZON_END" displayName="展望期结束" mandatory="true" name="horizonEnd" propId="7"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Horizon End"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Horizon End"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-aps/schedule-status"
                         i18n-en:displayName="Status"/>
@@ -248,9 +255,9 @@
                         propId="3" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-aps/constraint-type"
                         i18n-en:displayName="Constraint Type"/>
                 <column code="START_TIME" displayName="开始时间" mandatory="true" name="startTime" propId="4"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="Start Time"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Start Time"/>
                 <column code="END_TIME" displayName="结束时间" mandatory="true" name="endTime" propId="5"
-                        stdDataType="datetime" stdSqlType="DATETIME" i18n-en:displayName="End Time"/>
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="End Time"/>
                 <column code="DESCRIPTION" displayName="约束描述" name="description" precision="500" propId="6"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Description"/>
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="7" stdDataType="long" stdSqlType="BIGINT"
@@ -397,8 +404,8 @@
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Priority Threshold"/>
                 <column code="ENABLED_HOURS" displayName="允许时段(JSON)" name="enabledHours" precision="500" propId="14"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Enabled Hours"/>
-                <column code="HOLD_UNTIL" displayName="暂停到" name="holdUntil" propId="15" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Hold Until"/>
+                <column code="HOLD_UNTIL" displayName="暂停到" name="holdUntil" propId="15" stdDataType="timestamp"
+                        stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Hold Until"/>
                 <column code="HOLD_REASON" displayName="暂停原因" name="holdReason" precision="500" propId="16"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Hold Reason"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="17"
@@ -460,8 +467,8 @@
                         i18n-en:displayName="Condition Check Result"/>
                 <column code="DISPATCHED_BY" displayName="派工人" name="dispatchedBy" precision="50" propId="9"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Dispatched By"/>
-                <column code="DISPATCHED_AT" displayName="派工时间" name="dispatchedAt" propId="10" stdDataType="datetime"
-                        stdSqlType="DATETIME" i18n-en:displayName="Dispatched At"/>
+                <column code="DISPATCHED_AT" displayName="派工时间" name="dispatchedAt" propId="10" stdDataType="timestamp"
+                        stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Dispatched At"/>
                 <column code="MATERIAL_AVAILABLE" displayName="物料齐套" name="materialAvailable" propId="11"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Material Available"/>
                 <column code="OPERATOR_AVAILABLE" displayName="操作工可用" name="operatorAvailable" propId="12"
@@ -514,6 +521,8 @@
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
+                <column code="NAME" name="name" precision="200" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        tagSet="disp"/>
             </columns>
         </entity>
     </entities>

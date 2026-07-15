@@ -7,11 +7,11 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="parentName" label="父级科目"/>
+                <col id="parentId" label="父级科目"/>
                 <col id="subjectClass" mandatory="true" sortable="true"/>
                 <col id="direction" mandatory="true" sortable="true"/>
                 <col id="balanceType" sortable="true"/>
-                <col id="currencyName" label="核算币种"/>
+                <col id="currencyId" label="核算币种"/>
                 <col id="isAuxiliaryPartner" sortable="true"/>
                 <col id="isAuxiliaryDepartment" sortable="true"/>
                 <col id="isAuxiliaryProject" sortable="true"/>

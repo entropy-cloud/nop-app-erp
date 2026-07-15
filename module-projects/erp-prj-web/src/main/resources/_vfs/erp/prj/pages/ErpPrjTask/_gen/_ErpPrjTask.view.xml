@@ -83,18 +83,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--项目名称-->
-                <col id="projectName"/>
-
-                <!--父任务名称-->
-                <col id="parentTaskName"/>
-
-                <!--负责人名称-->
-                <col id="assigneeName"/>
-
-                <!--依赖任务名称-->
-                <col id="dependsOnTaskName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -113,9 +101,7 @@
  sortNum[排序号] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] projectName[项目名称]
- parentTaskName[父任务名称] assigneeName[负责人名称]
- dependsOnTaskName[依赖任务名称] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-任务" i18n-en:title="Add Task" x:prototype="edit"/>

@@ -1,0 +1,4 @@
+_chgType,ID,CODE,TITLE,CONTENT,CATEGORY_ID,IS_PUBLISHED,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,9627,@var:ErpCsKnowledgeBase@code,登录密码重置指南,用户忘记密码时可通过邮箱重置,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9628,@var:ErpCsKnowledgeBase@code_1,密码安全策略,密码需包含大小写字母和数字,,true,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9857,@var:ErpCsKnowledgeBase@code_2,密码草案未发布,此文章尚未发布,,false,,@var:ErpCsKnowledgeBase@delVersion,0,autotest-ref,*,autotest-ref,*

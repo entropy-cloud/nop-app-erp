@@ -6,10 +6,10 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="contractVersionId" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="provider" mandatory="true" sortable="true"/>
-                <col id="providerRequestName" label="提供商请求"/>
+                <col id="providerRequestId" label="提供商请求"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="signers" sortable="true"/>
                 <col id="signingDeadline" sortable="true"/>

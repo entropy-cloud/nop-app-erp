@@ -22,14 +22,13 @@
   "updateTime": "2000-01-01 14:00:00",
   "approvedBy": "",
   "approvedAt": "2000-01-01 14:00:00",
-  "exchangeRate": "",
-  "amountSource": "",
-  "amountFunctional": "",
+  "exchangeRate": 0.0,
+  "amountSource": 0.0,
+  "amountFunctional": 0.0,
   "project": null,
   "lines": null,
   "currency": null,
+  "currency.name": "",
   "org": null,
-  "projectName": "",
-  "orgName": "",
-  "currencyName": ""
+  "org.name": ""
 }

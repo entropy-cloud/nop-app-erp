@@ -302,16 +302,16 @@
         }
 
 
-        private java.time.LocalDateTime _postedAt;
+        private java.sql.Timestamp _postedAt;
 
     
         @PropMeta(propId=19)
     
-        public java.time.LocalDateTime getPostedAt(){
+        public java.sql.Timestamp getPostedAt(){
             return _postedAt;
         }
 
-        public void setPostedAt(java.time.LocalDateTime value){
+        public void setPostedAt(java.sql.Timestamp value){
             this._postedAt = value;
         }
 
@@ -344,30 +344,30 @@
         }
 
 
-        private String _amountSource;
+        private java.math.BigDecimal _amountSource;
 
     
         @PropMeta(propId=22)
     
-        public String getAmountSource(){
+        public java.math.BigDecimal getAmountSource(){
             return _amountSource;
         }
 
-        public void setAmountSource(String value){
+        public void setAmountSource(java.math.BigDecimal value){
             this._amountSource = value;
         }
 
 
-        private String _amountFunctional;
+        private java.math.BigDecimal _amountFunctional;
 
     
         @PropMeta(propId=23)
     
-        public String getAmountFunctional(){
+        public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
         }
 
-        public void setAmountFunctional(String value){
+        public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
         }
 
@@ -470,89 +470,17 @@
         }
 
 
-        private java.time.LocalDateTime _approvedAt;
+        private java.sql.Timestamp _approvedAt;
 
     
         @PropMeta(propId=201)
     
-        public java.time.LocalDateTime getApprovedAt(){
+        public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
         }
 
-        public void setApprovedAt(java.time.LocalDateTime value){
+        public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
-        }
-
-
-        private String _orgName;
-
-    
-        public String getOrgName(){
-            return _orgName;
-        }
-
-        public void setOrgName(String value){
-            this._orgName = value;
-        }
-
-
-        private String _workOrderNo;
-
-    
-        public String getWorkOrderNo(){
-            return _workOrderNo;
-        }
-
-        public void setWorkOrderNo(String value){
-            this._workOrderNo = value;
-        }
-
-
-        private String _supplierName;
-
-    
-        public String getSupplierName(){
-            return _supplierName;
-        }
-
-        public void setSupplierName(String value){
-            this._supplierName = value;
-        }
-
-
-        private String _workcenterName;
-
-    
-        public String getWorkcenterName(){
-            return _workcenterName;
-        }
-
-        public void setWorkcenterName(String value){
-            this._workcenterName = value;
-        }
-
-
-        private String _productName;
-
-    
-        public String getProductName(){
-            return _productName;
-        }
-
-        public void setProductName(String value){
-            this._productName = value;
-        }
-
-
-        private String _currencyName;
-
-    
-        public String getCurrencyName(){
-            return _currencyName;
-        }
-
-        public void setCurrencyName(String value){
-            this._currencyName = value;
         }
 
 

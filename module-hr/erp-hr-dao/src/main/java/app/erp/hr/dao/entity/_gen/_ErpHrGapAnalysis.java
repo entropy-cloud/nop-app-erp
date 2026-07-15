@@ -53,7 +53,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
     public static final String PROP_NAME_assessmentDate = "assessmentDate";
     public static final int PROP_ID_assessmentDate = 8;
     
-    /* 分析日期: ANALYSIS_DATE DATETIME */
+    /* 分析日期: ANALYSIS_DATE DATE */
     public static final String PROP_NAME_analysisDate = "analysisDate";
     public static final int PROP_ID_analysisDate = 9;
     
@@ -172,7 +172,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
     private java.time.LocalDate _assessmentDate;
     
     /* 分析日期: ANALYSIS_DATE */
-    private java.time.LocalDateTime _analysisDate;
+    private java.time.LocalDate _analysisDate;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -403,9 +403,9 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
             }
         
             case PROP_ID_analysisDate:{
-               java.time.LocalDateTime typedValue = null;
+               java.time.LocalDate typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toLocalDate(value,
                        err-> newTypeConversionError(PROP_NAME_analysisDate));
                }
                setAnalysisDate(typedValue);
@@ -539,7 +539,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
         
             case PROP_ID_analysisDate:{
                onInitProp(propId);
-               this._analysisDate = (java.time.LocalDateTime)value;
+               this._analysisDate = (java.time.LocalDate)value;
                
                break;
             }
@@ -747,7 +747,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
     /**
      * 分析日期: ANALYSIS_DATE
      */
-    public final java.time.LocalDateTime getAnalysisDate(){
+    public final java.time.LocalDate getAnalysisDate(){
          onPropGet(PROP_ID_analysisDate);
          return _analysisDate;
     }
@@ -755,7 +755,7 @@ public class _ErpHrGapAnalysis extends DynamicOrmEntity{
     /**
      * 分析日期: ANALYSIS_DATE
      */
-    public final void setAnalysisDate(java.time.LocalDateTime value){
+    public final void setAnalysisDate(java.time.LocalDate value){
         if(onPropSet(PROP_ID_analysisDate,value)){
             this._analysisDate = value;
             internalClearRefs(PROP_ID_analysisDate);

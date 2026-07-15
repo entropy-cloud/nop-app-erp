@@ -1,0 +1,13 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,100,97,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_8,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,105,102,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_9,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,110,107,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_10,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,115,112,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_11,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,60,57,DEPRECIATION,@var:ErpFinVoucherBillR@billCode,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,65,62,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_1,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,70,67,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_2,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,75,72,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_3,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,80,77,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_4,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,85,82,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_5,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,90,87,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_6,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*
+A,95,92,DEPRECIATION,@var:ErpFinVoucherBillR@billCode_7,,DEPRECIATION,@var:ErpFinVoucherBillR@delVersion_9,0,autotest-ref,*,autotest-ref,*

@@ -32,11 +32,19 @@
   "move": null,
   "moveLine": null,
   "material": null,
+  "material.name": "",
   "sku": null,
+  "sku.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "location": null,
+  "location.name": "",
   "currency": null,
+  "currency.name": "",
   "org": null,
+  "org.name": "",
   "acctSchema": null,
-  "owner": null
+  "acctSchema.name": "",
+  "owner": null,
+  "owner.name": ""
 }

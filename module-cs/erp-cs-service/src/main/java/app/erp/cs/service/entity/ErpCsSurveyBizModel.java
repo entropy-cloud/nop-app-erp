@@ -24,10 +24,6 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.lt;
 import io.nop.api.core.time.CoreMetrics;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * 满意度调查 BizModel。权威：{@code docs/design/customer-service/csat.md}、
@@ -75,7 +71,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         survey.setSurveyChannel(ErpCsConstants.SURVEY_CHANNEL_PORTAL);
         int delayHours = ErpCsConfigs.getSurveySendDelayHours();
         // delay=0 立即发送（surveySentAt=now，状态 SENT）；delay>0 留空（状态 PENDING，待 nop-job 延迟发送）
-        survey.setSurveySentAt(delayHours <= 0 ? CoreMetrics.currentDateTime() : null);
+        survey.setSurveySentAt(delayHours <= 0 ? CoreMetrics.currentTimestamp() : null);
         saveEntity(survey, null, context);
         return survey;
     }
@@ -112,7 +108,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         survey.setNpsScore(npsScore);
         survey.setCesScore(cesScore);
         survey.setComment(comment);
-        survey.setRespondedAt(CoreMetrics.currentDateTime());
+        survey.setRespondedAt(CoreMetrics.currentTimestamp());
         // NPS 分类（派生，不持久化——ORM 无分类列）
         updateEntity(survey, null, context);
         return survey;
@@ -172,25 +168,5 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCsSurvey.class)
-    public List<String> orgName(@ContextSource List<ErpCsSurvey> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsSurvey row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCsSurvey.class)
-    public List<String> ticketCode(@ContextSource List<ErpCsSurvey> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("ticket"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCsSurvey row : rows) {
-            result.add(row.orm_attached() && row.getTicket() != null ? row.getTicket().getCode() : null);
-        }
-        return result;
-    }
 
 }

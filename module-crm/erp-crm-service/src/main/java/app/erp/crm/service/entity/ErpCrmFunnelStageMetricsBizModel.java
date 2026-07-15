@@ -12,10 +12,6 @@ import io.nop.core.context.IServiceContext;
 
 import java.util.Comparator;
 import java.util.List;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.ContextSource;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * 漏斗阶段明细 BizModel。{@link #getStageMetrics} 按 funnelId 查阶段明细（按 stageOrder 升序）。
@@ -45,25 +41,5 @@ public class ErpCrmFunnelStageMetricsBizModel extends CrudBizModel<ErpCrmFunnelS
     }
 
     
-    // ---------- 高价值外键名称解析（机制 D：xmeta 派生 *Name/*Code 字段 + @BizLoader 批量加载防 N+1）----------
-    @BizLoader(forType = ErpCrmFunnelStageMetrics.class)
-    public List<String> funnelName(@ContextSource List<ErpCrmFunnelStageMetrics> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("funnel"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmFunnelStageMetrics row : rows) {
-            result.add(row.orm_attached() && row.getFunnel() != null ? row.getFunnel().getFunnelName() : null);
-        }
-        return result;
-    }
-
-    @BizLoader(forType = ErpCrmFunnelStageMetrics.class)
-    public List<String> orgName(@ContextSource List<ErpCrmFunnelStageMetrics> rows) {
-        orm().batchLoadProps(rows, Collections.singleton("org"));
-        List<String> result = new ArrayList<>(rows.size());
-        for (ErpCrmFunnelStageMetrics row : rows) {
-            result.add(row.orm_attached() && row.getOrg() != null ? row.getOrg().getName() : null);
-        }
-        return result;
-    }
 
 }

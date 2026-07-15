@@ -125,16 +125,16 @@
         }
 
 
-        private java.time.LocalDateTime _validUntil;
+        private java.sql.Timestamp _validUntil;
 
     
         @PropMeta(propId=9)
     
-        public java.time.LocalDateTime getValidUntil(){
+        public java.sql.Timestamp getValidUntil(){
             return _validUntil;
         }
 
-        public void setValidUntil(java.time.LocalDateTime value){
+        public void setValidUntil(java.sql.Timestamp value){
             this._validUntil = value;
         }
 

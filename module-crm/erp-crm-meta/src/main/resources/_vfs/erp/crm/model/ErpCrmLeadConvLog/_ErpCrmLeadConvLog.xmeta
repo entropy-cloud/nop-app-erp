@@ -39,9 +39,9 @@
               sortable="true" insertable="true" updatable="true" ext:relation="toStage">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="changedAt" displayName="变更时间" propId="6" i18n-en:displayName="Changed At" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDateTime"/>
+        <prop name="changedAt" displayName="变更时间" propId="6" i18n-en:displayName="Changed At" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
         </prop>
         <prop name="changedBy" displayName="变更人" propId="7" i18n-en:displayName="Changed By" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -91,9 +91,12 @@
             <schema bizObjName="ErpCrmStage"/>
         </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
-              ext:joinLeftProp="orgId" ext:joinRightProp="id" biz:moduleId="erp/md" insertable="false" updatable="false"
-              lazy="true">
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
         </prop>
     </props>
 </meta>

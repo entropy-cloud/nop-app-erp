@@ -18,10 +18,9 @@
   "updateTime": "2000-01-01 14:00:00",
   "forecast": null,
   "material": null,
+  "material.name": "",
   "warehouse": null,
+  "warehouse.name": "",
   "uoM": null,
-  "forecastCode": "",
-  "materialName": "",
-  "warehouseName": "",
-  "uomName": ""
+  "uoM.name": ""
 }

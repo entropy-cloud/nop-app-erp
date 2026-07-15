@@ -195,7 +195,7 @@ public class ErpPrjProjectSettlementProcessor {
         settlement.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
         settlement.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
         settlement.setApprovedBy(resolveUserId(context));
-        settlement.setApprovedAt(CoreMetrics.currentDateTime());
+        settlement.setApprovedAt(CoreMetrics.currentTimestamp());
     }
 
     protected void doReject(ErpPrjProjectSettlement settlement, IServiceContext context) {
@@ -210,7 +210,7 @@ public class ErpPrjProjectSettlementProcessor {
         boolean posted = postingDispatcher.tryPost(settlement);
         if (posted) {
             settlement.setPosted(true);
-            settlement.setPostedAt(CoreMetrics.currentDateTime());
+            settlement.setPostedAt(CoreMetrics.currentTimestamp());
             settlement.setPostedBy(resolveUserId(context));
         }
     }
@@ -235,7 +235,7 @@ public class ErpPrjProjectSettlementProcessor {
             line.setLineType(ErpPrjConstants.SETTLEMENT_LINE_TYPE_COST);
             line.setSourceBillType(ErpPrjConstants.SOURCE_BILL_TYPE_COST_COLLECTION);
             line.setSourceBillCode(cc.getCode());
-            line.setAmount(parseAmount(cc.getAmountFunctional()));
+            line.setAmount(nz(cc.getAmountFunctional()));
             lineDao.saveEntity(line);
         }
     }

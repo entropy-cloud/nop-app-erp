@@ -33,11 +33,11 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     public static final String PROP_NAME_constraintType = "constraintType";
     public static final int PROP_ID_constraintType = 3;
     
-    /* 开始时间: START_TIME DATETIME */
+    /* 开始时间: START_TIME TIMESTAMP */
     public static final String PROP_NAME_startTime = "startTime";
     public static final int PROP_ID_startTime = 4;
     
-    /* 结束时间: END_TIME DATETIME */
+    /* 结束时间: END_TIME TIMESTAMP */
     public static final String PROP_NAME_endTime = "endTime";
     public static final int PROP_ID_endTime = 5;
     
@@ -147,10 +147,10 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     private java.lang.String _constraintType;
     
     /* 开始时间: START_TIME */
-    private java.time.LocalDateTime _startTime;
+    private java.sql.Timestamp _startTime;
     
     /* 结束时间: END_TIME */
-    private java.time.LocalDateTime _endTime;
+    private java.sql.Timestamp _endTime;
     
     /* 约束描述: DESCRIPTION */
     private java.lang.String _description;
@@ -337,9 +337,9 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
             }
         
             case PROP_ID_startTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_startTime));
                }
                setStartTime(typedValue);
@@ -347,9 +347,9 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
             }
         
             case PROP_ID_endTime:{
-               java.time.LocalDateTime typedValue = null;
+               java.sql.Timestamp typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDateTime(value,
+                   typedValue = ConvertHelper.toTimestamp(value,
                        err-> newTypeConversionError(PROP_NAME_endTime));
                }
                setEndTime(typedValue);
@@ -478,14 +478,14 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
         
             case PROP_ID_startTime:{
                onInitProp(propId);
-               this._startTime = (java.time.LocalDateTime)value;
+               this._startTime = (java.sql.Timestamp)value;
                
                break;
             }
         
             case PROP_ID_endTime:{
                onInitProp(propId);
-               this._endTime = (java.time.LocalDateTime)value;
+               this._endTime = (java.sql.Timestamp)value;
                
                break;
             }
@@ -619,7 +619,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     /**
      * 开始时间: START_TIME
      */
-    public final java.time.LocalDateTime getStartTime(){
+    public final java.sql.Timestamp getStartTime(){
          onPropGet(PROP_ID_startTime);
          return _startTime;
     }
@@ -627,7 +627,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     /**
      * 开始时间: START_TIME
      */
-    public final void setStartTime(java.time.LocalDateTime value){
+    public final void setStartTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_startTime,value)){
             this._startTime = value;
             internalClearRefs(PROP_ID_startTime);
@@ -638,7 +638,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     /**
      * 结束时间: END_TIME
      */
-    public final java.time.LocalDateTime getEndTime(){
+    public final java.sql.Timestamp getEndTime(){
          onPropGet(PROP_ID_endTime);
          return _endTime;
     }
@@ -646,7 +646,7 @@ public class _ErpApsConstraint extends DynamicOrmEntity{
     /**
      * 结束时间: END_TIME
      */
-    public final void setEndTime(java.time.LocalDateTime value){
+    public final void setEndTime(java.sql.Timestamp value){
         if(onPropSet(PROP_ID_endTime,value)){
             this._endTime = value;
             internalClearRefs(PROP_ID_endTime);

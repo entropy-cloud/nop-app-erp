@@ -28,8 +28,8 @@
   "updateTime": "2000-01-01 14:00:00",
   "remark": "",
   "parent": null,
+  "parent.name": "",
   "currency": null,
-  "children": null,
-  "parentName": "",
-  "currencyName": ""
+  "currency.name": "",
+  "children": null
 }

@@ -7,14 +7,14 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="forecastId" ui:number="true" sortable="true"/>
-                <col id="orgName" label="业务组织"/>
+                <col id="orgId" label="业务组织"/>
                 <col id="leadCode" label="商机"/>
                 <col id="probability" ui:number="true" sortable="true"/>
                 <col id="expectedRevenue" ui:number="true" sortable="true"/>
                 <col id="weightedRevenue" ui:number="true" sortable="true"/>
                 <col id="forecastCategory" sortable="true"/>
                 <col id="includedInCommit" sortable="true"/>
-                <col id="stageName" sortable="true"/>
+                <col id="stageId" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

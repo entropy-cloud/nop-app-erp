@@ -16,8 +16,7 @@
   "updateTime": "2000-01-01 14:00:00",
   "subcontractOrder": null,
   "material": null,
+  "material.name": "",
   "uoM": null,
-  "subcontractOrderCode": "",
-  "materialName": "",
-  "uomName": ""
+  "uoM.name": ""
 }

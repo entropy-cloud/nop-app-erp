@@ -65,21 +65,6 @@
 
                 <!--在建工程科目-->
                 <col id="cipSubjectId" ui:number="true" sortable="true"/>
-
-                <!--折旧科目-->
-                <col id="subjectName"/>
-
-                <!--折旧费用科目-->
-                <col id="depreciationSubjectName"/>
-
-                <!--费用科目-->
-                <col id="expenseSubjectName"/>
-
-                <!--处置损益科目-->
-                <col id="disposalGainLossSubjectName"/>
-
-                <!--在建工程科目-->
-                <col id="cipSubjectName"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -95,9 +80,7 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
  remark[备注] disposalGainLossSubjectId[清理损益科目]
- cipSubjectId[在建工程科目] subjectName[折旧科目]
- depreciationSubjectName[折旧费用科目] expenseSubjectName[费用科目]
- disposalGainLossSubjectName[处置损益科目] cipSubjectName[在建工程科目]
+ cipSubjectId[在建工程科目] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产类别" i18n-en:title="Add Asset Category" x:prototype="edit"/>
