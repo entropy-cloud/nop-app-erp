@@ -133,9 +133,10 @@ Exit Criteria:
 ### 像素级截图基线 diff（toHaveScreenshot 全页比对）
 
 - Classification: `optimization candidate`
+- **RELEASED**: 经 plan `2026-07-17-2010-2`（像素级截图视觉回归基线层）整体承接完成。Phase 1 Explore 在 finance（参数化，含 echarts）+ master-data（非参数化）× 4 变体实测跨 3 次新鲜浏览器上下文全部 0 diff pixels（`maxDiffPixels: 0` 最严格口径）证明 macOS + Chrome + 系统字体跨次 pixel-exact；Phase 2 落地 `assertSnapshot` 原语（字体固化 + canonical mask [header, canvas] + 1% maxDiffPixelRatio 容差 + echarts 动画末态等待 networkidle+1500ms）+ 10 看板 + 6 代表性报表（覆盖参数化/零参/日期参/字符串参四形态）`toHaveScreenshot` 基线 + 跨 3 次新鲜运行全绿 + visual 全套件 50/50 0 回归。
 - Why Not Blocking Closure: 跨环境渲染稳定性（字体/无头/CI 差异）成本高，AMIS 布局为框架控制非应用控制。本期 DOM 内容+结构断言（数值渲染进 DOM + echarts canvas + 表格行）捕获 adaptor/渲染路径回归，信号优于像素 diff。
-- Successor Required: `yes`
-- Trigger Condition: 当 CI 无头渲染稳定性可接受（字体固化 + 差异可控）且产品要求像素级一致性（如品牌看板视觉验收）时。
+- Successor Required: `yes`（已满足）
+- Trigger Condition: 当 CI 无头渲染稳定性可接受（字体固化 + 差异可控）且产品要求像素级一致性（如品牌看板视觉验收）时。（已满足，2010-2 落地）
 
 ### 跨浏览器矩阵（Firefox/WebKit/移动视口）
 

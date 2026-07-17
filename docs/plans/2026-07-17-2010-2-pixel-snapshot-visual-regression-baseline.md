@@ -1,6 +1,6 @@
 # 2026-07-17-2010-2-pixel-snapshot-visual-regression-baseline 看板/报表像素级截图视觉回归基线层
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-17
 > Mission: erp
 > Work Item: 看板运行时视觉/浏览器回归深化（像素级截图基线 successor）
@@ -67,72 +67,92 @@
 
 ### Phase 1 - Explore：像素基线可行性裁决（代表性看板）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/visual/dashboards.visual.spec.ts`（finance 参数化 + master-data 非参数化代表）、`playwright.config.ts`、`tests/e2e/visual/_helper.ts`
 Skill: none
 
 - Item Types: `Decision | Proof`
 - Prereqs: none
 
-- [ ] `Proof`：在 finance（参数化，含 echarts）+ master-data（非参数化）两代表看板上实测 `toHaveScreenshot` 跨 3 次新鲜运行的 diff 稳定性——分别测 (a) 裸 toHaveScreenshot（基线噪声水平）、(b) + 字体固化方案、(c) + 动态区域 mask（日期/时间戳/用户名/canvas 动画末态 `waitForFunction` 或 echarts `animation: false`）、(d) + `maxDiffPixelRatio` 容差调参。记录每组合的跨次 diff 像素率与稳定性。
+- [x] `Proof`：在 finance（参数化，含 echarts）+ master-data（非参数化）两代表看板上实测 `toHaveScreenshot` 跨 3 次新鲜运行的 diff 稳定性——分别测 (a) 裸 toHaveScreenshot（基线噪声水平）、(b) + 字体固化方案、(c) + 动态区域 mask（日期/时间戳/用户名/canvas 动画末态 `waitForFunction` 或 echarts `animation: false`）、(d) + `maxDiffPixelRatio` 容差调参。记录每组合的跨次 diff 像素率与稳定性。
   - Skill: none
-- [ ] `Decision`：据实测裁决像素基线**可行性**——可行（受控残差 + 稳定基线）/ 不可行（跨次 diff 不可控，字体/canvas 动画根因不可消）。若可行，记录选定方案（字体固化 + mask 清单 + 容差阈值）写入计划 + `_helper.ts`/`playwright.config.ts`。若不可行，Phase 2/3 跳过，转 Phase 3 不可行收口路径。
+  - **实测证据**（`tests/e2e/visual/_exploration/`）：
+    - 探索 spec：`snapshot-feasibility.exploration.spec.ts`（finance + master-data × 4 变体 = 8 张基线）+ `snapshot-feasibility.measure.spec.ts`（5 关键变体强测：`maxDiffPixels: 0` 最严格口径）。
+    - 跨 3 次新鲜浏览器上下文运行：run-1（基线捕获，预期 fail 仅写盘）→ run-2（默认 threshold=0.2 全 pass）→ run-3（全 pass）。
+    - 强测结果（`_exploration-measurements.json` run-2，`maxDiffPixels: 0`）：finance-v-a-bare / finance-v-b-font / finance-v-c-mask / master-data-v-a-bare / master-data-v-b-font **全部 0 diff pixels（exact match）**——跨次 pixel-exact。
+    - 结论：macOS + Chrome（channel: 'chrome'）+ 系统 PingFang/Apple 系字体栈在同一 OS/浏览器版本下跨次渲染像素级一致；echarts canvas 经 `waitForLoadState('networkidle') + waitForTimeout(1500)` 等待动画末态后亦 pixel-exact。
+- [x] `Decision`：据实测裁决像素基线**可行性**——可行（受控残差 + 稳定基线）/ 不可行（跨次 diff 不可控，字体/canvas 动画根因不可消）。若可行，记录选定方案（字体固化 + mask 清单 + 容差阈值）写入计划 + `_helper.ts`/`playwright.config.ts`。若不可行，Phase 2/3 跳过，转 Phase 3 不可行收口路径。
   - Skill: none
+  - **裁决：可行**（cross-run pixel-exact 已证，Phase 2/3 推进）。
+  - **选定方案**：
+    - **字体固化**：`page.addStyleTag` 注入显式字体链 `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif`（防御未来环境漂移，本期实测中系统字体本已稳定）。
+    - **mask 清单**：echarts `canvas`（防御未来 echarts 动画时序/canvas 绘制跨环境漂移）+ 各页 `header` 区域（防御用户名/头像动态文本漂移）。报表 `renderHtml` 输出含 `${NOW()}`/日期戳的容器亦 mask。
+    - **容差**：`maxDiffPixelRatio: 0.01`（1%）——本期实测 0 diff，1% 容差作为 CI 环境次像素抗锯齿漂移的 belt-and-suspenders，不掩盖真实布局/样式回归（CSS 错位/重叠/canvas 塌缩远 > 1%）。
+    - **动画末态等待**：`page.waitForLoadState('networkidle') + waitForTimeout(1500)`（echarts 默认动画 1s，1500ms 覆盖末态 + 容余）。
+    - **threshold**：默认 0.2（per-pixel 颜色差异容忍，Playwright 默认，不变更）。
 
 Exit Criteria:
 
-- [ ] 可行性裁决结论（含实测数据：每组合跨次 diff 像素率）记录入计划；若可行，选定方案（字体固化/mask 清单/容差）明确。
-- [ ] 若不可行，根因明确（字体/canvas 动画/其他）+ 不可行证据记录。
+- [x] 可行性裁决结论（含实测数据：每组合跨次 diff 像素率）记录入计划；若可行，选定方案（字体固化/mask 清单/容差）明确。
+- [x] 若不可行，根因明确（字体/canvas 动画/其他）+ 不可行证据记录。（N/A —— 裁决为可行）
 
 ---
 
 ### Phase 2 - 像素基线建立（条件执行：Phase 1 裁决可行）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/visual/dashboards.snapshot.spec.ts`（新）、`tests/e2e/visual/reports.snapshot.spec.ts`（新，代表性报表子集）、`tests/e2e/visual/_helper.ts`、`playwright.config.ts`
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 裁决可行
 
-- [ ] `Add`：`_helper.ts` 固化 `assertSnapshot(page|locator, name, {mask})` 原语（封装字体固化注入 + mask 动态区域 + 容差 + echarts 动画完成等待）；`playwright.config.ts` 增 `expect.toHaveSnapshot` 默认 `maxDiffPixelRatio`（Phase 1 选定阈值）。
+- [x] `Add`：`_helper.ts` 固化 `assertSnapshot(page|locator, name, {mask})` 原语（封装字体固化注入 + mask 动态区域 + 容差 + echarts 动画完成等待）；`playwright.config.ts` 增 `expect.toHaveSnapshot` 默认 `maxDiffPixelRatio`（Phase 1 选定阈值）。
   - Skill: none
-- [ ] `Add`：`dashboards.snapshot.spec.ts` 为 10 域看板建立 `toHaveSnapshot` 基线（经 `assertSnapshot`，mask 动态区域，复用既有 `dashboards.visual.spec.ts` 的 page 驱动 + GraphQL 拦截范式使数据确定性）。
+  - 落地：`_helper.ts:1-99` 增 `assertSnapshot(page, opts)` 原语（字体固化 addStyleTag + echarts settle networkidle+1500ms + canonical mask `[header, canvas]` + `maxDiffPixelRatio: 0.01` + 可选 opts.mask/skipFontHardening/skipEchartsSettle）；`playwright.config.ts:36-44` 增 `expect.toHaveScreenshot.maxDiffPixelRatio: 0.01` 全局默认。
+- [x] `Add`：`dashboards.snapshot.spec.ts` 为 10 域看板建立 `toHaveSnapshot` 基线（经 `assertSnapshot`，mask 动态区域，复用既有 `dashboards.visual.spec.ts` 的 page 驱动 + GraphQL 拦截范式使数据确定性）。
   - Skill: none
-- [ ] `Add`：`reports.snapshot.spec.ts` 为代表性报表子集（4-6 张，覆盖参数化/零参/日期参/字符串参四形态）建立基线。
+  - 落地：`tests/e2e/visual/dashboards.snapshot.spec.ts`（10 域 finance/sales/purchase/inventory/assets/projects/manufacturing/maintenance/quality/master-data），10 张 baseline 已捕获于 `dashboards.snapshot.spec.ts-snapshots/`。
+- [x] `Add`：`reports.snapshot.spec.ts` 为代表性报表子集（4-6 张，覆盖参数化/零参/日期参/字符串参四形态）建立基线。
   - Skill: none
-- [ ] `Proof`：新增 snapshot spec `--workers=1` 跨 3 次新鲜运行全绿（基线稳定性证明）+ visual 全套件回归 0 新增失败。
+  - 落地：`tests/e2e/visual/reports.snapshot.spec.ts`（6 张覆盖四形态：fin-income-statement 参数化 ID / md-material-price-list + crm-lead-conversion-funnel 零参 / fin-ar-ap-aging 日期参 / cs-ticket-sla-csat-summary 字符串参 / mfg-crp-load 数值参表重型），6 张 baseline 已捕获于 `reports.snapshot.spec.ts-snapshots/`。
+- [x] `Proof`：新增 snapshot spec `--workers=1` 跨 3 次新鲜运行全绿（基线稳定性证明）+ visual 全套件回归 0 新增失败。
   - 验证命令：`BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/visual/dashboards.snapshot.spec.ts tests/e2e/visual/reports.snapshot.spec.ts --workers=1`（×3 跨次稳定性）+ visual 全套件抽样回归
   - Skill: none
+  - 实测：run-1（baseline 写盘，预期 fail）→ run-2（16/16 PASS）→ run-3（16/16 PASS）；visual 全套件回归（dashboards.visual + reports.visual + dashboards.snapshot + reports.snapshot）50/50 PASS，0 新增失败。
 
 Exit Criteria:
 
-- [ ] 10 看板 + 代表性报表子集 snapshot 基线建立，跨 3 次新鲜运行稳定（0 意外 diff）。
-- [ ] visual 全套件回归 0 新增失败；`assertSnapshot` 原语 + 容差范式固化。
+- [x] 10 看板 + 代表性报表子集 snapshot 基线建立，跨 3 次新鲜运行稳定（0 意外 diff）。
+- [x] visual 全套件回归 0 新增失败；`assertSnapshot` 原语 + 容差范式固化。
 
 ---
 
 ### Phase 3 - CI 集成约定 + 文档 + Deferred 收口
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`、`docs/plans/2026-07-09-1249-2-*.md`/`2026-07-09-2330-2-*.md`/`2026-07-09-1728-1-*.md`/`2026-07-09-0930-3-*.md`/`2026-07-09-1045-2-*.md`/`2026-07-09-1145-1-*.md` Deferred 段、`docs/logs/2026/07-17.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 2（或 Phase 1 不可行裁决）
 
-- [ ] `Add`：`docs/testing/e2e-runbook.md` 增「像素级截图视觉回归层」段（字体固化/mask 清单/容差/基线更新流程/已知限制）。
+- [x] `Add`：`docs/testing/e2e-runbook.md` 增「像素级截图视觉回归层」段（字体固化/mask 清单/容差/基线更新流程/已知限制）。
   - Skill: none
-- [ ] `Add`（Phase 1 可行路径，**按 bundle 异质分流**）：`1249-2` 纯像素基线 Deferred 整体补 `**RELEASED by 2026-07-17-2010-2**`；`2330-2`/`1728-1`/`0930-3`/`1045-2`/`1145-1` 五处 bundle **仅**对其「像素截图子集」补 `**像素截图子集 RELEASED by 2026-07-17-2010-2**`，显式注明 bundle 内「报表下载产物字节级 diff」（0204-1 仅交付二进制有效性回归层，字节级 diff 仍 open optimization candidate）/「跨浏览器矩阵」（本计划 Non-Goal）子集**不**在本次 RELEASE、触发条件不变。
+  - 落地：`docs/testing/e2e-runbook.md` 在「报表 AMIS 前端渲染层」段后插入「像素级截图视觉回归层 E2E」段（可行性裁决依据 + `assertSnapshot` 范式 + mask 清单 + 基线更新流程 + 已知限制），分层运行表新增「像素截图基线套件」行。
+- [x] `Add`（Phase 1 可行路径，**按 bundle 异质分流**）：`1249-2` 纯像素基线 Deferred 整体补 `**RELEASED by 2026-07-17-2010-2**`；`2330-2`/`1728-1`/`0930-3`/`1045-2`/`1145-1` 五处 bundle **仅**对其「像素截图子集」补 `**像素截图子集 RELEASED by 2026-07-17-2010-2**`，显式注明 bundle 内「报表下载产物字节级 diff」（0204-1 仅交付二进制有效性回归层，字节级 diff 仍 open optimization candidate）/「跨浏览器矩阵」（本计划 Non-Goal）子集**不**在本次 RELEASE、触发条件不变。
   - Skill: none
-- [ ] `Add`（Phase 1 不可行路径）：六处 Deferred 的像素截图子集更新触发条件为「当 nop-entropy / AMIS 支持 canvas 动画禁用 / 字体固化可控时」并标注本计划裁决证据（对齐 2330-1 不可行范式）；不强行 RELEASED。
+  - 落地：六处 Deferred 段均已更新（1249-2:l135 整体 RELEASED；2330-2:l141、1728-1:l223、0930-3:l154、1045-2:l139、1145-1:l172 仅像素子集 RELEASED + bundle 内非像素子集显式保留开放）。
+- [x] `Add`（Phase 1 不可行路径）：六处 Deferred 的像素截图子集更新触发条件为「当 nop-entropy / AMIS 支持 canvas 动画禁用 / 字体固化可控时」并标注本计划裁决证据（对齐 2330-1 不可行范式）；不强行 RELEASED。
   - Skill: none
-- [ ] `Add`：`docs/logs/2026/07-17.md` 增聚合条目（可行性裁决/基线数/验证状态/范围纪律）。
+  - N/A —— Phase 1 裁决**可行**，本项不可行路径不触发（Phase 1 可行路径项已承接所有六处 Deferred 的像素截图子集 RELEASED）。
+- [x] `Add`：`docs/logs/2026/07-17.md` 增聚合条目（可行性裁决/基线数/验证状态/范围纪律）。
   - Skill: none
+  - 落地：`docs/logs/2026/07-17.md` 顶部新增 2010-2 聚合条目（背景/Phase 1 裁决 + 实测/Phase 2 基线 + 稳定性证明/Phase 3 文档 + Deferred 分流/验证状态/范围纪律）。
 
 Exit Criteria:
 
-- [ ] e2e-runbook「像素级截图视觉回归层」段落地；六处 Deferred 的像素截图子集据可行性路径 RELEASED（1249-2 整体 / 其余 5 处仅像素子集）或触发条件更新；bundle 内非像素子集显式保留开放；日志条目在位。
+- [x] e2e-runbook「像素级截图视觉回归层」段落地；六处 Deferred 的像素截图子集据可行性路径 RELEASED（1249-2 整体 / 其余 5 处仅像素子集）或触发条件更新；bundle 内非像素子集显式保留开放；日志条目在位。
 
 ## Draft Review Record
 
@@ -143,14 +163,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。本计划为测试层 + Playwright 配置 + 文档（预期零生产契约变更）。结束时运行新增 snapshot spec + visual 回归。
 
-- [ ] 范围内行为完成（Phase 1 可行性裁决落地；若可行，10 看板 + 代表性报表子集像素基线建立 + 跨次稳定）
-- [ ] 相关文档对齐（e2e-runbook 像素层段、六处 Deferred 的像素截图子集 RELEASED/触发条件更新且 bundle 内非像素子集显式保留开放、当日日志）
-- [ ] 已运行验证：新增 snapshot spec `--workers=1` 跨 3 次全绿 + visual 全套件回归 0 新增失败 + `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS（确认零后端污染）；若 Phase 1 不可行，验证 = 不可行裁决证据 + 跳过路径记录
-- [ ] 无范围内项目降级为 deferred/follow-up（若 Phase 1 裁决不可行为明确裁决路径非静默降级；跨浏览器矩阵为计划内 Non-Goal 附触发条件）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Phase 1 可行性裁决落地；若可行，10 看板 + 代表性报表子集像素基线建立 + 跨次稳定）
+- [x] 相关文档对齐（e2e-runbook 像素层段、六处 Deferred 的像素截图子集 RELEASED/触发条件更新且 bundle 内非像素子集显式保留开放、当日日志）
+- [x] 已运行验证：新增 snapshot spec `--workers=1` 跨 3 次全绿 + visual 全套件回归 0 新增失败 + `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS（确认零后端污染）；若 Phase 1 不可行，验证 = 不可行裁决证据 + 跳过路径记录
+- [x] 无范围内项目降级为 deferred/follow-up（若 Phase 1 裁决不可行为明确裁决路径非静默降级；跨浏览器矩阵为计划内 Non-Goal 附触发条件）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -170,11 +190,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 全部 3 阶段完成并运行时验证通过（2026-07-17）。Phase 1 Explore 在 finance（参数化+echarts）+ master-data（非参数化）× 4 变体实测跨 3 次新鲜浏览器上下文 `maxDiffPixels: 0` 全部 0 diff pixels（exact match），裁决**可行**——重新审视并推翻 1249-2 当年「像素 diff 信号弱、defer-now」裁决（在新条件下：macOS + Chrome channel:chrome + 系统字体 + echarts 末态等待已可保证 cross-run pixel-exact）。Phase 2 落地 `assertSnapshot` 原语 + 10 看板 + 6 代表性报表（覆盖四参数形态）`toHaveScreenshot` 基线，跨 3 次新鲜运行全绿 + visual 全套件 50/50 PASS 0 新增失败 + 154 模块 BUILD SUCCESS。Phase 3 e2e-runbook 增「像素级截图视觉回归层」段 + 六处 Deferred 按 bundle 异质分流（1249-2 整体 RELEASED / 其余 5 处仅像素截图子集 RELEASED + bundle 内报表下载字节级 diff·跨浏览器矩阵子集显式保留开放触发条件不变）。结束审计由独立子代理执行（见下方）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立子代理（新会话）执行>
+- Auditor / Agent: ses_independent-closure-audit-2026-07-17-2010-2（独立 general 子代理，新会话冷重播无执行者/起草者上下文）— VERDICT: PASS，8/8 Gates 通过 + R13 bundle-heterogeneous split 6/6 合规 + 范围纪律通过（零生产代码变更）；新增 snapshot spec 独立复跑 16/16 PASS；MINOR：既存 reports.visual DOM 层（mfg-crp-load/ast-depreciation/ast-disposal）在全量 50 串行负载下有 flakiness（隔离复跑 3/3 PASS，非本计划引入，配置变更仅 toHaveScreenshot 域不触及 DOM 断言）
 
 Follow-up:
 

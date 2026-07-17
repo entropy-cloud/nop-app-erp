@@ -221,9 +221,10 @@ Exit Criteria:
 ### 其余 1249-2 既有 Deferred（像素级截图 diff / 跨浏览器矩阵）
 
 - Classification: `optimization candidate`
+- **像素截图子集 RELEASED by 2026-07-17-2010-2**：经 plan `2026-07-17-2010-2` Phase 1 Explore（修复后正确态跨次 pixel-exact 实测）+ Phase 2（10 看板 `dashboards.snapshot.spec.ts` 像素基线，含 1728-1 修复 `$var` 后非空正确渲染态捕获）承接完成（pixel-subset RELEASED）。**bundle 内「跨浏览器矩阵」子集不在此 RELEASE**：触发条件不变（需支持非 Chromium 时），归独立 successor。
 - Why Not Blocking Closure: 1249-2 既定，触发条件未变（CI 无头渲染稳定性可接受且产品要求像素级一致性 / 需支持非 Chromium 时）。本计划修复的是数据正确性层（数值/HTML 注入），非视觉/格式层。
-- Successor Required: `yes`
-- Trigger Condition: 同 1249-2 Deferred。
+- Successor Required: `yes`（像素截图子集已满足；跨浏览器矩阵子集仍 open）
+- Trigger Condition: 像素截图子集已满足（2010-2 落地）；跨浏览器矩阵同 1249-2 Deferred（需支持非 Chromium 时）。
 
 ## Closure
 

@@ -170,9 +170,10 @@ Exit Criteria:
 ### 像素级视觉回归 + 报表下载产物 diff + 跨浏览器矩阵
 
 - Classification: `optimization candidate`
+- **像素截图子集 RELEASED by 2026-07-17-2010-2**：经 plan `2026-07-17-2010-2` Phase 2 承接——master-data 看板含于 10 看板 `dashboards.snapshot.spec.ts` 像素基线（非参数化代表，Phase 1 Explore 即以此域为可行性裁决样本），md-material-price-list 含于 6 代表性报表 `reports.snapshot.spec.ts` 基线（覆盖零参形态）（pixel-subset RELEASED）。**bundle 内「报表下载产物字节级 diff」子集不在此 RELEASE**：0204-1 仅交付二进制有效性回归层（魔数 + 弱结构 token），字节级 diff 仍 open optimization candidate，触发条件不变。**bundle 内「跨浏览器矩阵」子集不在此 RELEASE**：AMIS 主目标 Chromium，触发条件不变（需支持非 Chromium 时），归独立 successor。
 - Why Not Blocking Closure: 0637-1 既定 Deferred，触发条件未变。本计划数值断言属数据正确性层，非视觉/格式层。
-- Successor Required: `yes`
-- Trigger Condition: 同 0637-1 Deferred。
+- Successor Required: `yes`（像素截图子集已满足；报表下载字节级 diff + 跨浏览器矩阵子集仍 open）
+- Trigger Condition: 像素截图子集已满足（2010-2 落地）；报表下载字节级 diff 同 0204-1 Deferred；跨浏览器矩阵同 0637-1 Deferred（需支持非 Chromium 时）。
 
 ## Closure
 

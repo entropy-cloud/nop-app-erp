@@ -139,9 +139,10 @@ Exit Criteria:
 ### 像素级截图基线 diff / 跨浏览器矩阵
 
 - Classification: `optimization candidate`
+- **像素截图子集 RELEASED by 2026-07-17-2010-2**：经 plan `2026-07-17-2010-2` Phase 2 落地 `tests/e2e/visual/reports.snapshot.spec.ts`（6 代表性报表覆盖参数化/零参/日期参/字符串参四形态，`toHaveScreenshot` 基线 + 跨 3 次新鲜运行全绿）+ `assertSnapshot` 原语 + `playwright.config.ts` 默认 `maxDiffPixelRatio: 0.01` 承接完成（pixel-subset RELEASED）。**bundle 内「跨浏览器矩阵」（Firefox/WebKit/移动视口）子集不在此 RELEASE**：触发条件不变（需支持非 Chromium 浏览器时），归独立 successor。**bundle 内「报表下载产物字节级 diff」子集不在此 RELEASE**：0204-1 仅交付二进制有效性回归层（魔数 + 弱结构 token），字节级 diff 仍 open optimization candidate，触发条件不变。
 - Why Not Blocking Closure: 1249-2 既定，触发条件未变（CI 无头渲染稳定性可接受且产品要求像素级一致性 / 需支持非 Chromium 时）。本计划为 DOM 内容断言层。
-- Successor Required: `yes`
-- Trigger Condition: 同 1249-2 Deferred。
+- Successor Required: `yes`（像素截图子集已满足；跨浏览器矩阵 + 报表下载字节级 diff 子集仍 open）
+- Trigger Condition: 像素截图子集已满足（2010-2 落地）；跨浏览器矩阵同 1249-2 Deferred（需支持非 Chromium 时）；报表下载字节级 diff 同 0204-1 Deferred。
 
 ## Closure
 
