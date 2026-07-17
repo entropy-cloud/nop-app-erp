@@ -177,6 +177,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: `shift-scheduling.md` §六设计要求休假审批触发排班标记（isAbsent=true / absenceReason=LEAVE / leaveRequestId 回链 / status=ABSENT），但经 `ErpHrShiftBizModel.onLeaveApproved(leaveRequestId)` `@BizMutation` 钩子触发（非用户面入口，由 LeaveRequest.approve 内部委派）。本计划仅测排班 DIRECT 用户面动作；跨实体钩子联动归 successor。
 - Successor Required: `yes`（触发条件：休假→排班联动浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-18-0347-2**：触发条件经实时仓库核实已满足（AGENTS.md / project-context.md:34「各域细化端到端验证」重点）；交付证据 = `tests/e2e/business-actions/hr-leave-shift-linkage.action.spec.ts`（2 测试：approve 正路径 + 区间范围准确性 [区间内 08-10/08-11 行 4 字段翻转 isAbsent=true/absenceReason=LEAVE/leaveRequestId=leave.id/status=ABSENT + 区间外 08-13 行字段不变] + cancel 正路径还原 [区间内 2 行 4 字段还原 isAbsent=false/absenceReason=null/leaveRequestId=null/status=SCHEDULED]）。
 
 ### 轮换组 `ErpHrShiftRotationGroup` 实体化
 
