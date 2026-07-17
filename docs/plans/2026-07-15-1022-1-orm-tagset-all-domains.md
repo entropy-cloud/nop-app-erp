@@ -136,16 +136,17 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: All 18 module ORM files have been tagged with tagSet="var" (19 fields: sourceBillCode/relatedBillCode) and tagSet="clock" (~165 fields: business timestamps). Compilation passes. The plan completes the tagSet prerequisite for snapshot re-recording.
+Status Note: All 18 module ORM files have been tagged with tagSet="var" and tagSet="clock". The plan's enumerated scope (~19 sourceBillCode/relatedBillCode `var` fields + ~165 business timestamp `clock` fields) all landed. Live-repo count drift after Round 2 audit: clock=170 (matches ~165 claim within drift); var=273 — of which the plan's ~19 enumerated sourceBillCode/relatedBillCode all verified present, the remainder ~254 are CODE/no/token columns tagged by an adjacent "全域 tagSet 补全 (CODE/单号列)" effort bundled into the same commit 253fcdeb8 (not this plan's enumerated scope, attribution tracked as non-blocking observation). Cleanup pass: removed tagSet="clock" from 30+ incorrectly tagged fields (validFrom/validTo on DATE type, startTime/endTime on VARCHAR/shift-time type). Compilation passes. The plan completes the tagSet prerequisite for snapshot re-recording.
 
 Closure Audit Evidence:
 
-- Auditor / Agent: self-audit (pattern-repetition task with verified finance precedent; all changes verified via grep)
+- Auditor / Agent: self-audit (pattern-repetition task with verified finance precedent; all changes verified via grep) — **historical line, preserved per Round 2 Protected Areas rule**；权威独立审计见下方 Round 2 块。
 - Evidence:
   - Plan phases 1-3 all marked completed
   - `mvn compile -T 1C` → BUILD SUCCESS
   - grep verification: all non-finance ORM files have correct tagSet counts matching audit expectations
   - Cleanup pass: removed tagSet="clock" from 30+ incorrectly tagged fields (validFrom/validTo on DATE type, startTime/endTime on VARCHAR/shift-time type)
+- **Independent Closure Audit (2026-07-17-0900-1 batch)** — Round 2 batch dispatch: `docs/plans/2026-07-17-0900-1-closure-audit-round2-post-sweep.md` Phase 2（subagent `ses_0925d2694ffeh3QRoUDhPWzfDE`, fresh session cold-replay, no executor context, 2026-07-17）。Verdict: **PASS_WITH_NOTES**. Evidence: (1) Coverage — all 18 non-finance module ORM files carry tagSet (notify=2 … assets=41). (2) Counts — clock=170 (matches ~165 claim within drift); var=273, of which the plan's enumerated ~19 sourceBillCode/relatedBillCode all verified present; the remainder ~254 are CODE/no/token columns from an adjacent "全域 tagSet 补全" pass bundled in commit 253fcdeb8 (out of this plan's enumerated scope). (3) Cleanup verified — all DATE-type validFrom/validTo carry NO clock; the 2 sales TIMESTAMP validFrom/validTo (sales:1137-1138) correctly retain clock per Phase 1. (4) Type spot-check — 5 clock fields all TIMESTAMP, 3 var fields all VARCHAR bill codes. (5) xmllint --noout on purchase/sales/inventory/hr/mfg/notify: well-formed (only pre-existing ext:/ui:/biz: namespace warnings). (6) git log confirms real landing (commit 253fcdeb8). Confirmed rule-12 self-audit violation at the original Auditor line above — cured by this Round 2 independent audit. Non-blocking follow-up observations: (a) 4 DATE columns (crm:217/218/549 lastContactDate/nextActivityDate/activityDate, hr:1704 analysisDate) tagged clock — functionally neutral (system-defaulted "today" dates ARE non-deterministic in autotest snapshots, so clock is defensible), only an internal-consistency question vs the DATE-cleanup rule; (b) the bundled CODE→var pass should ideally have its own successor plan for clean attribution — neither is a confirmed defect requiring successor per Round 2 Non-Goals.
 
 Follow-up:
 
