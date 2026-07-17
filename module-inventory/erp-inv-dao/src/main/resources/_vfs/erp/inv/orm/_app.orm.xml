@@ -147,7 +147,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="5"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="SOURCE_WAREHOUSE_ID" displayName="源仓库" name="sourceWarehouseId" propId="6"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Warehouse"/>
                 <column code="SOURCE_LOCATION_ID" displayName="源库位" name="sourceLocationId" propId="7"
@@ -445,7 +445,7 @@
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="17" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="18" stdDataType="date"
-                        stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="BATCH_NO" displayName="批号" name="batchNo" precision="50" propId="19" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Batch No"/>
                 <column code="SERIAL_NO" displayName="序列号" name="serialNo" precision="50" propId="20"
@@ -711,7 +711,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="4"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="SOURCE_BILL_TYPE" displayName="来源单据类型(如 SALES_ORDER/WORK_ORDER)" mandatory="true"
                         name="sourceBillType" precision="50" propId="5" stdDataType="string" stdSqlType="VARCHAR"
                         i18n-en:displayName="Source Bill Type"/>
@@ -1024,7 +1024,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="4"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="FROM_WAREHOUSE_ID" displayName="调出仓库" mandatory="true" name="fromWarehouseId" propId="5"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="From Warehouse"/>
                 <column code="TO_WAREHOUSE_ID" displayName="调入仓库" mandatory="true" name="toWarehouseId" propId="6"
@@ -1219,7 +1219,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="盘点日期" mandatory="true" name="businessDate" propId="4"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="TAKE_TYPE" displayName="盘点类型" name="takeType" precision="20" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/take-type"
                         i18n-en:displayName="Take Type"/>
@@ -1412,7 +1412,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="4"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="WAREHOUSE_ID" displayName="拣货仓库" mandatory="true" name="warehouseId" propId="5"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="PICKER_ID" displayName="拣货人(职员)" name="pickerId" propId="6" stdDataType="long"
@@ -1802,7 +1802,7 @@
                 <column code="PARTNER_ID" displayName="所有权对方(往来单位)" mandatory="true" name="partnerId" propId="5"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="6"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="WAREHOUSE_ID" displayName="仓库" mandatory="true" name="warehouseId" propId="7"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="SOURCE_LOC_ID" displayName="源库位(=目的库位)" mandatory="true" name="sourceLocId" propId="8"
@@ -2171,7 +2171,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="4"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="ADJUST_TYPE" displayName="调整类型" mandatory="true" name="adjustType" precision="30"
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/adjust-type"
                         i18n-en:displayName="Adjust Type"/>
@@ -2388,7 +2388,7 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="16" stdDataType="timestamp"
                         stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="17"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="18"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"

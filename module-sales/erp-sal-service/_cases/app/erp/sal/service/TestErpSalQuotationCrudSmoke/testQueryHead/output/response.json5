@@ -9,7 +9,7 @@
         "code": "@var:ErpSalQuotation@code",
         "orgId": null,
         "customerId": 2,
-        "businessDate": "2026-07-01",
+        "businessDate": "@var:ErpSalQuotation@businessDate",
         "validFrom": null,
         "validTo": null,
         "currencyId": 1,

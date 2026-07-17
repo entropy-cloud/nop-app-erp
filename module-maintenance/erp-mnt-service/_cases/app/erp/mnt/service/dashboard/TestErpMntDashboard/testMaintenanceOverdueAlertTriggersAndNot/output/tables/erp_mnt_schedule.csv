@@ -1,5 +1,5 @@
 _chgType,ID,CODE,NAME,EQUIPMENT_ID,SCHEDULE_TYPE,FREQUENCY,RECURRENCE_TYPE,DAYS_OF_WEEK,START_DATE,END_DATE,NEXT_DUE_DATE,IS_ACTIVE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,301,@var:ErpMntSchedule@code,计划-SCH-A,401,PREVENTIVE,,,,2026-01-01,,2026-07-05,1,,@var:ErpMntSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,302,@var:ErpMntSchedule@code_1,计划-SCH-B,402,PREVENTIVE,,,,2026-01-01,,2026-07-05,1,,@var:ErpMntSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,303,@var:ErpMntSchedule@code_2,计划-SCH-C,403,PREVENTIVE,,,,2026-01-01,,2026-07-25,1,,@var:ErpMntSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,304,@var:ErpMntSchedule@code_3,计划-SCH-D,404,PREVENTIVE,,,,2026-01-01,,2026-07-05,0,,@var:ErpMntSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,301,@var:ErpMntSchedule@code,计划-SCH-A,401,PREVENTIVE,,,,2026-01-01,,2026-07-07,1,,@var:ErpMntSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,302,@var:ErpMntSchedule@code_1,计划-SCH-B,402,PREVENTIVE,,,,2026-01-01,,2026-07-07,1,,@var:ErpMntSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,303,@var:ErpMntSchedule@code_2,计划-SCH-C,403,PREVENTIVE,,,,2026-01-01,,2026-07-27,1,,@var:ErpMntSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,304,@var:ErpMntSchedule@code_3,计划-SCH-D,404,PREVENTIVE,,,,2026-01-01,,2026-07-07,0,,@var:ErpMntSchedule@delVersion_1,0,autotest-ref,*,autotest-ref,*

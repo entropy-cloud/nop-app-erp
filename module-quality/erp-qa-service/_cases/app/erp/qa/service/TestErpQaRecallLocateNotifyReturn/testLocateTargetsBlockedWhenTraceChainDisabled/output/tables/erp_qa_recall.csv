@@ -1,2 +1,2 @@
 _chgType,ID,CODE,RECALL_NAME,TRIGGER_TYPE,SOURCE_NCR_ID,MATERIAL_ID,BATCH_ID,SERIAL_NO,ROOT_CAUSE,SEVERITY_LEVEL,BUSINESS_DATE,NOTIFY_CUSTOMER,STATUS,APPROVE_STATUS,APPROVED_BY,APPROVED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,1,@var:ErpQaRecall@code,召回-RC-LNR-DISABLED,MANUAL,,27101,87101,,,HIGH,2026-07-15,false,APPROVED,APPROVED,autotest,@var:ErpQaRecall@approvedAt,,@var:ErpQaRecall@delVersion,2,autotest-ref,*,autotest-ref,*
+A,1,@var:ErpQaRecall@code,召回-RC-LNR-DISABLED,MANUAL,,27101,87101,,,HIGH,@var:ErpQaRecall@businessDate,false,APPROVED,APPROVED,autotest,@var:ErpQaRecall@approvedAt,,@var:ErpQaRecall@delVersion,2,autotest-ref,*,autotest-ref,*

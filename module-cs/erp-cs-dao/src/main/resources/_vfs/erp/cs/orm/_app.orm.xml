@@ -212,7 +212,7 @@
                 <column code="APPROVED_AT" displayName="审核时间" name="approvedAt" propId="201" stdDataType="timestamp"
                         stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Approved At" ui:show="R"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="202"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_CS_TICKET_ORG_DOC_STATUS" unique="false">
@@ -870,7 +870,7 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="19"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_CS_CONTRACT_ORG_STATUS" unique="false">

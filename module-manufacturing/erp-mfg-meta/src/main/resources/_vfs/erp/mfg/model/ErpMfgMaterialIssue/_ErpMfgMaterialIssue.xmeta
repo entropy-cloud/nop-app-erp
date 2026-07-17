@@ -45,8 +45,8 @@
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="businessDate" displayName="领料日期" propId="7" i18n-en:displayName="Business Date" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="businessDate" displayName="领料日期" propId="7" i18n-en:displayName="Business Date" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="8" i18n-en:displayName="Doc Status" mandatory="true"

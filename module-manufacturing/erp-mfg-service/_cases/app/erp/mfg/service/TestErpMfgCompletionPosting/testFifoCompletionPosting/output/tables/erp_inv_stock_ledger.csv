@@ -1,5 +1,5 @@
 _chgType,ID,CODE,ORG_ID,MOVE_ID,MOVE_LINE_ID,MATERIAL_ID,SKU_ID,WAREHOUSE_ID,LOCATION_ID,QUANTITY,UNIT_COST,TOTAL_COST,BALANCE_QUANTITY,BALANCE_TOTAL_COST,COST_METHOD,ACCT_SCHEMA_ID,CURRENCY_ID,BUSINESS_DATE,BATCH_NO,SERIAL_NO,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,OWNER_ID,OWNERSHIP_TYPE
-A,17,@var:ErpInvStockLedger@code_1,1501,14,15,1302,,3501,,5,7,35,15.0000,65.0000,FIFO,7501,6501,2026-07-01,,,@var:ErpInvStockLedger@delVersion,0,autotest-ref,*,autotest-ref,*,,OWNED
-A,24,@var:ErpInvStockLedger@code_2,1501,22,23,1302,,3501,,-2.0000,3.000000,-6.00000000,13.0000,59.00000000,FIFO,7501,6501,2026-07-01,,,@var:ErpInvStockLedger@delVersion,0,autotest-ref,*,autotest-ref,*,,OWNED
-A,32,@var:ErpInvStockLedger@code_3,1501,29,30,1301,,3501,,1,6.0000,6.0000,1,6.0000,MOVING_AVERAGE,7501,6501,2026-07-01,,,@var:ErpInvStockLedger@delVersion,0,autotest-ref,*,autotest-ref,*,,OWNED
-A,9,@var:ErpInvStockLedger@code,1501,5,6,1302,,3501,,10,3,30,10,30,FIFO,7501,6501,2026-07-01,,,@var:ErpInvStockLedger@delVersion,0,autotest-ref,*,autotest-ref,*,,OWNED
+A,17,@var:ErpInvStockLedger@code_1,1501,14,15,1302,,3501,,5,7.0000,35,15.0000,65.0000,FIFO,7501,6501,@var:ErpInvStockLedger@businessDate,,,@var:ErpInvStockLedger@delVersion,0,autotest-ref,*,autotest-ref,*,,OWNED
+A,24,@var:ErpInvStockLedger@code_2,1501,22,23,1302,,3501,,-2.0000,3.0000,-6.00000000,13.0000,59.00000000,FIFO,7501,6501,@var:ErpInvStockLedger@businessDate,,,@var:ErpInvStockLedger@delVersion,0,autotest-ref,*,autotest-ref,*,,OWNED
+A,32,@var:ErpInvStockLedger@code_3,1501,29,30,1301,,3501,,1,6.0000,6.0000,1,6.0000,MOVING_AVERAGE,7501,6501,@var:ErpInvStockLedger@businessDate,,,@var:ErpInvStockLedger@delVersion,0,autotest-ref,*,autotest-ref,*,,OWNED
+A,9,@var:ErpInvStockLedger@code,1501,5,6,1302,,3501,,10,3.0000,30,10,30,FIFO,7501,6501,@var:ErpInvStockLedger@businessDate,,,@var:ErpInvStockLedger@delVersion,0,autotest-ref,*,autotest-ref,*,,OWNED

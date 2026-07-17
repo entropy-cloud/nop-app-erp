@@ -1,2 +1,2 @@
 _chgType,ID,EMPLOYEE_ID,DATE,CLOCK_IN,CLOCK_OUT,WORK_HOURS,LATE_MINUTES,EARLY_LEAVE_MINUTES,IS_ABSENT,SOURCE,LEAVE_REQUEST_ID,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,2,1,2026-07-15,@var:ErpHrAttendance@clockIn,,,0,0,false,CARD,,,,@var:ErpHrAttendance@delVersion,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,2,1,2026-07-17,@var:ErpHrAttendance@clockIn,,,0,0,false,CARD,,,,@var:ErpHrAttendance@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpHrAttendance@businessDate

@@ -122,7 +122,7 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="18"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_DRP_PLAN_ORG_STATUS" unique="false">

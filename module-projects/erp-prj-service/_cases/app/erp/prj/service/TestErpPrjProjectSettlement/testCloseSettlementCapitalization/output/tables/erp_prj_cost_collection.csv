@@ -1,2 +1,2 @@
 _chgType,ID,CODE,PROJECT_ID,ORG_ID,BUSINESS_DATE,CURRENCY_ID,TOTAL_AMOUNT,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,APPROVED_BY,APPROVED_AT,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL
-A,17,@var:ErpPrjCostCollection@code,15,1,2026-06-15,1,0,APPROVED,APPROVED,false,,,,@var:ErpPrjCostCollection@delVersion,0,autotest-ref,*,autotest-ref,*,,,1,0,0
+A,17,@var:ErpPrjCostCollection@code,15,1,@var:ErpPrjCostCollection@businessDate,1,0,APPROVED,APPROVED,false,,,,@var:ErpPrjCostCollection@delVersion,0,autotest-ref,*,autotest-ref,*,,,1,0,0

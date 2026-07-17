@@ -233,7 +233,7 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="32" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="33"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
             </columns>
             <indexes>
                 <index name="IDX_QA_INSPECTION_ORG_DOC_STATUS" unique="false">
@@ -946,7 +946,7 @@
                 <column code="INSTRUMENT_CODE" displayName="量具编号" name="instrumentCode" precision="100" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Instrument Code"/>
                 <column code="BUSINESS_DATE" displayName="校准日期" mandatory="true" name="businessDate" propId="6"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="STANDARD_REF" displayName="参考标准" name="standardRef" precision="200" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Standard Ref"/>
                 <column code="MEASURED_VALUE" displayName="测量值" domain="measuredValue" name="measuredValue"
@@ -1050,7 +1050,7 @@
                         propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-qa/recall-severity"
                         i18n-en:displayName="Severity Level"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="11"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="NOTIFY_CUSTOMER" defaultValue="false" displayName="已通知客户" name="notifyCustomer"
                         propId="12" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Notify Customer"/>
                 <column code="STATUS" displayName="召回状态" mandatory="true" name="status" precision="20" propId="13"

@@ -19,7 +19,7 @@
     "createTime": "@var:ErpB2bAsn@updateTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpB2bAsn@updateTime",
-    "businessDate": "2026-07-15"
+    "businessDate": "@var:ErpB2bAsn@businessDate"
   },
   "status": 0
 }

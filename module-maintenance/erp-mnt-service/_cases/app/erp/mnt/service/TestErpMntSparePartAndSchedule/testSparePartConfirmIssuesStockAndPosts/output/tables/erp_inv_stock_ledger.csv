@@ -1,3 +1,3 @@
 _chgType,ID,CODE,ORG_ID,MOVE_ID,MOVE_LINE_ID,MATERIAL_ID,SKU_ID,WAREHOUSE_ID,LOCATION_ID,QUANTITY,UNIT_COST,TOTAL_COST,BALANCE_QUANTITY,BALANCE_TOTAL_COST,COST_METHOD,ACCT_SCHEMA_ID,CURRENCY_ID,BUSINESS_DATE,BATCH_NO,SERIAL_NO,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,OWNER_ID,OWNERSHIP_TYPE
-A,15,@var:ErpInvStockLedger@code_1,1201,13,14,4201,,3201,,-10.0000,5.0000,-50.00000000,10.0000,50.00000000,MOVING_AVERAGE,,,2026-07-01,,,@var:ErpInvStockLedger@delVersion_1,0,autotest-ref,*,autotest-ref,*,,OWNED
-A,8,@var:ErpInvStockLedger@code,1201,5,6,4201,,3201,,20,5.0000,100,20,100,MOVING_AVERAGE,7201,6201,2026-07-01,,,@var:ErpInvStockLedger@delVersion_1,0,autotest-ref,*,autotest-ref,*,,OWNED
+A,15,@var:ErpInvStockLedger@code_1,1201,13,14,4201,,3201,,-10.0000,5.0000,-50.00000000,10.0000,50.00000000,MOVING_AVERAGE,,,@var:ErpInvStockLedger@businessDate,,,@var:ErpInvStockLedger@delVersion_1,0,autotest-ref,*,autotest-ref,*,,OWNED
+A,8,@var:ErpInvStockLedger@code,1201,5,6,4201,,3201,,20,5.0000,100,20,100,MOVING_AVERAGE,7201,6201,@var:ErpInvStockLedger@businessDate,,,@var:ErpInvStockLedger@delVersion_1,0,autotest-ref,*,autotest-ref,*,,OWNED

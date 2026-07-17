@@ -1,3 +1,3 @@
 _chgType,ID,CODE,NAME,ORG_ID,CATEGORY_ID,CURRENCY_ID,BUSINESS_DATE,ESTIMATED_COMPLETION_DATE,ACCUMULATED_COST,IS_COMPLETED,COMPLETED_ASSET_ID,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK,PROJECT_ID,CIP_ASSET_CATEGORY_SNAPSHOT,POSTED,POSTED_AT,POSTED_BY,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL
-A,301,@var:ErpAstCip@code,在建工程-301,1,1,1,2026-01-01,,600,false,,DRAFT,@var:ErpAstCip@delVersion_1,0,autotest-ref,*,autotest-ref,*,,,,false,,,1,600,600
-A,302,@var:ErpAstCip@code_1,在建工程-302,1,1,1,2026-01-01,,100,true,,DRAFT,@var:ErpAstCip@delVersion_1,0,autotest-ref,*,autotest-ref,*,,,,false,,,1,100,100
+A,301,@var:ErpAstCip@code,在建工程-301,1,1,1,@var:ErpAstCip@businessDate,,600,false,,DRAFT,@var:ErpAstCip@delVersion_1,0,autotest-ref,*,autotest-ref,*,,,,false,,,1,600,600
+A,302,@var:ErpAstCip@code_1,在建工程-302,1,1,1,@var:ErpAstCip@businessDate,,100,true,,DRAFT,@var:ErpAstCip@delVersion_1,0,autotest-ref,*,autotest-ref,*,,,,false,,,1,100,100

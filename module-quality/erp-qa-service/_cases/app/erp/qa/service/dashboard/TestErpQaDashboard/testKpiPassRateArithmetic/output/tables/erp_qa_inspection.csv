@@ -1,6 +1,6 @@
 _chgType,ID,CODE,ORG_ID,INSPECTION_TYPE,RELATED_BILL_TYPE,RELATED_BILL_CODE,RELATED_LINE_CODE,MATERIAL_ID,TEMPLATE_ID,SUPPLIER_ID,WAREHOUSE_ID,BATCH_NO,INSPECTION_DATE,LOT_QUANTITY,SAMPLE_QUANTITY,INSPECTOR_ID,RESULT,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,APPROVED_BY,APPROVED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,101,@var:ErpQaInspection@code,,INCOMING,,,,1,,,,,2026-07-15,,,,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,102,@var:ErpQaInspection@code_1,,INCOMING,,,,1,,,,,2026-07-15,,,,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,103,@var:ErpQaInspection@code_2,,INCOMING,,,,1,,,,,2026-07-15,,,,REJECTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,104,@var:ErpQaInspection@code_3,,INCOMING,,,,1,,,,,2026-07-15,,,,CONDITIONAL,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,105,@var:ErpQaInspection@code_4,,INCOMING,,,,1,,,,,2026-05-15,,,,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,2026-05-15
+A,101,@var:ErpQaInspection@code,,INCOMING,,,,1,,,,,2026-07-17,,,,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpQaInspection@businessDate_3
+A,102,@var:ErpQaInspection@code_1,,INCOMING,,,,1,,,,,2026-07-17,,,,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpQaInspection@businessDate_3
+A,103,@var:ErpQaInspection@code_2,,INCOMING,,,,1,,,,,2026-07-17,,,,REJECTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpQaInspection@businessDate_3
+A,104,@var:ErpQaInspection@code_3,,INCOMING,,,,1,,,,,2026-07-17,,,,CONDITIONAL,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpQaInspection@businessDate_3
+A,105,@var:ErpQaInspection@code_4,,INCOMING,,,,1,,,,,2026-05-17,,,,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpQaInspection@businessDate_4

@@ -9,7 +9,7 @@
         "code": "@var:ErpPurRfq@code",
         "orgId": null,
         "requisitionId": 1,
-        "businessDate": "2026-07-01",
+        "businessDate": "@var:ErpPurRfq@businessDate",
         "validUntil": null,
         "docStatus": "DRAFT",
         "docStatus_label": "DRAFT-草稿",

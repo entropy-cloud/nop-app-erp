@@ -439,7 +439,7 @@
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="21" stdDataType="date"
-                        stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="22" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" mandatory="true" name="exchangeRate"
@@ -507,7 +507,7 @@
                 <column code="ASSET_ID" displayName="资产ID" mandatory="true" name="assetId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Asset"/>
                 <column code="BUSINESS_DATE" displayName="移动日期" mandatory="true" name="businessDate" propId="5"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="FROM_DATE" displayName="开始日期" mandatory="true" name="fromDate" propId="6"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="From Date"/>
                 <column code="THRU_DATE" displayName="截止日期" name="thruDate" propId="7" stdDataType="date"
@@ -695,7 +695,7 @@
                 <column code="ASSET_ID" displayName="资产ID" mandatory="true" name="assetId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Asset"/>
                 <column code="BUSINESS_DATE" displayName="调整日期" mandatory="true" name="businessDate" propId="5"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
@@ -818,7 +818,7 @@
                         precision="20" propId="8" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="BUSINESS_DATE" displayName="处置日期" mandatory="true" name="businessDate" propId="9"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="GAIN_LOSS" displayName="损益" domain="amount" name="gainLoss" precision="20" propId="10"
                         scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Gain Loss"/>
                 <column code="REASON" displayName="处置原因" name="reason" precision="20" propId="11" stdDataType="string"
@@ -976,7 +976,7 @@
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="25"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="26" stdDataType="date"
-                        stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="EXCHANGE_RATE" displayName="汇率" mandatory="true" name="exchangeRate" precision="20"
                         propId="27" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
@@ -1046,7 +1046,7 @@
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="BUSINESS_DATE" displayName="开工日期" mandatory="true" name="businessDate" propId="7"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="ESTIMATED_COMPLETION_DATE" displayName="预计完工日期" name="estimatedCompletionDate" propId="8"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Estimated Completion Date"/>
                 <column code="ACCUMULATED_COST" defaultValue="0" displayName="累计归集成本" domain="amount"
@@ -1184,7 +1184,7 @@
                 <column code="CAPITALIZATION_ID" displayName="转固资本化单" name="capitalizationId" propId="12"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Capitalization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="13" stdDataType="date"
-                        stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="14" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -1333,7 +1333,7 @@
                 <column code="SOURCE_ASSET_ID" displayName="被拆分资产" mandatory="true" name="sourceAssetId" propId="4"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Source Asset"/>
                 <column code="BUSINESS_DATE" displayName="拆分日期" mandatory="true" name="businessDate" propId="5"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="SPLIT_REASON" displayName="拆分原因" name="splitReason" precision="500" propId="7"
@@ -1438,7 +1438,7 @@
                 <column code="TARGET_ASSET_ID" displayName="合并目标资产" name="targetAssetId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Target Asset"/>
                 <column code="BUSINESS_DATE" displayName="合并日期" mandatory="true" name="businessDate" propId="5"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="MERGE_REASON" displayName="合并原因" name="mergeReason" precision="500" propId="7"
@@ -1723,7 +1723,7 @@
                 <column code="RESPONSIBLE_BY_ID" displayName="盘点负责人" name="responsibleById" propId="9"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Responsible By"/>
                 <column code="BUSINESS_DATE" displayName="盘点基准日" mandatory="true" name="businessDate" propId="10"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="11" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
@@ -2002,7 +2002,7 @@
                         name="totalCostAmount" precision="20" propId="10" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total Cost Amount"/>
                 <column code="BUSINESS_DATE" displayName="维修日期" mandatory="true" name="businessDate" propId="11"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="12" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
@@ -2116,7 +2116,7 @@
                 <column code="AMOUNT" defaultValue="0" displayName="金额" domain="amount" name="amount" precision="20"
                         propId="6" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Amount"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" name="businessDate" propId="7" stdDataType="date"
-                        stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="8" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"

@@ -175,8 +175,8 @@
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="businessDate" displayName="业务日期" propId="92" i18n-en:displayName="Business Date" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="businessDate" displayName="业务日期" propId="92" i18n-en:displayName="Business Date" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="posted" displayName="已过账" propId="93" i18n-en:displayName="Posted" queryable="true" sortable="true"

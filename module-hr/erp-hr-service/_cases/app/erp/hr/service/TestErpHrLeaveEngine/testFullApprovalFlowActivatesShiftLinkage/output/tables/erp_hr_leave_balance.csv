@@ -1,2 +1,2 @@
 _chgType,ID,EMPLOYEE_ID,LEAVE_TYPE,FISCAL_YEAR,ENTITLED_DAYS,CARRIED_FORWARD_DAYS,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,3,1,ANNUAL,2026,10,0,,,@var:ErpHrLeaveBalance@delVersion,0,autotest-ref,*,autotest-ref,*,2026-01-01
+A,3,1,ANNUAL,2026,10,0,,,@var:ErpHrLeaveBalance@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpHrLeaveBalance@businessDate

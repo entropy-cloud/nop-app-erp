@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,FORMAT_ID,RELATED_BILL_TYPE,RELATED_BILL_CODE,STATE,BLOCKING_LEVEL,ERROR,RETRY_COUNT,ATTACHMENT_FILE_ID,SENT_AT,ACKNOWLEDGED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,2,@var:ErpB2bEdiDoc@code,,1,AR_INVOICE,@var:ErpB2bEdiDoc@relatedBillCode,SENT,INFO,,1,,@var:ErpB2bEdiDoc@sentAt_1,,,@var:ErpB2bEdiDoc@delVersion,4,autotest-ref,*,autotest-ref,*,2026-07-01
+A,2,@var:ErpB2bEdiDoc@code,,1,AR_INVOICE,@var:ErpB2bEdiDoc@relatedBillCode,SENT,INFO,,1,,@var:ErpB2bEdiDoc@sentAt_1,,,@var:ErpB2bEdiDoc@delVersion,4,autotest-ref,*,autotest-ref,*,@var:ErpB2bEdiDoc@businessDate

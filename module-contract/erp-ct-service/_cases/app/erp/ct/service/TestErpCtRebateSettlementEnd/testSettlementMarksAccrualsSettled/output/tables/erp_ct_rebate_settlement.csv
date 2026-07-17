@@ -1,2 +1,2 @@
 _chgType,ID,REBATE_AGREEMENT_ID,ORG_ID,SETTLEMENT_DATE,TOTAL_REBATE_AMOUNT,CREDIT_MEMO_BILL_TYPE,CREDIT_MEMO_BILL_CODE,STATUS,POSTED_AT,POSTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE,POSTED
-A,13,8,,2026-07-15,24000.00,AR_INVOICE,CT-REBATE-13,POSTED,@var:ErpCtRebateSettlement@postedAt,,,@var:ErpCtRebateSettlement@delVersion,1,autotest-ref,*,autotest-ref,*,2026-07-15,false
+A,13,8,,2026-07-17,24000.00,AR_INVOICE,CT-REBATE-13,POSTED,@var:ErpCtRebateSettlement@postedAt,,,@var:ErpCtRebateSettlement@delVersion,1,autotest-ref,*,autotest-ref,*,@var:ErpCtRebateSettlement@businessDate,false

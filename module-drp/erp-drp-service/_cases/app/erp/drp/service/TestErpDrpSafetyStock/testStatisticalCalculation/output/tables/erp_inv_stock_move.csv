@@ -1,4 +1,4 @@
 _chgType,ID,CODE,MOVE_TYPE,ORG_ID,BUSINESS_DATE,SOURCE_WAREHOUSE_ID,SOURCE_LOCATION_ID,DEST_WAREHOUSE_ID,DEST_LOCATION_ID,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,RELATED_BILL_TYPE,RELATED_BILL_CODE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,ORIGIN_MOVE_ID,ORIGIN_RETURNED_MOVE_ID
-A,5394,@var:ErpInvStockMove@code,OUTGOING,5401,2026-04-10,5101,,,,APPROVED,APPROVED,true,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
-A,5395,@var:ErpInvStockMove@code_1,OUTGOING,5401,2026-05-10,5101,,,,APPROVED,APPROVED,true,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
-A,5396,@var:ErpInvStockMove@code_2,OUTGOING,5401,2026-06-10,5101,,,,APPROVED,APPROVED,true,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,5394,@var:ErpInvStockMove@code,OUTGOING,5401,@var:ErpInvStockMove@businessDate,5101,,,,APPROVED,APPROVED,true,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,5395,@var:ErpInvStockMove@code_1,OUTGOING,5401,@var:ErpInvStockMove@businessDate_1,5101,,,,APPROVED,APPROVED,true,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,5396,@var:ErpInvStockMove@code_2,OUTGOING,5401,@var:ErpInvStockMove@businessDate_2,5101,,,,APPROVED,APPROVED,true,,,,,,@var:ErpInvStockMove@delVersion,0,autotest-ref,*,autotest-ref,*,,

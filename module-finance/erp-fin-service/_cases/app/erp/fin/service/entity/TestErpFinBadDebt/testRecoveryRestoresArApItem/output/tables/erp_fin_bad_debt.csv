@@ -1,3 +1,3 @@
 _chgType,ID,CODE,ORG_ID,ACCT_SCHEMA_ID,DOC_TYPE,PARTNER_ID,SOURCE_AR_AP_ITEM_ID,AMOUNT,CURRENCY_ID,EXCHANGE_RATE,BUSINESS_DATE,REASON,APPROVAL_STATUS,PERIOD_ID,VOUCHER_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,14,@var:ErpFinBadDebt@code_1,1,1,RECOVERY,1,4,300.0000,1,1.00000000,2026-07-15,事后回款,APPROVED,1,10,,@var:ErpFinBadDebt@delVersion,0,autotest-ref,*,autotest-ref,*
-A,9,@var:ErpFinBadDebt@code,1,1,WRITE_OFF,1,4,300.0000,1,1.00000000,2026-07-15,核销,APPROVED,1,5,,@var:ErpFinBadDebt@delVersion,0,autotest-ref,*,autotest-ref,*
+A,14,@var:ErpFinBadDebt@code_1,1,1,RECOVERY,1,4,300.0000,1,1.00000000,@var:ErpFinBadDebt@businessDate,事后回款,APPROVED,1,10,,@var:ErpFinBadDebt@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9,@var:ErpFinBadDebt@code,1,1,WRITE_OFF,1,4,300.0000,1,1.00000000,@var:ErpFinBadDebt@businessDate,核销,APPROVED,1,5,,@var:ErpFinBadDebt@delVersion,0,autotest-ref,*,autotest-ref,*

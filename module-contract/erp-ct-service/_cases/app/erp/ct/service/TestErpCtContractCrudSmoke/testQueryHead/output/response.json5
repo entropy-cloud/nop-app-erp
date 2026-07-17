@@ -32,7 +32,7 @@
         "createTime": "@var:ErpCtContract@updateTime",
         "updatedBy": "autotest-ref",
         "updateTime": "@var:ErpCtContract@updateTime",
-        "businessDate": "2026-07-15"
+        "businessDate": "@var:ErpCtContract@businessDate"
       }
     ],
     "limit": 10,

@@ -1,3 +1,3 @@
 _chgType,ID,CIP_ID,ORG_ID,LINE_NO,COST_TYPE,AMOUNT_SOURCE,EXCHANGE_RATE,AMOUNT_FUNCTIONAL,SOURCE_BILL_TYPE,SOURCE_BILL_CODE,POSTED_TRANSFER_FLAG,CAPITALIZATION_ID,BUSINESS_DATE,CURRENCY_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
-A,7,6,1,10,PURCHASE,2000.0000,1.00000000,2000.0000,,,true,9,2026-07-15,1,@var:ErpAstCipCostItem@delVersion_1,1,autotest-ref,*,autotest-ref,*,
-A,8,6,1,20,LABOR,3000.0000,1.00000000,3000,,,false,,2026-07-15,1,@var:ErpAstCipCostItem@delVersion_1,0,autotest-ref,*,autotest-ref,*,
+A,7,6,1,10,PURCHASE,2000.0000,1.00000000,2000.0000,,,true,9,@var:ErpAstCipCostItem@businessDate_1,1,@var:ErpAstCipCostItem@delVersion_1,1,autotest-ref,*,autotest-ref,*,
+A,8,6,1,20,LABOR,3000.0000,1.00000000,3000,,,false,,@var:ErpAstCipCostItem@businessDate_1,1,@var:ErpAstCipCostItem@delVersion_1,0,autotest-ref,*,autotest-ref,*,

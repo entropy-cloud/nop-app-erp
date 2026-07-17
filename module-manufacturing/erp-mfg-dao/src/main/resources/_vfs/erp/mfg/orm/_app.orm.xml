@@ -949,7 +949,7 @@
                         name="scrappedQuantity" precision="20" propId="13" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Scrapped Quantity"/>
                 <column code="BUSINESS_DATE" displayName="工单日期" mandatory="true" name="businessDate" propId="14"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="PLANNED_START_DATE" displayName="计划开工日期" name="plannedStartDate" propId="15"
                         stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Planned Start Date"/>
                 <column code="PLANNED_END_DATE" displayName="计划完工日期" name="plannedEndDate" propId="16"
@@ -1330,7 +1330,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="计划日期" mandatory="true" name="businessDate" propId="4"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="PLANNING_HORIZON_DAYS" displayName="计划区间(天)" name="planningHorizonDays" propId="5"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Planning Horizon Days"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="6"
@@ -1737,7 +1737,7 @@
                 <column code="WAREHOUSE_ID" displayName="发料仓库" mandatory="true" name="warehouseId" propId="6"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
                 <column code="BUSINESS_DATE" displayName="领料日期" mandatory="true" name="businessDate" propId="7"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mfg/issue-status"
                         i18n-en:displayName="Doc Status"/>
@@ -1988,7 +1988,7 @@
                 <column code="PRODUCT_ID" displayName="产品" mandatory="true" name="productId" propId="9"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Product"/>
                 <column code="BUSINESS_DATE" displayName="委外日期" mandatory="true" name="businessDate" propId="10"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="11"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" mandatory="true"
@@ -2225,7 +2225,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="3" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="计算日期" mandatory="true" name="businessDate" propId="4"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="COSTING_VERSION" displayName="成本核算版本" name="costingVersion" precision="50" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Costing Version"/>
                 <column code="STATUS" displayName="状态" mandatory="true" name="status" precision="20" propId="6"
@@ -2611,7 +2611,7 @@
                 <column code="WORKCENTER_ID" displayName="工作中心" name="workcenterId" propId="16" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Workcenter"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="17"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="18"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="19"

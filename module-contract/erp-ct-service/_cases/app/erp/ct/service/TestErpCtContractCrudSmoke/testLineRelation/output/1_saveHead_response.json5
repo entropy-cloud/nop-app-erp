@@ -24,10 +24,10 @@
     "delVersion": 0,
     "version": 0,
     "createdBy": "autotest-ref",
-    "createTime": "@var:ErpCtContract@updateTime",
+    "createTime": "@var:ErpCtContract@createTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpCtContract@updateTime",
-    "businessDate": "2026-07-15"
+    "updateTime": "@var:ErpCtContract@createTime",
+    "businessDate": "@var:ErpCtContract@businessDate"
   },
   "status": 0
 }

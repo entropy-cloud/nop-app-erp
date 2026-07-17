@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,TARGET_ASSET_ID,BUSINESS_DATE,CURRENCY_ID,MERGE_REASON,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,APPROVED_BY,APPROVED_AT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL
-A,11,@var:ErpAstMerge@code,1,15,2026-07-15,1,测试合并,ACTIVE,APPROVED,true,@var:ErpAstMerge@postedAt,,,@var:ErpAstMerge@approvedAt,@var:ErpAstMerge@delVersion,2,autotest-ref,*,autotest-ref,*,,1.00000000,0.0000,0.0000
+A,11,@var:ErpAstMerge@code,1,15,@var:ErpAstMerge@businessDate,1,测试合并,ACTIVE,APPROVED,true,@var:ErpAstMerge@postedAt,,,@var:ErpAstMerge@approvedAt,@var:ErpAstMerge@delVersion,2,autotest-ref,*,autotest-ref,*,,1.00000000,0.0000,0.0000

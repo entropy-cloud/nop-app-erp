@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,WORK_ORDER_ID,JOB_CARD_ID,WAREHOUSE_ID,BUSINESS_DATE,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,APPROVED_BY,APPROVED_AT,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL
-A,9112,@var:ErpMfgMaterialIssue@code,1501,9160,,3501,2026-07-01,DONE,UNSUBMITTED,true,@var:ErpMfgMaterialIssue@postedAt,,,@var:ErpMfgMaterialIssue@delVersion,3,autotest-ref,*,autotest-ref,*,,,6501,1.00000000,0.0000,0.0000
+A,9112,@var:ErpMfgMaterialIssue@code,1501,9160,,3501,@var:ErpMfgMaterialIssue@businessDate,DONE,UNSUBMITTED,true,@var:ErpMfgMaterialIssue@postedAt,,,@var:ErpMfgMaterialIssue@delVersion,3,autotest-ref,*,autotest-ref,*,,,6501,1.00000000,0.0000,0.0000

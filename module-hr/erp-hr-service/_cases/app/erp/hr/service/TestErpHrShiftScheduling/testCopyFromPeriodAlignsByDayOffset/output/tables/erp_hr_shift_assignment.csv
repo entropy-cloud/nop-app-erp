@@ -1,5 +1,5 @@
 _chgType,ID,ORG_ID,EMPLOYEE_ID,SHIFT_ID,ASSIGNMENT_DATE,ACTUAL_START_TIME,ACTUAL_END_TIME,IS_ABSENT,ABSENCE_REASON,LEAVE_REQUEST_ID,SWAP_REQUEST_ID,REPLACED_BY_ASSIGNMENT_ID,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,3,,1,2,2026-06-01,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_1,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,4,,1,2,2026-06-02,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_1,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,5,,1,2,2026-07-01,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_1,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,6,,1,2,2026-07-02,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_1,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,3,,1,2,2026-06-01,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpHrShiftAssignment@businessDate
+A,4,,1,2,2026-06-02,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpHrShiftAssignment@businessDate
+A,5,,1,2,2026-07-01,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpHrShiftAssignment@businessDate
+A,6,,1,2,2026-07-02,,,false,,,,,SCHEDULED,@var:ErpHrShiftAssignment@delVersion_1,0,autotest-ref,*,autotest-ref,*,@var:ErpHrShiftAssignment@businessDate

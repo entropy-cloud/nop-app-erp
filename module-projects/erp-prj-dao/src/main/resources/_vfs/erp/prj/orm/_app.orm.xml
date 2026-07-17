@@ -635,7 +635,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="预算日期" mandatory="true" name="businessDate" propId="5"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="预算总额" domain="amount" name="totalAmount"
@@ -807,7 +807,7 @@
                 <column code="ORG_ID" displayName="业务组织" name="orgId" propId="4" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="归集日期" mandatory="true" name="businessDate" propId="5"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="TOTAL_AMOUNT" defaultValue="0" displayName="归集金额合计" domain="amount" name="totalAmount"
@@ -1062,7 +1062,7 @@
                 <column code="MILESTONE_ID" displayName="关联里程碑" name="milestoneId" propId="6" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Milestone"/>
                 <column code="BUSINESS_DATE" displayName="开票日期" mandatory="true" name="businessDate" propId="7"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" name="currencyId" propId="8" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
@@ -1392,7 +1392,7 @@
                 <column code="CUSTOMER_ID" displayName="客户" name="customerId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Customer"/>
                 <column code="BUSINESS_DATE" displayName="结算日期" mandatory="true" name="businessDate" propId="6"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="SETTLEMENT_TYPE" displayName="结算类型" mandatory="true" name="settlementType" precision="20"
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-prj/settlement-type"
                         i18n-en:displayName="Settlement Type"/>

@@ -1,3 +1,3 @@
 _chgType,ID,CODE,ORG_ID,PARTNER_ID,CONTRACT_ID,SLA_POLICY_ID,SERVICE_TYPE,START_DATE,END_DATE,MAX_TICKETS,USED_TICKETS,MAX_RESPONSE_TIME,MAX_RESOLUTION_TIME,IS_ACTIVE,NOTES,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,8010,@var:ErpCsEntitlement@code,,9101,,7201,WARRANTY,2026-07-10,2026-07-25,,,,,true,,@var:ErpCsEntitlement@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,8011,@var:ErpCsEntitlement@code_1,,9101,,7201,WARRANTY,2026-07-10,2026-10-23,,,,,true,,@var:ErpCsEntitlement@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8010,@var:ErpCsEntitlement@code,,9101,,7201,WARRANTY,2026-07-12,2026-07-27,,,,,true,,@var:ErpCsEntitlement@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,8011,@var:ErpCsEntitlement@code_1,,9101,,7201,WARRANTY,2026-07-12,2026-10-25,,,,,true,,@var:ErpCsEntitlement@delVersion_1,0,autotest-ref,*,autotest-ref,*

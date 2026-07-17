@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,BUSINESS_DATE,PLANNING_HORIZON_DAYS,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,9262,@var:ErpMfgMrpPlan@code,9401,2026-07-01,10,COMPLETED,,@var:ErpMfgMrpPlan@delVersion,1,autotest-ref,*,autotest-ref,*
+A,9262,@var:ErpMfgMrpPlan@code,9401,@var:ErpMfgMrpPlan@businessDate,10,COMPLETED,,@var:ErpMfgMrpPlan@delVersion,1,autotest-ref,*,autotest-ref,*

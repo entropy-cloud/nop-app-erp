@@ -1,3 +1,3 @@
 _chgType,ID,CODE,ORG_ID,INSPECTION_TYPE,RELATED_BILL_TYPE,RELATED_BILL_CODE,RELATED_LINE_CODE,MATERIAL_ID,TEMPLATE_ID,SUPPLIER_ID,WAREHOUSE_ID,BATCH_NO,INSPECTION_DATE,LOT_QUANTITY,SAMPLE_QUANTITY,INSPECTOR_ID,RESULT,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,APPROVED_BY,APPROVED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,81754,@var:ErpQaInspection@code,,INCOMING,,,,7601,,,,,2026-07-15,,,7701,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,81755,@var:ErpQaInspection@code_1,,INCOMING,,,,7601,,,,,2026-07-15,,,7701,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,2026-07-15
+A,81754,@var:ErpQaInspection@code,,INCOMING,,,,7601,,,,,2026-07-17,,,7701,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpQaInspection@businessDate
+A,81755,@var:ErpQaInspection@code_1,,INCOMING,,,,7601,,,,,2026-07-17,,,7701,ACCEPTED,ACTIVE,APPROVED,false,,,,,,@var:ErpQaInspection@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpQaInspection@businessDate

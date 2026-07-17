@@ -185,7 +185,7 @@
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" code="SUPPLIER_ID" propId="10" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="warehouseId" displayName="仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="11" stdDataType="long" i18n-en:displayName='Warehouse' />
                 <column name="batchNo" displayName="批号" stdSqlType="VARCHAR" precision="50" code="BATCH_NO" propId="13" stdDataType="string" i18n-en:displayName='Batch No' />
-                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="inspectionDate" displayName="检验日期" stdSqlType="DATE" mandatory="true" code="INSPECTION_DATE" propId="14" i18n-en:displayName='Inspection Date' />
                 <column name="lotQuantity" displayName="批量" domain="quantity" code="LOT_QUANTITY" propId="15" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Lot Quantity' />
                 <column name="sampleQuantity" displayName="抽样数量" domain="quantity" code="SAMPLE_QUANTITY" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Sample Quantity' />
@@ -614,7 +614,7 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="instrumentName" displayName="量具/设备名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="INSTRUMENT_NAME" propId="4" stdDataType="string" i18n-en:displayName='Instrument Name' />
                 <column name="instrumentCode" displayName="量具编号" stdSqlType="VARCHAR" precision="100" code="INSTRUMENT_CODE" propId="5" stdDataType="string" i18n-en:displayName='Instrument Code' />
-                <column name="businessDate" displayName="校准日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="校准日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="standardRef" displayName="参考标准" stdSqlType="VARCHAR" precision="200" code="STANDARD_REF" propId="7" stdDataType="string" i18n-en:displayName='Standard Ref' />
                 <column name="measuredValue" displayName="测量值" domain="measuredValue" code="MEASURED_VALUE" propId="8" stdSqlType="VARCHAR" precision="100" stdDataType="string" i18n-en:displayName='Measured Value' />
                 <column name="targetValue" displayName="目标值" domain="measuredValue" code="TARGET_VALUE" propId="9" stdSqlType="DECIMAL" precision="20" scale="6" stdDataType="decimal" i18n-en:displayName='Target Value' />
@@ -670,7 +670,7 @@
                 <column name="serialNo" displayName="召回序列号" stdSqlType="VARCHAR" precision="50" code="SERIAL_NO" propId="8" stdDataType="string" i18n-en:displayName='Serial No' />
                 <column name="rootCause" displayName="根本原因" stdSqlType="VARCHAR" precision="2000" code="ROOT_CAUSE" propId="9" stdDataType="string" i18n-en:displayName='Root Cause' />
                 <column name="severityLevel" displayName="严重程度" ext:dict="erp-qa/recall-severity" mandatory="true" code="SEVERITY_LEVEL" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Severity Level' />
-                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="11" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="11" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="notifyCustomer" displayName="已通知客户" stdSqlType="BOOLEAN" defaultValue="false" code="NOTIFY_CUSTOMER" propId="12" stdDataType="boolean" i18n-en:displayName='Notify Customer' />
                 <column name="status" displayName="召回状态" ext:dict="erp-qa/recall-status" mandatory="true" code="STATUS" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />

@@ -1,2 +1,2 @@
 _chgType,ID,BATCH_NO,PAYMENT_DATE,TOTAL_AMOUNT,RECORD_COUNT,FILE_FORMAT,FILE_CONTENT,STATUS,BANK_ID,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,8,@var:ErpHrPayrollBankFile@batchNo,2026-07-15,14118.00,1,CSV,@var:ErpHrPayrollBankFile@fileContent,GENERATED,1,,,@var:ErpHrPayrollBankFile@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8,@var:ErpHrPayrollBankFile@batchNo,2026-07-17,14118.00,1,CSV,@var:ErpHrPayrollBankFile@fileContent,GENERATED,1,,,@var:ErpHrPayrollBankFile@delVersion,0,autotest-ref,*,autotest-ref,*

@@ -113,7 +113,7 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="requesterId" displayName="请购人(职员)" stdSqlType="BIGINT" mandatory="true" code="REQUESTER_ID" propId="4" stdDataType="long" i18n-en:displayName='Requester' />
                 <column name="departmentId" displayName="请购部门" stdSqlType="BIGINT" code="DEPARTMENT_ID" propId="5" stdDataType="long" i18n-en:displayName='Department' />
-                <column name="businessDate" displayName="请购日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="请购日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="requiredDate" displayName="需求日期" stdSqlType="DATE" code="REQUIRED_DATE" propId="7" i18n-en:displayName='Required Date' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
@@ -211,7 +211,7 @@
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="requisitionId" displayName="请购单" stdSqlType="BIGINT" code="REQUISITION_ID" propId="4" stdDataType="long" i18n-en:displayName='Requisition' />
-                <column name="businessDate" displayName="询价日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="询价日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="validUntil" displayName="报价有效期至" stdSqlType="DATE" code="VALID_UNTIL" propId="6" i18n-en:displayName='Valid Until' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-pur/doc-status" mandatory="true" code="DOC_STATUS" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
@@ -298,7 +298,7 @@
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="5" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="6" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="7" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
-                <column name="businessDate" displayName="报价日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="8" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="报价日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="8" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="validFrom" displayName="生效日期" stdSqlType="DATE" code="VALID_FROM" propId="9" i18n-en:displayName='Valid From' />
                 <column name="validTo" displayName="失效日期" stdSqlType="DATE" code="VALID_TO" propId="10" i18n-en:displayName='Valid To' />
                 <column name="isAccepted" displayName="是否中标" stdSqlType="BOOLEAN" defaultValue="false" code="IS_ACCEPTED" propId="11" stdDataType="boolean" i18n-en:displayName='Is Accepted' />
@@ -547,7 +547,7 @@
                 <column name="quotationId" displayName="报价单" stdSqlType="BIGINT" code="QUOTATION_ID" propId="5" stdDataType="long" i18n-en:displayName='Quotation' />
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="6" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="warehouseId" displayName="收货仓库" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="7" stdDataType="long" i18n-en:displayName='Warehouse' />
-                <column name="businessDate" displayName="订单日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="8" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="订单日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="8" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="deliveryDate" displayName="交货日期" stdSqlType="DATE" code="DELIVERY_DATE" propId="9" i18n-en:displayName='Delivery Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="10" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="11" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
@@ -695,7 +695,7 @@
                 <column name="orderId" displayName="采购订单" stdSqlType="BIGINT" code="ORDER_ID" propId="4" stdDataType="long" i18n-en:displayName='Order' />
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="5" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="warehouseId" displayName="入库仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long" i18n-en:displayName='Warehouse' />
-                <column name="businessDate" displayName="入库日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="入库日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
@@ -824,7 +824,7 @@
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="4" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="invoiceNo" displayName="发票号码" stdSqlType="VARCHAR" precision="50" code="INVOICE_NO" propId="5" stdDataType="string" i18n-en:displayName='Invoice No' />
                 <column name="invoiceType" displayName="发票类型" ext:dict="erp-pur/invoice-type" code="INVOICE_TYPE" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Invoice Type' />
-                <column name="businessDate" displayName="发票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="发票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
@@ -931,7 +931,7 @@
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="4" stdDataType="long" i18n-en:displayName='Supplier' />
-                <column name="businessDate" displayName="付款日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="付款日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="6" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="7" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="amountSource" displayName="合计金额(源币)" domain="amount" mandatory="true" code="AMOUNT_SOURCE" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />
@@ -1039,7 +1039,7 @@
                 <column name="receiveId" displayName="入库单" stdSqlType="BIGINT" code="RECEIVE_ID" propId="4" stdDataType="long" i18n-en:displayName='Receive' />
                 <column name="supplierId" displayName="供应商" stdSqlType="BIGINT" mandatory="true" code="SUPPLIER_ID" propId="5" stdDataType="long" i18n-en:displayName='Supplier' />
                 <column name="warehouseId" displayName="出库仓库" stdSqlType="BIGINT" mandatory="true" code="WAREHOUSE_ID" propId="6" stdDataType="long" i18n-en:displayName='Warehouse' />
-                <column name="businessDate" displayName="退货日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="退货日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" mandatory="true" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="amountSource" displayName="合计金额(源币)" domain="amount" defaultValue="0" code="AMOUNT_SOURCE" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Amt (Source)' />

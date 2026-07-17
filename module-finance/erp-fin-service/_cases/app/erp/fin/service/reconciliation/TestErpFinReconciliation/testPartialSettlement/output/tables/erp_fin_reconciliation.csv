@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,ACCT_SCHEMA_ID,DIRECTION,PARTNER_ID,BUSINESS_DATE,CURRENCY_ID,EXCHANGE_RATE,TOTAL_AMOUNT_SOURCE,TOTAL_AMOUNT_FUNCTIONAL,FX_GAIN_LOSS,DOC_STATUS,POSTED_BY,POSTED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,3,@var:ErpFinReconciliation@code,1,1,PAYABLE,10,2026-06-20,1,1.00000000,300.0000,300.0000,0.0000,POSTED,,@var:ErpFinReconciliation@postedAt,,@var:ErpFinReconciliation@delVersion,1,autotest-ref,*,autotest-ref,*
+A,3,@var:ErpFinReconciliation@code,1,1,PAYABLE,10,@var:ErpFinReconciliation@businessDate,1,1.00000000,300.0000,300.0000,0.0000,POSTED,,@var:ErpFinReconciliation@postedAt,,@var:ErpFinReconciliation@delVersion,1,autotest-ref,*,autotest-ref,*

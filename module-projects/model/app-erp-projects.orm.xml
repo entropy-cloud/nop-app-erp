@@ -379,7 +379,7 @@
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="3" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="businessDate" displayName="预算日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="预算日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="6" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="totalAmount" displayName="预算总额" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-prj/project-status" mandatory="true" code="DOC_STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
@@ -476,7 +476,7 @@
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="3" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="businessDate" displayName="归集日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="归集日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="5" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="6" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="totalAmount" displayName="归集金额合计" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
                 <column name="docStatus" displayName="单据状态" ext:dict="erp-prj/project-status" mandatory="true" code="DOC_STATUS" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
@@ -619,7 +619,7 @@
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="customerId" displayName="客户" stdSqlType="BIGINT" mandatory="true" code="CUSTOMER_ID" propId="5" stdDataType="long" i18n-en:displayName='Customer' />
                 <column name="milestoneId" displayName="关联里程碑" stdSqlType="BIGINT" code="MILESTONE_ID" propId="6" stdDataType="long" i18n-en:displayName='Milestone' />
-                <column name="businessDate" displayName="开票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="开票日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="7" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="8" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="exchangeRate" displayName="汇率" domain="exchangeRate" defaultValue="1" code="EXCHANGE_RATE" propId="9" stdSqlType="DECIMAL" precision="20" scale="8" i18n-en:displayName='Exchange Rate' />
                 <column name="totalAmount" displayName="开票金额" domain="amount" defaultValue="0" code="TOTAL_AMOUNT" propId="10" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Total Amt' />
@@ -790,7 +790,7 @@
                 <column name="projectId" displayName="项目" stdSqlType="BIGINT" mandatory="true" code="PROJECT_ID" propId="3" stdDataType="long" i18n-en:displayName='Project' />
                 <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
                 <column name="customerId" displayName="客户" stdSqlType="BIGINT" code="CUSTOMER_ID" propId="5" stdDataType="long" i18n-en:displayName='Customer' />
-                <column name="businessDate" displayName="结算日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" i18n-en:displayName='Business Date' />
+                <column name="businessDate" displayName="结算日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="6" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="settlementType" displayName="结算类型" ext:dict="erp-prj/settlement-type" mandatory="true" code="SETTLEMENT_TYPE" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Settlement Type' />
                 <column name="pnlSnapshotId" displayName="关联损益汇总" stdSqlType="BIGINT" code="PNL_SNAPSHOT_ID" propId="8" stdDataType="long" i18n-en:displayName='PnL Snapshot' />
                 <column name="currencyId" displayName="币种" stdSqlType="BIGINT" code="CURRENCY_ID" propId="9" stdDataType="long" i18n-en:displayName='Currency' />

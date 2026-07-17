@@ -89,8 +89,8 @@
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="businessDate" displayName="业务日期" propId="18" i18n-en:displayName="Business Date" queryable="true"
-              sortable="true" insertable="true" updatable="true">
+        <prop name="businessDate" displayName="业务日期" propId="18" i18n-en:displayName="Business Date" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="batchNo" displayName="批号" propId="19" i18n-en:displayName="Batch No" queryable="true"

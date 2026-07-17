@@ -1,2 +1,2 @@
 _chgType,ID,CODE,PLAN_NAME,PERIOD_FROM,PERIOD_TO,STATUS,TOTAL_REPLENISHMENT_QTY,RUN_AT,RUN_BY,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,6365,@var:ErpDrpPlan@code,DRP-DRP-RESET,2026-07-01,2026-07-31,DRAFT,,@var:ErpDrpPlan@runAt,,6401,,@var:ErpDrpPlan@delVersion,2,autotest-ref,*,autotest-ref,*,2026-07-01
+A,6365,@var:ErpDrpPlan@code,DRP-DRP-RESET,2026-07-01,2026-07-31,DRAFT,,@var:ErpDrpPlan@runAt,,6401,,@var:ErpDrpPlan@delVersion,2,autotest-ref,*,autotest-ref,*,@var:ErpDrpPlan@businessDate

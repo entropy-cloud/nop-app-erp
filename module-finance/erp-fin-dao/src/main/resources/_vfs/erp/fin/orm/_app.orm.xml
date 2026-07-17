@@ -301,7 +301,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/posting-type"
                         i18n-en:displayName="Posting Type"/>
                 <column code="VOUCHER_DATE" displayName="凭证日期" mandatory="true" name="voucherDate" propId="5"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Voucher Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Voucher Date"/>
                 <column code="VOUCHER_NO" displayName="凭证编号" domain="voucherNo" name="voucherNo" precision="50"
                         propId="6" stdDataType="string" stdSqlType="VARCHAR" tagSet="var"
                         i18n-en:displayName="Voucher No"/>
@@ -933,7 +933,7 @@
                         precision="50" propId="8" stdDataType="string" stdSqlType="VARCHAR" tagSet="var"
                         i18n-en:displayName="Source Bill Code"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="9"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="DUE_DATE" displayName="到期日" name="dueDate" propId="10" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Due Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="11"
@@ -1059,7 +1059,7 @@
                 <column code="PARTNER_ID" displayName="往来单位" mandatory="true" name="partnerId" propId="6"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="7"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="8"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
@@ -1889,7 +1889,7 @@
                 <column code="DEPARTMENT_ID" displayName="部门" name="departmentId" propId="5" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Department"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="6"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="PAYMENT_MODE" displayName="付款方式" mandatory="true" name="paymentMode" precision="20"
                         propId="7" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/expense-payment-mode"
                         i18n-en:displayName="Payment Mode"/>
@@ -2130,7 +2130,7 @@
                         propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/advance-type"
                         i18n-en:displayName="Advance Type"/>
                 <column code="BUSINESS_DATE" displayName="借款日期" mandatory="true" name="businessDate" propId="6"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="CURRENCY_ID" displayName="币种" mandatory="true" name="currencyId" propId="7"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Currency"/>
                 <column code="EXCHANGE_RATE" defaultValue="1" displayName="汇率" domain="exchangeRate" name="exchangeRate"
@@ -2672,7 +2672,7 @@
                 <column code="FAILED_STAGE" displayName="失败阶段" name="failedStage" precision="50" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Failed Stage"/>
                 <column code="VOUCHER_DATE" displayName="凭证日期" name="voucherDate" propId="9" stdDataType="date"
-                        stdSqlType="DATE" i18n-en:displayName="Voucher Date"/>
+                        stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Voucher Date"/>
                 <column code="ORG_ID" displayName="核算组织" name="orgId" propId="10" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Organization"/>
                 <column code="ACCT_SCHEMA_ID" displayName="账套" name="acctSchemaId" propId="11" stdDataType="long"
@@ -2794,7 +2794,7 @@
                         precision="20" propId="10" scale="8" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Exchange Rate"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="11"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="REASON" displayName="核销/恢复原因" name="reason" precision="500" propId="12"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
                 <column code="APPROVAL_STATUS" displayName="审核状态" mandatory="true" name="approvalStatus" precision="20"
@@ -3186,7 +3186,7 @@
                 <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="2" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
                 <column code="BUSINESS_DATE" displayName="业务日期" mandatory="true" name="businessDate" propId="3"
-                        stdDataType="date" stdSqlType="DATE" i18n-en:displayName="Business Date"/>
+                        stdDataType="date" stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Business Date"/>
                 <column code="SCENARIO_ID" displayName="预算方案" name="scenarioId" propId="4" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Scenario"/>
                 <column code="BUDGET_LINE_ID" displayName="预算明细行" name="budgetLineId" propId="5" stdDataType="long"

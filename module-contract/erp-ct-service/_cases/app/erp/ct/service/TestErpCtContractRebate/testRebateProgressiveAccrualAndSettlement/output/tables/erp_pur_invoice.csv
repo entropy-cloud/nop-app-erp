@@ -1,4 +1,4 @@
 _chgType,ID,CODE,ORG_ID,SUPPLIER_ID,INVOICE_NO,INVOICE_TYPE,BUSINESS_DATE,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,TOTAL_AMOUNT,TOTAL_TAX_AMOUNT,TOTAL_AMOUNT_WITH_TAX,PAID_AMOUNT,DOC_STATUS,APPROVE_STATUS,PAID_STATUS,POSTED,POSTED_AT,POSTED_BY,APPROVED_BY,APPROVED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,11,@var:ErpPurInvoice@code,,1,,,2026-06-15,2,1,800000,800000,800000,0,800000,0,ACTIVE,APPROVED,UNPAID,true,,,,,,@var:ErpPurInvoice@delVersion_2,0,autotest-ref,*,autotest-ref,*
-A,13,@var:ErpPurInvoice@code_1,,1,,,2026-06-15,2,1,400000,400000,400000,0,400000,0,ACTIVE,APPROVED,UNPAID,true,,,,,,@var:ErpPurInvoice@delVersion_2,0,autotest-ref,*,autotest-ref,*
-A,16,@var:ErpPurInvoice@code_2,,1,,,2026-07-15,2,1,-24000.00,-24000.00,-24000.00,0,-24000.00,0,DRAFT,UNSUBMITTED,UNPAID,false,,,,,,@var:ErpPurInvoice@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,11,@var:ErpPurInvoice@code,,1,,,@var:ErpPurInvoice@businessDate,2,1,800000,800000,800000,0,800000,0,ACTIVE,APPROVED,UNPAID,true,,,,,,@var:ErpPurInvoice@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,13,@var:ErpPurInvoice@code_1,,1,,,@var:ErpPurInvoice@businessDate,2,1,400000,400000,400000,0,400000,0,ACTIVE,APPROVED,UNPAID,true,,,,,,@var:ErpPurInvoice@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,16,@var:ErpPurInvoice@code_2,,1,,,@var:ErpPurInvoice@businessDate_2,2,1,-24000.00,-24000.00,-24000.00,0,-24000.00,0,DRAFT,UNSUBMITTED,UNPAID,false,,,,,,@var:ErpPurInvoice@delVersion_2,0,autotest-ref,*,autotest-ref,*

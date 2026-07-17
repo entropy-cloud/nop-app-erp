@@ -3,7 +3,7 @@
     "id": "5",
     "code": "@var:ErpSalQuotation@code",
     "customerId": 2,
-    "businessDate": "2026-07-01",
+    "businessDate": "@var:ErpSalQuotation@businessDate",
     "currencyId": 1,
     "exchangeRate": 1,
     "totalAmount": 0,

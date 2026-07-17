@@ -1,4 +1,4 @@
 _chgType,ID,CODE,ORG_ID,SOURCE_EDI_DOC_ID,PARTNER_ID,SHIPMENT_DATE,ESTIMATED_ARRIVAL_DATE,TRACKING_NO,RELATED_BILL_TYPE,RELATED_BILL_CODE,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,11,@var:ErpB2bAsn@code_1,,9,1,2026-07-15,2026-07-10,,PO_ORDER,@var:ErpB2bAsn@relatedBillCode_1,RECEIVED,,@var:ErpB2bAsn@delVersion_2,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,16,@var:ErpB2bAsn@code_2,,14,1,2026-07-15,2026-07-10,,PO_ORDER,@var:ErpB2bAsn@relatedBillCode_2,RECEIVED,,@var:ErpB2bAsn@delVersion_2,0,autotest-ref,*,autotest-ref,*,2026-07-15
-A,6,@var:ErpB2bAsn@code,,4,1,2026-07-15,2026-07-10,,PO_ORDER,@var:ErpB2bAsn@relatedBillCode,MATCHED,,@var:ErpB2bAsn@delVersion_2,1,autotest-ref,*,autotest-ref,*,2026-07-15
+A,11,@var:ErpB2bAsn@code_1,,9,1,2026-07-17,2026-07-10,,PO_ORDER,@var:ErpB2bAsn@relatedBillCode_1,RECEIVED,,@var:ErpB2bAsn@delVersion_2,0,autotest-ref,*,autotest-ref,*,@var:ErpB2bAsn@businessDate_2
+A,16,@var:ErpB2bAsn@code_2,,14,1,2026-07-17,2026-07-10,,PO_ORDER,@var:ErpB2bAsn@relatedBillCode_2,RECEIVED,,@var:ErpB2bAsn@delVersion_2,0,autotest-ref,*,autotest-ref,*,@var:ErpB2bAsn@businessDate_2
+A,6,@var:ErpB2bAsn@code,,4,1,2026-07-17,2026-07-10,,PO_ORDER,@var:ErpB2bAsn@relatedBillCode,MATCHED,,@var:ErpB2bAsn@delVersion_2,1,autotest-ref,*,autotest-ref,*,@var:ErpB2bAsn@businessDate_2

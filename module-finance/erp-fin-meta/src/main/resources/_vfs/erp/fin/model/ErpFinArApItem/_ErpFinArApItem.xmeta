@@ -54,8 +54,8 @@
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="businessDate" displayName="业务日期" propId="9" i18n-en:displayName="Business Date" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="businessDate" displayName="业务日期" propId="9" i18n-en:displayName="Business Date" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="dueDate" displayName="到期日" propId="10" i18n-en:displayName="Due Date" queryable="true"

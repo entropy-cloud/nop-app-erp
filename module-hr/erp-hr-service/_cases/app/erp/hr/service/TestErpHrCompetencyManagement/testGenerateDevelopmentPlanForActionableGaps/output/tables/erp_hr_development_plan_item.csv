@@ -1,3 +1,3 @@
 _chgType,ID,PLAN_ID,COMPETENCY_ID,GAP_ID,TARGET_LEVEL,DEVELOPMENT_ACTION,MENTOR_ID,START_DATE,END_DATE,STATUS,PROGRESS_NOTE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,17,16,3,13,5,"针对胜任力差距 (gap=3,severity=CRITICAL) 的建议发展行动",,2026-07-15,2026-10-15,NOT_STARTED,,@var:ErpHrDevelopmentPlanItem@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,18,16,4,14,4,"针对胜任力差距 (gap=2,severity=MODERATE) 的建议发展行动",,2026-07-15,2026-10-15,NOT_STARTED,,@var:ErpHrDevelopmentPlanItem@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,17,16,3,13,5,"针对胜任力差距 (gap=3,severity=CRITICAL) 的建议发展行动",,2026-07-17,2026-10-17,NOT_STARTED,,@var:ErpHrDevelopmentPlanItem@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,18,16,4,14,4,"针对胜任力差距 (gap=2,severity=MODERATE) 的建议发展行动",,2026-07-17,2026-10-17,NOT_STARTED,,@var:ErpHrDevelopmentPlanItem@delVersion_1,0,autotest-ref,*,autotest-ref,*

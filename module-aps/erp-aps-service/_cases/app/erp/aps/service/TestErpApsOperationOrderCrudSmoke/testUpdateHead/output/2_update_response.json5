@@ -29,7 +29,7 @@
     "updateTime": "@var:ErpApsOperationOrder@updateTime_1",
     "earliestStartDateT": null,
     "latestEndDateT": null,
-    "businessDate": "2026-07-15"
+    "businessDate": "@var:ErpApsOperationOrder@businessDate"
   },
   "status": 0
 }

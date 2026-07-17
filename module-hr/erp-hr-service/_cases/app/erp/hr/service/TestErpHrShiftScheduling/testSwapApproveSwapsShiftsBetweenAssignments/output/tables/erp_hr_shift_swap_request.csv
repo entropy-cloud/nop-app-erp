@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,REQUESTER_ID,TARGET_EMPLOYEE_ID,SOURCE_ASSIGNMENT_ID,TARGET_ASSIGNMENT_ID,SWAP_DATE,REASON,STATUS,APPROVED_BY_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,7,@var:ErpHrShiftSwapRequest@code,,1,2,5,6,2026-07-01,测试调换,APPROVED,autotest,@var:ErpHrShiftSwapRequest@delVersion,1,autotest-ref,*,autotest-ref,*,2026-07-15
+A,7,@var:ErpHrShiftSwapRequest@code,,1,2,5,6,2026-07-01,测试调换,APPROVED,autotest,@var:ErpHrShiftSwapRequest@delVersion,1,autotest-ref,*,autotest-ref,*,@var:ErpHrShiftSwapRequest@businessDate

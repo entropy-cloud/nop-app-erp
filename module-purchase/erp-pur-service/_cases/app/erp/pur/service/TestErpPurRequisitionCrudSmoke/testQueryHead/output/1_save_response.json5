@@ -3,7 +3,7 @@
     "id": "1",
     "code": "@var:ErpPurRequisition@code",
     "requesterId": 1,
-    "businessDate": "2026-07-01",
+    "businessDate": "@var:ErpPurRequisition@businessDate",
     "docStatus": "DRAFT",
     "docStatus_label": "DRAFT-草稿",
     "approveStatus": "UNSUBMITTED",

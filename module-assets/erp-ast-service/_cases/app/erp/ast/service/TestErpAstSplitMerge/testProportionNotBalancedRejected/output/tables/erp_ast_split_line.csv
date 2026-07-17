@@ -1,4 +1,4 @@
 _chgType,ID,SPLIT_ID,ORG_ID,LINE_NO,TARGET_ASSET_CODE,TARGET_ASSET_NAME,CATEGORY_ID,ALLOCATION_METHOD,PROPORTION,ORIGINAL_COST_AMOUNT,ACCUMULATED_DEPRECIATION_AMOUNT,NET_BOOK_VALUE,TARGET_ASSET_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK
-A,10,9,1,1,@var:ErpAstSplitLine@targetAssetCode,目标资产-0,,PROPORTIONAL,0.5,0,0,0,,@var:ErpAstSplitLine@delVersion_1,0,autotest-ref,*,autotest-ref,*,
-A,11,9,1,2,@var:ErpAstSplitLine@targetAssetCode_1,目标资产-1,,PROPORTIONAL,0.3,0,0,0,,@var:ErpAstSplitLine@delVersion_1,0,autotest-ref,*,autotest-ref,*,
-A,12,9,1,3,@var:ErpAstSplitLine@targetAssetCode_2,目标资产-2,,PROPORTIONAL,0.15,0,0,0,,@var:ErpAstSplitLine@delVersion_1,0,autotest-ref,*,autotest-ref,*,
+A,10,9,1,1,@var:ErpAstSplitLine@targetAssetCode,目标资产-0,,PROPORTIONAL,0.5,0,0,0,,@var:ErpAstSplitLine@delVersion,0,autotest-ref,*,autotest-ref,*,
+A,11,9,1,2,@var:ErpAstSplitLine@targetAssetCode_1,目标资产-1,,PROPORTIONAL,0.3,0,0,0,,@var:ErpAstSplitLine@delVersion,0,autotest-ref,*,autotest-ref,*,
+A,12,9,1,3,@var:ErpAstSplitLine@targetAssetCode_2,目标资产-2,,PROPORTIONAL,0.15,0,0,0,,@var:ErpAstSplitLine@delVersion,0,autotest-ref,*,autotest-ref,*,

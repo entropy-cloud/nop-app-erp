@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,VISIT_ID,REQUEST_ID,EQUIPMENT_ID,BUSINESS_DATE,WAREHOUSE_ID,TOTAL_AMOUNT,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,APPROVED_BY,APPROVED_AT
-A,300002,@var:ErpMntSparePartUsage@code,1201,5,,101,2026-07-01,3201,20.0000,ACTIVE,APPROVED,true,@var:ErpMntSparePartUsage@postedAt,,,@var:ErpMntSparePartUsage@delVersion,1,autotest-ref,*,autotest-ref,*,,
+A,300002,@var:ErpMntSparePartUsage@code,1201,5,,101,@var:ErpMntSparePartUsage@businessDate,3201,20.0000,ACTIVE,APPROVED,true,@var:ErpMntSparePartUsage@postedAt,,,@var:ErpMntSparePartUsage@delVersion,1,autotest-ref,*,autotest-ref,*,,

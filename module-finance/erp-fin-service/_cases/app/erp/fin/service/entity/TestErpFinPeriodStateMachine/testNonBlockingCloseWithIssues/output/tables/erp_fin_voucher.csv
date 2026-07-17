@@ -1,2 +1,2 @@
 _chgType,ID,CODE,VOUCHER_TYPE,POSTING_TYPE,VOUCHER_DATE,VOUCHER_NO,ORG_ID,ACCT_SCHEMA_ID,PERIOD_ID,TOTAL_DEBIT,TOTAL_CREDIT,IS_REVERSED,REVERSAL_OF_VOUCHER_ID,DOC_STATUS,POSTED_BY,POSTED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,2,@var:ErpFinVoucher@code,TRANSFER,,2026-09-10,,1,1,1,0,0,false,,DRAFT,,,,@var:ErpFinVoucher@delVersion,0,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpFinVoucher@code,TRANSFER,,@var:ErpFinVoucher@voucherDate,,1,1,1,0,0,false,,DRAFT,,,,@var:ErpFinVoucher@delVersion,0,autotest-ref,*,autotest-ref,*

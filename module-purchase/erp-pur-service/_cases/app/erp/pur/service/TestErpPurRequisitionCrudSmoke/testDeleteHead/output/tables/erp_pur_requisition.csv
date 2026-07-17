@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,REQUESTER_ID,DEPARTMENT_ID,BUSINESS_DATE,REQUIRED_DATE,DOC_STATUS,APPROVE_STATUS,APPROVED_BY,APPROVED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,1,@var:ErpPurRequisition@code,,1,,2026-07-01,,DRAFT,UNSUBMITTED,,,,@var:ErpPurRequisition@delVersion_1,1,autotest-ref,*,autotest-ref,*
+A,1,@var:ErpPurRequisition@code,,1,,@var:ErpPurRequisition@businessDate,,DRAFT,UNSUBMITTED,,,,@var:ErpPurRequisition@delVersion_1,1,autotest-ref,*,autotest-ref,*

@@ -1,3 +1,3 @@
 _chgType,ID,CODE,EMPLOYEE_ID,LEAVE_TYPE,START_DATE,END_DATE,DURATION_DAYS,REASON,STATUS,APPROVER_ID,APPROVED_AT,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
-A,3,@var:ErpHrLeaveRequest@code,1,ANNUAL,2026-07-01,2026-07-03,3,,APPROVED,,,,,@var:ErpHrLeaveRequest@delVersion,0,autotest-ref,*,autotest-ref,*,2026-01-01
-A,4,@var:ErpHrLeaveRequest@code_1,1,ANNUAL,2026-07-10,2026-07-13,,,DRAFT,,,,,@var:ErpHrLeaveRequest@delVersion,0,autotest-ref,*,autotest-ref,*,2026-01-01
+A,3,@var:ErpHrLeaveRequest@code,1,ANNUAL,2026-07-01,2026-07-03,3,,APPROVED,,,,,@var:ErpHrLeaveRequest@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpHrLeaveRequest@businessDate_1
+A,4,@var:ErpHrLeaveRequest@code_1,1,ANNUAL,2026-07-10,2026-07-13,,,DRAFT,,,,,@var:ErpHrLeaveRequest@delVersion,0,autotest-ref,*,autotest-ref,*,@var:ErpHrLeaveRequest@businessDate_1

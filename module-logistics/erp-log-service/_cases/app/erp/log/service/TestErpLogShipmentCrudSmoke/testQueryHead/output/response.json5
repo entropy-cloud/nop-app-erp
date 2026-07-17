@@ -47,7 +47,7 @@
         "createTime": "@var:ErpLogShipment@createTime",
         "updatedBy": "autotest-ref",
         "updateTime": "@var:ErpLogShipment@createTime",
-        "businessDate": "2026-07-15",
+        "businessDate": "@var:ErpLogShipment@businessDate",
         "posted": false
       }
     ],

@@ -1,2 +1,2 @@
 _chgType,ID,CODE,ORG_ID,RFQ_ID,SUPPLIER_ID,CURRENCY_ID,EXCHANGE_RATE,BUSINESS_DATE,VALID_FROM,VALID_TO,IS_ACCEPTED,DOC_STATUS,APPROVE_STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,APPROVED_BY,APPROVED_AT
-A,5,@var:ErpPurQuotation@code,,,9006,6101,1,2026-07-03,,,false,DRAFT,UNSUBMITTED,,@var:ErpPurQuotation@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,5,@var:ErpPurQuotation@code,,,9006,6101,1,@var:ErpPurQuotation@businessDate,,,false,DRAFT,UNSUBMITTED,,@var:ErpPurQuotation@delVersion,0,autotest-ref,*,autotest-ref,*,,

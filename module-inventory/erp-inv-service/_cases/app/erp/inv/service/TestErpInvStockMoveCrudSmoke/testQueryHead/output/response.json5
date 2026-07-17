@@ -10,7 +10,7 @@
         "moveType": "INCOMING",
         "moveType_label": "INCOMING-入库",
         "orgId": null,
-        "businessDate": "2026-07-01",
+        "businessDate": "@var:ErpInvStockMove@businessDate",
         "sourceWarehouseId": null,
         "sourceLocationId": null,
         "destWarehouseId": null,

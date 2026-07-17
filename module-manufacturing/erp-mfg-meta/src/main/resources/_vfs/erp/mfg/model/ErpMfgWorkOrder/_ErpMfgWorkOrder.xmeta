@@ -73,8 +73,8 @@
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
             <schema domain="quantity" type="java.math.BigDecimal" precision="20" scale="4"/>
         </prop>
-        <prop name="businessDate" displayName="工单日期" propId="14" i18n-en:displayName="Business Date" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="true">
+        <prop name="businessDate" displayName="工单日期" propId="14" i18n-en:displayName="Business Date" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="plannedStartDate" displayName="计划开工日期" propId="15" i18n-en:displayName="Planned Start Date"

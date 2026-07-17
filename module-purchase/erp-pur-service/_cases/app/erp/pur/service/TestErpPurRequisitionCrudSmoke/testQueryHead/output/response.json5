@@ -10,7 +10,7 @@
         "orgId": null,
         "requesterId": 1,
         "departmentId": null,
-        "businessDate": "2026-07-01",
+        "businessDate": "@var:ErpPurRequisition@businessDate",
         "requiredDate": null,
         "docStatus": "DRAFT",
         "docStatus_label": "DRAFT-草稿",

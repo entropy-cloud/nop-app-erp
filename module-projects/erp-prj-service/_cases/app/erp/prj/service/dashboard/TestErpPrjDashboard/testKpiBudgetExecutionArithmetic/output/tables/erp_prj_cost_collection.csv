@@ -1,4 +1,4 @@
 _chgType,ID,CODE,PROJECT_ID,ORG_ID,BUSINESS_DATE,CURRENCY_ID,TOTAL_AMOUNT,DOC_STATUS,APPROVE_STATUS,POSTED,POSTED_AT,POSTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,APPROVED_BY,APPROVED_AT,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL
-A,301,@var:ErpPrjCostCollection@code,101,1,2026-07-15,1,400,APPROVED,APPROVED,true,,,,@var:ErpPrjCostCollection@delVersion_2,0,autotest-ref,*,autotest-ref,*,,,1,0,0
-A,302,@var:ErpPrjCostCollection@code_1,102,1,2026-07-15,1,1000,APPROVED,APPROVED,true,,,,@var:ErpPrjCostCollection@delVersion_2,0,autotest-ref,*,autotest-ref,*,,,1,0,0
-A,303,@var:ErpPrjCostCollection@code_2,103,1,2026-07-15,1,9999,APPROVED,APPROVED,true,,,,@var:ErpPrjCostCollection@delVersion_2,0,autotest-ref,*,autotest-ref,*,,,1,0,0
+A,301,@var:ErpPrjCostCollection@code,101,1,@var:ErpPrjCostCollection@businessDate,1,400,APPROVED,APPROVED,true,,,,@var:ErpPrjCostCollection@delVersion_2,0,autotest-ref,*,autotest-ref,*,,,1,0,0
+A,302,@var:ErpPrjCostCollection@code_1,102,1,@var:ErpPrjCostCollection@businessDate,1,1000,APPROVED,APPROVED,true,,,,@var:ErpPrjCostCollection@delVersion_2,0,autotest-ref,*,autotest-ref,*,,,1,0,0
+A,303,@var:ErpPrjCostCollection@code_2,103,1,@var:ErpPrjCostCollection@businessDate,1,9999,APPROVED,APPROVED,true,,,,@var:ErpPrjCostCollection@delVersion_2,0,autotest-ref,*,autotest-ref,*,,,1,0,0

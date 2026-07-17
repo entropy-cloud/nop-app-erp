@@ -7,5 +7,10 @@
                 return inject('app.erp.pur.service.processor.ErpPurRequisitionProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
+        <mutation name="reverseApprove">
+            <source><c:script><![CDATA[
+                return inject('app.erp.pur.service.processor.ErpPurRequisitionProcessor').reverseApprove(id, svcCtx);
+            ]]></c:script></source>
+        </mutation>
     </actions>
 </biz>

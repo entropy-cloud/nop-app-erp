@@ -1,5 +1,5 @@
 _chgType,ID,CODE,NCR_DATE,SOURCE_TYPE,SOURCE_CODE,MATERIAL_ID,INSPECTION_ID,QUANTITY,DESCRIPTION,SEVERITY,DISPOSITION_TYPE,STATUS,SUPPLIER_ID,PARAMETER_NAME,MEASURED_VALUE,SPEC_MIN,SPEC_MAX,ASSIGNED_TO,RESOLVED_BY,RESOLVED_AT,RESOLUTION,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,POSTED,POSTED_AT,POSTED_BY,RETURN_CODE
-A,221,@var:ErpQaNonConformance@code,2026-07-15,,,1,,,,MAJOR,SCRAP,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_3,0,autotest-ref,*,autotest-ref,*,false,,,
-A,222,@var:ErpQaNonConformance@code_1,2026-07-15,,,1,,,,MAJOR,SCRAP,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_3,0,autotest-ref,*,autotest-ref,*,false,,,
-A,223,@var:ErpQaNonConformance@code_2,2026-07-15,,,1,,,,MAJOR,SCRAP,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_3,0,autotest-ref,*,autotest-ref,*,false,,,
-A,224,@var:ErpQaNonConformance@code_3,2026-07-15,,,1,,,,MAJOR,RETURN,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_3,0,autotest-ref,*,autotest-ref,*,false,,,
+A,221,@var:ErpQaNonConformance@code,2026-07-17,,,1,,,,MAJOR,SCRAP,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_3,0,autotest-ref,*,autotest-ref,*,false,,,
+A,222,@var:ErpQaNonConformance@code_1,2026-07-17,,,1,,,,MAJOR,SCRAP,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_3,0,autotest-ref,*,autotest-ref,*,false,,,
+A,223,@var:ErpQaNonConformance@code_2,2026-07-17,,,1,,,,MAJOR,SCRAP,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_3,0,autotest-ref,*,autotest-ref,*,false,,,
+A,224,@var:ErpQaNonConformance@code_3,2026-07-17,,,1,,,,MAJOR,RETURN,OPEN,,,,,,,,,,,@var:ErpQaNonConformance@delVersion_3,0,autotest-ref,*,autotest-ref,*,false,,,
