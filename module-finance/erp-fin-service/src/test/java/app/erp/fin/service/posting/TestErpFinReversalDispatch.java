@@ -112,6 +112,7 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
 
         assertNotNull(redId, "红冲应生成红字凭证");
         assertNotEquals(originalId, redId);
+        output("1_red_id.json5", redId);
         assertEquals(1, capturing.callCount.get(), "监听者应被回调 1 次");
         VoucherReversedEvent event = capturing.lastEvent;
         assertNotNull(event, "监听者应收到事件");
@@ -122,6 +123,14 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
         assertEquals(BUSINESS_TYPE_AP_INVOICE, event.getBillType(), "事件 billType 正确");
         assertNotNull(event.getTraceId(), "事件 traceId 由引擎生成非空");
         assertTrue(!event.getTraceId().isEmpty(), "traceId 非空串");
+        java.util.Map<String, Object> eventState = new java.util.LinkedHashMap<>();
+        eventState.put("voucherId", event.getVoucherId());
+        eventState.put("reversalOfVoucherId", event.getReversalOfVoucherId());
+        eventState.put("billHeadCode", event.getBillHeadCode());
+        eventState.put("businessType", event.getBusinessType());
+        eventState.put("billType", event.getBillType());
+        eventState.put("callCount", capturing.callCount.get());
+        output("2_event.json5", eventState);
     }
 
     @Test
@@ -144,6 +153,7 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
         Long redId = ormTemplate.runInSession(session -> voucherBiz.reverse("AP-NOOP-001", ErpFinBusinessType.AP_INVOICE, CTX));
 
         assertNotNull(redId, "无监听者时 reverse() 应正常返回红字凭证 ID");
+        output("1_red_id.json5", redId);
     }
 
     @Test
@@ -170,6 +180,7 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
         // reverse() 不抛错（监听者失败被隔离），红字凭证成功落库。
         Long redId = ormTemplate.runInSession(session -> voucherBiz.reverse("AP-FAIL-001", ErpFinBusinessType.AP_INVOICE, CTX));
         assertNotNull(redId, "监听者抛错时红字凭证仍应过账（法律效力）");
+        output("1_red_id.json5", redId);
         assertEquals(1, goodListener.callCount.get(),
                 "正常监听者应仍被回调（失败监听者不阻断其他监听者）");
 
@@ -186,6 +197,14 @@ public class TestErpFinReversalDispatch extends JunitAutoTestCase {
                 "失败记录 errorCode=ERR_REVERSAL_LISTENER_FAILED");
         assertEquals(ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING, pe.getStatus(),
                 "失败记录 status=PENDING");
+        java.util.Map<String, Object> exceptionState = new java.util.LinkedHashMap<>();
+        exceptionState.put("id", pe.getId());
+        exceptionState.put("postingType", pe.getPostingType());
+        exceptionState.put("failedStage", pe.getFailedStage());
+        exceptionState.put("errorCode", pe.getErrorCode());
+        exceptionState.put("status", pe.getStatus());
+        exceptionState.put("goodListenerCallCount", goodListener.callCount.get());
+        output("2_posting_exception.json5", exceptionState);
     }
 
     // ---------- helpers ----------

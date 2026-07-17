@@ -1,0 +1,7 @@
+{
+  "errorCode": "erp.err.fin.posting.unbalanced",
+  "params": {
+    "totalCredit": "200",
+    "totalDebit": "113"
+  }
+}

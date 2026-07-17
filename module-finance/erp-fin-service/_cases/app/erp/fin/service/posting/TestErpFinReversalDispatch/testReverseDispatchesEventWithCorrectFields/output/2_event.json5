@@ -1,0 +1,8 @@
+{
+  "voucherId": 15,
+  "reversalOfVoucherId": 9,
+  "billHeadCode": "@var:ErpFinVoucherBillR@billCode_1",
+  "businessType": "AP_INVOICE",
+  "billType": "AP_INVOICE",
+  "callCount": 1
+}

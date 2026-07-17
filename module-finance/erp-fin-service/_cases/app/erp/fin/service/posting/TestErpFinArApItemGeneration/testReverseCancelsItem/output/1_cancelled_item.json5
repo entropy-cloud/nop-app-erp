@@ -1,0 +1,11 @@
+{
+  "id": 14,
+  "direction": "PAYABLE",
+  "sourceBillType": "AP_INVOICE",
+  "sourceBillCode": "@var:ErpFinVoucherBillR@billCode_1",
+  "status": "CANCELLED",
+  "partnerId": 1,
+  "amountFunctional": 150.0000,
+  "openAmountFunctional": 0.0000,
+  "settledAmountFunctional": 0.0000
+}

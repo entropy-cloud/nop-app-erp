@@ -1,0 +1,14 @@
+[
+  {
+    "subjectCode": "@var:ErpMdSubject@code",
+    "dcDirection": "DEBIT",
+    "debitAmount": 495.0000,
+    "creditAmount": 0.0000
+  },
+  {
+    "subjectCode": "@var:ErpMdSubject@code_1",
+    "dcDirection": "CREDIT",
+    "debitAmount": 0.0000,
+    "creditAmount": 495.0000
+  }
+]

@@ -84,10 +84,12 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
         Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        output("1_post_response.json5", voucherId);
 
         assertNotNull(voucherId, "happy path 应生成并返回凭证 ID");
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         ErpFinVoucher voucher = voucherDao.requireEntityById(voucherId);
+        output("2_voucher_state.json5", voucherState(voucher));
         assertEquals(VOUCHER_STATUS_POSTED, voucher.getDocStatus(), "凭证应为已过账");
         assertEquals(false, voucher.getIsReversed(), "非红字凭证");
         assertTrue(voucher.getTotalDebit().compareTo(new BigDecimal("113")) == 0,
@@ -117,6 +119,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
 
         Long first = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         Long second = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        output("1_idempotent_responses.json5", java.util.Arrays.asList(first, second));
 
         assertNotNull(first, "首次过账应生成凭证");
         assertNull(second, "重复过账应空操作返回 null");
@@ -141,7 +144,9 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-UNBAL-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("200"));
 
-        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)), "借贷不平衡应抛 NopException");
+        NopException unbalanced = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)), "借贷不平衡应抛 NopException");
+        output("1_reject_exception.json5", exceptionInfo(unbalanced));
         assertEquals(0, countBillLinks("AP-UNBAL-001", BUSINESS_TYPE_AP_INVOICE), "被拒不应落库回链");
     }
 
@@ -160,7 +165,9 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         PostingEvent event = apInvoiceEvent("AP-CLOSED-001", voucherDate,
                 new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
 
-        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)), "期间已结账应抛 NopException");
+        NopException periodClosed = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> voucherBiz.post(event, CTX)), "期间已结账应抛 NopException");
+        output("1_reject_exception.json5", exceptionInfo(periodClosed));
         assertEquals(0, countBillLinks("AP-CLOSED-001", BUSINESS_TYPE_AP_INVOICE), "被拒不应落库回链");
     }
 
@@ -181,6 +188,7 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         assertNotNull(originalId, "前置：先 happy 过账生成原凭证");
 
         Long redId = ormTemplate.runInSession(session -> voucherBiz.reverse("AP-REV-001", ErpFinBusinessType.AP_INVOICE, CTX));
+        output("1_reverse_red_id.json5", redId);
         assertNotNull(redId, "红冲应生成红字凭证");
         assertNotEquals(originalId, redId, "红字凭证是新凭证，非原凭证");
 
@@ -225,6 +233,24 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    private java.util.Map<String, Object> exceptionInfo(NopException ex) {
+        java.util.Map<String, Object> info = new java.util.LinkedHashMap<>();
+        info.put("errorCode", ex.getErrorCode());
+        info.put("params", ex.getParams());
+        return info;
+    }
+
+    private java.util.Map<String, Object> voucherState(ErpFinVoucher v) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("id", v.getId());
+        m.put("docStatus", v.getDocStatus());
+        m.put("isReversed", v.getIsReversed());
+        m.put("voucherType", v.getVoucherType());
+        m.put("totalDebit", v.getTotalDebit());
+        m.put("totalCredit", v.getTotalCredit());
+        return m;
+    }
 
     private void seed(Runnable action) {
         ormTemplate.runInSession(action);

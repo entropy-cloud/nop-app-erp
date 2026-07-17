@@ -75,6 +75,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         assertEquals(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode(), completeResp.getCode(),
                 "DONE 后再 complete 应返回非法迁移错误（经 GraphQL，不抛异常）");
         assertEquals(1, findLedgers(moveId).size(), "DONE 后不可再写流水");
+        output("1_complete_rejection.json5", completeResp.getCode());
     }
 
     @Test
@@ -90,6 +91,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         assertEquals(0, updated.getTotalQuantity().compareTo(new BigDecimal("20")), "totalQty=20");
         assertEquals(0, updated.getAvgCost().compareTo(new BigDecimal("7")), "avgCost=(60+80)/20=7");
         assertEquals(0, updated.getTotalCost().compareTo(new BigDecimal("140")), "totalCost=140");
+        output("1_balance_state.json5", balanceState(updated));
     }
 
     @Test
@@ -109,6 +111,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         assertEquals(0, outLedger.getUnitCost().compareTo(new BigDecimal("10")),
                 "出库流水 unitCost 快照=当前 avgCost 10");
         assertEquals(0, outLedger.getQuantity().compareTo(new BigDecimal("-8")), "出库 quantity 负 -8");
+        output("1_balance_state.json5", balanceState(findBalance()));
     }
 
     @Test
@@ -116,6 +119,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         ApiResponse<?> resp = genMove(outgoingReq("SALES_SHIP", "SS-INSUF-001", new BigDecimal("5")));
         assertEquals(ErpInvErrors.ERR_AVAILABLE_INSUFFICIENT.getErrorCode(), resp.getCode(),
                 "可用量不足应返回 ERR_AVAILABLE_INSUFFICIENT");
+        output("1_rejection_code.json5", resp.getCode());
 
         ErpInvStockMove move = findMove("SALES_SHIP", "SS-INSUF-001");
         assertNull(move, "可用量不足整笔回滚，不应残留移动单");
@@ -137,6 +141,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
             ErpInvStockBalance balance = findBalance();
             assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("-5")),
                     "totalQty 允许为负 -5");
+            output("1_balance_state.json5", balanceState(balance));
         } finally {
             setNegativeStock(false);
         }
@@ -167,6 +172,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
                     balance.getTotalQuantity().subtract(balance.getReservedQuantity())
                             .subtract(balance.getLockedQuantity())),
                     "available = total - reserved - locked 不变量在负库存下成立");
+            output("1_balance_state.json5", balanceState(balance));
         } finally {
             setNegativeStock(false);
         }
@@ -199,6 +205,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
                     "avgCost = 80 / 5 = 16（平滑过渡，无除零/负成本异常）");
             assertEquals(0, replenished.getAvailableQuantity().compareTo(new BigDecimal("5")),
                     "available = 5（全部可用）");
+            output("1_replenished_balance_state.json5", balanceState(replenished));
         } finally {
             setNegativeStock(false);
         }
@@ -249,6 +256,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
                     "DONE 释放 reserved = 0");
             assertEquals(0, afterDone.getAvailableQuantity().compareTo(new BigDecimal("7")),
                     "available = 7 - 0 - 0 = 7");
+            output("1_after_done_balance.json5", balanceState(afterDone));
         } finally {
             setNegativeStock(false);
         }
@@ -268,6 +276,7 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
         ApiResponse<?> resp = genMove(outgoingReq("SALES_SHIP", "SS-DEF-REJECT-001", new BigDecimal("5")));
         assertEquals(ErpInvErrors.ERR_AVAILABLE_INSUFFICIENT.getErrorCode(), resp.getCode(),
                 "默认 allow-negative-stock=false 时可用量不足应返回 ERR_AVAILABLE_INSUFFICIENT");
+        output("1_rejection_code.json5", resp.getCode());
 
         ErpInvStockMove move = findMove("SALES_SHIP", "SS-DEF-REJECT-001");
         assertNull(move, "拒绝应整笔回滚，不残留移动单");
@@ -279,6 +288,17 @@ public class TestErpInvStockMoveBookkeeping extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    private java.util.Map<String, Object> balanceState(ErpInvStockBalance b) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("totalQuantity", b.getTotalQuantity());
+        m.put("availableQuantity", b.getAvailableQuantity());
+        m.put("reservedQuantity", b.getReservedQuantity());
+        m.put("lockedQuantity", b.getLockedQuantity());
+        m.put("avgCost", b.getAvgCost());
+        m.put("totalCost", b.getTotalCost());
+        return m;
+    }
 
     private Long generateIncoming(String billCode, BigDecimal qty, BigDecimal unitCost) {
         return idOf(genMove(incomingReq("PUR_RECEIPT", billCode, qty, unitCost)));

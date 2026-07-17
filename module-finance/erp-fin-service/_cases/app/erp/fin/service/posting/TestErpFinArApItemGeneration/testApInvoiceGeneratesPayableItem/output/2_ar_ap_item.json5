@@ -1,0 +1,11 @@
+{
+  "id": 14,
+  "direction": "PAYABLE",
+  "sourceBillType": "AP_INVOICE",
+  "sourceBillCode": "@var:ErpFinVoucherBillR@billCode",
+  "status": "OPEN",
+  "partnerId": 2,
+  "amountFunctional": 113.0000,
+  "openAmountFunctional": 113.0000,
+  "settledAmountFunctional": 0.0000
+}

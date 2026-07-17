@@ -86,13 +86,16 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         // 领料出库：领 M1×2，材料成本 = 2×5 = 10
         Long issueId = seedIssue("MI-E2E", woId);
         seedIssueLine(9301L, issueId, M1, bd("2"), wolId);
-        rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
+        ApiResponse<?> issueConfirmResp = rpc(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
+        assertEquals(0, issueConfirmResp.getStatus(), "ErpMfgMaterialIssue__confirm 应成功: " + issueConfirmResp);
+        output("1_issue_confirm_response.json5", issueConfirmResp);
 
         // 报工：JobCard 录工时 60 分钟 × 费率 30 → 人工成本 = 60/60×30 = 30
         Long jobCardId = seedJobCard(woId);
         rpcOk(mutation, "ErpMfgJobCard__startJob", Map.of("jobCardId", jobCardId));
         ApiResponse<?> rwResp = recordWorkRequest(jobCardId, bd("60"), bd("30"), bd("1"));
         assertEquals(0, rwResp.getStatus(), "recordWork 应成功: " + rwResp);
+        output("2_record_work_response.json5", rwResp);
 
         ErpMfgJobCardTimeLog timeLog = findTimeLog(jobCardId);
         assertEquals(0, timeLog.getLaborCost().compareTo(bd("30")), "人工成本 = 60/60×30 = 30");
@@ -101,7 +104,9 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         Map<String, Object> completeReq = new LinkedHashMap<>();
         completeReq.put("workOrderId", woId);
         completeReq.put("completedQty", bd("1"));
-        rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion", completeReq);
+        ApiResponse<?> completeResp = rpc(mutation, "ErpMfgWorkOrder__reportCompletion", completeReq);
+        assertEquals(0, completeResp.getStatus(), "reportCompletion 应成功: " + completeResp);
+        output("3_report_completion_response.json5", completeResp);
 
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
         assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, wo.getDocStatus(), "完工达量 → COMPLETED");
@@ -110,6 +115,16 @@ public class TestErpMfgWorkOrderEndToEnd extends JunitAutoTestCase {
         assertEquals(0, wo.getLaborCost().compareTo(bd("30")), "人工成本 = 30");
         assertEquals(0, wo.getTotalCost().compareTo(bd("40")), "总成本 = 10+30+0+0 = 40");
         assertEquals(0, wo.getUnitCost().compareTo(bd("40")), "单位成本 = 40/1 = 40");
+        java.util.Map<String, Object> woState = new java.util.LinkedHashMap<>();
+        woState.put("id", wo.getId());
+        woState.put("code", wo.getCode());
+        woState.put("docStatus", wo.getDocStatus());
+        woState.put("completedQuantity", wo.getCompletedQuantity());
+        woState.put("materialCost", wo.getMaterialCost());
+        woState.put("laborCost", wo.getLaborCost());
+        woState.put("totalCost", wo.getTotalCost());
+        woState.put("unitCost", wo.getUnitCost());
+        output("4_workorder_final_state.json5", woState);
 
         // 完工入库移动单生成（MANUFACTURING，产成品 P 入库）
         ErpInvStockMove completionMove = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-E2E");

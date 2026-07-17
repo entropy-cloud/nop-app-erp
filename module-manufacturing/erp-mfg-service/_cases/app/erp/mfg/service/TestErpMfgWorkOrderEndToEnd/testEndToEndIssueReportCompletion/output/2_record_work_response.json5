@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "8598",
+    "workOrderId": 8977,
+    "operationId": null,
+    "lineNo": 10,
+    "plannedQuantity": 1.0000,
+    "completedQuantity": 1.0000,
+    "scrappedQuantity": 0.0000,
+    "status": "WORK_IN_PROGRESS",
+    "status_label": "WORK_IN_PROGRESS-作业中",
+    "workcenterId": null,
+    "actualStartTime": null,
+    "actualEndTime": null,
+    "remark": null,
+    "code": "@var:ErpMfgJobCard@code",
+    "delVersion": 0,
+    "version": 2,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMfgJobCard@createTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMfgJobCard@updateTime_2",
+    "sourceScheduleId": null
+  },
+  "status": 0
+}

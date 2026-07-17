@@ -73,6 +73,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
 
         Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "前置：过账成功");
+        output("1_voucher_id.json5", voucherId);
 
         List<ErpFinArApItem> items = findItems("AP_INVOICE", "AP-ARAP-001");
         assertEquals(1, items.size(), "AP_INVOICE 过账应生成 1 条应付辅助账项");
@@ -85,6 +86,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         assertEquals(0, item.getSettledAmountFunctional().compareTo(BigDecimal.ZERO), "已核销=0");
         assertEquals(ErpFinConstants.AR_AP_STATUS_OPEN, item.getStatus(), "状态=未核销");
         assertEquals(voucherDate, item.getBusinessDate());
+        output("2_ar_ap_item.json5", arApItemState(item));
     }
 
     @Test
@@ -111,6 +113,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
 
         Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId, "前置：收款过账成功");
+        output("1_voucher_id.json5", voucherId);
 
         List<ErpFinArApItem> items = findItems("RECEIPT", "RC-ARAP-001");
         assertEquals(1, items.size(), "RECEIPT 过账应生成 1 条应收辅助账项");
@@ -119,6 +122,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         assertEquals("RECEIPT", item.getSourceBillType());
         assertEquals(0, item.getOpenAmountFunctional().compareTo(new BigDecimal("200")));
         assertEquals(ErpFinConstants.AR_AP_STATUS_OPEN, item.getStatus());
+        output("2_ar_ap_item.json5", arApItemState(item));
     }
 
     @Test
@@ -139,6 +143,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
 
         List<ErpFinArApItem> items = findItems("AP_INVOICE", "AP-ARAP-IDEM");
         assertEquals(1, items.size(), "幂等：重复过账不应重复生成辅助账项");
+        output("1_items_count.json5", items.size());
     }
 
     @Test
@@ -165,6 +170,7 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         ErpFinArApItem cancelled = after.get(0);
         assertEquals(ErpFinConstants.AR_AP_STATUS_CANCELLED, cancelled.getStatus(), "红冲后原项状态=已作废");
         assertEquals(0, cancelled.getOpenAmountFunctional().compareTo(BigDecimal.ZERO), "红冲后未核销余额=0");
+        output("1_cancelled_item.json5", arApItemState(cancelled));
     }
 
     @Test
@@ -189,12 +195,28 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
 
         Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
         assertNotNull(voucherId);
+        output("1_voucher_id.json5", voucherId);
         // PURCHASE_INPUT 非 AR/AP 类型，不应生成辅助账
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         assertTrue(dao.findAllByQuery(new QueryBean()).isEmpty(), "非 AR/AP 业务类型不应生成辅助账");
+        output("2_items_count.json5", 0);
     }
 
     // ---------- helpers ----------
+
+    private java.util.Map<String, Object> arApItemState(ErpFinArApItem it) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("id", it.getId());
+        m.put("direction", it.getDirection());
+        m.put("sourceBillType", it.getSourceBillType());
+        m.put("sourceBillCode", it.getSourceBillCode());
+        m.put("status", it.getStatus());
+        m.put("partnerId", it.getPartnerId());
+        m.put("amountFunctional", it.getAmountFunctional());
+        m.put("openAmountFunctional", it.getOpenAmountFunctional());
+        m.put("settledAmountFunctional", it.getSettledAmountFunctional());
+        return m;
+    }
 
     private void seed(Runnable action) {
         ormTemplate.runInSession(action);

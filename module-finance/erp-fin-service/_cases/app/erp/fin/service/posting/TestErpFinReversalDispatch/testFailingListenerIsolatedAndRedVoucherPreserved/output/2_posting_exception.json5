@@ -1,0 +1,8 @@
+{
+  "id": 20,
+  "postingType": "REVERSAL",
+  "failedStage": "notify-reversal-listener",
+  "errorCode": "erp.err.fin.posting.reversal-listener-failed",
+  "status": "PENDING",
+  "goodListenerCallCount": 1
+}

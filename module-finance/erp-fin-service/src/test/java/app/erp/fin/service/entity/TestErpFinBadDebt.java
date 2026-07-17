@@ -98,6 +98,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         assertEquals(0, result.getAllowanceBalance().compareTo(BigDecimal.ZERO), "初始 Allowance 0");
         assertEquals("RESERVE", result.getAction(), "不足→补提");
         assertNotNull(result.getVoucherId(), "生成补提凭证");
+        output("1_provision_result.json5", provisionResultState(result));
 
         // 凭证：借信用减值损失 625 / 贷坏账准备 625（进 P&L）
         List<ErpFinVoucherLine> lines = linesOf(result.getVoucherId());
@@ -106,6 +107,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         ErpFinVoucherLine allowance = lineOfSubject(lines, "1231");
         assertEquals(ErpFinConstants.DC_CREDIT, allowance.getDcDirection(), "贷坏账准备");
         assertEquals(0, expense.getDebitAmount().compareTo(new BigDecimal("625.000")), "金额 625");
+        output("2_voucher_lines.json5", lines.stream().map(this::voucherLineState).collect(java.util.stream.Collectors.toList()));
     }
 
     @Test
@@ -154,11 +156,13 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
 
         assertEquals(ErpFinConstants.APPROVE_STATUS_APPROVED, debt.getApprovalStatus(), "自动审批通过");
         assertNotNull(debt.getVoucherId(), "生成核销凭证");
+        output("1_writeoff_debt.json5", badDebtState(debt));
 
         ErpFinArApItem after = daoProvider.daoFor(ErpFinArApItem.class).getEntityById(itemId[0]);
         assertEquals(ErpFinConstants.AR_AP_STATUS_WRITTEN_OFF, after.getStatus(), "status→WRITTEN_OFF");
         assertEquals(0, after.getOpenAmountFunctional().compareTo(BigDecimal.ZERO), "openAmount→0");
         assertEquals(0, after.getSettledAmountFunctional().compareTo(new BigDecimal("500")), "settledAmount+=500");
+        output("2_ar_ap_item_state.json5", arApItemState(after));
 
         // 凭证：借 Allowance 500 / 贷 AR 500（不进 P&L — 无 expense 科目）
         List<ErpFinVoucherLine> lines = linesOf(debt.getVoucherId());
@@ -168,6 +172,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         assertEquals(ErpFinConstants.DC_CREDIT, ar.getDcDirection(), "核销贷 AR");
         // 确认无信用减值损失科目（不进 P&L）
         assertTrue(lines.stream().noneMatch(l -> "6701".equals(l.getSubjectCode())), "核销不进 P&L");
+        output("3_voucher_lines.json5", lines.stream().map(this::voucherLineState).collect(java.util.stream.Collectors.toList()));
     }
 
     @Test
@@ -190,15 +195,18 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
 
         assertEquals(ErpFinConstants.BAD_DEBT_TYPE_RECOVERY, recovery.getDocType(), "恢复单类型");
         assertNotNull(recovery.getVoucherId(), "生成恢复凭证");
+        output("1_recovery_debt.json5", badDebtState(recovery));
 
         ErpFinArApItem after = daoProvider.daoFor(ErpFinArApItem.class).getEntityById(itemId[0]);
         assertEquals(ErpFinConstants.AR_AP_STATUS_OPEN, after.getStatus(), "回退正常态 OPEN");
         assertEquals(0, after.getOpenAmountFunctional().compareTo(new BigDecimal("300")), "openAmount 恢复");
+        output("2_ar_ap_item_state.json5", arApItemState(after));
 
         // 凭证：借 AR 300 / 贷 Allowance 300
         List<ErpFinVoucherLine> lines = linesOf(recovery.getVoucherId());
         assertEquals(ErpFinConstants.DC_DEBIT, lineOfSubject(lines, "1122").getDcDirection(), "恢复借 AR");
         assertEquals(ErpFinConstants.DC_CREDIT, lineOfSubject(lines, "1231").getDcDirection(), "恢复贷 Allowance");
+        output("3_voucher_lines.json5", lines.stream().map(this::voucherLineState).collect(java.util.stream.Collectors.toList()));
     }
 
     @Test
@@ -220,6 +228,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         BadDebtProvisionResult result = ormTemplate.runInSession(session -> badDebtBiz.runBadDebtProvision(holder[0], CTX));
 
         assertEquals("RELEASE", result.getAction(), "超额→释放");
+        output("1_provision_result.json5", provisionResultState(result));
         // 释放 = 500 − 5 = 495
         List<ErpFinVoucherLine> lines = linesOf(result.getVoucherId());
         // 借 Allowance / 贷 信用减值损失（释放是唯一贷记 Bad Debt Expense 的场景）
@@ -227,6 +236,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         ErpFinVoucherLine expense = lineOfSubject(lines, "6701");
         assertEquals(ErpFinConstants.DC_CREDIT, expense.getDcDirection(), "释放贷信用减值损失");
         assertEquals(0, expense.getCreditAmount().compareTo(new BigDecimal("495.000")), "释放金额 495");
+        output("2_voucher_lines.json5", lines.stream().map(this::voucherLineState).collect(java.util.stream.Collectors.toList()));
     }
 
     @Test
@@ -249,6 +259,7 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
 
         assertEquals("NONE", result.getAction(), "精度内相等→无动作");
         assertNull(result.getVoucherId(), "无凭证生成");
+        output("1_provision_result.json5", provisionResultState(result));
     }
 
     @Test
@@ -277,9 +288,50 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         PeriodPreCheckReport report = ormTemplate.runInSession(session -> periodCloseBiz.preCheck(holder[0], CTX));
         assertTrue(report.getAllowanceShortfall().compareTo(BigDecimal.ZERO) > 0, "Allowance 缺口阻断");
         assertTrue(report.hasIssues(), "前置检查未通过");
+        java.util.Map<String, Object> preCheckState = new java.util.LinkedHashMap<>();
+        preCheckState.put("allowanceShortfall", report.getAllowanceShortfall());
+        preCheckState.put("hasIssues", report.hasIssues());
+        output("1_pre_check_report.json5", preCheckState);
     }
 
     // ---------- helpers ----------
+
+    private java.util.Map<String, Object> provisionResultState(BadDebtProvisionResult r) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("action", r.getAction());
+        m.put("requiredProvision", r.getRequiredProvision());
+        m.put("allowanceBalance", r.getAllowanceBalance());
+        m.put("voucherId", r.getVoucherId());
+        m.put("totalConsidered", r.getTotalConsidered());
+        return m;
+    }
+
+    private java.util.Map<String, Object> badDebtState(ErpFinBadDebt d) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("id", d.getId());
+        m.put("docType", d.getDocType());
+        m.put("approvalStatus", d.getApprovalStatus());
+        m.put("voucherId", d.getVoucherId());
+        return m;
+    }
+
+    private java.util.Map<String, Object> arApItemState(ErpFinArApItem it) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("id", it.getId());
+        m.put("status", it.getStatus());
+        m.put("openAmountFunctional", it.getOpenAmountFunctional());
+        m.put("settledAmountFunctional", it.getSettledAmountFunctional());
+        return m;
+    }
+
+    private java.util.Map<String, Object> voucherLineState(ErpFinVoucherLine l) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("subjectCode", l.getSubjectCode());
+        m.put("dcDirection", l.getDcDirection());
+        m.put("debitAmount", l.getDebitAmount());
+        m.put("creditAmount", l.getCreditAmount());
+        return m;
+    }
 
     private Long seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);

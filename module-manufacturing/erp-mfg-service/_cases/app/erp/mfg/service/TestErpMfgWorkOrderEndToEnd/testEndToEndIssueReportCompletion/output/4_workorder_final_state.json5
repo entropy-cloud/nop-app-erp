@@ -1,0 +1,10 @@
+{
+  "id": 8977,
+  "code": "@var:ErpMfgWorkOrder@code",
+  "docStatus": "COMPLETED",
+  "completedQuantity": 1.0000,
+  "materialCost": 10.0000,
+  "laborCost": 30.0000,
+  "totalCost": 40.0000,
+  "unitCost": 40.0000
+}

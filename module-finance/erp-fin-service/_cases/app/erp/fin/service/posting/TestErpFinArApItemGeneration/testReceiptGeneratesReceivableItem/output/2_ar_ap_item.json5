@@ -1,0 +1,11 @@
+{
+  "id": 11,
+  "direction": "RECEIVABLE",
+  "sourceBillType": "RECEIPT",
+  "sourceBillCode": "@var:ErpFinVoucherBillR@billCode",
+  "status": "OPEN",
+  "partnerId": 3,
+  "amountFunctional": 200.0000,
+  "openAmountFunctional": 200.0000,
+  "settledAmountFunctional": 0.0000
+}

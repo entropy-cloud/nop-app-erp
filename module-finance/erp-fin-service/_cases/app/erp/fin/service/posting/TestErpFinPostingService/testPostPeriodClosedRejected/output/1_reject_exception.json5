@@ -1,0 +1,6 @@
+{
+  "errorCode": "erp.err.fin.posting.period-closed",
+  "params": {
+    "periodStatus": "CLOSED"
+  }
+}

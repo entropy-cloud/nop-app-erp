@@ -114,7 +114,8 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
 
         // 1. 入库审核：触发库存移动 DONE + PURCHASE_INPUT 暂估凭证 posted=true
         assertEquals(0, submitReceive(receive[0]).getStatus());
-        assertEquals(0, approveReceive(receive[0]).getStatus());
+        ApiResponse<?> receiveApproveResp = approveReceive(receive[0]);
+        output("1_receive_approve_response.json5", receiveApproveResp);
         ErpPurReceive approvedReceive = daoProvider.daoFor(ErpPurReceive.class).getEntityById(receive[0]);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approvedReceive.getApproveStatus());
         assertEquals(true, approvedReceive.getPosted(), "入库 posted=true");
@@ -122,7 +123,8 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         // 2. 发票审核：三单匹配通过 + AP_INVOICE 凭证 posted=true
         long invoiceId = buildInvoice("PI-P2P-001", receive[1], new BigDecimal("10"), new BigDecimal("5"));
         assertEquals(0, submitInvoice(invoiceId).getStatus());
-        assertEquals(0, approveInvoice(invoiceId).getStatus());
+        ApiResponse<?> invoiceApproveResp = approveInvoice(invoiceId);
+        output("2_invoice_approve_response.json5", invoiceApproveResp);
         ErpPurInvoice approvedInvoice = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approvedInvoice.getApproveStatus());
         assertEquals(true, approvedInvoice.getPosted(), "发票 posted=true (AP_INVOICE)");
@@ -131,13 +133,15 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         // 3. 付款审核：PAYMENT 凭证 posted=true
         long paymentId = buildPayment("PY-P2P-001", new BigDecimal("56.5"));
         assertEquals(0, submitPayment(paymentId).getStatus());
-        assertEquals(0, approvePayment(paymentId).getStatus());
+        ApiResponse<?> paymentApproveResp = approvePayment(paymentId);
+        output("3_payment_approve_response.json5", paymentApproveResp);
         ErpPurPayment approvedPayment = daoProvider.daoFor(ErpPurPayment.class).getEntityById(paymentId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_APPROVED, approvedPayment.getApproveStatus());
         assertEquals(true, approvedPayment.getPosted(), "付款 posted=true (PAYMENT)");
 
         // 4. 部分核销：发票 paidStatus=PARTIAL
-        assertEquals(0, settle(paymentId, invoiceId, new BigDecimal("30")).getStatus());
+        ApiResponse<?> settleResp = settle(paymentId, invoiceId, new BigDecimal("30"));
+        output("4_settle_response.json5", settleResp);
         ErpPurInvoice settledInvoice = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
         ErpPurPayment settledPayment = daoProvider.daoFor(ErpPurPayment.class).getEntityById(paymentId);
         assertEquals(0, new BigDecimal("30").compareTo(settledInvoice.getPaidAmount()), "发票已付=30");
@@ -174,11 +178,13 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
                 daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId).getPaidStatus());
 
         // 反向 1：付款 reverseSettlement 恢复余额 + reverseApprove 红字冲销 PAYMENT
-        assertEquals(0, reverseSettlement(paymentId, invoiceId).getStatus());
+        ApiResponse<?> reverseSettleResp = reverseSettlement(paymentId, invoiceId);
+        output("1_reverse_settlement_response.json5", reverseSettleResp);
         ErpPurInvoice invAfter = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
         assertEquals(ErpPurConstants.PAID_STATUS_UNPAID, invAfter.getPaidStatus(), "冲销核销后发票回 UNPAID");
 
-        assertEquals(0, reverseApprovePayment(paymentId).getStatus());
+        ApiResponse<?> reversePayResp = reverseApprovePayment(paymentId);
+        output("2_reverse_approve_payment_response.json5", reversePayResp);
         ErpPurPayment payAfter = daoProvider.daoFor(ErpPurPayment.class).getEntityById(paymentId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, payAfter.getApproveStatus());
         assertFalse(Boolean.TRUE.equals(payAfter.getPosted()), "付款反审核后 posted=false (PAYMENT 红冲)");
@@ -186,7 +192,8 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
         assertTrue(payLinksBefore >= 2, "PAYMENT 原凭证 + 红字冲销凭证均存在");
 
         // 反向 2：发票 reverseApprove 红字冲销 AP
-        assertEquals(0, reverseApproveInvoice(invoiceId).getStatus());
+        ApiResponse<?> reverseInvResp = reverseApproveInvoice(invoiceId);
+        output("3_reverse_approve_invoice_response.json5", reverseInvResp);
         ErpPurInvoice invFinal = daoProvider.daoFor(ErpPurInvoice.class).getEntityById(invoiceId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_REJECTED, invFinal.getApproveStatus());
         assertFalse(Boolean.TRUE.equals(invFinal.getPosted()), "发票反审核后 posted=false (AP 红冲)");
@@ -246,6 +253,12 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
                 Collections.singletonList(reconLine(paymentItem.getId(), invoiceItem.getId(), "56.5")), CTX));
         assertEquals(ErpFinConstants.RECON_STATUS_DRAFT, head.getDocStatus());
         ormTemplate.runInSession(() -> reconciliationBiz.post(head.getId(), CTX));
+        ErpFinReconciliation postedHead = daoProvider.daoFor(ErpFinReconciliation.class).getEntityById(head.getId());
+        java.util.Map<String, Object> reconState = new java.util.LinkedHashMap<>();
+        reconState.put("id", postedHead.getId());
+        reconState.put("docStatus", postedHead.getDocStatus());
+        reconState.put("totalAmountFunctional", postedHead.getTotalAmountFunctional());
+        output("reconciliation_post_response.json5", reconState);
 
         // 核销后：双方辅助账 openAmount 回减至零，status=SETTLED
         ErpFinArApItem settledInvoice = reloadItem(invoiceItem.getId());
@@ -259,7 +272,6 @@ public class TestErpPurProcureToPayEnd extends JunitAutoTestCase {
                 "核销后付款辅助账 openAmount=0");
         assertEquals(ErpFinConstants.AR_AP_STATUS_SETTLED, settledPayment.getStatus(), "付款辅助账 SETTLED");
 
-        ErpFinReconciliation postedHead = daoProvider.daoFor(ErpFinReconciliation.class).getEntityById(head.getId());
         assertEquals(ErpFinConstants.RECON_STATUS_POSTED, postedHead.getDocStatus(), "核销单 POSTED");
         assertEquals(0, new BigDecimal("56.5").compareTo(postedHead.getTotalAmountFunctional()),
                 "核销单总额=56.5");

@@ -1,0 +1,18 @@
+[
+  {
+    "id": 57,
+    "period": "@var:ErpFinAccountingPeriod@code",
+    "status": "EXECUTED",
+    "actualAmount": 1000.0000,
+    "netBookValue": 11000.0000,
+    "posted": true
+  },
+  {
+    "id": 62,
+    "period": "@var:ErpFinAccountingPeriod@code",
+    "status": "EXECUTED",
+    "actualAmount": 500.0000,
+    "netBookValue": 5500.0000,
+    "posted": true
+  }
+]

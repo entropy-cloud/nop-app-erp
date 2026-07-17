@@ -1,0 +1,7 @@
+{
+  "action": "RESERVE",
+  "requiredProvision": 625.0000000,
+  "allowanceBalance": 0,
+  "voucherId": 10,
+  "totalConsidered": 5000.0000
+}

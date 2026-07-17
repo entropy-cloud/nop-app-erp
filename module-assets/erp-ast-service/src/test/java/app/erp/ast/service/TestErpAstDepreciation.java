@@ -75,10 +75,15 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
             total = total.add(s.getActualAmount());
         }
         assertEquals(0, total.compareTo(new BigDecimal("12000")), "12 期累计折旧=原值");
+        output("1_straight_line_schedules.json5", daoProvider.daoFor(ErpAstDepreciationSchedule.class)
+                .findAllByQuery(new QueryBean()).stream()
+                .filter(s -> s.getAssetId().equals(assetId)).map(this::scheduleState)
+                .collect(java.util.stream.Collectors.toList()));
 
         ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
         assertEquals(0, nz(asset.getAccumulatedDepreciation()).compareTo(new BigDecimal("12000")), "资产累计折旧汇总=12000");
         assertEquals(0, nz(asset.getNetBookValue()).compareTo(BigDecimal.ZERO), "资产净值=残值 0");
+        output("2_asset_state.json5", assetState(asset));
 
         // DEPRECIATION(70) 凭证经业财回链可查
         assertTrue(!findBillLinks("AST-SL#" + START_PERIOD, "DEPRECIATION").isEmpty(), "首期 DEPRECIATION 凭证回链已落库");
@@ -111,6 +116,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         // 末期满寿命净值收敛到残值（容许舍入误差）
         assertTrue(nz(asset.getNetBookValue()).compareTo(new BigDecimal("1")) <= 0,
                 "末期满寿命净值收敛到残值，实际=" + asset.getNetBookValue());
+        output("1_ddb_asset_state.json5", assetState(asset));
     }
 
     @Test
@@ -143,6 +149,7 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         // 批量错误隔离：非使用中资产不计提
         assertEquals(0, s1.getActualAmount().compareTo(new BigDecimal("1000")), "AST-BAT-1 月折旧 1000");
         assertEquals(0, s2.getActualAmount().compareTo(new BigDecimal("500")), "AST-BAT-2 月折旧 500");
+        output("1_batch_schedules.json5", java.util.Arrays.asList(scheduleState(s1), scheduleState(s2)));
     }
 
     @Test
@@ -206,6 +213,26 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    private java.util.Map<String, Object> scheduleState(ErpAstDepreciationSchedule s) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("id", s.getId());
+        m.put("period", s.getPeriod());
+        m.put("status", s.getStatus());
+        m.put("actualAmount", s.getActualAmount());
+        m.put("netBookValue", s.getNetBookValue());
+        m.put("posted", s.getPosted());
+        return m;
+    }
+
+    private java.util.Map<String, Object> assetState(ErpAstAsset a) {
+        java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+        m.put("id", a.getId());
+        m.put("code", a.getCode());
+        m.put("accumulatedDepreciation", a.getAccumulatedDepreciation());
+        m.put("netBookValue", a.getNetBookValue());
+        return m;
+    }
 
     private void seedBasics() {
         AstTestSupport.seedAcctSchema(daoProvider, 1L);

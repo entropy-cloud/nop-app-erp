@@ -1,0 +1,32 @@
+{
+  "data": {
+    "id": "8913",
+    "code": "@var:ErpInvStockMove@relatedBillCode_1",
+    "orgId": 1401,
+    "workOrderId": 8977,
+    "jobCardId": null,
+    "warehouseId": 3401,
+    "businessDate": "@var:ErpFinPostingException@voucherDate",
+    "docStatus": "DONE",
+    "docStatus_label": "DONE-已出库",
+    "approveStatus": "UNSUBMITTED",
+    "approveStatus_label": "UNSUBMITTED-未提交",
+    "posted": false,
+    "postedAt": null,
+    "postedBy": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 2,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMfgMaterialIssue@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMfgMaterialIssue@updateTime_2",
+    "approvedBy": null,
+    "approvedAt": null,
+    "currencyId": 6401,
+    "exchangeRate": 1.00000000,
+    "amountSource": 0.0000,
+    "amountFunctional": 0.0000
+  },
+  "status": 0
+}
