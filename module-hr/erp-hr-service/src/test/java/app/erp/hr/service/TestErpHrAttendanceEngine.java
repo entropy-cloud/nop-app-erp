@@ -14,6 +14,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpHrAttendanceEngine extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static HrFrozenClockExtension frozenClock = new HrFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

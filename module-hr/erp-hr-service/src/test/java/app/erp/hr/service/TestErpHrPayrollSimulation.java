@@ -439,36 +439,43 @@ public class TestErpHrPayrollSimulation extends JunitAutoTestCase {
 
     @Test
     public void testConvertToFormalPaidConflict() {
-        Long employeeId = ormTemplate.runInSession(session -> {
-            seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-SIM-PAID");
-            seedContract(empId, "10000");
-            seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
-            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
-                    "0.15", "0.08", "6123", "32694");
-            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_HOUSING_FUND,
-                    "0.12", "0.12", "2360", "32694");
-            System.setProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID, "2211");
-            return empId;
-        });
+        // 本测试快照的 paymentDate 由 CoreMetrics.today() 派生，钉住参考日避免跨日漂移。
+        // 仅作用于本方法：类内其它用例依赖 WORKFLOW + currentDateTime 推进，整体冻结会破坏 wf 步骤用户解析。
+        HrFrozenClockExtension.installFrozenClock();
+        try {
+            Long employeeId = ormTemplate.runInSession(session -> {
+                seedTaxConfig(2026);
+                Long empId = seedEmployee("EMP-SIM-PAID");
+                seedContract(empId, "10000");
+                seedSocialInsuranceBase(empId, "SHENZHEN", "10000", "10000");
+                seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
+                        "0.15", "0.08", "6123", "32694");
+                seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_HOUSING_FUND,
+                        "0.12", "0.12", "2360", "32694");
+                System.setProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID, "2211");
+                return empId;
+            });
 
-        // 目标期间已有 PAID 薪酬
-        ErpHrSalary target = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
-        submitSalary(target.getId());
-        approveSalary(target.getId());
-        ormTemplate.runInSession(() -> salaryBiz.markPaid(target.getId(), CTX));
+            // 目标期间已有 PAID 薪酬
+            ErpHrSalary target = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 6, CTX));
+            submitSalary(target.getId());
+            approveSalary(target.getId());
+            ormTemplate.runInSession(() -> salaryBiz.markPaid(target.getId(), CTX));
 
-        ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
-                2026, 6, 2026, 6, "PAID 冲突", null, CTX));
-        ormTemplate.runInSession(() -> simulationBiz.adjustItem(simulation.getId(), employeeId,
-                "basicSalary", new BigDecimal("11000"),
-                ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
-        ormTemplate.runInSession(() -> simulationBiz.submitForReview(simulation.getId(), CTX));
-        ormTemplate.runInSession(() -> simulationBiz.approve(simulation.getId(), 1L, CTX));
+            ErpHrSalarySimulation simulation = ormTemplate.runInSession(session -> simulationBiz.createSimulation(
+                    2026, 6, 2026, 6, "PAID 冲突", null, CTX));
+            ormTemplate.runInSession(() -> simulationBiz.adjustItem(simulation.getId(), employeeId,
+                    "basicSalary", new BigDecimal("11000"),
+                    ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, CTX));
+            ormTemplate.runInSession(() -> simulationBiz.submitForReview(simulation.getId(), CTX));
+            ormTemplate.runInSession(() -> simulationBiz.approve(simulation.getId(), 1L, CTX));
 
-        NopException ex = assertThrows(NopException.class,
-                () -> ormTemplate.runInSession(session -> simulationBiz.convertToFormal(simulation.getId(), CTX)));
-        assertEquals(ErpHrErrors.ERR_HR_SIMULATION_TARGET_PERIOD_CONFLICT.getErrorCode(), ex.getErrorCode());
+            NopException ex = assertThrows(NopException.class,
+                    () -> ormTemplate.runInSession(session -> simulationBiz.convertToFormal(simulation.getId(), CTX)));
+            assertEquals(ErpHrErrors.ERR_HR_SIMULATION_TARGET_PERIOD_CONFLICT.getErrorCode(), ex.getErrorCode());
+        } finally {
+            HrFrozenClockExtension.restoreSystemClock();
+        }
     }
 
     @Test

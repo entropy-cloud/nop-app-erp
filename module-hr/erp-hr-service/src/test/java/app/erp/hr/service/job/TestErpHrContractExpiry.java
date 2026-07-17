@@ -5,9 +5,11 @@ import app.erp.hr.dao.entity.ErpHrEmployee;
 import app.erp.hr.dao.entity.ErpHrEmploymentContract;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.HrFrozenClockExtension;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -16,6 +18,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -42,6 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpHrContractExpiry extends JunitAutoTestCase {
 
+    @RegisterExtension
+    static HrFrozenClockExtension frozenClock = new HrFrozenClockExtension();
+
     private static final IServiceContext CTX = new ServiceContextImpl();
 
     @Inject
@@ -55,7 +61,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
     public void testScanExpiringContractsHitsWithinWindow() {
         Object[] seeded = ormTemplate.runInSession(session -> {
             Long empId = seedEmployee("EMP-EXPIRE-SOON");
-            LocalDate today = LocalDate.now();
+            LocalDate today = CoreMetrics.today();
             Long contractId = seedContract("CTC-SOON", empId,
                     today.minusDays(10), today.plusDays(15), ErpHrConstants.CONTRACT_STATUS_ACTIVE);
             return new Object[]{empId, contractId};
@@ -71,7 +77,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
     public void testExpireOverdueContractsAdvancesStatus() {
         Object[] seeded = ormTemplate.runInSession(session -> {
             Long empId = seedEmployee("EMP-EXPIRE-PAST");
-            LocalDate today = LocalDate.now();
+            LocalDate today = CoreMetrics.today();
             Long contractId = seedContract("CTC-PAST", empId,
                     today.minusDays(40), today.minusDays(1), ErpHrConstants.CONTRACT_STATUS_ACTIVE);
             return new Object[]{empId, contractId};
@@ -90,13 +96,13 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
     public void testRenewFromExpiredToActive() {
         Object[] seeded = ormTemplate.runInSession(session -> {
             Long empId = seedEmployee("EMP-RENEW");
-            LocalDate today = LocalDate.now();
+            LocalDate today = CoreMetrics.today();
             Long contractId = seedContract("CTC-RENEW", empId,
                     today.minusDays(40), today.minusDays(1), ErpHrConstants.CONTRACT_STATUS_EXPIRED);
             return new Object[]{empId, contractId};
         });
         Long contractId = (Long) seeded[1];
-        LocalDate newEndDate = LocalDate.now().plusYears(1);
+        LocalDate newEndDate = CoreMetrics.today().plusYears(1);
 
         ErpHrEmploymentContract renewed = ormTemplate.runInSession(session -> contractBiz.renew(String.valueOf(contractId), newEndDate, CTX));
         assertEquals(ErpHrConstants.CONTRACT_STATUS_ACTIVE, renewed.getStatus());
@@ -112,14 +118,14 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
         Object[] seeded = ormTemplate.runInSession(session -> {
             Long empId = seedEmployee("EMP-RENEW-FAIL");
             Long contractId = seedContract("CTC-TERM", empId,
-                    LocalDate.now().minusDays(10), LocalDate.now().plusDays(10),
+                    CoreMetrics.today().minusDays(10), CoreMetrics.today().plusDays(10),
                     ErpHrConstants.CONTRACT_STATUS_TERMINATED);
             return new Object[]{empId, contractId};
         });
         Long contractId = (Long) seeded[1];
 
         NopException ex = assertThrows(NopException.class,
-                () -> ormTemplate.runInSession(session -> contractBiz.renew(String.valueOf(contractId), LocalDate.now().plusYears(1), CTX)));
+                () -> ormTemplate.runInSession(session -> contractBiz.renew(String.valueOf(contractId), CoreMetrics.today().plusYears(1), CTX)));
         assertEquals(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), ex.getErrorCode());
     }
 
@@ -169,7 +175,7 @@ public class TestErpHrContractExpiry extends JunitAutoTestCase {
     private Long seedContract(String code, Long employeeId, LocalDate startDate, LocalDate endDate, String status) {
         IEntityDao<ErpHrEmploymentContract> dao = daoProvider.daoFor(ErpHrEmploymentContract.class);
         ErpHrEmploymentContract c = new ErpHrEmploymentContract();
-        c.setBusinessDate(LocalDate.now());
+        c.setBusinessDate(CoreMetrics.today());
         c.setCode(code + "-" + System.nanoTime());
         c.setEmployeeId(employeeId);
         c.setContractType(ErpHrConstants.CONTRACT_TYPE_FIXED_TERM);
