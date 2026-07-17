@@ -1,6 +1,6 @@
 # 2026-07-17-1430-2-test-hardening-anchor-assertions 核心测试三层验证加固
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-17
 > Source: 技术债识别 — 录制回放测试在重新录制时可能掩码业务回归；锚点断言审计确认断言充分但缺 output 快照覆盖
 > Related: `2026-07-15-1022-1-orm-tagset-all-domains.md`（BUSINESS_DATE/VOUCHER_DATE 加 tagSet="clock" 修复）
@@ -77,7 +77,7 @@ Skill: `nop-testing`
 
 ### Phase 2 — 为 Top 5 高价值测试补充 `output()` 快照
 
-Status: planned
+Status: completed
 Targets:
 - `module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/TestErpPurProcureToPayEnd.java`
 - `module-finance/erp-fin-service/src/test/java/app/erp/fin/service/entity/TestErpFinPeriodCloseEndToEnd.java`
@@ -120,25 +120,25 @@ Skill: `nop-testing`
 
 - `testEndToEndIssueReportCompletion`：工单全生命周期完成后加 `output()`
 
-- [ ] 逐一修改 Top 5 测试类，为所有涉及多表副作用的方法补充 `output()` 调用
+- [x] 逐一修改 Top 5 测试类，为所有涉及多表副作用的方法补充 `output()` 调用
       - Skill: `nop-testing`
-- [ ] `mvn clean install -DskipTests` 构建通过
-- [ ] 为每个修改后的测试类在 RECORDING 模式下生成 output 快照
-- [ ] 切回 CHECKING 模式，确认 `mvn test -pl` 各模块全绿
+- [x] `mvn clean install -DskipTests` 构建通过
+- [x] 为每个修改后的测试类在 RECORDING 模式下生成 output 快照
+- [x] 切回 CHECKING 模式，确认 `mvn test -pl` 各模块全绿
 
 Exit Criteria（对应计划第 99-121 行列出的具体方法）：
 
-- [ ] TestErpPurProcureToPayEnd：3 个方法（testProcureToPayPartialSettlement / testReverseScenarios / testFinanceReconciliationLayerPayable）已补 output
-- [ ] TestErpFinPeriodCloseEndToEnd：testFullChain 已补 output
-- [ ] TestErpFinPostingService：4 个方法（testPostHappyPath / testReverse / testPostIdempotent / testPostUnbalancedRejected / testPostPeriodClosedRejected）已补 output
-- [ ] TestErpAstDepreciation：3 个方法（testStraightLine / testDoubleDeclining / testBatchDepreciation）已补 output
-- [ ] TestErpMfgWorkOrderEndToEnd：testEndToEndIssueReportCompletion 已补 output
-- [ ] 快照录制完成，CHECKING 模式下各模块 `mvn test` 全绿
-- [ ] 没有破坏任何现有锚点断言
+- [x] TestErpPurProcureToPayEnd：3 个方法（testProcureToPayPartialSettlement / testReverseScenarios / testFinanceReconciliationLayerPayable）已补 output
+- [x] TestErpFinPeriodCloseEndToEnd：testFullChain 已补 output
+- [x] TestErpFinPostingService：4 个方法（testPostHappyPath / testReverse / testPostIdempotent / testPostUnbalancedRejected / testPostPeriodClosedRejected）已补 output
+- [x] TestErpAstDepreciation：3 个方法（testStraightLine / testDoubleDeclining / testBatchDepreciation）已补 output
+- [x] TestErpMfgWorkOrderEndToEnd：testEndToEndIssueReportCompletion 已补 output
+- [x] 快照录制完成，CHECKING 模式下各模块 `mvn test` 全绿
+- [x] 没有破坏任何现有锚点断言
 
 ### Phase 3 — 扩展到其他有跨表副作用的业务测试
 
-Status: planned
+Status: completed
 Targets: 根据副作用缺口分析，对剩余有 medium 收益的测试类补 output
 Skill: `nop-testing`
 
@@ -153,12 +153,26 @@ Skill: `nop-testing`
 | finance | TestErpFinReversalDispatch | MEDIUM | 红字凭证的 DB 侧未检查 |
 | inventory | TestErpInvStockMoveBookkeeping | MEDIUM | 已充分覆盖，但 ErpInvStockMoveLine/ErpInvReservation 未检查 |
 
-- [ ] 逐个为候选测试类补 `output()` 并录制/验证
-- [ ] `mvn test` 全绿
+- [x] 逐个为候选测试类补 `output()` 并录制/验证
+- [x] `mvn test` 全绿
+
+实施记录（4 个候选全部补完，未跳过）：
+
+| 测试类 | 补充方法数 | 实施要点 |
+|--------|----------|---------|
+| TestErpFinBadDebt | 6（provision/writeOff/recovery/release/noAction/periodGate） | 输出 BadDebtProvisionResult 关键字段 + ErpFinBadDebt/ErpFinArApItem/ErpFinVoucherLine 状态 Map + PeriodPreCheckReport shortfall |
+| TestErpFinArApItemGeneration | 5（apInvoice/receipt/idempotent/reverse/nonArAp） | 输出 voucherId + ArApItem 状态 Map；rejection/无生成场景输出计数 |
+| TestErpFinReversalDispatch | 3（dispatch/noListener/failingListener） | 输出 redId + VoucherReversedEvent 字段 Map + ErpFinPostingException 状态 Map |
+| TestErpInvStockMoveBookkeeping | 9（completeWrites/incomingAvg/outgoing/insufRejected/negativeConfig 等） | 输出 ErpInvStockBalance 状态 Map；rejection 场景输出 errorCode |
+
+技术要点：
+- 实体对象无法直接 JSON 序列化（非 DataBean），统一通过 Map helper（`xxxState()`）提取关键字段
+- 拒绝路径（assertThrows / GraphQL rejection）通过捕获异常 errorCode 或 count 输出
+- TestErpInvStockMoveBookkeeping 两个 rejection 测试（testConfirmInsufficientAvailableRejected / testNegativeStockOffRejectsByDefault）的录制产生了 transient `erp_inv_stock_move.csv` 行（事务回滚前 ORM Hook 捕获了 insert 事件），但 CHECKING 模式下回滚后实体不存在导致 mismatch。已删除这两个 transient CSV，恢复与之前已提交的快照基线一致
 
 Exit Criteria:
 
-- [ ] Medium 优先级测试类已审计补完，或评估决定跳过并有理由记录
+- [x] Medium 优先级测试类已审计补完，或评估决定跳过并有理由记录
 
 ## Draft Review Record
 
@@ -168,14 +182,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐（`docs-for-ai/02-core-guides/testing.md` 的三层验证章节已更新）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test` 各模块全绿
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐（`docs-for-ai/02-core-guides/testing.md` 的三层验证章节已更新）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test` 各模块全绿
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计（见 Closure 节证据）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -186,4 +200,24 @@ Exit Criteria:
 
 ## Closure
 
-（待完成时填写）
+Status Note: 所有范围内工作（Phase 1 审计 + Phase 2 Top 5 跨域测试 + Phase 3 MEDIUM 扩展）已落地，验证全绿，三层验证模式已固化到 owner doc。计划可关闭。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立结束审计子代理（new session，不重用执行者上下文）
+- Audit Scope: 结构合规（plan-check.mjs --strict）+ 语义验证（live repo 对照）
+- Evidence:
+  - 结构：`plan-check.mjs --strict` 通过（23/23 items checked，0 unchecked）
+  - Live repo 核验：9 个测试类的 `output()` 调用全部落地（grep 命中数：ProcureToPay 8、PeriodClose 5、Posting 6、AstDepreciation 4、MfgWorkOrder 4、FinBadDebt 12、ArApItemGeneration 7、ReversalDispatch 5、InvStockMoveBookkeeping 9）
+  - 快照产物核验：`_cases/.../output/*.json5` 文件真实存在（抽样确认 `1_receive_approve_response.json5` / `1_post_response.json5` / `1_straight_line_schedules.json5` / `4_reverse_close_response.json5` / `reconciliation_post_response.json5` 等）
+  - 反空壳核验：所有 `output()` 调用均为运行时实参（RPC 响应、Map helper 提取的状态、异常 errorCode），非空函数体或 `return null` 占位
+  - 文档同步核验：`docs/logs/2026/07-17.md` 详细日志条目存在；`../nop-entropy/docs-for-ai/02-core-guides/testing.md` 第 165 行起「三层验证」章节存在
+  - 五点一致性：Plan Status / 3 个 Phase Status / 全部 Exit Criteria / Closure Gates / Closure evidence 全部 `completed` 或 `[x]`，相互一致
+  - Deferred 诚实性：唯一 deferred 项（状态机/校验型测试不补 output）分类为 `out-of-scope improvement`，理由为该类测试无跨表副作用，非掩盖范围内缺陷
+
+Follow-up:
+
+- 无范围内非阻塞跟进；已确认的 `ErpPurRequisition.reverseApprove` 接线补齐（pre-existing，与 07-17.md 第二条日志记录一致）属另一计划范围，不在本计划 deferred 中。
+
+待办（保留 [ ] 不阻断 closure）：
+- 无
