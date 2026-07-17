@@ -35,7 +35,7 @@ ORM：`erp_hr_salary` = `useWorkflow="true"` + use-approval tagSet。`calculateS
 - **`erp_hr_salary` 审批轴 xwf 段 + markPaid/generateBankFile happy-path**（APPROVED_MANAGER→PAID 经 useWorkflow 审批）——经 2330-1 权威裁决浏览器层不可行（sysUser(0) 阻塞 submit，salary 无法达 APPROVED）；`markPaid` 硬守卫 `approveStatus==APPROVED` 无 config 旁路。本计划仅覆盖 `markPaid` negative-path（UNSUBMITTED 守卫拒绝）+ calculateSalary/runPayroll/voidSalary DIRECT happy-path。markPaid/generateBankFile happy-path 归 Deferred successor
 - **排班生成（generateRotation）/ 批量分配（assignBatch / copyFromPeriod）深度编排**——批量+轮换生成复杂度高，归 successor
 - **胜任力评估 + 差距分析 + 发展计划**——1100-2 已落地但属低频人才发展面，归 successor
-- **员工调动（transferEmployee）跨域编排**——0517-2 已落地但跨域合同/休假联动复杂，归 successor
+- **员工调动（transferEmployee）跨域编排**——0517-2 已落地但跨域合同/休假联动复杂，归 successor（**RELEASED by 2026-07-18-0100-2**：2 spec 8 测试覆盖 handleContract=YES/NO/AUTO 三分支合同联动 + RESIGNED/position-not-in-target-dept 双守卫）
 - **薪酬过账精确数值断言**——聚焦引擎触发可观测性（salary 金额非空 + 状态翻转），凭证行数值断言归 successor
 - **合同到期扫描 Job（expireOverdueContracts）**——nop-job 定时任务非浏览器面动作
 
@@ -152,6 +152,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 1100-2 胜任力段 + 0517-2 调动段已落地但属低频人才发展面 + 跨域编排，边际收益递减。
 - Successor Required: `yes`（触发条件：人才发展域浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-18-0100-2**：触发条件已满足（项目阶段「各域细化端到端验证」+ hr 人才发展 4 实体 + 调动 8 DIRECT @BizMutation 浏览器层零覆盖）。2 spec 8 测试已交付（`hr-assessment-dev-plan` 4 + `hr-transfer` 4），覆盖 submitAssessment/completeAssessment + 自动 gap refresh 链 + refreshGapAnalysis/refreshGapAnalysisWithLevels 双入口 + gapSeverity 多档（MINOR/MODERATE/CRITICAL）+ generateDevelopmentPlan（actionable 过滤 + null 返回）+ updatePlanItemStatus 状态机（NOT_STARTED→IN_PROGRESS→ACHIEVED + startDate/endDate 写回）+ completePlan 终态守卫 + transferEmployee handleContract=YES/NO/AUTO 三分支合同联动（源 ACTIVE→TERMINATED + 新 ACTIVE 建创建）+ RESIGNED/position-not-in-target-dept 双守卫；执行期修复 1 处 latent defect（refreshGapAnalysisWithLevels Map<Long,Integer> 反序列化键类型不匹配）。
 
 ### hr 合同到期扫描 Job + renew 续签
 
