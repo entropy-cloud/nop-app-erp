@@ -40,6 +40,8 @@ public interface ErpHrErrors {
     String ARG_POSITION_ID = "positionId";
     String ARG_REQUIRED_LEVEL = "requiredLevel";
     String ARG_TARGET_STATUS = "targetStatus";
+    String ARG_LEVEL_MAP_KEY = "levelMapKey";
+    String ARG_LEVEL_MAP_VALUE = "levelMapValue";
 
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
@@ -177,6 +179,11 @@ public interface ErpHrErrors {
             "erp.err.hr.gap-no-role-requirement",
             "员工 {employeeId} 无岗位（ErpHrPosition）或岗位未配置胜任力要求（ErpHrRoleCompetency），无法计算差距",
             ARG_EMPLOYEE_ID);
+    ErrorCode ERR_GAP_INVALID_LEVEL_MAP = ErrorCode.define(
+            "erp.err.hr.gap-invalid-level-map",
+            "差距刷新入参 aggregatedLevels 含非法键/值（key={levelMapKey}, value={levelMapValue}），"
+                    + "key 须为 Long/Number/String-Number，value 须为 Integer/Number/String-Number",
+            ARG_LEVEL_MAP_KEY, ARG_LEVEL_MAP_VALUE);
     ErrorCode ERR_ROLE_COMPETENCY_INVALID_LEVEL = ErrorCode.define(
             "erp.err.hr.role-competency-invalid-level",
             "岗位胜任力要求的等级 {requiredLevel} 超出有效范围（须为 1-5）",

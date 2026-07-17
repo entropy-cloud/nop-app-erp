@@ -74,6 +74,8 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
     public List<ErpHrGapAnalysis> refreshGapAnalysisWithLevels(@Name("employeeId") Long employeeId,
                                                                 @Name("aggregatedLevels") Map<Long, Integer> aggregatedLevels,
                                                                 IServiceContext context) {
+        Map<Long, Integer> normalized = normalizeLevelMap(aggregatedLevels);
+
         Long positionId = loadPositionId(employeeId);
         List<ErpHrRoleCompetency> roleCompetencies = findRoleCompetencies(positionId, context);
         if (roleCompetencies.isEmpty()) {
@@ -85,12 +87,46 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
 
         deleteExistingGaps(employeeId, context);
 
-        List<ErpHrGapAnalysis> gaps = gapAnalysisCalculator.calculate(roleCompetencies, aggregatedLevels, assessmentDate);
+        List<ErpHrGapAnalysis> gaps = gapAnalysisCalculator.calculate(roleCompetencies, normalized, assessmentDate);
         gaps.forEach(g -> {
             g.setEmployeeId(employeeId);
             saveEntity(g, null, context);
         });
         return gaps;
+    }
+
+    /**
+     * 规范化 aggregatedLevels 入参的键类型。GraphQL generic {@code Map} scalar 经 JSON 反序列化后键为 String，
+     * 而内部 Java 调用方（{@code completeAssessment}）传入的是 {@code Map<Long,Integer>}；GapAnalysisCalculator
+     * 按 {@code competencyId（Long）} 取值，键类型不匹配会一律回退到默认值 0。这里统一转 Long 键使两条入口行为一致。
+     */
+    static Map<Long, Integer> normalizeLevelMap(Map<Long, Integer> raw) {
+        if (raw == null || raw.isEmpty()) {
+            return raw;
+        }
+        Map<Long, Integer> normalized = new HashMap<>(raw.size());
+        for (Map.Entry<?, ?> e : raw.entrySet()) {
+            normalized.put(toLongKey(e.getKey()), toIntValue(e.getValue()));
+        }
+        return normalized;
+    }
+
+    static Long toLongKey(Object key) {
+        if (key == null) return null;
+        if (key instanceof Long) return (Long) key;
+        if (key instanceof Number) return ((Number) key).longValue();
+        if (key instanceof String) return Long.parseLong((String) key);
+        throw new NopException(ErpHrErrors.ERR_GAP_INVALID_LEVEL_MAP)
+                .param(ErpHrErrors.ARG_LEVEL_MAP_KEY, key);
+    }
+
+    static Integer toIntValue(Object value) {
+        if (value == null) return null;
+        if (value instanceof Integer) return (Integer) value;
+        if (value instanceof Number) return ((Number) value).intValue();
+        if (value instanceof String) return Integer.parseInt((String) value);
+        throw new NopException(ErpHrErrors.ERR_GAP_INVALID_LEVEL_MAP)
+                .param(ErpHrErrors.ARG_LEVEL_MAP_VALUE, value);
     }
 
     Long loadPositionId(Long employeeId) {
