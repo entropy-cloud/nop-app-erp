@@ -172,6 +172,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 本计划使 crp-load 报表数值可观测（HTML token 断言），不做 echarts 可视化增强（前端能力面）。
 - Successor Required: `yes`
 - Trigger Condition: 当产品要求 CRP 负荷看板可视化（负荷/产能趋势图、超负荷高亮）时。
+- **RELEASED by 2026-07-17-2010-1**（触发条件已满足：successor 计划 `docs/plans/2026-07-17-2010-1-dashboard-echarts-spc-crp-charts.md` 已交付 `ErpMfgDashboard__getCrpLoadChartData` `@BizQuery`（委派 `CrpLoadCalculator.getLoadReport` 后按 loadDate 聚合 Σ loadHours / Σ capacityHours / 派生 loadRate + 汇总负荷率）+ mfg 看板 `crpLoadChart` echarts 双轴图：bar 负荷工时 + line 产能工时 + 负荷率 tooltip + 标题含 overallLoadRate）
 
 ### crp_load 重算链 seed / calculateLoad 端到端
 

@@ -135,6 +135,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 本期仅交付 KPI/预警聚合数字 + 简单 AMIS 卡片；交互式控制图渲染属前端可视化面。
 - Successor Required: yes（触发条件：报表/看板 e2e 可视化套件建立时）
+- **RELEASED by 2026-07-17-2010-1**（触发条件已满足：`tests/e2e/visual/dashboards.visual.spec.ts` + `reports.visual.spec.ts` 已落地；successor 计划 `docs/plans/2026-07-17-2010-1-dashboard-echarts-spc-crp-charts.md` 已交付 `ErpQaDashboard__getSpcControlChartData` `@BizQuery`（聚合 cl/ucl/lcl + 样本点 + 违规标记）+ quality 看板 `spcControlChart` echarts 图表：line 样本均值 + markLine UCL/LCL/CL + `isOutOfControl` 点 itemStyle 红色高亮 + tooltip 含 violatedRules）
 
 ### 项目毛利率多维下钻（期间/部门/项目经理）
 

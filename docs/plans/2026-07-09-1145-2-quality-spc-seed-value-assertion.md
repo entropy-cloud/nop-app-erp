@@ -160,6 +160,7 @@ Exit Criteria:
 - Why Not Blocking Closure: 0930-3 既定 Deferred（前端可视化面）。本计划仅令 SPC 预警计数器非空可观测，不做控制图可视化。
 - Successor Required: `yes`
 - Trigger Condition: 同 0930-3 Deferred（前端 SPC 控制图可视化需求时）。
+- **RELEASED by 2026-07-17-2010-1**（触发条件已满足：successor 计划 `docs/plans/2026-07-17-2010-1-dashboard-echarts-spc-crp-charts.md` 已交付 `ErpQaDashboard__getSpcControlChartData` `@BizQuery`（ucl/lcl/cl 经 chart 实体字段真实传递 + 样本点 subgroupNo/mean/isOutOfControl/violatedRules 按 subgroupNo 升序）+ quality 看板 `spcControlChart` echarts 图表：line 样本均值 + markLine UCL/LCL/CL 三水平线 + `isOutOfControl=true` 点 itemStyle 红色高亮 + tooltip 含 violatedRules）
 
 ### ErpQaParameter 实体物化 / 检验参数 seed
 
