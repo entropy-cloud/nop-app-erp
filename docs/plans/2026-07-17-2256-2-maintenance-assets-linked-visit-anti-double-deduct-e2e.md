@@ -1,6 +1,6 @@
 # 2026-07-17-2256-2-maintenance-assets-linked-visit-anti-double-deduct-e2e Maintenance × Assets 跨域维修费用防双重扣减浏览器层 E2E
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-17
 > Mission: erp
 > Work Item: 各域细化端到端验证（maintenance × assets 跨域成本闭环防双重扣减 successor）
@@ -68,71 +68,77 @@
 
 ### Phase 1 - Explore：跨域链路可达性 + linkedVisit 分支 + setup 隔离冷核实
 
-Status: planned
+Status: completed
 Targets: `MaintenanceExpensePostingDispatcher`、`MaintenanceExpenseAcctDocProvider`、`ErpMntSparePartUsageBizModel.confirm`、`ErpAstMaintenanceProcessor`、`tests/e2e/business-actions/ast-maintenance.action.spec.ts`、`tests/e2e/orchestration/_helper.ts`
 Skill: none
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无
 
-- [ ] `Proof`：冷核实跨域实体链 + 浏览器层可达性 —— `ErpAstMaintenance.maintenanceVisitId`（→ mnt `ErpMntVisit`）经 `__save` 可置；mnt `ErpMntSparePartUsage.confirm(usageId)` DIRECT 可达（已由 0606-2 验证）；assets 维修 approve→过账触发 DIRECT 可达（已由 0215-1 验证）。核实两域 `@BizMutation` 入参名/返回类型。
+- [x] `Proof`：冷核实跨域实体链 + 浏览器层可达性 —— `IErpAstMaintenanceBiz.createMaintenance(@Name maintenanceVisitId, ...)` 接受可空 Long maintenanceVisitId（接口 :29 逐字核实）；mnt `ErpMntSparePartUsage.confirm(usageId)` DIRECT `@BizMutation`（ErpMntSparePartUsageBizModel.java:46，0606-2 已验）；assets 维修 approve→过账 DIRECT 可达（0215-1 已验）。两域 `@BizMutation` 入参名/返回类型经实时仓库核实一致。
   - Skill: none
-- [ ] `Proof`：冷核实 linkedVisit 分支判定源 —— `MaintenanceExpensePostingDispatcher` linkedVisit = `maintenance.getMaintenanceVisitId() != null`（确认非 config 或其他判定）；`MaintenanceExpenseAcctDocProvider.createFacts` linkedVisit=true → Cr 2502 / linkedVisit=false → Cr 1002（确认分支科目）。**核实并记录 provider docstring 漂移**：`MaintenanceExpenseAcctDocProvider` l.24 docstring 称 false 分支「贷存货（备件消耗）/银行存款」，但 `createFacts`（:60-64）仅贷 bankSubject 1002，`SUBJECT_INVENTORY=1403` 常量声明（:38）但 `createFacts` 未引用（dead constant）—— 断言以 `createFacts` 实际行为为准（false → Cr 1002 非 1403）。核实种子 `erp_md_subject.csv` 是否含 2502（实测缺失，Phase 2 必须补，见下）。
+- [x] `Proof`：冷核实 linkedVisit 分支判定源 —— `MaintenanceExpensePostingDispatcher.buildEvent:79` 逐字 `boolean linkedVisit = maintenance.getMaintenanceVisitId() != null`（非 config 判定）；`MaintenanceExpenseAcctDocProvider.createFacts:60-64` linkedVisit=true → `fact(clearingSubject=2502, ...)` / false → `fact(bankSubject=1002, ...)`。**provider docstring 漂移记录**：l.24 docstring 称 false 分支「贷存货（备件消耗）/银行存款」但 createFacts:62-63 仅贷 bankSubject 1002；`SUBJECT_INVENTORY=1403`（:38）声明但 `createFacts` 未引用（dead constant）。**断言以 createFacts 实际行为为准**（false → Cr 1002 非 1403）。种子 `erp_md_subject.csv`（app-erp-all/src/main/resources/_vfs/_init-data/，HEAD 实测）**不含 2502**（仅 1001/1002/1122/1405/2202/1401/1403/1601/1602/6602/6603 等），Phase 2 必须补。
   - Skill: none
-- [ ] `Proof`：冷核实既有 `ast-maintenance.action.spec.ts` 路径 —— 确认其走独立（linkedVisit=false）路径（无 maintenanceVisitId），本计划 linkedVisit=true 为真实净增缺口（非 1005-1 式伪基线）。核实 `findVoucherIdByBillCode` + `assertVoucherLines` 两原语在 orchestration/_helper.ts 可用。
+- [x] `Proof`：冷核实既有 `ast-maintenance.action.spec.ts` 路径 —— l.66-73 `createMaintenance` 调用不传 `maintenanceVisitId`（参数列表止于 reason），l.139 断言 `Cr 1002` 银行存款，确认走独立（linkedVisit=false）路径；glob `tests/e2e/business-actions/*{linked,double,deduct,mnt-ast}*` NONE。本计划 linkedVisit=true 为真实净增缺口（非 1005-1 式伪基线）。`findVoucherIdByBillCode`（orchestration/_helper.ts:92）+ `assertVoucherLines`（:151）两原语在位可直接复用。
   - Skill: none
-- [ ] `Decision`：选定跨域 setup 编排 + 隔离策略（测试专用备件物料，避免 WEIGHTED_AVERAGE 混合 + 清理抹除种子 inventory dashboard totalValue 基线，对齐 0704-2 范式）+ cleanup 顺序（assets 凭证→mnt 凭证→mnt 移动→双域实体）。记录入计划。
+- [x] `Decision`：跨域 setup 编排 + 隔离策略 + cleanup 顺序（记录入计划，确定性可复现）：
+  - **物料隔离**：测试专用新建备件物料（RAW_MATERIAL/MOVING_AVERAGE，非种子 MAT-001），无种子余额，使 mnt 备件出库 unitCost 确定性（无 WEIGHTED_AVERAGE 混合）+ 清理整行删除安全（不污染 inventory dashboard totalValue 基线），对齐 0704-2 mfg-chain / 0606-2 mnt-spare-part-posting 范式。
+  - **mnt setup**：种子设备 id=1（EQ-2026-001 RUNNING，confirm 不改设备状态无污染）+ 自包含建 DRAFT Visit（code/equipmentId/visitDate/status=DRAFT/assignedTo/visitType/orgId）+ SparePartUsage（**visitId 显式指向该 visit**，DRAFT/UNSUBMITTED）+ Line（materialId=测试物料/qty/unitCost/amount）→ `confirm(usageId)` → `MAINTENANCE_ISSUE` 凭证（Dr 6602=amount/Cr 1403=amount；billHeadCode=usage.code+"-MI"）。
+  - **assets setup（测试 1，linkedVisit=true 正路径）**：`createMaintenance(assetId=种子资产 id=3 AST-2026-003, code, name, businessDate, **maintenanceVisitId=上述 mnt visit.id**, reason)` → 费用归集行 `ErpAstMaintenanceCost`（costType=SPARE_PART，amount=同 mnt 备件出库 amount；totalCost>0 为 post 前置）→ `submit→startWork→completeWork→decideTreatment(EXPENSE)→approve→post` → `MAINTENANCE_EXPENSE` 凭证（Dr 6602=totalCost/Cr **2502**=totalCost，linkedVisit=true；billHeadCode=maintenance.code）。
+  - **assets setup（测试 2，linkedVisit=false 对照）**：同上但不传 `maintenanceVisitId` + 独立金额（不与测试 1 同 spec 实例时无干扰；本计划两测试在同 spec 同 visit 物料隔离内顺序运行，amount 取不同值避免辅助账误聚合）→ `post` → `MAINTENANCE_EXPENSE` 凭证（Dr 6602/Cr **1002**，linkedVisit=false）。
+  - **cleanup 顺序（依赖反向）**：assets 凭证（billHeadCode=maintenance.code）→ mnt 凭证（billHeadCode=usage.code+"-MI"）→ mnt OUTGOING 移动（relatedBillType=ERP_MNT_SPARE_PART + relatedBillCode=usage.code，删 ledger/moveLine/move）→ assets 费用行+维修工单（测试 1 维修工单无资产原值变更，EXPENSE 不修改资产卡片无回退需要）→ mnt UsageLine+Usage+Visit → StockLedger/StockBalance 按测试物料 materialId+warehouseId → INCOMING 备货移动 → 测试物料。两测试共享 try/finally 各自隔离 cleanup。
+  - **金额确定性**：备件 qty=10 × unitCost=5 → amount=50；测试 1 assets MaintenanceCost SPARE_PART=50 → totalCost=50 → 两凭证 Dr 6602=50 / mnt Cr 1403=50 / assets Cr 2502=50；测试 2 assets MaintenanceCost SPARE_PART=80 → totalCost=80 → assets Dr 6602=80 / Cr 1002=80（独立 visit/maintenance，无聚合）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 跨域链路 + linkedVisit 分支 + setup 隔离经实时仓库核实明确（无伪基线）。
-- [ ] Decision（编排 + 隔离 + cleanup 顺序）记录入计划，确定性可复现。
+- [x] 跨域链路 + linkedVisit 分支 + setup 隔离经实时仓库核实明确（无伪基线）。
+- [x] Decision（编排 + 隔离 + cleanup 顺序）记录入计划，确定性可复现。
 
 ---
 
 ### Phase 2 - 跨域并存防双重扣减浏览器层 E2E spec + 种子 COA
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/business-actions/mnt-ast-linked-visit-anti-double-deduct.action.spec.ts`（新）、`tests/e2e/orchestration/_helper.ts`（复用/按需扩）、种子 `erp_md_subject.csv`（+2502 加性行若 Explore 确认缺失）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] `Add`：种子 `erp_md_subject.csv` 追加 2502 维修中转清算科目行（经实时仓库核实部署期种子**缺失** 2502，必须补，加性，不动既有科目）。
+- [x] `Add`：种子 `erp_md_subject.csv` 追加 `43,2502,维修中转清算,LIABILITY,CREDIT,ACTIVE,CREDIT,true`（Phase 1 实测缺失，加性，不动既有科目）。
   - Skill: none
   - Skill: none
-- [ ] `Add`：`mnt-ast-linked-visit-anti-double-deduct.action.spec.ts` —— 自包含双域 setup（finally 兜底 cleanup 按 Decision 顺序）：
-  - 测试 1（linkedVisit=true 防双重扣减正路径）：建测试专用备件物料 + INCOMING 备货 + mnt 设备 + Visit + SparePartUsage(+Line) → `confirm(usageId)` → 断言 `MAINTENANCE_ISSUE` 凭证 Dr 6602/Cr 1403；建 assets Maintenance(`maintenanceVisitId`=该 visit，totalCostAmount=备件金额) → approve → 断言 `MAINTENANCE_EXPENSE` 凭证 Dr 6602/**Cr 2502**（linkedVisit=true，非 Cr 1403）—— 备件成本未被双重扣减。
-  - 测试 2（linkedVisit=false 独立对照）：建 assets Maintenance（无 maintenanceVisitId，totalCostAmount=X）→ approve → 断言 `MAINTENANCE_EXPENSE` 凭证 Dr 6602/**Cr 1002** 银行（linkedVisit=false 分支，与既有 ast-maintenance spec 路径一致，确认分支差异）。
-  - 凭证行精确数值经 `findVoucherIdByBillCode`（按 billHeadCode 区分两域凭证）+ `assertVoucherLines` 逐行断言 subjectCode + dcDirection + 借贷金额。
+- [x] `Add`：`mnt-ast-linked-visit-anti-double-deduct.action.spec.ts` —— 自包含双域 setup（finally 兜底 cleanup 按 Decision 顺序）：
+  - 测试 1（linkedVisit=true 防双重扣减正路径）：建测试专用备件物料 + INCOMING 备货 + mnt 设备 id=1 + DRAFT Visit + SparePartUsage（**visitId 显式指向 visit**）+ Line → `confirm(usageId)` → 断言 `MAINTENANCE_ISSUE` 凭证 Dr 6602=50/Cr 1403=50（billHeadCode=usage.code+"-MI"）；建 assets Maintenance（`maintenanceVisitId`=该 visit，SPARE_PART cost=50 → totalCost=50）→ submit→startWork→completeWork→decideTreatment(EXPENSE)→approve→post → 断言 `MAINTENANCE_EXPENSE` 凭证 Dr 6602=50/**Cr 2502=50**（linkedVisit=true，非 Cr 1403）—— 备件成本未被双重扣减。
+  - 测试 2（linkedVisit=false 独立对照）：建 assets Maintenance（无 maintenanceVisitId，SPARE_PART cost=80 → totalCost=80）→ approve→post → 断言 `MAINTENANCE_EXPENSE` 凭证 Dr 6602=80/**Cr 1002=80** 银行（linkedVisit=false 分支，与既有 ast-maintenance spec 路径一致，确认分支差异）。
+  - 凭证行精确数值经 `findVoucherIdByBillCode`（按 billHeadCode 区分两域凭证，mnt 后缀 -MI + assets 无后缀）+ `assertVoucherLines` 逐行断言 subjectCode + dcDirection + 借贷金额。
   - Skill: none
-- [ ] `Proof`：spec 独立运行全绿（`npx playwright test mnt-ast-linked-visit-anti-double-deduct.action.spec.ts`）；maintenance/assets 既有 spec 抽样回归 0 新增失败。
+- [x] `Proof`：spec 独立运行全绿（`BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test mnt-ast-linked-visit-anti-double-deduct.action.spec.ts --workers=1` → **2 passed (16.0s)**）；maintenance/assets 既有 spec 抽样回归（mnt-spare-part-posting + maintenance-visit + mnt-request + ast-maintenance + ast-depreciation → **10 passed (1.2m)**）0 新增失败。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 2 测试全绿；linkedVisit=true 贷 2502（非 1403）+ linkedVisit=false 贷 1002 分支差异断言；凭证行精确数值对齐。
-- [ ] finally cleanup 保护共享 DB（inventory/maintenance/assets dashboard 数值断言基线无漂移，经测试专用物料隔离）。
+- [x] 2 测试全绿；linkedVisit=true 贷 2502（非 1403）+ linkedVisit=false 贷 1002 分支差异断言；凭证行精确数值对齐。
+- [x] finally cleanup 保护共享 DB（inventory/maintenance/assets dashboard 数值断言基线无漂移，经测试专用物料隔离 + 逐域凭证/移动/余额清理）。
 
 ---
 
 ### Phase 3 - 文档对齐 + Deferred RELEASED + 日志
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`、`docs/plans/2026-07-14-0606-2-landed-cost-spare-part-posting-e2e.md` Deferred 段、`docs/logs/2026/07-17.md`、`docs/backlog/README.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 2
 
-- [ ] `Add`：`docs/testing/e2e-runbook.md` 业务动作表 +maintenance × assets 跨域防双重扣减行 + 凭证行断言表 +2 行（MAINTENANCE_ISSUE Cr1403 / MAINTENANCE_EXPENSE Cr2502 linkedVisit=true）+ 套件计数对齐（实测 spec 数 +N）；0606-2 Deferred 段补 `**RELEASED by 2026-07-17-2256-2**` 行（触发条件已满足 + 本计划交付证据）；`docs/logs/2026/07-17.md` 增聚合条目（spec 数/验证状态/范围纪律）；`docs/backlog/README.md` +1 done 行。
+- [x] `Add`：`docs/testing/e2e-runbook.md` 业务动作表 +maintenance × assets 跨域防双重扣减行 + 凭证行断言表 +1 行（MAINTENANCE_EXPENSE 跨域 linkedVisit=true Cr 2502）+ 套件计数对齐（business-actions 66→67 spec，运行表头 + 段头同步）；0606-2 Deferred 段补 `**RELEASED by 2026-07-17-2256-2**` 行（触发条件已满足 + 本计划交付证据）；`docs/logs/2026/07-17.md` 增聚合条目（spec 数/验证状态/范围纪律）；`docs/backlog/README.md` +1 done 行。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] e2e-runbook 业务动作表 + 凭证行断言表 + 套件计数对齐实际；0606-2 Deferred RELEASED 登记落地；日志 + backlog 条目在位。
+- [x] e2e-runbook 业务动作表 + 凭证行断言表 + 套件计数对齐实际；0606-2 Deferred RELEASED 登记落地；日志 + backlog 条目在位。
 
 ## Draft Review Record
 
@@ -142,14 +148,14 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。本计划为测试层 + 种子 COA 加性行 + 文档（预期零生产契约变更）。结束时运行新增 spec + maintenance/assets 既有 spec 抽样回归 + 全量构建。
 
-- [ ] 范围内行为完成（跨域防双重扣减 linkedVisit=true 正路径 + linkedVisit=false 对照 2 测试）
-- [ ] 相关文档对齐（e2e-runbook 业务动作表 + 凭证行断言表、0606-2 Deferred RELEASED、当日日志、backlog）
-- [ ] 已运行验证：新增 spec 独立运行全绿 + maintenance/assets 既有 spec 抽样回归 0 新增失败 + `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS（closure gate，确认零后端污染）
-- [ ] 无范围内项目降级为 deferred/follow-up（维修工时费用化/资本化路径均为计划内 Non-Goal 附触发条件）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（跨域防双重扣减 linkedVisit=true 正路径 + linkedVisit=false 对照 2 测试）
+- [x] 相关文档对齐（e2e-runbook 业务动作表 + 凭证行断言表、0606-2 Deferred RELEASED、当日日志、backlog）
+- [x] 已运行验证：新增 spec 独立运行全绿 + maintenance/assets 既有 spec 抽样回归 0 新增失败 + `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS（closure gate，确认零后端污染）
+- [x] 无范围内项目降级为 deferred/follow-up（维修工时费用化/资本化路径均为计划内 Non-Goal 附触发条件）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -167,11 +173,16 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 完成。三 Phase 均全绿。Phase 1 Explore 冷核实跨域链路 + linkedVisit 分支（Dispatcher:79 / Provider createFacts:60-64）+ provider docstring 漂移记录 + 种子 2502 缺失确认 + Decision（编排 + 隔离 + cleanup 顺序）；Phase 2 落地种子 erp_md_subject.csv +2502 维修中转清算 + mnt-ast-linked-visit-anti-double-deduct.action.spec.ts 2 用例（linkedVisit=true 正路径 Cr 2502 中转清算 + linkedVisit=false 对照 Cr 1002 银行存款）；Phase 3 e2e-runbook 业务动作表 +maintenance × assets 跨域防双重扣减行 + 凭证行断言表 +1 行 + 套件计数 66→67 + 0606-2 Deferred RELEASED + 当日日志聚合条目 + backlog README +1 done 行。零生产 Java/ORM/契约/codegen/config 变更，唯一后端变更为种子 CSV 加性追加。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立子代理（新会话）执行>
+- 新增 spec 独立运行：`BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/business-actions/mnt-ast-linked-visit-anti-double-deduct.action.spec.ts --workers=1` → **2 passed (16.0s)**（2026-07-18T00:13+08:00）。
+- maintenance/assets 既有 spec 抽样回归（mnt-spare-part-posting + maintenance-visit + mnt-request + ast-maintenance + ast-depreciation）→ **10 passed (1.2m)** 0 新增失败。
+- closure gate 构建：`mvn clean install -DskipTests` → **154 模块 BUILD SUCCESS**（01:30 min，2026-07-18T00:09+08:00）。
+- 结束审计由独立子代理（新会话）执行。
+
+Auditor / Agent: independent closure auditor `ses_08f18b6c1ffeNdjHgxEMFxL1Ja`（general subagent，新会话冷审计无执行者上下文，2026-07-18）。Verdict: **audit pass** / 0 BLOCKERS。逐项核实：① Plan Status=completed + 三 Phase 所有 items `[x]` + Exit Criteria `[x]`；② 种子 CSV 仅追加 `+43,2502,维修中转清算,LIABILITY,CREDIT,ACTIVE,CREDIT,true` 无既有行变更；③ 新 spec 2 测试结构正确（Test 1 linkedVisit=true Cr 2502 非 1403 + mnt MAINTENANCE_ISSUE Dr6602/Cr1403 + finally cleanup；Test 2 对照 Cr 1002）；④ 后端分支 Dispatcher:79 / Provider createFacts:60-64 与 spec 断言逐字对齐；⑤ e2e-runbook 业务动作表 + 凭证行断言表 + 套件计数 66→67（分层运行行 + 段头 + 关键裁决三处同步）+ 0606-2 RELEASED + 07-17.md 顶部聚合条目 + backlog README done 行；⑥ 测试证据 2 passed + 10 passed 抽样 + 154 模块 BUILD SUCCESS，pre-existing 日期边界快照失败（today=2026-07-18 vs 快照期望 2026-07-17）经 git stash baseline 对照确认为非本计划回归；⑦ 反范围蔓延：仅种子 CSV 加性 + 新 spec + 5 文档文件，零生产 Java/ORM/`_gen/`/契约/config 变更，orchestration/_helper.ts 复用未改。
 
 Follow-up:
 

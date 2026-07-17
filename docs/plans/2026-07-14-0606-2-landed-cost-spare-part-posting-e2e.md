@@ -165,6 +165,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 1100-6 后端已处理 linkedVisit 分支（assets 维修工单关联维护工单时贷中转清算防双重）。跨域并存场景复杂度高（maintenance 备件消耗 + assets 维修工单双域 setup）。
 - Successor Required: `yes`（触发条件：双域并存防双重扣减浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-17-2256-2**：触发条件经实时仓库核实已满足（AGENTS.md / project-context.md:34「各域细化端到端验证」重点 + 防双重扣减后端分支已由 1100-6 落地）；交付证据 = `tests/e2e/business-actions/mnt-ast-linked-visit-anti-double-deduct.action.spec.ts`（2 测试：linkedVisit=true 正路径 Cr 2502 中转清算 + linkedVisit=false 对照 Cr 1002 银行存款）+ 种子 `erp_md_subject.csv` 补 2502 维修中转清算行。
 
 ## Closure
 
