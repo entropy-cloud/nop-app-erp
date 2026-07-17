@@ -28,7 +28,11 @@
 
 - **本计划（2026-07-17-1430-1）未改生产代码**（过账引擎为共享 Protected Area，生产代码修复须 ask-first）。
 - E2E 绕过：`tests/e2e/business-actions/fin-notes-receivable.action.spec.ts` / `fin-notes-payable.action.spec.ts` 使用紧凑 base36 `note.code`（≤13 字符，对齐生产票据码实际长度），使生成 code ≤ 50。
-- **显式 successor（未落地，触发时承接）**：`buildCode` 加长度守护——优先保留 `prefix + sourceBillType + uuid8`，`sourceBillCode` 段超限时截断 + 后缀哈希摘要保证唯一；或 `ArApItem.code` 列放宽 precision。属生产代码变更，须独立计划 + ask-first。
+- **已由 plan `2026-07-17-1600-1` 修复**（`docs/plans/2026-07-17-1600-1-ar-ap-item-code-length-guard.md`，Status: completed）——采用方案 1（`buildCode` 应用层长度守护），否决方案 2（放宽 `voucherCode` precision，侵入面跨 15 实体 + DDL 迁移 + ORM 保护区域）：
+  - 新增常量 `protected static final int AR_AP_ITEM_CODE_MAX_LENGTH = 50;`（对齐 `voucherCode` precision，生成器为 DAG 顶不反向依赖 ORM 元数据）。
+  - `buildCode` 短码路径（拼接结果 ≤ 50）逐字符不变；超限路径优先保留 `ARI- + sourceBillType + uuid8` 固定段（最坏 32 < 50，留 ≥18 给 sourceBillCode 压缩段），对 sourceBillCode 截取头部并追加 MD5 前 4 hex 摘要（保留全长指纹，全局唯一性由 uuid8 兜底）。方法签名 `protected String buildCode(String sourceBillType, String sourceBillCode)` 不变（向后兼容）。
+  - 覆盖 `resolveProfile` 全分支（AP/AR_INVOICE/PAYMENT/RECEIPT/PUR_RETURN/SAL_RETURN/EXPENSE_CLAIM/EMPLOYEE_ADVANCE/NOTES_RECEIVABLE/NOTES_ENDORSED/OWNERSHIP_TRANSFER），任意 sourceBillType + 任意长度 sourceBillCode 均返回 ≤ 50。
+  - E2E 紧凑码 workaround 说明仍保留（紧凑码本身合理，非缺陷，无需为验证修复而人为加长；修复正确性由后端 JUnit 长码回归测试保证）。
 
 ## 测试
 
@@ -52,3 +56,4 @@
 
 - 缺少「长单据号 + 长 businessType 名」组合的辅助账插入回归测试（现有 JUnit 均用短码）。
 - `buildCode` 无应用层长度断言/截断，依赖 DB 列宽兜底但兜底表现为运行时截断异常而非可读校验。
+- **已补回归测试**（plan `2026-07-17-1600-1` Phase 2）：`TestErpFinArApItemGeneration#testLongSourceBillCodeDoesNotOverflowVoucherCodePrecision` 驱动 `NOTES_RECEIVABLE_RECEIVED` + 28 字符 note.code 过账，断言过账成功（未吞 `22001`）+ 辅助账 1 条 OPEN + `code.length()<=50` + 幂等。经 stash 红绿反转证明：未应用修复时确实捕获 `sqlState=22001 / data-integrity-violation / insert into ERP_FIN_AR_AP_ITEM`，应用修复后全绿。

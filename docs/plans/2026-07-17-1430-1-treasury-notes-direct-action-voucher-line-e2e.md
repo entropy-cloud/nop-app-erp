@@ -176,7 +176,7 @@ Exit Criteria:
 
 - [x] 应收票据 spec 全绿，7 动作状态翻转 + 4 业财过账凭证行精确数值均经 `verifyState`/`assertVoucherLines` 独立断言（非仅 mutation 返回值）
 - [x] 种子 COA 补齐使过账 Provider 科目码可达（`findByCode` 全局按码解析）
-- [x] **执行期发现 + 处置（latent defect，非阻塞）**：`ErpFinArApItemGenerator.buildCode` 生成辅助账 code `"ARI-{sourceBillType}-{sourceBillCode}-{uuid8}"`，voucherCode 精度 50；NOTES_RECEIVABLE(17)+长 sourceBillCode(>19 字符) 组合溢出 → `sqlState=22001` 截断 → receive/endorse posted=false。后端 JUnit 用短码通过故未暴露。**处置**：E2E 用紧凑 base36 note.code（≤13 字符，对齐生产票据码 NR-2026-0001 实际长度）绕过；生产代码修复属 Protected Area（ask-first），记于 `docs/bugs/` + Deferred 作显式 successor（触发条件：票据/单据码长度策略统一或该缺陷复现时），不阻塞本计划结束。
+- [x] **执行期发现 + 处置（latent defect，非阻塞）**：`ErpFinArApItemGenerator.buildCode` 生成辅助账 code `"ARI-{sourceBillType}-{sourceBillCode}-{uuid8}"`，voucherCode 精度 50；NOTES_RECEIVABLE(17)+长 sourceBillCode(>19 字符) 组合溢出 → `sqlState=22001` 截断 → receive/endorse posted=false。后端 JUnit 用短码通过故未暴露。**处置**：E2E 用紧凑 base36 note.code（≤13 字符，对齐生产票据码 NR-2026-0001 实际长度）绕过；生产代码修复属 Protected Area（ask-first），记于 `docs/bugs/` + Deferred 作显式 successor（触发条件：票据/单据码长度策略统一或该缺陷复现时），不阻塞本计划结束。— **RELEASED by 2026-07-17-1600-1**（successor 已承接并完成：`buildCode` 长度守护 + 长码回归测试）
 
 ---
 
@@ -309,4 +309,4 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- `ErpFinArApItemGenerator.buildCode` 长度守护改造（显式 successor，触发条件：票据/单据码长度策略统一或该 latent defect 复现时；详见 `docs/bugs/2026-07-17-1430-...`，生产代码修复须 ask-first 独立计划）
+- `ErpFinArApItemGenerator.buildCode` 长度守护改造（显式 successor，触发条件：票据/单据码长度策略统一或该 latent defect 复现时；详见 `docs/bugs/2026-07-17-1430-...`，生产代码修复须 ask-first 独立计划） — **RELEASED by 2026-07-17-1600-1**（`buildCode` 应用层长度守护落地 + 长码回归测试 + 红绿反转证明）
