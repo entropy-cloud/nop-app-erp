@@ -159,12 +159,14 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: `runAccrual` 仅计提 `ErpCtRebateAccrual` 行，结算单（`ErpCtRebateSettlement`）为独立后端入口。本计划聚焦计提触发面。
 - Successor Required: `yes`（触发条件：返利结算浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-17-1005-2**：触发条件已满足（AGENTS.md「当前项目阶段」明示「各域细化端到端验证」为当前重点）；`ct-rebate-settlement.action.spec.ts` 交付 postSettlement DRAFT→POSTED + 跨域负额 credit memo AP 发票（totalAmount=-96.05）+ creditMemoBillCode=CT-REBATE-{id} + accruals isSettled 翻转 + 非法态守卫浏览器层 E2E。
 
 ### drp releaseApproved 批量释放深度编排 E2E
 
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: `releaseLine` 单行释放已验证释放机制 + 跨域建单。批量入口 + 计划 APPROVED→EXECUTED 全量行联动经后端单测覆盖（`TestErpDrpScheduleRelease`）。
 - Successor Required: `yes`（触发条件：DRP 批量释放→全行 ORDERED→计划 EXECUTED 浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-17-1005-2**：触发条件已满足；`drp-release-approved.action.spec.ts` 交付 releaseApproved APPROVED plan 全行 ORDERED + 计划 EXECUTED + 下游 TransferOrder/PurOrder 创建断言 + SUGGESTED-only no-op 守卫浏览器层 E2E。
 
 ## Closure
 

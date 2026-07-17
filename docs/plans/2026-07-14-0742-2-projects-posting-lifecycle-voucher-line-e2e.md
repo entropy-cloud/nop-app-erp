@@ -142,6 +142,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: CLOSE 资本化路径（Dr 1601/Cr 1603）作代表验证结算过账机制；FINAL/INTERIM（Dr 5101/Cr 6001 + 4103 损益平衡三行）为损益结转深化
 - Successor Required: `yes`（触发条件：项目损益结转浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-17-1005-2**：触发条件已满足（AGENTS.md「当前项目阶段」明示「各域细化端到端验证」为当前重点）；`projects-pnl-settlement.action.spec.ts` 交付 FINAL/INTERIM approve→posted + 凭证行 Dr 5101=6000/条件性 Dr 4103=4000(profitLoss>0)/Cr 6001=10000 + reverseSettlement 红冲同向取负 + INTERIM 对照浏览器层 E2E（setup 工程化 finalRevenue≠finalCost 使 4103 行确定性出现）。
 
 ### 工时 actualCost 归集精确数值断言
 

@@ -175,18 +175,21 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: `matchPurchaseOrder` 需 ASN 处于 RECEIVED + 跨域读 `ErpPurOrder`/`ErpPurOrderLine` 匹配（b2b→purchase 跨域只读）。自包含 setup 需建 ASN + 匹配 PO 双域实体，耦合度高。本计划聚焦 EDI 信封状态机（自包含单域）。
 - Successor Required: `yes`（触发条件：ASN→PO 匹配浏览器层 E2E 需求落地时，或 ASN 入站编排 successor 落地时）
+- **RELEASED by `2026-07-14-0941-2`**（2026-07-14）：触发条件已满足，由 0941-2 Phase 1 `b2b-asn-match-receive.action.spec.ts` 交付——`matchPurchaseOrder` RECEIVED→MATCHED + `retryMatch` 幂等 + 非匹配/非 RECEIVED 守卫。
 
 ### b2b createReceiveFromAsn 跨域建入库草稿
 
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: config-gated MATCHED→RECEIVED_TO_STOCK 跨域建 `ErpPurReceive`（采购入库草稿），属跨域编排链。本计划聚焦 EDI 信封状态机。
 - Successor Required: `yes`（触发条件：ASN→入库编排浏览器层 E2E 需求落地时）
+- **RELEASED by `2026-07-14-0941-2`**（2026-07-14）：触发条件已满足，由 0941-2 Phase 1 交付——`createReceiveFromAsn` MATCHED→RECEIVED_TO_STOCK + `ErpPurReceive` 草稿头跨域 8 字段断言（code=`RCV-FROM-ASN-{asnCode}` + orderId/supplierId/warehouseId/currencyId/docStatus/approveStatus/receiveStatus）。
 
 ### aps insertRushOrder 插单区间重排
 
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 需 PLANNED 工序前置（scheduleForward 产物）+ 急单窗口配置，复杂度高。本计划聚焦 publish/archive 状态机 + 正向/反向排产引擎。
 - Successor Required: `yes`（触发条件：插单浏览器层 E2E 需求落地时）
+- **RELEASED by `2026-07-14-0941-2`**（2026-07-14）：触发条件已满足，由 0941-2 Phase 2 `aps-rush-order.action.spec.ts` 交付——`insertRushOrder` + `SchedulingResult.feasible/scheduledOperationIds` 非空 + 背景工序 `plannedStart` 被推移区间重排可观测。
 
 ### logistics DELIVERED 运费过账 / path-2 到岸成本自动创建
 
