@@ -18,6 +18,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.time.LocalDate;
 import java.math.BigDecimal;
@@ -42,6 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
     static final Long MATERIAL_ID = 7401L;
     static final Long VERIFICATION_PERSON = 7501L;

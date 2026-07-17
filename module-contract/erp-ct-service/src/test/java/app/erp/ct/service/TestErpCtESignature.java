@@ -22,6 +22,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -56,6 +57,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCtESignature extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static CtFrozenClockExtension frozenClock = new CtFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

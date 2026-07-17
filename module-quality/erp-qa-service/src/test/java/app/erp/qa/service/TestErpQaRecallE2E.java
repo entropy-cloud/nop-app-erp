@@ -27,6 +27,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -55,6 +56,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
         enableActionAuth = OptionalBoolean.FALSE,
         testBeansFile = "/erp/qa/beans/test-mock-sales.beans.xml")
 public class TestErpQaRecallE2E extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
     static final Long MATERIAL_ID = 28201L;
     static final Long WAREHOUSE_ID = 38201L;

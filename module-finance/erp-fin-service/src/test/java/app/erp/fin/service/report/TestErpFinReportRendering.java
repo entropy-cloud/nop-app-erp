@@ -9,6 +9,7 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.FinFrozenClockExtension;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
@@ -22,6 +23,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -46,6 +48,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinReportRendering extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static FinFrozenClockExtension frozenClock = new FinFrozenClockExtension();
 
     private static final io.nop.core.context.IServiceContext CTX = new io.nop.core.context.ServiceContextImpl();
 

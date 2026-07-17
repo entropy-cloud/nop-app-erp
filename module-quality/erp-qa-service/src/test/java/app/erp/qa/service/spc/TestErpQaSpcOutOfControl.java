@@ -17,6 +17,9 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import app.erp.qa.service.QaFrozenClockExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -48,6 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpQaSpcOutOfControl extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
     static final Long MATERIAL_ID = 7701L;
     static final Long PARAMETER_ID = 8901L;

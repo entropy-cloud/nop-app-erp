@@ -19,6 +19,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.List;
 
@@ -42,6 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpLogShipmentGateway extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static LogFrozenClockExtension frozenClock = new LogFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

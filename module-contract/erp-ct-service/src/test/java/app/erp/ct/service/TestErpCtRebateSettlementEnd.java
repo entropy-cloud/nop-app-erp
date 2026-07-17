@@ -22,6 +22,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,6 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCtRebateSettlementEnd extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static CtFrozenClockExtension frozenClock = new CtFrozenClockExtension();
 
     @Inject
     IGraphQLEngine graphQLEngine;

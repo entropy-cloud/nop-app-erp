@@ -18,6 +18,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,6 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpQaInspectionTrigger extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
     static final Long MATERIAL_ID = 7101L;
     static final Long SUPPLIER_ID = 7201L;

@@ -20,6 +20,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -45,6 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpB2bAsnInbound extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static B2bFrozenClockExtension frozenClock = new B2bFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

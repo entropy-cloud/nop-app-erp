@@ -17,6 +17,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -46,6 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCsEntitlement extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static CsFrozenClockExtension frozenClock = new CsFrozenClockExtension();
 
     static final Long PARTNER_ID = 9101L;
     static final Long TICKET_TYPE_ID = 6201L;

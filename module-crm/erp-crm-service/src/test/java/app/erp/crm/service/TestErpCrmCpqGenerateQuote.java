@@ -24,6 +24,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -52,6 +53,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static CrmFrozenClockExtension frozenClock = new CrmFrozenClockExtension();
 
     static final Long ORG_ID = 3301L;
     static final Long CURRENCY_ID = 6401L;

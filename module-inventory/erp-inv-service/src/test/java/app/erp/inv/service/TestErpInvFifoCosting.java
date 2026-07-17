@@ -19,6 +19,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -43,6 +44,9 @@ import static org.junit.jupiter.api.Assertions.fail;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvFifoCosting extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static InvFrozenClockExtension frozenClock = new InvFrozenClockExtension();
 
     static final Long ORG_ID = 1201L;
     static final Long WAREHOUSE_ID = 3201L;

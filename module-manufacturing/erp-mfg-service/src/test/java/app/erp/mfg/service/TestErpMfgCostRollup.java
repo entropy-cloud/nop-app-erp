@@ -27,6 +27,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -53,6 +54,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgCostRollup extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
     static final Long UOM_ID = 5101L;
     static final Long WC1 = 6101L;     // 工作中心（费率 20/小时）

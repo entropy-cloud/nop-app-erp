@@ -14,6 +14,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,6 +42,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPrjTaskDependency extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static PrjFrozenClockExtension frozenClock = new PrjFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

@@ -22,6 +22,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,6 +39,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static DrpFrozenClockExtension frozenClock = new DrpFrozenClockExtension();
 
     static final Long ORG_ID = 6401L;
     static final Long UOM_ID = 6501L;

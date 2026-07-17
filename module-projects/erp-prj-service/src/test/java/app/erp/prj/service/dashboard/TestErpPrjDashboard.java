@@ -4,6 +4,7 @@ import app.erp.prj.dao.entity.ErpPrjBudget;
 import app.erp.prj.dao.entity.ErpPrjCostCollection;
 import app.erp.prj.dao.entity.ErpPrjProject;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.PrjFrozenClockExtension;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.time.CoreMetrics;
@@ -15,6 +16,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPrjDashboard extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static PrjFrozenClockExtension frozenClock = new PrjFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

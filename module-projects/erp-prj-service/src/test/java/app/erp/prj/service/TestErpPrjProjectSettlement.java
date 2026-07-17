@@ -29,7 +29,9 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -58,7 +60,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpPrjProjectSettlement extends JunitAutoTestCase {
 
-    private static final IServiceContext CTX = new ServiceContextImpl();
+    @RegisterExtension
+    static PrjFrozenClockExtension frozenClock = new PrjFrozenClockExtension();
+
+    private static IServiceContext CTX = new ServiceContextImpl();
+
+    @BeforeAll
+    static void fixCtxUser() {
+        CTX.getContext().setUserId("autotest");
+    }
 
     @Inject
     IDaoProvider daoProvider;

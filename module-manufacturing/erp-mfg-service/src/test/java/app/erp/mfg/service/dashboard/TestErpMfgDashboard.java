@@ -13,6 +13,9 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import app.erp.mfg.service.MfgFrozenClockExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,6 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgDashboard extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

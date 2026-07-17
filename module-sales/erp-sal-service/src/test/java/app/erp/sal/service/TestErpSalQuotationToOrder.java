@@ -21,6 +21,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,6 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpSalQuotationToOrder extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static SalFrozenClockExtension frozenClock = new SalFrozenClockExtension();
 
     static final Long ORG_ID = 1301L;
     static final Long CUSTOMER_ID = 2401L;

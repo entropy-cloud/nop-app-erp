@@ -28,6 +28,7 @@ import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -57,6 +58,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMfgCostFlowEndToEnd extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static MfgFrozenClockExtension frozenClock = new MfgFrozenClockExtension();
 
     static final Long ORG_ID = 1701L;
     static final Long WAREHOUSE_ID = 3701L;

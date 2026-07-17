@@ -16,9 +16,11 @@ import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import app.erp.inv.service.InvFrozenClockExtension;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,6 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpInvDashboard extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static InvFrozenClockExtension frozenClock = new InvFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

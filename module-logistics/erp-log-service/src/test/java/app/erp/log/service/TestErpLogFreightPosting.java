@@ -20,6 +20,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -46,6 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpLogFreightPosting extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static LogFrozenClockExtension frozenClock = new LogFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

@@ -16,6 +16,9 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import app.erp.qa.service.QaFrozenClockExtension;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpQaDashboard extends JunitAutoTestCase {
+
+    @RegisterExtension
+    static QaFrozenClockExtension frozenClock = new QaFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
