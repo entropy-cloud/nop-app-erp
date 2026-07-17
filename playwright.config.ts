@@ -32,6 +32,16 @@ export default defineConfig({
   workers: 1,
   retries: 0,
   reporter: 'list',
+  expect: {
+    // Pixel-snapshot layer defaults (plan 2026-07-17-2010-2 Phase 1).
+    // Phase 1 measured 0 cross-run diff with maxDiffPixels: 0 on macOS +
+    // Chrome; 1% ratio is a generous CI-environment drift absorber and is
+    // still far tighter than any real layout regression. Individual
+    // assertions can override via assertSnapshot options.
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.01,
+    },
+  },
   use: {
     baseURL: effectiveBaseUrl,
     trace: 'retain-on-failure',

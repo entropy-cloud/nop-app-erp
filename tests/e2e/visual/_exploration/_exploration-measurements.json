@@ -1,0 +1,24 @@
+{
+  "run-2": {
+    "finance-v-a-bare": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    },
+    "finance-v-b-font": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    },
+    "finance-v-c-mask": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    },
+    "master-data-v-a-bare": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    },
+    "master-data-v-b-font": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    }
+  }
+}
