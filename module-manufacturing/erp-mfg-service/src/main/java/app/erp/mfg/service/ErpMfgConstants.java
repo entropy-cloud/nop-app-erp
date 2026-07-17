@@ -285,4 +285,9 @@ public interface ErpMfgConstants {
 
     /** 释放生成的委外单 code 前缀。 */
     String RELEASE_SUBCONTRACT_CODE_PREFIX = "SUB-MRP-";
+
+    // ---- 看板 CRP 负荷图配置项（plan 2026-07-17-2010-1）----
+    /** 看板 CRP 负荷图默认向前窗口天数（dateFrom/dateTo 缺省时取近 N 天；默认 7）。经 AppConfig.var 读取。 */
+    String CONFIG_DASH_MFG_CRP_DEFAULT_DAYS = "erp-dash.mfg-crp-default-days";
+    int DEFAULT_DASH_MFG_CRP_DEFAULT_DAYS = 7;
 }

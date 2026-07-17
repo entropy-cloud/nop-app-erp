@@ -1,7 +1,10 @@
 package app.erp.mfg.service.dashboard;
 
+import app.erp.mfg.biz.CrpLoadReportItem;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
+import app.erp.mfg.service.ErpMfgConfigs;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.crp.CrpLoadCalculator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
@@ -16,9 +19,11 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -49,6 +54,12 @@ public class ErpMfgDashboardBizModel {
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
+    @Inject
+    CrpLoadCalculator crpLoadCalculator;
+
+    public void setCrpLoadCalculator(CrpLoadCalculator crpLoadCalculator) {
+        this.crpLoadCalculator = crpLoadCalculator;
+    }
 
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("startDate") LocalDate startDate,
@@ -160,6 +171,82 @@ public class ErpMfgDashboardBizModel {
         });
     }
 
+    /**
+     * CRP 负荷/产能对比图数据（{@code crp.md §负载报表}，plan 2026-07-17-2010-1）。
+     *
+     * <p>委派 {@link CrpLoadCalculator#getLoadReport} 复用既有产能/负荷率派生链（{@code WorkcenterCalendar}
+     * 出勤时段 × {@code WorkcenterCapacity.efficiencyFactor}），再按 {@code loadDate} 聚合返回的
+     * {@link CrpLoadReportItem}（Σ loadHours / Σ capacityHours / 派生 loadRate），返回结构化 DTO
+     * 供看板 echarts 渲染 bar（负荷小时）+ line（产能小时）+ 负荷率。
+     *
+     * <p>dateFrom/dateTo 为空时取近 N 天（{@code erp-dash.mfg-crp-default-days}，默认 7）；空串当 null
+     * 宽容处理（对齐 1321-3 范式）。空数据返回零值结构（非 {@code null}）。
+     */
+    @BizQuery
+    public Map<String, Object> getCrpLoadChartData(@Optional @Name("workcenterId") Long workcenterId,
+                                                    @Optional @Name("dateFrom") String dateFrom,
+                                                    @Optional @Name("dateTo") String dateTo,
+                                                    IServiceContext context) {
+        LocalDate today = CoreMetrics.currentDate();
+        LocalDate from = parseDate(dateFrom, null);
+        LocalDate to = parseDate(dateTo, null);
+        if (from == null && to == null) {
+            int n = ErpMfgConfigs.getDashMfgCrpDefaultDays();
+            to = today;
+            from = today.minusDays((long) n - 1L);
+        } else if (from == null) {
+            from = to.minusDays(0);
+        } else if (to == null) {
+            to = today;
+        }
+        if (from.isAfter(to)) {
+            LocalDate tmp = from;
+            from = to;
+            to = tmp;
+        }
+
+        List<Long> workcenterIds = workcenterId != null ? Collections.singletonList(workcenterId) : null;
+        List<CrpLoadReportItem> items = crpLoadCalculator.getLoadReport(from, to, workcenterIds);
+
+        // 按 loadDate 聚合（多个工作中心合并为日总量）
+        Map<LocalDate, BigDecimal> loadByDate = new LinkedHashMap<>();
+        Map<LocalDate, BigDecimal> capByDate = new LinkedHashMap<>();
+        for (CrpLoadReportItem item : items) {
+            LocalDate d = item.getLoadDate();
+            if (d == null) continue;
+            loadByDate.merge(d, nz(item.getLoadHours()), BigDecimal::add);
+            capByDate.merge(d, nz(item.getCapacityHours()), BigDecimal::add);
+        }
+
+        List<Map<String, Object>> series = new ArrayList<>();
+        BigDecimal totalLoad = BigDecimal.ZERO;
+        BigDecimal totalCap = BigDecimal.ZERO;
+        for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
+            BigDecimal load = loadByDate.getOrDefault(d, BigDecimal.ZERO);
+            BigDecimal cap = capByDate.getOrDefault(d, BigDecimal.ZERO);
+            BigDecimal rate = deriveLoadRate(load, cap);
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("loadDate", d);
+            row.put("loadHours", load);
+            row.put("capacityHours", cap);
+            row.put("loadRate", rate);
+            series.add(row);
+            totalLoad = totalLoad.add(load);
+            totalCap = totalCap.add(cap);
+        }
+        BigDecimal overallRate = deriveLoadRate(totalLoad, totalCap);
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("dateFrom", from);
+        result.put("dateTo", to);
+        result.put("workcenterId", workcenterId);
+        result.put("series", series);
+        result.put("totalLoadHours", totalLoad);
+        result.put("totalCapacityHours", totalCap);
+        result.put("overallLoadRate", overallRate);
+        return result;
+    }
+
     // ===================== helpers =====================
 
     private long countByDocStatusIn(List<String> statuses) {
@@ -217,5 +304,25 @@ public class ErpMfgDashboardBizModel {
 
     private static BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    private static LocalDate parseDate(String raw, LocalDate fallback) {
+        if (raw == null || raw.trim().isEmpty()) {
+            return fallback;
+        }
+        try {
+            return LocalDate.parse(raw.trim());
+        } catch (Exception e) {
+            return fallback;
+        }
+    }
+
+    private static BigDecimal deriveLoadRate(BigDecimal loadHours, BigDecimal capacityHours) {
+        loadHours = nz(loadHours);
+        capacityHours = nz(capacityHours);
+        if (capacityHours.signum() <= 0) {
+            return loadHours.signum() > 0 ? new BigDecimal("9999") : BigDecimal.ZERO;
+        }
+        return loadHours.divide(capacityHours, 4, RoundingMode.HALF_UP);
     }
 }

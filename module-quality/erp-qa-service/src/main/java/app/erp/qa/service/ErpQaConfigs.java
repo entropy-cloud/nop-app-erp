@@ -140,6 +140,19 @@ public final class ErpQaConfigs {
         return Boolean.parseBoolean(raw.trim());
     }
 
+    /** 看板 SPC 控制图默认 chartId（null=未配置时取最近一张 ErpQaSpcChart；plan 2026-07-17-2010-1）。 */
+    public static Long getDashQaSpcDefaultChartId() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_DASH_QA_SPC_DEFAULT_CHART_ID, "");
+        if (raw == null || raw.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.valueOf(raw.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     private static List<String> parseCsv(String raw) {
         List<String> result = new ArrayList<>();
         if (raw == null || raw.trim().isEmpty()) {

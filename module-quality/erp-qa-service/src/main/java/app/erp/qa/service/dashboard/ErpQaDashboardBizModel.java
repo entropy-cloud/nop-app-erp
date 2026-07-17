@@ -4,6 +4,7 @@ import app.erp.qa.dao.entity.ErpQaAction;
 import app.erp.qa.dao.entity.ErpQaInspection;
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import app.erp.qa.dao.entity.ErpQaSpcCapability;
+import app.erp.qa.dao.entity.ErpQaSpcChart;
 import app.erp.qa.dao.entity.ErpQaSpcSample;
 import app.erp.qa.service.ErpQaConfigs;
 import app.erp.qa.service.ErpQaConstants;
@@ -223,6 +224,57 @@ public class ErpQaDashboardBizModel {
         });
     }
 
+    /**
+     * SPC 控制图可视化数据（{@code spc.md §SPC 控制图语义}，plan 2026-07-17-2010-1）。
+     *
+     * <p>同域只读聚合 {@link ErpQaSpcChart}（chartType + cl/ucl/lcl 三控制限，已由
+     * {@code SpcControlLimitCalculator} 持久化于 chart 实体）+ {@link ErpQaSpcSample}（subgroupNo/mean/
+     * isOutOfControl/violatedRules）。返回结构化 DTO 供看板 echarts 渲染 line（样本均值）+
+     * markLine（UCL/LCL/CL）+ 违规点高亮。
+     *
+     * <p>chartId 解析优先级：入参 &gt; config {@code erp-dash.qa-spc-default-chart-id} &gt; 最近一张
+     * {@code ErpQaSpcChart}（按 id 降序）。空数据返回零值结构（非 {@code null}）。
+     */
+    @BizQuery
+    public Map<String, Object> getSpcControlChartData(@Optional @Name("chartId") Long chartId,
+                                                       IServiceContext context) {
+        return ormTemplate.runInSession(session -> {
+            Long resolvedId = chartId != null ? chartId : ErpQaConfigs.getDashQaSpcDefaultChartId();
+            ErpQaSpcChart chart = null;
+            if (resolvedId != null) {
+                chart = daoProvider.daoFor(ErpQaSpcChart.class).getEntityById(resolvedId);
+            }
+            if (chart == null) {
+                chart = findLatestSpcChart();
+            }
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            if (chart == null) {
+                // 空数据零值结构（非 null）
+                result.put("chartId", null);
+                result.put("chartCode", null);
+                result.put("chartName", null);
+                result.put("chartType", null);
+                result.put("cl", null);
+                result.put("ucl", null);
+                result.put("lcl", null);
+                result.put("samples", new ArrayList<Map<String, Object>>());
+                return result;
+            }
+
+            List<Map<String, Object>> samples = loadSpcSamples(chart.getId());
+            result.put("chartId", chart.getId());
+            result.put("chartCode", chart.getCode());
+            result.put("chartName", chart.getName());
+            result.put("chartType", chart.getChartType());
+            result.put("cl", chart.getCl());
+            result.put("ucl", chart.getUcl());
+            result.put("lcl", chart.getLcl());
+            result.put("samples", samples);
+            return result;
+        });
+    }
+
     // ===================== helpers =====================
 
     private long countOutOfControlCharts() {
@@ -234,6 +286,33 @@ public class ErpQaDashboardBizModel {
             if (s.getChartId() != null) chartIds.add(s.getChartId());
         }
         return chartIds.size();
+    }
+
+    private ErpQaSpcChart findLatestSpcChart() {
+        IEntityDao<ErpQaSpcChart> dao = daoProvider.daoFor(ErpQaSpcChart.class);
+        QueryBean q = new QueryBean();
+        q.addOrderField("id", true);
+        q.setLimit(1);
+        List<ErpQaSpcChart> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    private List<Map<String, Object>> loadSpcSamples(Long chartId) {
+        IEntityDao<ErpQaSpcSample> dao = daoProvider.daoFor(ErpQaSpcSample.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("chartId", chartId));
+        q.addOrderField("subgroupNo", false);
+        List<ErpQaSpcSample> raw = dao.findAllByQuery(q);
+        List<Map<String, Object>> rows = new ArrayList<>(raw.size());
+        for (ErpQaSpcSample s : raw) {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("subgroupNo", s.getSubgroupNo());
+            row.put("mean", s.getMean());
+            row.put("isOutOfControl", s.getIsOutOfControl());
+            row.put("violatedRules", s.getViolatedRules());
+            rows.add(row);
+        }
+        return rows;
     }
 
     private long countInadequateCapabilityCharts() {

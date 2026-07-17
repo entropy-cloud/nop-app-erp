@@ -129,6 +129,8 @@ public interface ErpQaConstants {
     String CONFIG_DASH_QA_SPC_INCLUDE_INADEQUATE = "erp-dash.qa-spc-include-inadequate";
     /** SPC 失控预警看板是否纳入待处置 SPC NCR 计数（默认 true）。 */
     String CONFIG_DASH_QA_SPC_INCLUDE_NCR = "erp-dash.qa-spc-include-ncr";
+    /** 看板 SPC 控制图默认 chartId（null=未配置时取最近一张 ErpQaSpcChart；plan 2026-07-17-2010-1）。 */
+    String CONFIG_DASH_QA_SPC_DEFAULT_CHART_ID = "erp-dash.qa-spc-default-chart-id";
 
     // ---- SPC 统计过程控制（2.4b，spc.md）----
     // SPC 控制图类型（erp-qa/spc-chart-type）

@@ -24,7 +24,7 @@ body:
         label: "刷新"
         icon: "refresh-cw"
         actionType: reload
-        target: "kpiService,trendChart,defectChart,spcWarningService,capaOverdueCrud"
+        target: "kpiService,trendChart,defectChart,spcWarningService,spcControlChart,capaOverdueCrud"
 
   - type: service
     name: kpiService
@@ -178,6 +178,60 @@ body:
                 tpl: "<div class='text-muted'>待处置 SPC NCR 数</div>"
               - type: tpl
                 tpl: "<span class='h3 ${includeNcr ? 'text-warning' : 'text-muted'}'>${openSpcNcrCount}</span>"
+
+  - type: chart
+    name: spcControlChart
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}chartId:Long){ ErpQaDashboard__getSpcControlChartData(chartId:${'$'}chartId) }"
+        variables:
+          chartId: "${chartId || null}"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const result = gql.ErpQaDashboard__getSpcControlChartData || {};
+        const samples = result.samples || [];
+        const ucl = result.ucl;
+        const lcl = result.lcl;
+        const cl = result.cl;
+        const seriesData = samples.map(function(s){
+          return { value: s.mean, itemStyle: s.isOutOfControl ? {color: 'red'} : undefined };
+        });
+        const markLines = [];
+        if (ucl != null) markLines.push({ yAxis: ucl, name: 'UCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'UCL'} });
+        if (lcl != null) markLines.push({ yAxis: lcl, name: 'LCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'LCL'} });
+        if (cl != null)  markLines.push({ yAxis: cl,  name: 'CL',  lineStyle: {color: 'green'}, label: {position: 'end', formatter: 'CL'} });
+        const series = { type: 'line', data: seriesData };
+        if (markLines.length > 0) series.markLine = { symbol: 'none', data: markLines };
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            title: { text: 'SPC 控制图：' + (result.chartName || '') + ' (' + (result.chartType || '') + ')' },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function(params) {
+                let s = params[0].axisValueLabel + '<br/>';
+                const idx = params[0].dataIndex;
+                params.forEach(function(p){
+                  s += p.marker + ' ' + p.seriesName + ': ' + p.value + '<br/>';
+                });
+                const sample = samples[idx];
+                if (sample && sample.isOutOfControl && sample.violatedRules) {
+                  s += '违规规则: ' + sample.violatedRules + '<br/>';
+                }
+                return s;
+              }
+            },
+            xAxis: { type: 'category', name: '子组号', data: samples.map(function(s){return s.subgroupNo;}) },
+            yAxis: { type: 'value' },
+            series: [series]
+          }
+        };
 
   - type: crud
     name: capaOverdueCrud

@@ -24,7 +24,7 @@ body:
         label: "刷新"
         icon: "refresh-cw"
         actionType: reload
-        target: "kpiService,statusChart,trendChart,delayedWorkOrderCrud"
+        target: "kpiService,statusChart,trendChart,crpLoadChart,delayedWorkOrderCrud"
 
   - type: service
     name: kpiService
@@ -133,6 +133,54 @@ body:
             yAxis: { type: 'value' },
             series: [
               { name: '完工量', type: 'line', data: rows.map(function(r){return r.completedQty;}) }
+            ]
+          }
+        };
+
+  - type: chart
+    name: crpLoadChart
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}workcenterId:Long,${'$'}dateFrom:String,${'$'}dateTo:String){ ErpMfgDashboard__getCrpLoadChartData(workcenterId:${'$'}workcenterId,dateFrom:${'$'}dateFrom,dateTo:${'$'}dateTo) }"
+        variables:
+          workcenterId: "${workcenterId || null}"
+          dateFrom: "${dateFrom || null}"
+          dateTo: "${dateTo || null}"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const result = gql.ErpMfgDashboard__getCrpLoadChartData || {};
+        const series = result.series || [];
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            title: { text: 'CRP 负荷/产能对比图（区间总负荷率：' + (result.overallLoadRate != null ? result.overallLoadRate : '-') + '）' },
+            tooltip: {
+              trigger: 'axis',
+              formatter: function(params) {
+                let s = params[0].axisValueLabel + '<br/>';
+                params.forEach(function(p){
+                  s += p.marker + ' ' + p.seriesName + ': ' + p.value + '<br/>';
+                });
+                const idx = params[0].dataIndex;
+                const row = series[idx];
+                if (row && row.loadRate != null) {
+                  s += '负荷率: ' + row.loadRate + '<br/>';
+                }
+                return s;
+              }
+            },
+            legend: { data: ['负荷工时', '产能工时'] },
+            xAxis: { type: 'category', data: series.map(function(r){return r.loadDate;}) },
+            yAxis: [{ type: 'value', name: '工时', position: 'left' }],
+            series: [
+              { name: '负荷工时', type: 'bar', data: series.map(function(r){return r.loadHours;}) },
+              { name: '产能工时', type: 'line', data: series.map(function(r){return r.capacityHours;}) }
             ]
           }
         };
