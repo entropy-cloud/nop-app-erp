@@ -51,6 +51,7 @@
 - 任何新增生成 `ErpFinArApItem` 的业务类型（长 `sourceBillType` 名）都可能在长单据号下复现 22001——`buildCode` 改造时须覆盖全部 `resolveProfile` 分支。
 - 若放宽 `voucherCode` precision，须同步核对所有绑该 domain 的列（凭证号/单据号族）+ DB DDL 迁移。
 - 票据/单据 `code` 长度策略若未来放宽（>19 字符），本缺陷将转活跃，须先修 `buildCode`。
+- **HR 调动 `ErpHrEmployeeBizModel.buildSuccessorCode` 同类 fix 见 plan `2026-07-18-0347-1`**；service 层 8 处 `buildXxxCode`-style 拼接方法的分布与各自 precision 风险评估见该计划 Current Baseline §同型 buildXxxCode 拼接方法分布表，本仓当前仅 #1（finance，1600-1 修）+ #2（hr，0347-1 修）实证 latent 缺陷并修复，#3~#8（finance `buildVoucherCode` / inventory `buildRollupCode` / mfg `buildJobCardCode` / ast `buildSurplusAssetCode` / hr `buildBillCode`/`buildSimulationCode`）保留 watch-only——若未来 E2E 或生产场景实证其中任一处溢出，开独立 successor 单独修复（不扩 domain precision，对齐方案 1 范式）。
 
 ## 预防差距
 

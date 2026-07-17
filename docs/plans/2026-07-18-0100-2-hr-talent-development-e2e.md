@@ -192,4 +192,4 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- `ErpHrEmployeeBizModel.buildSuccessorCode` 新合同码超 code precision=50 同 1430-1 类 buildCode overflow——E2E 紧凑短码规避仅是测试层兜底，生产代码层修复（应用层 length 守护，对齐 1430-1/1600-1 范式）须以显式 successor 承接（触发条件：长员工码 + 长 effectiveDate 路径生产场景落地时）
+- `ErpHrEmployeeBizModel.buildSuccessorCode` 新合同码超 code precision=50 同 1430-1 类 buildCode overflow——E2E 紧凑短码规避仅是测试层兜底，生产代码层修复（应用层 length 守护，对齐 1430-1/1600-1 范式）须以显式 successor 承接（触发条件：长员工码 + 长 effectiveDate 路径生产场景落地时） **RELEASED by 2026-07-18-0347-1**：方案 1（应用层长度守护），新增 `SUCCESSOR_CONTRACT_CODE_MAX_LENGTH=50` 常量 + 短码路径逐字符不变 + 超限路径保留 `TRF-{empId}-{date}` 固定段 + active.code 头部截断 + MD5 前 4 hex 摘要保唯一；方法签名不变（向后兼容）。覆盖：经 `transferEmployee` 端到端回归测试 `testLongActiveCodeDoesNotOverflowCodePrecision` 验证 4 子用例（短码逐字符不变 / 长码 ≤50 不抛 22001 / 不同长码经哈希不退化 / 无 active 走 base）；经 stash 红绿反转证明（未修复时 `sqlState=22001` 字符串右截断 → transferEmployee 事务回滚 → 修复后全绿）。
