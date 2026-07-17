@@ -20,6 +20,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
@@ -49,6 +50,20 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implements IErpHrEmployeeBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpHrEmployeeBizModel.class);
+
+    /**
+     * 调动后新合同 code 总长上限，对齐 {@code module-hr/model/app-erp-hr.orm.xml} domain
+     * {@code code} precision=50（{@link ErpHrEmploymentContract#getCode() code} 列绑该 domain，
+     * 与 voucherCode 同精度，同 1430-1/1600-1 类 buildXxxCode overflow 缺陷）。BizModel 为 DAG 顶，
+     * 不反向依赖 ORM domain 元数据 API，故在此持有常量而非运行时读取 precision。
+     */
+    static final int SUCCESSOR_CONTRACT_CODE_MAX_LENGTH = 50;
+
+    /**
+     * 超限路径追加的 MD5 摘要长度（hex 字符）。保留全长 active.code 指纹，使两条不同长 active.code 即使头部相同
+     * 也不退化为同一新合同 code（避免唯一性冲突）。
+     */
+    private static final int SUCCESSOR_HASH_SUFFIX_LENGTH = 4;
 
     @Inject
     IErpHrDepartmentBiz departmentBiz;
@@ -245,13 +260,38 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return c;
     }
 
+    /**
+     * 生成调动后新劳动合同 code。短码（拼接结果 ≤ {@link #SUCCESSOR_CONTRACT_CODE_MAX_LENGTH}）路径
+     * 保持原拼接 {@code "TRF-" + employeeId + "-" + effectiveDate + "-" + active.code} 逐字符不变；
+     * 超限时进入截断 + 哈希摘要分支：优先保留 {@code "TRF-" + employeeId + "-" + effectiveDate} 固定段
+     * 不截断（最坏 4 + 19(Long.MAX) + 1 + 10 = 34 &lt; 50，留 ≥16 给 active.code 压缩段），对 active.code
+     * 段截取头部并追加 MD5 前 4 hex 摘要。
+     *
+     * <p>覆盖任意长度 employeeId + 任意 ISO effectiveDate + 任意长度 active.code 组合，均返回
+     * ≤ {@link #SUCCESSOR_CONTRACT_CODE_MAX_LENGTH}，消除 code precision 50 的字符串右截断
+     * （sqlState=22001）latent defect（0100-2 Follow-up 显式 successor）。
+     */
     static String buildSuccessorCode(ErpHrEmployee employee, ErpHrEmploymentContract active,
                                      LocalDate effectiveDate) {
-        String base = "TRF-" + (employee != null ? employee.getId() : "0") + "-" + effectiveDate.toString();
-        if (active != null && active.getCode() != null && !active.getCode().isEmpty()) {
-            return base + "-" + active.getCode();
+        String employeeIdStr = (employee != null && employee.getId() != null)
+                ? String.valueOf(employee.getId()) : "0";
+        String base = "TRF-" + employeeIdStr + "-" + effectiveDate.toString();
+        String activeCode = (active != null && active.getCode() != null && !active.getCode().isEmpty())
+                ? active.getCode() : null;
+        if (activeCode == null) {
+            return base;
         }
-        return base;
+        String code = base + "-" + activeCode;
+        if (code.length() <= SUCCESSOR_CONTRACT_CODE_MAX_LENGTH) {
+            return code;
+        }
+        // 固定段 = "TRF-"(4) + employeeIdStr + "-"(1) + effectiveDate(10) + "-"(1,分隔符)；剩余预算给 active.code 压缩段。
+        int budget = SUCCESSOR_CONTRACT_CODE_MAX_LENGTH
+                - "TRF-".length() - employeeIdStr.length() - 1 - effectiveDate.toString().length() - 1;
+        int headLen = Math.max(0, budget - SUCCESSOR_HASH_SUFFIX_LENGTH);
+        String head = headLen > 0 ? activeCode.substring(0, Math.min(headLen, activeCode.length())) : "";
+        String hash = StringHelper.md5Hash(activeCode).substring(0, SUCCESSOR_HASH_SUFFIX_LENGTH);
+        return base + "-" + head + hash;
     }
 
     // ---------- helpers for tests ----------
