@@ -265,12 +265,14 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: `treasury.md:174/184` 明示 nop-job 定时基线未落地，当前仅手动 `refreshForecast`。现金预测属聚合面（不同结果面），非票据生命周期。
 - Successor Required: `yes`（触发条件：nop-job 接线时，或现金预测浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-17-2256-1**：触发条件已满足（nop-job 已接线 `ErpFinCashForecastJob` + scheduler.yaml；现金预测浏览器层 E2E 落地 `fin-cash-forecast.action.spec.ts` 3 用例覆盖三源聚合/终态过滤/幂等重写）。
 
 ### 银行授信额度独立生命周期 + 利息计提
 
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: `ErpFinCreditFacilityBizModel` 2 `@BizMutation`（CREDIT_FACILITY_INTEREST 计提）属授信额度面 successor；本计划仅在应付票据 issue 路径断言授信占用副作用（若 config 启用）。
 - Successor Required: `yes`（触发条件：授信额度浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-17-2256-1**：触发条件已满足（授信额度浏览器层 E2E 落地 `fin-credit-facility.action.spec.ts` 3 用例覆盖 reserve/release/不足守卫事务回滚）。利息计提（CREDIT_FACILITY_INTEREST）后端 `@BizMutation` 未实现，归 2256-1 Deferred（后端 successor）。
 
 ### 外币贴现汇兑损益（6051）路径
 
