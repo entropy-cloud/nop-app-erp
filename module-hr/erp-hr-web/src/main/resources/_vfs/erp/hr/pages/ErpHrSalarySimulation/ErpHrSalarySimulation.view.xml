@@ -11,9 +11,9 @@
                 <col id="sourceSalaryId" ui:number="true" sortable="true"/>
                 <col id="simulationPeriodYear" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="simulationPeriodMonth" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="simulationId" sortable="true"/>
+                <col id="simulationName" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="reviewerDisplayName" label="审核人"/>
+                <col id="reviewer" label="审核人"/>
                 <col id="reviewedAt" sortable="true"/>
                 <col id="convertedAt" sortable="true"/>
                 <col id="convertedSalaryId" ui:number="true" sortable="true"/>

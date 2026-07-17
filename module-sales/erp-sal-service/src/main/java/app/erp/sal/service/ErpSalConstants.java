@@ -1,23 +1,17 @@
 package app.erp.sal.service;
 
+import app.erp.sal.dao.constants.ErpSalDocStatus;
+
 /**
  * 销售域状态码常量。权威值来自 {@code module-sales/model/app-erp-sales.orm.xml}
  * 关联字典 {@code erp-sal/approve-status}、{@code erp-sal/doc-status}、{@code erp-sal/delivery-status}。
  *
  * <p>三轴状态分离见 {@code docs/design/sales/state-machine.md}（与采购域镜像对称）。
+ *
+ * <p>{@code extends ErpSalDocStatus} 复用 dao 层常量定义，保持 approve-status / doc-status 单一真相源；
+ * 本接口仅追加 service 层独有的派生状态与配置项。
  */
-public interface ErpSalConstants {
-
-    // 审核轴 approve-status
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-    String APPROVE_STATUS_REJECTED = "REJECTED";
-
-    // 单据生命周期轴 doc-status
-    String DOC_STATUS_DRAFT = "DRAFT";
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-    String DOC_STATUS_CANCELLED = "CANCELLED";
+public interface ErpSalConstants extends ErpSalDocStatus {
 
     // 发货进度（派生）delivery-status
     String DELIVERY_STATUS_UNDELIVERED = "UNDELIVERED";

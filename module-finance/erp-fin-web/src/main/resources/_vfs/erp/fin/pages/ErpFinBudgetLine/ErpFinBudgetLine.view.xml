@@ -5,11 +5,11 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="scenarioCode" label="预算方案"/>
+                <col id="scenario" label="预算方案"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="acctSchemaCode" label="账套"/>
-                <col id="periodCode" label="会计期间"/>
+                <col id="acctSchema" label="账套"/>
+                <col id="period" label="会计期间"/>
                 <col id="subjectCode" mandatory="true" sortable="true"/>
                 <col id="subjectId" label="科目名称"/>
                 <col id="costCenterId" label="成本中心"/>

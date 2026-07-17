@@ -53,7 +53,7 @@ public class ErpAstDisposalProcessor {
 
     public ErpAstDisposal approve(String id, IServiceContext context) {
         ErpAstDisposal disposal = requireDisposal(id, context);
-        if (isAlreadyApproved(disposal)) {
+        if (disposal.isApproved()) {
             return disposal;
         }
         validateNotCancelled(disposal, context);
@@ -112,7 +112,7 @@ public class ErpAstDisposalProcessor {
 
     public ErpAstDisposal reverseApprove(String id, IServiceContext context) {
         ErpAstDisposal disposal = requireDisposal(id, context);
-        if (isAlreadyRejected(disposal)) {
+        if (disposal.isRejected()) {
             return disposal;
         }
         validateTransitionForReverseApprove(disposal, context);
@@ -174,9 +174,8 @@ public class ErpAstDisposalProcessor {
     }
 
     protected void validateTransitionForCancel(ErpAstDisposal disposal, IServiceContext context) {
-        String docStatus = disposal.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(disposal, docStatus, "非已作废");
+        if (disposal.isCancelled()) {
+            throw illegalDocTransition(disposal, disposal.getDocStatus(), "非已作废");
         }
     }
 
@@ -242,16 +241,6 @@ public class ErpAstDisposalProcessor {
 
     protected void validateNotCancelled(ErpAstDisposal disposal, IServiceContext context) {
         validateTransitionForCancel(disposal, context);
-    }
-
-    protected boolean isAlreadyApproved(ErpAstDisposal disposal) {
-        String status = disposal.getApproveStatus();
-        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpAstDisposal disposal) {
-        String status = disposal.getApproveStatus();
-        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected String currentApproveStatus(ErpAstDisposal disposal) {

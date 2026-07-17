@@ -5,7 +5,7 @@ import * as fs from 'fs';
 const port = parseInt(process.env.PLAYWRIGHT_PORT || '8080', 10);
 const baseUrl = `http://127.0.0.1:${port}`;
 const repoRoot = path.resolve(__dirname);
-const runnerJar = path.join(repoRoot, 'app-erp-all/target/quarkus-app/quarkus-run.jar');
+const runnerJar = path.join(repoRoot, 'app-erp-all/target/app-erp-all-1.0-SNAPSHOT-runner.jar');
 
 const skipWebServer = !!process.env.SKIP_WEBSERVER || !!process.env.BASE_URL;
 const effectiveBaseUrl = process.env.BASE_URL || baseUrl;

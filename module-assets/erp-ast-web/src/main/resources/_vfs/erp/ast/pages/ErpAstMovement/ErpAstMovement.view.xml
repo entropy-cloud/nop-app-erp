@@ -7,7 +7,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="所属组织"/>
-                <col id="assetCode" label="资产编码"/>
+                <col id="asset" label="资产编码"/>
                 <col id="businessDate" sortable="true"/>
                 <col id="fromDepartmentId" label="源部门"/>
                 <col id="toDepartmentId" label="目标部门"/>

@@ -8,12 +8,12 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="eventType" sortable="true"/>
-                <col id="categoryId" label="活动类别"/>
+                <col id="eventCategory" label="活动类别"/>
                 <col id="subject" sortable="true"/>
-                <col id="leadCode" label="关联线索"/>
+                <col id="relatedLead" label="关联线索"/>
                 <col id="partnerId" label="客户"/>
                 <col id="contactId" label="联系人"/>
-                <col id="eventCode" label="父活动"/>
+                <col id="parentEvent" label="父活动"/>
                 <col id="startDateTime" sortable="true"/>
                 <col id="endDateTime" sortable="true"/>
                 <col id="status" sortable="true"/>

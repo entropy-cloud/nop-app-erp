@@ -1,10 +1,15 @@
 package app.erp.fin.service;
 
+import app.erp.fin.dao.constants.ErpFinDocStatus;
+
 /**
  * 财务域状态码与配置键常量。权威值来自 {@code module-finance/model/app-erp-finance.orm.xml}
  * 关联字典 {@code erp-fin/ar-ap-direction}、{@code erp-fin/ar-ap-status}、{@code erp-fin/reconciliation-status}。
+ *
+ * <p>{@code extends ErpFinDocStatus} 复用 dao 层 approve-status / doc-status 常量定义，
+ * 保持单一真相源；本接口仅追加 service 层独有的派生状态与配置项。
  */
-public interface ErpFinConstants {
+public interface ErpFinConstants extends ErpFinDocStatus {
 
     // ---- 配置项（ar-ap-reconciliation.md §配置项），经 AppConfig.var 读取 ----
     /** 应收账龄计算基准（invoice_date/due_date），默认 due_date。 */
@@ -60,16 +65,6 @@ public interface ErpFinConstants {
     String RECON_STATUS_DRAFT = "DRAFT";
     String RECON_STATUS_POSTED = "POSTED";
     String RECON_STATUS_REVERSED = "REVERSED";
-
-    // ---- approve-status（共用 erp-fin/approve-status） ----
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-    String APPROVE_STATUS_REJECTED = "REJECTED";
-
-    // ---- expense-claim-status / advance-status（docStatus 轴） ----
-    String DOC_STATUS_DRAFT = "DRAFT";
-    String DOC_STATUS_CANCELLED = "CANCELLED";
 
     // ---- expense-payment-mode ----
     String PAYMENT_MODE_OWN_ACCOUNT = "OWN_ACCOUNT";

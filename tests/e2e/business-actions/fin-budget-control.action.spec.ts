@@ -12,6 +12,7 @@ import {
   findFirst,
   deleteByFilter,
   deleteById,
+  GraphQLClient,
 } from './_helper';
 import { cleanupVoucherByBillCode } from '../orchestration/_helper';
 
@@ -250,12 +251,9 @@ test.describe('Finance budget control hook (PO approve) + getBudgetVsActual brow
     try {
       // approve 后 BUDGET 凭证存预算额；getBudgetVsActual 按 postingType 聚合 BUDGET(预算)/NORMAL(实际)。
       // 返回 List<BudgetVsActualRow>（复杂类型，须显式 selection set；callQuery 不带 selection 故直接构造 query）。
-      const resp = await page.request.post('/graphql', {
-        data: {
-          query: `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:${ACCT_SCHEMA},periodId:${PERIOD},subjectId:${PURCHASE_EXPENSE_SUBJECT_ID}){ subjectId subjectCode subjectName budgetAmount actualAmount availableAmount } }`,
-        },
-      });
-      const json: any = await resp.json();
+      const json: any = await new GraphQLClient(page).raw(
+        `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:${ACCT_SCHEMA},periodId:${PERIOD},subjectId:${PURCHASE_EXPENSE_SUBJECT_ID}){ subjectId subjectCode subjectName budgetAmount actualAmount availableAmount } }`,
+      );
       expect(json?.errors, `getBudgetVsActual should not return GraphQL errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
       const rows: any[] = json?.data?.ErpFinBudgetLine__getBudgetVsActual ?? [];
       expect(Array.isArray(rows), 'getBudgetVsActual should return a list of BudgetVsActualRow').toBe(true);

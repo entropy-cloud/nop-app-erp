@@ -66,7 +66,7 @@ public class ErpPurInvoiceProcessor {
 
     public ErpPurInvoice approve(String id, IServiceContext context) {
         ErpPurInvoice invoice = requireInvoice(id, context);
-        if (isAlreadyApproved(invoice)) {
+        if (invoice.isApproved()) {
             return invoice;
         }
         validateNotCancelled(invoice, context);
@@ -89,7 +89,7 @@ public class ErpPurInvoiceProcessor {
 
     public ErpPurInvoice reverseApprove(String id, IServiceContext context) {
         ErpPurInvoice invoice = requireInvoice(id, context);
-        if (isAlreadyRejected(invoice)) {
+        if (invoice.isRejected()) {
             return invoice;
         }
         validateTransitionForReverseApprove(invoice, context);
@@ -178,7 +178,7 @@ public class ErpPurInvoiceProcessor {
 
     protected void validateBusinessRulesForApprove(ErpPurInvoice invoice, IServiceContext context) {
         requireSupplierActive(invoice, context);
-        List<ErpPurInvoiceLine> lines = loadLines(invoice.getId());
+        List<ErpPurInvoiceLine> lines = loadLines(invoice);
         threeWayMatcher.match(invoice.getCode(), lines, null);
     }
 
@@ -239,24 +239,13 @@ public class ErpPurInvoiceProcessor {
     }
 
     protected void validateNotCancelled(ErpPurInvoice invoice, IServiceContext context) {
-        String docStatus = invoice.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(invoice, docStatus, "非已作废");
+        if (invoice.isCancelled()) {
+            throw illegalDocTransition(invoice, invoice.getDocStatus(), "非已作废");
         }
     }
 
-    protected boolean isAlreadyApproved(ErpPurInvoice invoice) {
-        String status = invoice.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpPurInvoice invoice) {
-        String status = invoice.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED);
-    }
-
     protected void requireLinesNonEmpty(ErpPurInvoice invoice, IServiceContext context) {
-        if (loadLines(invoice.getId()).isEmpty()) {
+        if (invoice.getLines().isEmpty()) {
             throw new NopException(ErpPurErrors.ERR_INVOICE_LINES_EMPTY)
                     .param(ErpPurErrors.ARG_INVOICE_CODE, invoice.getCode());
         }
@@ -274,11 +263,12 @@ public class ErpPurInvoiceProcessor {
         }
     }
 
-    protected List<ErpPurInvoiceLine> loadLines(Long invoiceId) {
-        IEntityDao<ErpPurInvoiceLine> dao = daoProvider.daoFor(ErpPurInvoiceLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("invoiceId", invoiceId));
-        return new ArrayList<>(dao.findAllByQuery(q));
+    /**
+     * 通过 ORM to-many 关系 {@code ErpPurInvoice.lines} 加载行（懒加载，复用主实体 session）。
+     * 关系已在 {@code app-erp-purchase.orm.xml} 声明。
+     */
+    protected List<ErpPurInvoiceLine> loadLines(ErpPurInvoice invoice) {
+        return new ArrayList<>(invoice.getLines());
     }
 
     // ---------- misc helpers ----------

@@ -86,7 +86,7 @@ public class ErpFinBadDebtProcessor {
 
     public ErpFinBadDebt approve(Long badDebtId, IServiceContext context) {
         ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        if (isAlreadyApproved(debt)) {
+        if (debt.isApproved()) {
             return debt;
         }
         validateTransitionForApprove(debt);
@@ -311,11 +311,6 @@ public class ErpFinBadDebtProcessor {
                     .param(ErpFinErrors.ARG_CONFIG_KEY, configKey);
         }
         return list.get(0);
-    }
-
-    protected boolean isAlreadyApproved(ErpFinBadDebt debt) {
-        String status = debt.getApprovalStatus();
-        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected String currentApprovalStatus(ErpFinBadDebt debt) {

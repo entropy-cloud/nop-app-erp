@@ -10,7 +10,7 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="title" sortable="true"/>
                 <col id="categoryId" label="分类"/>
-                <col id="ticketTypeId" label="工单类型"/>
+                <col id="macroTicketType" label="工单类型"/>
                 <col id="macroPriority" sortable="true"/>
                 <col id="sequence" ui:number="true" sortable="true"/>
                 <col id="isActive" sortable="true"/>

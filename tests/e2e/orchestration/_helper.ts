@@ -1,5 +1,6 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
 import type { Page } from '@playwright/test';
+import { GraphQLClient } from '../pages';
 
 /**
  * 跨域编排链浏览器层 E2E helper（plan 2026-07-09-1249-1）。
@@ -46,9 +47,8 @@ export const SEED = {
 const BDATE = '2026-07-09'; // 落在种子 OPEN 期间 2026-07（posting resolveOpenPeriod 需要）
 const MOVE_REQ_TYPE = 'i_app_erp_inv_biz_StockMoveRequest';
 
-async function extract(resp: { json: () => Promise<unknown> }, actionKey: string): Promise<{ data: any | null; errors: any[] | null }> {
-  const json: any = await resp.json();
-  return { data: json?.data?.[actionKey] ?? null, errors: json?.errors ?? null };
+function gqlFor(page: Page): GraphQLClient {
+  return new GraphQLClient(page);
 }
 
 /**
@@ -60,14 +60,7 @@ export async function findItems<T = any>(
   filter: Record<string, unknown>,
   selection: string,
 ): Promise<T[]> {
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `query($f:Map){ ${entityName}__findPage(query:{offset:0,limit:500,filter:$f}){ items{ ${selection} } } }`,
-      variables: { f: filter },
-    },
-  });
-  const { data } = await extract(resp, `${entityName}__findPage`);
-  return (data?.items || []) as T[];
+  return gqlFor(page).findItems<T>(entityName, filter, selection);
 }
 
 export async function findFirst<T = any>(
@@ -76,8 +69,7 @@ export async function findFirst<T = any>(
   filter: Record<string, unknown>,
   selection: string,
 ): Promise<T | null> {
-  const items = await findItems<T>(page, entityName, filter, selection);
-  return items.length > 0 ? items[0] : null;
+  return gqlFor(page).findFirst<T>(entityName, filter, selection);
 }
 
 // ---------- 凭证行精确数值断言原语（plan 2026-07-10-0704-1） ----------
@@ -401,12 +393,9 @@ export async function runP2pReverse(page: Page): Promise<P2pReverseResult> {
   const billCode = base.codes.invoice;
 
   // reverse 返回标量 Long，直接构造原始 mutation（无选择集）
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `mutation{ ErpFinVoucher__reverse(billHeadCode:${JSON.stringify(billCode)},businessType:${JSON.stringify('AP_INVOICE')}) }`,
-    },
-  });
-  const json: any = await resp.json();
+  const json: any = await gqlFor(page).raw(
+    `mutation{ ErpFinVoucher__reverse(billHeadCode:${JSON.stringify(billCode)},businessType:${JSON.stringify('AP_INVOICE')}) }`,
+  );
   // GraphQL 成功响应省略 errors 字段（undefined）；失败时为非空数组。用真值检查而非 === null。
   expect(json?.errors, `ErpFinVoucher__reverse(AP_INVOICE) should not return GraphQL errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
   const reversalVoucherId = json?.data?.ErpFinVoucher__reverse;
@@ -594,12 +583,9 @@ export async function runO2cReverse(page: Page): Promise<O2cReverseResult> {
   const base = await runO2cChain(page);
   const billCode = base.codes.invoice;
 
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `mutation{ ErpFinVoucher__reverse(billHeadCode:${JSON.stringify(billCode)},businessType:${JSON.stringify('AR_INVOICE')}) }`,
-    },
-  });
-  const json: any = await resp.json();
+  const json: any = await gqlFor(page).raw(
+    `mutation{ ErpFinVoucher__reverse(billHeadCode:${JSON.stringify(billCode)},businessType:${JSON.stringify('AR_INVOICE')}) }`,
+  );
   expect(json?.errors, `ErpFinVoucher__reverse(AR_INVOICE) should not return GraphQL errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
   const reversalVoucherId = json?.data?.ErpFinVoucher__reverse;
   expect(reversalVoucherId, 'ErpFinVoucher__reverse should return reversal voucher id').toBeTruthy();

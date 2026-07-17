@@ -8,7 +8,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="bundleId" label="捆绑定价"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="materialId" label="产品"/>
+                <col id="product" label="产品"/>
                 <col id="quantity" ui:number="true" sortable="true"/>
                 <col id="unitPrice" ui:number="true" sortable="true"/>
                 <col id="sequence" ui:number="true" sortable="true"/>

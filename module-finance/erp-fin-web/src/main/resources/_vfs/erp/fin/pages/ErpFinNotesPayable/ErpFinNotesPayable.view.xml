@@ -17,7 +17,7 @@
                 <col id="amountSource" ui:number="true" sortable="true"/>
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
                 <col id="partnerId" label="收款方"/>
-                <col id="creditFacilityCode" label="授信额度"/>
+                <col id="creditFacility" label="授信额度"/>
                 <col id="status" sortable="true"/>
             </cols>
         </grid>

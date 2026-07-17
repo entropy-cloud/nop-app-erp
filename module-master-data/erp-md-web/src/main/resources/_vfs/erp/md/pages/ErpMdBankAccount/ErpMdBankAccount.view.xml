@@ -6,7 +6,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="partnerId" label="往来单位"/>
-                <col id="bankId" mandatory="true" sortable="true"/>
+                <col id="bankName" mandatory="true" sortable="true"/>
                 <col id="bankBranch" sortable="true"/>
                 <col id="bankAccount" mandatory="true" sortable="true"/>
                 <col id="accountType" sortable="true"/>

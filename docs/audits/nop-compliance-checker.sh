@@ -266,6 +266,22 @@ echo "  → 命中: $R10_N 处"
 echo "$R10_N" > "$TMPDIR/r10"
 
 # ============================================================
+# R11: Processor 状态判断方法重复（应上提到实体）
+# ============================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "[R11] 🟡 中 — Processor 中重复定义的状态判断方法（应上提到实体）"
+echo "规则: DDD 实体方法上提——isAlreadyApproved/isAlreadyRejected 应为实体方法 isApproved/isRejected"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+R11=$(find "$REPO_ROOT" -name '*Processor.java' \
+  -not -path '*_gen*' -not -path '*/test/*' -not -path '*/target/*' \
+  -type f -exec grep -HnE 'protected boolean (isAlreadyApproved|isAlreadyRejected)\(' {} \; 2>/dev/null || true)
+R11_N=$(cnt "$R11")
+[[ $R11_N -gt 0 ]] && echo "$R11" | sed 's/^/  /'
+echo "  → 命中: $R11_N 处（实体方法上提后应为 0）"
+echo "$R11_N" > "$TMPDIR/r11"
+
+# ============================================================
 # 汇总
 # ============================================================
 echo ""
@@ -290,6 +306,7 @@ printf "%-6s %-42s %-8s %s\n" "R6" "@Transactional in BizModel" "🟢 低" "$(ca
 printf "%-6s %-42s %-8s %s\n" "R7" "System.currentTimeMillis()" "🟢 低" "$(cat $TMPDIR/r7)"
 printf "%-6s %-42s %-8s %s\n" "R8" "Processor 无 xbiz 接线" "🔴 高" "$(cat $TMPDIR/r8)"
 printf "%-6s %-42s %-8s %s\n" "R10" "REQUIRES_NEW 事务" "🟡 中" "$(cat $TMPDIR/r10)"
+printf "%-6s %-42s %-8s %s\n" "R11" "Processor 重复状态判断方法" "🟡 中" "$(cat $TMPDIR/r11)"
 echo ""
 echo "检测完成。"
 echo "注意: 命中项需人工逐一确认是否为合理偏离（如文档化的 REQUIRES_NEW）。"

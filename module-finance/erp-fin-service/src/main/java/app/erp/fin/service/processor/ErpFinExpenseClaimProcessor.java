@@ -65,7 +65,7 @@ public class ErpFinExpenseClaimProcessor {
 
     public ErpFinExpenseClaim approve(String id, IServiceContext context) {
         ErpFinExpenseClaim claim = requireClaim(id, context);
-        if (isAlreadyApproved(claim)) {
+        if (claim.isApproved()) {
             return claim;
         }
         validateNotCancelled(claim, context);
@@ -85,7 +85,7 @@ public class ErpFinExpenseClaimProcessor {
 
     public ErpFinExpenseClaim reverseApprove(String id, IServiceContext context) {
         ErpFinExpenseClaim claim = requireClaim(id, context);
-        if (isAlreadyRejected(claim)) {
+        if (claim.isRejected()) {
             return claim;
         }
         validateTransitionForReverseApprove(claim, context);
@@ -138,9 +138,8 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected void validateTransitionForCancel(ErpFinExpenseClaim claim, IServiceContext context) {
-        String docStatus = claim.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpFinConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(claim, docStatus, "非已作废");
+        if (claim.isCancelled()) {
+            throw illegalDocTransition(claim, claim.getDocStatus(), "非已作废");
         }
     }
 
@@ -343,16 +342,6 @@ public class ErpFinExpenseClaimProcessor {
 
     protected ErpFinExpenseClaim reload(String id) {
         return claimDao().getEntityById(id);
-    }
-
-    protected boolean isAlreadyApproved(ErpFinExpenseClaim claim) {
-        String status = claim.getApproveStatus();
-        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpFinExpenseClaim claim) {
-        String status = claim.getApproveStatus();
-        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected String currentApproveStatus(ErpFinExpenseClaim claim) {

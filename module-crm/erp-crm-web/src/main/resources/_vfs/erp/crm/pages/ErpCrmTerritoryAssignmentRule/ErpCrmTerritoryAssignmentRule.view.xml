@@ -9,7 +9,7 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="ruleName" sortable="true"/>
                 <col id="territoryId" label="销售区域"/>
-                <col id="teamId" label="销售团队"/>
+                <col id="team" label="销售团队"/>
                 <col id="priority" ui:number="true" sortable="true"/>
                 <col id="conditionType" sortable="true"/>
                 <col id="assignmentMethod" sortable="true"/>

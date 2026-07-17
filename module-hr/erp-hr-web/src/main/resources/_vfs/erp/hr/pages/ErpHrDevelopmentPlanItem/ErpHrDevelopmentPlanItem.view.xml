@@ -11,7 +11,7 @@
                 <col id="gapId" ui:number="true" sortable="true"/>
                 <col id="targetLevel" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="developmentAction" sortable="true"/>
-                <col id="mentorDisplayName" label="导师"/>
+                <col id="mentor" label="导师"/>
                 <col id="startDate" sortable="true"/>
                 <col id="endDate" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>

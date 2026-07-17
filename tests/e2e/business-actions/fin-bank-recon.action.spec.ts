@@ -10,6 +10,7 @@ import {
   deleteByFilter,
   deleteById,
   findFirst,
+  GraphQLClient,
 } from './_helper';
 import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines } from '../orchestration/_helper';
 
@@ -196,14 +197,10 @@ test.describe('Finance ErpFinBankReconciliation lifecycle browser-layer E2E', ()
       expect(reconFinal2.docStatus, '__get should confirm CANCELLED after reverse').toBe('CANCELLED');
 
       // 红冲后存在 REVERSAL 凭证（与原 NORMAL 凭证共用 billCode=recon.code，postingType 区分）
-      const links = await page.request.post('/graphql', {
-        data: {
-          query: `query($f:Map){ ErpFinVoucherBillR__findPage(query:{offset:0,limit:10,filter:$f}){ items{ voucherId } } }`,
-          variables: { f: eqFilter('billCode', generated.code) },
-        },
-      });
-      const linksJson: any = await links.json();
-      const voucherIds: any[] = linksJson?.data?.ErpFinVoucherBillR__findPage?.items?.map((i: any) => i.voucherId) ?? [];
+      const linkRows = await new GraphQLClient(page).findItems<{ voucherId: any }>(
+        'ErpFinVoucherBillR', eqFilter('billCode', generated.code), 'voucherId',
+      );
+      const voucherIds: any[] = linkRows.map((i) => i.voucherId).filter((v) => v != null);
       let hasReversal = false;
       for (const vid of voucherIds) {
         const v = await findFirst<any>(page, 'ErpFinVoucher', eqFilter('id', Number(vid)), 'id postingType');

@@ -68,7 +68,7 @@ public class ErpSalOrderProcessor {
 
     public ErpSalOrder approve(String id, IServiceContext context) {
         ErpSalOrder order = requireOrder(id, context);
-        if (isAlreadyApproved(order)) {
+        if (order.isApproved()) {
             return order;
         }
         validateNotCancelled(order, context);
@@ -89,7 +89,7 @@ public class ErpSalOrderProcessor {
 
     public ErpSalOrder reverseApprove(String id, IServiceContext context) {
         ErpSalOrder order = requireOrder(id, context);
-        if (isAlreadyRejected(order)) {
+        if (order.isRejected()) {
             return order;
         }
         validateTransitionForReverseApprove(order, context);
@@ -213,20 +213,9 @@ public class ErpSalOrderProcessor {
     }
 
     protected void validateNotCancelled(ErpSalOrder order, IServiceContext context) {
-        String docStatus = order.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(order, docStatus, "非已作废");
+        if (order.isCancelled()) {
+            throw illegalDocTransition(order, order.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpSalOrder order) {
-        String status = order.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpSalOrder order) {
-        String status = order.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalOrder order, IServiceContext context) {

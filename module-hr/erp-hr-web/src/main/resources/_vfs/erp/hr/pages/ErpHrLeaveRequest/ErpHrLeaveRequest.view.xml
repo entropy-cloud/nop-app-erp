@@ -6,13 +6,13 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="employeeDisplayName" label="员工"/>
+                <col id="employee" label="员工"/>
                 <col id="leaveType" mandatory="true" sortable="true"/>
                 <col id="startDate" mandatory="true" sortable="true"/>
                 <col id="endDate" mandatory="true" sortable="true"/>
                 <col id="durationDays" ui:number="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="approverDisplayName" label="审批人"/>
+                <col id="approver" label="审批人"/>
                 <col id="approvedAt" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
             </cols>

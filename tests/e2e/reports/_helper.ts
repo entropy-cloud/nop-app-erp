@@ -1,4 +1,5 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
+import { GraphQLClient, getEngine } from '../pages';
 import type { Page } from '@playwright/test';
 import * as zlib from 'zlib';
 import * as fs from 'fs';
@@ -63,12 +64,7 @@ export function assertReportRenderedWithValue(cfg: ReportValueAssertion): void {
     test('renderHtml returns HTML containing deterministic seed values', async ({ page }) => {
       await loginAndNavigate(page, cfg.route);
 
-      const resp = await page.request.post('/graphql', {
-        data: { query: cfg.query, variables: cfg.variables },
-      });
-      expect(resp.status(), 'renderHtml GraphQL should return 200').toBe(200);
-
-      const json = await resp.json();
+      const json: any = await new GraphQLClient(page).raw(cfg.query, cfg.variables);
       const html: string = json?.data?.[cfg.responseKey] ?? '';
       expect(html.length, 'rendered HTML should be non-empty').toBeGreaterThan(0);
 
@@ -380,8 +376,9 @@ export function assertAmisDownloadButton(cfg: AmisDownloadAssertion): void {
       }
 
       if (cfg.fillDates) {
+        const engine = getEngine();
         for (const [label, value] of Object.entries(cfg.fillDates)) {
-          await page.locator('.cxd-Form-item').filter({ hasText: label }).locator('input').first().fill(value);
+          await engine.dateInputByLabel(page, label).fill(value);
         }
       }
 

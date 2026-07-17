@@ -1,28 +1,14 @@
-import { test as base, expect, type Page } from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
+import { getEngine } from './pages';
+import type { EngineAdapter } from './pages';
+import { loginAndNavigate, login, navigateTo } from './pages/Navigation';
 
-async function loginAndNavigate(page: Page, hashRoute: string): Promise<void> {
-  await page.goto('/', { waitUntil: 'domcontentloaded', timeout: 30_000 });
+export { loginAndNavigate, login, navigateTo };
 
-  const usernameInput = page.locator('input[name="username"]');
-  await usernameInput.waitFor({ state: 'visible', timeout: 20_000 });
-
-  if (page.url().includes('/auth/login')) {
-    await usernameInput.fill('nop');
-    await page.locator('input[name="password"]').fill('123');
-    await page.waitForTimeout(500);
-
-    const loginBtn = page.getByRole('button', { name: /Sign in|登录/ });
-    await loginBtn.click();
-
-    await page.waitForURL((url) => !url.hash.includes('login'), { timeout: 30_000 });
-    await page.waitForTimeout(2000);
-  }
-
-  await page.goto(`/#${hashRoute}`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
-  await page.waitForTimeout(4000);
-}
-
-export const test = base.extend({
+export const test = base.extend<{ engine: EngineAdapter }>({
+  engine: async ({}, use) => {
+    await use(getEngine());
+  },
   page: async ({ page }, use) => {
     const consoleErrors: string[] = [];
     page.on('console', (msg) => {
@@ -52,4 +38,5 @@ export const test = base.extend({
   },
 });
 
-export { expect, loginAndNavigate };
+export { expect };
+export type { EngineAdapter };

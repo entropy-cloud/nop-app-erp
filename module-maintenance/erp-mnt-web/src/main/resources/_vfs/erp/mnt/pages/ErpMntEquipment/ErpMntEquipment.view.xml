@@ -10,7 +10,7 @@
                 <col id="orgId" label="组织"/>
                 <col id="categoryId" label="设备类别"/>
                 <col id="locationId" label="位置"/>
-                <col id="assetCode" label="资产"/>
+                <col id="asset" label="资产"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="serialNo" sortable="true"/>
                 <col id="manufacturer" sortable="true"/>

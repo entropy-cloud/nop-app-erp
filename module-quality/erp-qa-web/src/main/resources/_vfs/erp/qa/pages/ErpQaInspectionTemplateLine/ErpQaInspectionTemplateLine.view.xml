@@ -6,7 +6,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="templateCode" label="检验模板"/>
+                <col id="template" label="检验模板"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="parameterName" mandatory="true" sortable="true"/>
                 <col id="specMin" ui:number="true" sortable="true"/>

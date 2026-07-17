@@ -5,7 +5,7 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="ticketCode" label="工单"/>
+                <col id="ticket" label="工单"/>
                 <col id="actionType" sortable="true"/>
                 <col id="fromStatus" sortable="true"/>
                 <col id="toStatus" sortable="true"/>

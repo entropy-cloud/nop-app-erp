@@ -201,6 +201,8 @@ public class ErpSalPricingRuleEngine {
     }
 
     protected void addGiftLine(ErpSalPricingRule rule, EvaluationResult result, ErpSalOrderLine referenceLine) {
+        // 纯函数式引擎：赠品行作为评估快照返回（调用方负责持久化，见 evaluate Javadoc），
+        // 不经 daoProvider.newEntity()，与 FunnelAggregationEngine 内存聚合同模式。
         ErpSalOrderLine giftLine = new ErpSalOrderLine();
         giftLine.setMaterialId(rule.getGiftMaterialId());
         giftLine.setSkuId(rule.getGiftSkuId());

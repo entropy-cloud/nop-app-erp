@@ -69,7 +69,7 @@ public class ErpAstMergeProcessor {
 
     public ErpAstMerge approve(String id, IServiceContext context) {
         ErpAstMerge merge = requireMerge(id, context);
-        if (isAlreadyApproved(merge)) {
+        if (merge.isApproved()) {
             return merge;
         }
         validateNotCancelled(merge, context);
@@ -411,15 +411,9 @@ public class ErpAstMergeProcessor {
     }
 
     protected void validateNotCancelled(ErpAstMerge merge, IServiceContext context) {
-        String docStatus = merge.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(merge, docStatus, "非已作废");
+        if (merge.isCancelled()) {
+            throw illegalDocTransition(merge, merge.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpAstMerge merge) {
-        String status = merge.getApproveStatus();
-        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected String currentApproveStatus(ErpAstMerge merge) {

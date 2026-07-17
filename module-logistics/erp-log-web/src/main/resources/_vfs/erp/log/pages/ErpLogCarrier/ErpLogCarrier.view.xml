@@ -7,7 +7,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="carrierId" mandatory="true" sortable="true"/>
+                <col id="carrierName" mandatory="true" sortable="true"/>
                 <col id="carrierType" mandatory="true" sortable="true"/>
                 <col id="gatewayId" mandatory="true" sortable="true"/>
                 <col id="partnerId" label="承运商往来单位"/>

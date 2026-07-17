@@ -12,11 +12,11 @@
                 <col id="candidateName" mandatory="true" sortable="true"/>
                 <col id="source" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="interviewerDisplayName" label="面试官"/>
+                <col id="interviewer" label="面试官"/>
                 <col id="interviewDate" sortable="true"/>
                 <col id="offerSalary" ui:number="true" sortable="true"/>
                 <col id="hiredDate" sortable="true"/>
-                <col id="employeeDisplayName" label="员工"/>
+                <col id="employee" label="员工"/>
                 <col id="orgId" label="业务组织"/>
             </cols>
         </grid>

@@ -1,4 +1,5 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
+import { GraphQLClient } from '../pages';
 
 export function runDashboardSmoke(domain: string, route: string, kpiKeywords: string[] = []): void {
   test.describe(`${domain} dashboard smoke`, () => {
@@ -42,12 +43,7 @@ export function assertDashboardKpiValues(cfg: DashboardKpiAssertion): void {
     test(`getDashboardKpi returns deterministic seed-driven values`, async ({ page }) => {
       await loginAndNavigate(page, cfg.route);
 
-      const resp = await page.request.post('/graphql', {
-        data: { query: cfg.query, variables: cfg.variables },
-      });
-      expect(resp.status(), 'GraphQL getDashboardKpi should return 200').toBe(200);
-
-      const json = await resp.json();
+      const json: any = await new GraphQLClient(page).raw(cfg.query, cfg.variables);
       const kpi = json?.data?.[cfg.responseKey];
       expect(kpi, `KPI map should be present at data.${cfg.responseKey}`).toBeTruthy();
 

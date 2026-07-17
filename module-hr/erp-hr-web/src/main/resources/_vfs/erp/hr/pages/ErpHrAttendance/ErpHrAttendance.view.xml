@@ -5,7 +5,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="employeeDisplayName" label="员工"/>
+                <col id="employee" label="员工"/>
                 <col id="date" mandatory="true" sortable="true"/>
                 <col id="clockIn" sortable="true"/>
                 <col id="clockOut" sortable="true"/>
@@ -14,7 +14,7 @@
                 <col id="earlyLeaveMinutes" ui:number="true" sortable="true"/>
                 <col id="isAbsent" sortable="true"/>
                 <col id="source" sortable="true"/>
-                <col id="leaveRequestCode" label="请假申请"/>
+                <col id="leaveRequest" label="请假申请"/>
                 <col id="orgId" label="业务组织"/>
             </cols>
         </grid>

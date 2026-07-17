@@ -10,7 +10,7 @@
                 <col id="name" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="productType" sortable="true"/>
-                <col id="configId" sortable="true"/>
+                <col id="configName" sortable="true"/>
                 <col id="wizardLayout" sortable="true"/>
                 <col id="isActive" sortable="true"/>
             </cols>

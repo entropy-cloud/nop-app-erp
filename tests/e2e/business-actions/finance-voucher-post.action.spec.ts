@@ -1,4 +1,4 @@
-import { test, expect, loginAndNavigate } from './_helper';
+import { test, expect, loginAndNavigate, GraphQLClient } from './_helper';
 import {
   eqFilter, deleteByFilter,
   findItems, cleanupVoucherByBillCode, assertVoucherLines, SEED,
@@ -45,13 +45,11 @@ async function postVoucher(
   page: Page,
   event: Record<string, unknown>,
 ): Promise<{ voucherId: number | null; errors: any[] | null; json: any }> {
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `mutation($e:${POSTING_EVENT_INPUT}){ ErpFinVoucher__post(event:$e) }`,
-      variables: { e: event },
-    },
-  });
-  const json: any = await resp.json();
+  const gql = new GraphQLClient(page);
+  const json: any = await gql.raw(
+    `mutation($e:${POSTING_EVENT_INPUT}){ ErpFinVoucher__post(event:$e) }`,
+    { e: event },
+  );
   const raw = json?.data?.ErpFinVoucher__post;
   const voucherId = raw == null ? null : Number(raw);
   return { voucherId, errors: json?.errors ?? null, json };
@@ -94,11 +92,10 @@ test.describe('finance ErpFinVoucher manual post (LANDED_COST)', () => {
 
     try {
       // 凭证头断言（经 __get 权威查库）
-      const headResp = await page.request.post('/graphql', {
-        data: { query: `{ ErpFinVoucher__get(id:${voucherId}){ id code voucherType postingType voucherDate totalDebit totalCredit docStatus isReversed } }` },
-      });
-      const headJson: any = await headResp.json();
-      const head = headJson?.data?.ErpFinVoucher__get;
+      const head = await new GraphQLClient(page).get<any>(
+        'ErpFinVoucher', voucherId as number,
+        'id code voucherType postingType voucherDate totalDebit totalCredit docStatus isReversed',
+      );
       expect(head, 'voucher head should exist').not.toBeNull();
       expect(head.voucherType, 'voucherType defaults to TRANSFER (AcctDocContext null → DEFAULT)').toBe('TRANSFER');
       expect(head.postingType, 'postingType should be NORMAL (正向过账)').toBe('NORMAL');

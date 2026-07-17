@@ -70,7 +70,7 @@ public class ErpSalInvoiceProcessor {
 
     public ErpSalInvoice approve(String id, IServiceContext context) {
         ErpSalInvoice invoice = requireInvoice(id, context);
-        if (isAlreadyApproved(invoice)) {
+        if (invoice.isApproved()) {
             return invoice;
         }
         validateNotCancelled(invoice, context);
@@ -93,7 +93,7 @@ public class ErpSalInvoiceProcessor {
 
     public ErpSalInvoice reverseApprove(String id, IServiceContext context) {
         ErpSalInvoice invoice = requireInvoice(id, context);
-        if (isAlreadyRejected(invoice)) {
+        if (invoice.isRejected()) {
             return invoice;
         }
         validateTransitionForReverseApprove(invoice, context);
@@ -258,20 +258,9 @@ public class ErpSalInvoiceProcessor {
     }
 
     protected void validateNotCancelled(ErpSalInvoice invoice, IServiceContext context) {
-        String docStatus = invoice.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(invoice, docStatus, "非已作废");
+        if (invoice.isCancelled()) {
+            throw illegalDocTransition(invoice, invoice.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpSalInvoice invoice) {
-        String status = invoice.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpSalInvoice invoice) {
-        String status = invoice.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalInvoice invoice, IServiceContext context) {

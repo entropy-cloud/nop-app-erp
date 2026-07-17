@@ -60,7 +60,7 @@ public class ErpAstAssetCapitalizationProcessor {
 
     public ErpAstAssetCapitalization approve(String id, IServiceContext context) {
         ErpAstAssetCapitalization cap = requireCap(id, context);
-        if (isAlreadyApproved(cap)) {
+        if (cap.isApproved()) {
             return cap;
         }
         validateNotCancelled(cap, context);
@@ -96,7 +96,7 @@ public class ErpAstAssetCapitalizationProcessor {
 
     public ErpAstAssetCapitalization reverseApprove(String id, IServiceContext context) {
         ErpAstAssetCapitalization cap = requireCap(id, context);
-        if (isAlreadyRejected(cap)) {
+        if (cap.isRejected()) {
             return cap;
         }
         validateTransitionForReverseApprove(cap, context);
@@ -158,9 +158,8 @@ public class ErpAstAssetCapitalizationProcessor {
     }
 
     protected void validateTransitionForCancel(ErpAstAssetCapitalization cap, IServiceContext context) {
-        String docStatus = cap.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(cap, docStatus, "非已作废");
+        if (cap.isCancelled()) {
+            throw illegalDocTransition(cap, cap.getDocStatus(), "非已作废");
         }
     }
 
@@ -292,16 +291,6 @@ public class ErpAstAssetCapitalizationProcessor {
             s.setStatus(ErpAstConstants.SCHEDULE_STATUS_CANCELLED);
             dao.saveOrUpdateEntity(s);
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpAstAssetCapitalization cap) {
-        String status = cap.getApproveStatus();
-        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpAstAssetCapitalization cap) {
-        String status = cap.getApproveStatus();
-        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected String currentApproveStatus(ErpAstAssetCapitalization cap) {

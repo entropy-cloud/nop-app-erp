@@ -10,6 +10,7 @@ import {
   findFirst,
   deleteByFilter,
   deleteById,
+  GraphQLClient,
 } from './_helper';
 import { cleanupVoucherByBillCode, findVoucherIdByBillCode, assertVoucherLines } from '../orchestration/_helper';
 
@@ -127,14 +128,12 @@ test.describe('assets ErpAstInventory count lifecycle', () => {
         page, 'ErpAstInventoryLine', eqFilter('inventoryId', inv.id), 'id',
       );
       expect(line, 'createInventory should expand 1 line for the test asset').toBeTruthy();
-      const lineUpdateResp = await page.request.post('/graphql', {
-        data: {
-          query: `mutation($d:ErpAstInventoryLine__update_input){ ErpAstInventoryLine__update(data:$d){ id actualQuantity } }`,
-          variables: { d: { id: line!.id, actualQuantity: 0 } },
-        },
-      });
-      const lineUpdateJson: any = await lineUpdateResp.json();
-      expect(lineUpdateJson.errors ?? null, 'ErpAstInventoryLine__update should not error').toBeNull();
+      const lineUpdateJson: any = await new GraphQLClient(page).update(
+        'ErpAstInventoryLine',
+        { id: line!.id, actualQuantity: 0 },
+        'id actualQuantity',
+      );
+      expect(lineUpdateJson, 'ErpAstInventoryLine__update should return updated line').not.toBeNull();
 
       // submitForCount: DRAFT → COUNTING
       const counting = await callMutationOk(

@@ -6,8 +6,8 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="timesheetCode" label="工时表"/>
-                <col id="employeeDisplayName" label="员工"/>
+                <col id="timesheet" label="工时表"/>
+                <col id="employee" label="员工"/>
                 <col id="workDate" mandatory="true" sortable="true"/>
                 <col id="projectId" label="项目"/>
                 <col id="taskId" label="任务"/>

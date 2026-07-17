@@ -9,7 +9,6 @@
                 <col id="orgId" label="组织"/>
                 <col id="inspectionType" mandatory="true" sortable="true"/>
                 <col id="materialId" label="物料"/>
-                <col id="templateCode" label="检验模板"/>
                 <col id="supplierId" label="供应商"/>
                 <col id="warehouseId" label="仓库"/>
                 <col id="batchNo" sortable="true"/>

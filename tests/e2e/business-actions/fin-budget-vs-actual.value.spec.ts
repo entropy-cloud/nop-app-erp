@@ -8,6 +8,7 @@ import {
   eqFilter,
   deleteByFilter,
   deleteById,
+  GraphQLClient,
 } from './_helper';
 import { cleanupVoucherByBillCode, cleanupArApByCode } from '../orchestration/_helper';
 
@@ -130,12 +131,9 @@ async function setupFull(page: import('@playwright/test').Page): Promise<Ctx> {
 }
 
 async function getBudgetVsActual(page: import('@playwright/test').Page): Promise<any[]> {
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:${ACCT_SCHEMA},periodId:${PERIOD},subjectId:${SUBJECT_EXPENSE_ID}){ subjectId subjectCode subjectName budgetAmount actualAmount availableAmount } }`,
-    },
-  });
-  const json: any = await resp.json();
+  const json: any = await new GraphQLClient(page).raw(
+    `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:${ACCT_SCHEMA},periodId:${PERIOD},subjectId:${SUBJECT_EXPENSE_ID}){ subjectId subjectCode subjectName budgetAmount actualAmount availableAmount } }`,
+  );
   expect(json?.errors, `getBudgetVsActual should not return errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
   return json?.data?.ErpFinBudgetLine__getBudgetVsActual ?? [];
 }

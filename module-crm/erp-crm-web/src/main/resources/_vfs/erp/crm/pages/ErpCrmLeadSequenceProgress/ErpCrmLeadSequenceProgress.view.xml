@@ -6,7 +6,7 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="leadCode" label="关联线索"/>
+                <col id="lead" label="关联线索"/>
                 <col id="sequenceId" label="销售序列"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="currentStepIndex" ui:number="true" sortable="true"/>

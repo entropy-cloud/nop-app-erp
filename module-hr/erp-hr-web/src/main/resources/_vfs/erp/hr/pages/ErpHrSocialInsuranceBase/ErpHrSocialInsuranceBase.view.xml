@@ -6,7 +6,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="employeeDisplayName" label="员工"/>
+                <col id="employee" label="员工"/>
                 <col id="cityCode" mandatory="true" sortable="true"/>
                 <col id="socialInsuranceBase" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="housingFundBase" ui:number="true" sortable="true"/>

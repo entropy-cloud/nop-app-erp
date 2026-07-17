@@ -6,7 +6,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="costCollectionCode" label="归集单号"/>
+                <col id="costCollection" label="归集单号"/>
                 <col id="lineNo" mandatory="true" sortable="true"/>
                 <col id="costCategory" mandatory="true" sortable="true"/>
                 <col id="sourceBillType" sortable="true"/>

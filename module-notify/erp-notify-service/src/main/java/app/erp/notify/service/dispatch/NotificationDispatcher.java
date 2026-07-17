@@ -10,6 +10,7 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.lang.json.JsonTool;
+import io.nop.dao.api.IDaoProvider;
 import io.nop.integration.api.email.EmailMessage;
 import io.nop.integration.api.email.IEmailSender;
 import io.nop.integration.api.sms.ISmsSender;
@@ -48,6 +49,8 @@ public class NotificationDispatcher {
     IEmailSender emailSender;
     @Inject
     ISmsSender smsSender;
+    @Inject
+    IDaoProvider daoProvider;
 
     public NotificationDispatcher(NotificationRecipientResolver recipientResolver,
                                   NotificationMergeCoordinator mergeCoordinator) {
@@ -127,7 +130,7 @@ public class NotificationDispatcher {
             }
         }
 
-        ErpSysNotification n = new ErpSysNotification();
+        ErpSysNotification n = daoProvider.daoFor(ErpSysNotification.class).newEntity();
         n.setTemplateId(template.getId());
         n.setNotificationType(template.getNotificationType());
         n.setRecipientUserId(userId);

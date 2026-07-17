@@ -28,6 +28,7 @@ Do not keep one-off migration scripts, repo-specific cleanup scripts, or tools t
 - `check-active-doc-code-anchors.mjs`: validate repo paths referenced in active docs
 - `check-oversized-code-files.mjs`: flag tracked code files that exceed line thresholds
 - `check-docs-garbled.mjs`: scan docs for suspicious Unicode and mojibake
+- `parse-nop-errors.mjs`: parse a Nop server log, dedupe & summarize structured errors (`errorCode` + `@_loc` file:line). See `docs/lessons/05-nop-e2e-failure-log-first-diagnosis.md`. Run: `pnpm parse:nop-errors -- <logfile> [--recent] [--grep PAT]`
 
 These are lightweight, generic, and reasonable to keep enabled by default.
 

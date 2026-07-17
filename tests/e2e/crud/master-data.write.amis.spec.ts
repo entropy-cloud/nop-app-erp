@@ -3,10 +3,7 @@ import { runAmisFormWrite } from './_helper';
 runAmisFormWrite({
   entityName: 'ErpMdPartner',
   route: '/ErpMdPartner-main',
-  // id is mandatory in the AMIS add form (seq-default field surfaced as required
-  // input); provide a unique large value to satisfy client-side validation.
   textFields: {
-    id: String(200000 + (Date.now() % 1000000)),
     code: `AMIS-PARTNER-${Date.now()}`,
     name: 'AMIS Form Write Partner',
   },

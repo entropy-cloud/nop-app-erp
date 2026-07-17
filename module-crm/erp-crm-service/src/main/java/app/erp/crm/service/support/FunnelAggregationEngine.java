@@ -266,6 +266,9 @@ public class FunnelAggregationEngine {
             // 丢失原因 TOP N
             String lostReasonTop = computeLostReasonTop(lostLeads, lostReasons, topLostN);
 
+            // FunnelAggregationEngine 是纯计算引擎（无 daoProvider 注入，测试直接 new 构造）；
+            // 产出的 ErpCrmFunnelStageMetrics 是计算快照值对象，由调用方 ErpCrmLeadFunnelBizModel
+            // 经 stageMetricsDao().saveEntity(m) 落库。直接 new 而非 newEntity() 可保留引擎的无状态纯净性。
             ErpCrmFunnelStageMetrics m = new ErpCrmFunnelStageMetrics();
             m.setStageId(stageId);
             m.setStageOrder(stage.getSequence());

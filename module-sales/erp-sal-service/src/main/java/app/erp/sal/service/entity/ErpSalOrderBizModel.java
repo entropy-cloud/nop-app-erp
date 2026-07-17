@@ -71,7 +71,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         if (order == null) {
             return;
         }
-        List<ErpSalOrderLine> lines = loadOrderLines(order.getId());
+        List<ErpSalOrderLine> lines = loadOrderLines(order);
         if (lines.isEmpty()) {
             return;
         }
@@ -84,11 +84,13 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         persistPricingResult(order, result, context);
     }
 
-    protected List<ErpSalOrderLine> loadOrderLines(Long orderId) {
-        IEntityDao<ErpSalOrderLine> dao = daoFor(ErpSalOrderLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orderId", orderId));
-        return new ArrayList<>(dao.findAllByQuery(q));
+    /**
+     * 通过 ORM to-many 关系 {@code ErpSalOrder.lines} 加载行（懒加载，复用主实体 session）。
+     * 取代 {@code daoFor(ErpSalOrderLine.class).findAllByQuery(eq("orderId", ...))}——
+     * 关系已在 {@code app-erp-sales.orm.xml} 声明，无需重复查询。
+     */
+    protected List<ErpSalOrderLine> loadOrderLines(ErpSalOrder order) {
+        return new ArrayList<>(order.getLines());
     }
 
     protected String resolveCustomerGroup(Long partnerId, IServiceContext context) {

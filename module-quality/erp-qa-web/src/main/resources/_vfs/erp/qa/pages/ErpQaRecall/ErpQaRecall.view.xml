@@ -6,9 +6,9 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="recallId" mandatory="true" sortable="true"/>
+                <col id="recallName" mandatory="true" sortable="true"/>
                 <col id="triggerType" mandatory="true" sortable="true"/>
-                <col id="sourceNcrCode" label="源不合格品"/>
+                <col id="sourceNcr" label="源不合格品"/>
                 <col id="materialId" label="物料"/>
                 <col id="severityLevel" mandatory="true" sortable="true"/>
                 <col id="businessDate" mandatory="true" sortable="true"/>

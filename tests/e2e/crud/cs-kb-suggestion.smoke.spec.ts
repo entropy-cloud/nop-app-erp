@@ -1,4 +1,5 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
+import { getEngine } from '../pages';
 
 test.describe('CS ticket KB suggestion smoke', () => {
   test('add form triggers suggestForTicket GraphQL and renders suggestion area', async ({ page }) => {
@@ -21,10 +22,11 @@ test.describe('CS ticket KB suggestion smoke', () => {
 
     await page.waitForTimeout(2000);
 
-    const mainContent = page.locator('#main-content, main, .cxd-Page, [role="main"]').first();
+    const engine = getEngine();
+    const mainContent = engine.crudContainer(page);
     await mainContent.waitFor({ state: 'visible', timeout: 15_000 });
 
-    const addBtn = mainContent.locator('button:has(.fa-plus), button:has-text("Save")').first();
+    const addBtn = engine.addButton(page);
     await addBtn.waitFor({ state: 'visible', timeout: 15_000 });
     await addBtn.click({ force: true });
 

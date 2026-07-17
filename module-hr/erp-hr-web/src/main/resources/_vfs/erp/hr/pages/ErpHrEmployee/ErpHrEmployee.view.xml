@@ -11,7 +11,6 @@
                 <col id="departmentId" label="部门"/>
                 <col id="positionId" label="职位"/>
                 <col id="jobTitle" sortable="true"/>
-                <col id="superiorDisplayName" label="直接上级"/>
                 <col id="costCenterId" label="默认成本中心"/>
                 <col id="bankAccountId" label="工资卡账户"/>
                 <col id="employmentStatus" mandatory="true" sortable="true"/>

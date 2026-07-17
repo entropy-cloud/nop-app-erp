@@ -5,7 +5,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="budgetCode" label="预算单号"/>
+                <col id="budget" label="预算单号"/>
                 <col id="lineNo" mandatory="true" sortable="true"/>
                 <col id="costCategory" mandatory="true" sortable="true"/>
                 <col id="subjectId" label="科目"/>

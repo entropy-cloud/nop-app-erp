@@ -66,7 +66,7 @@ public class ErpSalReceiptProcessor {
 
     public ErpSalReceipt approve(String id, IServiceContext context) {
         ErpSalReceipt receipt = requireReceipt(id, context);
-        if (isAlreadyApproved(receipt)) {
+        if (receipt.isApproved()) {
             return receipt;
         }
         validateNotCancelled(receipt, context);
@@ -86,7 +86,7 @@ public class ErpSalReceiptProcessor {
 
     public ErpSalReceipt reverseApprove(String id, IServiceContext context) {
         ErpSalReceipt receipt = requireReceipt(id, context);
-        if (isAlreadyRejected(receipt)) {
+        if (receipt.isRejected()) {
             return receipt;
         }
         validateTransitionForReverseApprove(receipt, context);
@@ -246,20 +246,9 @@ public class ErpSalReceiptProcessor {
     }
 
     protected void validateNotCancelled(ErpSalReceipt receipt, IServiceContext context) {
-        String docStatus = receipt.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(receipt, docStatus, "非已作废");
+        if (receipt.isCancelled()) {
+            throw illegalDocTransition(receipt, receipt.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpSalReceipt receipt) {
-        String status = receipt.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpSalReceipt receipt) {
-        String status = receipt.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireCustomerActive(ErpSalReceipt receipt, IServiceContext context) {

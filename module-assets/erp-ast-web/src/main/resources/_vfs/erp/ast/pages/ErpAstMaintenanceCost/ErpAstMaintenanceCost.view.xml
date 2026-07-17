@@ -6,7 +6,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="maintenanceCode" label="维修单编码"/>
+                <col id="maintenance" label="维修单编码"/>
                 <col id="orgId" label="所属组织"/>
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="costType" sortable="true"/>

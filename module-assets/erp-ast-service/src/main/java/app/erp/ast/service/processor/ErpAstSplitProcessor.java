@@ -79,7 +79,7 @@ public class ErpAstSplitProcessor {
 
     public ErpAstSplit approve(String id, IServiceContext context) {
         ErpAstSplit split = requireSplit(id, context);
-        if (isAlreadyApproved(split)) {
+        if (split.isApproved()) {
             return split;
         }
         validateNotCancelled(split, context);
@@ -470,15 +470,9 @@ public class ErpAstSplitProcessor {
     }
 
     protected void validateNotCancelled(ErpAstSplit split, IServiceContext context) {
-        String docStatus = split.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(split, docStatus, "非已作废");
+        if (split.isCancelled()) {
+            throw illegalDocTransition(split, split.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpAstSplit split) {
-        String status = split.getApproveStatus();
-        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED);
     }
 
     protected String currentApproveStatus(ErpAstSplit split) {

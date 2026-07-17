@@ -8,7 +8,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="workOrderId" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="operationId" mandatory="true" sortable="true"/>
+                <col id="operationName" mandatory="true" sortable="true"/>
                 <col id="sequence" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="machineId" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="priority" ui:number="true" sortable="true"/>

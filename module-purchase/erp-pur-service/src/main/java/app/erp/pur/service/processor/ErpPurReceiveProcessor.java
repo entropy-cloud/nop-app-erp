@@ -82,7 +82,7 @@ public class ErpPurReceiveProcessor {
 
     public ErpPurReceive approve(String id, IServiceContext context) {
         ErpPurReceive receive = requireReceive(id, context);
-        if (isAlreadyApproved(receive)) {
+        if (receive.isApproved()) {
             return receive;
         }
         validateNotCancelled(receive, context);
@@ -107,7 +107,7 @@ public class ErpPurReceiveProcessor {
 
     public ErpPurReceive reverseApprove(String id, IServiceContext context) {
         ErpPurReceive receive = requireReceive(id, context);
-        if (isAlreadyRejected(receive)) {
+        if (receive.isRejected()) {
             return receive;
         }
         validateTransitionForReverseApprove(receive, context);
@@ -120,7 +120,7 @@ public class ErpPurReceiveProcessor {
     public ErpPurReceive cancel(String id, IServiceContext context) {
         ErpPurReceive receive = requireReceive(id, context);
         validateTransitionForCancel(receive, context);
-        if (isApproved(receive)) {
+        if (receive.isApproved()) {
             ensureReversed(receive, context);
             receive = receiveDao().getEntityById(id);
         }
@@ -233,7 +233,7 @@ public class ErpPurReceiveProcessor {
     // ---------- 库存触发 + 过账接线 + 冲销 ----------
 
     protected ErpInvStockMove triggerIncomingMove(ErpPurReceive receive, IServiceContext context) {
-        List<ErpPurReceiveLine> lines = loadLines(receive.getId());
+        List<ErpPurReceiveLine> lines = loadLines(receive);
         StockMoveRequest request = stockMoveBuilder.build(receive, lines, context);
         return stockMoveBiz.generateMove(request, context);
     }
@@ -272,12 +272,12 @@ public class ErpPurReceiveProcessor {
         }
 
         Map<Long, BigDecimal> receivedByOrderLine = new HashMap<>();
-        addLineQuantities(receivedByOrderLine, loadLines(currentReceive.getId()));
+        addLineQuantities(receivedByOrderLine, loadLines(currentReceive));
         for (ErpPurReceive r : findApprovedReceives(orderId)) {
             if (r.getId().equals(currentReceive.getId())) {
                 continue;
             }
-            addLineQuantities(receivedByOrderLine, loadLines(r.getId()));
+            addLineQuantities(receivedByOrderLine, loadLines(r));
         }
 
         boolean anyReceived = false;
@@ -308,7 +308,7 @@ public class ErpPurReceiveProcessor {
         if (!InspectionTrigger.isMandatoryBillType(billType)) {
             return;
         }
-        for (ErpPurReceiveLine line : loadLines(receive.getId())) {
+        for (ErpPurReceiveLine line : loadLines(receive)) {
             if (line.getMaterialId() == null) {
                 continue;
             }
@@ -334,28 +334,13 @@ public class ErpPurReceiveProcessor {
     }
 
     protected void validateNotCancelled(ErpPurReceive receive, IServiceContext context) {
-        String docStatus = receive.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(receive, docStatus, "非已作废");
+        if (receive.isCancelled()) {
+            throw illegalDocTransition(receive, receive.getDocStatus(), "非已作废");
         }
     }
 
-    protected boolean isAlreadyApproved(ErpPurReceive receive) {
-        String status = receive.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isApproved(ErpPurReceive receive) {
-        return isAlreadyApproved(receive);
-    }
-
-    protected boolean isAlreadyRejected(ErpPurReceive receive) {
-        String status = receive.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED);
-    }
-
     protected void requireLinesNonEmpty(ErpPurReceive receive, IServiceContext context) {
-        if (loadLines(receive.getId()).isEmpty()) {
+        if (receive.getLines().isEmpty()) {
             throw new NopException(ErpPurErrors.ERR_RECEIVE_LINES_EMPTY)
                     .param(ErpPurErrors.ARG_RECEIVE_CODE, receive.getCode());
         }
@@ -373,13 +358,18 @@ public class ErpPurReceiveProcessor {
         }
     }
 
-    protected List<ErpPurReceiveLine> loadLines(Long receiveId) {
-        IEntityDao<ErpPurReceiveLine> dao = daoProvider.daoFor(ErpPurReceiveLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("receiveId", receiveId));
-        return new ArrayList<>(dao.findAllByQuery(q));
+    /**
+     * 通过 ORM to-many 关系 {@code ErpPurReceive.lines} 加载行（懒加载，复用主实体 session）。
+     * 关系已在 {@code app-erp-purchase.orm.xml} 声明。
+     */
+    protected List<ErpPurReceiveLine> loadLines(ErpPurReceive receive) {
+        return new ArrayList<>(receive.getLines());
     }
 
+    /**
+     * 按订单 id 加载采购订单行。{@code ErpPurReceive} 与 {@code ErpPurOrder} 是不同聚合，
+     * 此处仅需 orderId 即可查询；保留 daoFor 形式避免仅为导航而额外加载订单头实体。
+     */
     protected List<ErpPurOrderLine> loadOrderLines(Long orderId) {
         IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
         QueryBean q = new QueryBean();

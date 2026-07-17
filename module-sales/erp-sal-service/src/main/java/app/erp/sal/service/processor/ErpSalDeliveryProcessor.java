@@ -91,7 +91,7 @@ public class ErpSalDeliveryProcessor {
 
     public ErpSalDelivery approve(String id, IServiceContext context) {
         ErpSalDelivery delivery = requireDelivery(id, context);
-        if (isAlreadyApproved(delivery)) {
+        if (delivery.isApproved()) {
             return delivery;
         }
         validateNotCancelled(delivery, context);
@@ -112,7 +112,7 @@ public class ErpSalDeliveryProcessor {
 
     public ErpSalDelivery reverseApprove(String id, IServiceContext context) {
         ErpSalDelivery delivery = requireDelivery(id, context);
-        if (isAlreadyRejected(delivery)) {
+        if (delivery.isRejected()) {
             return delivery;
         }
         validateTransitionForReverseApprove(delivery, context);
@@ -123,7 +123,7 @@ public class ErpSalDeliveryProcessor {
     public ErpSalDelivery cancel(String deliveryId, IServiceContext context) {
         ErpSalDelivery delivery = requireDelivery(deliveryId, context);
         validateTransitionForCancel(delivery, context);
-        if (isApproved(delivery)) {
+        if (delivery.isApproved()) {
             ensureReversed(delivery, context);
             delivery = deliveryDao().getEntityById(deliveryId);
         }
@@ -355,24 +355,9 @@ public class ErpSalDeliveryProcessor {
     }
 
     protected void validateNotCancelled(ErpSalDelivery delivery, IServiceContext context) {
-        String docStatus = delivery.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(delivery, docStatus, "非已作废");
+        if (delivery.isCancelled()) {
+            throw illegalDocTransition(delivery, delivery.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isApproved(ErpSalDelivery delivery) {
-        String status = delivery.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyApproved(ErpSalDelivery delivery) {
-        return isApproved(delivery);
-    }
-
-    protected boolean isAlreadyRejected(ErpSalDelivery delivery) {
-        String status = delivery.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalDelivery delivery, IServiceContext context) {

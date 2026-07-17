@@ -11,6 +11,7 @@
     "check:bizmodel-annotations": "node ./check-bizmodel-annotations.mjs",
     "check:duplicates": "node ./check-duplicates.mjs",
     "audit:suspects": "node ./audit/discover-audit-suspects.mjs",
+    "parse:nop-errors": "node ./parse-nop-errors.mjs",
     "stats": "node ./code-stats.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."

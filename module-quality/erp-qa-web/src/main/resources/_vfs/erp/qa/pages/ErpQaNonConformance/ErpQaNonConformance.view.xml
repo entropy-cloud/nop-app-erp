@@ -11,7 +11,7 @@
                 <col id="sourceType" sortable="true"/>
                 <col id="sourceCode" sortable="true"/>
                 <col id="materialId" label="物料"/>
-                <col id="inspectionCode" label="质检单"/>
+                <col id="inspection" label="质检单"/>
                 <col id="quantity" ui:number="true" sortable="true"/>
                 <col id="severity" mandatory="true" sortable="true"/>
                 <col id="dispositionType" sortable="true"/>

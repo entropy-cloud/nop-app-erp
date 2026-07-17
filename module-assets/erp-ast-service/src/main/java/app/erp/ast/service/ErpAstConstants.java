@@ -1,12 +1,17 @@
 package app.erp.ast.service;
 
+import app.erp.ast.dao.constants.ErpAstDocStatus;
+
 /**
  * 资产域状态码与配置键常量。权威值来自 {@code module-assets/model/app-erp-assets.orm.xml}
  * 关联字典 {@code erp-ast/asset-status}、{@code erp-ast/depreciation-method}、
  * {@code erp-ast/depreciation-schedule-status}、{@code erp-ast/disposal-type}、
  * {@code erp-ast/doc-status}、{@code erp-ast/approve-status}、{@code erp-ast/capitalization-source-type}。
+ *
+ * <p>{@code extends ErpAstDocStatus} 复用 dao 层 approve-status / doc-status 常量定义，
+ * 保持单一真相源；本接口仅追加 service 层独有的派生状态与配置项。
  */
-public interface ErpAstConstants {
+public interface ErpAstConstants extends ErpAstDocStatus {
 
     // ---- 配置项（depreciation-and-posting.md §配置），经 AppConfig.var 读取 ----
     /** 期末结账时是否自动批量折旧（供 1000-3 调用），默认 true。 */
@@ -96,17 +101,6 @@ public interface ErpAstConstants {
     String ADJUSTMENT_TYPE_IMPAIRMENT = "IMPAIRMENT";
     String ADJUSTMENT_TYPE_REVALUATION_UP = "REVALUATION_UP";
     String ADJUSTMENT_TYPE_REVALUATION_DOWN = "REVALUATION_DOWN";
-
-    // ---- doc-status ----
-    String DOC_STATUS_DRAFT = "DRAFT";
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-    String DOC_STATUS_CANCELLED = "CANCELLED";
-
-    // ---- approve-status ----
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-    String APPROVE_STATUS_REJECTED = "REJECTED";
 
     // ---- capitalization-source-type ----
     String SOURCE_TYPE_INVENTORY = "INVENTORY";

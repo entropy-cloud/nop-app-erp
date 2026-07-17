@@ -62,7 +62,7 @@ public class ErpSalQuotationProcessor {
 
     public ErpSalQuotation approve(String id, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(id, context);
-        if (isAlreadyApproved(quotation)) {
+        if (quotation.isApproved()) {
             return quotation;
         }
         validateNotCancelled(quotation, context);
@@ -81,7 +81,7 @@ public class ErpSalQuotationProcessor {
 
     public ErpSalQuotation reverseApprove(String id, IServiceContext context) {
         ErpSalQuotation quotation = requireQuotation(id, context);
-        if (isAlreadyRejected(quotation)) {
+        if (quotation.isRejected()) {
             return quotation;
         }
         validateTransitionForReverseApprove(quotation, context);
@@ -269,20 +269,9 @@ public class ErpSalQuotationProcessor {
     }
 
     protected void validateNotCancelled(ErpSalQuotation quotation, IServiceContext context) {
-        String docStatus = quotation.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(quotation, docStatus, "非已作废");
+        if (quotation.isCancelled()) {
+            throw illegalDocTransition(quotation, quotation.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpSalQuotation quotation) {
-        String status = quotation.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpSalQuotation quotation) {
-        String status = quotation.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalQuotation quotation, IServiceContext context) {

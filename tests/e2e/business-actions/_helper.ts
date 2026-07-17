@@ -1,5 +1,6 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
 import type { Page } from '@playwright/test';
+import { GraphQLClient } from '../pages';
 
 /**
  * 业务动作浏览器层 E2E helper（plan 2026-07-09-0814-2）。
@@ -10,10 +11,12 @@ import type { Page } from '@playwright/test';
  *   - verifyState：经 GraphQL query __get 断言状态字段翻转
  *
  * 范式与 dashboards/_helper.ts（getDashboardKpi 经 GraphQL）、crud/_helper.ts（__save/__get）
- * 一致：loginAndNavigate 建立 nop-token 会话后 page.request.post('/graphql') 直调。
+ * 一致：loginAndNavigate 建立 nop-token 会话后 GraphQLClient 直调（plan 2246-1 Phase 2
+ * 将裸 page.request.post('/graphql') 全部中心化到 GraphQLClient）。
  */
 
 export { test, expect, loginAndNavigate };
+export { GraphQLClient };
 
 /**
  * 标记一个 GraphQL input 对象参数（自定义动作的复杂入参，如 generateMove 的 StockMoveRequest）。
@@ -29,9 +32,8 @@ export function input(type: string, value: Record<string, unknown>): InputArg {
   return { __input: true, type, value };
 }
 
-async function extract(resp: { json: () => Promise<unknown> }, actionKey: string): Promise<{ data: any | null; errors: any[] | null; json: any }> {
-  const json: any = await resp.json();
-  return { data: json?.data?.[actionKey] ?? null, errors: json?.errors ?? null, json };
+function gqlFor(page: Page): GraphQLClient {
+  return new GraphQLClient(page);
 }
 
 /**
@@ -43,14 +45,13 @@ export async function createViaSave(
   data: Record<string, unknown>,
   selection = 'id',
 ): Promise<any> {
-  const inputType = `${entityName}__save_input`;
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `mutation($d:${inputType}){ ${entityName}__save(data:$d){ ${selection} } }`,
-      variables: { d: data },
-    },
-  });
-  const { data: saved, errors } = await extract(resp, `${entityName}__save`);
+  const gql = gqlFor(page);
+  const json: any = await gql.raw(
+    `mutation($d:${entityName}__save_input){ ${entityName}__save(data:$d){ ${selection} } }`,
+    { d: data },
+  );
+  const errors = json?.errors ?? null;
+  const saved = json?.data?.[`${entityName}__save`] ?? null;
   expect(errors, `${entityName}__save should not return GraphQL errors`).toBeNull();
   expect(saved, `${entityName}__save should return saved entity`).toBeTruthy();
   return saved;
@@ -69,25 +70,9 @@ export async function callMutation(
   args: Record<string, unknown>,
   selection = 'id',
 ): Promise<{ data: any | null; errors: any[] | null; json: any }> {
-  const parts: string[] = [];
-  const varDecls: string[] = [];
-  const vars: Record<string, unknown> = {};
-  for (const [name, arg] of Object.entries(args)) {
-    if (arg && typeof arg === 'object' && (arg as InputArg).__input) {
-      const ia = arg as InputArg;
-      varDecls.push(`$${name}:${ia.type}`);
-      vars[name] = ia.value;
-      parts.push(`${name}:$${name}`);
-    } else {
-      parts.push(`${name}:${JSON.stringify(arg)}`);
-    }
-  }
-  const query = varDecls.length
-    ? `mutation(${varDecls.join(',')}){ ${entityName}__${action}(${parts.join(',')}){ ${selection} } }`
-    : `mutation{ ${entityName}__${action}(${parts.join(',')}){ ${selection} } }`;
-  const payload = varDecls.length ? { query, variables: vars } : { query };
-  const resp = await page.request.post('/graphql', { data: payload });
-  return extract(resp, `${entityName}__${action}`);
+  const gql = gqlFor(page);
+  const { data, errors, json } = await gql.callMutation(entityName, action, args, selection);
+  return { data, errors, json };
 }
 
 /**
@@ -115,10 +100,10 @@ export async function verifyState(
   id: string | number,
   selection: string,
 ): Promise<any> {
-  const resp = await page.request.post('/graphql', {
-    data: { query: `{ ${entityName}__get(id:${id}){ ${selection} } }` },
-  });
-  const { data, errors } = await extract(resp, `${entityName}__get`);
+  const gql = gqlFor(page);
+  const json: any = await gql.raw(`{ ${entityName}__get(id:${id}){ ${selection} } }`);
+  const errors = json?.errors ?? null;
+  const data = json?.data?.[`${entityName}__get`] ?? null;
   expect(errors, `${entityName}__get should not return GraphQL errors`).toBeNull();
   return data;
 }
@@ -135,29 +120,8 @@ export async function callQuery(
   action: string,
   args: Record<string, unknown>,
 ): Promise<{ data: any | null; errors: any[] | null; json: any }> {
-  const parts: string[] = [];
-  const varDecls: string[] = [];
-  const vars: Record<string, unknown> = {};
-  for (const [name, arg] of Object.entries(args)) {
-    if (arg && typeof arg === 'object' && (arg as InputArg).__input) {
-      const ia = arg as InputArg;
-      varDecls.push(`$${name}:${ia.type}`);
-      vars[name] = ia.value;
-      parts.push(`${name}:$${name}`);
-    } else {
-      parts.push(`${name}:${JSON.stringify(arg)}`);
-    }
-  }
-  const query = varDecls.length
-    ? `query(${varDecls.join(',')}){ ${entityName}__${action}(${parts.join(',')}) }`
-    : `query{ ${entityName}__${action}(${parts.join(',')}) }`;
-  const payload = varDecls.length ? { query, variables: vars } : { query };
-  const resp = await page.request.post('/graphql', { data: payload });
-  const json: any = await resp.json();
-  const actionKey = `${entityName}__${action}`;
-  const data = json?.data?.[actionKey] ?? null;
-  const errors = json?.errors ?? null;
-  return { data, errors, json };
+  const gql = gqlFor(page);
+  return gql.callQuery(entityName, action, args);
 }
 
 /**
@@ -185,14 +149,7 @@ export async function findPageTotal(
   entityName: string,
   filter: Record<string, unknown>,
 ): Promise<number> {
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `query($f:Map){ ${entityName}__findPage(query:{offset:0,limit:1,filter:$f}){ total } }`,
-      variables: { f: filter },
-    },
-  });
-  const { data } = await extract(resp, `${entityName}__findPage`);
-  return data?.total ?? 0;
+  return gqlFor(page).findPageTotal(entityName, filter);
 }
 
 /**
@@ -205,15 +162,7 @@ export async function findFirst<T = any>(
   filter: Record<string, unknown>,
   selection: string,
 ): Promise<T | null> {
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `query($f:Map){ ${entityName}__findPage(query:{offset:0,limit:1,filter:$f}){ items{ ${selection} } } }`,
-      variables: { f: filter },
-    },
-  });
-  const { data } = await extract(resp, `${entityName}__findPage`);
-  const items: any[] = data?.items || [];
-  return items.length > 0 ? (items[0] as T) : null;
+  return gqlFor(page).findFirst<T>(entityName, filter, selection);
 }
 
 /**
@@ -228,27 +177,12 @@ export async function deleteByFilter(
   entityName: string,
   filter: Record<string, unknown>,
 ): Promise<number> {
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `query($f:Map){ ${entityName}__findPage(query:{offset:0,limit:500,filter:$f}){ items{ id } } }`,
-      variables: { f: filter },
-    },
-  });
-  const { data } = await extract(resp, `${entityName}__findPage`);
-  const items: any[] = data?.items || [];
-  for (const item of items) {
-    await page.request.post('/graphql', {
-      data: { query: `mutation{ ${entityName}__delete(id:${item.id}) }` },
-    });
-  }
-  return items.length;
+  return gqlFor(page).deleteByFilter(entityName, filter);
 }
 
 /**
  * 删除单个实体（经 __delete）。用于清理测试创建的主实体。
  */
 export async function deleteById(page: Page, entityName: string, id: string | number): Promise<void> {
-  await page.request.post('/graphql', {
-    data: { query: `mutation{ ${entityName}__delete(id:${id}) }` },
-  });
+  await gqlFor(page).deleteById(entityName, id);
 }

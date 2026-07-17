@@ -56,7 +56,6 @@
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[单号] moveType[作业类型]
- materialId[物料] warehouseId[仓库]
  docStatus[单据状态] businessDate[业务日期]
             </layout>
             <cells>

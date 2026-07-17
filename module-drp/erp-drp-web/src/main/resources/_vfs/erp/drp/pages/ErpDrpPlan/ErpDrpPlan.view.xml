@@ -6,7 +6,6 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="planId" mandatory="true" sortable="true"/>
                 <col id="periodFrom" mandatory="true" sortable="true"/>
                 <col id="periodTo" mandatory="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>

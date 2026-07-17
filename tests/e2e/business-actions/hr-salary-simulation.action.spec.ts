@@ -12,6 +12,7 @@ import {
   findFirst,
   deleteByFilter,
   deleteById,
+  GraphQLClient,
 } from './_helper';
 
 /**
@@ -128,13 +129,10 @@ async function applyBatchRaw(
   adjustType: string,
   value: number,
 ): Promise<{ data: any | null; errors: any[] | null }> {
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `mutation($scope:Map){ ErpHrSalarySimulation__applyBatchAdjustment(simulationId:${simulationId},scope:$scope,adjustType:${JSON.stringify(adjustType)},value:${JSON.stringify(value)}) }`,
-      variables: { scope },
-    },
-  });
-  const json: any = await resp.json();
+  const json: any = await new GraphQLClient(page).raw(
+    `mutation($scope:Map){ ErpHrSalarySimulation__applyBatchAdjustment(simulationId:${simulationId},scope:$scope,adjustType:${JSON.stringify(adjustType)},value:${JSON.stringify(value)}) }`,
+    { scope },
+  );
   return { data: json?.data?.ErpHrSalarySimulation__applyBatchAdjustment ?? null, errors: json?.errors ?? null };
 }
 

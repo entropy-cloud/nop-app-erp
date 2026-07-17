@@ -6,10 +6,10 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="subcontractOrderCode" label="委外单"/>
+                <col id="subcontractOrder" label="委外单"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="materialId" label="物料"/>
-                <col id="uomId" label="计量单位"/>
+                <col id="uoMId" label="计量单位"/>
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="unitProcessingFee" ui:number="true" sortable="true"/>
                 <col id="amount" ui:number="true" sortable="true"/>

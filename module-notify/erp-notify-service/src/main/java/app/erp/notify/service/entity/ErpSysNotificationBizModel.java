@@ -98,7 +98,7 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
         }
         IEntityDao<ErpSysNotificationRead> readDao = daoProvider().daoFor(ErpSysNotificationRead.class);
         if (!isRead(notificationId, userId, readDao)) {
-            ErpSysNotificationRead read = new ErpSysNotificationRead();
+            ErpSysNotificationRead read = readDao.newEntity();
             read.setNotificationId(notificationId);
             read.setUserId(userId);
             read.setReadTime(CoreMetrics.currentTimestamp());
@@ -115,7 +115,7 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
         int count = 0;
         for (ErpSysNotification n : unread) {
             if (!isRead(n.getId(), userId, readDao)) {
-                ErpSysNotificationRead read = new ErpSysNotificationRead();
+                ErpSysNotificationRead read = readDao.newEntity();
                 read.setNotificationId(n.getId());
                 read.setUserId(userId);
                 read.setReadTime(CoreMetrics.currentTimestamp());

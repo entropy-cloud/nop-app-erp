@@ -6,7 +6,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="workOrderNo" label="工单"/>
+                <col id="workOrder" label="工单"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="varianceType" mandatory="true" sortable="true"/>
                 <col id="costElement" mandatory="true" sortable="true"/>

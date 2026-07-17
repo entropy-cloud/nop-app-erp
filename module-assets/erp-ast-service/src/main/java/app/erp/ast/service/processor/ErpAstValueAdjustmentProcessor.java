@@ -53,7 +53,7 @@ public class ErpAstValueAdjustmentProcessor {
 
     public ErpAstValueAdjustment approve(String id, IServiceContext context) {
         ErpAstValueAdjustment adjustment = requireAdjustment(id, context);
-        if (isAlreadyApproved(adjustment)) {
+        if (adjustment.isApproved()) {
             return adjustment;
         }
         validateNotCancelled(adjustment, context);
@@ -100,7 +100,7 @@ public class ErpAstValueAdjustmentProcessor {
 
     public ErpAstValueAdjustment reverseApprove(String id, IServiceContext context) {
         ErpAstValueAdjustment adjustment = requireAdjustment(id, context);
-        if (isAlreadyRejected(adjustment)) {
+        if (adjustment.isRejected()) {
             return adjustment;
         }
         validateTransitionForReverseApprove(adjustment, context);
@@ -317,20 +317,9 @@ public class ErpAstValueAdjustmentProcessor {
     }
 
     protected void validateNotCancelled(ErpAstValueAdjustment adjustment, IServiceContext context) {
-        String docStatus = adjustment.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(adjustment, docStatus, "非已作废");
+        if (adjustment.isCancelled()) {
+            throw illegalDocTransition(adjustment, adjustment.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpAstValueAdjustment adjustment) {
-        String status = adjustment.getApproveStatus();
-        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpAstValueAdjustment adjustment) {
-        String status = adjustment.getApproveStatus();
-        return status != null && Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected String currentApproveStatus(ErpAstValueAdjustment adjustment) {

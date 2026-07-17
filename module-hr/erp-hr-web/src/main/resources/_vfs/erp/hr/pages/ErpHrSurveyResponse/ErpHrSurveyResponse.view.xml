@@ -7,7 +7,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="surveyId" label="问卷"/>
-                <col id="employeeDisplayName" label="员工"/>
+                <col id="employee" label="员工"/>
                 <col id="submittedAt" sortable="true"/>
                 <col id="isComplete" sortable="true"/>
                 <col id="orgId" label="业务组织"/>

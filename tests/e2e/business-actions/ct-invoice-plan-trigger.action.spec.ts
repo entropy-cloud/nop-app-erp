@@ -1,4 +1,4 @@
-import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMutation, verifyState, findFirst, deleteByFilter, deleteById, eqFilter } from './_helper';
+import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMutation, verifyState, findFirst, deleteByFilter, deleteById, eqFilter, GraphQLClient } from './_helper';
 
 /**
  * contract ErpCtInvoicePlan 发票计划触发跨域编排业务动作浏览器层 E2E（plan 2026-07-14-0941-1 Phase 2）。
@@ -249,10 +249,9 @@ test.describe('contract ErpCtInvoicePlan triggerInvoice / triggerDuePlans orches
 
     try {
       // triggerDuePlans 返回触发行数（int 标量，原始 mutation 无选择集）
-      const resp = await page.request.post('/graphql', {
-        data: { query: `mutation{ ErpCtInvoicePlan__triggerDuePlans(contractId:${contract.id},asOfDate:"${AS_OF_DATE}") }` },
-      });
-      const json: any = await resp.json();
+      const json: any = await new GraphQLClient(page).raw(
+        `mutation{ ErpCtInvoicePlan__triggerDuePlans(contractId:${contract.id},asOfDate:"${AS_OF_DATE}") }`,
+      );
       expect(json.errors, 'triggerDuePlans should not return GraphQL errors').toBeFalsy();
       const triggered = Number(json?.data?.ErpCtInvoicePlan__triggerDuePlans);
       expect(triggered, 'triggerDuePlans should return >=2 triggered count').toBeGreaterThanOrEqual(2);

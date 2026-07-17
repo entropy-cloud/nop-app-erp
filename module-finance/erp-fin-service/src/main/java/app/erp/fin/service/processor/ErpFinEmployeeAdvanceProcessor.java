@@ -46,7 +46,7 @@ public class ErpFinEmployeeAdvanceProcessor {
 
     public ErpFinEmployeeAdvance approve(String id, IServiceContext context) {
         ErpFinEmployeeAdvance advance = requireAdvance(id, context);
-        if (isAlreadyApproved(advance)) {
+        if (advance.isApproved()) {
             return advance;
         }
         validateNotCancelled(advance, context);
@@ -66,7 +66,7 @@ public class ErpFinEmployeeAdvanceProcessor {
 
     public ErpFinEmployeeAdvance reverseApprove(String id, IServiceContext context) {
         ErpFinEmployeeAdvance advance = requireAdvance(id, context);
-        if (isAlreadyRejected(advance)) {
+        if (advance.isRejected()) {
             return advance;
         }
         validateTransitionForReverseApprove(advance, context);
@@ -118,9 +118,8 @@ public class ErpFinEmployeeAdvanceProcessor {
     }
 
     protected void validateTransitionForCancel(ErpFinEmployeeAdvance advance, IServiceContext context) {
-        String docStatus = advance.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpFinConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(advance, docStatus, "非已作废");
+        if (advance.isCancelled()) {
+            throw illegalDocTransition(advance, advance.getDocStatus(), "非已作废");
         }
     }
 
@@ -249,16 +248,6 @@ public class ErpFinEmployeeAdvanceProcessor {
 
     protected ErpFinEmployeeAdvance reload(String id) {
         return advanceDao().getEntityById(id);
-    }
-
-    protected boolean isAlreadyApproved(ErpFinEmployeeAdvance advance) {
-        String status = advance.getApproveStatus();
-        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpFinEmployeeAdvance advance) {
-        String status = advance.getApproveStatus();
-        return status != null && Objects.equals(status, ErpFinConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected String currentApproveStatus(ErpFinEmployeeAdvance advance) {

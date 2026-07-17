@@ -1,4 +1,4 @@
-import { test, expect, loginAndNavigate, createViaSave, callQuery, verifyState, deleteByFilter, deleteById } from './_helper';
+import { test, expect, loginAndNavigate, createViaSave, callQuery, verifyState, deleteByFilter, deleteById, GraphQLClient } from './_helper';
 
 /**
  * CS Canned Response 预设应答浏览器层 E2E（plan 2026-07-11-1234-2 §Phase 4）。
@@ -60,12 +60,9 @@ test.describe('CS Canned Response actions', () => {
 
     // suggestForTicket（@BizQuery，返回 List<ErpCsCannedResponse> 复杂列表，需 selection set，非 callQuery 标量原语可表达）
     // 镜像 fin-reconciliation.action.spec.ts:235-239 inline query 范式
-    const suggestResp = await page.request.post('/graphql', {
-      data: {
-        query: `query{ ErpCsCannedResponse__suggestForTicket(ticketId:${Number(ticket.id)}){ id title content macroTicketTypeId macroPriority sequence usageCount } }`,
-      },
-    });
-    const suggestJson: any = await suggestResp.json();
+    const suggestJson: any = await new GraphQLClient(page).raw(
+      `query{ ErpCsCannedResponse__suggestForTicket(ticketId:${Number(ticket.id)}){ id title content macroTicketTypeId macroPriority sequence usageCount } }`,
+    );
     expect(suggestJson?.errors, `suggestForTicket should not return GraphQL errors: ${JSON.stringify(suggestJson?.errors)}`).toBeFalsy();
     const suggestions = suggestJson?.data?.ErpCsCannedResponse__suggestForTicket;
     expect(Array.isArray(suggestions), 'suggestForTicket should return a list').toBe(true);
@@ -84,12 +81,9 @@ test.describe('CS Canned Response actions', () => {
 
     // applyCannedResponse（@BizMutation，返回 String 标量，无 selection set；标量 mutation 不能选 'id'）
     const before = canned.usageCount || 0;
-    const applyMutationResp = await page.request.post('/graphql', {
-      data: {
-        query: `mutation{ ErpCsCannedResponse__applyCannedResponse(cannedResponseId:${Number(canned.id)},ticketId:${Number(ticket.id)}) }`,
-      },
-    });
-    const applyJson: any = await applyMutationResp.json();
+    const applyJson: any = await new GraphQLClient(page).raw(
+      `mutation{ ErpCsCannedResponse__applyCannedResponse(cannedResponseId:${Number(canned.id)},ticketId:${Number(ticket.id)}) }`,
+    );
     expect(applyJson?.errors, `applyCannedResponse should not return GraphQL errors: ${JSON.stringify(applyJson?.errors)}`).toBeFalsy();
     const applyResp = applyJson?.data?.ErpCsCannedResponse__applyCannedResponse;
     expect(applyResp, 'applyCannedResponse should return rendered content').toBeTruthy();
@@ -101,14 +95,11 @@ test.describe('CS Canned Response actions', () => {
     expect(Number(usageAfter), `usageCount should increment from ${before} to ${before + 1}`).toBe(before + 1);
 
     // 验证 TicketAction NOTE 写入
-    const actionResp = await page.request.post('/graphql', {
-      data: {
-        query: `query($f:Map){ ErpCsTicketAction__findPage(query:{offset:0,limit:10,filter:$f}){ total items{ id actionType content } } }`,
-        variables: { f: { $type: 'eq', name: 'ticketId', value: Number(ticket.id) } },
-      },
-    });
-    const actionJson = await actionResp.json();
-    const actions = actionJson?.data?.ErpCsTicketAction__findPage?.items || [];
+    const actions = await new GraphQLClient(page).findItems<any>(
+      'ErpCsTicketAction',
+      { $type: 'eq', name: 'ticketId', value: Number(ticket.id) },
+      'id actionType content',
+    );
     const noteActions = actions.filter((a: any) => a.actionType === 'NOTE');
     expect(noteActions.length, 'should have at least one NOTE action from applyCannedResponse').toBeGreaterThan(0);
 

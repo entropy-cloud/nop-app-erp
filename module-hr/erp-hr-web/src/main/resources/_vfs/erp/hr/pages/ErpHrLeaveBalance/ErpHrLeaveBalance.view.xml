@@ -5,7 +5,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="employeeDisplayName" label="员工"/>
+                <col id="employee" label="员工"/>
                 <col id="leaveType" mandatory="true" sortable="true"/>
                 <col id="fiscalYear" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="entitledDays" mandatory="true" ui:number="true" sortable="true"/>

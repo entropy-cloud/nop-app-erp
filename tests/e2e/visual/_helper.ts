@@ -1,4 +1,5 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
+import { getEngine } from '../pages';
 import type { Page } from '@playwright/test';
 
 export interface DashboardVisualAssertion {
@@ -133,8 +134,9 @@ export function assertReportRendered(cfg: ReportVisualAssertion): void {
       }
 
       if (cfg.fillDates) {
+        const engine = getEngine();
         for (const [label, value] of Object.entries(cfg.fillDates)) {
-          await page.locator('.cxd-Form-item').filter({ hasText: label }).locator('input').first().fill(value);
+          await engine.dateInputByLabel(page, label).fill(value);
         }
       }
 

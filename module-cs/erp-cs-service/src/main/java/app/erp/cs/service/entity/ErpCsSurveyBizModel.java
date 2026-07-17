@@ -54,11 +54,6 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         if (ticketId == null) {
             throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
         }
-        // 校验工单存在（经 daoProvider 只读校验，避免与 ErpCsTicketBizModel 形成循环依赖）
-        ErpCsTicket ticket = daoProvider().daoFor(ErpCsTicket.class).getEntityById(ticketId);
-        if (ticket == null) {
-            throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
-        }
         // 唯一约束：一工单一调查
         ErpCsSurvey existing = findSurveyByTicket(ticketId, context);
         if (existing != null) {
@@ -66,13 +61,20 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         }
 
         ErpCsSurvey survey = newEntity();
-        survey.setTicketId(ticket.getId());
+        survey.setTicketId(ticketId);
         survey.setSurveyToken(SurveyTokenGenerator.generate());
         survey.setSurveyChannel(ErpCsConstants.SURVEY_CHANNEL_PORTAL);
         int delayHours = ErpCsConfigs.getSurveySendDelayHours();
         // delay=0 立即发送（surveySentAt=now，状态 SENT）；delay>0 留空（状态 PENDING，待 nop-job 延迟发送）
         survey.setSurveySentAt(delayHours <= 0 ? CoreMetrics.currentTimestamp() : null);
         saveEntity(survey, null, context);
+        // 经 ORM to-one 关系 {@code ErpCsSurvey.ticket} 透明懒加载校验工单存在（避免 daoFor 跨聚合访问 +
+        // 避免与 ErpCsTicketBizModel 循环依赖）。saveEntity 后实体已入 session，getTicket() 触发懒加载；
+        // 若工单不存在则事务回滚撤销本次保存。
+        ErpCsTicket ticket = survey.getTicket();
+        if (ticket == null) {
+            throw new NopException(ErpCsErrors.ERR_TICKET_NOT_FOUND).param(ErpCsErrors.ARG_TICKET_ID, ticketId);
+        }
         return survey;
     }
 

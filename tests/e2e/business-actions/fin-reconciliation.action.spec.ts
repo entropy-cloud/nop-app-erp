@@ -10,6 +10,7 @@ import {
   eqFilter,
   deleteByFilter,
   deleteById,
+  GraphQLClient,
 } from './_helper';
 
 /**
@@ -232,12 +233,9 @@ test.describe('Finance ErpFinReconciliation lifecycle browser-layer E2E', () => 
       // checkDualSideConsistency 返回 DualSideDiffReport（复杂对象，需 selection set，非 callQuery 原语可表达）。
       // 自包含 setup 仅建 finance 侧 OPEN 发票项（settled=0）+ 无域侧发票 → diff=0 → consistent=true。
       // 本用例仅断言查询可达 + 报告结构非空（direction/partnerId/consistent/rows 字段可观测），不断言 consistent 取值。
-      const resp = await page.request.post('/graphql', {
-        data: {
-          query: `query{ ErpFinReconciliation__checkDualSideConsistency(direction:"PAYABLE",partnerId:${partner.id}){ direction partnerId consistent rows{ partnerId financeSettled domainSettled diff status } } }`,
-        },
-      });
-      const json: any = await resp.json();
+      const json: any = await new GraphQLClient(page).raw(
+        `query{ ErpFinReconciliation__checkDualSideConsistency(direction:"PAYABLE",partnerId:${partner.id}){ direction partnerId consistent rows{ partnerId financeSettled domainSettled diff status } } }`,
+      );
       expect(json?.errors, `checkDualSideConsistency should not return GraphQL errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
       const report = json?.data?.ErpFinReconciliation__checkDualSideConsistency;
       expect(report, 'DualSideDiffReport should be returned').toBeTruthy();

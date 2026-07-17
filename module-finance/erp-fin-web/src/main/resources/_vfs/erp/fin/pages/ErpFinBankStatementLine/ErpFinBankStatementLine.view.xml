@@ -6,7 +6,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="statementCode" label="对账单"/>
+                <col id="statement" label="对账单"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="transactionDate" mandatory="true" sortable="true"/>
                 <col id="description" sortable="true"/>

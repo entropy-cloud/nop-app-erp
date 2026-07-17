@@ -9,7 +9,6 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="leadType" sortable="true"/>
                 <col id="partnerId" label="客户"/>
-                <col id="contactId" sortable="true"/>
                 <col id="sourceId" label="线索来源"/>
                 <col id="leadStatusId" label="线索状态"/>
                 <col id="stageId" label="漏斗阶段"/>

@@ -82,7 +82,7 @@ public class ErpPurReturnProcessor {
 
     public ErpPurReturn approve(String id, IServiceContext context) {
         ErpPurReturn returnOrder = requireReturn(id, context);
-        if (isAlreadyApproved(returnOrder)) {
+        if (returnOrder.isApproved()) {
             return returnOrder;
         }
         validateNotCancelled(returnOrder, context);
@@ -109,7 +109,7 @@ public class ErpPurReturnProcessor {
 
     public ErpPurReturn reverseApprove(String id, IServiceContext context) {
         ErpPurReturn returnOrder = requireReturn(id, context);
-        if (isAlreadyRejected(returnOrder)) {
+        if (returnOrder.isRejected()) {
             return returnOrder;
         }
         validateTransitionForReverseApprove(returnOrder, context);
@@ -122,7 +122,7 @@ public class ErpPurReturnProcessor {
     public ErpPurReturn cancel(String id, IServiceContext context) {
         ErpPurReturn returnOrder = requireReturn(id, context);
         validateTransitionForCancel(returnOrder, context);
-        if (isApproved(returnOrder)) {
+        if (returnOrder.isApproved()) {
             ensureReversed(returnOrder, context);
             returnOrder = returnDao().getEntityById(id);
         }
@@ -189,7 +189,7 @@ public class ErpPurReturnProcessor {
     protected void validateBusinessRulesForApprove(ErpPurReturn returnOrder, IServiceContext context) {
         requireSupplierActive(returnOrder, context);
         requireSourceReceiveApproved(returnOrder, context);
-        List<ErpPurReturnLine> lines = loadLines(returnOrder.getId());
+        List<ErpPurReturnLine> lines = loadLines(returnOrder);
         requireReasonIfConfigured(returnOrder, lines, context);
         returnQtyValidator.validate(returnOrder, lines);
     }
@@ -238,7 +238,7 @@ public class ErpPurReturnProcessor {
     // ---------- 库存触发 + 冲销 ----------
 
     protected ErpInvStockMove triggerOutgoingMove(ErpPurReturn returnOrder, IServiceContext context) {
-        List<ErpPurReturnLine> lines = loadLines(returnOrder.getId());
+        List<ErpPurReturnLine> lines = loadLines(returnOrder);
         StockMoveRequest request = stockMoveBuilder.build(returnOrder, lines, context);
         request.setOriginReturnedMoveId(resolveSourceReceiveMoveId(returnOrder, context));
         return stockMoveBiz.generateMove(request, context);
@@ -288,28 +288,13 @@ public class ErpPurReturnProcessor {
     }
 
     protected void validateNotCancelled(ErpPurReturn returnOrder, IServiceContext context) {
-        String docStatus = returnOrder.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(returnOrder, docStatus, "非已作废");
+        if (returnOrder.isCancelled()) {
+            throw illegalDocTransition(returnOrder, returnOrder.getDocStatus(), "非已作废");
         }
     }
 
-    protected boolean isAlreadyApproved(ErpPurReturn returnOrder) {
-        String status = returnOrder.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isApproved(ErpPurReturn returnOrder) {
-        return isAlreadyApproved(returnOrder);
-    }
-
-    protected boolean isAlreadyRejected(ErpPurReturn returnOrder) {
-        String status = returnOrder.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED);
-    }
-
     protected void requireLinesNonEmpty(ErpPurReturn returnOrder, IServiceContext context) {
-        if (loadLines(returnOrder.getId()).isEmpty()) {
+        if (returnOrder.getLines().isEmpty()) {
             throw new NopException(ErpPurErrors.ERR_RETURN_LINES_EMPTY)
                     .param(ErpPurErrors.ARG_RETURN_CODE, returnOrder.getCode());
         }
@@ -370,11 +355,12 @@ public class ErpPurReturnProcessor {
         }
     }
 
-    protected List<ErpPurReturnLine> loadLines(Long returnId) {
-        IEntityDao<ErpPurReturnLine> dao = daoProvider.daoFor(ErpPurReturnLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("returnId", returnId));
-        return new ArrayList<>(dao.findAllByQuery(q));
+    /**
+     * 通过 ORM to-many 关系 {@code ErpPurReturn.lines} 加载行（懒加载，复用主实体 session）。
+     * 关系已在 {@code app-erp-purchase.orm.xml} 声明。
+     */
+    protected List<ErpPurReturnLine> loadLines(ErpPurReturn returnOrder) {
+        return new ArrayList<>(returnOrder.getLines());
     }
 
     // ---------- misc helpers ----------

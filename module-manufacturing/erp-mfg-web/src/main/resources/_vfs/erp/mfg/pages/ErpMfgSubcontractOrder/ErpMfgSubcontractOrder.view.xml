@@ -8,7 +8,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="workOrderNo" label="来源工单"/>
+                <col id="workOrder" label="来源工单"/>
                 <col id="supplierId" label="委外供应商"/>
                 <col id="workcenterId" label="外协工作中心"/>
                 <col id="productId" label="产品"/>
@@ -35,7 +35,7 @@
                 sourceWarehouseId[发料仓库]
             </layout>
             <cells>
-                <cell id="sourceWarehouseId" label="发料仓库" domain="long">
+                <cell id="sourceWarehouseId" label="发料仓库" domain="long" custom="true">
                     <gen-control>
                         <select clearable="@:true">
                             <source>
@@ -53,8 +53,8 @@
                 receivedQty[收货数量] destWarehouseId[收货仓库]
             </layout>
             <cells>
-                <cell id="receivedQty" label="收货数量" domain="decimal" mandatory="true"/>
-                <cell id="destWarehouseId" label="收货仓库" domain="long">
+                <cell id="receivedQty" label="收货数量" domain="decimal" mandatory="true" custom="true"/>
+                <cell id="destWarehouseId" label="收货仓库" domain="long" custom="true">
                     <gen-control>
                         <select clearable="@:true">
                             <source>

@@ -6,8 +6,8 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="simulationCode" label="薪资模拟"/>
-                <col id="employeeDisplayName" label="员工"/>
+                <col id="simulation" label="薪资模拟"/>
+                <col id="employee" label="员工"/>
                 <col id="salaryItemCode" mandatory="true" sortable="true"/>
                 <col id="originalAmount" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="adjustedAmount" mandatory="true" ui:number="true" sortable="true"/>

@@ -6,7 +6,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="ticketCode" label="工单"/>
+                <col id="ticket" label="工单"/>
                 <col id="agentId" sortable="true"/>
                 <col id="startTime" sortable="true"/>
                 <col id="endTime" sortable="true"/>

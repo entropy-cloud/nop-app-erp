@@ -91,7 +91,7 @@ public class ErpSalReturnProcessor {
 
     public ErpSalReturn approve(String id, IServiceContext context) {
         ErpSalReturn returnOrder = requireReturn(id, context);
-        if (isAlreadyApproved(returnOrder)) {
+        if (returnOrder.isApproved()) {
             return returnOrder;
         }
         validateNotCancelled(returnOrder, context);
@@ -111,7 +111,7 @@ public class ErpSalReturnProcessor {
 
     public ErpSalReturn reverseApprove(String id, IServiceContext context) {
         ErpSalReturn returnOrder = requireReturn(id, context);
-        if (isAlreadyRejected(returnOrder)) {
+        if (returnOrder.isRejected()) {
             return returnOrder;
         }
         validateTransitionForReverseApprove(returnOrder, context);
@@ -122,7 +122,7 @@ public class ErpSalReturnProcessor {
     public ErpSalReturn cancel(String returnId, IServiceContext context) {
         ErpSalReturn returnOrder = requireReturn(returnId, context);
         validateTransitionForCancel(returnOrder, context);
-        if (isApproved(returnOrder)) {
+        if (returnOrder.isApproved()) {
             ensureReversed(returnOrder, context);
             returnOrder = returnDao().getEntityById(returnId);
         }
@@ -356,24 +356,9 @@ public class ErpSalReturnProcessor {
     }
 
     protected void validateNotCancelled(ErpSalReturn returnOrder, IServiceContext context) {
-        String docStatus = returnOrder.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpSalConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(returnOrder, docStatus, "非已作废");
+        if (returnOrder.isCancelled()) {
+            throw illegalDocTransition(returnOrder, returnOrder.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isApproved(ErpSalReturn returnOrder) {
-        String status = returnOrder.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyApproved(ErpSalReturn returnOrder) {
-        return isApproved(returnOrder);
-    }
-
-    protected boolean isAlreadyRejected(ErpSalReturn returnOrder) {
-        String status = returnOrder.getApproveStatus();
-        return status != null && Objects.equals(status, ErpSalConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireLinesNonEmpty(ErpSalReturn returnOrder, IServiceContext context) {

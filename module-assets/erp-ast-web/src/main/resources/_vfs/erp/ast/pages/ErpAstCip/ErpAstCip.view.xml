@@ -13,7 +13,7 @@
                 <col id="businessDate" sortable="true"/>
                 <col id="accumulatedCost" sortable="true"/>
                 <col id="isCompleted" sortable="true"/>
-                <col id="completedAssetCode" label="转固资产编码"/>
+                <col id="completedAsset" label="转固资产编码"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="projectId" ui:number="true" sortable="true"/>
             </cols>

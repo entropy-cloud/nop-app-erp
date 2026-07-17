@@ -70,7 +70,7 @@ public class ErpPurOrderProcessor {
 
     public ErpPurOrder approve(String id, IServiceContext context) {
         ErpPurOrder order = requireOrder(id, context);
-        if (isAlreadyApproved(order)) {
+        if (order.isApproved()) {
             return order;
         }
         validateNotCancelled(order, context);
@@ -90,7 +90,7 @@ public class ErpPurOrderProcessor {
 
     public ErpPurOrder reverseApprove(String id, IServiceContext context) {
         ErpPurOrder order = requireOrder(id, context);
-        if (isAlreadyRejected(order)) {
+        if (order.isRejected()) {
             return order;
         }
         validateTransitionForReverseApprove(order, context);
@@ -259,24 +259,13 @@ public class ErpPurOrderProcessor {
     }
 
     protected void validateNotCancelled(ErpPurOrder order, IServiceContext context) {
-        String docStatus = order.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(order, docStatus, "非已作废");
+        if (order.isCancelled()) {
+            throw illegalDocTransition(order, order.getDocStatus(), "非已作废");
         }
     }
 
-    protected boolean isAlreadyApproved(ErpPurOrder order) {
-        String status = order.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpPurOrder order) {
-        String status = order.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED);
-    }
-
     protected void requireLinesNonEmpty(ErpPurOrder order, IServiceContext context) {
-        if (loadLines(order.getId()).isEmpty()) {
+        if (order.getLines().isEmpty()) {
             throw new NopException(ErpPurErrors.ERR_ORDER_LINES_EMPTY)
                     .param(ErpPurErrors.ARG_ORDER_CODE, order.getCode());
         }
@@ -294,11 +283,13 @@ public class ErpPurOrderProcessor {
         }
     }
 
-    protected List<ErpPurOrderLine> loadLines(Long orderId) {
-        IEntityDao<ErpPurOrderLine> dao = daoProvider.daoFor(ErpPurOrderLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orderId", orderId));
-        return new ArrayList<>(dao.findAllByQuery(q));
+    /**
+     * 通过 ORM to-many 关系 {@code ErpPurOrder.lines} 加载行（懒加载，复用主实体 session）。
+     * 取代 {@code daoFor(ErpPurOrderLine.class).findAllByQuery(eq("orderId", ...))}——
+     * 关系已在 {@code app-erp-purchase.orm.xml} 声明，无需重复查询。
+     */
+    protected List<ErpPurOrderLine> loadLines(ErpPurOrder order) {
+        return new ArrayList<>(order.getLines());
     }
 
     // ---------- misc helpers ----------

@@ -1,10 +1,15 @@
 package app.erp.inv.service;
 
+import app.erp.inv.dao.constants.ErpInvDocStatus;
+
 /**
  * 库存域状态码与作业类型常量。权威值来自 {@code module-inventory/model/app-erp-inventory.orm.xml}
  * 关联字典 {@code erp-inv/move-status} 与 {@code erp-inv/operation-type}。
+ *
+ * <p>{@code extends ErpInvDocStatus} 复用 dao 层 doc-status / approve-status 常量定义，
+ * 保持单一真相源；本接口仅追加 service 层独有的派生状态与配置项。
  */
-public interface ErpInvConstants {
+public interface ErpInvConstants extends ErpInvDocStatus {
 
     String CONFIG_ALLOW_NEGATIVE_STOCK = "erp-inv.allow-negative-stock";
 
@@ -44,11 +49,6 @@ public interface ErpInvConstants {
     // 追溯链 linkType 标识（TraceLink）
     String TRACE_LINK_FORWARD = "FORWARD";
     String TRACE_LINK_RETURN = "RETURN";
-
-    String DOC_STATUS_DRAFT = "DRAFT";
-    String DOC_STATUS_CONFIRMED = "CONFIRMED";
-    String DOC_STATUS_DONE = "DONE";
-    String DOC_STATUS_CANCELLED = "CANCELLED";
 
     String MOVE_TYPE_INCOMING = "INCOMING";
     String MOVE_TYPE_OUTGOING = "OUTGOING";

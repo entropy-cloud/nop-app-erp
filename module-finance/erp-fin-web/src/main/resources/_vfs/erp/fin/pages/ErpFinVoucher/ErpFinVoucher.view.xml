@@ -9,8 +9,6 @@
                 <col id="voucherType" mandatory="true" sortable="true"/>
                 <col id="voucherDate" mandatory="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="acctSchemaCode" label="账套"/>
-                <col id="periodCode" label="会计期间"/>
                 <col id="isReversed" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true"/>
             </cols>

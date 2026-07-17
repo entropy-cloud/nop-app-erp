@@ -77,7 +77,7 @@ public class ErpPurPaymentProcessor {
 
     public ErpPurPayment approve(String id, IServiceContext context) {
         ErpPurPayment payment = requirePayment(id, context);
-        if (isAlreadyApproved(payment)) {
+        if (payment.isApproved()) {
             return payment;
         }
         validateNotCancelled(payment, context);
@@ -100,7 +100,7 @@ public class ErpPurPaymentProcessor {
 
     public ErpPurPayment reverseApprove(String id, IServiceContext context) {
         ErpPurPayment payment = requirePayment(id, context);
-        if (isAlreadyRejected(payment)) {
+        if (payment.isRejected()) {
             return payment;
         }
         validateTransitionForReverseApprove(payment, context);
@@ -303,20 +303,9 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void validateNotCancelled(ErpPurPayment payment, IServiceContext context) {
-        String docStatus = payment.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(payment, docStatus, "非已作废");
+        if (payment.isCancelled()) {
+            throw illegalDocTransition(payment, payment.getDocStatus(), "非已作废");
         }
-    }
-
-    protected boolean isAlreadyApproved(ErpPurPayment payment) {
-        String status = payment.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpPurPayment payment) {
-        String status = payment.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED);
     }
 
     protected void requireSupplierActive(ErpPurPayment payment, IServiceContext context) {

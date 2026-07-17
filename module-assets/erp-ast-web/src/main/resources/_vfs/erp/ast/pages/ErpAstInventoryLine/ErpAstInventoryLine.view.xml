@@ -6,7 +6,7 @@
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="inventoryCode" label="盘点单编码"/>
+                <col id="inventory" label="盘点单编码"/>
                 <col id="orgId" label="所属组织"/>
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="assetCodeSnapshot" sortable="true"/>
@@ -16,9 +16,9 @@
                 <col id="actualQuantity" ui:number="true" sortable="true"/>
                 <col id="varianceQuantity" ui:number="true" sortable="true"/>
                 <col id="disposition" sortable="true"/>
-                <col id="newAssetCode" label="新增资产编码"/>
-                <col id="capitalizationCode" label="资本化单编码"/>
-                <col id="disposalCode" label="处置单编码"/>
+                <col id="newAsset" label="新增资产编码"/>
+                <col id="capitalization" label="资本化单编码"/>
+                <col id="disposal" label="处置单编码"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

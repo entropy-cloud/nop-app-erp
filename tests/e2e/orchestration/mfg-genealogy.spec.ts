@@ -10,6 +10,7 @@ import {
   MFG_EXPECT,
   SEED,
 } from './_helper';
+import { GraphQLClient } from '../pages';
 import type { Page } from '@playwright/test';
 
 /**
@@ -41,12 +42,9 @@ async function traceQuery(
   argName: string,
   lotId: number,
 ): Promise<any[]> {
-  const resp = await page.request.post('/graphql', {
-    data: {
-      query: `{ ErpMfgBatchGenealogy__${action}(${argName}:${lotId}){ id inputLotId outputLotId inputMaterialId outputMaterialId } }`,
-    },
-  });
-  const json: any = await resp.json();
+  const json: any = await new GraphQLClient(page).raw(
+    `{ ErpMfgBatchGenealogy__${action}(${argName}:${lotId}){ id inputLotId outputLotId inputMaterialId outputMaterialId } }`,
+  );
   expect(json?.errors, `ErpMfgBatchGenealogy__${action} should not return GraphQL errors`).toBeFalsy();
   return json?.data?.[`ErpMfgBatchGenealogy__${action}`] ?? [];
 }

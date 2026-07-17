@@ -8,8 +8,8 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="requesterDisplayName" label="申请人"/>
-                <col id="targetEmployeeDisplayName" label="目标员工"/>
+                <col id="requester" label="申请人"/>
+                <col id="targetEmployee" label="目标员工"/>
                 <col id="sourceAssignmentId" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="targetAssignmentId" ui:number="true" sortable="true"/>
                 <col id="swapDate" mandatory="true" sortable="true"/>

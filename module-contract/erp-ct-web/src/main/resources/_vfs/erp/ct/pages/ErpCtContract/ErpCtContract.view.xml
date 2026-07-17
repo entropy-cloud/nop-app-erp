@@ -7,7 +7,6 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="contractId" mandatory="true" sortable="true"/>
                 <col id="contractType" mandatory="true" sortable="true"/>
                 <col id="contractDirection" mandatory="true" sortable="true"/>
                 <col id="partnerId" label="合作方"/>

@@ -62,7 +62,7 @@ public class ErpInvCostAdjustProcessor {
 
     public ErpInvCostAdjust submitForApproval(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        validateNotCancelled(adjust);
+        validateNotCancelled(adjust, context);
         validateTransitionForSubmit(adjust);
         adjust.setApproveStatus(APPROVE_STATUS_SUBMITTED);
         adjustDao().updateEntity(adjust);
@@ -71,7 +71,7 @@ public class ErpInvCostAdjustProcessor {
 
     public ErpInvCostAdjust withdrawApproval(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        validateNotCancelled(adjust);
+        validateNotCancelled(adjust, context);
         validateTransitionForWithdraw(adjust);
         adjust.setApproveStatus(APPROVE_STATUS_UNSUBMITTED);
         adjustDao().updateEntity(adjust);
@@ -80,10 +80,10 @@ public class ErpInvCostAdjustProcessor {
 
     public ErpInvCostAdjust approve(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        if (isAlreadyApproved(adjust)) {
+        if (adjust.isApproved()) {
             return adjust;
         }
-        validateNotCancelled(adjust);
+        validateNotCancelled(adjust, context);
         validateTransitionForApprove(adjust);
         adjust.setApproveStatus(APPROVE_STATUS_APPROVED);
         adjust.setApprovedBy(currentUserId());
@@ -94,7 +94,7 @@ public class ErpInvCostAdjustProcessor {
 
     public ErpInvCostAdjust reject(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        validateNotCancelled(adjust);
+        validateNotCancelled(adjust, context);
         validateTransitionForReject(adjust);
         adjust.setApproveStatus(APPROVE_STATUS_REJECTED);
         adjustDao().updateEntity(adjust);
@@ -103,7 +103,7 @@ public class ErpInvCostAdjustProcessor {
 
     public ErpInvCostAdjust reverseApprove(String id, IServiceContext context) {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        if (isAlreadyRejected(adjust)) {
+        if (adjust.isRejected()) {
             return adjust;
         }
         validateTransitionForReverseApprove(adjust);
@@ -119,7 +119,7 @@ public class ErpInvCostAdjustProcessor {
 
     public ErpInvCostAdjust applyCostAdjust(Long id, IServiceContext context) {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        validateNotCancelled(adjust);
+        validateNotCancelled(adjust, context);
         if (Boolean.TRUE.equals(adjust.getPosted())) {
             throw new NopException(ErpInvErrors.ERR_COST_ADJUST_ALREADY_APPLIED)
                     .param(ErpInvErrors.ARG_ADJUST_CODE, adjust.getCode());
@@ -207,23 +207,14 @@ public class ErpInvCostAdjustProcessor {
         }
     }
 
-    protected void validateNotCancelled(ErpInvCostAdjust adjust) {
-        String docStatus = adjust.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpInvConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalTransition(adjust, docStatus, "非已取消");
+    protected void validateNotCancelled(ErpInvCostAdjust adjust, IServiceContext context) {
+        if (adjust.isCancelled()) {
+            throw illegalTransition(adjust, adjust.getDocStatus(), "非已取消");
         }
     }
 
     public boolean isApprovalRequired() {
         return AppConfig.var(ErpInvConstants.CONFIG_COST_ADJUST_APPROVAL, true);
-    }
-
-    protected boolean isAlreadyApproved(ErpInvCostAdjust adjust) {
-        return Objects.equals(adjust.getApproveStatus(), APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpInvCostAdjust adjust) {
-        return Objects.equals(adjust.getApproveStatus(), APPROVE_STATUS_REJECTED);
     }
 
     protected String currentApproveStatus(ErpInvCostAdjust adjust) {

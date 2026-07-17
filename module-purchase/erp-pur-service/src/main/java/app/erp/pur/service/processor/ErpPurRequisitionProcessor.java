@@ -61,7 +61,7 @@ public class ErpPurRequisitionProcessor {
 
     public ErpPurRequisition approve(String id, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(id, context);
-        if (isAlreadyApproved(req)) {
+        if (req.isApproved()) {
             return req;
         }
         validateNotCancelled(req, context);
@@ -80,7 +80,7 @@ public class ErpPurRequisitionProcessor {
 
     public ErpPurRequisition reverseApprove(String id, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(id, context);
-        if (isAlreadyRejected(req)) {
+        if (req.isRejected()) {
             return req;
         }
         validateTransitionForReverseApprove(req, context);
@@ -98,7 +98,7 @@ public class ErpPurRequisitionProcessor {
     public ErpPurOrder convertToOrder(String id, ConvertToOrderRequest request, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(id, context);
         validateApprovedForConversion(req, context);
-        List<ErpPurRequisitionLine> lines = loadLines(req.getId());
+        List<ErpPurRequisitionLine> lines = loadLines(req);
         validateLinesNonEmptyForConversion(req, lines, context);
         Long supplierId = validateConsistentSupplier(req, lines, context);
         validateNotAlreadyConverted(req.getId(), context);
@@ -254,34 +254,24 @@ public class ErpPurRequisitionProcessor {
     }
 
     protected void validateNotCancelled(ErpPurRequisition req, IServiceContext context) {
-        String docStatus = req.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(req, docStatus, "非已作废");
+        if (req.isCancelled()) {
+            throw illegalDocTransition(req, req.getDocStatus(), "非已作废");
         }
     }
 
-    protected boolean isAlreadyApproved(ErpPurRequisition req) {
-        String status = req.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED);
-    }
-
-    protected boolean isAlreadyRejected(ErpPurRequisition req) {
-        String status = req.getApproveStatus();
-        return status != null && Objects.equals(status, ErpPurConstants.APPROVE_STATUS_REJECTED);
-    }
-
     protected void requireLinesNonEmpty(ErpPurRequisition req, IServiceContext context) {
-        if (loadLines(req.getId()).isEmpty()) {
+        if (req.getLines().isEmpty()) {
             throw new NopException(ErpPurErrors.ERR_REQ_LINES_EMPTY)
                     .param(ErpPurErrors.ARG_REQUISITION_CODE, req.getCode());
         }
     }
 
-    protected List<ErpPurRequisitionLine> loadLines(Long requisitionId) {
-        IEntityDao<ErpPurRequisitionLine> dao = daoProvider.daoFor(ErpPurRequisitionLine.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("requisitionId", requisitionId));
-        return new ArrayList<>(dao.findAllByQuery(q));
+    /**
+     * 通过 ORM to-many 关系 {@code ErpPurRequisition.lines} 加载行（懒加载，复用主实体 session）。
+     * 关系已在 {@code app-erp-purchase.orm.xml} 声明。
+     */
+    protected List<ErpPurRequisitionLine> loadLines(ErpPurRequisition req) {
+        return new ArrayList<>(req.getLines());
     }
 
     // ---------- misc helpers ----------
