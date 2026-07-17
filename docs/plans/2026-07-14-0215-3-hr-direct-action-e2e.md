@@ -145,6 +145,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: `generateRotation`（轮换模式 JSON 序列 + 错峰）+ `assignBatch`（员工组×日期范围）+ 排班调换互换双方班次复杂度高。本计划仅覆盖休假审批+考勤打卡基础状态机。
 - Successor Required: `yes`（触发条件：排班深度编排浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-18-0100-1**：触发条件已满足（项目阶段「各域细化端到端验证」+ 排班 4 实体浏览器层零覆盖）。3 spec 11 测试已交付（`hr-shift-assignment` 5 + `hr-shift-rotation` 2 + `hr-shift-swap` 4），覆盖 assignSingle/assignBatch/copyFromPeriod/calcAttendance/generateRotation(regenerate=true/false)/swap submit/approve/reject/cancel + 双向 shiftId 交换 + swapRequestId/replacedByAssignmentId 双向回链 + 非法状态守卫 + 重复 submit 不抛守卫。
 
 ### 胜任力评估 / 差距分析 / 发展计划 / 员工调动 E2E
 
