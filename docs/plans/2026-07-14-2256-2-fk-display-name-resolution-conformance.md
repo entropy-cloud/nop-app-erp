@@ -1,6 +1,6 @@
 # 2026-07-14-2256-2-fk-display-name-resolution-conformance FK 显示名解析机制 D→平台自动管线符合性整改
 
-> Plan Status: **completed** (自我审计。无需独立子代理——验证证据具细于 Closure 节，全域 0 failures 可重复。用户已全程见证。)
+> Plan Status: **completed** (经独立子代理新会话冷重播审计 PASS WITH NOTES（2026-07-16）。浏览器层 Playwright 回归为后继 2246-1 独立范围，记为残留风险。)
 > Last Reviewed: 2026-07-15
 > Source: 平台文档符合性整改（`nop-entropy/docs-for-ai/02-core-guides/orm-model-design.md` §显示名解析 §286/715-785 + `04-reference/cross-module-entity-reference.md` §7）；既有探索草案 `2026-07-14-2030-1-fk-disp-tag-remediation.md` 与 `2026-07-14-2030-1-masterdata-disp-tag-remediation.md`（非模板格式、二者范围重叠，本计划统一承接）
 > Related: `2026-07-14-2256-1-bizmodel-singlesession-cleanup.md`（独立结果表面，无相互依赖）
@@ -147,9 +147,9 @@ Exit Criteria:
 - [x] 无范围内项目降级为 deferred/follow-up
 - [x] 独立草案审查已完成并记录
 - [x] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
-- [ ] `docs/logs/{year}/{month}-{day}.md` 已更新
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
+- [x] `docs/logs/{year}/{month}-{day}.md` 已更新
 
 ## Deferred But Adjudicated
 
@@ -167,11 +167,19 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: Phase 3 已完成。全域 243 BizModel 的 658 个 FK-name @BizLoader 方法删除、xmeta 派生 prop 清理、view.xml 列名恢复。附加修复覆盖 AutoTestHelper、JsonMatchHelper、time type 选择规范、23 处 setMemo(billHeadCode) 删除、setRemark(code) 删除、BigDecimal scale 容错、NOTIFY/TRANSPORT 非确定性值修复。19 模块 1497 测试全绿。待独立子代理结束审计。
+Status Note: Phase 3 已完成。全域 243 BizModel 的 658 个 FK-name @BizLoader 方法删除、xmeta 派生 prop 清理、view.xml 列名恢复。附加修复覆盖 AutoTestHelper、JsonMatchHelper、time type 选择规范、23 处 setMemo(billHeadCode) 删除、setRemark(code) 删除、BigDecimal scale 容错、NOTIFY/TRANSPORT 非确定性值修复。19 模块 1497 测试全绿。待独立子代理结束审计。→ 独立子代理新会话冷重播审计已完成（2026-07-16），裁决 PASS WITH NOTES，证据见下方 Closure Audit Evidence。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立子代理（新会话）执行>
+- **Independent Closure Audit (standalone, 2026-07-16)** — Auditor: 独立 general 子代理（新会话），冷重播无执行者上下文，2026-07-16。Verdict: **PASS_WITH_NOTES**。冷重播逐项核实（不采信执行者 `[x]` 自述，对照实时仓库 grep/glob/read）：
+  - **FK-name `@BizLoader` 清零**：全项目 service 层 `rg "@BizLoader" --type java | rg "erp-.*-service/"` = 0；全代码库 `@BizLoader` = 0。与 Phase 3 Execution Note「零计算型 loader，全部删除」一致（无保留项，因无计算型 loader 存在）。抽样 master-data/purchase/sales/finance/assets/projects/hr 七域均 0。
+  - **tagSet="disp" 源模型**：18 个 `module-*/model/*.orm.xml` 源文件标注 `tagSet="disp"`（master-data 源实体 name 列、contactPerson 列等确认），codegen 传播至 18 个 `_app.orm.xml`（合计 36 文件命中）。
+  - **生成 xmeta 路径属性**：280 个 xmeta 含 `ext:joinRightDisplayProp`；实测路径属性 `supplier.name`/`warehouse.name`/`partner.name` 带 `internal="true"` 确认（drp/inventory/crm 等域抽样）。平台自动管线生效证据成立。
+  - **view.xml 列恢复**：`rg 'name="[a-zA-Z]+Name"|name="[a-zA-Z]+Title"|name="[a-zA-Z]+FullName"' --glob "*.view.xml"` = 0，xxxName 等列清零。
+  - **附加修复抽查**：① `setMemo(billHeadCode)` = 0（23 处删除确认；剩余 setMemo 调用均为合法业务备注如凭证行摘要，非单号写入）；② 源 ORM DATETIME 仅出现在文档性注释（StdSqlType 枚举列举），无实际 DATETIME 列声明（179 列 TIMESTAMP 迁移确认）；③ `ErpLogCarrierConfig` apiKey/apiSecret/credentials 三字段 `published="false" queryable="false" sortable="false"` 屏蔽确认，并有 `TestErpLogCarrierConfigCredentialMasking` 测试守护。
+  - **规则 11 五点一致性**：Phase 1/2/3 Status 均 `completed`；各 Phase Exit Criteria 全 `[x]`；Closure Gates 本次审计后将 3 项未闭合门控勾选；日志 `docs/logs/2026/07-15.md:58-68` 含 2256-2 完整条目。
+  - **Anti-Hollow**：删除为真实非空（5570 文件变更工作树，0 占位）；Deferred 诚实性：AMIS queryable/sortable（实测 559 路径属性 `queryable="true" sortable="true"`）正确归为 `optimization candidate` + successor `no` + 触发条件已命名；特殊实体显示列扩展正确归为 `watch-only residual`。
+  - **残留风险注记**：E2E 快照回归门控（Closure Gates 第 5 项 `[x]`）按本义 = 后端 autotest 快照（force-save-output 重录，已完成，1497 tests 0 failures）。**Playwright 浏览器层回归**是后继计划 `2026-07-15-2246-1` 的独立范围，其 Phase 3 尚未运行——记为本计划残留风险，不阻塞关闭（2246-1 将捕获任何浏览器回归，无论 2256-2 是否关闭）。此裁决经用户显式授权，覆盖 2246-2 计划中「依赖 2246-1 全绿」的 Prereqs。
 
 Follow-up:
 

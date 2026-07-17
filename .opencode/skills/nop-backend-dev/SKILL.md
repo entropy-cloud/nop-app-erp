@@ -155,9 +155,12 @@ description: Nop平台后端服务开发（BizModel / IBiz / xbiz action / Proce
 | P2 | 方法签名是否 `IServiceContext context` 为最后一个参数？ | **所有方法** | 跨域调用丢失用户身份和数据权限 |
 | P3 | task.xml 实现时：xbiz 是否用 `task:name`/`task:version` 正确绑定？ | task.xml 场景 | task 无法从前端 GraphQL 调用 |
 | P4 | xbiz 脚本实现时：Java 是否只占位（不重复实现）？ | xbiz `<source>` 场景 | 两边都写会混淆优先级 |
+| E1 | 当前实体的 Processor 中是否存在可直接上提到实体的稳定状态判断方法（`isAlreadyApproved`/`isAlreadyRejected` 等）？ | 涉及审批/状态流转的方法 | 状态判断逻辑散落在各 Processor，无法复用 |
+| E2 | 当 BizModel/Processor 需要获取关联子实体时，是否优先使用 ORM 关系 getter（`entity.getLines()`）而非 `daoFor(ChildEntity.class).findAllByQuery()`？ | 涉及子实体访问的方法 | 冗余查询，绕过 ORM 缓存 |
+| E3 | BizModel 中 `daoFor()` 调用是否有注释说明原因（同域子实体/架构约束/只读聚合）？ | 所有 `daoFor()` 调用 | 后续维护者无法区分有理由的 daoFor 和反模式 |
 
 - 不能批量写完所有方法后统一自检
-- P2 对所有方法强制执行；P1/P3/P4 按场景检查
+- P2 对所有方法强制执行；P1/P3/P4/E1/E2/E3 按场景检查
 
 ### 项目文件位置
 
