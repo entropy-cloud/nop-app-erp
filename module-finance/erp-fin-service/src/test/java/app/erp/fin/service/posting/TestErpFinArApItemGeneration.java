@@ -204,6 +204,52 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
+    /**
+     * 回归：长 sourceBillType（{@code NOTES_RECEIVABLE}=17）+ 长 sourceBillCode 组合。
+     * 修复前 {@code buildCode} 产出 {@code 4+17+1+len(code)+1+8 = 31+len(code)}，当 {@code len(code)>19}
+     * 即超过 {@code voucherCode} precision 50 → {@code sqlState=22001} 字符串右截断 → 过账吞异常 {@code posted=false}。
+     * 修复后断言：过账成功、辅助账 1 条 + OPEN、{@code code.length()<=50}、幂等不重复生成。
+     *
+     * <p>覆盖 {@code resolveProfile} 最长 sourceBillType 分支之一（{@code NOTES_RECEIVABLE_RECEIVED}）。
+     */
+    @Test
+    public void testLongSourceBillCodeDoesNotOverflowVoucherCodePrecision() {
+        LocalDate voucherDate = LocalDate.of(2026, 6, 20);
+        // 28 字符 note.code（确定性字面量，非随机）：> 19 字符溢出阈值 → 修复前 total = 31+28 = 59 > 50。
+        String longNoteCode = "E2E-NR-LONGCODE-20260717-001";
+        assertEquals(28, longNoteCode.length(), "长码字面量长度自检");
+        assertTrue(31 + longNoteCode.length() > 50,
+                "前置：该长码在修复前会溢出 voucherCode precision 50");
+
+        seed(() -> {
+            seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30));
+            seedSubject("1121", "应收票据");
+            seedSubject("1122", "应收账款");
+            seedNotesReceivableReceivedTemplate();
+        });
+
+        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(
+                notesReceivableEvent(longNoteCode, voucherDate, 5L, new BigDecimal("10000")), CTX));
+        assertNotNull(voucherId, "过账成功（未吞 22001 截断异常）");
+        output("1_voucher_id.json5", voucherId);
+
+        List<ErpFinArApItem> items = findItems("NOTES_RECEIVABLE", longNoteCode);
+        assertEquals(1, items.size(), "NOTES_RECEIVABLE 过账应生成 1 条应收辅助账项");
+        ErpFinArApItem item = items.get(0);
+        assertEquals(ErpFinConstants.DIRECTION_RECEIVABLE, item.getDirection(), "方向=应收");
+        assertEquals(ErpFinConstants.AR_AP_STATUS_OPEN, item.getStatus(), "状态=未核销");
+        assertTrue(item.getCode().length() <= 50,
+                "辅助账 code 长度 ≤ voucherCode precision 50，实际=" + item.getCode().length());
+        output("2_ar_ap_item.json5", arApItemState(item));
+
+        // 幂等：同 sourceBillCode 再过账不产生第二条且不抛异常。
+        ormTemplate.runInSession(session -> voucherBiz.post(
+                notesReceivableEvent(longNoteCode, voucherDate, 5L, new BigDecimal("10000")), CTX));
+        List<ErpFinArApItem> itemsAfterDup = findItems("NOTES_RECEIVABLE", longNoteCode);
+        assertEquals(1, itemsAfterDup.size(), "幂等：重复过账不应重复生成辅助账项");
+        output("3_items_count_after_dup.json5", itemsAfterDup.size());
+    }
+
     private java.util.Map<String, Object> arApItemState(ErpFinArApItem it) {
         java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
         m.put("id", it.getId());
@@ -239,6 +285,22 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         return event;
     }
 
+    private PostingEvent notesReceivableEvent(String billHeadCode, LocalDate voucherDate, long partnerId,
+                                              BigDecimal faceAmount) {
+        PostingEvent event = new PostingEvent();
+        event.setBusinessType(ErpFinBusinessType.NOTES_RECEIVABLE_RECEIVED);
+        event.setBillHeadCode(billHeadCode);
+        event.setAcctSchemaId(1L);
+        event.setOrgId(1L);
+        event.setCurrencyId(1L);
+        event.setExchangeRate(BigDecimal.ONE);
+        event.setVoucherDate(voucherDate);
+        event.getBillData().put("partnerId", partnerId);
+        event.getBillData().put("FACE_AMOUNT", faceAmount);
+        event.getBillData().put("businessDate", voucherDate);
+        return event;
+    }
+
     private void seedApInvoiceTemplate() {
         IEntityDao<ErpFinVoucherTemplate> dao = daoProvider.daoFor(ErpFinVoucherTemplate.class);
         ErpFinVoucherTemplate tpl = new ErpFinVoucherTemplate();
@@ -252,6 +314,20 @@ public class TestErpFinArApItemGeneration extends JunitAutoTestCase {
         lineDao.saveEntity(tplLine(tpl.getId(), 1, "6602", DC_DEBIT, "AMOUNT"));
         lineDao.saveEntity(tplLine(tpl.getId(), 2, "2221", DC_DEBIT, "TAX"));
         lineDao.saveEntity(tplLine(tpl.getId(), 3, "2202", DC_CREDIT, "TOTAL"));
+    }
+
+    private void seedNotesReceivableReceivedTemplate() {
+        IEntityDao<ErpFinVoucherTemplate> dao = daoProvider.daoFor(ErpFinVoucherTemplate.class);
+        ErpFinVoucherTemplate tpl = new ErpFinVoucherTemplate();
+        tpl.setCode("TPL-NR-RECEIVED");
+        tpl.setName("应收票据收到模板");
+        tpl.setBusinessType(ErpFinBusinessType.NOTES_RECEIVABLE_RECEIVED.name());
+        tpl.setVoucherType(VOUCHER_TYPE_TRANSFER);
+        tpl.setIsActive(true);
+        dao.saveEntity(tpl);
+        IEntityDao<ErpFinVoucherTemplateLine> lineDao = daoProvider.daoFor(ErpFinVoucherTemplateLine.class);
+        lineDao.saveEntity(tplLine(tpl.getId(), 1, "1121", DC_DEBIT, "FACE_AMOUNT"));
+        lineDao.saveEntity(tplLine(tpl.getId(), 2, "1122", DC_CREDIT, "FACE_AMOUNT"));
     }
 
     private void seedReceiptTemplate() {

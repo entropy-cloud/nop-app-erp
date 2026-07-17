@@ -41,6 +41,19 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ErpFinArApItemGenerator {
 
+    /**
+     * 辅助账 code 总长上限，对齐 {@code module-finance/model/app-erp-finance.orm.xml} domain
+     * {@code voucherCode} precision=50（{@link ErpFinArApItem#getCode() code} 列绑该 domain）。
+     * 生成器为 DAG 顶，不反向依赖 ORM domain 元数据 API，故在此持有常量而非运行时读取 precision。
+     */
+    protected static final int AR_AP_ITEM_CODE_MAX_LENGTH = 50;
+
+    /**
+     * 超限路径追加的 MD5 摘要长度（hex 字符）。保留全长 sourceBillCode 指纹，使两条不同长码即使头部相同
+     * 也不退化为同一 code（可追溯）；全局唯一性兜底由 {@code uuid8} 保证。
+     */
+    private static final int AR_AP_ITEM_HASH_SUFFIX_LENGTH = 4;
+
     @Inject
     IDaoProvider daoProvider;
 
@@ -189,9 +202,31 @@ public class ErpFinArApItemGenerator {
         return dao.findAllByQuery(q);
     }
 
+    /**
+     * 生成辅助账 code。短码（拼接结果 ≤ {@link #AR_AP_ITEM_CODE_MAX_LENGTH}）路径保持原拼接
+     * {@code "ARI-" + sourceBillType + "-" + sourceBillCode + "-" + uuid8} 逐字符不变；
+     * 超限时进入截断 + 哈希摘要分支：优先保留 {@code "ARI-" + sourceBillType + uuid8} 固定段不截断
+     * （sourceBillType 最长 {@code OWNERSHIP_TRANSFER}=18 → 固定段最坏 4+18+2+8=32 &lt; 50，
+     * 留 ≥18 给 sourceBillCode 压缩段），对 sourceBillCode 段截取头部并追加 MD5 前 4 hex 摘要。
+     *
+     * <p>覆盖 {@code resolveProfile} 全分支：任意 sourceBillType + 任意长度 sourceBillCode 均返回
+     * ≤ {@link #AR_AP_ITEM_CODE_MAX_LENGTH}，消除 voucherCode precision 50 的字符串右截断（sqlState=22001）
+     * latent defect。
+     */
     protected String buildCode(String sourceBillType, String sourceBillCode) {
-        return "ARI-" + sourceBillType + "-" + (sourceBillCode != null ? sourceBillCode : "")
-                + "-" + StringHelper.generateUUID().substring(0, 8);
+        String safeCode = sourceBillCode != null ? sourceBillCode : "";
+        String uuid8 = StringHelper.generateUUID().substring(0, 8);
+        String code = "ARI-" + sourceBillType + "-" + safeCode + "-" + uuid8;
+        if (code.length() <= AR_AP_ITEM_CODE_MAX_LENGTH) {
+            return code;
+        }
+        // 固定段 = "ARI-"(4) + sourceBillType + 两个 "-" 分隔符 + uuid8(8)；剩余预算给 sourceBillCode 压缩段。
+        int budget = AR_AP_ITEM_CODE_MAX_LENGTH
+                - "ARI-".length() - sourceBillType.length() - 2 - uuid8.length();
+        int headLen = Math.max(0, budget - AR_AP_ITEM_HASH_SUFFIX_LENGTH);
+        String head = headLen > 0 ? safeCode.substring(0, Math.min(headLen, safeCode.length())) : "";
+        String hash = StringHelper.md5Hash(safeCode).substring(0, AR_AP_ITEM_HASH_SUFFIX_LENGTH);
+        return "ARI-" + sourceBillType + "-" + head + hash + "-" + uuid8;
     }
 
     /**
