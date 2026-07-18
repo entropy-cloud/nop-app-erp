@@ -158,6 +158,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 0305-2 裁定 SPC 计算引擎仅实现计量型（X_BAR_R/X_BAR_S/X_MR），计数型聚合算法未落地；本计划控制图仅渲染计量型样本均值。计数型渲染依赖计数型计算引擎先落地。
 - Successor Required: `yes`（触发条件：计数型 SPC 计算引擎落地时）
+- **RELEASED by 2026-07-19-0120-2**：计数型 SPC 计算引擎已落地（`AttributesControlLimitFormulas` 4 公式 + `SpcControlLimitCalculator.recalculate` chartType 分支 + `SpcSamplingService.collectSamples` 计数型聚合 + `ErpQaSpcSample.defectCount/inspectedCount` 加性 2 列 + `ErpQaDashboardBizModel.getSpcControlChartData` per-sample defectRate/defectCount/inspectedCount 加性字段 + 看板 page.yaml `spcControlChart` chartType 字符串值分支渲染缺陷率纵轴 + 4 计数型 chart 种子 + 20 子组 sample 种子 + JUnit 12 用例 + E2E 2 spec 8 用例）。
 
 ### CRP 工作中心甘特视图 / 精确费率拆分
 

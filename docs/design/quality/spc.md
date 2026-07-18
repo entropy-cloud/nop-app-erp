@@ -19,7 +19,7 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 | 字段 | 含义 |
 |---|---|
 | id/code/name/orgId | 标准 |
-| chartType | 图类型 dict `erp-qa/spc-chart-type`:X_BAR_R=10/X_BAR_S=20/X_MR=30/P=40/NP=50/C=60/U=70 |
+| chartType | 图类型 dict `erp-qa/spc-chart-type`:X_BAR_R/X_BAR_S/X_MR/P/NP/C/U（**字符串枚举值**，对齐 `module-quality/erp-qa-meta/src/main/resources/_vfs/dict/erp-qa/spc-chart-type.dict.yaml valueType=string`，plan 2026-07-19-0120-2 修正原数字编码标注） |
 | materialId | 物料(→ErpMdMaterial notGenCode) |
 | inspectionTypeId | 关联质检模板 |
 | parameterId | 关键检验参数(被控质量特性,→ErpQaInspectionTemplateLine) |
@@ -46,6 +46,8 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 | mean | 子组均值 X̄(计算字段) |
 | range | 子组极差 R(max−min) |
 | stdDev | 子组标准差 s |
+| defectCount | 缺陷数(计数型 P/NP/C/U；计量型 chart 此字段为 null。plan 2026-07-19-0120-2) |
+| inspectedCount | 检验数(计数型 P/NP/C/U；计量型 chart 此字段为 null。plan 2026-07-19-0120-2) |
 | sourceBillType/sourceCode/sourceLineCode | 数据来源三元组(反查 ErpQaInspection/ErpQaInspectionLine,凭证指针模式) |
 | inspectorId | 检验员(→ErpMdEmployee) |
 | violatedRules | 本子组违反的判异规则(如 "1,2",空表示受控) |
@@ -79,6 +81,15 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 1. **数据采集**:定时任务(依赖 nop-job)扫描 ErpQaInspectionLine 中已审核(ApproveStatus=APPROVED)且对应 templateLine 命中 SPC chart.parameterId 的记录,按 chart.subgroupSize 与 samplingFrequency 聚合成 ErpQaSpcSample。聚合用业务单号三元组反查,不重复存原始值。
 
 2. **控制图计算**:样本数≥20 子组后触发重算 chart.ucl/lcl/cl 与每个 sample.violatedRules/isOutOfControl。控制限系数 d2/D3/D4 等按 subgroupSize 内置常量表。
+
+   **计量型实现注记**（X_BAR_R/X_BAR_S/X_MR，plan 2026-07-07-0305-2 Phase 2）：`SpcControlLimitCalculator.recalculate` 按 X̄̄-R 范式计算 grandMean = mean(sample.mean), sigmaHat = R̄/d2, UCL/LCL = cl ± 3σ̂；clCenterType 三分支（AUTO_FROM_DATA=grandMean / MANUAL=chart.cl 当前值 / TARGET=(specMin+specMax)/2 规格中值）。
+
+   **计数型实现注记**（P/NP/C/U，plan 2026-07-19-0120-2）：`SpcControlLimitCalculator.recalculate` 按 chartType 字符串值分支调 `AttributesControlLimitFormulas` 对应公式——
+   - **P 图**：CL=p̄=Σdᵢ/Σnᵢ，UCL/LCL=p̄±3√(p̄(1−p̄)/n̄)，n̄=平均 inspectedCount；
+   - **NP 图**：CL=n·p̄，UCL/LCL=n·p̄±3√(n·p̄(1−p̄))；
+   - **C 图**：CL=c̄=Σcᵢ/k，UCL/LCL=c̄±3√c̄；
+   - **U 图**：CL=ū=Σcᵢ/Σnᵢ，UCL/LCL=ū±3√(ū/n̄)；
+   - 负数下限钳到 0（CL−3σ < 0 时 lcl=0，行业标准——缺陷率/数下界 ≥ 0）；clCenterType 不适用计数型（CL 为统计均值）。计数型采样：P/NP 从 ErpQaInspectionLine 按 result=REJECTED 计数 defectCount + line 总数作 inspectedCount；C/U 从 ErpQaNonConformance 按 sourceType=INSPECTION + inspectionId 反查 quantity 累计 defectCount + inspection 数作 inspectedCount。计数型能力指数保守降级（Phase 1 Decision (a)）：cap.cp/cpk/pp/ppk/cpm 全 null，capabilityLevel=null，仅算 grandMean/overallStdDev 按 defectRate 序列供参考。
 
 3. **失控预警**:sample.isOutOfControl=true 时,事件驱动(模式 B,post-commit)创建 ErpQaNonConformance(sourceType=SPC,severity 按 violatedRules 映射),并按 chart.ruleSet 创建 ErpQaAction(actionType=CAPA)。NCR→Action 的级联已在现有 orm 中存在(ErpQaNonConformance.actions to-many cascade-delete)。
 
