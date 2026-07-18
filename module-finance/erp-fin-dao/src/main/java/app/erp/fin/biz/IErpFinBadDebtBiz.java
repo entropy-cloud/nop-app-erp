@@ -7,6 +7,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import app.erp.fin.dao.dto.BadDebtProvisionResult;
+import app.erp.fin.dao.dto.BadDebtProvisionReversalResult;
 import app.erp.fin.dao.entity.ErpFinBadDebt;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.math.BigDecimal;
  *   <li>{@link #writeOff} / {@link #recover} —— 创建核销/恢复坏账单（审批门控）</li>
  *   <li>{@link #submit} / {@link #approve} / {@link #reject} —— 三轴审批状态机</li>
  *   <li>{@link #runBadDebtProvision} —— 期末账龄分桶法计提/释放（必需准备 vs Allowance 账面）</li>
+ *   <li>{@link #reverseBadDebtProvision} —— 反向坏账准备计提/释放红冲闭环（plan 2026-07-18-2251-2）</li>
  * </ul>
  *
  * <p>Facade 仅负责入口/事务/委托；编排（审批状态机 + ArApItem 变异 + 凭证生成）委托
@@ -70,4 +72,21 @@ public interface IErpFinBadDebtBiz extends ICrudBiz<ErpFinBadDebt> {
      */
     @BizMutation
     BadDebtProvisionResult runBadDebtProvision(@Name("periodId") Long periodId, IServiceContext context);
+
+    /**
+     * 反向坏账准备计提/释放红冲闭环（{@code bad-debt.md §步骤2b 反向红冲}，plan 2026-07-18-2251-2）。
+     *
+     * <p>反向指定期间全部 BAD_DEBT_RESERVE/RELEASE 已过账未冲销 NORMAL 凭证（覆盖多次 {@link #runBadDebtProvision}
+     * 累积——{@code CloseVoucherWriter} 无幂等检查，多次调用累积多张凭证）→ 调
+     * {@code FinPostingExecutor.reverse(billCode, businessType)} 原子红冲。
+     *
+     * <p>守卫：(1) period.status=CLOSED_FINAL 抛 {@code ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED}；
+     * (2) 未找到任何 BAD_DEBT_RESERVE/RELEASE 已过账未冲销凭证抛 {@code ERR_BAD_DEBT_PROVISION_NOT_FOUND}。
+     *
+     * <p>对称 {@link #runBadDebtProvision}：单 periodId 入参；返回 {@link BadDebtProvisionReversalResult}
+     * 含红冲凭证数量 + 反向金额合计。反向后调用方可再调 {@link #runBadDebtProvision} 重提
+     * （{@code getAllowanceBalance} 基于红冲后状态重算）。
+     */
+    @BizMutation
+    BadDebtProvisionReversalResult reverseBadDebtProvision(@Name("periodId") Long periodId, IServiceContext context);
 }

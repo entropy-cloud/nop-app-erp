@@ -2,9 +2,11 @@ package app.erp.fin.service.baddebt;
 
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.dto.BadDebtProvisionResult;
+import app.erp.fin.dao.dto.BadDebtProvisionReversalResult;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinVoucher;
+import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdCurrency;
@@ -13,6 +15,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.close.CloseVoucherWriter;
 import app.erp.fin.service.close.CloseVoucherWriter.Line;
+import app.erp.fin.service.posting.FinPostingExecutor;
 import app.erp.fin.service.posting.SchemaPropagator;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -22,10 +25,13 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.isNull;
@@ -34,7 +40,7 @@ import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
- * 坏账准备期末计提/释放服务（{@code bad-debt.md §步骤2 计提 / §步骤5 释放}）。
+ * 坏账准备期末计提/释放服务（{@code bad-debt.md §步骤2 计提 / §步骤5 释放 / §步骤2b 反向红冲}）。
  *
  * <p>{@link #runBadDebtProvision(Long, IServiceContext)} 作为期末计提/释放入口：
  * <ol>
@@ -44,6 +50,10 @@ import static io.nop.api.core.beans.FilterBeans.or;
  *   <li>必需 &lt; 账面 → 释放 BAD_DEBT_RELEASE（借坏账准备/贷信用减值损失）</li>
  *   <li>精度内相等 → 无动作</li>
  * </ol>
+ *
+ * <p>{@link #reverseBadDebtProvision(Long, IServiceContext)} 为反向红冲入口（plan 2026-07-18-2251-2）：
+ * 按 {@code ErpFinVoucherBillR} 反查指定期间全部 BAD_DEBT_RESERVE/RELEASE 已过账未冲销 NORMAL 凭证 →
+ * 调 {@link FinPostingExecutor#reverse} 原子红冲。
  *
  * <p>计提是期间估计批量动作（设计 Decision：无审批）；释放直接 P&L 影响，期末门控仅提示，
  * 实际释放由财务主管经本入口审批后执行（本计划范围内释放随计提批量，审批门控为 follow-up 接线点）。
@@ -64,6 +74,9 @@ public class BadDebtProvisionService {
     @Inject
     SchemaPropagator schemaPropagator;
 
+    @Inject
+    FinPostingExecutor finPostingExecutor;
+
     /**
      * 期末计提/释放入口。返回结果含必需准备、Allowance 账面、动作与凭证 ID。
      *
@@ -78,6 +91,103 @@ public class BadDebtProvisionService {
             lastResult = runBadDebtProvisionForSchema(period, schemaId, context);
         }
         return lastResult;
+    }
+
+    /**
+     * 反向坏账准备计提/释放入口（{@code bad-debt.md §步骤2b 反向红冲}，plan 2026-07-18-2251-2）。
+     *
+     * <p>经 {@link ErpFinVoucherBillR} 反查该期间全部 BAD_DEBT_RESERVE/RELEASE 凭证（按
+     * {@code BAD_DEBT_RESERVE_BILL_CODE_PREFIX + period.code} / {@code BAD_DEBT_RELEASE_BILL_CODE_PREFIX + period.code}
+     * 完全匹配——{@code CloseVoucherWriter.writeVoucher} 实测 billCode 确定性派生无 UUID 后缀）→
+     * 过滤未冲销 NORMAL 凭证 → 按 (billCode, businessType) 调一次 {@link FinPostingExecutor#reverse}：
+     * 平台 {@code ErpFinPostingProcessor.reverseProcess} 内部循环反查的全部未冲销凭证原子红冲 +
+     * {@code markOriginalVoucherReversed} 补标 isReversed=true（参 Phase 1 Decision (a)）。
+     *
+     * <p>守卫：(1) period 不存在抛 {@code ERR_PERIOD_NOT_FOUND}；(2) period.status=CLOSED_FINAL 抛
+     * {@code ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED}；(3) 未找到任何 BAD_DEBT_RESERVE/RELEASE
+     * 已过账未冲销凭证抛 {@code ERR_BAD_DEBT_PROVISION_NOT_FOUND}。
+     *
+     * <p>事务边界：跟随 Facade {@code @BizMutation} 事务，本方法不带 {@code @Transactional}；
+     * 任一 billCode 红冲失败抛 NopException 触发事务回滚（强一致：反审核为补救路径，须保证无残留半状态——
+     * 参 Phase 2 §执行期注意 Decision (b)，对齐 {@code ErpFinBadDebtProcessor.reverseApprove} 范式）。
+     *
+     * @return 反向结果（含红冲凭证数量 + 反向金额合计，按 BDR/BDL 方向拆分）
+     */
+    public BadDebtProvisionReversalResult reverseBadDebtProvision(Long periodId, IServiceContext context) {
+        ErpFinAccountingPeriod period = requirePeriod(periodId);
+
+        if (Objects.equals(period.getStatus(), ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL)) {
+            throw new NopException(ErpFinErrors.ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED)
+                    .param(ErpFinErrors.ARG_PERIOD_ID, periodId)
+                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode());
+        }
+
+        String reserveBillCode = ErpFinConstants.BAD_DEBT_RESERVE_BILL_CODE_PREFIX + period.getCode();
+        String releaseBillCode = ErpFinConstants.BAD_DEBT_RELEASE_BILL_CODE_PREFIX + period.getCode();
+
+        List<ErpFinVoucher> reserveVouchers = findUnreversedProvisionVouchers(reserveBillCode, ErpFinBusinessType.BAD_DEBT_RESERVE);
+        List<ErpFinVoucher> releaseVouchers = findUnreversedProvisionVouchers(releaseBillCode, ErpFinBusinessType.BAD_DEBT_RELEASE);
+
+        if (reserveVouchers.isEmpty() && releaseVouchers.isEmpty()) {
+            throw new NopException(ErpFinErrors.ERR_BAD_DEBT_PROVISION_NOT_FOUND)
+                    .param(ErpFinErrors.ARG_PERIOD_ID, periodId)
+                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode());
+        }
+
+        BigDecimal reversedReserveAmount = sumVoucherAmount(reserveVouchers);
+        BigDecimal reversedReleaseAmount = sumVoucherAmount(releaseVouchers);
+
+        if (!reserveVouchers.isEmpty()) {
+            finPostingExecutor.reverse(reserveBillCode, ErpFinBusinessType.BAD_DEBT_RESERVE);
+        }
+        if (!releaseVouchers.isEmpty()) {
+            finPostingExecutor.reverse(releaseBillCode, ErpFinBusinessType.BAD_DEBT_RELEASE);
+        }
+
+        BadDebtProvisionReversalResult result = new BadDebtProvisionReversalResult();
+        result.setPeriodId(periodId);
+        result.setPeriodCode(period.getCode());
+        result.setReversedReserveCount(reserveVouchers.size());
+        result.setReversedReleaseCount(releaseVouchers.size());
+        result.setReversedReserveAmount(reversedReserveAmount);
+        result.setReversedReleaseAmount(reversedReleaseAmount);
+        return result;
+    }
+
+    /**
+     * 按 (billCode, businessType) 反查 {@link ErpFinVoucherBillR} 关联的已过账未冲销 NORMAL 凭证
+     * （过滤条件对齐 {@code ErpFinPostingProcessor.findAllPostedVouchers}）。
+     */
+    public List<ErpFinVoucher> findUnreversedProvisionVouchers(String billCode, ErpFinBusinessType businessType) {
+        IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(
+                eq("billCode", billCode),
+                eq("businessType", businessType.name())
+        ));
+        List<ErpFinVoucherBillR> links = linkDao.findAllByQuery(q);
+        IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
+        List<ErpFinVoucher> result = new ArrayList<>();
+        for (ErpFinVoucherBillR link : links) {
+            ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
+            if (voucher != null
+                    && ErpFinConstants.VOUCHER_STATUS_POSTED.equals(voucher.getDocStatus())
+                    && !Boolean.TRUE.equals(voucher.getIsReversed())
+                    && (voucher.getPostingType() == null
+                        || Objects.equals(voucher.getPostingType(), ErpFinConstants.POSTING_TYPE_NORMAL))) {
+                result.add(voucher);
+            }
+        }
+        return result;
+    }
+
+    /** 红冲金额合计（voucher.totalDebit = voucher.totalCredit，二者等价）。 */
+    protected BigDecimal sumVoucherAmount(List<ErpFinVoucher> vouchers) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (ErpFinVoucher v : vouchers) {
+            total = total.add(nz(v.getTotalDebit()));
+        }
+        return total;
     }
 
     private BadDebtProvisionResult runBadDebtProvisionForSchema(ErpFinAccountingPeriod period, Long acctSchemaId, IServiceContext context) {

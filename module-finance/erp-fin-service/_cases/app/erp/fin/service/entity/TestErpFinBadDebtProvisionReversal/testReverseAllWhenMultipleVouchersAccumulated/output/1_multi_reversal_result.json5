@@ -1,0 +1,9 @@
+{
+  "periodId": 1,
+  "periodCode": "@var:ErpFinAccountingPeriod@code",
+  "reversedReserveCount": 2,
+  "reversedReleaseCount": 0,
+  "reversedReserveAmount": 105.0000,
+  "reversedReleaseAmount": 0,
+  "totalReversedCount": 2
+}

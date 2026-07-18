@@ -374,6 +374,14 @@ public interface ErpFinErrors {
             "应收净额（NRV）为负：应收总额 {openAmount} − 坏账准备 {allowanceBalance} < 0，数据异常或 Allowance 反转",
             ARG_OPEN_AMOUNT, ARG_ALLOWANCE_BALANCE);
 
+    ErrorCode ERR_BAD_DEBT_PROVISION_NOT_FOUND = ErrorCode.define("erp.err.fin.bad-debt-provision.not-found",
+            "会计期间 {periodCode} 未找到已过账的坏账准备计提/释放凭证（BAD_DEBT_RESERVE/RELEASE），无凭证可反向",
+            ARG_PERIOD_ID, ARG_PERIOD_CODE);
+
+    ErrorCode ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED = ErrorCode.define("erp.err.fin.bad-debt-provision.period-final-closed",
+            "会计期间 {periodCode} 已最终关闭（CLOSED_FINAL），不允许反向坏账准备计提",
+            ARG_PERIOD_ID, ARG_PERIOD_CODE);
+
     // --- 预算管理作用域（budget.md） ---
 
     ErrorCode ERR_BUDGET_EXCEEDED = ErrorCode.define("erp.err.fin.budget.exceeded",
