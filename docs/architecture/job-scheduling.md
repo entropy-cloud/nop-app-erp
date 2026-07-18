@@ -71,14 +71,16 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
            └─ errorMessage
 ```
 
-**当前状态（2026-07-18）**：
+**当前状态（2026-07-18，plan 2026-07-18-1600-1 完成后刷新）**：
 
 - `nop-job-local` 已接入 `app-erp-all/pom.xml:182`（`BeanMethodJobInvoker`，本地反射，无 RPC）。
-- **19 个 Job Bean 类**已完成三件套接线（bean 注册 + bean 实现 + `scheduler.yaml` 条目），覆盖 9 个域。全部使用一次性加载 + 内存迭代反模式，无 nop-batch 分 chunk 处理。
-- **`nop-batch` 完全闲置**：全仓零 `*.batch.xml`、零 `*.job.yaml`、零 `nop-batch` Maven 依赖。
-- **`scheduler.yaml` 使用旧机制**：19 个作业内联在 `scheduler.yaml.jobs` 中，而非推荐的单文件 `.job.yaml` 模式。无 per-job `enabled` 字段（仅有顶层的 `enabled: true`）。
-- **待迁移 12 个 batch-candidate 作业**已识别但处于 deferred 状态（详见 §7）。
-- **`nopBatchTaskRunner` 平台内置 Bean** 可在引入 `nop-batch-dsl` 依赖后直接使用，无额外配置。
+- **`nop-batch-dsl` 依赖已引入** `app-erp-all/pom.xml:186-189`，自动传递 `nop-batch-core`/`nop-batch-orm`/`nop-batch-dao`；`nopBatchTaskRunner` 平台 Bean 已可用。
+- **全仓 19 个作业已迁移到独立 `.job.yaml` 模式**：`app-erp-all/.../nop/job/conf/` 下 19 个 `.job.yaml` 文件，由 nop-job-local 启动期扫描 `/nop/job/conf/` 加载。
+  - **9 个 batch-candidate（迁移类型 A）**：`invoker.bean: nopBatchTaskRunner` + `params.taskPath` 指向各域 `batch.xml`（9 个 `*.batch.xml` 分落 fin/ast/qa/prj/mfg 域），实现 Loader→Processor chunk 处理 + `saveState` 断点续传。9 个原始 Java Job Bean 类已删除。
+  - **10 个定点作业（迁移类型 B）**：`invoker.bean: <原 Java Bean>` 保留现有 `*Job.execute()`，仅将 `scheduler.yaml` 内联条目外移为独立 `.job.yaml`。
+- **`scheduler.yaml` 已清空内联作业**：仅保留顶层 `enabled: true`，无 `jobs:` 段。每个 `.job.yaml` 经 `enabled: "@cfg:nop.job.<name>.enabled|false"` 配置门控（默认关闭，运维按需启用）。
+- **待迁移 12 个 §7 batch-candidate**（无现有 Java Bean）仍处 deferred 状态，后续实现时直接走 `batch.xml + .job.yaml` 模式。
+- **`nopBatchTaskRunner` 平台内置 Bean** 已随 `nop-batch-dsl` 依赖就位自动注册（`batch-dsl.beans.xml`）。
 
 ---
 
@@ -172,9 +174,9 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
 | `erp-crm-event-reminder` | 扫描 PLANNED 活动按 `reminderMinutesBefore` 发提醒 | `0 0/15 * * * ?`（每 15 分钟） | `ErpCrmEventReminderJob.execute()` → `IErpCrmEventBiz.findDueReminders()` → `IErpSysNotificationBiz.notify("crm.event-reminder")` | 小 | job | SCHEDULED | `erp-crm.event-reminder-cron` | `docs/design/crm/use-cases.md:168`；`plans/2026-07-06-0642-1` §Phase 2 |
-| `erp-crm-lead-scoring-recalc` | 每日批量重算线索评分 | `0 2 * * *`（每日 02:00） | `ErpCrmLeadScoringRecalcJob.execute()` → `IErpCrmLeadScoreBiz.recalculateScore()` | 小-中 | job | SCHEDULED | `erp-crm.lead-scoring.schedule-cron` | `docs/design/crm/lead-scoring.md:157`；`plans/2026-07-05-0306-1` |
+| `erp-crm-lead-scoring-recalc` | 每日批量重算线索评分 | `0 2 * * *`（每日 02:00） | `erp-crm-lead-scoring-recalc.job.yaml` → `nopBatchTaskRunner` → `crm/lead-scoring-recalc.batch.xml`（orm-reader filter notIn(terminal statuses) + processor → `IErpCrmLeadScoreBiz.recalculateScore()`） | 小-中 | batch | SCHEDULED | `erp-crm.lead-scoring.schedule-cron` | `docs/design/crm/lead-scoring.md:157`；`plans/2026-07-18-1600-1:Phase2` |
 | `erp-crm-forecast-recalc` | 每日重算销售预测 | `0 3 * * *`（每日 03:00） | `ErpCrmForecastRecalcJob.execute()` → `IErpCrmForecastBiz.refreshForecast()` | 中 | job | SCHEDULED | `erp-crm.forecast.recalc-cron` | `docs/design/crm/sales-forecast.md:165`；`plans/2026-07-05-0306-1` |
-| `erp-crm-funnel-aggregation` | 漏斗阶段聚合 rollup | `0 0 3 * * ?`（每日 03:00） | （待实现） | 中 | batch-candidate | DESIGN | `erp-crm.funnel.aggregation-cron` | `docs/design/crm/lead-waterfall.md:191` |
+| `erp-crm-funnel-aggregation` | 漏斗阶段聚合 rollup（查询后写结果表，不适合 chunk 拆分） | `0 0 3 * * ?`（每日 03:00） | `ErpCrmFunnelAggregationJob.execute()` → `IErpCrmFunnelBiz.aggregateFunnel()` | 中 | job | SCHEDULED | `erp-crm.funnel.aggregation-cron` | `docs/design/crm/lead-waterfall.md:191`；`plans/2026-07-18-1600-1:row16,fn1` |
 | `erp-crm-sequence-step-reminder` | 销售序列步骤到期提醒 + 逾期检查 | 未定 | （待实现） | 小 | job | DESIGN | — | `docs/design/crm/sales-sequence.md:205` |
 
 ### 3.10 Customer Service（客户服务）
@@ -185,7 +187,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 | `erp-cs-sla-warning` | 截止前 1h/30min 向经办人发预警 | 随扫描 | `findSlaWarnings()` | 小 | job | WIRED | `erp-cs.sla-warning-before` | `docs/design/customer-service/sla.md:282` |
 | `erp-cs-csat-reminder` | CSAT 调查提醒 + 过期标记 | `0 0 2 * * ?`（每日 02:00） | `ErpCsCsatReminderJob.execute()` → `findSurveyReminders()`/`findExpiredSurveys()` → `IErpSysNotificationBiz.notify("cs.csat-reminder")` | 小 | job | SCHEDULED | `erp-cs.csat-reminder-cron` | `docs/design/customer-service/csat.md:188,225`；`plans/2026-07-06-0642-1` §Phase 2 |
 | `erp-cs-csat-delayed-send` | `survey-send-delay>0` 时延迟发送调查 | 按延迟 | （待实现） | 小 | job | DESIGN | `erp-cs.survey-send-delay` | `docs/design/customer-service/csat.md:220` |
-| `erp-cs-entitlement-expiry` | 每日扫描 30/60/90 天到期权益，到期自动停用 | 每日 | （待实现） | 小 | job | DESIGN | `erp-cs.entitlement-expiry-warning-days` | `docs/design/customer-service/entitlement.md:87,195` |
+| `erp-cs-entitlement-expiry` | 每日扫描 30/60/90 天到期权益，到期自动停用 | 每日 | `ErpCsEntitlementExpiryJob.execute()` | 小 | job | SCHEDULED | `erp-cs.entitlement-expiry-warning-days` | `docs/design/customer-service/entitlement.md:87,195` |
 
 ### 3.11 B2B / MFT（EDI / 托管文件传输）
 
