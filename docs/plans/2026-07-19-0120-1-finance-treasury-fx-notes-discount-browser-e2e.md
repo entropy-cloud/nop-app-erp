@@ -197,6 +197,8 @@ Exit Criteria:
 
 ### 外币票据 honor/dishonor/endorse/collect 路径浏览器层 E2E
 
+- **RELEASED by 2026-07-19-0330-1**：触发条件已满足（AGENTS.md「当前项目阶段」明示「各域细化端到端验证」为当前重点 + 0120-1 同型裁决先例）；`fin-notes-receivable-fx-lifecycle.action.spec.ts`（4 用例）交付完整 FX NR honor/endorse/collect 生命周期浏览器层 E2E：(1) FX endorse 路径（USD note → ENDORSED + posted=true + 2 行凭证 Dr 2202=6666.7000/Cr 1121=6666.7000 全 functional CNY 无 6051）+ (2) FX collect（无凭证）+ honor 路径（COLLECTION_PENDING 无凭证 → HONORED + posted=true + 2 行凭证 Dr 1002=6666.7000/Cr 1121=6666.7000）+ (3) FX dishonor 路径（COLLECTION_PENDING → DISHONORED 显式无凭证 + 非法迁移守卫）+ (4) 单币种对照测试用例（CNY note 同动作断言凭证行集合与 FX 路径科目+方向完全一致，唯一变量为金额）；iter-2/iter-3 草案审查闭环 + 实时仓库逐行核实 honor/endorse 路径 Provider 无 FX 分支为设计选择，collect/dishonor 路径仅 setStatus 无 postingDispatcher。
+
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 1430-1/本计划仅覆盖 DISCOUNTED 多币种路径；非 DISCOUNTED 路径汇兑损益规则不同（按到期日 vs 贴现日汇率），属不同结果面。
 - Successor Required: `yes`（触发条件：外币票据 honor/endorse 业务路径浏览器层 E2E 需求落地时）
