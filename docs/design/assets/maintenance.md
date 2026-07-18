@@ -108,7 +108,7 @@ SPARE_PART 费用行为**操作员手工录入的会计确认**（独立于 ErpM
 | 业务类型 | MAINTENANCE_EXPENSE(470) / MAINTENANCE_CAPITALIZATION(480) | MAINTENANCE_ISSUE(492)（✅ 已接线，plan 2026-07-10-1100-6） |
 | 结果表面 | 资产原值/折旧/会计凭证 | 设备状态/库存出库 |
 
-两域经 `ErpAstMaintenance.maintenanceVisitId` 弱关联（不跨工程 refEntityName，走 I*Biz）。MAINTENANCE_ISSUE（maintenance 域实物侧备件消耗凭证）已于 plan 2026-07-10-1100-6 **接线闭合**：备件消耗确认时贷存货 1403（实物出库 GL 对应），assets 侧 linkedVisit=true 时贷中转清算 2502（防双重），两域不冲突。命名邻近（MAINTENANCE_EXPENSE vs MAINTENANCE_ISSUE）通过不同 code 段（470/480 vs 492）+ 本边界注记消歧。维修工时费用化凭证仍 open（successor）。未来若两域统一维修单据模型，命名邻近可能需重整（触发条件：维修单据跨域统一时）。
+两域经 `ErpAstMaintenance.maintenanceVisitId` 弱关联（不跨工程 refEntityName，走 I*Biz）。MAINTENANCE_ISSUE（maintenance 域实物侧备件消耗凭证）已于 plan 2026-07-10-1100-6 **接线闭合**：备件消耗确认时贷存货 1403（实物出库 GL 对应），assets 侧 linkedVisit=true 时贷中转清算 2502（防双重），两域不冲突。命名邻近（MAINTENANCE_EXPENSE vs MAINTENANCE_ISSUE）通过不同 code 段（470/480 vs 492）+ 本边界注记消歧。维修工时费用化凭证（MAINTENANCE_LABOR(493)，Dr 折旧费用 6602 / Cr 应付职工薪酬 2211）已实现（plan 2026-07-18-0949-1，config-gated `erp-mnt.labor-posting-enabled` 默认关，工时费率先经 config 全局费率派生），与 assets 侧 MAINTENANCE_EXPENSE(470) 语义差异：assets 侧为独立维修（Dr 6602 / Cr 银行存款或中转清算，已支付或挂往来清算视角），maintenance 侧工时为权责发生制员工薪酬计提（Cr 2211 应付职工薪酬）；两凭证独立生成不冲突（工时非存货无 inventory 余额联动）。未来若两域统一维修单据模型，命名邻近可能需重整（触发条件：维修单据跨域统一时）。
 
 ## 六、反向红冲（reverse）
 

@@ -162,6 +162,7 @@ Exit Criteria:
 ### 维修工时（labor）费用化过账
 
 - Classification: `out-of-scope improvement`
+- **RELEASED by 2026-07-18-0949-1**：plan `2026-07-18-0949-1-maintenance-labor-cost-posting.md` 已落地 maintenance 工时费用化 GL 过账（`MaintenanceLaborPostingDispatcher` + `MaintenanceLaborAcctDocProvider` Dr 6602 折旧费用 / Cr 2211 应付职工薪酬，`ErpFinBusinessType.MAINTENANCE_LABOR(493)` 新增，config-gated `erp-mnt.labor-posting-enabled` 默认 false 向后兼容；JUnit `TestErpMntLaborPosting` 6 用例 + 浏览器层 E2E `mnt-labor-posting.action.spec.ts` 3 用例全绿）。触发条件「维修工时成本核算后端落地时」已满足。
 - Why Not Blocking Closure: maintenance 工时计提 GL 过账后端未实现（1018-3/1100-6 Deferred，需工时归集体系，无 labor 实体/字段）。本计划仅备件消耗 + assets 维修费用化防双重扣减面。
 - Successor Required: `yes`（触发条件：维修工时成本核算后端落地时）
 

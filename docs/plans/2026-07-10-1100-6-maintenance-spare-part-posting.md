@@ -163,6 +163,7 @@ Exit Criteria:
 ### 维修工时费用化过账
 
 - Classification: `out-of-scope improvement`
+- **RELEASED by 2026-07-18-0949-1**：plan `2026-07-18-0949-1-maintenance-labor-cost-posting.md` 已落地维修工时费用化过账（`MaintenanceLaborPostingDispatcher` + `MaintenanceLaborAcctDocProvider` Dr 6602 折旧费用 / Cr 2211 应付职工薪酬；工时费率先经 config 全局费率 `erp-mnt.default-labor-hourly-rate` 派生，设备级/模板级/员工级费率物化归各自 successor；JUnit + 浏览器层 E2E 全绿）。触发条件「维修工时成本核算需求落地时」已满足。
 - Why Not Blocking Closure: 本期仅处理备件实物出库触发过账。维修工时计提（Dr: 维修费用 / Cr: 应付职工薪酬）需工时归集体系落地
 - Successor Required: yes（触发条件：维修工时成本核算需求落地时）
 

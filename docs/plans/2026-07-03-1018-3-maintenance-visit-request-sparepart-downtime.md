@@ -166,6 +166,7 @@ Exit Criteria:
 - Successor Required: yes（触发条件：维修费用业财一体过账需求时）
 - **互补边界注记（2026-07-07，plan 2026-07-07-0842-2）**：本项属 **maintenance 域实物侧**（维护工单 ErpMntVisit/ErpMntSparePartUsage 备件出库/工时的费用化凭证 MAINTENANCE_ISSUE），仍 **open**。assets 域 plan 0842-2 已承接 **价值侧**（资产维修工单 ErpAstMaintenance 的资本化/费用化会计处理，MAINTENANCE_EXPENSE(470)/MAINTENANCE_CAPITALIZATION(480)），两域**互补共存不闭合**（不同实体/不同价值视角/不同结果表面）。详见 `docs/design/assets/maintenance.md` §五（与 maintenance 域边界）。
 - **部分解除（2026-07-10，plan 2026-07-10-1100-6）**：备件消耗 GL 过账已落地（MAINTENANCE_ISSUE(492)，Dr: 维修费用 6602 / Cr: 存货 1403，config-gated 默认关）。**维修工时费用化凭证仍 open**（successor，触发条件：维修工时成本核算需求落地时）。
+- **RELEASED by 2026-07-18-0949-1**：plan `2026-07-18-0949-1-maintenance-labor-cost-posting.md` 已落地维修工时费用化凭证（`MaintenanceLaborPostingDispatcher` + `MaintenanceLaborAcctDocProvider` Dr 6602 折旧费用 / Cr 2211 应付职工薪酬，`ErpFinBusinessType.MAINTENANCE_LABOR(493)` 新增，config-gated `erp-mnt.labor-posting-enabled` 默认关；JUnit + 浏览器层 E2E 全绿）。至此 maintenance 域业财过账备件段（1100-6）+ 工时段（0949-1）双闭合。
 
 ### 预测性维护（IoT）/ 校准管理全流程 / 设备-资产价值联动 / 多级审批
 
