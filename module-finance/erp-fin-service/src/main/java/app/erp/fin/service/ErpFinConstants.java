@@ -225,6 +225,8 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     String CONFIG_CREDIT_CHECK_ON_ISSUE = "erp-fin.credit-check-on-issue";
     /** 票据注销是否需审批门控，默认 true。 */
     String CONFIG_NOTES_WRITEOFF_APPROVAL_REQUIRED = "erp-fin.notes-writeoff-approval-required";
+    /** 授信利息计提默认年化利率，默认 0=关闭门控（rate=0 时 accrueInterest 抛 RATE_NOT_CONFIGURED）；非 0 时作年化利率（360 天基准）。 */
+    String CONFIG_CREDIT_FACILITY_DEFAULT_INTEREST_RATE = "erp-fin.credit-facility-default-interest-rate";
 
     // ---- notes-type ----
     String NOTES_TYPE_BANK_ACCEPTANCE = "BANK_ACCEPTANCE";

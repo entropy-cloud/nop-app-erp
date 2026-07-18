@@ -118,11 +118,21 @@
           class="app.erp.fin.service.posting.AdvanceOffsetOrchestrator"/>
 
     <!-- 票据业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，
-         处理 NOTES_RECEIVABLE_RECEIVED/DISCOUNTED/ENDORSED/COLLECTION + NOTES_PAYABLE_ISSUED/HONORED）。 -->
+          处理 NOTES_RECEIVABLE_RECEIVED/DISCOUNTED/ENDORSED/COLLECTION + NOTES_PAYABLE_ISSUED/HONORED）。 -->
     <bean id="app.erp.fin.service.posting.provider.NotesReceivableAcctDocProvider"
           class="app.erp.fin.service.posting.provider.NotesReceivableAcctDocProvider"/>
     <bean id="app.erp.fin.service.posting.provider.NotesPayableAcctDocProvider"
           class="app.erp.fin.service.posting.provider.NotesPayableAcctDocProvider"/>
+
+    <!-- 授信利息计提业财过账 Provider（plan 2026-07-18-0718-1，treasury.md §业财过账 CREDIT_FACILITY_INTEREST）：
+          注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，处理 CREDIT_FACILITY_INTEREST（Dr 6603 / Cr 1002）。 -->
+    <bean id="app.erp.fin.service.posting.provider.CreditFacilityInterestAcctDocProvider"
+          class="app.erp.fin.service.posting.provider.CreditFacilityInterestAcctDocProvider"/>
+
+    <!-- 授信利息计提凭证构造器（plan 2026-07-18-0718-1，VoucherBuilder 模式非 BizModel 直调）：
+          被 ErpFinCreditFacilityBizModel.accrueInterest 注入委派构造 PostingEvent + 调 voucherBiz.post。 -->
+    <bean id="app.erp.fin.service.treasury.CreditFacilityInterestVoucherBuilder"
+          class="app.erp.fin.service.treasury.CreditFacilityInterestVoucherBuilder"/>
 
     <!-- 票据过账派发器（状态迁移边界触发：收到/贴现/背书/托收/承兑 + 应付开出/兑付；失败吞异常保持原态 posted=false）。 -->
     <bean id="app.erp.fin.service.posting.NotesPostingDispatcher"

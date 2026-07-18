@@ -1,0 +1,4 @@
+erp-fin:
+  credit-facility-default-interest-rate: 0.05
+  auto-depreciation-on-close: false
+  auto-post-on-close: true

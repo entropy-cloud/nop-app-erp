@@ -47,6 +47,8 @@ public interface ErpFinErrors {
     String ARG_FACE_AMOUNT = "faceAmount";
     String ARG_DISCOUNT_RATE = "discountRate";
     String ARG_CONFIG_KEY = "configKey";
+    String ARG_FROM_DATE = "fromDate";
+    String ARG_TO_DATE = "toDate";
 
     // --- 预算管理作用域参数键 ---
     String ARG_SUBJECT_ID = "subjectId";
@@ -229,6 +231,14 @@ public interface ErpFinErrors {
     ErrorCode ERR_CREDIT_FACILITY_INSUFFICIENT = ErrorCode.define("erp.err.fin.credit-facility.insufficient",
             "授信额度 {creditFacilityId} 可用额度 {availableAmount} 不足，无法开出银承票面 {faceAmount}",
             ARG_CREDIT_FACILITY_ID, ARG_AVAILABLE_AMOUNT, ARG_FACE_AMOUNT);
+
+    ErrorCode ERR_CREDIT_FACILITY_INTEREST_INVALID_DATE_RANGE = ErrorCode.define("erp.err.fin.credit-facility-interest.invalid-date-range",
+            "授信利息计提日期区间非法：fromDate {fromDate} 晚于 toDate {toDate}",
+            ARG_FROM_DATE, ARG_TO_DATE);
+
+    ErrorCode ERR_CREDIT_FACILITY_INTEREST_RATE_NOT_CONFIGURED = ErrorCode.define("erp.err.fin.credit-facility-interest.rate-not-configured",
+            "授信利息计提未启用：配置键 {configKey} 缺省值 0（关闭门控），请配置非零年化利率后重试",
+            ARG_CONFIG_KEY);
 
     // --- 期末结账作用域 ---
 
