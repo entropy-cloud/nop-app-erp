@@ -44,6 +44,18 @@ public interface ErpMntConstants {
     String DEFAULT_EXPENSE_SUBJECT_CODE = "6602";
     String DEFAULT_INVENTORY_SUBJECT_CODE = "1403";
 
+    // ---- 维修工时费用化 GL 过账配置项（plan 2026-07-18-0949-1）----
+    /** 工时费用化 GL 过账总开关，默认 false（向后兼容：仅 complete 终态，不生成凭证）。 */
+    String CONFIG_LABOR_POSTING_ENABLED = "erp-mnt.labor-posting-enabled";
+    /** 默认工时小时费率（元/小时），默认 0=未配置（跳过过账，不抛错）。 */
+    String CONFIG_DEFAULT_LABOR_HOURLY_RATE = "erp-mnt.default-labor-hourly-rate";
+    /** 应付职工薪酬科目编码（贷方），默认 2211（种子 0742-2 已加性追加）。 */
+    String CONFIG_LABOR_PAYABLE_SUBJECT_CODE = "erp-mnt.labor-payable-subject-code";
+
+    boolean DEFAULT_LABOR_POSTING_ENABLED = false;
+    String DEFAULT_LABOR_HOURLY_RATE_VALUE = "0";
+    String DEFAULT_LABOR_PAYABLE_SUBJECT_CODE = "2211";
+
     boolean DEFAULT_AUTO_GENERATE_DUE_VISITS = true;
     boolean DEFAULT_EQUIPMENT_STATUS_LINK_ENABLED = true;
 

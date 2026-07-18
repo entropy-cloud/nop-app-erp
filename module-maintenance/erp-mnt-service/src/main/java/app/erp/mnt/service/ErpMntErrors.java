@@ -76,6 +76,15 @@ public interface ErpMntErrors {
             "备件消耗单 {usageCode} 库存已出库，但 GL 过账失败（posted 保持库存出库语义，凭证由人工或兜底补登）",
             ARG_USAGE_CODE);
 
+    // --- 维修工时费用化 GL 过账（plan 2026-07-18-0949-1）---
+    ErrorCode ERR_VISIT_TOTAL_MINUTES_MISSING = ErrorCode.define("erp.err.mnt.visit-total-minutes-missing",
+            "维护访问 {visitCode} 无有效工时（totalMinutes 缺失或 ≤0），不可工时费用化过账",
+            ARG_VISIT_CODE);
+
+    ErrorCode ERR_LABOR_RATE_NOT_CONFIGURED = ErrorCode.define("erp.err.mnt.labor-rate-not-configured",
+            "维护访问 {visitCode} 工时费率未配置（erp-mnt.default-labor-hourly-rate ≤0），不可工时费用化过账",
+            ARG_VISIT_CODE);
+
     ErrorCode ERR_EQUIPMENT_NOT_FOUND = ErrorCode.define("erp.err.mnt.equipment-not-found",
             "设备 {equipmentId} 不存在", ARG_EQUIPMENT_ID);
 

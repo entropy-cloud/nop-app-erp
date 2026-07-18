@@ -193,6 +193,14 @@ options:
     value: MAINTENANCE_CAPITALIZATION
     description: 
   
+  - label: 维修备件消耗
+    value: MAINTENANCE_ISSUE
+    description: 
+  
+  - label: 维修工时费用
+    value: MAINTENANCE_LABOR
+    description: 
+  
   - label: 委外发料
     value: SUBCONTRACT_ISSUE
     description: 

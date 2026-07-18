@@ -104,6 +104,10 @@
                     i18n-en:label="Maintenance Expense"/>
             <option code="MAINTENANCE_CAPITALIZATION" label="维修资本化" value="MAINTENANCE_CAPITALIZATION"
                     i18n-en:label="Maintenance Capitalization"/>
+            <option code="MAINTENANCE_ISSUE" label="维修备件消耗" value="MAINTENANCE_ISSUE"
+                    i18n-en:label="Maintenance Spare Part Issue"/>
+            <option code="MAINTENANCE_LABOR" label="维修工时费用" value="MAINTENANCE_LABOR"
+                    i18n-en:label="Maintenance Labor Cost"/>
             <option code="SUBCONTRACT_ISSUE" label="委外发料" value="SUBCONTRACT_ISSUE" i18n-en:label="Subcontract Issue"/>
             <option code="SUBCONTRACT_RECEIPT" label="委外收货" value="SUBCONTRACT_RECEIPT"
                     i18n-en:label="Subcontract Receipt"/>

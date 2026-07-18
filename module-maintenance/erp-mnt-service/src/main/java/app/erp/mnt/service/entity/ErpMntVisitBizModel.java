@@ -5,6 +5,7 @@ import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntEquipment;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.ErpMntErrors;
+import app.erp.mnt.service.posting.MaintenanceLaborPostingDispatcher;
 import app.erp.mnt.service.support.EquipmentStatusLinker;
 import io.nop.api.core.annotations.biz.BizModel;
 import java.util.List;
@@ -14,6 +15,8 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import io.nop.core.context.IServiceContext;
@@ -30,8 +33,13 @@ import static io.nop.api.core.beans.FilterBeans.in;
 @BizModel("ErpMntVisit")
 public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IErpMntVisitBiz {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ErpMntVisitBizModel.class);
+
     @jakarta.inject.Inject
     EquipmentStatusLinker equipmentStatusLinker;
+
+    @jakarta.inject.Inject
+    MaintenanceLaborPostingDispatcher laborPostingDispatcher;
 
     public ErpMntVisitBizModel() {
         setEntityName(ErpMntVisit.class.getName());
@@ -161,6 +169,15 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
         }
         visit.setCompletedAt(CoreMetrics.currentTimestamp());
         updateEntity(visit, null, context);
+
+        // 维修工时费用化 GL 过账（Dr: 折旧费用 6602 / Cr: 应付职工薪酬 2211），config-gated 默认关
+        //（plan 2026-07-18-0949-1 Phase 1 Decision (c) 内嵌触发 + (e) 显式消费 boolean 返回值）。
+        // 失败不阻断 complete 终态（吞异常范式，对齐 MaintenanceIssuePostingDispatcher.dispatchIfApplicable）。
+        if (laborPostingDispatcher.isPostingEnabled()) {
+            if (!laborPostingDispatcher.postLabor(visit, context)) {
+                LOG.warn("Labor posting skipped or failed for visit {}", visit.getCode());
+            }
+        }
     }
 
     protected void doCancel(ErpMntVisit visit, IServiceContext context) {

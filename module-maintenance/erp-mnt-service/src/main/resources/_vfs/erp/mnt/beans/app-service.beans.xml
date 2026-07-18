@@ -17,14 +17,22 @@
           class="app.erp.mnt.service.support.SparePartIssueService"/>
 
     <!-- 备件消耗 GL 过账（plan 2026-07-10-1100-6）：备件消耗 confirm 后 → Dr: 维修费用 / Cr: 存货 凭证。
-          Dispatcher 由 ErpMntSparePartUsageBizModel.confirm 显式调用（config-gated 默认关）；
-          Provider 由 finance ErpFinAcctDocRegistry 跨模块 collect-beans 自动聚合（同 ManufacturingIssue 范式）。 -->
+           Dispatcher 由 ErpMntSparePartUsageBizModel.confirm 显式调用（config-gated 默认关）；
+           Provider 由 finance ErpFinAcctDocRegistry 跨模块 collect-beans 自动聚合（同 ManufacturingIssue 范式）。 -->
     <bean id="app.erp.mnt.service.posting.MntPostingExecutor"
           class="app.erp.mnt.service.posting.MntPostingExecutor"/>
     <bean id="app.erp.mnt.service.posting.MaintenanceIssuePostingDispatcher"
           class="app.erp.mnt.service.posting.MaintenanceIssuePostingDispatcher"/>
     <bean id="app.erp.mnt.service.posting.MaintenanceIssueAcctDocProvider"
           class="app.erp.mnt.service.posting.MaintenanceIssueAcctDocProvider"/>
+
+    <!-- 维修工时费用化 GL 过账（plan 2026-07-18-0949-1）：Visit complete 后 → Dr: 折旧费用 6602
+           / Cr: 应付职工薪酬 2211 凭证。镜像 1100-6 bean 注册范式（全限定类名 bean id）。Dispatcher 由
+           ErpMntVisitBizModel.doComplete 显式调用（config erp-mnt.labor-posting-enabled 默认关）。 -->
+    <bean id="app.erp.mnt.service.posting.MaintenanceLaborPostingDispatcher"
+          class="app.erp.mnt.service.posting.MaintenanceLaborPostingDispatcher"/>
+    <bean id="app.erp.mnt.service.posting.MaintenanceLaborAcctDocProvider"
+          class="app.erp.mnt.service.posting.MaintenanceLaborAcctDocProvider"/>
 
     <!-- 维护域服务（非 BizModel）：维护计划到期生成访问生成器（扫描 active 计划生成 PLANNED 访问 + 推进 nextDueDate） -->
     <bean id="app.erp.mnt.service.support.ScheduleDueGenerator"

@@ -314,6 +314,16 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_MAINTENANCE_CAPITALIZATION = "MAINTENANCE_CAPITALIZATION";
                     
     /**
+     * 业务类型: 维修备件消耗 
+     */
+    String BUSINESS_TYPE_MAINTENANCE_ISSUE = "MAINTENANCE_ISSUE";
+                    
+    /**
+     * 业务类型: 维修工时费用 
+     */
+    String BUSINESS_TYPE_MAINTENANCE_LABOR = "MAINTENANCE_LABOR";
+                    
+    /**
      * 业务类型: 委外发料 
      */
     String BUSINESS_TYPE_SUBCONTRACT_ISSUE = "SUBCONTRACT_ISSUE";
