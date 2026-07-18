@@ -49,11 +49,6 @@
     <bean id="erpCrmForecastRecalcJob"
           class="app.erp.crm.service.job.ErpCrmForecastRecalcJob"/>
 
-    <!-- 定时线索评分批量重算 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
-          经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.lead-scoring.schedule-cron 配置门控。 -->
-    <bean id="erpCrmLeadScoringRecalcJob"
-          class="app.erp.crm.service.job.ErpCrmLeadScoringRecalcJob"/>
-
     <!-- 定时活动到期提醒 Job Bean（plan 2026-07-06-0642-1 §Phase 2）。由 nop-job-local scheduler.yaml
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.event-reminder-cron 配置门控。 -->
     <bean id="erpCrmEventReminderJob"

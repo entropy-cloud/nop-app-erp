@@ -1,0 +1,13 @@
+jobName: erp-qa-spc-capability
+enabled: "@cfg:nop.job.erp-qa-spc-capability.enabled|false"
+displayName: Quality SPC Capability Analysis
+description: 每日 02:00 批量计算控制图过程能力指数（Cp/Cpk/Pp/Ppk）；nop-batch chunk 按 ErpQaSpcChart(isActive=true) 逐图 calculateCapability
+jobGroup: erp-qa
+trigger:
+  cronExpr: "@cfg:nop.job.erp-qa-spc-capability.cron-expr|0 0 2 * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/qa/spc-capability.batch.xml
+  params: {}

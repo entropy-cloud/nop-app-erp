@@ -182,6 +182,12 @@
             <artifactId>nop-job-local</artifactId>
         </dependency>
 
+        <!-- 批处理（job.yaml + batch.xml chunk 处理） -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-batch-dsl</artifactId>
+        </dependency>
+
         <!-- 前端站点 -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>

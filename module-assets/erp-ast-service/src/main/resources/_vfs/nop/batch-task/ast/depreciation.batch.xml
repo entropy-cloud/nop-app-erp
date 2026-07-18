@@ -1,0 +1,26 @@
+<batch taskName="ast.depreciation"
+       batchSize="50"
+       transactionScope="chunk"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <orm-reader entityName="app.erp.ast.dao.entity.ErpAstDepreciationSchedule">
+            <query>
+                <filter>
+                    <eq name="status" value="PENDING"/>
+                    <eq name="period" value="${java.time.YearMonth.now().toString()}"/>
+                </filter>
+            </query>
+        </orm-reader>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpAstDepreciationScheduleBiz');
+            biz.executeDepreciation(item.assetId, item.period, batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

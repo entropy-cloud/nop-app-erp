@@ -1,0 +1,13 @@
+jobName: erp-crm-lead-scoring-recalc
+enabled: "@cfg:nop.job.erp-crm-lead-scoring-recalc.enabled|false"
+displayName: CRM Lead Scoring Recalc
+description: 迭代 active 线索批量重算评分（单线索失败隔离）
+jobGroup: erp-crm
+trigger:
+  cronExpr: "@cfg:nop.job.erp-crm-lead-scoring-recalc.cron-expr|0 2 * * *"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/crm/lead-scoring-recalc.batch.xml
+  params: {}

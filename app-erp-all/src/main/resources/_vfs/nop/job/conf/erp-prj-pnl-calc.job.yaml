@@ -1,0 +1,13 @@
+jobName: erp-prj-pnl-calc
+enabled: "@cfg:nop.job.erp-prj-pnl-calc.enabled|false"
+displayName: Projects PnL Aggregation
+description: 每日凌晨扫描活跃项目批量汇总损益（Billing 收入 + CostCollection 四类成本）；nop-batch chunk 按 ErpPrjProject(active) 逐项目 refreshPnl
+jobGroup: erp-prj
+trigger:
+  cronExpr: "@cfg:nop.job.erp-prj-pnl-calc.cron-expr|0 0 1 * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/prj/pnl-calc.batch.xml
+  params: {}

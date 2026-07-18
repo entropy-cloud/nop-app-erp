@@ -1,0 +1,27 @@
+<batch taskName="qa.spc-sampling"
+       batchSize="200"
+       transactionScope="chunk"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <orm-reader entityName="app.erp.qa.dao.entity.ErpQaSpcChart">
+            <query>
+                <filter>
+                    <eq name="isActive" value="${true}"/>
+                </filter>
+            </query>
+        </orm-reader>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const samplingService = inject('spcSamplingService');
+            const controlLimitCalculator = inject('spcControlLimitCalculator');
+            samplingService.collectSamples(item.id, batchChunkCtx.serviceContext);
+            controlLimitCalculator.recalculate(item.id);
+        ]]></source>
+    </processor>
+</batch>

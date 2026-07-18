@@ -1,0 +1,10 @@
+jobName: erp-cs-entitlement-expiry
+enabled: "@cfg:nop.job.erp-cs-entitlement-expiry.enabled|false"
+displayName: Customer Service Entitlement Expiry Scan
+description: 每日 01:30 扫描到期前权益派发提醒通知 + 自动停用已到期权益（isActive=false）；cron 经 erp-cs.entitlement-expiry-cron 配置门控
+jobGroup: erp-cs
+trigger:
+  cronExpr: "@cfg:nop.job.erp-cs-entitlement-expiry.cron-expr|0 30 1 * * ?"
+invoker:
+  bean: erpCsEntitlementExpiryJob
+  method: execute

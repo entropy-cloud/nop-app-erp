@@ -1,0 +1,10 @@
+jobName: erp-mnt-due-visit-generation
+enabled: "@cfg:nop.job.erp-mnt-due-visit-generation.enabled|false"
+displayName: Maintenance Due Visit Generation
+description: 每日凌晨扫描 active 维护计划生成到期访问；cron 经 erp-mnt.due-visit-cron 配置门控
+jobGroup: erp-mnt
+trigger:
+  cronExpr: "@cfg:nop.job.erp-mnt-due-visit-generation.cron-expr|0 0 1 * * ?"
+invoker:
+  bean: erpMntDueVisitJob
+  method: execute

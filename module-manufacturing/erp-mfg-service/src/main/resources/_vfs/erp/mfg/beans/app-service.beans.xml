@@ -117,12 +117,6 @@
     <bean id="erpMfgCrpRunJob"
           class="app.erp.mfg.service.job.ErpMfgCrpRunJob"/>
 
-    <!-- 定时 APS 排程→工序卡自动生成 Job Bean（plan 2026-07-05-0427-3 Phase 3）。双层门控：
-           erp-mfg.jobcard-auto-generate-cron（本 Job cron 空跳过）+ erp-mfg.jobcard-auto-generate-on-schedule
-           （Processor 总开关，默认 false）。参照 0306-1 三件套范式。 -->
-    <bean id="erpMfgJobCardAutoGenJob"
-          class="app.erp.mfg.service.job.ErpMfgJobCardAutoGenJob"/>
-
     <!-- 制造运营报表渲染入口（plan 2026-07-06-0935-2）：非实体 BizModel，注入平台 IReportEngine，
          经 @BizQuery 暴露 renderHtml/download。@BizModel 注解由 bizObject 管理器自动识别。
          镜像 finance ErpFinReportBizModel（域隔离 /mfg/ vs /fin/）。 -->

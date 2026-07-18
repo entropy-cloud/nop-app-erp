@@ -1,0 +1,13 @@
+jobName: erp-ast-depreciation
+enabled: "@cfg:nop.job.erp-ast-depreciation.enabled|false"
+displayName: Assets Batch Depreciation
+description: 每月 1 日 02:00 批量计提折旧（当前自然月）；nop-batch chunk 按 ErpAstDepreciationSchedule(PENDING) 逐资产 executeDepreciation
+jobGroup: erp-ast
+trigger:
+  cronExpr: "@cfg:nop.job.erp-ast-depreciation.cron-expr|0 0 2 1 * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/ast/depreciation.batch.xml
+  params: {}

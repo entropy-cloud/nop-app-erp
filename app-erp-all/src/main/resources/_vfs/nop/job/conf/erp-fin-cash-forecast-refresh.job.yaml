@@ -1,0 +1,13 @@
+jobName: erp-fin-cash-forecast-refresh
+enabled: "@cfg:nop.job.erp-fin-cash-forecast-refresh.enabled|false"
+displayName: Finance Cash Forecast Refresh
+description: 每日凌晨聚合未核销 AR/AP + 票据到期项刷新现金预测；nop-batch 调 refreshForecast(fromDate,toDate)
+jobGroup: erp-fin
+trigger:
+  cronExpr: "@cfg:nop.job.erp-fin-cash-forecast-refresh.cron-expr|0 0 1 * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/fin/cash-forecast-refresh.batch.xml
+  params: {}

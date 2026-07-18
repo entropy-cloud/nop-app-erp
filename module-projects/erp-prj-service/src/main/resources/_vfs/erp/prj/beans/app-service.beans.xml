@@ -54,9 +54,4 @@
     <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor"
           class="app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor"/>
 
-    <!-- 定时批量损益汇总 Job Bean（plan 2026-07-07-0305-1 Phase 2）。由 nop-job-local scheduler.yaml
-          经 BeanMethodJobInvoker 反射调用 execute()。双层门控：cron 经 erp-prj.pnl-calc-cron 配置 + 总开关
-          erp-prj.pnl-auto-calc-enabled（默认 false）。 -->
-    <bean id="erpPrjPnlCalcJob"
-          class="app.erp.prj.service.job.ErpPrjPnlCalcJob"/>
 </beans>

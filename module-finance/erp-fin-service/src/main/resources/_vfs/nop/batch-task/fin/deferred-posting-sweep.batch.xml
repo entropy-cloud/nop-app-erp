@@ -1,0 +1,29 @@
+<batch taskName="fin.deferred-posting-sweep"
+       batchSize="50"
+       transactionScope="process"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <orm-reader entityName="app.erp.fin.dao.entity.ErpFinPostingException">
+            <query>
+                <filter>
+                    <and>
+                        <eq name="status" value="PENDING"/>
+                        <lt name="retryCount" value="${3}"/>
+                        <ge name="occurrenceTime" value="${io.nop.api.core.time.CoreMetrics.currentTimeMillis() - 24 * 3600 * 1000}"/>
+                    </and>
+                </filter>
+            </query>
+        </orm-reader>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const helper = inject('erpFinDeferredPostingRetryHelper');
+            helper.retry(item.id, batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

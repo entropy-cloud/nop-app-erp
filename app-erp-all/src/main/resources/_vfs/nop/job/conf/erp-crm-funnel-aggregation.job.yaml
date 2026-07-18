@@ -1,0 +1,10 @@
+jobName: erp-crm-funnel-aggregation
+enabled: "@cfg:nop.job.erp-crm-funnel-aggregation.enabled|false"
+displayName: CRM Funnel Aggregation
+description: 每日 03:30 全量刷新漏斗快照（LeadFunnel 头 + FunnelStageMetrics 阶段明细）；cron 经 erp-crm.funnel.aggregation-cron 配置门控
+jobGroup: erp-crm
+trigger:
+  cronExpr: "@cfg:nop.job.erp-crm-funnel-aggregation.cron-expr|0 30 3 * * ?"
+invoker:
+  bean: erpCrmFunnelAggregationJob
+  method: execute

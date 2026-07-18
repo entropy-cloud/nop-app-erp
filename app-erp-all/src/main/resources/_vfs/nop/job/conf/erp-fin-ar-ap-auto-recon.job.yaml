@@ -1,0 +1,13 @@
+jobName: erp-fin-ar-ap-auto-recon
+enabled: "@cfg:nop.job.erp-fin-ar-ap-auto-recon.enabled|false"
+displayName: Finance AR/AP Auto Reconciliation
+description: 每日凌晨触发 AR/AP 自动核销（FIFO 全 partner）；nop-batch 分方向（RECEIVABLE+PAYABLE）调用 runAutoReconciliation
+jobGroup: erp-fin
+trigger:
+  cronExpr: "@cfg:nop.job.erp-fin-ar-ap-auto-recon.cron-expr|0 0 1 * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/fin/ar-ap-auto-recon.batch.xml
+  params: {}

@@ -1,0 +1,10 @@
+jobName: erp-cs-sla-scan
+enabled: "@cfg:nop.job.erp-cs-sla-scan.enabled|false"
+displayName: Customer Service SLA Overdue Scan
+description: 每分钟扫描 SLA 超时工单建 ESCALATE 审计 + 升级通知；cron 经 erp-cs.sla-scan-cron 配置门控
+jobGroup: erp-cs
+trigger:
+  cronExpr: "@cfg:nop.job.erp-cs-sla-scan.cron-expr|0 * * * * ?"
+invoker:
+  bean: erpCsSlaScanJob
+  method: execute

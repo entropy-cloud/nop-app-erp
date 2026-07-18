@@ -1,0 +1,24 @@
+<batch taskName="fin.ar-ap-auto-recon"
+       batchSize="100"
+       transactionScope="process"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <source><![CDATA[
+            return [
+                { direction: 'RECEIVABLE' },
+                { direction: 'PAYABLE' }
+            ];
+        ]]></source>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpFinReconciliationBiz');
+            biz.runAutoReconciliation(item.direction, null, 'FIFO', batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

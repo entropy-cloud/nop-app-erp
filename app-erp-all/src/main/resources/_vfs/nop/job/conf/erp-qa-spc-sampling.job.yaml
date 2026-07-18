@@ -1,0 +1,13 @@
+jobName: erp-qa-spc-sampling
+enabled: "@cfg:nop.job.erp-qa-spc-sampling.enabled|false"
+displayName: Quality SPC Sampling
+description: 每小时扫描 active 控制图批量采集子组样本并重算控制限；nop-batch chunk 按 ErpQaSpcChart(isActive=true) 逐图 collectSamples + recalculate
+jobGroup: erp-qa
+trigger:
+  cronExpr: "@cfg:nop.job.erp-qa-spc-sampling.cron-expr|0 0 * * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/qa/spc-sampling.batch.xml
+  params: {}

@@ -6149,43 +6149,6 @@
       },
       {
         "allowWrite": true,
-        "name": "leadScoreBiz"
-      }
-    ],
-    "methods": [
-      {
-        "name": "findActiveLeads",
-        "parameterTypes": [
-          "io.nop.core.context.IServiceContext"
-        ]
-      },
-      {
-        "name": "resolveCronConfig",
-        "parameterTypes": []
-      },
-      {
-        "name": "runRecalculateScore",
-        "parameterTypes": [
-          "java.lang.Long",
-          "io.nop.core.context.IServiceContext"
-        ]
-      }
-    ],
-    "name": "app.erp.crm.service.job.ErpCrmLeadScoringRecalcJob"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
-        "name": "leadBiz"
-      },
-      {
-        "allowWrite": true,
         "name": "notificationBiz"
       },
       {

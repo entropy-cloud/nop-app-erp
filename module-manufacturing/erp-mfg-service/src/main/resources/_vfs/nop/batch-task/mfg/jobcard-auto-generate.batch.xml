@@ -1,0 +1,21 @@
+<batch taskName="mfg.jobcard-auto-generate"
+       batchSize="50"
+       transactionScope="process"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <source><![CDATA[
+            return [ { trigger: true } ];
+        ]]></source>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpMfgWorkOrderBiz');
+            biz.generatePendingJobCards(batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

@@ -1,0 +1,10 @@
+jobName: erp-mfg-crp-run
+enabled: "@cfg:nop.job.erp-mfg-crp-run.enabled|false"
+displayName: Manufacturing CRP Load Calculation
+description: 每日凌晨按当月窗口计算 CRP 产能负荷快照（全工作中心）；cron 经 erp-mfg.crp-run-cron 配置门控
+jobGroup: erp-mfg
+trigger:
+  cronExpr: "@cfg:nop.job.erp-mfg-crp-run.cron-expr|0 0 1 * * ?"
+invoker:
+  bean: erpMfgCrpRunJob
+  method: execute

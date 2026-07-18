@@ -1,0 +1,24 @@
+<batch taskName="crm.lead-scoring-recalc"
+       batchSize="200"
+       transactionScope="process"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <orm-reader entityName="app.erp.crm.dao.entity.ErpCrmLead">
+            <query>
+                <filter>
+                    <notIn name="docStatus" value="${['CONVERTED','LOST','CANCELLED']}"/>
+                </filter>
+            </query>
+        </orm-reader>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpCrmLeadScoreBiz');
+            biz.recalculateScore(item.id, 'SCHEDULED', batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

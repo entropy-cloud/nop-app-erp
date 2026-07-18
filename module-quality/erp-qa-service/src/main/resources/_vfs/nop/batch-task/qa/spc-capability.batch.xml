@@ -1,0 +1,27 @@
+<batch taskName="qa.spc-capability"
+       batchSize="100"
+       transactionScope="chunk"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <orm-reader entityName="app.erp.qa.dao.entity.ErpQaSpcChart">
+            <query>
+                <filter>
+                    <eq name="isActive" value="${true}"/>
+                </filter>
+            </query>
+        </orm-reader>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpQaSpcCapabilityBiz');
+            const periodTo = java.time.LocalDate.now();
+            const periodFrom = periodTo.minusDays(30);
+            biz.calculateCapability(item.id, periodFrom, periodTo, batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

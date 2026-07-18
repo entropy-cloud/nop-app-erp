@@ -79,20 +79,10 @@
     <bean id="app.erp.fin.service.reconciliation.DualSideConsistencyChecker"
           class="app.erp.fin.service.reconciliation.DualSideConsistencyChecker"/>
 
-    <!-- 定时自动核销 Job Bean（plan 2026-07-05-0115-1 Phase 2）。由 nop-job-local scheduler.yaml
-         经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-fin.ar-ap-auto-recon-cron 配置门控。 -->
-    <bean id="erpFinAutoReconJob"
-          class="app.erp.fin.service.job.ErpFinAutoReconJob"/>
-
-    <!-- 定时现金预测刷新 Job Bean（plan 2026-07-05-0306-1 Phase 1）。由 nop-job-local scheduler.yaml
-         经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-fin.cash-forecast-cron 配置门控。 -->
-    <bean id="erpFinCashForecastJob"
-          class="app.erp.fin.service.job.ErpFinCashForecastJob"/>
-
-    <!-- O-2：兜底扫描重试 Job Bean。定时扫描 ErpFinPostingException PENDING 记录（retryCount < 3，最近 24h），
-         重建 PostingEvent 经 voucherBiz.post()/reverse() 重试。cron 经 erp-fin.deferred-posting-sweep-cron 配置门控。 -->
-    <bean id="erpFinDeferredPostingSweepJob"
-          class="app.erp.fin.service.job.DeferredPostingSweepJob"/>
+    <!-- 过账异常重试帮助类（plan 2026-07-18-1600-1 Phase 3，自原 DeferredPostingSweepJob 抽取）：
+         供 nop-batch deferred-posting-sweep.batch.xml processor 按记录调用，单条 REQUIRES_NEW 重试 + retryCount 递增。 -->
+    <bean id="erpFinDeferredPostingRetryHelper"
+          class="app.erp.fin.service.posting.ErpFinDeferredPostingRetryHelper"/>
 
     <!-- 报销/借款业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，
          处理 EXPENSE_CLAIM / EMPLOYEE_ADVANCE / EMPLOYEE_ADVANCE_SETTLE）。 -->

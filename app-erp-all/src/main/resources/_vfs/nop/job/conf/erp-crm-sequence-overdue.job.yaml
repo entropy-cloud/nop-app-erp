@@ -1,0 +1,10 @@
+jobName: erp-crm-sequence-overdue
+enabled: "@cfg:nop.job.erp-crm-sequence-overdue.enabled|false"
+displayName: CRM Sequence Overdue Scan
+description: 每日 06:00 扫描连续逾期 ≥ max-overdue-steps 的序列进度派发提醒通知；cron 经 erp-crm.sequence.overdue-check-cron 配置门控
+jobGroup: erp-crm
+trigger:
+  cronExpr: "@cfg:nop.job.erp-crm-sequence-overdue.cron-expr|0 0 6 * * ?"
+invoker:
+  bean: erpCrmSequenceOverdueJob
+  method: execute

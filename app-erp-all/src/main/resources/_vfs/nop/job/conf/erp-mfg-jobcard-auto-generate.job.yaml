@@ -1,0 +1,13 @@
+jobName: erp-mfg-jobcard-auto-generate
+enabled: "@cfg:nop.job.erp-mfg-jobcard-auto-generate.enabled|false"
+displayName: Manufacturing APS Schedule to JobCard Auto Generation
+description: 每日凌晨扫描「APS已排程但未生成工序卡」的工单批量建卡；nop-batch 调 generatePendingJobCards（双层门控：cron + 总开关 erp-mfg.jobcard-auto-generate-on-schedule）
+jobGroup: erp-mfg
+trigger:
+  cronExpr: "@cfg:nop.job.erp-mfg-jobcard-auto-generate.cron-expr|0 0 1 * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/mfg/jobcard-auto-generate.batch.xml
+  params: {}

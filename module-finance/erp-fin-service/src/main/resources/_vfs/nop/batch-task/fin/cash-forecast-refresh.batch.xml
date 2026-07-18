@@ -1,0 +1,26 @@
+<batch taskName="fin.cash-forecast-refresh"
+       batchSize="500"
+       transactionScope="process"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <source><![CDATA[
+            const today = java.time.LocalDate.now();
+            const windowDays = io.nop.api.core.config.AppConfig.var('erp-fin.cash-forecast-window-days', '30');
+            const days = java.lang.Integer.parseInt(windowDays);
+            return [
+                { fromDate: today, toDate: today.plusDays(days) }
+            ];
+        ]]></source>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpFinCashForecastBiz');
+            biz.refreshForecast(item.fromDate, item.toDate, batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

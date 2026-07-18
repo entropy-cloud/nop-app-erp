@@ -1,0 +1,13 @@
+jobName: erp-fin-deferred-posting-sweep
+enabled: "@cfg:nop.job.erp-fin-deferred-posting-sweep.enabled|false"
+displayName: Finance Deferred Posting Sweep
+description: 每 5 分钟扫描 ErpFinPostingException PENDING 记录（retryCount<3，最近 24h）重建 PostingEvent 重试过账；nop-batch chunk 处理 + 单条失败隔离
+jobGroup: erp-fin
+trigger:
+  cronExpr: "@cfg:nop.job.erp-fin-deferred-posting-sweep.cron-expr|0 0/5 * * * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/fin/deferred-posting-sweep.batch.xml
+  params: {}

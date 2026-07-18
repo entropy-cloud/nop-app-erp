@@ -1,0 +1,10 @@
+jobName: erp-crm-forecast-recalc
+enabled: "@cfg:nop.job.erp-crm-forecast-recalc.enabled|false"
+displayName: CRM Sales Forecast Recalc
+description: 每日 03:00 重算当前 OPEN 预测期间的销售预测；cron 经 erp-crm.forecast.recalc-cron 配置门控
+jobGroup: erp-crm
+trigger:
+  cronExpr: "@cfg:nop.job.erp-crm-forecast-recalc.cron-expr|0 3 * * *"
+invoker:
+  bean: erpCrmForecastRecalcJob
+  method: execute

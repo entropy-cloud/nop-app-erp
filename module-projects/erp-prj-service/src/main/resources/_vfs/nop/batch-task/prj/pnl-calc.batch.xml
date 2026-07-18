@@ -1,0 +1,25 @@
+<batch taskName="prj.pnl-calc"
+       batchSize="100"
+       transactionScope="chunk"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <loader>
+        <orm-reader entityName="app.erp.prj.dao.entity.ErpPrjProject">
+            <query>
+                <filter>
+                    <in name="status" value="${['DRAFT','OPEN','ON_HOLD']}"/>
+                </filter>
+            </query>
+        </orm-reader>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const biz = inject('IErpPrjProjectPnlBiz');
+            biz.refreshPnl(item.id, null, null, batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>
