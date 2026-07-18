@@ -204,6 +204,18 @@ public interface ErpFinErrors {
     ErrorCode ERR_EMPLOYEE_ADVANCE_NOT_REVERSED_BEFORE_CANCEL = ErrorCode.define("erp.err.fin.employee-advance.not-reversed-before-cancel",
             "员工借款单 {advanceCode} 已过账，须先反审核（红字冲销）再作废", ARG_ADVANCE_CODE);
 
+    ErrorCode ERR_EMPLOYEE_ADVANCE_NOT_REPAYABLE = ErrorCode.define("erp.err.fin.employee-advance.not-repayable",
+            "员工借款单 {advanceId} 不可现金还款（须已过账且 APPROVED）：posted/postoveStatus 异常",
+            ARG_ADVANCE_ID);
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_CASH_REPAY_AMOUNT_INVALID = ErrorCode.define("erp.err.fin.employee-advance.cash-repay-amount-invalid",
+            "员工借款单 {advanceId} 现金还款金额 {settleAmount} 必须大于 0",
+            ARG_ADVANCE_ID, ARG_SETTLE_AMOUNT);
+
+    ErrorCode ERR_EMPLOYEE_ADVANCE_CASH_REPAY_EXCEEDS_OUTSTANDING = ErrorCode.define("erp.err.fin.employee-advance.cash-repay-exceeds-outstanding",
+            "员工借款单 {advanceId} 现金还款金额 {settleAmount} 超过未还余额 {openAmount}",
+            ARG_ADVANCE_ID, ARG_SETTLE_AMOUNT, ARG_OPEN_AMOUNT);
+
     // --- 票据（应收/应付）作用域 ---
 
     ErrorCode ERR_NOTES_RECEIVABLE_NOT_FOUND = ErrorCode.define("erp.err.fin.notes-receivable.not-found",

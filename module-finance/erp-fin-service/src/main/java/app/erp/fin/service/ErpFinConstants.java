@@ -101,6 +101,14 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     /** billData 键：部门 ID。 */
     String BILL_DATA_DEPARTMENT_ID = "DEPARTMENT_ID";
 
+    // ---- PostingEvent.billData 键（员工借款清算类型分派，plan 2026-07-18-0718-2） ----
+    /** billData 键：员工借款清算类型（CASH 现金还款 / OFFSET 报销抵扣）；缺省视为 OFFSET。 */
+    String BILL_DATA_SETTLE_TYPE = "SETTLE_TYPE";
+    /** SETTLE_TYPE 取值：现金还款路径（Dr 1002 银行存款 / Cr 1221 其他应收款-员工预支）。 */
+    String SETTLE_TYPE_CASH = "CASH";
+    /** SETTLE_TYPE 取值：报销抵扣路径（Dr 2241 应付-员工 / Cr 1221 其他应收款-员工预支，既有默认行为）。 */
+    String SETTLE_TYPE_OFFSET = "OFFSET";
+
     // ---- 期末结账配置项（period-close.md §配置项），经 AppConfig.var 读取 ----
     /** 结账时 posted=false 单据阻断(false)/提示(true)，默认 false（阻断）。 */
     String CONFIG_AUTO_POST_ON_CLOSE = "erp-fin.auto-post-on-close";

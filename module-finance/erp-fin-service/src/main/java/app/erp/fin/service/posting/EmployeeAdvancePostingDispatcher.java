@@ -85,6 +85,39 @@ public class EmployeeAdvancePostingDispatcher {
         executor.reverse(claimCode, ErpFinBusinessType.EMPLOYEE_ADVANCE_SETTLE);
     }
 
+    /**
+     * 现金还款过账（由 {@code ErpFinEmployeeAdvanceBizModel.cashRepay} 调用）：EMPLOYEE_ADVANCE_SETTLE 现金还款凭证
+     * （借银行存款 / 贷其他应收款-员工预支，{@code billData.SETTLE_TYPE=CASH}）。
+     *
+     * <p>billHeadCode 形如 {@code EA-CASH-REPAY-<advanceCode>-<millis>}，含时间戳避免同 advance 多次还款碰撞。
+     * 失败语义对齐 {@link #postSettle}：catch Exception → log + return false（不阻断业务字段更新，残留风险由调用方记录）。
+     */
+    public boolean postCashRepay(ErpFinEmployeeAdvance advance, BigDecimal amount, io.nop.core.context.IServiceContext context) {
+        Long partnerId = resolveEmployeePartnerId(advance.getEmployeeId());
+
+        PostingEvent event = new PostingEvent();
+        event.setBusinessType(ErpFinBusinessType.EMPLOYEE_ADVANCE_SETTLE);
+        event.setBillHeadCode("EA-CASH-REPAY-" + advance.getCode() + "-" + CoreMetrics.currentTimeMillis());
+        event.setOrgId(advance.getOrgId());
+        event.setAcctSchemaId(resolveAcctSchemaId(advance.getOrgId()));
+        event.setCurrencyId(advance.getCurrencyId() != null ? advance.getCurrencyId() : 1L);
+        event.setExchangeRate(BigDecimal.ONE);
+        event.setVoucherDate(CoreMetrics.today());
+
+        Map<String, Object> billData = new LinkedHashMap<>();
+        billData.put(ErpFinConstants.BILL_DATA_EMPLOYEE_ID, partnerId);
+        billData.put("TOTAL", amount);
+        billData.put(ErpFinConstants.BILL_DATA_SETTLE_TYPE, ErpFinConstants.SETTLE_TYPE_CASH);
+        event.setBillData(billData);
+        try {
+            Long voucherId = executor.postEvent(event);
+            return voucherId != null;
+        } catch (Exception e) {
+            LOG.error("借款现金还款过账失败，借款单 {} 还款金额 {}：{}", advance.getCode(), amount, e.getMessage(), e);
+            return false;
+        }
+    }
+
     private PostingEvent buildEvent(ErpFinEmployeeAdvance advance) {
         Long partnerId = resolveEmployeePartnerId(advance.getEmployeeId());
 

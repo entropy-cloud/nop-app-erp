@@ -21,8 +21,13 @@ import java.util.Set;
  *   <li>{@link ErpFinBusinessType#EMPLOYEE_ADVANCE}（借款审核）：借其他应收款-员工预支 / 贷银行存款，
  *       金额 = 票面（billData.TOTAL）。科目方向 = 其他应收（资产/借方），与报销（应付-员工，负债/贷方）相反，
  *       不污染应收应付余额（对齐 ERPNext {@code book_advance_payments_in_separate_party_account}）。</li>
- *   <li>{@link ErpFinBusinessType#EMPLOYEE_ADVANCE_SETTLE}（报销抵扣清算）：借应付-员工（净额）/ 贷其他应收款-员工预支（净额）。
- *       净额 = min(借款未还, 报销应付-员工)。由 {@code AdvanceOffsetOrchestrator} 在报销抵扣时触发。</li>
+ *   <li>{@link ErpFinBusinessType#EMPLOYEE_ADVANCE_SETTLE}（清算）：按 {@code billData.SETTLE_TYPE} 分派两条路径——
+ *     <ul>
+ *       <li>{@code SETTLE_TYPE=CASH}（现金还款，plan 2026-07-18-0718-2）：借银行存款 / 贷其他应收款-员工预支，
+ *           金额 = billData.TOTAL。由 {@code ErpFinEmployeeAdvanceBizModel.cashRepay} 触发。</li>
+ *       <li>{@code SETTLE_TYPE=OFFSET} 或缺省（报销抵扣清算，既有默认）：借应付-员工（净额）/ 贷其他应收款-员工预支（净额）。
+ *           净额 = min(借款未还, 报销应付-员工)。由 {@code AdvanceOffsetOrchestrator} 在报销抵扣时触发。</li>
+ *     </ul></li>
  * </ul>
  */
 public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
@@ -41,6 +46,9 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
 
     @Override
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
+        if (!getSupportedBusinessTypes().contains(event.getBusinessType())) {
+            return Collections.emptyList();
+        }
         List<VoucherFact> facts = new ArrayList<>();
         BigDecimal amount = readDecimal(event, "TOTAL");
         Long partnerId = asLong(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID));
@@ -51,12 +59,23 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
             facts.add(debit);
             facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, amount, event));
         } else { // EMPLOYEE_ADVANCE_SETTLE
-            VoucherFact debit = fact(SUBJECT_PAYABLE_EMPLOYEE, "其他应付款-员工", DC_DEBIT, amount, event);
-            debit.setPartnerId(partnerId);
-            facts.add(debit);
-            VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event);
-            credit.setPartnerId(partnerId);
-            facts.add(credit);
+            String settleType = asString(event.getBillData().get(ErpFinConstants.BILL_DATA_SETTLE_TYPE));
+            if (ErpFinConstants.SETTLE_TYPE_CASH.equals(settleType)) {
+                // 现金还款路径（plan 2026-07-18-0718-2）：Dr 1002 银行存款 / Cr 1221 其他应收款-员工预支
+                VoucherFact debit = fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, amount, event);
+                facts.add(debit);
+                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event);
+                credit.setPartnerId(partnerId);
+                facts.add(credit);
+            } else {
+                // 报销抵扣路径（默认 / OFFSET / null）：Dr 2241 应付-员工 / Cr 1221 应收-员工预支（既有行为不变）
+                VoucherFact debit = fact(SUBJECT_PAYABLE_EMPLOYEE, "其他应付款-员工", DC_DEBIT, amount, event);
+                debit.setPartnerId(partnerId);
+                facts.add(debit);
+                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event);
+                credit.setPartnerId(partnerId);
+                facts.add(credit);
+            }
         }
         return facts;
     }
@@ -95,5 +114,15 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    private String asString(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String) {
+            return ((String) value).trim();
+        }
+        return String.valueOf(value);
     }
 }
