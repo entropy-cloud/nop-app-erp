@@ -2,7 +2,7 @@
 
 > 本文是 `nop-app-erp` 全部定时/批处理作业的**唯一权威目录**与 nop-job / nop-batch / nop-task / nop-message 四模块**职责划分与选择判据**的归属文档。
 >
-> 修订日期：2026-07-04（由计划 `docs/plans/2026-07-04-1600-1-batch-scheduling-architecture.md` 权威化重写）。原文档仅 53 行、登记 5 个作业、误把 DAG 算作 nop-job 能力——已据平台契约重写。
+> 修订日期：2026-07-18（§1.1 配合模式更新、§2 当前状态刷新、§7 计数修正、§8 接线规范更新）。原文档 2026-07-04 由计划 `docs/plans/2026-07-04-1600-1-batch-scheduling-architecture.md` 权威化重写。
 >
 > **真相优先级**：本文档登记作业的"何时跑/调谁/配置键是什么"；各作业的**业务规则**归各域 owner doc（`docs/design/<domain>/`），不在本文重复。
 
@@ -31,7 +31,10 @@
 | **nop-task** | **跨作业 DAG 编排** | `<graph>` 数据驱动 DAG；`dispatchMode`(partition/broadcast/bestFit/single) 是 task 拆分策略非作业依赖。用于编排多步骤/多作业的依赖链 | `nop-entropy/docs-for-ai/03-modules/nop-task.md:115`；`reusable-modules-overview.md:13-22` |
 | **nop-message** | **跨进程推送** | 异步消息投递（post-commit 派发、跨进程解耦），区别于同进程的 nop-job 触发 | `nop-entropy/docs-for-ai/03-modules/reusable-modules-overview.md` |
 
-**配合模式（平台已成文）**：nop-job 定时触发 → task step 经 `<batch:Execute>` 调 nop-batch 分 chunk 执行（`nop-batch.md:193-204`）。大数据量作业 = nop-job（触发）+ nop-batch（执行）双层。
+**配合模式（平台已成文）**：
+- **推荐（纯批处理）**：`.job.yaml` → `nopBatchTaskRunner.executeAsync(params: {taskPath: ...})` —— 无 Java Job Bean，`job.yaml` 直接指定 `batch.xml` 路径，平台内置 `nopBatchTaskRunner` 负责加载与执行（证据：`nop-batch-sys` 的 `sys-event-batch-consumer.job.yaml`）
+- **备选（需 DAG 编排）**：`task.xml` → `<step customType="batch:Execute">` 标签在 nop-task 中嵌入 batch 执行（`batch-demo.task.xml`）
+- 大数据量作业统一 = nop-job（触发）+ nop-batch 分 chunk（执行）双层
 
 ### 1.2 四维裁决表
 
@@ -68,12 +71,14 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
            └─ errorMessage
 ```
 
-**当前状态（2026-07-04）**：
+**当前状态（2026-07-18）**：
 
-- `nop-job-local` 已作为系统级依赖接入 `app-erp-all/pom.xml:149-154`（`BeanMethodJobInvoker`，本地反射，无 RPC）。
-- **无任何 job bean 实现**：全仓零 `IJob` / `IJobInvoker` 实现；无 `scheduler.yaml`；无 `batch.xml`；无 `@Scheduled`。
-- 各域 BizModel 入口方法（§3 表中"调用入口"列）已交付，可经 GraphQL / 测试调用，但**未接线到调度器**——cron 实际注册归各域 follow-up（见 §8 汇总，约 20 个计划 Deferred 段）。
-- `nop-batch` 完全闲置：全仓仅 `docs/discussions/2026-06-29...:1761` 一处"大批量对账数据分片处理（可选）"提及，无正式设计采用。
+- `nop-job-local` 已接入 `app-erp-all/pom.xml:182`（`BeanMethodJobInvoker`，本地反射，无 RPC）。
+- **19 个 Job Bean 类**已完成三件套接线（bean 注册 + bean 实现 + `scheduler.yaml` 条目），覆盖 9 个域。全部使用一次性加载 + 内存迭代反模式，无 nop-batch 分 chunk 处理。
+- **`nop-batch` 完全闲置**：全仓零 `*.batch.xml`、零 `*.job.yaml`、零 `nop-batch` Maven 依赖。
+- **`scheduler.yaml` 使用旧机制**：19 个作业内联在 `scheduler.yaml.jobs` 中，而非推荐的单文件 `.job.yaml` 模式。无 per-job `enabled` 字段（仅有顶层的 `enabled: true`）。
+- **待迁移 12 个 batch-candidate 作业**已识别但处于 deferred 状态（详见 §7）。
+- **`nopBatchTaskRunner` 平台内置 Bean** 可在引入 `nop-batch-dsl` 依赖后直接使用，无额外配置。
 
 ---
 
@@ -319,7 +324,7 @@ erp-fin-period-close（单个作业）
 
 ## 7. nop-batch 候选作业汇总（大数据量迁移触发条件）
 
-> 以下 **11 个**作业标注 `executionModel=batch-candidate`。本计划仅**登记判据与候选**，不强制接线；迁移触发条件满足时归各域 follow-up（首个候选正式接线时引入 `nop-batch` 模块依赖到 `app-erp-all`）。
+> 以下 **12 个**作业标注 `executionModel=batch-candidate`。迁移方式：`xxx.job.yaml` → `nopBatchTaskRunner.executeAsync(params: {taskPath: xxx.batch.xml})`，替代旧式 `scheduler.yaml` 内联条目 + Java Job Bean。首个候选接线时引入 `nop-batch-dsl` 依赖到 `app-erp-all`。
 
 | 作业 | 量级证据 | 为何需 nop-batch（四维裁决） | 迁移触发条件 |
 |------|----------|------------------------------|--------------|
@@ -367,7 +372,13 @@ erp-fin-period-close（单个作业）
 | `2026-07-04-2200-2-contract-e-signature-spi.md` | 签署状态轮询 | 生产部署 |
 | `2026-07-04-2200-3-hr-payroll-simulation.md` | 模拟转正式/过期清理 | 生产部署 |
 
-**接线规范**：各域接线时，在本目录对应作业行的"调用入口"已就绪的前提下，新增 `scheduler.yaml` 条目（声明 cron + 调用 bean 方法）；大数据量作业改用 `<batch:Execute>` 调 nop-batch（按 §7 迁移触发条件）。
+**接线规范**：
+
+1. **新作业统一走 `.job.yaml`**：每个 job 一个文件放在 `/nop/job/conf/<jobName>.job.yaml`，遵循 `@cfg:` 配置键约定（`nop.job.<jobName>.enabled` + `nop.job.<jobName>.cron-expr`），缺省 `false`
+2. **小数据量作业**：`invoker.bean` 指向现有 Java Job Bean（通过 `BeanMethodJobInvoker` 调用 `execute()`）
+3. **大数据量作业（batch-candidate）**：`invoker.bean: nopBatchTaskRunner` + `params.taskPath` 指向 `batch.xml`，删除 Java Job Bean
+4. **旧 `scheduler.yaml` 清理**：内联条目迁移到 `.job.yaml` 后，清理 `scheduler.yaml` 的 `jobs:` 段，仅保留 `enabled: true`
+5. **同名互斥**：同名 job 在 `scheduler.yaml.jobs` 和 `.job.yaml` 中同时存在时，先加载的 wins（后者 WARN 跳过），因此迁移时必须先清后加
 
 ---
 
@@ -377,5 +388,7 @@ erp-fin-period-close（单个作业）
 - 阈值旁证：`nop-entropy/docs-for-ai/04-reference/non-bizmodel-orm-access.md:134-186`
 - 专项审计：`docs/audits/2026-07-04-0000-batch-scheduling-audit.md`
 - 推动计划：`docs/plans/2026-07-04-1600-1-batch-scheduling-architecture.md`
+- 迁移实施计划：`docs/plans/2026-07-18-1600-1-batch-migration-phase-1.md`
+- 迁移分析报告：`docs/analysis/batch-processing-audit-and-migration-analysis.md`
 - 既有合规审计（不覆盖批处理维度）：`docs/audits/2026-07-02-0000-best-practices-compliance-audit.md`
 - 各域 owner doc 的"配置点"表（见 §6 配置键证据列）
