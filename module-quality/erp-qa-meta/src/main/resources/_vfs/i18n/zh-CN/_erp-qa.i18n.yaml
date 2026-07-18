@@ -438,8 +438,10 @@ prop:
       chartId: 控制图ID
       createTime: 创建时间
       createdBy: 创建人
+      defectCount: 缺陷数(计数型 P/NP/C/U)
       delVersion: 逻辑删除版本
       id: ID
+      inspectedCount: 检验数(计数型 P/NP/C/U)
       inspector: null
       inspector.name: null
       inspectorId: 检验员

@@ -131,6 +131,8 @@ public interface ErpQaConstants {
     String CONFIG_DASH_QA_SPC_INCLUDE_NCR = "erp-dash.qa-spc-include-ncr";
     /** 看板 SPC 控制图默认 chartId（null=未配置时取最近一张 ErpQaSpcChart；plan 2026-07-17-2010-1）。 */
     String CONFIG_DASH_QA_SPC_DEFAULT_CHART_ID = "erp-dash.qa-spc-default-chart-id";
+    /** 看板 SPC 计数型（P/NP/C/U）控制图默认 chartId（null=未配置时取最近一张 ErpQaSpcChart；plan 2026-07-19-0120-2 Phase 1 Decision (a)）。 */
+    String CONFIG_DASH_QA_SPC_DEFAULT_ATTRIBUTES_CHART_ID = "erp-dash.qa-spc-default-attributes-chart-id";
 
     // ---- SPC 统计过程控制（2.4b，spc.md）----
     // SPC 控制图类型（erp-qa/spc-chart-type）

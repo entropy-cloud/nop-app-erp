@@ -80,6 +80,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--缺陷数(计数型 P/NP/C/U)-->
+                <col id="defectCount" ui:number="true" sortable="true"/>
+
+                <!--检验数(计数型 P/NP/C/U)-->
+                <col id="inspectedCount" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -98,6 +104,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ defectCount[缺陷数(计数型 P/NP/C/U)] inspectedCount[检验数(计数型 P/NP/C/U)]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-SPC 样本数据" i18n-en:title="Add SPC Sample" x:prototype="edit"/>
@@ -110,7 +117,8 @@
  sourceBillType[数据来源单据类型] sourceCode[数据来源单号]
  sourceLineCode[数据来源行号] inspectorId[检验员]
  violatedRules[违反的判异规则(逗号分隔)] isOutOfControl[是否失控]
- remark[备注] 
+ remark[备注] defectCount[缺陷数(计数型 P/NP/C/U)]
+ inspectedCount[检验数(计数型 P/NP/C/U)] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

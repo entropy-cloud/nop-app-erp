@@ -321,6 +321,34 @@
         }
 
 
+        private Integer _defectCount;
+
+    
+        @PropMeta(propId=23)
+    
+        public Integer getDefectCount(){
+            return _defectCount;
+        }
+
+        public void setDefectCount(Integer value){
+            this._defectCount = value;
+        }
+
+
+        private Integer _inspectedCount;
+
+    
+        @PropMeta(propId=24)
+    
+        public Integer getInspectedCount(){
+            return _inspectedCount;
+        }
+
+        public void setInspectedCount(Integer value){
+            this._inspectedCount = value;
+        }
+
+
         private Map<String,Object> _chart;
 
         public Map<String,Object> getChart(){

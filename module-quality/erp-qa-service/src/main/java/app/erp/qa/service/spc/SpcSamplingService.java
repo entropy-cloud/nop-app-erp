@@ -5,6 +5,7 @@ import app.erp.qa.biz.IErpQaInspectionLineBiz;
 import app.erp.qa.biz.IErpQaSpcSampleBiz;
 import app.erp.qa.dao.entity.ErpQaInspection;
 import app.erp.qa.dao.entity.ErpQaInspectionLine;
+import app.erp.qa.dao.entity.ErpQaNonConformance;
 import app.erp.qa.dao.entity.ErpQaSpcChart;
 import app.erp.qa.dao.entity.ErpQaSpcSample;
 import app.erp.qa.service.ErpQaConstants;
@@ -87,6 +88,16 @@ public class SpcSamplingService {
     /**
      * 对指定 chart 执行增量样本采集。返回新增的样本数。
      *
+     * <p>chartType 两分支（plan 2026-07-19-0120-2 增计数型）：
+     * <ul>
+     *   <li><b>计量型</b>（X_BAR_R/X_BAR_S/X_MR，含 chartType==null 回落）：既有 measuredValues 聚合
+     *       —— APPROVED inspection line 的 measuredValue（字符串→BigDecimal）按 subgroupSize 聚合；</li>
+     *   <li><b>计数型</b>（P/NP/C/U）：按 chartType 派生数据源——
+     *       P/NP 从 ErpQaInspectionLine 按 result=REJECTED 计数 defectCount + line 总数作 inspectedCount；
+     *       C/U 从 ErpQaNonConformance 按 sourceType=INSPECTION + inspectionId 反查 quantity 累计 defectCount +
+     *       inspection 数作 inspectedCount。每子组（按 inspection 切分，subgroupSize=子组内 inspection 数）1 sample。</li>
+     * </ul>
+     *
      * @param chartId 控制图 ID
      * @param context 服务上下文
      * @return 本次新采集的样本（子组）数；无新数据返回 0
@@ -112,6 +123,11 @@ public class SpcSamplingService {
         if (subgroupSize < 2) {
             throw new NopException(ErpQaErrors.ERR_QA_SPC_SUBGROUP_SIZE_INVALID)
                     .param(ErpQaErrors.ARG_CHART_CODE, chart.getCode());
+        }
+
+        // chartType 分支：计数型走 attributes 聚合路径（plan 2026-07-19-0120-2）
+        if (SpcControlLimitCalculator.isAttributesChart(chart.getChartType())) {
+            return collectAttributesSamples(chart, parameterId, subgroupSize);
         }
 
         // 1. 候选 InspectionLine：parameterId 命中 + APPROVED 的 inspection
@@ -191,6 +207,153 @@ public class SpcSamplingService {
             created++;
         }
         return created;
+    }
+
+    /**
+     * 计数型样本采集（plan 2026-07-19-0120-2 Phase 2）。
+     *
+     * <p>P/NP 从 ErpQaInspectionLine 按 result=REJECTED 计数 defectCount + line 总数作 inspectedCount；
+     * C/U 从 ErpQaNonConformance 按 sourceType=INSPECTION + inspectionId 反查 quantity 累计 defectCount +
+     * inspection 数作 inspectedCount。
+     *
+     * <p>子组按 APPROVED inspection 切分（chart.subgroupSize 语义改为"子组内 inspection 数"），
+     * 每子组 1 ErpQaSpcSample，幂等键 = "ATTR#" + inspectionCode（避免与计量型 measuredValue 键冲突）。
+     */
+    private int collectAttributesSamples(ErpQaSpcChart chart, Long parameterId, int subgroupSize) {
+        Long chartId = chart.getId();
+        // 找全部 APPROVED inspection（命中 parameterId 的 line 关联）
+        List<ErpQaInspectionLine> approvedLines = findApprovedInspectionLines(parameterId);
+        if (approvedLines.isEmpty()) {
+            LOG.debug("spc-sampling-attrs-no-data: chartId={} parameterId={}", chartId, parameterId);
+            return 0;
+        }
+        // 按 inspectionId 分组行（一个 inspection 多个 line）
+        Map<Long, List<ErpQaInspectionLine>> linesByInspection = new LinkedHashMap<>();
+        for (ErpQaInspectionLine line : approvedLines) {
+            if (line.getInspectionId() == null) continue;
+            linesByInspection.computeIfAbsent(line.getInspectionId(), k -> new ArrayList<>()).add(line);
+        }
+        // 收集有效 inspection（按 createTime 升序）
+        List<ErpQaInspection> inspections = new ArrayList<>();
+        for (Long insId : linesByInspection.keySet()) {
+            ErpQaInspection ins = resolveInspection(insId);
+            if (ins != null) inspections.add(ins);
+        }
+        if (inspections.isEmpty()) {
+            return 0;
+        }
+        inspections.sort((a, b) -> {
+            LocalDateTime ta = a.getCreateTime() == null ? LocalDateTime.MIN : a.getCreateTime().toLocalDateTime();
+            LocalDateTime tb = b.getCreateTime() == null ? LocalDateTime.MIN : b.getCreateTime().toLocalDateTime();
+            return ta.compareTo(tb);
+        });
+
+        // 幂等：检查已有 sample 的 sourceCode（计数型以 inspection code 列表 join 作为幂等键）
+        List<ErpQaSpcSample> existingSamples = findSamples(chartId);
+        java.util.Set<String> sampledKeys = buildAttributesSampledKeys(existingSamples);
+
+        // 按 subgroupSize 切分 inspection 集合
+        int nextSubgroupNo = nextSubgroupNo(existingSamples);
+        IEntityDao<ErpQaSpcSample> sampleDao = daoProvider.daoFor(ErpQaSpcSample.class);
+        boolean isCU = ErpQaConstants.SPC_CHART_TYPE_C.equals(chart.getChartType())
+                || ErpQaConstants.SPC_CHART_TYPE_U.equals(chart.getChartType());
+        // C/U 预加载 NCR（按 inspectionId 索引）
+        Map<Long, List<ErpQaNonConformance>> ncrsByInspection = isCU
+                ? loadNcrsByInspectionId(linesByInspection.keySet()) : java.util.Collections.emptyMap();
+
+        int total = inspections.size();
+        int created = 0;
+        for (int offset = 0; offset + subgroupSize <= total; offset += subgroupSize) {
+            List<ErpQaInspection> subgroup = inspections.subList(offset, offset + subgroupSize);
+            // 幂等键：以子组首个 inspection code（同一起始 inspection 不重建）
+            String firstCode = subgroup.get(0).getCode();
+            String key = "ATTR#" + firstCode;
+            if (sampledKeys.contains(key)) {
+                // 该子组起始 inspection 已被采样过；进一步检查后续子组（增量场景：旧子组保留 + 新数据成新子组）
+                continue;
+            }
+
+            int defectCount = 0;
+            int inspectedCount = 0;
+            for (ErpQaInspection ins : subgroup) {
+                List<ErpQaInspectionLine> lines = linesByInspection.get(ins.getId());
+                if (lines == null) continue;
+                if (isCU) {
+                    // C/U：defectCount 从 NCR.quantity 累计（每 inspection），inspectedCount = 1 (1 inspection = 1 单位 opportunity)
+                    List<ErpQaNonConformance> ncrs = ncrsByInspection.get(ins.getId());
+                    if (ncrs != null) {
+                        for (ErpQaNonConformance ncr : ncrs) {
+                            if (ncr.getQuantity() != null) {
+                                defectCount += ncr.getQuantity().intValue();
+                            }
+                        }
+                    }
+                    inspectedCount += 1;
+                } else {
+                    // P/NP：defectCount = REJECTED line 数；inspectedCount = line 总数
+                    for (ErpQaInspectionLine line : lines) {
+                        if (ErpQaConstants.INSPECTION_RESULT_REJECTED.equals(line.getResult())) {
+                            defectCount++;
+                        }
+                        inspectedCount++;
+                    }
+                }
+            }
+
+            ErpQaSpcSample sample = sampleDao.newEntity();
+            sample.setChartId(chartId);
+            sample.setOrgId(chart.getOrgId());
+            sample.setSubgroupNo(nextSubgroupNo++);
+            sample.setSampleTime(CoreMetrics.currentTimestamp());
+            sample.setDefectCount(defectCount);
+            sample.setInspectedCount(inspectedCount);
+            // 派生 mean/range/stdDev：保留计量型字段语义为 defectRate/0/0（兼容既有看板渲染 mean 字段）
+            BigDecimal defectRate = inspectedCount > 0
+                    ? BigDecimal.valueOf(defectCount).divide(BigDecimal.valueOf(inspectedCount), 6, RoundingMode.HALF_UP)
+                    : BigDecimal.ZERO;
+            sample.setMean(scaleTo(defectRate));
+            sample.setRange(BigDecimal.ZERO.setScale(6, RoundingMode.HALF_UP));
+            sample.setStdDev(BigDecimal.ZERO.setScale(6, RoundingMode.HALF_UP));
+            sample.setSourceBillType(ErpQaConstants.SPC_SOURCE_BILL_TYPE_INSPECTION);
+            sample.setSourceCode(subgroup.get(0).getCode());
+            sample.setSourceLineCode(String.valueOf(subgroup.size()));
+            sample.setInspectorId(subgroup.get(0).getInspectorId());
+            sample.setIsOutOfControl(false);
+            sampleDao.saveEntity(sample);
+            created++;
+        }
+        return created;
+    }
+
+    private Map<Long, List<ErpQaNonConformance>> loadNcrsByInspectionId(java.util.Set<Long> inspectionIds) {
+        if (inspectionIds.isEmpty()) {
+            return java.util.Collections.emptyMap();
+        }
+        IEntityDao<ErpQaNonConformance> dao = daoProvider.daoFor(ErpQaNonConformance.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(in("inspectionId", new ArrayList<>(inspectionIds)));
+        q.addFilter(eq("sourceType", ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION));
+        List<ErpQaNonConformance> ncrs = dao.findAllByQuery(q);
+        Map<Long, List<ErpQaNonConformance>> result = new LinkedHashMap<>();
+        for (ErpQaNonConformance ncr : ncrs) {
+            if (ncr.getInspectionId() == null) continue;
+            result.computeIfAbsent(ncr.getInspectionId(), k -> new ArrayList<>()).add(ncr);
+        }
+        return result;
+    }
+
+    private java.util.Set<String> buildAttributesSampledKeys(List<ErpQaSpcSample> existingSamples) {
+        // 计数型幂等键：sample.sourceCode（子组首个 inspection code）—— 同一起始 inspection 不重建
+        java.util.Set<String> keys = new java.util.HashSet<>();
+        for (ErpQaSpcSample s : existingSamples) {
+            if (s.getDefectCount() == null && s.getInspectedCount() == null) {
+                continue;
+            }
+            if (s.getSourceCode() != null) {
+                keys.add("ATTR#" + s.getSourceCode());
+            }
+        }
+        return keys;
     }
 
     private ErpQaInspection resolveInspection(Long inspectionId) {

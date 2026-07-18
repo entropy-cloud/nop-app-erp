@@ -109,8 +109,16 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 22;
     
+    /* 缺陷数(计数型 P/NP/C/U): DEFECT_COUNT INTEGER */
+    public static final String PROP_NAME_defectCount = "defectCount";
+    public static final int PROP_ID_defectCount = 23;
+    
+    /* 检验数(计数型 P/NP/C/U): INSPECTED_COUNT INTEGER */
+    public static final String PROP_NAME_inspectedCount = "inspectedCount";
+    public static final int PROP_ID_inspectedCount = 24;
+    
 
-    private static int _PROP_ID_BOUND = 23;
+    private static int _PROP_ID_BOUND = 25;
 
     
     /* relation:  */
@@ -126,7 +134,7 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[23];
+    private static final String[] PROP_ID_TO_NAME = new String[25];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -196,6 +204,12 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_defectCount] = PROP_NAME_defectCount;
+          PROP_NAME_TO_ID.put(PROP_NAME_defectCount, PROP_ID_defectCount);
+      
+          PROP_ID_TO_NAME[PROP_ID_inspectedCount] = PROP_NAME_inspectedCount;
+          PROP_NAME_TO_ID.put(PROP_NAME_inspectedCount, PROP_ID_inspectedCount);
+      
     }
 
     
@@ -264,6 +278,12 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 缺陷数(计数型 P/NP/C/U): DEFECT_COUNT */
+    private java.lang.Integer _defectCount;
+    
+    /* 检验数(计数型 P/NP/C/U): INSPECTED_COUNT */
+    private java.lang.Integer _inspectedCount;
     
 
     public _ErpQaSpcSample(){
@@ -404,6 +424,12 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_defectCount:
+               return getDefectCount();
+        
+            case PROP_ID_inspectedCount:
+               return getInspectedCount();
         
            default:
               return super.orm_propValue(propId);
@@ -636,6 +662,26 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_defectCount:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_defectCount));
+               }
+               setDefectCount(typedValue);
+               break;
+            }
+        
+            case PROP_ID_inspectedCount:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_inspectedCount));
+               }
+               setInspectedCount(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -795,6 +841,20 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_defectCount:{
+               onInitProp(propId);
+               this._defectCount = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_inspectedCount:{
+               onInitProp(propId);
+               this._inspectedCount = (java.lang.Integer)value;
                
                break;
             }
@@ -1219,6 +1279,44 @@ public class _ErpQaSpcSample extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 缺陷数(计数型 P/NP/C/U): DEFECT_COUNT
+     */
+    public final java.lang.Integer getDefectCount(){
+         onPropGet(PROP_ID_defectCount);
+         return _defectCount;
+    }
+
+    /**
+     * 缺陷数(计数型 P/NP/C/U): DEFECT_COUNT
+     */
+    public final void setDefectCount(java.lang.Integer value){
+        if(onPropSet(PROP_ID_defectCount,value)){
+            this._defectCount = value;
+            internalClearRefs(PROP_ID_defectCount);
+            
+        }
+    }
+    
+    /**
+     * 检验数(计数型 P/NP/C/U): INSPECTED_COUNT
+     */
+    public final java.lang.Integer getInspectedCount(){
+         onPropGet(PROP_ID_inspectedCount);
+         return _inspectedCount;
+    }
+
+    /**
+     * 检验数(计数型 P/NP/C/U): INSPECTED_COUNT
+     */
+    public final void setInspectedCount(java.lang.Integer value){
+        if(onPropSet(PROP_ID_inspectedCount,value)){
+            this._inspectedCount = value;
+            internalClearRefs(PROP_ID_inspectedCount);
             
         }
     }

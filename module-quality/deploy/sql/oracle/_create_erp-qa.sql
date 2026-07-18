@@ -351,6 +351,8 @@ CREATE TABLE erp_qa_spc_sample(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  DEFECT_COUNT INTEGER  ,
+  INSPECTED_COUNT INTEGER  ,
   constraint PK_erp_qa_spc_sample primary key (ID)
 );
 
@@ -1007,6 +1009,10 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_spc_sample.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_spc_sample.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.DEFECT_COUNT IS '缺陷数(计数型 P/NP/C/U)';
+                    
+      COMMENT ON COLUMN erp_qa_spc_sample.INSPECTED_COUNT IS '检验数(计数型 P/NP/C/U)';
                     
       COMMENT ON TABLE erp_qa_spc_capability IS 'SPC 过程能力分析';
                 

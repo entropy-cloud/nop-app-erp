@@ -198,8 +198,14 @@ body:
         const ucl = result.ucl;
         const lcl = result.lcl;
         const cl = result.cl;
+        const chartType = result.chartType || '';
+        const isAttributes = chartType === 'P' || chartType === 'NP' || chartType === 'C' || chartType === 'U';
+        // 计数型样本纵轴 = defectRate（defectCount/inspectedCount）；计量型纵轴 = mean
         const seriesData = samples.map(function(s){
-          return { value: s.mean, itemStyle: s.isOutOfControl ? {color: 'red'} : undefined };
+          var v = isAttributes
+            ? (s.defectRate != null ? s.defectRate : (s.inspectedCount ? s.defectCount / s.inspectedCount : 0))
+            : s.mean;
+          return { value: v, itemStyle: s.isOutOfControl ? {color: 'red'} : undefined };
         });
         const markLines = [];
         if (ucl != null) markLines.push({ yAxis: ucl, name: 'UCL', lineStyle: {color: 'red', type: 'dashed'}, label: {position: 'end', formatter: 'UCL'} });
@@ -207,11 +213,12 @@ body:
         if (cl != null)  markLines.push({ yAxis: cl,  name: 'CL',  lineStyle: {color: 'green'}, label: {position: 'end', formatter: 'CL'} });
         const series = { type: 'line', data: seriesData };
         if (markLines.length > 0) series.markLine = { symbol: 'none', data: markLines };
+        const yAxisName = isAttributes ? '缺陷率' : '均值';
         return {
           status: 0,
           msg: '',
           data: {
-            title: { text: 'SPC 控制图：' + (result.chartName || '') + ' (' + (result.chartType || '') + ')' },
+            title: { text: 'SPC 控制图：' + (result.chartName || '') + ' (' + chartType + ')' },
             tooltip: {
               trigger: 'axis',
               formatter: function(params) {
@@ -221,14 +228,18 @@ body:
                   s += p.marker + ' ' + p.seriesName + ': ' + p.value + '<br/>';
                 });
                 const sample = samples[idx];
-                if (sample && sample.isOutOfControl && sample.violatedRules) {
-                  s += '违规规则: ' + sample.violatedRules + '<br/>';
+                if (sample) {
+                  if (sample.defectCount != null) s += '缺陷数: ' + sample.defectCount + '<br/>';
+                  if (sample.inspectedCount != null) s += '检验数: ' + sample.inspectedCount + '<br/>';
+                  if (sample.isOutOfControl && sample.violatedRules) {
+                    s += '违规规则: ' + sample.violatedRules + '<br/>';
+                  }
                 }
                 return s;
               }
             },
             xAxis: { type: 'category', name: '子组号', data: samples.map(function(s){return s.subgroupNo;}) },
-            yAxis: { type: 'value' },
+            yAxis: { type: 'value', name: yAxisName },
             series: [series]
           }
         };

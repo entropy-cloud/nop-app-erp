@@ -12,6 +12,7 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,13 +23,15 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * SPC 控制限计算引擎（{@code docs/design/quality/spc.md §关键流程 2}，plan 2026-07-07-0305-2 Phase 2）。
  *
  * <p>当 chart 下样本数 ≥ {@link ErpQaConstants#SPC_MIN_SUBGROUPS_FOR_CONTROL_LIMIT}（默认 20）触发
- * 重算 chart.ucl/lcl/cl。系数 d2/D3/D4 按 subgroupSize 内置常量表。
+ * 重算 chart.ucl/lcl/cl。
  *
- * <p>clCenterType 三分支：
+ * <p>chartType 两分支（plan 2026-07-19-0120-2 增计数型）：
  * <ul>
- *   <li>{@code AUTO_FROM_DATA}：cl = grandMean（所有子组均值的平均）。</li>
- *   <li>{@code MANUAL}：cl 用 chart.cl 当前值；ucl/lcl 仍按公式重算。</li>
- *   <li>{@code TARGET}：cl = (specMin + specMax) / 2（规格中值）。</li>
+ *   <li><b>计量型</b>（X_BAR_R/X_BAR_S/X_MR）：grandMean = mean(sample.mean)，sigmaHat = R̄/d2，
+ *       UCL/LCL = cl ± 3σ̂；clCenterType 三分支（AUTO_FROM_DATA/MANUAL/TARGET）。</li>
+ *   <li><b>计数型</b>（P/NP/C/U）：调 {@link AttributesControlLimitFormulas} 对应公式；
+ *       CL/UCL/LCL 由公式直接派生，clCenterType 不适用（计数型 CL 为统计均值）；
+ *       负数下限钳 0（缺陷率/数下界 ≥ 0）。</li>
  * </ul>
  *
  * <p>样本数不足 20 时，calcStatus 保持 PENDING，不抛错。
@@ -99,44 +102,59 @@ public class SpcControlLimitCalculator {
             // 样本不足，保持 PENDING
             return false;
         }
-        int subgroupSize = chart.getSubgroupSize() == null ? ErpQaConstants.DEFAULT_SPC_SUBGROUP_SIZE : chart.getSubgroupSize();
-        BigDecimal d2 = lookupD2(subgroupSize);
-        BigDecimal d3 = lookupD3(subgroupSize);
-        BigDecimal d4 = lookupD4(subgroupSize);
 
-        // grandMean = mean(sample.mean)
-        BigDecimal sumMean = BigDecimal.ZERO;
-        BigDecimal sumRange = BigDecimal.ZERO;
-        for (ErpQaSpcSample s : samples) {
-            if (s.getMean() != null) {
-                sumMean = sumMean.add(s.getMean());
-            }
-            if (s.getRange() != null) {
-                sumRange = sumRange.add(s.getRange());
-            }
-        }
-        BigDecimal grandMean = sumMean.divide(BigDecimal.valueOf(samples.size()), 10, RoundingMode.HALF_UP);
-        BigDecimal averageRange = sumRange.divide(BigDecimal.valueOf(samples.size()), 10, RoundingMode.HALF_UP);
-
-        // cl 按 clCenterType 分支
-        BigDecimal cl = resolveCenterLine(chart, grandMean);
-        BigDecimal sigmaHat = d2.equals(BigDecimal.ZERO) ? null
-                : averageRange.divide(d2, 10, RoundingMode.HALF_UP);
-
+        BigDecimal cl;
         BigDecimal ucl;
         BigDecimal lcl;
-        if (sigmaHat != null) {
-            BigDecimal threeSigma = sigmaHat.multiply(new BigDecimal("3"));
-            ucl = cl.add(threeSigma);
-            lcl = cl.subtract(threeSigma);
+        String chartType = chart.getChartType();
+        if (isAttributesChart(chartType)) {
+            // 计数型分支：调 AttributesControlLimitFormulas
+            AttributesControlLimitFormulas.Result r = calculateAttributes(chartType, samples);
+            cl = r.getCl();
+            ucl = r.getUcl();
+            lcl = r.getLcl();
         } else {
-            // 异常路径（d2 缺失）：仅置 cl，ucl/lcl 留空
-            ucl = null;
-            lcl = null;
+            // 计量型分支：既有 X̄̄-R 范式（默认 chartType==null 时走计量型以保持向后兼容）
+            int subgroupSize = chart.getSubgroupSize() == null ? ErpQaConstants.DEFAULT_SPC_SUBGROUP_SIZE : chart.getSubgroupSize();
+            BigDecimal d2 = lookupD2(subgroupSize);
+            BigDecimal d3 = lookupD3(subgroupSize);
+            BigDecimal d4 = lookupD4(subgroupSize);
+
+            // grandMean = mean(sample.mean)
+            BigDecimal sumMean = BigDecimal.ZERO;
+            BigDecimal sumRange = BigDecimal.ZERO;
+            for (ErpQaSpcSample s : samples) {
+                if (s.getMean() != null) {
+                    sumMean = sumMean.add(s.getMean());
+                }
+                if (s.getRange() != null) {
+                    sumRange = sumRange.add(s.getRange());
+                }
+            }
+            BigDecimal grandMean = sumMean.divide(BigDecimal.valueOf(samples.size()), 10, RoundingMode.HALF_UP);
+            BigDecimal averageRange = sumRange.divide(BigDecimal.valueOf(samples.size()), 10, RoundingMode.HALF_UP);
+
+            // cl 按 clCenterType 分支
+            cl = resolveCenterLine(chart, grandMean);
+            BigDecimal sigmaHat = d2.equals(BigDecimal.ZERO) ? null
+                    : averageRange.divide(d2, 10, RoundingMode.HALF_UP);
+
+            if (sigmaHat != null) {
+                BigDecimal threeSigma = sigmaHat.multiply(new BigDecimal("3"));
+                ucl = cl.add(threeSigma);
+                lcl = cl.subtract(threeSigma);
+            } else {
+                // 异常路径（d2 缺失）：仅置 cl，ucl/lcl 留空
+                ucl = null;
+                lcl = null;
+            }
+            // 极差控制限（可选记录于 remark；本实现不持久化 R 控制限字段，仅日志）
+            BigDecimal rangeUpper = averageRange.multiply(d4);
+            BigDecimal rangeLower = averageRange.multiply(d3);
+            // rangeUpper/rangeLower 仅本地变量供未来扩展，不计入 chart 字段
+            if (rangeUpper == null) { /* no-op 守门避免 unused warning */ }
+            if (rangeLower == null) { /* no-op */ }
         }
-        // 极差控制限（可选记录于 remark；本实现不持久化 R 控制限字段，仅日志）
-        BigDecimal rangeUpper = averageRange.multiply(d4);
-        BigDecimal rangeLower = averageRange.multiply(d3);
 
         chart.setCl(scale(cl));
         chart.setUcl(scale(ucl));
@@ -144,6 +162,38 @@ public class SpcControlLimitCalculator {
         chart.setCalcStatus(ErpQaConstants.SPC_CALC_STATUS_CALCULATED);
         chartDao.updateEntity(chart);
         return true;
+    }
+
+    /** 判定 chartType 是否属计数型（P/NP/C/U）。 */
+    public static boolean isAttributesChart(String chartType) {
+        return ErpQaConstants.SPC_CHART_TYPE_P.equals(chartType)
+                || ErpQaConstants.SPC_CHART_TYPE_NP.equals(chartType)
+                || ErpQaConstants.SPC_CHART_TYPE_C.equals(chartType)
+                || ErpQaConstants.SPC_CHART_TYPE_U.equals(chartType);
+    }
+
+    private AttributesControlLimitFormulas.Result calculateAttributes(String chartType, List<ErpQaSpcSample> samples) {
+        List<Integer> defects = new ArrayList<>(samples.size());
+        List<Integer> inspected = new ArrayList<>(samples.size());
+        for (ErpQaSpcSample s : samples) {
+            int d = s.getDefectCount() == null ? 0 : s.getDefectCount();
+            int n = s.getInspectedCount() == null ? 0 : s.getInspectedCount();
+            defects.add(d);
+            inspected.add(n);
+        }
+        if (ErpQaConstants.SPC_CHART_TYPE_P.equals(chartType)) {
+            return AttributesControlLimitFormulas.calcP(defects, inspected);
+        }
+        if (ErpQaConstants.SPC_CHART_TYPE_NP.equals(chartType)) {
+            return AttributesControlLimitFormulas.calcNp(defects, inspected);
+        }
+        if (ErpQaConstants.SPC_CHART_TYPE_C.equals(chartType)) {
+            return AttributesControlLimitFormulas.calcC(defects);
+        }
+        if (ErpQaConstants.SPC_CHART_TYPE_U.equals(chartType)) {
+            return AttributesControlLimitFormulas.calcU(defects, inspected);
+        }
+        return new AttributesControlLimitFormulas.Result(null, null, null);
     }
 
     /** R̄/d2 标准差估计（Cp/Cpk 计算复用）。 */

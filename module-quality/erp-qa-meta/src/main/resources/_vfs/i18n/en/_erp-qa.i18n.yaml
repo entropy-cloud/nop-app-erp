@@ -456,6 +456,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      defectCount: Defect Count
+      inspectedCount: Inspected Count
       chart: Chart
       inspector: Inspector
       inspector.name: Inspector

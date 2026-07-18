@@ -65,6 +65,14 @@ public class SpcCapabilityCalculator {
 
     /**
      * 计算 chart 在指定周期内的过程能力。返回新创建的 ErpQaSpcCapability（已持久化）。
+     *
+     * <p>chartType 两分支（plan 2026-07-19-0120-2 增计数型）：
+     * <ul>
+     *   <li><b>计量型</b>（X_BAR_R/X_BAR_S/X_MR，含 chartType==null 回落）：既有 Cp/Cpk/Pp/Ppk/Cpm 全套
+     *       + capabilityLevel 按 Cpk 阈值分档 + QualityGoal 回写 + RiskRegister 登记；</li>
+     *   <li><b>计数型</b>（P/NP/C/U）：保守降级（Phase 1 Decision (a)）—— cp/cpk/pp/ppk/cpm 全 null +
+     *       capabilityLevel=null；grandMean/overallStdDev 仍按 defectRate 序列派生供参考。</li>
+     * </ul>
      */
     public ErpQaSpcCapability calculateCapability(Long chartId, LocalDate periodFrom, LocalDate periodTo,
                                                    IServiceContext context) {
@@ -79,38 +87,75 @@ public class SpcCapabilityCalculator {
             return null;
         }
 
-        // 收集所有 measuredValues 平铺成单值序列
-        List<BigDecimal> allValues = new ArrayList<>();
-        List<BigDecimal> sampleMeans = new ArrayList<>();
-        List<BigDecimal> sampleRanges = new ArrayList<>();
-        for (ErpQaSpcSample s : samples) {
-            if (s.getMean() != null) sampleMeans.add(s.getMean());
-            if (s.getRange() != null) sampleRanges.add(s.getRange());
-            if (!Objects.equals(s.getIsOutOfControl(), Boolean.TRUE)) {
-                allValues.addAll(parseValues(s.getMeasuredValues()));
+        boolean isAttributes = SpcControlLimitCalculator.isAttributesChart(chart.getChartType());
+
+        BigDecimal grandMean;
+        BigDecimal overallStdDev;
+        BigDecimal withinStdDev;
+        BigDecimal cp;
+        BigDecimal cpk;
+        BigDecimal pp;
+        BigDecimal ppk;
+        BigDecimal cpm;
+        String capabilityLevel;
+        int totalObservations;
+
+        if (isAttributes) {
+            // 计数型降级（Phase 1 Decision (a)）：defectRate 序列派生 grandMean/σ，cp/cpk/cpm 全 null
+            List<BigDecimal> defectRates = new ArrayList<>();
+            for (ErpQaSpcSample s : samples) {
+                if (Objects.equals(s.getIsOutOfControl(), Boolean.TRUE)) continue;
+                int d = s.getDefectCount() == null ? 0 : s.getDefectCount();
+                int n = s.getInspectedCount() == null || s.getInspectedCount() == 0 ? 1 : s.getInspectedCount();
+                defectRates.add(BigDecimal.valueOf(d).divide(BigDecimal.valueOf(n), 10, RoundingMode.HALF_UP));
             }
-        }
-        if (allValues.isEmpty()) {
-            return null;
-        }
+            if (defectRates.isEmpty()) {
+                return null;
+            }
+            grandMean = Statistics.mean(defectRates);
+            overallStdDev = Statistics.populationStdDev(defectRates);
+            withinStdDev = null;
+            cp = null;
+            cpk = null;
+            pp = null;
+            ppk = null;
+            cpm = null;
+            capabilityLevel = null;
+            totalObservations = samples.stream()
+                    .mapToInt(s -> s.getInspectedCount() == null ? 0 : s.getInspectedCount())
+                    .sum();
+        } else {
+            // 既有计量型分支
+            List<BigDecimal> allValues = new ArrayList<>();
+            List<BigDecimal> sampleMeans = new ArrayList<>();
+            List<BigDecimal> sampleRanges = new ArrayList<>();
+            for (ErpQaSpcSample s : samples) {
+                if (s.getMean() != null) sampleMeans.add(s.getMean());
+                if (s.getRange() != null) sampleRanges.add(s.getRange());
+                if (!Objects.equals(s.getIsOutOfControl(), Boolean.TRUE)) {
+                    allValues.addAll(parseValues(s.getMeasuredValues()));
+                }
+            }
+            if (allValues.isEmpty()) {
+                return null;
+            }
+            grandMean = Statistics.mean(allValues);
+            overallStdDev = Statistics.populationStdDev(allValues);
+            int subgroupSize = chart.getSubgroupSize() == null ? ErpQaConstants.DEFAULT_SPC_SUBGROUP_SIZE : chart.getSubgroupSize();
+            BigDecimal averageRange = sampleRanges.isEmpty() ? null
+                    : Statistics.mean(sampleRanges);
+            withinStdDev = controlLimitCalculator.estimateWithinStdDev(subgroupSize, averageRange);
 
-        // grandMean = mean(allValues)
-        BigDecimal grandMean = Statistics.mean(allValues);
-        BigDecimal overallStdDev = Statistics.populationStdDev(allValues);
-        // withinStdDev = R̄/d2
-        int subgroupSize = chart.getSubgroupSize() == null ? ErpQaConstants.DEFAULT_SPC_SUBGROUP_SIZE : chart.getSubgroupSize();
-        BigDecimal averageRange = sampleRanges.isEmpty() ? null
-                : Statistics.mean(sampleRanges);
-        BigDecimal withinStdDev = controlLimitCalculator.estimateWithinStdDev(subgroupSize, averageRange);
-
-        BigDecimal usl = chart.getSpecMax();
-        BigDecimal lsl = chart.getSpecMin();
-        BigDecimal cp = computeCp(usl, lsl, withinStdDev);
-        BigDecimal cpk = computeCpk(usl, lsl, grandMean, withinStdDev);
-        BigDecimal pp = computeCp(usl, lsl, overallStdDev);
-        BigDecimal ppk = computeCpk(usl, lsl, grandMean, overallStdDev);
-        BigDecimal cpm = computeCpm(usl, lsl, grandMean, overallStdDev);
-        String capabilityLevel = classifyByCpk(cpk);
+            BigDecimal usl = chart.getSpecMax();
+            BigDecimal lsl = chart.getSpecMin();
+            cp = computeCp(usl, lsl, withinStdDev);
+            cpk = computeCpk(usl, lsl, grandMean, withinStdDev);
+            pp = computeCp(usl, lsl, overallStdDev);
+            ppk = computeCpk(usl, lsl, grandMean, overallStdDev);
+            cpm = computeCpm(usl, lsl, grandMean, overallStdDev);
+            capabilityLevel = classifyByCpk(cpk);
+            totalObservations = allValues.size();
+        }
         boolean isStable = samples.stream().noneMatch(s -> Objects.equals(s.getIsOutOfControl(), Boolean.TRUE));
 
         IEntityDao<ErpQaSpcCapability> capDao = daoProvider.daoFor(ErpQaSpcCapability.class);
@@ -120,7 +165,7 @@ public class SpcCapabilityCalculator {
         cap.setPeriodFrom(periodFrom);
         cap.setPeriodTo(periodTo);
         cap.setSampleCount(samples.size());
-        cap.setTotalObservations(allValues.size());
+        cap.setTotalObservations(totalObservations);
         cap.setGrandMean(scale(grandMean));
         cap.setOverallStdDev(scale(overallStdDev));
         cap.setWithinStdDev(scale(withinStdDev));
@@ -134,8 +179,8 @@ public class SpcCapabilityCalculator {
         cap.setCalculatedAt(CoreMetrics.currentTimestamp());
         capDao.saveEntity(cap);
 
-        // 等级 < ACCEPTABLE（INADEQUATE）触发 QualityGoal 回写 + RiskRegister 登记
-        if (ErpQaConstants.SPC_CAPABILITY_INADEQUATE.equals(capabilityLevel)) {
+        // 仅计量型 INADEQUATE 触发回写（计数型 capabilityLevel=null 跳过）
+        if (!isAttributes && ErpQaConstants.SPC_CAPABILITY_INADEQUATE.equals(capabilityLevel)) {
             try {
                 writeBackQualityGoal(chart, cpk, context);
             } catch (Exception e) {

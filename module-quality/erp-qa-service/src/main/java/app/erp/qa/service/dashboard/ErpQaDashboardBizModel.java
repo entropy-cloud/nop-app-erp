@@ -229,17 +229,22 @@ public class ErpQaDashboardBizModel {
      *
      * <p>同域只读聚合 {@link ErpQaSpcChart}（chartType + cl/ucl/lcl 三控制限，已由
      * {@code SpcControlLimitCalculator} 持久化于 chart 实体）+ {@link ErpQaSpcSample}（subgroupNo/mean/
-     * isOutOfControl/violatedRules）。返回结构化 DTO 供看板 echarts 渲染 line（样本均值）+
-     * markLine（UCL/LCL/CL）+ 违规点高亮。
+     * isOutOfControl/violatedRules；计数型样本额外 defectRate/defectCount/inspectedCount）。
+     * 返回结构化 DTO 供看板 echarts 渲染 line（样本均值/缺陷率）+ markLine（UCL/LCL/CL）+ 违规点高亮。
      *
-     * <p>chartId 解析优先级：入参 &gt; config {@code erp-dash.qa-spc-default-chart-id} &gt; 最近一张
-     * {@code ErpQaSpcChart}（按 id 降序）。空数据返回零值结构（非 {@code null}）。
+     * <p>chartId 解析优先级（plan 2026-07-19-0120-2 Phase 1 Decision 增 attributes-chart-id fallback）：
+     * 入参 &gt; config {@code erp-dash.qa-spc-default-chart-id} &gt; config
+     * {@code erp-dash.qa-spc-default-attributes-chart-id} &gt; 最近一张 {@code ErpQaSpcChart}（按 id 降序）。
+     * 空数据返回零值结构（非 {@code null}）。
      */
     @BizQuery
     public Map<String, Object> getSpcControlChartData(@Optional @Name("chartId") Long chartId,
                                                        IServiceContext context) {
         return ormTemplate.runInSession(session -> {
             Long resolvedId = chartId != null ? chartId : ErpQaConfigs.getDashQaSpcDefaultChartId();
+            if (resolvedId == null) {
+                resolvedId = ErpQaConfigs.getDashQaSpcDefaultAttributesChartId();
+            }
             ErpQaSpcChart chart = null;
             if (resolvedId != null) {
                 chart = daoProvider.daoFor(ErpQaSpcChart.class).getEntityById(resolvedId);
@@ -310,6 +315,14 @@ public class ErpQaDashboardBizModel {
             row.put("mean", s.getMean());
             row.put("isOutOfControl", s.getIsOutOfControl());
             row.put("violatedRules", s.getViolatedRules());
+            // 计数型字段（计量型 chart 的样本此三字段为 null，向前端透明不破坏计量型渲染）
+            Integer defectCount = s.getDefectCount();
+            Integer inspectedCount = s.getInspectedCount();
+            if (defectCount != null) row.put("defectCount", defectCount);
+            if (inspectedCount != null) row.put("inspectedCount", inspectedCount);
+            if (defectCount != null && inspectedCount != null && inspectedCount > 0) {
+                row.put("defectRate", (double) defectCount / (double) inspectedCount);
+            }
             rows.add(row);
         }
         return rows;

@@ -109,6 +109,14 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="defectCount" displayName="缺陷数(计数型 P/NP/C/U)" propId="23" i18n-en:displayName="Defect Count"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" precision="10"/>
+        </prop>
+        <prop name="inspectedCount" displayName="检验数(计数型 P/NP/C/U)" propId="24" i18n-en:displayName="Inspected Count"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer" precision="10"/>
+        </prop>
         <prop name="chart" i18n-en:displayName="Chart" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="chartId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
               lazy="true">

@@ -836,6 +836,8 @@
                 <column name="inspectorId" displayName="检验员" stdSqlType="BIGINT" code="INSPECTOR_ID" propId="13" stdDataType="long" i18n-en:displayName='Inspector' />
                 <column name="violatedRules" displayName="违反的判异规则(逗号分隔)" stdSqlType="VARCHAR" precision="100" code="VIOLATED_RULES" propId="14" stdDataType="string" i18n-en:displayName='Violated Rules' />
                 <column name="isOutOfControl" displayName="是否失控" stdSqlType="BOOLEAN" defaultValue="false" code="IS_OUT_OF_CONTROL" propId="15" stdDataType="boolean" i18n-en:displayName='Is Out Of Control' />
+                <column name="defectCount" displayName="缺陷数(计数型 P/NP/C/U)" stdSqlType="INTEGER" precision="10" code="DEFECT_COUNT" propId="23" stdDataType="int" i18n-en:displayName='Defect Count' />
+                <column name="inspectedCount" displayName="检验数(计数型 P/NP/C/U)" stdSqlType="INTEGER" precision="10" code="INSPECTED_COUNT" propId="24" stdDataType="int" i18n-en:displayName='Inspected Count' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="16" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="17" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="18" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />

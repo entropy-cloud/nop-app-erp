@@ -153,6 +153,19 @@ public final class ErpQaConfigs {
         }
     }
 
+    /** 看板 SPC 计数型（P/NP/C/U）控制图默认 chartId（null=未配置；plan 2026-07-19-0120-2 Phase 1 Decision (a)）。 */
+    public static Long getDashQaSpcDefaultAttributesChartId() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_DASH_QA_SPC_DEFAULT_ATTRIBUTES_CHART_ID, "");
+        if (raw == null || raw.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.valueOf(raw.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     private static List<String> parseCsv(String raw) {
         List<String> result = new ArrayList<>();
         if (raw == null || raw.trim().isEmpty()) {
