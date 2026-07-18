@@ -405,6 +405,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: `ErpMntVisit.cancel` 当前仅翻状态 + 设备恢复；cancel 触发红冲属不同结果面 successor（对齐备件消耗 cancel 同型 Non-Goal——1100-6 已声明）。
 - Successor Required: `yes`（触发条件：cancel visit 业务流程须回滚已生成凭证时）
+- **RELEASED by 2026-07-18-1745-1**（plan `2026-07-18-1745-1-maintenance-posting-reversal-closure.md` 落地 `MntPostingExecutor.reverse` + `MaintenanceLaborPostingDispatcher.reverseLabor` + `ErpMntVisitBizModel.doCancel` 内嵌 config-gated 红冲触发 + JUnit 3 用例 + E2E 1 spec 1 用例，已完成独立结束审计 APPROVED）
 
 ### nop-job 定时批量补提
 

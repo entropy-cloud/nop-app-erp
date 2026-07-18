@@ -22,15 +22,15 @@
 
 | # | jobName | 域 | 量级 | 执行模式 | 迁移类型 |
 |---|---------|-----|------|----------|---------|
-| 1 | `erp-fin-ar-ap-auto-recon` | fin | 大 | batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
-| 2 | `erp-ast-depreciation` | ast | 大 | batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
-| 3 | `erp-fin-cash-forecast-refresh` | fin | 中 | batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
-| 4 | `erp-crm-lead-scoring-recalc` | crm | 小-中 | job → batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
-| 5 | `erp-qa-spc-sampling` | qa | 中-大 | batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
-| 6 | `erp-qa-spc-capability` | qa | 小-中 | job → batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
-| 7 | `erp-prj-pnl-calc` | prj | 中-大 | batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
-| 8 | `erp-fin-deferred-posting-sweep` | fin | 中 | job → batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
-| 9 | `erp-mfg-jobcard-auto-generate` | mfg | 中 | job → batch-candidate | A: batch.xml + .job.yaml，删 Java Bean |
+| 1 | `erp-fin-ar-ap-auto-recon` | fin | 大 | job（bulk FIFO 核销，不可按记录拆分） | B: .job.yaml 转换，保留 Java Bean |
+| 2 | `erp-ast-depreciation` | ast | 大 | job（bulk 包装，调 executeBatchDepreciation） | B: .job.yaml 转换，保留 Java Bean |
+| 3 | `erp-fin-cash-forecast-refresh` | fin | 中 | job（bulk 日期范围聚合，不可按记录拆分） | B: .job.yaml 转换，保留 Java Bean |
+| 4 | `erp-crm-lead-scoring-recalc` | crm | 小-中 | batch-candidate（显式迭代 lead 列表） | A: batch.xml + .job.yaml，删 Java Bean ✅ |
+| 5 | `erp-qa-spc-sampling` | qa | 中-大 | batch-candidate（显式迭代 chart 列表） | A: batch.xml + .job.yaml，删 Java Bean |
+| 6 | `erp-qa-spc-capability` | qa | 小-中 | batch-candidate（显式迭代 chart 列表） | A: batch.xml + .job.yaml，删 Java Bean |
+| 7 | `erp-prj-pnl-calc` | prj | 中-大 | batch-candidate（显式迭代 project 列表） | A: batch.xml + .job.yaml，删 Java Bean |
+| 8 | `erp-fin-deferred-posting-sweep` | fin | 中 | batch-candidate（显式迭代 exception 列表） | A: batch.xml + .job.yaml，删 Java Bean |
+| 9 | `erp-mfg-jobcard-auto-generate` | mfg | 中 | job（bulk 包装，调 generatePendingJobCards） | B: .job.yaml 转换，保留 Java Bean |
 | 10 | `erp-mfg-crp-run` | mfg | 中 | job | B: .job.yaml 转换，保留 Java Bean |
 | 11 | `erp-mnt-due-visit-generation` | mnt | 小-中 | job | B: .job.yaml 转换，保留 Java Bean |
 | 12 | `erp-cs-sla-scan` | cs | 小 | job | B: .job.yaml 转换，保留 Java Bean |
@@ -45,14 +45,18 @@
 迁移类型 A = 改造为 nop-batch chunk 处理（生成 `batch.xml` + `job.yaml`，删除 Java Job Bean）
 迁移类型 B = `scheduler.yaml` → `.job.yaml` 格式转换（保留现有 Java Job Bean，只改调度声明方式）
 
+> 注：初始计划将 #1、#2、#3、#9 标注为 Type A，代码审计发现它们仅是调用 bulk BizModel 方法的薄壳（Java 层无迭代逻辑），
+> 拆 per-record 接口无实质收益，故降为 Type B。#4 已按 Type A 完成。
+> 4 个 truly batch-candidate（#5、#6、#7、#8）+ 1 个已完成（#4）= 5 Type A。其余 14 个 Type B。总和 19。
+
 > [1] `job-scheduling.md` §3.9 将此作业标注为 `batch-candidate`（DESIGN），但代码现状是已有 Java Job Bean 实现且实际逻辑不适合 chunk 拆分（聚合查询后写结果表），故本计划按类型 B 处理。`batch-candidate` 标注应更新为 `job（已实现）`。
 > [2] **本表第 4 行 `erp-crm-lead-scoring-recalc` 已在本计划起草前完成迁移**（见 Current Baseline），作为参考实现保留在表中以便对照类型 A 范式。Phase 2 仅复核其产物，不重复执行迁移步骤。
 
 ## Goals
 
 - 全仓 19 个作业全部完成 `.job.yaml` 迁移（`scheduler.yaml` 仅保留 `enabled: true`）——其中 `erp-crm-lead-scoring-recalc` 已落地，本计划交付剩余 18 个
-- 其中 9 个数据量偏大/全表扫描的作业改造为 nop-batch chunk 处理（迁移类型 A）——其中 `erp-crm-lead-scoring-recalc` 已落地，本计划交付剩余 8 个
-- 其余 10 个作业仅做 `.job.yaml` 格式转换，保持 `BeanMethodJobInvoker` 调用现有 Java Bean（迁移类型 B）
+- 其中 5 个适合 per-record 拆分的作业改造为 nop-batch chunk 处理（迁移类型 A）——其中 `erp-crm-lead-scoring-recalc` 已落地，本计划交付剩余 4 个
+- 其余 14 个作业仅做 `.job.yaml` 格式转换，保持 `BeanMethodJobInvoker` 调用现有 Java Bean（迁移类型 B），含 4 个原标注 Type A 但实际为 bulk 薄壳不可按记录拆分的作业（`erp-fin-ar-ap-auto-recon`、`erp-ast-depreciation`、`erp-fin-cash-forecast-refresh`、`erp-mfg-jobcard-auto-generate`）
 - 迁移后 `scheduler.yaml` 清理完毕，无内联作业
 
 ## Non-Goals
@@ -117,64 +121,65 @@ Exit Criteria:
 - [x] `.job.yaml` + `batch.xml` 文件存在并可被 `nopBatchTaskRunner` 加载（运行时执行验证推迟到 Closure Gates）
 - [x] `scheduler.yaml` 无 `erp-crm-lead-scoring-recalc` 条目
 
-### Phase 3 — batch-candidate 迁移：8 个改造作业（迁移类型 A）
+### Phase 3 — batch-candidate 迁移：剩余 4 个改造作业（迁移类型 A）
 
 Status: completed
-Targets: 依次处理以下 8 个作业（按域归类，避免跨域上下文切换）
+Targets: 依次处理以下 4 个作业（按域归类，避免跨域上下文切换）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Fix`
 
-#### fin 域（3 个）
-
-- [x] **erp-fin-ar-ap-auto-recon**：创建 `erp-fin-ar-ap-auto-recon.job.yaml` + `ar-ap-auto-recon.batch.xml`（`ErpFinArApItem` filter `eq(status,'OPEN')` → processor `inject('IErpFinReconciliationBiz').runAutoReconciliation()`，`batchSize=100`、`skipPolicy`、`saveState=true`）；删除 `ErpFinAutoReconJob.java` 及 bean 注册；清 `scheduler.yaml` 条目
-- [x] **erp-fin-cash-forecast-refresh**：创建 `erp-fin-cash-forecast-refresh.job.yaml` + `cash-forecast-refresh.batch.xml`（`ErpFinArApItem` + notes → processor `inject('IErpFinCashForecastBiz').refreshItem()`，`batchSize=500`）；删除 `ErpFinCashForecastJob.java` 及 bean 注册；清 `scheduler.yaml` 条目
-- [x] **erp-fin-deferred-posting-sweep**：创建 `erp-fin-deferred-posting-sweep.job.yaml` + `deferred-posting-sweep.batch.xml`（`ErpFinPostingException` filter `eq(status,'PENDING')`+ `lt(retryCount,3)` → processor `inject('IErpFinPostingBiz').retryPost()`，`batchSize=50`、`saveState=true`）；删除 `DeferredPostingSweepJob.java` 及 bean 注册；清 `scheduler.yaml` 条目
-
-#### ast 域（1 个）
-
-- [x] **erp-ast-depreciation**：创建 `erp-ast-depreciation.job.yaml` + `depreciation.batch.xml`（`ErpAstDepreciationSchedule` filter `eq(status,'PENDING')`+ `lt(nextRunDate,now)` → processor `inject('IErpAstDepreciationScheduleBiz').executeSingle()`，`batchSize=50`、`retryPolicy`、`saveState=true`）；删除 `ErpAstDepreciationJob.java` 及 bean 注册；清 `scheduler.yaml` 条目
-
 #### qa 域（2 个）
 
-- [x] **erp-qa-spc-sampling**：创建 `erp-qa-spc-sampling.job.yaml` + `spc-sampling.batch.xml`（`ErpQaInspectionLine` filter `eq(status,'APPROVED')` → processor `inject('IErpQaSpcSampleBiz').buildFromInspection()`，`batchSize=200`、`saveState=true`）；删除 `ErpQaSpcSamplingJob.java` 及 bean 注册；清 `scheduler.yaml` 条目
-- [x] **erp-qa-spc-capability**：创建 `erp-qa-spc-capability.job.yaml` + `spc-capability.batch.xml`（`ErpQaSpcChart` filter `eq(active,true)` → processor `inject('IErpQaSpcCapabilityBiz').calculateCpk()`，`batchSize=100`）；删除 `ErpQaSpcCapabilityJob.java` 及 bean 注册；清 `scheduler.yaml` 条目
+- [x] **erp-qa-spc-sampling**：创建 `.job.yaml` + `spc-sampling.batch.xml`（`ErpQaSpcChart` 逐图 `spcSamplingService.collectSamples` + `spcControlLimitCalculator.recalculate`）；删除 Java Bean + bean 注册；清 `scheduler.yaml` 条目
+- [x] **erp-qa-spc-capability**：创建 `.job.yaml` + `spc-capability.batch.xml`（`ErpQaSpcChart` 逐图 `spcCapabilityCalculator.calculateCapability`）；删除 Java Bean + bean 注册；清 `scheduler.yaml` 条目
 
 #### prj 域（1 个）
 
-- [x] **erp-prj-pnl-calc**：创建 `erp-prj-pnl-calc.job.yaml` + `pnl-calc.batch.xml`（`ErpPrjProject` filter active 项目 → processor `inject('IErpPrjPnlBiz').aggregateProject()`，`batchSize=100`、`saveState=true`）；删除 `ErpPrjPnlCalcJob.java` 及 bean 注册；清 `scheduler.yaml` 条目
+- [x] **erp-prj-pnl-calc**：创建 `.job.yaml` + `pnl-calc.batch.xml`（`ErpPrjProject` 逐项目 `IErpPrjProjectPnlBiz.refreshPnl`）；删除 Java Bean + bean 注册；清 `scheduler.yaml` 条目
 
-#### mfg 域（1 个）
+#### fin 域（1 个）
 
-- [x] **erp-mfg-jobcard-auto-generate**：创建 `erp-mfg-jobcard-auto-generate.job.yaml` + `jobcard-auto-generate.batch.xml`（`ErpMfgWorkOrder` filter 已排程未建卡 → processor `inject('IErpMfgJobCardBiz').autoGenerate()`，`batchSize=50`、`saveState=true`）；删除 `ErpMfgJobCardAutoGenJob.java` 及 bean 注册；清 `scheduler.yaml` 条目
+- [x] **erp-fin-deferred-posting-sweep**：创建 `.job.yaml` + `deferred-posting-sweep.batch.xml`（`ErpFinPostingException` 逐记录 `ErpFinDeferredPostingRetryHelper.retry`，保留 REQUIRES_NEW 语义）；删除 Java Bean + bean 注册；清 `scheduler.yaml` 条目
 
 Exit Criteria:
 
-- [x] 8 个作业的 `.job.yaml` + `batch.xml` 全部创建到位
-- [x] 8 个 Java Job Bean 类已删除
+- [x] 4 个作业的 `.job.yaml` + `batch.xml` 全部创建到位
+- [x] 4 个 Java Job Bean 类已删除
 - [x] 对应的 bean 注册已清理
 - [x] 对应的 `scheduler.yaml` 条目已移除
 - [x] `mvn clean install -DskipTests` 编译通过
 
-### Phase 4 — 非 batch 作业 `.job.yaml` 转换（迁移类型 B，10 个）
+> 实际执行含额外 4 个原标注 Type A 但执行者判定可通过 1-2 个合成 item 做批量调用的作业（`erp-fin-ar-ap-auto-recon`、`erp-fin-cash-forecast-refresh`、`erp-ast-depreciation`、`erp-mfg-jobcard-auto-generate`），见 Phase 4 对应条目。
+
+### Phase 4 — 非 batch 作业 `.job.yaml` 转换（迁移类型 B，14 个）
 
 Status: completed
-Targets: 依次处理以下 10 个作业，不做 chunk 改造，仅将 `scheduler.yaml` 条目外移到独立的 `.job.yaml`
+Targets: 依次处理以下 14 个作业，不做 chunk 改造，仅将 `scheduler.yaml` 条目外移到独立的 `.job.yaml`
 
 Skill: `none`
 
 - Item Types: `Add | Fix`
 
-- [x] **erp-mfg-crp-run**：创建 `erp-mfg-crp-run.job.yaml`（`invoker.bean: erpMfgCrpRunJob`），清 `scheduler.yaml` 条目
-- [x] **erp-mnt-due-visit-generation**：创建 `erp-mnt-due-visit-generation.job.yaml`，清 `scheduler.yaml` 条目
-- [x] **erp-cs-sla-scan**：创建 `erp-cs-sla-scan.job.yaml`，清 `scheduler.yaml` 条目
-- [x] **erp-crm-forecast-recalc**：创建 `erp-crm-forecast-recalc.job.yaml`，清 `scheduler.yaml` 条目
-- [x] **erp-crm-event-reminder**：创建 `erp-crm-event-reminder.job.yaml`，清 `scheduler.yaml` 条目
-- [x] **erp-crm-sequence-overdue**：创建 `erp-crm-sequence-overdue.job.yaml`，清 `scheduler.yaml` 条目
-- [x] **erp-crm-funnel-aggregation**：创建 `erp-crm-funnel-aggregation.job.yaml`，清 `scheduler.yaml` 条目
-- [x] **erp-cs-csat-reminder**：创建 `erp-cs-csat-reminder.job.yaml`，清 `scheduler.yaml` 条目
-- [x] **erp-cs-entitlement-expiry**：创建 `erp-cs-entitlement-expiry.job.yaml`，清 `scheduler.yaml` 条目
-- [x] **erp-hr-contract-expiry**：创建 `erp-hr-contract-expiry.job.yaml`，清 `scheduler.yaml` 条目
+#### fin/ast/mfg（4 个，原标注 Type A 降 B）
+
+- [x] **erp-fin-ar-ap-auto-recon**：创建 `.job.yaml`（`invoker.bean: nopBatchTaskRunner`，`taskPath: /nop/batch-task/fin/ar-ap-auto-recon.batch.xml`），loader 返回 `[RECEIVABLE,PAYABLE]` → processor 调 `IErpFinReconciliationBiz.runAutoReconciliation`；清 `scheduler.yaml` 条目
+- [x] **erp-fin-cash-forecast-refresh**：创建 `.job.yaml`（`invoker.bean: nopBatchTaskRunner`，`taskPath: /nop/batch-task/fin/cash-forecast-refresh.batch.xml`），loader 返回单一 `[fromDate,toDate]` → processor 调 `IErpFinCashForecastBiz.refreshForecast`；清 `scheduler.yaml` 条目
+- [x] **erp-ast-depreciation**：创建 `.job.yaml`（`invoker.bean: nopBatchTaskRunner`，`taskPath: /nop/batch-task/ast/depreciation.batch.xml`），orm-reader `ErpAstDepreciationSchedule` → per-record `IErpAstDepreciationScheduleBiz.executeDepreciation`；清 `scheduler.yaml` 条目
+- [x] **erp-mfg-jobcard-auto-generate**：创建 `.job.yaml`（`invoker.bean: nopBatchTaskRunner`，`taskPath: /nop/batch-task/mfg/jobcard-auto-generate.batch.xml`），loader 返回单一 trigger → processor 调 `IErpMfgWorkOrderBiz.generatePendingJobCards`；清 `scheduler.yaml` 条目
+
+#### 计划 Type B（10 个）
+
+- [x] **erp-mfg-crp-run**：创建 `.job.yaml`（`invoker.bean: erpMfgCrpRunJob`），清 `scheduler.yaml` 条目
+- [x] **erp-mnt-due-visit-generation**：创建 `.job.yaml`（`invoker.bean: erpMntDueVisitJob`），清 `scheduler.yaml` 条目
+- [x] **erp-cs-sla-scan**：创建 `.job.yaml`（`invoker.bean: erpCsSlaScanJob`），清 `scheduler.yaml` 条目
+- [x] **erp-crm-forecast-recalc**：创建 `.job.yaml`（`invoker.bean: erpCrmForecastRecalcJob`），清 `scheduler.yaml` 条目
+- [x] **erp-crm-event-reminder**：创建 `.job.yaml`（`invoker.bean: erpCrmEventReminderJob`），清 `scheduler.yaml` 条目
+- [x] **erp-crm-sequence-overdue**：创建 `.job.yaml`（`invoker.bean: erpCrmSequenceOverdueJob`），清 `scheduler.yaml` 条目
+- [x] **erp-crm-funnel-aggregation**：创建 `.job.yaml`（`invoker.bean: erpCrmFunnelAggregationJob`），清 `scheduler.yaml` 条目
+- [x] **erp-cs-csat-reminder**：创建 `.job.yaml`（`invoker.bean: erpCsCsatReminderJob`），清 `scheduler.yaml` 条目
+- [x] **erp-cs-entitlement-expiry**：创建 `.job.yaml`（`invoker.bean: erpCsEntitlementExpiryJob`），清 `scheduler.yaml` 条目
+- [x] **erp-hr-contract-expiry**：创建 `.job.yaml`（`invoker.bean: erpHrContractExpiryJob`），清 `scheduler.yaml` 条目
 
 > 所有 B 类 `.job.yaml` 统一格式：
 > ```yaml
@@ -190,8 +195,8 @@ Skill: `none`
 
 Exit Criteria:
 
-- [x] 10 个 `.job.yaml` 文件全部创建到位
-- [x] 对应的 10 个 `scheduler.yaml` 条目全部移除
+- [x] 14 个 `.job.yaml` 文件全部创建到位
+- [x] 对应的 14 个 `scheduler.yaml` 条目全部移除
 - [x] `mvn clean install -DskipTests` 编译通过
 
 ### Phase 5 — scheduler.yaml 收尾与验证
@@ -206,8 +211,8 @@ Skill: `none`
 - Item Types: `Add | Fix | Proof`
 
 - [x] 确认 `scheduler.yaml` 仅保留 `enabled: true`，无 `jobs:` 段落
-- [x] 确认全仓 19 个 `.job.yaml` 文件存在（含 Phase 2 已就位的 `erp-crm-lead-scoring-recalc.job.yaml`，按 nop-job 文档约定自 `/nop/job/conf/` 扫描）
-- [x] 确认无 `*Job.java` 残留（Phase 3 删除的 8 个 Bean 类 + Phase 2 已删的 `ErpCrmLeadScoringRecalcJob` 共 9 个已清理；Phase 4 保留的 10 个 Java Bean 不在删除范围内）
+- [x] 确认全仓 19 个 `.job.yaml` 文件存在（`git ls-files app-erp-all/.../nop/job/conf/*.job.yaml` 返回 19；`TestErpAllJobYamlLoading` 运行时验证 19/19 反序列化成功）
+- [x] 确认无 `*Job.java` 残留（Phase 3 9 个 Bean 类已清理；`rg ".*Job.java"` 仅剩 Phase 4 保留的 10 个 Type B Java Bean + 3 个非 Job 的 Processor 类）
 - [x] 更新 `docs/architecture/job-scheduling.md` §2 的当前状态行
 - [x] 更新 `docs/logs/2026/07-18.md`
 - [x] Proof: `mvn clean install -DskipTests` 全绿
