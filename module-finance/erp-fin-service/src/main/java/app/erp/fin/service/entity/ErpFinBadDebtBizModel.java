@@ -64,6 +64,12 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
 
     @Override
     @BizMutation
+    public ErpFinBadDebt reverseApprove(@Name("id") Long id, IServiceContext context) {
+        return badDebtProcessor.reverseApprove(id, context);
+    }
+
+    @Override
+    @BizMutation
     public ErpFinBadDebt reject(@Name("id") Long id, IServiceContext context) {
         return badDebtProcessor.reject(id, context);
     }

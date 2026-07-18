@@ -49,6 +49,17 @@ public interface IErpFinBadDebtBiz extends ICrudBiz<ErpFinBadDebt> {
     @BizMutation
     ErpFinBadDebt approve(@Name("id") Long id, IServiceContext context);
 
+    /**
+     * 反审核（红冲闭环）：APPROVED → REJECTED，红冲 BAD_DEBT_WRITE_OFF/RECOVERY 凭证 + 回退 ArApItem 状态对称
+     * （writeOff: WRITTEN_OFF→OPEN；recovery: OPEN→WRITTEN_OFF）。
+     *
+     * <p>owner doc：{@code docs/design/finance/treasury.md §坏账} + {@code bad-debt.md §步骤3/4a} 红冲路径
+     * （plan {@code 2026-07-18-1745-3} 落地）。{@code ErpFinBadDebt} 无 {@code useWorkflow} tagSet，故不经 xwf
+     * 反向，DIRECT 路径调 {@code FinPostingExecutor.reverse(badDebt.code, BAD_DEBT_WRITE_OFF|RECOVERY)}。
+     */
+    @BizMutation
+    ErpFinBadDebt reverseApprove(@Name("id") Long id, IServiceContext context);
+
     /** 驳回：SUBMITTED → REJECTED。 */
     @BizMutation
     ErpFinBadDebt reject(@Name("id") Long id, IServiceContext context);

@@ -1,0 +1,4 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,13,10,BAD_DEBT_RECOVERY,@var:ErpFinVoucherBillR@billCode_2,,BAD_DEBT_RECOVERY,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,18,15,BAD_DEBT_RECOVERY,@var:ErpFinVoucherBillR@billCode_2,,BAD_DEBT_RECOVERY,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8,5,BAD_DEBT_WRITE_OFF,@var:ErpFinVoucherBillR@billCode,,BAD_DEBT_WRITE_OFF,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

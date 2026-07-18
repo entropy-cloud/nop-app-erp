@@ -1,0 +1,7 @@
+{
+  "id": 6,
+  "code": "@var:ErpFinEmployeeAdvance@code",
+  "settledAmount": 0.0000,
+  "outstandingAmount": 500.0000,
+  "approveStatus": "APPROVED"
+}

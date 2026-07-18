@@ -216,6 +216,16 @@ public interface ErpFinErrors {
             "员工借款单 {advanceId} 现金还款金额 {settleAmount} 超过未还余额 {openAmount}",
             ARG_ADVANCE_ID, ARG_SETTLE_AMOUNT, ARG_OPEN_AMOUNT);
 
+    ErrorCode ERR_EMPLOYEE_ADVANCE_CASH_REPAY_VOUCHER_NOT_FOUND = ErrorCode.define("erp.err.fin.employee-advance.cash-repay-voucher-not-found",
+            "员工借款单 {advanceId} 未找到可红冲的现金还款凭证（无已过账 EA-CASH-REPAY-{advanceCode}-* NORMAL 凭证）",
+            ARG_ADVANCE_ID, ARG_ADVANCE_CODE);
+
+    // --- 坏账 reverseApprove 作用域 ---
+
+    ErrorCode ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED = ErrorCode.define("erp.err.fin.bad-debt.not-approved-or-not-posted",
+            "坏账单 {badDebtId} 当前不可反审核（须 approvalStatus=APPROVED 且已生成凭证）",
+            ARG_BAD_DEBT_ID);
+
     // --- 票据（应收/应付）作用域 ---
 
     ErrorCode ERR_NOTES_RECEIVABLE_NOT_FOUND = ErrorCode.define("erp.err.fin.notes-receivable.not-found",

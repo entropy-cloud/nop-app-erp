@@ -1,14 +1,17 @@
 package app.erp.fin.service.processor;
 
+import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinBadDebt;
+import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.close.CloseVoucherWriter;
 import app.erp.fin.service.close.CloseVoucherWriter.Line;
+import app.erp.fin.service.posting.FinPostingExecutor;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -49,6 +52,9 @@ public class ErpFinBadDebtProcessor {
 
     @Inject
     IDaoProvider daoProvider;
+
+    @Inject
+    FinPostingExecutor finPostingExecutor;
 
     // ===================== 创建坏账单 =====================
 
@@ -97,6 +103,63 @@ public class ErpFinBadDebtProcessor {
         ErpFinBadDebt debt = requireBadDebt(badDebtId);
         validateTransitionForReject(debt);
         doReject(debt);
+        return debt;
+    }
+
+    // ===================== 反审核（红冲闭环，plan 2026-07-18-1745-3） =====================
+
+    /**
+     * 反审核已审批通过的坏账单：红冲 BAD_DEBT_WRITE_OFF/RECOVERY 凭证 + 回退 ArApItem 状态对称 + 翻 APPROVED→REJECTED。
+     *
+     * <p>对齐 {@code executeWriteOff}/{@code executeRecovery} 的反向语义：
+     * <ul>
+     *   <li>writeOff 反向：ArApItem WRITTEN_OFF → OPEN，settledAmount-=amount，openAmount+=amount（与 executeWriteOff 对称）</li>
+     *   <li>recovery 反向：ArApItem OPEN → WRITTEN_OFF，settledAmount+=amount，openAmount-=amount（与 executeRecovery 对称）</li>
+     * </ul>
+     *
+     * <p>事务边界：跟随 Facade {@code @BizMutation} 事务；红冲凭证失败经 {@link FinPostingExecutor#reverse}
+     * 抛 NopException 触发事务回滚（强一致：要么全部回滚要么全部生效——比"字段先于凭证"范式更严格，
+     * 因为反审核是补救路径不是用户主路径，需要强保证无残留半状态）。
+     */
+    public ErpFinBadDebt reverseApprove(Long badDebtId, IServiceContext context) {
+        ErpFinBadDebt debt = requireBadDebt(badDebtId);
+        // 守卫：须已 APPROVED 且已生成凭证（ErpFinBadDebt 无 posted 字段，以 voucherId 非空作为已过账标志）
+        if (!debt.isApproved() || debt.getVoucherId() == null) {
+            throw new NopException(ErpFinErrors.ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED)
+                    .param(ErpFinErrors.ARG_BAD_DEBT_ID, badDebtId);
+        }
+
+        // step 1：红冲凭证（billHeadCode = debt.code，对齐 writeBadDebtVoucher）
+        ErpFinBusinessType businessType = Objects.equals(debt.getDocType(), ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF)
+                ? ErpFinBusinessType.BAD_DEBT_WRITE_OFF
+                : ErpFinBusinessType.BAD_DEBT_RECOVERY;
+        finPostingExecutor.reverse(debt.getCode(), businessType);
+
+        // step 2：回退 ArApItem 状态对称（与 executeWriteOff/executeRecovery 反向）
+        ErpFinArApItem item = arApItemDao().getEntityById(debt.getSourceArApItemId());
+        if (item != null) {
+            BigDecimal amount = debt.getAmount();
+            if (Objects.equals(debt.getDocType(), ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF)) {
+                // writeOff 反向：WRITTEN_OFF → OPEN；settled-=amount，open+=amount
+                item.setSettledAmountFunctional(nz(item.getSettledAmountFunctional()).subtract(amount));
+                item.setSettledAmountSource(nz(item.getSettledAmountSource()).subtract(amount));
+                item.setOpenAmountFunctional(nz(item.getOpenAmountFunctional()).add(amount));
+                item.setOpenAmountSource(nz(item.getOpenAmountSource()).add(amount));
+                item.setStatus(ErpFinConstants.AR_AP_STATUS_OPEN);
+            } else {
+                // recovery 反向：OPEN → WRITTEN_OFF；settled+=amount，open-=amount
+                item.setSettledAmountFunctional(nz(item.getSettledAmountFunctional()).add(amount));
+                item.setSettledAmountSource(nz(item.getSettledAmountSource()).add(amount));
+                item.setOpenAmountFunctional(nz(item.getOpenAmountFunctional()).subtract(amount));
+                item.setOpenAmountSource(nz(item.getOpenAmountSource()).subtract(amount));
+                item.setStatus(ErpFinConstants.AR_AP_STATUS_WRITTEN_OFF);
+            }
+            arApItemDao().updateEntity(item);
+        }
+
+        // step 3：翻 approvalStatus → REJECTED（保留 voucherId 不动——原凭证 isReversed=true 已表明状态）
+        debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_REJECTED);
+        badDebtDao().updateEntity(debt);
         return debt;
     }
 

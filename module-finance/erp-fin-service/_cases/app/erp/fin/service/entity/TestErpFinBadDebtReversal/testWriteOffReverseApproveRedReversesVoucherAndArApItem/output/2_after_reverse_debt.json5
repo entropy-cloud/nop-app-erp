@@ -1,0 +1,7 @@
+{
+  "id": 9,
+  "code": "@var:ErpFinVoucherBillR@billCode_1",
+  "docType": "WRITE_OFF",
+  "approvalStatus": "REJECTED",
+  "voucherId": 5
+}

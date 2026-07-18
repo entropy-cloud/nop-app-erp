@@ -33,4 +33,18 @@ public interface IErpFinEmployeeAdvanceBiz extends ICrudBiz<ErpFinEmployeeAdvanc
     ErpFinEmployeeAdvance cashRepay(@Name("advanceId") Long advanceId,
                                     @Name("amount") BigDecimal amount,
                                     IServiceContext context);
+
+    /**
+     * 反向现金还款（红冲闭环，plan {@code 2026-07-18-1745-3}）。撤销 advance 最近一次现金还款凭证：
+     * 经 {@code ErpFinVoucherBillR} 反查 {@code billCode LIKE 'EA-CASH-REPAY-<advanceCode>-%'} +
+     * {@code businessType=EMPLOYEE_ADVANCE_SETTLE} + 原凭证 {@code isReversed=false}，取最新一笔 billHeadCode，
+     * 调既有 {@code EmployeeAdvancePostingDispatcher.reverseSettle(billHeadCode)} 红冲 + 回退 advance 字段
+     * （{@code settledAmount -= voucherAmount} / {@code outstandingAmount += voucherAmount}，按红冲凭证 totalDebit
+     * 反查精确金额）。
+     *
+     * <p>兑现 owner doc {@code expense-claim.md §红冲联动} cashRepay 路径承诺（plan 1745-3 修复 owner-doc 漂移）。
+     * 守卫：advance 须存在；存在可红冲的 cashRepay NORMAL 凭证（否则 {@code ERR_EMPLOYEE_ADVANCE_CASH_REPAY_VOUCHER_NOT_FOUND}）。
+     */
+    @BizMutation
+    ErpFinEmployeeAdvance reverseCashRepay(@Name("advanceId") Long advanceId, IServiceContext context);
 }
