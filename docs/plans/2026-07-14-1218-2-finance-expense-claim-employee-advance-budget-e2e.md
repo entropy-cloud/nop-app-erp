@@ -169,6 +169,8 @@ Exit Criteria:
 
 ### 员工借款现金还款 (EMPLOYEE_ADVANCE_SETTLE 现金还款路径)
 
+**RELEASED by 2026-07-18-0718-2** — 落地 `ErpFinEmployeeAdvanceBizModel.cashRepay(@Name advanceId, @Name amount)` `@BizMutation` + `EmployeeAdvancePostingDispatcher.postCashRepay` + `EmployeeAdvanceAcctDocProvider` SETTLE_TYPE=CASH 分派（Dr 1002 / Cr 1221）+ 3 ErrorCode + JUnit 6 tests + 浏览器层 E2E 3 用例全绿。
+
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: owner doc 设计了现金还款凭证承载路径（`ErpFinVoucher` EMPLOYEE_ADVANCE_SETTLE），但后端是否有 `cashRepay` 入口需 Explore 核实。报销抵扣路径（本计划 Phase 3）已代表验证 EMPLOYEE_ADVANCE_SETTLE 凭证。
 - Successor Required: `yes`（触发条件：现金还款浏览器层入口落地时）

@@ -126,6 +126,16 @@
 
 凭证经业财过账引擎（`IErpFinAcctDocProvider`）生成，业财回链（`ErpFinVoucherBillR`）关联源借款单。**无需新建通用 finance 付款实体**——这是解除原 Deferred 的关键（参 hrms `make_return_entry` 模式：用 JE 承载，不依赖 Payment 实体）。
 
+### 实现注记（plan 2026-07-18-0718-2 落地）
+
+- **入口**：`ErpFinEmployeeAdvanceBizModel.cashRepay(advanceId, amount, context)` `@BizMutation`（Java 自动暴露 GraphQL `ErpFinEmployeeAdvance__cashRepay` 端点，无需 xbiz action 注册）。
+- **守卫**：advance 须 `posted=true && approveStatus=APPROVED`（`ERR_EMPLOYEE_ADVANCE_NOT_REPAYABLE`）；`amount > 0`（`ERR_EMPLOYEE_ADVANCE_CASH_REPAY_AMOUNT_INVALID`）；`amount <= outstandingAmount`（`ERR_EMPLOYEE_ADVANCE_CASH_REPAY_EXCEEDS_OUTSTANDING`）。
+- **字段更新**：`settledAmount += amount`；`outstandingAmount -= amount`；字段经 `updateEntity` 先于凭证持久化（对齐 `postSettle` 失败不阻断范式——残留风险：字段已更新但凭证缺失，归异常工作台补录）。
+- **docStatus 保持不变**：字典 `erp-fin/advance-status` 无 SETTLED 值；outstandingAmount=0 由查询/UI 派生投影表达「已结清」，非字典推进（对齐 §还款状态派生）。
+- **SETTLE_TYPE 分派机制**：`EmployeeAdvanceAcctDocProvider.createFacts` SETTLE 分支按 `billData.SETTLE_TYPE` 分派——`CASH` → Dr 1002 / Cr 1221（现金还款）；`OFFSET` 或缺省 → Dr 2241 / Cr 1221（既有报销抵扣路径，零回归）。
+- **billHeadCode 格式**：`EA-CASH-REPAY-<advanceCode>-<millis>`（含时间戳避免同 advance 多次还款碰撞）。
+- **三金额闭环仍 Deferred**：`settledAmount` 混合累计报销抵扣 + 现金还款；`claimedAmount`/`returnedAmount` 拆分属 ORM 保护区域（见 §借款金额维度建议）。
+
 ### 借款清算三路径
 
 员工借款 `outstandingAmount` 归零有三条路径，可组合使用：
