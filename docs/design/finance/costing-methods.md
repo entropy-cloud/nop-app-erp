@@ -49,6 +49,14 @@
 - **过账（`LandedCostAcctDocProvider` + `LandedCostPostingDispatcher`）**：业务类型 `LANDED_COST`(490)。借：每入库行分摊金额 → 存货(1401)；贷：每费用要素 → 应付账款(2202, partnerId=费用行应付对象或采购供应商)。
 - **本期 Non-Goal**：多段到岸成本累计管理（同一入库单多次分摊）、到岸成本预估、logistics path-2 运费自动创建到岸成本单的完整编排——各归 successor。
 
+## 到岸成本红冲实现注记（计划 `2026-07-18-1745-2`）
+
+到岸成本审核过账后如需回滚（"错误审核"纠错路径），新增 `ErpInvLandedCost.reverseApprove(@BizMutation)` 入口闭环：
+
+- **红冲编排（`ErpInvLandedCostProcessor.reverseApprove`）**：(1) 守卫 `posted=true + approveStatus=APPROVED`（未过账抛 `ERR_LANDED_COST_NOT_POSTED`）；(2) 调 `LandedCostPostingDispatcher.reverse(landedCost)` 红冲 `LANDED_COST(490)` 凭证（billHeadCode=`landedCost.code` 与正向对称，委派 `InvPostingExecutor.reverse` → `IErpFinVoucherBiz.reverse` 生成红字凭证 + 原凭证 `isReversed=true`）；(3) 按 `LANDED_COST-{code}` 命名约定反查关联 `ErpInvCostAdjust(LANDED_COST_SUPPLEMENT)` + 行 → 调 `CostAdjustmentService.reverseCostAdjust` 反向应用成本层（MOVING_AVERAGE：`balance.avgCost = line.oldUnitCost` 回退、`totalCost -= adjustAmount`；FIFO：按 `-line.id` 哨兵删调整层；STANDARD_REVALUATION：删 FIRMED rollup）；(4) 翻 `posted=false / approveStatus=REJECTED / docStatus=CANCELLED` + 同步 CostAdjust 单 `posted=false`。
+- **红字凭证行**：`LANDED_COST` 红字凭证行同向取负（Dr 1401=-X / Cr 2202=-X，dcDirection 不变），与原凭证共用 billHeadCode（`voucher_bill_r` 回链按 `postingType=NORMAL|REVERSAL` 区分）。
+- **残留风险（Deferred）**：FIFO 调整层已部分被后续出库消耗时 `removeFifoAdjustLayer` 直接物理删除可能破坏已扣减层——已由 Phase 4 单测覆盖 MOVING_AVERAGE 主路径（FIFO 边界场景归 successor，触发条件：实际启用 FIFO 物料的到岸成本红冲遇此场景时）。
+
 ## 实现注记（计划 `2026-07-05-0427-2`）
 
 本节承接 `1538-1` Deferred「STANDARD（标准成本）方法」，触发条件「N=2 BOM/工艺成本卷算 rollup 落地后」已满足（`2026-07-02-1538-2-manufacturing-bom-routing-rollup.md` 已完成并产出 `ErpMfgCostRollupLine.unitCost`）。

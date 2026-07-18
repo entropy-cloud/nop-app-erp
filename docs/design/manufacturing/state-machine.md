@@ -174,6 +174,7 @@
 - **制造费用 overheadCost 经 config-gated 分配率应用**：工作中心仅有单一 `hourlyRate`（无独立制造费率分列，同 plan 1538-2）。成本卷算 `CostRollupService` 的 overhead 要素经 config-gated 分配率（plan 2026-07-13-0455-2）：关时（默认）`overheadCost`=0 向后兼容；开时按 `erp-mfg.overhead-allocation-mode`（MACHINE_HOUR=工序机器工时×rate / LABOR_RATIO=laborCost×rate）× `erp-mfg.overhead-allocation-rate` 计算。subcontract 委外费要素同步落地（`erp-mfg.subcontract-cost-aggregation-enabled` 开时按物料聚合已过账委外订单加工费按产量分摊）。**触发条件**：产品要求工作中心级精确人工/制造费率分列时拆 `ErpMfgWorkcenter` laborRate/overheadRate schema（ask-first ORM）。
 - **完工成本结转凭证已实现**：完工入库移动单生成（产成品入 destWarehouse）+ 产成品存货估值过账凭证（MANUFACTURING_RECEIPT 凭证类型：Dr 产成品存货 1401 / Cr WIP 1411）已由 plan 2026-07-10-1100-5 落地。完工入库移动单 posted=true。领料出库 GL 过账（MANUFACTURING_ISSUE：Dr WIP 1411 / Cr 原材料存货 1401）同步落地，领料单 posted=true。
 - **工时/实领数量列类型修正补注**：`ErpMfgJobCardTimeLog.durationMins`/`setupMins`/`runMins`/`hourlyRate`（VARCHAR→DECIMAL，对齐 domain）+ `ErpMfgMaterialIssueLine.issuedQuantity`（BOOLEAN→DECIMAL，对齐 domain）已修正，解除报工成本归集数值计算阻塞（同 plan 1538-2 工时/费率修正范式）。
+- **领料红冲实现注记（plan 2026-07-18-1745-2）**：领料单 DONE+posted=true 后如需回滚（"错误确认"纠错路径），新增 `ErpMfgMaterialIssue.reverseConfirm(@BizMutation)` 入口闭环：守卫 `posted=true + DONE` 态（未过账抛 `ERR_MATERIAL_ISSUE_NOT_POSTED`）→ 调 `ManufacturingIssuePostingDispatcher.reverse(issue)` 红冲 `MANUFACTURING_ISSUE` 凭证（billHeadCode=`issue.code + "-MI"` 与正向对称）+ 调 `IErpInvStockMoveBiz.reverse(moveId)` 反向 OUTGOING 移动单（生成 REVERSAL 反向冲销移动单，库存余额自动回滚）→ 翻 `posted=false / docStatus=CANCELLED`。红字凭证行同向取负（Dr 1411=-X / Cr 1401=-X）。库存反向移动单范式对齐 1934-1 委外红冲 + 1745-1 备件消耗红冲。
 
 ---
 
