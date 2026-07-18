@@ -1,7 +1,19 @@
 _chgType,ID,VOUCHER_ID,LINE_NO,SUBJECT_ID,SUBJECT_CODE,SUBJECT_NAME,DC_DIRECTION,DEBIT_AMOUNT,CREDIT_AMOUNT,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,ACCT_SCHEMA_ID,ORG_ID,MEMO,PARTNER_ID,DEPARTMENT_ID,PROJECT_ID,WAREHOUSE_ID,MATERIAL_ID,BUSINESS_TYPE,COST_CENTER_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,16,15,1,2,1410,制造差异-材料,DEBIT,2.0000,0,6401,1,2.0000,2.0000,7401,,制造差异-材料（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,17,15,2,3,1411,在制品-材料,CREDIT,0,2.0000,6401,1,2.0000,2.0000,7401,,制造差异-材料（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,18,15,3,4,1412,制造差异-人工,DEBIT,10.0000,0,6401,1,10.0000,10.0000,7401,,制造差异-人工（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,19,15,4,5,1413,在制品-人工,CREDIT,0,10.0000,6401,1,10.0000,10.0000,7401,,制造差异-人工（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,20,15,5,7,1415,在制品-制造费用,DEBIT,4.0000,0,6401,1,4.0000,4.0000,7401,,制造差异-制造费用（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
-A,21,15,6,6,1414,制造差异-制造费用,CREDIT,0,4.0000,6401,1,4.0000,4.0000,7401,,制造差异-制造费用（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,17,16,1,2,1410,制造差异-材料,DEBIT,2.0000,0,6401,1,2.0000,2.0000,7401,,制造差异-材料（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,18,16,2,3,1411,在制品-材料,CREDIT,0,2.0000,6401,1,2.0000,2.0000,7401,,制造差异-材料（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,19,16,3,4,1412,制造差异-人工,DEBIT,10.0000,0,6401,1,10.0000,10.0000,7401,,制造差异-人工（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,20,16,4,5,1413,在制品-人工,CREDIT,0,10.0000,6401,1,10.0000,10.0000,7401,,制造差异-人工（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,21,16,5,7,1415,在制品-制造费用,DEBIT,4.0000,0,6401,1,4.0000,4.0000,7401,,制造差异-制造费用（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,22,16,6,6,1414,制造差异-制造费用,CREDIT,0,4.0000,6401,1,4.0000,4.0000,7401,,制造差异-制造费用（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,25,24,1,2,1410,制造差异-材料,DEBIT,-2.0000,0,6401,1.00000000,-2.0000,-2.0000,7401,,制造差异-材料（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,26,24,2,3,1411,在制品-材料,CREDIT,0,-2.0000,6401,1.00000000,-2.0000,-2.0000,7401,,制造差异-材料（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,27,24,3,4,1412,制造差异-人工,DEBIT,-10.0000,0,6401,1.00000000,-10.0000,-10.0000,7401,,制造差异-人工（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,28,24,4,5,1413,在制品-人工,CREDIT,0,-10.0000,6401,1.00000000,-10.0000,-10.0000,7401,,制造差异-人工（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,29,24,5,7,1415,在制品-制造费用,DEBIT,-4.0000,0,6401,1.00000000,-4.0000,-4.0000,7401,,制造差异-制造费用（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,30,24,6,6,1414,制造差异-制造费用,CREDIT,0,-4.0000,6401,1.00000000,-4.0000,-4.0000,7401,,制造差异-制造费用（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,38,37,1,2,1410,制造差异-材料,DEBIT,2.0000,0,6401,1,2.0000,2.0000,7401,,制造差异-材料（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,39,37,2,3,1411,在制品-材料,CREDIT,0,2.0000,6401,1,2.0000,2.0000,7401,,制造差异-材料（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,40,37,3,4,1412,制造差异-人工,DEBIT,10.0000,0,6401,1,10.0000,10.0000,7401,,制造差异-人工（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,41,37,4,5,1413,在制品-人工,CREDIT,0,10.0000,6401,1,10.0000,10.0000,7401,,制造差异-人工（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,42,37,5,7,1415,在制品-制造费用,DEBIT,4.0000,0,6401,1,4.0000,4.0000,7401,,制造差异-制造费用（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,43,37,6,6,1414,制造差异-制造费用,CREDIT,0,4.0000,6401,1,4.0000,4.0000,7401,,制造差异-制造费用（工单 WO-PV-IDEM）,,,,,,PRODUCTION_VARIANCE,,@var:ErpFinVoucherLine@delVersion_1,0,autotest-ref,*,autotest-ref,*

@@ -80,7 +80,6 @@ public class ProductionVarianceDispatcher {
         if (wo == null) {
             return;
         }
-
         // 按成本要素汇总净差异（同要素多类型行的 varianceAmount 求和）
         Map<String, BigDecimal> elementVariance = new LinkedHashMap<>();
         for (ErpMfgCostVariance line : lines) {
@@ -112,6 +111,33 @@ public class ProductionVarianceDispatcher {
             } else {
                 LOG.error("生产差异过账异常，工单 {} 保持 posted=false", wo.getCode(), e);
             }
+        }
+    }
+
+    /**
+     * 红冲指定工单的既有 PRODUCTION_VARIANCE 凭证（若存在）。用于重算场景：在 {@code deleteByWorkOrder} 删数据行前
+     * 调用，闭合「重算→红冲→新凭证」链路，避免数据行新金额 + GL 旧凭证金额数据分叉。
+     *
+     * <p>billHeadCode 派生对齐正向 {@link #buildEvent}（{@code wo.code + "-PV"}）；红冲经
+     * {@link MfgPostingExecutor#reverse} → {@code IErpFinVoucherBiz.reverse}。
+     *
+     * <p>异常处理范式（plan 2026-07-18-2251-1 Phase 1 Decision (a)）：始终调用 + 本地 try/catch 守护吞异常。
+     * {@code IErpFinVoucherBiz.reverse} 在无原已过账凭证时抛 {@code NopException(ERR_REVERSE_SOURCE_NOT_FOUND)}
+     * （非 no-op），由本地 catch 守护吞此异常 + 真实红冲失败异常，log warn 不阻断重算后续步骤
+     * （deleteByWorkOrder/calculateVariances/dispatchIfApplicable）。范式对齐 {@link #dispatchIfApplicable} 过账失败
+     * try/catch（{@code :109-115}）。红冲失败孤儿凭证风险经 log warn 可观测，归 finance 5.1 异常工作台兜底。
+     */
+    public void reverseIfExists(Long workOrderId) {
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(workOrderId);
+        if (wo == null) {
+            return;
+        }
+        String billHeadCode = wo.getCode() + "-PV";
+        try {
+            executor.reverse(billHeadCode, ErpFinBusinessType.PRODUCTION_VARIANCE);
+        } catch (Exception e) {
+            LOG.warn("生产差异红冲失败或无原凭证，工单 {} billHeadCode={} 不阻断重算：{}",
+                    wo.getCode(), billHeadCode, e.getMessage());
         }
     }
 

@@ -1,2 +1,2 @@
 _chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
-A,22,15,PRODUCTION_VARIANCE,@var:ErpFinVoucherBillR@billCode,,PRODUCTION_VARIANCE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*
+A,23,16,PRODUCTION_VARIANCE,@var:ErpFinVoucherBillR@billCode,,PRODUCTION_VARIANCE,@var:ErpFinVoucherBillR@delVersion,0,autotest-ref,*,autotest-ref,*

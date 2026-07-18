@@ -226,6 +226,9 @@ public class ErpMfgWorkOrderProcessor {
         // 不阻断完工（异常工作台统一接入归 Deferred，见 plan 2026-07-05-1838-2 Deferred「cron 定时批量」）。
         if (willFinish && isVarianceAutoCalcEnabled()) {
             try {
+                // 重算幂等闭环（plan 2026-07-18-2251-1）：先红冲既有 PRODUCTION_VARIANCE 凭证 → 删差异旧行 → 重算 → 派发新凭证。
+                // reverseIfExists 内部 try/catch 守护吞无原凭证异常（首次完工无原凭证场景安全 no-op）。
+                productionVarianceDispatcher.reverseIfExists(workOrderId);
                 productionVarianceCalculator.deleteByWorkOrder(workOrderId);
                 productionVarianceCalculator.calculateVariances(workOrderId);
                 productionVarianceDispatcher.dispatchIfApplicable(workOrderId);

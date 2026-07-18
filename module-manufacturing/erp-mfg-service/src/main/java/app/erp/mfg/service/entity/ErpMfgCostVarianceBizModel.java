@@ -64,6 +64,9 @@ public class ErpMfgCostVarianceBizModel extends CrudBizModel<ErpMfgCostVariance>
                     .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode())
                     .param(ErpMfgErrors.ARG_CURRENT_STATUS, wo.getDocStatus());
         }
+        // 重算幂等闭环（plan 2026-07-18-2251-1）：先红冲既有 PRODUCTION_VARIANCE 凭证 → 再删差异旧行 → 再重算 → 再派发新凭证。
+        // 缺失红冲步骤会致「数据行新金额 + GL 旧凭证金额」数据分叉（reverseIfExists 内部 try/catch 守护吞无原凭证异常）。
+        productionVarianceDispatcher.reverseIfExists(workOrderId);
         // 幂等：先删该工单全部差异旧行，再重算
         productionVarianceCalculator.deleteByWorkOrder(workOrderId);
         List<ErpMfgCostVariance> lines = productionVarianceCalculator.calculateVariances(workOrderId);
