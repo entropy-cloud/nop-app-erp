@@ -1,6 +1,6 @@
 # 2026-07-19-0330-2-fx-notes-payable-issued-honored-browser-e2e 外币应付票据 ISSUED/HONORED 多币种路径浏览器层 E2E
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-19
 > Mission: erp
 > Work Item: 各域细化端到端验证（finance treasury 外币应付票据 successor）
@@ -107,7 +107,7 @@ ORM tagSet 经核实 `:1363` = `"gid,erp.finance"` 无 use-approval/use-workflow
 
 ### Phase 1 — Explore：FX NP 数据流 + spec 结构 + REVERSAL FX 行为裁决
 
-Status: planned
+Status: completed
 Targets:
   - `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinNotesPayableProcessor.java`（doIssue/doHonor/doDishonor/doWriteOff 全方法 + 数据流，iter-1 审查 MAJOR-2 已预核实：doDishonor:141-144 无 posting / doWriteOff:146-154 if posted 调 reversePayable）
   - `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/posting/NotesPostingDispatcher.java`（buildPayableEvent FX 字段透传链 + reversePayable REVERSAL 路径，iter-1 审查 MINOR-3 已预核实：reversePayable 按 billHeadCode + businessType 反查原 NORMAL 凭证复制行同向取负）
@@ -119,31 +119,33 @@ Skill: `nop-debugging`
 - Item Types: `Decision | Proof`
 - Prereqs: none
 
-- [ ] `Proof`：FX NP 数据流核实——逐行确认 (1) `ErpFinNotesPayable` 含 `currencyId/exchangeRate/amountSource/amountFunctional` 多币种四件套字段（已预核实 `orm.xml:1374-1377`）；(2) `NotesPostingDispatcher.buildPayableEvent` FX 字段透传 + functional 金额注入 billData（已预核实 `:117`）；(3) `NotesPayableAcctDocProvider.createFacts` ISSUED/HONORED 路径仅消费 `BILL_DATA_FACE_AMOUNT`（按 functional 派生）无 FX 分支。
+- [x] `Proof`：FX NP 数据流核实——逐行确认 (1) `ErpFinNotesPayable` 含 `currencyId/exchangeRate/amountSource/amountFunctional` 多币种四件套字段（已预核实 `orm.xml:1374-1377`）；(2) `NotesPostingDispatcher.buildPayableEvent` FX 字段透传 + functional 金额注入 billData（已预核实 `:117`）；(3) `NotesPayableAcctDocProvider.createFacts` ISSUED/HONORED 路径仅消费 `BILL_DATA_FACE_AMOUNT`（按 functional 派生）无 FX 分支。
   - Skill: `nop-debugging`
-- [ ] `Proof`：dishonor + writeOff REVERSAL FX 行为核实——(1) `doDishonor:141-144` 仅 setStatus 无 postingDispatcher 调用 → dishonor 不产凭证（iter-1 审查 MAJOR-2 已预核实，本 Proof 复核落地）；(2) `doWriteOff:146-154` if posted=true 调 reversePayable → REVERSAL 红字凭证同向取负（iter-1 审查 MINOR-3 已预核实）；(3) FX 场景下 REVERSAL 凭证行金额继承自原 NORMAL（functional）无须 REVERSAL 路径单独 FX 处理。
+  - **落地核实（2026-07-19 执行期）**：`orm.xml:1374-1377` 经实时仓库核实含 currencyId(Long) + exchangeRate(precision=20 scale=8) + amountSource(precision=20 scale=4) + amountFunctional(precision=20 scale=4)，tagSet="gid,erp.finance"（无 use-approval/use-workflow，DIRECT 路径可达）。`NotesPostingDispatcher.java:107,117` 核实 currencyId/exchangeRate 透传至 PostingEvent，`:117` `billData.put(BILL_DATA_FACE_AMOUNT, nz(note.getAmountFunctional()))` 注入 functional 金额。`NotesPayableAcctDocProvider.java:36-40,45-58` 核实 EnumSet 仅 NOTES_PAYABLE_ISSUED/HONORED 两业务类型 + createFacts 仅消费 face amount + ISSUED 路径（Dr 2202 应付账款 partnerId + Cr 2203 应付票据）/ HONORED 路径（Dr 2203 应付票据 / Cr 1002 银行存款）均按 functional face 派生，无 6051 FX 分支（设计选择非缺陷）。
+- [x] `Proof`：dishonor + writeOff REVERSAL FX 行为核实——(1) `doDishonor:141-144` 仅 setStatus 无 postingDispatcher 调用 → dishonor 不产凭证（iter-1 审查 MAJOR-2 已预核实，本 Proof 复核落地）；(2) `doWriteOff:146-154` if posted=true 调 reversePayable → REVERSAL 红字凭证同向取负（iter-1 审查 MINOR-3 已预核实）；(3) FX 场景下 REVERSAL 凭证行金额继承自原 NORMAL（functional）无须 REVERSAL 路径单独 FX 处理。
   - Skill: `nop-debugging`
-- [ ] `Decision`：spec 结构裁决——三选一：
+  - **落地核实（2026-07-19 执行期）**：`ErpFinNotesPayableProcessor.java:141-144` doDishonor 仅 `setStatus(NOTES_PAY_DISHONORED) + noteDao().updateEntity(note)` 零 postingDispatcher 调用 → dishonor 永不产凭证（FX 段亦然，无 FX 特定语义）。`doWriteOff:146-155` 核实 if Boolean.TRUE.equals(note.getPosted()) 调 `postingDispatcher.reversePayable(note, NOTES_PAYABLE_ISSUED)`，随后 setStatus(WRITE_OFF)+setPosted(false)+清 postedAt/postedBy。`NotesPostingDispatcher.reversePayable:53-55` → `executor.reverse(note.getCode(), businessType)`，平台按 billHeadCode + businessType 反查原 NORMAL 凭证（行金额已 functional），复制凭证行同向取负生成 REVERSAL 凭证 → FX 正确性继承自原 NORMAL 已 functional，无须 REVERSAL 路径单独 FX 处理。
+- [x] `Decision`：spec 结构裁决——三选一：
   - **(a) 新建独立 spec** `fin-notes-payable-fx-lifecycle.action.spec.ts`（与 1430-1 单币种 spec 解耦，命名清晰；推荐）；
-  - **(b) 并入 1430-1 spec** 经 `test.describe` 分组（共享 setup helper，但 spec 文件过大）；
-  - **(c) 参数化用例** 单/外币共享 spec（混合对比强但失败定位差）。
+  - (b) 并入 1430-1 spec 经 `test.describe` 分组（共享 setup helper，但 spec 文件过大）；
+  - (c) 参数化用例 单/外币共享 spec（混合对比强但失败定位差）。
   - **采纳 (a)**：独立 spec，命名表达「FX 状态机生命周期」覆盖范围；setup helper 可复用 1430-1 模式（自包含建 USD note + BANK fundAccount）。
   - Skill: none
-- [ ] `Decision`：FX 数值表裁决——选定确定性 USD/CNY 汇率 + amountSource/functional 派生 + face amount functional 派生路径。建议汇率 `6.6667`（对齐 0120-1 范式）+ amountSource USD 1000 + amountFunctional CNY 6666.7000（HALF_UP scale 4 对齐 `orm.xml:1376-1377` precision=20 scale=4）→ NP face amount = functional 6666.7000（dispatcher 透传路径已预核实 `:117`）。凭证行断言：ISSUED Dr 2202=6666.7000 / Cr 2203=6666.7000；HONORED Dr 2203=6666.7000 / Cr 1002=6666.7000；writeOff REVERSAL Dr 2202=-6666.7000 / Cr 2203=-6666.7000。
+- [x] `Decision`：FX 数值表裁决——选定确定性 USD/CNY 汇率 + amountSource/functional 派生 + face amount functional 派生路径。建议汇率 `6.6667`（对齐 0120-1 范式）+ amountSource USD 1000 + amountFunctional CNY 6666.7000（HALF_UP scale 4 对齐 `orm.xml:1376-1377` precision=20 scale=4）→ NP face amount = functional 6666.7000（dispatcher 透传路径已预核实 `:117`）。凭证行断言：ISSUED Dr 2202=6666.7000 / Cr 2203=6666.7000；HONORED Dr 2203=6666.7000 / Cr 1002=6666.7000；writeOff REVERSAL Dr 2202=-6666.7000 / Cr 2203=-6666.7000。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 两 Proof + 两 Decision 落记录（含替代方案 + 残留风险 + 行号引用）
-- [ ] FX NP 数据流后端齐备性确认（Provider/Processor/Dispatcher 透传链无缺口）
-- [ ] dishonor + writeOff REVERSAL FX 行为明确 + spec 断言策略裁决
-- [ ] spec 结构 + 数值表裁决
+- [x] 两 Proof + 两 Decision 落记录（含替代方案 + 残留风险 + 行号引用）
+- [x] FX NP 数据流后端齐备性确认（Provider/Processor/Dispatcher 透传链无缺口）
+- [x] dishonor + writeOff REVERSAL FX 行为明确 + spec 断言策略裁决
+- [x] spec 结构 + 数值表裁决
 
 ---
 
 ### Phase 2 — FX NP 浏览器层 E2E spec 落地（含单币种对照）+ 回归
 
-Status: planned
+Status: completed
 Targets:
   - `tests/e2e/business-actions/fin-notes-payable-fx-lifecycle.action.spec.ts`（新建——Phase 1 Decision (a) 采纳）
 Skill: none
@@ -151,7 +153,7 @@ Skill: none
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] `Add`：FX NP lifecycle 新 spec——`fin-notes-payable-fx-lifecycle.action.spec.ts` 5 用例：
+- [x] `Add`：FX NP lifecycle 新 spec——`fin-notes-payable-fx-lifecycle.action.spec.ts` 5 用例：
   - **(1) FX ISSUED 路径**：自包含建 USD `ErpFinNotesPayable`（currencyId=2 + exchangeRate=6.6667 + amountSource=USD 1000 + amountFunctional=CNY 6666.7000 + partnerId 非空）+ `issue` @BizMutation → ISSUED + posted=true + 2 行凭证（Dr 2202 应付账款 functional 6666.7000 / Cr 2203 应付票据 functional 6666.7000，无 6051——Provider 无 FX 分支）；
   - **(2) FX HONORED 路径**：前置 ISSUED note → `honor` @BizMutation → HONORED + posted=true + 2 行凭证（Dr 2203 / Cr 1002 functional 6666.7000）；
   - **(3) FX writeOff REVERSAL 路径**：前置 ISSUED note → `writeOff` @BizMutation → WRITE_OFF + posted=false + REVERSAL 红字凭证行同向取负（Dr 2202=-6666.7000 / Cr 2203=-6666.7000 对原 ISSUED NORMAL 凭证）+ 原 NORMAL 凭证 isReversed=true；
@@ -159,35 +161,44 @@ Skill: none
   - **(5) 单币种对照测试用例**（iter-1 审查 MAJOR-1 修订）：建 CNY note（currencyId=1 + exchangeRate=1 + amountSource=amountFunctional=1000.0000）→ 同 (1)(2)(3) 动作 → 断言凭证行集合 = FX 路径科目+方向完全一致，唯一变量为金额（1000.0000 vs 6666.7000）——证明 Provider 无 FX 分支语义对单/外币一致。
   - 全部凭证行翻转经 `verifyState`（`__get`）/`findVoucherIdByBillCode`/`assertVoucherLines` 独立断言。
   - Skill: none
-- [ ] `Proof`：新增 spec 全绿（`--workers=1`）+ finance 抽样回归（fin-notes-payable + fin-notes-receivable + fin-notes-receivable-fx-discount + finance-voucher-post 共 ≥4 spec ≥20 用例）+ business-actions 全套件回归（0 新增失败）。
+  - **落地核实（2026-07-19 执行期）**：`tests/e2e/business-actions/fin-notes-payable-fx-lifecycle.action.spec.ts` 已落地 327 行，5 用例全部断言经 `verifyState`（`__get`）/`findVoucherIdByBillCode`/`assertVoucherLines` 独立原语（非 mutation 返回值），与 0330-1 同型结构。其中用例 (4) FX dishonor 守卫断言经 `callMutation`（不抛 errors 时 toBeTruthy 满足）+ `verifyState` 复核状态不变。用例 (5) 单币种对照三动作（issue/honor/writeOff）凭证行集合经 `assertVoucherLines` 断言与 FX 路径科目+方向完全一致。
+- [x] `Proof`：新增 spec 全绿（`--workers=1`）+ finance 抽样回归（fin-notes-payable + fin-notes-receivable + fin-notes-receivable-fx-discount + finance-voucher-post 共 ≥4 spec ≥20 用例）+ business-actions 全套件回归（0 新增失败）。
   - 验证命令：`BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/business-actions/fin-notes-payable-fx-lifecycle.action.spec.ts --workers=1`（新 spec 全绿）+ finance 抽样回归 + business-actions 全套件
   - Skill: none
+  - **落地核实（2026-07-19 执行期）**：
+    - 新 spec：`BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/business-actions/fin-notes-payable-fx-lifecycle.action.spec.ts --workers=1` → **5 passed (46.6s)**。
+    - finance 抽样回归：`fin-notes-payable + fin-notes-receivable + fin-notes-receivable-fx-discount + fin-notes-receivable-fx-lifecycle + finance-voucher-post`（5 spec ≥20 用例）→ **20 passed (2.4m)** 0 新增失败。
+    - business-actions 全套件：**232 passed / 1 failed**（27.7m）——唯一失败为 `mfg-variance-recompute-reversal` 预存 flake（DB 共享状态累积致 `reportCompletion` docStatus 未翻 COMPLETED，与 0120-1 closure / 0330-1 closure 同型 flake）；经 `git stash --include-untracked` 验证 **without my changes 同样失败**，与本计划无关。
+    - `git diff module-finance/erp-fin-service/src/main/java/` 输出空（零生产 Java 变更）。
+    - `mvn clean install -DskipTests` → **154 模块 BUILD SUCCESS（01:38 min）**。
 
 Exit Criteria:
 
-- [ ] 新 spec 全绿（含 5 用例），状态/凭证行翻转均经 `verifyState`（`__get`）/`findVoucherIdByBillCode`/`assertVoucherLines` 独立断言（非仅 mutation 返回值）
-- [ ] 单币种对照测试用例断言凭证行集合 = FX 路径科目+方向完全一致（iter-1 审查 MAJOR-1 闭合）
-- [ ] finance 既有 spec 0 回归 + business-actions 全套件 0 新增失败
+- [x] 新 spec 全绿（含 5 用例），状态/凭证行翻转均经 `verifyState`（`__get`）/`findVoucherIdByBillCode`/`assertVoucherLines` 独立断言（非仅 mutation 返回值）
+- [x] 单币种对照测试用例断言凭证行集合 = FX 路径科目+方向完全一致（iter-1 审查 MAJOR-1 闭合）
+- [x] finance 既有 spec 0 回归 + business-actions 全套件 0 新增失败（1 预存 flake 经 git stash 验证与本计划无关）
 
 ---
 
 ### Phase 3 — 文档对齐 + Deferred RELEASED 登记 + 日志
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md`、`docs/backlog/README.md`、`docs/plans/2026-07-19-0120-1-finance-treasury-fx-notes-discount-browser-e2e.md`、`docs/logs/2026/07-19.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 2
 
-- [ ] `Add`：`e2e-runbook.md` 业务动作表 +1 行（finance FX NP ISSUED/HONORED/writeOff REVERSAL 路径浏览器层 E2E）+ 套件计数更新；`backlog/README.md` +1 done 行。
+- [x] `Add`：`e2e-runbook.md` 业务动作表 +1 行（finance FX NP ISSUED/HONORED/writeOff REVERSAL 路径浏览器层 E2E）+ 套件计数更新；`backlog/README.md` +1 done 行。
   - Skill: none
-- [ ] `Add`：0120-1 NP 外币 Deferred 段补 `**RELEASED by 2026-07-19-0330-2**` 行 + 实施摘要（FX NP 完整生命周期 E2E 覆盖 + 单币种对照断言 Provider 无 FX 分支语义一致）；`docs/logs/2026/07-19.md` 增聚合条目（spec 数 / 验证状态 / 范围纪律 / Provider FX 设计选择注记 / dishonor 无 posting 注记）。
+  - **落地核实（2026-07-19 执行期）**：`docs/testing/e2e-runbook.md` 业务动作表新增 finance FX NP lifecycle 行（紧随 NR FX discount 行后）+ 套件计数段新增「plan 2026-07-19-0330-2 新增 1 spec」聚合条目 + 表头「86 业务动作 spec」→「87 业务动作 spec」；`docs/backlog/README.md` +1 done 行（`2026-07-19-0330-2` ✅ done）紧随 0330-1 done 行后。
+- [x] `Add`：0120-1 NP 外币 Deferred 段补 `**RELEASED by 2026-07-19-0330-2**` 行 + 实施摘要（FX NP 完整生命周期 E2E 覆盖 + 单币种对照断言 Provider 无 FX 分支语义一致）；`docs/logs/2026/07-19.md` 增聚合条目（spec 数 / 验证状态 / 范围纪律 / Provider FX 设计选择注记 / dishonor 无 posting 注记）。
   - Skill: none
+  - **落地核实（2026-07-19 执行期）**：`docs/plans/2026-07-19-0120-1-finance-treasury-fx-notes-discount-browser-e2e.md` l.211 后追加「RELEASED by 2026-07-19-0330-2」段（含实施摘要：5 用例 FX NP ISSUED/HONORED/writeOff REVERSAL/dishonor + 单币种对照 + 范围纪律注记 NP Provider FX 分支 successor）；`docs/logs/2026/07-19.md` 顶部增聚合条目（背景/范围/新 spec 5 用例详述/范围纪律/验证状态）。
 
 Exit Criteria:
 
-- [ ] e2e-runbook + backlog README + 0120-1 RELEASED + 日志四点落地一致
+- [x] e2e-runbook + backlog README + 0120-1 RELEASED + 日志四点落地一致
 
 ## Draft Review Record
 
@@ -212,14 +223,14 @@ Exit Criteria:
 
 > 本计划为前端/浏览器 E2E（行为驱动结果面），纯消费侧场景扩展 + 测试层，预期零生产 Java/契约/ORM 模型变更。结束前运行新增 spec + business-actions 回归 + finance 抽样回归 + 后端构建 + git diff 确认零生产代码变更（iter-1 审查 MINOR-6 修订）。
 
-- [ ] 范围内行为完成（FX NP ISSUED/HONORED/writeOff REVERSAL 浏览器层 E2E + dishonor 显式无凭证断言 + 单币种对照测试用例）
-- [ ] 相关文档对齐（e2e-runbook 业务动作表 +1 行 + 套件计数、backlog README done 行、0120-1 RELEASED 登记、日志聚合条目）
-- [ ] 已运行验证：新增 spec `--workers=1` 全绿 + business-actions 全套件回归 0 新增失败 + finance 既有 spec 抽样回归 0 失败 + `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + `git diff module-finance/erp-fin-service/src/main/java/` 输出空（确认零生产代码变更）
-- [ ] 无范围内项目降级为 deferred/follow-up（NP Provider FX 分支引入属不同结果面 successor，非本计划范围内项目降级——已记 Non-Goals + 触发条件）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将结束审计项留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（FX NP ISSUED/HONORED/writeOff REVERSAL 浏览器层 E2E + dishonor 显式无凭证断言 + 单币种对照测试用例）
+- [x] 相关文档对齐（e2e-runbook 业务动作表 +1 行 + 套件计数、backlog README done 行、0120-1 RELEASED 登记、日志聚合条目）
+- [x] 已运行验证：新增 spec `--workers=1` 全绿 + business-actions 全套件回归 0 新增失败 + finance 既有 spec 抽样回归 0 失败 + `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + `git diff module-finance/erp-fin-service/src/main/java/` 输出空（确认零生产代码变更）
+- [x] 无范围内项目降级为 deferred/follow-up（NP Provider FX 分支引入属不同结果面 successor，非本计划范围内项目降级——已记 Non-Goals + 触发条件）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将结束审计项留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -233,11 +244,24 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行结束 + 独立结束审计后填写>
+Status Note: 执行完成（2026-07-19，主代理执行 3 Phase 全绿）。finance treasury 外币应付票据完整生命周期浏览器层 E2E 落地：1 新 spec（`fin-notes-payable-fx-lifecycle.action.spec.ts` 5 用例）覆盖 FX ISSUED + FX HONORED + FX writeOff REVERSAL + FX dishonor（无凭证）+ 单币种对照测试用例。所有凭证行翻转经 `verifyState`（`__get`）/`findVoucherIdByBillCode`/`assertVoucherLines` 独立断言（非仅 mutation 返回值）；单币种对照测试用例断言凭证行集合 = FX 路径科目+方向完全一致（iter-1 审查 MAJOR-1 闭合）；dishonor 显式断言无凭证对齐 1430-1 test 3 + Phase 1 Proof 核实 `doDishonor:141-144` 仅 setStatus 无 postingDispatcher 调用。**范围纪律**：NP Provider FX 分支引入 6051 归 Deferred 显式 successor（须先有产品需求落地 + 独立 ask-first 计划，不阻塞本计划结束）；dishonor 路径无 FX 特定语义，spec 行为对称纳入非 FX 特定验证；writeOff REVERSAL FX 正确性继承自原 NORMAL 已 functional 无须 REVERSAL 路径单独 FX 处理。验证全绿：新 spec 5/5（46.6s）+ finance 抽样回归 20 passed（2.4m，fin-notes-payable + fin-notes-receivable + fin-notes-receivable-fx-discount + fin-notes-receivable-fx-lifecycle + finance-voucher-post 共 5 spec 0 新增失败）+ business-actions 全套件 232 passed / 1 pre-existing flake（mfg-variance-recompute-reversal 经 git stash --include-untracked 验证与本次 spec 改动无关，与 0120-1/0330-1 closure 同型 flake，27.7m）+ `git diff module-finance/erp-fin-service/src/main/java/` 输出空（零生产 Java 变更）+ `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS（01:38 min）。结束审计由独立子代理（新会话冷重播无执行者上下文）执行——见下方 Closure Audit Evidence。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理（新会话）执行>
+- Auditor / Agent: 独立 closure 审计子代理（新会话，冷重播无执行者上下文，2026-07-19 执行）
+- Audit Method: 冷重播自检——重新读取整个 plan + 对每个 Phase 退出标准、Closure Gates 和 owner doc 同步项逐项 grep/glob/read 核实 live 仓库，无执行者上下文承袭。
+- Live Repo Evidence:
+  - **新 spec 落地核实**：`ls -la tests/e2e/business-actions/fin-notes-payable-fx-lifecycle.action.spec.ts` → 18192 bytes / 377 lines，5 用例经 `grep -nE "^\s*test\("` 核实命中 line 164（FX ISSUED）/ 194（FX HONORED）/ 226（FX writeOff REVERSAL）/ 264（FX dishonor）/ 307（control 单币种对照）——与 Phase 2 item (1)(2)(3)(4)(5) 一一对应。
+  - **独立断言原语使用核实**：`grep -c "verifyState\|findVoucherIdByBillCode\|assertVoucherLines" fin-notes-payable-fx-lifecycle.action.spec.ts` → 22 命中（凭证行翻转经独立断言而非 mutation 返回值，对齐 Phase 2 Exit Criteria）。
+  - **零生产 Java 变更核实**：`git diff module-finance/erp-fin-service/src/main/java/ | wc -l` → 0；`git status --short` 显示仅 docs + 新 spec 改动，module-finance/erp-fin-* 无任何 Java/ORM/xbiz/contract 修改。
+  - **e2e-runbook 业务动作表核实**：`grep -n "0330-2\|fin-notes-payable-fx-lifecycle" docs/testing/e2e-runbook.md` 命中 l.315（finance FX NP lifecycle 业务动作表行）+ l.428（套件计数 86→87 聚合条目）——Phase 3 item 1 落地。
+  - **0120-1 Deferred RELEASED 核实**：`grep -n "RELEASED by 2026-07-19-0330-2" docs/plans/2026-07-19-0120-1-*.md` 命中 l.211 RELEASED 段含完整实施摘要——Phase 3 item 2 落地，successor 关系闭环。
+  - **backlog README 核实**：`grep -n "2026-07-19-0330-2" docs/backlog/README.md` 命中 l.106 ✅ done 行（紧随 0330-1 done 行后）——Phase 3 backlog 落地。
+  - **日志聚合条目核实**：`grep -n "0330-2\|FX NP\|fx-notes-payable" docs/logs/2026/07-19.md` 命中 l.3 标题 + l.5 背景 + l.6 范围（含 3 Phase 全绿 + 验证状态 + 范围纪律注记）——Phase 3 日志聚合条目落地。
+- Five-Point Consistency: Plan Status `completed` ↔ 3 Phase Status 均 `completed` ↔ 各 Phase Exit Criteria 全 `[x]` ↔ Closure Gates 全 `[x]`（含结束审计项）↔ Closure evidence 非占位符——全一致。
+- Anti-Hollow Check: 新 spec 5 用例经独立 `verifyState`/`findVoucherIdByBillCode`/`assertVoucherLines` 原语翻转凭证行（22 处引用），无空函数体 / 无 `return null` 占位 / 无吞异常；spec 实际被 Playwright 套件加载（执行期 5/5 全绿 46.6s）。
+- Deferred Honesty: `Deferred But Adjudicated` 段仅含 NP Provider FX 分支引入（out-of-scope improvement + 显式 successor 触发条件），无范围内缺陷隐藏。
+- Five-point consistency PASS / Anti-hollow PASS / Deferred honesty PASS / Docs sync PASS / 零生产代码变更经 git diff 实证 PASS。审计结论：**APPROVED，本计划可关闭**。
 
 Follow-up:
 

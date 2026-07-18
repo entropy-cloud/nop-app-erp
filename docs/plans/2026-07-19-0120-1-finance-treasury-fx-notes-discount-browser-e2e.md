@@ -208,6 +208,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 1430-1 已覆盖单币种；外币段同型规则但不同实体（`ErpFinNotesPayable` 非 `ErpFinNotesReceivable`）+ 不同科目分解（2202/2203 vs 1121）。
 - Successor Required: `yes`（触发条件：外币应付票据业务路径浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-19-0330-2**：触发条件经实时仓库核实已满足（AGENTS.md「当前项目阶段」明示「各域细化端到端验证」为当前重点 + 0120-1 同型裁决先例）；`fin-notes-payable-fx-lifecycle.action.spec.ts`（5 用例）交付完整 FX NP ISSUED/HONORED/writeOff REVERSAL 生命周期浏览器层 E2E + dishonor 无凭证断言 + 单币种对照：(1) FX ISSUED 路径（USD note → ISSUED + posted=true + 2 行凭证 Dr 2202=6666.7000/Cr 2203=6666.7000 全 functional CNY 无 6051，Provider ISSUED 路径无 FX 分支为设计选择）+ (2) FX HONORED 路径（USD note ISSUED 入口 → HONORED + posted=true + 2 行凭证 Dr 2203=6666.7000/Cr 1002=6666.7000 经 NOTES_PAYABLE_HONORED）+ (3) FX writeOff REVERSAL 路径（USD note ISSUED+posted=true → WRITE_OFF + posted=false + REVERSAL 红字凭证行同向取负 Dr 2202=-6666.7000/Cr 2203=-6666.7000 对原 ISSUED NORMAL 凭证，FX 正确性继承自原 NORMAL 已 functional）+ (4) FX dishonor 路径（USD note ISSUED 入口 → DISHONORED 显式无凭证对齐 1430-1 test 3 + `doDishonor:141-144` 仅 setStatus 无 postingDispatcher + 非法迁移守卫）+ (5) 单币种对照测试用例（CNY note 同 issue/honor/writeOff 动作断言凭证行集合与 FX 路径科目+方向完全一致，唯一变量为金额 1000 vs 6666.7000）；iter-1/iter-2 草案审查闭环 + 实时仓库逐行核实 NP Provider/Processor/Dispatcher FX 透传链；NP Provider FX 分支引入 6051 仍归 0330-2 `Deferred But Adjudicated` 显式 successor（须独立 ask-first 计划，不阻塞本计划结束）。
 
 ## Closure
 
