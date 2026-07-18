@@ -106,6 +106,19 @@ Net Accounts Receivable (NRV)          ← 报表呈现
 - **审批**：财务主管（直接 P&L 影响）。
 - **businessType**：`BAD_DEBT_RELEASE`。
 
+### 步骤 6 — 反审核红冲（BAD_DEBT_WRITE_OFF/RECOVERY 反向，plan 2026-07-18-1745-3）
+
+> 闭环补齐：步骤 3 / 步骤 4a approve 即立即过账，原设计无反向入口。`ErpFinBadDebt.reverseApprove(id)` 补齐红冲闭环，对齐 finance 域红冲一致性（参 `posting.md §冲销机制`）。
+
+**反向语义**：approve 后误操作 / 审批纠错时反审核：
+
+- **writeOff 反向**：红冲 `BAD_DEBT_WRITE_OFF` 凭证（红字行同向取负：Dr 1231=-X / Cr 1122=-X）+ 回退 ArApItem 状态对称（`WRITTEN_OFF → OPEN`，settled-=X / open+=X）+ 翻 `approvalStatus APPROVED → REJECTED`。
+- **recovery 反向**：红冲 `BAD_DEBT_RECOVERY` 凭证 + 回退 ArApItem 状态对称（`OPEN → WRITTEN_OFF`，settled+=X / open-=X）+ 翻 `approvalStatus APPROVED → REJECTED`。
+- **DIRECT 路径**：`ErpFinBadDebt` ORM tagSet = `gid,erp.finance`（无 `useWorkflow`），不经 xwf 反向；调既有 `FinPostingExecutor.reverse(debt.code, BAD_DEBT_WRITE_OFF|RECOVERY)`（同 billHeadCode 复用）+ `IErpFinVoucherBiz.reverse` 平台内置幂等守护。
+- **门控**：守卫 `approvalStatus=APPROVED && voucherId != null`（`ErpFinBadDebt` 无 `posted` 字段，以 `voucherId` 非空作为已过账标志）；未过账坏账单抛 `ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED`。
+- **事务边界**：红冲凭证失败抛 NopException 触发事务回滚（强一致：反审核为补救路径，须保证无残留半状态）。
+- **voucherId 保留**：反审核后 `voucherId` 字段保留不动（不重置为 null），原凭证 `isReversed=true` 已表明状态，保留回链供审计回溯。
+
 ## 坏账准备计提方法
 
 ### 账龄分桶法（默认方法）

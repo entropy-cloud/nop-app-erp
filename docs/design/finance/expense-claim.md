@@ -195,6 +195,8 @@
 4. **价税分离**：行级 untaxed/tax/total 保证进项税可抵扣，与采购发票一致。
 5. **红冲联动**：报销单/借款单 CANCELLED 时按业财回链红冲已过账凭证（posting.md 冲销机制）。
 
+   > **cashRepay 路径红冲联动已落地**（plan `2026-07-18-1745-3`）：`ErpFinEmployeeAdvance.reverseCashRepay(advanceId)` 反向现金还款闭环——经 `ErpFinVoucherBillR` 反查 advance 最近一笔未红冲的 cashRepay NORMAL 凭证（`billCode LIKE 'EA-CASH-REPAY-<advanceCode>-%'` + `businessType=EMPLOYEE_ADVANCE_SETTLE` + `isReversed=false`），调既有 `EmployeeAdvancePostingDispatcher.reverseSettle(billHeadCode)` 红冲 + 按原凭证 `totalDebit` 回退 advance 字段（`settledAmount-=amount` / `outstandingAmount+=amount`）。守卫：未找到 cashRepay 凭证抛 `ERR_EMPLOYEE_ADVANCE_CASH_REPAY_VOUCHER_NOT_FOUND`。兑现本节 l.196 红冲联动承诺于 cashRepay 路径（解除 owner-doc 漂移）。
+
 ## 反模式警示
 
 - ⛔ **学 Odoo 单轴 state**（draft→submitted→approved→posted→in_payment→paid 七态串一轴，🟢 `hr_expense.py:122-142`）——本项目坚持三轴分离（docStatus + approveStatus + posted + paidStatus），业务态与过账态解耦。

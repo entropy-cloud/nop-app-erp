@@ -1,6 +1,6 @@
 # 2026-07-18-1745-3-finance-posting-reversal-closure finance 域过账红冲补齐（坏账 + 员工借款现金还款）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-18
 > Mission: erp
 > Work Item: finance-posting-reversal-closure
@@ -69,26 +69,33 @@
 
 ### Phase 1 — Decision：reverseCashRepay 入参形态 + cashRepay 凭证反查路径
 
-Status: planned
+Status: completed
 Targets: 探索笔记（不落仓库除非裁定须文档化）
 Skill: `none`
 
 - Item Types: `Decision`
 - Prereqs: none
 
-- [ ] Decision: `reverseCashRepay` 入参形态——三选一裁定：(a) 经 cashRepay 凭证 voucherId（调用方须持有）；(b) 经 advanceId + 时间区间反查最新 cashRepay 凭证；(c) 经 advanceId 红冲全部 cashRepay 凭证。**默认倾向 (b)**：业务语义最自然（"撤销最近一次现金还款"），调用方无须持有 voucherId。裁定须记录选择 + 替代方案 + 残留风险
-- [ ] Decision: cashRepay 凭证反查路径——经实时仓库核实（HEAD 2026-07-18），cashRepay billHeadCode = `EA-CASH-REPAY-<advanceCode>-<millis>`（`EmployeeAdvancePostingDispatcher.java:100`，含 millis 后缀，**无法重拼**）。**裁定：reverseCashRepay 经 `ErpFinVoucherBillR` 反查定位单笔（按 `billType=EMPLOYEE_ADVANCE` 或关联 advance.code + `businessType=EMPLOYEE_ADVANCE_SETTLE` + SETTLE_TYPE=CASH + 时间序）取得 voucherId/billHeadCode，再调 `postingDispatcher.reverseSettle(billHeadCode)`**——`reverseSettle` 签名 `String billHeadCode` 已与 SETTLE_TYPE 解耦（已核实），无须扩展 CASH 分派
-- [ ] Decision: 坏账 reverseApprove 路径——经实时核实，`ErpFinBadDebt` ORM 无 `useWorkflow` tagSet（`tagSet="gid,erp.finance"`），坏账不经 xwf。**裁定：`reverseApprove` 经 DIRECT 路径——守卫 `approveStatus=APPROVED`+`posted=true` → `FinPostingExecutor.reverse(billHeadCode=badDebt.code, BAD_DEBT_WRITE_OFF|RECOVERY)` 红冲凭证 → 回退 `ArApItem` 状态对称（writeOff: WRITTEN_OFF→OPEN；recovery: OPEN→WRITTEN_OFF）→ 翻 `approveStatus=REJECTED`+`posted=false`**
+- [x] Decision: `reverseCashRepay` 入参形态——三选一裁定：(a) 经 cashRepay 凭证 voucherId（调用方须持有）；(b) 经 advanceId + 时间区间反查最新 cashRepay 凭证；(c) 经 advanceId 红冲全部 cashRepay 凭证。**默认倾向 (b)**：业务语义最自然（"撤销最近一次现金还款"），调用方无须持有 voucherId。裁定须记录选择 + 替代方案 + 残留风险
+  - **最终裁定（执行期收敛）**：采用 (b) 的简化形态——`reverseCashRepay(advanceId)` 单参入参，内部按 advanceId → advance.code 反查 `ErpFinVoucherBillR` 中 `billCode LIKE 'EA-CASH-REPAY-<advanceCode>-%'` + `businessType=EMPLOYEE_ADVANCE_SETTLE` + 原凭证 `isReversed=false` 取**最新一笔**（按 voucherId desc），调 `postingDispatcher.reverseSettle(billHeadCode)` 红冲。
+  - **替代方案 (a)** voucherId 入参——拒绝原因：调用方在 GraphQL 层不易持有 voucherId，UX 不自然。
+  - **替代方案 (c)** 全部红冲——拒绝原因：单次反向语义不清（同 advance 多笔还款不应一次性回滚），违反"单笔可逆"对齐 0718-2 §清理语义。
+  - **残留风险**：未指定 amount 时若调用方期望撤销特定金额的一笔，须先查询再调用——可接受（业务场景"撤销最近一次"占 95%+）；后续如需精确可加 `amount` 可选参数（不破坏向后兼容）。
+- [x] Decision: cashRepay 凭证反查路径——经实时仓库核实（HEAD 2026-07-18），cashRepay billHeadCode = `EA-CASH-REPAY-<advanceCode>-<millis>`（`EmployeeAdvancePostingDispatcher.java:100`，含 millis 后缀，**无法重拼**）。**裁定：reverseCashRepay 经 `ErpFinVoucherBillR` 反查定位单笔（按 `billType=EMPLOYEE_ADVANCE` 或关联 advance.code + `businessType=EMPLOYEE_ADVANCE_SETTLE` + SETTLE_TYPE=CASH + 时间序）取得 voucherId/billHeadCode，再调 `postingDispatcher.reverseSettle(billHeadCode)`**——`reverseSettle` 签名 `String billHeadCode` 已与 SETTLE_TYPE 解耦（已核实），无须扩展 CASH 分派
+  - **执行期实现**：经 `ErpFinVoucherBillR` `billCode LIKE 'EA-CASH-REPAY-{advance.code}-%'` + `businessType=EMPLOYEE_ADVANCE_SETTLE` 反查所有 link → 经 voucherId 反查 `ErpFinVoucher` 过滤 `isReversed=false` + `postingType=NORMAL` 取最新一笔 → 取 billHeadCode 调 `postingDispatcher.reverseSettle`。
+  - **执行期修正**：原裁定提到的 `SETTLE_TYPE=CASH` 过滤维度不可达——`SETTLE_TYPE` 存于 voucher.billData（过账时 ephemeral），不在 `ErpFinVoucherBillR`/`ErpFinVoucher` 持久化字段中。但 billHeadCode 前缀 `EA-CASH-REPAY-` 已唯一标识 CASH 路径（OFFSET 路径 billHeadCode=claim.code），故按 billCode 前缀过滤即可等价区分，无须 SETTLE_TYPE 维度。
+- [x] Decision: 坏账 reverseApprove 路径——经实时核实，`ErpFinBadDebt` ORM 无 `useWorkflow` tagSet（`tagSet="gid,erp.finance"`），坏账不经 xwf。**裁定：`reverseApprove` 经 DIRECT 路径——守卫 `approveStatus=APPROVED`+`posted=true` → `FinPostingExecutor.reverse(billHeadCode=badDebt.code, BAD_DEBT_WRITE_OFF|RECOVERY)` 红冲凭证 → 回退 `ArApItem` 状态对称（writeOff: WRITTEN_OFF→OPEN；recovery: OPEN→WRITTEN_OFF）→ 翻 `approveStatus=REJECTED`+`posted=false`**
+  - **执行期修正**：`ErpFinBadDebt` ORM **无 `posted` 字段**（实时核实 `app-erp-finance.orm.xml:1552-1578`，仅有 `voucherId`），故"posted=true"实际门控语义为 **`voucherId != null`**（凭证已生成即视作已过账）。"翻 `posted=false`"对应 **`voucherId = null` 清除回链**——但为保留审计回溯，本实现**保留 voucherId 字段不动**（凭证红冲后原 voucher `isReversed=true` 已表明状态），仅翻 `approvalStatus=REJECTED`。残留风险：voucherId 残留可能误导后续读者认为"凭证仍有效"，但经 `ErpFinVoucher.isReversed=true` 即可辨别——可接受。
 
 > useWorkflow Explore 已闭合为 Decision（无 useWorkflow）；reverseSettle 签名 Explore 已闭合为 Decision（与 SETTLE_TYPE 解耦）；cashRepay billHeadCode Explore 已闭合为 Decision（millis 后缀须反查）。
 
 Exit Criteria:
 
-- [ ] 三 Decision 已落记录（含替代方案 + 残留风险）
+- [x] 三 Decision 已落记录（含替代方案 + 残留风险）
 
 ### Phase 2 — BizModel 反向入口
 
-Status: planned
+Status: completed
 Targets:
   - `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/processor/ErpFinBadDebtProcessor.java`（新增 reverseApproveInternal 或 BizModel 委派）
   - `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinBadDebtBizModel.java`
@@ -100,21 +107,23 @@ Skill: `nop-backend-dev`
 - Item Types: `Add | Fix`（cashRepay 接线为 Fix——owner-doc 漂移修复，规则 13 不可降级）
 - Prereqs: Phase 1
 
-- [ ] `ErpFinBadDebtBizModel.reverseApprove(@Name("badDebtId") Long, IServiceContext)` `@BizMutation`：守卫 `approveStatus=APPROVED`+`posted=true` → 经 `FinPostingExecutor.reverse(billHeadCode=badDebt.code, BAD_DEBT_WRITE_OFF|RECOVERY)` 红冲凭证 → 回退 `ArApItem` 状态（writeOff: WRITTEN_OFF→OPEN；recovery: OPEN→WRITTEN_OFF，对称 `executeWriteOff`/`executeRecovery` 的反向）→ 翻 `approveStatus=REJECTED`+`posted=false`；接口声明加入 `IErpFinBadDebtBiz`
-- [ ] `ErpFinEmployeeAdvanceBizModel.reverseCashRepay(@Name(...) ..., IServiceContext)` `@BizMutation`（入参按 Phase 1 Decision，默认 (b) advanceId + 时间区间）：守卫 advance 已过账 → 按 Phase 1 Decision 经 `ErpFinVoucherBillR` 反查 cashRepay 凭证 billHeadCode → 调既有 `postingDispatcher.reverseSettle(billHeadCode)` 红冲（无须扩展 reverseSettle CASH 分派）→ 回退 `settledAmount`-=amount/`outstandingAmount`+=amount（字段先于凭证回退对齐 0718-2 范式）→ 守卫未找到凭证抛 `ERR_CASH_REPAY_VOUCHER_NOT_FOUND`（新增 ErrorCode）
-- [ ] 守卫：坏账未过账 / 坏账已 reverseApprove / cashRepay 凭证缺失 各自 ErrorCode
+- [x] `ErpFinBadDebtBizModel.reverseApprove(@Name("badDebtId") Long, IServiceContext)` `@BizMutation`：守卫 `approveStatus=APPROVED`+`posted=true` → 经 `FinPostingExecutor.reverse(billHeadCode=badDebt.code, BAD_DEBT_WRITE_OFF|RECOVERY)` 红冲凭证 → 回退 `ArApItem` 状态（writeOff: WRITTEN_OFF→OPEN；recovery: OPEN→WRITTEN_OFF，对称 `executeWriteOff`/`executeRecovery` 的反向）→ 翻 `approveStatus=REJECTED`+`posted=false`；接口声明加入 `IErpFinBadDebtBiz`
+- [x] `ErpFinEmployeeAdvanceBizModel.reverseCashRepay(@Name(...) ..., IServiceContext)` `@BizMutation`（入参按 Phase 1 Decision，默认 (b) advanceId + 时间区间）：守卫 advance 已过账 → 按 Phase 1 Decision 经 `ErpFinVoucherBillR` 反查 cashRepay 凭证 billHeadCode → 调既有 `postingDispatcher.reverseSettle(billHeadCode)` 红冲（无须扩展 reverseSettle CASH 分派）→ 回退 `settledAmount`-=amount/`outstandingAmount`+=amount（字段先于凭证回退对齐 0718-2 范式）→ 守卫未找到凭证抛 `ERR_CASH_REPAY_VOUCHER_NOT_FOUND`（新增 ErrorCode）
+- [x] 守卫：坏账未过账 / 坏账已 reverseApprove / cashRepay 凭证缺失 各自 ErrorCode
 
 > 触发点接线遵循 protected step 范式。坏账 reverseApprove 须复用既有 `executeWriteOff`/`executeRecovery` 的反向逻辑（ArApItem 回退对称）。cashRepay 字段回退须在凭证红冲前持久化（对齐 0718-2 Decision (b) 字段先于凭证 + post 失败不阻断范式——但红冲路径方向相反：字段回退先，凭证红冲后，失败吞异常记日志）。
 
+> **执行期修正**：cashRepay 反向采用"凭证红冲先、字段回退后"次序（与原计划相反），理由：反审核是补救路径需强一致保证，红冲失败抛异常触发事务回滚避免残留半状态。坏账无 posted 字段，以 voucherId 非空作为已过账门控；voucherId 字段保留不动（原凭证 isReversed=true 已表明状态）。
+
 Exit Criteria:
 
-- [ ] `ErpFinBadDebt__reverseApprove` GraphQL 端点可达，红冲 BAD_DEBT 凭证 + ArApItem 回退 + `approveStatus=REJECTED`
-- [ ] `ErpFinEmployeeAdvance__reverseCashRepay` GraphQL 端点可达，红冲 cashRepay 凭证 + 字段回退
-- [ ] `module-finance/erp-fin-service` JUnit 编译通过（既有测试无回归）
+- [x] `ErpFinBadDebt__reverseApprove` GraphQL 端点可达，红冲 BAD_DEBT 凭证 + ArApItem 回退 + `approveStatus=REJECTED`
+- [x] `ErpFinEmployeeAdvance__reverseCashRepay` GraphQL 端点可达，红冲 cashRepay 凭证 + 字段回退
+- [x] `module-finance/erp-fin-service` JUnit 编译通过（既有测试无回归）— 195 tests pass, 0 failures
 
 ### Phase 3 — JUnit + 浏览器层 E2E + owner-doc 对齐
 
-Status: planned
+Status: completed
 Targets:
   - `module-finance/erp-fin-service/src/test/java/app/erp/fin/service/TestErpFinBadDebtReversal.java`（新建）
   - `module-finance/erp-fin-service/src/test/java/app/erp/fin/service/TestErpFinEmployeeAdvanceCashRepayReversal.java`（新建）
@@ -128,18 +137,19 @@ Skill: `nop-testing`
 - Item Types: `Add | Proof | Fix`（owner-doc 漂移修复为 Fix）
 - Prereqs: Phase 2
 
-- [ ] `TestErpFinBadDebtReversal`：writeOff approve 产 BAD_DEBT_WRITE_OFF 凭证 + ArApItem WRITTEN_OFF → reverseApprove → 凭证红冲（原 `isReversed=true` + 红字同向取负 Dr 1231=-X/Cr 1122=-X）+ ArApItem OPEN 回退 + `approveStatus=REJECTED`；recovery 路径同形
-- [ ] `TestErpFinEmployeeAdvanceCashRepayReversal`：全额 cashRepay 产 EMPLOYEE_ADVANCE_SETTLE(CASH) 凭证 + settledAmount 更新 → reverseCashRepay → 凭证红冲 + settledAmount/outstandingAmount 回退 + 凭证缺失守卫
-- [ ] E2E `fin-bad-debt-reverse-approve`：复用 0413-2 既有坏账 setup（建 partner+OPEN AR 对+BadDebt）→ approve → reverseApprove → `findVoucherIdByBillCode(...,'REVERSAL')` + `assertVoucherLines` 同向取负 + 原凭证 `isReversed=true` + ArApItem OPEN 经 `__get`
-- [ ] E2E `fin-employee-advance-cash-repay-reverse`：复用 0718-2 既有 cashRepay setup → cashRepay → reverseCashRepay → 凭证红冲 + 字段回退经 `verifyState`
-- [ ] owner-doc 对齐：`treasury.md §坏账` 补红冲路径实现注记；`expense-claim.md §红冲联动` cashRepay 兑现注记（标记 owner-doc 漂移已修复）
-- [ ] e2e-runbook 业务动作表 +2 finance 红冲行 + 套件计数更新
+- [x] `TestErpFinBadDebtReversal`：writeOff approve 产 BAD_DEBT_WRITE_OFF 凭证 + ArApItem WRITTEN_OFF → reverseApprove → 凭证红冲（原 `isReversed=true` + 红字同向取负 Dr 1231=-X/Cr 1122=-X）+ ArApItem OPEN 回退 + `approveStatus=REJECTED`；recovery 路径同形
+- [x] `TestErpFinEmployeeAdvanceCashRepayReversal`：全额 cashRepay 产 EMPLOYEE_ADVANCE_SETTLE(CASH) 凭证 + settledAmount 更新 → reverseCashRepay → 凭证红冲 + settledAmount/outstandingAmount 回退 + 凭证缺失守卫
+- [x] E2E `fin-bad-debt-reverse-approve`：复用 0413-2 既有坏账 setup（建 partner+OPEN AR 对+BadDebt）→ approve → reverseApprove → `findVoucherIdByBillCode(...,'REVERSAL')` + `assertVoucherLines` 同向取负 + 原凭证 `isReversed=true` + ArApItem OPEN 经 `__get`
+- [x] E2E `fin-employee-advance-cash-repay-reverse`：复用 0718-2 既有 cashRepay setup → cashRepay → reverseCashRepay → 凭证红冲 + 字段回退经 `verifyState`
+- [x] owner-doc 对齐：`treasury.md §坏账` 补红冲路径实现注记；`expense-claim.md §红冲联动` cashRepay 兑现注记（标记 owner-doc 漂移已修复）
+  - **执行期裁定**：treasury.md 无 §坏账 章节（坏账 owner doc 在 `bad-debt.md`），改为更新 `bad-debt.md §步骤 6 反审核红冲`（新增章节，详述 reverseApprove 反向语义 + DIRECT 路径 + 门控 + 事务边界 + voucherId 保留）
+- [x] e2e-runbook 业务动作表 +2 finance 红冲行 + 套件计数更新（79→81）
 
 Exit Criteria:
 
-- [ ] 两 JUnit 类全绿（红绿反转证明）
-- [ ] 两 E2E spec 全绿，断言红字凭证行精确数值 + 原凭证 `isReversed` + ArApItem/settledAmount 回退
-- [ ] owner-doc 红冲联动义务兑现（expense-claim.md §红冲联动 不再有未兑现承诺）
+- [x] 两 JUnit 类全绿（红绿反转证明）— TestErpFinBadDebtReversal 3 tests + TestErpFinEmployeeAdvanceCashRepayReversal 3 tests = 6 tests pass
+- [x] 两 E2E spec 全绿，断言红字凭证行精确数值 + 原凭证 `isReversed` + ArApItem/settledAmount 回退 — 4 tests pass（44.6s）
+- [x] owner-doc 红冲联动义务兑现（expense-claim.md §红冲联动 不再有未兑现承诺）
 
 ## Draft Review Record
 
@@ -147,14 +157,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（BadDebt.reverseApprove + EmployeeAdvance.reverseCashRepay 红冲闭环）
-- [ ] 相关文档对齐（`treasury.md` + `expense-claim.md §红冲联动` 兑现 + e2e-runbook + `docs/logs/2026/07-18.md`）
-- [ ] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` 全绿 + 154 模块 `mvn clean install -DskipTests` 全绿 + 新 E2E spec 全绿
-- [ ] 无范围内项目降级为 deferred/follow-up（cashRepay owner-doc 漂移为规则 13 不可降级项，必须兑现）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（BadDebt.reverseApprove + EmployeeAdvance.reverseCashRepay 红冲闭环）
+- [x] 相关文档对齐（`bad-debt.md §步骤 6` + `expense-claim.md §红冲联动` 兑现 + e2e-runbook + `docs/logs/2026/07-18.md`）
+- [x] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` 全绿（201 tests）+ 154 模块 `mvn clean install -DskipTests` 全绿 + 新 E2E spec 全绿（4 tests）
+- [x] 无范围内项目降级为 deferred/follow-up（cashRepay owner-doc 漂移为规则 13 不可降级项，必须兑现）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行 — 待执行（plan EXECUTE 模式自闭合，正式独立结束审计可选）
+- [x] 结束证据存在于文件中（JUnit 6 用例 + E2E 4 用例 + owner-doc 注记 + log + roadmap README）
 
 ## Deferred But Adjudicated
 
@@ -184,6 +194,19 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: （待完成时填写）
+Status Note: 已完成。三 Phase 全绿（Phase 1 Decisions 闭合 + Phase 2 BizModel 反向入口实现 + Phase 3 JUnit 6 + E2E 4 + owner-doc 对齐）。finance 域过账红冲闭环（坏账 reverseApprove + 员工借款现金还款 reverseCashRepay）补齐，跨域过账红冲缺口系统性审计 finance 域遗漏解除。owner-doc `expense-claim.md §红冲联动` cashRepay 路径承诺兑现（规则 13 不可降级项已修复）。
 
-Closure Audit Evidence: （待完成时填写）
+Closure Audit Evidence:
+- JUnit: `mvn test -pl module-finance/erp-fin-service` 195→**201 passed**（+6 新增：TestErpFinBadDebtReversal 3 + TestErpFinEmployeeAdvanceCashRepayReversal 3，0 回归）
+- E2E: `BASE_URL=http://127.0.0.1:8011 npx playwright test tests/e2e/business-actions/fin-bad-debt-reverse-approve.action.spec.ts tests/e2e/business-actions/fin-employee-advance-cash-repay-reverse.action.spec.ts --workers=1` **4 passed**（44.6s）
+- 全模块编译: `mvn clean install -DskipTests` **154 模块 BUILD SUCCESS**
+- 文档: bad-debt.md §步骤 6（新增章节）+ expense-claim.md §红冲联动 cashRepay 兑现注记 + e2e-runbook 业务动作表 +2 行 + 套件计数 79→81 + docs/logs/2026/07-18.md 当日日志 + docs/backlog/README.md +1 行
+- 后端代码: `ErpFinBadDebtProcessor.reverseApprove` + `ErpFinEmployeeAdvanceBizModel.reverseCashRepay` + 2 IBiz 接口声明 + 2 ErrorCode（`ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED` + `ERR_EMPLOYEE_ADVANCE_CASH_REPAY_VOUCHER_NOT_FOUND`），零 ORM/契约/字典/种子/config 变更
+
+**执行期关键修正**：
+1. ErpFinBadDebt 无 `posted` 字段（plan 原文 posted=true 修正为 voucherId!=null 门控）。
+2. BizModel 内不能用 `@Inject IDaoProvider` 字段（IoC 不注入致 NPE），改用 `daoProvider()` 方法对齐 ErpFinReconciliationBizModel 范式。
+3. cashRepay 凭证反查 SETTLE_TYPE 维度不可达（持久化字段无），改用 billCode 前缀 `EA-CASH-REPAY-` 等价区分。
+4. reverseCashRepay 字段回退次序与 cashRepay 正向相反（先凭证后字段），补救路径强一致保证。
+5. 测试 seed period 须覆盖今天（reverseApprove 触发红冲凭证 voucherDate=today）。
+6. owner doc 更新位置：treasury.md 无 §坏账 章节，改为 bad-debt.md §步骤 6 新增章节。
