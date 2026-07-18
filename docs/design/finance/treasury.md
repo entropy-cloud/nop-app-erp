@@ -147,6 +147,13 @@
 | NOTES_PAYABLE_HONORED | 应付票据到期兑付 | 借：应付票据 / 贷：银行存款 |
 | CREDIT_FACILITY_INTEREST | 授信利息 | 借：财务费用-利息支出 / 贷：银行存款 |
 
+**CREDIT_FACILITY_INTEREST 实现注记**（plan 2026-07-18-0718-1）：
+- **触发**：`ErpFinCreditFacilityBizModel.accrueInterest(creditFacilityId, fromDate, toDate)` `@BizMutation`（手动入口；定时执行归 successor）。
+- **计息公式**：`interest = usedAmount × rate × days / 360`（HALF_UP scale=4，对齐 `amount` domain precision=20 scale=4）；`usedAmount` 取 fromDate 时点值；`days = ChronoUnit.DAYS.between(fromDate, toDate) + 1`（闭区间）；360 天年化基准对齐票据贴现 `ErpFinNotesReceivableProcessor:231-234` 范式。
+- **rate 来源**：config `erp-fin.credit-facility-default-interest-rate`（全 facility 共享年化利率；默认 0=关闭门控，accrueInterest 抛 `ERR_CREDIT_FACILITY_INTEREST_RATE_NOT_CONFIGURED`）；per-facility 利率覆盖归 successor（需 ORM 加列）。
+- **凭证构造**：经 `CreditFacilityInterestVoucherBuilder.post(facility, fromDate, toDate, interest, ctx)` 构造 PostingEvent + 调 `IErpFinVoucherBiz.post`；`billHeadCode = "CFI-INT-{facilityId}-{fromDate}_{toDate}"` 作**区间级幂等键**（IErpFinVoucherBiz.post 内置 alreadyPosted 按 `(billHeadCode, businessType)` 反查，同 facility + 同区间二次调用返回 null 无第二张凭证）。
+- **币种解析**：`facility.fundAccount.currencyId` → `acctSchema.functionalCurrencyId` 兜底（facility 未绑定资金账户时仍可计提）。
+
 **贴现凭证科目分解**（借 Metasfresh `Doc_BankStatement.java:206-547` 五科目分解范式，非票据证据）：
 
 ```

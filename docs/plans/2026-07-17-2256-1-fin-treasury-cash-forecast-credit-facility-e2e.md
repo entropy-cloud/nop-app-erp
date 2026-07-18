@@ -188,6 +188,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: treasury.md:148 设计声明业务类型 `CREDIT_FACILITY_INTEREST`（借财务费用-利息支出/贷银行存款），但 `ErpFinCreditFacilityBizModel` 仅 reserve/release，无利息计提 `@BizMutation`。属后端 successor，非浏览器层 E2E 缺口。
 - Successor Required: `yes`（触发条件：授信利息计提后端落地时）
+- **RELEASED by 2026-07-18-0718-1**：plan `2026-07-18-0718-1-credit-facility-interest-accrual-backend-e2e.md` 落地后端 `ErpFinCreditFacilityBizModel.accrueInterest(@BizMutation)` + `CreditFacilityInterestVoucherBuilder` + `CreditFacilityInterestAcctDocProvider` + bean 注册 + config 常量 + 2 ErrorCode + JUnit 6 用例 + 浏览器层 E2E 1 spec 3 用例；计息公式 `usedAmount × rate × days / 360`（HALF_UP scale=4，360 天基准对齐贴现范式）；rate 来源 config `erp-fin.credit-facility-default-interest-rate`（默认 0=关闭门控）；billHeadCode = `CFI-INT-{facilityId}-{fromDate}_{toDate}` 区间级幂等键（IErpFinVoucherBiz.post 内置 alreadyPosted 守护）；Dr 6603 财务费用-利息支出 / Cr 1002 银行存款。
 
 ### 现金预测多资金账户分摊 / 定时执行浏览器层
 
