@@ -1312,33 +1312,6 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
-        "name": "depreciationScheduleBiz"
-      }
-    ],
-    "methods": [
-      {
-        "name": "resolveCronConfig",
-        "parameterTypes": []
-      },
-      {
-        "name": "runBatchDepreciation",
-        "parameterTypes": [
-          "java.lang.String",
-          "io.nop.core.context.IServiceContext"
-        ]
-      }
-    ],
-    "name": "app.erp.ast.service.job.ErpAstDepreciationJob"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
     "fields": [],
     "methods": [],
     "name": "app.erp.ast.service.posting.AssetInventoryAcctDocProvider"
@@ -11232,140 +11205,6 @@
     "fields": [
       {
         "allowWrite": true,
-        "name": "daoProvider"
-      },
-      {
-        "allowWrite": true,
-        "name": "ormTemplate"
-      },
-      {
-        "allowWrite": true,
-        "name": "transactionTemplate"
-      },
-      {
-        "allowWrite": true,
-        "name": "voucherBiz"
-      }
-    ],
-    "methods": [
-      {
-        "name": "doRetry",
-        "parameterTypes": [
-          "app.erp.fin.dao.entity.ErpFinPostingException",
-          "io.nop.core.context.IServiceContext"
-        ]
-      },
-      {
-        "name": "findPendingExceptions",
-        "parameterTypes": []
-      },
-      {
-        "name": "incrementRetryAndRethrow",
-        "parameterTypes": [
-          "app.erp.fin.dao.entity.ErpFinPostingException",
-          "java.lang.Exception"
-        ]
-      },
-      {
-        "name": "markRetried",
-        "parameterTypes": [
-          "app.erp.fin.dao.entity.ErpFinPostingException"
-        ]
-      },
-      {
-        "name": "parseBusinessType",
-        "parameterTypes": [
-          "java.lang.String"
-        ]
-      },
-      {
-        "name": "rebuildEvent",
-        "parameterTypes": [
-          "app.erp.fin.dao.entity.ErpFinPostingException"
-        ]
-      },
-      {
-        "name": "resolveCronConfig",
-        "parameterTypes": []
-      },
-      {
-        "name": "retryOne",
-        "parameterTypes": [
-          "app.erp.fin.dao.entity.ErpFinPostingException",
-          "io.nop.core.context.IServiceContext"
-        ]
-      }
-    ],
-    "name": "app.erp.fin.service.job.DeferredPostingSweepJob"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
-        "name": "reconciliationBiz"
-      }
-    ],
-    "methods": [
-      {
-        "name": "resolveCronConfig",
-        "parameterTypes": []
-      },
-      {
-        "name": "runDirection",
-        "parameterTypes": [
-          "java.lang.String",
-          "io.nop.core.context.IServiceContext"
-        ]
-      }
-    ],
-    "name": "app.erp.fin.service.job.ErpFinAutoReconJob"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
-        "name": "cashForecastBiz"
-      }
-    ],
-    "methods": [
-      {
-        "name": "resolveCronConfig",
-        "parameterTypes": []
-      },
-      {
-        "name": "resolveForecastWindowDays",
-        "parameterTypes": []
-      },
-      {
-        "name": "runRefreshForecast",
-        "parameterTypes": [
-          "java.time.LocalDate",
-          "java.time.LocalDate",
-          "io.nop.core.context.IServiceContext"
-        ]
-      }
-    ],
-    "name": "app.erp.fin.service.job.ErpFinCashForecastJob"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
         "name": "advanceDispatcher"
       },
       {
@@ -20359,32 +20198,6 @@
     "fields": [
       {
         "allowWrite": true,
-        "name": "workOrderBiz"
-      }
-    ],
-    "methods": [
-      {
-        "name": "resolveCronConfig",
-        "parameterTypes": []
-      },
-      {
-        "name": "runGenerate",
-        "parameterTypes": [
-          "io.nop.core.context.IServiceContext"
-        ]
-      }
-    ],
-    "name": "app.erp.mfg.service.job.ErpMfgJobCardAutoGenJob"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
         "name": "daoProvider"
       }
     ],
@@ -23065,25 +22878,6 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.prj.service.entity.ErpPrjTimesheetBizModel__aop"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
-        "name": "daoProvider"
-      },
-      {
-        "allowWrite": true,
-        "name": "pnlBiz"
-      }
-    ],
-    "methods": [],
-    "name": "app.erp.prj.service.job.ErpPrjPnlCalcJob"
   },
   {
     "allDeclaredConstructors": true,
@@ -26898,48 +26692,6 @@
     ],
     "methods": [],
     "name": "app.erp.qa.service.report.ErpQaReportBizModel"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
-        "name": "daoProvider"
-      },
-      {
-        "allowWrite": true,
-        "name": "spcCapabilityCalculator"
-      }
-    ],
-    "methods": [],
-    "name": "app.erp.qa.service.spc.ErpQaSpcCapabilityJob"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [
-      {
-        "allowWrite": true,
-        "name": "daoProvider"
-      },
-      {
-        "allowWrite": true,
-        "name": "spcControlLimitCalculator"
-      },
-      {
-        "allowWrite": true,
-        "name": "spcSamplingService"
-      }
-    ],
-    "methods": [],
-    "name": "app.erp.qa.service.spc.ErpQaSpcSamplingJob"
   },
   {
     "allDeclaredConstructors": true,

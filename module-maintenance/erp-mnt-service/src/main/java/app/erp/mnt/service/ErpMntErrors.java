@@ -76,6 +76,10 @@ public interface ErpMntErrors {
             "备件消耗单 {usageCode} 库存已出库，但 GL 过账失败（posted 保持库存出库语义，凭证由人工或兜底补登）",
             ARG_USAGE_CODE);
 
+    ErrorCode ERR_SPARE_PART_USAGE_NOT_POSTED = ErrorCode.define("erp.err.mnt.spare-part-usage-not-posted",
+            "备件消耗单 {usageCode} 未过账（posted=false），不可红冲",
+            ARG_USAGE_CODE);
+
     // --- 维修工时费用化 GL 过账（plan 2026-07-18-0949-1）---
     ErrorCode ERR_VISIT_TOTAL_MINUTES_MISSING = ErrorCode.define("erp.err.mnt.visit-total-minutes-missing",
             "维护访问 {visitCode} 无有效工时（totalMinutes 缺失或 ≤0），不可工时费用化过账",

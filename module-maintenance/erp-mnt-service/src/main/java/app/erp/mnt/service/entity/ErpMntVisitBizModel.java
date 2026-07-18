@@ -183,6 +183,21 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
     protected void doCancel(ErpMntVisit visit, IServiceContext context) {
         visit.setStatus(ErpMntDaoConstants.VISIT_STATUS_CANCELLED);
         updateEntity(visit, null, context);
+
+        // 维修工时费用化 GL 红冲（cancel 时已生成 MAINTENANCE_LABOR 凭证则红冲），config-gated 与正向对称
+        //（plan 2026-07-18-1745-1）。失败不阻断 cancel 终态（吞异常告警，对齐 doComplete 内 postLabor 失败语义）。
+        if (laborPostingDispatcher.isPostingEnabled()) {
+            try {
+                laborPostingDispatcher.reverseLabor(visit);
+            } catch (Exception e) {
+                if (e instanceof NopException) {
+                    LOG.warn("维修工时费用化红冲失败，访问 {} 保持 CANCELLED 终态（凭证孤儿由人工或兜底处理）：{}",
+                            visit.getCode(), e.getMessage());
+                } else {
+                    LOG.error("维修工时费用化红冲异常，访问 {} 保持 CANCELLED 终态", visit.getCode(), e);
+                }
+            }
+        }
     }
 
     protected NopException illegalVisitTransition(ErpMntVisit visit, String current, String expected) {

@@ -132,6 +132,25 @@ public class MaintenanceLaborPostingDispatcher {
         return flag != null && flag;
     }
 
+    /**
+     * 红冲指定维护访问的工时费用化凭证（{@code visit.cancel} 触发，config-gated 同正向）。
+     *
+     * <p>billHeadCode = {@code visit.code + "-ML"} 与正向 {@link #postLabor} 对称（{@code MaintenanceLaborPostingDispatcher.java:102}
+     * 经独立草案审查核实无 millis/uuid 后缀）；委派 {@link MntPostingExecutor#reverse} →
+     * {@link IErpFinVoucherBiz#reverse} 生成红字凭证 + 标记原凭证 isReversed=true（platform 内置幂等守护，
+     * 无凭证时安全 no-op）。
+     *
+     * <p>语义对齐 {@code MfgPostingExecutor.reverse}：异常由调用方（{@code ErpMntVisitBizModel.doCancel}）
+     * 以 try/catch 吞异常告警保持 cancel 终态不阻断（对齐 {@link #postLabor} 失败语义）。
+     */
+    public void reverseLabor(ErpMntVisit visit) {
+        if (visit == null || visit.getCode() == null) {
+            return;
+        }
+        String billHeadCode = visit.getCode() + "-ML";
+        executor.reverse(billHeadCode, ErpFinBusinessType.MAINTENANCE_LABOR);
+    }
+
     private BigDecimal getDefaultLaborHourlyRate() {
         String raw = AppConfig.var(ErpMntConstants.CONFIG_DEFAULT_LABOR_HOURLY_RATE,
                 ErpMntConstants.DEFAULT_LABOR_HOURLY_RATE_VALUE);

@@ -224,6 +224,25 @@ public class MaintenanceIssuePostingDispatcher {
         return flag != null && flag;
     }
 
+    /**
+     * 红冲指定备件消耗单的 GL 凭证（{@code ErpMntSparePartUsage.reverseConfirm} 触发）。
+     *
+     * <p>billHeadCode = {@code usage.code + "-MI"} 与正向 {@link #dispatchIfApplicable} 对称
+     *（{@code MaintenanceIssuePostingDispatcher.java:93/129} 经独立草案审查核实无后缀）；委派
+     * {@link MntPostingExecutor#reverse} → {@link IErpFinVoucherBiz#reverse} 生成红字凭证 + 标记原凭证
+     * isReversed=true（platform 内置幂等守护，无凭证时安全 no-op）。
+     *
+     * <p>红冲失败由调用方（{@code ErpMntSparePartUsageBizModel.reverseConfirm}）以 try/catch 吞异常告警
+     * 保持幂等（对齐 {@link #dispatchIfApplicable} 正向过账范式）。
+     */
+    public void reverseIssue(ErpMntSparePartUsage usage) {
+        if (usage == null || usage.getCode() == null) {
+            return;
+        }
+        String billHeadCode = usage.getCode() + "-MI";
+        executor.reverse(billHeadCode, ErpFinBusinessType.MAINTENANCE_ISSUE);
+    }
+
     private String resolveInventorySubjectCode() {
         String code = AppConfig.var(ErpMntConstants.CONFIG_INVENTORY_SUBJECT_CODE,
                 ErpMntConstants.DEFAULT_INVENTORY_SUBJECT_CODE);
