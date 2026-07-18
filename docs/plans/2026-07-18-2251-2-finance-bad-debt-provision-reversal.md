@@ -1,7 +1,7 @@
 # 2026-07-18-2251-2-finance-bad-debt-provision-reversal finance 坏账准备计提反向入口
 
-> Plan Status: active
-> Last Reviewed: 2026-07-18
+> Plan Status: completed
+> Last Reviewed: 2026-07-19
 > Mission: erp
 > Work Item: finance-bad-debt-provision-reversal
 > Source: 跨域过账红冲缺口系统性审计 Phase 2（承接 `docs/plans/2026-07-18-1745-3` Deferred「坏账计提（provision）红冲」——触发条件「provision 凭证化落地时」经实时仓库核实**已满足**：`BadDebtProvisionService.runBadDebtProvision` 实测经 `CloseVoucherWriter.writeVoucher` 已生成 BAD_DEBT_RESERVE/BAD_DEBT_RELEASE 凭证 + ErpFinVoucherBillR 业财回链；原 1745-3 Deferred 措辞「`runBadDebtProvision` 返回结构非实体凭证」系采信 0413-2 旧记忆的过时陈述——实时仓库已证伪。本计划补齐反向入口，闭合 finance 域红冲闭环 Phase 2）。
@@ -82,29 +82,30 @@
 
 ### Phase 1 — Decision：多凭证红冲策略 + reverse 入参形态裁定
 
-Status: planned
+Status: completed
 Targets: 探索笔记（不落仓库除非裁定须文档化）
 Skill: `none`
 
 - Item Types: `Decision`
 - Prereqs: none
 
-- [ ] Decision: 多凭证红冲策略——经实时仓库核实 `CloseVoucherWriter.writeVoucher` 无幂等检查（`CloseVoucherWriter.java:61-139` 逐次创建新 voucher + billR），多次 `runBadDebtProvision` 同期间产生多张 BAD_DEBT_RESERVE/RELEASE 凭证。**三选一裁定**：(a) 反向全部（按 `ErpFinVoucherBillR` 反查所有 `isReversed=false` 凭证逐张红冲）；(b) 仅反向最新一张；(c) 反向全部 + 拒绝多次调用的根因修复（writeVoucher 幂等门控）。**默认倾向 (a)**：业务语义最自然（"撤销该期间全部计提"），且与根因修复 (c) 解耦（根因属不同结果面 successor）。裁定须记录选择 + 替代方案 + 残留风险
-  - 替代方案 (b) 拒绝原因：单张反向留下其它累积凭证成孤儿，违反反向语义完整性。
-  - 替代方案 (c) 拒绝原因：writeVoucher 跨多个 caller（损益结转/汇兑重估/坏账），加幂等门控须逐 caller 评估（部分 caller 可能依赖每次新凭证语义），属不同结果面 + 高风险。
+- [x] Decision: 多凭证红冲策略——经实时仓库核实 `CloseVoucherWriter.writeVoucher` 无幂等检查（`CloseVoucherWriter.java:61-139` 逐次创建新 voucher + billR），多次 `runBadDebtProvision` 同期间产生多张 BAD_DEBT_RESERVE/RELEASE 凭证。**裁定 (a) 反向全部**（按 `ErpFinVoucherBillR` 反查所有 `isReversed=false` NORMAL 凭证原子红冲——经实时仓库核实 `ErpFinPostingProcessor.reverseProcess:199-247` 已内部循环 `findAllPostedVouchers` 返回的全部未冲销 NORMAL 凭证 + `markOriginalVoucherReversed` 补标原凭证 isReversed=true，故 service 层只须按 (billCode, businessType) 调一次 `FinPostingExecutor.reverse`，平台内部原子红冲该 billCode 下所有未冲销凭证，覆盖既有累积）。
+  - 替代方案 (b)（仅反向最新一张）拒绝原因：单张反向留下其它累积凭证成孤儿，违反反向语义完整性；且 `reverseProcess` 不支持"仅最新一张"语义，需绕过平台机制自实现，得不偿失。
+  - 替代方案 (c)（writeVoucher 根因幂等门控）拒绝原因：writeVoucher 跨多个 caller（损益结转/汇兑重估/坏账），加幂等门控须逐 caller 评估（部分 caller 可能依赖每次新凭证语义），属不同结果面 + 高风险。
   - 残留风险：策略 (a) 反向后用户重提须再调 `runBadDebtProvision`（`getAllowanceBalance` 重算）——多次反向/重提产生大量红字凭证链，可能影响 voucher 表性能。可接受（运营场景频次低）。
-- [ ] Decision: `reverseBadDebtProvision` 入参形态——经实时仓库核实 `runBadDebtProvision(periodId)` 单参，**裁定 `reverseBadDebtProvision(periodId)` 单参对称**（无须 schemaId 入参——service 内部按 `schemaPropagator.resolveTargetSchemas` 循环全部 schema 对称正向）；返回类型 `BadDebtProvisionResult` 复用（设置 `action="REVERSED"` + voucherId=null + reversedCount 字段扩展，或新建 `BadDebtProvisionReversalResult` DTO——后者更清晰）。**默认倾向：新建 `BadDebtProvisionReversalResult` DTO**（避免既有 DTO 语义污染）。裁定须记录选择 + 替代方案
-- [ ] Decision: period 状态门控——经实时仓库核实 `ErpFinAccountingPeriod` 有状态机（OPEN/CLOSING/CLOSED/CLOSED_FINAL）。**裁定：reverseBadDebtProvision 守卫 `period.status != CLOSED_FINAL`**（CLOSED_FINAL 期间禁止任何凭证变动，对齐 `ErpFinVoucherBizModel` 既有期间硬约束）；其它状态允许反向。裁定须记录守卫 ErrorCode + message token
+- [x] Decision: `reverseBadDebtProvision` 入参形态——经实时仓库核实 `runBadDebtProvision(periodId)` 单参，**裁定 `reverseBadDebtProvision(periodId)` 单参对称**（无须 schemaId 入参——`reverseProcess` 跨账套反查全部 schemas 凭证，对称正向 `schemaPropagator.resolveTargetSchemas` 循环）；**返回类型新建 `BadDebtProvisionReversalResult` DTO**（含 periodId/periodCode/reversedReserveCount/reversedReleaseCount/reversedReserveAmount/reversedReleaseAmount/totalReversedCount 字段——避免既有 `BadDebtProvisionResult` 语义污染）。
+  - 替代方案（复用 `BadDebtProvisionResult` + 设 action="REVERSED" + voucherId=null + 扩展 reversedCount 字段）拒绝原因：既有 DTO 已 9 字段聚焦正向计提语义；混入反向计数字段污染语义清晰度，且回返前端时 GraphQL 选择集难以分辨。
+- [x] Decision: period 状态门控——经实时仓库核实 `ErpFinAccountingPeriod` 有状态机（OPEN/CLOSING/CLOSED/CLOSED_FINAL）。**裁定：reverseBadDebtProvision 服务层显式守卫 `period.status != CLOSED_FINAL`**（CLOSED_FINAL 期间禁止任何凭证变动，对齐 `ErpFinVoucherBizModel` 既有期间硬约束；其它状态允许反向）。守卫 ErrorCode：`ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED`（中文 message「会计期间 {periodCode} 已最终关闭（CLOSED_FINAL），不允许反向坏账准备计提」+ ARG_PERIOD_ID + ARG_PERIOD_ID 参数声明）。
 
 > 探索项须 Phase 1 闭合为 Decision，否则 Phase 2 不能开始。
 
 Exit Criteria:
 
-- [ ] 三 Decision 已落记录（含替代方案 + 残留风险）
+- [x] 三 Decision 已落记录（含替代方案 + 残留风险）
 
 ### Phase 2 — `BadDebtProvisionService.reverseBadDebtProvision` + BizModel 接线
 
-Status: planned
+Status: completed
 Targets:
   - `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/baddebt/BadDebtProvisionService.java`
   - `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinBadDebtBizModel.java`
@@ -116,10 +117,10 @@ Skill: `nop-backend-dev`
 - Item Types: `Add`（owner-doc §步骤2b 新章节 + 1745-3 Deferred successor 兑现均为 Add 范畴——bad-debt.md §步骤2b 是新增章节非修复现有承诺文本；service 方法 + BizModel + DTO + ErrorCode + IBiz 接口均为新增）
 - Prereqs: Phase 1
 
-- [ ] `BadDebtProvisionService.reverseBadDebtProvision(Long periodId, IServiceContext context) → BadDebtProvisionReversalResult`：守卫 period 存在 + status != CLOSED_FINAL（按 Phase 1 Decision (c)）→ 按 `ErpFinVoucherBillR` 反查该期间全部 `billCode = BAD_DEBT_RESERVE_BILL_CODE_PREFIX + period.code` 或 `BAD_DEBT_RELEASE_BILL_CODE_PREFIX + period.code` 凭证（按 Phase 1 Decision (a) 反向全部）→ 过滤 voucher `isReversed=false` → 逐张调 `FinPostingExecutor.reverse(billCode, BAD_DEBT_RESERVE|RELEASE)` → 累计 reversedCount + reversedReserveAmount + reversedReleaseAmount → 返回 result；守卫未找到任何凭证抛 `ERR_BAD_DEBT_PROVISION_NOT_FOUND`
-- [ ] `BadDebtProvisionReversalResult` DTO：含 `periodId` / `periodCode` / `reversedReserveCount` / `reversedReleaseCount` / `reversedReserveAmount` / `reversedReleaseAmount` / `totalReversedCount` 字段
-- [ ] `ErpFinBadDebtBizModel.reverseBadDebtProvision(@Name("periodId") Long, IServiceContext)` `@BizMutation` 委派 service；接口声明加入 `IErpFinBadDebtBiz`
-- [ ] `ErpFinErrors.ERR_BAD_DEBT_PROVISION_NOT_FOUND` + `ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED`（按 Phase 1 Decision (c)）+ ARG_PERIOD_ID 参数声明
+- [x] `BadDebtProvisionService.reverseBadDebtProvision(Long periodId, IServiceContext context) → BadDebtProvisionReversalResult`：守卫 period 存在 + status != CLOSED_FINAL（按 Phase 1 Decision (c)）→ 按 `ErpFinVoucherBillR` 反查该期间全部 `billCode = BAD_DEBT_RESERVE_BILL_CODE_PREFIX + period.code` 或 `BAD_DEBT_RELEASE_BILL_CODE_PREFIX + period.code` 凭证（按 Phase 1 Decision (a) 反向全部）→ 过滤 voucher `isReversed=false` → 逐张调 `FinPostingExecutor.reverse(billCode, BAD_DEBT_RESERVE|RELEASE)` → 累计 reversedCount + reversedReserveAmount + reversedReleaseAmount → 返回 result；守卫未找到任何凭证抛 `ERR_BAD_DEBT_PROVISION_NOT_FOUND`
+- [x] `BadDebtProvisionReversalResult` DTO：含 `periodId` / `periodCode` / `reversedReserveCount` / `reversedReleaseCount` / `reversedReserveAmount` / `reversedReleaseAmount` / `totalReversedCount` 字段
+- [x] `ErpFinBadDebtBizModel.reverseBadDebtProvision(@Name("periodId") Long, IServiceContext)` `@BizMutation` 委派 service；接口声明加入 `IErpFinBadDebtBiz`
+- [x] `ErpFinErrors.ERR_BAD_DEBT_PROVISION_NOT_FOUND` + `ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED`（按 Phase 1 Decision (c)）+ ARG_PERIOD_ID 参数声明
 
 > 接口契约：`reverseBadDebtProvision(periodId)` 为 finance 域侧 reverse 入口（与 `runBadDebtProvision(periodId)` 对称）；返回 DTO 含红冲证据。多凭证反查须精确（按 `ErpFinVoucherBillR` billType + billCode 完全匹配，非模糊匹配，避免误反查其它期间）。
 
@@ -127,14 +128,14 @@ Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] `ErpFinBadDebt__reverseBadDebtProvision` GraphQL 端点可达，红冲指定期间全部 BAD_DEBT_RESERVE/RELEASE 凭证
-- [ ] 新代码本地编译通过（完整模块 JUnit 在 Closure Gates 验证）
+- [x] `ErpFinBadDebt__reverseBadDebtProvision` GraphQL 端点可达，红冲指定期间全部 BAD_DEBT_RESERVE/RELEASE 凭证
+- [x] 新代码本地编译通过（完整模块 JUnit 在 Closure Gates 验证）
 
 > **执行期注意（防 Nop `@Inject IDaoProvider` NPE gotcha）**：BizModel 内不能用 `@Inject IDaoProvider` 字段（IoC 不注入致 NPE，1745-3 closure l.208 已记录）——`BadDebtProvisionService` 已用 `@Inject IDaoProvider daoProvider` 字段（service 层非 BizModel 层，IoC 正常注入），本计划在 service 层扩展现有方法，数据访问经 `daoProvider.daoFor(ErpFinVoucherBillR.class)` + `daoProvider.daoFor(ErpFinVoucher.class)`，**不在 BizModel 层引入 `@Inject IDaoProvider`**。
 
 ### Phase 3 — JUnit + 浏览器层 E2E + owner-doc 对齐
 
-Status: planned
+Status: completed
 Targets:
   - `module-finance/erp-fin-service/src/test/java/app/erp/fin/service/TestErpFinBadDebtProvisionReversal.java`（新建）
   - `tests/e2e/business-actions/fin-bad-debt-provision-reverse.action.spec.ts`（新建）
@@ -145,15 +146,15 @@ Skill: `nop-testing`
 - Item Types: `Add | Proof`（owner-doc §步骤2b 新章节为 Add 范畴——非修复现有承诺文本）
 - Prereqs: Phase 2
 
-- [ ] `TestErpFinBadDebtProvisionReversal`：(a) 单凭证反向——建 OPEN AR 对 + runBadDebtProvision 产 1 张 BAD_DEBT_RESERVE 凭证（Dr 6701/Cr 1231）→ reverseBadDebtProvision → 原凭证 `isReversed=true` + 红字凭证行同向取负（Dr 6701=-X/Cr 1231=-X）+ `getAllowanceBalance` 回退至反向前余额 + reversedReserveCount=1；(b) 多凭证累积反向——runBadDebtProvision 两次产生 2 张 BDR 凭证 → reverseBadDebtProvision → 两张全 `isReversed=true` + 红字凭证 2 张 + reversedReserveCount=2（按 Phase 1 Decision (a) 反向全部）；(c) 未找到凭证守卫——无计提记录的期间调用抛 `ERR_BAD_DEBT_PROVISION_NOT_FOUND`；(d) CLOSED_FINAL 期间守卫——置 period.status=CLOSED_FINAL 调用抛 `ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED`；(e) 混合反向——同期间产 1 BDR + 1 BDL（修改 AR 数据触发不同方向）→ reverseBadDebtProvision → 两张全红冲
-- [ ] E2E `fin-bad-debt-provision-reverse`：复用 0413-2 既有坏账 setup（建 partner+OPEN AR 对+period）→ `runBadDebtProvision` mutation → `reverseBadDebtProvision` mutation → 经 `findVoucherIdByBillCode(BDR-{period.code}, "REVERSAL")` 反查红字凭证 + `assertVoucherLines` 同向取负 + 原凭证 `isReversed=true` + GraphQL response 断言 `reversedReserveCount=1`
-- [ ] owner-doc 对齐：`bad-debt.md §步骤2b 反向红冲`（新增章节，详述 reverseBadDebtProvision 反向语义 + DIRECT 路径 + 多凭证策略 + 期间状态门控 + 事务边界）；e2e-runbook 业务动作表 +1 finance 反向行 + 套件计数更新
+- [x] `TestErpFinBadDebtProvisionReversal`：(a) 单凭证反向——建 OPEN AR 对 + runBadDebtProvision 产 1 张 BAD_DEBT_RESERVE 凭证（Dr 6701/Cr 1231）→ reverseBadDebtProvision → 原凭证 `isReversed=true` + 红字凭证行同向取负（Dr 6701=-X/Cr 1231=-X）+ `getAllowanceBalance` 回退至反向前余额 + reversedReserveCount=1；(b) 多凭证累积反向——runBadDebtProvision 两次产生 2 张 BDR 凭证 → reverseBadDebtProvision → 两张全 `isReversed=true` + 红字凭证 2 张 + reversedReserveCount=2（按 Phase 1 Decision (a) 反向全部）；(c) 未找到凭证守卫——无计提记录的期间调用抛 `ERR_BAD_DEBT_PROVISION_NOT_FOUND`；(d) CLOSED_FINAL 期间守卫——置 period.status=CLOSED_FINAL 调用抛 `ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED`；(e) 混合反向——同期间产 1 BDR + 1 BDL（修改 AR 数据触发不同方向）→ reverseBadDebtProvision → 两张全红冲
+- [x] E2E `fin-bad-debt-provision-reverse`：复用 0413-2 既有坏账 setup（建 partner+OPEN AR 对+period）→ `runBadDebtProvision` mutation → `reverseBadDebtProvision` mutation → 经 `findVoucherIdByBillCode(BDR-{period.code}, "REVERSAL")` 反查红字凭证 + `assertVoucherLines` 同向取负 + 原凭证 `isReversed=true` + GraphQL response 断言 `reversedReserveCount=1`
+- [x] owner-doc 对齐：`bad-debt.md §步骤2b 反向红冲`（新增章节，详述 reverseBadDebtProvision 反向语义 + DIRECT 路径 + 多凭证策略 + 期间状态门控 + 事务边界）；e2e-runbook 业务动作表 +1 finance 反向行 + 套件计数更新
 
 Exit Criteria:
 
-- [ ] JUnit 全绿（红绿反转证明：移除 reverse 调用则原凭证 `isReversed=true` 断言红）
-- [ ] E2E spec 全绿，断言红字凭证行精确数值 + 原凭证 `isReversed` + reversedCount
-- [ ] owner-doc §步骤2b 章节落地
+- [x] JUnit 全绿（红绿反转证明：移除 reverse 调用则原凭证 `isReversed=true` 断言红）
+- [x] E2E spec 全绿，断言红字凭证行精确数值 + 原凭证 `isReversed` + reversedCount
+- [x] owner-doc §步骤2b 章节落地
 
 ## Draft Review Record
 
@@ -162,14 +163,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（`reverseBadDebtProvision` 反向入口 + 多凭证策略 + 期间状态门控）
-- [ ] 相关文档对齐（`bad-debt.md §步骤2b` 新增章节 + e2e-runbook + `docs/logs/2026/07-18.md` 或当日日志）
-- [ ] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` 全绿 + 154 模块 `mvn clean install -DskipTests` 全绿 + 新 E2E spec 全绿
-- [ ] 无范围内项目降级为 deferred/follow-up（owner-doc §步骤2b 新章节 + 多凭证策略 (a) 均纳入范围内不降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致（**含 CLOSED_FINAL 守卫——Non-Goals 已移除"不实现"措辞，与 Phase 1 Decision (c)/Phase 2 ErrorCode/Phase 3 test (d) 守卫一致**）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（`reverseBadDebtProvision` 反向入口 + 多凭证策略 + 期间状态门控）
+- [x] 相关文档对齐（`bad-debt.md §步骤2b` 新增章节 + e2e-runbook + `docs/logs/2026/07-18.md` 或当日日志）
+- [x] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` 全绿 + 154 模块 `mvn clean install -DskipTests` 全绿 + 新 E2E spec 全绿
+- [x] 无范围内项目降级为 deferred/follow-up（owner-doc §步骤2b 新章节 + 多凭证策略 (a) 均纳入范围内不降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致（**含 CLOSED_FINAL 守卫——Non-Goals 已移除"不实现"措辞，与 Phase 1 Decision (c)/Phase 2 ErrorCode/Phase 3 test (d) 守卫一致**）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -193,9 +194,15 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待执行。
+Status Note: 已完成。三 Phase 全绿（Phase 1 三 Decisions 闭合 + Phase 2 service/BizModel/IBiz/DTO/ErrorCode 实现 + Phase 3 JUnit 5 + E2E 2 + owner-doc §步骤2b 章节对齐）。finance 域坏账准备期末计提反向红冲闭环（`reverseBadDebtProvision`）补齐，跨域过账红冲缺口系统性审计 finance 域 Phase 2 第二个 successor（1745-3 Deferred「坏账计提（provision）红冲」）解除。owner doc `bad-debt.md §步骤2b 反向红冲` 章节落地（owner-doc 缺口补齐）。独立子代理结束审计已在新会话执行（执行结果：JUnit 5 passed + 154 模块 BUILD SUCCESS + fin-service 206 tests 0 failures/0 errors）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 待执行（独立子代理 fresh session）
-- Evidence: 待执行结束后填充
+- Auditor / Agent: 独立子代理（new session，mission-driver closure-auditor role，非执行者上下文重放）
+- Audit Method: 实时仓库 grep/read 复核计划每个范围内项目是否落地——逐项核实代码、测试、文档与 owner-doc 同步状态
+- Evidence:
+  - 后端 Java：`BadDebtProvisionService.reverseBadDebtProvision` 新方法（`module-finance/erp-fin-service/src/main/java/app/erp/fin/service/baddebt/BadDebtProvisionService.java`）+ `BadDebtProvisionReversalResult` DTO（`module-finance/erp-fin-dao/src/main/java/app/erp/fin/dao/dto/BadDebtProvisionReversalResult.java`）+ `IErpFinBadDebtBiz.reverseBadDebtProvision` 接口声明 + `ErpFinBadDebtBizModel.reverseBadDebtProvision` BizMutation 实现 + 2 ErrorCode（`ERR_BAD_DEBT_PROVISION_NOT_FOUND` / `ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED`）
+  - 测试：`TestErpFinBadDebtProvisionReversal` JUnit 5 用例全绿（含 _cases 快照）+ `fin-bad-debt-provision-reverse.action.spec.ts` E2E 2 用例
+  - 文档：`docs/design/finance/bad-debt.md §步骤2b 反向红冲` 新章节 + `docs/testing/e2e-runbook.md` 业务动作表 +1 finance 反向行 + 套件计数段补 2251-2 增量 + `docs/backlog/README.md` 新增 `2026-07-18-2251-2` 行（✅ done）
+  - 验证：`mvn test -pl module-finance/erp-fin-service` 全绿（206 tests，0 failures/0 errors，含新增 5 用例）+ 154 模块 `mvn clean install -DskipTests` 全绿
+  - 范围内行为：`ErpFinBadDebt__reverseBadDebtProvision(periodId)` GraphQL 端点可达；按 Phase 1 Decision (a) 反向全部累积 BDR/BDL 凭证；按 Phase 1 Decision (c) 守卫 CLOSED_FINAL 期间

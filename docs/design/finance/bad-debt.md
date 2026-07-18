@@ -60,6 +60,22 @@ Net Accounts Receivable (NRV)          ← 报表呈现
 - **性质**：**估计**，非核销决策。计提后应收辅助账项**仍在账龄表**（继续催收），不改变 `ErpFinArApItem.status`。
 - **businessType**：`BAD_DEBT_RESERVE`（建议新增，保护区域，见 §businessType 映射）。
 
+### 步骤 2b — 反向计提红冲（BAD_DEBT_RESERVE/RELEASE 反向，plan 2026-07-18-2251-2）
+
+> 闭环补齐：步骤 2 计提 / 步骤 5 释放期末执行后，原设计无反向入口（误选期间 / 误算 / 业务变化需重提时无法回滚）。
+> `ErpFinBadDebt.reverseBadDebtProvision(periodId)` 补齐反向红冲闭环，对齐 finance 域红冲一致性（参 `posting.md §冲销机制`）。
+
+**反向语义**：撤销指定会计期间内**全部**已过账未冲销的 BAD_DEBT_RESERVE + BAD_DEBT_RELEASE 凭证：
+
+- **多凭证策略（plan Phase 1 Decision (a)）**：经 `ErpFinVoucherBillR` 反查 `billCode = BAD-DEBT-RESERVE-{period.code}` 或 `BAD-DEBT-RELEASE-{period.code}` 完全匹配（`CloseVoucherWriter.writeVoucher` 实测 billCode 确定性派生无 UUID 后缀）+ 过滤 `isReversed=false` NORMAL 凭证 → 按 (billCode, businessType) 调一次 `FinPostingExecutor.reverse`：平台 `ErpFinPostingProcessor.reverseProcess` 内部循环反查的全部未冲销凭证原子红冲 + `markOriginalVoucherReversed` 补标原凭证 `isReversed=true`。覆盖 `CloseVoucherWriter` 无幂等检查导致多次 `runBadDebtProvision` 同期间累积多张凭证的场景（参 §不做边界 后继 successor）。
+- **DIRECT 路径**：`ErpFinBadDebt` 无 `useWorkflow` tagSet（同 §步骤6 reverseApprove），不经 xwf 反向。
+- **守卫**：(1) `period.status = CLOSED_FINAL` 抛 `ERR_BAD_DEBT_PROVISION_PERIOD_FINAL_CLOSED`（CLOSED_FINAL 期间禁止任何凭证变动，对齐 `ErpFinVoucherBizModel` 既有期间硬约束）；(2) 未找到任何 BAD_DEBT_RESERVE/RELEASE 已过账未冲销凭证抛 `ERR_BAD_DEBT_PROVISION_NOT_FOUND`。
+- **事务边界**：跟随 `@BizMutation` 默认事务（REQUIRED）；任一 billCode 红冲失败抛 NopException 触发事务回滚（强一致：反审核为补救路径，须保证无残留半状态——对齐 `ErpFinBadDebtProcessor.reverseApprove` 范式）。
+- **返回值**：`BadDebtProvisionReversalResult` DTO（含 `periodId/periodCode/reversedReserveCount/reversedReleaseCount/reversedReserveAmount/reversedReleaseAmount/totalReversedCount`）。
+- **重提路径**：反向后调用方可再调 `runBadDebtProvision(periodId)`，`getAllowanceBalance` 将基于红冲后状态重算 + 写新凭证。
+
+> 残留风险：多次反向/重提产生大量红字凭证链，可能影响 voucher 表性能。可接受（运营场景频次低）。
+
 ### 步骤 3 — 坏账核销（BAD_DEBT_WRITE_OFF）
 
 ```
