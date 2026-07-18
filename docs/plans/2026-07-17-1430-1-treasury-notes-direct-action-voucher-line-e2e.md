@@ -279,6 +279,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 单币种测试即覆盖科目分解五件套主路径；外币 fx（6051 行）`signum≠0` 才发，属多币种 successor。
 - Successor Required: `yes`（触发条件：多币种票据贴现浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-19-0120-1**：触发条件已满足（AGENTS.md「当前项目阶段」明示当前重点含「各域细化端到端验证」）。本计划交付 `fin-notes-receivable-fx-discount.action.spec.ts` 三层覆盖——(1) FX 状态机生命周期经 discount mutation（USD 票据 → DISCOUNTED + 3 行凭证 functional CNY，6051 因 builder ZERO 抑制）；(2) FX 6051 触发分支经 `ErpFinVoucher__post` 直驱（4 行凭证含 Dr 6051=5.00 signum>0）；(3) 对照单币种经同 post 入口（3 行凭证 signum=0 抑制）。**执行期发现 Java builder 缺陷**：`ErpFinNotesReceivableProcessor.buildDiscount:249` 无条件 `setExchangeGainLoss(BigDecimal.ZERO)` 致 discount mutation 永远不触发 6051 行——spec 改用 `ErpFinVoucher__post` 直驱验证 Provider FX 分支（plan Phase 1 Decision (a)），Java builder 外币 exchangeGainLoss 派生缺陷归 0120-1 `Deferred But Adjudicated` 显式 successor（不改生产代码即时修，plan 规则 13/14）。
 
 ### writeOff 强制审批（xwf）面
 
