@@ -55,6 +55,9 @@ public class ErpInvLandedCostProcessor {
     static final String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
     static final String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
     static final String APPROVE_STATUS_APPROVED = "APPROVED";
+    static final String APPROVE_STATUS_REJECTED = "REJECTED";
+
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ErpInvLandedCostProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -152,6 +155,117 @@ public class ErpInvLandedCostProcessor {
         createFreightLine(landedCost, freightAmount, receive.getSupplierId());
 
         return landedCost;
+    }
+
+    // ---------- 红冲（plan 2026-07-18-1745-2） ----------
+
+    /**
+     * 红冲已审核到岸成本单：红冲 LANDED_COST 凭证 + 反向应用 {@code ErpInvCostAdjust(LANDED_COST_SUPPLEMENT)}
+     * 成本层 + 翻 {@code posted=false}/{@code approveStatus=REJECTED}/{@code docStatus=CANCELLED}。
+     *
+     * <p>守卫：仅 {@code posted=true} 且 {@code approveStatus=APPROVED}（已审核已过账）的到岸成本单可红冲。
+     * 未过账抛 {@link ErpInvErrors#ERR_LANDED_COST_NOT_POSTED}。
+     *
+     * <p>编排（protected step 方法，下游可逐个覆盖）：
+     * <ol>
+     *   <li>红冲 LANDED_COST 凭证（{@link LandedCostPostingDispatcher#reverse} 委派
+     *       {@code IErpFinVoucherBiz.reverse} 生成红字凭证 + 原凭证 isReversed=true）</li>
+     *   <li>按 Phase 1 Decision 调 {@link CostAdjustmentService#reverseCostAdjust} 反向应用成本层
+     *       （FIFO 按 {@code -line.id} 哨兵删调整层，MOVING_AVERAGE 反向 adjustAmount 回滚 avgCost/totalCost）</li>
+     *   <li>翻 {@code posted=false}/{@code approveStatus=REJECTED}/{@code docStatus=CANCELLED}
+     *       + 同步 CostAdjust 单 {@code posted=false}</li>
+     * </ol>
+     *
+     * <p>红冲失败语义对齐 {@link LandedCostPostingDispatcher#tryPost}：异常由调用方以 try/catch 吞掉告警，
+     * 但本方法作为顶层 BizModel 入口语义更严格——异常向上抛由 GraphQL 表达，便于前端感知失败。
+     */
+    public ErpInvLandedCost reverseApprove(Long id, IServiceContext context) {
+        ErpInvLandedCost landedCost = requireLandedCost(id, context);
+        validateCanReverse(landedCost, context);
+
+        ErpInvCostAdjust costAdjust = findCostAdjustForLandedCost(landedCost.getCode());
+        List<ErpInvCostAdjustLine> adjustLines = costAdjust != null ? loadAdjustLines(costAdjust.getId()) : java.util.Collections.emptyList();
+
+        doReverseApprove(landedCost, costAdjust, adjustLines, context);
+
+        return reload(id);
+    }
+
+    protected void validateCanReverse(ErpInvLandedCost landedCost, IServiceContext context) {
+        if (!Boolean.TRUE.equals(landedCost.getPosted())
+                || !Objects.equals(landedCost.getApproveStatus(), APPROVE_STATUS_APPROVED)) {
+            throw new NopException(ErpInvErrors.ERR_LANDED_COST_NOT_POSTED)
+                    .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
+        }
+    }
+
+    /**
+     * step 1-3：红冲凭证 → 反向应用成本层 → 状态翻转。
+     *
+     * <p>红冲凭证失败吞异常告警保持幂等（对齐 {@code LandedCostPostingDispatcher.tryPost} 正向范式：
+     * platform {@code IErpFinVoucherBiz.reverse} 内置幂等守护，无凭证时安全 no-op）。
+     * 成本层反向应用失败向上抛（不可恢复的余额不一致）。
+     */
+    protected void doReverseApprove(ErpInvLandedCost landedCost, ErpInvCostAdjust costAdjust,
+                                      List<ErpInvCostAdjustLine> adjustLines, IServiceContext context) {
+        // 1. 红冲 LANDED_COST 凭证（billHeadCode=landedCost.code 与正向对称）
+        try {
+            postingDispatcher.reverse(landedCost);
+        } catch (Exception e) {
+            if (e instanceof NopException) {
+                LOG.warn("到岸成本红冲 GL 凭证失败（吞异常保持幂等），单 {} billHeadCode={}: {}",
+                        landedCost.getCode(), landedCost.getCode(), e.getMessage());
+            } else {
+                LOG.error("到岸成本红冲 GL 凭证异常（吞异常保持幂等），单 {} billHeadCode={}",
+                        landedCost.getCode(), landedCost.getCode(), e);
+            }
+        }
+
+        // 2. 反向应用 ErpInvCostAdjust(LANDED_COST_SUPPLEMENT) 成本层（按 Phase 1 Decision 复用既有 reverseCostAdjust）
+        if (costAdjust != null && !adjustLines.isEmpty()) {
+            costAdjustmentService.reverseCostAdjust(costAdjust, adjustLines);
+            ormTemplate.flushSession();
+        }
+
+        // 3. 翻状态：posted=false / approveStatus=REJECTED / docStatus=CANCELLED + CostAdjust 同步 posted=false
+        ErpInvLandedCost managed = landedCostDao().getEntityById(landedCost.getId());
+        Timestamp now = CoreMetrics.currentTimestamp();
+        managed.setPosted(false);
+        managed.setPostedAt(now);
+        managed.setApproveStatus(APPROVE_STATUS_REJECTED);
+        managed.setDocStatus(ErpInvConstants.DOC_STATUS_CANCELLED);
+        landedCostDao().updateEntity(managed);
+        ormTemplate.flushSession();
+
+        if (costAdjust != null) {
+            IEntityDao<ErpInvCostAdjust> adjustDao = daoProvider.daoFor(ErpInvCostAdjust.class);
+            ErpInvCostAdjust managedAdjust = adjustDao.getEntityById(costAdjust.getId());
+            if (managedAdjust != null) {
+                managedAdjust.setPosted(false);
+                managedAdjust.setPostedAt(now);
+                managedAdjust.setDocStatus(ErpInvConstants.DOC_STATUS_CANCELLED);
+                adjustDao.updateEntity(managedAdjust);
+                ormTemplate.flushSession();
+            }
+        }
+    }
+
+    protected ErpInvCostAdjust findCostAdjustForLandedCost(String landedCostCode) {
+        IEntityDao<ErpInvCostAdjust> dao = daoProvider.daoFor(ErpInvCostAdjust.class);
+        QueryBean q = new QueryBean();
+        // 命名约定：createAndApplyCostAdjust 中 adjust.code = "LC-" + landedCost.code
+        q.addFilter(eq("code", "LC-" + landedCostCode));
+        q.setLimit(1);
+        List<ErpInvCostAdjust> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    protected List<ErpInvCostAdjustLine> loadAdjustLines(Long adjustId) {
+        IEntityDao<ErpInvCostAdjustLine> dao = daoProvider.daoFor(ErpInvCostAdjustLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("adjustId", adjustId));
+        q.addOrderField("lineNo", false);
+        return dao.findAllByQuery(q);
     }
 
     protected ErpPurReceive loadReceiveByCode(String receiveCode) {

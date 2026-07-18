@@ -147,6 +147,9 @@ public interface ErpInvErrors {
     ErrorCode ERR_LANDED_COST_RECEIVE_NOT_FOUND = ErrorCode.define("erp.err.inv.landed-cost-receive-not-found",
             "采购入库单 {receiveCode} 不存在", "receiveCode");
 
+    ErrorCode ERR_LANDED_COST_NOT_POSTED = ErrorCode.define("erp.err.inv.landed-cost-not-posted",
+            "到岸成本单 {landedCostCode} 未过账（未审核或未生成凭证），不可红冲", ARG_LANDED_COST_CODE);
+
     // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，库存域独立错误码，不跨域 import） ---
 
     ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define("erp.err.inv.report.name-invalid",

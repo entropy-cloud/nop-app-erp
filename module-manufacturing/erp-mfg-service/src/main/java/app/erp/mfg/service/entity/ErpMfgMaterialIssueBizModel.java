@@ -56,6 +56,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 @BizModel("ErpMfgMaterialIssue")
 public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssue> implements IErpMfgMaterialIssueBiz {
 
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ErpMfgMaterialIssueBizModel.class);
+
     @Inject
     IErpInvStockMoveBiz stockMoveBiz;
     @Inject
@@ -122,6 +124,50 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
 
         // 领料 GL 过账（Dr: WIP / Cr: Inventory），镜像 ProductionVarianceDispatcher 显式调用范式
         issuePostingDispatcher.dispatchIfApplicable(issueId);
+        return issue;
+    }
+
+    @Override
+    @BizMutation
+    public ErpMfgMaterialIssue reverseConfirm(@Name("issueId") Long issueId, IServiceContext context) {
+        ErpMfgMaterialIssue issue = requireEntity(String.valueOf(issueId), null, context);
+        validateCanReverse(issue, context);
+
+        // 1. 红冲 MANUFACTURING_ISSUE 凭证（try/catch 吞异常保持幂等，对齐 dispatchIfApplicable 正向过账范式；
+        //    IErpFinVoucherBiz.reverse platform 内置幂等守护，无凭证时安全 no-op）
+        try {
+            issuePostingDispatcher.reverse(issue);
+        } catch (Exception e) {
+            if (e instanceof NopException) {
+                LOG.warn("领料红冲 GL 凭证失败（吞异常保持幂等），领料单 {} billHeadCode={}: {}",
+                        issue.getCode(), issue.getCode() + "-MI", e.getMessage());
+            } else {
+                LOG.error("领料红冲 GL 凭证异常（吞异常保持幂等），领料单 {} billHeadCode={}",
+                        issue.getCode(), issue.getCode() + "-MI", e);
+            }
+        }
+
+        // 2. 反向 OUTGOING 库存移动单（经 relatedBillType+relatedBillCode 反查原移动单 → IErpInvStockMoveBiz.reverse
+        //    生成 REVERSAL 反向移动单，余额自动回滚，对齐 1934-1 委外红冲 + 1745-1 备件消耗红冲范式）
+        ErpInvStockMove originalMove = findIssueMove(issue.getCode());
+        if (originalMove != null) {
+            try {
+                stockMoveBiz.reverse(originalMove.getId(), context);
+            } catch (Exception e) {
+                if (e instanceof NopException) {
+                    LOG.warn("领料红冲反向库存移动失败（吞异常保持幂等），领料单 {} moveCode={}: {}",
+                            issue.getCode(), originalMove.getCode(), e.getMessage());
+                } else {
+                    LOG.error("领料红冲反向库存移动异常（吞异常保持幂等），领料单 {} moveCode={}",
+                            issue.getCode(), originalMove.getCode(), e);
+                }
+            }
+        }
+
+        // 3. 翻 posted=false + docStatus=CANCELLED（状态机终态）。
+        //    跨域 reverse 调用可能扰动会话脏跟踪，故重新加载并以 updateEntity 显式持久化（对齐 confirm 范式）。
+        issue = requireEntity(String.valueOf(issueId), null, context);
+        doReverseConfirm(issue, context);
         return issue;
     }
 
@@ -194,6 +240,42 @@ public class ErpMfgMaterialIssueBizModel extends CrudBizModel<ErpMfgMaterialIssu
 
     static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /**
+     * 红冲前置守卫：仅 posted=true 且 docStatus=DONE（已 confirm 出库）的领料单可红冲。
+     * 未过账或已 CANCELLED 抛 ERR_MATERIAL_ISSUE_NOT_POSTED。
+     */
+    protected void validateCanReverse(ErpMfgMaterialIssue issue, IServiceContext context) {
+        String status = issue.getDocStatus();
+        if (!Boolean.TRUE.equals(issue.getPosted())
+                || !Objects.equals(status, ErpMfgConstants.ISSUE_STATUS_DONE)) {
+            throw new NopException(ErpMfgErrors.ERR_MATERIAL_ISSUE_NOT_POSTED)
+                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, issue.getCode());
+        }
+    }
+
+    /**
+     * 翻 posted=false + docStatus=CANCELLED（红冲终态）。对齐 {@link #confirm} 反向操作。
+     */
+    protected void doReverseConfirm(ErpMfgMaterialIssue issue, IServiceContext context) {
+        issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_CANCELLED);
+        issue.setPosted(false);
+        updateEntity(issue, null, context);
+    }
+
+    /**
+     * 反查领料单关联的 OUTGOING 移动单（按 {@code relatedBillType=ERP_MFG_ISSUE}+{@code relatedBillCode=issue.code}）。
+     * 不存在返回 null（红冲步骤对此容忍）。
+     */
+    protected ErpInvStockMove findIssueMove(String issueCode) {
+        IEntityDao<ErpInvStockMove> dao = daoProvider().daoFor(ErpInvStockMove.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("relatedBillType", ErpMfgConstants.RELATED_BILL_TYPE_MFG_ISSUE));
+        q.addFilter(eq("relatedBillCode", issueCode));
+        q.setLimit(1);
+        List<ErpInvStockMove> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     private NopException illegalTransition(ErpMfgMaterialIssue issue, String current, String expected) {

@@ -32,6 +32,11 @@ import java.util.Map;
  *
  * <p>失败语义对齐 {@link CostAdjustmentPostingDispatcher}：过账失败吞异常返回 null
  * （保持 posted=false），不阻塞审核终态。
+ *
+ * <p>{@link #reverse(ErpInvLandedCost)}（plan 2026-07-18-1745-2）：到岸成本红冲入口，
+ * billHeadCode 与正向 {@link #tryPost} 对称（{@code landedCost.code} 无后缀），委派
+ * {@link InvPostingExecutor#reverse} → {@link IErpFinVoucherBiz#reverse} 生成红字凭证 +
+ * 原凭证 isReversed=true（platform 内置幂等守护，无凭证时安全 no-op）。
  */
 public class LandedCostPostingDispatcher {
 
@@ -42,6 +47,13 @@ public class LandedCostPostingDispatcher {
 
     @Inject
     IDaoProvider daoProvider;
+
+    @Inject
+    InvPostingExecutor postingExecutor;
+
+    public void setPostingExecutor(InvPostingExecutor postingExecutor) {
+        this.postingExecutor = postingExecutor;
+    }
 
     public Long tryPost(ErpInvLandedCost landedCost, List<ErpInvLandedCostLine> costLines,
                           List<LandedCostAllocationEngine.AllocationResult> allocations) {
@@ -56,6 +68,24 @@ public class LandedCostPostingDispatcher {
             }
             return null;
         }
+    }
+
+    /**
+     * 红冲指定到岸成本单的 GL 凭证（{@code ErpInvLandedCost.reverseApprove} 触发）。
+     *
+     * <p>billHeadCode = {@code landedCost.code} 与正向 {@link #tryPost} 对称（无后缀，经独立草案审查核实）；
+     * 委派 {@link InvPostingExecutor#reverse} → {@link IErpFinVoucherBiz#reverse} 生成红字凭证 +
+     * 标记原凭证 isReversed=true（platform 内置幂等守护，无凭证时安全 no-op）。
+     *
+     * <p>红冲失败由调用方（{@code ErpInvLandedCostBizModel.reverseApprove}）以 try/catch 吞异常告警
+     * 保持幂等（对齐 {@link #tryPost} 正向过账范式）。
+     */
+    public void reverse(ErpInvLandedCost landedCost) {
+        if (landedCost == null || landedCost.getCode() == null) {
+            return;
+        }
+        String billHeadCode = landedCost.getCode();
+        postingExecutor.reverse(billHeadCode, ErpFinBusinessType.LANDED_COST);
     }
 
     private Long postEvent(PostingEvent event) {

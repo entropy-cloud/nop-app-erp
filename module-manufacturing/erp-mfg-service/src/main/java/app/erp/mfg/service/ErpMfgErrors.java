@@ -104,6 +104,11 @@ public interface ErpMfgErrors {
             "领料单[{workOrderCode}]无领料行，无法确认出库",
             ARG_WORK_ORDER_CODE);
 
+    ErrorCode ERR_MATERIAL_ISSUE_NOT_POSTED = ErrorCode.define(
+            "erp.err.mfg.issue.not-posted",
+            "领料单[{workOrderCode}]未过账（未确认出库或未生成凭证），不可红冲",
+            ARG_WORK_ORDER_CODE);
+
     ErrorCode ERR_MRP_PLAN_NOT_FOUND = ErrorCode.define(
             "erp.err.mfg.mrp-plan.not-found",
             "MRP计划不存在: {mrpPlanId}",

@@ -57,4 +57,10 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
         return landedCostProcessor.generateFreightLandedCost(receiveCode, freightAmount,
                 freightCurrencyId, freightExchangeRate, context);
     }
+
+    @Override
+    @BizMutation
+    public ErpInvLandedCost reverseApprove(@Name("id") Long id, IServiceContext context) {
+        return landedCostProcessor.reverseApprove(id, context);
+    }
 }

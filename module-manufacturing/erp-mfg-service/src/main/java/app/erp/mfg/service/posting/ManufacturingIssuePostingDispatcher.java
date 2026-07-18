@@ -191,4 +191,23 @@ public class ManufacturingIssuePostingDispatcher {
     private Long resolveAcctSchemaId(Long orgId) {
         return AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
     }
+
+    /**
+     * 红冲指定领料单的 GL 凭证（{@code ErpMfgMaterialIssue.reverseConfirm} 触发）。
+     *
+     * <p>billHeadCode = {@code issue.code + "-MI"} 与正向 {@link #dispatchIfApplicable} 对称
+     *（{@code ManufacturingIssuePostingDispatcher.java:123} 经独立草案审查核实无后缀）；委派
+     * {@link MfgPostingExecutor#reverse} → {@link IErpFinVoucherBiz#reverse} 生成红字凭证 + 标记原凭证
+     * isReversed=true（platform 内置幂等守护，无凭证时安全 no-op）。
+     *
+     * <p>红冲失败由调用方（{@code ErpMfgMaterialIssueBizModel.reverseConfirm}）以 try/catch 吞异常告警
+     * 保持幂等（对齐 {@link #dispatchIfApplicable} 正向过账范式）。
+     */
+    public void reverse(ErpMfgMaterialIssue issue) {
+        if (issue == null || issue.getCode() == null) {
+            return;
+        }
+        String billHeadCode = issue.getCode() + "-MI";
+        executor.reverse(billHeadCode, ErpFinBusinessType.MANUFACTURING_ISSUE);
+    }
 }
