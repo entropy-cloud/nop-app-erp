@@ -98,4 +98,11 @@ public interface ErpB2bErrors {
     ErrorCode ERR_B2B_CODE_MAPPING_NOT_FOUND = ErrorCode.define("erp.err.b2b.code-mapping-not-found",
             "代码映射不存在：格式 {ediFormatCode} / 代码 {relatedBillCode}",
             ARG_EDI_FORMAT_CODE, ARG_RELATED_BILL_CODE);
+
+    String ARG_MATERIAL_ID = "materialId";
+    String ARG_LINE_NO = "lineNo";
+
+    ErrorCode ERR_B2B_ASN_LINE_MATERIAL_REQUIRED = ErrorCode.define("erp.err.b2b.asn-line-material-required",
+            "ASN {asnCode} 行 {lineNo} 缺失物料或物料主数据 {materialId} 不存在，无法回填 ReceiveLine",
+            ARG_ASN_CODE, ARG_LINE_NO, ARG_MATERIAL_ID);
 }

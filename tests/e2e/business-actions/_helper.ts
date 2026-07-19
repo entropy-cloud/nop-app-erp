@@ -166,6 +166,20 @@ export async function findFirst<T = any>(
 }
 
 /**
+ * 经 __findPage 返回所有匹配实体（最多 `limit` 条，默认 500）。
+ * 用于副作用多行产物断言（如行级回填 ReceiveLine 多行的字段精确数值断言）。filter 走 GraphQL variable。
+ */
+export async function findItems<T = any>(
+  page: Page,
+  entityName: string,
+  filter: Record<string, unknown>,
+  selection: string,
+  limit = 500,
+): Promise<T[]> {
+  return gqlFor(page).findItems<T>(entityName, filter, selection, limit);
+}
+
+/**
  * 清理（逻辑删除）匹配过滤的所有实体：findPage 全量后逐条 __delete。
  *
  * 业务动作 E2E 会创建不可逆下游产物（库存流水/余额、工单审计/调查、线索转化日志），
