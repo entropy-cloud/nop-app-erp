@@ -160,22 +160,22 @@ Status: `done` (2026-07-19, plan `2026-07-19-1818-3-f5-status-tag-coloring`)
 
 ### F6 — 字段格式化（P1）
 
-Status: `todo`
+Status: `done`
 
 所有金额/数量/日期列的显示格式修复：
 
 | 字段类型 | 格式要求 |
 |---------|---------|
 | 金额 | `#,##0.00` 千分位 + 右对齐 |
-| 数量 | `#,##0.###` 千分位 + 右对齐 |
+| 数量 | `#,##0.0000` 千分位 + 右对齐 |
 | 单价 | `#,##0.0000` 千分位 + 右对齐 |
 | 日期 | `YYYY-MM-DD` 统一格式 |
 | 百分比 | `0.00%` |
 | 税率 | `0.0000` |
 
-推荐在 xmeta 层配置（`format` 属性），避免逐 view.xml 定制。
+经 Phase 1 Explore 裁决采用 view.xml `<col><gen-control><c:script>return {type:'number', kilometer:true, precision:N}</c:script></gen-control></col>` 范式（与 F5 一致），覆盖 489 col × 17 域 web 模块。设计文档：`docs/design/field-formatting-patterns.md`；计划：`docs/plans/2026-07-19-2200-2-f6-field-formatting-xmeta.md`。
 
-**受影响**：~50+ 实体 × 5-15 金额/数量列
+**受影响**：~50+ 实体 × 5-15 金额/数量列（实际落地 489 col 改造）
 
 ---
 
