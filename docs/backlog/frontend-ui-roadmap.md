@@ -483,7 +483,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 以下为跨域共有的前端模式，需在实现过程中统一纳入：
 
 4. **敏感字段脱敏**（cross-cutting）：hr 员工详情页的证件号、手机号、银行账户需脱敏显示（`**************`、`138****0000`、`工行****1234`）。logistics 承运商配置的 API Key/Secret 需默认脱敏（`sk****89ab`），查看需二次验证。建议在 xmeta 层或 view.xml 定制字段渲染，而非逐域硬编码。
-5. **通知收件箱**（notify 域）：所有用户需要通知列表页面，支持未读/已读切换、批量标记已读、按类型筛选。当前通知仅有后端基础设施，无前端 UI。建议作为独立页面或全局侧边栏面板实现。（提示：notify 域实体使用 `ErpSys*` 前缀，属于 `module-notify`，非 `docs/design/notify`。暂无 `ui-patterns.md`。）
+5. **通知收件箱**（notify 域）：所有用户需要通知列表页面，支持未读/已读切换、批量标记已读、按类型筛选。当前通知仅有后端基础设施，无前端 UI。建议作为独立页面或全局侧边栏面板实现。（提示：notify 域实体使用 `ErpSys*` 前缀，属于 `module-notify`，非 `docs/design/notify`。**已落地** ✅：`docs/design/notify/inbox-patterns.md` 是首个 notify 域设计文档；plan `2026-07-19-2200-3` 完成 inbox.page.yaml + 菜单重排 + Playwright E2E。）
 6. **删除/停用引用预览**（master-data + 全域）：主数据实体删除或停用前，前端需查询并展示引用该实体的未完成单据数，用户确认后才可执行。已部分在 F7 §3 提及，需统一实现模式。
 7. **编码唯一性前置校验**（master-data）：物料编码、往来单位编码、科目编码等在用户输入时异步检查唯一性（`@BizQuery`），输入框旁实时显示 ✓/✗。已部分在 F7 §3 提及。
 8. **Timesheet 周网格共享组件**（hr + projects）：行=任务/项目、列=星期、0.5h 步进、<40h 警告。当前两个域各自设计（`hr/ui-patterns.md` + `projects/ui-patterns.md`），建议合并为共享组件。P3。
@@ -528,7 +528,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F14: 18 域 action-auth 菜单完整可达，排序按业务流程
 - [ ] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性
 - [ ] F16: 16 个复杂手写页面核心交互实现（凭证录入平衡校验、甘特图拖拽、三单匹配差异高亮、版本对比 diff、EDI 语法高亮等）
-- [ ] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选）
+- [x] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选） ✅ plan `2026-07-19-2200-3`
 - [ ] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret）
 - [ ] Timesheet 周网格共享组件实现（hr 考勤 + projects 工时录入合并）
 - [ ] Barcode/PDA 扫描交互模式落地（inventory 移动确认 + master-data 条码录入）

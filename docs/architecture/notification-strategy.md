@@ -60,3 +60,14 @@
 | `wf.<entity>.cc` | `.xwf` cc step（`specialType="cc"`）`<on-enter>` | 模板存在性 | ROLE CC 角色（财务经理/销售经理/资产管理员/HR专员） | cc step 需 confirm 后 wf 结束（标准 OA 抄送语义） |
 
 **关键技术约束**：xbiz `<observes>` 在当前 nop-entropy 版本仅 schema 解析、运行时未触发（dead），故审批通知统一在 wf listener/on-enter 注入。`<entity>` ∈ pur-payment/sal-receipt/ast-disposal/hr-salary。
+
+## 前端收件箱（user-facing 通知中心）
+
+落地计划：`docs/plans/2026-07-19-2200-3-notify-inbox-page.md`（已完成）。
+范式权威：`docs/design/notify/inbox-patterns.md`（首个 notify 域设计文档）。
+
+- **页面**：`module-notify/erp-notify-web/.../pages/ErpSysNotification/inbox.page.yaml`（手写 AMIS，不经 codegen）—— 三 tab 切换（未读 / 已读 / 全部）+ 顶部未读计数（`__countUnread` 实时拉取）+ 「全部标记已读」批量操作 + 行内 markRead + 详情 drawer。
+- **菜单**：`module-notify/erp-notify-web/.../auth/_erp-notify.action-auth.xml` —— `ErpSysNotification-inbox` user-facing TOPM（permissions=`ErpSysNotification:query` 所有登录用户）vs `test-orm-erp-notify` admin TOPM（permissions 含 `mutation` 仅管理员）。
+- **后端适配**：`ErpSysNotificationBizModel.findUnread/countUnread/markAllRead` 三方法 `userId` 参数扩展为 `@Optional`，留空时回退 `ctx.getUserId()`（与既有 `markRead` 内部「优先 `recipientUserId`，回退 `ctx.getUserId()`」模式一致）；新增对称端点 `findRead(ctx)` 供已读 tab 直接接入，避免 GraphQL sub-query / 客户端拼接的复杂性。
+- **关键约束**：`status` 字段是通知 lifecycle（SENT/MERGED/FAILED），非已读状态；已读状态派生自 `ErpSysNotificationRead` 关联，**禁用** `<filter><eq name="status" value="READ"/></filter>`。
+- **Successor（Deferred）**：全局 header 未读角标（需修改全局 layout delta + WebSocket 推送）；通知偏好设置页（需新 ORM 实体）；partnerId/deptId 维度 inbox；markUnread 反向操作；批量删除/归档 + 数据保留策略；审批类通知专用渲染（含「去审批」跳转，依赖 xwf 浏览器层可达性突破）；i18n（F15 覆盖）。
