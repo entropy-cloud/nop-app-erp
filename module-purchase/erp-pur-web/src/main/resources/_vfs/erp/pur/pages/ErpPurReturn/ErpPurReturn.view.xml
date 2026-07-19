@@ -52,40 +52,54 @@
     <forms>
         <form id="view" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[单号] orgId[业务组织]
  receiveId[入库单] supplierId[供应商]
  warehouseId[出库仓库] businessDate[退货日期]
  currencyId[币种] exchangeRate[汇率]
  docStatus[单据状态] approveStatus[审核状态]
-==========>amount[金额信息]======
- amountSource[合计金额(源币)] amountFunctional[合计金额(本位币)]
- totalAmount[合计金额(不含税)] totalTaxAmount[合计税额]
- totalAmountWithTax[合计金额(含税)]
-==========^approval[审批与过账]=========
+=========>amount[金额信息]======
+ @amountSource[合计金额(源币)] @amountFunctional[合计金额(本位币)]
+ @totalAmount[合计金额(不含税)] @totalTaxAmount[合计税额]
+ @totalAmountWithTax[合计金额(含税)]
+=========>lines[明细行]======
+ lines[明细行](2)
+=========>approval[审批与过账]======
  approvedBy[审核人] approvedAt[审核时间]
  posted[已过账] postedAt[过账时间]
  postedBy[过账人]
-==========^audit[审计信息]=========
+=========>audit[审计信息]======
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/pur/pages/ErpPurReturnLine/ErpPurReturnLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[单号] orgId[业务组织]
  receiveId[入库单] supplierId[供应商]
  warehouseId[出库仓库] businessDate[退货日期]
  currencyId[币种] exchangeRate[汇率]
  docStatus[单据状态] approveStatus[审核状态]
-==========>amount[金额信息]======
- amountSource[合计金额(源币)] amountFunctional[合计金额(本位币)]
- totalAmount[合计金额(不含税)] totalTaxAmount[合计税额]
- totalAmountWithTax[合计金额(含税)]
+=========>amount[金额信息]======
+ @amountSource[合计金额(源币)] @amountFunctional[合计金额(本位币)]
+ @totalAmount[合计金额(不含税)] @totalTaxAmount[合计税额]
+ @totalAmountWithTax[合计金额(含税)]
+=========>lines[明细行]======
+ lines[明细行](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/pur/pages/ErpPurReturnLine/ErpPurReturnLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="query" editMode="query" title="查询条件">

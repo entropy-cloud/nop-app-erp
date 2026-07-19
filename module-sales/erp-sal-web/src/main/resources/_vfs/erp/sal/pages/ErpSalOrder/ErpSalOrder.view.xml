@@ -65,19 +65,26 @@
  approveStatus[审核状态] receivedStatus[收款进度]
  deliveryStatus[发货进度]
 ==========>amount[金额信息]======
- amountSource[合计金额(源币不含税)] amountFunctional[合计金额(本位币不含税)]
- totalAmount[合计金额(不含税)] totalTaxAmount[合计税额]
- totalAmountWithTax[合计金额(含税)] discountRate[整单折扣率(%)]
+ @amountSource[合计金额(源币不含税)] @amountFunctional[合计金额(本位币不含税)]
+ @totalAmount[合计金额(不含税)] @totalTaxAmount[合计税额]
+ @totalAmountWithTax[合计金额(含税)] discountRate[整单折扣率(%)]
  discountAmount[折扣金额] receivedAmount[已收金额]
-==========^approval[审批与过账]=========
+==========>lines[明细行]======
+ lines[明细行](2)
+==========>approval[审批与过账]======
  approvedBy[审核人] approvedAt[审核时间]
  posted[已过账] postedAt[过账时间]
  postedBy[过账人]
-==========^audit[审计信息]=========
+==========>audit[审计信息]======
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/sal/pages/ErpSalOrderLine/ErpSalOrderLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
@@ -91,12 +98,19 @@
  approveStatus[审核状态] receivedStatus[收款进度]
  deliveryStatus[发货进度]
 ==========>amount[金额信息]======
- amountSource[合计金额(源币不含税)] amountFunctional[合计金额(本位币不含税)]
- totalAmount[合计金额(不含税)] totalTaxAmount[合计税额]
- totalAmountWithTax[合计金额(含税)] discountRate[整单折扣率(%)]
+ @amountSource[合计金额(源币不含税)] @amountFunctional[合计金额(本位币不含税)]
+ @totalAmount[合计金额(不含税)] @totalTaxAmount[合计税额]
+ @totalAmountWithTax[合计金额(含税)] discountRate[整单折扣率(%)]
  discountAmount[折扣金额] receivedAmount[已收金额]
+==========>lines[明细行]======
+ lines[明细行](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/sal/pages/ErpSalOrderLine/ErpSalOrderLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="query" editMode="query" title="查询条件">

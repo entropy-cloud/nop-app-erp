@@ -16,6 +16,132 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="materialId" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'materialId',
+                                label: '物料',
+                                required: true,
+                                source: '/erp/md/pages/ErpMdMaterial/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="uoMId" mandatory="true"/>
+                <col id="quantity" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'quantity',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 0.0001 },
+                                validationErrors: { minimum: '数量必须大于 0' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        amount: '${ROUND(quantity * unitPrice, 4)}',
+                                                        taxAmount: '${ROUND(quantity * unitPrice * taxRate / 100, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="unitPrice" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'unitPrice',
+                                required: true,
+                                step: 0.0001,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '单价不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        amount: '${ROUND(quantity * unitPrice, 4)}',
+                                                        taxAmount: '${ROUND(quantity * unitPrice * taxRate / 100, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amount"/>
+                <col id="taxRate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'taxRate',
+                                step: 0.01,
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        taxAmount: '${ROUND(quantity * unitPrice * taxRate / 100, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="taxAmount"/>
+                <col id="reason"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="materialId"/>
+                <col id="uoMId"/>
+                <col id="quantity"/>
+                <col id="unitPrice"/>
+                <col id="amount"/>
+                <col id="taxRate"/>
+                <col id="taxAmount"/>
+                <col id="reason"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
