@@ -49,6 +49,14 @@
 - **过账（`LandedCostAcctDocProvider` + `LandedCostPostingDispatcher`）**：业务类型 `LANDED_COST`(490)。借：每入库行分摊金额 → 存货(1401)；贷：每费用要素 → 应付账款(2202, partnerId=费用行应付对象或采购供应商)。
 - **本期 Non-Goal**：多段到岸成本累计管理（同一入库单多次分摊）、到岸成本预估、logistics path-2 运费自动创建到岸成本单的完整编排——各归 successor。
 
+## logistics path-2 到岸成本自动创建衔接点（plan `2026-07-11-2329-1` 后端 + `2026-07-19-0849-2` 浏览器层）
+
+到岸成本单可由 logistics 域 DELIVERED 事件自动创建（与销售域/采购域/财务域人工创建并列的**第 4 入口**）：
+
+- **衔接链路**：logistics `ErpLogShipmentBizModel.handleTrackingWebhook` 推进至 DELIVERED → `onDelivered` 按 `relatedBillType` 分派 → **PURCHASE_RECEIPT** 走 `handlePurchaseReceiptDelivered`（config-gated `erp-log.path2-landed-cost-auto-create`，默认 false 向后兼容）→ 调 `IErpInvLandedCostBiz.generateFreightLandedCost(receiveCode, freightAmount, freightCurrencyId, null, ctx)` → 委派 `ErpInvLandedCostProcessor.generateFreightLandedCost` 创建 DRAFT 到岸成本单（FREIGHT 费用行，apPartnerId=receive.supplierId，totalCostAmount=freightAmount）。
+- **结果面**：仅创建 DRAFT + UNSUBMITTED 单据，**不**触发分摊/CostAdjust/`LANDED_COST(490)` 过账（这些归人工审核入口 `approve`，由 plan `2026-07-10-1100-3` 提供）。logistics 侧成功后 `freightSettlementStatus` 翻 SETTLED。
+- **浏览器层 E2E**：经 `tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts`（plan `2026-07-19-0849-2`）覆盖正路径（DRAFT 头+行字段精确数值断言）+ freightAmount=0 边界（显式断言无 LandedCost 创建）。后端单测覆盖 path-2 失败重试/幂等（`TestErpLogPath2LandedCost`）。
+
 ## 到岸成本红冲实现注记（计划 `2026-07-18-1745-2`）
 
 到岸成本审核过账后如需回滚（"错误审核"纠错路径），新增 `ErpInvLandedCost.reverseApprove(@BizMutation)` 入口闭环：

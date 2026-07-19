@@ -101,6 +101,7 @@
 > **实现裁决补注（plan 2026-07-04-1115-3 + 2026-07-11-2329-1）**：原描述"DELIVERED 后本域发布 `ShipmentDeliveredEvent`，finance 域订阅执行过账"已调整为：
 > - **path-1（SALES_DELIVERY）**：**直接调用** `IErpFinVoucherBiz.post(PostingEvent{businessType=FREIGHT})`（参 inventory `InvPostingExecutor` 范式），与现有全域过账一致。
 > - **path-2（PURCHASE_RECEIPT 采购运费）**：已从事件占位升级为 config-gated **到岸成本自动编排**。`erp-log.path2-landed-cost-auto-create=true`（默认 false，向后兼容）时，DELIVERED 后调用 `IErpInvLandedCostBiz.generateFreightLandedCost(receiveCode, freightAmount, ...)` 创建 DRAFT 到岸成本单（FREIGHT 费用行），由用户人工审核触发分摊→成本层更新→`LANDED_COST(490)` 过账（引擎由 plan `2026-07-10-1100-3` 提供）。config 关闭时退化为事件占位 + SETTLED（向后兼容）。
+> - **path-2 浏览器层 E2E 覆盖（plan `2026-07-19-0849-2`）**：logistics path-2 完整链路（handleTrackingWebhook DELIVERED → onDelivered → handlePurchaseReceiptDelivered → generateFreightLandedCost → DRAFT ErpInvLandedCost）已有浏览器层 E2E 覆盖——`tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts` 2 用例（正路径 DRAFT 头+行字段精确数值断言 + freightAmount=0 边界显式断言无 LandedCost 创建），承接 2026-07-11-2329-1 后端落地 + TestErpLogPath2LandedCost 单测覆盖；freightAmount ≤ 0/null 分支由 path-1（SALES_DELIVERY）作代表验证 onDelivered 触发面。path-2 失败重试/scanForPolling 轮询驱动 DELIVERED + path-2 外币 freight 汇兑分支仍归 successor（不同结果面，见 2026-07-19-0849-2 Deferred But Adjudicated）。
 
 外部触发渠道：
 - 用户手工创建发运单（主要渠道）。

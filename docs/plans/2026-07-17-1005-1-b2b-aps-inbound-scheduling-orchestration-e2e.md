@@ -180,6 +180,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 经 webhook/轮询事件驱动非浏览器面 mutation 入口（0508-1 裁定）。不同结果面，不并入本计划。
 - Successor Required: `yes`（触发条件：运费过账/path-2 到岸成本浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-19-0849-2**：plan `2026-07-19-0849-2-logistics-path2-landed-cost-browser-e2e.md` 全 3 phase 全绿交付——1 新 spec（2 用例）`log-path2-landed-cost-auto-create.action.spec.ts` 覆盖 logistics path-2 采购运费→到岸成本自动创建完整链路（PURCHASE_RECEIPT DELIVERED → generateFreightLandedCost → DRAFT ErpInvLandedCost FREIGHT 费用行）正路径 + freightAmount=0 边界对照；`playwright.config.ts` webServer JVM arg 追加 `-Derp-log.path2-landed-cost-auto-create=true`；1005-1 Deferred 解除。
 
 ## Closure
 

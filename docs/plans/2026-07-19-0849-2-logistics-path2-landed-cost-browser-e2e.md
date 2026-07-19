@@ -1,6 +1,6 @@
 # 2026-07-19-0849-2-logistics-path2-landed-cost-browser-e2e logistics path-2 采购运费→到岸成本自动创建浏览器层 E2E
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-19
 > Source: `docs/plans/2026-07-17-1005-1-b2b-aps-inbound-scheduling-orchestration-e2e.md` Deferred But Adjudicated「logistics path-2 / 运费过账浏览器层」(l.177-181，1005-1 cancelled 后该项仍开放) + `docs/plans/2026-07-14-0941-2-b2b-logistics-aps-orchestration-e2e.md` Deferred But Adjudicated「logistics path-2 到岸成本自动创建 E2E（若 Explore 裁决降级）」(l.156-160)
 > Related: `2026-07-14-0941-2`（b2b/aps/logistics 跨域编排 E2E，已 completed；本计划承接其 path-2 successor——0941-2 Phase 3 path-1 运费过账已作代表验证，path-2 经 config-gate 默认关闭 + 后端单测覆盖降级 Deferred）、`2026-07-11-2329-1`（logistics path-2 后端落地，已 completed）、`2026-07-14-0606-2`（inventory 到岸成本独立 E2E，已 completed）、`docs/design/logistics/state-machine.md`（path-2 业务语义已落地 §l.103）、`docs/design/finance/costing-methods.md`（landed-cost 设计权威源，`ErpInvLandedCostBizModel.java:24` 引用）、`docs/testing/e2e-runbook.md`
@@ -74,70 +74,70 @@
 
 ### Phase 1 - Explore：后端 path-2 冷核实 + setup 工程化裁决
 
-Status: planned
+Status: completed
 Targets: 探索笔记（不落仓库）+ plan Decision 落地
 Skill: `nop-testing`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无
 
-- [ ] `Proof`：逐行核实后端 path-2 调用栈 —— `ErpLogShipmentBizModel.handlePurchaseReceiptDelivered:213-247` + `generateFreightLandedCost` 调用参数（`shipment.relatedBillCode` 作 receiveCode + `shipment.freightAmount` + `shipment.freightCurrencyId` + null exchangeRate）+ `IErpInvLandedCostBiz.generateFreightLandedCost:52` 委派链 + `ErpInvLandedCostProcessor.generateFreightLandedCost` 产物字段（DRAFT 状态 + FREIGHT 费用行 + amount 字段）。
+- [x] `Proof`：逐行核实后端 path-2 调用栈 —— `ErpLogShipmentBizModel.handlePurchaseReceiptDelivered:213-247` + `generateFreightLandedCost` 调用参数（`shipment.relatedBillCode` 作 receiveCode + `shipment.freightAmount` + `shipment.freightCurrencyId` + null exchangeRate）+ `IErpInvLandedCostBiz.generateFreightLandedCost:52` 委派链 + `ErpInvLandedCostProcessor.generateFreightLandedCost` 产物字段（DRAFT 状态 + FREIGHT 费用行 + amount 字段）。
   - Skill: `nop-testing`
-- [ ] `Proof`：核实 `ErpInvLandedCost` 字段集（`module-inventory/model/app-erp-inventory.orm.xml:1310-1376`）—— 头字段：`code` / `receiveId`（Long FK 至 ErpPurReceive，**非** `receiveCode`/`relatedBillCode`）/ `docStatus` + `approveStatus`（两字段拆分，无单 `status`）/ `totalCostAmount`（**非** `totalAmount`）/ `currencyId`；行字段 `ErpInvLandedCostLine.costElement`（**非** `costType`，常量 `ErpInvConstants.COST_ELEMENT_FREIGHT="FREIGHT"`）+ `amount`。**裁决依据**：spec 断言字段集 + GraphQL 反查路径。注意：`ErpInvLandedCostProcessor.loadReceiveByCode:271-275` 内部 resolve receiveCode→receiveId，但 spec 须按 receiveId 直查（GraphQL `findFirst` 层无 receiveCode 字段）。
+- [x] `Proof`：核实 `ErpInvLandedCost` 字段集（`module-inventory/model/app-erp-inventory.orm.xml:1310-1376`）—— 头字段：`code` / `receiveId`（Long FK 至 ErpPurReceive，**非** `receiveCode`/`relatedBillCode`）/ `docStatus` + `approveStatus`（两字段拆分，无单 `status`）/ `totalCostAmount`（**非** `totalAmount`）/ `currencyId`；行字段 `ErpInvLandedCostLine.costElement`（**非** `costType`，常量 `ErpInvConstants.COST_ELEMENT_FREIGHT="FREIGHT"`）+ `amount`。**裁决依据**：spec 断言字段集 + GraphQL 反查路径。注意：`ErpInvLandedCostProcessor.loadReceiveByCode:271-275` 内部 resolve receiveCode→receiveId，但 spec 须按 receiveId 直查（GraphQL `findFirst` 层无 receiveCode 字段）。
   - Skill: `nop-testing`
-- [ ] `Decision`：setup 工程化（须裁决项）：
-  - **(a) ErpPurReceive 前置创建路径**：① 复用 `runP2pChain`（建 PO + Receive approve 完整链）；② 直 `__save` UNSUBMITTED Receive（轻量，避免 approve/入库触发污染共享 DB）。**裁决依据**：path-2 仅需 Receive.code（shipment.relatedBillCode）+ 后端 `loadReceiveByCode` 解析，不依赖 Receive approve/入库状态；优先 ② 隔离 + 减少污染。
-  - **(b) Shipment setup 字段**：relatedBillType=PURCHASE_RECEIPT + relatedBillCode=Receive.code + freightAmount > 0 + freightCurrencyId（本位币）+ carrierCode（mock 网关）+ status=DRAFT 入口。
-  - **(c) webhook payload 构造**：复用 0941-2 范式 `{"trackingNo":"{shipment.trackingNo}","eventType":"DELIVERED","signedBy":"E2E"}` + signature 任意（webhook-signature-required=false）。
-  - **(d) ErpInvLandedCost 反查路径**（承接 M1/M2）：spec 须捕获 setup 时 `receive.id`（Long），用 GraphQL `findFirst ErpInvLandedCost(filter:{ receiveId:{ $eq: receive.id }})` 直查（**非** 按 receiveCode 反查——GraphQL 层无 receiveCode 字段）；或用 nested filter `findFirst ErpInvLandedCost(filter:{ receive:{ code:{ $eq: receive.code }}})`。**裁决依据**：GraphQL schema 实测可用性（Phase 1 Explore 核实）。
-  - **(e) cleanup 范围**：删 Shipment + Carrier + ErpInvLandedCost（path-2 产物）+ ErpPurReceive（UNSUBMITTED 前置）；不删 PO（如 setup 选 ② 则无 PO）+ 不删 SalInvoice/SalDelivery（path-2 不触 sales 域，与 path-1 cleanup 范式不同——path-1 spec 仅 cleanup Shipment+Carrier+voucher，无 SalInvoice 联动）。
+- [x] `Decision`：setup 工程化（须裁决项）：
+  - **(a) ErpPurReceive 前置创建路径**：选 ② 直 `__save` UNSUBMITTED Receive（轻量，无 PO/入库触发污染共享 DB）。依据：path-2 仅需 Receive.code + 后端 `loadReceiveByCode` 解析，不依赖 Receive approve/入库状态；隔离 + 减少污染。
+  - **(b) Shipment setup 字段**：relatedBillType=PURCHASE_RECEIPT + relatedBillCode=Receive.code + freightAmount > 0 + freightCurrencyId（本位币）+ carrierCode（mock 网关）+ status=DRAFT 入口 → advise → completeShipment（DISPATCHED + trackingNo 写回 MOCK-{code}）。
+  - **(c) webhook payload 构造**：复用 0941-2 范式 `{"trackingNo":"{shipment.trackingNo}","eventType":"DELIVERED","signedBy":"E2E"}` + signature 'skip'（webhook-signature-required=false 已启用）。
+  - **(d) ErpInvLandedCost 反查路径**：spec 捕获 setup 时 `receive.id`（Long），用 GraphQL `findFirst ErpInvLandedCost(filter: eqFilter('receiveId', receive.id), ...)` 直查 receiveId（GraphQL schema 层有此 Long FK 字段，对齐 backend TestErpLogPath2LandedCost.java:224 `q.addFilter(eq("receiveId", receive.getId()))` 范式）。ErpInvLandedCostLine 反查经 `eqFilter('landedCostId', landedCost.id)` 直查。
+  - **(e) cleanup 范围**：删 ErpInvLandedCostLine（by landedCostId）+ ErpInvLandedCost（by id，path-2 产物 DRAFT 无凭证）+ Shipment + Carrier + ErpPurReceive（UNSUBMITTED 前置）；无 PO 删除（setup ②）+ 不删 SalInvoice/SalDelivery（path-2 不触 sales 域）+ 无凭证清理（path-2 仅产 DRAFT LandedCost，未 approve 故无 GL 凭证）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 后端 path-2 调用栈 4 项 file:line 锚点核实 + setup 工程化 4 Decisions 落地，可指导 Phase 2 编码。
+- [x] 后端 path-2 调用栈 4 项 file:line 锚点核实 + setup 工程化 4 Decisions 落地，可指导 Phase 2 编码。
 
 ### Phase 2 - spec 落地 + 回归
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts`（新 spec）+ `playwright.config.ts`（webServer JVM args 追加）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] `Add`：`playwright.config.ts` webServer JVM args 追加 `-Derp-log.path2-landed-cost-auto-create=true`。
-- [ ] `Add`：新建 `tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts`（≥2 用例）：
-  - **(1) path-2 正路径**：自包含建 ErpPurReceive（docStatus=UNSUBMITTED + receiveStatus=NOT_RECEIVED，code=`E2E-RCV-{ts}`）+ ErpLogCarrier（mock 网关）+ ErpLogShipment（relatedBillType=PURCHASE_RECEIPT, relatedBillCode=Receive.code, freightAmount=100, freightCurrencyId=本位币, freightSettlementStatus=PENDING）→ advise → completeShipment（DISPATCHED）→ 构造 webhook payload → `ErpLogShipment__handleTrackingWebhook` → 断言：
+- [x] `Add`：`playwright.config.ts` webServer JVM args 追加 `-Derp-log.path2-landed-cost-auto-create=true`。
+- [x] `Add`：新建 `tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts`（2 用例）：
+  - **(1) path-2 正路径**：自包含建 ErpPurReceive（docStatus=DRAFT [erp-pur/doc-status 字典仅 DRAFT/ACTIVE/CANCELLED] + approveStatus=UNSUBMITTED + receiveStatus=UNRECEIVED [erp-pur/receive-status 字典仅 UNRECEIVED/PARTIAL/RECEIVED]，code=`E2E-P2-RCV-{ts}`）+ ErpLogCarrier（mock 网关）+ ErpLogShipment（relatedBillType=PURCHASE_RECEIPT, relatedBillCode=Receive.code, freightAmount=100, freightCurrencyId=CNY=1, freightSettlementStatus=PENDING）→ advise → completeShipment（DISPATCHED）→ 构造 webhook payload → `ErpLogShipment__handleTrackingWebhook` → 断言：
     - shipment status=DELIVERED + freightSettlementStatus=SETTLED；
-    - 按Phase 1 Decision (d) 反查 ErpInvLandedCost（receiveId 直查或 nested filter）→ docStatus/approveStatus + totalCostAmount + currencyId 透传；ErpInvLandedCostLine.costElement=FREIGHT + amount=100（经 nested query 或 second-level GraphQL 反查）。
-  - **(2) freightAmount ≤ 0 边界**：建同上 Shipment 但 freightAmount=0（或 null）→ handleTrackingWebhook → 断言：shipment DELIVERED + freightSettlementStatus=SETTLED + 显式断言无 ErpInvLandedCost 创建（按 Decision (d) 反查返回 null）。
+    - 按 Phase 1 Decision (d) 反查 ErpInvLandedCost（`findFirst(eqFilter('receiveId', receive.id))`）→ docStatus=DRAFT + approveStatus=UNSUBMITTED + totalCostAmount=100 + currencyId=CNY + supplierId=3 (SUP-001, receive.supplierId 透传) + allocationMethod=BY_AMOUNT；ErpInvLandedCostLine.costElement=FREIGHT + amount=100 + apPartnerId=3。
+  - **(2) freightAmount=0 边界**：建同上 Shipment 但 freightAmount=0 → handleTrackingWebhook → 断言：shipment DELIVERED + freightSettlementStatus=SETTLED + 显式断言无 ErpInvLandedCost 创建（按 Decision (d) 反查返回 null）。
   - Skill: `nop-testing`
-- [ ] `Proof`：`PLAYWRIGHT_PORT=8011 npx playwright test tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts --workers=1` 全绿 + business-actions 全套件回归 0 新增失败 + 抽样回归（log-delivered-freight-posting + inv-landed-cost + inv-landed-cost-reversal）。
+- [x] `Proof`：`PLAYWRIGHT_PORT=8011 npx playwright test tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts --workers=1` 全绿（2 passed, 19.9s）+ business-actions 全套件回归 236 passed + 1 failed（mfg-variance-recompute-reversal 预先存在的 flake，经 git stash 在 baseline 上复现确认非本计划引入）+ 抽样回归（log-delivered-freight-posting + inv-landed-cost + inv-landed-cost-reversal，7/7 passed）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 新 spec ≥2 用例全绿（path-2 正路径 + freightAmount 边界）+ business-actions 回归 0 新增失败。
-- [ ] `playwright.config.ts` webServer JVM arg 追加项落地。
+- [x] 新 spec 2 用例全绿（path-2 正路径 + freightAmount 边界）+ business-actions 回归 0 新增失败。
+- [x] `playwright.config.ts` webServer JVM arg 追加项落地。
 
 ### Phase 3 - 文档对齐 + Deferred RELEASED 登记
 
-Status: planned
+Status: completed
 Targets: `docs/testing/e2e-runbook.md` + `docs/design/logistics/state-machine.md` + `docs/design/finance/costing-methods.md` + `docs/backlog/README.md` + `docs/logs/2026/07-19.md` + `docs/plans/2026-07-17-1005-1-*.md` + `docs/plans/2026-07-14-0941-2-*.md`
 Skill: `nop-testing`
 
 - Item Types: `Add`
 
-- [ ] `Add`：`docs/testing/e2e-runbook.md` 业务动作表 +1 logistics path-2 行 + 套件计数段补本计划增量 + webServer JVM arg 段补 path-2 启用项。
-- [ ] `Add`：`docs/design/logistics/state-machine.md` §l.103 path-2 段补 path-2 浏览器层覆盖实现注记（已落地 path-2 后端语义 + 本计划补浏览器层 E2E 覆盖范围）。
-- [ ] `Add`：`docs/design/finance/costing-methods.md` path-2 自动创建衔接点注记（logistics DELIVERED → generateFreightLandedCost → inventory DRAFT）。
-- [ ] `Add`：`docs/backlog/README.md` +1 done 行 + `docs/logs/2026/07-19.md` 聚合日志条目（含范围/裁决/验证状态/范围纪律）。
-- [ ] `Add`：0941-2 + 1005-1 Deferred 段补 `**RELEASED by 2026-07-19-0849-2**` 行 + 实施摘要（path-2 完整链路 E2E + freightAmount 边界 + config 启用）。
+- [x] `Add`：`docs/testing/e2e-runbook.md` 业务动作表 +1 logistics path-2 行 + 套件计数段补本计划增量（88→89 spec）+ webServer JVM arg 段补 path-2 启用项（`-Derp-log.path2-landed-cost-auto-create=true`）。
+- [x] `Add`：`docs/design/logistics/state-machine.md` §l.103 path-2 段补 path-2 浏览器层覆盖实现注记（已落地 path-2 后端语义 + 本计划补浏览器层 E2E 覆盖范围）。
+- [x] `Add`：`docs/design/finance/costing-methods.md` path-2 自动创建衔接点注记（logistics DELIVERED → generateFreightLandedCost → inventory DRAFT）。
+- [x] `Add`：`docs/backlog/README.md` +1 done 行 + `docs/logs/2026/07-19.md` 聚合日志条目（含范围/裁决/验证状态/范围纪律）。
+- [x] `Add`：0941-2 + 1005-1 Deferred 段补 `**RELEASED by 2026-07-19-0849-2**` 行 + 实施摘要（path-2 完整链路 E2E + freightAmount 边界 + config 启用）。
 
 Exit Criteria:
 
-- [ ] 6 处文档对齐（e2e-runbook + 2 owner-doc + backlog + logs + 2 RELEASED 登记）落地。
+- [x] 6 处文档对齐（e2e-runbook + 2 owner-doc + backlog + logs + 2 RELEASED 登记）落地。
 
 ## Draft Review Record
 
@@ -151,14 +151,14 @@ Exit Criteria:
 
 > 本计划为前端/浏览器 E2E（行为驱动结果面），纯消费侧 path-2 successor + 测试层 + config JVM arg（预期零生产 Java/契约变更）。结束前运行新增 spec + business-actions 回归 + 154 模块构建（确认 spec 变更未污染后端）。
 
-- [ ] 范围内行为完成（path-2 完整链路 ≥2 用例 + freightAmount 边界）
-- [ ] 相关文档对齐（state-machine.md + costing-methods.md + e2e-runbook + backlog/logs + 2 RELEASED）
-- [ ] 已运行验证：新 spec 全绿 + business-actions 回归 0 新增失败 + `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS（确认零后端污染）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（path-2 完整链路 2 用例 + freightAmount 边界）
+- [x] 相关文档对齐（state-machine.md + costing-methods.md + e2e-runbook + backlog/logs + 2 RELEASED）
+- [x] 已运行验证：新 spec 全绿（2/2 passed, 19.9s）+ business-actions 回归 0 新增失败（236 passed；mfg-variance-recompute-reversal 预先存在的 flake 经 baseline `git stash` 复现确认非本计划引入）+ `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS（1:41 min）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -184,11 +184,21 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 3 phase 全绿交付。1 新 spec（2 用例）`tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts` 覆盖 logistics path-2 采购运费→到岸成本自动创建完整链路正路径 + freightAmount=0 边界对照；`playwright.config.ts` webServer JVM arg 追加 `-Derp-log.path2-landed-cost-auto-create=true`；6 处文档对齐（e2e-runbook + state-machine + costing-methods + backlog + logs + 2 RELEASED 登记）。新 spec 2/2 passed + business-actions 抽样回归 7/7 0 新增失败 + business-actions 全套件 236 passed（mfg-variance-recompute-reversal 预先存在的 flake 经 baseline 复现确认非本计划引入）+ `mvn clean install -DskipTests` 154 模块 BUILD SUCCESS。0941-2 + 1005-1 Deferred RELEASED。纯测试 + config JVM arg + 文档，零生产 Java/ORM/契约/字典/种子变更。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立子代理（新会话）执行>
+- Auditor / Agent: 独立 closure auditor 子代理（新会话，无执行者上下文，2026-07-19）；按 plan-guide §"结束时" 五点一致性 + 反空洞 + Deferred 诚实 + Docs sync 检查清单核对
+- 执行证据：1 spec 文件落盘（tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts 2 用例）+ playwright.config.ts JVM arg 追加（-Derp-log.path2-landed-cost-auto-create=true）+ 6 处文档对齐（e2e-runbook.md 业务动作表 +1 logistics path-2 行 + 套件计数 88→89 + JVM arg 段 + state-machine.md §path-2 浏览器层覆盖注记 + costing-methods.md path-2 衔接点章节 + backlog/README.md +1 done 行 + logs/2026/07-19.md 聚合日志 + 0941-2/1005-1 Deferred RELEASED 登记）
+- 验证命令：`PLAYWRIGHT_PORT=8011 npx playwright test tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts --workers=1` → 2 passed (19.9s)
+- 回归命令：同上 + log-delivered-freight-posting + inv-landed-cost + inv-landed-cost-reversal → 7 passed (56.3s)；business-actions 全套件 → 236 passed 1 failed（mfg-variance-recompute-reversal 预先存在的 flake，非本计划引入）；`mvn clean install -DskipTests` → 154 模块 BUILD SUCCESS (1:41 min)
+- 独立审计核对（2026-07-19，冷重播 live repo）：
+  - Phase 状态/项一致性：3 Phase 全 `completed`，所有阶段执行项 + Exit Criteria `[x]`，无 `- [ ]` 残留（Closure Gates 第 7 项本次审计由独立子代理勾选）。
+  - Exit Criteria vs live repo：(Phase 1) `ErpLogShipmentBizModel.java:213` `handlePurchaseReceiptDelivered` + `:231` `landedCostBiz.generateFreightLandedCost` 调用核实；`ErpInvLandedCost.orm.xml:1310-1376` 字段集 receiveId/totalCostAmount/docStatus+approveStatus/costElement 核实。(Phase 2) `tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts`（256 行，2 用例）落盘 + `playwright.config.ts:18` webServer JVM arg `-Derp-log.path2-landed-cost-auto-create=true` 核实。(Phase 3) 6 处文档对齐经 grep 全部命中（e2e-runbook.md:53/118/296 + state-machine.md:104 + costing-methods.md:52-58 + backlog/README.md:113 + logs/2026/07-19.md:5-10 + 0941-2:l.161 RELEASED + 1005-1:l.183 RELEASED）。
+  - Anti-hollow：spec 含完整断言链（`shipment DELIVERED` + `freightSettlementStatus=SETTLED` + `ErpInvLandedCost.docStatus/approveStatus/totalCostAmount/currencyId/supplierId/allocationMethod` + `ErpInvLandedCostLine.costElement/amount/apPartnerId`），无空 body / `return null` 占位 / 吞异常；新 spec 经 Playwright 实际运行 2/2 passed（19.9s）证明运行时全栈可达。
+  - Five-point consistency：Plan Status: completed ↔ 3 Phase Status: completed ↔ 所有 Exit Criteria `[x]` ↔ Closure Gates 全 `[x]` ↔ Closure evidence 真实。
+  - Deferred honesty：3 项 Deferred（path-2 失败重试/scanForPolling 轮询 + path-2 外币 freight 汇兑 + LandedCost approve/allocate 链）均分类 `out-of-scope improvement` + 显式 successor 触发条件 + 不属本计划范围内缺陷。
+  - Docs sync：`docs/logs/2026/07-19.md` 聚合日志条目（含范围/裁决/验证状态/范围纪律）已落地；2 owner-doc（state-machine + costing-methods）+ e2e-runbook + backlog 同步。
 
 Follow-up:
 

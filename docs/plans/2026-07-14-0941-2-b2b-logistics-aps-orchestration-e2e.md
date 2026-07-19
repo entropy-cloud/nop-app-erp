@@ -158,6 +158,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`（若 Explore 裁决 config-gated 关闭或 setup 复杂度过高）
 - Why Not Blocking Closure: path-1 运费过账已作代表验证 `onDelivered` 触发面。path-2（PURCHASE_RECEIPT → `IErpInvLandedCostBiz` 自动建到岸成本单）经后端单测覆盖（`TestErpLogPath2LandedCost`）。
 - Successor Required: `yes`（触发条件：path-2 到岸成本自动创建浏览器层 E2E 需求落地时，或 config-gate 启用时）
+- **RELEASED by 2026-07-19-0849-2**：plan `2026-07-19-0849-2-logistics-path2-landed-cost-browser-e2e.md` 全 3 phase 全绿交付——1 新 spec（2 用例）`log-path2-landed-cost-auto-create.action.spec.ts` 覆盖 path-2 完整链路正路径（advise→completeShipment→handleTrackingWebhook DELIVERED → DRAFT ErpInvLandedCost 自动创建：docStatus+approveStatus+totalCostAmount+currencyId+supplierId+allocationMethod + FREIGHT 行 costElement+amount+apPartnerId 字段精确数值断言）+ freightAmount=0 边界对照（显式断言无 LandedCost 创建）；`playwright.config.ts` webServer JVM arg 追加 `-Derp-log.path2-landed-cost-auto-create=true`；0941-2 Deferred 解除。
 
 ### b2b handleInboundWebhook 完整入站处理链 E2E
 
