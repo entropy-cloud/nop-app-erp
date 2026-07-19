@@ -176,3 +176,60 @@
 | FIFO 队列可视化 | ERPNext#Stock Ledger Entry | 流水行显示 stock_queue，可查看队列详情 |
 | 盘点差异差异自动生成移动单 | Odoo#stock.inventory | 盘点 DONE 自动生成盘盈/盘亏移动单 |
 | 不可变流水 + 冲销反向单 | Odoo#stock.move line | 流水只读，冲销新建反向移动单 |
+
+## Line 子实体 form 分组模板
+
+> 适用范围：库存域 8 个 Line 子实体独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md` Phase 0.C。
+> 库存域 Line 模板**分化**（不同于 purchase/sales 的统一模板），按业务关键字段分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpInvStockMoveLine | baseInfo + quantity + location + audit（4 组） |
+| ErpInvStockTakeLine | baseInfo + quantity + cost + audit（4 组） |
+| ErpInvLandedCostLine | baseInfo + amount + audit（3 组；无物料） |
+| ErpInvCostAdjustLine | baseInfo + cost + audit（3 组） |
+| ErpInvTransferOrderLine | baseInfo + quantity + audit（3 组） |
+| ErpInvPickingOrderLine | baseInfo + quantity + audit（3 组） |
+| ErpInvOwnershipTransferLine | baseInfo + quantity + reference + audit（4 组） |
+| ErpInvReservationLine | baseInfo + quantity + audit（3 组） |
+
+### StockMoveLine 模板（基础范式）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ batchNo[批号] serialNo[序列号]
+=========>quantity[数量与价格]======
+ quantity[数量] unitCost[单位成本]
+ totalCost[总成本] currencyId[币种]
+=========>location[库位信息]======
+ sourceLocationId[源库位] destLocationId[目标库位]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### 各 Line 特化点
+
+| 实体 | 特化 |
+|------|------|
+| ErpInvStockTakeLine | baseInfo 含 `locationId`；quantity 含 `bookQuantity/actualQuantity/differenceQuantity`；cost 含 `unitCost/differenceAmount` |
+| ErpInvLandedCostLine | 无 quantity/location 组；baseInfo 含 `costElement`；amount 含 `amount/apPartnerId` |
+| ErpInvCostAdjustLine | 无 quantity/location 组；baseInfo 含 `warehouseId/batchNo`；cost 含 `oldUnitCost/newUnitCost/adjustQty/adjustAmount/adjustReason/currencyId` |
+| ErpInvTransferOrderLine | 无 cost/location 组；quantity 仅 `quantity` |
+| ErpInvPickingOrderLine | baseInfo 含 `sourceLocationId`；quantity 含 `quantity/pickedQuantity` |
+| ErpInvOwnershipTransferLine | quantity 含 `quantity/unitCost/totalCost`；reference 含 `sourceBillType/sourceBillCode`；无 skuId/uoMId（实体未含） |
+| ErpInvReservationLine | baseInfo 含 `warehouseId/locationId/uomId/sourceLineCode`；quantity 含 `reservedQuantity/consumedQuantity` |
+
+### query 表单基线（5+ 字段 + filterOp）
+
+所有 inventory Line 实体的 `<form id="query">` 至少含：`lineNo` + `materialId` + `warehouseId`（视实体）+ 父头 ID + `batchNo`（视实体）。LandedCostLine（无物料）沿用 `lineNo` + `costElement` + `landedCostId` + `apPartnerId` + `amount` 替代字段达到基线。

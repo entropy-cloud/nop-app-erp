@@ -117,3 +117,52 @@
 | 价格来源标签 | 管伊佳#MaterialExtend 多档价格 | 手工改价后标记价格来源 |
 | 收款核销多对多 | 赤龙#ApPayLine | 核销明细子表选择未收发票 |
 | 红字发票链条 | 赤龙#VoucherBillR | 退货红字发票与蓝字发票双向关联展示 |
+
+## Line 子实体 form 分组模板
+
+> 适用范围：销售域 7 个 Line 子实体独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md` Phase 0.B。
+> 销售域 Line 分组与采购域同构（baseInfo + quantity + tax + reference + audit 5 组），仅 FK 名替换为 sales 域（orderId/deliveryId/invoiceId/receiptId/returnId/quotationId/priceListId）。
+
+### 统一模板（5 组）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ warehouseId[发货仓库]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ amount[金额(不含税)] deliveredQuantity[已发货数量]
+ invoicedQuantity[已开票数量]
+ discountRate[折扣率(%)] discountAmount[折扣金额]
+=========>tax[税务信息]======
+ taxRate[税率(%)] taxRateId[税率主数据]
+ taxAmount[税额] amountWithTax[金额(含税)]
+=========>reference[业务关联]======
+ orderId[订单ID] projectId[项目]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### 各 Line 特化点
+
+| 实体 | 特化 |
+|------|------|
+| ErpSalOrderLine | 完整 5 组；quantity 含 `discountRate/discountAmount/pricingSource`；reference 含 `orderId/projectId` |
+| ErpSalDeliveryLine | quantity 含 `batchNo`；reference 含 `deliveryId/orderLineId`；tax 无 `amountWithTax` |
+| ErpSalInvoiceLine | baseInfo 无 `warehouseId`；reference 含 `invoiceId/deliveryLineId` |
+| ErpSalReceiptLine | 仅 3 组（baseInfo[lineNo] + amount[amount] + reference[receiptId/invoiceId] + audit）；无 quantity/tax 组 |
+| ErpSalReturnLine | quantity 含 `reason`；reference 含 `returnId/deliveryLineId` |
+| ErpSalQuotationLine | quantity 含 `discountRate/discountAmount/pricingSource`；reference 仅 `quotationId` |
+| ErpSalPriceListLine | quantity 含 `unitPrice/minQuantity/maxQuantity/validFrom/validTo`；无 tax 组；reference 仅 `priceListId` |
+
+### query 表单基线（5+ 字段 + filterOp）
+
+所有 sales Line 实体的 `<form id="query">` 至少含：`lineNo` + `materialId` + `warehouseId`（视实体）+ 父头 ID（orderId/deliveryId/...）+ 日期字段（如 `businessDate`，视实体是否含；无则用 `lineNo` filterOp=like 替代）+ `pricingSource`（如实体含）。ReceiptLine 等极简实体沿用 `lineNo` + `invoiceId` 等替代字段达到基线。

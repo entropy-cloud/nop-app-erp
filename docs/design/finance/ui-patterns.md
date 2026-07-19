@@ -191,3 +191,77 @@
 | GL 行多币种 + 辅助核算维度 | ERPNext#gl_entry.json | 分录行可选显示辅助核算列 |
 | 总账 → 明细账 → 凭证 三级下钻 | 通用范式 | 科目行展开明细账，明细账行跳转凭证 |
 | 红冲链条双向展示 | 赤龙#VoucherBillR 回链 | 详情页展示"冲销了谁/被谁冲销" |
+
+## Line 子实体 form 分组模板
+
+> 适用范围：财务域 6 个 Line 子实体（ErpFinVoucherLine 已由 1500-1 覆盖，不在此节范围）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md` Phase 0.D。
+> 财务域 Line 模板**各异**（与 inventory 同属分化，但更碎片化），按业务关键字段分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpFinVoucherTemplateLine | baseInfo + template + audit（3 组） |
+| ErpFinReconciliationLine | baseInfo + amount + reference + audit（4 组） |
+| ErpFinBankReconciliationLine | baseInfo + amount + reference + audit（4 组） |
+| ErpFinBankStatementLine | baseInfo + amount + match + reference + audit（5 组） |
+| ErpFinExpenseClaimLine | baseInfo + amount + reference + audit（4 组） |
+| ErpFinBudgetLine | baseInfo + auxiliary + amount + reference + audit（5 组；字段最多） |
+
+### ErpFinVoucherTemplateLine 模板
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] subjectCode[科目编码]
+ dcDirection[借贷方向] amountExpression[金额表达式]
+=========>template[模板信息]======
+ accountKey[科目键] amountKey[金额键]
+ memoTemplate[摘要模板] templateId[凭证模板ID]
+=========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpFinBudgetLine 模板（最大实体）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] orgId[核算组织]
+ acctSchemaId[账套] periodId[期间]
+ subjectId[科目ID] subjectCode[科目编码]
+=========>auxiliary[辅助核算]======
+ costCenterId[成本中心] departmentId[部门]
+ projectId[项目] partnerId[往来单位]
+ warehouseId[仓库] materialId[物料]
+=========>amount[金额信息]======
+ budgetAmountSource[预算金额(源币种)] budgetAmountFunctional[预算金额(本位币)]
+ currencyId[币种] exchangeRate[汇率]
+=========>reference[业务关联]======
+ scenarioId[预算方案ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### 各 Line 特化点
+
+| 实体 | 特化 |
+|------|------|
+| ErpFinReconciliationLine | baseInfo 含 `paymentItemId/invoiceItemId`；amount 含 `settledAmountSource/settledAmountFunctional`；reference 仅 `reconciliationId` |
+| ErpFinBankReconciliationLine | baseInfo 含 `adjustmentType/description/dcDirection/side`；amount 仅 `amount`；reference 仅 `reconciliationId` |
+| ErpFinBankStatementLine | baseInfo 含 `transactionDate/description/refNo/dcDirection`；amount 含 `amount/currencyId/balanceAfter`；match 含 `matchStatus/matchedLineId`；reference 仅 `statementId` |
+| ErpFinExpenseClaimLine | baseInfo 含 `expenseType/projectId/costCenterId/subjectId/subjectCode`；amount 含 `amountWithoutTax/taxRate/taxAmount/amountWithTax`；reference 仅 `claimId` |
+
+### query 表单基线（5+ 字段 + filterOp）
+
+所有 finance Line 实体的 `<form id="query">` 至少含 5 个查询字段。BankStatementLine 等含 `transactionDate` 的实体配 `filterOp=date-between`；其余实体的 `lineNo`、`subjectCode`、`dcDirection` 等无 `like` filterOp 时显式 `filterOp=eq`。ErpFinVoucherLine 已由 1500-1 closure audit 裁决「line entity, query via parent context, 0 filterOp by design」，本节不重做。

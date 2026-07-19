@@ -282,7 +282,7 @@ xmeta 全部 prop（排除 internal）
 
 ## 4. 影响面与工作量评估
 
-> **实施状态（2026-07-13）**：P0 已完成（全域 338 实体 codegen 跳过 seq-default id）；P1 已完成（39 核心实体分组 + 查询表单，plan `2026-07-12-1500-1`）；P2 归 successor。详见 `docs/plans/2026-07-12-1500-1-view-form-layout-overhaul.md`。
+> **实施状态（2026-07-13）**：P0 已完成（全域 338 实体 codegen 跳过 seq-default id）；P1 已完成（39 核心实体分组 + 查询表单，plan `2026-07-12-1500-1`）；P2 部分（核心 4 域 47 扩展实体分组 + 查询表单已完成，plan `2026-07-19-1818-2`）；其余 P2 归 successor。详见 `docs/plans/2026-07-12-1500-1-view-form-layout-overhaul.md` 与 `docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md`。
 
 ### 4.1 按优先级分批
 
@@ -291,7 +291,8 @@ xmeta 全部 prop（排除 internal）
 | P0 | id 字段从表单 layout 中移除 | 337 | 低（机械修改） | 全域批量执行 | ✅ 已完成 |
 | P1 | 核心交易实体字段分组（view + edit） | ~40（高频实体） | 中（需业务知识设计分组） | 按域分批 | ✅ 已完成（39 实体） |
 | P1 | 核心交易实体查询表单配置 | ~40 | 中（需选择查询字段 + 运算符） | 按域分批 | ✅ 已完成（39 实体） |
-| P2 | 全部实体字段分组 + 查询表单 | ~299（低频实体） | 中（同上但量大） | 渐进推进 | ⏳ successor |
+| P2 | 核心 4 域 Line 子实体 + 剩余主实体分组（purchase/sales/inventory/finance） | 47（29 Line + 18 主） | 中（按业务模板分化） | 单 plan 落地（plan `2026-07-19-1818-2`） | ✅ 已完成（2026-07-19） |
+| P2 | 全部实体字段分组 + 查询表单（剩余扩展域） | ~252 | 中（同上但量大） | 渐进推进 | ⏳ successor（F3 P1/P2/P3） |
 
 ### 4.2 最需要优先处理的实体（字段数 ≥ 25 的 edit 表单）
 

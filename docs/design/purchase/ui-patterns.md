@@ -266,3 +266,54 @@
 | 付款核销子表 | 赤龙#ApPayLine | 核销明细行多对多选择未付发票 |
 | 凭证过账状态嵌入单据详情 | ERPNext#GL Entry 反查 | 详情页显示凭证号与过账状态 |
 | 红冲链条可视化 | 赤龙#VoucherBillR | 红字/蓝字发票双向关联，详情页展示冲销链条 |
+
+## Line 子实体 form 分组模板
+
+> 适用范围：采购域 8 个 Line 子实体独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md` Phase 0.A。
+> 父视图内嵌的子表行内编辑（child-table-editor）属 F4 Phase 2 范围，不在本节约定内。
+
+### 统一模板（5 组）
+
+采购域所有 Line 实体共享以下 5 组结构（缺字段则该组省略，不强行保留空组）：
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ warehouseId[收货仓库]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ amount[金额(不含税)] receivedQuantity[已收货数量]
+ invoicedQuantity[已开票数量]
+=========>tax[税务信息]======
+ taxRate[税率(%)] taxRateId[税率主数据]
+ taxAmount[税额] amountWithTax[金额(含税)]
+=========>reference[业务关联]======
+ orderId[订单ID] projectId[项目]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### 各 Line 特化点
+
+| 实体 | 特化 |
+|------|------|
+| ErpPurOrderLine | 完整 5 组（baseInfo / quantity / tax / reference / audit） |
+| ErpPurReceiveLine | quantity 额外 `rejectedQuantity/batchNo`；reference 含 `orderLineId`；tax 无 `amountWithTax`（实体未含） |
+| ErpPurInvoiceLine | baseInfo 无 `warehouseId/skuId`；reference 含 `receiveLineId`；quantity 无 `receivedQuantity` |
+| ErpPurPaymentLine | 仅 3 组（baseInfo + amount[amount] + reference[paymentId/invoiceId] + audit）；无 quantity/tax 组 |
+| ErpPurReturnLine | quantity 含 `reason`；reference 含 `receiveLineId`；tax 无 `amountWithTax` |
+| ErpPurRequisitionLine | 无 tax 组；quantity 含 `requiredDate/suggestedSupplierId/projectId`；reference 仅 `requisitionId` |
+| ErpPurQuotationLine | quantity 含 `leadTimeDays`；无 `amountWithTax`/`receivedQuantity`；reference 仅 `quotationId` |
+| ErpPurRfqLine | 极简（baseInfo + quantity + reference[rfqId] + audit）；无 tax 组 |
+
+### query 表单基线（5+ 字段 + filterOp）
+
+所有 purchase Line 实体的 `<form id="query">` 至少含：`lineNo`（filterOp=eq）+ `materialId` + `warehouseId`（视实体而定）+ `orderId`/对应父头 ID + `businessDate`（filterOp=date-between，视实体是否含日期字段）。PaymentLine 等无 `businessDate` 的实体，沿用 `lineNo` + `invoiceId` 等替代字段达到 ≥5 字段基线。

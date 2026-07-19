@@ -71,7 +71,7 @@ Status: `todo`
 
 ### F3 — Form 布局分组（P0-P3 按域）
 
-Status: `todo`
+Status: `P0 completed`（plan `docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md` 全 5 phase 全绿：Phase 0 4 域 Line 模板冻结 + Phase 1-4 共 47 实体 form 分组 + query filterOp）。P1/P2/P3 独立 plan 待启动。
 
 每域主实体 + 子实体，按 `ui-patterns.md` 设计分组。
 
