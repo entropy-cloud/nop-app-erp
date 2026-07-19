@@ -7,6 +7,7 @@ import app.erp.fin.service.processor.ErpFinNotesReceivableProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -44,8 +45,9 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
                                            @Name("discountDate") LocalDate discountDate,
                                            @Name("bankId") Long bankId,
                                            @Name("discountRate") BigDecimal discountRate,
+                                           @Optional @Name("exchangeRate") BigDecimal exchangeRate,
                                            IServiceContext context) {
-        return notesReceivableProcessor.discount(notesId, discountDate, bankId, discountRate, context);
+        return notesReceivableProcessor.discount(notesId, discountDate, bankId, discountRate, exchangeRate, context);
     }
 
     @Override

@@ -8,13 +8,17 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinNotesReceivable;
 import app.erp.fin.dao.entity.ErpFinReconciliation;
+import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
+import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -88,9 +92,70 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
                     new BigDecimal("36000"), partnerId, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 30));
         });
 
-        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), CTX));
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), null, CTX));
         assertTrue(Boolean.TRUE.equals(note.getPosted()), "贴现过账成功 posted=true");
         assertFalse(findBillLinks("NR-POST-002", ErpFinBusinessType.NOTES_RECEIVABLE_DISCOUNTED.name()).isEmpty(), "DISCOUNTED 凭证回链已落库");
+    }
+
+    @Test
+    public void testDiscountFxPosts6051VoucherLineAndBalance() {
+        // plan 2026-07-19-0730-1 Proof 3：cash-at-spot plug 范式外币贴现端到端 6051 行 + 复式平衡断言。
+        // USD note: amountSource=USD 100 / exchangeRate=6.6667 / amountFunctional=CNY 666.67
+        // discountRate=0.12 / remainingDays=30 / spotRate=6.7000（外币升值）
+        // → discountInterestFunctional=6.67 / netAmount=663.3000 / exchangeGainLoss=−3.3000（Cr 6051）
+        // 复式平衡：Dr 663.3000 + Dr 6.67 = 669.97 ≡ Cr 3.3000 + Cr 666.67 = 669.97
+        long partnerId = 7706L;
+        Long noteId = ormTemplate.runInSession(s -> {
+            seedBase();
+            seedCurrency(1L, "CNY", true);
+            seedCurrency(2L, "USD", false);
+            seedSubject("1121", "应收票据");
+            seedSubject("1002", "银行存款");
+            seedSubject("6603", "财务费用-利息支出");
+            seedSubject("6051", "汇兑损益");
+            return seedFxReceivable("NR-FX-POST-001",
+                    app.erp.fin.service.ErpFinConstants.NOTES_RECV_RECEIVED,
+                    new BigDecimal("100"), new BigDecimal("6.6667"), new BigDecimal("666.67"), 2L, partnerId,
+                    LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
+        });
+
+        Boolean originalFlag = AppConfig.var(ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.FALSE);
+        ErpFinNotesReceivable note;
+        try {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.TRUE);
+            note = ormTemplate.runInSession(session -> notesBiz.discount(
+                    noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.12"), new BigDecimal("6.7000"), CTX));
+        } finally {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, originalFlag);
+        }
+
+        assertTrue(Boolean.TRUE.equals(note.getPosted()), "FX 贴现过账成功 posted=true");
+        List<ErpFinVoucherBillR> links = findBillLinks("NR-FX-POST-001",
+                ErpFinBusinessType.NOTES_RECEIVABLE_DISCOUNTED.name());
+        assertFalse(links.isEmpty(), "FX DISCOUNTED 凭证回链已落库");
+
+        List<ErpFinVoucherLine> lines = linesOf(links.get(0).getVoucherId());
+        assertEquals(4, lines.size(), "FX 贴现凭证 4 行（含 6051）");
+
+        BigDecimal dr1002 = debitOf(lines, "1002");
+        BigDecimal dr6603 = debitOf(lines, "6603");
+        BigDecimal cr6051 = creditOf(lines, "6051");
+        BigDecimal cr1121 = creditOf(lines, "1121");
+
+        assertEquals(0, new BigDecimal("663.3000").compareTo(dr1002), "Dr 1002 netAmount cash-at-spot=663.3000");
+        assertEquals(0, new BigDecimal("6.67").compareTo(dr6603), "Dr 6603 discountInterest functional=6.67");
+        assertEquals(0, new BigDecimal("3.3000").compareTo(cr6051), "Cr 6051 exchangeGainLoss 取负=3.3000");
+        assertEquals(0, new BigDecimal("666.67").compareTo(cr1121), "Cr 1121 faceAmount functional=666.67");
+
+        // 复式平衡断言（Decision 2 硬约束）：Σ Dr ≡ Σ Cr = 669.97
+        BigDecimal sumDr = dr1002.add(dr6603);
+        BigDecimal sumCr = cr6051.add(cr1121);
+        assertEquals(0, sumDr.compareTo(sumCr),
+                "Σ Dr (" + sumDr + ") ≡ Σ Cr (" + sumCr + ") 复式平衡");
+        assertEquals(0, new BigDecimal("669.97").compareTo(sumDr), "Σ Dr = 669.97");
+        assertEquals(0, new BigDecimal("669.97").compareTo(sumCr), "Σ Cr = 669.97");
     }
 
     @Test
@@ -199,6 +264,38 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         return note.getId();
     }
 
+    private Long seedFxReceivable(String code, String status, BigDecimal amountSource, BigDecimal exchangeRate,
+                                  BigDecimal amountFunctional, Long currencyId, Long partnerId,
+                                  LocalDate issueDate, LocalDate dueDate) {
+        IEntityDao<ErpFinNotesReceivable> dao = daoProvider.daoFor(ErpFinNotesReceivable.class);
+        ErpFinNotesReceivable note = new ErpFinNotesReceivable();
+        note.setCode(code);
+        note.setOrgId(1L);
+        note.setNotesType(app.erp.fin.service.ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE);
+        note.setNotesNo("N-" + code);
+        note.setIssueDate(issueDate);
+        note.setDueDate(dueDate);
+        note.setCurrencyId(currencyId);
+        note.setExchangeRate(exchangeRate);
+        note.setAmountFunctional(amountFunctional);
+        note.setAmountSource(amountSource);
+        note.setPartnerId(partnerId);
+        note.setStatus(status);
+        note.setPosted(false);
+        dao.saveEntity(note);
+        return note.getId();
+    }
+
+    private void seedCurrency(Long id, String code, boolean functional) {
+        IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
+        ErpMdCurrency c = new ErpMdCurrency();
+        c.setId(id);
+        c.setCode(code);
+        c.setName(code);
+        c.setIsFunctional(functional);
+        dao.saveEntity(c);
+    }
+
     private Long seedArApItem(Long partnerId, String direction, String sourceBillType, String sourceBillCode, BigDecimal amount) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         ErpFinArApItem item = new ErpFinArApItem();
@@ -274,5 +371,26 @@ public class TestErpFinNotesReceivablePosting extends JunitAutoTestCase {
         QueryBean q = new QueryBean();
         q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));
         return dao.findAllByQuery(q);
+    }
+
+    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+        IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        return dao.findAllByQuery(q);
+    }
+
+    private BigDecimal debitOf(List<ErpFinVoucherLine> lines, String subjectCode) {
+        return lines.stream()
+                .filter(l -> subjectCode.equals(l.getSubjectCode()))
+                .map(ErpFinVoucherLine::getDebitAmount)
+                .findFirst().orElse(BigDecimal.ZERO);
+    }
+
+    private BigDecimal creditOf(List<ErpFinVoucherLine> lines, String subjectCode) {
+        return lines.stream()
+                .filter(l -> subjectCode.equals(l.getSubjectCode()))
+                .map(ErpFinVoucherLine::getCreditAmount)
+                .findFirst().orElse(BigDecimal.ZERO);
     }
 }

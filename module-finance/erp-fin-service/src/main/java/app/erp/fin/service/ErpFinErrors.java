@@ -49,6 +49,7 @@ public interface ErpFinErrors {
     String ARG_CONFIG_KEY = "configKey";
     String ARG_FROM_DATE = "fromDate";
     String ARG_TO_DATE = "toDate";
+    String ARG_CURRENCY_ID = "currencyId";
 
     // --- 预算管理作用域参数键 ---
     String ARG_SUBJECT_ID = "subjectId";
@@ -244,6 +245,10 @@ public interface ErpFinErrors {
 
     ErrorCode ERR_NOTES_AMOUNT_INVALID = ErrorCode.define("erp.err.fin.notes.amount-invalid",
             "票据 {notesCode} 票面金额必须大于 0", ARG_NOTES_CODE);
+
+    ErrorCode ERR_NOTES_DISCOUNT_FX_RATE_REQUIRED = ErrorCode.define("erp.err.fin.notes.discount-fx-rate-required",
+            "外币票据 {notesCode}（currencyId={currencyId}）贴现启用 FX 派生（erp-fin.notes-fx-gain-loss-enabled=true）时贴现日即期汇率(exchangeRate)必填",
+            ARG_NOTES_CODE, ARG_CURRENCY_ID);
 
     // --- 授信额度作用域 ---
 

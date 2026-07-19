@@ -235,6 +235,11 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     String CONFIG_NOTES_WRITEOFF_APPROVAL_REQUIRED = "erp-fin.notes-writeoff-approval-required";
     /** 授信利息计提默认年化利率，默认 0=关闭门控（rate=0 时 accrueInterest 抛 RATE_NOT_CONFIGURED）；非 0 时作年化利率（360 天基准）。 */
     String CONFIG_CREDIT_FACILITY_DEFAULT_INTEREST_RATE = "erp-fin.credit-facility-default-interest-rate";
+    /**
+     * 外币票据贴现 exchangeGainLoss 派生开关，默认 false（关闭时 Builder 沿用 ZERO 行为向后兼容）。
+     * 启用时 buildDiscount 按 cash-at-spot plug 范式派生 exchangeGainLoss（详见 treasury.md §业财过账 实现注记）。
+     */
+    String CONFIG_NOTES_FX_GAIN_LOSS_ENABLED = "erp-fin.notes-fx-gain-loss-enabled";
 
     // ---- notes-type ----
     String NOTES_TYPE_BANK_ACCEPTANCE = "BANK_ACCEPTANCE";

@@ -6,9 +6,12 @@ import app.erp.fin.dao.entity.ErpFinNotesReceivable;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.NotesPostingDispatcher;
+import app.erp.md.dao.entity.ErpMdCurrency;
 import io.nop.api.core.auth.IUserContext;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -21,6 +24,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+
+import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 应收票据状态机编排 Processor（{@code processor-extension-pattern.md} 两层结构：Facade + Processor）。
@@ -51,11 +56,11 @@ public class ErpFinNotesReceivableProcessor {
     }
 
     public ErpFinNotesReceivable discount(Long notesId, LocalDate discountDate, Long bankId,
-                                          BigDecimal discountRate, IServiceContext context) {
+                                          BigDecimal discountRate, BigDecimal exchangeRate, IServiceContext context) {
         ErpFinNotesReceivable note = requireNote(notesId, context);
         validateTransitionForDiscount(note, context);
-        requireDiscountInputs(note, discountDate, bankId, discountRate, context);
-        ErpFinNotesDiscount discount = buildDiscount(note, discountDate, bankId, discountRate);
+        requireDiscountInputs(note, discountDate, bankId, discountRate, exchangeRate, context);
+        ErpFinNotesDiscount discount = buildDiscount(note, discountDate, bankId, discountRate, exchangeRate);
         return doDiscount(notesId, note, discount, context);
     }
 
@@ -146,10 +151,12 @@ public class ErpFinNotesReceivableProcessor {
     }
 
     protected void requireDiscountInputs(ErpFinNotesReceivable note, LocalDate discountDate, Long bankId,
-                                          BigDecimal discountRate, IServiceContext context) {
+                                          BigDecimal discountRate, BigDecimal exchangeRate, IServiceContext context) {
         if (discountDate == null || discountRate == null || bankId == null) {
             throw illegalTransition(note, note.getStatus(), "贴现日/贴现银行/贴现率非空");
         }
+        // 注：config 启用 + 外币票据 + exchangeRate=null 时走 ZERO 兜底路径（向后兼容），不强制抛错。
+        // exchangeGainLoss 派生在 buildDiscount 中按 fxPlugEnabled 三联条件（enabled + 外币 + exchangeRate≠null）判定。
     }
 
     // ---------- step：执行（状态推进 + 持久化） ----------
@@ -224,16 +231,44 @@ public class ErpFinNotesReceivableProcessor {
     // ---------- 实体构造（贴现计算） ----------
 
     protected ErpFinNotesDiscount buildDiscount(ErpFinNotesReceivable note, LocalDate discountDate, Long bankId,
-                                                  BigDecimal discountRate) {
-        BigDecimal faceAmount = nz(note.getAmountFunctional());
+                                                  BigDecimal discountRate, BigDecimal exchangeRate) {
+        BigDecimal faceAmountFunctional = nz(note.getAmountFunctional());
+        BigDecimal amountSource = nz(note.getAmountSource());
         long remainingDays = note.getDueDate() != null && discountDate.isBefore(note.getDueDate())
                 ? ChronoUnit.DAYS.between(discountDate, note.getDueDate()) : 0L;
-        // discountInterest = 票面 × 贴现率 × 剩余天数 / 360
-        BigDecimal discountInterest = faceAmount
+
+        // discountInterest(functional 口径，作为 Dr 6603 行金额，不动）
+        BigDecimal discountInterestFunctional = faceAmountFunctional
                 .multiply(discountRate)
                 .multiply(BigDecimal.valueOf(remainingDays))
                 .divide(BigDecimal.valueOf(360), 2, RoundingMode.HALF_UP);
-        BigDecimal netAmount = faceAmount.subtract(discountInterest);
+
+        // cash-at-spot plug 范式（仅当 config 启用 + 外币票据 + exchangeRate 入参时启用）
+        boolean fxPlugEnabled = notesFxGainLossEnabled() && isForeignCurrency(note) && exchangeRate != null;
+        BigDecimal netAmount;
+        BigDecimal exchangeGainLoss;
+        BigDecimal resolvedExchangeRate;
+        if (fxPlugEnabled) {
+            // discountInterestSource（source 口径中间量）
+            BigDecimal discountInterestSource = amountSource
+                    .multiply(discountRate)
+                    .multiply(BigDecimal.valueOf(remainingDays))
+                    .divide(BigDecimal.valueOf(360), 2, RoundingMode.HALF_UP);
+            BigDecimal netAmountSource = amountSource.subtract(discountInterestSource);
+            // discount.netAmount = netAmountSource × spotRate（cash-at-spot，Dr 1002 行金额）
+            netAmount = netAmountSource.multiply(exchangeRate).setScale(4, RoundingMode.HALF_UP);
+            // exchangeGainLoss = faceFunctional − interestFunctional − netAmount（plug 平衡差额，Dr/Cr 6051）
+            exchangeGainLoss = faceAmountFunctional
+                    .subtract(discountInterestFunctional)
+                    .subtract(netAmount)
+                    .setScale(4, RoundingMode.HALF_UP);
+            resolvedExchangeRate = exchangeRate;
+        } else {
+            // 兜底路径（config 关闭 / 本位币票据 / exchangeRate=null）：沿用原 functional 口径 + ZERO。
+            netAmount = faceAmountFunctional.subtract(discountInterestFunctional);
+            exchangeGainLoss = BigDecimal.ZERO;
+            resolvedExchangeRate = note.getExchangeRate() != null ? note.getExchangeRate() : BigDecimal.ONE;
+        }
 
         IEntityDao<ErpFinNotesDiscount> discountDao = daoProvider.daoFor(ErpFinNotesDiscount.class);
         ErpFinNotesDiscount discount = discountDao.newEntity();
@@ -241,12 +276,12 @@ public class ErpFinNotesReceivableProcessor {
         discount.setOrgId(note.getOrgId());
         discount.setDiscountDate(discountDate);
         discount.setBankId(bankId);
-        discount.setFaceAmount(faceAmount);
-        discount.setDiscountInterest(discountInterest);
+        discount.setFaceAmount(faceAmountFunctional);
+        discount.setDiscountInterest(discountInterestFunctional);
         discount.setNetAmount(netAmount);
         discount.setCurrencyId(note.getCurrencyId());
-        discount.setExchangeRate(note.getExchangeRate() != null ? note.getExchangeRate() : BigDecimal.ONE);
-        discount.setExchangeGainLoss(BigDecimal.ZERO);
+        discount.setExchangeRate(resolvedExchangeRate);
+        discount.setExchangeGainLoss(exchangeGainLoss);
         return discount;
     }
 
@@ -330,6 +365,36 @@ public class ErpFinNotesReceivableProcessor {
 
     protected static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /**
+     * config {@code erp-fin.notes-fx-gain-loss-enabled} 读取（默认 false 向后兼容）。
+     * 直接调用点 reader 对齐既有 11+ 处 config 读取范式（如 ExchangeRevaluationService:254 / ErpFinAccountingPeriodProcessor:726），
+     * 不引入 ErpFinConfigs 抽象层（{@code ErpFinConfigs.java} 仅 5 行空接口零 reader 方法）。
+     */
+    private boolean notesFxGainLossEnabled() {
+        return AppConfig.var(ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.FALSE);
+    }
+
+    /**
+     * 判定票据是否外币（currencyId ≠ 本位币 currencyId）。本位币 currencyId 经 {@code ErpMdCurrency.isFunctional=TRUE}
+     * 反查（对齐 {@code ExchangeRevaluationService:280-287} private {@code resolveFunctionalCurrencyId} 范式）。
+     */
+    private boolean isForeignCurrency(ErpFinNotesReceivable note) {
+        Long functionalCurrencyId = resolveFunctionalCurrencyId();
+        if (functionalCurrencyId == null || note.getCurrencyId() == null) {
+            return false;
+        }
+        return !Objects.equals(note.getCurrencyId(), functionalCurrencyId);
+    }
+
+    private Long resolveFunctionalCurrencyId() {
+        IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("isFunctional", Boolean.TRUE));
+        q.setLimit(1);
+        java.util.List<ErpMdCurrency> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0).getId();
     }
 
     protected NopException illegalTransition(ErpFinNotesReceivable note, String current, String expected) {

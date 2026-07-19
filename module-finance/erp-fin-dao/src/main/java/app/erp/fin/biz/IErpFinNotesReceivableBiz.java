@@ -3,6 +3,7 @@ package app.erp.fin.biz;
 
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
@@ -23,11 +24,17 @@ public interface IErpFinNotesReceivableBiz extends ICrudBiz<ErpFinNotesReceivabl
     @BizMutation
     ErpFinNotesReceivable receive(@Name("notesId") Long notesId, IServiceContext context);
 
+    /**
+     * 票据贴现（{@code treasury.md §业财过账}）。{@code exchangeRate} 为贴现日即期汇率（外币票据 FX 派生用），
+     * 可选入参；省略或单币种票据或 config {@code erp-fin.notes-fx-gain-loss-enabled=false} 时走 ZERO 兜底路径。
+     * 详见 plan 2026-07-19-0730-1。
+     */
     @BizMutation
     ErpFinNotesReceivable discount(@Name("notesId") Long notesId,
                                    @Name("discountDate") LocalDate discountDate,
                                    @Name("bankId") Long bankId,
                                    @Name("discountRate") BigDecimal discountRate,
+                                   @Optional @Name("exchangeRate") BigDecimal exchangeRate,
                                    IServiceContext context);
 
     @BizMutation

@@ -6,9 +6,11 @@ import app.erp.fin.dao.entity.ErpFinNotesDiscount;
 import app.erp.fin.dao.entity.ErpFinNotesReceivable;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
+import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
@@ -60,13 +62,116 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
                     LocalDate.of(2026, 7, 1), LocalDate.of(2026, 8, 30));
         });
 
-        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), CTX));
+        ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.06"), null, CTX));
         assertEquals(ErpFinConstants.NOTES_RECV_DISCOUNTED, note.getStatus());
 
         ErpFinNotesDiscount discount = findDiscount(note.getId());
         assertEquals(0, new BigDecimal("360.00").compareTo(discount.getDiscountInterest()), "贴现息=360.00");
         assertEquals(0, new BigDecimal("35640.00").compareTo(discount.getNetAmount()), "实得=35640.00");
         assertEquals(note.getDiscountId(), discount.getId());
+    }
+
+    @Test
+    public void testDiscountFxWithSpotRateDerivesExchangeGainLossCashAtSpot() {
+        // USD note: amountSource=USD 100, exchangeRate=6.6667, amountFunctional=CNY 666.67,
+        // discountRate=0.12, remainingDays=30, spotRate=6.7000（外币升值）
+        // → discountInterestFunctional=6.67, discountInterestSource=1.00 USD, netAmountSource=99 USD,
+        //   netAmount=99×6.7000=663.3000 (cash-at-spot), exchangeGainLoss=666.67−6.67−663.3000=−3.3000（Cr 6051）
+        Long noteId = ormTemplate.runInSession(s -> {
+            seedBase();
+            seedCurrency(1L, "CNY", true);
+            seedCurrency(2L, "USD", false);
+            return seedFxReceivable("NR-FX-001", ErpFinConstants.NOTES_RECV_RECEIVED,
+                    new BigDecimal("100"), new BigDecimal("6.6667"), new BigDecimal("666.67"), 2L,
+                    LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
+        });
+
+        Boolean originalFlag = AppConfig.var(ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.FALSE);
+        try {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.TRUE);
+            ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(
+                    noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.12"), new BigDecimal("6.7000"), CTX));
+            assertEquals(ErpFinConstants.NOTES_RECV_DISCOUNTED, note.getStatus());
+
+            ErpFinNotesDiscount discount = findDiscount(note.getId());
+            assertEquals(0, new BigDecimal("6.67").compareTo(discount.getDiscountInterest()),
+                    "discountInterest(functional 口径）=6.67");
+            assertEquals(0, new BigDecimal("663.3000").compareTo(discount.getNetAmount()),
+                    "netAmount(cash-at-spot）=663.3000");
+            assertEquals(0, new BigDecimal("-3.3000").compareTo(discount.getExchangeGainLoss()),
+                    "exchangeGainLoss(plug）=−3.3000（负数 → Cr 6051 汇兑收益）");
+            assertEquals(0, new BigDecimal("6.7000").compareTo(discount.getExchangeRate()),
+                    "ErpFinNotesDiscount.exchangeRate=6.7000（spotRate 覆盖 note.exchangeRate）");
+        } finally {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, originalFlag);
+        }
+    }
+
+    @Test
+    public void testDiscountFxFallbackWhenSpotRateNull() {
+        // USD note + config 启用 + exchangeRate=null（旧签名委派）→ 走 ZERO 兜底路径（向后兼容）。
+        Long noteId = ormTemplate.runInSession(s -> {
+            seedBase();
+            seedCurrency(1L, "CNY", true);
+            seedCurrency(2L, "USD", false);
+            return seedFxReceivable("NR-FX-002", ErpFinConstants.NOTES_RECV_RECEIVED,
+                    new BigDecimal("100"), new BigDecimal("6.6667"), new BigDecimal("666.67"), 2L,
+                    LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
+        });
+
+        Boolean originalFlag = AppConfig.var(ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.FALSE);
+        try {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.TRUE);
+            // exchangeRate=null（5 参数签名显式传 null，对齐旧 4 参数签名行为）
+            ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(
+                    noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.12"), null, CTX));
+            assertEquals(ErpFinConstants.NOTES_RECV_DISCOUNTED, note.getStatus());
+
+            ErpFinNotesDiscount discount = findDiscount(note.getId());
+            assertEquals(0, BigDecimal.ZERO.compareTo(discount.getExchangeGainLoss()),
+                    "exchangeRate=null 走 ZERO 兜底路径");
+            // netAmount=functional 兜底口径：666.67 − 6.67 = 660.00
+            assertEquals(0, new BigDecimal("660.00").compareTo(discount.getNetAmount()),
+                    "netAmount（functional 兜底口径）=660.00");
+            // exchangeRate 兜底为 note.exchangeRate=6.6667
+            assertEquals(0, new BigDecimal("6.6667").compareTo(discount.getExchangeRate()),
+                    "ErpFinNotesDiscount.exchangeRate 兜底=note.exchangeRate=6.6667");
+        } finally {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, originalFlag);
+        }
+    }
+
+    @Test
+    public void testDiscountFxSuppressedByConfigGate() {
+        // USD note + config 关闭 + exchangeRate=6.7000 → config 关闭抑制派生（向后兼容）。
+        Long noteId = ormTemplate.runInSession(s -> {
+            seedBase();
+            seedCurrency(1L, "CNY", true);
+            seedCurrency(2L, "USD", false);
+            return seedFxReceivable("NR-FX-003", ErpFinConstants.NOTES_RECV_RECEIVED,
+                    new BigDecimal("100"), new BigDecimal("6.6667"), new BigDecimal("666.67"), 2L,
+                    LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
+        });
+
+        Boolean originalFlag = AppConfig.var(ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.FALSE);
+        try {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, Boolean.FALSE);
+            ErpFinNotesReceivable note = ormTemplate.runInSession(session -> notesBiz.discount(
+                    noteId, LocalDate.of(2026, 7, 1), 9001L, new BigDecimal("0.12"), new BigDecimal("6.7000"), CTX));
+            assertEquals(ErpFinConstants.NOTES_RECV_DISCOUNTED, note.getStatus());
+
+            ErpFinNotesDiscount discount = findDiscount(note.getId());
+            assertEquals(0, BigDecimal.ZERO.compareTo(discount.getExchangeGainLoss()),
+                    "config 关闭时 exchangeGainLoss 抑制=ZERO");
+        } finally {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinConstants.CONFIG_NOTES_FX_GAIN_LOSS_ENABLED, originalFlag);
+        }
     }
 
     @Test
@@ -155,6 +260,38 @@ public class TestErpFinNotesReceivableStateMachine extends JunitAutoTestCase {
         note.setPosted(false);
         dao.saveEntity(note);
         return note.getId();
+    }
+
+    private Long seedFxReceivable(String code, String status, BigDecimal amountSource, BigDecimal exchangeRate,
+                                  BigDecimal amountFunctional, Long currencyId,
+                                  LocalDate issueDate, LocalDate dueDate) {
+        IEntityDao<ErpFinNotesReceivable> dao = daoProvider.daoFor(ErpFinNotesReceivable.class);
+        ErpFinNotesReceivable note = new ErpFinNotesReceivable();
+        note.setCode(code);
+        note.setOrgId(1L);
+        note.setNotesType(ErpFinConstants.NOTES_TYPE_BANK_ACCEPTANCE);
+        note.setNotesNo("N-" + code);
+        note.setIssueDate(issueDate);
+        note.setDueDate(dueDate);
+        note.setCurrencyId(currencyId);
+        note.setExchangeRate(exchangeRate);
+        note.setAmountFunctional(amountFunctional);
+        note.setAmountSource(amountSource);
+        note.setPartnerId(7000L);
+        note.setStatus(status);
+        note.setPosted(false);
+        dao.saveEntity(note);
+        return note.getId();
+    }
+
+    private void seedCurrency(Long id, String code, boolean functional) {
+        IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
+        ErpMdCurrency c = new ErpMdCurrency();
+        c.setId(id);
+        c.setCode(code);
+        c.setName(code);
+        c.setIsFunctional(functional);
+        dao.saveEntity(c);
     }
 
     private void seedSubject(String code, String name) {
