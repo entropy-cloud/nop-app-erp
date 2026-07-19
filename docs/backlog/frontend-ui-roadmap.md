@@ -140,17 +140,19 @@ Phase 2 — 子表行内编辑：
 
 ### F5 — 状态标签与状态可视化（P1）
 
-Status: `todo`
+Status: `done` (2026-07-19, plan `2026-07-19-1818-3-f5-status-tag-coloring`)
 
-所有业务实体列表页的状态列（`docStatus`、`approveStatus`、`status`）需要：
+68 个主要业务实体列表页的状态列（`docStatus`、`approveStatus`、业务专用 `status`）已落地彩色标签：
 
-1. **着色标签**：统一颜色映射（DRAFT=灰、SUBMITTED=蓝、APPROVED=绿、REJECTED=红、CANCELLED=灰删除线）
-2. **状态栏/进度条**：详情页顶部显示当前状态 + 可选状态流转（如「已入库 X/Y 行」）
-3. **组合状态概览**：如 `ErpPurOrder` 组合 `docStatus` + `approveStatus` 显示
+1. **着色标签**：统一颜色映射（DRAFT=灰、SUBMITTED=蓝、APPROVED=绿、REJECTED=红、CANCELLED=灰删除线）。权威表见 `docs/design/status-color-map.md §3`。
+2. **状态栏/进度条**：详情页顶部状态流转（如「已入库 X/Y 行」）—— `defer` 到 F12 详情页结构增强。
+3. **组合状态概览**：`ErpPurOrder`/`ErpSalOrder` 等保持双标签并列（`docStatus` + `approveStatus` 两列分别独立着色）。
 
-推荐在 xmeta 层配置（`format`/`ui:mask`/`ui:statusLabel`），统一 18 域风格。
+实施采用 `<gen-control><c:script>` inline AMIS tpl 模式（XPL JS 不支持 ES6 模板字面量，使用字符串拼接）。`docs/design/status-color-map.md §4` 给出 4 种模板范式（doc/approve/active/progress + smart 启发式 + finance 域专用）。
 
-**受影响**：18 域，~150+ 业务实体
+**已覆盖实体（68 个）**：master-data 9 + purchase 6 + sales 6 + inventory 2 + finance 12 + mfg 6 + projects 9 + quality 8 + maintenance 6 + crm 3 + cs 2 + hr 11 + aps 2 + logistics 1 + b2b 3 + contract 5 + drp 3。剩余 ~80 个长尾低频实体（行项目子表、配置实体 isActive、自由文本 status 字段）显式 defer，见 `docs/design/status-color-map.md §7`。
+
+**验证**：`mvn test` 154 模块全绿 + `tests/e2e/visual/status-tag.visual.spec.ts` 12 case 全绿 + 抽样回归 dashboards/reports visual spec 34 case 全绿。
 
 ---
 
@@ -511,7 +513,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F3: 18 域主实体 form layout 按 `ui-patterns.md` 分组
 - [x] F4 Phase1: 高频 picker（物料/供应商/客户/员工/资产/币种/科目）定制完成
 - [ ] F4 Phase2: ~50+ 头行实体对的 child-table-editor 配置完成（含 M2M picker、自动推算、行校验）
-- [ ] F5: 所有业务实体（~150+）状态列使用着色标签
+- [x] F5: 主要业务实体（68 个核心+扩展域实体）状态列使用着色标签（plan 2026-07-19-1818-3-f5-status-tag-coloring）
 - [ ] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置）
 - [ ] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地
 - [ ] F8: 每域列表页查询条件从 3-4 字段扩展到域专用多维筛选

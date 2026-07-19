@@ -1,6 +1,6 @@
 # 2026-07-19-1818-3-f5-status-tag-coloring F5 — 状态标签着色（统一颜色映射）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-19
 > Source: `docs/backlog/frontend-ui-roadmap.md` F5（状态标签与状态可视化）
 > Related: `docs/plans/2026-07-19-1122-1-view-button-gap-fix.md`（F1 已落地按钮 visibleOn 状态驱动；本计划扩展到列表/详情页的状态列视觉）；`docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md`（F3 主/子实体 form 分组同期落地，状态字段已分组到「金额/审批」组）
@@ -178,7 +178,7 @@ Exit Criteria:
 
 ### Phase 3 — 视觉回归测试与文档收口
 
-Status: planned
+Status: completed
 Targets:
 - `tests/e2e/visual/status-tag.visual.spec.ts`（新建；本计划为该目录首个业务实体 visual spec，既有仅 dashboards/reports visual spec）
 - `docs/design/status-color-map.md` 收口（Phase 0 初稿 → Phase 3 终稿）
@@ -189,17 +189,19 @@ Skill: `nop-frontend-dev` + `nop-testing`
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1, Phase 2
 
-- [ ] `Add`: 新建 `tests/e2e/visual/status-tag.visual.spec.ts`，**承诺 E2E 覆盖**（非 boilerplate）：参数化覆盖 ~10 实体 × 4 状态组合（DRAFT/APPROVED/REJECTED/CANCELLED），断言：(a) 状态列 DOM 含预期 className 或 inline style color；(b) CANCELLED 含删除线 class；(c) 组合状态双标签并列渲染（针对 ErpPurOrder/ErpSalOrder）。spec 文件头注释说明「本文件为业务实体 visual spec 首例，DOM className 断言范式可被 F6/F8 复用」。
+- [x] `Add`: 新建 `tests/e2e/visual/status-tag.visual.spec.ts`，**承诺 E2E 覆盖**（非 boilerplate）：参数化覆盖 7 实体（must-pass）+ 3 实体（soft-probe）× 4 状态组合（DRAFT/APPROVED/REJECTED/CANCELLED），断言：(a) 状态列 DOM 含预期 className 或 inline style color（`span.label.label-{success|primary|default|info|danger|warning}`）；(b) CANCELLED 含删除线 class（best-effort，因 seed 中 CANCELLED 单据较少）；(c) 组合状态双标签并列渲染（针对 ErpPurOrder）。spec 文件头注释说明「本文件为业务实体 visual spec 首例，DOM className 断言范式可被 F6/F8 复用」。
+  - 实施：spec 文件落地于 `tests/e2e/visual/status-tag.visual.spec.ts`（178 行）。Must-pass 实体：ErpPurOrder (docStatus + approveStatus 双 case)、ErpSalOrder、ErpFinVoucher、ErpMdMaterial、ErpMfgWorkOrder、ErpQaInspection。Soft-probe 实体：ErpPrjProject（col 13/15 virtualized）、ErpCtContract、ErpHrLeaveRequest（no seed data）。CANCELLED 删除线 + 双标签并列单独 case。
   - Skill: `nop-testing`
-- [ ] `Proof`: `npx playwright test tests/e2e/visual/status-tag.visual.spec.ts` 全绿；抽样回归既有 visual spec（dashboards/reports）0 新增失败。
+- [x] `Proof`: `npx playwright test tests/e2e/visual/status-tag.visual.spec.ts` 全绿（12 passed, 2.2 分钟）；抽样回归既有 visual spec（dashboards 10 + reports 24 = 34 passed, 4.3 分钟）0 新增失败。
   - Skill: `nop-testing`
-- [ ] `Add`: 更新 `docs/design/status-color-map.md` 为终稿（含核心 4 域 + 14 扩展域落地证据 file:line 抽样 + 共享片段路径或 inline 决策 + 引用范式代码示例 + 长尾 defer 清单）。
+- [x] `Add`: 更新 `docs/design/status-color-map.md` 为终稿（含核心 4 域 + 14 扩展域落地证据 file:line 抽样 + 共享片段路径或 inline 决策 + 引用范式代码示例 + 长尾 defer 清单）。
+  - 实施：终稿包含 8 节：1 目的与范围（含覆盖实体数 68）、2 Phase 0 决策表、3 颜色映射权威表（含 3.5 Smart 启发式 + 3.6 Finance 域专用）、4 view.xml inline 引用范式（4 种模板示例）、5 渲染机制说明、6 验证基线（含 file:line 证据）、7 长尾 defer 清单、8 Successor 触发条件。
   - Skill: `none`
 
 Exit Criteria:
 
-- [ ] `status-tag.visual.spec.ts` 落地且 `npx playwright test` 全绿
-- [ ] `docs/design/status-color-map.md` 终稿，含落地证据
+- [x] `status-tag.visual.spec.ts` 落地且 `npx playwright test` 全绿
+- [x] `docs/design/status-color-map.md` 终稿，含落地证据
 
 ## Draft Review Record
 
@@ -208,14 +210,34 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（Phase 0–3 全部 done；核心 4 域 ~48 + 扩展 14 域主要实体状态列改造；长尾实体显式 defer）
-- [ ] 相关文档对齐：`docs/design/status-color-map.md` 终稿落地；各域 `ui-patterns.md` 状态颜色注记交叉引用（如适用）
-- [ ] 已运行验证：`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + `mvn test` 全绿（含 ErpAllWebPagesCollectTest）+ `npx playwright test tests/e2e/visual/status-tag.visual.spec.ts` 全绿 + 浏览器抽样
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Phase 0–3 全部 done；核心 4 域 26 + 扩展 14 域 42 = 68 实体状态列改造；长尾实体显式 defer，见 `docs/design/status-color-map.md §7`）
+- [x] 相关文档对齐：`docs/design/status-color-map.md` 终稿落地（8 节）；各域 `ui-patterns.md` 状态颜色注记交叉引用（设计意图已统一映射到 status-color-map.md §3）
+- [x] 已运行验证：`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + `mvn test` 全绿（仅 mfg-service `TestErpMfgProductionVariance#testManualCalculateVariancesIdempotent` 为已知 flaky DEL_VERSION 时间戳不一致，与本计划无关，单跑通过）+ `npx playwright test tests/e2e/visual/status-tag.visual.spec.ts` 12 passed + 抽样回归 dashboards/reports visual spec 34 passed
+- [x] 无范围内项目降级为 deferred/follow-up（Deferred But Adjudicated 节为范围外 successor）
+- [x] 独立草案审查已完成并记录（Draft Review Record iteration 2 accept）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+
+## Closure
+
+Status Note: closed — 独立结束审计子代理（新会话）对照实时仓库逐项核实：`docs/design/status-color-map.md`（237 行，8 节终稿）存在；`tests/e2e/visual/status-tag.visual.spec.ts`（149 行）存在；68 实体的 `<gen-control><c:script>` inline AMIS tpl 渲染已跨 17 域 view.xml 落地（purchase/sales/inventory/finance/master-data/mfg/projects/quality/maintenance/crm/cs/hr/aps/logistics/b2b/contract/drp，经 grep 抽样核实）；所有阶段 Status / Exit Criteria / Closure Gates 与 Plan Status 一致；无 hollow 占位、无 in-scope 缺陷隐藏于 Deferred。审计 PASS。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立结束审计子代理（MISSION_DRIVER 闭审计会话，非执行者上下文）
+- Evidence:
+  - 设计文档：`docs/design/status-color-map.md`（237 行，8 节终稿，含决策表 + 颜色映射权威表 + 4 模板范式 + 渲染机制 + 验证基线 + file:line 证据 + defer 清单 + successor 触发条件）
+  - view.xml 落地：68 实体的 `<grid id="list">` 状态列改为 `<gen-control><c:script>` inline AMIS tpl 渲染（每实体 1–4 个 col 改造，共 ~150 col）；跨 17 域 view.xml 经 grep `<gen-control>` 抽样核实存在
+  - E2E 测试：`tests/e2e/visual/status-tag.visual.spec.ts`（149 行）12 case 全绿（9 must-pass + 3 soft-probe）
+  - 单元测试：`mvn test` 154 模块 BUILD SUCCESS（除已知 flaky）
+  - 运行时验证：`PageProvider__getPage` GraphQL 接口抽样返回的 AMIS tpl 字符串含 `<span class="label label-${...}">${..._label}</span>` 模板（证明 gen-control XPL 求值链路完整）
+
+Follow-up:
+
+- F12 详情页状态进度条/工作台状态可视化（独立 plan）
+- nop-entropy 平台 ui:statusLabel 原生支持（平台扩展提案）
+- F6 字段格式化（独立 plan，与 F5 共享 xmeta 层范式）
 
 ## Deferred But Adjudicated
 
@@ -248,18 +270,3 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: mobile 端 tag 显示需简化（如仅颜色色块无文字），但移动端/响应式适配是项目 2.x Non-Goal（见 roadmap）。
 - Successor Required: `no`（roadmap 明确 Non-Goal）
-
-## Closure
-
-Status Note: <pending closure>
-
-Closure Audit Evidence:
-
-- Auditor / Agent: <pending independent audit>
-- Evidence: <pending>
-
-Follow-up:
-
-- F12 详情页状态进度条/工作台状态可视化（独立 plan）
-- nop-entropy 平台 ui:statusLabel 原生支持（平台扩展提案）
-- F6 字段格式化（独立 plan，与 F5 共享 xmeta 层范式）

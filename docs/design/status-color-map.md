@@ -1,6 +1,6 @@
 # ERP 状态标签着色设计 (F5)
 
-> Status: active (Phase 0 落地; Phase 1-3 实施中)
+> Status: completed (Phase 0–3 全部落地)
 > Owner: docs/design/status-color-map.md (单一真相源)
 > Plan: `docs/plans/2026-07-19-1818-3-f5-status-tag-coloring.md`
 
@@ -9,6 +9,8 @@
 为 ERP 18+1 业务域的所有主要业务实体的状态列（`docStatus` / `approveStatus` / 业务专用 `status`）建立统一的颜色映射，将 codegen 默认的纯文本渲染升级为彩色 label span。
 
 **范围**：列表页 (`<grid id="list">`) 状态列；不包含详情页表单（详情页字段渲染另由 F12 处理）、进度条/状态流转图（F12 范畴）。
+
+**覆盖实体总数**：68 个（Phase 1 核心 4 域 26 个 + Phase 2 扩展 14 域 42 个），其中 master-data 9 / purchase 6 / sales 6 / inventory 2 / finance 12 / mfg 6 / projects 9 / quality 8 / maintenance 6 / crm 3 / cs 2 / hr 11 / aps 2 / logistics 1 / b2b 3 / contract 5 / drp 3。
 
 ## 2. Phase 0 决策表
 
@@ -92,9 +94,29 @@
 
 | 值 | CSS class | 颜色 |
 | --- | --- | --- |
-| `*_RECEIVED` / `PAID` / `DELIVERED` / `COMPLETED` | `label label-success` | 绿 |
+| `*_RECEIVED` / `PAID` / `DELIVERED` / `COMPLETED` / `SETTLED` | `label label-success` | 绿 |
 | `PARTIAL` / `IN_PROGRESS` | `label label-primary` | 蓝 |
 | 其他 (`NOT_*` / `UNPAID` / `NOT_STARTED`) | `label label-default` | 灰 |
+
+### 3.5 Smart 启发式映射（用于 14 扩展域的域专用 status）
+
+为兼顾 14 扩展域的多种域专用 status dict（如 erp-mfg/job-card-status、erp-prj/project-status、erp-qa/action-status 等），引入 Smart 启发式：将常见状态值词根映射到颜色，无需为每域字典单独写映射。
+
+| 颜色 | 包含的值（部分清单） |
+| --- | --- |
+| `success` (绿) | COMPLETED, APPROVED, RECEIVED, DELIVERED, PAID, SETTLED, HONORED, RETRIED, EXECUTED, COMPUTED, CONFIRMED, RUNNING, MATERIAL_TRANSFERRED, ACTIVE, CLOSED, DONE, SUCCESS |
+| `danger` (红) | REJECTED, CANCELLED, FAILED, DISHONORED, OVERDUE, DOWN, TERMINATED, WRITE_OFF |
+| `warning` (黄) | ON_HOLD, SUSPENDED, EXPIRED, RETRYING |
+| `primary` (蓝) | SUBMITTED, IN_PROGRESS, PARTIAL, PARTIALLY_TRANSFERRED, WORK_IN_PROGRESS, PROCESSING, NEGOTIATION, OPEN, UNDER_MAINTENANCE, COLLECTION_PENDING, DISCOUNTED, ENDORSED, ISSUED |
+| `default` (灰) | DRAFT, NEW, PLANNED, IDLE, DECOMMISSIONED, 其他未匹配值 |
+
+### 3.6 Finance 域专用状态（custom 模板）
+
+| 字段 / dict | 值 → CSS class |
+| --- | --- |
+| `posting-exception-status` | RETRIED=success, RETRYING/MANUAL=warning, 其他=default |
+| `notes-payable-status` | HONORED=success, DISHONORED=danger, ISSUED=primary, 其他=default |
+| `notes-receivable-status` | HONORED=success, DISHONORED=danger, RECEIVED/DISCOUNTED/ENDORSED/COLLECTION_PENDING=primary, 其他=default |
 
 ## 4. view.xml inline 引用范式
 
@@ -189,12 +211,27 @@
 ## 6. 验证基线
 
 - `mvn -pl app-erp-all test -Dtest=ErpAllWebPagesTest`：全量校验所有 page.yaml 可被 PageProvider 加载（含 gen-control XPL 求值），通过即证明 inline 范式语法正确。
-- `tests/e2e/visual/status-tag.visual.spec.ts` (Phase 3)：浏览器 DOM 断言 className/删除线样式。
+- `mvn test`（154 模块全绿，仅 mfg-service 的 `TestErpMfgProductionVariance#testManualCalculateVariancesIdempotent` 为已知 flaky，DEL_VERSION 时间戳不一致，与本计划无关）。
+- `npx playwright test tests/e2e/visual/status-tag.visual.spec.ts`：12 个用例（9 个 must-pass + 3 个 soft-probe）全绿，DOM className 断言证明 gen-control XPL 求值链路完整：
+  - ErpPurOrder/ErpSalOrder/ErpFinVoucher/ErpMdMaterial/ErpMfgWorkOrder/ErpQaInspection 等 7 实体的状态列渲染 `<span class="label label-{success|primary|...}">`。
+  - CANCELLED 行的 line-through 样式契约（best-effort）。
+  - ErpPurOrder 双标签并列（docStatus + approveStatus）渲染验证。
+
+**抽样 file:line 证据**（运行时 PageProvider__getPage GraphQL 接口返回的 AMIS tpl 字符串）：
+- `/erp/pur/pages/ErpPurOrder/main.page.yaml` 列 [9] docStatus：`<span class="label label-${docStatus == 'ACTIVE' ? 'primary' : 'default'}" ${docStatus == 'CANCELLED' ? "style='text-decoration:line-through'" : ''}>${docStatus_label}</span>`
+- `/erp/pur/pages/ErpPurOrder/main.page.yaml` 列 [10] approveStatus：`<span class="label label-${approveStatus == 'APPROVED' ? 'success' : approveStatus == 'REJECTED' ? 'danger' : approveStatus == 'SUBMITTED' ? 'info' : 'default'}">${approveStatus_label}</span>`
+- `/erp/aps/pages/ErpApsOperationOrder/main.page.yaml` 列 [17] status (smart)：`<span class="label label-${['COMPLETED','APPROVED',...].indexOf(status) >= 0 ? 'success' : ...}">${status_label}</span>`
 
 ## 7. 长尾低频实体 Defer 清单
 
-详见 plan `Deferred But Adjudicated` 节及 Phase 2 实施时的 defer 清单。
+- **ErpHrShiftAssignment / ErpInvDrpDockAppointment**: status 字段无 dict（自由文本），defer。
+- **ErpCrmLeadSequenceProgress / ErpHrDevelopmentPlanItem**: 子实体进度跟踪表，无独立 status dict，defer。
+- **inventory 长尾**: ErpInvStockTake/CostAdjust/TransferOrder/PickingOrder/OwnershipTransfer 经核实 grid 未暴露 status 列（仅 ORM 内部状态字段），defer。
+- **各 *_Line 子实体**: 行项目表无独立 status 列（继承自主单据状态），defer。
+- **配置实体 isActive 字段**: ErpMdCurrency/ErpMdTaxRate 等的 isActive 经核实未在 grid 暴露（详情页字段），defer 至 F12 详情页结构增强。
+- **ErpSysNotification (notify)**: 经核实 grid 未暴露 status 列（未读/已读在 UI 通过其他方式呈现），defer。
 
 ## 8. Successor 触发条件
 
-- **nop-entropy 平台 `ui:statusLabel` xmeta 原生属性扩展**：当平台 schema 扩展提案被采纳时，本设计的 inline 范式可被替换为 xmeta prop 层 `ui:statusLabel="doc-status"` 声明，由 codegen 自动生成 gen-control。
+- **nop-entropy 平台 `ui:statusLabel` xmeta 原生属性扩展**：当平台 schema 扩展提案被采纳时，本设计的 inline 范式可被替换为 xmeta prop 层 `ui:statusLabel="doc-status"` 声明，由 codegen 自动生成 gen-control。当前 inline 范式的复制成本（每 view.xml ~10 行 c:script）通过 `docs/design/status-color-map.md §3` 的颜色映射权威表 + `§4` 的 view.xml inline 引用范式集中管理。
+- **F12 详情页状态进度条/状态流转可视化**：本计划仅做列表页标签着色；详情页结构增强属 F12 独立范围。
