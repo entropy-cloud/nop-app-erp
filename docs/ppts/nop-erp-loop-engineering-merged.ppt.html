@@ -347,7 +347,7 @@
   <body>
     <div id="presentation-container">
       <div id="progress-bar"></div>
-      <div id="slide-counter">1 / 23</div>
+      <div id="slide-counter">1 / 24</div>
       <div id="keyboard-hint" class="keyboard-hint">
         <kbd>&larr;</kbd><kbd>&rarr;</kbd> 翻页 &nbsp;|&nbsp; <kbd>Home</kbd> 首页 &nbsp;|&nbsp;
         <kbd>F</kbd> 全屏 &nbsp;|&nbsp; <kbd>?</kbd> 帮助
@@ -1114,64 +1114,48 @@ flowchart TD
           </div>
         </section>
 
-        <!-- S23: 全场架构总图 -->
+        <!-- S23: 落地路径——三种项目模式 -->
         <section class="slide">
-          <h2>全场架构总图</h2>
-          <div class="two-column">
-            <div class="column">
-              <div class="mermaid-container">
-                <div class="mermaid">
-                  graph TB
-                    subgraph AttractorLayer["方向层（不是 Loop，是结构不变量）"]
-                      A1["Attractor 的三个维度"]
-                      A2["定义'系统应向哪里收敛'"]
-                    end
-                    subgraph HarnessLayer["Harness 层（控制 Loop）"]
-                      H1["内层：Plan Loop（小时级）<br/>每次变更的关闭契约"]
-                      H2["外层：Mission Driver Loop（天/周级）<br/>自动编排 + 自审计"]
-                    end
-                    A1 -->|"提供方向"| H1
-                    A1 -->|"提供方向"| H2
-                    H1 --- H2
-                    HarnessLayer -.->|"在Attractor内运行"| AttractorLayer
-                </div>
-              </div>
-              <div class="highlight-box">
-                <p><strong>关系</strong>：Harness 在 Attractor 内运行，Attractor 为 Harness 提供方向</p>
-              </div>
+          <h2><i class="fa-solid fa-road"></i> 落地路径——三种项目模式</h2>
+          <div class="card-grid" style="grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+            <div class="card" style="background:#eff6ff;border-color:var(--color-primary);text-align:center;">
+              <div style="font-size:2rem;color:var(--color-primary);margin-bottom:0.5rem;"><i class="fa-solid fa-building"></i></div>
+              <h4>模式 A：已有项目</h4>
+              <p class="details" style="text-align:left;">加 Plan Loop：修改 PR 模板，每次变更加 Plan + 独立审计</p>
+              <p class="details" style="text-align:left;">先定义一个 Attractor（核心架构文档），再看是否需要 Mission Driver</p>
+              <div style="margin-top:0.5rem;"><span class="tag tag-warn">最小改动</span></div>
             </div>
-            <div class="column">
-              <h4>与 Andrew Ng 三层 Loop 的关系</h4>
-              <table class="comparison-table">
-                <thead>
-                  <tr><th>层次</th><th>Andrew Ng</th><th>AGE</th></tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>内层</td>
-                    <td>代码编辑 Loop</td>
-                    <td>Plan Loop（小时级）</td>
-                  </tr>
-                  <tr>
-                    <td>中层</td>
-                    <td>测试 / CI Loop</td>
-                    <td>Mission Driver（天/周级）</td>
-                  </tr>
-                  <tr>
-                    <td>外层</td>
-                    <td>系统评估 Loop</td>
-                    <td><em>（与中层合并）</em></td>
-                  </tr>
-                  <tr style="background:#fffbeb;">
-                    <td><strong>前提层</strong></td>
-                    <td><em>无</em></td>
-                    <td><strong>Attractor（方向定义层）</strong></td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="golden-quote">
-                <p>Loop Engineering 让 AI 跑得更快更稳。Attractor 让 Loop 知道往哪里跑。前者是实践突破，后者是哲学基础。两者都需要，但不能混淆。</p>
-              </div>
+            <div class="card" style="background:#f0fdf4;border-color:var(--color-secondary);text-align:center;">
+              <div style="font-size:2rem;color:var(--color-secondary);margin-bottom:0.5rem;"><i class="fa-solid fa-rocket"></i></div>
+              <h4>模式 B：新项目</h4>
+              <p class="details" style="text-align:left;">从 AGE 模板开始（含 Plan Loop + Mission Driver + Attractor 骨架）</p>
+              <p class="details" style="text-align:left;">先花 1-2 天定义 Attractor（不能外包给 AI），然后运行 Mission Driver</p>
+              <div style="margin-top:0.5rem;"><span class="tag tag-success">全自动</span></div>
+            </div>
+            <div class="card" style="background:#fffbeb;border-color:var(--color-warning);text-align:center;">
+              <div style="font-size:2rem;color:var(--color-warning);margin-bottom:0.5rem;"><i class="fa-solid fa-cubes"></i></div>
+              <h4>模式 C：平台/框架</h4>
+              <p class="details" style="text-align:left;">Attractor 定义最重要——平台方向决策权不能交给 AI</p>
+              <p class="details" style="text-align:left;">Plan Loop 用于框架自身开发控制</p>
+              <div style="margin-top:0.5rem;"><span class="tag tag-danger">方向决策</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- S24: 二维码链接 -->
+        <section class="slide" style="justify-content:center;align-items:center;text-align:center;">
+          <div style="max-width:600px;margin:0 auto;">
+            <div class="golden-quote" style="font-size:1.3rem;">
+              <p>"吸引子定义方向。Harness 控制轨迹。人定义吸引子。AI 在吸引子内扩张。系统检查偏离。三者都在，系统才会自运转。"</p>
+            </div>
+            <div style="margin:2rem 0;">
+              <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://gitee.com/canonical-entropy/nop-app-erp"
+                   alt="QR Code" style="width:180px;height:180px;border-radius:12px;box-shadow:var(--shadow-lg);" />
+            </div>
+            <p style="font-size:1.1rem;font-weight:600;color:var(--color-primary);">https://gitee.com/canonical-entropy/nop-app-erp</p>
+            <p style="font-size:1rem;color:var(--color-text-light);margin-top:0.5rem;">Nop Platform · AGE 工作流 · 22 天 · 154 模块</p>
+            <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--color-border);">
+              <p style="font-size:1.5rem;font-weight:700;color:var(--color-text-dark);">谢谢，Q&A</p>
             </div>
           </div>
         </section>
