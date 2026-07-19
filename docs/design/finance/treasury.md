@@ -163,6 +163,19 @@
 贷：应收票据（票面金额 faceAmount）
 ```
 
+**DISCOUNTED exchangeGainLoss 派生实现注记**（plan `2026-07-19-0730-1`，cash-at-spot plug 范式）：
+
+- **派生公式**（`ErpFinNotesReceivableProcessor.buildDiscount`）：
+  - `discountInterestFunctional = note.amountFunctional × discountRate × remainingDays / 360`（HALF_UP scale=2，`Dr 6603` 行金额；functional 口径，不动）
+  - `discountInterestSource = note.amountSource × discountRate × remainingDays / 360`（source 口径中间量）
+  - `netAmountSource = note.amountSource − discountInterestSource`
+  - `discount.netAmount = netAmountSource × spotRate`（**cash-at-spot**，HALF_UP scale=4，`Dr 1002` 行金额按贴现日即期汇率折算实际收到现金）
+  - `exchangeGainLoss = note.amountFunctional − discountInterestFunctional − discount.netAmount`（**plug 平衡差额**，HALF_UP scale=4，`Dr/Cr 6051` 行金额）
+- **符号语义**：外币升值（`spotRate > note.exchangeRate`）→ `exchangeGainLoss < 0` → `Cr 6051` 汇兑收益；外币贬值（`spotRate < note.exchangeRate`）→ `exchangeGainLoss > 0` → `Dr 6051` 汇兑损失。对齐 Provider `:72-78` signum 分支（fx>0 Dr 6051；fx<0 Cr 6051=-fx）。
+- **复式平衡约束（会计正确性硬约束）**：`Dr 1002 + Dr 6603 ± Dr/Cr 6051 ≡ Cr 1121`。数值示例：`amountSource=USD 100 / note.exchangeRate=6.6667 / amountFunctional=CNY 666.67 / discountRate=0.12 / remainingDays=30 / spotRate=6.7000` → `Dr 663.3000 + Dr 6.67 = 669.97 ≡ Cr 666.67 + Cr 3.3000 = 669.97 ✓`。
+- **config-gate `erp-fin.notes-fx-gain-loss-enabled`**（默认 `false`）：关闭时 Builder 沿用 `exchangeGainLoss=ZERO` + functional 口径 netAmount（向后兼容）；启用时按上述公式派生。`discount` mutation 经可选入参 `exchangeRate`（贴现日即期汇率）传入；未传 / note 单币种 / config 关闭 → 兜底 ZERO 路径。
+- **Successor（不在本计划范围）**：多汇率选择精细化（票面日 vs 贴现日 vs 到期日）/ 汇率源数据表（CurrencyRateTable）/ NR RECEIVED/ENDORSED/COLLECTION 路径 FX 分支 / NP Provider FX 分支 / config 默认值切换为 true。
+
 ## 跨域协作
 
 | 对端 | 协作内容 |

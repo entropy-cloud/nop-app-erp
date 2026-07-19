@@ -253,6 +253,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`（生产 Java 修改须 ask-first 独立计划，且须引入新信号源）
 - Why Not Blocking Closure: iter-1 草案审查 B1 实证修复需引入新信号源（`ErpFinExchangeRateTable` 实体不存在 / `note.exchangeRate` 即出票日汇率致派生退化 / 残差派生退化 / `ExchangeRevaluationService` 无 per-currency-date 查询）。本计划范围（honor/endorse/collect）不走 buildDiscount，与该缺陷完全无关——该缺陷仅影响 DISCOUNTED 路径，0120-1 已用 `ErpFinVoucher__post` 直驱验证 Provider FX 分支实现正确。Java builder 修复属 DISCOUNTED 路径 successor，须独立 ask-first 计划引入 config-gated spot rate（如 `erp-fin.notes-discount-fx-spot-rate` config）或 ORM 加列（如 `ErpFinNotesReceivable.discountSpotRate` 字段）。
 - Successor Required: `yes`（触发条件：外币票据贴现业务实际生产路径需正确派生 6051 时，或 config/ORM 信号源引入被授权时——须独立 ask-first 计划）
+- **RELEASED by 2026-07-19-0730-1**：触发条件已满足（owner-doc `treasury.md §业财过账` 明示 FX 语义，0120-1/0330-1 同型 Deferred）。`docs/plans/2026-07-19-0730-1-fx-notes-receivable-discount-exchange-gain-loss-builder.md` 交付完整修复：采纳 config-gated spot rate 入参路径（`@Optional @Name("exchangeRate") BigDecimal exchangeRate` 5 参数 `discount` mutation），由 Builder 按 cash-at-spot plug 范式派生 `exchangeGainLoss = amountFunctional − discountInterestFunctional − netAmount`（plug 平衡差额，符号语义外币升值 → Cr 6051 汇兑收益 / 外币贬值 → Dr 6051 汇兑损失）+ config `erp-fin.notes-fx-gain-loss-enabled` 默认 false 向后兼容；详见 0120-1 同型 RELEASED 注记 + 0730-1 计划本体。
 
 ### RECEIVED/ENDORSED/COLLECTION 路径 FX 分支引入（6051 行）
 
