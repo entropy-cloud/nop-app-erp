@@ -8,9 +8,46 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ materialId[物料] skuId[SKU]
+ uoMId[计量单位] priceListId[价格清单ID]
+=========>price[价格信息]======
+ unitPrice[单价] minQuantity[最小数量]
+ maxQuantity[最大数量] validFrom[生效日]
+ validTo[失效日]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ materialId[物料] skuId[SKU]
+ uoMId[计量单位] priceListId[价格清单ID]
+=========>price[价格信息]======
+ unitPrice[单价] minQuantity[最小数量]
+ maxQuantity[最大数量] validFrom[生效日]
+ validTo[失效日]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ materialId[物料] priceListId[价格清单ID]
+ unitPrice[单价] validFrom[生效日]
+            </layout>
+            <cells>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="priceListId" filterOp="eq"/>
+                <cell id="unitPrice" filterOp="gt"/>
+                <cell id="validFrom" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

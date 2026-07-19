@@ -22,9 +22,56 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] transactionDate[交易日期]
+ description[描述] refNo[参考号]
+ dcDirection[借贷方向]
+=========>amount[金额信息]======
+ amount[金额] currencyId[币种]
+ balanceAfter[交易后余额]
+=========>match[匹配信息]======
+ matchStatus[匹配状态] matchedLineId[匹配明细ID]
+=========>reference[业务关联]======
+ statementId[银行对账单ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] transactionDate[交易日期]
+ description[描述] refNo[参考号]
+ dcDirection[借贷方向]
+=========>amount[金额信息]======
+ amount[金额] currencyId[币种]
+ balanceAfter[交易后余额]
+=========>match[匹配信息]======
+ matchStatus[匹配状态] matchedLineId[匹配明细ID]
+=========>reference[业务关联]======
+ statementId[银行对账单ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] statementId[银行对账单ID]
+ transactionDate[交易日期] matchStatus[匹配状态]
+ dcDirection[借贷方向]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="statementId" filterOp="eq"/>
+                <cell id="transactionDate" filterOp="date-between"/>
+                <cell id="matchStatus" filterOp="eq"/>
+                <cell id="dcDirection" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -8,9 +8,48 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] warehouseId[仓库]
+ locationId[库位] batchNo[批号]
+ uomId[计量单位]
+=========>quantity[预留数量]======
+ reservedQuantity[预留数量] consumedQuantity[已消耗数量]
+ sourceLineCode[源行号]
+=========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] warehouseId[仓库]
+ locationId[库位] batchNo[批号]
+ uomId[计量单位]
+=========>quantity[预留数量]======
+ reservedQuantity[预留数量] consumedQuantity[已消耗数量]
+ sourceLineCode[源行号]
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ reservationId[预留单ID] warehouseId[仓库]
+ locationId[库位]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="reservationId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="locationId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

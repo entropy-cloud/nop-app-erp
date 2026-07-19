@@ -8,9 +8,54 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ leadTimeDays[交货周期(天)]
+=========>tax[税务信息]======
+ taxRate[税率(%)]
+=========>reference[业务关联]======
+ quotationId[报价单ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ leadTimeDays[交货周期(天)]
+=========>tax[税务信息]======
+ taxRate[税率(%)]
+=========>reference[业务关联]======
+ quotationId[报价单ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ quotationId[报价单ID] unitPrice[单价]
+ taxRate[税率(%)]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="quotationId" filterOp="eq"/>
+                <cell id="unitPrice" filterOp="gt"/>
+                <cell id="taxRate" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

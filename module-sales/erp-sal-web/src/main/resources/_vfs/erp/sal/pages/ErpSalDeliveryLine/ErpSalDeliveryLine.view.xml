@@ -21,9 +21,56 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ warehouseId[出库库位]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ amount[金额(不含税)] batchNo[批号]
+=========>tax[税务信息]======
+ taxRate[税率(%)] taxAmount[税额]
+=========>reference[业务关联]======
+ deliveryId[出库单ID] orderLineId[订单行ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ warehouseId[出库库位]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ amount[金额(不含税)] batchNo[批号]
+=========>tax[税务信息]======
+ taxRate[税率(%)] taxAmount[税额]
+=========>reference[业务关联]======
+ deliveryId[出库单ID] orderLineId[订单行ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ warehouseId[出库库位] deliveryId[出库单ID]
+ orderLineId[订单行ID]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="deliveryId" filterOp="eq"/>
+                <cell id="orderLineId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

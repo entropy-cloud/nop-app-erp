@@ -8,9 +8,50 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ businessDate[业务日期] warehouseId[仓库]
+ pickerId[拣货人]
+=========>reference[业务关联]======
+ relatedBillType[源单类型] relatedBillCode[源单编号]
+=========>status[状态信息]======
+ docStatus[单据状态]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ businessDate[业务日期] warehouseId[仓库]
+ pickerId[拣货人]
+=========>reference[业务关联]======
+ relatedBillType[源单类型] relatedBillCode[源单编号]
+=========>status[状态信息]======
+ docStatus[单据状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] warehouseId[仓库]
+ pickerId[拣货人] docStatus[单据状态]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="pickerId" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

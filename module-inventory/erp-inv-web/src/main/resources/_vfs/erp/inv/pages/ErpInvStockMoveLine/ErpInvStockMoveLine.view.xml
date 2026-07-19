@@ -20,9 +20,52 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ batchNo[批号] serialNo[序列号]
+=========>quantity[数量与成本]======
+ quantity[数量] unitCost[单位成本]
+ totalCost[总成本] currencyId[币种]
+=========>location[库位信息]======
+ sourceLocationId[源库位] destLocationId[目标库位]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ batchNo[批号] serialNo[序列号]
+=========>quantity[数量与成本]======
+ quantity[数量] unitCost[单位成本]
+ totalCost[总成本] currencyId[币种]
+=========>location[库位信息]======
+ sourceLocationId[源库位] destLocationId[目标库位]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ moveId[移动单ID] batchNo[批号]
+ sourceLocationId[源库位]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="moveId" filterOp="eq"/>
+                <cell id="batchNo" filterOp="like"/>
+                <cell id="sourceLocationId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

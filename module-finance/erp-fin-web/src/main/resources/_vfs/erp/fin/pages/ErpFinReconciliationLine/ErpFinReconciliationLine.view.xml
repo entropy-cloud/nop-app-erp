@@ -8,9 +8,46 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] paymentItemId[付款明细ID]
+ invoiceItemId[发票明细ID]
+=========>amount[核销金额]======
+ settledAmountSource[核销金额(源币种)] settledAmountFunctional[核销金额(本位币)]
+=========>reference[业务关联]======
+ reconciliationId[核销单ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] paymentItemId[付款明细ID]
+ invoiceItemId[发票明细ID]
+=========>amount[核销金额]======
+ settledAmountSource[核销金额(源币种)] settledAmountFunctional[核销金额(本位币)]
+=========>reference[业务关联]======
+ reconciliationId[核销单ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] reconciliationId[核销单ID]
+ paymentItemId[付款明细ID] invoiceItemId[发票明细ID]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="reconciliationId" filterOp="eq"/>
+                <cell id="paymentItemId" filterOp="eq"/>
+                <cell id="invoiceItemId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

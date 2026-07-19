@@ -8,9 +8,50 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] year[年度]
+ month[月份] quarter[季度]
+ startDate[开始日期] endDate[结束日期]
+ isAdjustment[是否调整期]
+=========>status[状态信息]======
+ status[期间状态] closedBy[关闭人]
+ closedAt[关闭时间]
+=========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] year[年度]
+ month[月份] quarter[季度]
+ startDate[开始日期] endDate[结束日期]
+ isAdjustment[是否调整期]
+=========>status[状态信息]======
+ status[期间状态] closedBy[关闭人]
+ closedAt[关闭时间]
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ year[年度] status[期间状态]
+ orgId[业务组织]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="year" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

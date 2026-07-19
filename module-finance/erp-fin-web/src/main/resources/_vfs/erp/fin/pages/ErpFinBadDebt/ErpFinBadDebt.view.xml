@@ -22,9 +22,56 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ acctSchemaId[账套] docType[单据类型]
+ partnerId[往来单位] sourceArApItemId[应收应付明细ID]
+ businessDate[业务日期] reason[坏账原因]
+=========>amount[金额信息]======
+ amount[坏账金额] currencyId[币种]
+ exchangeRate[汇率]
+=========>status[状态信息]======
+ approvalStatus[审批状态] periodId[会计期间]
+ voucherId[凭证ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ acctSchemaId[账套] docType[单据类型]
+ partnerId[往来单位] sourceArApItemId[应收应付明细ID]
+ businessDate[业务日期] reason[坏账原因]
+=========>amount[金额信息]======
+ amount[坏账金额] currencyId[币种]
+ exchangeRate[汇率]
+=========>status[状态信息]======
+ approvalStatus[审批状态] periodId[会计期间]
+ voucherId[凭证ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] partnerId[往来单位]
+ docType[单据类型] approvalStatus[审批状态]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="docType" filterOp="eq"/>
+                <cell id="approvalStatus" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

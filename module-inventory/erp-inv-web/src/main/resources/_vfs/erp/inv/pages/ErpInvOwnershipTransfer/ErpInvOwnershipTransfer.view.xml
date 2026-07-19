@@ -8,9 +8,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ transferType[转移类型] partnerId[往来单位]
+ businessDate[业务日期] warehouseId[仓库]
+ sourceLocId[源库位] destLocId[目标库位]
+ fromOwnershipType[源所有权] toOwnershipType[目标所有权]
+=========>amount[金额信息]======
+ currencyId[币种]
+=========>status[状态信息]======
+ docStatus[单据状态]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ transferType[转移类型] partnerId[往来单位]
+ businessDate[业务日期] warehouseId[仓库]
+ sourceLocId[源库位] destLocId[目标库位]
+ fromOwnershipType[源所有权] toOwnershipType[目标所有权]
+=========>amount[金额信息]======
+ currencyId[币种]
+=========>status[状态信息]======
+ docStatus[单据状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] partnerId[往来单位]
+ transferType[转移类型] warehouseId[仓库]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="transferType" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

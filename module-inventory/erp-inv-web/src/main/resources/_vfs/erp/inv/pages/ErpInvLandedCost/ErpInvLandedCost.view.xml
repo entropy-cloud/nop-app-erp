@@ -18,24 +18,66 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit">
-            <layout>
-                code[单号] businessDate[业务日期]
-                receiveId[采购入库单] supplierId[采购供应商]
-                allocationMethod[分摊方法] currencyId[币种]
-                exchangeRate[汇率] totalCostAmount[到岸成本合计]
-                remark[备注]
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ businessDate[业务日期] receiveId[采购入库单]
+ supplierId[采购供应商] allocationMethod[分摊方法]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ totalCostAmount[到岸成本合计]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="add">
-            <layout>
-                code[单号] businessDate[业务日期]
-                receiveId[采购入库单] supplierId[采购供应商]
-                allocationMethod[分摊方法] currencyId[币种]
-                exchangeRate[汇率] totalCostAmount[到岸成本合计]
-                remark[备注]
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ businessDate[业务日期] receiveId[采购入库单]
+ supplierId[采购供应商] allocationMethod[分摊方法]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ totalCostAmount[到岸成本合计]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注](2)
             </layout>
+        </form>
+        <form id="add" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ businessDate[业务日期] receiveId[采购入库单]
+ supplierId[采购供应商] allocationMethod[分摊方法]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ totalCostAmount[到岸成本合计]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] docStatus[单据状态]
+ approveStatus[审核状态] receiveId[采购入库单]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="receiveId" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
         </form>
     </forms>
 

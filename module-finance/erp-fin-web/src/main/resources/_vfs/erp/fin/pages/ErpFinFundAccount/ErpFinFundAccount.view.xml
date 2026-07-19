@@ -21,9 +21,56 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[账户编码] name[账户名称]
+ orgId[业务组织] accountType[账户类型]
+ subjectId[关联科目]
+=========>bank[银行信息]======
+ bankName[银行名称] bankAccount[银行账号]
+=========>amount[金额信息]======
+ currencyId[币种] openingBalance[期初余额]
+ currentBalance[当前余额]
+=========>status[状态信息]======
+ status[账户状态]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[账户编码] name[账户名称]
+ orgId[业务组织] accountType[账户类型]
+ subjectId[关联科目]
+=========>bank[银行信息]======
+ bankName[银行名称] bankAccount[银行账号]
+=========>amount[金额信息]======
+ currencyId[币种] openingBalance[期初余额]
+ currentBalance[当前余额]
+=========>status[状态信息]======
+ status[账户状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[账户编码] name[账户名称]
+ accountType[账户类型] currencyId[币种]
+ status[账户状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="accountType" filterOp="eq"/>
+                <cell id="currencyId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

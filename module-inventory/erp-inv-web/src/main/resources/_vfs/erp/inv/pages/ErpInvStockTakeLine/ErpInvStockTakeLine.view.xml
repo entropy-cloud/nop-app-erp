@@ -8,9 +8,52 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ locationId[库位] batchNo[批号]
+=========>quantity[盘点数量]======
+ bookQuantity[账面数量] actualQuantity[实盘数量]
+ differenceQuantity[差异数量]
+=========>cost[成本信息]======
+ unitCost[单位成本] differenceAmount[差异金额]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ locationId[库位] batchNo[批号]
+=========>quantity[盘点数量]======
+ bookQuantity[账面数量] actualQuantity[实盘数量]
+ differenceQuantity[差异数量]
+=========>cost[成本信息]======
+ unitCost[单位成本] differenceAmount[差异金额]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ takeId[盘点单ID] locationId[库位]
+ batchNo[批号]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="takeId" filterOp="eq"/>
+                <cell id="locationId" filterOp="eq"/>
+                <cell id="batchNo" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

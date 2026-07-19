@@ -8,9 +8,52 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ supplierId[供应商] materialId[物料]
+ uoMId[计量单位] currencyId[币种]
+=========>price[价格信息]======
+ unitPrice[单价] taxRate[税率(%)]
+ minOrderQuantity[最小订量] leadTimeDays[交货周期(天)]
+ priority[优先级]
+=========>validity[有效期]======
+ validFrom[生效日] validTo[失效日]
+ isActive[是否启用]
+=========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ supplierId[供应商] materialId[物料]
+ uoMId[计量单位] currencyId[币种]
+=========>price[价格信息]======
+ unitPrice[单价] taxRate[税率(%)]
+ minOrderQuantity[最小订量] leadTimeDays[交货周期(天)]
+ priority[优先级]
+=========>validity[有效期]======
+ validFrom[生效日] validTo[失效日]
+ isActive[是否启用]
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ supplierId[供应商] materialId[物料]
+ currencyId[币种] isActive[是否启用]
+ validFrom[生效日]
+            </layout>
+            <cells>
+                <cell id="supplierId" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="currencyId" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+                <cell id="validFrom" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

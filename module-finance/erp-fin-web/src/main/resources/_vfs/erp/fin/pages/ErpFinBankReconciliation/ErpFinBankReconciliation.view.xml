@@ -22,9 +22,58 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ fundAccountId[资金账户] statementId[银行对账单]
+ reconciliationDate[对账日期]
+=========>amount[金额信息]======
+ bookBalance[账面余额] statementBalance[对账单余额]
+ unreconciledDiff[未达账项差异]
+=========>result[对账结果]======
+ isBalanced[是否平衡] reconciledAt[对账时间]
+ reconciledBy[对账人]
+=========>status[状态信息]======
+ docStatus[单据状态]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ fundAccountId[资金账户] statementId[银行对账单]
+ reconciliationDate[对账日期]
+=========>amount[金额信息]======
+ bookBalance[账面余额] statementBalance[对账单余额]
+ unreconciledDiff[未达账项差异]
+=========>result[对账结果]======
+ isBalanced[是否平衡] reconciledAt[对账时间]
+ reconciledBy[对账人]
+=========>status[状态信息]======
+ docStatus[单据状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] fundAccountId[资金账户]
+ docStatus[单据状态] isBalanced[是否平衡]
+ reconciliationDate[对账日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="fundAccountId" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="isBalanced" filterOp="eq"/>
+                <cell id="reconciliationDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

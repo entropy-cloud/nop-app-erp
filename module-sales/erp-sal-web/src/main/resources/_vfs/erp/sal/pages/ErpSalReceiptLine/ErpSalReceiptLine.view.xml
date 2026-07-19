@@ -7,9 +7,39 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ receiptId[收款单ID] invoiceId[发票ID]
+=========>amount[金额信息]======
+ amount[核销金额]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ receiptId[收款单ID] invoiceId[发票ID]
+=========>amount[金额信息]======
+ amount[核销金额]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ receiptId[收款单ID] invoiceId[发票ID]
+ amount[核销金额]
+            </layout>
+            <cells>
+                <cell id="receiptId" filterOp="eq"/>
+                <cell id="invoiceId" filterOp="eq"/>
+                <cell id="amount" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

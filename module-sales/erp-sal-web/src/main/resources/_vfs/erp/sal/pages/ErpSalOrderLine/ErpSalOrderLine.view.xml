@@ -22,9 +22,64 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ warehouseId[发货仓库]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ amount[金额(不含税)] deliveredQuantity[已发货数量]
+ invoicedQuantity[已开票数量]
+ discountRate[折扣率(%)] discountAmount[折扣金额]
+ pricingSource[价格来源]
+=========>tax[税务信息]======
+ taxRate[税率(%)] taxRateId[税率主数据]
+ taxAmount[税额] amountWithTax[金额(含税)]
+=========>reference[业务关联]======
+ orderId[订单ID] projectId[项目]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ warehouseId[发货仓库]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ amount[金额(不含税)] deliveredQuantity[已发货数量]
+ invoicedQuantity[已开票数量]
+ discountRate[折扣率(%)] discountAmount[折扣金额]
+ pricingSource[价格来源]
+=========>tax[税务信息]======
+ taxRate[税率(%)] taxRateId[税率主数据]
+ taxAmount[税额] amountWithTax[金额(含税)]
+=========>reference[业务关联]======
+ orderId[订单ID] projectId[项目]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ warehouseId[发货仓库] orderId[订单ID]
+ pricingSource[价格来源]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="orderId" filterOp="eq"/>
+                <cell id="pricingSource" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

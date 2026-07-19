@@ -7,9 +7,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[合同编号] contractName[合同名称]
+ orgId[业务组织] customerId[客户]
+ signedBy[签约人] businessDate[签约日期]
+ validFrom[生效日] validTo[失效日]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ totalAmount[合计金额(不含税)] totalTaxAmount[合计税额]
+ totalAmountWithTax[合计金额(含税)]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+=========^audit[审计信息]=========
+ remark[备注]
+ approvedBy[审核人] approvedAt[审核时间]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[合同编号] contractName[合同名称]
+ orgId[业务组织] customerId[客户]
+ signedBy[签约人] businessDate[签约日期]
+ validFrom[生效日] validTo[失效日]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ totalAmount[合计金额(不含税)] totalTaxAmount[合计税额]
+ totalAmountWithTax[合计金额(含税)]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[合同编号] customerId[客户]
+ docStatus[单据状态] approveStatus[审核状态]
+ businessDate[签约日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="customerId" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

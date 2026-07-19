@@ -8,9 +8,46 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] costElement[成本要素]
+=========>amount[金额信息]======
+ amount[金额] apPartnerId[应付往来]
+=========>reference[业务关联]======
+ landedCostId[到岸成本单ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] costElement[成本要素]
+=========>amount[金额信息]======
+ amount[金额] apPartnerId[应付往来]
+=========>reference[业务关联]======
+ landedCostId[到岸成本单ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] costElement[成本要素]
+ landedCostId[到岸成本单ID] apPartnerId[应付往来]
+ amount[金额]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="costElement" filterOp="eq"/>
+                <cell id="landedCostId" filterOp="eq"/>
+                <cell id="apPartnerId" filterOp="eq"/>
+                <cell id="amount" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

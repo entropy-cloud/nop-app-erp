@@ -7,9 +7,50 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ name[名称] code[编码]
+ customerGroupCode[客户组] partnerId[客户]
+=========>price[价格信息]======
+ currencyId[币种] priority[优先级]
+=========>validity[有效期]======
+ validFrom[生效日] validTo[失效日]
+ isActive[是否启用]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ name[名称] code[编码]
+ customerGroupCode[客户组] partnerId[客户]
+=========>price[价格信息]======
+ currencyId[币种] priority[优先级]
+=========>validity[有效期]======
+ validFrom[生效日] validTo[失效日]
+ isActive[是否启用]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] partnerId[客户]
+ currencyId[币种] isActive[是否启用]
+ validFrom[生效日]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="currencyId" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+                <cell id="validFrom" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

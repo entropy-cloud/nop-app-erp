@@ -8,9 +8,46 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] subjectCode[科目编码]
+ dcDirection[借贷方向] amountExpression[金额表达式]
+=========>template[模板信息]======
+ accountKey[科目键] amountKey[金额键]
+ memoTemplate[摘要模板]
+=========>reference[业务关联]======
+ templateId[凭证模板ID]
+=========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] subjectCode[科目编码]
+ dcDirection[借贷方向] amountExpression[金额表达式]
+=========>template[模板信息]======
+ accountKey[科目键] amountKey[金额键]
+ memoTemplate[摘要模板]
+=========>reference[业务关联]======
+ templateId[凭证模板ID]
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] subjectCode[科目编码]
+ templateId[凭证模板ID] dcDirection[借贷方向]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="subjectCode" filterOp="like"/>
+                <cell id="templateId" filterOp="eq"/>
+                <cell id="dcDirection" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

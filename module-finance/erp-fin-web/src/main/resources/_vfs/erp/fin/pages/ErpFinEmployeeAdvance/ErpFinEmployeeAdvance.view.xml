@@ -20,9 +20,58 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ employeeId[员工] advanceType[借款类型]
+ businessDate[业务日期] projectId[项目]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[借款金额(源币种)] amountFunctional[借款金额(本位币)]
+ settledAmount[已结算金额] outstandingAmount[未还金额]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+=========>posting[过账信息]======
+ posted[已过账] postedBy[过账人]
+ postedAt[过账时间] approvedBy[审核人]
+ approvedAt[审核时间]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ employeeId[员工] advanceType[借款类型]
+ businessDate[业务日期] projectId[项目]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[借款金额(源币种)] amountFunctional[借款金额(本位币)]
+ settledAmount[已结算金额] outstandingAmount[未还金额]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] employeeId[员工]
+ advanceType[借款类型] docStatus[单据状态]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="advanceType" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

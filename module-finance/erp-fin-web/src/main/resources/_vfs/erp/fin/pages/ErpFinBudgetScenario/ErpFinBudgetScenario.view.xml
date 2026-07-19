@@ -20,9 +20,62 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[方案编码] name[方案名称]
+ orgId[核算组织] acctSchemaId[账套]
+ fiscalYear[预算年度] scenarioType[方案类型]
+ parentScenarioId[源方案] validFrom[生效日期]
+ validTo[失效日期]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[预算金额(源币种)] amountFunctional[预算金额(本位币)]
+=========>control[控制信息]======
+ controlLevel[控制级别]
+=========>status[状态信息]======
+ docStatus[方案状态] approveStatus[审核状态]
+ voucherId[关联预算凭证ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[方案编码] name[方案名称]
+ orgId[核算组织] acctSchemaId[账套]
+ fiscalYear[预算年度] scenarioType[方案类型]
+ parentScenarioId[源方案] validFrom[生效日期]
+ validTo[失效日期]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[预算金额(源币种)] amountFunctional[预算金额(本位币)]
+=========>control[控制信息]======
+ controlLevel[控制级别]
+=========>status[状态信息]======
+ docStatus[方案状态] approveStatus[审核状态]
+ voucherId[关联预算凭证ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[方案编码] fiscalYear[预算年度]
+ scenarioType[方案类型] controlLevel[控制级别]
+ docStatus[方案状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="fiscalYear" filterOp="eq"/>
+                <cell id="scenarioType" filterOp="eq"/>
+                <cell id="controlLevel" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

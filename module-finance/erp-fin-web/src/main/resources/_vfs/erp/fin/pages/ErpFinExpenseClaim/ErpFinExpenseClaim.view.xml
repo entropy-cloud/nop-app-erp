@@ -24,9 +24,62 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ claimantId[报销人] departmentId[部门]
+ businessDate[业务日期] paymentMode[付款方式]
+ reason[报销事由]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[金额(源币种)] amountFunctional[金额(本位币)]
+ amountWithoutTax[金额(不含税)] taxAmount[税额]
+ amountWithTax[金额(含税)] settleAdvanceId[抵扣借款]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+=========>posting[过账信息]======
+ posted[已过账] postedBy[过账人]
+ postedAt[过账时间] approvedBy[审核人]
+ approvedAt[审核时间]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ claimantId[报销人] departmentId[部门]
+ businessDate[业务日期] paymentMode[付款方式]
+ reason[报销事由]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[金额(源币种)] amountFunctional[金额(本位币)]
+ amountWithoutTax[金额(不含税)] taxAmount[税额]
+ amountWithTax[金额(含税)] settleAdvanceId[抵扣借款]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] claimantId[报销人]
+ docStatus[单据状态] approveStatus[审核状态]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="claimantId" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

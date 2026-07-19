@@ -8,9 +8,48 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ warehouseId[仓库] batchNo[批号]
+=========>cost[成本调整]======
+ oldUnitCost[原单位成本] newUnitCost[新单位成本]
+ adjustQty[调整数量] adjustAmount[调整金额]
+ adjustReason[调整原因] currencyId[币种]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ warehouseId[仓库] batchNo[批号]
+=========>cost[成本调整]======
+ oldUnitCost[原单位成本] newUnitCost[新单位成本]
+ adjustQty[调整数量] adjustAmount[调整金额]
+ adjustReason[调整原因] currencyId[币种]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ adjustId[成本调整单ID] warehouseId[仓库]
+ adjustReason[调整原因]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="adjustId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="adjustReason" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

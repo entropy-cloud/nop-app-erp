@@ -8,9 +8,52 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] expenseType[费用类型]
+ projectId[项目] costCenterId[成本中心]
+ subjectId[科目ID] subjectCode[科目编码]
+=========>amount[金额信息]======
+ amountWithoutTax[金额(不含税)] taxRate[税率(%)]
+ taxAmount[税额] amountWithTax[金额(含税)]
+=========>reference[业务关联]======
+ claimId[报销单ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] expenseType[费用类型]
+ projectId[项目] costCenterId[成本中心]
+ subjectId[科目ID] subjectCode[科目编码]
+=========>amount[金额信息]======
+ amountWithoutTax[金额(不含税)] taxRate[税率(%)]
+ taxAmount[税额] amountWithTax[金额(含税)]
+=========>reference[业务关联]======
+ claimId[报销单ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] claimId[报销单ID]
+ expenseType[费用类型] subjectCode[科目编码]
+ amountWithTax[金额(含税)]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="claimId" filterOp="eq"/>
+                <cell id="expenseType" filterOp="eq"/>
+                <cell id="subjectCode" filterOp="like"/>
+                <cell id="amountWithTax" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

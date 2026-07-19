@@ -7,9 +7,46 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位]
+=========>quantity[数量]======
+ quantity[数量]
+=========>reference[业务关联]======
+ rfqId[询价单ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位]
+=========>quantity[数量]======
+ quantity[数量]
+=========>reference[业务关联]======
+ rfqId[询价单ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ rfqId[询价单ID] quantity[数量]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="rfqId" filterOp="eq"/>
+                <cell id="quantity" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

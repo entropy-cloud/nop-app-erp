@@ -8,9 +8,50 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] adjustmentType[调整类型]
+ description[描述] dcDirection[借贷方向]
+ side[账方]
+=========>amount[金额信息]======
+ amount[金额]
+=========>reference[业务关联]======
+ reconciliationId[银行余额调节表ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] adjustmentType[调整类型]
+ description[描述] dcDirection[借贷方向]
+ side[账方]
+=========>amount[金额信息]======
+ amount[金额]
+=========>reference[业务关联]======
+ reconciliationId[银行余额调节表ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] reconciliationId[银行余额调节表ID]
+ adjustmentType[调整类型] dcDirection[借贷方向]
+ amount[金额]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="reconciliationId" filterOp="eq"/>
+                <cell id="adjustmentType" filterOp="eq"/>
+                <cell id="dcDirection" filterOp="eq"/>
+                <cell id="amount" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

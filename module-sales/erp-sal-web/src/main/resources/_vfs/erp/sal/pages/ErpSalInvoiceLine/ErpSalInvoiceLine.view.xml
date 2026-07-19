@@ -18,9 +18,54 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ amount[金额(不含税)]
+=========>tax[税务信息]======
+ taxRate[税率(%)] taxAmount[税额]
+=========>reference[业务关联]======
+ invoiceId[发票ID] deliveryLineId[出库行ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+ amount[金额(不含税)]
+=========>tax[税务信息]======
+ taxRate[税率(%)] taxAmount[税额]
+=========>reference[业务关联]======
+ invoiceId[发票ID] deliveryLineId[出库行ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ invoiceId[发票ID] deliveryLineId[出库行ID]
+ unitPrice[单价]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="invoiceId" filterOp="eq"/>
+                <cell id="deliveryLineId" filterOp="eq"/>
+                <cell id="unitPrice" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

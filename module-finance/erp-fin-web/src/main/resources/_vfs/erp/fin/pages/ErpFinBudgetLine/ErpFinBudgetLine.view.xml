@@ -27,9 +27,60 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] orgId[核算组织]
+ acctSchemaId[账套] periodId[会计期间]
+ subjectId[科目ID] subjectCode[科目编码]
+=========>auxiliary[辅助核算]======
+ costCenterId[成本中心] departmentId[部门]
+ projectId[项目] partnerId[往来单位]
+ warehouseId[仓库] materialId[物料]
+=========>amount[金额信息]======
+ budgetAmountSource[预算金额(源币种)] budgetAmountFunctional[预算金额(本位币)]
+ currencyId[币种] exchangeRate[汇率]
+=========>reference[业务关联]======
+ scenarioId[预算方案ID]
+=========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] orgId[核算组织]
+ acctSchemaId[账套] periodId[会计期间]
+ subjectId[科目ID] subjectCode[科目编码]
+=========>auxiliary[辅助核算]======
+ costCenterId[成本中心] departmentId[部门]
+ projectId[项目] partnerId[往来单位]
+ warehouseId[仓库] materialId[物料]
+=========>amount[金额信息]======
+ budgetAmountSource[预算金额(源币种)] budgetAmountFunctional[预算金额(本位币)]
+ currencyId[币种] exchangeRate[汇率]
+=========>reference[业务关联]======
+ scenarioId[预算方案ID]
+ remark[备注](2)
+            </layout>
+        </form>
         <form id="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] scenarioId[预算方案ID]
+ subjectCode[科目编码] orgId[核算组织]
+ periodId[会计期间]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="scenarioId" filterOp="eq"/>
+                <cell id="subjectCode" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="periodId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
