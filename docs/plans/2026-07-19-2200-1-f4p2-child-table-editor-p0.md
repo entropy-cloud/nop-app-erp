@@ -248,9 +248,9 @@ Exit Criteria:
 
 ### F4 Phase 2 P1（inventory/finance 3 对）
 
-- Classification: `optimization candidate`
+- Classification: `optimization candidate` **RELEASED 2026-07-20**（inventory 3 对已落地，finance Voucher 仍为独立 successor）
 - Why Not Blocking Closure: roadmap F4 §Phase 2 表将 inventory（StockMove+Line / LandedCost+Line / TransferOrder+Line）+ finance（Voucher+Line 已 form 分组但无嵌套编辑）3 对列为 P1 优先级；本计划仅覆盖 P0 8 对。P1 复用本计划范式独立 plan 推进。
-- Successor Required: `yes`（触发条件：F4 Phase 2 P1 plan 启动时）
+- Successor Required: `partial`（inventory 3 对已落地见 `docs/plans/2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory.md`；finance ErpFinVoucher 子表编辑独立 successor，触发条件 F7/F9/F10 落地后）
 
 ### F4 Phase 2 P2/P3（mfg/assets/projects 3 对 + ext 8 域 ~36+ 对）
 

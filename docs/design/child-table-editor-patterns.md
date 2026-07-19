@@ -226,3 +226,91 @@ input-table 自身已含 `needConfirm=false`，每次行内编辑都触发 `chan
 | 日期 | 变更 | 来源 |
 |------|------|------|
 | 2026-07-19 | 初版落地（P0 8 对头行子表编辑范式 + 列集表 + onEvent 自动推算 + 头聚合机制 + 反模式自检表） | `docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md` |
+| 2026-07-20 | P1 扩展（inventory 3 头行对列集表 + 退化变体 + add 表单嵌入决策 + warehouse/location picker 补齐） | `docs/plans/2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory.md` |
+
+## 12. P1 inventory 3 头行对列集表
+
+inventory 域 3 对头行子表编辑（F4 Phase 2 P1）：
+
+### 12.1 inventory 域列集
+
+| 头实体 | 行实体 | 列集（顺序） | 自动推算 |
+|--------|--------|-------------|---------|
+| `ErpInvStockMove` | `ErpInvStockMoveLine` | `lineNo` `materialId` `uoMId` `quantity` `unitCost` `totalCost` `currencyId` `sourceLocationId` `destLocationId` `remark`（10 列） | `totalCost = ROUND(quantity × unitCost, 4)` |
+| `ErpInvLandedCost` | `ErpInvLandedCostLine` | `lineNo` `costElement` `amount` `apPartnerId` `remark`（5 列退化变体） | 无（无可乘字段） |
+| `ErpInvTransferOrder` | `ErpInvTransferOrderLine` | `lineNo` `materialId` `uoMId` `quantity` `batchNo` `remark`（6 列最小集） | 无（仅 quantity 单字段） |
+
+**字段名核实证据**（抽样 `_ErpInvStockMoveLine.xmeta` / `_ErpInvLandedCostLine.xmeta` / `_ErpInvTransferOrderLine.xmeta`）：
+- `ErpInvStockMoveLine`：含 `quantity`（propId=7）+ `unitCost`（propId=8）+ `totalCost`（propId=9）+ `currencyId`（propId=10）+ `sourceLocationId`（propId=13）+ `destLocationId`（propId=14）
+- `ErpInvLandedCostLine`：含 `costElement`（propId=4，dict=`erp-inv/cost-element`）+ `amount`（propId=5）+ `apPartnerId`（propId=6）；**无 quantity / unitPrice / unitCost 字段**
+- `ErpInvTransferOrderLine`：含 `quantity`（propId=7）+ `batchNo`（propId=8）；**无任何成本/金额字段**
+
+### 12.2 退化变体（无可乘字段实体）
+
+当行实体**无可乘字段**（即不存在 `quantity × unitPrice` 或类似乘积关系）时，sub-grid-edit **不引入 onEvent.setValue 自动推算**，仅保留 picker 接线 + 行级校验。
+
+**裁决依据**：
+- `ErpInvLandedCostLine`：`amount` 是直接录入的总金额（费用要素 + 应付往来），无乘法派生关系 → 不引入自动推算
+- `ErpInvTransferOrderLine`：仅 `quantity` 一个数值字段，无对应单价/金额字段 → 不引入自动推算
+
+**退化变体的写法差异**：
+- sub-grid-edit 列集不变（lineNo + 业务字段 + remark）
+- 行级校验保留（amount ≥ 0、quantity > 0 等）
+- **不写 onEvent.change.actions.setValue 块**
+- 头表单 lines cell 不挂头聚合 onEvent（无行级金额可累加）
+
+### 12.3 add 表单嵌入决策（ErpInvLandedCost）
+
+**方案 A（已采纳）**：`<form id="add">` 与 `<form id="edit">` 同构——layout 末尾追加 lines 组 + cells 内嵌 `<cell id="lines">` 子表控件。
+
+**理由**：
+- 与 P0 头实体行为一致（P0 头实体 add 表单虽为空 `<form id="add"/>`，但 ErpInvLandedCost 已含业务 add 表单）
+- 用户体验流畅——新建时直接录入行，不必先建头再编辑行
+- codegen `__save` 端点已支持聚合根 save 嵌套行（inventory 3 头实体沿用相同 ORM 关系模型）
+
+**反例（不采纳方案 B）**：add 表单不嵌入 lines cell，仅 edit/view 嵌入——会导致「先建头再编辑行」的两步流程，与 P0 行为分化。
+
+### 12.4 inventory 头表单 picker 补齐
+
+F4 Phase 1 已落地 `ErpMdMaterial / ErpMdPartner / ErpMdCurrency / ErpMdSubject` picker 列集；本 P1 计划补齐 `ErpMdWarehouse` + `ErpMdLocation` picker（picker.page.yaml 已存在 codegen wrapper，本计划仅在 view.xml 层补 `pick-list` grid + `pick-query` filterForm）：
+
+| Picker | pick-list 列集 | pick-query 筛选字段 |
+|--------|---------------|---------------------|
+| `ErpMdWarehouse` | `id` `code` `name` `warehouseType` `orgId` `status` | `code(like) | name(like) | warehouseType(eq) | status(eq)` |
+| `ErpMdLocation` | `id` `warehouseId` `code` `name` `parentId` `isActive` | `code(like) | name(like) | warehouseId(eq) | isActive(eq)` |
+
+**消费方**：
+- StockMove 头表 `sourceWarehouseId` / `destWarehouseId`（→ ErpMdWarehouse）
+- StockMove 头表 `sourceLocationId` / `destLocationId`（→ ErpMdLocation，头级字段）
+- StockMoveLine 行表 `sourceLocationId` / `destLocationId`（→ ErpMdLocation，行级字段）
+- TransferOrder 头表 `fromWarehouseId` / `toWarehouseId` / `inTransitWarehouseId`（→ ErpMdWarehouse）
+
+### 12.5 P1 反模式补充自检
+
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 对无可乘字段的 LandedCostLine 强行写 onEvent.setValue | 直接录入 `amount`，仅加 `validations.minimum: 0` |
+| 在 ErpMdWarehouse/ErpMdLocation 新建 picker.page.yaml | picker.page.yaml 已存在 codegen wrapper，仅在 view.xml 补 pick-list + pick-query |
+| 在 inventory Line view.xml 复用 P0 的 taxRate/amountWithTax 列 | inventory Line 字段异构，按 xmeta 实际字段裁剪列集 |
+| add 表单不嵌入 lines cell 强迫两步流程 | add 表单与 edit 表单同构嵌入 lines cell |
+
+### 12.6 P1 落地证据（2026-07-20）
+
+**实施范围**：
+- 3 inventory 头实体 view.xml 改造（`ErpInvStockMove` / `ErpInvLandedCost` / `ErpInvTransferOrder`），头表单 view + edit（+ LandedCost add）追加 lines 组 + `<cell id="lines">` 引用 sub-grid
+- 3 inventory Line 实体 view.xml 新增 sub-grid-edit + sub-grid-view（共 6 个新 grid）
+- `ErpMdWarehouse` + `ErpMdLocation` picker.page.yaml 补 pick-list + pick-query（picker.page.yaml wrapper 复用 codegen 既有产物）
+- 1 个写路径 E2E spec 新建：`tests/e2e/crud/inventory.write.spec.ts`（4 测试）
+
+**写路径 E2E 验证（不可降级）**：
+- ErpInvStockMove：__save 含嵌套 `lines:[...]` 持久化 2 行 + 行 totalCost = qty × unitCost = 50 派生验证
+- ErpInvLandedCost：__save 含嵌套 `lines:[...]` 持久化 2 行 + 退化变体直接录入 amount/costElement 验证
+- ErpInvTransferOrder：__save 含嵌套 `lines:[...]` 持久化 2 行 + 最小列集 quantity/batchNo 验证
+- AMIS input-table DOM 验证：ErpInvStockMove 编辑表单含 `.cxd-InputTable` 控件（codegen 展开非降级）
+
+**回归**：`tests/e2e/crud/` 49 测试全绿（45 既有 + 4 新增）；`mvn test` BUILD SUCCESS（含 `ErpAllWebPagesCollectTest` PAGE_ERROR_COUNT=0）。
+
+**P1 范式可推广性**：
+- 退化变体规则（§12.2）可推广至 P2/P3 中所有无可乘字段的行实体（如 mfg JobCard 材料行、assets 维护成本行等）
+- add 表单嵌入决策（§12.3）可推广至 P2/P3 中所有已有业务 add 表单的头实体
+- warehouse/location picker 列集（§12.4）可作为 ext 域类似扁平主数据 picker 的模板

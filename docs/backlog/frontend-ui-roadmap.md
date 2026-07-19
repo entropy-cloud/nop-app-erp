@@ -130,13 +130,16 @@ Phase 2 — 子表行内编辑：
 | Phase 2 优先级 | 域 | 头行实体 | 状态 |
 |--------|----|---------|------|
 | P0 | purchase/sales | 8 对 | ✅ completed（2026-07-20，plan `2026-07-19-2200-1-f4p2-child-table-editor-p0`） |
-| P1 | inventory/finance | 3 对 | ⏳ 待启动 |
+| P1 | inventory | 3 对（StockMove/LandedCost/TransferOrder） | ✅ completed（2026-07-20，plan `2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory`） |
+| P1 | finance | ErpFinVoucher（独立 successor，依赖 F7/F9/F10 落地后启动） | ⏳ 待启动 |
 | P2 | mfg/assets/prj | 3 对 | ⏳ 待启动 |
 | P3 | ext 8 域 | 对应头行实体 | ⏳ 待启动 |
 
 > P0 8 对（ErpPurOrder/Receive/Invoice/Return + ErpSalOrder/Delivery/Invoice/Return）已落地 `<view path=... grid="sub-grid-edit"/>` 范式 + 行内 picker + onEvent.setValue 自动推算（amount/taxAmount/amountWithTax）+ 行级校验（minimum/minimum）。范式见 `docs/design/child-table-editor-patterns.md`。
 
-> 注：P0 8 对 + P1 3 对 + P2 3 对 ≈ 14 对已分配，剩余 ~36+ 对（P3 ext 8 域）待具体确认。建议在实施 P0/P1 后再细化 P2/P3 的逐域映射。
+> P1 inventory 3 对（ErpInvStockMove/LandedCost/TransferOrder）已落地同范式 + 退化变体规则（无可乘字段实体不引入 onEvent）+ ErpMdWarehouse/ErpMdLocation picker pick-list 补齐 + StockMove 自动推算 totalCost = qty × unitCost。范式扩展见 `docs/design/child-table-editor-patterns.md §12`。
+
+> 注：P0 8 对 + P1 inventory 3 对 + P2 3 对 ≈ 14 对已分配，剩余 ~36+ 对（P3 ext 8 域）+ finance ErpFinVoucher 待具体确认。
 
 ---
 
@@ -515,7 +518,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F3: 18 域主实体 form layout 按 `ui-patterns.md` 分组
 - [x] F4 Phase1: 高频 picker（物料/供应商/客户/员工/资产/币种/科目）定制完成
 - [x] F4 Phase2 P0: purchase/sales 8 头行对的 child-table-editor 配置完成（含 M2M picker、自动推算、行校验，plan `2026-07-19-2200-1-f4p2-child-table-editor-p0`）
-- [ ] F4 Phase2 P1/P2/P3: ~42+ 剩余头行实体对的 child-table-editor 配置待启动
+- [ ] F4 Phase2 P2/P3 + finance: ~39+ 剩余头行实体对的 child-table-editor 配置待启动（P1 inventory 3 对已落地；finance ErpFinVoucher + P2 3 对 + P3 ext 8 域 ~36 对待启动）
 - [x] F5: 主要业务实体（68 个核心+扩展域实体）状态列使用着色标签（plan 2026-07-19-1818-3-f5-status-tag-coloring）
 - [ ] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置）
 - [ ] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地
