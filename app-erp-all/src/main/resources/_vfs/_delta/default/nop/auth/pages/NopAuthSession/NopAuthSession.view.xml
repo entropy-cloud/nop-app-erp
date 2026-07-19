@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpInvSerialNumber.view.xml" x:schema="/nop/schema/xui/xview.xdef"
-      xmlns:x="/nop/schema/xdsl.xdef">
-
-    <grids>
-        <grid id="list"/>
-        <grid id="pick-list"/>
-    </grids>
-
-    <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
-    </forms>
-
+<view x:extends="super" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
     <pages>
         <crud name="main">
             <listActions x:override="bounded-merge"/>
@@ -22,6 +9,5 @@
                 </action>
             </rowActions>
         </crud>
-        <picker name="picker"/>
     </pages>
 </view>

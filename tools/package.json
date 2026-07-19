@@ -13,6 +13,7 @@
     "audit:suspects": "node ./audit/discover-audit-suspects.mjs",
     "parse:nop-errors": "node ./parse-nop-errors.mjs",
     "stats": "node ./code-stats.mjs",
+    "analyze:buttons": "node ./analyze-view-buttons.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
