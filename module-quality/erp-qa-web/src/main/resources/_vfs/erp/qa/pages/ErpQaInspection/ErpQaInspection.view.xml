@@ -12,9 +12,27 @@
                 <col id="supplierId" label="供应商"/>
                 <col id="warehouseId" label="仓库"/>
                 <col id="batchNo" sortable="true"/>
-                <col id="inspectionDate" mandatory="true" sortable="true"/>
-                <col id="lotQuantity" ui:number="true" sortable="true"/>
-                <col id="sampleQuantity" ui:number="true" sortable="true"/>
+                <col id="inspectionDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="lotQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="sampleQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="result" mandatory="true" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>

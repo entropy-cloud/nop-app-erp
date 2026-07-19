@@ -11,8 +11,20 @@
                 <col id="contractId" label="合同"/>
                 <col id="slaPolicyId" label="SLA策略"/>
                 <col id="serviceType" sortable="true"/>
-                <col id="startDate" sortable="true"/>
-                <col id="endDate" sortable="true"/>
+                <col id="startDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="maxTickets" ui:number="true" sortable="true"/>
                 <col id="usedTickets" ui:number="true" sortable="true"/>
                 <col id="isActive" sortable="true"/>

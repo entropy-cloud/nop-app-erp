@@ -8,7 +8,13 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="所属组织"/>
                 <col id="asset" label="资产编码"/>
-                <col id="businessDate" sortable="true"/>
+                <col id="businessDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="fromDepartmentId" label="源部门"/>
                 <col id="toDepartmentId" label="目标部门"/>
                 <col id="fromStaffId" label="源使用人"/>

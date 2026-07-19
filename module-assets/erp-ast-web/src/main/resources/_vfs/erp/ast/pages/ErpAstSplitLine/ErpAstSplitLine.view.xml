@@ -13,7 +13,13 @@
                 <col id="categoryId" label="资产类别"/>
                 <col id="allocationMethod" sortable="true"/>
                 <col id="proportion" sortable="true"/>
-                <col id="netBookValue" sortable="true"/>
+                <col id="netBookValue" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

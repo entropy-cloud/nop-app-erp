@@ -9,10 +9,28 @@
                 <col id="customerId" label="客户"/>
                 <col id="invoiceNo"/>
                 <col id="invoiceType"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="currencyId" label="币种"/>
-                <col id="totalAmountWithTax" ui:number="true" sortable="true"/>
-                <col id="receivedAmount" ui:number="true" sortable="true"/>
+                <col id="totalAmountWithTax" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="receivedAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="receivedStatus"/>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>

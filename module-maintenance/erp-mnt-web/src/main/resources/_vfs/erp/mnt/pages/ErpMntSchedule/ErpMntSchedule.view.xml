@@ -11,8 +11,20 @@
                 <col id="scheduleType" mandatory="true" sortable="true"/>
                 <col id="frequency" ui:number="true" sortable="true"/>
                 <col id="recurrenceType" sortable="true"/>
-                <col id="startDate" mandatory="true" sortable="true"/>
-                <col id="nextDueDate" sortable="true"/>
+                <col id="startDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="nextDueDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isActive" ui:number="true" sortable="true"/>
             </cols>
         </grid>

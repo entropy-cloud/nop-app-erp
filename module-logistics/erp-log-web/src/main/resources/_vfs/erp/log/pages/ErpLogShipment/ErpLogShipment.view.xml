@@ -11,10 +11,22 @@
                 <col id="carrierConfigId" label="承运商配置"/>
                 <col id="relatedBillType" sortable="true"/>
                 <col id="relatedBillCode" sortable="true"/>
-                <col id="shipmentDate" sortable="true"/>
+                <col id="shipmentDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="trackingNo" sortable="true"/>
                 <col id="labelUrl" sortable="true"/>
-                <col id="freightAmount" ui:number="true" sortable="true"/>
+                <col id="freightAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="freightCurrencyId" label="运费币种"/>
                 <col id="freightTerms" sortable="true"/>
                 <col id="freightSettlementStatus" sortable="true"/>
@@ -31,8 +43,20 @@
                 <col id="senderName" sortable="true"/>
                 <col id="senderPhone" sortable="true"/>
                 <col id="senderAddress" sortable="true"/>
-                <col id="estimatedDeliveryDate" sortable="true"/>
-                <col id="actualDeliveryDate" sortable="true"/>
+                <col id="estimatedDeliveryDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualDeliveryDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="signedBy" sortable="true"/>
                 <col id="shipperId" label="发货员(职员)"/>
                 <col id="status" mandatory="true" sortable="true">
@@ -62,10 +86,28 @@
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
-                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="updatedBy" mandatory="true" sortable="true"/>
-                <col id="updateTime" mandatory="true" sortable="true"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="posted" sortable="true"/>
             </cols>
         </grid>

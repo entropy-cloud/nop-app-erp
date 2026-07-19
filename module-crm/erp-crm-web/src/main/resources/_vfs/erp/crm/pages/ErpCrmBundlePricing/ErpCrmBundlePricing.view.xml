@@ -11,8 +11,20 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="bundleName" sortable="true"/>
                 <col id="discountType" sortable="true"/>
-                <col id="discountValue" ui:number="true" sortable="true"/>
-                <col id="bundleAmount" ui:number="true" sortable="true"/>
+                <col id="discountValue" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="bundleAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isActive" sortable="true"/>
             </cols>
         </grid>

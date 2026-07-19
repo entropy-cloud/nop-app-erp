@@ -11,7 +11,13 @@
                 <col id="operationCode" sortable="true"/>
                 <col id="operationName" sortable="true"/>
                 <col id="workcenterId" label="工作中心"/>
-                <col id="standardTime" ui:number="true" sortable="true"/>
+                <col id="standardTime" ui:number="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

@@ -33,8 +33,20 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="startDate" sortable="true"/>
-                <col id="endDate" sortable="true"/>
+                <col id="startDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="targetDepartmentId" label="目标部门"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="totalQuestions" ui:number="true" sortable="true"/>

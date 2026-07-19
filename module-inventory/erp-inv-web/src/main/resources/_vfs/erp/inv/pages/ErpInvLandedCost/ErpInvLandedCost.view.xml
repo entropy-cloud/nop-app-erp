@@ -6,7 +6,13 @@
             <cols x:override="bounded-merge">
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="receiveId" mandatory="true" sortable="true"/>
-                <col id="totalCostAmount" ui:number="true" sortable="true"/>
+                <col id="totalCostAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="allocationMethod" mandatory="true" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>
@@ -41,7 +47,13 @@
                     </gen-control>
                 </col>
                 <col id="posted" sortable="true"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

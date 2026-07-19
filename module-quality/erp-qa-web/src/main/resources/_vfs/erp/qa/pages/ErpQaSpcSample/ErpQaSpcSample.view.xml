@@ -8,7 +8,13 @@
                 <col id="chart" label="控制图"/>
                 <col id="orgId" label="组织"/>
                 <col id="subgroupNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="sampleTime" mandatory="true" sortable="true"/>
+                <col id="sampleTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="mean" ui:number="true" sortable="true"/>
                 <col id="range" ui:number="true" sortable="true"/>
                 <col id="stdDev" ui:number="true" sortable="true"/>

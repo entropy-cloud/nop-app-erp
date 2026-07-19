@@ -8,13 +8,37 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="组织"/>
                 <col id="equipment" label="设备"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="standardRef" sortable="true"/>
-                <col id="measuredValue" ui:number="true" sortable="true"/>
-                <col id="targetValue" ui:number="true" sortable="true"/>
+                <col id="measuredValue" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="targetValue" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="tolerance" ui:number="true" sortable="true"/>
                 <col id="result" mandatory="true" sortable="true"/>
-                <col id="nextCalibrationDate" sortable="true"/>
+                <col id="nextCalibrationDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

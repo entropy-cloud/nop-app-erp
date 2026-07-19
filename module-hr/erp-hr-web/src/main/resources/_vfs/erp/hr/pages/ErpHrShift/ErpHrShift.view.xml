@@ -9,8 +9,20 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="name" mandatory="true" sortable="true"/>
                 <col id="shiftType" mandatory="true" sortable="true"/>
-                <col id="startTime" mandatory="true" sortable="true"/>
-                <col id="endTime" mandatory="true" sortable="true"/>
+                <col id="startTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="graceLateMinutes" ui:number="true" sortable="true"/>
                 <col id="graceEarlyLeaveMinutes" ui:number="true" sortable="true"/>
                 <col id="requireClockIn" sortable="true"/>

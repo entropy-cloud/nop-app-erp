@@ -8,7 +8,13 @@
                 <col id="ncr" label="不合格品"/>
                 <col id="actionType" mandatory="true" sortable="true"/>
                 <col id="description" sortable="true"/>
-                <col id="dueDate" sortable="true"/>
+                <col id="dueDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

@@ -10,8 +10,20 @@
                 <col id="customerId" label="客户"/>
                 <col id="warehouseId" label="出库仓库"/>
                 <col id="currencyId" label="币种"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
-                <col id="totalAmountWithTax" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalAmountWithTax" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

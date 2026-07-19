@@ -8,7 +8,13 @@
                 <col id="workcenterId" label="工作中心"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="workOrder" label="工单"/>
-                <col id="loadDate" mandatory="true" sortable="true"/>
+                <col id="loadDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="loadHours" ui:number="true" sortable="true"/>
                 <col id="setupHours" ui:number="true" sortable="true"/>
             </cols>

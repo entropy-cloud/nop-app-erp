@@ -9,10 +9,34 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="productId" label="产品(主产出)"/>
                 <col id="currencyId" label="币种"/>
-                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="completedQuantity" ui:number="true" sortable="true"/>
-                <col id="scrappedQuantity" ui:number="true" sortable="true"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="completedQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

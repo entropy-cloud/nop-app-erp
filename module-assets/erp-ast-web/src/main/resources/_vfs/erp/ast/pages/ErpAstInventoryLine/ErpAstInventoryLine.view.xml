@@ -12,9 +12,27 @@
                 <col id="assetCodeSnapshot" sortable="true"/>
                 <col id="assetNameSnapshot" sortable="true"/>
                 <col id="categoryId" label="资产类别"/>
-                <col id="bookQuantity" ui:number="true" sortable="true"/>
-                <col id="actualQuantity" ui:number="true" sortable="true"/>
-                <col id="varianceQuantity" ui:number="true" sortable="true"/>
+                <col id="bookQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="varianceQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="disposition" sortable="true"/>
                 <col id="newAsset" label="新增资产编码"/>
                 <col id="capitalization" label="资本化单编码"/>

@@ -10,7 +10,13 @@
                 <col id="materialId" label="物料"/>
                 <col id="uoMId" label="计量单位"/>
                 <col id="warehouseId" label="发货仓库"/>
-                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="scrapRate" ui:number="true" sortable="true"/>
             </cols>
         </grid>

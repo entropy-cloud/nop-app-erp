@@ -8,9 +8,27 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="materialId" label="物料名称"/>
-                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="unitCost" ui:number="true" sortable="true"/>
-                <col id="totalCost" ui:number="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="unitCost" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalCost" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="batchNo" sortable="true"/>
                 <col id="serialNo" sortable="true"/>
                 <col id="remark" sortable="true"/>

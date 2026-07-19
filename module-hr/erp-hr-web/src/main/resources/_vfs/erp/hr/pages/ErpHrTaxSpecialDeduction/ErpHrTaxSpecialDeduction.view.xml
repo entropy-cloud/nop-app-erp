@@ -10,7 +10,13 @@
                 <col id="year" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="month" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="deductionType" mandatory="true" sortable="true"/>
-                <col id="monthlyAmount" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="monthlyAmount" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="verified" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
             </cols>

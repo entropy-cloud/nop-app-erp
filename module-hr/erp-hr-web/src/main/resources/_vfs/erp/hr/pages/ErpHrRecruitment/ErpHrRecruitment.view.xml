@@ -36,9 +36,21 @@
                     </gen-control>
                 </col>
                 <col id="interviewer" label="面试官"/>
-                <col id="interviewDate" sortable="true"/>
+                <col id="interviewDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="offerSalary" ui:number="true" sortable="true"/>
-                <col id="hiredDate" sortable="true"/>
+                <col id="hiredDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="employee" label="员工"/>
                 <col id="orgId" label="业务组织"/>
             </cols>

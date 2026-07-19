@@ -9,7 +9,13 @@
                 <col id="year" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="month" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="paymentStatus" mandatory="true" sortable="true"/>
-                <col id="paymentDate" sortable="true"/>
+                <col id="paymentDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="approveStatus" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

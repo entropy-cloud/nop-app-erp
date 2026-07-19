@@ -8,9 +8,27 @@
                 <col id="projectId" label="项目"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="plannedDate" mandatory="true" sortable="true"/>
-                <col id="actualDate" sortable="true"/>
-                <col id="billingAmount" sortable="true"/>
+                <col id="plannedDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="billingAmount" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isBillingTrigger" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>

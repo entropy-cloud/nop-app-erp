@@ -12,7 +12,13 @@
                 <col id="targetEmployee" label="目标员工"/>
                 <col id="sourceAssignmentId" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="targetAssignmentId" ui:number="true" sortable="true"/>
-                <col id="swapDate" mandatory="true" sortable="true"/>
+                <col id="swapDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="reason" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>

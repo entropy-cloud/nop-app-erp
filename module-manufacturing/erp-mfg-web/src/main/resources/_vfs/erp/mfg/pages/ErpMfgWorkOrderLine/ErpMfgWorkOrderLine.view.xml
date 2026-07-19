@@ -11,9 +11,27 @@
                 <col id="materialId" label="物料名称"/>
                 <col id="sourceWarehouseId" label="领料仓库"/>
                 <col id="destWarehouseId" label="入库仓库"/>
-                <col id="plannedQuantity" ui:number="true" sortable="true"/>
-                <col id="actualQuantity" ui:number="true" sortable="true"/>
-                <col id="scrappedQuantity" ui:number="true" sortable="true"/>
+                <col id="plannedQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="remark" sortable="true"/>
             </cols>
         </grid>

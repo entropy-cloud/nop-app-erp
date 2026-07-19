@@ -9,7 +9,13 @@
                 <col id="productId" label="产品"/>
                 <col id="bomType" mandatory="true" sortable="true"/>
                 <col id="versionLabel" sortable="true"/>
-                <col id="qty" ui:number="true" sortable="true"/>
+                <col id="qty" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isActive" sortable="true"/>
                 <col id="isDefault" sortable="true"/>
             </cols>

@@ -9,8 +9,20 @@
                 <col id="bundleId" label="捆绑定价"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="product" label="产品"/>
-                <col id="quantity" ui:number="true" sortable="true"/>
-                <col id="unitPrice" ui:number="true" sortable="true"/>
+                <col id="quantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="unitPrice" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="sequence" ui:number="true" sortable="true"/>
             </cols>
         </grid>

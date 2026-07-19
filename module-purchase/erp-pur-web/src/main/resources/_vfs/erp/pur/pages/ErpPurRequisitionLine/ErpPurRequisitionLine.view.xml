@@ -8,8 +8,20 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="materialId" label="物料名称"/>
-                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="requiredDate" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="requiredDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="remark" sortable="true"/>
             </cols>
         </grid>

@@ -12,7 +12,13 @@
                 <col id="patternType" sortable="true"/>
                 <col id="patternData" sortable="true"/>
                 <col id="rotateInterval" ui:number="true" sortable="true"/>
-                <col id="startDate" sortable="true"/>
+                <col id="startDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="groupId" label="轮换组"/>
             </cols>
         </grid>

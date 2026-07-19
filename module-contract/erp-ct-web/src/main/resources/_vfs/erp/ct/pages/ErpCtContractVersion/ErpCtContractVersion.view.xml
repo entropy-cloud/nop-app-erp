@@ -8,7 +8,13 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="contractId" label="合同"/>
                 <col id="versionNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="versionDate" mandatory="true" sortable="true"/>
+                <col id="versionDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="content" sortable="true"/>
                 <col id="attachmentFileId" sortable="true"/>
                 <col id="isCurrent" sortable="true"/>
@@ -37,13 +43,31 @@
                     </gen-control>
                 </col>
                 <col id="approvedBy" sortable="true"/>
-                <col id="approvedAt" sortable="true"/>
+                <col id="approvedAt" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
-                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="updatedBy" mandatory="true" sortable="true"/>
-                <col id="updateTime" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

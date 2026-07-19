@@ -7,7 +7,13 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="组织"/>
-                <col id="reviewDate" mandatory="true" sortable="true"/>
+                <col id="reviewDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="reviewType" mandatory="true" sortable="true"/>
                 <col id="conclusion" sortable="true"/>
                 <col id="actionRequired" ui:number="true" sortable="true"/>

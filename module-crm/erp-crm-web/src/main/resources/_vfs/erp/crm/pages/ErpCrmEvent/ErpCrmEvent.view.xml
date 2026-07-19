@@ -14,8 +14,20 @@
                 <col id="partnerId" label="客户"/>
                 <col id="contactId" label="联系人"/>
                 <col id="parentEvent" label="父活动"/>
-                <col id="startDateTime" sortable="true"/>
-                <col id="endDateTime" sortable="true"/>
+                <col id="startDateTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDateTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="status" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

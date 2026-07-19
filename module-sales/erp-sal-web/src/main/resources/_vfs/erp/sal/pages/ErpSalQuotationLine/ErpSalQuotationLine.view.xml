@@ -8,11 +8,41 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="materialId" label="物料名称"/>
-                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="unitPrice" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="taxAmount" ui:number="true" sortable="true"/>
-                <col id="amount" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="amountWithTax" ui:number="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="unitPrice" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="taxAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amount" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amountWithTax" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="remark" sortable="true"/>
             </cols>
         </grid>

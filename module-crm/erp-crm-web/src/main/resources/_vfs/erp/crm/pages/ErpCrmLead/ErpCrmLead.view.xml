@@ -34,7 +34,13 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="expectedCloseDate" sortable="true"/>
+                <col id="expectedCloseDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

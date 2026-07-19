@@ -8,8 +8,20 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="agentId" sortable="true"/>
                 <col id="serviceType" sortable="true"/>
-                <col id="rate" ui:number="true" sortable="true"/>
-                <col id="effectiveDate" sortable="true"/>
+                <col id="rate" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 8 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="effectiveDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isActive" sortable="true"/>
             </cols>
         </grid>

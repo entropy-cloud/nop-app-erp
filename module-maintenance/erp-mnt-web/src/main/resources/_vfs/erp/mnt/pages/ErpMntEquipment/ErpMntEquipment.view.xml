@@ -38,7 +38,13 @@
                 <col id="serialNo" sortable="true"/>
                 <col id="manufacturer" sortable="true"/>
                 <col id="model" sortable="true"/>
-                <col id="installDate" sortable="true"/>
+                <col id="installDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

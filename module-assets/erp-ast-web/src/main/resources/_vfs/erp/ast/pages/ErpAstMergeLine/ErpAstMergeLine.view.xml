@@ -10,9 +10,27 @@
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="sourceAsset" label="源资产编码"/>
                 <col id="contributionProportion" sortable="true"/>
-                <col id="originalCostAmount" sortable="true"/>
-                <col id="accumulatedDepreciationAmount" sortable="true"/>
-                <col id="netBookValue" sortable="true"/>
+                <col id="originalCostAmount" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="accumulatedDepreciationAmount" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="netBookValue" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

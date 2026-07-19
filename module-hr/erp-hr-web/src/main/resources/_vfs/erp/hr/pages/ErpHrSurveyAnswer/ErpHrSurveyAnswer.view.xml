@@ -7,7 +7,13 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="responseId" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="question" label="题目"/>
-                <col id="ratingValue" ui:number="true" sortable="true"/>
+                <col id="ratingValue" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="selectedOption" sortable="true"/>
                 <col id="openText" sortable="true"/>
             </cols>

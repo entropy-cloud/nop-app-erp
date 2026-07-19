@@ -12,8 +12,20 @@
                 <col id="costElement" mandatory="true" sortable="true"/>
                 <col id="materialId" label="物料"/>
                 <col id="workcenterId" label="工作中心"/>
-                <col id="varianceAmount" ui:number="true" sortable="true"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="varianceAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

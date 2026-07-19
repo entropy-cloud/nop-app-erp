@@ -8,8 +8,20 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="employee" label="员工"/>
                 <col id="leaveType" mandatory="true" sortable="true"/>
-                <col id="startDate" mandatory="true" sortable="true"/>
-                <col id="endDate" mandatory="true" sortable="true"/>
+                <col id="startDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="durationDays" ui:number="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
@@ -36,7 +48,13 @@
                     </gen-control>
                 </col>
                 <col id="approver" label="审批人"/>
-                <col id="approvedAt" sortable="true"/>
+                <col id="approvedAt" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="orgId" label="业务组织"/>
             </cols>
         </grid>

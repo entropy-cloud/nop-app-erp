@@ -7,7 +7,13 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="组织"/>
-                <col id="visitDate" mandatory="true" sortable="true"/>
+                <col id="visitDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="visitType" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
@@ -33,8 +39,20 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="startTime" sortable="true"/>
-                <col id="endTime" sortable="true"/>
+                <col id="startTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="totalMinutes" ui:number="true" sortable="true"/>
                 <col id="result" sortable="true"/>
             </cols>

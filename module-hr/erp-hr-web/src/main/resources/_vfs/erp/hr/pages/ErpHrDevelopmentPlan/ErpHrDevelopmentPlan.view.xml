@@ -8,7 +8,13 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="employee" label="员工"/>
                 <col id="planName" sortable="true"/>
-                <col id="targetDate" sortable="true"/>
+                <col id="targetDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -34,7 +40,13 @@
                     </gen-control>
                 </col>
                 <col id="orgId" label="业务组织"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

@@ -10,9 +10,27 @@
                 <col id="territoryId" label="销售区域"/>
                 <col id="teamId" label="销售团队"/>
                 <col id="currencyId" label="币种"/>
-                <col id="commitAmount" ui:number="true" sortable="true"/>
-                <col id="upsideAmount" ui:number="true" sortable="true"/>
-                <col id="weightedAmount" ui:number="true" sortable="true"/>
+                <col id="commitAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="upsideAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="weightedAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="opportunityCount" ui:number="true" sortable="true"/>
                 <col id="lastCalculatedAt" sortable="true"/>
             </cols>

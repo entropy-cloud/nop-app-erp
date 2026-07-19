@@ -7,8 +7,20 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="equipment" label="设备"/>
-                <col id="startTime" mandatory="true" sortable="true"/>
-                <col id="endTime" sortable="true"/>
+                <col id="startTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="totalMinutes" ui:number="true" sortable="true"/>
                 <col id="reason" sortable="true"/>
             </cols>

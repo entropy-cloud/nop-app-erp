@@ -7,8 +7,20 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="batchNo" mandatory="true" sortable="true"/>
-                <col id="paymentDate" mandatory="true" sortable="true"/>
-                <col id="totalAmount" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="paymentDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalAmount" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="recordCount" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="fileFormat" mandatory="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true">

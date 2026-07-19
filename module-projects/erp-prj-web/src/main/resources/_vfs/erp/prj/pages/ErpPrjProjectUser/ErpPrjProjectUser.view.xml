@@ -8,8 +8,20 @@
                 <col id="projectId" label="项目"/>
                 <col id="userId" label="用户"/>
                 <col id="role" sortable="true"/>
-                <col id="startDate" sortable="true"/>
-                <col id="endDate" sortable="true"/>
+                <col id="startDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

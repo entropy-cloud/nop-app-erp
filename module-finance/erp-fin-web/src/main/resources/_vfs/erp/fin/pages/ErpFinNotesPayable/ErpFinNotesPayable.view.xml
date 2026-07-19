@@ -11,8 +11,20 @@
                 <col id="notesType" mandatory="true" sortable="true"/>
                 <col id="notesNo" sortable="true"/>
                 <col id="payeeName" sortable="true"/>
-                <col id="issueDate" sortable="true"/>
-                <col id="dueDate" sortable="true"/>
+                <col id="issueDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="dueDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="currencyId" label="币种"/>
                 <col id="amountSource" ui:number="true" sortable="true"/>
                 <col id="amountFunctional" ui:number="true" sortable="true"/>

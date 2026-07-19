@@ -70,7 +70,13 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="deadlineDateTime" sortable="true"/>
+                <col id="deadlineDateTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isSlaCompleted" sortable="true"/>
             </cols>
         </grid>

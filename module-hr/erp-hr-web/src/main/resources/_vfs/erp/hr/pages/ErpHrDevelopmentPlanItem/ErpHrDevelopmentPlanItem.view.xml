@@ -12,8 +12,20 @@
                 <col id="targetLevel" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="developmentAction" sortable="true"/>
                 <col id="mentor" label="导师"/>
-                <col id="startDate" sortable="true"/>
-                <col id="endDate" sortable="true"/>
+                <col id="startDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="status" mandatory="true" sortable="true"/>
             </cols>
         </grid>

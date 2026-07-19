@@ -9,9 +9,27 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="employee" label="员工"/>
                 <col id="shiftId" label="班次"/>
-                <col id="assignmentDate" mandatory="true" sortable="true"/>
-                <col id="actualStartTime" sortable="true"/>
-                <col id="actualEndTime" sortable="true"/>
+                <col id="assignmentDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualStartTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualEndTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isAbsent" sortable="true"/>
                 <col id="absenceReason" sortable="true"/>
                 <col id="leaveRequest" label="关联休假"/>

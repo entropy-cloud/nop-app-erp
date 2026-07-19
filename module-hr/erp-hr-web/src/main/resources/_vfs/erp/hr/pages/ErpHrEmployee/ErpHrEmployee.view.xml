@@ -15,7 +15,13 @@
                 <col id="bankAccountId" label="工资卡账户"/>
                 <col id="employmentStatus" mandatory="true" sortable="true"/>
                 <col id="employeeType" mandatory="true" sortable="true"/>
-                <col id="hireDate" mandatory="true" sortable="true"/>
+                <col id="hireDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="userAccountId" ui:number="true" sortable="true"/>
             </cols>
         </grid>

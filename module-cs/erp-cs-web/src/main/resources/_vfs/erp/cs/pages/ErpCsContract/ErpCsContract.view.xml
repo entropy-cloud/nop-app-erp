@@ -10,9 +10,27 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="partnerId" label="客户"/>
                 <col id="contractType" sortable="true"/>
-                <col id="startDate" sortable="true"/>
-                <col id="endDate" sortable="true"/>
-                <col id="totalAmount" ui:number="true" sortable="true"/>
+                <col id="startDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="billingCycle" sortable="true"/>
                 <col id="status" sortable="true">
                     <gen-control>

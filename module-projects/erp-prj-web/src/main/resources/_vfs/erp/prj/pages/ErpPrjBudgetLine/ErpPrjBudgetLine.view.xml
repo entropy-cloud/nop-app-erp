@@ -10,9 +10,27 @@
                 <col id="costCategory" mandatory="true" sortable="true"/>
                 <col id="subjectId" label="科目"/>
                 <col id="taskId" label="任务"/>
-                <col id="plannedAmount" mandatory="true" sortable="true"/>
-                <col id="committedAmount" sortable="true"/>
-                <col id="actualAmount" sortable="true"/>
+                <col id="plannedAmount" mandatory="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="committedAmount" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualAmount" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

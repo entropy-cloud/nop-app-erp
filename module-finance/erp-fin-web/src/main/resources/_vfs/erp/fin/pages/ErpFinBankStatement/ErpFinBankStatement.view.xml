@@ -9,9 +9,27 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="fundAccountId" label="资金账户"/>
-                <col id="statementDate" mandatory="true" sortable="true"/>
-                <col id="beginningBalance" ui:number="true" sortable="true"/>
-                <col id="endingBalance" ui:number="true" sortable="true"/>
+                <col id="statementDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="beginningBalance" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endingBalance" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="totalDebit" ui:number="true" sortable="true"/>
                 <col id="totalCredit" ui:number="true" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true">

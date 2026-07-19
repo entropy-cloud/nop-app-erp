@@ -8,7 +8,13 @@
                 <col id="lead" label="关联线索"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="activityType" sortable="true"/>
-                <col id="activityDate" sortable="true"/>
+                <col id="activityDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="summary" sortable="true"/>
             </cols>
         </grid>

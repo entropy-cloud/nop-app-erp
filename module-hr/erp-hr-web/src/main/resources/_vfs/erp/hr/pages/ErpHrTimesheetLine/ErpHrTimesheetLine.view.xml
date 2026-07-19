@@ -8,7 +8,13 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="timesheet" label="工时表"/>
                 <col id="employee" label="员工"/>
-                <col id="workDate" mandatory="true" sortable="true"/>
+                <col id="workDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="projectId" label="项目"/>
                 <col id="taskId" label="任务"/>
                 <col id="activityType" sortable="true"/>

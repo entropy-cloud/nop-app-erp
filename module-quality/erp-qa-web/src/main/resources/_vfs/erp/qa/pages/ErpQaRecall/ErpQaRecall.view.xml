@@ -11,7 +11,13 @@
                 <col id="sourceNcr" label="源不合格品"/>
                 <col id="materialId" label="物料"/>
                 <col id="severityLevel" mandatory="true" sortable="true"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

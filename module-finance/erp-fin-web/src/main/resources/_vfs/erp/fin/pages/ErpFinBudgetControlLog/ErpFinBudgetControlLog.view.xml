@@ -6,12 +6,30 @@
         <grid id="list">
             <!-- 预算控制日志：仅保留审计关键字段（只读日志，bounded-merge 丢弃冗余列） -->
             <cols x:override="bounded-merge">
-                <col id="businessDate" label="业务日期"/>
+                <col id="businessDate" label="业务日期" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="sourceBillType" label="单据类型"/>
                 <col id="sourceBillCode" label="单据号"/>
                 <col id="subjectId" label="科目"/>
-                <col id="requestedAmount" label="申请金额"/>
-                <col id="availableAmount" label="检查时余量"/>
+                <col id="requestedAmount" label="申请金额" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="availableAmount" label="检查时余量" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="actionResult" label="控制结果"/>
                 <col id="operatorId" label="操作人"/>
                 <col id="operatedAt" label="操作时间"/>

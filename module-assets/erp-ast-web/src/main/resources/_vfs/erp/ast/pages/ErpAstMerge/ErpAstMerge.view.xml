@@ -9,7 +9,13 @@
                 <col id="orgId" label="所属组织"/>
                 <col id="targetAsset" label="目标资产编码"/>
                 <col id="currencyId" label="币种"/>
-                <col id="businessDate" sortable="true"/>
+                <col id="businessDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="mergeReason" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true"/>
                 <col id="approveStatus" sortable="true"/>

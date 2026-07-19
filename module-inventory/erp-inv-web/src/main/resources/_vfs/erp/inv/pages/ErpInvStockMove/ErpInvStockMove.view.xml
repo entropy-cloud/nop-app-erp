@@ -10,7 +10,13 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="sourceWarehouseId" label="源仓库"/>
                 <col id="destWarehouseId" label="目标仓库"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

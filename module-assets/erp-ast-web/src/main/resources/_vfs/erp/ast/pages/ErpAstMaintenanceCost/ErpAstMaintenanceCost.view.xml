@@ -10,8 +10,20 @@
                 <col id="orgId" label="所属组织"/>
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="costType" sortable="true"/>
-                <col id="amount" sortable="true"/>
-                <col id="businessDate" sortable="true"/>
+                <col id="amount" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="businessDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="currencyId" label="币种"/>
             </cols>
         </grid>

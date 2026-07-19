@@ -11,7 +11,13 @@
                 <col id="parameterName" sortable="true"/>
                 <col id="specMin" ui:number="true" sortable="true"/>
                 <col id="specMax" ui:number="true" sortable="true"/>
-                <col id="measuredValue" sortable="true"/>
+                <col id="measuredValue" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="unit" sortable="true"/>
                 <col id="result" mandatory="true" sortable="true"/>
             </cols>

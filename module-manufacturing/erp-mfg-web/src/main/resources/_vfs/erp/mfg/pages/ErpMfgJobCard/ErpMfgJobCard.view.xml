@@ -9,9 +9,27 @@
                 <col id="workOrder" label="工单"/>
                 <col id="workcenterId" label="工作中心"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="completedQuantity" ui:number="true" sortable="true"/>
-                <col id="scrappedQuantity" ui:number="true" sortable="true"/>
+                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="completedQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

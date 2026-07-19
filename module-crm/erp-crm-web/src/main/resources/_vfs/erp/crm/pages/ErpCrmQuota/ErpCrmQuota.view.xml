@@ -12,7 +12,13 @@
                 <col id="periodType" sortable="true"/>
                 <col id="fiscalYear" ui:number="true" sortable="true"/>
                 <col id="periodLabel" sortable="true"/>
-                <col id="quotaAmount" ui:number="true" sortable="true"/>
+                <col id="quotaAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isFinalized" sortable="true"/>
             </cols>
         </grid>

@@ -13,7 +13,13 @@
                 <col id="errorCode" mandatory="true" sortable="true"/>
                 <col id="errorMessage" sortable="true"/>
                 <col id="failedStage" sortable="true"/>
-                <col id="voucherDate" sortable="true"/>
+                <col id="voucherDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="orgId" label="业务组织"/>
                 <col id="acctSchema" label="账套"/>
                 <col id="status" mandatory="true" sortable="true">
@@ -33,7 +39,13 @@
                 </col>
                 <col id="voucher" label="凭证号"/>
                 <col id="currencyId" label="币种"/>
-                <col id="occurrenceTime" mandatory="true" sortable="true"/>
+                <col id="occurrenceTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

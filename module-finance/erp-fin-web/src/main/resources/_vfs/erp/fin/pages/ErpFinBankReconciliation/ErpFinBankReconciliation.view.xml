@@ -10,9 +10,27 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="fundAccountId" label="资金账户"/>
                 <col id="statement" label="对账单"/>
-                <col id="reconciliationDate" mandatory="true" sortable="true"/>
-                <col id="bookBalance" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="statementBalance" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="reconciliationDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="bookBalance" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="statementBalance" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="unreconciledDiff" ui:number="true" sortable="true"/>
                 <col id="isBalanced" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true">

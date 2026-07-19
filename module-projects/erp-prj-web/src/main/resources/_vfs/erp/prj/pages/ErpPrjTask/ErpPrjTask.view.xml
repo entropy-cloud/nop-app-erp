@@ -10,8 +10,20 @@
                 <col id="title" mandatory="true" sortable="true"/>
                 <col id="assigneeId" label="负责人"/>
                 <col id="dependsOn" label="依赖任务"/>
-                <col id="plannedStartDate" sortable="true"/>
-                <col id="plannedEndDate" sortable="true"/>
+                <col id="plannedStartDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="plannedEndDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="estimatedHours" sortable="true"/>
                 <col id="actualHours" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true">

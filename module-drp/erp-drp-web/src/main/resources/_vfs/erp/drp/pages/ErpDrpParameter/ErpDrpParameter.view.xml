@@ -8,7 +8,13 @@
                 <col id="warehouseId" label="仓库"/>
                 <col id="materialId" label="物料"/>
                 <col id="safetyStock" ui:number="true" sortable="true"/>
-                <col id="replenishmentLeadTime" ui:number="true" sortable="true"/>
+                <col id="replenishmentLeadTime" ui:number="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="orderMultiple" ui:number="true" sortable="true"/>
                 <col id="preferredSourceWarehouseId" label="首选调出仓库"/>
                 <col id="preferredSupplierId" label="首选供应商"/>
@@ -20,9 +26,21 @@
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
-                <col id="createTime" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="updatedBy" mandatory="true" sortable="true"/>
-                <col id="updateTime" mandatory="true" sortable="true"/>
+                <col id="updateTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

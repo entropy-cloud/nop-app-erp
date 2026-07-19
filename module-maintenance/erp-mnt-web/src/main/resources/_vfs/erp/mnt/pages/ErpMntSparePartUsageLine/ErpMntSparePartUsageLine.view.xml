@@ -10,9 +10,27 @@
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="materialId" label="物料"/>
                 <col id="uoMId" label="计量单位"/>
-                <col id="quantity" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="unitCost" ui:number="true" sortable="true"/>
-                <col id="amount" ui:number="true" sortable="true"/>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="unitCost" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="batchNo" sortable="true"/>
             </cols>
         </grid>

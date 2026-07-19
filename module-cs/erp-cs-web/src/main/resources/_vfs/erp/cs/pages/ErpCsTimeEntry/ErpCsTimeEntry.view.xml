@@ -8,8 +8,20 @@
                 <col id="orgId" label="业务组织"/>
                 <col id="ticket" label="工单"/>
                 <col id="agentId" sortable="true"/>
-                <col id="startTime" sortable="true"/>
-                <col id="endTime" sortable="true"/>
+                <col id="startTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endTime" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="duration" ui:number="true" sortable="true"/>
                 <col id="isBillable" sortable="true"/>
                 <col id="projectId" ui:number="true" sortable="true"/>

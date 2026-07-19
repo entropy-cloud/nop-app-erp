@@ -10,7 +10,13 @@
                 <col id="costCategory" sortable="true"/>
                 <col id="taskId" label="任务"/>
                 <col id="subjectId" label="科目"/>
-                <col id="amount" mandatory="true" sortable="true"/>
+                <col id="amount" mandatory="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

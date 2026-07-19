@@ -7,7 +7,13 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="voucherType" mandatory="true" sortable="true"/>
-                <col id="voucherDate" mandatory="true" sortable="true"/>
+                <col id="voucherDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="orgId" label="业务组织"/>
                 <col id="isReversed" sortable="true"/>
                 <col id="docStatus" mandatory="true" sortable="true">

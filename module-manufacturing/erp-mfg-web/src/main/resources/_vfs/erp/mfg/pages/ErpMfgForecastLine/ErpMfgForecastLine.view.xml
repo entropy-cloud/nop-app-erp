@@ -13,7 +13,13 @@
                 <col id="uoMId" label="计量单位"/>
                 <col id="periodStart" mandatory="true" sortable="true"/>
                 <col id="periodEnd" mandatory="true" sortable="true"/>
-                <col id="forecastQty" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="forecastQty" mandatory="true" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

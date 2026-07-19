@@ -9,7 +9,13 @@
                 <col id="employee" label="员工"/>
                 <col id="assessmentType" mandatory="true" sortable="true"/>
                 <col id="assessor" label="评估人"/>
-                <col id="assessmentDate" sortable="true"/>
+                <col id="assessmentDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -36,7 +42,13 @@
                 </col>
                 <col id="overallScore" ui:number="true" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

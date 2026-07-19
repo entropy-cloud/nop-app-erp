@@ -12,8 +12,20 @@
                 <col id="request" label="维护请求"/>
                 <col id="equipment" label="设备"/>
                 <col id="warehouseId" label="仓库"/>
-                <col id="businessDate" mandatory="true" sortable="true"/>
-                <col id="totalAmount" ui:number="true" sortable="true"/>
+                <col id="businessDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalAmount" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
