@@ -12,8 +12,38 @@
                 <col id="scenarioType" label="方案类型"/>
                 <col id="amountFunctional" label="预算金额(本位币)"/>
                 <col id="controlLevel" label="控制级别"/>
-                <col id="docStatus" label="方案状态"/>
-                <col id="approveStatus" label="审核状态"/>
+                <col id="docStatus" label="方案状态">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'docStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'primary' : 'default'}\" "
+                                    + "${" + valueProp
+                                    + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="approveStatus" label="审核状态">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'approveStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'APPROVED' ? 'success' : "
+                                    + valueProp + " == 'REJECTED' ? 'danger' : "
+                                    + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

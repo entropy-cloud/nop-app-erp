@@ -15,7 +15,22 @@
                 <col id="specMax" ui:number="true" sortable="true"/>
                 <col id="calcStatus" mandatory="true" sortable="true"/>
                 <col id="isActive" sortable="true"/>
-                <col id="docStatus" mandatory="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'docStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'primary' : 'default'}\" "
+                                    + "${" + valueProp
+                                    + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

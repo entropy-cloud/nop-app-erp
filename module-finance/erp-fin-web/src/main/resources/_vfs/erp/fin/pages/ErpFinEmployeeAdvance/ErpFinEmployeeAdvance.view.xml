@@ -13,7 +13,22 @@
                 <col id="amountSource" ui:number="true" sortable="true"/>
                 <col id="businessDate" sortable="true"/>
                 <col id="projectId" label="项目"/>
-                <col id="approveStatus" mandatory="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'approveStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'APPROVED' ? 'success' : "
+                                    + valueProp + " == 'REJECTED' ? 'danger' : "
+                                    + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

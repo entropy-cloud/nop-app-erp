@@ -20,7 +20,20 @@
                 <col id="isAuxiliaryCostCenter" sortable="true"/>
                 <col id="isBudgetable" sortable="true"/>
                 <col id="isLeaf" sortable="true"/>
-                <col id="status" mandatory="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'success' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
                 <col id="createTime" mandatory="true" sortable="true"/>

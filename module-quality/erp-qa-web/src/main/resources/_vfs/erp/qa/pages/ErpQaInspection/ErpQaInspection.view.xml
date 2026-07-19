@@ -16,8 +16,38 @@
                 <col id="lotQuantity" ui:number="true" sortable="true"/>
                 <col id="sampleQuantity" ui:number="true" sortable="true"/>
                 <col id="result" mandatory="true" sortable="true"/>
-                <col id="docStatus" mandatory="true" sortable="true"/>
-                <col id="approveStatus" mandatory="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'docStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'primary' : 'default'}\" "
+                                    + "${" + valueProp
+                                    + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="approveStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'approveStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'APPROVED' ? 'success' : "
+                                    + valueProp + " == 'REJECTED' ? 'danger' : "
+                                    + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="posted" sortable="true"/>
             </cols>
         </grid>

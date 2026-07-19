@@ -18,7 +18,23 @@
                 <col id="amountSource" ui:number="true" sortable="true"/>
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
                 <col id="partnerId" label="出票客户"/>
-                <col id="status" sortable="true"/>
+                <col id="status" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'HONORED' ? 'success' : " + valueProp
+                                    + " == 'DISHONORED' ? 'danger' : (" + valueProp
+                                    + " == 'RECEIVED' || " + valueProp + " == 'DISCOUNTED' || " + valueProp
+                                    + " == 'ENDORSED' || " + valueProp + " == 'COLLECTION_PENDING' ? 'primary' : 'default')}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
         <grid id="pick-list"/>

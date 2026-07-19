@@ -11,7 +11,30 @@
                 <col id="categoryId" label="设备类别"/>
                 <col id="locationId" label="位置"/>
                 <col id="asset" label="资产"/>
-                <col id="status" mandatory="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            const successVals = ['COMPLETED','APPROVED','RECEIVED','DELIVERED','PAID','SETTLED','HONORED','RETRIED','EXECUTED','COMPUTED','CONFIRMED','RUNNING','MATERIAL_TRANSFERRED','ACTIVE','CLOSED','DONE','SUCCESS'];
+                            const dangerVals = ['REJECTED','CANCELLED','FAILED','DISHONORED','OVERDUE','DOWN','TERMINATED','WRITE_OFF'];
+                            const warningVals = ['ON_HOLD','SUSPENDED','EXPIRED','RETRYING'];
+                            const primaryVals = ['SUBMITTED','IN_PROGRESS','PARTIAL','PARTIALLY_TRANSFERRED','WORK_IN_PROGRESS','PROCESSING','NEGOTIATION','OPEN','UNDER_MAINTENANCE','COLLECTION_PENDING','DISCOUNTED','ENDORSED','ISSUED'];
+                            function quote(v){return "'" + v + "'";}
+                            function inList(vals){return "[" + vals.map(quote).join(",") + "].indexOf(" + valueProp + ") >= 0";}
+                            const expr = inList(successVals) + " ? 'success' : "
+                                + inList(dangerVals) + " ? 'danger' : "
+                                + inList(warningVals) + " ? 'warning' : "
+                                + inList(primaryVals) + " ? 'primary' : 'default'";
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + expr + "}"
+                                    + ">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="serialNo" sortable="true"/>
                 <col id="manufacturer" sortable="true"/>
                 <col id="model" sortable="true"/>

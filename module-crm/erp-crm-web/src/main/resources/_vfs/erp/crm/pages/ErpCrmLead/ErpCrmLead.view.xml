@@ -18,7 +18,22 @@
                 <col id="teamId" label="销售团队"/>
                 <col id="territoryId" label="销售区域"/>
                 <col id="lostReasonId" label="丢单原因"/>
-                <col id="docStatus" sortable="true"/>
+                <col id="docStatus" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'docStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'primary' : 'default'}\" "
+                                    + "${" + valueProp
+                                    + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="expectedCloseDate" sortable="true"/>
             </cols>
         </grid>

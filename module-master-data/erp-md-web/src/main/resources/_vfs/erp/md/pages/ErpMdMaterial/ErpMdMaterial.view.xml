@@ -10,7 +10,20 @@
                 <col id="materialType" mandatory="true" sortable="true"/>
                 <col id="categoryId" label="分类"/>
                 <col id="uoMId" label="主计量单位"/>
-                <col id="status" mandatory="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'success' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="costMethod" sortable="true"/>
                 <col id="isBatchManaged" sortable="true"/>
                 <col id="isSerialManaged" sortable="true"/>
@@ -38,7 +51,20 @@
                 <col id="materialType" sortable="true"/>
                 <col id="categoryId" label="分类"/>
                 <col id="uoMId" label="主计量单位"/>
-                <col id="status" sortable="true"/>
+                <col id="status" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'success' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
     </grids>

@@ -14,8 +14,38 @@
                 <col id="totalAmountWithTax" ui:number="true" sortable="true"/>
                 <col id="receivedAmount" ui:number="true" sortable="true"/>
                 <col id="receivedStatus"/>
-                <col id="docStatus" mandatory="true" sortable="true"/>
-                <col id="approveStatus" mandatory="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'docStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'primary' : 'default'}\" "
+                                    + "${" + valueProp
+                                    + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="approveStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'approveStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'APPROVED' ? 'success' : "
+                                    + valueProp + " == 'REJECTED' ? 'danger' : "
+                                    + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="posted"/>
                 <col id="orgId" label="业务组织"/>
             </cols>
@@ -27,8 +57,38 @@
                 <col id="customerId" label="客户"/>
                 <col id="totalAmountWithTax" ui:number="true" sortable="true"/>
                 <col id="receivedAmount" ui:number="true" sortable="true"/>
-                <col id="docStatus" mandatory="true" sortable="true"/>
-                <col id="approveStatus" mandatory="true" sortable="true"/>
+                <col id="docStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'docStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'primary' : 'default'}\" "
+                                    + "${" + valueProp
+                                    + " == 'CANCELLED' ? \"style='text-decoration:line-through'\" : ''}>"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="approveStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'approveStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'APPROVED' ? 'success' : "
+                                    + valueProp + " == 'REJECTED' ? 'danger' : "
+                                    + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
             </cols>
         </grid>
     </grids>

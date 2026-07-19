@@ -10,7 +10,22 @@
                 <col id="month" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="paymentStatus" mandatory="true" sortable="true"/>
                 <col id="paymentDate" sortable="true"/>
-                <col id="approveStatus" mandatory="true" sortable="true"/>
+                <col id="approveStatus" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'approveStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'APPROVED' ? 'success' : "
+                                    + valueProp + " == 'REJECTED' ? 'danger' : "
+                                    + valueProp + " == 'SUBMITTED' ? 'info' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="bankFileId" label="银行代发文件"/>
                 <col id="orgId" label="业务组织"/>
             </cols>

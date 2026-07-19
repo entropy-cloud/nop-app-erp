@@ -16,7 +16,21 @@
                 <col id="voucherDate" sortable="true"/>
                 <col id="orgId" label="业务组织"/>
                 <col id="acctSchema" label="账套"/>
-                <col id="status" mandatory="true" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'RETRIED' ? 'success' : (" + valueProp
+                                    + " == 'RETRYING' || " + valueProp + " == 'MANUAL' ? 'warning' : 'default')}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="voucher" label="凭证号"/>
                 <col id="currencyId" label="币种"/>
                 <col id="occurrenceTime" mandatory="true" sortable="true"/>
