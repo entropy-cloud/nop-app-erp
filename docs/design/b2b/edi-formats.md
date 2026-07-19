@@ -541,3 +541,39 @@ RECEIVED ──(解析处理)──→ ARCHIVED(终态)
 - `architecture/b2b-integration.md`（集成层契约）
 - `architecture/integration-pattern.md`（Webhook 复用）
 - `model/app-erp-b2b.orm.xml`（权威 ORM 模型）
+
+## 附录：`createReceiveFromAsn` 行级回填实现注记（plan 2026-07-19-0849-1）
+
+`ErpB2bAsnBizModel.createReceiveFromAsn(@Name("asnId") Long)` 早期实现仅建采购入库**头**（`ErpPurReceive`）。plan 2026-07-19-0849-1 扩展为迭代 `asn.lines` → 为每条 AsnLine 创建对应 `ErpPurReceiveLine`，使 ASN→采购入库链下游 approve/入库触发可达成（无 ReceiveLine 则后续链断裂）。
+
+### 字段映射规则（权威）
+
+| ReceiveLine 字段 | 来源（按优先级） | 备注 |
+| --- | --- | --- |
+| `receiveId` | 新建 `ErpPurReceive.id` | 头行关联 |
+| `lineNo` | 透传 `AsnLine.lineNo` | Decision (c)① 透传避免重生成冲突 |
+| `materialId` | 透传 `AsnLine.materialId` | null → 抛 `ERR_B2B_ASN_LINE_MATERIAL_REQUIRED` 守卫 |
+| `uoMId` | `AsnLine.materialId` → `ErpMdMaterial.uoMId` 反查 | Decision (f)①——物料主数据 uoMId mandatory=true 必然有值；物料不存在 → 抛守卫 |
+| `quantity` | `AsnLine.shippedQty` 优先，fallback `AsnLine.quantity` | shippedQty 优先取实际发货数量 |
+| `unitPrice` | 经 `materialId` 反查 `ErpPurOrderLine.unitPrice` | Decision (a)①——PO line 价格透传，无 PO line → null |
+| `taxRate` | 同 unitPrice 路径（PO line 反查） | 顺便透传 |
+| `orderLineId` | 同 unitPrice 路径（PO line 反查） | 加强 ReceiveLine↔PO line 关联 |
+| `amount` | `unitPrice × quantity`（HALF_UP scale=4），任一 null → null | Decision (b)① 派生 |
+| `warehouseId` | 复用 `receive.warehouseId`（即 `po.warehouseId`） | Decision (d)②——AsnLine 无 warehouseId，行级统一入 Receive 头仓库 |
+| `taxAmount` / `batchNo` | null | taxAmount 后续 Receive approve 时由 tax engine 计算；batchNo ASN 不携带 |
+
+### 边界与守卫
+
+- **空白 AsnLine 边界**（Decision (e)①）：0 行 AsnLine 合法——Receive 头仍创建 + 0 行 ReceiveLine，仅 LOG.warn 提示。理由：matchPurchaseOrder 已容许部分行未匹配，createReceiveFromAsn 保留头创建能力，行级空可后续手动补录。
+- **materialId null/material 不存在守卫**：抛 `NopException(ERR_B2B_ASN_LINE_MATERIAL_REQUIRED)`，@BizMutation 事务回滚（Decision 实现策略 (b) 强一致），已写入的 Receive 头 + ReceiveLine 全部回滚。
+- **迭代持久化**（Decision 实现策略 (a)①）：`for (asnLine : asnLines) { lineDao.newEntity(); setFields; lineDao.saveEntity(line); }`——简单迭代 saveEntity 模式，行数典型 ≤30，N 次 INSERT 性能可接受（对齐既有 createReceiveFromAsn 单 saveEntity + parseToAsn AsnLine 迭代 saveEntity 范式）。
+
+### Config 门控
+
+`erp-b2b.asn-auto-create-receive`（默认 false）。关闭时 `createReceiveFromAsn` 直接返回 null 跳过（不抛错），保持 0941-2 既有 config-gated 语义不变。
+
+### 跨域依赖方向
+
+- `app-erp-b2b-service` → `app-erp-purchase-dao`（pom 显式依赖，ErpPurReceive/ErpPurReceiveLine/ErpPurOrder/ErpPurOrderLine 编译期可达）。
+- `app-erp-b2b-dao` → `app-erp-master-data-dao`（pom 显式依赖，ErpMdMaterial 编译期可达）。
+- 反向（purchase/b2b → b2b）无依赖；purchase 经弱指针 `relatedBillType/Code` 引用 ASN（核心零污染设计：不在 `ErpPurReceive` 加 `asnId` 列）。

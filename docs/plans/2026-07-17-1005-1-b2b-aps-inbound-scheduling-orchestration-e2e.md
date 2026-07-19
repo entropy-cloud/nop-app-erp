@@ -173,6 +173,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`（待 Explore）
 - Why Not Blocking Closure: 0508-1 裁定 createReceiveFromAsn 仅建头无行；行级回填属增强面。本计划聚焦状态翻转 + 草稿头跨域断言。
 - Successor Required: `yes`（触发条件：ASN→入库行级回填浏览器层 E2E 需求落地时）
+- **RELEASED by 2026-07-19-0849-1**：plan `2026-07-19-0849-1-b2b-asn-line-level-receive-fill.md` 全 3 phase 全绿交付——后端 `ErpB2bAsnBizModel.createReceiveFromAsn` 扩展 iterate AsnLine → ErpPurReceiveLine 字段映射（materialId/uoMId 经 ErpMdMaterial 反查 / quantity=shippedQty 优先 / unitPrice/taxRate/orderLineId 经 PO line 反查 / amount=unitPrice×qty HALF_UP scale=4 派生 / warehouseId 复用 receive.warehouseId / lineNo 透传）+ 新 ErrorCode `ERR_B2B_ASN_LINE_MATERIAL_REQUIRED`（materialId null/material 不存在守卫）+ 空白 AsnLine 边界（0 行合法仅建头）+ JUnit +3 用例（multi-line / empty / config-gate）+ 浏览器层 1 新 spec 2 用例（多行映射正路径 2 AsnLine → 2 ReceiveLine + 逐行字段精确数值断言 amount=5×15=75/12×8=96 + 空白 AsnLine 边界对照）；1005-1 Deferred 解除。
 
 ### logistics path-2 / 运费过账浏览器层
 
