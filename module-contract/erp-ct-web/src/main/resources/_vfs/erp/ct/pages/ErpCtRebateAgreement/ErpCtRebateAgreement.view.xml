@@ -37,7 +37,20 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-run-accrual-button" label="运行计提" level="primary" icon="fa fa-cogs">
+                    <api url="@mutation:ErpCtRebateAgreement__runAccrual?agreementId=$id&amp;asOfDate="/>
+                    <confirmText>确认运行此返利协议的计提？</confirmText>
+                    <messages>
+                        <success>返利计提已运行</success>
+                    </messages>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

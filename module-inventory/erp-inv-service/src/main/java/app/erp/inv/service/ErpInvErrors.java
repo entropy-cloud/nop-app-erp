@@ -33,6 +33,7 @@ public interface ErpInvErrors {
     String ARG_LANDED_COST_ID = "landedCostId";
     String ARG_LANDED_COST_CODE = "landedCostCode";
     String ARG_RECEIVE_ID = "receiveId";
+    String ARG_TAKE_ID = "takeId";
 
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
@@ -159,4 +160,9 @@ public interface ErpInvErrors {
     ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define("erp.err.inv.report.render-type-invalid",
             "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    ErrorCode ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION = ErrorCode.define(
+            "erp.err.inv.stock-take.illegal-transition",
+            "盘点单[{takeId}]当前状态[{currentStatus}]不允许此操作",
+            ARG_TAKE_ID, ARG_CURRENT_STATUS);
 }

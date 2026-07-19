@@ -98,7 +98,41 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-qualify-button" label="资质认定" level="primary" icon="fa fa-thumbs-up">
+                    <api url="@mutation:ErpCrmLead__qualify?leadId=$id"/>
+                    <confirmText>确认对此线索进行资质认定？</confirmText>
+                    <messages>
+                        <success>线索已资质认定</success>
+                    </messages>
+                </action>
+                <action id="row-convert-button" label="转化为客户" level="success" icon="fa fa-user-plus">
+                    <api url="@mutation:ErpCrmLead__convertToCustomer?leadId=$id"/>
+                    <confirmText>确认将此线索转化为客户？</confirmText>
+                    <messages>
+                        <success>线索已转化为客户</success>
+                    </messages>
+                </action>
+                <action id="row-lose-button" label="丢单" level="warning" icon="fa fa-thumbs-down">
+                    <api url="@mutation:ErpCrmLead__lose?leadId=$id&amp;lostReasonId=0&amp;lostReasonDesc="/>
+                    <confirmText>确认标记此线索为丢单？</confirmText>
+                    <messages>
+                        <success>线索已标记为丢单</success>
+                    </messages>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpCrmLead__cancel?leadId=$id"/>
+                    <confirmText>确认作废此线索？</confirmText>
+                    <messages>
+                        <success>线索已作废</success>
+                    </messages>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

@@ -36,7 +36,34 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-query-status-button" label="查询状态" level="primary" icon="fa fa-search">
+                    <api url="@mutation:ErpCtSignatureRequest__queryAndUpdateStatus?requestId=$id"/>
+                    <confirmText>确认从签署提供商查询并更新状态？</confirmText>
+                    <messages>
+                        <success>签署状态已更新</success>
+                    </messages>
+                </action>
+                <action id="row-reject-button" label="拒绝" level="warning" icon="fa fa-times">
+                    <api url="@mutation:ErpCtSignatureRequest__rejectSignature?requestId=$id"/>
+                    <confirmText>确认拒绝此签署请求？</confirmText>
+                    <messages>
+                        <success>签署请求已拒绝</success>
+                    </messages>
+                </action>
+                <action id="row-cancel-button" label="取消" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpCtSignatureRequest__cancelSignatureRequest?requestId=$id"/>
+                    <confirmText>确认取消此签署请求？</confirmText>
+                    <messages>
+                        <success>签署请求已取消</success>
+                    </messages>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

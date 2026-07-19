@@ -58,4 +58,23 @@ public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection>, IApprova
     boolean isInspectionCleared(@Name("billType") String billType,
                                 @Name("billCode") String billCode,
                                 IServiceContext context);
+
+    /**
+     * 简单合格判定：PENDING→ACCEPTED（行级结果保留自动评测；不录入行级 measuredValue）。
+     * 与 {@link #recordResult}（行级评测完整流程）相比，本方法为简化入口，用于无行级明细的快速判定。
+     */
+    @BizMutation
+    ErpQaInspection passInspection(@Name("inspectionId") Long inspectionId, IServiceContext context);
+
+    /**
+     * 简单不合格判定：PENDING→REJECTED。
+     */
+    @BizMutation
+    ErpQaInspection failInspection(@Name("inspectionId") Long inspectionId, IServiceContext context);
+
+    /**
+     * 复检：重置结果为 PENDING，允许重新检验。
+     */
+    @BizMutation
+    ErpQaInspection reInspect(@Name("inspectionId") Long inspectionId, IServiceContext context);
 }

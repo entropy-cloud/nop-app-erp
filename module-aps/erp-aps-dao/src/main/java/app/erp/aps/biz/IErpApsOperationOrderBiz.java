@@ -46,4 +46,22 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
     CtpResult checkFeasibility(@Name("materialId") Long materialId,
                                @Name("qty") BigDecimal qty,
                                @Name("desiredDate") LocalDateTime desiredDate);
+
+    /**
+     * 启动工序工单：PLANNED→IN_PROGRESS。
+     */
+    @BizMutation
+    ErpApsOperationOrder start(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+
+    /**
+     * 完成工序工单：IN_PROGRESS→FINISHED。
+     */
+    @BizMutation
+    ErpApsOperationOrder complete(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+
+    /**
+     * 作废工序工单：DRAFT/PLANNED→CANCELLED。
+     */
+    @BizMutation
+    ErpApsOperationOrder cancel(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
 }

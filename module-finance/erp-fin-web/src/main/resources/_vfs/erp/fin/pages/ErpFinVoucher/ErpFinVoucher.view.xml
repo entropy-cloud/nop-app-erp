@@ -57,7 +57,29 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-post-button" label="过账" level="success" icon="fa fa-check-circle">
+                    <api url="@mutation:ErpFinVoucher__postVoucher?voucherId=$id"/>
+                    <confirmText>确认过账此凭证？过账后不可编辑。</confirmText>
+                    <messages>
+                        <success>凭证已过账</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-reverse-button" label="红冲" level="danger" icon="fa fa-undo">
+                    <api url="@mutation:ErpFinVoucher__reverseVoucher?voucherId=$id"/>
+                    <confirmText>确认对此凭证执行红字冲销？</confirmText>
+                    <messages>
+                        <success>凭证已红冲</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'POSTED' &amp;&amp; !isReversed}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

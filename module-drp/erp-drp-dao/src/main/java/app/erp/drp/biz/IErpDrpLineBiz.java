@@ -21,4 +21,22 @@ public interface IErpDrpLineBiz extends ICrudBiz<ErpDrpLine> {
      */
     @BizMutation
     ErpDrpPlan releaseApproved(@Name("planId") Long planId, IServiceContext context);
+
+    /**
+     * 行级审批：SUGGESTED→APPROVED。批准补货建议，进入待释放状态。
+     */
+    @BizMutation
+    ErpDrpLine approveLine(@Name("lineId") Long lineId, IServiceContext context);
+
+    /**
+     * 行级驳回：SUGGESTED/APPROVED→CANCELLED。拒绝补货建议（不进入释放流程）。
+     */
+    @BizMutation
+    ErpDrpLine rejectLine(@Name("lineId") Long lineId, IServiceContext context);
+
+    /**
+     * 行级作废：SUGGESTED/APPROVED→CANCELLED。
+     */
+    @BizMutation
+    ErpDrpLine cancelLine(@Name("lineId") Long lineId, IServiceContext context);
 }

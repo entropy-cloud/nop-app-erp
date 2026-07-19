@@ -132,6 +132,38 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
                 </action>
+                <action id="row-start-button" label="开工" level="primary" icon="fa fa-play">
+                    <api url="@mutation:ErpMfgWorkOrder__start?workOrderId=$id"/>
+                    <confirmText>确认开工此工单？</confirmText>
+                    <messages>
+                        <success>工单已开工</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'APPROVED' &amp;&amp; (docStatus == 'NOT_STARTED' || docStatus == 'STOCK_RESERVED' || docStatus == 'STOCK_PARTIAL')}</visibleOn>
+                </action>
+                <action id="row-report-completion-button" label="报告完工" level="success" icon="fa fa-check-circle">
+                    <api url="@mutation:ErpMfgWorkOrder__reportCompletion?workOrderId=$id&amp;completedQty=0"/>
+                    <confirmText>确认报告此工单完工？</confirmText>
+                    <messages>
+                        <success>工单已报告完工</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'IN_PROCESS'}</visibleOn>
+                </action>
+                <action id="row-close-button" label="结案" level="info" icon="fa fa-stop">
+                    <api url="@mutation:ErpMfgWorkOrder__close?workOrderId=$id"/>
+                    <confirmText>确认结案此工单？</confirmText>
+                    <messages>
+                        <success>工单已结案</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'STARTED' || docStatus == 'COMPLETED'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpMfgWorkOrder__cancel?workOrderId=$id"/>
+                    <confirmText>确认作废此工单？</confirmText>
+                    <messages>
+                        <success>工单已作废</success>
+                    </messages>
+                    <visibleOn>${docStatus != 'CANCELLED' &amp;&amp; docStatus != 'CLOSED' &amp;&amp; docStatus != 'COMPLETED'}</visibleOn>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

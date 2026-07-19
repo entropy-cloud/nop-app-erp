@@ -119,6 +119,14 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
                 </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpPurReceive__cancel?receiveId=$id"/>
+                    <confirmText>确认作废此采购入库单？</confirmText>
+                    <messages>
+                        <success>采购入库单已作废</success>
+                    </messages>
+                    <visibleOn>${docStatus != 'CANCELLED'}</visibleOn>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

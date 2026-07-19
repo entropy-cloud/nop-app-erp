@@ -73,7 +73,53 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-start-button" label="启动" level="primary" icon="fa fa-play">
+                    <api url="@mutation:ErpPrjProject__startProject?projectId=$id"/>
+                    <confirmText>确认启动此项目？</confirmText>
+                    <messages>
+                        <success>项目已启动</success>
+                    </messages>
+                    <visibleOn>${status == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-hold-button" label="暂停" level="warning" icon="fa fa-pause">
+                    <api url="@mutation:ErpPrjProject__holdProject?projectId=$id"/>
+                    <confirmText>确认暂停此项目？</confirmText>
+                    <messages>
+                        <success>项目已暂停</success>
+                    </messages>
+                    <visibleOn>${status == 'OPEN'}</visibleOn>
+                </action>
+                <action id="row-resume-button" label="恢复" level="primary" icon="fa fa-play">
+                    <api url="@mutation:ErpPrjProject__resumeProject?projectId=$id"/>
+                    <confirmText>确认恢复此项目？</confirmText>
+                    <messages>
+                        <success>项目已恢复</success>
+                    </messages>
+                    <visibleOn>${status == 'ON_HOLD'}</visibleOn>
+                </action>
+                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpPrjProject__closeProject?projectId=$id"/>
+                    <confirmText>确认完成此项目？</confirmText>
+                    <messages>
+                        <success>项目已完成</success>
+                    </messages>
+                    <visibleOn>${status == 'OPEN'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpPrjProject__cancelProject?projectId=$id"/>
+                    <confirmText>确认作废此项目？</confirmText>
+                    <messages>
+                        <success>项目已作废</success>
+                    </messages>
+                    <visibleOn>${status != 'COMPLETED' &amp;&amp; status != 'CANCELLED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

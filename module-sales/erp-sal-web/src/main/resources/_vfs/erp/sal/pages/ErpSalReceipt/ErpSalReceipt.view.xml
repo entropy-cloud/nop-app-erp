@@ -118,6 +118,14 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
                 </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpSalReceipt__cancel?receiptId=$id"/>
+                    <confirmText>确认作废此收款单？</confirmText>
+                    <messages>
+                        <success>收款单已作废</success>
+                    </messages>
+                    <visibleOn>${docStatus != 'CANCELLED'}</visibleOn>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

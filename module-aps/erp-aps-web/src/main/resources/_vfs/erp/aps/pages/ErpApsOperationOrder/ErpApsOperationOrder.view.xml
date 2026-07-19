@@ -45,7 +45,42 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-schedule-button" label="排程" level="primary" icon="fa fa-calendar">
+                    <api url="@mutation:ErpApsOperationOrder__scheduleForward?scheduleId=0"/>
+                    <confirmText>排程操作请在排程方案详情页执行</confirmText>
+                    <visibleOn>${status == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-start-button" label="开始" level="primary" icon="fa fa-play">
+                    <api url="@mutation:ErpApsOperationOrder__start?operationOrderId=$id"/>
+                    <confirmText>确认开始此工序工单？</confirmText>
+                    <messages>
+                        <success>工序工单已开始</success>
+                    </messages>
+                    <visibleOn>${status == 'PLANNED'}</visibleOn>
+                </action>
+                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpApsOperationOrder__complete?operationOrderId=$id"/>
+                    <confirmText>确认完成此工序工单？</confirmText>
+                    <messages>
+                        <success>工序工单已完成</success>
+                    </messages>
+                    <visibleOn>${status == 'IN_PROGRESS'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpApsOperationOrder__cancel?operationOrderId=$id"/>
+                    <confirmText>确认作废此工序工单？</confirmText>
+                    <messages>
+                        <success>工序工单已作废</success>
+                    </messages>
+                    <visibleOn>${status == 'DRAFT' || status == 'PLANNED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

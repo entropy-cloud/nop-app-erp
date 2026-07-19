@@ -14,7 +14,29 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-close-period-button" label="结账" level="primary" icon="fa fa-lock">
+                    <api url="@mutation:ErpFinAccountingPeriod__closePeriod?periodId=$id"/>
+                    <confirmText>确认结账此会计期间？结账后该期间凭证不可修改。</confirmText>
+                    <messages>
+                        <success>会计期间已结账</success>
+                    </messages>
+                    <visibleOn>${status == 'OPEN' || status == 'CLOSING'}</visibleOn>
+                </action>
+                <action id="row-reverse-close-button" label="反结账" level="warning" icon="fa fa-unlock">
+                    <api url="@mutation:ErpFinAccountingPeriod__reverseClose?periodId=$id"/>
+                    <confirmText>确认反结账此会计期间？</confirmText>
+                    <messages>
+                        <success>会计期间已反结账</success>
+                    </messages>
+                    <visibleOn>${status == 'CLOSED' || status == 'CLOSED_FINAL'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

@@ -123,7 +123,37 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-advise-button" label="发运" level="primary" icon="fa fa-paper-plane">
+                    <api url="@mutation:ErpLogShipment__advise?shipmentId=$id"/>
+                    <confirmText>确认发送此运单给承运商？</confirmText>
+                    <messages>
+                        <success>运单已发送给承运商</success>
+                    </messages>
+                    <visibleOn>${status == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-confirm-shipment-button" label="确认发运" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpLogShipment__completeShipment?shipmentId=$id"/>
+                    <confirmText>确认此运单已发运？</confirmText>
+                    <messages>
+                        <success>运单已确认发运</success>
+                    </messages>
+                    <visibleOn>${status == 'ADVISED'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpLogShipment__cancelShipment?shipmentId=$id"/>
+                    <confirmText>确认作废此运单？</confirmText>
+                    <messages>
+                        <success>运单已作废</success>
+                    </messages>
+                    <visibleOn>${status != 'CANCELLED' &amp;&amp; status != 'DELIVERED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

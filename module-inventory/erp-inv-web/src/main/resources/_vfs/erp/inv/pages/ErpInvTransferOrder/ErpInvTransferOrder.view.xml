@@ -49,7 +49,21 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-confirm-button" label="确认" level="primary" icon="fa fa-check">
+                    <api url="@mutation:ErpInvTransferOrder__confirm?transferOrderId=$id"/>
+                    <confirmText>确认审核此调拨单？</confirmText>
+                    <messages>
+                        <success>调拨单已确认</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

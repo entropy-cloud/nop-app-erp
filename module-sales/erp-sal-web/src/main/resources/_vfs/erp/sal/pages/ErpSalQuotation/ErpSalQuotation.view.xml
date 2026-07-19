@@ -114,6 +114,14 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
                 </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpSalQuotation__cancel?quotationId=$id"/>
+                    <confirmText>确认作废此销售报价单？</confirmText>
+                    <messages>
+                        <success>销售报价单已作废</success>
+                    </messages>
+                    <visibleOn>${docStatus != 'CANCELLED'}</visibleOn>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

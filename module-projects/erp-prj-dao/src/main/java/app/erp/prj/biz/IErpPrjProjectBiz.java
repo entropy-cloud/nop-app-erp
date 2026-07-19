@@ -37,4 +37,28 @@ public interface IErpPrjProjectBiz extends ICrudBiz<ErpPrjProject> {
      */
     @BizMutation
     ErpPrjProject closeProject(@Name("projectId") Long projectId, IServiceContext context);
+
+    /**
+     * 启动项目（DRAFT→OPEN）。
+     */
+    @BizMutation
+    ErpPrjProject startProject(@Name("projectId") Long projectId, IServiceContext context);
+
+    /**
+     * 暂停项目（OPEN→ON_HOLD）。
+     */
+    @BizMutation
+    ErpPrjProject holdProject(@Name("projectId") Long projectId, IServiceContext context);
+
+    /**
+     * 恢复项目（ON_HOLD→OPEN）。
+     */
+    @BizMutation
+    ErpPrjProject resumeProject(@Name("projectId") Long projectId, IServiceContext context);
+
+    /**
+     * 取消项目（DRAFT/OPEN/ON_HOLD→CANCELLED）。
+     */
+    @BizMutation
+    ErpPrjProject cancelProject(@Name("projectId") Long projectId, IServiceContext context);
 }

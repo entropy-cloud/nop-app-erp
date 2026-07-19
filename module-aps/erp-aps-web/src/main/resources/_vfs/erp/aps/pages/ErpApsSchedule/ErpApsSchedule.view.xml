@@ -65,7 +65,29 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-publish-button" label="发布" level="primary" icon="fa fa-paper-plane">
+                    <api url="@mutation:ErpApsSchedule__publish?id=$id"/>
+                    <confirmText>确认发布此排程方案？</confirmText>
+                    <messages>
+                        <success>排程方案已发布</success>
+                    </messages>
+                    <visibleOn>${status == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-archive-button" label="归档" level="info" icon="fa fa-archive">
+                    <api url="@mutation:ErpApsSchedule__archive?id=$id"/>
+                    <confirmText>确认归档此排程方案？</confirmText>
+                    <messages>
+                        <success>排程方案已归档</success>
+                    </messages>
+                    <visibleOn>${status == 'PUBLISHED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

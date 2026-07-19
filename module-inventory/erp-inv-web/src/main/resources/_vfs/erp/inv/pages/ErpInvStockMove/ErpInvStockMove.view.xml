@@ -66,7 +66,37 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-confirm-button" label="提交确认" level="primary" icon="fa fa-paper-plane">
+                    <api url="@mutation:ErpInvStockMove__confirm?moveId=$id"/>
+                    <confirmText>确认提交此库存移动单？</confirmText>
+                    <messages>
+                        <success>库存移动单已确认</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-complete-button" label="执行完成" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpInvStockMove__complete?moveId=$id"/>
+                    <confirmText>确认完成此库存移动单？</confirmText>
+                    <messages>
+                        <success>库存移动单已完成</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'CONFIRMED'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpInvStockMove__cancel?moveId=$id"/>
+                    <confirmText>确认作废此库存移动单？</confirmText>
+                    <messages>
+                        <success>库存移动单已作废</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'DRAFT' || docStatus == 'CONFIRMED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

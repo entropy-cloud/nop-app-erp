@@ -13,7 +13,37 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-start-take-button" label="开始盘点" level="primary" icon="fa fa-play">
+                    <api url="@mutation:ErpInvStockTake__startTake?takeId=$id"/>
+                    <confirmText>确认开始此盘点单？</confirmText>
+                    <messages>
+                        <success>盘点单已开始</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-complete-take-button" label="完成盘点" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpInvStockTake__completeTake?takeId=$id"/>
+                    <confirmText>确认完成此盘点单？</confirmText>
+                    <messages>
+                        <success>盘点单已完成</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'CONFIRMED'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpInvStockTake__cancelTake?takeId=$id"/>
+                    <confirmText>确认作废此盘点单？</confirmText>
+                    <messages>
+                        <success>盘点单已作废</success>
+                    </messages>
+                    <visibleOn>${docStatus == 'DRAFT' || docStatus == 'CONFIRMED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

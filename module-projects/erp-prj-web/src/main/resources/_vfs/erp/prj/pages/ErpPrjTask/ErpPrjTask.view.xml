@@ -28,7 +28,45 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-start-button" label="开始" level="primary" icon="fa fa-play">
+                    <api url="@mutation:ErpPrjTask__startTask?taskId=$id"/>
+                    <confirmText>确认开始此任务？</confirmText>
+                    <messages>
+                        <success>任务已开始</success>
+                    </messages>
+                    <visibleOn>${status == 'TODO'}</visibleOn>
+                </action>
+                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpPrjTask__completeTask?taskId=$id"/>
+                    <confirmText>确认完成此任务？</confirmText>
+                    <messages>
+                        <success>任务已完成</success>
+                    </messages>
+                    <visibleOn>${status == 'IN_PROGRESS' || status == 'BLOCKED'}</visibleOn>
+                </action>
+                <action id="row-block-button" label="阻塞" level="warning" icon="fa fa-exclamation-triangle">
+                    <api url="@mutation:ErpPrjTask__blockTask?taskId=$id&amp;reason=blocked"/>
+                    <confirmText>确认标记此任务为阻塞？</confirmText>
+                    <messages>
+                        <success>任务已标记为阻塞</success>
+                    </messages>
+                    <visibleOn>${status == 'TODO' || status == 'IN_PROGRESS'}</visibleOn>
+                </action>
+                <action id="row-unblock-button" label="解除阻塞" level="primary" icon="fa fa-unlock">
+                    <api url="@mutation:ErpPrjTask__unblockTask?taskId=$id"/>
+                    <confirmText>确认解除此任务阻塞？</confirmText>
+                    <messages>
+                        <success>任务已解除阻塞</success>
+                    </messages>
+                    <visibleOn>${status == 'BLOCKED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

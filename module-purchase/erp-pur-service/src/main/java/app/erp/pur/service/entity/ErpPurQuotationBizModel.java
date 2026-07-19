@@ -2,10 +2,13 @@
 package app.erp.pur.service.entity;
 
 import app.erp.pur.biz.IErpPurQuotationBiz;
+import app.erp.pur.dao.constants.ErpPurDocStatus;
 import app.erp.pur.dao.entity.ErpPurQuotation;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.SupplierEligibilityChecker;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
@@ -53,5 +56,14 @@ public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> imple
         if (decision == SupplierEligibilityChecker.Decision.WARN) {
             LOG.warn("供应商 {} 近期评分偏低（YELLOW），请关注其交付/质量表现", quotation.getSupplierId());
         }
+    }
+
+    @Override
+    @BizMutation
+    public ErpPurQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context) {
+        ErpPurQuotation quotation = requireEntity(String.valueOf(quotationId), null, context);
+        quotation.setDocStatus(ErpPurDocStatus.DOC_STATUS_CANCELLED);
+        updateEntity(quotation, null, context);
+        return quotation;
     }
 }

@@ -13,7 +13,45 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                    <api url="@mutation:ErpPurQuotation__submitForApproval?id=$id"/>
+                    <confirmText>确认提交此报价单？</confirmText>
+                    <messages>
+                        <success>报价单已提交</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
+                </action>
+                <action id="row-accept-button" label="中标" level="success" icon="fa fa-trophy">
+                    <api url="@mutation:ErpPurQuotation__approve?id=$id"/>
+                    <confirmText>确认此报价单中标？</confirmText>
+                    <messages>
+                        <success>报价单已标记为中标</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
+                </action>
+                <action id="row-reject-button" label="未中标" level="warning" icon="fa fa-times">
+                    <api url="@mutation:ErpPurQuotation__reject?id=$id"/>
+                    <confirmText>确认此报价单未中标？</confirmText>
+                    <messages>
+                        <success>报价单已标记为未中标</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpPurQuotation__cancel?quotationId=$id"/>
+                    <confirmText>确认作废此报价单？</confirmText>
+                    <messages>
+                        <success>报价单已作废</success>
+                    </messages>
+                    <visibleOn>${docStatus != 'CANCELLED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

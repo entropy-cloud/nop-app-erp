@@ -30,7 +30,29 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpCrmEvent__complete?eventId=$id"/>
+                    <confirmText>确认完成此活动？</confirmText>
+                    <messages>
+                        <success>活动已完成</success>
+                    </messages>
+                    <visibleOn>${status == 'PLANNED'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="取消" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpCrmEvent__cancel?eventId=$id"/>
+                    <confirmText>确认取消此活动？</confirmText>
+                    <messages>
+                        <success>活动已取消</success>
+                    </messages>
+                    <visibleOn>${status == 'PLANNED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

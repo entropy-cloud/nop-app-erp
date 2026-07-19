@@ -194,7 +194,48 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-assign-button" label="分派" level="primary" icon="fa fa-user">
+                    <api url="@mutation:ErpCsTicket__assign?ticketId=$id&amp;assignedToId=0"/>
+                    <confirmText>确认分派此工单？</confirmText>
+                    <messages>
+                        <success>工单已分派</success>
+                    </messages>
+                </action>
+                <action id="row-start-button" label="开始处理" level="primary" icon="fa fa-play">
+                    <api url="@mutation:ErpCsTicket__start?ticketId=$id"/>
+                    <confirmText>确认开始处理此工单？</confirmText>
+                    <messages>
+                        <success>工单已开始处理</success>
+                    </messages>
+                </action>
+                <action id="row-resolve-button" label="解决" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpCsTicket__resolve?ticketId=$id&amp;resolution="/>
+                    <confirmText>确认解决此工单？</confirmText>
+                    <messages>
+                        <success>工单已解决</success>
+                    </messages>
+                </action>
+                <action id="row-close-button" label="关闭" level="info" icon="fa fa-archive">
+                    <api url="@mutation:ErpCsTicket__close?ticketId=$id"/>
+                    <confirmText>确认关闭此工单？</confirmText>
+                    <messages>
+                        <success>工单已关闭</success>
+                    </messages>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpCsTicket__cancel?ticketId=$id"/>
+                    <confirmText>确认作废此工单？</confirmText>
+                    <messages>
+                        <success>工单已作废</success>
+                    </messages>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

@@ -13,7 +13,53 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-submit-button" label="发布" level="primary" icon="fa fa-paper-plane">
+                    <api url="@mutation:ErpPurRfq__submitForApproval?id=$id"/>
+                    <confirmText>确认发布此询价单？</confirmText>
+                    <messages>
+                        <success>询价单已发布</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
+                </action>
+                <action id="row-approve-button" label="比价完成" level="success" icon="fa fa-trophy">
+                    <api url="@mutation:ErpPurRfq__approve?id=$id"/>
+                    <confirmText>确认完成此询价单比价？</confirmText>
+                    <messages>
+                        <success>询价单比价已完成</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
+                </action>
+                <action id="row-reject-button" label="流标" level="warning" icon="fa fa-times">
+                    <api url="@mutation:ErpPurRfq__reject?id=$id"/>
+                    <confirmText>确认流标此询价单？</confirmText>
+                    <messages>
+                        <success>询价单已流标</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
+                </action>
+                <action id="row-reverse-approve-button" label="反审批" level="info" icon="fa fa-undo">
+                    <api url="@mutation:ErpPurRfq__reverseApprove?id=$id"/>
+                    <confirmText>确认反审批此询价单？</confirmText>
+                    <messages>
+                        <success>询价单已反审批</success>
+                    </messages>
+                    <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpPurRfq__cancel?id=$id"/>
+                    <confirmText>确认作废此询价单？</confirmText>
+                    <messages>
+                        <success>询价单已作废</success>
+                    </messages>
+                    <visibleOn>${docStatus != 'CANCELLED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

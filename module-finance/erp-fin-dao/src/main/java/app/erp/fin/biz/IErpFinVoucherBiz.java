@@ -40,4 +40,17 @@ public interface IErpFinVoucherBiz extends ICrudBiz<ErpFinVoucher> {
     Long reverse(@Name("billHeadCode") String billHeadCode,
                  @Name("businessType") ErpFinBusinessType businessType,
                  IServiceContext context);
+
+    /**
+     * 凭证过账：DRAFT→POSTED。仅切换凭证状态；不再生成新凭证。
+     * 与 {@link #post(PostingEvent, IServiceContext)}（业财事件→凭证工厂）不同——本方法作用于已存在的 DRAFT 凭证。
+     */
+    @BizMutation
+    ErpFinVoucher postVoucher(@Name("voucherId") Long voucherId, IServiceContext context);
+
+    /**
+     * 凭证红冲：标记原凭证为已红冲并生成反向凭证的简化入口（按 voucherId 调用 reverse）。
+     */
+    @BizMutation
+    ErpFinVoucher reverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context);
 }

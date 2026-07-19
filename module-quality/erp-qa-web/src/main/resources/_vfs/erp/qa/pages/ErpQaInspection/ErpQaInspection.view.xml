@@ -79,7 +79,37 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-pass-button" label="合格" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpQaInspection__passInspection?inspectionId=$id"/>
+                    <confirmText>确认判定此质检单为合格？</confirmText>
+                    <messages>
+                        <success>质检单已判合格</success>
+                    </messages>
+                    <visibleOn>${result == 'PENDING'}</visibleOn>
+                </action>
+                <action id="row-fail-button" label="不合格" level="danger" icon="fa fa-times">
+                    <api url="@mutation:ErpQaInspection__failInspection?inspectionId=$id"/>
+                    <confirmText>确认判定此质检单为不合格？</confirmText>
+                    <messages>
+                        <success>质检单已判不合格</success>
+                    </messages>
+                    <visibleOn>${result == 'PENDING'}</visibleOn>
+                </action>
+                <action id="row-re-inspect-button" label="复检" level="warning" icon="fa fa-undo">
+                    <api url="@mutation:ErpQaInspection__reInspect?inspectionId=$id"/>
+                    <confirmText>确认将此质检单重置为待检？</confirmText>
+                    <messages>
+                        <success>质检单已重置为待检</success>
+                    </messages>
+                    <visibleOn>${result != 'PENDING'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

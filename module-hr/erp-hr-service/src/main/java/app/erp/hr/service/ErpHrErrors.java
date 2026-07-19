@@ -257,4 +257,10 @@ public interface ErpHrErrors {
             "erp.err.hr.contract-illegal-status-transition",
             "合同 {contractId} 当前状态={currentStatus}，不允许续签（仅 ACTIVE/EXPIRED 允许）",
             ARG_CONTRACT_ID, ARG_CURRENT_STATUS);
+
+    String ARG_TIMESHEET_ID = "timesheetId";
+    ErrorCode ERR_HR_TIMESHEET_ILLEGAL_TRANSITION = ErrorCode.define(
+            "erp.err.hr.timesheet-illegal-transition",
+            "工时表[{timesheetId}]当前状态[{currentStatus}]不允许此操作",
+            ARG_TIMESHEET_ID, ARG_CURRENT_STATUS);
 }

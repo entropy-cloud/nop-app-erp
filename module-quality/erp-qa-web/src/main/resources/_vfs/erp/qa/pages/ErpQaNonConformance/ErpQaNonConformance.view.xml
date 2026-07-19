@@ -29,7 +29,37 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-investigate-button" label="评审" level="primary" icon="fa fa-search">
+                    <api url="@mutation:ErpQaNonConformance__submitReview?ncrId=$id"/>
+                    <confirmText>确认提交此 NCR 进入评审？</confirmText>
+                    <messages>
+                        <success>NCR 已进入评审</success>
+                    </messages>
+                    <visibleOn>${status == 'OPEN'}</visibleOn>
+                </action>
+                <action id="row-resolve-button" label="解决" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpQaNonConformance__resolve?ncrId=$id&amp;resolution="/>
+                    <confirmText>确认解决此 NCR？</confirmText>
+                    <messages>
+                        <success>NCR 已解决</success>
+                    </messages>
+                    <visibleOn>${status == 'IN_REVIEW'}</visibleOn>
+                </action>
+                <action id="row-reject-button" label="拒绝" level="warning" icon="fa fa-times">
+                    <api url="@mutation:ErpQaNonConformance__cancel?ncrId=$id"/>
+                    <confirmText>确认拒绝/取消此 NCR？</confirmText>
+                    <messages>
+                        <success>NCR 已取消</success>
+                    </messages>
+                    <visibleOn>${status == 'OPEN' || status == 'IN_REVIEW'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

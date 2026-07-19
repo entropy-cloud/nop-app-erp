@@ -88,7 +88,45 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-activate-button" label="生效" level="success" icon="fa fa-check-circle">
+                    <api url="@mutation:ErpCtContract__activate?contractId=$id"/>
+                    <confirmText>确认生效此合同？</confirmText>
+                    <messages>
+                        <success>合同已生效</success>
+                    </messages>
+                    <visibleOn>${status == 'DRAFT' || status == 'NEGOTIATION'}</visibleOn>
+                </action>
+                <action id="row-suspend-button" label="中止" level="warning" icon="fa fa-pause">
+                    <api url="@mutation:ErpCtContract__suspend?contractId=$id"/>
+                    <confirmText>确认中止此合同？</confirmText>
+                    <messages>
+                        <success>合同已中止</success>
+                    </messages>
+                    <visibleOn>${status == 'ACTIVE'}</visibleOn>
+                </action>
+                <action id="row-resume-button" label="恢复" level="primary" icon="fa fa-play">
+                    <api url="@mutation:ErpCtContract__resume?contractId=$id"/>
+                    <confirmText>确认恢复此合同？</confirmText>
+                    <messages>
+                        <success>合同已恢复</success>
+                    </messages>
+                    <visibleOn>${status == 'SUSPENDED'}</visibleOn>
+                </action>
+                <action id="row-terminate-button" label="终止" level="danger" icon="fa fa-stop">
+                    <api url="@mutation:ErpCtContract__terminate?contractId=$id"/>
+                    <confirmText>确认终止此合同？</confirmText>
+                    <messages>
+                        <success>合同已终止</success>
+                    </messages>
+                    <visibleOn>${status != 'TERMINATED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

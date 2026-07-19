@@ -84,6 +84,7 @@ public interface ErpFinErrors {
     String ARG_REF_NO = "refNo";
     String ARG_LINE_ID = "lineId";
     String ARG_VOUCHER_LINE_ID = "voucherLineId";
+    String ARG_VOUCHER_ID = "voucherId";
     String ARG_BOOK_BALANCE = "bookBalance";
     String ARG_STATEMENT_BALANCE = "statementBalance";
     String ARG_UNRECONCILED_DIFF = "unreconciledDiff";
@@ -408,6 +409,11 @@ public interface ErpFinErrors {
             ARG_REPORT_NAME);
 
     ErrorCode ERR_REPORT_RENDER_TYPE_INVALID = ErrorCode.define("erp.err.fin.report.render-type-invalid",
-            "渲染类型 {renderType} 非法（仅允许 html/xlsx/pdf）",
+            "渲染类型[{renderType}]非法（仅允许 html/xlsx/pdf）",
             ARG_RENDER_TYPE);
+
+    ErrorCode ERR_FIN_VOUCHER_ILLEGAL_TRANSITION = ErrorCode.define(
+            "erp.err.fin.voucher.illegal-transition",
+            "凭证[{voucherId}]当前状态[{currentStatus}]不允许此操作",
+            ARG_VOUCHER_ID, ARG_CURRENT_STATUS);
 }

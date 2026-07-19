@@ -76,7 +76,29 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-retry-button" label="重试" level="primary" icon="fa fa-repeat">
+                    <api url="@mutation:ErpB2bEdiDoc__retry?ediDocId=$id"/>
+                    <confirmText>确认重试此 EDI 文档发送？</confirmText>
+                    <messages>
+                        <success>EDI 文档已重试发送</success>
+                    </messages>
+                    <visibleOn>${state == 'ERROR' || state == 'TO_SEND'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="取消" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpB2bEdiDoc__cancel?ediDocId=$id"/>
+                    <confirmText>确认取消此 EDI 文档？</confirmText>
+                    <messages>
+                        <success>EDI 文档已取消</success>
+                    </messages>
+                    <visibleOn>${state != 'CANCELLED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

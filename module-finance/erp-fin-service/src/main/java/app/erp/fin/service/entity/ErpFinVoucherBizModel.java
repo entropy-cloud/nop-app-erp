@@ -8,6 +8,8 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.txn.TransactionPropagation;
 import io.nop.api.core.annotations.txn.Transactional;
+import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
@@ -15,10 +17,13 @@ import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.fin.dao.entity.ErpFinVoucher;
+import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.ErpFinPostingProcessor;
 import jakarta.inject.Inject;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 凭证聚合根 Biz（过账记录主实体）。CRUD 之外承载业财过账的两个动作入口（{@code post}/{@code reverse}），
@@ -37,6 +42,9 @@ import java.util.List;
  *
  * <p>O-17：{@link #post} 叠加 {@link BizAudit}(AUDIT_SUCCESS)，过账操作经平台审计日志机制记录操作人/时间/事件键，
  * 满足会计凭证过账的可追溯性要求。
+ *
+ * <p>{@link #postVoucher}/{@link #reverseVoucher}：UI 按钮入口，作用于已存在的凭证实体，分别执行
+ * DRAFT→POSTED 状态切换与红冲标记（不与跨域业财过账入口 {@link #post} 混淆）。
  */
 @BizModel("ErpFinVoucher")
 public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implements IErpFinVoucherBiz {
@@ -64,6 +72,36 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
                         @Name("businessType") ErpFinBusinessType businessType,
                         IServiceContext context) {
         return postingProcessor.reverseProcess(billHeadCode, businessType, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpFinVoucher postVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
+        ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
+        if (!Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_DRAFT)) {
+            throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
+                    .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
+                    .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());
+        }
+        voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
+        voucher.setPostedBy(context.getUserContext() != null ? context.getUserContext().getUserId() : null);
+        voucher.setPostedAt(CoreMetrics.currentTimestamp());
+        updateEntity(voucher, null, context);
+        return voucher;
+    }
+
+    @Override
+    @BizMutation
+    public ErpFinVoucher reverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
+        ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
+        if (!Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_POSTED)) {
+            throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
+                    .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
+                    .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());
+        }
+        voucher.setIsReversed(true);
+        updateEntity(voucher, null, context);
+        return voucher;
     }
 
 }

@@ -41,7 +41,37 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpDrpLine__approveLine?lineId=$id"/>
+                    <confirmText>确认批准此补货建议？</confirmText>
+                    <messages>
+                        <success>补货建议已批准</success>
+                    </messages>
+                    <visibleOn>${status == 'SUGGESTED'}</visibleOn>
+                </action>
+                <action id="row-reject-button" label="驳回" level="warning" icon="fa fa-times">
+                    <api url="@mutation:ErpDrpLine__rejectLine?lineId=$id"/>
+                    <confirmText>确认驳回此补货建议？</confirmText>
+                    <messages>
+                        <success>补货建议已驳回</success>
+                    </messages>
+                    <visibleOn>${status == 'SUGGESTED'}</visibleOn>
+                </action>
+                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                    <api url="@mutation:ErpDrpLine__cancelLine?lineId=$id"/>
+                    <confirmText>确认作废此补货建议？</confirmText>
+                    <messages>
+                        <success>补货建议已作废</success>
+                    </messages>
+                    <visibleOn>${status == 'SUGGESTED' || status == 'APPROVED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

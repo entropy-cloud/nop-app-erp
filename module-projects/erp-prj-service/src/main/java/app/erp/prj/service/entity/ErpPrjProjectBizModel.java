@@ -79,4 +79,54 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
         return project;
     }
 
+    @Override
+    @BizMutation
+    public ErpPrjProject startProject(@Name("projectId") Long projectId, IServiceContext context) {
+        return transition(projectId, ErpPrjConstants.PROJECT_STATUS_DRAFT,
+                ErpPrjConstants.PROJECT_STATUS_OPEN, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpPrjProject holdProject(@Name("projectId") Long projectId, IServiceContext context) {
+        return transition(projectId, ErpPrjConstants.PROJECT_STATUS_OPEN,
+                ErpPrjConstants.PROJECT_STATUS_ON_HOLD, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpPrjProject resumeProject(@Name("projectId") Long projectId, IServiceContext context) {
+        return transition(projectId, ErpPrjConstants.PROJECT_STATUS_ON_HOLD,
+                ErpPrjConstants.PROJECT_STATUS_OPEN, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpPrjProject cancelProject(@Name("projectId") Long projectId, IServiceContext context) {
+        ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
+        String status = project.getStatus();
+        if (Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_COMPLETED)
+                || Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_CANCELLED)) {
+            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
+                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
+                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
+        }
+        project.setStatus(ErpPrjConstants.PROJECT_STATUS_CANCELLED);
+        updateEntity(project, null, context);
+        return project;
+    }
+
+    private ErpPrjProject transition(Long projectId, String expected, String target, IServiceContext context) {
+        ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
+        String status = project.getStatus();
+        if (!Objects.equals(status, expected)) {
+            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
+                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
+                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
+        }
+        project.setStatus(target);
+        updateEntity(project, null, context);
+        return project;
+    }
+
 }

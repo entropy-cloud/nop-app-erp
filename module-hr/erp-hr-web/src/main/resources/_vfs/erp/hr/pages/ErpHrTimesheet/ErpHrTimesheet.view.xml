@@ -24,7 +24,21 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                    <api url="@mutation:ErpHrTimesheet__submit?timesheetId=$id"/>
+                    <confirmText>确认提交此工时表？</confirmText>
+                    <messages>
+                        <success>工时表已提交</success>
+                    </messages>
+                    <visibleOn>${status == 'DRAFT'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

@@ -32,7 +32,42 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge">
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-run-drp-button" label="运行DRP" level="primary" icon="fa fa-cogs">
+                    <api url="@mutation:ErpDrpPlan__runDrp?planId=$id"/>
+                    <confirmText>确认运行此 DRP 计算？</confirmText>
+                    <messages>
+                        <success>DRP 计算已运行</success>
+                    </messages>
+                    <visibleOn>${status == 'DRAFT' || status == 'COMPUTED'}</visibleOn>
+                </action>
+                <action id="row-approve-all-button" label="批准全部" level="success" icon="fa fa-check-double">
+                    <api url="@mutation:ErpDrpPlan__approvePlan?planId=$id"/>
+                    <confirmText>确认批准此计划下全部补货建议？</confirmText>
+                    <messages>
+                        <success>全部补货建议已批准</success>
+                    </messages>
+                    <visibleOn>${status == 'COMPUTED'}</visibleOn>
+                </action>
+                <action id="row-generate-order-button" label="生成单据" level="primary" icon="fa fa-file-text">
+                    <api url="@mutation:ErpDrpLine__releaseApproved?planId=$id"/>
+                    <confirmText>确认按已批准行生成采购/调拨单？</confirmText>
+                    <messages>
+                        <success>已按已批准行生成下游单据</success>
+                    </messages>
+                    <visibleOn>${status == 'APPROVED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

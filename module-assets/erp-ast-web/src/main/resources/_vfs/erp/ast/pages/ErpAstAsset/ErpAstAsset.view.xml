@@ -81,7 +81,25 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-transfer-button" label="移动" level="primary" icon="fa fa-arrows-alt">
+                    <api url="@mutation:ErpAstAsset__save/id"/>
+                    <confirmText>移动操作请打开资产卡片详情后在子表中操作</confirmText>
+                </action>
+                <action id="row-value-adjust-button" label="价值调整" level="primary" icon="fa fa-money">
+                    <api url="@mutation:ErpAstAsset__save/id"/>
+                    <confirmText>价值调整操作请通过资产价值调整单据进行</confirmText>
+                </action>
+                <action id="row-dispose-button" label="处置" level="danger" icon="fa fa-times-circle">
+                    <api url="@mutation:ErpAstAsset__save/id"/>
+                    <confirmText>处置操作请通过资产处置单据进行</confirmText>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

@@ -40,7 +40,37 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-activate-button" label="上线" level="success" icon="fa fa-power-off">
+                    <api url="@mutation:ErpB2bPartnerProfile__activate?profileId=$id"/>
+                    <confirmText>确认将此合作伙伴上线到生产环境？</confirmText>
+                    <messages>
+                        <success>合作伙伴已上线</success>
+                    </messages>
+                    <visibleOn>${status == 'CERTIFIED' || status == 'TESTING'}</visibleOn>
+                </action>
+                <action id="row-suspend-button" label="暂停" level="warning" icon="fa fa-pause">
+                    <api url="@mutation:ErpB2bPartnerProfile__suspend?profileId=$id"/>
+                    <confirmText>确认暂停此合作伙伴？</confirmText>
+                    <messages>
+                        <success>合作伙伴已暂停</success>
+                    </messages>
+                    <visibleOn>${status == 'PRODUCTION'}</visibleOn>
+                </action>
+                <action id="row-deactivate-button" label="终止" level="danger" icon="fa fa-stop">
+                    <api url="@mutation:ErpB2bPartnerProfile__deactivate?profileId=$id"/>
+                    <confirmText>确认终止此合作伙伴？</confirmText>
+                    <messages>
+                        <success>合作伙伴已终止</success>
+                    </messages>
+                    <visibleOn>${status != 'TERMINATED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

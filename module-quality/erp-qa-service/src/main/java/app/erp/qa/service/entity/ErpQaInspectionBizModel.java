@@ -251,4 +251,31 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
                 .param(ErpQaErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpQaErrors.ARG_EXPECTED_STATUS, expected);
     }
+
+    @Override
+    @BizMutation
+    public ErpQaInspection passInspection(@Name("inspectionId") Long inspectionId, IServiceContext context) {
+        ErpQaInspection inspection = requireInspection(inspectionId, context);
+        inspection.setResult(ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
+        updateEntity(inspection, null, context);
+        return inspection;
+    }
+
+    @Override
+    @BizMutation
+    public ErpQaInspection failInspection(@Name("inspectionId") Long inspectionId, IServiceContext context) {
+        ErpQaInspection inspection = requireInspection(inspectionId, context);
+        inspection.setResult(ErpQaConstants.INSPECTION_RESULT_REJECTED);
+        updateEntity(inspection, null, context);
+        return inspection;
+    }
+
+    @Override
+    @BizMutation
+    public ErpQaInspection reInspect(@Name("inspectionId") Long inspectionId, IServiceContext context) {
+        ErpQaInspection inspection = requireInspection(inspectionId, context);
+        inspection.setResult(ErpQaConstants.INSPECTION_RESULT_PENDING);
+        updateEntity(inspection, null, context);
+        return inspection;
+    }
 }

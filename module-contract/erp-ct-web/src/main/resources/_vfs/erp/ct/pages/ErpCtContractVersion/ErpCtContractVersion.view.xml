@@ -33,7 +33,27 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-finalize-button" label="定稿" level="primary" icon="fa fa-check">
+                    <api url="@mutation:ErpCtContractVersion__finalizeVersion?versionId=$id"/>
+                    <confirmText>确认定稿此合同版本？</confirmText>
+                    <messages>
+                        <success>合同版本已定稿</success>
+                    </messages>
+                </action>
+                <action id="row-sign-button" label="签署" level="success" icon="fa fa-signature">
+                    <api url="@mutation:ErpCtContractVersion__signVersion?versionId=$id"/>
+                    <confirmText>确认签署此合同版本？</confirmText>
+                    <messages>
+                        <success>合同版本已签署</success>
+                    </messages>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

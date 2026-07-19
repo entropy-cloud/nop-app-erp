@@ -116,4 +116,9 @@ public interface ErpDrpErrors {
             "erp.err.drp.calc.engine-error",
             "DRP计算引擎执行异常：方法[{method}] / 原因[{reason}]",
             ARG_METHOD, ARG_REASON);
+
+    ErrorCode ERR_DRP_LINE_ILLEGAL_TRANSITION = ErrorCode.define(
+            "erp.err.drp.line.illegal-transition",
+            "DRP明细行[{drpLineId}]当前状态[{currentStatus}]不允许此操作",
+            ARG_DRP_LINE_ID, ARG_CURRENT_STATUS);
 }
