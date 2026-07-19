@@ -20,17 +20,38 @@
                 <col id="updateTime" mandatory="true" sortable="true"/>
             </cols>
         </grid>
-        <grid id="pick-list"/>
+        <grid id="pick-list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="orgId" label="所属组织/部门"/>
+                <col id="position" sortable="true"/>
+                <col id="status" sortable="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
         <form id="view"/>
         <form id="edit"/>
         <form id="add"/>
+        <form id="pick-query" editMode="query" title="查询条件">
+            <layout>
+ code[工号] name[姓名]
+ orgId[所属组织/部门] status[状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
         <crud name="main"/>
-        <picker name="picker"/>
+        <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

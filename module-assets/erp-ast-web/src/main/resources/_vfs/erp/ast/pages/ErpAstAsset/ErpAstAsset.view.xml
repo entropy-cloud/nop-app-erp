@@ -20,7 +20,16 @@
                 <col id="staffId" label="使用人(往来单位)"/>
             </cols>
         </grid>
-        <grid id="pick-list"/>
+        <grid id="pick-list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="categoryId" label="资产类别"/>
+                <col id="netBookValue" ui:number="true" sortable="true"/>
+                <col id="status" sortable="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
@@ -76,6 +85,20 @@
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="name" filterOp="like"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="categoryId" filterOp="eq"/>
+            </cells>
+        </form>
+        <form id="pick-query" editMode="query" title="查询条件">
+            <layout>
+ code[资产编码] name[资产名称]
+ categoryId[资产类别] status[资产状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="categoryId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
@@ -100,6 +123,6 @@
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
-        <picker name="picker"/>
+        <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

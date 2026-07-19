@@ -30,7 +30,17 @@
                 <col id="remark" sortable="true"/>
             </cols>
         </grid>
-        <grid id="pick-list"/>
+        <grid id="pick-list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="materialType" sortable="true"/>
+                <col id="categoryId" label="分类"/>
+                <col id="uoMId" label="主计量单位"/>
+                <col id="status" sortable="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
@@ -81,12 +91,26 @@
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="name" filterOp="like"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="materialType" filterOp="eq"/>
+            </cells>
+        </form>
+        <form id="pick-query" editMode="query" title="查询条件">
+            <layout>
+ code[物料编码] name[物料名称]
+ materialType[物料类型] status[状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="materialType" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
 
     <pages>
         <crud name="main"/>
-        <picker name="picker"/>
+        <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

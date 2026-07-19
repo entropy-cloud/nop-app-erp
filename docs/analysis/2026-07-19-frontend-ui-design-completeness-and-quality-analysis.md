@@ -77,7 +77,7 @@ Notify 域（`module-notify`）是跨域通知派发基础设施，但：
 | F1 | 状态按钮 | 18 域均设计 | 25 实体缺域专用按钮（blocker 级别），12 实体缺次要按钮 | 25 blocker + 12 major |
 | F2 | 只读视图 | 13+ 实体有设计 | 7 已修复（Phase 1 部分执行） | 6 待执行 |
 | F3 | Form 分组 | 18 域 39 核心实体（~12%）分组设计已定 | ~39 实体（12%）有分隔线布局 | — |
-| F4 | 子表编辑+Picker | 7 高频 Picker + ~50+ 头行对有设计 | 全部缺失 | 最大缺口 |
+| F4 | 子表编辑+Picker | 7 高频 Picker + ~50+ 头行对有设计 | Phase 1 done（2026-07-19，7 个高频 Picker 列集+筛选字段已落地，`docs/design/picker-patterns.md` 范式文档化）；Phase 2 子表编辑仍缺失 | Phase 1 完成，Phase 2 为最大剩余缺口 |
 | F5 | 状态标签 | 通用颜色映射已设计 | 全部缺失 | xmeta 层建议 |
 | F6 | 字段格式化 | 格式要求已定义 | 全部缺失 | xmeta 层建议 |
 | F7 | non-state visibleOn | 部分设计已提及 | 全部缺失 | 新概念 |

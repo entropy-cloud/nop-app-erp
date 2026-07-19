@@ -3,17 +3,27 @@
 
     <grids>
         <grid id="list"/>
-        <grid id="pick-list"/>
+        <grid id="pick-list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="partnerType" sortable="true"/>
+                <col id="taxNo" sortable="true"/>
+                <col id="creditLimit" ui:number="true" sortable="true"/>
+                <col id="status" sortable="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
         <form id="view">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[编码] name[名称]
  partnerType[类型] status[状态]
  customerGroup[客户组]
-==========>contact[联系方式]======
+=========>contact[联系方式]======
  contactPerson[联系人] phone[电话]
  email[邮箱] address[地址]
 ==========^credit[信用与余额]=========
@@ -28,11 +38,11 @@
         </form>
         <form id="edit">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[编码] name[名称]
  partnerType[类型] status[状态]
  customerGroup[客户组]
-==========>contact[联系方式]======
+=========>contact[联系方式]======
  contactPerson[联系人] phone[电话]
  email[邮箱] address[地址]
  taxNo[税号] creditLimit[信用额度]
@@ -50,12 +60,26 @@
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="name" filterOp="like"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="partnerType" filterOp="eq"/>
+            </cells>
+        </form>
+        <form id="pick-query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ partnerType[类型] status[状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="partnerType" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
             </cells>
         </form>
     </forms>
 
     <pages>
         <crud name="main"/>
-        <picker name="picker"/>
+        <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

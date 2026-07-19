@@ -102,11 +102,11 @@ Status: `todo`
 
 **合并 F9（Picker）为 F4 Phase 1，因为 Picker 是子表编辑的前置依赖。**
 
-Status: `todo`
+Status: `F4 Phase 1 completed`（plan `docs/plans/2026-07-19-1818-1-f4p1-high-frequency-picker.md` 全 4 phase 全绿：Phase 1 范式探索+设计冻结 + Phase 2 master-data 5 picker + Phase 3 assets picker + Phase 4 调用方 filter 注入约定）。Phase 2 子表编辑独立 plan 待启动。
 
 **覆盖范围**：所有头行实体对（~50+）。这是 view.xml 手写层**最大缺口**。
 
-Phase 1 — 关联 Picker 定制：
+Phase 1 — 关联 Picker 定制：✅ completed（2026-07-19）
 
 | 选择器 | 定制内容 |
 |--------|---------|
@@ -509,7 +509,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F1: 18 域主实体 view.xml 按钮完整（0 blocker, 0 major），每按钮含状态驱动 `visibleOn`（F7 覆盖非状态驱动场景）
 - [ ] F2: ~13+ 只读实体实现「搜索 → 行点击 → 详情 drawer」模式，无编辑/删除入口
 - [ ] F3: 18 域主实体 form layout 按 `ui-patterns.md` 分组
-- [ ] F4 Phase1: 高频 picker（物料/供应商/客户/员工/资产/币种/科目）定制完成
+- [x] F4 Phase1: 高频 picker（物料/供应商/客户/员工/资产/币种/科目）定制完成
 - [ ] F4 Phase2: ~50+ 头行实体对的 child-table-editor 配置完成（含 M2M picker、自动推算、行校验）
 - [ ] F5: 所有业务实体（~150+）状态列使用着色标签
 - [ ] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置）
