@@ -28,6 +28,7 @@
         --font-size-base: 1.25rem;
         --line-height-base: 1.7;
         --controls-area-height: 40px;
+        --dot-color: var(--color-primary);
       }
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body {
@@ -185,7 +186,7 @@
       }
       .mermaid { display: flex; justify-content: center; width: 100%; }
       .comparison-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: var(--font-size-base); }
-      .comparison-table th, .comparison-table td { padding: 10px 14px; text-align: left; border: 1px solid var(--color-border); }
+      .comparison-table th, .comparison-table td { padding: 8px 12px; text-align: left; border: 1px solid var(--color-border); }
       .comparison-table th { background-color: var(--color-primary); color: white; font-weight: 600; }
       .comparison-table tr:nth-child(even) { background-color: var(--color-code-bg); }
       .flow-layout { display: flex; align-items: flex-start; gap: 1rem; margin-top: 1rem; width: 100%; flex-wrap: wrap; }
@@ -208,6 +209,16 @@
       .card h4 { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
       .card h4 i { color: var(--color-primary); }
       .card .details { font-size: 0.95rem; color: var(--color-text-light); line-height: 1.5; margin: 0; }
+      .card-border-primary { border-left: 4px solid var(--color-primary); }
+      .card-border-danger { border-left: 4px solid var(--color-danger); }
+      .card-border-success { border-left: 4px solid var(--color-secondary); }
+      .card-border-warning { border-left: 4px solid var(--color-warning); }
+      .card-top-primary { border-top: 4px solid var(--color-primary); }
+      .card-top-success { border-top: 4px solid var(--color-secondary); }
+      .card-top-warning { border-top: 4px solid var(--color-warning); }
+      .card-top-purple { border-top: 4px solid #8b5cf6; }
+      .card-top-pink { border-top: 4px solid #ec4899; }
+      .card-top-teal { border-top: 4px solid #14b8a6; }
       .timeline { position: relative; padding: 1rem 0; margin: 1rem 0; }
       .timeline::before {
         content: ''; position: absolute; top: 50%; left: 5%; right: 5%;
@@ -262,6 +273,23 @@
       .bar-fill.type-c { background: #059669; }
       .bar-date { font-size: 0.7rem; color: var(--color-text-light); width: 50px; flex-shrink: 0; }
       .pre-wrap { white-space: pre-wrap; font-family: var(--font-code); font-size: 0.85rem; line-height: 1.5; }
+      /* Utility spacing */
+      .mt-0 { margin-top: 0 !important; }
+      .mt-1 { margin-top: 0.5rem; }
+      .mt-2 { margin-top: 1rem; }
+      .mt-3 { margin-top: 1.5rem; }
+      .mb-0 { margin-bottom: 0 !important; }
+      .mb-1 { margin-bottom: 0.5rem; }
+      .mb-2 { margin-bottom: 1rem; }
+      .mx-auto { margin-left: auto; margin-right: auto; }
+      .text-center { text-align: center; }
+      .d-flex { display: flex; }
+      .gap-1 { gap: 0.5rem; }
+      .gap-2 { gap: 1rem; }
+      .flex-wrap { flex-wrap: wrap; }
+      .align-center { align-items: center; }
+      .justify-center { justify-content: center; }
+      .w-full { width: 100%; }
       /* Animations */
       .slide.active .icon-bullet { animation: slideInLeft 0.4s ease-out both; }
       .slide.active .icon-bullet:nth-child(1) { animation-delay: 0.1s; }
@@ -388,36 +416,36 @@
               <h4><i class="fa-solid fa-circle-check" style="color: var(--color-secondary);"></i> 传统信念</h4>
               <svg width="380" height="240" viewBox="0 0 380 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
                 <rect x="10" y="10" width="160" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-                <text x="90" y="40" text-anchor="middle" font-family="var(--font-main)" font-size="13" fill="#1e40af" font-weight="600">人定义需求</text>
+                <text x="90" y="40" text-anchor="middle" font-family="Inter,-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" fill="#1e40af" font-weight="600">人定义需求</text>
                 <line x1="170" y1="35" x2="210" y2="35" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowS2)"/>
                 <rect x="210" y="10" width="160" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-                <text x="290" y="40" text-anchor="middle" font-family="var(--font-main)" font-size="13" fill="#1e40af" font-weight="600">AI 执行</text>
+                <text x="290" y="40" text-anchor="middle" font-family="Inter,-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" fill="#1e40af" font-weight="600">AI 执行</text>
                 <rect x="10" y="80" width="160" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-                <text x="90" y="110" text-anchor="middle" font-family="var(--font-main)" font-size="13" fill="#1e40af" font-weight="600">人控制方向</text>
+                <text x="90" y="110" text-anchor="middle" font-family="Inter,-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" fill="#1e40af" font-weight="600">人控制方向</text>
                 <line x1="170" y1="105" x2="210" y2="105" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowS2)"/>
                 <rect x="210" y="80" width="160" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-                <text x="290" y="110" text-anchor="middle" font-family="var(--font-main)" font-size="13" fill="#1e40af" font-weight="600">AI 填充细节</text>
+                <text x="290" y="110" text-anchor="middle" font-family="Inter,-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" fill="#1e40af" font-weight="600">AI 填充细节</text>
                 <rect x="10" y="150" width="160" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-                <text x="90" y="180" text-anchor="middle" font-family="var(--font-main)" font-size="13" fill="#1e40af" font-weight="600">人做架构决策</text>
+                <text x="90" y="180" text-anchor="middle" font-family="Inter,-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" fill="#1e40af" font-weight="600">人做架构决策</text>
                 <line x1="170" y1="175" x2="210" y2="175" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowS2)"/>
                 <rect x="210" y="150" width="160" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
-                <text x="290" y="180" text-anchor="middle" font-family="var(--font-main)" font-size="13" fill="#1e40af" font-weight="600">AI 写代码</text>
+                <text x="290" y="180" text-anchor="middle" font-family="Inter,-apple-system,BlinkMacSystemFont,sans-serif" font-size="13" fill="#1e40af" font-weight="600">AI 写代码</text>
                 <defs><marker id="arrowS2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#2563eb"/></marker></defs>
               </svg>
             </div>
             <div class="column">
-              <h4><i class="fa-solid fa-circle-question" style="color: var(--color-warning);"></i> 本项目的证据</h4>
+              <h4><i class="fa-solid fa-flask" style="color: var(--color-warning);"></i> nop-app-erp 的实验</h4>
               <div class="highlight-box">
-                <p><strong>一个很自然的问题：</strong>如果没有人，AI 还能产出同样的系统吗？</p>
+                <p>nop-app-erp 是探索 AI 全自动开发边界的实验性项目。核心追问：<strong>如果没有人，AI 还能产出同样的系统吗？</strong></p>
               </div>
               <div class="card">
-                <p class="details"><strong>nop-app-erp 的证据：</strong>全量抽取 28 天日志，得到 28 条明确人类干预 + 80 次设计决策记录</p>
+                <p class="details"><strong>实验记录：</strong>全量抽取 28 天日志，得到 28 条明确人类干预 + 80 次设计决策记录</p>
               </div>
-              <div class="card" style="margin-top: 8px; border-left: 4px solid var(--color-danger);">
-                <p class="details"><strong>更尖锐的问题：</strong>这 28 条干预 + 80 次决策，多大比例可以被另一 AI agent 替代？</p>
+              <div class="card card-border-danger mt-1">
+                <p class="details"><strong>继续追问：</strong>这 28 条干预 + 80 次决策，多大比例可以被另一 AI agent 替代？</p>
               </div>
-              <div class="card" style="margin-top: 8px; border-left: 4px solid var(--color-secondary);">
-                <p class="details" style="font-weight: 600; color: var(--color-text-dark);">诚实回答：约 90% 的知识内容属于通用可编码类型，约 10% 涉及方向性/战略性判断</p>
+              <div class="card card-border-success mt-1">
+                <p class="details" style="font-weight: 600; color: var(--color-text-dark);">初步判断：约 90% 的知识内容属于通用可编码类型，约 10% 涉及方向性/战略性判断</p>
               </div>
             </div>
           </div>
@@ -515,16 +543,16 @@
             <div class="stat-card"><i class="fa-solid fa-file-lines" style="font-size:1.5rem;color:var(--color-primary);margin-bottom:0.3rem;display:block;"></i><span class="stat-number">187+2</span><span class="stat-label">计划文件 + 指南</span></div>
             <div class="stat-card"><i class="fa-solid fa-magnifying-glass-chart" style="font-size:1.5rem;color:#f59e0b;margin-bottom:0.3rem;display:block;"></i><span class="stat-number">9+78</span><span class="stat-label">审计记录 9 / 分析文件 78</span></div>
           </div>
-          <div class="quote" style="text-align:center;">
+          <div class="quote text-center">
             <p>这些是<strong>经审计校准</strong>的口径——不是"22 天的奇迹"，而是三层控制 Loop 的系统输出产物</p>
           </div>
         </section>
 
         <!-- S06: Loop 趋势 + AGE -->
         <section class="slide">
-          <h2 style="margin-bottom:0.8rem;"><i class="fa-solid fa-arrow-trend-up" style="margin-right:10px;"></i>从 Prompt → Loop → AGE</h2>
+          <h2><i class="fa-solid fa-arrow-trend-up" style="margin-right:10px;"></i>从 Prompt → Loop → AGE</h2>
           <div class="two-column">
-            <div class="column" style="display:flex;flex-direction:column;gap:0.4rem;">
+            <div class="column d-flex" style="flex-direction:column;gap:0.4rem;">
               <div class="icon-list" style="margin:0;">
                 <div class="icon-bullet" style="padding:8px 12px;margin-bottom:4px;">
                   <i class="fa-solid fa-quote-left" style="font-size:0.9rem;"></i>
@@ -532,7 +560,7 @@
                 </div>
                 <div class="icon-bullet" style="padding:8px 12px;margin-bottom:4px;">
                   <i class="fa-solid fa-quote-left" style="font-size:0.9rem;"></i>
-                  <div><p style="font-size:0.95rem;margin:0;">Addy Osmani<small style="color:var(--color-text-light);font-weight:400;">（Google）</small></p><span class="details" style="font-size:0.8rem;">"Loop Engineering = 替换你自己作为 prompt 的那个人。"</span></div>
+                  <div><p style="font-size:0.95rem;margin:0;">Addy Osmani<small style="color:var(--color-text-light);font-weight:400;">（Google）</small></p><span class="details" style="font-size:0.8rem;">"Loop Engineering = 你不再写 prompt，而是设计写 prompt 的系统"</span></div>
                 </div>
                 <div class="icon-bullet" style="padding:8px 12px;margin-bottom:0;">
                   <i class="fa-solid fa-quote-left" style="font-size:0.9rem;"></i>
@@ -540,7 +568,7 @@
                 </div>
               </div>
               <div class="highlight-box" style="margin:0;padding:10px 14px;">
-                <p style="font-size:0.85rem;margin:0;"><strong>隐含前提：</strong>"方向已知。" AGE 问：<strong>方向谁定义的？保证方向本身是对的？</strong></p>
+                <p class="mb-0" style="font-size:0.85rem;"><strong>隐含前提：</strong>"方向已知。" AGE 问：<strong>方向谁定义的？保证方向本身是对的？</strong></p>
               </div>
             </div>
             <div class="column">
@@ -575,7 +603,7 @@ flowchart LR
             <span style="font-size:1rem;font-weight:600;color:#78350f;"><i class="fa-solid fa-quote-left" style="color:#f59e0b;margin-right:6px;"></i>Loop Engineering 让 AI 跑得更快更稳。Attractor 让 Loop 知道往哪里跑。</span>
             <span style="display:inline-flex;gap:8px;margin-left:12px;">
               <span class="tag" style="font-size:0.8rem;padding:4px 10px;">Harness：Plan + Mission Driver</span>
-              <span class="tag" style="background:#fef3c7;color:#92400e;font-size:0.8rem;padding:4px 10px;border:1px solid #d97706;">Attractor：3 个结构不变量</span>
+              <span class="tag" style="background:#fef3c7;color:#92400e;font-size:0.8rem;padding:4px 10px;border:1px solid #d97706;">Attractor：长期收敛目标</span>
             </span>
           </div>
         </section>
@@ -588,19 +616,19 @@ flowchart LR
           </div>
           <h3 style="margin-top:1rem;">四大缺失</h3>
           <div class="card-grid card-grid-2">
-            <div class="card" style="border-left:4px solid var(--color-danger);">
+            <div class="card card-border-danger">
               <h4><i class="fa-solid fa-circle-xmark" style="color:var(--color-danger)"></i> 无基线</h4>
               <p class="details">不知道当前状态，无法衡量变更</p>
             </div>
-            <div class="card" style="border-left:4px solid var(--color-danger);">
+            <div class="card card-border-danger">
               <h4><i class="fa-solid fa-circle-xmark" style="color:var(--color-danger)"></i> 无范围</h4>
               <p class="details">不知道要做什么，边界模糊</p>
             </div>
-            <div class="card" style="border-left:4px solid var(--color-danger);">
+            <div class="card card-border-danger">
               <h4><i class="fa-solid fa-circle-xmark" style="color:var(--color-danger)"></i> 无退出标准</h4>
               <p class="details">不知道何时算"完成"</p>
             </div>
-            <div class="card" style="border-left:4px solid var(--color-danger);">
+            <div class="card card-border-danger">
               <h4><i class="fa-solid fa-circle-xmark" style="color:var(--color-danger)"></i> 无审计</h4>
               <p class="details">没有人独立验证"是否正确"</p>
             </div>
@@ -631,7 +659,7 @@ flowchart LR
           </div>
           <div class="highlight-box" style="margin-top:0.5rem;">
             <p><i class="fa-solid fa-shield"></i> <strong>生成与验收分离</strong>：审计必须由独立子代理（fresh session）执行，不继承执行上下文</p>
-            <p><i class="fa-solid fa-link"></i> 这套 Plan + 审计 + 验证的联合机制，我们称为 <strong>Harness（控制机制）</strong>——它是控制轨迹的执行层</p>
+            <p><i class="fa-solid fa-link"></i> 这套 Plan + 审计 + 验证的联合机制，是 Harness 中的 <strong>Plan Loop</strong>——控制单次变更轨迹的执行层</p>
           </div>
         </section>
 
@@ -698,7 +726,7 @@ draft → 审查 iter1（"客户维度 Decision 缺失"，needs_revision）
             <div class="column">
               <ul class="icon-list">
                 <li class="icon-bullet"><i class="fa-solid fa-question"></i><div><p>Plan Loop 只管理"一次变更"</p><span class="details">谁决定下一个？谁确保全路线图被执行？谁空闲时触发审计？</span></div></li>
-                <li class="icon-bullet"><i class="fa-solid fa-robot"></i><div><p>Mission Driver = AGE 框架中 harness 层的自动化实现</p><span class="details">在 Plan Loop 之外加一个编排层。全凭人做 → 手动、不可重复。</span></div></li>
+                <li class="icon-bullet"><i class="fa-solid fa-robot"></i><div><p>Mission Driver = AGE 框架中 harness 层的自动化实现</p>            <span class="details">在 Plan Loop 之外加一个编排层。完全依赖人 → 手动、不可重复。</span></div></li>
                 <li class="icon-bullet"><i class="fa-solid fa-clock"></i><div><p>时间尺度：天/周级</p><span class="details">一次完整循环处理 1-7 个计划、耗时 4-12 小时。整个路线图的流转需要数天到数周。它自动运行的底气，来自 <strong>attractor 已被定义好</strong></span></div></li>
               </ul>
             </div>
@@ -719,7 +747,7 @@ draft → 审查 iter1（"客户维度 Decision 缺失"，needs_revision）
         <!-- S11: MD 5 步闭环 -->
         <section class="slide">
           <h2><i class="fa-solid fa-diagram-project" style="margin-right:10px;"></i>Mission Driver 的 5 步闭环</h2>
-          <div class="mermaid-container">
+          <div class="mermaid-container" style="overflow:visible;flex-shrink:0;margin:0.3rem 0;padding:0.5rem;">
             <div class="mermaid">
 flowchart TD
     subgraph L1["主流程：5 步闭环"]
@@ -742,10 +770,10 @@ flowchart TD
     style L3 fill:#eff6ff,stroke:#93c5fd
             </div>
           </div>
-          <div class="highlight-box" style="margin-top:0.3rem;">
-            <p><strong>关键设计：</strong>REVIEW 在 EXEC 之前 / EXEC 用 forEach / DRAFT 含自审计 / DEEP_AUDIT（全 done 不是停止信号，是升级审计的信号）</p>
+          <div class="highlight-box">
+            <p><strong>关键设计：</strong>REVIEW 在 EXEC 之前 / EXEC 用 forEach / DRAFT 含自审计 / DEEP_AUDIT（全部完成不是停止信号，是升级审计的信号）</p>
+            <p style="margin-top:0.3rem;margin-bottom:0;">——<strong>这就是 Boris Cherny 说的"我的工作是写 Loop"</strong>，但前提是 Loop 在已定义的 attractor 内工作</p>
           </div>
-          <p style="font-size:0.9rem;margin-top:0.2rem;"><strong>这就是 Boris Cherny 说的"我的工作是写 Loop"</strong>——但 Mission Driver 之所以能自动运行，前提是这条 Loop 是在已定义的 attractor 内工作</p>
         </section>
 
         <!-- S12: MD 实现架构 -->
@@ -763,7 +791,7 @@ flowchart TD
                 <rect x="10" y="196" width="380" height="50" rx="8" fill="#f3e8ff" stroke="#9333ea" stroke-width="1.5"/>
                 <text x="200" y="218" text-anchor="middle" fill="#9333ea" font-size="13" font-weight="700">存储层：磁盘文件</text><text x="200" y="236" text-anchor="middle" fill="#581c87" font-size="9">Plan 文件 · Audit 文件 · 路线图文档</text>
                 <path d="M200,60 L200,72" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrowGray)"/><path d="M200,122 L200,134" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrowGray)"/><path d="M200,184 L200,196" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrowGray)"/>
-                <text x="200" y="272" text-anchor="middle" fill="#6b7280" font-size="9">引擎细节（marker 抠取、进程模型、断点恢复）→ 附录 / speaker notes</text>
+                <text x="200" y="272" text-anchor="middle" fill="#6b7280" font-size="9">引擎细节（占位符注入、进程模型、断点恢复）→ 附录 / speaker notes</text>
               </svg>
             </div>
             <div class="column">
@@ -772,9 +800,9 @@ flowchart TD
               <div class="card"><h4><i class="fa-solid fa-key"></i> 关键设计三：零 IPC，全文件</h4><p class="details">没有 IPC、没有 web server。Mission Driver 主进程只做状态机推进，AI 通过文件 I/O 交互。这是 AGE <strong>"仓库 = 唯一真相源"</strong>原则在工具层的落实</p></div>
             </div>
           </div>
-          <div class="highlight-box" style="margin-top:0.5rem;">
+          <div class="highlight-box" style="margin-top:0.3rem;">
             <h4><i class="fa-solid fa-handshake"></i> 对人介入的支持</h4>
-            <p>DRAFT_PLANS 持续从路线图起草新 Plan（不限批次）；REVIEW_PLANS 自动拾取任何 Status=draft 的 Plan（不区分来源——手工创建或自动起草都一样）；人可随时修改 Plan 状态/路线图，下轮循环自动适配</p>
+            <p style="margin-bottom:0;">DRAFT_PLANS 持续起草新 Plan；REVIEW_PLANS 自动拾取 Status=draft 的 Plan（不区分来源）；人可随时修改 Plan 状态/路线图，下轮循环自动适配</p>
           </div>
         </section>
 
@@ -811,7 +839,7 @@ flowchart TD
               <div class="card" style="margin-bottom:12px;"><h4><i class="fa-solid fa-arrows-spin" style="color:#2563eb;"></i> Plan Loop</h4><p class="details">单次变更控制。每次变更从起草到关闭的完整管理</p></div>
               <div class="card" style="margin-bottom:12px;"><h4><i class="fa-solid fa-route" style="color:#059669;"></i> Mission Driver Loop</h4><p class="details">编排控制。自动遍历路线图，决定"下一个做什么"，空闲时自动审计</p></div>
               <div class="highlight-box" style="background:#fef2f2;border-color:#dc2626;"><p><strong>但它们不能回答：</strong>路线图本身正确吗？"正确的结构"是什么？</p></div>
-              <p>07-12 竞争杠杆审计发现的"2 个夸大 + 2 个缺口"——不是因为 Harness 没跑好，是因为<strong>方向定义层（Attractor）有过问题</strong>（文档夸大"多公司 ERP"、制造委外曾是空壳）。Harness 跑得越好，方向错了损失越大。</p>
+              <p>07-12 竞争杠杆审计发现的"2 个夸大 + 2 个缺口"——不是因为 Harness 没执行好，是因为<strong>方向定义层（Attractor）有过问题</strong>（文档夸大"多公司 ERP"、制造委外曾是空壳）。Harness 执行得越好，方向错了损失越大。</p>
             </div>
             <div class="column" style="display:flex;flex-direction:column;align-items:center;">
               <svg width="380" height="280" style="width:100%;height:auto;" viewBox="0 0 380 280">
@@ -819,10 +847,10 @@ flowchart TD
                 <ellipse cx="190" cy="140" rx="90" ry="45" fill="none" stroke="#d1d5db" stroke-width="2" opacity="0.4"/>
                 <circle cx="190" cy="140" r="35" fill="#f59e0b" opacity="0.95"/>
                 <circle cx="190" cy="140" r="35" fill="none" stroke="#f59e0b" stroke-width="4" opacity="0.8"><animate attributeName="r" values="35;42;35" dur="2s" repeatCount="indefinite"/></circle>
-                <text x="190" y="132" text-anchor="middle" fill="white" font-size="12" font-weight="700">吸引子</text><text x="190" y="148" text-anchor="middle" fill="white" font-size="10">结构不变量</text>
+                <text x="190" y="132" text-anchor="middle" fill="white" font-size="12" font-weight="700">吸引子</text><text x="190" y="148" text-anchor="middle" fill="white" font-size="10">系统长期收敛的目标结构</text>
                 <text x="190" y="235" text-anchor="middle" fill="#f59e0b" font-size="18" font-weight="700">方向不是 Loop</text><text x="190" y="260" text-anchor="middle" fill="#6b7280" font-size="11">环变暗 · 轴点亮</text>
               </svg>
-              <div class="quote"><p><strong>过渡到 Act 4：</strong>"所以我们需要解决的，不是第三个 Loop——而是一个完全不同性质的东西：结构不变量（Attractor）。"</p></div>
+              <div class="quote"><p><strong>过渡到 Act 4：</strong>"所以我们需要解决的，不是第三个 Loop——而是一个完全不同性质的东西：系统长期收敛的目标结构（Attractor）。"</p></div>
             </div>
           </div>
         </section>
@@ -837,20 +865,20 @@ flowchart TD
                 <text x="200" y="33" text-anchor="middle" fill="#9333ea" font-size="14" font-weight="700">状态空间</text><text x="200" y="48" text-anchor="middle" fill="#581c87" font-size="10">所有可能状态</text>
                 <path d="M200,55 L200,65" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrowGray)"/>
                 <rect x="10" y="65" width="380" height="45" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
-                <text x="200" y="88" text-anchor="middle" fill="#d97706" font-size="14" font-weight="700">吸引子（Attractor）</text><text x="200" y="103" text-anchor="middle" fill="#78350f" font-size="10">长期稳定的结构不变</text>
+                <text x="200" y="88" text-anchor="middle" fill="#d97706" font-size="14" font-weight="700">吸引子（Attractor）</text><text x="200" y="103" text-anchor="middle" fill="#78350f" font-size="10">系统长期收敛的目标结构</text>
                 <path d="M200,110 L200,120" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrowGray)"/>
                 <rect x="10" y="120" width="380" height="45" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
                 <text x="200" y="143" text-anchor="middle" fill="#2563eb" font-size="14" font-weight="700">轨迹</text><text x="200" y="158" text-anchor="middle" fill="#1e40af" font-size="10">实际演化路径</text>
                 <path d="M200,165 L200,175" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrowGray)"/>
                 <rect x="10" y="175" width="380" height="45" rx="8" fill="#f0fdf4" stroke="#059669" stroke-width="1.5"/>
                 <text x="200" y="198" text-anchor="middle" fill="#059669" font-size="14" font-weight="700">控制</text><text x="200" y="213" text-anchor="middle" fill="#166534" font-size="10">将轨迹拉回吸引子的机制</text>
-                <text x="200" y="248" text-anchor="middle" fill="#6b7280" font-size="11">三层结构：结构层 → 承载层 → 实现层</text><text x="200" y="268" text-anchor="middle" fill="#6b7280" font-size="10">吸引子不是文档（文档是承载），吸引子不是代码（代码是投影）</text>
+                <text x="200" y="248" text-anchor="middle" fill="#d97706" font-size="12" font-weight="600">三层结构：结构层 → 承载层 → 实现层</text><text x="200" y="268" text-anchor="middle" fill="#6b7280" font-size="10">吸引子不是文档（文档是承载），吸引子不是代码（代码是投影）</text>
               </svg>
             </div>
             <div class="column">
-              <div class="card" style="margin-bottom:8px;border-left:3px solid #dc2626;"><h4><i class="fa-solid fa-bezier-curve"></i> 混淆 1：吸引子 ≠ 边界</h4><p class="details">边界回答"什么不能做"，违反即报错。吸引子回答"系统应向哪里长期收敛"，单次偏离不报错但持续偏离让结构腐烂。反例：规定"不准用 JPA"（边界），AI 绕过用 JDBC 写 SQL——没违反边界但破坏了"ORM 模型唯一真相源"这个吸引子。边界抓不住这种偏离。</p></div>
-              <div class="card" style="margin-bottom:8px;border-left:3px solid #f59e0b;"><h4><i class="fa-solid fa-shield"></i> 混淆 2：吸引子 ≠ 更强的护栏</h4><p class="details">护栏在执行层检查每次动作，吸引子在方向层评估多次动作累积是否靠拢。反例：10 次 PR 的代码规范都通过（护栏），但测试套件已与旧实现深度耦合。护栏视角：每次合规；吸引子视角：方向在漂移。</p></div>
-              <div class="card" style="margin-bottom:8px;border-left:3px solid #2563eb;"><h4><i class="fa-solid fa-crosshairs"></i> 混淆 3：吸引子 ≠ 控制目标</h4><p class="details">它是控制的目标因，不在控制之中。没有先定义 attractor，Harness 没有统一含义。反例：团队有完美的 CI/CD + code review + 测试门禁，但没人回答过"系统该向什么架构收敛"。结果：所有控制机制高效地固化了一套错误基线。</p></div>
+              <div class="card card-border-danger"><h4><i class="fa-solid fa-bezier-curve"></i> 混淆 1：吸引子 ≠ 边界</h4><p class="details">边界回答"什么不能做"，违反即报错。吸引子回答"系统应向哪里长期收敛"，单次偏离不报错但持续偏离让结构腐烂。反例：规定"不准用 JPA"（边界），AI 绕过用 JDBC 写 SQL——没违反边界但破坏了"ORM 模型唯一真相源"这个吸引子。边界抓不住这种偏离。</p></div>
+              <div class="card card-border-warning"><h4><i class="fa-solid fa-shield"></i> 混淆 2：吸引子 ≠ 更强的护栏</h4><p class="details">护栏在执行层检查每次动作，吸引子在方向层评估多次动作累积是否靠拢。反例：10 次 PR 的代码规范都通过（护栏），但测试套件已与旧实现深度耦合。护栏视角：每次合规；吸引子视角：方向在漂移。</p></div>
+              <div class="card card-border-primary"><h4><i class="fa-solid fa-crosshairs"></i> 混淆 3：吸引子 ≠ 控制目标</h4><p class="details">它是控制的目标因，不在控制之中。没有先定义 attractor，Harness 没有统一含义。反例：团队有完美的 CI/CD + code review + 测试门禁，但没人回答过"系统该向什么架构收敛"。结果：所有控制机制高效地固化了一套错误基线。</p></div>
             </div>
           </div>
         </section>
@@ -859,22 +887,22 @@ flowchart TD
         <section class="slide">
           <h2><i class="fa-solid fa-user" style="margin-right:0.6rem;color:var(--color-primary)"></i>用户其实在做什么——定义和演进吸引子</h2>
           <div class="comparison-table">
-            <table>
+            <table style="border-collapse:separate;border-spacing:0;">
               <tr><th>介入类型</th><th>频次</th><th>用户做了什么</th><th>对吸引子的影响</th></tr>
               <tr>
-                <td><span class="tag-danger"><i class="fa-solid fa-wrench" style="margin-right:0.2rem"></i>A 类</span></td>
+                <td style="border-left:4px solid var(--color-danger);"><span class="tag-danger"><i class="fa-solid fa-wrench" style="margin-right:0.2rem"></i>A 类</span></td>
                 <td>9 次<br/>06-22 ~ 07-03</td>
                 <td>明确指明平台机制<br/>"租户开关是全局配置，不是每个实体手写"</td>
                 <td><strong>修正吸引子的技术基底</strong></td>
               </tr>
               <tr>
-                <td><span class="tag-warn"><i class="fa-solid fa-scale-balanced" style="margin-right:0.2rem"></i>B 类</span></td>
+                <td style="border-left:4px solid var(--color-warning);"><span class="tag-warn"><i class="fa-solid fa-scale-balanced" style="margin-right:0.2rem"></i>B 类</span></td>
                 <td>9 次</td>
                 <td>指明工程原则方向<br/>"过账方法应挂聚合根 BizModel"</td>
                 <td><strong>修正吸引子的结构原则</strong></td>
               </tr>
               <tr>
-                <td><span class="tag-success"><i class="fa-solid fa-expand" style="margin-right:0.2rem"></i>C 类</span></td>
+                <td style="border-left:4px solid var(--color-secondary);"><span class="tag-success"><i class="fa-solid fa-expand" style="margin-right:0.2rem"></i>C 类</span></td>
                 <td>绝大多数<br/>07-04 后为主</td>
                 <td>只让 AI 自查对比<br/>"对照 erp-survey 检查功能覆盖"</td>
                 <td><strong>在吸引子内让 AI 自行扩张</strong></td>
@@ -906,44 +934,57 @@ flowchart TD
 
         <!-- S17: 知识转移曲线 -->
         <section class="slide">
-          <h2><i class="fa-solid fa-chart-line"></i> 知识转移曲线 <span class="tag tag-danger">全 PPT 最核心的一页</span></h2>
-          <div style="text-align:center;">
-            <svg width="980" height="320" viewBox="0 0 980 320" style="width:100%;height:auto;" xmlns="http://www.w3.org/2000/svg">
-              <line x1="70" y1="270" x2="940" y2="270" stroke="#9ca3af" stroke-width="1.5"/>
-              <line x1="70" y1="30" x2="70" y2="270" stroke="#9ca3af" stroke-width="1.5"/>
-              <text x="40" y="40" font-size="11" fill="#d97706" font-weight="700">A类频次(左Y)</text>
-              <text x="820" y="25" font-size="11" fill="#2563eb" font-weight="700">AI自主度(右Y)</text>
-              <g font-size="10" fill="#6b7280" text-anchor="middle">
-                <text x="120" y="288">06-22</text><text x="240" y="288">06-23</text>
-                <text x="360" y="288">06-29</text><text x="470" y="288">06-30</text>
-                <text x="580" y="288">07-01</text><text x="680" y="288">07-03</text>
-                <text x="820" y="288">07-04+</text>
-              </g>
-              <g fill="#d97706">
-                <rect x="105" y="60" width="30" height="210"/><rect x="225" y="200" width="30" height="70"/>
-                <rect x="345" y="250" width="30" height="20"/><rect x="455" y="225" width="30" height="45"/>
-                <rect x="565" y="100" width="30" height="170"/><rect x="665" y="220" width="30" height="50"/>
-                <rect x="805" y="265" width="30" height="5"/>
-              </g>
-              <polyline points="120,230 240,200 360,150 470,130 580,90 680,70 820,45"
-                fill="none" stroke="#2563eb" stroke-width="3"/>
-              <g fill="#2563eb">
-                <circle cx="120" cy="230" r="5"/><circle cx="240" cy="200" r="5"/>
-                <circle cx="360" cy="150" r="5"/><circle cx="470" cy="130" r="5"/>
-                <circle cx="580" cy="90" r="6"/><circle cx="680" cy="70" r="5"/>
-                <circle cx="820" cy="45" r="6"/>
-              </g>
-              <text x="120" y="55" font-size="10" fill="#92400e" text-anchor="middle" font-weight="700">AAAAAAA</text>
-              <text x="580" y="92" font-size="10" fill="#1e40af" font-weight="700">最后两次A</text>
-              <text x="680" y="65" font-size="10" fill="#1e40af" font-weight="700">最后A</text>
-              <text x="820" y="40" font-size="10" fill="#1e40af" font-weight="700">几乎全C</text>
-            </svg>
-          </div>
-          <div class="golden-quote">
+          <h2><i class="fa-solid fa-chart-line"></i> 知识转移曲线</h2>
+          <svg width="100%" height="380" viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+            <defs>
+              <linearGradient id="lineGrad1" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#dc2626" stop-opacity="0.15"/><stop offset="100%" stop-color="#dc2626" stop-opacity="0"/></linearGradient>
+              <linearGradient id="lineGrad2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#2563eb" stop-opacity="0.15"/><stop offset="100%" stop-color="#2563eb" stop-opacity="0"/></linearGradient>
+            </defs>
+            <line x1="80" y1="40" x2="80" y2="300" stroke="#94a3b8" stroke-width="1.5"/>
+            <line x1="80" y1="300" x2="870" y2="300" stroke="#94a3b8" stroke-width="1.5"/>
+            <text x="30" y="175" text-anchor="middle" font-size="12" fill="#dc2626" transform="rotate(-90,30,175)">A 类频次 ↓</text>
+            <text x="72" y="104" text-anchor="end" font-size="11" fill="#94a3b8">6</text>
+            <text x="72" y="169" text-anchor="end" font-size="11" fill="#94a3b8">4</text>
+            <text x="72" y="235" text-anchor="end" font-size="11" fill="#94a3b8">2</text>
+            <text x="72" y="300" text-anchor="end" font-size="11" fill="#94a3b8">0</text>
+            <text x="888" y="175" text-anchor="middle" font-size="12" fill="#2563eb" transform="rotate(90,888,175)">AI 自主度 ↑</text>
+            <text x="878" y="104" text-anchor="start" font-size="11" fill="#94a3b8">100%</text>
+            <text x="878" y="169" text-anchor="start" font-size="11" fill="#94a3b8">75%</text>
+            <text x="878" y="235" text-anchor="start" font-size="11" fill="#94a3b8">50%</text>
+            <text x="878" y="300" text-anchor="start" font-size="11" fill="#94a3b8">25%</text>
+            <text x="80" y="322" text-anchor="middle" font-size="11" fill="#64748b">06-22</text>
+            <text x="200" y="322" text-anchor="middle" font-size="11" fill="#64748b">06-25</text>
+            <text x="350" y="322" text-anchor="middle" font-size="11" fill="#64748b">06-29</text>
+            <text x="470" y="322" text-anchor="middle" font-size="11" fill="#64748b">07-01</text>
+            <text x="590" y="322" text-anchor="middle" font-size="11" fill="#64748b">07-03</text>
+            <text x="750" y="322" text-anchor="middle" font-size="11" fill="#64748b">07-07</text>
+            <text x="870" y="322" text-anchor="middle" font-size="11" fill="#64748b">07-13</text>
+            <line x1="80" y1="104" x2="870" y2="104" stroke="#e2e8f0" stroke-width="0.5"/>
+            <line x1="80" y1="169" x2="870" y2="169" stroke="#e2e8f0" stroke-width="0.5"/>
+            <line x1="80" y1="235" x2="870" y2="235" stroke="#e2e8f0" stroke-width="0.5"/>
+            <path d="M80,104 Q200,110 350,170 Q470,210 590,235 Q750,275 870,300 L870,300 L80,300 Z" fill="url(#lineGrad1)"/>
+            <path d="M80,104 Q200,110 350,170 Q470,210 590,235 Q750,275 870,300" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+            <path d="M80,280 Q200,255 350,190 Q470,150 590,130 Q750,110 870,104" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+            <path d="M80,280 Q200,255 350,190 Q470,150 590,130 Q750,110 870,104 L870,300 L80,300 Z" fill="url(#lineGrad2)"/>
+            <circle cx="420" cy="195" r="6" fill="#7c3aed" stroke="white" stroke-width="2"/>
+            <line x1="420" y1="195" x2="420" y2="300" stroke="#7c3aed" stroke-width="1" stroke-dasharray="5,3"/>
+            <rect x="90" y="330" width="130" height="22" rx="4" fill="#fee2e2"/>
+            <text x="155" y="345" text-anchor="middle" font-size="10" fill="#991b1b">A 类密集 + B + C 起步</text>
+            <rect x="310" y="330" width="140" height="22" rx="4" fill="#fef3c7"/>
+            <text x="380" y="345" text-anchor="middle" font-size="10" fill="#92400e">grill 83 问仅 4 题需纠正</text>
+            <rect x="470" y="330" width="150" height="22" rx="4" fill="#dbeafe"/>
+            <text x="545" y="345" text-anchor="middle" font-size="10" fill="#1e40af">最后 A 类 + 两次关键 B 类</text>
+            <rect x="680" y="330" width="180" height="22" rx="4" fill="#dcfce7"/>
+            <text x="770" y="345" text-anchor="middle" font-size="10" fill="#166534">几乎全 C 类 · 用户只提要求</text>
+            <rect x="100" y="360" width="14" height="14" rx="2" fill="#dc2626"/>
+            <text x="118" y="372" font-size="10" fill="#475569">A 类频次</text>
+            <rect x="200" y="360" width="14" height="14" rx="2" fill="#2563eb"/>
+            <text x="218" y="372" font-size="10" fill="#475569">AI 自主度</text>
+            <rect x="300" y="360" width="14" height="14" rx="2" fill="#7c3aed"/>
+            <text x="318" y="372" font-size="10" fill="#475569">交叉点</text>
+          </svg>
+          <div class="golden-quote" style="margin-top:0.3rem;">
             <i class="fa-solid fa-lightbulb"></i> "用户不是在写代码，而是在<strong>转移平台知识</strong>。一旦知识转移完成，他的介入频率自动归零。"
-          </div>
-          <div class="highlight-box">
-            <p><strong>三阶段</strong>：① 早期（06-22~07-01）用户=平台知识权威，A 类密集且全部命中盲区 · ② 中期 07-01 两次关键 B 类（DDD 聚合根 + 架构元规则）→ 工程范式定型，"用户不告诉答案，但告诉方向" · ③ 后期 07-04+ 用户退到"只提要求不给方法"，AI 的 19 skills + docs-for-ai 补充 + lessons 构成自运转基座</p>
           </div>
         </section>
 
@@ -952,11 +993,11 @@ flowchart TD
           <h2>8 阶段演进 (06-22 &rarr; 07-13 / 22 天)</h2>
           <svg width="1000" height="480" viewBox="0 0 1000 480" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
             <defs>
-              <linearGradient id="heat1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#ef4444"/></linearGradient>
-              <linearGradient id="heat2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#fb923c"/></linearGradient>
-              <linearGradient id="heat3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#eab308"/><stop offset="100%" stop-color="#facc15"/></linearGradient>
-              <linearGradient id="heat4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#4ade80"/></linearGradient>
-              <linearGradient id="heat5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient>
+               <linearGradient id="heat1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#ef4444"/></linearGradient>
+              <linearGradient id="heat2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#78350f"/><stop offset="100%" stop-color="#92400e"/></linearGradient>
+              <linearGradient id="heat3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#451a03"/><stop offset="100%" stop-color="#78350f"/></linearGradient>
+              <linearGradient id="heat4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#064e3b"/><stop offset="100%" stop-color="#047857"/></linearGradient>
+              <linearGradient id="heat5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#60a5fa"/></linearGradient>
             </defs>
             <line x1="60" y1="40" x2="60" y2="440" stroke="#e5e7eb" stroke-width="1"/>
             <line x1="940" y1="40" x2="940" y2="440" stroke="#e5e7eb" stroke-width="1"/>
@@ -1000,12 +1041,12 @@ flowchart TD
         <section class="slide">
           <h2>六种自驱动机制</h2>
           <div class="card-grid card-grid-3">
-            <div class="card" style="border-top: 4px solid var(--color-primary);"><h4><i class="fa-solid fa-rotate"></i> 1. 计划-审计闭环</h4><p class="details">最核心 — 187 计划，强制双审计</p></div>
-            <div class="card" style="border-top: 4px solid var(--color-secondary);"><h4><i class="fa-solid fa-map"></i> 2. 路线图驱动</h4><p class="details">3 子路线图逐项推进</p></div>
-            <div class="card" style="border-top: 4px solid var(--color-warning);"><h4><i class="fa-solid fa-check-double"></i> 3. 审计-整改驱动</h4><p class="details">9 轮审计</p></div>
-            <div class="card" style="border-top: 4px solid #8b5cf6;"><h4><i class="fa-solid fa-shield-halved"></i> 4. 测试回归防护</h4><p class="details">~2890 单元 + 260 E2E</p></div>
-            <div class="card" style="border-top: 4px solid #ec4899;"><h4><i class="fa-solid fa-scale-balanced"></i> 5. 竞品对标驱动</h4><p class="details">24 项目作完整性参照系</p></div>
-            <div class="card" style="border-top: 4px solid #14b8a6;"><h4><i class="fa-solid fa-file-circle-check"></i> 6. 文档一致性驱动</h4><p class="details">ORM XML 唯一真相源</p></div>
+            <div class="card card-top-primary"><h4><i class="fa-solid fa-rotate"></i> 1. 计划-审计闭环</h4><p class="details">187 计划，强制双审计</p></div>
+            <div class="card card-top-success"><h4><i class="fa-solid fa-map"></i> 2. 路线图驱动</h4><p class="details">3 子路线图逐项推进</p></div>
+            <div class="card card-top-warning"><h4><i class="fa-solid fa-check-double"></i> 3. 审计-整改驱动</h4><p class="details">9 轮审计</p></div>
+            <div class="card card-top-purple"><h4><i class="fa-solid fa-shield-halved"></i> 4. 测试回归防护</h4><p class="details">~2890 单元 + 260 E2E</p></div>
+            <div class="card card-top-pink"><h4><i class="fa-solid fa-scale-balanced"></i> 5. 竞品对标驱动</h4><p class="details">24 项目作完整性参照系</p></div>
+            <div class="card card-top-teal"><h4><i class="fa-solid fa-file-circle-check"></i> 6. 文档一致性驱动</h4><p class="details">ORM XML 唯一真相源</p></div>
           </div>
           <div style="display: flex; justify-content: center; margin-top: 1rem;">
             <svg viewBox="0 0 200 200" width="200" height="200" style="width:200px;height:200px;">
@@ -1103,7 +1144,7 @@ flowchart TD
               <h4><i class="fa-solid fa-arrows-rotate"></i> Takeaway 2</h4>
               <p class="details"><strong>把"编排"从记忆变成自动</strong></p>
               <p class="details" style="margin-top:0.5rem;">Mission Driver 自动遍历路线图、拾取 Plan、审查执行、空闲时审计</p>
-              <p class="details" style="margin-top:0.3rem;">Plan 够了吗 → 不够 → Mission Driver 来编排——这是从 In 到 On 的跨越器</p>
+              <p class="details" style="margin-top:0.3rem;">Plan 够了吗 → 不够 → Mission Driver 来编排——这是从 In 到 On 的关键跨越</p>
             </div>
             <div class="card" style="border-color:var(--color-warning);border-width:2px;">
               <h4><i class="fa-solid fa-location-dot"></i> Takeaway 3</h4>
@@ -1186,7 +1227,7 @@ flowchart TD
     <script>
       mermaid.initialize({
         startOnLoad: true, theme: 'default', securityLevel: 'loose',
-        fontFamily: 'var(--font-main)',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
         flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' }
       });
     </script>

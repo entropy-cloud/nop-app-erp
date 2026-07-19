@@ -1,0 +1,1358 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loop Engineering × Attractor</title>
+    <link rel="stylesheet" href="assets/css/all.min.css" />
+    <script src="assets/js/html2pdf.bundle.min.js"></script>
+    <script src="assets/js/mermaid.min.js"></script>
+    <script src="assets/js/lightbox.js"></script>
+    <style>
+      :root {
+        --color-primary: #2563eb;
+        --color-primary-dark: #1e40af;
+        --color-secondary: #059669;
+        --color-warning: #d97706;
+        --color-danger: #dc2626;
+        --color-text-dark: #1f2937;
+        --color-text-light: #4b5563;
+        --color-bg-main: #f4f6f9;
+        --color-bg-slide: #ffffff;
+        --color-border: #e5e7eb;
+        --color-code-bg: #f8fafc;
+        --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        --font-code: 'Fira Code', monospace;
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --font-size-base: 1.25rem;
+        --line-height-base: 1.7;
+        --controls-area-height: 40px;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: var(--font-main);
+        background-color: var(--color-bg-main);
+        color: var(--color-text-dark);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        line-height: var(--line-height-base);
+      }
+      #presentation-container {
+        width: 90vw; height: 90vh; max-width: 1200px;
+        background: var(--color-bg-slide);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+        display: flex; flex-direction: column;
+        overflow: hidden; position: relative;
+        padding-bottom: var(--controls-area-height);
+      }
+      .slides-viewport {
+        flex-grow: 1; position: relative; overflow: hidden;
+      }
+      .slide {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        padding: 50px 60px; opacity: 0; visibility: hidden;
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        transform: translateY(10px);
+        display: flex; flex-direction: column; justify-content: flex-start;
+        overflow-y: auto; background-color: var(--color-bg-slide);
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .slide.active {
+        opacity: 1; visibility: visible; transform: translateY(0); z-index: 1;
+      }
+      h1, h2, h3 { font-weight: 700; line-height: 1.2; }
+      h1 { font-size: 2.8rem; margin-bottom: 1rem; }
+      h2 {
+        font-size: 2.2rem; color: var(--color-text-dark);
+        border-bottom: 3px solid var(--color-primary);
+        padding-bottom: 0.75rem; margin-bottom: 1.5rem; font-weight: 600;
+      }
+      h3 { font-size: 1.4rem; color: var(--color-primary); margin-bottom: 0.8rem; }
+      h4 { font-size: 1.15rem; font-weight: 600; color: var(--color-text-dark); margin-bottom: 0.5rem; }
+      p, li { font-size: var(--font-size-base); color: var(--color-text-light); margin-bottom: 0.6rem; }
+      strong { color: var(--color-primary); font-weight: 600; }
+      ul { list-style: none; padding-left: 0; }
+      li p { margin-bottom: 0.25rem; }
+      #progress-bar {
+        position: absolute; top: 0; left: 0; height: 4px;
+        background-color: var(--color-primary); width: 0%;
+        transition: width 0.4s ease; z-index: 10;
+      }
+      .controls {
+        position: absolute; bottom: 20px; right: 20px;
+        display: flex; gap: 10px; z-index: 10;
+      }
+      .btn {
+        background-color: var(--color-primary); color: white; border: none;
+        padding: 10px 18px; border-radius: 8px; cursor: pointer;
+        font-weight: 600; display: flex; align-items: center; gap: 8px;
+        transition: all 0.2s ease; box-shadow: var(--shadow-md);
+      }
+      .btn:hover:not(:disabled) {
+        background-color: var(--color-primary-dark);
+        transform: translateY(-2px); box-shadow: var(--shadow-lg);
+      }
+      .btn:disabled {
+        background-color: #9ca3af; cursor: not-allowed;
+        transform: none; box-shadow: var(--shadow-md);
+      }
+      #pdf-btn { background-color: var(--color-secondary); }
+      #pdf-btn:hover:not(:disabled) { background-color: #047857; }
+      #print-btn { background-color: #6366f1; }
+      #print-btn:hover:not(:disabled) { background-color: #4f46e5; }
+      #slide-counter {
+        position: absolute; bottom: 20px; left: 20px;
+        background: rgba(255,255,255,0.8); backdrop-filter: blur(5px);
+        padding: 8px 14px; border-radius: 8px; font-size: 0.9rem;
+        font-weight: 600; color: var(--color-text-dark);
+        box-shadow: var(--shadow-md); z-index: 10;
+      }
+      .title-slide { text-align: center; align-items: center; }
+      .slide.title-slide { justify-content: center; align-items: center; }
+      .title-slide h1 { font-size: 2.8rem; color: var(--color-text-dark); line-height: 1.3; }
+      .title-slide .subtitle { font-size: 1.3rem; color: var(--color-text-light); font-weight: 400; margin-top: 0.5rem; }
+      .title-slide .author { font-size: 1.2rem; color: var(--color-text-light); margin-top: 1rem; font-weight: 400; }
+      .icon-list { list-style: none; padding: 0; margin: 0.8rem 0; }
+      .icon-bullet {
+        display: flex; gap: 14px;
+        background-color: var(--color-code-bg);
+        padding: 14px; border-radius: 10px; margin-bottom: 10px;
+        border: 1px solid var(--color-border);
+        transition: all 0.3s ease;
+      }
+      .icon-bullet:hover { transform: translateX(5px); box-shadow: var(--shadow-md); }
+      .icon-bullet i {
+        font-size: 1.15rem; color: var(--color-primary);
+        margin-top: 4px; flex-shrink: 0; width: 24px; text-align: center;
+      }
+      .icon-bullet div { flex-grow: 1; }
+      .icon-bullet p { margin-bottom: 0.2rem; color: var(--color-text-dark); font-weight: 500; font-size: 1.1rem; }
+      .icon-bullet .details { font-size: calc(var(--font-size-base) - 0.25rem); color: var(--color-text-light); font-weight: 400; }
+      .sub-items { margin-top: 0.4rem; margin-left: 1rem; }
+      .sub-item {
+        font-size: calc(var(--font-size-base) - 0.15rem); color: var(--color-text-light);
+        margin-bottom: 0.2rem; position: relative; padding-left: 1rem;
+      }
+      .sub-item::before { content: '\2022'; color: var(--color-secondary); position: absolute; left: 0; }
+      .two-column { display: flex; gap: 30px; align-items: flex-start; width: 100%; }
+      .column { flex: 1; }
+      .column-narrow { flex: 0.7; }
+      .column-wide { flex: 1.3; }
+      .highlight-box {
+        background-color: #eff6ff; border-left: 4px solid var(--color-primary);
+        padding: 16px 20px; margin: 1rem 0; border-radius: 0 8px 8px 0;
+      }
+      .highlight-box p { margin-bottom: 0.3rem; }
+      .quote {
+        background: #fffbeb; border-left: 4px solid var(--color-warning);
+        padding: 16px 20px; margin: 1rem 0; border-radius: 0 8px 8px 0;
+        font-style: italic; color: #92400e;
+      }
+      .quote p { font-size: calc(var(--font-size-base) + 0.05rem); }
+      .golden-quote {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-left: 4px solid #f59e0b;
+        padding: 18px 24px; margin: 1.2rem 0; border-radius: 0 12px 12px 0;
+        font-size: 1.15rem; font-weight: 500; color: #78350f;
+        box-shadow: var(--shadow-md); text-align: center;
+      }
+      .key-quote {
+        background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+        border: 2px solid var(--color-primary); border-radius: 12px;
+        padding: 1.2rem 1.5rem; margin: 1rem 0; text-align: center;
+      }
+      .key-quote p { font-size: 1.2rem; font-weight: 600; color: var(--color-primary-dark); margin: 0; }
+      .stat-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px; margin: 1.2rem 0;
+      }
+      .stat-card {
+        background: var(--color-code-bg); padding: 16px; border-radius: 12px;
+        text-align: center; border: 1px solid var(--color-border);
+        transition: all 0.3s ease;
+      }
+      .stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+      .stat-number { font-size: 2.2rem; font-weight: 700; color: var(--color-primary); display: block; }
+      .stat-label { font-size: 0.85rem; color: var(--color-text-light); margin-top: 0.2rem; }
+      .mermaid-container {
+        background-color: var(--color-code-bg); padding: 1rem; border-radius: 8px;
+        border: 1px solid var(--color-border); margin: 1.5rem 0; overflow: auto;
+      }
+      .mermaid { display: flex; justify-content: center; width: 100%; }
+      .comparison-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: var(--font-size-base); }
+      .comparison-table th, .comparison-table td { padding: 10px 14px; text-align: left; border: 1px solid var(--color-border); }
+      .comparison-table th { background-color: var(--color-primary); color: white; font-weight: 600; }
+      .comparison-table tr:nth-child(even) { background-color: var(--color-code-bg); }
+      .flow-layout { display: flex; align-items: flex-start; gap: 1rem; margin-top: 1rem; width: 100%; flex-wrap: wrap; }
+      .flow-step {
+        flex: 1; min-width: 140px; background-color: var(--color-code-bg);
+        border: 1px solid var(--color-border); border-radius: 12px;
+        padding: 1rem; text-align: center; display: flex; flex-direction: column; align-items: center;
+      }
+      .flow-step h4 { font-size: 1rem; color: var(--color-primary); margin-bottom: 0.5rem; }
+      .flow-step .details { font-size: 0.9rem; color: var(--color-text-light); line-height: 1.5; }
+      .flow-arrow { font-size: 2rem; color: var(--color-primary); margin-top: 50px; }
+      .card-grid { display: grid; gap: 1rem; margin-top: 1rem; }
+      .card-grid-2 { grid-template-columns: 1fr 1fr; }
+      .card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+      .card {
+        background-color: var(--color-code-bg); border: 1px solid var(--color-border);
+        border-radius: 10px; padding: 1.1rem; transition: all 0.3s ease;
+      }
+      .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+      .card h4 { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+      .card h4 i { color: var(--color-primary); }
+      .card .details { font-size: 0.95rem; color: var(--color-text-light); line-height: 1.5; margin: 0; }
+      .timeline { position: relative; padding: 1rem 0; margin: 1rem 0; }
+      .timeline::before {
+        content: ''; position: absolute; top: 50%; left: 5%; right: 5%;
+        height: 4px; background: var(--color-border); border-radius: 2px;
+      }
+      .timeline-items { display: flex; justify-content: space-between; position: relative; }
+      .timeline-item { text-align: center; flex: 1; position: relative; padding-top: 20px; }
+      .timeline-item::before {
+        content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+        width: 16px; height: 16px; border-radius: 50%; background: var(--color-primary);
+        border: 3px solid white; box-shadow: var(--shadow-md); z-index: 1;
+      }
+      .timeline-item .label { font-size: 0.9rem; font-weight: 600; color: var(--color-text-dark); margin-bottom: 0.3rem; }
+      .timeline-item .desc { font-size: 0.8rem; color: var(--color-text-light); }
+      .tag { display: inline-block; background: #dbeafe; color: var(--color-primary); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; margin-right: 4px; }
+      .tag-warn { background: #fef3c7; color: #92400e; }
+      .tag-danger { background: #fee2e2; color: #991b1b; }
+      .tag-success { background: #dcfce7; color: #166534; }
+      code {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        padding: 2px 6px; border-radius: 4px; font-family: var(--font-code);
+        font-size: 0.9em; color: #0f172a; border: 1px solid #e2e8f0; white-space: nowrap;
+      }
+      .icon-bullet code, .details code, .sub-item code {
+        background: rgba(59,130,246,0.1); color: var(--color-primary-dark);
+        border-color: rgba(59,130,246,0.2);
+      }
+      .cycle-diagram { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; margin: 1.5rem 0; }
+      .cycle-step {
+        background: var(--color-code-bg); border: 2px solid var(--color-border);
+        padding: 12px 18px; border-radius: 10px; font-weight: 500;
+        text-align: center; min-width: 140px;
+      }
+      .cycle-step.highlight { background: var(--color-primary); color: white; border-color: var(--color-primary-dark); }
+      .cycle-arrow { font-size: 1.5rem; color: var(--color-primary); }
+      /* Animations */
+      .slide.active .icon-bullet { animation: slideInLeft 0.4s ease-out both; }
+      .slide.active .icon-bullet:nth-child(1) { animation-delay: 0.1s; }
+      .slide.active .icon-bullet:nth-child(2) { animation-delay: 0.15s; }
+      .slide.active .icon-bullet:nth-child(3) { animation-delay: 0.2s; }
+      .slide.active .icon-bullet:nth-child(4) { animation-delay: 0.25s; }
+      .slide.active .icon-bullet:nth-child(5) { animation-delay: 0.3s; }
+      .slide.active .card { animation: fadeInUp 0.4s ease-out both; }
+      .slide.active .card:nth-child(1) { animation-delay: 0.1s; }
+      .slide.active .card:nth-child(2) { animation-delay: 0.15s; }
+      .slide.active .card:nth-child(3) { animation-delay: 0.2s; }
+      .slide.active .stat-card { animation: scaleIn 0.3s ease-out both; }
+      .slide.active .stat-card:nth-child(1) { animation-delay: 0.05s; }
+      .slide.active .stat-card:nth-child(2) { animation-delay: 0.1s; }
+      .slide.active .stat-card:nth-child(3) { animation-delay: 0.15s; }
+      .slide.active .stat-card:nth-child(4) { animation-delay: 0.2s; }
+      .slide.active .stat-card:nth-child(5) { animation-delay: 0.25s; }
+      .slide.active .stat-card:nth-child(6) { animation-delay: 0.3s; }
+      .slide.active .stat-card:nth-child(7) { animation-delay: 0.35s; }
+      .slide.active .stat-card:nth-child(8) { animation-delay: 0.4s; }
+      .slide.active .golden-quote { animation: fadeInUp 0.5s ease-out 0.3s both; }
+      .slide.active .highlight-box { animation: fadeInUp 0.4s ease-out 0.2s both; }
+      @keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+      @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+      .keyboard-hint {
+        position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.7); color: white; padding: 6px 12px;
+        border-radius: 6px; font-size: 0.75rem; opacity: 0;
+        transition: opacity 0.3s; z-index: 100; pointer-events: none;
+      }
+      .keyboard-hint.show { opacity: 1; }
+      .keyboard-hint kbd {
+        background: rgba(255,255,255,0.2); padding: 2px 6px;
+        border-radius: 3px; margin: 0 2px; font-family: var(--font-code);
+      }
+      @media (max-width: 768px) {
+        .slide { padding: 30px; }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        .two-column, .stat-grid { flex-direction: column; grid-template-columns: 1fr; }
+        .controls { right: auto; left: 50%; transform: translateX(-50%); }
+        #slide-counter { display: none; }
+        .comparison-table { font-size: 0.9rem; }
+        .card-grid-2, .card-grid-3 { grid-template-columns: 1fr; }
+      }
+      @media print {
+        body { background: #fff !important; height: auto; overflow: visible; display: block; }
+        .controls, #progress-bar, #slide-counter { display: none !important; }
+        #presentation-container {
+          display: block; width: 100%; height: auto;
+          box-shadow: none; border: none; padding: 0;
+        }
+        .slides-viewport { overflow: visible; height: auto; }
+        .slide {
+          display: flex !important; opacity: 1 !important; visibility: visible !important;
+          transform: none !important; position: relative; page-break-after: always;
+          page-break-inside: avoid; width: 100%; height: auto; aspect-ratio: 16/12;
+          border: 1px solid #ddd; margin-bottom: 20px; box-shadow: none;
+          border-radius: 0; overflow: hidden;
+        }
+        .slide:last-of-type { page-break-after: avoid; }
+        svg * { animation-play-state: paused !important; }
+      }
+      .pdf-page-container { width: 100%; height: auto; background: white; color: black; box-shadow: none; }
+      .pdf-slide {
+        position: relative !important; opacity: 1 !important; visibility: visible !important;
+        transform: none !important; height: auto !important; width: 100%;
+        background: white; border: 1px solid #eee; padding: 40px 50px;
+        box-shadow: none; margin-bottom: 0; overflow: hidden;
+        page-break-after: always; break-inside: avoid; aspect-ratio: 16/12;
+      }
+      .pdf-slide:last-of-type { page-break-after: avoid; }
+      .pdf-slide, .pdf-slide * { animation: none !important; opacity: 1 !important; }
+    </style>
+  </head>
+  <body>
+    <div id="presentation-container">
+      <div id="progress-bar"></div>
+      <div id="slide-counter">1 / N</div>
+      <div id="keyboard-hint" class="keyboard-hint">
+        <kbd>&larr;</kbd><kbd>&rarr;</kbd> 翻页 &nbsp;|&nbsp; <kbd>Home</kbd> 首页 &nbsp;|&nbsp;
+        <kbd>F</kbd> 全屏 &nbsp;|&nbsp; <kbd>?</kbd> 帮助
+      </div>
+      <div class="slides-viewport">
+
+        <!-- ===== SLIDES START ===== -->
+
+        <!-- S01: Title Slide -->
+        <section class="slide active title-slide">
+          <h1>Loop Engineering × Attractor</h1>
+          <p class="subtitle">Attractor Guided Loop 实战——中型 ERP 产品的 AI 全自动开发</p>
+          <p class="author">Nop Platform · AGE 工作流 · 22 天 · 154 模块</p>
+          <svg width="300" height="240" viewBox="0 0 300 240">
+            <text x="150" y="25" text-anchor="middle" font-size="13" fill="#059669" font-weight="700">Mission Driver Loop</text>
+            <circle cx="150" cy="130" r="90" fill="none" stroke="#059669" stroke-width="3" stroke-dasharray="8,5" opacity="0.7"/>
+            <circle cx="150" cy="130" r="55" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="5,4" opacity="0.7"/>
+            <text x="150" y="235" text-anchor="middle" font-size="13" fill="#2563eb" font-weight="700">Plan Loop</text>
+            <circle cx="150" cy="130" r="22" fill="#d97706" opacity="0.15"/>
+            <circle cx="150" cy="130" r="12" fill="#d97706"/>
+            <text x="150" y="134" text-anchor="middle" font-size="10" fill="white" font-weight="bold">锚</text>
+            <text x="150" y="175" text-anchor="middle" font-size="12" fill="#d97706" font-weight="700">Attractor</text>
+          </svg>
+          <p style="font-size:0.9rem;color:var(--color-text-light);margin-top:0.5rem;">AGE = Attractor-Guided Engineering，吸引子引导工程</p>
+        </section>
+
+        <!-- S02: 全篇悬念 -->
+        <section class="slide">
+          <h2>这是一个关于"往哪做"的问题</h2>
+          <div class="two-column">
+            <div class="column">
+              <div class="card-grid card-grid-2">
+                <div class="card" style="grid-column:1/-1;">
+                  <h4><i class="fa-solid fa-code-branch"></i> Loop Engineering 当前热议</h4>
+                  <p class="details">Cherny 设计 Loop、Osmani 设计系统、Andrew Ng 的三层反馈——都在讨论"怎么做"</p>
+                </div>
+                <div class="card" style="border-color:var(--color-warning);">
+                  <h4><i class="fa-solid fa-circle-question"></i> 隐含前提</h4>
+                  <p class="details">所有 Loop 都有一个隐含前提：<strong>方向是已知的</strong></p>
+                </div>
+                <div class="card" style="border-color:var(--color-danger);">
+                  <h4><i class="fa-solid fa-triangle-exclamation" style="color:var(--color-danger);"></i> 风险</h4>
+                  <p class="details">如果方向错了，Loop 跑得越快，偏离得越远</p>
+                </div>
+              </div>
+            </div>
+            <div class="column" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <div style="font-size:5rem;font-weight:800;color:var(--color-primary);text-align:center;">方向呢？</div>
+              <svg width="160" height="80" viewBox="0 0 160 80">
+                <defs><marker id="arrow-s02" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/></marker></defs>
+                <line x1="10" y1="40" x2="140" y2="40" stroke="#dc2626" stroke-width="4" marker-end="url(#arrow-s02)"/>
+                <text x="50" y="25" text-anchor="middle" font-size="13" fill="#dc2626">箭头指向全篇</text>
+              </svg>
+              <p style="margin-top:0.8rem;font-weight:600;color:var(--color-primary-dark);text-align:center;">本场回答两个问题：Loop 怎么做 + 方向谁来定</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- S03: Vibe Coding = Human In The Loop -->
+        <section class="slide">
+          <h2>Vibe Coding = Human In The Loop</h2>
+          <div class="card-grid card-grid-2" style="margin-bottom:0.8rem;">
+            <div class="card">
+              <h4><i class="fa-solid fa-user"></i> 主流模式</h4>
+              <p class="details">用户说 → AI 写 → 用户读 → 用户再说 → AI 再写 → ... 人在<strong>循环内部</strong></p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-bolt"></i> 节奏由人决定</h4>
+              <p class="details">没有人的指令，AI 不会进入下一轮。人是循环的节拍器</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-check-circle" style="color:var(--color-secondary);"></i> 适用场景</h4>
+              <p class="details">适合快速原型、单文件脚本、局部修复</p>
+            </div>
+            <div class="card" style="border-color:var(--color-danger);">
+              <h4><i class="fa-solid fa-xmark" style="color:var(--color-danger);"></i> 不可持续</h4>
+              <p class="details">对于产品级系统（352 实体、154 模块、~2890 测试），这种模式不可持续</p>
+            </div>
+          </div>
+          <div class="highlight-box" style="border-left-color:var(--color-danger);background:#fef2f2;">
+            <p><strong>核心问题：</strong>这是一个<strong>不可关闭的循环</strong>——没有基线、没有范围、没有退出标准、没有审计</p>
+          </div>
+          <div class="cycle-diagram">
+            <div class="cycle-step highlight">Human</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step">AI</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step highlight">Human</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step">AI</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step" style="background:#fee2e2;border-color:#dc2626;color:#991b1b;">∞ 无退出条件</div>
+          </div>
+        </section>
+
+        <!-- S04: 真实案例 -->
+        <section class="slide">
+          <h2>一个真实案例说明问题</h2>
+          <div class="two-column">
+            <div class="column">
+              <div class="card" style="border-color:var(--color-danger);background:#fef2f2;">
+                <h4><i class="fa-solid fa-circle-exclamation" style="color:var(--color-danger);"></i> 子代理误判报告（红）</h4>
+                <p class="details">07-12 竞争杠杆审计：子代理报告"零 Delta 使用""循环依赖"</p>
+                <p class="details" style="margin-top:0.5rem;color:var(--color-danger);font-weight:500;">同一上下文既制造又检查，天然确认偏差</p>
+              </div>
+            </div>
+            <div class="column">
+              <div class="card" style="border-color:var(--color-secondary);background:#f0fdf4;">
+                <h4><i class="fa-solid fa-check-circle" style="color:var(--color-secondary);"></i> grep 事实证据（绿）</h4>
+                <p class="details">338 个 view.xml 用了 <code>x:extends</code>（Delta 机制），<code>mvn clean install</code> 无环</p>
+              </div>
+            </div>
+          </div>
+          <div class="highlight-box" style="margin-top:0.5rem;">
+            <p><strong>传统 Loop（Human In The Loop）能解决吗？</strong> 能——如果人每一轮都查。但人不可能每一轮都查</p>
+            <p style="margin-top:0.3rem;font-weight:600;">所以我们需要从 In 升级到 On</p>
+          </div>
+          <div style="text-align:center;">
+            <span class="tag" style="background:#fee2e2;color:#991b1b;">子代理误判</span>
+            <span class="tag" style="font-size:1.2rem;padding:4px 12px;">❌</span>
+            <span class="tag" style="background:#dcfce7;color:#166534;">事实证据</span>
+            <span class="tag" style="font-size:1.2rem;padding:4px 12px;">同一上下文</span>
+          </div>
+        </section>
+
+        <!-- S05: Plan as key -->
+        <section class="slide">
+          <h2>从 In 到 On 的关键：Plan</h2>
+          <div class="card-grid card-grid-3" style="margin-bottom:0.8rem;">
+            <div class="card">
+              <h4><i class="fa-solid fa-cubes"></i> 为什么是 Plan？</h4>
+              <p class="details">不是"一段代码"或"一个文件"——Plan 是可独立执行的基本单位</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-up-right-and-down-left-from-center"></i> 有边界</h4>
+              <p class="details">Goals + Non-Goals → AI 知道做什么、不做什么</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-database"></i> 有基线</h4>
+              <p class="details">Current Baseline → 从仓库读取，不依赖对话记忆</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-flag-checkered"></i> 有退出标准</h4>
+              <p class="details">Exit Criteria → AI 知道"什么时候做完"</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-clipboard-check"></i> 可审计</h4>
+              <p class="details">独立子代理可在不继承上下文的情况下验证完成度</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-rotate"></i> 可恢复</h4>
+              <p class="details">Plan 状态（draft/active/completed）+ 复选框，中断后扫盘即恢复</p>
+            </div>
+          </div>
+          <p style="margin-bottom:0.3rem;"><strong>Plan Loop 闭环：</strong>生成与验收分离——审计必须由<strong>独立子代理（fresh session）</strong>执行</p>
+          <div class="cycle-diagram">
+            <div class="cycle-step">draft</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step" style="background:#fee2e2;border-color:#dc2626;color:#991b1b;"><i class="fa-solid fa-shield-halved"></i> 独立草案审查</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step">active</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step">执行（含验证）</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step" style="background:#fee2e2;border-color:#dc2626;color:#991b1b;"><i class="fa-solid fa-shield-halved"></i> 独立结束审计</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step">completed</div>
+          </div>
+          <div class="highlight-box">
+            <p>这套 Plan + 审计 + 验证的联合机制，我们称为 <strong>Harness（控制机制）</strong>——它是控制轨迹的执行层</p>
+          </div>
+        </section>
+
+        <!-- S06: Plan 1100-1 -->
+        <section class="slide">
+          <h2>实例：Plan 1100-1 销售定价引擎</h2>
+          <div class="card" style="margin-bottom:0.8rem;">
+            <pre style="font-family:var(--font-code);font-size:0.9rem;color:var(--color-text-light);line-height:1.7;white-space:pre-wrap;">
+draft → 审查 iter1（"客户维度 Decision 缺失"，needs_revision）
+  → 修订 → 审查 iter2（accept）
+    → active → Phase 1-4（ORM + SPI + 测试 + 前端）
+      → mvn test 全绿 → 结束审计 PASS → completed</pre>
+          </div>
+          <div class="card-grid card-grid-2">
+            <div class="card" style="border-color:var(--color-danger);background:#fef2f2;">
+              <h4><i class="fa-solid fa-shield-halved" style="color:var(--color-danger);"></i> 该批次 4 个 Plan 拦截 4 个 P0 缺陷</h4>
+              <p class="details">码值冲突、BUDGET 污染财务、GlBalance 前提错误、维度歧义。全部在编码前拦截</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-triangle-exclamation" style="color:var(--color-warning);"></i> 如果没有 Plan Loop</h4>
+              <p class="details">这 4 个缺陷在实施/运行期才暴露，修复成本高 5-10 倍</p>
+            </div>
+          </div>
+          <div class="timeline">
+            <div class="timeline-items">
+              <div class="timeline-item">
+                <div class="label">draft</div>
+                <div class="desc">起草</div>
+              </div>
+              <div class="timeline-item" style="--c:var(--color-danger);">
+                <div class="label" style="color:var(--color-danger);">审查 iter1</div>
+                <div class="desc">needs_revision</div>
+              </div>
+              <div class="timeline-item">
+                <div class="label">审查 iter2</div>
+                <div class="desc">accept</div>
+              </div>
+              <div class="timeline-item">
+                <div class="label">Phase 1-4</div>
+                <div class="desc">ORM + SPI + 测试 + 前端</div>
+              </div>
+              <div class="timeline-item">
+                <div class="label" style="color:var(--color-secondary);">完成</div>
+                <div class="desc">mvn test 全绿 → PASS</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- S07: 189 份 Plan 轨迹 -->
+        <section class="slide">
+          <h2>189 份 Plan 的轨迹</h2>
+          <div class="card-grid card-grid-2" style="margin-bottom:0.8rem;">
+            <div class="card">
+              <h4><i class="fa-solid fa-timeline"></i> 每份 Plan 可追溯</h4>
+              <p class="details">为什么做（Source → 路线图）/ 做前状态（Current Baseline）/ 决策记录（Decision + 备选方案）/ 完成状态（Closure Gates + 审计记录）</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-clock"></i> 时间尺度实证</h4>
+              <p class="details">典型 Plan 生命周期 4-12 小时（同一天完成）。最短 ~4h（07-10 的 4 个计划同日完成），最长 ~2 天</p>
+              <p class="details" style="margin-top:0.3rem;">没有以分钟计的计划——每条都必须经过审查→执行→验证→审计的门控链</p>
+            </div>
+          </div>
+          <svg width="100%" height="180" viewBox="0 0 800 180" style="background:var(--color-code-bg);border-radius:8px;border:1px solid var(--color-border);">
+            <!-- X axis -->
+            <line x1="50" y1="140" x2="780" y2="140" stroke="#d1d5db" stroke-width="2"/>
+            <!-- Date labels -->
+            <text x="60" y="165" font-size="9" fill="#9ca3af">06-22</text>
+            <text x="200" y="165" font-size="9" fill="#9ca3af">06-27</text>
+            <text x="370" y="165" font-size="9" fill="#9ca3af">07-02</text>
+            <text x="540" y="165" font-size="9" fill="#9ca3af">07-07</text>
+            <text x="730" y="165" font-size="9" fill="#9ca3af">07-13</text>
+            <!-- Y axis -->
+            <text x="15" y="25" font-size="9" fill="#9ca3af">Active</text>
+            <text x="15" y="75" font-size="9" fill="#9ca3af">Completed</text>
+            <text x="15" y="130" font-size="9" fill="#9ca3af">Draft</text>
+            <!-- Scatter dots - 189 simulated -->
+            <!-- Draft dots (grey) - bottom area -->
+            <circle cx="70" cy="120" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="90" cy="125" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="110" cy="115" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="130" cy="125" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="160" cy="118" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="180" cy="122" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="210" cy="115" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="240" cy="128" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="270" cy="120" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="300" cy="124" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="330" cy="117" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="360" cy="126" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="400" cy="119" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="430" cy="123" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="460" cy="116" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="500" cy="127" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="530" cy="121" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="560" cy="125" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="600" cy="118" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="640" cy="122" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="680" cy="115" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="720" cy="128" r="3" fill="#d1d5db" opacity="0.6"/>
+            <circle cx="750" cy="120" r="3" fill="#d1d5db" opacity="0.6"/>
+            <!-- Active dots (blue) - middle area -->
+            <circle cx="75" cy="55" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="95" cy="50" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="120" cy="60" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="145" cy="48" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="170" cy="58" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="195" cy="52" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="220" cy="62" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="245" cy="45" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="270" cy="55" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="295" cy="50" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="320" cy="60" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="350" cy="48" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="380" cy="58" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="410" cy="52" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="440" cy="62" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="470" cy="45" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="500" cy="55" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="530" cy="50" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="560" cy="60" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="590" cy="48" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="620" cy="58" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="650" cy="52" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="680" cy="62" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="710" cy="45" r="3" fill="#2563eb" opacity="0.8"/>
+            <circle cx="740" cy="55" r="3" fill="#2563eb" opacity="0.8"/>
+            <!-- Completed dots (green) - top area -->
+            <circle cx="80" cy="18" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="105" cy="14" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="135" cy="22" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="160" cy="10" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="190" cy="16" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="215" cy="20" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="250" cy="12" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="280" cy="18" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="310" cy="14" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="340" cy="22" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="370" cy="10" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="395" cy="16" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="425" cy="20" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="455" cy="12" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="485" cy="18" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="515" cy="14" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="545" cy="22" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="575" cy="10" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="605" cy="16" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="635" cy="20" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="665" cy="12" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="695" cy="18" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="730" cy="14" r="3" fill="#059669" opacity="0.8"/>
+            <circle cx="760" cy="22" r="3" fill="#059669" opacity="0.8"/>
+            <!-- Legend -->
+            <rect x="620" y="2" width="10" height="10" fill="#d1d5db" rx="2"/>
+            <text x="635" y="10" font-size="9" fill="#6b7280">Draft</text>
+            <rect x="680" y="2" width="10" height="10" fill="#2563eb" rx="2"/>
+            <text x="695" y="10" font-size="9" fill="#6b7280">Active</text>
+            <rect x="740" y="2" width="10" height="10" fill="#059669" rx="2"/>
+            <text x="755" y="10" font-size="9" fill="#6b7280">Completed</text>
+          </svg>
+          <p style="text-align:center;font-size:0.8rem;color:var(--color-text-light);">189 个 Plan，X=日期，颜色=状态 | 典型周期 4-12h，最短 ~4h，最长 ~2 天</p>
+        </section>
+
+        <!-- S08: Plan not enough -->
+        <section class="slide">
+          <h2>Plan 够了吗？不够</h2>
+          <div class="two-column">
+            <div class="column" style="display:flex;flex-direction:column;align-items:center;">
+              <svg width="220" height="220" viewBox="0 0 220 220">
+                <text x="110" y="25" text-anchor="middle" font-size="11" fill="#2563eb" font-weight="600">Plan Loop</text>
+                <circle cx="110" cy="120" r="55" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="5,4"/>
+                <text x="110" y="124" text-anchor="middle" font-size="9" fill="#2563eb">小环</text>
+                <text x="110" y="200" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="600">需要人逐个触发</text>
+              </svg>
+              <div class="card" style="margin-top:0.5rem;width:100%;border-color:var(--color-warning);">
+                <h4><i class="fa-solid fa-question-circle"></i> 189 次变更怎么办？</h4>
+                <div class="sub-items">
+                  <div class="sub-item">谁决定下一个做什么？</div>
+                  <div class="sub-item">谁确保路线图上所有工作项都被执行？</div>
+                  <div class="sub-item">谁在空闲时触发审计？</div>
+                  <div class="sub-item">谁把 Plan 完成状态同步回路线图？</div>
+                </div>
+              </div>
+            </div>
+            <div class="column" style="display:flex;flex-direction:column;align-items:center;">
+              <svg width="260" height="220" viewBox="0 0 260 220">
+                <text x="130" y="25" text-anchor="middle" font-size="11" fill="#059669" font-weight="600">Mission Driver</text>
+                <circle cx="130" cy="120" r="85" fill="none" stroke="#059669" stroke-width="3" stroke-dasharray="8,5"/>
+                <circle cx="130" cy="120" r="50" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="4,3"/>
+                <text x="75" y="75" text-anchor="middle" font-size="8" fill="#2563eb">Plan</text>
+                <text x="130" y="75" text-anchor="middle" font-size="8" fill="#2563eb">Plan</text>
+                <text x="185" y="75" text-anchor="middle" font-size="8" fill="#2563eb">Plan</text>
+                <text x="130" y="205" text-anchor="middle" font-size="10" fill="#059669" font-weight="600">自动编排层</text>
+              </svg>
+              <div class="card" style="margin-top:0.5rem;width:100%;background:#f0fdf4;border-color:var(--color-secondary);">
+                <h4><i class="fa-solid fa-arrow-right" style="color:var(--color-secondary);"></i> Mission Driver</h4>
+                <p class="details">在 Plan Loop 之外加一个自动编排层，实现从 In 到 On 的跨越</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- S09: Mission Driver 运行实例 -->
+        <section class="slide">
+          <h2>Mission Driver 的运行实例与 5 步循环</h2>
+          <div class="two-column" style="margin-bottom:0.8rem;">
+            <div class="column">
+              <div class="card" style="font-family:var(--font-code);font-size:0.8rem;line-height:1.8;">
+                <p style="font-weight:600;color:var(--color-primary-dark);margin-bottom:0.3rem;">07-10 真实运行记录</p>
+                <span class="tag" style="background:#e0e7ff;">08:00</span> CHECK（mvn 全绿）<br/>
+                <span class="tag" style="background:#e0e7ff;">08:05</span> REVIEW_PLANS（4 个 draft → all active）<br/>
+                <span class="tag" style="background:#e0e7ff;">09:30</span> EXEC_PLANS（4 个 active Plan 全绿 ✅）<br/>
+                <span class="tag" style="background:#e0e7ff;">16:00</span> DRAFT_PLANS（路线图全 done）<br/>
+                <span class="tag" style="background:#e0e7ff;">16:05</span> DEEP_AUDIT（自动启动深度审计）
+              </div>
+            </div>
+            <div class="column">
+              <div class="card-grid card-grid-2" style="margin-top:0;">
+                <div class="card" style="background:#eff6ff;border-color:#2563eb;">
+                  <h4><i class="fa-solid fa-shield"></i> 关键设计</h4>
+                  <div class="sub-items">
+                    <div class="sub-item">REVIEW 在 EXEC 之前（避免重复起草）</div>
+                    <div class="sub-item">EXEC 用 forEach（一次返回后重新扫描）</div>
+                    <div class="sub-item">DRAFT 含自审计</div>
+                    <div class="sub-item">DEEP_AUDIT——全 done 不是停止信号，是升级审计的信号</div>
+                  </div>
+                </div>
+                <div class="card">
+                  <h4><i class="fa-solid fa-clock"></i> 关于时间</h4>
+                  <p class="details">一次完整循环 ~8 小时，整个路线图遍历横跨 22 天</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p style="margin-bottom:0.3rem;"><strong>5 步闭环：</strong></p>
+          <div class="cycle-diagram">
+            <div class="cycle-step highlight"><i class="fa-solid fa-shield-halved"></i> CHECK</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step"><i class="fa-solid fa-eye"></i> REVIEW_PLANS</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step"><i class="fa-solid fa-play"></i> EXEC_PLANS</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step"><i class="fa-solid fa-pen"></i> DRAFT_PLANS</div>
+            <span class="cycle-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+            <div class="cycle-step" style="background:#fef3c7;border-color:#d97706;"><i class="fa-solid fa-search"></i> DEEP_AUDIT</div>
+          </div>
+        </section>
+
+        <!-- S11: 起点与终点 -->
+        <section class="slide">
+          <h2>起点与终点</h2>
+          <div class="two-column">
+            <div class="column">
+              <div class="card" style="border-color:#9ca3af;">
+                <h4><i class="fa-solid fa-play"></i> 起点（06-22）</h4>
+                <p class="details">AGE 模板空骨架——10 域 ORM 多数实体为 0、构建未闭环、测试=0、文档占位符</p>
+              </div>
+              <svg width="100%" height="120" viewBox="0 0 300 120">
+                <text x="10" y="18" font-size="10" fill="#9ca3af">nop-app-erp/</text>
+                <text x="20" y="32" font-size="9" fill="#d1d5db">├── module-master-data/</text>
+                <text x="20" y="44" font-size="9" fill="#d1d5db">├── module-purchase/</text>
+                <text x="20" y="56" font-size="9" fill="#d1d5db">├── module-sales/</text>
+                <text x="20" y="68" font-size="9" fill="#d1d5db">├── ...（10 域，多数实体为 0）</text>
+                <text x="20" y="84" font-size="9" fill="#d1d5db">├── docs/（占位符）</text>
+                <text x="20" y="100" font-size="9" fill="#d1d5db">└── 构建未闭环，测试=0</text>
+                <rect x="10" y="6" width="280" height="108" fill="none" stroke="#e5e7eb" stroke-width="1" rx="4" stroke-dasharray="4,3"/>
+              </svg>
+            </div>
+            <div class="column">
+              <div class="card" style="border-color:var(--color-secondary);background:#f0fdf4;">
+                <h4><i class="fa-solid fa-flag-checkered" style="color:var(--color-secondary);"></i> 终点（07-13）</h4>
+                <p class="details">这些数字是两层 Loop（Plan + Mission Driver）+ 一个 Attractor 的共同输出</p>
+              </div>
+              <div class="stat-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                <div class="stat-card"><span class="stat-number">18+1</span><span class="stat-label">业务域</span></div>
+                <div class="stat-card"><span class="stat-number">154</span><span class="stat-label">模块</span></div>
+                <div class="stat-card"><span class="stat-number">352</span><span class="stat-label">实体</span></div>
+                <div class="stat-card"><span class="stat-number">~2890</span><span class="stat-label">测试</span></div>
+                <div class="stat-card"><span class="stat-number">260+</span><span class="stat-label">E2E</span></div>
+                <div class="stat-card"><span class="stat-number">0</span><span class="stat-label">regression</span></div>
+                <div class="stat-card"><span class="stat-number">24</span><span class="stat-label">报表</span></div>
+                <div class="stat-card"><span class="stat-number">10</span><span class="stat-label">看板</span></div>
+                <div class="stat-card"><span class="stat-number">19</span><span class="stat-label">技能</span></div>
+              </div>
+              <p style="text-align:center;font-size:0.85rem;color:var(--color-text-light);margin-top:0.3rem;">两层 Loop + 一个 Attractor</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- S12: 验证基线 + 审计演进 -->
+        <section class="slide">
+          <h2>验证基线 + 审计演进</h2>
+          <div class="two-column">
+            <div class="column-narrow">
+              <div class="card" style="margin-bottom:0.5rem;">
+                <h4><i class="fa-solid fa-chart-line"></i> 验证基线</h4>
+                <p class="details">06-23（81 模块首闭环）到 07-13（154 模块），持续全绿</p>
+              </div>
+              <svg width="100%" height="160" viewBox="0 0 260 160">
+                <!-- Axes -->
+                <line x1="20" y1="140" x2="250" y2="140" stroke="#d1d5db" stroke-width="1.5"/>
+                <line x1="20" y1="10" x2="20" y2="140" stroke="#d1d5db" stroke-width="1.5"/>
+                <text x="55" y="155" font-size="8" fill="#9ca3af">06-23</text>
+                <text x="165" y="155" font-size="8" fill="#9ca3af">07-13</text>
+                <!-- Stacked areas -->
+                <!-- E2E layer (top) -->
+                <polygon points="20,140 30,120 50,105 70,90 90,75 110,60 130,50 150,40 170,35 190,30 210,25 230,22 250,20 250,140" fill="#059669" opacity="0.3"/>
+                <text x="240" y="25" font-size="8" fill="#059669">E2E 260+</text>
+                <!-- Tests layer (middle) -->
+                <polygon points="20,140 30,90 50,60 70,40 90,30 110,25 130,20 150,18 170,16 190,14 210,12 230,10 250,10 250,140 20,140" fill="#2563eb" opacity="0.3"/>
+                <text x="240" y="16" font-size="8" fill="#2563eb">Test ~2890</text>
+                <!-- Modules layer (bottom, widest) -->
+                <polygon points="20,140 30,100 50,85 70,78 90,72 110,68 130,65 150,63 170,61 190,60 210,59 230,58 250,58 250,140 20,140" fill="#d1d5db" opacity="0.3"/>
+                <text x="240" y="56" font-size="8" fill="#6b7280">Module 154</text>
+              </svg>
+            </div>
+            <div class="column-wide">
+              <div class="card">
+                <h4><i class="fa-solid fa-arrow-trend-up"></i> 审计方法论 8 阶段演进</h4>
+                <div style="max-height:280px;overflow-y:auto;font-size:0.85rem;line-height:1.5;">
+                  <p><span class="tag-success">1</span> 07-02 单代理 + rg 扫描（首次合规审计）</p>
+                  <p><span class="tag-success">2</span> 07-04 单代理 + 6 维度（结束审计范式定型）</p>
+                  <p><span class="tag-success">3</span> 07-05-1300 3 路并行子代理（首次多代理并行）</p>
+                  <p><span class="tag">4</span> 07-05-1400 4 路对抗性子代理——方法论飞跃：从"方法存在"到"语义保真"</p>
+                  <p><span class="tag">5</span> 07-05-1500 工具化合规检查器（15 条 R 规则 → 脚本）</p>
+                  <p><span class="tag">6</span> 07-06 UC 断言对照（粒度切换到业务实现率）</p>
+                  <p><span class="tag-warn">7</span> 07-07 4 路并行 + 自省（审计质量回顾）</p>
+                  <p><span class="tag-warn">8</span> 07-12 3 路并行 + 主代理复核（纠正 2 处子代理误判）</p>
+                </div>
+              </div>
+              <div class="highlight-box" style="margin-top:0.5rem;">
+                <p><strong>关键洞察：</strong>好的 Harness 不仅检查系统——它也检查自己。07-07 回顾记录了 07-05 的评分偏差事件</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- S13: 平台共生发现 -->
+        <section class="slide">
+          <h2>平台共生发现 + 健康度声明</h2>
+          <div class="card-grid card-grid-2" style="margin-bottom:0.8rem;">
+            <div class="card" style="border-color:var(--color-secondary);background:#f0fdf4;">
+              <h4><i class="fa-solid fa-handshake" style="color:var(--color-secondary);"></i> 7 个平台共生发现</h4>
+              <p class="details">项目发现了 7 个 nop-entropy 平台问题，其中 3 个是源码 bug（<code>SiteMapProviderImpl</code> init、<code>DataInitInitializer</code> NPE、codegen 模板标签前缀），已修复并反哺</p>
+              <p class="details" style="margin-top:0.3rem;">证明两层 Harness 不仅检查应用层，还超出了预期范围发现了平台层问题</p>
+            </div>
+            <div class="card" style="border-color:var(--color-warning);background:#fffbeb;">
+              <h4><i class="fa-solid fa-triangle-exclamation"></i> 5 项风险诚实陈述</h4>
+              <div class="sub-items">
+                <div class="sub-item">文档诚信 / 多组织缺失 / 委外空壳（后修复）/ 审计盲区 / logs 缺决策依据</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:0.8rem;">
+            <span class="tag-success" style="padding:6px 14px;font-size:0.9rem;">✅ 文档诚信</span>
+            <span class="tag-danger" style="padding:6px 14px;font-size:0.9rem;">❌ 多组织缺失</span>
+            <span class="tag-success" style="padding:6px 14px;font-size:0.9rem;">✅ 委外（后修复）</span>
+            <span class="tag-danger" style="padding:6px 14px;font-size:0.9rem;">⚠️ 审计盲区</span>
+            <span class="tag-warn" style="padding:6px 14px;font-size:0.9rem;">⚠️ logs 缺决策依据</span>
+          </div>
+          <div class="golden-quote" style="font-size:1.3rem;">
+            <strong>Not zero-defect — defect-aware</strong><br/>
+            <span style="font-size:0.9rem;">不是零缺陷——缺陷可感知、偏差可见、纠偏可执行</span>
+          </div>
+        </section>
+
+        <!-- S14: Flow DSL Engine -->
+        <section class="slide">
+          <h2>通用 Flow DSL 引擎</h2>
+          <p style="margin-bottom:0.5rem;"><strong>三个层级，一个引擎：</strong></p>
+          <svg width="100%" height="260" viewBox="0 0 700 260">
+            <!-- Layer 3 - Config -->
+            <rect x="50" y="10" width="600" height="55" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+            <text x="70" y="32" font-size="12" fill="#1e40af" font-weight="600">配置层</text>
+            <text x="70" y="50" font-size="10" fill="#4b5563">missions/erp.json → roadmapPath、planGuide、commands</text>
+            <!-- Layer 2 - Flow -->
+            <rect x="50" y="75" width="600" height="55" rx="6" fill="#dcfce7" stroke="#059669" stroke-width="1.5"/>
+            <text x="70" y="97" font-size="12" fill="#065f46" font-weight="600">流程层</text>
+            <text x="70" y="115" font-size="10" fill="#4b5563">flows/mission-driver.json → 定义 5 步状态机</text>
+            <!-- Layer 1 - Execution -->
+            <rect x="50" y="140" width="600" height="55" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+            <text x="70" y="162" font-size="12" fill="#78350f" font-weight="600">执行层</text>
+            <text x="70" y="180" font-size="10" fill="#4b5563">AI step → spawn opencode run → 写 Plan/审计文件 → 引擎抠 marker 推进</text>
+            <!-- Layer 0 - Storage -->
+            <rect x="50" y="205" width="600" height="40" rx="6" fill="#f1f5f9" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="70" y="228" font-size="10" fill="#6b7280" font-weight="600">磁盘文件（零 IPC，全文件）</text>
+            <!-- Arrows -->
+            <line x1="350" y1="65" x2="350" y2="75" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow-down)"/>
+            <line x1="350" y1="130" x2="350" y2="140" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow-down)"/>
+            <line x1="350" y1="195" x2="350" y2="205" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow-down)"/>
+            <defs><marker id="arrow-down" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 5 10 L 10 0 z" fill="#9ca3af"/></marker></defs>
+          </svg>
+          <div class="card-grid card-grid-3" style="margin-top:0.5rem;">
+            <div class="card">
+              <h4><i class="fa-solid fa-syringe"></i> 注入机制</h4>
+              <p class="details">AI step 的 prompt 含 <code>{{planGuide}}</code> 等占位符，引擎从配置注入。AI 的思考内容来自外部的 plan guide 和 context docs，不来自 prompt 本身</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-cube"></i> 隔离的顶级步骤</h4>
+              <p class="details">顶级步骤相互不传参数。可单独执行任一（<code>--step DEEP_AUDIT</code>），可从任一步开始向后执行，中断后扫盘恢复</p>
+            </div>
+            <div class="card">
+              <h4><i class="fa-solid fa-file"></i> 零 IPC，全文件</h4>
+              <p class="details">没有 web server，状态通过 Plan/Audit 文件持久化</p>
+            </div>
+          </div>
+          <div class="highlight-box" style="margin-top:0.3rem;">
+            <p><strong>对人介入的支持：</strong>DRAFT_PLANS 持续从路线图起草新 Plan（不限批次）；REVIEW_PLANS 自动拾取任何 Status=draft 的 Plan（不区分来源——手工创建或自动起草都一样）；人可随时修改 Plan 状态/路线图，下轮循环自动适配</p>
+          </div>
+        </section>
+
+        <!-- S15: 回扣悬念 -->
+        <section class="slide">
+          <h2>回扣悬念：谁回答了"往哪做"？</h2>
+          <div class="card-grid card-grid-2">
+            <div class="card" style="background:#eff6ff;border-color:#2563eb;">
+              <h4><i class="fa-solid fa-rotate"></i> Plan Loop + Mission Driver</h4>
+              <p class="details">前三个 Act 展示了 Plan Loop + Mission Driver 如何让 AI 全自动执行</p>
+              <p class="details" style="margin-top:0.3rem;">但有一个问题始终没回答：<strong>方向是谁定的？</strong></p>
+            </div>
+            <div class="card" style="background:#fffbeb;border-color:var(--color-warning);">
+              <h4><i class="fa-solid fa-user"></i> 22 天里，人几乎没写代码</h4>
+              <p class="details">那他做了什么？</p>
+              <p class="details" style="margin-top:0.5rem;font-weight:600;color:var(--color-primary-dark);">预告：三件事，而且随时间主动退场</p>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-top:1rem;">
+            <div style="font-size:3rem;font-weight:800;color:#9ca3af;text-decoration:line-through;">方向呢？</div>
+            <svg width="80" height="60" viewBox="0 0 80 60">
+              <defs><marker id="arrow-s15" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" fill="#059669"/></marker></defs>
+              <line x1="5" y1="30" x2="70" y2="30" stroke="#059669" stroke-width="3" marker-end="url(#arrow-s15)"/>
+            </svg>
+            <span style="font-size:1.5rem;font-weight:700;color:var(--color-secondary);">即将回答</span>
+          </div>
+        </section>
+
+        <!-- S16: 人的三类介入 -->
+        <section class="slide">
+          <h2>人的三类介入</h2>
+          <p style="margin-bottom:0.3rem;">全量抽取 22 天开发周期的日志，得到 28 条明确人类干预 + 80 次设计决策决议</p>
+          <div class="card-grid card-grid-3" style="margin-bottom:0.5rem;">
+            <div class="card" style="border-color:#9ca3af;background:#f8fafc;">
+              <h4><i class="fa-solid fa-book"></i> A 类（9 次）</h4>
+              <p class="details"><strong>明确指明平台机制</strong><br/>06-22~07-03 密集</p>
+              <div class="sub-items">
+                <div class="sub-item">用户直接说出平台怎么工作</div>
+                <div class="sub-item">例："全局租户开关是 <code>nop.orm.enable-tenant-by-default</code>"——AI 查 docs-for-ai 查不到，因为当时没写</div>
+              </div>
+            </div>
+            <div class="card" style="border-color:var(--color-warning);background:#fffbeb;">
+              <h4><i class="fa-solid fa-compass"></i> B 类（9 次）</h4>
+              <p class="details"><strong>指明工程原则方向</strong></p>
+              <div class="sub-items">
+                <div class="sub-item">用户给原则，不给 API</div>
+                <div class="sub-item">例："过账方法应挂聚合根 BizModel"——AI 自行裁定凭证=聚合根，零 ORM 变更</div>
+              </div>
+            </div>
+            <div class="card" style="border-color:var(--color-secondary);background:#f0fdf4;border-width:2px;">
+              <h4><i class="fa-solid fa-check-circle" style="color:var(--color-secondary);"></i> C 类（绝大多数，07-04 后为主）</h4>
+              <p class="details"><strong>只让 AI 自查</strong></p>
+              <div class="sub-items">
+                <div class="sub-item">只提要求，不暗示答案</div>
+                <div class="sub-item">例："对照 erp-survey 检查功能覆盖"</div>
+              </div>
+            </div>
+          </div>
+          <div class="highlight-box" style="background:#f8fafc;border-left-color:var(--color-warning);">
+            <p><strong>用户不是"AI 监督员"</strong>——他是平台知识权威（A 类）+ 方向指南针（B 类），业务逻辑让 AI 对开源自行对标（C 类）</p>
+          </div>
+          <!-- Pyramid SVG -->
+          <svg width="300" height="80" viewBox="0 0 300 80" style="margin:0 auto;display:block;">
+            <polygon points="150,5 280,75 20,75" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" opacity="0.5"/>
+            <polygon points="150,25 250,75 50,75" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5" opacity="0.6"/>
+            <polygon points="150,45 220,75 80,75" fill="#93c5fd" stroke="#2563eb" stroke-width="1.5" opacity="0.7"/>
+            <text x="150" y="45" text-anchor="middle" font-size="8" fill="#1e40af" font-weight="600">C 类最厚</text>
+            <text x="150" y="58" text-anchor="middle" font-size="7" fill="#2563eb">B 类</text>
+            <text x="150" y="70" text-anchor="middle" font-size="7" fill="#2563eb">A 类</text>
+          </svg>
+        </section>
+
+        <!-- S17: 知识转移曲线 + Attractor 定义 (全场高潮) -->
+        <section class="slide">
+          <h2>【全场高潮】知识转移曲线 + Attractor 定义</h2>
+          <div class="two-column">
+            <div class="column-narrow">
+              <div class="card" style="margin-bottom:0.5rem;font-family:var(--font-code);font-size:0.75rem;line-height:1.6;">
+                06-22 <span style="background:#2563eb;color:white;padding:0 2px;">███████████</span> A 类密集 + B + C 起步<br/>
+                06-29 <span style="background:#059669;color:white;padding:0 2px;">██████████</span> C 类（grill 83 问，仅 4 题需纠正）<br/>
+                07-01 <span style="background:#d97706;color:white;padding:0 2px;">██</span>    <span style="background:#059669;color:white;padding:0 2px;">██</span> 最后两次 A 类 + 两次关键 B 类<br/>
+                07-03 <span style="background:#d97706;color:white;padding:0 2px;">█</span> 最后一次 A 类<br/>
+                07-04+ <span style="background:#059669;color:white;padding:0 2px;">████████████</span> 几乎全 C 类
+              </div>
+              <div class="golden-quote" style="font-size:1rem;padding:12px 16px;">
+                用户后期介入归零不是因为 AI 学会了写代码，而是因为<strong>吸引子已经定义好了</strong>
+              </div>
+            </div>
+            <div class="column-wide">
+              <div class="card-grid card-grid-3" style="margin-top:0;">
+                <div class="card" style="background:#eff6ff;border-color:#2563eb;">
+                  <h4><i class="fa-solid fa-database"></i> 维度一</h4>
+                  <p class="details"><strong>ORM XML 唯一真相源</strong><br/>所有持久化代码从 XML 生成，手写绕过 = 编译失败</p>
+                </div>
+                <div class="card" style="background:#f0fdf4;border-color:var(--color-secondary);">
+                  <h4><i class="fa-solid fa-diagram-project"></i> 维度二</h4>
+                  <p class="details"><strong>DAG + R/S/P 跨域契约</strong><br/>模块依赖为 DAG，跨域引用分三类（R 只读桩/S 同步 I*Biz/P 弱关联字符串），369 条白名单</p>
+                </div>
+                <div class="card" style="background:#fffbeb;border-color:var(--color-warning);">
+                  <h4><i class="fa-solid fa-cube"></i> 维度三</h4>
+                  <p class="details"><strong>三轴正交状态分离</strong><br/>docStatus（域状态机）× approveStatus（四态统一）× posted（过账引擎独占）</p>
+                </div>
+              </div>
+              <div class="highlight-box" style="margin-top:0.3rem;">
+                <p><strong>三者是同一个 Attractor 的三个维度：</strong>系统应向声明式、模块隔离、状态正交的结构收敛</p>
+              </div>
+              <svg width="100%" height="100" viewBox="0 0 400 100">
+                <!-- Left Y axis -->
+                <line x1="40" y1="10" x2="40" y2="85" stroke="#d1d5db" stroke-width="1"/>
+                <text x="5" y="30" font-size="8" fill="#9ca3af">A 类频次</text>
+                <text x="5" y="85" font-size="8" fill="#9ca3af">低</text>
+                <!-- Right Y axis -->
+                <line x1="360" y1="10" x2="360" y2="85" stroke="#d1d5db" stroke-width="1" stroke-dasharray="2,2"/>
+                <text x="370" y="30" font-size="8" fill="#9ca3af">AI 自主度</text>
+                <text x="370" y="85" font-size="8" fill="#9ca3af">低</text>
+                <!-- X axis -->
+                <line x1="40" y1="85" x2="360" y2="85" stroke="#d1d5db" stroke-width="1"/>
+                <text x="80" y="96" font-size="7" fill="#9ca3af">06-22</text>
+                <text x="200" y="96" font-size="7" fill="#9ca3af">07-03</text>
+                <text x="320" y="96" font-size="7" fill="#9ca3af">07-13</text>
+                <!-- A类频次曲线 (red, descending) -->
+                <polyline points="60,25 120,30 180,35 240,60 300,75 340,78" fill="none" stroke="#dc2626" stroke-width="2"/>
+                <text x="340" y="75" font-size="8" fill="#dc2626" font-weight="600">A 类 ↓</text>
+                <!-- AI自主度曲线 (green, ascending) -->
+                <polyline points="60,78 120,75 180,70 240,40 300,20 340,15" fill="none" stroke="#059669" stroke-width="2" stroke-dasharray="4,2"/>
+                <text x="340" y="18" font-size="8" fill="#059669" font-weight="600">AI 自主度 ↑</text>
+              </svg>
+            </div>
+          </div>
+          <div class="card" style="margin-top:0.3rem;background:#f8fafc;border-color:#e5e7eb;">
+            <pre style="font-family:var(--font-code);font-size:0.78rem;color:var(--color-text-light);white-space:pre-wrap;line-height:1.4;">
+状态空间（所有可能状态）→ 吸引子（长期稳定的结构）→ 轨迹（实际演化路径）→ 控制（将轨迹拉回吸引子的机制）</pre>
+            <p style="font-size:0.85rem;margin-top:0.2rem;"><strong>⚠️ 最常见的三类混淆：</strong>① 吸引子 ≠ 边界 ② 吸引子 ≠ 更强的护栏 ③ 吸引子 ≠ 控制目标</p>
+          </div>
+        </section>
+
+        <!-- S18: 全场架构总图 -->
+        <section class="slide">
+          <h2>全场架构总图</h2>
+          <div class="two-column">
+            <div class="column">
+              <svg width="100%" height="280" viewBox="0 0 320 280">
+                <!-- Direction layer label (top) -->
+                <text x="160" y="20" text-anchor="middle" font-size="12" fill="#d97706" font-weight="700">方向层（不是 Loop，是结构不变量）</text>
+                <!-- Attractor box -->
+                <rect x="20" y="30" width="280" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+                <text x="160" y="52" text-anchor="middle" font-size="10" fill="#78350f" font-weight="600">Attractor 的三个维度</text>
+                <text x="160" y="68" text-anchor="middle" font-size="9" fill="#92400e">定义"系统应向哪里收敛"</text>
+                <!-- Down arrow -->
+                <line x1="160" y1="90" x2="160" y2="110" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arr)"/>
+                <!-- Harness layer label -->
+                <text x="160" y="122" text-anchor="middle" font-size="12" fill="#2563eb" font-weight="700">Harness 层（控制 Loop）</text>
+                <!-- Inner loop - Plan -->
+                <rect x="30" y="130" width="260" height="50" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+                <text x="160" y="150" text-anchor="middle" font-size="10" fill="#1e40af" font-weight="600">内层：Plan Loop（小时级）</text>
+                <text x="160" y="166" text-anchor="middle" font-size="9" fill="#4b5563">每次变更的关闭契约</text>
+                <!-- Outer loop - Mission Driver -->
+                <rect x="10" y="188" width="300" height="50" rx="8" fill="#dcfce7" stroke="#059669" stroke-width="1.5"/>
+                <text x="160" y="208" text-anchor="middle" font-size="10" fill="#065f46" font-weight="600">外层：Mission Driver Loop（天/周级）</text>
+                <text x="160" y="224" text-anchor="middle" font-size="9" fill="#4b5563">自动编排 + 自审计</text>
+                <!-- Up arrow from Mission Driver to Attractor -->
+                <path d="M 280 100 Q 310 140 280 210" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+                <defs><marker id="arr" viewBox="0 0 10 10" refX="5" refY="8" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 5 10 L 10 0 z" fill="#9ca3af"/></marker></defs>
+                <!-- Bottom text -->
+                <text x="160" y="260" text-anchor="middle" font-size="9" fill="#6b7280">Harness 在 Attractor 内运行，Attractor 为 Harness 提供方向</text>
+              </svg>
+            </div>
+            <div class="column">
+              <div class="card" style="margin-bottom:0.8rem;">
+                <h4><i class="fa-solid fa-code-compare"></i> Andrew Ng 三层 Loop vs AGE</h4>
+                <table class="comparison-table" style="font-size:0.85rem;margin:0.5rem 0;">
+                  <tr><th>维度</th><th>Andrew Ng</th><th>AGE</th></tr>
+                  <tr><td>Loop 层数</td><td>三层</td><td>两层（Plan + Mission Driver）</td></tr>
+                  <tr><td>方向定义</td><td>隐含（未独立分层）</td><td>Attractor（独立方向层）</td></tr>
+                  <tr><td>控制对象</td><td>代码/模型/系统</td><td>变更的变更（Meta-Loop）</td></tr>
+                  <tr><td>核心贡献</td><td>AI 开发分层</td><td>发现 Loop 的前提——方向定义层</td></tr>
+                </table>
+              </div>
+              <div class="key-quote">
+                <p>Loop Engineering 让 AI 跑得更快更稳。Attractor 让 Loop 知道往哪里跑。前者是实践突破，后者是哲学基础。两者都需要，但不能混淆。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- S19: 三个 Takeaway -->
+        <section class="slide">
+          <h2>三个 Takeaway</h2>
+          <div class="card-grid card-grid-3" style="margin-top:1rem;">
+            <div class="card" style="border-color:#2563eb;border-width:2px;">
+              <h4><i class="fa-solid fa-file-contract"></i> Takeaway 1</h4>
+              <p class="details"><strong>把"变更"从对话变成契约</strong></p>
+              <p class="details" style="margin-top:0.5rem;">Plan Loop 给每次变更一个关闭契约（draft→审查→执行→审计→completed）</p>
+              <p class="details" style="margin-top:0.3rem;">这是 Human On The Loop 的前提——AI 自主执行完整一轮，不等人</p>
+            </div>
+            <div class="card" style="border-color:var(--color-secondary);border-width:2px;">
+              <h4><i class="fa-solid fa-arrows-rotate"></i> Takeaway 2</h4>
+              <p class="details"><strong>把"编排"从记忆变成自动</strong></p>
+              <p class="details" style="margin-top:0.5rem;">Mission Driver 自动遍历路线图、拾取 Plan、审查执行、空闲时审计</p>
+              <p class="details" style="margin-top:0.3rem;">Plan 够了吗 → 不够 → Mission Driver 来编排——这是从 In 到 On 的跨越器</p>
+            </div>
+            <div class="card" style="border-color:var(--color-warning);border-width:2px;">
+              <h4><i class="fa-solid fa-location-dot"></i> Takeaway 3</h4>
+              <p class="details"><strong>把"方向"从个人变成文件</strong></p>
+              <p class="details" style="margin-top:0.5rem;">Attractor 承载于 owner docs，可版本、可审计、可继承</p>
+              <p class="details" style="margin-top:0.3rem;">吸引子不能外包给 AI——定义方向是人的工作</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- S20: 落地路径 -->
+        <section class="slide">
+          <h2>落地路径——三种项目模式</h2>
+          <div class="card-grid card-grid-3">
+            <div class="card" style="background:#eff6ff;">
+              <h4><i class="fa-solid fa-building" style="color:#2563eb;"></i> 模式 A：已有项目</h4>
+              <p class="details" style="font-weight:600;color:var(--color-primary-dark);">最小改动</p>
+              <div class="sub-items">
+                <div class="sub-item">加 Plan Loop：修改 PR 模板，每次变更加 Plan + 独立审计</div>
+                <div class="sub-item">先定义一个 Attractor（核心架构文档），再看是否需要 Mission Driver</div>
+              </div>
+            </div>
+            <div class="card" style="background:#f0fdf4;">
+              <h4><i class="fa-solid fa-rocket" style="color:var(--color-secondary);"></i> 模式 B：新项目</h4>
+              <p class="details" style="font-weight:600;color:var(--color-secondary);">从第一天起 AI 全自动</p>
+              <div class="sub-items">
+                <div class="sub-item">从 AGE 模板开始（含 Plan Loop + Mission Driver + Attractor 骨架）</div>
+                <div class="sub-item">先花 1-2 天定义 Attractor（不能外包给 AI）</div>
+                <div class="sub-item">然后运行 Mission Driver</div>
+              </div>
+            </div>
+            <div class="card" style="background:#fffbeb;">
+              <h4><i class="fa-solid fa-layer-group" style="color:var(--color-warning);"></i> 模式 C：平台/框架</h4>
+              <p class="details" style="font-weight:600;color:var(--color-warning);">方向决策权不能交给 AI</p>
+              <div class="sub-items">
+                <div class="sub-item">Attractor 定义最重要——平台方向决策权不能交给 AI</div>
+                <div class="sub-item">Plan Loop 用于框架自身开发控制</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- S21: 结尾 -->
+        <section class="slide">
+          <h2>回扣悬念 + 视觉闭环</h2>
+          <div style="display:flex;align-items:center;gap:2rem;flex:1;">
+            <div style="flex:1;">
+              <div class="card" style="margin-bottom:0.8rem;">
+                <h4><i class="fa-solid fa-arrow-rotate-left"></i> 回扣 S02 的问题</h4>
+                <p class="details"><strong>"方向谁定？"</strong> 人定义 Attractor，AI 在 Attractor 内扩张，Harness 检查偏离。三层都在，系统自运转</p>
+              </div>
+              <div class="quote" style="background:#eff6ff;border-left-color:var(--color-primary);font-style:normal;">
+                <p style="font-size:1rem;color:var(--color-primary-dark);">"在 AI 时代，真正稀缺的并非更多会写代码的 agent，而是能够率先回答'系统该向哪里收敛'的人。"</p>
+                <p style="text-align:right;font-size:0.85rem;margin-top:0.3rem;">——AGE 文章</p>
+              </div>
+              <p style="text-align:center;margin-top:1rem;font-size:1.1rem;">
+                <span class="tag" style="font-size:1rem;padding:6px 16px;">github.com/anomalyco/nop-app-erp</span>
+                &nbsp;&nbsp; 谢谢，Q&amp;A
+              </p>
+            </div>
+            <div style="flex:1;display:flex;justify-content:center;">
+              <svg width="320" height="280" viewBox="0 0 320 280">
+                <circle cx="160" cy="140" r="100" fill="none" stroke="#059669" stroke-width="3" stroke-dasharray="8,5" opacity="0.7"/>
+                <circle cx="160" cy="140" r="60" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="5,4" opacity="0.7"/>
+                <circle cx="160" cy="140" r="25" fill="#d97706" opacity="0.15"/>
+                <circle cx="160" cy="140" r="14" fill="#d97706"/>
+                <text x="160" y="144" text-anchor="middle" font-size="11" fill="white" font-weight="bold">锚</text>
+                <text x="160" y="40" text-anchor="middle" font-size="12" fill="#059669" font-weight="700">Mission Driver</text>
+                <text x="160" y="255" text-anchor="middle" font-size="12" fill="#2563eb" font-weight="700">Plan Loop</text>
+                <text x="160" y="190" text-anchor="middle" font-size="12" fill="#d97706" font-weight="700">Attractor</text>
+                <text x="160" y="275" text-anchor="middle" font-size="10" fill="#6b7280">Harness 让 AI 跑得更快。</text>
+                <text x="160" y="288" text-anchor="middle" font-size="10" fill="#6b7280">Attractor 让 Loop 知道往哪跑。</text>
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SLIDES END ===== -->
+
+      </div>
+      <div class="controls">
+        <button class="btn" id="home-btn" title="First Slide (Home)"><i class="fa-solid fa-home"></i></button>
+        <button class="btn" id="prev-btn" title="Previous (&larr;)"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="btn" id="next-btn" title="Next (&rarr; / Space)"><i class="fa-solid fa-arrow-right"></i></button>
+        <button class="btn" id="fullscreen-btn" title="Fullscreen (F)"><i class="fa-solid fa-expand"></i></button>
+        <button class="btn" id="print-btn" title="Print"><i class="fa-solid fa-print"></i></button>
+        <button class="btn" id="pdf-btn" title="Export to PDF"><i class="fa-solid fa-file-pdf"></i></button>
+      </div>
+    </div>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true, theme: 'default', securityLevel: 'loose',
+        fontFamily: 'var(--font-main)',
+        flowchart: { useMaxWidth: false, htmlLabels: true, curve: 'basis' }
+      });
+    </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('presentation-container');
+        const allSlides = document.querySelectorAll('.slide');
+        const homeBtn = document.getElementById('home-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const printBtn = document.getElementById('print-btn');
+        const pdfBtn = document.getElementById('pdf-btn');
+        const slideCounter = document.getElementById('slide-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const keyboardHint = document.getElementById('keyboard-hint');
+        let currentSlide = 0;
+        const totalSlides = allSlides.length;
+        let hintTimeout = null;
+
+        function showKeyboardHint() {
+          if (keyboardHint) {
+            keyboardHint.classList.add('show');
+            clearTimeout(hintTimeout);
+            hintTimeout = setTimeout(() => keyboardHint.classList.remove('show'), 3000);
+          }
+        }
+        function showSlide(index, skipHashUpdate) {
+          if (index < 0 || index >= totalSlides) return;
+          allSlides.forEach((s, i) => s.classList.toggle('active', i === index));
+          currentSlide = index;
+          updateControls();
+          if (!skipHashUpdate) updateHash(index);
+        }
+        function updateControls() {
+          slideCounter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+          progressBar.style.width = ((currentSlide + 1) / totalSlides * 100) + '%';
+          prevBtn.disabled = currentSlide === 0;
+          nextBtn.disabled = currentSlide === totalSlides - 1;
+        }
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+        function goToFirstSlide() { showSlide(0); }
+        function toggleFullscreen() {
+          if (!document.fullscreenElement) {
+            container.requestFullscreen().catch(function(err) { alert('Cannot enter fullscreen: ' + err.message); });
+          } else { document.exitFullscreen(); }
+        }
+        function updateHash(index) {
+          var hash = '#slide-' + (index + 1);
+          if (location.hash !== hash) history.pushState(null, null, hash);
+        }
+        function parseHashToIndex() {
+          var m = location.hash.match(/slide-(\d+)/i);
+          if (m) { var idx = parseInt(m[1], 10) - 1; if (!isNaN(idx) && idx >= 0 && idx < totalSlides) return idx; }
+          return null;
+        }
+        function printPresentation() { window.print(); }
+        function hasExternalImages() {
+          return Array.from(document.querySelectorAll('.slide img')).some(function(img) {
+            var src = img.getAttribute('src') || '';
+            return src && !src.startsWith('data:');
+          });
+        }
+        function showLocalFileWarning() {
+          var overlay = document.createElement('div');
+          overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;';
+          var dialog = document.createElement('div');
+          dialog.style.cssText = 'background:white;border-radius:16px;padding:32px 40px;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,0.3);font-family:Inter,-apple-system,sans-serif;';
+          dialog.innerHTML = '<h3 style="margin:0 0 16px;font-size:1.3rem;color:#1f2937;">\u26a0\ufe0f 本地文件模式</h3><p style="color:#4b5563;font-size:1rem;line-height:1.7;margin:0 0 12px;">当前通过 <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:0.9em;">file://</code> 协议直接打开，页面中的本地图片将无法嵌入 PDF。</p><div style="display:flex;gap:12px;justify-content:flex-end;"><button id="pdf-cancel-btn" style="padding:10px 20px;border:1px solid #d1d5db;border-radius:8px;background:white;cursor:pointer;font-size:1rem;font-weight:600;color:#4b5563;">取消</button><button id="pdf-continue-btn" style="padding:10px 20px;border:none;border-radius:8px;background:#2563eb;color:white;cursor:pointer;font-size:1rem;font-weight:600;">继续导出</button></div>';
+          overlay.appendChild(dialog);
+          document.body.appendChild(overlay);
+          return new Promise(function(resolve) {
+            dialog.querySelector('#pdf-cancel-btn').onclick = function() { document.body.removeChild(overlay); resolve(false); };
+            dialog.querySelector('#pdf-continue-btn').onclick = function() { document.body.removeChild(overlay); resolve(true); };
+            overlay.onclick = function(e) { if (e.target === overlay) { document.body.removeChild(overlay); resolve(false); } };
+          });
+        }
+        async function prepareForPdf() {
+          var pdfContainer = document.createElement('div');
+          pdfContainer.className = 'pdf-page-container';
+          allSlides.forEach(function(slide) {
+            var clone = slide.cloneNode(true);
+            clone.classList.remove('active');
+            clone.classList.add('pdf-slide');
+            pdfContainer.appendChild(clone);
+          });
+          document.body.appendChild(pdfContainer);
+          return pdfContainer;
+        }
+        async function exportToPDF() {
+          if (location.protocol === 'file:' && hasExternalImages()) {
+            var proceed = await showLocalFileWarning();
+            if (!proceed) return;
+          }
+
+          var originalButtonContent = pdfBtn.innerHTML;
+          pdfBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+          pdfBtn.disabled = true;
+          prepareForPdf().then(function(pdfContainer) {
+            var options = {
+              margin: 0,
+              filename: 'nop-erp-loop-engineering-v2-v2.pdf',
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: { scale: 2, useCORS: true, allowTaint: true, letterRendering: true, backgroundColor: '#ffffff' },
+              jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
+              pagebreak: { mode: ['css'] }
+            };
+            html2pdf()
+              .set(options)
+              .from(pdfContainer)
+              .save()
+              .then(function() {
+                document.body.removeChild(pdfContainer);
+                pdfBtn.innerHTML = originalButtonContent;
+                pdfBtn.disabled = false;
+              })
+              .catch(function(err) {
+                document.body.removeChild(pdfContainer);
+                pdfBtn.innerHTML = originalButtonContent;
+                pdfBtn.disabled = false;
+                alert('PDF export failed: ' + (err.message || err));
+              });
+          });
+        }
+        homeBtn.addEventListener('click', goToFirstSlide);
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        printBtn.addEventListener('click', printPresentation);
+        pdfBtn.addEventListener('click', exportToPDF);
+        document.addEventListener('keydown', function(e) {
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+          if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); nextSlide(); }
+          if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prevSlide(); }
+          if (e.key === 'Home') { e.preventDefault(); goToFirstSlide(); }
+          if (e.key === 'End') { e.preventDefault(); showSlide(totalSlides - 1); }
+          if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen(); }
+          if (e.key === '?' || e.key === 'h' || e.key === 'H') { e.preventDefault(); showKeyboardHint(); }
+        });
+        var touchStartX = 0;
+        container.addEventListener('touchstart', function(e) { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        container.addEventListener('touchend', function(e) {
+          var touchEndX = e.changedTouches[0].screenX;
+          if (touchStartX - touchEndX > 50) nextSlide();
+          if (touchEndX - touchStartX > 50) prevSlide();
+        });
+        window.addEventListener('popstate', function() {
+          var idx = parseHashToIndex();
+          if (idx !== null && idx !== currentSlide) showSlide(idx, true);
+        });
+        var initialIndex = parseHashToIndex();
+        if (initialIndex !== null) showSlide(initialIndex, true);
+        else showSlide(0);
+        setTimeout(function() {
+          if (window.enableContentLightboxForSelector)
+            window.enableContentLightboxForSelector('.mermaid svg, .column img, .slide svg');
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
