@@ -166,3 +166,21 @@
 ### query 表单基线（5+ 字段 + filterOp）
 
 所有 sales Line 实体的 `<form id="query">` 至少含：`lineNo` + `materialId` + `warehouseId`（视实体）+ 父头 ID（orderId/deliveryId/...）+ 日期字段（如 `businessDate`，视实体是否含；无则用 `lineNo` filterOp=like 替代）+ `pricingSource`（如实体含）。ReceiptLine 等极简实体沿用 `lineNo` + `invoiceId` 等替代字段达到基线。
+
+## 子表行内编辑（F4 Phase 2 P0 已落地）
+
+> Owner doc: `docs/design/child-table-editor-patterns.md`（范式权威）
+> 落地计划：`docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md`
+
+sales 域 4 P0 头行对（`ErpSalOrder/Delivery/Invoice/Return` + 对应 Line）已落地头表单内嵌 AMIS input-table 子表编辑。范式与 purchase 域完全同构（见 `docs/design/purchase/ui-patterns.md §子表行内编辑`）。
+
+### 列集（按实体）
+
+| 头实体 | 行实体 | 列集 |
+|--------|--------|------|
+| `ErpSalOrder` | `ErpSalOrderLine` | lineNo / materialId / uoMId / quantity / unitPrice / amount / taxRate / taxAmount / amountWithTax / warehouseId / remark |
+| `ErpSalDelivery` | `ErpSalDeliveryLine` | lineNo / materialId / uoMId / quantity / unitPrice / amount / taxRate / taxAmount / warehouseId / batchNo / remark |
+| `ErpSalInvoice` | `ErpSalInvoiceLine` | lineNo / materialId / uoMId / quantity / unitPrice / amount / taxRate / taxAmount / remark |
+| `ErpSalReturn` | `ErpSalReturnLine` | lineNo / materialId / uoMId / quantity / unitPrice / amount / taxRate / taxAmount / reason / remark |
+
+行内 picker、自动推算、行级校验、头聚合机制均与 purchase 域同型。

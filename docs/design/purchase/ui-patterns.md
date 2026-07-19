@@ -317,3 +317,34 @@
 ### query 表单基线（5+ 字段 + filterOp）
 
 所有 purchase Line 实体的 `<form id="query">` 至少含：`lineNo`（filterOp=eq）+ `materialId` + `warehouseId`（视实体而定）+ `orderId`/对应父头 ID + `businessDate`（filterOp=date-between，视实体是否含日期字段）。PaymentLine 等无 `businessDate` 的实体，沿用 `lineNo` + `invoiceId` 等替代字段达到 ≥5 字段基线。
+
+## 子表行内编辑（F4 Phase 2 P0 已落地）
+
+> Owner doc: `docs/design/child-table-editor-patterns.md`（范式权威）
+> 落地计划：`docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md`
+
+purchase 域 4 P0 头行对（`ErpPurOrder/Receive/Invoice/Return` + 对应 Line）已落地头表单内嵌 AMIS input-table 子表编辑。
+
+### 范式摘要
+
+- 头实体 `<form id="view">` + `<form id="edit">` layout 末尾新增 `=========>lines[明细行]======\n lines[明细行](2)` 组
+- 头实体 `<cells>` 新增 `<cell id="lines"><view path="/erp/pur/pages/<LineEntity>/<LineEntity>.view.xml" grid="sub-grid-{view,edit}"/></cell>`
+- 头实体 `totalAmount`/`totalTaxAmount`/`totalAmountWithTax` 改为编辑态只读（`@` 前缀），避免用户手填被 `__save` 时后端 `persistTotalAmounts` 覆盖
+- 行实体 view.xml 新增 `<grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">` 与 `<grid id="sub-grid-view">`，含 bounded-merge 列集
+- 行实体 quantity/unitPrice/taxRate 列经 `<gen-control><c:script>` 注入 AMIS `input-number` + `onEvent.change.actions.setValue` 推算 amount/taxAmount/amountWithTax（`ROUND(x, 4)` 对齐 xmeta scale=4）
+- 行实体 amount/taxAmount/amountWithTax 列为静态显示（编辑态由 onEvent 推算填充）
+- 行级校验：quantity `minimum=0.0001`「数量必须大于 0」+ unitPrice `minimum=0`「单价不能为负」
+
+### 列集（按实体）
+
+| 头实体 | 行实体 | 列集 |
+|--------|--------|------|
+| `ErpPurOrder` | `ErpPurOrderLine` | lineNo / materialId / uoMId / quantity / unitPrice / amount / taxRate / taxAmount / amountWithTax / warehouseId / remark |
+| `ErpPurReceive` | `ErpPurReceiveLine` | lineNo / materialId / uoMId / quantity / unitPrice / amount / taxRate / taxAmount / warehouseId / batchNo / remark |
+| `ErpPurInvoice` | `ErpPurInvoiceLine` | lineNo / materialId / uoMId / quantity / unitPrice / amount / taxRate / taxAmount / remark |
+| `ErpPurReturn` | `ErpPurReturnLine` | lineNo / materialId / uoMId / quantity / unitPrice / amount / taxRate / taxAmount / reason / remark |
+
+### 行内 picker
+
+- `materialId` 经 codegen 自动生成 AMIS picker，picker URL `/erp/md/pages/ErpMdMaterial/picker.page.yaml`（由 `ext:relation="material"` + `biz:moduleId="erp/md"` + bizObjName=`ErpMdMaterial` 推导）
+- `warehouseId` / `uoMId` 同型（codegen 默认）
