@@ -93,7 +93,13 @@ SPARE_PART 费用行为**操作员手工录入的会计确认**（独立于 ErpM
 
 | 借方 | 贷方 | 科目来源 |
 |------|------|----------|
-| 固定资产（1601，原值增量） | 在建工程（1604）/ 银行存款（1002）/ 存货（1403） | 借方=类别 subjectId；贷方按费用来源 |
+| 固定资产（1601，原值增量） | 维修中转清算（2502）/ 银行存款（1002） | 借方=类别 subjectId；贷方按 maintenanceVisitId 分支 |
+
+贷方分支（**防双重扣减规则**，对齐 EXPENSE 范式，plan 2026-07-19-0849-3 落地）：
+- `maintenanceVisitId` 非空（已关联维护工单，linkedVisit=true）：贷**维修中转/清算科目 2502**（备件已由 maintenance 域 `ErpMntSparePartUsage.generateMove` 实物出库，资本化备件成本无银行实际付出，避免虚增银行付出）。
+- `maintenanceVisitId` 为空（独立资产维修，linkedVisit=false）：贷**银行存款 1002** 直接（既有路径无回归，对齐 0215-1/0742-1）。
+
+实现注记：CAPITALIZE Provider 科目分支扩展经 `MaintenanceCapitalizationAcctDocProvider.createFacts` 按 `BILL_DATA_MAINTENANCE_LINKED_VISIT` 分支读取 clearing/bank subject code（镜像 `MaintenanceExpenseAcctDocProvider` 2256-2 范式）；dispatcher 透传 `BILL_DATA_MAINTENANCE_CLEARING_SUBJECT_CODE = "2502"` 至 billData。
 
 凭证按维修工单聚合（一张维修单一张凭证，多行分录汇总费用来源）。`billHeadCode` = 维修单 code，作为幂等/红冲键。
 

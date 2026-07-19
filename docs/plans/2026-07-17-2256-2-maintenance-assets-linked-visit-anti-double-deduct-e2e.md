@@ -169,6 +169,7 @@ Exit Criteria:
 ### assets 维修资本化（CAPITALIZATION）路径
 
 - Classification: `out-of-scope improvement`
+- **RELEASED by 2026-07-19-0849-3**：plan `2026-07-19-0849-3-assets-linked-visit-capitalize-anti-double-deduct.md` 已落地 assets 维修资本化路径 linkedVisit 防双重扣减后端对齐 + 浏览器层 E2E（CAPITALIZE Provider `MaintenanceCapitalizationAcctDocProvider.createFacts` 按 linkedVisit 分支 Cr 2502/1002 + Dispatcher `MaintenanceCapitalizationPostingDispatcher.buildEvent` 补加 `BILL_DATA_MAINTENANCE_CLEARING_SUBJECT_CODE = "2502"` 透传 + JUnit `TestErpAstMaintenance` +4 用例 + 新 spec `ast-maintenance-linked-visit-capitalize.action.spec.ts` 2 用例 + owner-doc + e2e-runbook + RELEASED 登记）。触发条件「assets 维修资本化浏览器层 E2E 需求落地时」已满足。
 - Why Not Blocking Closure: assets 维修可费用化（MAINTENANCE_EXPENSE）或资本化（计入资产成本）。本计划仅费用化防双重扣减面；资本化路径为不同结果面。
 - Successor Required: `yes`（触发条件：assets 维修资本化浏览器层 E2E 需求落地时）
 
