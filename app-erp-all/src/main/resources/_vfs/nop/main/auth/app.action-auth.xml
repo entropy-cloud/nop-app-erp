@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- 聚合 app 的菜单入口:合并全部 18 业务域 + 系统模块(nop-auth/sys/wf/report/job)的菜单。
+<!-- 聚合 app 的菜单入口:合并全部 18 业务域 + 跨域通知派发子系统(notify) + 系统模块(nop-auth/sys/wf/report/job)的菜单。
      x:extends 用逗号分隔多个 action-auth,合并到同一 site。各业务域菜单定义在各自 erp-{short}.action-auth.xml,
      系统模块菜单在 nop-{module}/auth/ 下。-->
 <auth x:extends="/erp/md/auth/erp-md.action-auth.xml,
@@ -20,6 +20,7 @@
                  /erp/drp/auth/erp-drp.action-auth.xml,
                  /erp/log/auth/erp-log.action-auth.xml,
                  /erp/b2b/auth/erp-b2b.action-auth.xml,
+                 /erp/notify/auth/erp-notify.action-auth.xml,
                  /nop/auth/auth/nop-auth.action-auth.xml,
                  /nop/sys/auth/nop-sys.action-auth.xml,
                  /nop/wf/auth/nop-wf.action-auth.xml,

@@ -2,19 +2,53 @@
 <view x:extends="_gen/_ErpSysNotification.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
+    <!--
+        通知实例管理员视图（admin-only）：用户面收件箱在不经 codegen view 的 inbox.page.yaml 中实现。
+        本保留层 view 仅服务于 admin 后台「通知实例」管理菜单（ErpSysNotification-main），故：
+        - 列集仅保留运维所需字段，管理员字段（payloadJson/errorMsg/delVersion 等）经 bounded-merge 裁掉
+        - row-update/row-delete 按钮 remove（系统通知不应人工编辑/删除）
+        - 保留 row-view-button（drawer）以便 admin 排查
+        - 用户面 mark-read/mark-all-read 按钮归 inbox.page.yaml（本 view 不暴露）
+    -->
+
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="notificationType" mandatory="true" sortable="true"/>
+                <col id="channel" mandatory="true" sortable="true"/>
+                <col id="recipientUserId" sortable="true"/>
+                <col id="subject" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="sentAt" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 
     <forms>
-        <form id="view"/>
+        <form id="view" editMode="view" title="通知详情">
+            <layout>
+ notificationType[业务事件键] channel[渠道]
+ recipientUserId[接收用户] status[状态]
+ subject[标题] sentAt[发送时间]
+ body[正文]
+ errorMsg[错误信息]
+</layout>
+        </form>
         <form id="edit"/>
         <form id="add"/>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge"/>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

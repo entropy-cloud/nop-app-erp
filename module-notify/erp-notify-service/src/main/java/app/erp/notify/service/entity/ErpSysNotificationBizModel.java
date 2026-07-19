@@ -11,6 +11,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
@@ -91,7 +92,8 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
     @BizMutation
     public ErpSysNotification markRead(@Name("notificationId") Long notificationId, IServiceContext ctx) {
         ErpSysNotification n = requireEntity(String.valueOf(notificationId), null, ctx);
-        // 通知按 recipientUserId 投递，已读记录以接收人为准（与 findUnread/countUnread 口径一致）
+        // 通知按 recipientUserId 投递，已读记录以接收人为准（与 findUnread/countUnread 口径一致）；
+        // recipientUserId 缺失时回退当前登录用户（与 resolveUserId 模式一致）
         String userId = n.getRecipientUserId();
         if (userId == null) {
             userId = ctx.getUserId();
@@ -109,15 +111,15 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
 
     @Override
     @BizMutation
-    public int markAllRead(@Name("userId") String userId, IServiceContext ctx) {
-        List<ErpSysNotification> unread = unreadOf(userId);
+    public int markAllRead(@Optional @Name("userId") String userId, IServiceContext ctx) {
+        List<ErpSysNotification> unread = unreadOf(resolveUserId(userId, ctx));
         IEntityDao<ErpSysNotificationRead> readDao = daoProvider().daoFor(ErpSysNotificationRead.class);
         int count = 0;
         for (ErpSysNotification n : unread) {
-            if (!isRead(n.getId(), userId, readDao)) {
+            if (!isRead(n.getId(), resolveUserId(userId, ctx), readDao)) {
                 ErpSysNotificationRead read = readDao.newEntity();
                 read.setNotificationId(n.getId());
-                read.setUserId(userId);
+                read.setUserId(resolveUserId(userId, ctx));
                 read.setReadTime(CoreMetrics.currentTimestamp());
                 readDao.saveEntity(read);
                 count++;
@@ -128,17 +130,55 @@ public class ErpSysNotificationBizModel extends CrudBizModel<ErpSysNotification>
 
     @Override
     @BizQuery
-    public List<ErpSysNotification> findUnread(@Name("userId") String userId, IServiceContext ctx) {
-        return unreadOf(userId);
+    public List<ErpSysNotification> findUnread(@Optional @Name("userId") String userId, IServiceContext ctx) {
+        return unreadOf(resolveUserId(userId, ctx));
     }
 
     @Override
     @BizQuery
-    public long countUnread(@Name("userId") String userId, IServiceContext ctx) {
-        return unreadOf(userId).size();
+    public List<ErpSysNotification> findRead(@Optional @Name("userId") String userId, IServiceContext ctx) {
+        String resolved = resolveUserId(userId, ctx);
+        if (resolved == null || resolved.isEmpty()) {
+            return Collections.emptyList();
+        }
+        // 已读 = 该用户的 ErpSysNotificationRead 记录关联回 ErpSysNotification（保持与 findUnread 对称）
+        IEntityDao<ErpSysNotificationRead> readDao = daoProvider().daoFor(ErpSysNotificationRead.class);
+        QueryBean readQ = new QueryBean();
+        readQ.addFilter(eq("userId", resolved));
+        List<ErpSysNotificationRead> reads = readDao.findAllByQuery(readQ);
+        if (reads.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Set<Long> readIds = new HashSet<>();
+        for (ErpSysNotificationRead r : reads) {
+            if (r.getNotificationId() != null) readIds.add(r.getNotificationId());
+        }
+        IEntityDao<ErpSysNotification> dao = daoProvider().daoFor(ErpSysNotification.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(in("id", new ArrayList<>(readIds)));
+        q.addOrderField("sentAt", true);
+        return dao.findAllByQuery(q);
+    }
+
+    @Override
+    @BizQuery
+    public long countUnread(@Optional @Name("userId") String userId, IServiceContext ctx) {
+        return unreadOf(resolveUserId(userId, ctx)).size();
     }
 
     // ---------- helpers ----------
+
+    /**
+     * 解析收件箱操作的 userId：显式传入优先（向后兼容 seed/测试/跨用户场景），否则回退到当前登录用户。
+     * 与 {@link #markRead} 内部 「优先 recipientUserId，回退 ctx.getUserId()」 模式一致——
+     * 前端 AMIS 收件箱页面（inbox.page.yaml）不传 userId 时自动落到当前登录用户。
+     */
+    private String resolveUserId(String userId, IServiceContext ctx) {
+        if (userId != null && !userId.isEmpty()) {
+            return userId;
+        }
+        return ctx == null ? null : ctx.getUserId();
+    }
 
     private ErpSysNotificationTemplate findActiveTemplate(String eventType, IServiceContext ctx) {
         QueryBean q = new QueryBean();

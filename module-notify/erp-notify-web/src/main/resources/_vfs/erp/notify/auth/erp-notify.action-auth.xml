@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<auth x:extends="_erp-notify.action-auth.xml" x:schema="/nop/schema/action-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<auth x:extends="_erp-notify.action-auth.xml" x:schema="/nop/schema/action-auth.xdef"
+     xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en">
 
-    <site id="main"/>
+    <site id="main">
+        <!-- 通知中心:user-facing 用户收件箱,所有登录用户可见(持 ErpSysNotification:query 权限)。
+             与 admin 自动生成的 test-orm-erp-notify TOPM 分离:admin TOPM 保留运维入口,
+             notify-inbox TOPM 提供给最终用户的菜单入口,指向 inbox.page.yaml(经 ctx.getUserId() 过滤 recipientUserId)。 -->
+        <resource id="notify-inbox" displayName="通知中心" i18n-en:displayName="Notification Center" icon="inbox"
+                  resourceType="TOPM" orderNo="9000" routePath="/notify-inbox" component="layouts/default/index">
+            <children>
+                <resource id="ErpSysNotification-inbox" displayName="我的通知" orderNo="9001"
+                          i18n-en:displayName="My Notifications" icon="bell" component="AMIS" resourceType="SUBM"
+                          url="/erp/notify/pages/ErpSysNotification/inbox.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpSysNotification:inbox-query" displayName="查询我的通知"
+                                  i18n-en:displayName="Query My Notifications" orderNo="9002" resourceType="FNPT">
+                            <permissions>ErpSysNotification:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpSysNotification:inbox-mutation" displayName="操作我的通知"
+                                  i18n-en:displayName="Modify My Notifications" orderNo="9003" resourceType="FNPT">
+                            <permissions>ErpSysNotification:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+            </children>
+        </resource>
+    </site>
 </auth>

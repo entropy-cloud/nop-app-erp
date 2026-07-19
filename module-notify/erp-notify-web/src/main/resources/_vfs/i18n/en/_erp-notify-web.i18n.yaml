@@ -1,11 +1,17 @@
 site:
   resource:
+    ErpSysNotification-inbox:
+      displayName: My Notifications
     ErpSysNotification-main:
       displayName: Notification
     ErpSysNotificationRead-main:
       displayName: Notification Read
     ErpSysNotificationTemplate-main:
       displayName: Notification Template
+    FNPT:ErpSysNotification:inbox-mutation:
+      displayName: Modify My Notifications
+    FNPT:ErpSysNotification:inbox-query:
+      displayName: Query My Notifications
     FNPT:ErpSysNotification:mutation:
       displayName: Modify Notification
     FNPT:ErpSysNotification:query:
@@ -18,5 +24,7 @@ site:
       displayName: Modify Notification Template
     FNPT:ErpSysNotificationTemplate:query:
       displayName: Query Notification Template
+    notify-inbox:
+      displayName: Notification Center
     test-orm-erp-notify:
       displayName: Test erp-notify

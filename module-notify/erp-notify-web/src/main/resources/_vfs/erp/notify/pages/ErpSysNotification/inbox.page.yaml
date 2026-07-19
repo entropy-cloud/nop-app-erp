@@ -1,0 +1,311 @@
+type: page
+title: "我的通知"
+body:
+  # 顶部：未读计数 + 全部标记已读按钮（包裹在 service 内，使 unreadCount 进 data scope）
+  - type: service
+    name: unreadCountService
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        # 后端 countUnread(userId) 留空时 resolveUserId 回退 ctx.getUserId()
+        # 显式传 null 触发 GraphQl 参数解析（GraphQL 必须传 declared 参数）
+        query: "query{ ErpSysNotification__countUnread(userId:null) }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const c = gql.ErpSysNotification__countUnread || 0;
+        return { status: 0, msg: '', data: { unreadCount: c } };
+    body:
+      - type: wrapper
+        className: "m-3 d-flex justify-content-between align-items-center"
+        body:
+          - type: tpl
+            tpl: "<span class='h4 m-0'>我的通知</span> <span class='ml-2 badge badge-danger'>未读 ${unreadCount} 条</span>"
+          - type: button
+            label: "全部标记已读"
+            level: primary
+            icon: "check-double"
+            confirmText: "确认将所有未读通知标记为已读？"
+            actionType: ajax
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                # 后端 markAllRead(userId:null) 回退 ctx.getUserId()
+                query: "mutation{ ErpSysNotification__markAllRead(userId:null) }"
+              adaptor: |
+                const d = payload.data || {};
+                const gql = d.data ? d.data : d;
+                const n = gql.ErpSysNotification__markAllRead || 0;
+                return { status: 0, msg: '已标记 ' + n + ' 条通知为已读', data: { count: n } };
+            onEvent:
+              after-success:
+                actionType: reload
+                target: "unreadCountService,unreadCrud,readCrud,allCrud"
+
+  # 多维筛选表单（仅作 reload trigger；adaptor 内读取 ${notificationType} 等作用域变量过滤）
+  - type: form
+    name: filterForm
+    title: ""
+    mode: inline
+    className: m-3
+    wrapWithPanel: false
+    submitOnChange: false
+    body:
+      - type: input-text
+        name: notificationType
+        label: "类型"
+        placeholder: "业务事件键"
+        clearable: true
+      - type: select
+        name: channel
+        label: "渠道"
+        clearable: true
+        options:
+          - label: "站内"
+            value: "IN_APP"
+          - label: "邮件"
+            value: "EMAIL"
+      - type: input-date
+        name: sentAtFrom
+        label: "发送起"
+        format: "YYYY-MM-DD"
+        clearable: true
+      - type: input-date
+        name: sentAtTo
+        label: "发送止"
+        format: "YYYY-MM-DD"
+        clearable: true
+      - type: select
+        name: status
+        label: "生命周期"
+        clearable: true
+        options:
+          - label: "已发送"
+            value: "SENT"
+          - label: "已合并"
+            value: "MERGED"
+          - label: "失败"
+            value: "FAILED"
+      - type: button
+        label: "刷新"
+        icon: "refresh-cw"
+        actionType: reload
+        target: "unreadCountService,unreadCrud,readCrud,allCrud"
+
+  # 三 tab 切换：未读 / 已读 / 全部
+  - type: tabs
+    name: inboxTabs
+    className: m-3
+    tabs:
+      # ====== 未读 tab ======
+      - title: "未读"
+        body:
+          - type: crud
+            name: unreadCrud
+            syncLocation: false
+            headerToolbar: []
+            footerToolbar:
+              - type: pagination
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                # findUnread(userId:null) 后端 resolveUserId 回退 ctx.getUserId()；返回 List
+                query: "query{ ErpSysNotification__findUnread(userId:null){ id notificationType channel subject body payloadJson sentAt status } }"
+              adaptor: |
+                const d = payload.data || {};
+                const gql = d.data ? d.data : d;
+                let rows = gql.ErpSysNotification__findUnread || [];
+                const t = (data && data.notificationType) || '';
+                const c = (data && data.channel) || '';
+                const fromD = (data && data.sentAtFrom) || '';
+                const toD = (data && data.sentAtTo) || '';
+                const st = (data && data.status) || '';
+                rows = rows.filter(function(r){
+                  if (t && r.notificationType !== t) return false;
+                  if (c && r.channel !== c) return false;
+                  if (fromD && (!r.sentAt || r.sentAt < fromD)) return false;
+                  if (toD && (!r.sentAt || r.sentAt > toD + 'T23:59:59')) return false;
+                  if (st && r.status !== st) return false;
+                  return true;
+                });
+                return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+            columns:
+              - name: notificationType
+                label: "类型"
+                width: 160
+              - name: channel
+                label: "渠道"
+                width: 80
+              - name: subject
+                label: "标题"
+              - name: sentAt
+                label: "发送时间"
+                width: 180
+              - type: button
+                label: "查看"
+                level: primary
+                actionType: dialog
+                dialog:
+                  type: drawer
+                  title: "${subject}"
+                  size: lg
+                  body:
+                    - type: tpl
+                      tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
+              - type: button
+                label: "标记已读"
+                level: success
+                icon: "check"
+                actionType: ajax
+                api:
+                  url: /graphql
+                  method: post
+                  dataType: raw
+                  data:
+                    query: "mutation(${'$'}id:Long){ ErpSysNotification__markRead(notificationId:${'$'}id){ id } }"
+                    variables:
+                      id: "${id}"
+                onEvent:
+                  after-success:
+                    actionType: reload
+                    target: "unreadCountService,unreadCrud,readCrud,allCrud"
+
+      # ====== 已读 tab ======
+      - title: "已读"
+        body:
+          - type: crud
+            name: readCrud
+            syncLocation: false
+            headerToolbar: []
+            footerToolbar:
+              - type: pagination
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                # findRead(userId:null) 后端 resolveUserId 回退 ctx.getUserId()；返回 List
+                query: "query{ ErpSysNotification__findRead(userId:null){ id notificationType channel subject body payloadJson sentAt status } }"
+              adaptor: |
+                const d = payload.data || {};
+                const gql = d.data ? d.data : d;
+                let rows = gql.ErpSysNotification__findRead || [];
+                const t = (data && data.notificationType) || '';
+                const c = (data && data.channel) || '';
+                const fromD = (data && data.sentAtFrom) || '';
+                const toD = (data && data.sentAtTo) || '';
+                const st = (data && data.status) || '';
+                rows = rows.filter(function(r){
+                  if (t && r.notificationType !== t) return false;
+                  if (c && r.channel !== c) return false;
+                  if (fromD && (!r.sentAt || r.sentAt < fromD)) return false;
+                  if (toD && (!r.sentAt || r.sentAt > toD + 'T23:59:59')) return false;
+                  if (st && r.status !== st) return false;
+                  return true;
+                });
+                return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+            columns:
+              - name: notificationType
+                label: "类型"
+                width: 160
+              - name: channel
+                label: "渠道"
+                width: 80
+              - name: subject
+                label: "标题"
+              - name: sentAt
+                label: "发送时间"
+                width: 180
+              - type: button
+                label: "查看"
+                level: primary
+                actionType: dialog
+                dialog:
+                  type: drawer
+                  title: "${subject}"
+                  size: lg
+                  body:
+                    - type: tpl
+                      tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
+
+      # ====== 全部 tab ======
+      # 走客户端拼接：adaptor 内并发拉取 findUnread + findRead，合并去重，按 sentAt 倒序
+      # 全部 tab 不再有「标记已读」行按钮（已在未读 tab 暴露）；详情 drawer 不带操作
+      - title: "全部"
+        body:
+          - type: crud
+            name: allCrud
+            syncLocation: false
+            headerToolbar: []
+            footerToolbar:
+              - type: pagination
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                # 单 GraphQL 请求内并发两个 query（GraphQL 允许 operation 多 field）
+                query: "query{ unread:ErpSysNotification__findUnread(userId:null){ id notificationType channel subject body payloadJson sentAt status } read:ErpSysNotification__findRead(userId:null){ id notificationType channel subject body payloadJson sentAt status } }"
+              adaptor: |
+                const d = payload.data || {};
+                const gql = d.data ? d.data : d;
+                const unread = gql.unread || [];
+                const read = gql.read || [];
+                const seen = {};
+                let rows = [];
+                for (const r of unread) { if (!seen[r.id]) { seen[r.id] = true; rows.push(Object.assign({read: false}, r)); } }
+                for (const r of read)  { if (!seen[r.id]) { seen[r.id] = true; rows.push(Object.assign({read: true}, r)); } }
+                rows.sort(function(a,b){ return (b.sentAt || '').localeCompare(a.sentAt || ''); });
+                const t = (data && data.notificationType) || '';
+                const c = (data && data.channel) || '';
+                const fromD = (data && data.sentAtFrom) || '';
+                const toD = (data && data.sentAtTo) || '';
+                const st = (data && data.status) || '';
+                rows = rows.filter(function(r){
+                  if (t && r.notificationType !== t) return false;
+                  if (c && r.channel !== c) return false;
+                  if (fromD && (!r.sentAt || r.sentAt < fromD)) return false;
+                  if (toD && (!r.sentAt || r.sentAt > toD + 'T23:59:59')) return false;
+                  if (st && r.status !== st) return false;
+                  return true;
+                });
+                return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+            columns:
+              - name: notificationType
+                label: "类型"
+                width: 160
+              - name: channel
+                label: "渠道"
+                width: 80
+              - name: subject
+                label: "标题"
+              - name: status
+                label: "生命周期"
+                width: 100
+              - name: read
+                label: "已读"
+                type: mapping
+                map:
+                  "true": "<span class='text-muted'>已读</span>"
+                  "false": "<span class='text-danger font-bold'>未读</span>"
+                width: 80
+              - name: sentAt
+                label: "发送时间"
+                width: 180
+              - type: button
+                label: "查看"
+                level: primary
+                actionType: dialog
+                dialog:
+                  type: drawer
+                  title: "${subject}"
+                  size: lg
+                  body:
+                    - type: tpl
+                      tpl: "<p><b>类型:</b> ${notificationType}</p><p><b>渠道:</b> ${channel}</p><p><b>发送时间:</b> ${sentAt}</p><p><b>状态:</b> ${status}</p><p><b>已读:</b> ${read}</p><hr/><p><b>正文:</b></p><div>${body}</div><hr/><p><b>负载 JSON:</b></p><pre>${payloadJson}</pre>"
