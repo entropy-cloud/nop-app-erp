@@ -17,11 +17,18 @@
 ==========>transfer[调拨信息]======
  fromWarehouseId[调出仓库] toWarehouseId[调入仓库]
  inTransitWarehouseId[在途仓库]
-==========^audit[审计信息]=========
+==========>lines[明细行]======
+ lines[明细行](2)
+=========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/inv/pages/ErpInvTransferOrderLine/ErpInvTransferOrderLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit">
             <layout x:override="replace">
@@ -32,8 +39,15 @@
 ==========>transfer[调拨信息]======
  fromWarehouseId[调出仓库] toWarehouseId[调入仓库]
  inTransitWarehouseId[在途仓库]
+==========>lines[明细行]======
+ lines[明细行](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/inv/pages/ErpInvTransferOrderLine/ErpInvTransferOrderLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="query" editMode="query" title="查询条件">

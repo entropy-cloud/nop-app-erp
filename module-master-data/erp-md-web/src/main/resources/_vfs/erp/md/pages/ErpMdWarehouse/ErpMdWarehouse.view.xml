@@ -46,17 +46,51 @@
                 <col id="batchSelectionStrategy" sortable="true"/>
             </cols>
         </grid>
-        <grid id="pick-list"/>
+        <grid id="pick-list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="warehouseType" sortable="true"/>
+                <col id="orgId" label="所属组织"/>
+                <col id="status" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'success' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
         <form id="view"/>
         <form id="edit"/>
         <form id="add"/>
+        <form id="pick-query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ warehouseType[仓库类型] status[状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="warehouseType" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
         <crud name="main"/>
-        <picker name="picker"/>
+        <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

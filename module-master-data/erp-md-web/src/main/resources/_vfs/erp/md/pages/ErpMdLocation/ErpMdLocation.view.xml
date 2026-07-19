@@ -29,17 +29,38 @@
                 </col>
             </cols>
         </grid>
-        <grid id="pick-list"/>
+        <grid id="pick-list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="warehouseId" label="仓库"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="parentId" label="父级库位"/>
+                <col id="isActive" sortable="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
         <form id="view"/>
         <form id="edit"/>
         <form id="add"/>
+        <form id="pick-query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ warehouseId[仓库] isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
         <crud name="main"/>
-        <picker name="picker"/>
+        <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

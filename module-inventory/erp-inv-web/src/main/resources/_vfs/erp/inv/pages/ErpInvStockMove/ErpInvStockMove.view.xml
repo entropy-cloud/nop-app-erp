@@ -67,11 +67,18 @@
 ==========>reference[关联信息]======
  relatedBillType[关联单据类型] relatedBillCode[关联单据号]
  originMoveId[上游移动单] originReturnedMoveId[原退货移动单]
-==========^audit[审计信息]=========
+==========>lines[明细行]======
+ lines[明细行](2)
+=========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/inv/pages/ErpInvStockMoveLine/ErpInvStockMoveLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
@@ -85,8 +92,15 @@
 ==========>reference[关联信息]======
  relatedBillType[关联单据类型] relatedBillCode[关联单据号]
  originMoveId[上游移动单] originReturnedMoveId[原退货移动单]
+==========>lines[明细行]======
+ lines[明细行](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/inv/pages/ErpInvStockMoveLine/ErpInvStockMoveLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="query" editMode="query" title="查询条件">

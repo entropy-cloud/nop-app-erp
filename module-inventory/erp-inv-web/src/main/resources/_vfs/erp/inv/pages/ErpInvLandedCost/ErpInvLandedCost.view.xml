@@ -75,11 +75,18 @@
  posted[已过账] postedAt[过账时间]
  postedBy[过账人] approvedBy[审核人]
  approvedAt[审核时间]
+=========>lines[明细行]======
+ lines[明细行](2)
 =========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/inv/pages/ErpInvLandedCostLine/ErpInvLandedCostLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
@@ -92,8 +99,15 @@
  totalCostAmount[到岸成本合计]
 =========>status[状态信息]======
  docStatus[单据状态] approveStatus[审核状态]
+=========>lines[明细行]======
+ lines[明细行](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/inv/pages/ErpInvLandedCostLine/ErpInvLandedCostLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add" size="lg">
             <layout x:override="replace">
@@ -104,8 +118,15 @@
 =========>amount[金额信息]======
  currencyId[币种] exchangeRate[汇率]
  totalCostAmount[到岸成本合计]
+=========>lines[明细行]======
+ lines[明细行](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/inv/pages/ErpInvLandedCostLine/ErpInvLandedCostLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
