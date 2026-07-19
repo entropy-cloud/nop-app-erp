@@ -84,6 +84,7 @@ public class MaintenanceCapitalizationPostingDispatcher {
         billData.put(ErpAstConstants.BILL_DATA_MAINTENANCE_LINKED_VISIT, linkedVisit);
         billData.put(ErpAstConstants.BILL_DATA_FIXED_ASSET_SUBJECT_CODE,
                 resolveSubjectCode(category != null ? category.getSubjectId() : null, "1601"));
+        billData.put(ErpAstConstants.BILL_DATA_MAINTENANCE_CLEARING_SUBJECT_CODE, "2502");
         billData.put(ErpAstConstants.BILL_DATA_MAINTENANCE_BANK_SUBJECT_CODE, "1002");
         billData.put(ErpAstConstants.BILL_DATA_MAINTENANCE_INVENTORY_SUBJECT_CODE, "1403");
         event.setBillData(billData);

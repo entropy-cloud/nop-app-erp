@@ -6,6 +6,7 @@ import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.dao.entity.ErpAstMaintenance;
 import app.erp.ast.dao.entity.ErpAstMaintenanceCost;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
@@ -108,6 +109,117 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
         // MAINTENANCE_CAPITALIZATION 凭证回链
         List<ErpFinVoucherBillR> links = findBillLinks("MNT-CAP-001", "MAINTENANCE_CAPITALIZATION");
         assertFalse(links.isEmpty(), "MAINTENANCE_CAPITALIZATION 凭证回链已落库");
+
+        // 独立 CAPITALIZE 凭证行断言（plan 2026-07-19-0849-3）：
+        // linkedVisit=false → Dr 1601 固定资产=25000 / Cr 1002 银行存款=25000（既有路径无回归）
+        assertCapitalizeVoucherLines(links.get(0).getVoucherId(), "1002", new BigDecimal("25000"));
+    }
+
+    @Test
+    public void testCapitalizePathLinkedVisitCreditsClearing() {
+        Long[] assetHolder = new Long[1];
+        Long mntId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            Long categoryId = seedCategory("CAT-MNT-CAP-LNK", "资本化关联维护类别");
+            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-LNK", "资本化关联维护资产", categoryId, 1L,
+                    new BigDecimal("100000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            assetHolder[0] = assetId;
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            // maintenanceVisitId=888L 非空 → linkedVisit=true → Cr 2502 中转清算分支
+            return createMaintenanceEntity(assetId, "MNT-CAP-LNK-001", "资本化关联维护维修单", 888L);
+        });
+
+        submit(mntId);
+        startWork(mntId);
+        addCostLine(mntId, ErpAstConstants.MAINTENANCE_COST_TYPE_SPARE_PART, new BigDecimal("20000"));
+        completeWork(mntId);
+        decideTreatment(mntId, ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE, new BigDecimal("20000"));
+        approve(mntId);
+        assertEquals(0, post(mntId).getStatus());
+
+        ErpAstMaintenance afterPost = daoProvider.daoFor(ErpAstMaintenance.class).getEntityById(mntId);
+        assertTrue(Boolean.TRUE.equals(afterPost.getPosted()), "posted=true");
+        assertEquals(0, nz(afterPost.getCapitalizedAmount()).compareTo(new BigDecimal("20000")),
+                "资本化金额=20000");
+
+        // 资产原值增量（100000 + 20000 = 120000）
+        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetHolder[0]);
+        assertEquals(0, nz(asset.getOriginalValue()).compareTo(new BigDecimal("120000")),
+                "资本化后原值=120000");
+
+        // MAINTENANCE_CAPITALIZATION 凭证行断言（plan 2026-07-19-0849-3 落地核心）：
+        // linkedVisit=true → Dr 1601 固定资产=20000 / **Cr 2502 维修中转清算=20000**（非 Cr 1002 银行存款）
+        // 备件已由 mnt 域贷 1403 出库，assets 资本化改贷 2502 中转清算避免虚增银行付出。
+        List<ErpFinVoucherBillR> links = findBillLinks("MNT-CAP-LNK-001", "MAINTENANCE_CAPITALIZATION");
+        assertFalse(links.isEmpty(), "MAINTENANCE_CAPITALIZATION linked-visit 凭证回链已落库");
+        assertCapitalizeVoucherLines(links.get(0).getVoucherId(), "2502", new BigDecimal("20000"));
+    }
+
+    @Test
+    public void testCapitalizePathIndependentCreditsBank() {
+        Long mntId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            Long categoryId = seedCategory("CAT-MNT-CAP-IND", "资本化独立维修类别");
+            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-IND", "资本化独立维修资产", categoryId, 1L,
+                    new BigDecimal("80000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            // maintenanceVisitId=null → linkedVisit=false → Cr 1002 银行存款既有路径
+            return createMaintenanceEntity(assetId, "MNT-CAP-IND-001", "资本化独立维修单", null);
+        });
+
+        submit(mntId);
+        startWork(mntId);
+        addCostLine(mntId, ErpAstConstants.MAINTENANCE_COST_TYPE_LABOR, new BigDecimal("12000"));
+        completeWork(mntId);
+        decideTreatment(mntId, ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE, new BigDecimal("12000"));
+        approve(mntId);
+        assertEquals(0, post(mntId).getStatus());
+
+        // 既有路径回归断言：linkedVisit=false → Dr 1601 / Cr 1002 银行存款（非 2502）
+        List<ErpFinVoucherBillR> links = findBillLinks("MNT-CAP-IND-001", "MAINTENANCE_CAPITALIZATION");
+        assertFalse(links.isEmpty(), "MAINTENANCE_CAPITALIZATION 独立维修凭证回链已落库");
+        assertCapitalizeVoucherLines(links.get(0).getVoucherId(), "1002", new BigDecimal("12000"));
+    }
+
+    @Test
+    public void testReverseCapitalizeLinkedVisitCreditsClearingRollsBack() {
+        Long[] assetHolder = new Long[1];
+        Long mntId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            Long categoryId = seedCategory("CAT-MNT-CAP-LNK-REV", "红冲资本化关联维护类别");
+            Long assetId = AstTestSupport.seedAsset(daoProvider, "AST-MNT-CAP-LNK-REV", "红冲资本化关联维护资产",
+                    categoryId, 1L, new BigDecimal("100000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 24,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            assetHolder[0] = assetId;
+            AstTestSupport.seedPendingSchedule(daoProvider, assetId, 1L, "2026-08");
+            return createMaintenanceEntity(assetId, "MNT-CAP-LNK-REV-001", "红冲资本化关联维护维修单", 777L);
+        });
+
+        submit(mntId);
+        startWork(mntId);
+        addCostLine(mntId, ErpAstConstants.MAINTENANCE_COST_TYPE_SPARE_PART, new BigDecimal("15000"));
+        completeWork(mntId);
+        decideTreatment(mntId, ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE, new BigDecimal("15000"));
+        approve(mntId);
+        post(mntId);
+
+        ErpAstAsset beforeReverse = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetHolder[0]);
+        assertEquals(0, nz(beforeReverse.getOriginalValue()).compareTo(new BigDecimal("115000")),
+                "红冲前原值=115000（100000+15000）");
+
+        assertEquals(0, reverse(mntId).getStatus(), "reverse 成功");
+        ErpAstMaintenance afterRev = daoProvider.daoFor(ErpAstMaintenance.class).getEntityById(mntId);
+        assertFalse(Boolean.TRUE.equals(afterRev.getPosted()), "红冲后 posted=false");
+        assertTrue(Boolean.TRUE.equals(afterRev.getReversed()), "红冲后 reversed=true");
+
+        ErpAstAsset afterReverseAsset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetHolder[0]);
+        assertEquals(0, nz(afterReverseAsset.getOriginalValue()).compareTo(new BigDecimal("100000")),
+                "红冲后资产原值回退=100000");
     }
 
     @Test
@@ -508,6 +620,38 @@ public class TestErpAstMaintenance extends JunitAutoTestCase {
             }
         }
         return true;
+    }
+
+    /**
+     * 断言 MAINTENANCE_CAPITALIZATION 凭证行：Dr 固定资产=amount（任意 subjectCode，因种子类别可解析为
+     * 类别专属 code 如 1601-CAT-XXX）/ Cr {creditSubject}=amount（1002 独立维修 / 2502 关联维护工单，
+     * plan 2026-07-19-0849-3 落地）。
+     */
+    private void assertCapitalizeVoucherLines(Long voucherId, String creditSubject, BigDecimal amount) {
+        IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        QueryBean debitQ = new QueryBean();
+        debitQ.addFilter(eq("voucherId", voucherId));
+        debitQ.addFilter(eq("dcDirection", "DEBIT"));
+        List<ErpFinVoucherLine> debitLines = dao.findAllByQuery(debitQ);
+
+        ErpFinVoucherLine crLine = findVoucherLine(voucherId, creditSubject, "CREDIT");
+        assertNotNull(crLine, "MAINTENANCE_CAPITALIZATION Cr " + creditSubject + " 凭证行存在");
+        assertFalse(debitLines.isEmpty(), "MAINTENANCE_CAPITALIZATION Dr 凭证行存在");
+        ErpFinVoucherLine drLine = debitLines.get(0);
+        assertEquals(0, nz(drLine.getDebitAmount()).compareTo(amount),
+                "Dr debitAmount=" + amount + " (subject=" + drLine.getSubjectCode() + ")");
+        assertEquals(0, nz(crLine.getCreditAmount()).compareTo(amount),
+                "Cr " + creditSubject + " creditAmount=" + amount);
+    }
+
+    private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode, String dcDirection) {
+        IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        q.addFilter(eq("subjectCode", subjectCode));
+        q.addFilter(eq("dcDirection", dcDirection));
+        List<ErpFinVoucherLine> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     private static BigDecimal nz(BigDecimal v) {
