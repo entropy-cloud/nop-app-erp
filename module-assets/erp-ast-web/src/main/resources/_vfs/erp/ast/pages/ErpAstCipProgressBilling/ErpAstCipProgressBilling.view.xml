@@ -26,9 +26,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] billingDate[账单日期]
+ billingMilestone[账单里程碑] paymentVoucherCode[付款凭证号]
+ paidFlag[已付款]
+=========>amount[金额信息]======
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ exchangeRate[汇率] currencyId[币种]
+=========>reference[业务关联]======
+ cipId[在建工程]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] billingDate[账单日期]
+ billingMilestone[账单里程碑] paymentVoucherCode[付款凭证号]
+ paidFlag[已付款]
+=========>amount[金额信息]======
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ exchangeRate[汇率] currencyId[币种]
+=========>reference[业务关联]======
+ cipId[在建工程]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] cipId[在建工程]
+ billingDate[账单日期] paidFlag[已付款]
+ billingMilestone[账单里程碑]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="cipId" filterOp="eq"/>
+                <cell id="billingDate" filterOp="date-between"/>
+                <cell id="paidFlag" filterOp="eq"/>
+                <cell id="billingMilestone" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

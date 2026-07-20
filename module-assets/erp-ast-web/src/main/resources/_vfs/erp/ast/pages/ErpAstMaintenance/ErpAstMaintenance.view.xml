@@ -40,21 +40,77 @@
     </grids>
 
     <forms>
-        <form id="view">
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[维修单号] name[维修单名称]
+ orgId[业务组织] assetId[资产]
+ maintenanceVisitId[维修探访单] treatment[处理方式]
+ businessDate[业务日期] reason[维修原因]
+=========>amount[金额信息]======
+ capitalizedAmount[资本化金额] totalCostAmount[总成本金额]
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ status[状态] reversed[已冲销]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
             <cells>
                 <cell id="capitalizedAmount" clearValueOnHidden="true">
                     <visibleOn>${treatment == 'CAPITALIZE'}</visibleOn>
                 </cell>
             </cells>
         </form>
-        <form id="edit">
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[维修单号] name[维修单名称]
+ orgId[业务组织] assetId[资产]
+ maintenanceVisitId[维修探访单] treatment[处理方式]
+ businessDate[业务日期] reason[维修原因]
+=========>amount[金额信息]======
+ capitalizedAmount[资本化金额] totalCostAmount[总成本金额]
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ status[状态] reversed[已冲销]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人] approvedBy[审核人]
+ approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
             <cells>
                 <cell id="capitalizedAmount" clearValueOnHidden="true">
                     <visibleOn>${treatment == 'CAPITALIZE'}</visibleOn>
                 </cell>
             </cells>
         </form>
-        <form id="add"/>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[维修单号] status[状态]
+ assetId[资产] treatment[处理方式]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="assetId" filterOp="eq"/>
+                <cell id="treatment" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

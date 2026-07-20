@@ -26,9 +26,63 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ chartId[控制图] orgId[业务组织]
+ subgroupNo[子组号] sampleTime[采样时间]
+ inspectorId[检验员]
+=========>measure[测量信息]======
+ measuredValues[测量值] mean[均值]
+ range[极差] stdDev[标准差]
+=========>source[来源信息]======
+ sourceBillType[来源单据类型] sourceCode[来源单号]
+ sourceLineCode[来源行号]
+=========>control[控制信息]======
+ violatedRules[违反规则] isOutOfControl[是否失控]
+ defectCount[缺陷数] inspectedCount[检验数]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ chartId[控制图] orgId[业务组织]
+ subgroupNo[子组号] sampleTime[采样时间]
+ inspectorId[检验员]
+=========>measure[测量信息]======
+ measuredValues[测量值] mean[均值]
+ range[极差] stdDev[标准差]
+=========>source[来源信息]======
+ sourceBillType[来源单据类型] sourceCode[来源单号]
+ sourceLineCode[来源行号]
+=========>control[控制信息]======
+ violatedRules[违反规则] isOutOfControl[是否失控]
+ defectCount[缺陷数] inspectedCount[检验数]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ chartId[控制图] subgroupNo[子组号]
+ inspectorId[检验员] isOutOfControl[是否失控]
+ sampleTime[采样时间]
+            </layout>
+            <cells>
+                <cell id="chartId" filterOp="eq"/>
+                <cell id="subgroupNo" filterOp="eq"/>
+                <cell id="inspectorId" filterOp="eq"/>
+                <cell id="isOutOfControl" filterOp="eq"/>
+                <cell id="sampleTime" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

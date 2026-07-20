@@ -8,9 +8,59 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workDate[工作日期] startTime[开始时间]
+ endTime[结束时间] operatorId[操作员]
+=========>quantity[数量信息]======
+ durationMins[持续分钟] setupMins[换型分钟]
+ runMins[运行分钟] completedQuantity[完工数量]
+ scrappedQuantity[报废数量]
+=========>cost[成本信息]======
+ hourlyRate[小时费率] laborCost[人工成本]
+=========>reference[业务关联]======
+ jobCardId[报工单] workOrderId[工单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workDate[工作日期] startTime[开始时间]
+ endTime[结束时间] operatorId[操作员]
+=========>quantity[数量信息]======
+ durationMins[持续分钟] setupMins[换型分钟]
+ runMins[运行分钟] completedQuantity[完工数量]
+ scrappedQuantity[报废数量]
+=========>cost[成本信息]======
+ hourlyRate[小时费率] laborCost[人工成本]
+=========>reference[业务关联]======
+ jobCardId[报工单] workOrderId[工单]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ jobCardId[报工单] workOrderId[工单]
+ operatorId[操作员] workDate[工作日期]
+ completedQuantity[完工数量]
+            </layout>
+            <cells>
+                <cell id="jobCardId" filterOp="eq"/>
+                <cell id="workOrderId" filterOp="eq"/>
+                <cell id="operatorId" filterOp="eq"/>
+                <cell id="workDate" filterOp="date-between"/>
+                <cell id="completedQuantity" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -40,9 +40,50 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[预测单号] orgId[业务组织]
+ planName[预测方案名] periodFrom[预测周期起]
+ periodTo[预测周期止]
+=========>status[状态信息]======
+ status[状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[预测单号] orgId[业务组织]
+ planName[预测方案名] periodFrom[预测周期起]
+ periodTo[预测周期止]
+=========>status[状态信息]======
+ status[状态]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[预测单号] status[状态]
+ orgId[业务组织] planName[预测方案名]
+ periodFrom[预测周期起] periodTo[预测周期止]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="planName" filterOp="like"/>
+                <cell id="periodFrom" filterOp="date-between"/>
+                <cell id="periodTo" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

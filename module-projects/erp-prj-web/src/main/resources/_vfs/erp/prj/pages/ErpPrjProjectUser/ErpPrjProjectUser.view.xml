@@ -28,9 +28,43 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ projectId[项目] userId[用户]
+ role[角色] startDate[开始日期]
+ endDate[结束日期]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ projectId[项目] userId[用户]
+ role[角色] startDate[开始日期]
+ endDate[结束日期]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ projectId[项目] userId[用户]
+ role[角色] startDate[开始日期]
+ endDate[结束日期]
+            </layout>
+            <cells>
+                <cell id="projectId" filterOp="eq"/>
+                <cell id="userId" filterOp="eq"/>
+                <cell id="role" filterOp="eq"/>
+                <cell id="startDate" filterOp="date-between"/>
+                <cell id="endDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

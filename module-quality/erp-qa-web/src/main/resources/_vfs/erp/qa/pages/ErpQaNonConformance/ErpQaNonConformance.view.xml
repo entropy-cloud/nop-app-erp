@@ -58,9 +58,75 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[NCR编码] ncrDate[发生日期]
+ sourceType[来源类型] sourceCode[来源单号]
+ materialId[物料] supplierId[供应商]
+ quantity[数量] inspectionId[质检单]
+ description[描述]
+=========>spec[规格信息]======
+ parameterName[参数名称] measuredValue[测量值]
+ specMin[规格下限] specMax[规格上限]
+ severity[严重程度]
+=========>disposition[处置方式]======
+ dispositionType[处置类型] returnCode[退货单号]
+=========>status[状态信息]======
+ status[状态] assignedTo[指派人]
+ resolvedBy[解决人] resolvedAt[解决时间]
+ resolution[解决方案]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[NCR编码] ncrDate[发生日期]
+ sourceType[来源类型] sourceCode[来源单号]
+ materialId[物料] supplierId[供应商]
+ quantity[数量] inspectionId[质检单]
+ description[描述]
+=========>spec[规格信息]======
+ parameterName[参数名称] measuredValue[测量值]
+ specMin[规格下限] specMax[规格上限]
+ severity[严重程度]
+=========>disposition[处置方式]======
+ dispositionType[处置类型] returnCode[退货单号]
+=========>status[状态信息]======
+ status[状态] assignedTo[指派人]
+ resolvedBy[解决人] resolvedAt[解决时间]
+ resolution[解决方案]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[NCR编码] status[状态]
+ materialId[物料] supplierId[供应商]
+ ncrDate[发生日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="supplierId" filterOp="eq"/>
+                <cell id="ncrDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -26,9 +26,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] targetAssetCode[目标资产编码]
+ targetAssetName[目标资产名称] categoryId[资产类别]
+ allocationMethod[分配方法] proportion[分配比例]
+ targetAssetId[目标资产]
+=========>value[价值信息]======
+ originalCostAmount[原值成本] accumulatedDepreciationAmount[累计折旧]
+ netBookValue[账面净值]
+=========>reference[业务关联]======
+ splitId[拆分单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] targetAssetCode[目标资产编码]
+ targetAssetName[目标资产名称] categoryId[资产类别]
+ allocationMethod[分配方法] proportion[分配比例]
+ targetAssetId[目标资产]
+=========>value[价值信息]======
+ originalCostAmount[原值成本] accumulatedDepreciationAmount[累计折旧]
+ netBookValue[账面净值]
+=========>reference[业务关联]======
+ splitId[拆分单]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] targetAssetCode[目标资产编码]
+ splitId[拆分单] categoryId[资产类别]
+ allocationMethod[分配方法]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="targetAssetCode" filterOp="like"/>
+                <cell id="splitId" filterOp="eq"/>
+                <cell id="categoryId" filterOp="eq"/>
+                <cell id="allocationMethod" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

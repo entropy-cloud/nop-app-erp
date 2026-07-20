@@ -58,9 +58,66 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[工时单号] orgId[业务组织]
+ projectId[项目] taskId[任务]
+ userId[员工] workDate[工作日期]
+ activityTypeId[活动类型]
+=========>hours[工时信息]======
+ hours[工时] costRate[成本费率]
+ costAmount[成本金额] currencyId[币种]
+=========>status[状态信息]======
+ status[状态] approvedBy[审核人]
+ approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[工时单号] orgId[业务组织]
+ projectId[项目] taskId[任务]
+ userId[员工] workDate[工作日期]
+ activityTypeId[活动类型]
+=========>hours[工时信息]======
+ hours[工时] costRate[成本费率]
+ costAmount[成本金额] currencyId[币种]
+=========>status[状态信息]======
+ status[状态] approvedBy[审核人]
+ approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[工时单号] projectId[项目]
+ taskId[任务] userId[员工]
+ status[状态] workDate[工作日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="projectId" filterOp="eq"/>
+                <cell id="taskId" filterOp="eq"/>
+                <cell id="userId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="workDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

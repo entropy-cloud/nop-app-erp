@@ -50,9 +50,84 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[利润单号] projectId[项目]
+ orgId[业务组织] periodFrom[期间起]
+ periodTo[期间止] currencyId[币种]
+ exchangeRate[汇率]
+=========>revenue[收入信息]======
+ revenueAmount[收入金额]
+=========>cost[成本信息]======
+ costLabor[人工成本] costMaterial[物料成本]
+ costExpense[费用成本] costSubcontract[分包成本]
+ totalCost[总成本]
+=========>profit[利润信息]======
+ grossProfit[毛利] grossMarginPct[毛利率]
+ committedCost[已承诺成本] budgetAmount[预算金额]
+ forecastCompleteCost[预计完工成本]
+=========>amount[金额信息]======
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ calcStatus[计算状态] docStatus[单据状态]
+ approveStatus[审核状态]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[利润单号] projectId[项目]
+ orgId[业务组织] periodFrom[期间起]
+ periodTo[期间止] currencyId[币种]
+ exchangeRate[汇率]
+=========>revenue[收入信息]======
+ revenueAmount[收入金额]
+=========>cost[成本信息]======
+ costLabor[人工成本] costMaterial[物料成本]
+ costExpense[费用成本] costSubcontract[分包成本]
+ totalCost[总成本]
+=========>profit[利润信息]======
+ grossProfit[毛利] grossMarginPct[毛利率]
+ committedCost[已承诺成本] budgetAmount[预算金额]
+ forecastCompleteCost[预计完工成本]
+=========>amount[金额信息]======
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ calcStatus[计算状态] docStatus[单据状态]
+ approveStatus[审核状态]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[利润单号] projectId[项目]
+ orgId[业务组织] docStatus[单据状态]
+ approveStatus[审核状态] calcStatus[计算状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="projectId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="calcStatus" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

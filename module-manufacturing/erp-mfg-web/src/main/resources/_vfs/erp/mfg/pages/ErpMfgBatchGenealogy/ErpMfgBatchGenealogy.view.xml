@@ -8,9 +8,63 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workOrderId[工单] jobCardId[报工单]
+ operationId[工序] lineNo[行号]
+ lotStatus[批次状态]
+=========>input[投入信息]======
+ inputLotId[投入批次] inputMaterialId[投入物料]
+ inputQty[投入数量] inputUoMId[投入单位]
+=========>output[产出信息]======
+ outputLotId[产出批次] outputMaterialId[产出物料]
+ outputQty[产出数量] outputUoMId[产出单位]
+=========>date[日期信息]======
+ productionDate[生产日期] productionTime[生产时间]
+ isInputConsumed[投入已消耗]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workOrderId[工单] jobCardId[报工单]
+ operationId[工序] lineNo[行号]
+ lotStatus[批次状态]
+=========>input[投入信息]======
+ inputLotId[投入批次] inputMaterialId[投入物料]
+ inputQty[投入数量] inputUoMId[投入单位]
+=========>output[产出信息]======
+ outputLotId[产出批次] outputMaterialId[产出物料]
+ outputQty[产出数量] outputUoMId[产出单位]
+=========>date[日期信息]======
+ productionDate[生产日期] productionTime[生产时间]
+ isInputConsumed[投入已消耗]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ workOrderId[工单] jobCardId[报工单]
+ lotStatus[批次状态] lineNo[行号]
+ productionDate[生产日期]
+            </layout>
+            <cells>
+                <cell id="workOrderId" filterOp="eq"/>
+                <cell id="jobCardId" filterOp="eq"/>
+                <cell id="lotStatus" filterOp="eq"/>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="productionDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

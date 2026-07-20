@@ -20,9 +20,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] parameterName[参数名称]
+=========>spec[规格信息]======
+ specMin[规格下限] specMax[规格上限]
+ unit[单位] isRequired[是否必检]
+ inspectionMethod[检验方法] sortNum[排序号]
+=========>reference[业务关联]======
+ templateId[检验模板]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] parameterName[参数名称]
+=========>spec[规格信息]======
+ specMin[规格下限] specMax[规格上限]
+ unit[单位] isRequired[是否必检]
+ inspectionMethod[检验方法] sortNum[排序号]
+=========>reference[业务关联]======
+ templateId[检验模板]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] parameterName[参数名称]
+ isRequired[是否必检] templateId[检验模板]
+ unit[单位]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="parameterName" filterOp="like"/>
+                <cell id="isRequired" filterOp="eq"/>
+                <cell id="templateId" filterOp="eq"/>
+                <cell id="unit" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

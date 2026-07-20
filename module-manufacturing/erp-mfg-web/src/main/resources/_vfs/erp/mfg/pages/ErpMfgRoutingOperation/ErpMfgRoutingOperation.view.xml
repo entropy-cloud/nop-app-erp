@@ -24,9 +24,53 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] operationCode[工序代码]
+ operationName[工序名称] workcenterId[工作中心]
+=========>operation[工序信息]======
+ standardTime[标准工时] timeUnit[工时单位]
+ setupTime[换型时间] runTime[运行时间]
+=========>reference[业务关联]======
+ routingId[工艺路线]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] operationCode[工序代码]
+ operationName[工序名称] workcenterId[工作中心]
+=========>operation[工序信息]======
+ standardTime[标准工时] timeUnit[工时单位]
+ setupTime[换型时间] runTime[运行时间]
+=========>reference[业务关联]======
+ routingId[工艺路线]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] operationCode[工序代码]
+ routingId[工艺路线] workcenterId[工作中心]
+ timeUnit[工时单位]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="operationCode" filterOp="like"/>
+                <cell id="routingId" filterOp="eq"/>
+                <cell id="workcenterId" filterOp="eq"/>
+                <cell id="timeUnit" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

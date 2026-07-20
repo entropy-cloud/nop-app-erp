@@ -23,9 +23,47 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workcenterId[工作中心] orgId[业务组织]
+ workOrderId[工单] loadDate[负荷日期]
+=========>load[负荷信息]======
+ loadHours[负荷工时] setupHours[换型工时]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workcenterId[工作中心] orgId[业务组织]
+ workOrderId[工单] loadDate[负荷日期]
+=========>load[负荷信息]======
+ loadHours[负荷工时] setupHours[换型工时]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ workcenterId[工作中心] orgId[业务组织]
+ workOrderId[工单] loadDate[负荷日期]
+ loadHours[负荷工时]
+            </layout>
+            <cells>
+                <cell id="workcenterId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="workOrderId" filterOp="eq"/>
+                <cell id="loadDate" filterOp="date-between"/>
+                <cell id="loadHours" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

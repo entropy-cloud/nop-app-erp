@@ -32,9 +32,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[计划编码] name[计划名称]
+ equipmentId[设备] scheduleType[计划类型]
+ frequency[频率] recurrenceType[重复类型]
+ daysOfWeek[星期几] startDate[开始日期]
+ endDate[结束日期] nextDueDate[下次到期日]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[计划编码] name[计划名称]
+ equipmentId[设备] scheduleType[计划类型]
+ frequency[频率] recurrenceType[重复类型]
+ daysOfWeek[星期几] startDate[开始日期]
+ endDate[结束日期] nextDueDate[下次到期日]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[计划编码] name[计划名称]
+ equipmentId[设备] scheduleType[计划类型]
+ isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="equipmentId" filterOp="eq"/>
+                <cell id="scheduleType" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

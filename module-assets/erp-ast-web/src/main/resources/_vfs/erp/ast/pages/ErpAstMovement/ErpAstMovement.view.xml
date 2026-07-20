@@ -30,9 +30,74 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[调拨单号] orgId[业务组织]
+ assetId[资产] businessDate[业务日期]
+ fromDate[生效起始日] thruDate[生效截止日]
+=========>transfer[调拨信息]======
+ fromDepartmentId[源部门] toDepartmentId[目标部门]
+ fromStaffId[源使用人] toStaffId[目标使用人]
+ fromLocationId[源地点] toLocationId[目标地点]
+ handlerId[经办人]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[调拨单号] orgId[业务组织]
+ assetId[资产] businessDate[业务日期]
+ fromDate[生效起始日] thruDate[生效截止日]
+=========>transfer[调拨信息]======
+ fromDepartmentId[源部门] toDepartmentId[目标部门]
+ fromStaffId[源使用人] toStaffId[目标使用人]
+ fromLocationId[源地点] toLocationId[目标地点]
+ handlerId[经办人]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[调拨单号] docStatus[单据状态]
+ approveStatus[审核状态] assetId[资产]
+ fromDepartmentId[源部门] toDepartmentId[目标部门]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="assetId" filterOp="eq"/>
+                <cell id="fromDepartmentId" filterOp="eq"/>
+                <cell id="toDepartmentId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

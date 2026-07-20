@@ -23,9 +23,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ partnerId[客户] batchNo[批次号]
+ serialNo[序列号] salesDeliveryId[发货单]
+ shippedQty[发货数量] notifiedAt[通知时间]
+ notifiedBy[通知人]
+=========>status[状态信息]======
+ returnStatus[退货状态] generatedReturnId[退货单]
+=========>reference[业务关联]======
+ recallId[召回事件]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ partnerId[客户] batchNo[批次号]
+ serialNo[序列号] salesDeliveryId[发货单]
+ shippedQty[发货数量] notifiedAt[通知时间]
+ notifiedBy[通知人]
+=========>status[状态信息]======
+ returnStatus[退货状态] generatedReturnId[退货单]
+=========>reference[业务关联]======
+ recallId[召回事件]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ partnerId[客户] returnStatus[退货状态]
+ recallId[召回事件] batchNo[批次号]
+ notifiedAt[通知时间]
+            </layout>
+            <cells>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="returnStatus" filterOp="eq"/>
+                <cell id="recallId" filterOp="eq"/>
+                <cell id="batchNo" filterOp="like"/>
+                <cell id="notifiedAt" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

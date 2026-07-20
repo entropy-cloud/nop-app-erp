@@ -7,9 +7,43 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[工艺路线号] name[名称]
+ isActive[启用]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[工艺路线号] name[名称]
+ isActive[启用]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[工艺路线号] name[名称]
+ isActive[启用] createdBy[创建人]
+ createTime[创建时间]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="isActive" filterOp="eq"/>
+                <cell id="createdBy" filterOp="eq"/>
+                <cell id="createTime" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

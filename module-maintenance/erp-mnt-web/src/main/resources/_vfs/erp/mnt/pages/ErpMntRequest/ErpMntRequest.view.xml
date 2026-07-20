@@ -46,9 +46,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[请求单号] equipmentId[设备]
+ requestDate[请求日期] description[问题描述]
+ priority[优先级] requestedBy[请求人]
+=========>dispatch[派工信息]======
+ assignedTo[指派给] acceptedBy[受理人]
+=========>status[状态信息]======
+ status[状态] completedBy[完成人]
+ completedAt[完成时间]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[请求单号] equipmentId[设备]
+ requestDate[请求日期] description[问题描述]
+ priority[优先级] requestedBy[请求人]
+=========>dispatch[派工信息]======
+ assignedTo[指派给] acceptedBy[受理人]
+=========>status[状态信息]======
+ status[状态] completedBy[完成人]
+ completedAt[完成时间]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[请求单号] status[状态]
+ equipmentId[设备] priority[优先级]
+ requestDate[请求日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="equipmentId" filterOp="eq"/>
+                <cell id="priority" filterOp="eq"/>
+                <cell id="requestDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -7,9 +7,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ mrpPlanId[MRP 计划] lineNo[行号]
+ materialId[物料] uoMId[计量单位]
+=========>quantity[数量信息]======
+ quantity[需求数量] requirementDate[需求日期]
+=========>reference[业务关联]======
+ demandSource[需求来源] sourceBillType[来源单据类型]
+ sourceBillCode[来源单据号]
+ ========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ mrpPlanId[MRP 计划] lineNo[行号]
+ materialId[物料] uoMId[计量单位]
+=========>quantity[数量信息]======
+ quantity[需求数量] requirementDate[需求日期]
+=========>reference[业务关联]======
+ demandSource[需求来源] sourceBillType[来源单据类型]
+ sourceBillCode[来源单据号]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ mrpPlanId[MRP 计划] lineNo[行号]
+ materialId[物料] demandSource[需求来源]
+ requirementDate[需求日期]
+            </layout>
+            <cells>
+                <cell id="mrpPlanId" filterOp="eq"/>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="demandSource" filterOp="eq"/>
+                <cell id="requirementDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

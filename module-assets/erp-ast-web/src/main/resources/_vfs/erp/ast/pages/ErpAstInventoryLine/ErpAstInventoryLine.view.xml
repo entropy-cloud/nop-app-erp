@@ -259,9 +259,63 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] assetId[账面资产]
+ assetCodeSnapshot[资产编码快照] assetNameSnapshot[资产名称快照]
+ categoryId[资产类别]
+=========>quantity[数量信息]======
+ bookQuantity[账面数量] actualQuantity[实盘数量]
+ varianceQuantity[差异数量] varianceType[差异类型]
+=========>value[价值信息]======
+ bookValue[账面价值] assessedValue[评估价值]
+ varianceAmount[差异金额] disposition[差异处置]
+=========>reference[业务关联]======
+ inventoryId[盘点单] newAssetId[盘盈新建资产]
+ capitalizationId[盘盈资本化单] disposalId[盘亏处置单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] assetId[账面资产]
+ assetCodeSnapshot[资产编码快照] assetNameSnapshot[资产名称快照]
+ categoryId[资产类别]
+=========>quantity[数量信息]======
+ bookQuantity[账面数量] actualQuantity[实盘数量]
+ varianceQuantity[差异数量] varianceType[差异类型]
+=========>value[价值信息]======
+ bookValue[账面价值] assessedValue[评估价值]
+ varianceAmount[差异金额] disposition[差异处置]
+=========>reference[业务关联]======
+ inventoryId[盘点单] newAssetId[盘盈新建资产]
+ capitalizationId[盘盈资本化单] disposalId[盘亏处置单]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] assetId[账面资产]
+ inventoryId[盘点单] categoryId[资产类别]
+ varianceType[差异类型]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="assetId" filterOp="eq"/>
+                <cell id="inventoryId" filterOp="eq"/>
+                <cell id="categoryId" filterOp="eq"/>
+                <cell id="varianceType" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

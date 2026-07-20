@@ -23,9 +23,63 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ chartId[控制图] orgId[业务组织]
+ periodFrom[周期起] periodTo[周期止]
+ calculatedBy[计算人] calculatedAt[计算时间]
+=========>sample[样本信息]======
+ sampleCount[样本数] totalObservations[观测总数]
+ grandMean[总均值] overallStdDev[整体标准差]
+ withinStdDev[组内标准差]
+=========>capability[能力指标]======
+ cp[Cp] cpk[Cpk]
+ pp[Pp] ppk[Ppk]
+ cpm[Cpm] capabilityLevel[能力等级]
+ isStable[是否稳定]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ chartId[控制图] orgId[业务组织]
+ periodFrom[周期起] periodTo[周期止]
+ calculatedBy[计算人] calculatedAt[计算时间]
+=========>sample[样本信息]======
+ sampleCount[样本数] totalObservations[观测总数]
+ grandMean[总均值] overallStdDev[整体标准差]
+ withinStdDev[组内标准差]
+=========>capability[能力指标]======
+ cp[Cp] cpk[Cpk]
+ pp[Pp] ppk[Ppk]
+ cpm[Cpm] capabilityLevel[能力等级]
+ isStable[是否稳定]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ chartId[控制图] orgId[业务组织]
+ capabilityLevel[能力等级] isStable[是否稳定]
+ periodFrom[周期起]
+            </layout>
+            <cells>
+                <cell id="chartId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="capabilityLevel" filterOp="eq"/>
+                <cell id="isStable" filterOp="eq"/>
+                <cell id="periodFrom" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

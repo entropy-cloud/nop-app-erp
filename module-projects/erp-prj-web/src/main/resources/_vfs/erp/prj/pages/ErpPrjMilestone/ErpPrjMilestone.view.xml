@@ -60,9 +60,53 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[里程碑编号] name[里程碑名称]
+ projectId[项目] plannedDate[计划日期]
+ actualDate[实际日期]
+=========>amount[金额信息]======
+ billingAmount[开票金额]
+=========>status[状态信息]======
+ isBillingTrigger[是否触发开票] status[状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[里程碑编号] name[里程碑名称]
+ projectId[项目] plannedDate[计划日期]
+ actualDate[实际日期]
+=========>amount[金额信息]======
+ billingAmount[开票金额]
+=========>status[状态信息]======
+ isBillingTrigger[是否触发开票] status[状态]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[里程碑编号] projectId[项目]
+ status[状态] isBillingTrigger[是否触发开票]
+ plannedDate[计划日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="projectId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="isBillingTrigger" filterOp="eq"/>
+                <cell id="plannedDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -66,9 +66,70 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[委外单号] orgId[业务组织]
+ workOrderId[工单] supplierId[供应商]
+ workcenterId[工作中心] routingId[工艺路线]
+ productionVersionId[生产版本] productId[产品]
+ businessDate[业务日期]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ processingFee[加工费] totalAmount[总金额]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedStatus[过账状态]
+ postedAt[过账时间] postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[委外单号] orgId[业务组织]
+ workOrderId[工单] supplierId[供应商]
+ workcenterId[工作中心] routingId[工艺路线]
+ productionVersionId[生产版本] productId[产品]
+ businessDate[业务日期]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ processingFee[加工费] totalAmount[总金额]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedStatus[过账状态]
+ postedAt[过账时间] postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[委外单号] docStatus[单据状态]
+ approveStatus[审核状态] supplierId[供应商]
+ businessDate[业务日期] postedStatus[过账状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="supplierId" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+                <cell id="postedStatus" filterOp="eq"/>
+            </cells>
+        </form>
 
         <!-- 发料参数收集（生命周期首个参数化 dialog 范式，plan 2026-07-13-0701-2 Phase 2）。
              无 objMeta 绑定，cells 显式声明 domain + gen-control（warehouse select）。 -->

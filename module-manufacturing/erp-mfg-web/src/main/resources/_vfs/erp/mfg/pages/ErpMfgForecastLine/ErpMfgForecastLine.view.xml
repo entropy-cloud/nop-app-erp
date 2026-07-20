@@ -26,9 +26,53 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ warehouseId[仓库] uoMId[计量单位]
+=========>quantity[数量信息]======
+ periodStart[周期起] periodEnd[周期止]
+ forecastQty[预测数量] sourcedFlag[已来源标记]
+=========>reference[业务关联]======
+ forecastId[预测单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ warehouseId[仓库] uoMId[计量单位]
+=========>quantity[数量信息]======
+ periodStart[周期起] periodEnd[周期止]
+ forecastQty[预测数量] sourcedFlag[已来源标记]
+=========>reference[业务关联]======
+ forecastId[预测单]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ forecastId[预测单] warehouseId[仓库]
+ periodStart[周期起]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="forecastId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="periodStart" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

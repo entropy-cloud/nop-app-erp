@@ -8,9 +8,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[版本号] productId[产品]
+ bomId[BOM] routingId[工艺路线]
+=========>validity[生效信息]======
+ validFrom[生效起] validTo[生效止]
+ lotSizeFrom[批量下限] lotSizeTo[批量上限]
+ isDefault[默认版本] isActive[启用]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[版本号] productId[产品]
+ bomId[BOM] routingId[工艺路线]
+=========>validity[生效信息]======
+ validFrom[生效起] validTo[生效止]
+ lotSizeFrom[批量下限] lotSizeTo[批量上限]
+ isDefault[默认版本] isActive[启用]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[版本号] productId[产品]
+ bomId[BOM] routingId[工艺路线]
+ isActive[启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="productId" filterOp="eq"/>
+                <cell id="bomId" filterOp="eq"/>
+                <cell id="routingId" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

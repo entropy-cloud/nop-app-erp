@@ -170,9 +170,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] lineType[行类型]
+ materialId[物料] skuId[SKU] uoMId[计量单位]
+=========>quantity[数量信息]======
+ plannedQuantity[计划数量] actualQuantity[实际数量]
+ scrappedQuantity[报废数量]
+ sourceWarehouseId[来源仓库] destWarehouseId[目标仓库]
+=========>reference[业务关联]======
+ workOrderId[工单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] lineType[行类型]
+ materialId[物料] skuId[SKU] uoMId[计量单位]
+=========>quantity[数量信息]======
+ plannedQuantity[计划数量] actualQuantity[实际数量]
+ scrappedQuantity[报废数量]
+ sourceWarehouseId[来源仓库] destWarehouseId[目标仓库]
+=========>reference[业务关联]======
+ workOrderId[工单]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] lineType[行类型]
+ materialId[物料] workOrderId[工单]
+ sourceWarehouseId[来源仓库]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="lineType" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="workOrderId" filterOp="eq"/>
+                <cell id="sourceWarehouseId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

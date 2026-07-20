@@ -77,9 +77,61 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ equipmentId[设备] businessDate[校准日期]
+ standardRef[参考标准]
+=========>measure[测量信息]======
+ measuredValue[测量值] targetValue[目标值]
+ tolerance[允差] result[校准结果]
+=========>schedule[计划信息]======
+ nextCalibrationDate[下次校准日期] calibratedBy[校准人]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+ equipmentId[设备] businessDate[校准日期]
+ standardRef[参考标准]
+=========>measure[测量信息]======
+ measuredValue[测量值] targetValue[目标值]
+ tolerance[允差] result[校准结果]
+=========>schedule[计划信息]======
+ nextCalibrationDate[下次校准日期] calibratedBy[校准人]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] docStatus[单据状态]
+ approveStatus[审核状态] equipmentId[设备]
+ businessDate[校准日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="equipmentId" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

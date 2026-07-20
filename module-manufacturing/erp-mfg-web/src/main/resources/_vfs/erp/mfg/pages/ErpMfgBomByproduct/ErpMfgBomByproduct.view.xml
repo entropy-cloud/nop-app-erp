@@ -8,9 +8,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ byproductType[副产品类型]
+=========>quantity[数量信息]======
+ quantity[数量] yieldRate[产出率]
+ costAllocationPercent[成本分摊比例]
+=========>reference[业务关联]======
+ bomId[BOM]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ byproductType[副产品类型]
+=========>quantity[数量信息]======
+ quantity[数量] yieldRate[产出率]
+ costAllocationPercent[成本分摊比例]
+=========>reference[业务关联]======
+ bomId[BOM]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ bomId[BOM] byproductType[副产品类型]
+ quantity[数量]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="bomId" filterOp="eq"/>
+                <cell id="byproductType" filterOp="eq"/>
+                <cell id="quantity" filterOp="gt"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

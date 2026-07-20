@@ -55,9 +55,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[评审编码] orgId[业务组织]
+ reviewDate[评审日期] reviewType[评审类型]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ participants[参与人员]
+=========>result[结果信息]======
+ conclusion[结论] actionRequired[需采取行动]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[评审编码] orgId[业务组织]
+ reviewDate[评审日期] reviewType[评审类型]
+ relatedBillType[关联单据类型] relatedBillCode[关联单据号]
+ participants[参与人员]
+=========>result[结果信息]======
+ conclusion[结论] actionRequired[需采取行动]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[评审编码] docStatus[单据状态]
+ approveStatus[审核状态] reviewType[评审类型]
+ reviewDate[评审日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="reviewType" filterOp="eq"/>
+                <cell id="reviewDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

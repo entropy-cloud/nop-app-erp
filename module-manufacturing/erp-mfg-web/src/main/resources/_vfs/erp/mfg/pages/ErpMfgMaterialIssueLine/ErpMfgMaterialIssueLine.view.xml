@@ -44,9 +44,59 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ workOrderLineId[工单行] batchNo[批次号]
+ locationId[库位]
+=========>quantity[数量信息]======
+ requiredQuantity[需求数量] issuedQuantity[已发数量]
+=========>cost[成本信息]======
+ unitCost[单位成本] totalCost[总成本]
+=========>reference[业务关联]======
+ issueId[领料单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ skuId[SKU] uoMId[计量单位]
+ workOrderLineId[工单行] batchNo[批次号]
+ locationId[库位]
+=========>quantity[数量信息]======
+ requiredQuantity[需求数量] issuedQuantity[已发数量]
+=========>cost[成本信息]======
+ unitCost[单位成本] totalCost[总成本]
+=========>reference[业务关联]======
+ issueId[领料单]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] materialId[物料]
+ issueId[领料单] workOrderLineId[工单行]
+ batchNo[批次号]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="issueId" filterOp="eq"/>
+                <cell id="workOrderLineId" filterOp="eq"/>
+                <cell id="batchNo" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

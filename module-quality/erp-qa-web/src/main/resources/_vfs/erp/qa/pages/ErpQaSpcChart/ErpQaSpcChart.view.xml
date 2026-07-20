@@ -37,9 +37,67 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[控制图编码] name[控制图名称]
+ orgId[业务组织] chartType[控制图类型]
+ materialId[物料] inspectionTypeId[检验类型]
+ parameterId[参数]
+=========>spec[规格信息]======
+ specMin[规格下限] specMax[规格上限]
+ subgroupSize[子组大小] samplingFrequency[抽样频率]
+=========>control[控制信息]======
+ clCenterType[中心线类型] ruleSet[规则集]
+ alarmThreshold[告警阈值]
+ ucl[控制上限] lcl[控制下限] cl[中心线]
+ calcStatus[计算状态] isActive[是否启用]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[控制图编码] name[控制图名称]
+ orgId[业务组织] chartType[控制图类型]
+ materialId[物料] inspectionTypeId[检验类型]
+ parameterId[参数]
+=========>spec[规格信息]======
+ specMin[规格下限] specMax[规格上限]
+ subgroupSize[子组大小] samplingFrequency[抽样频率]
+=========>control[控制信息]======
+ clCenterType[中心线类型] ruleSet[规则集]
+ alarmThreshold[告警阈值]
+ ucl[控制上限] lcl[控制下限] cl[中心线]
+ calcStatus[计算状态] isActive[是否启用]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[控制图编码] docStatus[单据状态]
+ approveStatus[审核状态] materialId[物料]
+ chartType[控制图类型]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="chartType" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

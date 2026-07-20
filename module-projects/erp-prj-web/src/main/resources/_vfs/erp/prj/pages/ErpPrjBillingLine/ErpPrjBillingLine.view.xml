@@ -23,9 +23,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] costCategory[成本类别]
+ taskId[任务] subjectId[科目]
+=========>amount[金额信息]======
+ amount[金额]
+=========>reference[业务关联]======
+ billingId[开票单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] costCategory[成本类别]
+ taskId[任务] subjectId[科目]
+=========>amount[金额信息]======
+ amount[金额]
+=========>reference[业务关联]======
+ billingId[开票单]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ lineNo[行号] costCategory[成本类别]
+ taskId[任务] subjectId[科目]
+ billingId[开票单]
+            </layout>
+            <cells>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="costCategory" filterOp="eq"/>
+                <cell id="taskId" filterOp="eq"/>
+                <cell id="subjectId" filterOp="eq"/>
+                <cell id="billingId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

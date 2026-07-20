@@ -39,9 +39,50 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] taskDescription[任务描述]
+=========>status[状态信息]======
+ status[状态] completedBy[完成人]
+ completedAt[完成时间]
+=========>reference[业务关联]======
+ visitId[维护访问]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] taskDescription[任务描述]
+=========>status[状态信息]======
+ status[状态] completedBy[完成人]
+ completedAt[完成时间]
+=========>reference[业务关联]======
+ visitId[维护访问]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ visitId[维护访问] lineNo[行号]
+ status[状态] taskDescription[任务描述]
+            </layout>
+            <cells>
+                <cell id="visitId" filterOp="eq"/>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="taskDescription" filterOp="like"/>
+                <cell id="completedBy" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

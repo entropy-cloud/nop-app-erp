@@ -34,9 +34,68 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[工程编码] name[工程名称]
+ orgId[所属组织] categoryId[预定资产类别]
+ projectId[关联项目] businessDate[开工日期]
+ estimatedCompletionDate[预计完工日期] accumulatedCost[累计归集成本]
+ isCompleted[是否已转固] completedAssetId[完工转出资产]
+ cipAssetCategorySnapshot[转固时类别快照]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ status[状态]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[工程编码] name[工程名称]
+ orgId[所属组织] categoryId[预定资产类别]
+ projectId[关联项目] businessDate[开工日期]
+ estimatedCompletionDate[预计完工日期] accumulatedCost[累计归集成本]
+ isCompleted[是否已转固] completedAssetId[完工转出资产]
+ cipAssetCategorySnapshot[转固时类别快照]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ status[状态]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[工程编码] status[状态]
+ orgId[所属组织] categoryId[预定资产类别]
+ projectId[关联项目] businessDate[开工日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="categoryId" filterOp="eq"/>
+                <cell id="projectId" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

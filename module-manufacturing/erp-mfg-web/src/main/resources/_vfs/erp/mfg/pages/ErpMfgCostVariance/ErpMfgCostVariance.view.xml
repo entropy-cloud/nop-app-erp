@@ -32,9 +32,66 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workOrderId[工单] lineNo[行号]
+ varianceType[差异类型] costElement[成本要素]
+ materialId[物料] operationId[工序]
+ workcenterId[工作中心] businessDate[业务日期]
+=========>standard[标准成本]======
+ standardQty[标准数量] standardPrice[标准单价]
+ standardAmount[标准金额]
+=========>actual[实际成本]======
+ actualQty[实际数量] actualPrice[实际单价]
+ actualAmount[实际金额]
+=========>variance[差异分析]======
+ varianceAmount[差异金额] variancePercent[差异百分比]
+ posted[已过账]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workOrderId[工单] lineNo[行号]
+ varianceType[差异类型] costElement[成本要素]
+ materialId[物料] operationId[工序]
+ workcenterId[工作中心] businessDate[业务日期]
+=========>standard[标准成本]======
+ standardQty[标准数量] standardPrice[标准单价]
+ standardAmount[标准金额]
+=========>actual[实际成本]======
+ actualQty[实际数量] actualPrice[实际单价]
+ actualAmount[实际金额]
+=========>variance[差异分析]======
+ varianceAmount[差异金额] variancePercent[差异百分比]
+ posted[已过账]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ workOrderId[工单] varianceType[差异类型]
+ costElement[成本要素] materialId[物料]
+ businessDate[业务日期] posted[已过账]
+            </layout>
+            <cells>
+                <cell id="workOrderId" filterOp="eq"/>
+                <cell id="varianceType" filterOp="eq"/>
+                <cell id="costElement" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+                <cell id="posted" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
