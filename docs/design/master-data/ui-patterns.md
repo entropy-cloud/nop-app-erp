@@ -185,6 +185,31 @@
 币种/汇率 → [录入汇率] → 多币种单据引用
 ```
 
+## 树形 CRUD 范式（MaterialCategory + Subject）
+
+主数据域含 2 个自引用树形实体：`ErpMdMaterialCategory`（物料分类树）和 `ErpMdSubject`（会计科目树）。两者均遵循 `docs/design/tree-entity-patterns.md` 跨域范式。
+
+### 列集表
+
+| 实体 | tree-list grid 列集 | 域专用业务约束 |
+|------|---------------------|----------------|
+| `ErpMdMaterialCategory` | `code` `name` `parentId` `sortNum` `priceValidationLevel` | 物料分类树，叶子节点用于物料归类 |
+| `ErpMdSubject` | `code` `name` `parentId` `subjectClass` `direction` `isLeaf` `status` | 凭证录入科目 picker 仅返回叶子节点（`filter_isLeaf=1`） |
+
+### 配置要点
+
+1. **tree-list grid**：克隆 `<grid id="list">` + 追加 `<selection>children @TreeChildren(max:5)</selection>`
+2. **crud main grid="tree-list"**：`<table loadDataOnce="true" sortable="false" pager="none">` + URL `@query:ErpMdXxx__findList/{@listSelection}?filter_parentId=__null`
+3. **add-child simple page**：`<simple name="add-child" form="add"><data><parentId>$id</parentId></data></simple>` + rowActions 追加 `row-add-child-button`
+4. **parentId tree-select 控件**：edit/add 表单 `<cell id="parentId">` 升级为 `<tree-select>`，URL 加 `filter_id__ne=$id` 排除自身防循环引用
+5. **picker 升级**：picker.page.yaml table 改 tree 配置（`loadDataOnce + pager=none + filter_parentId=__null`）；ErpMdSubject picker 保留 `filter_isLeaf=1` 过滤
+
+### ErpMdSubject 域专用约束（凭证录入科目 picker）
+
+凭证录入只能选择叶子科目（`isLeaf=1`）。tree picker URL 同时含 `filter_parentId=__null` + `filter_isLeaf=1` —— 根节点 + 叶子双过滤确保只返回位于根层级且是叶子的科目。@TreeChildren 嵌套展开为只读层级上下文。
+
+详细配置模板与反模式自检见 `docs/design/tree-entity-patterns.md`。
+
 ## 调研参考
 
 | 设计点 | 参考来源 | 应用方式 |

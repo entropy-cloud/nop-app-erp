@@ -297,3 +297,27 @@
 | 知识库嵌入工单创建 | 🟢 Axelor Ticket.knowledgeBase建议 | 输入主题时实时搜索推荐 |
 | SLA 策略配置 | 🟢 Axelor Sla.xml | 按类型/优先级/团队匹配 |
 | 待分派工单超时高亮 | ⚪ 本项目设计意图 | 超过指定时间闪烁提示 |
+
+## 树形 CRUD 范式（ServiceCatalogItem）
+
+客服域含 1 个自引用树形实体：`ErpCsServiceCatalogItem`（服务目录树）。遵循 `docs/design/tree-entity-patterns.md` 跨域范式。
+
+### 列集表
+
+| 实体 | tree-list grid 列集 | 域专用业务约束 |
+|------|---------------------|----------------|
+| `ErpCsServiceCatalogItem` | `code` `name` `parentId` `ticketTypeId` `slaPolicyId` `fulfillmentProcessId` `isActive` `sequence` | 服务目录树，叶子节点关联工单类型/SLA 策略/履行流程；F12 工单详情目录树 successor 依赖 |
+
+### 配置要点
+
+1. **tree-list grid**：克隆 `<grid id="list">` + 追加 `<selection>children @TreeChildren(max:5)</selection>`
+2. **crud main grid="tree-list"**：`<table loadDataOnce="true" sortable="false" pager="none">` + URL `@query:ErpCsServiceCatalogItem__findList/{@listSelection}?filter_parentId=__null`
+3. **add-child simple page**：`<simple name="add-child" form="add"><data><parentId>$id</parentId></data></simple>` + rowActions 追加 `row-add-child-button`（用于「在某目录项下新建子项」）
+4. **parentId tree-select 控件**：edit/add 表单 `<cell id="parentId">` 升级为 `<tree-select>`，URL 加 `filter_id__ne=$id` 排除自身防循环引用
+5. **picker 升级**：picker.page.yaml table 改 tree 配置（`loadDataOnce + pager=none + filter_parentId=__null`）
+
+### ErpCsServiceCatalogItem 域专用约束（F12 工单详情目录树 successor）
+
+服务目录树叶子节点保留 `ticketTypeId`（工单类型）+ `slaPolicyId`（SLA 策略）+ `fulfillmentProcessId`（履行流程）业务字段。F12 工单详情 tabs 容器 successor 依赖此 tree CRUD 范式（用户在工单录入时通过 tree picker 选择服务目录叶子节点，自动带出关联的工单类型/SLA/履行流程）。
+
+详细配置模板与反模式自检见 `docs/design/tree-entity-patterns.md`。

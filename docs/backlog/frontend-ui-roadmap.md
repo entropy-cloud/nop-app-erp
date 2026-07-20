@@ -243,7 +243,7 @@ Status: `done` (核心 4 域；长尾实体 defer 到后续)
 
 ### F10 — 树形实体视图（P2）
 
-Status: `todo`
+Status: `done`
 
 树形实体使用 AMIS `tree` / `tree-select` 组件：
 
@@ -251,12 +251,14 @@ Status: `todo`
 |------|------|
 | ErpMdMaterialCategory | 物料分类树 |
 | ErpMdSubject | 会计科目树 |
-| ErpAstCategory | 资产分类树 |
-| ErpMfgBom | BOM 结构树 |
 | ErpHrDepartment | 组织架构树 |
 | ErpCsServiceCatalogItem | 服务目录树 |
+| ~~ErpAstCategory~~ | ❌ 实际实体名 `ErpAstAssetCategory` 且 ORM 无 `parentId` 列（扁平分类表），剔除 |
+| ~~ErpMfgBom~~ | ❌ ORM 无 `parentId` self-FK 列，层级经子行实体表达，归 F16 BOM 复杂页面 successor |
 
-标准 `<crud>` 不适用于树形结构，需要独立 `<form>` + `<tree>` 页面布局。需调用 `__findList` 获取树形数据（非 `__findPage`，分页不适用于树）。各树实体 BizModel 需确认已暴露 `findList`。
+实际范围 4 实体（plan `2026-07-20-1020-1`）：tree-list grid + `@TreeChildren(max:5)` + `loadDataOnce + pager=none + filter_parentId=__null` + add-child simple page + parentId tree-select 控件。详见 `docs/design/tree-entity-patterns.md`。
+
+> ~~标准 `<crud>` 不适用于树形结构，需要独立 `<form>` + `<tree>` 页面布局。需调用 `__findList` 获取树形数据（非 `__findPage`，分页不适用于树）。各树实体 BizModel 需确认已暴露 `findList`。~~ 已落地：通过 `<crud name="main" grid="tree-list">` + `<table loadDataOnce="true" pager="none">` + `<api url="@query:Xxx__findList?filter_parentId=__null" gql:selection="{@listSelection}"/>` 在标准 CRUD 容器中嵌入 tree 表格；`__findList` 由 `CrudBizModel` 内置，无需手写。
 
 ---
 
@@ -530,7 +532,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地
 - [x] F8: 8 核心列表页查询条件扩展到域专用多维筛选（plan `2026-07-20-0629-2`：query + asideFilter 双筛选面，inventory/finance/purchase/sales 4 域；扩展域 8 个独立 plan 待启动）
 - [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`
-- [ ] F10: 6 个树形实体使用 AMIS tree 组件页面
+- [x] F10: 4 树形实体（ErpMdMaterialCategory/ErpMdSubject/ErpHrDepartment/ErpCsServiceCatalogItem）使用 AMIS tree 组件页面（plan `2026-07-20-1020-1`；ErpMfgBom/ErpAstAssetCategory 经 ORM 核实剔除，归 F16/无 tree 语义）
 - [ ] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现
 - [ ] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板）
 - [ ] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现
