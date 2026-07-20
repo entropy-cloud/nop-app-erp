@@ -16,6 +16,9 @@
 | 已中止（SUSPENDED） | 执行中临时中止（纠纷/暂停合作） | 版本冻结，不可开票/消耗 |
 | 已到期（EXPIRED） | 终态：endDate 到达，正常到期 | 归档版本 |
 | 已终止（TERMINATED） | 终态：提前终止（违约/协商解约） | 归档版本，注明终止原因 |
+| 已作废（CANCELLED） | 终态：草稿废弃（仅 DRAFT 可作废） | 删除草稿版本（未生效，无业务影响） |
+
+> L-5（plan 2026-07-20-2200-1）补：CANCELLED 态在 §2 迁移图中早已使用（`DRAFT → CANCELLED` 草稿废弃路径），但 §1 定义表遗漏。CANCELLED 与 TERMINATED 的区别：CANCELLED 仅限 DRAFT 阶段的草稿废弃（未生效，无版本归档，无业务回写）；TERMINATED 是已生效合同（ACTIVE/NEGOTIATION）的提前终止（已生效，需归档版本与关联终止协议）。
 
 ### 2. 迁移完整性
 
@@ -35,6 +38,7 @@ DRAFT（草稿）
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
 | DRAFT→NEGOTIATION | 合同经办人 | 合同内容填完整，金额/条款/日期必填 | 创建 v1 版本（DRAFT→FINALIZED） |
+| DRAFT→CANCELLED | 合同经办人 | 草稿状态、无关联生效业务（无开票/消耗） | 删除草稿版本，记录作废原因 |
 | NEGOTIATION→ACTIVE | 双方签署 | 合同文件签署完成（signDate 设置） | 版本状态→SIGNED，isCurrent=true |
 
 > **电子签章接入点**（plan 2026-07-04-2200-2）：`IErpCtContractVersionBiz.signVersion`（FINALIZED→SIGNED + isCurrent 翻转）
@@ -48,9 +52,10 @@ DRAFT（草稿）
 
 ### 3. 终态与恢复
 
-- 终态：`已到期（EXPIRED）`、`已终止（TERMINATED）`。
+- 终态：`已作废（CANCELLED）`、`已到期（EXPIRED）`、`已终止（TERMINATED）`。
 - 终态不可恢复。若需续签，从 EXPIRED 创建续期合同（parentContractId 关联原合同）。
 - SUSPENDED 不是终态，可恢复为 ACTIVE。
+- CANCELLED 仅限 DRAFT 阶段草稿废弃；已进入 NEGOTIATION 或后续态的合同不可作废，只能 TERMINATED。
 
 ### 4. 异常路径
 

@@ -26,6 +26,7 @@
 - 任务路由和记录的技能使用是否仍然与交付的工作匹配
 - 是否在没有持久证据的情况下放宽了任何自主权或待办事项状态
 - 是否隐藏了验证失败或未运行的命令
+- **Owner-doc → 代码一致性抽样核查（plan 2026-07-20-2200-1 M-3）**：对本计划涉及的每个 owner doc（`docs/design/<domain>/state-machine.md`、`docs/design/roles-and-permissions.md` 等）随机抽 2 个关键断言（状态名/字段名/角色名/迁移路径/ErrorCode），对照 `*.orm.xml` / BizModel / `*Errors.java` / `*Constants.java` 核验是否漂移。**发现 ≥2 处漂移**则升级为 `needs revision`，并列出全部漂移点；1 处漂移记 Minor 但仍 passes；0 处漂移正常 passes。漂移模板："`<owner-doc>:<section>` 断言 X 与 `<file>:<line>` 不一致（owner 写 A，代码为 B）"。
 
 **强制验证范围检查（历史教训：声明"full-green"时实际只跑了局部模块测试）：**
 - `mvn -pl <aggregator> -am`（如 `-pl app-erp-all -am`）因 `-am` 引入所有传递依赖，效果等价于 full reactor 编译/测试，**可以**作为完成依据。这不是 `-pl` 的问题。

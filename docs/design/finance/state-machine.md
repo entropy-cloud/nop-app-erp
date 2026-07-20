@@ -245,3 +245,21 @@
 - 期间结账的前置校验（无未过账单据）是否落实。
 - 反结账权限是否严格（管理员 + 审批）。
 - 两类状态机的耦合约束（期间 vs 凭证）是否一致。
+
+## 已知限制：浏览器层 xwf 审批路径
+
+> M-2（plan `2026-07-20-2200-1`）补充；权威裁决见 plan `2026-07-09-2330-1`。
+
+财务域的 **ErpFinPayment**（付款单）与 **ErpFinReceipt**（收款单）的 `useWorkflow="true"` xwf 审批轴在浏览器层 E2E 不可达：
+
+- 根因：nop-wf `WorkflowEngineImpl.newSteps` 在浏览器层 `submitForApproval` 时 fallback `sysUser(0)` 作 step owner，但 `NopAuthUser.userId` 因 `tagSet="seq"` 覆盖显式 "0" 为 UUID，致 `allowCallByUser:1053` 拒绝。
+- **替代路径**：Payment / Receipt 的 DIRECT 三轴审批（`approveStatus` DIRECT，`docs/plans/2026-07-05-0540-3` 范式）不依赖 xwf，浏览器层 E2E 可达且全绿。
+- **影响范围**：本状态机文档涉及的 `POSTED` 状态由 DIRECT 三轴审批驱动可达；多级审批链的业务场景仅在浏览器层外（后端单测）覆盖。
+- **解除条件**：见 `docs/design/roles-and-permissions.md §浏览器层审批路径已知限制`。
+
+Payment / Receipt 的 `approve_direct` 路径状态迁移：
+
+| 迁移 | 触发人/系统 | 前置条件 | 结果 |
+|------|-------------|----------|------|
+| SUBMITTED → APPROVED（DIRECT） | 财务员 | 已提交、`useWorkflow="true"` 实体的 DIRECT `approve_direct` action | `approveStatus=APPROVED`；触发后续过账与凭证写入 |
+| SUBMITTED → REJECTED（DIRECT） | 财务员 | 已提交、DIRECT `reject_direct` action | `approveStatus=REJECTED`；不触发过账 |

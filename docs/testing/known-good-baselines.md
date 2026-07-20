@@ -49,6 +49,34 @@ Update this file when:
 - a previously failing command becomes green and should be remembered
 - a team intentionally accepts a known failing command and records it as a known failure, not as a passed command
 
+## Known Failures (Accepted)
+
+| Date | Command | Symptom | Root Cause | Re-enable / Fix Condition | Tracking |
+| --- | --- | --- | --- | --- | --- |
+| 2026-07-20 | `mvn test -pl app-erp-all -Dtest=ErpAllWebPagesCollectTest` | PAGE_ERROR_COUNT 在同日 0↔203 跳变；非 view.xml 真实回归（`ClassCastException: ParseCancellationException cannot be cast to RecognitionException`） | zulu-26 JDK 下 ANTLR 4 runtime 与平台 parser 字节码不兼容，全局 page parser 故障 | 满足任一即可移除 `@Disabled`：(A) `pom.xml` 修复 antlr 版本兼容性（需 ask-first）；(B) `JAVA_HOME` 从 zulu-26 切换为 zulu-21/temurin-21；(C) nop-entropy 修复 ANTLR parser 在 JDK 26 下的兼容性 | `docs/bugs/2026-07-20-2200-page-error-count-instability.md`（H-2，plan `2026-07-20-2200-1`）；`ErpAllWebPagesCollectTest` 已加 `@Disabled` 注解 |
+
+## Active Bugs
+
+> Cross-reference with `docs/bugs/`. Status as of 2026-07-20.
+
+| Bug File | Severity | Status | Brief |
+| --- | --- | --- | --- |
+| `docs/bugs/2026-07-20-2200-page-error-count-instability.md` | high | active | PAGE_ERROR_COUNT JDK 26 / ANTLR 兼容性致 0↔203 跳变；`ErpAllWebPagesCollectTest` 已 `@Disabled` |
+
+## Future Baselines (First-Run Records)
+
+| Date | Command | First-Run Result | Notes |
+| --- | --- | --- | --- |
+| 2026-07-20 | `bash docs/audits/nop-compliance-checker.sh` | 30s（优化后）；R1a/R1b/R1c/R4/R5/R7/R11 = 0；R1d=17 / R2a=25 / R2b=290 / R2c=985 / R2d=30 / R3=18 / R6=7 / R8=42 / R10=51 | M-1（plan `2026-07-20-2200-1`）首次实际运行合规检查器。脚本经 `-prune` 优化（性能 81s→30s，避免 descend ~850 个 target/_gen/node_modules 目录）。当前命中数为基线快照；后续命中数变化可作为反模式回归信号。R8（42 Processor 无 xbiz）由 M-5 落地解释（多数为合法 Processor 模式，无 xbiz 桥接是设计选择）；R2b/R2c 由 H-5 审计报告（`docs/analysis/2026-07-20-2200-h5-daofor-classification-audit.md`）分类为合法（同域子实体访问 + Dispatcher/Processor/Listener 跨域构造凭证的标准位置）；R1d=17 含 10 处代码调用 + 7 处 Javadoc 注释引用（M-6 在 md AcctSchema + crm 3 BizModel 文件新增 4 处注释，注释引用 `dao().findAllByQuery` 字面量被 grep 匹配，属预期）；R3/R6/R10 已由 L-7 / 平台标准 / 文档化 REQUIRES_NEW 解释 |
+
+## Known E2E / Functional Gaps
+
+> 跨域 E2E 测试或浏览器层覆盖的已知缺口。Status as of 2026-07-20。
+
+| Gap | Severity | Status | Tracking |
+| --- | --- | --- | --- |
+| 资产报废（ErpAstDisposal）浏览器层 E2E 缺口 | low | known gap | L-8（plan `2026-07-20-2200-1`）记录。资产处置 DIRECT 三轴审批浏览器层 E2E 未覆盖；后端单测覆盖 SCRAP/SOLD 路径。同时受 xwf 浏览器层限制（见 `docs/design/roles-and-permissions.md §浏览器层审批路径已知限制`）——Disposal 的 DIRECT 路径浏览器层可达但未补 E2E spec。Follow-up：补 `tests/e2e/business-actions/ast-disposal.action.spec.ts` 覆盖 SCRAP+SOLD 两路径 + 资产清理凭证断言 |
+
 ## Rule
 
 Do not mark a command as passed unless it actually ran in the current repository state.

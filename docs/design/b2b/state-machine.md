@@ -20,23 +20,31 @@
 ### 2. 迁移完整性
 
 ```
-                         ┌──────────────────────────────────────────┐
-                         │                                          │
-                         ▼                                          │
+                          ┌──────────────────────────────────────────┐
+                          │                                          │
+                          ▼                                          │
 TO_SEND ──(发送成功)──→ SENT ──(对方确认)──→ ACKNOWLEDGED(终态)
   │                      │
   │                      ├──(取消请求)──→ TO_CANCEL ──(确认取消)──→ CANCELLED(终态)
   │                      │
-  │                      └──(取消确认收到)──→ CANCELLED(终态)
+  │                      ├──(对方拒绝/超时未确认)──→ ERROR ──(重试)──→ SENT
+  │                      │                                  │
+  │                      └──(取消确认收到)──→ CANCELLED(终态) │
+  │                                                         └──(放弃)──→ CANCELLED(终态)
   │
   └──(发送失败)──→ ERROR ──(重试)──→ TO_SEND
-                       │
-                       └──(放弃)──→ CANCELLED(终态)
+                        │
+                        └──(放弃)──→ CANCELLED(终态)
 
 RECEIVED ──(解析处理)──→ ARCHIVED(终态)
     │
     └──(解析失败)──→ ERROR ──(重试)──→ RECEIVED
 ```
+
+> L-8（plan 2026-07-20-2200-1）补：早期版本图中 SENT 只有 ACKNOWLEDGED/TO_CANCEL/CANCELLED 出边，
+> 但 §6 角色权限表已列 `SENT→ERROR`，§4 异常路径也已隐含（"Trading Partner 返回错误响应→state=ERROR"）。
+> 此处图与表对齐：补充 `SENT ──(对方拒绝/超时未确认)──→ ERROR` 出边及其重试/放弃路径。
+> **触发条件**：对方拒绝（NACK）或超时未收到 ACK（`erp-b2b.ack-timeout-seconds` 默认 24h）。
 
 ### 3. 终态与恢复
 
@@ -51,7 +59,8 @@ RECEIVED ──(解析处理)──→ ARCHIVED(终态)
 
 | 异常场景 | 处理 |
 |----------|------|
-| EDI 发送超时 | 设 state=ERROR，blocking_level=WARN，记录错误信息 |
+| EDI 发送超时（TO_SEND→ERROR） | 设 state=ERROR，blocking_level=WARN，记录错误信息 |
+| **对方拒绝 NACK 或超时未确认（SENT→ERROR，L-8 补）** | 设 state=ERROR，blocking_level=WARN；超时阈值由 `erp-b2b.ack-timeout-seconds` 控制（默认 24h）；自动重试最多 3 次（指数退避），耗尽后保留 ERROR 等待人工介入 |
 | Trading Partner 返回错误响应 | 设 state=ERROR，blocking_level=根据错误严重程度设 WARN/ERROR |
 | 同一业务单重复发送 | UNIQUE(formatId, relatedBillType, relatedBillCode) 防重复，返回已有记录 |
 | ASN 报文解析失败 | 设 state=ERROR，保留原始报文到 EdiLog |
@@ -72,6 +81,7 @@ RECEIVED ──(解析处理)──→ ARCHIVED(终态)
 |------|----------|
 | TO_SEND→SENT | 系统（EDI 发送器）/ 异步队列 |
 | SENT→ACKNOWLEDGED | 系统（收到对方确认） |
+| **SENT→ERROR（L-8 补）** | 系统（对方拒绝 NACK 或 ACK 超时 `erp-b2b.ack-timeout-seconds` 默认 24h 触发） |
 | SENT→TO_CANCEL | B2B 管理员（发起取消请求） |
 | TO_CANCEL→CANCELLED | 系统（收到取消确认） |
 | TO_SEND→ERROR / SENT→ERROR / RECEIVED→ERROR | 系统（发送/接收/解析异常） |

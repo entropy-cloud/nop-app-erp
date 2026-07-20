@@ -98,3 +98,100 @@
 | `../nop-entropy/docs-for-ai/03-runbooks/implement-complex-business-flow.md` | Processor vs task flow 判定的平台权威 |
 | `../nop-entropy/docs-for-ai/02-core-guides/domain-logic-and-ddd.md` | 何时拆 Processor / Step 的平台权威 |
 | `../nop-entropy/docs-for-ai/02-core-guides/service-layer.md` | `IServiceContext` 末参与命名规范的平台权威 |
+
+## Processor → xbiz 桥接：何时不需 xbiz（M-5，plan 2026-07-20-2200-1）
+
+> 本节回应 M-5 审计发现："42 个 Processor 无对应 `.xbiz.xml` 桥接文件，Delta 定制方缺 VFS 层切入点"。审计结论：**42 Processor 全部合法，不需要新增 xbiz 桥接**——xbiz 不是 Processor 的契约层。
+
+### 合规检查器 R8 误报根因
+
+`docs/audits/nop-compliance-checker.sh` 的 R8 规则查找 `<ProcessorBase>.xbiz.xml` 文件（如 `ErpPurOrder.xbiz.xml`），但 **xbiz 文件按实体命名而非 Processor**：
+
+- `ErpPurOrder.xbiz`（实体 xbiz） → 存在
+- `ErpPurOrderProcessor.xbiz.xml`（Processor xbiz） → 不存在（按设计）
+
+R8 把"实体 xbiz 存在"误判为"Processor 缺 xbiz"。**42 全部是误报**。
+
+### Nop 平台的 Processor 桥接规则（权威：`nop-backend-dev` skill §xbiz 的定位）
+
+| Processor 调用方式 | 是否需要 xbiz 桥接 | 模式 |
+|--------------------|-------------------|------|
+| BizModel `@Inject Processor` + `@BizMutation` 方法内调用 `processor.process()` | **不需要** | 41/42 Processor 走此模式（最常见，xbiz `<actions/>` 为空是正确状态） |
+| xbiz `<mutation><source>inject('FQCN').method()</source></mutation>` | **已存在 xbiz**（实体 xbiz 内的 source 脚本） | 1/42 Processor 走此模式（`ErpQaRecallProcessor`，经 `ErpQaRecall.xbiz` 的 source 脚本注入） |
+| 客户/行业 Delta 想覆盖 Processor 单步实现 | **不需要 xbiz** | 写派生 Processor + Delta beans.xml 同名 bean 覆盖（见本文"配置余地"节） |
+| 客户/行业 Delta 想用脚本完全替换 Processor 实现 | 需要 xbiz source | 在 Delta xbiz 中新增 `<mutation><source>...</source></mutation>` 覆盖 Java 默认 |
+
+### 42 Processor 实际接线统计（M-5 audit）
+
+- **41 个 Processor**：经 BizModel `@Inject` 注入，从 `@BizMutation` 方法内调用。Java 完整实现，xbiz `<actions/>` 为空（正确状态）。
+- **1 个 Processor**（`ErpQaRecallProcessor`）：经 `ErpQaRecall.xbiz` 的 `<source>` 脚本注入（`inject('app.erp.qa.service.processor.ErpQaRecallProcessor').submitForApproval(id, svcCtx)`）。xbiz 桥接**已存在**，只是 R8 因文件名匹配规则误判为缺失。
+- **0 个 Processor** 是真正的 orphan（无任何接线）。
+
+### 复现命令
+
+```bash
+python3 << 'PY'
+import os, re, glob
+REPO_ROOT = "/Users/abc/app/nop-app-erp"
+processors = [(f, os.path.basename(f).replace('.java',''))
+              for f in glob.glob(f"{REPO_ROOT}/module-*/erp-*-service/src/main/java/**/*Processor.java", recursive=True)
+              if '/target/' not in f and '/_gen/' not in f and '/test/' not in f]
+all_files = []
+for pat in ['module-*/erp-*-service/src/main/java/**/*.java',
+            'module-*/erp-*-service/src/main/resources/**/*.xbiz',
+            'module-*/erp-*-service/src/main/resources/**/app-service.beans.xml']:
+    all_files.extend([f for f in glob.glob(f"{REPO_ROOT}/{pat}", recursive=True) if '/target/' not in f])
+for f, cls in processors:
+    p = re.compile(rf'\b{cls}\b')
+    hits = {'java': 0, 'xbiz': 0, 'beans': 0}
+    for other in all_files:
+        if other == f: continue
+        try:
+            c = open(other).read()
+            if p.search(c):
+                if other.endswith('.java'): hits['java'] += 1
+                elif '.xbiz' in other: hits['xbiz'] += 1
+                elif 'beans.xml' in other: hits['beans'] += 1
+        except: pass
+    print(f"{cls}: java={hits['java']} xbiz={hits['xbiz']} beans={hits['beans']}")
+PY
+```
+
+### 后续行动（M-5）
+
+- **不需要新增任何 xbiz 桥接文件**
+- 修复合规检查器 R8 的命名匹配（查找 `<Entity>.xbiz` 而非 `<Processor>.xbiz.xml`）→ **列为 Follow-up**（不阻塞本计划，当前命中数已稳定为基线）
+- Delta 定制方覆盖 Processor 单步实现的标准入口已明确：派生 bean + beans.xml 同名覆盖（本文 §配置境地已说明）
+
+## 状态判断方法的复用约定（L-6，plan 2026-07-20-2200-1）
+
+> L-6 原审计假设：Processor 中存在重复的 `isAlreadyApproved`/`isAlreadyRejected` 方法，应上提到实体或工具类。
+>
+> **审计结果**：`protected boolean (isAlreadyApproved|isAlreadyRejected)` 模式在 production 代码中**实际不存在 0 处命中**（合规检查器 R11 报 0）。
+
+### 实际的等价重复（Decision + Follow-up）
+
+虽然方法名形式的重复不存在，但**等价的内联状态判断**有显著重复：
+
+- `Objects.equals(status, ErpXxxConstants.APPROVE_STATUS_APPROVED)` 在 22 个 Processor 中累计出现 132 次
+- `Objects.equals(status, ErpXxxConstants.APPROVE_STATUS_REJECTED)` 类似
+
+这是**形式不同但语义相同**的重复：每个 Processor 在自己的状态守卫方法中重复写 `Objects.equals(getApproveStatus(), CONSTANTS.APPROVED)`，没有抽到实体方法（如 `ErpPurOrder.isApproved()`）或共享工具（如 `ApproveStatusHelper.isApproved(entity)`）。
+
+### 为什么不立即改造（裁决）
+
+- **影响范围大**：22 Processor + 多个实体类 + 跨域常量；L-6 标记为低严重性，与改造风险不匹配
+- **改造路径未定型**：实体方法上提 vs 共享工具 vs 平台 `use-approval` 机制标准化，需要专门的 ADR
+- **当前代码无 bug**：内联判断虽冗余但正确，无运行时风险
+
+### Follow-up 触发条件（满足任一即创建专门计划）
+
+1. 新增审批流单据 ≥ 5 个（重复模式继续累积）
+2. 平台 nop-entropy 提供 `ApproveStatusHelper` 或等价标准机制
+3. 任何 Processor 因内联状态判断错误导致 bug（说明抽象缺失开始付出代价）
+
+### 推荐改造方向（仅作 successor 计划参考）
+
+- **优先方向 A**：实体方法上提（`ErpPurOrder.isApproved()` / `isRejected()` / `isSubmitted()`）——DDD 正统，调用点最自然
+- **方向 B**：共享工具类（`ApprovalStatusHelper.isApproved(ApprovableEntity)`）——跨实体通用但需引入新接口
+- **方向 C**：依赖平台 `use-approval` 机制标准化（`ApprovalSupportBizModel` 提供 helper）——平台对齐但需 nop-entropy 协调

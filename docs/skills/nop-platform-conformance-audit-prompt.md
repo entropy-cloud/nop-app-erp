@@ -101,6 +101,14 @@
     - 特例：如果只有 admin 可访问的配置页面，可以只注册在 admin TOPM 下；但如果有 user-facing 入口（如通知收件箱），必须在聚合器的 user TOPM 中注册。
     - 自动化检查：`grep 'x:extends' app.action-auth.xml` 列出所有已注册模块，检查是否有遗漏。`grep 'notify\|<new-module>' app.action-auth.xml` 确认新模块存在。
 
+15. **Owner-doc → 代码关键断言抽样核查（漂移检测，plan 2026-07-20-2200-1 M-3）**
+    - 各域 `state-machine.md` 的状态定义表/迁移表/角色权限节是设计真相，**`<domain>/model/*.orm.xml` 与 BizModel/Processor 是持久化真相**。漂移会让散文与代码不一致，长期累积会让 owner docs 失去参考价值。
+    - **审计时强制抽样**：从本审计范围内涉及的每个 owner doc（`docs/design/<domain>/state-machine.md`、`docs/design/roles-and-permissions.md`、`docs/design/<domain>/*.md` 等）中**随机选取 2 个关键断言**（状态名/字段名/角色名/迁移路径/ErrorCode 字符串之一），对照代码（`*.orm.xml` 字典值 / BizModel 常量 / `*Errors.java` / `*Constants.java`）核验是否一致。
+    - **不一致即报 Major**：例如 owner doc 写"COMPLETED 终态"但 orm.xml 字典值为"FINISHED"、owner doc 写角色"质量主管"但 BizModel 错误码参数为"qaManager"、owner doc 列出 `approveStatus` 三态但代码用四态。
+    - **范围**：每次审计至少抽样 2 个 owner doc × 2 个断言 = 4 个核查点；若发现 ≥2 处漂移，扩大抽样至全部 owner doc。
+    - **不要求工具化**：抽样核查是审计员的人工对抗性核查；方案 A（独立扫描脚本）成本高、误报风险大，列为 Follow-up（触发条件：owner docs 总量 > 50 或单次审计抽样发现 ≥2 处漂移）。
+    - 记录格式："`<owner-doc>:<section>` 断言 X 与 `<file>:<line>` 一致/不一致（说明）"。
+
 自动化核查建议：
 - grep 扫描源码：`extends RuntimeException`（应 NopException）、`@Inject private`（应非 private）、`@Transactional` 与 `@BizMutation` 共存（冗余）、`System.currentTimeMillis`（应 CoreMetrics）、`IDaoProvider` 直接注入（应 I*Biz）。
 - 扫描 `_gen/` 是否被手动修改（git diff 检测）。

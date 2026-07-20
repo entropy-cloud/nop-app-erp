@@ -137,6 +137,31 @@
 
 > **行业参照**：Axelor 等 ERP 的 portal/模块权限也是"权限定义随模块安装生效、默认非全开"（见 `docs/analysis/erp-survey/2026-06-30-0000-axelor-open-suite.md`），"已定义≠默认开启"是行业常态。
 
+### 浏览器层审批路径已知限制（xwf 4 实体）
+
+> 来源：plan `2026-07-09-2330-1` 权威裁决（NOT FEASIBLE）；M-2（plan `2026-07-20-2200-1`）落地补充。
+
+**4 个 `useWorkflow="true"` 实体的 xwf 审批轴（Payment / Receipt / Disposal / Salary）目前在浏览器层 E2E 不可达**——根因是 nop-wf 的 `WorkflowEngineImpl.newSteps` fallback 在浏览器层调用 `submitForApproval` 时为 submit step 委托 `sysUser(0)` 作 step owner，但 `NopAuthUser.userId` 因 `tagSet="seq"` 覆盖显式 "0" 为 UUID（实测 `3d0538b1...`），致 `allowCallByUser:1053` 拒绝 nop uuid。
+
+**影响范围（4 实体经 xwf 的 approve/submit 路径）：**
+
+| 域 | 实体 | xwf 文件 | 影响 |
+|----|------|---------|------|
+| finance | ErpFinPayment | `payment-approval/v1.xwf` | 浏览器层 `submitForApproval`→`approve` 链不可达；后端 BizModel `approve_direct` / DIRECT 三轴审批仍可用（不依赖 xwf） |
+| finance | ErpFinReceipt | `receipt-approval/v1.xwf` | 同上 |
+| assets | ErpAstDisposal | `disposal-approval/v1.xwf` | 同上；资产处置审批走 DIRECT 三轴 |
+| hr | ErpHrSalary | `salary-approval/v1.xwf`（三级链） | 同上；薪资审批走 DIRECT 三轴 |
+
+**替代路径**：4 实体的 DIRECT 三轴审批状态机（`approveStatus` DIRECT 路径，见 `docs/plans/2026-07-05-0540-3`）不依赖 xwf，浏览器层 E2E 可达且全绿。需要多级审批链的业务场景在浏览器层目前无法验证（仅后端单测覆盖）。
+
+**解除条件（满足任一即可）：**
+
+1. nop-wf 平台修复 `sysUser(0)` 在浏览器层的物化路径（nop uuid → 真实 userId=0）
+2. nop-wf 提供 API 允许浏览器层显式指定 step owner（破坏审批隔离的设计原则，**不推荐**）
+3. 4 实体改回 DIRECT 审批，移除 `useWorkflow="true"`（产品决策）
+
+**详细裁决与探针证据**：见 `docs/plans/2026-07-09-2330-1-use-workflow-browser-e2e-feasibility.md`（plan 内 §Closure Audit Evidence）。
+
 ## 实现机制（平台组件）
 
 - 角色与权限：nop-auth 的 RBAC 体系（用户→角色→资源）。

@@ -124,6 +124,47 @@
 
 如果任何一项失败，计划保持打开状态。
 
+## 计划生命周期管理（L-3，plan 2026-07-20-2200-1）
+
+`docs/plans/` 累积 274+ 文件（截至 2026-07-20），信号噪声比下降。本节规定何时归档已完成计划，保持 `docs/plans//` 仅含**活动计划 + 模板/索引文件**。
+
+### 保留规则
+
+**默认保留**：所有 `Plan Status: active` / `Plan Status: draft` 的计划必须保留在 `docs/plans/`。
+
+**默认归档**：满足以下**全部**条件的计划应归档到 `docs/archive/plans/<year>/`（保留原相对名）：
+
+1. `Plan Status: completed`
+2. Closure Gates 全部 `[x]`
+3. 距 `Last Reviewed` ≥ 90 天
+4. 不被任何 `Plan Status: active` / `draft` 计划的 `Source:` 或 `Related:` 字段引用
+5. 不被任何 owner doc（`docs/design/`、`docs/architecture/`、`docs/requirements/`）的"实现证据"或"权威裁决"段落引用
+
+**例外（即使满足归档条件也保留）**：
+
+- **裁决类计划**（如 `2026-07-09-2330-1-use-workflow-browser-e2e-feasibility.md`）：包含 NOT FEASIBLE / DECISION 等被其他活跃文档引用的权威裁决
+- **首例模式计划**：包含首次落地的平台模式（如 `2026-07-01-2030-1-posting-engine-voucher-facade-processor.md` 是 Facade+Processor 范式的首例）
+- **架构变更计划**：改变了 `docs/architecture/` 中记录的稳定架构决策
+
+### 归档流程
+
+1. 在 `docs/archive/plans/<year>/` 下创建对应子目录（若不存在）
+2. `git mv docs/plans/<file> docs/archive/plans/<year>/<file>`（保留原相对名，符合 AGENTS.md §14 归档规则）
+3. 检查 `docs/logs/` 与 `docs/audits/` 是否有链接需要更新（grep 引用）
+4. 在 `docs/archive/README.md` 增加一行说明归档原因与日期
+
+### 何时触发批量归档
+
+- 每季度末执行一次批量归档审查
+- 触发阈值：`docs/plans/` 文件数 > 300（当前 274，逼近阈值）
+- 批量归档由人工批准后执行（不自动化，避免误归档裁决类计划）
+
+### 与 AGENTS.md §14 的关系
+
+> AGENTS.md §14："当引用的文件未在预期路径找到时，在断定不存在之前检查 `docs/archive/`。归档文件在 `docs/archive/` 下保留其原始相对名称。未经人工批准，不要将文件移动到 `docs/archive/`。"
+
+本节的归档规则是 AGENTS.md §14 的执行细则，但**不替代人工批准要求**。批量归档必须经人工批准。
+
 ## 模板
 
 ```md

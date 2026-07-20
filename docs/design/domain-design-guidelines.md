@@ -553,16 +553,16 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
 | manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `NOT_STARTED` / `STOCK_PARTIAL` / `STOCK_RESERVED` / `IN_PROCESS` / `COMPLETED` / `STOPPED` / `CLOSED` / `CANCELLED` | 制造执行链（与 `manufacturing/state-machine.md` `erp-mfg/work-order-status` 10 态字典一致；质检门控经 config-gated 钩子，不加 INSPECTING 字典态，见 plan 2237-1） |
 | projects | 项目/任务 | `DRAFT` / `OPEN` / `ON_HOLD` / `COMPLETED` / `CANCELLED` | 项目生命周期。`ON_HOLD` 为项目独有暂停态（可恢复），见 `projects/state-machine.md` |
-| quality | 质检/NCR/CAPA | `DRAFT` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程 |
+| quality | 质检/NCR/CAPA | 质检单 `PENDING` / `ACCEPTED` / `CONDITIONAL` / `REJECTED`；NCR `OPEN` / `IN_REVIEW` / `RESOLVED` / `ESCALATED_TO_RECALL` / `CANCELLED`；CAPA `OPEN` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程（与 `quality/state-machine.md` 一致；3 类单据各有独立状态机，非单一 docStatus）。M-4（plan 2026-07-20-2200-1）修正：§16.2 早期版本误用 `DRAFT/IN_PROGRESS/COMPLETED/CANCELLED` 通配所有质量单据——实际质检单初始态是 `PENDING` 而非 `DRAFT`，且三类单据状态集不同 |
 | maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |
 | crm | 线索 | `NEW` / `QUALIFIED` / `CONVERTED` / `LOST` / `CANCELLED` | 线索生命周期（与 `crm/state-machine.md` `erp-crm/lead-status` 一致；不含工单状态轴） |
 | cs | 工单 | `NEW` / `ASSIGNED` / `IN_PROGRESS` / `RESOLVED` / `CLOSED` / `CANCELLED` | 客服工单流程（与 `customer-service/README.md` `erp-cs/ticket-status` 一致；SLA 从 NEW 计时到 RESOLVED） |
 | hr | 请假/工时单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `REJECTED` / `CANCELLED` | HR 审批类单据（与 `human-resource/README.md` 一致；招聘工单另用 `OPEN`/`SCREENING`/`INTERVIEW`/`OFFERED`/`HIRED`/`REJECTED`/`CLOSED`，员工在职状态 `employmentStatus` 用 `ACTIVE`/`PROBATION`/`RESIGNED`/`TERMINATED`/`RETIRED`，二者均非 docStatus） |
-| logistics | 发运单 | `DRAFT` / `CONFIRMED` / `IN_TRANSIT` / `DELIVERED` / `CANCELLED` | 物流发运流程（与 `logistics/state-machine.md` 一致） |
+| logistics | 发运单 | `DRAFT` / `ADVISED` / `DISPATCHED` / `IN_TRANSIT` / `DELIVERED` / `CANCELLED` | 物流发运流程（与 `logistics/state-machine.md` 一致）。M-4（plan 2026-07-20-2200-1）修正：§16.2 早期版本仅列 5 态漏 `ADVISED`（已预约）/`DISPATCHED`（已派发）——实际为 6 态 |
 | b2b | EDI 事务 | `TO_SEND` / `SENT` / `ACKNOWLEDGED` / `RECEIVED` / `ARCHIVED` / `TO_CANCEL` / `CANCELLED` | EDI 报文生命周期（与 `b2b/state-machine.md` 一致；出/入站共用 docStatus） |
 | contract | 合同 | `DRAFT` / `NEGOTIATION` / `ACTIVE` / `SUSPENDED` / `EXPIRED` / `TERMINATED` | 合同全生命周期（与 `contract/state-machine.md` 一致；版本状态 `isCurrent`/`FINALIZED`/`SIGNED` 单独管理） |
-| drp | DRP 计划 | `DRAFT` / `COMPUTED` / `APPROVED` | 分销需求计划（与 `drp/state-machine.md` 一致；明细行 `SUGGESTED`/`CONFIRMED` 是行级状态，非 docStatus） |
-| aps | 工序订单 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 排产执行（与 `aps/state-machine.md` `erp-aps/operation-order-status` 一致） |
+| drp | DRP 计划 | `DRAFT` / `COMPUTED` / `APPROVED` / `EXECUTED` | 分销需求计划（与 `drp/state-machine.md` 一致；明细行 `SUGGESTED`/`CONFIRMED` 是行级状态，非 docStatus）。M-4（plan 2026-07-20-2200-1）修正：§16.2 早期版本漏 `EXECUTED` 终态（补货单全部生成完毕）——实际为 4 态 |
+| aps | 工序订单 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `FINISHED` / `CANCELLED` | 排产执行（与 `aps/state-machine.md` `erp-aps/operation-order-status` 一致）。M-4（plan 2026-07-20-2200-1）修正：§16.2 早期版本误用 `COMPLETED`——实际工序订单完成态为 `FINISHED`，避免与 `work-order-status.COMPLETED` 工单完成态歧义 |
 
 ### 16.3 approveStatus 取值约定（仅带审批的单据）
 

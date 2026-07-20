@@ -156,3 +156,14 @@
 - 终态（报废/出售）是否真正无出边，处置错误的纠正路径是否清晰。
 - 折旧漏提补提路径是否覆盖（反结账 vs 当期补提）。
 - 资本化入账与库存出库的协作（库存转固场景）。
+
+## 已知限制：浏览器层 xwf 审批路径（ErpAstDisposal）
+
+> M-2（plan `2026-07-20-2200-1`）补充；权威裁决见 plan `2026-07-09-2330-1`。
+
+资产处置单 **ErpAstDisposal** 的 `useWorkflow="true"` xwf 审批轴在浏览器层 E2E 不可达：
+
+- 根因：nop-wf `WorkflowEngineImpl.newSteps` 在浏览器层 `submitForApproval` 时 fallback `sysUser(0)` 作 step owner，但 `NopAuthUser.userId` 因 `tagSet="seq"` 覆盖显式 "0" 为 UUID，致 `allowCallByUser:1053` 拒绝。
+- **替代路径**：处置单的 DIRECT 三轴审批（`approveStatus` DIRECT，`docs/plans/2026-07-05-0540-3` 范式）不依赖 xwf，浏览器层 E2E 可达。
+- **影响范围**：本状态机的 `IN_SERVICE → SCRAPPED` / `IN_SERVICE → SOLD` 迁移由 DIRECT 审批驱动的过账触发，浏览器层可达；多级审批链业务场景仅在浏览器层外覆盖。
+- **解除条件**：见 `docs/design/roles-and-permissions.md §浏览器层审批路径已知限制`。

@@ -357,6 +357,8 @@
 
 > 落地状态（2026-07-06）：本节多级审批链设计已由 `docs/plans/2026-07-06-0315-1-workflow-approval-xwf.md` 实现——`salary-approval/v1.xwf` 三级链 hr-review→finance-review→manager-approval 已落地，submit→三级 agree→approve 闭环 + disagree 驳回 + REJECTED 重提测试全绿（`TestErpHrSalaryWorkflowApproval`）。bootstrap actor 用 `actorType="all"`；§6.3 精确角色（HR 专员/财务主管/部门负责人）路由待角色基础设施落地（Deferred）。
 
+> **浏览器层已知限制**（M-2，plan `2026-07-20-2200-1`）：xwf 三级链目前**仅在单测可达**，浏览器层 E2E 不可达。权威裁决见 plan `2026-07-09-2330-1`：nop-wf `WorkflowEngineImpl.newSteps` 在浏览器层 `submitForApproval` 时 fallback `sysUser(0)` 作 step owner，但 `NopAuthUser.userId` 因 `tagSet="seq"` 覆盖显式 "0" 为 UUID，致 `allowCallByUser:1053` 拒绝。**替代路径**：ErpHrSalary 的 DIRECT 三轴审批（`approveStatus` DIRECT，`docs/plans/2026-07-05-0540-3` 范式）不依赖 xwf，浏览器层 E2E 可达。**解除条件**：见 `docs/design/roles-and-permissions.md §浏览器层审批路径已知限制`。
+
 薪酬审批采用与全 ERP 一致的**三轴状态分离**原则（`domain-design-guidelines.md §16`）：
 
 | 轴 | 字段 | 取值 | 管理方 |
