@@ -210,6 +210,49 @@
 
 详细配置模板与反模式自检见 `docs/design/tree-entity-patterns.md`。
 
+## 主数据专用交互模式（F7 §3）
+
+> 落地计划：`docs/plans/2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions.md`
+> 跨域范式参考：`docs/design/visible-on-patterns.md`
+
+主数据实体（物料/往来单位/科目）有 3 类区别于业务单据的专用交互模式。本节固化本域 3 高频实体（`ErpMdMaterial` / `ErpMdPartner` / `ErpMdSubject`）的统一实现约定。
+
+### 1. 编码唯一性前置校验（async validator on blur）
+
+| 实体 | 校验字段 | 后端 @BizQuery | excludeId 自身排除 |
+|------|---------|---------------|-------------------|
+| `ErpMdMaterial` | `code` | `isCodeUnique(String code, Long excludeId)` | edit 模式传 id |
+| `ErpMdPartner` | `code` | `isCodeUnique(String code, Long excludeId)` | edit 模式传 id |
+| `ErpMdSubject` | `code` | `isCodeUnique(String code, Long excludeId)` | edit 模式传 id |
+
+**触发时机**：`onEvent.blur`（用户离开输入框时异步校验，避免每键击一次请求）。
+**反馈方式**：AMIS toast（msg：「编码已存在」红色 / 通过无提示）。
+**前置范式**：见 `visible-on-patterns.md §5`。
+
+### 2. 删除引用预览（countReferences + dialog 阻断）
+
+| 实体 | 引用域覆盖 | 后端 @BizQuery |
+|------|-----------|---------------|
+| `ErpMdMaterial` | purchase（Order/Receive/Invoice Line）+ sales（Order/Delivery/Invoice Line）+ inventory（StockMove） 共 7 表 | `countReferences(Long id) → Map<String,Long>` |
+| `ErpMdPartner` | purchase（Order/Receive/Invoice 头 supplierId）+ sales（Order/Delivery/Invoice 头 customerId）+ inventory（StockMove）共 7 表 | `countReferences(Long id) → Map<String,Long>` |
+| `ErpMdSubject` | ❌ 不实现 | 会计语义上科目可停用不可删除，F1 已移除删除按钮，无消费者 |
+
+**跨域解耦**：master-data 不可反向依赖 purchase/sales/inventory（依赖环约束）。`countReferences` 经 SPI 端口（`IErpMdMaterialReferenceChecker` / `IErpMdPartnerReferenceChecker`，在 `erp-md-dao` 声明）+ `@Nullable @Inject` 在 BizModel 收集下游实现。默认无实现时返回空 Map（删除直接走原 __delete 路径）。
+
+**交互流程**：点击 `row-delete-button` → 调 countReferences → 引用 > 0 弹 dialog（列出 N 张单据 + 阻断） / 引用 = 0 走原 confirm + __delete 路径。
+**前置范式**：见 `visible-on-patterns.md §6`。
+
+### 3. 启用/停用 Switch 控件（替代 button-group-select）
+
+| 实体 | status 字段 | onEvent.change | 覆盖状态 |
+|------|-----------|---------------|---------|
+| `ErpMdMaterial` | ACTIVE/INACTIVE | 停用方向弹确认 dialog | ✅ F7 落地 |
+| `ErpMdPartner` | ACTIVE/INACTIVE | 停用方向弹确认 dialog | ✅ F7 落地 |
+| `ErpMdSubject` | ACTIVE/INACTIVE | ❌ 不在本计划范围 | 🟡 successor（按域推进主数据 Switch 控件全覆盖） |
+
+**控件配置**：`type: 'switch'` + `trueValue: 'ACTIVE'` + `falseValue: 'INACTIVE'`（保留 DB schema 兼容）。
+**前置范式**：见 `visible-on-patterns.md §7`。
+
 ## 调研参考
 
 | 设计点 | 参考来源 | 应用方式 |
@@ -219,3 +262,6 @@
 | 科目树形 + 段值编码 | 赤龙#MdFinanceSubject | 科目树自动拼接编码 |
 | 多单位换算 | 管伊佳#MaterialExtend.unit | SKU 行展开单位换算配置 |
 | 引用预览（停用前检查） | 通用范式 | 停用/删除前展示引用影响范围 |
+| 编码唯一性前置校验（async validator on blur） | 通用范式 | F7 §3 落地：3 高频主数据实体 `code` 字段 |
+| 删除引用预览（countReferences + dialog 阻断） | 通用范式 | F7 §3 落地：2 高频实体经 SPI 跨域聚合 |
+| 启用/停用 Switch 控件 | 通用范式 | F7 §3 落地：2 高频实体（替代 button-group-select） |

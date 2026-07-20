@@ -111,3 +111,20 @@
 | 折旧计划时间轴可视化 | Yu-FAMS#DepreciationSchedule | 水平时间轴展示折旧进度 |
 | 处置清理损益预览 | OFBiz#AssetDisposal | 处置前预览清理损益计算 |
 | 资产类别绑定科目映射 | OFBiz#AssetCategory | 资产类别配置中设置默认折旧科目 |
+
+
+## 非状态 visibleOn 模式（F7 §1）
+
+> 落地计划：`docs/plans/2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions.md`
+> 跨域范式参考：`docs/design/visible-on-patterns.md`
+
+assets 域含字段值驱动 visibleOn 的实体：
+
+| 实体 | 字段 | 表达式 | clearValueOnHidden | 业务语义 |
+|------|------|--------|-------------------|----------|
+| `ErpAstMaintenance` | `capitalizedAmount` | `${treatment == 'CAPITALIZE'}` | true | 费用化（EXPENSE）时无资本化金额 |
+
+`erp-ast/maintenance-treatment` 字典值：`CAPITALIZE`/`EXPENSE`（2 值）。
+`CAPITALIZE` 时 `capitalizedAmount` 显；`EXPENSE` 时隐藏并清空（防隐藏字段提交脏数据）。
+
+写法与反模式见 `visible-on-patterns.md §4`。

@@ -233,3 +233,21 @@
 ### query 表单基线（5+ 字段 + filterOp）
 
 所有 inventory Line 实体的 `<form id="query">` 至少含：`lineNo` + `materialId` + `warehouseId`（视实体）+ 父头 ID + `batchNo`（视实体）。LandedCostLine（无物料）沿用 `lineNo` + `costElement` + `landedCostId` + `apPartnerId` + `amount` 替代字段达到基线。
+
+
+## 非状态 visibleOn 模式（F7 §1）
+
+> 落地计划：`docs/plans/2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions.md`
+> 跨域范式参考：`docs/design/visible-on-patterns.md`
+
+inventory 域含字段值驱动 visibleOn 的实体：
+
+| 实体 | 字段 | 表达式 | clearValueOnHidden | 业务语义 |
+|------|------|--------|-------------------|----------|
+| `ErpInvStockMove` | `sourceLocationId` | `${moveType != 'INCOMING'}` | true | 入库（INCOMING）无内部来源库位 |
+| `ErpInvStockMove` | `destLocationId` | `${moveType != 'OUTGOING'}` | true | 出库（OUTGOING）无内部去向库位 |
+
+`erp-inv/operation-type` 字典值：`INCOMING`/`OUTGOING`/`INTERNAL`/`MANUFACTURE`（4 值，无 TRANSFER）。
+`INTERNAL`/`MANUFACTURE` 时两个字段均显；`INCOMING` 时 `sourceLocationId` 隐藏；`OUTGOING` 时 `destLocationId` 隐藏。
+
+写法与反模式见 `visible-on-patterns.md §4`。

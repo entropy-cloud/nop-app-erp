@@ -184,7 +184,7 @@ Status: `done`
 
 ### F7 — 非状态驱动的 visibleOn 条件（P1）
 
-Status: `todo`
+Status: `done`（plan `docs/plans/2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions.md`：(A) 字段值驱动 visibleOn 覆盖 ErpInvStockMove（moveType 切换 sourceLocationId/destLocationId）+ ErpAstMaintenance（treatment 切换 capitalizedAmount）；(B) 主数据专用交互 3 实体：ErpMdMaterial/ErpMdPartner/ErpMdSubject 各落地 isCodeUnique @BizQuery + 异步 blur 校验 + ErpMdMaterial/ErpMdPartner 各落地 countReferences @BizQuery + 删除引用预览 dialog + status Switch 控件 + 停用确认 dialog。ErpFinVoucher dcDirection visibleOn 表达式库预冻结于 `visible-on-patterns.md` 待 F4 finance voucher successor 引用。§2 配置门控剥离至独立 successor。）
 
 F1 验收标准已覆盖状态驱动（`docStatus`/`approveStatus`）的 `visibleOn`。本项覆盖其他场景：
 
@@ -529,7 +529,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F4 Phase2 P2/P3 + finance: ~39+ 剩余头行实体对的 child-table-editor 配置待启动（P1 inventory 3 对已落地；finance ErpFinVoucher + P2 3 对 + P3 ext 8 域 ~36 对待启动）
 - [x] F5: 主要业务实体（68 个核心+扩展域实体）状态列使用着色标签（plan 2026-07-19-1818-3-f5-status-tag-coloring）
 - [ ] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置）
-- [ ] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地
+- [x] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地 ✅ plan `2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions`
 - [x] F8: 8 核心列表页查询条件扩展到域专用多维筛选（plan `2026-07-20-0629-2`：query + asideFilter 双筛选面，inventory/finance/purchase/sales 4 域；扩展域 8 个独立 plan 待启动）
 - [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`
 - [x] F10: 4 树形实体（ErpMdMaterialCategory/ErpMdSubject/ErpHrDepartment/ErpCsServiceCatalogItem）使用 AMIS tree 组件页面（plan `2026-07-20-1020-1`；ErpMfgBom/ErpAstAssetCategory 经 ORM 核实剔除，归 F16/无 tree 语义）
