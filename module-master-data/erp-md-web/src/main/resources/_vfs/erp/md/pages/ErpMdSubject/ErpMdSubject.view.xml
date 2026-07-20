@@ -137,10 +137,7 @@
                                                         query: '${"query{ErpMdSubject__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
                                                     },
                                                     responseType: 'response',
-                                                    adapt: function(payload) {
-                                                        const ok = payload && payload.data && payload.data.ErpMdSubject__isCodeUnique === true;
-                                                        return { status: ok ? 0 : 500, msg: ok ? '' : '编码已存在' };
-                                                    }
+                                                    adapt: 'function(payload){ var ok = payload && payload.data && payload.data.ErpMdSubject__isCodeUnique === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
                                                 }
                                             }
                                         ]
@@ -183,10 +180,7 @@
                                                         query: '${"query{ErpMdSubject__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
                                                     },
                                                     responseType: 'response',
-                                                    adapt: function(payload) {
-                                                        const ok = payload && payload.data && payload.data.ErpMdSubject__isCodeUnique === true;
-                                                        return { status: ok ? 0 : 500, msg: ok ? '' : '编码已存在' };
-                                                    }
+                                                    adapt: 'function(payload){ var ok = payload && payload.data && payload.data.ErpMdSubject__isCodeUnique === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
                                                 }
                                             }
                                         ]
