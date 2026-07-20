@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
-      xmlns:xpl="xpl" ext:model="orm" ext:icon="sliders-horizontal" xmlns:c="c" xmlns:graphql="graphql"
-      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="资产价值调整" i18n-en:displayName="Asset Value Adjustment"
-      tagSet="gid,erp.assets,use-approval" xmlns:ui="ui" xmlns:orm="orm">
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="sliders-horizontal" ext:web-renderer="" xmlns:c="c"
+      xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="资产价值调整"
+      i18n-en:displayName="Asset Value Adjustment" tagSet="gid,erp.assets,use-approval" xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.ast.dao.entity.ErpAstValueAdjustment</entityName>
 

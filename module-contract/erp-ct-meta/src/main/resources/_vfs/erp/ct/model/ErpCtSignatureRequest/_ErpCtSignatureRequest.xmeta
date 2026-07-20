@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
-      xmlns:xpl="xpl" ext:model="orm" ext:icon="file-signature" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="file-signature" ext:web-renderer="" xmlns:c="c" xmlns:graphql="graphql"
       xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="签章请求" i18n-en:displayName="Signature Request"
       tagSet="gid,erp.contract" xmlns:ui="ui" xmlns:orm="orm">
 
