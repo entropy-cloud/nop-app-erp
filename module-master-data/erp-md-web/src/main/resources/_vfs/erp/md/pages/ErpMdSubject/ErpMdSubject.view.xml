@@ -117,6 +117,39 @@
                         </tree-select>
                     </gen-control>
                 </cell>
+                <cell id="code">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-text',
+                                name: 'code',
+                                required: true,
+                                onEvent: {
+                                    blur: {
+                                        actions: [
+                                            {
+                                                actionType: 'ajax',
+                                                api: {
+                                                    method: 'post',
+                                                    url: '/graphql',
+                                                    dataType: 'raw',
+                                                    data: {
+                                                        query: '${"query{ErpMdSubject__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
+                                                    },
+                                                    responseType: 'response',
+                                                    adapt: function(payload) {
+                                                        const ok = payload && payload.data && payload.data.ErpMdSubject__isCodeUnique === true;
+                                                        return { status: ok ? 0 : 500, msg: ok ? '' : '编码已存在' };
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
             </cells>
         </form>
         <form id="add">
@@ -128,6 +161,39 @@
                                 <url>@query:ErpMdSubject__findList/{@listSelection}?filter_parentId=__null&amp;filter_id__ne=$id</url>
                             </source>
                         </tree-select>
+                    </gen-control>
+                </cell>
+                <cell id="code">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-text',
+                                name: 'code',
+                                required: true,
+                                onEvent: {
+                                    blur: {
+                                        actions: [
+                                            {
+                                                actionType: 'ajax',
+                                                api: {
+                                                    method: 'post',
+                                                    url: '/graphql',
+                                                    dataType: 'raw',
+                                                    data: {
+                                                        query: '${"query{ErpMdSubject__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
+                                                    },
+                                                    responseType: 'response',
+                                                    adapt: function(payload) {
+                                                        const ok = payload && payload.data && payload.data.ErpMdSubject__isCodeUnique === true;
+                                                        return { status: ok ? 0 : 500, msg: ok ? '' : '编码已存在' };
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
                     </gen-control>
                 </cell>
             </cells>

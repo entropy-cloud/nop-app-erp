@@ -40,8 +40,20 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
+        <form id="view">
+            <cells>
+                <cell id="capitalizedAmount" clearValueOnHidden="true">
+                    <visibleOn>${treatment == 'CAPITALIZE'}</visibleOn>
+                </cell>
+            </cells>
+        </form>
+        <form id="edit">
+            <cells>
+                <cell id="capitalizedAmount" clearValueOnHidden="true">
+                    <visibleOn>${treatment == 'CAPITALIZE'}</visibleOn>
+                </cell>
+            </cells>
+        </form>
         <form id="add"/>
     </forms>
 

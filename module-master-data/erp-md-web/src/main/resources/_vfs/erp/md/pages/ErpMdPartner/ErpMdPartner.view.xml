@@ -32,11 +32,11 @@
     <forms>
         <form id="view">
             <layout x:override="replace">
-=========>baseInfo[基本信息]======
+========>baseInfo[基本信息]======
  code[编码] name[名称]
  partnerType[类型] status[状态]
  customerGroup[客户组]
-=========>contact[联系方式]======
+========>contact[联系方式]======
  contactPerson[联系人] phone[电话]
  email[邮箱] address[地址]
 ==========^credit[信用与余额]=========
@@ -48,14 +48,57 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="status">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'switch',
+                                name: 'status',
+                                trueValue: 'ACTIVE',
+                                falseValue: 'INACTIVE',
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'dialog',
+                                                condition: "${status == 'INACTIVE'}",
+                                                dialog: {
+                                                    title: '停用确认',
+                                                    body: '停用后该往来单位不可在新单据中选择，是否继续？',
+                                                    actions: [
+                                                        {
+                                                            type: 'button',
+                                                            actionType: 'ajax',
+                                                            label: '确认停用',
+                                                            api: '@mutation:ErpMdPartner__update/id?id=$id',
+                                                            data: { status: 'INACTIVE' },
+                                                            close: true
+                                                        },
+                                                        {
+                                                            type: 'button',
+                                                            actionType: 'close',
+                                                            label: '取消'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+            </cells>
         </form>
         <form id="edit">
             <layout x:override="replace">
-=========>baseInfo[基本信息]======
+========>baseInfo[基本信息]======
  code[编码] name[名称]
  partnerType[类型] status[状态]
  customerGroup[客户组]
-=========>contact[联系方式]======
+========>contact[联系方式]======
  contactPerson[联系人] phone[电话]
  email[邮箱] address[地址]
  taxNo[税号] creditLimit[信用额度]
@@ -63,8 +106,120 @@
  payableBalance[应付余额]
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="code">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-text',
+                                name: 'code',
+                                required: true,
+                                onEvent: {
+                                    blur: {
+                                        actions: [
+                                            {
+                                                actionType: 'ajax',
+                                                api: {
+                                                    method: 'post',
+                                                    url: '/graphql',
+                                                    dataType: 'raw',
+                                                    data: {
+                                                        query: '${"query{ErpMdPartner__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
+                                                    },
+                                                    responseType: 'response',
+                                                    adapt: function(payload) {
+                                                        const ok = payload && payload.data && payload.data.ErpMdPartner__isCodeUnique === true;
+                                                        return { status: ok ? 0 : 500, msg: ok ? '' : '编码已存在' };
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <cell id="status">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'switch',
+                                name: 'status',
+                                trueValue: 'ACTIVE',
+                                falseValue: 'INACTIVE',
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'dialog',
+                                                condition: "${status == 'INACTIVE'}",
+                                                dialog: {
+                                                    title: '停用确认',
+                                                    body: '停用后该往来单位不可在新单据中选择，是否继续？',
+                                                    actions: [
+                                                        {
+                                                            type: 'button',
+                                                            actionType: 'ajax',
+                                                            label: '确认停用',
+                                                            api: '@mutation:ErpMdPartner__update/id?id=$id',
+                                                            data: { status: 'INACTIVE' },
+                                                            close: true
+                                                        },
+                                                        {
+                                                            type: 'button',
+                                                            actionType: 'close',
+                                                            label: '取消'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+            </cells>
         </form>
-        <form id="add"/>
+        <form id="add">
+            <cells>
+                <cell id="code">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-text',
+                                name: 'code',
+                                required: true,
+                                onEvent: {
+                                    blur: {
+                                        actions: [
+                                            {
+                                                actionType: 'ajax',
+                                                api: {
+                                                    method: 'post',
+                                                    url: '/graphql',
+                                                    dataType: 'raw',
+                                                    data: {
+                                                        query: '${"query{ErpMdPartner__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
+                                                    },
+                                                    responseType: 'response',
+                                                    adapt: function(payload) {
+                                                        const ok = payload && payload.data && payload.data.ErpMdPartner__isCodeUnique === true;
+                                                        return { status: ok ? 0 : 500, msg: ok ? '' : '编码已存在' };
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[编码] name[名称]
@@ -92,7 +247,49 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-delete-button" level="danger" label="删除">
+                    <api url="@mutation:ErpMdPartner__delete?id=$id"/>
+                    <confirmText>确认删除此往来单位？</confirmText>
+                    <onEvent>
+                        <click>
+                            <actions>
+                                <action>
+                                    <actionType>ajax</actionType>
+                                    <api>
+                                        <method>post</method>
+                                        <url>/graphql</url>
+                                        <data>
+                                            <query>${"query{ErpMdPartner__countReferences(id:" + id + "){k v}}"}</query>
+                                        </data>
+                                        <responseType>response</responseType>
+                                    </api>
+                                    <outputVar>refCount</outputVar>
+                                </action>
+                                <action>
+                                    <actionType>dialog</actionType>
+                                    <condition>${refCount &amp;&amp; refCount.data &amp;&amp; refCount.data.ErpMdPartner__countReferences &amp;&amp; refCount.data.ErpMdPartner__countReferences.length > 0}</condition>
+                                    <dialog>
+                                        <title>无法删除：存在引用</title>
+                                        <body>该往来单位被以下业务单据引用，删除将被阻断。请先解除引用关系。</body>
+                                        <actions>
+                                            <action>
+                                                <type>button</type>
+                                                <actionType>close</actionType>
+                                                <label>知道了</label>
+                                            </action>
+                                        </actions>
+                                    </dialog>
+                                </action>
+                            </actions>
+                        </click>
+                    </onEvent>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

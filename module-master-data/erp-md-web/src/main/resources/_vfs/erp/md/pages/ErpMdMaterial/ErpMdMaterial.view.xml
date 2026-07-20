@@ -84,16 +84,16 @@
     <forms>
         <form id="view" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[物料编码] name[物料名称]
  materialType[物料类型] categoryId[分类ID]
  uoMId[主计量单位] status[状态]
-==========>inventory[库存管理]======
+=========>inventory[库存管理]======
  isBatchManaged[是否批次管理] isSerialManaged[是否序列号管理]
  defaultWarehouseId[默认仓库] minStock[最低库存]
  maxStock[最高库存] safetyStock[安全库存]
  leadTimeDays[采购提前期(天)]
-==========>physical[物理属性]======
+=========>physical[物理属性]======
  weight[重量(kg)] volume[体积(m3)]
 ==========^finance[财务信息]=========
  costMethod[存货计价方法] defaultTaxRateId[默认税率]
@@ -102,25 +102,180 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="status">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'switch',
+                                name: 'status',
+                                trueValue: 'ACTIVE',
+                                falseValue: 'INACTIVE',
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'dialog',
+                                                condition: "${status == 'INACTIVE'}",
+                                                dialog: {
+                                                    title: '停用确认',
+                                                    body: '停用后该物料不可在新单据中选择，是否继续？',
+                                                    actions: [
+                                                        {
+                                                            type: 'button',
+                                                            actionType: 'ajax',
+                                                            label: '确认停用',
+                                                            api: '@mutation:ErpMdMaterial__update/id?id=$id',
+                                                            data: { status: 'INACTIVE' },
+                                                            close: true
+                                                        },
+                                                        {
+                                                            type: 'button',
+                                                            actionType: 'close',
+                                                            label: '取消'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[物料编码] name[物料名称]
  materialType[物料类型] categoryId[分类ID]
  uoMId[主计量单位] status[状态]
-==========>inventory[库存管理]======
+=========>inventory[库存管理]======
  isBatchManaged[是否批次管理] isSerialManaged[是否序列号管理]
  defaultWarehouseId[默认仓库] minStock[最低库存]
  maxStock[最高库存] safetyStock[安全库存]
  leadTimeDays[采购提前期(天)]
-==========>physical[物理属性]======
+=========>physical[物理属性]======
  weight[重量(kg)] volume[体积(m3)]
  costMethod[存货计价方法] defaultTaxRateId[默认税率]
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="code">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-text',
+                                name: 'code',
+                                required: true,
+                                onEvent: {
+                                    blur: {
+                                        actions: [
+                                            {
+                                                actionType: 'ajax',
+                                                api: {
+                                                    method: 'post',
+                                                    url: '/graphql',
+                                                    dataType: 'raw',
+                                                    data: {
+                                                        query: '${"query{ErpMdMaterial__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
+                                                    },
+                                                    responseType: 'response',
+                                                    adapt: function(payload) {
+                                                        const ok = payload && payload.data && payload.data.ErpMdMaterial__isCodeUnique === true;
+                                                        return { status: ok ? 0 : 500, msg: ok ? '' : '编码已存在' };
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <cell id="status">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'switch',
+                                name: 'status',
+                                trueValue: 'ACTIVE',
+                                falseValue: 'INACTIVE',
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'dialog',
+                                                condition: "${status == 'INACTIVE'}",
+                                                dialog: {
+                                                    title: '停用确认',
+                                                    body: '停用后该物料不可在新单据中选择，是否继续？',
+                                                    actions: [
+                                                        {
+                                                            type: 'button',
+                                                            actionType: 'ajax',
+                                                            label: '确认停用',
+                                                            api: '@mutation:ErpMdMaterial__update/id?id=$id',
+                                                            data: { status: 'INACTIVE' },
+                                                            close: true
+                                                        },
+                                                        {
+                                                            type: 'button',
+                                                            actionType: 'close',
+                                                            label: '取消'
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+            </cells>
         </form>
-        <form id="add"/>
+        <form id="add">
+            <cells>
+                <cell id="code">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-text',
+                                name: 'code',
+                                required: true,
+                                onEvent: {
+                                    blur: {
+                                        actions: [
+                                            {
+                                                actionType: 'ajax',
+                                                api: {
+                                                    method: 'post',
+                                                    url: '/graphql',
+                                                    dataType: 'raw',
+                                                    data: {
+                                                        query: '${"query{ErpMdMaterial__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
+                                                    },
+                                                    responseType: 'response',
+                                                    adapt: function(payload) {
+                                                        const ok = payload && payload.data && payload.data.ErpMdMaterial__isCodeUnique === true;
+                                                        return { status: ok ? 0 : 500, msg: ok ? '' : '编码已存在' };
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[物料编码] name[物料名称]
@@ -148,7 +303,49 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-delete-button" level="danger" label="删除">
+                    <api url="@mutation:ErpMdMaterial__delete?id=$id"/>
+                    <confirmText>确认删除此物料？</confirmText>
+                    <onEvent>
+                        <click>
+                            <actions>
+                                <action>
+                                    <actionType>ajax</actionType>
+                                    <api>
+                                        <method>post</method>
+                                        <url>/graphql</url>
+                                        <data>
+                                            <query>${"query{ErpMdMaterial__countReferences(id:" + id + "){k v}}"}</query>
+                                        </data>
+                                        <responseType>response</responseType>
+                                    </api>
+                                    <outputVar>refCount</outputVar>
+                                </action>
+                                <action>
+                                    <actionType>dialog</actionType>
+                                    <condition>${refCount &amp;&amp; refCount.data &amp;&amp; refCount.data.ErpMdMaterial__countReferences &amp;&amp; refCount.data.ErpMdMaterial__countReferences.length > 0}</condition>
+                                    <dialog>
+                                        <title>无法删除：存在引用</title>
+                                        <body>该物料被以下业务单据引用，删除将被阻断。请先解除引用关系。</body>
+                                        <actions>
+                                            <action>
+                                                <type>button</type>
+                                                <actionType>close</actionType>
+                                                <label>知道了</label>
+                                            </action>
+                                        </actions>
+                                    </dialog>
+                                </action>
+                            </actions>
+                        </click>
+                    </onEvent>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

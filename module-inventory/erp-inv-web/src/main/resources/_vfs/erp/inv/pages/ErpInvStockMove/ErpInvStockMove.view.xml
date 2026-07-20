@@ -78,6 +78,12 @@
                 <cell id="lines">
                     <view path="/erp/inv/pages/ErpInvStockMoveLine/ErpInvStockMoveLine.view.xml" grid="sub-grid-view"/>
                 </cell>
+                <cell id="sourceLocationId" clearValueOnHidden="true">
+                    <visibleOn>${moveType != 'INCOMING'}</visibleOn>
+                </cell>
+                <cell id="destLocationId" clearValueOnHidden="true">
+                    <visibleOn>${moveType != 'OUTGOING'}</visibleOn>
+                </cell>
             </cells>
         </form>
         <form id="edit" size="lg">
@@ -99,6 +105,12 @@
             <cells>
                 <cell id="lines">
                     <view path="/erp/inv/pages/ErpInvStockMoveLine/ErpInvStockMoveLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+                <cell id="sourceLocationId" clearValueOnHidden="true">
+                    <visibleOn>${moveType != 'INCOMING'}</visibleOn>
+                </cell>
+                <cell id="destLocationId" clearValueOnHidden="true">
+                    <visibleOn>${moveType != 'OUTGOING'}</visibleOn>
                 </cell>
             </cells>
         </form>
