@@ -131,7 +131,7 @@ Phase 2 — 子表行内编辑：
 |--------|----|---------|------|
 | P0 | purchase/sales | 8 对 | ✅ completed（2026-07-20，plan `2026-07-19-2200-1-f4p2-child-table-editor-p0`） |
 | P1 | inventory | 3 对（StockMove/LandedCost/TransferOrder） | ✅ completed（2026-07-20，plan `2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory`） |
-| P1 | finance | ErpFinVoucher（独立 successor，依赖 F7/F9/F10 落地后启动） | ⏳ 待启动 |
+| P1 | finance | ErpFinVoucher（独立 successor，依赖 F7/F9/F10 落地后启动） | ✅ completed（2026-07-21，plan `2026-07-20-2059-3-f4p2-finance-voucher-child-table-editor`） |
 | P2 | mfg/assets/prj | 3 对 | ✅ completed（2026-07-20，plan `2026-07-20-1020-3-f4p2-child-table-editor-p2-mfg-assets-projects`） |
 | P3 | ext 8 域 | 对应头行实体 | ⏳ 待启动 |
 
@@ -140,6 +140,8 @@ Phase 2 — 子表行内编辑：
 > P1 inventory 3 对（ErpInvStockMove/LandedCost/TransferOrder）已落地同范式 + 退化变体规则（无可乘字段实体不引入 onEvent）+ ErpMdWarehouse/ErpMdLocation picker pick-list 补齐 + StockMove 自动推算 totalCost = qty × unitCost。范式扩展见 `docs/design/child-table-editor-patterns.md §12`。
 
 > P2 mfg/assets/projects 3 对（ErpMfgWorkOrder/Line + ErpAstInventory/Line + ErpPrjCostCollection/Line）已落地同范式 + 减法变体规则（ErpAstInventoryLine `varianceQuantity = actual - book`、`varianceAmount = assessed - book`）+ ErpPrjProject picker pick-list 补齐 + ErpAstInventory site map 注册。范式扩展见 `docs/design/child-table-editor-patterns.md §13-§15`。
+
+> P1 finance ErpFinVoucher 已落地（plan `2026-07-20-2059-3`）：17 列 sub-grid-edit/sub-grid-view（突破 P0 8-12 列基线）+ 科目树 picker onEvent.setValue 8 字段快照（subjectCode/name + 6 isAuxiliary* flag）+ subject 驱动 6 辅助维度 visibleOn（宽松表达式 graceful degradation）+ dcDirection 行内切换 debitAmount/creditAmount visibleOn（F7 §8 预冻结表达式落地，clearValueOnHidden 经 gen-control AMIS column 注入）+ 多币种自动推算（amountFunctional = ROUND(amountSource × exchangeRate, 4)）+ autoBalance 按钮 custom script 触发头合计刷新（xview schema 限制 + P0/P1 既有行为对齐）+ 过账按钮 disabledOn 守卫 + list 平衡状态 virtual col。范式扩展见 `docs/design/child-table-editor-patterns.md §16` + `docs/design/visible-on-patterns.md §8.4`。
 
 > 注：P0 8 对 + P1 inventory 3 对 + P2 3 对 ≈ 14 对已分配，剩余 ~36+ 对（P3 ext 8 域）+ finance ErpFinVoucher 待具体确认。
 

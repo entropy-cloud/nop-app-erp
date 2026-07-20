@@ -48,8 +48,8 @@ view.xml `<form>` 段的 `<cell>` 元素支持两个核心属性（见 `nop/sche
 | `ErpInvStockMove` | `sourceLocationId` | `${moveType != 'INCOMING'}` | true | 入库（INCOMING）无内部来源库位（来源由外部供应商/生产单确定） | ✅ F7 |
 | `ErpInvStockMove` | `destLocationId` | `${moveType != 'OUTGOING'}` | true | 出库（OUTGOING）无内部去向库位（去向由外部客户/领用确定） | ✅ F7 |
 | `ErpAstMaintenance` | `capitalizedAmount` | `${treatment == 'CAPITALIZE'}` | true | 费用化（EXPENSE）时无资本化金额（直接计入当期费用） | ✅ F7 |
-| `ErpFinVoucherLine` | `debitAmount` | `${dcDirection == 'DEBIT'}` | true | 贷方分录无借方金额 | 🟡 F4 successor（表达式库预冻结，本计划仅记录） |
-| `ErpFinVoucherLine` | `creditAmount` | `${dcDirection == 'CREDIT'}` | true | 借方分录无贷方金额 | 🟡 F4 successor |
+| `ErpFinVoucherLine` | `debitAmount` | `${dcDirection == 'DEBIT'}` | true | 贷方分录无借方金额 | ✅ F4 finance successor 落地（plan `2026-07-20-2059-3`） |
+| `ErpFinVoucherLine` | `creditAmount` | `${dcDirection == 'CREDIT'}` | true | 借方分录无贷方金额 | ✅ F4 finance successor 落地（plan `2026-07-20-2059-3`） |
 
 **dict 值核实**（实时仓库 ORM）：
 
@@ -407,6 +407,101 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
     </gen-control>
 </cell>
 ```
+
+### 8.4 ErpFinVoucherLine subject 驱动辅助维度 visibleOn（科目 picker 多字段快照）
+
+> **本节由 F4 finance voucher successor plan `2026-07-20-2059-3` 落地**——预冻结表达式库的「跨实体 subject 驱动维度显隐」扩展。
+
+#### 8.4.1 业务语义
+
+凭证分录行录入科目后，按所选科目的 `isAuxiliary*` flag（6 个：partner/department/project/warehouse/product/costCenter）动态显隐辅助维度 cell。每行独立维护各自的辅助维度显隐状态（A 行选「应收账款」无辅助 → A 行 dim cells 全隐；B 行选「应付账款」isAuxiliaryPartner=1 → B 行 partnerId cell 显）。
+
+#### 8.4.2 科目 picker onEvent.setValue 8 字段快照
+
+`subjectId` col gen-control 返回 AMIS picker，onEvent.change 经 setValue 将 8 字段（subjectCode + subjectName + 6 个 isAuxiliary* flag）批量写入 input-table row scope：
+
+```xml
+<col id="subjectId" mandatory="true">
+    <gen-control>
+        <c:script><![CDATA[
+            return {
+                type: 'picker',
+                name: 'subjectId',
+                source: '/erp/md/pages/ErpMdSubject/picker.page.yaml',
+                valueField: 'id',
+                labelField: 'name',
+                joinValues: false,
+                extractValue: true,
+                onEvent: {
+                    change: {
+                        actions: [{
+                            actionType: 'setValue',
+                            args: {
+                                value: {
+                                    subjectCode: '${event.data.selectedItem ? event.data.selectedItem.code : ""}',
+                                    subjectName: '${event.data.selectedItem ? event.data.selectedItem.name : ""}',
+                                    isAuxiliaryPartner: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryPartner || 0) : 0}',
+                                    isAuxiliaryDepartment: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryDepartment || 0) : 0}',
+                                    isAuxiliaryProject: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryProject || 0) : 0}',
+                                    isAuxiliaryWarehouse: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryWarehouse || 0) : 0}',
+                                    isAuxiliaryProduct: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryProduct || 0) : 0}',
+                                    isAuxiliaryCostCenter: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryCostCenter || 0) : 0}'
+                                }
+                            }
+                        }]
+                    }
+                }
+            };
+        ]]></c:script>
+    </gen-control>
+</col>
+```
+
+#### 8.4.3 维度 cell visibleOn 表达式（宽松兜底）
+
+```xml
+<col id="partnerId">
+    <visibleOn>${!subjectId || isAuxiliaryPartner == true}</visibleOn>
+</col>
+<col id="departmentId">
+    <visibleOn>${!subjectId || isAuxiliaryDepartment == true}</visibleOn>
+</col>
+<col id="projectId">
+    <visibleOn>${!subjectId || isAuxiliaryProject == true}</visibleOn>
+</col>
+<col id="warehouseId">
+    <visibleOn>${!subjectId || isAuxiliaryWarehouse == true}</visibleOn>
+</col>
+<col id="materialId">
+    <visibleOn>${!subjectId || isAuxiliaryProduct == true}</visibleOn>
+</col>
+<col id="costCenterId">
+    <visibleOn>${!subjectId || isAuxiliaryCostCenter == true}</visibleOn>
+</col>
+```
+
+**宽松表达式 `${!subjectId || isAuxiliaryXxx == true}` 语义**：
+- 无科目（`subjectId == null`）：全显（允许先选维度再补科目）
+- 有科目 + 快照成功：仅显该科目启用的维度
+- 有科目 + 快照失败（picker event.data.selectedItem 不可达）：全显（兜底防「全部隐藏」graceful degradation）
+
+#### 8.4.4 字段名映射陷阱
+
+| 行字段 | 对应 subject flag | 陷阱说明 |
+|--------|------------------|----------|
+| `materialId` | `isAuxiliaryProduct` | **非** `isAuxiliaryMaterial`——subject 字段名核实（`module-master-data/.../ErpMdSubject.orm.xml`） |
+
+#### 8.4.5 xview schema 适配裁决
+
+`<col>` 元素（grid 列）不允许 `clearValueOnHidden` 作为属性（仅 form `<cell>` 允许）；`<col>` 允许 `<visibleOn>` 作为子节点。本节列出的 6 维度 col 仅用 `<visibleOn>` 子节点，无 `clearValueOnHidden` 需求（维度字段非借贷金额，无脏数据风险）。
+
+#### 8.4.6 反模式
+
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| materialId col visibleOn 引用 `isAuxiliaryMaterial` | 引用 `isAuxiliaryProduct`（subject 字段名） |
+| 行 cell visibleOn 用严格 `${isAuxiliaryPartner == true}` | 宽松 `${!subjectId \|\| isAuxiliaryPartner == true}` 防快照失败时全隐 |
+| onEvent.change.setValue 清空对侧金额（违反 §8.3） | 仅依赖 `clearValueOnHidden`（金额 cell）+ visibleOn 隐藏（维度 cell，无 clearValueOnHidden 需求） |
 
 ## 9. 长尾域扩展参考
 
