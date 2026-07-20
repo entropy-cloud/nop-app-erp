@@ -218,6 +218,25 @@
                     </messages>
                     <visibleOn>${docStatus != 'CANCELLED' &amp;&amp; docStatus != 'CLOSED' &amp;&amp; docStatus != 'COMPLETED'}</visibleOn>
                 </action>
+                <action id="row-view-material-issue-button" label="查看领料单" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/mfg/pages/ErpMfgMaterialIssue/ref-work-order.page.yaml" size="xl">
+                        <data>
+                            <workOrderId>${id}</workOrderId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-job-card-button" label="查看报工单" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/mfg/pages/ErpMfgJobCard/ref-work-order.page.yaml" size="xl">
+                        <data>
+                            <workOrderId>${id}</workOrderId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-completion-move-button" label="查看完工入库" level="primary" icon="fa fa-arrow-right"
+                        tooltip="跳转到库存移动单列表（按来源单据号筛选；mfg→inv 跨域非 FK，按 sourceBillCode 字符串匹配降级为 URL 跳转）"
+                        link="/ErpInvStockMove-main"/>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

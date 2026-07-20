@@ -237,6 +237,19 @@
                     </messages>
                     <visibleOn>${docStatus != 'CANCELLED'}</visibleOn>
                 </action>
+                <action id="row-create-receive-button" label="创建入库单" level="primary" icon="fa fa-plus"
+                        tooltip="跳转到入库单列表（带订单上下文筛选），新建入库单时自动预填订单"
+                        link="/ErpPurReceive-main?filter_orderId=${id}">
+                    <visibleOn>${approveStatus == 'APPROVED' &amp;&amp; docStatus != 'CANCELLED'}</visibleOn>
+                </action>
+                <action id="row-view-receive-button" label="关联入库单" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/pur/pages/ErpPurReceive/ref-order.page.yaml" size="xl">
+                        <data>
+                            <orderId>${id}</orderId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

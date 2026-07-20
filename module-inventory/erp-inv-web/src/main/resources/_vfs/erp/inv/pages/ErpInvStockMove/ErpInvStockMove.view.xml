@@ -144,6 +144,17 @@
                     </messages>
                     <visibleOn>${docStatus == 'DRAFT' || docStatus == 'CONFIRMED'}</visibleOn>
                 </action>
+                <action id="row-view-ledger-button" label="关联流水" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/inv/pages/ErpInvStockLedger/ref-move.page.yaml" size="xl">
+                        <data>
+                            <moveId>${id}</moveId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-ledger-link-button" label="查看流水" level="primary" icon="fa fa-arrow-right"
+                        tooltip="跳转到库存流水列表（带移动单上下文筛选）"
+                        link="/ErpInvStockLedger-main?filter_moveId=${id}"/>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

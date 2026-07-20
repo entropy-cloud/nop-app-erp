@@ -93,21 +93,78 @@
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[单号] orgId[业务组织]
  orderId[销售订单] customerId[客户]
  warehouseId[出库仓库] businessDate[出库日期]
  currencyId[币种] exchangeRate[汇率]
  docStatus[单据状态] approveStatus[审核状态]
-==========>amount[金额信息]======
+=========>amount[金额信息]======
  @amountSource[合计金额(源币)] @amountFunctional[合计金额(本位币)]
  @totalAmount[合计金额(不含税)] @totalTaxAmount[合计税额]
  @totalAmountWithTax[合计金额(含税)]
-==========>lines[明细行]======
+=========>copyFromOrder[从订单导入]======
+ copyFromOrder[从订单导入](2)
+=========>lines[明细行]======
  lines[明细行](2)
  remark[备注](2)
             </layout>
             <cells>
+                <cell id="copyFromOrder" custom="true" notSubmit="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'button',
+                                label: '从订单导入行',
+                                level: 'primary',
+                                icon: 'fa fa-download',
+                                tooltip: '打开销售订单行选择器，挑选订单行后自动映射填入子表',
+                                actionType: 'dialog',
+                                dialog: {
+                                    title: '从销售订单导入行',
+                                    size: 'lg',
+                                    actions: [
+                                        {
+                                            type: 'button',
+                                            label: '确认导入到子表',
+                                            level: 'primary',
+                                            onEvent: {
+                                                click: {
+                                                    actions: [
+                                                        {
+                                                            actionType: 'setValue',
+                                                            componentName: 'form',
+                                                            args: {
+                                                                value: {
+                                                                    lines: '${selectedOrderLines | map: {lineNo: __index + 1, materialId: materialId, uoMId: uoMId, quantity: quantity, unitPrice: unitPrice, taxRate: taxRate | default:0, amount: amount | default:0, taxAmount: taxAmount | default:0, orderLineId: id}}'
+                                                                }
+                                                            }
+                                                        },
+                                                        { actionType: 'closeDialog' }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    body: [
+                                        {
+                                            type: 'picker',
+                                            name: 'selectedOrderLines',
+                                            label: '选择销售订单行',
+                                            source: '/erp/sal/pages/ErpSalOrderLine/picker.page.yaml',
+                                            multiple: true,
+                                            valueField: 'id',
+                                            labelField: 'lineNo',
+                                            joinValues: false,
+                                            extractValue: false,
+                                            required: true
+                                        }
+                                    ]
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
                 <cell id="lines">
                     <view path="/erp/sal/pages/ErpSalDeliveryLine/ErpSalDeliveryLine.view.xml" grid="sub-grid-edit"/>
                 </cell>

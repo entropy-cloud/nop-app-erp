@@ -169,11 +169,68 @@
  @amountSource[合计金额(源币)] @amountFunctional[合计金额(本位币)]
  @totalAmount[合计金额(不含税)] @totalTaxAmount[合计税额]
  @totalAmountWithTax[合计金额(含税)] paidAmount[已付金额]
+=========>copyFromReceive[从入库导入]======
+ copyFromReceive[从入库导入](2)
 =========>lines[明细行]======
  lines[明细行](2)
  remark[备注](2)
             </layout>
             <cells>
+                <cell id="copyFromReceive" custom="true" notSubmit="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'button',
+                                label: '从入库导入行',
+                                level: 'primary',
+                                icon: 'fa fa-download',
+                                tooltip: '打开入库行选择器，挑选入库行后自动映射填入子表',
+                                actionType: 'dialog',
+                                dialog: {
+                                    title: '从入库单导入行',
+                                    size: 'lg',
+                                    actions: [
+                                        {
+                                            type: 'button',
+                                            label: '确认导入到子表',
+                                            level: 'primary',
+                                            onEvent: {
+                                                click: {
+                                                    actions: [
+                                                        {
+                                                            actionType: 'setValue',
+                                                            componentName: 'form',
+                                                            args: {
+                                                                value: {
+                                                                    lines: '${selectedReceiveLines | map: {lineNo: __index + 1, materialId: materialId, uoMId: uoMId, quantity: quantity, unitPrice: unitPrice, taxRate: taxRate | default:0, amount: amount | default:0, taxAmount: taxAmount | default:0, receiveLineId: id}}'
+                                                                }
+                                                            }
+                                                        },
+                                                        { actionType: 'closeDialog' }
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    body: [
+                                        {
+                                            type: 'picker',
+                                            name: 'selectedReceiveLines',
+                                            label: '选择入库行',
+                                            source: '/erp/pur/pages/ErpPurReceiveLine/picker.page.yaml',
+                                            multiple: true,
+                                            valueField: 'id',
+                                            labelField: 'lineNo',
+                                            joinValues: false,
+                                            extractValue: false,
+                                            required: true
+                                        }
+                                    ]
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
                 <cell id="lines">
                     <view path="/erp/pur/pages/ErpPurInvoiceLine/ErpPurInvoiceLine.view.xml" grid="sub-grid-edit"/>
                 </cell>

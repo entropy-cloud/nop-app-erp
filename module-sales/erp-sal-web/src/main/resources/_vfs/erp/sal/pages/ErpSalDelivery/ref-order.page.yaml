@@ -1,0 +1,5 @@
+# fixedProps用于指定关联属性，表示这是一个关联子表的crud页面。在本页面中orderId字段的值固定为传入的值。
+# 父页面（ErpSalOrder 列表行）通过 row-action drawer 打开本页，data.orderId 注入到子表上下文。
+# 范式来源：nop-entropy/nop-job/.../NopJobTask/ref-fire.page.yaml
+x:gen-extends: |
+  <web:GenPage view="ErpSalDelivery.view.xml" page="main" fixedProps="orderId" xpl:lib="/nop/web/xlib/web.xlib" />
