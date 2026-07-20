@@ -133,7 +133,7 @@ Phase 2 — 子表行内编辑：
 | P1 | inventory | 3 对（StockMove/LandedCost/TransferOrder） | ✅ completed（2026-07-20，plan `2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory`） |
 | P1 | finance | ErpFinVoucher（独立 successor，依赖 F7/F9/F10 落地后启动） | ✅ completed（2026-07-21，plan `2026-07-20-2059-3-f4p2-finance-voucher-child-table-editor`） |
 | P2 | mfg/assets/prj | 3 对 | ✅ completed（2026-07-20，plan `2026-07-20-1020-3-f4p2-child-table-editor-p2-mfg-assets-projects`） |
-| P3 | ext 8 域 | 对应头行实体 | ⏳ 待启动 |
+| P3 | ext 8 域 | 对应头行实体 | ✅ completed（2026-07-21，plan `2026-07-21-0330-1-f4p2-child-table-editor-p3-ext-domains`） |
 
 > P0 8 对（ErpPurOrder/Receive/Invoice/Return + ErpSalOrder/Delivery/Invoice/Return）已落地 `<view path=... grid="sub-grid-edit"/>` 范式 + 行内 picker + onEvent.setValue 自动推算（amount/taxAmount/amountWithTax）+ 行级校验（minimum/minimum）。范式见 `docs/design/child-table-editor-patterns.md`。
 
@@ -143,7 +143,9 @@ Phase 2 — 子表行内编辑：
 
 > P1 finance ErpFinVoucher 已落地（plan `2026-07-20-2059-3`）：17 列 sub-grid-edit/sub-grid-view（突破 P0 8-12 列基线）+ 科目树 picker onEvent.setValue 8 字段快照（subjectCode/name + 6 isAuxiliary* flag）+ subject 驱动 6 辅助维度 visibleOn（宽松表达式 graceful degradation）+ dcDirection 行内切换 debitAmount/creditAmount visibleOn（F7 §8 预冻结表达式落地，clearValueOnHidden 经 gen-control AMIS column 注入）+ 多币种自动推算（amountFunctional = ROUND(amountSource × exchangeRate, 4)）+ autoBalance 按钮 custom script 触发头合计刷新（xview schema 限制 + P0/P1 既有行为对齐）+ 过账按钮 disabledOn 守卫 + list 平衡状态 virtual col。范式扩展见 `docs/design/child-table-editor-patterns.md §16` + `docs/design/visible-on-patterns.md §8.4`。
 
-> 注：P0 8 对 + P1 inventory 3 对 + P2 3 对 ≈ 14 对已分配，剩余 ~36+ 对（P3 ext 8 域）+ finance ErpFinVoucher 待具体确认。
+> P3 ext 8 域已落地（plan `2026-07-21-0330-1`）：Tier 1 18 对头行子表（logistics Shipment × 3 + Carrier configs + b2b Asn lines + cs Ticket actions + hr Timesheet/Survey×2/EmployeeAssessment/DevelopmentPlan/Competency/SurveyResponse.answers + contract Contract×2/ContractLine.invoicePlans+consumptionLines + drp Plan lines）+ Tier 2 9 对降级为后端 gap successor（ORM 缺 cascade-delete，successor 触发条件=ORM 修改批准）+ 6 个新变体范式（§17.1-§17.6：配置对无 cascade 退化 / 三级嵌套弹窗管理 fallback / EstRows≥100 性能策略 / 半只读 action log / 敏感字段脱敏 / hr 域完整 7 对清单）+ 2 picker 补齐（ErpLogCarrier + ErpHrCompetency pick-list+pick-query）。范式扩展见 `docs/design/child-table-editor-patterns.md §17`。
+
+> 注：P0 8 对 + P1 inventory 3 对 + P2 3 对 + finance ErpFinVoucher 1 对 + P3 ext 8 域 18 对 Tier 1 = 33 对 Tier 1 已落地；P3 ext 8 域 9 对 Tier 2 配置对降级为后端 gap successor（待 ORM 修改批准后启动 successor）。
 
 ---
 
@@ -530,7 +532,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F3: 18 域主实体 form layout 按 `ui-patterns.md` 分组（P0 核心 4 域 + P1 mfg 5 域 + P2 ext 8 域 + P3 master-data 全部完成；累计 47+68+86=201 实体）
 - [x] F4 Phase1: 高频 picker（物料/供应商/客户/员工/资产/币种/科目）定制完成
 - [x] F4 Phase2 P0: purchase/sales 8 头行对的 child-table-editor 配置完成（含 M2M picker、自动推算、行校验，plan `2026-07-19-2200-1-f4p2-child-table-editor-p0`）
-- [ ] F4 Phase2 P2/P3 + finance: ~39+ 剩余头行实体对的 child-table-editor 配置待启动（P1 inventory 3 对已落地；finance ErpFinVoucher + P2 3 对 + P3 ext 8 域 ~36 对待启动）
+- [x] F4 Phase2 P2/P3 + finance: ~39+ 剩余头行实体对的 child-table-editor 配置已全部落地（P1 inventory 3 对 + finance ErpFinVoucher 1 对 + P2 3 对 + P3 ext 8 域 18 对 Tier 1 = 25 对全完成；P3 ext 8 域 9 对 Tier 2 配置对降级为后端 gap successor 待 ORM 修改批准后启动 successor）
 - [x] F5: 主要业务实体（68 个核心+扩展域实体）状态列使用着色标签（plan 2026-07-19-1818-3-f5-status-tag-coloring）
 - [ ] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置）
 - [x] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地 ✅ plan `2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions`

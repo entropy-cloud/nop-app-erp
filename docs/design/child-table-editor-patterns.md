@@ -229,6 +229,7 @@ input-table 自身已含 `needConfirm=false`，每次行内编辑都触发 `chan
 | 2026-07-20 | P1 扩展（inventory 3 头行对列集表 + 退化变体 + add 表单嵌入决策 + warehouse/location picker 补齐） | `docs/plans/2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory.md` |
 | 2026-07-20 | P2 扩展（mfg/assets/projects 3 头行对列集表 + 减法变体 + ErpAstCip 不适用裁决 + ErpPrjProject picker 补齐） | `docs/plans/2026-07-20-1020-3-f4p2-child-table-editor-p2-mfg-assets-projects.md` |
 | 2026-07-21 | finance 凭证子表变体（ErpFinVoucher↔ErpFinVoucherLine + dcDirection 行内切换 visibleOn + 科目 picker 8 字段快照 + subject 驱动 6 维度 visibleOn + 多币种自动推算 + autoBalance 按钮触发头合计 + xview schema 适配裁决） | `docs/plans/2026-07-20-2059-3-f4p2-finance-voucher-child-table-editor.md` |
+| 2026-07-21 | P3 ext 8 域扩展（logistics/b2b/cs/hr/contract/drp 18 对 Tier 1 + Tier 2 9 对降级 + §17 6 子节：配置对无 cascade 退化 / 三级嵌套弹窗管理 fallback / EstRows≥100 性能策略 / 半只读 action log / 敏感字段脱敏 / hr 域完整 7 对清单） | `docs/plans/2026-07-21-0330-1-f4p2-child-table-editor-p3-ext-domains.md` |
 
 ## 12. P1 inventory 3 头行对列集表
 
@@ -563,3 +564,190 @@ xview.xdef schema 限制 `<cell><view>` 元素仅允许 `<data>` 子节点，**o
 - dcDirection 行内切换范式可推广至任何含「借贷/收付/进出」双向字段的行实体（如 ErpFinReconciliation 行核销方向、ErpFinBankStatement 行收入/支出方向）
 - 科目 picker 多字段快照 + subject 驱动维度 visibleOn 范式可推广至任何需要「主数据驱动行内字段动态显隐」的场景（如物料 picker 快照驱动批次/序列号 cell 显隐）
 - autoBalance 按钮 custom script 触发头合计刷新范式可推广至任何需要「按钮触发计算 + 多字段写回」的场景（避免 xview schema 限制 onEvent on `<view>`）
+
+## 17. ext 8 域子表变体（P3 扩展）
+
+ext 8 域（logistics/b2b/cs/hr/contract/drp/crm/aps）子表行内编辑收尾，引入 6 个新变体（嵌套子表降级 / 大数据量 / 半只读 action log / 配置型无 cascade 降级 / 敏感字段脱敏 / hr 多 cascade 子表）。落地计划：`docs/plans/2026-07-21-0330-1-f4p2-child-table-editor-p3-ext-domains.md`。
+
+### 17.1 ext 域配置对（无 ORM cascade）的 sub-grid-edit 退化模式
+
+**判定规则**：ext 域中存在「业务上头行结构但 ORM 模型未声明 `<to-many cascade-delete,insertable,updatable>`」的对（P3 经审计识别 9 对）。
+
+**机制裁决**：平台 `__save` mutation 经 codegen 将 `<to-many cascade-delete,insertable,updatable>` 展开为 InputBean 的 `_lines/_items` 字段。**ORM 缺失该关系 → xmeta 无 `lines/items` prop → InputBean 不生成嵌套字段 → `__save` 拒绝嵌套子表**。强行实施需修改 ORM（保护区域 Non-Goal）。
+
+**降级方案（已采纳）**：Tier 2 配置对**不在头表单嵌入 sub-grid-edit**；子表 CRUD 经现有 codegen 默认独立 CRUD 页面管理（每行实体均已有 `main.page.yaml` + list grid + view/edit/add form）。用户操作流程：头表单 CRUD → 单独打开子表 CRUD 页面 → 经 FK 字段（如 `configId`/`scoreId`/`bundleId`）筛选关联行。
+
+**P3 范围内降级的 9 对**：
+
+| 域 | 头实体 | 行实体 | 降级理由 |
+|----|--------|--------|---------|
+| crm | ErpCrmLeadScoreConfig | ErpCrmLeadScoreConfigLine | ORM 无 cascade + xmeta 无 `lines` prop |
+| crm | ErpCrmLeadScore | ErpCrmLeadScoreLine | 同上 |
+| crm | ErpCrmBundlePricing | ErpCrmBundlePricingLine | 同上 |
+| crm | ErpCrmSequence | ErpCrmSequenceStep | 同上 |
+| crm | ErpCrmForecast | ErpCrmForecastLine | 同上 + 业务裁决只读（来源汇总非手工录入） |
+| hr | ErpHrSalarySimulation | ErpHrSalarySimulationItemAdjustment | 同上 + 独立 mutation 写入（Explore (d)） |
+| b2b | ErpB2bPartnerProfile | ErpB2bPartnerCredential | 同上 + 敏感字段脱敏（网关写入为主） |
+| contract | ErpCtRebateAgreement | ErpCtRebateTier | 同上 |
+| aps | ErpApsSchedule | ErpApsOperationOrder | 同上 + 操作单为独立聚合根（Deferred） |
+
+**Successor 触发条件**：业务方明确要求头表单内联编辑 + ORM 修改批准后启动。届时按 P0/P1/P2 标准范式（sub-grid-edit + sub-grid-view）落地。
+
+### 17.2 AMIS input-table 二级嵌套可行性结论 + 弹窗管理 fallback
+
+**判定场景**：头 → 行 → 子行三级结构（P3 识别 2 处）：
+- `ErpCtContract` → `ErpCtContractLine` → `ErpCtInvoicePlan` + `ErpCtConsumptionLine`（合同 → 合同行 → 开票计划/消耗行）
+- `ErpHrSurvey` → `ErpHrSurveyResponse` → `ErpHrSurveyAnswer`（问卷 → 答卷 → 回答明细）
+
+**可行性裁决（基于 codegen 源码分析）**：AMIS input-table 理论上支持 `columns[].type="input-table"` 嵌套，但 Nop view.xml 经 `GenInputTable` codegen 展开嵌套层时依赖外层行 scope 提供外键（`contractLineId` / `responseId`），AMIS 行 scope 跨级传递未在前任一计划验证。三级嵌套额外风险：第二层行 scope 的 `id` 需暴露给第三层 source.data.filter，AMIS 行 scope 传递跨级未验证。
+
+**降级方案（已采纳）**：二级嵌套**不在头表单直接嵌 input-table**。改为「头表单 → 第一层 sub-grid-edit（标准范式）→ 第一层行级独立 CRUD 页面（嵌套第二层 sub-grid-edit）」。
+
+**ErpCtContractLine 的 invoicePlans/consumptionLines 落地**：
+- `ErpCtContract` 头表单 → `<cell id="lines">` sub-grid-edit（合同行可内联编辑）+ 二级嵌套经 ErpCtInvoicePlan/ErpCtConsumptionLine view.xml 单独定义 sub-grid-edit/sub-grid-view（本计划已落地）
+- 用户流程：合同表单 → 编辑合同行 → 进入 ErpCtInvoicePlan 独立 CRUD 页面（按 contractLineId 筛选）→ CRUD 开票计划
+- 替代方案：未来 F12 page 级 tabs 容器落地时，可在合同行 drawer 内挂 `[管理发票计划]` `[管理消耗]` 弹窗按钮
+
+**ErpHrSurveyResponse 的 answers 落地**：
+- `ErpHrSurvey` 头表单 → `<cell id="questions">` + `<cell id="responses">` sub-grid-edit（题目与答卷可内联编辑）
+- `ErpHrSurveyAnswer` 的 sub-grid-edit/sub-grid-view 在 ErpHrSurveyAnswer.view.xml 单独定义（本计划已落地），供 ErpHrSurveyResponse 独立 CRUD 页面消费
+- 用户流程：问卷表单 → 编辑答卷 → 进入 ErpHrSurveyAnswer 独立 CRUD 页面（按 responseId 筛选）→ CRUD 回答明细
+
+**Successor 触发条件**：F12 page 级 tabs/wizard 包装落地时，可补 `[管理子项]` 弹窗按钮（参考 P0 `ErpPurOrder` 的 `[关联入库单]` drawer 范式：`<action id="row-view-receive-button" actionType="drawer"><drawer page="...ref-order.page.yaml"/></action>`）。
+
+### 17.3 大数据量（EstRows ≥ 50）input-table 性能策略
+
+**判定场景**：单头挂多行（estRows ≥ 50）的子表渲染。
+
+**P3 经验样本**：`ErpDrpPlan ↔ ErpDrpLine`（estRows=100）。drp lines 为 DRP 计算结果（系统计算，用户仅可调整 `suggestedQty`），业务上为「read-mostly」。
+
+**机制裁决**：
+- **read-only / read-mostly 场景**：直接用 `sub-grid-view`。AMIS input-table view 模式渲染 100 行性能可接受（无内联控件渲染开销，列虚拟化由 AMIS 自动处理）
+- **fully-editable 场景 + estRows ≥ 100**：建议引入 AMIS `lazy` 加载（按需拉取行）或前端分页（参考 `<pagination trait="pagination"/>` + 服务端 `__findPage` offset/limit）
+- **read-mostly + 单字段可编辑**：采用 disabled-column 范式——sub-grid-view 整体只读，特定列（如 `suggestedQty`）用 `<gen-control>` 注入 `input-number` 允许编辑
+
+**disabled-column 范式示例**（ErpDrpLine sub-grid-view 内 `suggestedQty` 列）：
+
+```xml
+<grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+    <cols x:override="bounded-merge">
+        <col id="lineNo" mandatory="true" ui:number="true"/>
+        <col id="materialId"/>
+        <!-- 其他列默认 view 模式 -->
+        <col id="suggestedQty" ui:number="true">
+            <gen-control>
+                <c:script><![CDATA[
+                    return {
+                        type: 'input-number',
+                        name: 'suggestedQty',
+                        step: 1,
+                        validations: { minimum: 0 },
+                        validationErrors: { minimum: '建议补货量不能为负' },
+                        remark: '系统计算值，可手工覆盖调整'
+                    };
+                ]]></c:script>
+            </gen-control>
+        </col>
+        <!-- ... -->
+    </cols>
+</grid>
+```
+
+注意：read-only grid 内的单字段编辑需后端有对应的行级 mutation（如 `ErpDrpLine__approveLine`）或经头 `__save` 聚合根更新（drp 走 `approvePlan` 批量 mutation，单字段编辑仅 UX 反馈）。
+
+### 17.4 半只读 action log（cs TicketAction / logistics ShipmentLog）的 sub-grid-view 范式
+
+**判定场景**：ORM 标 `cascade-delete,insertable,updatable` 但业务上由系统/网关/工作流自动生成的子表（action log / webhook log / state transition log）。
+
+**P3 经验样本（2 处）**：
+- `logistics ErpLogShipmentLog`：由 `GatewayDispatcher.writeLog()` 在 `IErpLogCarrierGatewayClient` 网关回调时写入（advise/track/cancel/complete_delivery 等），100% 系统生成
+- `cs ErpCsTicketAction`：由 `ErpCsCannedResponseBizModel` + `ErpCsCatalogFulfillmentBizModel` + `ErpCsTicketBizModel` 状态迁移时经 `ticketActionBiz.newEntity()` 写入，100% 系统生成
+
+**机制裁决**：ORM 的 `cascade-delete,insertable,updatable` 是为支持头删除时级联清理日志（数据完整性约束），**并非允许前端直接 CRUD**。手工录入会破坏审计完整性（日志应由系统单向追加，不可手工修改/删除）。
+
+**降级方案（已采纳）**：action log 类实体**只落地 `sub-grid-view`**（无 sub-grid-edit）。头表单 `<cell id="actions/logs">` 引用 `sub-grid-view`，用户只能查看历史记录，不能新增/编辑/删除。
+
+**sub-grid-view 范式示例**（ErpCsTicketAction）：
+
+```xml
+<grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+    <cols x:override="bounded-merge">
+        <col id="actionType"/>
+        <col id="fromStatus"/>
+        <col id="toStatus"/>
+        <col id="operatorId"/>
+        <col id="content"/>
+        <col id="createTime" mandatory="true">
+            <gen-control>
+                <c:script><![CDATA[
+                    return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                ]]></c:script>
+            </gen-control>
+        </col>
+    </cols>
+</grid>
+```
+
+注意：不写 `<grid id="sub-grid-edit">`。头表单 view/edit 两模式均引用 `sub-grid-view`（无新增/删除按钮）。
+
+### 17.5 敏感字段（logistics CarrierConfig.apiKey/apiSecret / b2b PartnerCredential）脱敏规则
+
+**判定场景**：子表行含敏感字段（API 密钥/凭证/证书密码等），不应在 UI 明文显示。
+
+**P3 经验样本**：`ErpLogCarrierConfig` 的 `apiKey` / `apiSecret` / `credentials` 字段。后端 `__findPage` 已对敏感字段做服务端脱敏（见 `TestErpLogCarrierConfigCredentialMasking` 测试用例，返回值替换为 `****`）。
+
+**机制裁决**：sub-grid-edit 内的敏感字段用 `<gen-control>` 注入 AMIS `input-password` 控件（前端显示 `****`，用户输入新值时正常保存，后端 `__save` 接收明文覆盖）。**无需 onEvent 或额外的 mask 逻辑**——后端 `__findPage` 脱敏已保证列表/查看态不暴露明文。
+
+**sub-grid-edit 敏感字段范式示例**（ErpLogCarrierConfig.apiKey）：
+
+```xml
+<col id="apiKey">
+    <gen-control>
+        <c:script><![CDATA[
+            return {
+                type: 'input-password',
+                name: 'apiKey',
+                remark: '敏感字段，保存后由后端脱敏返回'
+            };
+        ]]></c:script>
+    </gen-control>
+</col>
+```
+
+**反模式（不要这样写）**：
+- ❌ 在 sub-grid-edit 显示明文（apiKey 用 `input-text`）→ 泄露风险
+- ❌ 在前端做 mask 逻辑（onEvent.setValue 替换为 `****`）→ 与后端脱敏重复且会破坏保存路径
+- ❌ 在 sub-grid-view 也用 `input-password`（查看态后端已脱敏返回 `****` 字符串，用普通 `text` 显示即可）
+
+### 17.6 hr 域完整清单（7 对子表）+ 嵌套范式
+
+**hr 域 Tier 1 共 7 对**（含原 P2 scope ErpHrTimesheet + ses_07ef7a0b1ffe 独立审计补充 6 对）：
+
+| 头实体 | 行实体 | to-many name | estRows | 变体类型 |
+|--------|--------|--------------|---------|---------|
+| `ErpHrTimesheet` | `ErpHrTimesheetLine` | `lines` | 20 | 退化变体（无可乘字段，仅 picker + 校验） |
+| `ErpHrSurvey` | `ErpHrSurveyQuestion` | `questions` | 20 | 退化变体（题目定义） |
+| `ErpHrSurvey` | `ErpHrSurveyResponse` | `responses` | 50 | 退化变体（答卷列表 + 三级嵌套 answers 降级 per §17.2） |
+| `ErpHrSurveyResponse` | `ErpHrSurveyAnswer` | `answers` | 20 | 退化变体（回答明细，经独立 CRUD 页面管理） |
+| `ErpHrEmployeeAssessment` | `ErpHrAssessmentDetail` | `details` | 30 | 退化变体（评估明细，含 competencyId picker） |
+| `ErpHrDevelopmentPlan` | `ErpHrDevelopmentPlanItem` | `items` | 10 | 退化变体（发展计划项，含 competencyId picker + 日期范围校验） |
+| `ErpHrCompetency` | `ErpHrCompetencyLevel` | `levels` | 5 | 退化变体（胜任力等级字典） |
+
+**关键裁决**：
+- 7 对**均无乘法字段**（无可推算 amount = qty × unitPrice），全部走 P1 §12.2 退化变体规则——不写 onEvent.setValue 自动推算
+- ErpHrSurveyResponse.answers 是 hr 域唯一三级嵌套结构，按 §17.2 降级为独立 CRUD 页面管理
+- ErpHrAssessmentDetail.competencyId + ErpHrDevelopmentPlanItem.competencyId 共用 `ErpHrCompetency` picker（本计划已补齐 pick-list 6 列 + pick-query 4 字段）
+
+**hr 域 picker 接线清单**：
+- `materialId` → ErpMdMaterial（F4 P1 已落地）
+- `employeeId` → ErpMdEmployee（F4 P1 已落地）
+- `projectId` → ErpPrjProject（F4 P2 已落地）
+- `taskId` → ErpPrjTask（codegen 默认 wrapper）
+- `competencyId` → ErpHrCompetency（本计划补齐 pick-list + pick-query）
+- `mentorId` → ErpMdEmployee（F4 P1 已落地，复用）
+
+**反模式自检（hr 域专用）**：
+- ❌ 对 ErpHrSurveyQuestion 强行写乘法 onEvent（无可乘字段）
+- ❌ 在 ErpHrSurvey 头表单直接嵌套 ErpHrSurveyAnswer 的 input-table（违反 §17.2 三级嵌套降级）
+- ❌ 漏写 ErpHrCompetency 的 pick-list（行级 competencyId picker 接线失败）
+- ✅ hr 域所有 picker 复用全局主数据 picker，无需新建独立 picker.page.yaml
