@@ -34,7 +34,7 @@
 - `docs/context/ai-autonomy-policy.md`
 - `docs/context/codebase-map.md`
 - `docs/context/source-of-truth-and-precedence.md`
-- `docs/skills/README.md`
+- `docs/skills/README.md`（特别是「技能组合使用方式」节，了解技能系统设计意图）
 - `docs/backlog/README.md`（如果存在）
 - `docs/plans/00-plan-authoring-and-execution-guide.md`（如果存在）
 - `docs/audits/00-audit-execution-guide.md`（如果存在）
@@ -42,11 +42,27 @@
 - `docs/analysis/README.md`
 - `docs/context/project-context.md` 引用的活动需求、owner doc 和活动计划（如果存在）
 
-还要检查足够的实时仓库结构，以验证记录的工作流是否实际被使用。
+还要检查足够的实时仓库结构，以验证记录的工作流是否实际被使用。注意文件位置约定：`missions/` 和 `tools/` 在项目根目录，AGE 文档制品（design/plans/audits/logs/context/analysis 等）在 `docs/` 下。
 
 ## 步骤 2 - 比较声称的流程 vs 实时证据
 
 检查这些领域中实际使用、部分使用或未使用的证据：
+
+### 核心机制层（AGE 的三大支柱必须先确认落实，否则所有下级纪律都是纸上谈兵）
+
+0. **吸引子机制落实（AGE Core）**
+   - **吸引子（Attractor）是否在真实驱动行为**：AI agent 在执行工作前是否实际读取了相关 attractor（AGENTS.md、设计文档、活动计划、相关技能）？日志中是否有"先读 attractor 再行动"的证据，还是仍存在直接跳代码的行为？
+   - **Plan Loop（计划闭环）**：是否存在 `计划审计 → 实施 → 关闭审计` 的完整闭环？计划是否真正被用作执行指南（实施按阶段执行、勾选检查项），还是写完后就被忽略？关闭审计是否真正捕获了实施缺口而非走过场？
+   - **Mission Loop（任务闭环）**：如果是超 AI 步工作（跨多个计划/阶段），是否有外层任务循环（MISSION_DRIVER 或等效机制）负责编排：`检查 → 审计划 → 执行计划 → 起草计划 → 深度审计`？日志中是否有同一个 mission 经历 execute → verify → closure-reexecute 的完整轨迹？
+
+   检查方法：
+   - 抽样 3-5 份近期计划，跟踪其生命周期：计划审计记录是否存在？实施是否按阶段勾选？关闭审计是否由独立子代理执行？审计发现的缺陷是否被修复验证？
+   - 检查日志中是否有同一工作跨多轮的轨迹（如 notify inbox 计划经历 3 轮 execute/verify/closure-reexecute）。
+   - 检查 AI agent 工作痕迹：最近 3-5 次修改之前，是否有读取 attractor 的证据（如 agent 输出中包含 "Read AGENTS.md 发现..." 或 "按 design doc 的约定..."）？
+
+   如果核心三支柱不完整，将此列为 blocker 级差异，在其他维度审计之前先报告。否则后续的"plan exists"检查没有意义。
+
+### 文档与流程层
 
 1. 上下文纪律
 - `project-context`、自主权策略和代码库映射是否填充了真实项目值还是仍然是占位符？
@@ -59,6 +75,17 @@
 3. 需求和设计流程
 - 工作是否在需要时通过 `input -> requirements -> design/architecture` 移动？
 - 团队是否直接从原始请求或原型跳转到实施？
+- **设计文档目录结构**：是否存在专门的 `docs/design/` 目录？结构是按域/模块组织还是单文件堆积？是否包含必要的索引文件（`README.md`）？
+- **设计文档完整性**：
+  - 项目涉及的核心域/功能是否都有对应的设计文档？（用 `docs/design/` 对照路线图或需求范围扫描，参考 `docs/skills/design-completeness-scan-prompt.md`）
+  - 每份设计文档是否包含：业务语义描述、状态/流程定义、关键设计决策（含备选方案和否决理由）？
+  - 设计文档是否引用而非重复 ORM 模型字段、API 签名等实现细节？（AGE 原则：设计聚焦业务语义，技术实现细节属于平台文档）
+- **设计文档可靠性**：
+  - 设计文档是否与 ORM 模型（`*.orm.xml`）、API 契约（`*.api.xml`）保持一致？是否存在"设计说了 A，代码实现了 B"的漂移？
+  - 设计文档之间的交叉引用是否有效（无断链）？
+  - 设计文档是否被计划/日志/审计引用为决策依据？
+- **设计文档维护**：需求变更后，设计文档是否同步更新？还是只改代码不跟设计？
+- 设计文档质量详细审计见 `docs/skills/design-doc-audit-prompt.md`。
 
 4. 任务路由和技能选择
 - 活动任务是否显示明确的任务分类和 owner-doc 路由？
@@ -67,10 +94,24 @@
 5. 规划纪律
 - 对于非平凡工作，规划触发器表明应该有计划时是否存在计划？
 - 阶段、证明要求、关闭门控和技能选择是真实的还是仅占位符？
+- 计划质量：检查计划是否包含以下维度（不满足的视为 quality-gap）：
+  - **非目标**（Non-Goals）：是否显式声明范围外事项？
+  - **退出标准**（Exit Criteria）：是否定义了可验证的完成条件？
+  - **阶段拆解**（Phase Breakdown）：是否有多阶段的执行路径？
+  - **关闭门控**（Closure Gates）：是否有独立验证步骤？
+  - **计划审计记录**：是否记录了计划审计（`plan-audit`）和结束审计（`closure-audit`）的证据？
+  - **真实证明**：审计证据是否包含具体文件路径、grep 命令输出、测试结果数字，而非仅「已审计通过」格式文本？
+  - 质量审计的详细维度见 `docs/skills/plan-audit-prompt.md` 和 `docs/skills/closure-audit-prompt.md`。
 
 6. 审计纪律
 - 创建的计划是否显示真实的计划审计和结束审计证据？
 - 在缺少审计的地方，遗漏是低风险且可解释的，还是真正的流程差距？
+- **审计质量**：检查审计记录是否满足以下标准（不满足的视为 quality-gap）：
+  - **独立执行**：审计是否由独立子代理（新会话）执行，而非实施者自查？审计记录中的 Auditor 字段是否有明确身份标识（独立子代理 ID 或新会话证据）？
+  - **根因识别**：审计发现的是表面症状还是根本原因？例如：发现「plan.md 中 `[x]` 未勾选」只是格式问题，发现「编辑了 codegen 生成文件被还原」才是根因识别。
+  - **跨层捕获**：审计是否捕获了跨层不一致？如：代码与文档矛盾、配置与代码矛盾、测试与实现不符。
+  - **修复闭环**：审计发现是否有对应的修复，且修复后是否有再验证证据？是否存在「发现→标记→下个计划又发现同一问题」的重复失败模式？
+  - 审计质量标准参考 `docs/skills/multi-dimensional-audit-prompt.md` 和 `docs/skills/closure-audit-prompt.md`。
 
 7. 验证纪律
 - 验证命令是否真实？
@@ -84,6 +125,19 @@
 - 复制的模板是否已针对真实项目进行定制，还是仍然存在误导性的通用内容？
 - 对文档结构或提示的重复调整是否被捕获为稳定指南，还是反复的临时修复？
 
+10. **任务驱动纪律（Mission Driver）**
+- Mission Driver 实现由共享 AGE 模板仓库提供（`tools/mission-driver/`），本审计不检查模板实现代码。
+- 审计范围仅限于**项目的任务驱动使用模式**：
+  - **采纳状态**：项目是否引入了 Mission Driver 工作流？检查：**项目根目录**下的 `missions/`（非 `docs/missions/`）是否存在任务清单文件（如 `erp.json`、`crud.json`）？`tools/mission-driver.sh` 或等效 launcher 是否存在？日志中是否有 `MISSION_DRIVER` 执行记录？
+  - **职责分离**：是否区分了 `execute`（执行者）和 `verify`（验证者）角色？是否有独立的 closure audit 步骤由不同 agent 执行？
+  - **阶段记录**：每个 `MISSION_DRIVER` 条目是否有明确的阶段划分（Phase 1..N）和完成状态？
+  - **验证复验**：是否有独立验证者跑 full reactor 测试而非仅 scoped 验证？
+  - **日志一致性**：日志条目标题中是否标记了 `MISSION_DRIVER` 角色和当前阶段（如 `execute`/`verify`/`closure-reexecute`）？
+- **如果未引入 Mission Driver**（未在 logs/ 或 AGENTS.md 中有任何任务驱动证据），评估是否需要引入的三项条件：
+  - 项目是否有多步骤重复执行的工作流需要自动化编排？
+  - 是否有独立的验证/审计步骤当前由人工触发？
+  - 是否因为缺少自动化 driver 而导致人工干预频率高、周期长？
+
 ## 步骤 3 - 诚实地分类每个差距
 
 对于与 AGE 的每个显著差异，将其分类为：
@@ -92,6 +146,7 @@
 - `operational-gap`
 - `stale-template-drift`
 - `missing-evidence`
+- `attractor-decoration`（AGE 文件/目录齐全但未被实际用于驱动 AI 行为——最常见的问题，即"看上去用了 AGE 但执行效果差"的真正根源）
 
 除非存在具体风险，否则不要将差异报告为缺陷，例如：
 - AI 可能对过时或占位符文档采取行动
@@ -99,6 +154,7 @@
 - 规划或审计义务被静默跳过
 - 重要的交付知识没有落地到持久文件中
 - 仓库表明 AGE 合规但证据缺失
+- **`attractor-decoration`：AGE 文件齐全但开发时未被实际引用** — 这是最隐蔽的风险：有人填充了所有模板文件，但 AI 在实施时仍然直接跳代码，不读 attractor。诊断方法是看日志工作记录中是否有"先读文档再行动"的证据。
 
 ## 步骤 4 - 将分析笔记写入 docs/analysis
 
@@ -123,7 +179,7 @@
 4. `## Alignment Matrix`
 - 表格列：
 `| Area | Expected AGE Practice | Current Evidence | Status | Classification | Risk | Next Action |`
-- 至少涵盖：上下文、路由、需求、设计/架构、规划、审计、验证、日志、可选层、模板定制
+- 至少涵盖：吸引子机制（Attractor/Plan Loop/Mission Loop）、上下文、路由、需求、设计（含完整性/一致性）、架构、规划（含质量）、审计（含质量）、验证、日志、可选层、模板定制、任务驱动（Mission Driver）
 
 5. `## Findings`
 - 首先返回发现，按严重性排序

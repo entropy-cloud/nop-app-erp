@@ -27,12 +27,16 @@
 - 是否在没有持久证据的情况下放宽了任何自主权或待办事项状态
 - 是否隐藏了验证失败或未运行的命令
 
-**强制验证范围检查（历史教训：多次因 scoped `-pl` 验证声明 full-green 导致假阳性）：**
-- 如果计划声称实现完成，验证必须是 **full reactor `mvn test`**（整仓库全栈测试），而不只是 scoped `-pl` 局部测试。
-- scoped `-pl` 验证可以作为「开发中快速反馈」手段，但不能作为「声明完成」的唯一依据。
-- 当计划声明的验证范围是 scoped 时，必须在 Closure 部分注明 `⚠️ scoped verification only`，并列出哪些模块未被验证。
-- 仅当 full reactor `mvn clean install -DskipTests` + `mvn test` 全部通过时，才能声明 `full-green`。
-- 特殊例外：如果 full reactor 已知存在计划范围外的前置基线失败（经 `git stash --include-untracked` 证明是前置失败而非本计划引入），可以 scoped 声明完成但必须在 Closure 部分附上前置失败证据。
+**强制验证范围检查（历史教训：声明"full-green"时实际只跑了局部模块测试）：**
+- `mvn -pl <aggregator> -am`（如 `-pl app-erp-all -am`）因 `-am` 引入所有传递依赖，效果等价于 full reactor 编译/测试，**可以**作为完成依据。这不是 `-pl` 的问题。
+- 真正的问题是**选错了验证目标**：如果只 `mvn test -pl :specific-service`（不包含聚合器），则只测该模块及其声明依赖，不完全等同于全栈。
+- 验证范围检查规则：
+  - `mvn clean install -DskipTests` (154 模块全 reactor) = full-build ✅
+  - `mvn install -DskipTests -pl app-erp-all -am` (聚合器 + 全部传递依赖) = effective full-build ✅
+  - `mvn test -pl app-erp-all -am` (聚合器测试 + 全部传递依赖测试) = effective full-test ✅
+  - `mvn test -pl :specific-module` (单模块，不含聚合器下游) = scoped ⚠️ 不能作为 full-green 依据
+- 如果验证执行的是 scoped（不含聚合器），在 Closure 中注明 `⚠️ scoped only` 并列出未验证模块。
+- 例外：如果 full reactor 已知存在计划范围外的基线失败（经 `git stash --include-untracked` 证明是前置失败），可以基于 effective full-build 声明完成，但必须在 Closure 中附前置失败证据。
 
 按严重性排序，首先返回发现。
 如果关闭被阻止，说 `needs revision` 并列出确切缺少的证明或更改。

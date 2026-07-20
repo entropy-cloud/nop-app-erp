@@ -217,7 +217,7 @@ Status: `partial completed`（plan `docs/plans/2026-07-20-0629-2-f8-f2-search-fi
 
 ### F9 — 跨单据导航与关联回链（P1）
 
-Status: `todo`
+Status: `done` (核心 4 域；长尾实体 defer 到后续)
 
 详情页底部添加关联单据区：
 
@@ -232,6 +232,12 @@ Status: `todo`
 | sales | Quotation → SO → Delivery → Invoice → Receipt → Voucher |
 | inventory | StockMove → Source/Dest Bills → Related Moves → Ledger |
 | manufacturing | WorkOrder → Material Issue → JobCard → Completion → Voucher |
+
+**落地证据（2026-07-20 plan `2026-07-20-0629-3-f9-cross-document-navigation`）**：
+- purchase / sales / inventory：FK 关联，使用 `fixedProps` 子表 drawer + `link` URL 跳转 + copy-line-from-order（4 子表 custom cell + AMIS dialog + picker multi-select + setValue 映射）
+- manufacturing：MaterialIssue + JobCard drawer + 完工入库 link 降级（mfg→inv 跨域非 FK）
+- 范式文档：`docs/design/cross-doc-navigation-patterns.md`
+- 长尾域（crm/cs/hr/aps/logistics/b2b/contract/drp/assets/projects/quality/maintenance）按需逐域补齐
 
 ---
 
@@ -523,7 +529,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置）
 - [ ] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地
 - [x] F8: 8 核心列表页查询条件扩展到域专用多维筛选（plan `2026-07-20-0629-2`：query + asideFilter 双筛选面，inventory/finance/purchase/sales 4 域；扩展域 8 个独立 plan 待启动）
-- [ ] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现
+- [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`
 - [ ] F10: 6 个树形实体使用 AMIS tree 组件页面
 - [ ] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现
 - [ ] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板）

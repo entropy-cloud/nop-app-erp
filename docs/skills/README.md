@@ -184,7 +184,7 @@
 | 实施 AI 自己审计自己的产出 | 盲区保留 | closure-audit / plan-audit 必须由独立子代理运行 |
 | 声称完成后才运行 development-wisdom-gate | 失去"开发过程中的自检"意义 | 在声称完成前作为门控运行 |
 | 认为某个 skill 可以覆盖所有检查 | 该 skill 膨胀，其他 skill 闲置 | 每个 skill 专注一个视角，组合使用 |
-| 只跑 scoped 验证就声明完成 | 假阳性 | closure-audit 强制 full reactor 验证检查 |
+| 只跑单模块 `mvn test -pl :xxx` 不跑聚合器就声称 full-green | 假阳性 | 验证必须包含聚合器或其所有传递依赖（`-pl app-erp-all -am`） |
 | 跳过自检直接进入外部审查 | 低质量问题浪费审查者时间 | 每份产出先自检通过，再提交外部审查 |
 | 一个阶段未使用任何技能 | 该阶段无人检查，盲区保留 | 每个阶段至少使用一个技能（自检或审查） |
 

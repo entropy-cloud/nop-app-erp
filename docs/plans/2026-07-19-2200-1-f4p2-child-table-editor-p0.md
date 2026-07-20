@@ -242,9 +242,9 @@ Exit Criteria:
 
 ### 从订单导入行（copy-line-from-order：Receive←Order / Invoice←Receive 等）
 
-- Classification: `out-of-scope improvement`
+- Classification: `out-of-scope improvement` **RELEASED 2026-07-20**（F9 plan `2026-07-20-0629-3-f9-cross-document-navigation` Phase 2-3 落地，覆盖 purchase Receive/Invoice + sales Delivery/Invoice 4 子表）
 - Why Not Blocking Closure: 从源单据导入行属跨单据编排（F9 范畴），需独立设计「源单据选择器 + 行映射规则 + 增量导入按钮」三个交互。本计划仅交付子表控件本身（手动新增/编辑行），手动新增可达 happy-path 不阻塞业务流程。
-- Successor Required: `yes`（触发条件：F9 跨单据导航与关联回链 plan 启动时）
+- Successor Required: `yes`（触发条件：F9 跨单据导航与关联回链 plan 启动时）— **已满足并 RELEASED**：F9 plan Phase 2 落地 ErpPurReceive/ErpPurInvoice 子表 copy-line + Phase 3 落地 ErpSalDelivery/ErpSalInvoice 子表 copy-line；范式见 `docs/design/cross-doc-navigation-patterns.md §3.4`。
 
 ### F4 Phase 2 P1（inventory/finance 3 对）
 
