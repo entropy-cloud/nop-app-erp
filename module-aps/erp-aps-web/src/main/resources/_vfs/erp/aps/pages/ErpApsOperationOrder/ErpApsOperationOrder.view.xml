@@ -92,9 +92,68 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] workOrderId[主工单]
+ operationName[工序名称] sequence[工序顺序]
+ orgId[业务组织] businessDate[业务日期]
+=========>assign[分派]======
+ machineId[工作中心/设备] assignedToId[操作工]
+ isOutsourced[是否外协]
+=========>schedule[排程]======
+ plannedStartDateT[计划开工时间] plannedEndDateT[计划完工时间]
+ realStartDateT[实际开工时间] realEndDateT[实际完工时间]
+ setupTime[准备时间(分钟)] runtimePerUnit[每件加工时间(分钟)]
+ qty[加工数量] totalDuration[总耗时(分钟)]
+ earliestStartDateT[最早开工时间] latestEndDateT[最晚完工时间]
+=========>status[状态]======
+ priority[优先级] status[状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] workOrderId[主工单]
+ operationName[工序名称] sequence[工序顺序]
+ orgId[业务组织] businessDate[业务日期]
+=========>assign[分派]======
+ machineId[工作中心/设备] assignedToId[操作工]
+ isOutsourced[是否外协]
+=========>schedule[排程]======
+ plannedStartDateT[计划开工时间] plannedEndDateT[计划完工时间]
+ realStartDateT[实际开工时间] realEndDateT[实际完工时间]
+ setupTime[准备时间(分钟)] runtimePerUnit[每件加工时间(分钟)]
+ qty[加工数量] totalDuration[总耗时(分钟)]
+ earliestStartDateT[最早开工时间] latestEndDateT[最晚完工时间]
+=========>status[状态]======
+ priority[优先级] status[状态]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编号] workOrderId[主工单]
+ machineId[工作中心/设备] orgId[业务组织]
+ status[状态] businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="workOrderId" filterOp="eq"/>
+                <cell id="machineId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

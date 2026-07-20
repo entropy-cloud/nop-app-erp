@@ -41,9 +41,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ partnerProfileId[伙伴档案] direction[方向]
+ formatCode[EDI格式] testCaseCode[测试用例编号]
+=========>payload[报文]======
+ sentPayload[发送报文] receivedPayload[接收报文]
+=========>result[测试结果]======
+ expectedResult[预期结果] actualResult[实际结果]
+ passed[测试通过] testedBy[测试人]
+ testedAt[测试时间]
+========^audit[审计信息]=========
+ notes[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ partnerProfileId[伙伴档案] direction[方向]
+ formatCode[EDI格式] testCaseCode[测试用例编号]
+=========>payload[报文]======
+ sentPayload[发送报文] receivedPayload[接收报文]
+=========>result[测试结果]======
+ expectedResult[预期结果] actualResult[实际结果]
+ passed[测试通过] testedBy[测试人]
+ testedAt[测试时间]
+========^audit[审计信息]=========
+ notes[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ partnerProfileId[伙伴档案] direction[方向]
+ formatCode[EDI格式] testCaseCode[测试用例编号]
+ passed[测试通过]
+            </layout>
+            <cells>
+                <cell id="partnerProfileId" filterOp="eq"/>
+                <cell id="direction" filterOp="eq"/>
+                <cell id="formatCode" filterOp="like"/>
+                <cell id="testCaseCode" filterOp="like"/>
+                <cell id="passed" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

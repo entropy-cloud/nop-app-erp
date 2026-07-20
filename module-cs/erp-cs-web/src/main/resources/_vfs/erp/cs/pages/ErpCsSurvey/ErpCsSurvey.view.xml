@@ -19,9 +19,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] ticketId[关联工单]
+ surveyToken[调查令牌] surveyChannel[发送渠道]
+=========>score[评分]======
+ csatScore[CSAT评分] npsScore[NPS评分]
+ cesScore[CES评分] comment[文字反馈]
+=========>time[时间信息]======
+ surveySentAt[调查发送时间] respondedAt[响应时间]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] ticketId[关联工单]
+ surveyToken[调查令牌] surveyChannel[发送渠道]
+=========>score[评分]======
+ csatScore[CSAT评分] npsScore[NPS评分]
+ cesScore[CES评分] comment[文字反馈]
+=========>time[时间信息]======
+ surveySentAt[调查发送时间] respondedAt[响应时间]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] ticketId[关联工单]
+ surveyChannel[发送渠道] surveySentAt[调查发送时间]
+ respondedAt[响应时间]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="ticketId" filterOp="eq"/>
+                <cell id="surveyChannel" filterOp="eq"/>
+                <cell id="surveySentAt" filterOp="date-between"/>
+                <cell id="respondedAt" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

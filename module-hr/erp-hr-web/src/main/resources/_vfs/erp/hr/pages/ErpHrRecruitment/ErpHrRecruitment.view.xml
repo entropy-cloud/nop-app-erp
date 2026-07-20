@@ -59,9 +59,61 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] positionId[招聘职位]
+ departmentId[招聘部门] orgId[业务组织]
+ businessDate[业务日期] 
+=========>headcount[编制与候选人]======
+ headcount[招聘人数] candidateName[应聘者姓名]
+ candidatePhone[联系电话] candidateEmail[电子邮箱]
+ source[来源] 
+=========>pipeline[招聘管线]======
+ status[状态] interviewerId[面试官]
+ interviewDate[面试日期] offerSalary[Offer薪资]
+ hiredDate[入职日期] employeeId[关联员工]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] positionId[招聘职位]
+ departmentId[招聘部门] orgId[业务组织]
+ businessDate[业务日期] 
+=========>headcount[编制与候选人]======
+ headcount[招聘人数] candidateName[应聘者姓名]
+ candidatePhone[联系电话] candidateEmail[电子邮箱]
+ source[来源] 
+=========>pipeline[招聘管线]======
+ status[状态] interviewerId[面试官]
+ interviewDate[面试日期] offerSalary[Offer薪资]
+ hiredDate[入职日期] employeeId[关联员工]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编号] positionId[招聘职位]
+ departmentId[招聘部门] status[状态]
+ businessDate[业务日期] 
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="positionId" filterOp="eq"/>
+                <cell id="departmentId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
 
         <!-- UC-HR-05 安排面试表单 -->
         <form id="scheduleInterview" editMode="add" title="安排面试">

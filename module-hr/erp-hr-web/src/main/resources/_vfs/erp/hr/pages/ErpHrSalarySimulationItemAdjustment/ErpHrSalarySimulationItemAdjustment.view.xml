@@ -33,9 +33,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ simulationId[模拟] employeeId[员工]
+ orgId[业务组织] 
+=========>detail[调整明细]======
+ salaryItemCode[薪酬项目编码] originalAmount[源值]
+ adjustedAmount[调整后值] adjustmentReason[调整原因]
+========^audit[审计信息]=========
+ adjustedBy[调整人] adjustedAt[调整时间]
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ simulationId[模拟] employeeId[员工]
+ orgId[业务组织] 
+=========>detail[调整明细]======
+ salaryItemCode[薪酬项目编码] originalAmount[源值]
+ adjustedAmount[调整后值] adjustmentReason[调整原因]
+========^audit[审计信息]=========
+ adjustedBy[调整人] adjustedAt[调整时间]
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ simulationId[模拟] employeeId[员工]
+ salaryItemCode[薪酬项目编码] adjustedBy[调整人]
+ adjustmentReason[调整原因] 
+            </layout>
+            <cells>
+                <cell id="simulationId" filterOp="eq"/>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="salaryItemCode" filterOp="like"/>
+                <cell id="adjustedBy" filterOp="eq"/>
+                <cell id="adjustmentReason" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

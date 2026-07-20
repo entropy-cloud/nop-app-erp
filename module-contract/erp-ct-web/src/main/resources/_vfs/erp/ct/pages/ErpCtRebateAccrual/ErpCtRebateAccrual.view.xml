@@ -51,9 +51,53 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ rebateAgreementId[返利协议] orgId[业务组织]
+ sourceBillType[来源单据类型] sourceBillCode[来源单据号]
+ accrualDate[计提日期]
+=========>amount[金额信息]======
+ billAmountSource[单据金额(源币种)] accruedRebate[计提返利金额]
+=========>settle[结算状态]======
+ isSettled[已结算] settledDate[结算日期]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ rebateAgreementId[返利协议] orgId[业务组织]
+ sourceBillType[来源单据类型] sourceBillCode[来源单据号]
+ accrualDate[计提日期]
+=========>amount[金额信息]======
+ billAmountSource[单据金额(源币种)] accruedRebate[计提返利金额]
+=========>settle[结算状态]======
+ isSettled[已结算] settledDate[结算日期]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ rebateAgreementId[返利协议] orgId[业务组织]
+ sourceBillType[来源单据类型] isSettled[已结算]
+ accrualDate[计提日期]
+            </layout>
+            <cells>
+                <cell id="rebateAgreementId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="sourceBillType" filterOp="eq"/>
+                <cell id="isSettled" filterOp="eq"/>
+                <cell id="accrualDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

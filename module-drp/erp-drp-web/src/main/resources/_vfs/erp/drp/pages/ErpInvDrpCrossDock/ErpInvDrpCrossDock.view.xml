@@ -81,9 +81,61 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] orgId[业务组织]
+ drpLineId[DRP行]
+=========>link[关联移动单]======
+ inboundMoveId[入站移动单] outboundMoveId[出站移动单]
+=========>bill[关联单据]======
+ sourceBillType[来源单据类型] sourceBillCode[来源单据号]
+ targetBillType[目标单据类型] targetBillCode[目标单据号]
+=========>detail[执行详情]======
+ materialId[物料] quantity[越库数量]
+ stagingLocationId[暂存库位] dockSlotTime[月台时间窗口]
+ status[状态] matchedAt[匹配时间]
+ loadedAt[装车完成时间]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] orgId[业务组织]
+ drpLineId[DRP行]
+=========>link[关联移动单]======
+ inboundMoveId[入站移动单] outboundMoveId[出站移动单]
+=========>bill[关联单据]======
+ sourceBillType[来源单据类型] sourceBillCode[来源单据号]
+ targetBillType[目标单据类型] targetBillCode[目标单据号]
+=========>detail[执行详情]======
+ materialId[物料] quantity[越库数量]
+ stagingLocationId[暂存库位] dockSlotTime[月台时间窗口]
+ status[状态] matchedAt[匹配时间]
+ loadedAt[装车完成时间]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编号] orgId[业务组织]
+ drpLineId[DRP行] status[状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="drpLineId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

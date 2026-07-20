@@ -33,9 +33,61 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] ticketId[关联工单]
+ agentId[处理人] source[来源]
+=========>time[计时信息]======
+ startTime[开始时间] endTime[结束时间]
+ duration[时长(分钟)] isBillable[是否可计费]
+ billingRate[计费费率] billableAmount[计费金额]
+=========>approval[审批信息]======
+ approvalStatus[审批状态] approvedById[审批人]
+ approvedAt[审批时间]
+=========>reference[关联引用]======
+ projectId[关联项目] taskId[关联任务]
+ description[工作内容描述]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] ticketId[关联工单]
+ agentId[处理人] source[来源]
+=========>time[计时信息]======
+ startTime[开始时间] endTime[结束时间]
+ duration[时长(分钟)] isBillable[是否可计费]
+ billingRate[计费费率] billableAmount[计费金额]
+=========>approval[审批信息]======
+ approvalStatus[审批状态] approvedById[审批人]
+ approvedAt[审批时间]
+=========>reference[关联引用]======
+ projectId[关联项目] taskId[关联任务]
+ description[工作内容描述]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] ticketId[关联工单]
+ agentId[处理人] approvalStatus[审批状态]
+ source[来源]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="ticketId" filterOp="eq"/>
+                <cell id="agentId" filterOp="eq"/>
+                <cell id="approvalStatus" filterOp="eq"/>
+                <cell id="source" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

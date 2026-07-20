@@ -54,9 +54,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractLineId[合同行ID] planDate[计划开票日期]
+ invoiceTerm[开票条款]
+=========>amount[金额信息]======
+ amount[开票金额]
+=========>status[开票状态]======
+ isInvoiced[是否已开票] invoiceBillCode[关联发票号]
+ invoiceDate[实际开票日期]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractLineId[合同行ID] planDate[计划开票日期]
+ invoiceTerm[开票条款]
+=========>amount[金额信息]======
+ amount[开票金额]
+=========>status[开票状态]======
+ isInvoiced[是否已开票] invoiceBillCode[关联发票号]
+ invoiceDate[实际开票日期]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ contractLineId[合同行ID] invoiceTerm[开票条款]
+ isInvoiced[是否已开票] planDate[计划开票日期]
+            </layout>
+            <cells>
+                <cell id="contractLineId" filterOp="eq"/>
+                <cell id="invoiceTerm" filterOp="eq"/>
+                <cell id="isInvoiced" filterOp="eq"/>
+                <cell id="planDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

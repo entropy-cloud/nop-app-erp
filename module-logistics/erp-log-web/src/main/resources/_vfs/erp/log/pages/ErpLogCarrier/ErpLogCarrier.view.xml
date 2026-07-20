@@ -39,9 +39,54 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ carrierName[承运商名称] carrierType[承运商类型]
+ partnerId[承运商往来单位ID] isActive[是否启用]
+=========>gateway[网关]======
+ gatewayId[网关标识] trackingUrlTemplate[追踪URL模板]
+=========>capability[能力]======
+ maxParcelWeight[最大包裹重量(kg)] supportedServiceTypes[支持服务类型]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ carrierName[承运商名称] carrierType[承运商类型]
+ partnerId[承运商往来单位ID] isActive[是否启用]
+=========>gateway[网关]======
+ gatewayId[网关标识] trackingUrlTemplate[追踪URL模板]
+=========>capability[能力]======
+ maxParcelWeight[最大包裹重量(kg)] supportedServiceTypes[支持服务类型]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] carrierName[承运商名称]
+ orgId[业务组织] carrierType[承运商类型]
+ partnerId[承运商往来单位ID] isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="carrierName" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="carrierType" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

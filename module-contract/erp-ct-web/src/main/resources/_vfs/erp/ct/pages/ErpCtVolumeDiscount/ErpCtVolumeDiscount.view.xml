@@ -54,9 +54,44 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractLineId[合同行] orgId[业务组织]
+=========>range[数量范围]======
+ fromQty[起始数量] toQty[截止数量]
+=========>discount[折扣信息]======
+ discountPercent[折扣百分比] unitPrice[覆盖单价]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractLineId[合同行] orgId[业务组织]
+=========>range[数量范围]======
+ fromQty[起始数量] toQty[截止数量]
+=========>discount[折扣信息]======
+ discountPercent[折扣百分比] unitPrice[覆盖单价]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ contractLineId[合同行] orgId[业务组织]
+            </layout>
+            <cells>
+                <cell id="contractLineId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

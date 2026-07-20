@@ -17,9 +17,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ configuratorId[配置器] orgId[业务组织]
+ ruleType[规则类型] sequence[顺序号]
+=========>condition[条件]======
+ sourceFeatureCode[源特征码] sourceFeatureValue[源特征值]
+ targetFeatureCode[目标特征码] targetFeatureValue[目标特征值]
+ conditionExpression[条件表达式]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ configuratorId[配置器] orgId[业务组织]
+ ruleType[规则类型] sequence[顺序号]
+=========>condition[条件]======
+ sourceFeatureCode[源特征码] sourceFeatureValue[源特征值]
+ targetFeatureCode[目标特征码] targetFeatureValue[目标特征值]
+ conditionExpression[条件表达式]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ configuratorId[配置器] orgId[业务组织]
+ ruleType[规则类型] sourceFeatureCode[源特征码]
+ targetFeatureCode[目标特征码]
+            </layout>
+            <cells>
+                <cell id="configuratorId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="ruleType" filterOp="eq"/>
+                <cell id="sourceFeatureCode" filterOp="like"/>
+                <cell id="targetFeatureCode" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

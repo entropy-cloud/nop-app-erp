@@ -43,9 +43,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] orgId[业务组织]
+ materialId[物料] warehouseId[仓库]
+=========>method[计算方法]======
+ method[计算方法] serviceLevel[服务水平]
+ historyMonths[分析月数] leadTimeDays[提前期(天)]
+=========>result[计算结果]======
+ calculatedSafetyStock[建议安全库存] calculatedRop[建议再订货点]
+ overrideSafetyStock[覆盖安全库存] lastCalculatedAt[计算时间]
+ overwrittenBy[覆盖人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] orgId[业务组织]
+ materialId[物料] warehouseId[仓库]
+=========>method[计算方法]======
+ method[计算方法] serviceLevel[服务水平]
+ historyMonths[分析月数] leadTimeDays[提前期(天)]
+=========>result[计算结果]======
+ calculatedSafetyStock[建议安全库存] calculatedRop[建议再订货点]
+ overrideSafetyStock[覆盖安全库存] lastCalculatedAt[计算时间]
+ overwrittenBy[覆盖人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编号] orgId[业务组织]
+ materialId[物料] warehouseId[仓库]
+ method[计算方法]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="method" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

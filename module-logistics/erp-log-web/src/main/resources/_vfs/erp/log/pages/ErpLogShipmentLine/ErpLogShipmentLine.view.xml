@@ -42,9 +42,46 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ shipmentId[发运单ID] lineNo[行号]
+ materialId[物料]
+=========>quantity[数量]======
+ quantity[数量] unit[单位]
+ packageDescription[包装说明]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ shipmentId[发运单ID] lineNo[行号]
+ materialId[物料]
+=========>quantity[数量]======
+ quantity[数量] unit[单位]
+ packageDescription[包装说明]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ shipmentId[发运单ID] lineNo[行号]
+ materialId[物料]
+            </layout>
+            <cells>
+                <cell id="shipmentId" filterOp="eq"/>
+                <cell id="lineNo" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

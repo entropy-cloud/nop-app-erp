@@ -19,9 +19,54 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] parentId[上级区域]
+ territoryType[区域类型] managerId[区域经理]
+=========>tree[层级信息]======
+ fullPath[全路径] level[层级]
+ isLeaf[是否叶子节点] sortOrder[排序号]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ description[描述] remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] parentId[上级区域]
+ territoryType[区域类型] managerId[区域经理]
+=========>tree[层级信息]======
+ fullPath[全路径] level[层级]
+ isLeaf[是否叶子节点] sortOrder[排序号]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ description[描述] remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ orgId[业务组织] territoryType[区域类型]
+ managerId[区域经理] isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="territoryType" filterOp="eq"/>
+                <cell id="managerId" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

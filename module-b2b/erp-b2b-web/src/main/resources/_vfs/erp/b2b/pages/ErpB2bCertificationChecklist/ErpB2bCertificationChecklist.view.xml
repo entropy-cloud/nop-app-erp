@@ -38,9 +38,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ partnerProfileId[伙伴档案]
+=========>detail[检查项详情]======
+ checklistItem[检查项] requiredDocType[对应文档类型]
+ isMandatory[必检]
+=========>result[检查结果]======
+ isPassed[通过] checkedBy[检查人]
+ checkedAt[检查时间] evidence[检查证据]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ partnerProfileId[伙伴档案]
+=========>detail[检查项详情]======
+ checklistItem[检查项] requiredDocType[对应文档类型]
+ isMandatory[必检]
+=========>result[检查结果]======
+ isPassed[通过] checkedBy[检查人]
+ checkedAt[检查时间] evidence[检查证据]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ partnerProfileId[伙伴档案] checklistItem[检查项]
+ isMandatory[必检] isPassed[通过]
+            </layout>
+            <cells>
+                <cell id="partnerProfileId" filterOp="eq"/>
+                <cell id="checklistItem" filterOp="like"/>
+                <cell id="isMandatory" filterOp="eq"/>
+                <cell id="isPassed" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

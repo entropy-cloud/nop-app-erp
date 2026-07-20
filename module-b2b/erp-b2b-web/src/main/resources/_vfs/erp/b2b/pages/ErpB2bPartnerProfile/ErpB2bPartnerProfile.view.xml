@@ -75,9 +75,69 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ partnerId[关联伙伴] partnerName[伙伴名称]
+ status[状态]
+=========>protocol[协议]======
+ protocol[传输协议] transportEndpoint[传输端点]
+ authMethod[认证方式] webhookSecret[Webhook密钥]
+ timezone[时区]
+=========>cert[证书]======
+ certExpiry[证书过期日期] certFingerprint[证书指纹]
+ allowedFormats[支持格式(JSON)]
+=========>contact[联系人]======
+ contactName[联系人姓名] contactEmail[联系邮箱]
+ contactPhone[联系电话]
+=========>lifecycle[生命周期]======
+ goLiveDate[上线日期] archivedAt[归档日期]
+ notes[备注]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ partnerId[关联伙伴] partnerName[伙伴名称]
+ status[状态]
+=========>protocol[协议]======
+ protocol[传输协议] transportEndpoint[传输端点]
+ authMethod[认证方式] webhookSecret[Webhook密钥]
+ timezone[时区]
+=========>cert[证书]======
+ certExpiry[证书过期日期] certFingerprint[证书指纹]
+ allowedFormats[支持格式(JSON)]
+=========>contact[联系人]======
+ contactName[联系人姓名] contactEmail[联系邮箱]
+ contactPhone[联系电话]
+=========>lifecycle[生命周期]======
+ goLiveDate[上线日期] archivedAt[归档日期]
+ notes[备注](2)
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] partnerName[伙伴名称]
+ orgId[业务组织] partnerId[关联伙伴]
+ status[状态]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="partnerName" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

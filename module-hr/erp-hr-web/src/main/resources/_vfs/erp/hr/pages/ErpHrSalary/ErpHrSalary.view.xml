@@ -40,9 +40,92 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ employeeId[员工] year[年份]
+ month[月份] orgId[业务组织]
+ businessDate[业务日期] 
+=========>gross[应发项目]======
+ basicSalary[基本工资] positionAllowance[岗位津贴]
+ performanceBonus[绩效奖金] overtimePay[加班费]
+ mealAllowance[餐补] transportAllowance[交通补贴]
+ otherAllowance[其他补贴] grossSalary[应发合计]
+=========>deduction[扣款项目]======
+ socialInsurance[社保个人部分] housingFund[公积金个人部分]
+ taxAmount[个税] otherDeductions[其他扣款]
+=========>net[实发]======
+ netSalary[实发合计] 
+=========>payment[支付信息]======
+ paymentStatus[支付状态] paymentDate[实发日期]
+ paymentBatchNo[发放批次号] bankFileId[银行文件]
+=========>approval[审核信息]======
+ approveStatus[审核状态] approvedBy[审核人]
+ approvedAt[审核时间] 
+=========>posting[过账信息]======
+ posted[已过账] nopFlowId[工作流实例]
+=========>meta[计算要素]======
+ performanceFactor[绩效系数] actualWorkDays[实际出勤日]
+ requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
+ unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
+ reviewNote[审核备注] 
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ employeeId[员工] year[年份]
+ month[月份] orgId[业务组织]
+ businessDate[业务日期] 
+=========>gross[应发项目]======
+ basicSalary[基本工资] positionAllowance[岗位津贴]
+ performanceBonus[绩效奖金] overtimePay[加班费]
+ mealAllowance[餐补] transportAllowance[交通补贴]
+ otherAllowance[其他补贴] grossSalary[应发合计]
+=========>deduction[扣款项目]======
+ socialInsurance[社保个人部分] housingFund[公积金个人部分]
+ taxAmount[个税] otherDeductions[其他扣款]
+=========>net[实发]======
+ netSalary[实发合计] 
+=========>payment[支付信息]======
+ paymentStatus[支付状态] paymentDate[实发日期]
+ paymentBatchNo[发放批次号] bankFileId[银行文件]
+=========>approval[审核信息]======
+ approveStatus[审核状态] approvedBy[审核人]
+ approvedAt[审核时间] 
+=========>posting[过账信息]======
+ posted[已过账] nopFlowId[工作流实例]
+=========>meta[计算要素]======
+ performanceFactor[绩效系数] actualWorkDays[实际出勤日]
+ requiredWorkDays[应出勤日] totalOvertimeHours[月总加班小时]
+ unpaidLeaveDays[无薪假天数] cumulativeData[累计个税数据]
+ reviewNote[审核备注] 
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ employeeId[员工] year[年份]
+ month[月份] orgId[业务组织]
+ paymentStatus[支付状态] approveStatus[审核状态]
+            </layout>
+            <cells>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="year" filterOp="eq"/>
+                <cell id="month" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="paymentStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

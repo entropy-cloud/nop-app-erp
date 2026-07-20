@@ -49,9 +49,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] partnerId[合作伙伴]
+ certName[证书名称] certType[证书类型]
+=========>detail[证书详情]======
+ algorithm[算法] keySize[密钥长度]
+ issuerName[颁发者] subjectName[主题]
+ serialNo[序列号] fingerprintSha256[SHA-256指纹]
+=========>validity[有效期]======
+ issuedAt[颁发日期] expiresAt[过期日期]
+ isActive[启用]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] partnerId[合作伙伴]
+ certName[证书名称] certType[证书类型]
+=========>detail[证书详情]======
+ algorithm[算法] keySize[密钥长度]
+ issuerName[颁发者] subjectName[主题]
+ serialNo[序列号] fingerprintSha256[SHA-256指纹]
+=========>validity[有效期]======
+ issuedAt[颁发日期] expiresAt[过期日期]
+ isActive[启用]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] partnerId[合作伙伴]
+ certName[证书名称] certType[证书类型]
+ isActive[启用]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="certName" filterOp="like"/>
+                <cell id="certType" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

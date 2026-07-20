@@ -32,9 +32,58 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] bundleName[套餐名称]
+ description[描述]
+=========>discount[折扣]======
+ discountType[折扣类型] discountValue[折扣值]
+ bundleAmount[套餐金额]
+=========>validity[有效期]======
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] bundleName[套餐名称]
+ description[描述]
+=========>discount[折扣]======
+ discountType[折扣类型] discountValue[折扣值]
+ bundleAmount[套餐金额]
+=========>validity[有效期]======
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ orgId[业务组织] discountType[折扣类型]
+ effectiveFrom[生效日期] isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="discountType" filterOp="eq"/>
+                <cell id="effectiveFrom" filterOp="date-between"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -65,9 +65,59 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] contractVersionId[合同版本]
+ provider[签名提供商] status[签章状态]
+=========>detail[签署详情]======
+ providerRequestId[提供商请求ID] signers[签署人(JSON)]
+ signingDeadline[签署截止日期]
+=========>result[签署结果]======
+ completedAt[签署完成时间] certificateUrl[完成证书URL]
+ evidenceNo[存证编号] errorMsg[错误信息]
+=========>attachment[附件]======
+ attachmentFileId[已签署文件]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] contractVersionId[合同版本]
+ provider[签名提供商] status[签章状态]
+=========>detail[签署详情]======
+ providerRequestId[提供商请求ID] signers[签署人(JSON)]
+ signingDeadline[签署截止日期]
+=========>result[签署结果]======
+ completedAt[签署完成时间] certificateUrl[完成证书URL]
+ evidenceNo[存证编号] errorMsg[错误信息]
+=========>attachment[附件]======
+ attachmentFileId[已签署文件]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] contractVersionId[合同版本]
+ provider[签名提供商] status[签章状态]
+ signingDeadline[签署截止日期]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="contractVersionId" filterOp="eq"/>
+                <cell id="provider" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="signingDeadline" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

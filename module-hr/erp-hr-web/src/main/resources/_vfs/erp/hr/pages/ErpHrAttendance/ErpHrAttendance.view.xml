@@ -28,9 +28,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ employeeId[员工] date[考勤日期]
+ businessDate[业务日期] orgId[业务组织]
+=========>clock[打卡信息]======
+ clockIn[签到时间] clockOut[签退时间]
+ workHours[出勤时长] 
+=========>exception[异常信息]======
+ lateMinutes[迟到分钟数] earlyLeaveMinutes[早退分钟数]
+ isAbsent[是否旷工] source[来源]
+ leaveRequestId[关联休假] 
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ employeeId[员工] date[考勤日期]
+ businessDate[业务日期] orgId[业务组织]
+=========>clock[打卡信息]======
+ clockIn[签到时间] clockOut[签退时间]
+ workHours[出勤时长] 
+=========>exception[异常信息]======
+ lateMinutes[迟到分钟数] earlyLeaveMinutes[早退分钟数]
+ isAbsent[是否旷工] source[来源]
+ leaveRequestId[关联休假] 
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ employeeId[员工] date[考勤日期]
+ orgId[业务组织] source[来源]
+ isAbsent[是否旷工] 
+            </layout>
+            <cells>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="date" filterOp="date-between"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="source" filterOp="eq"/>
+                <cell id="isAbsent" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

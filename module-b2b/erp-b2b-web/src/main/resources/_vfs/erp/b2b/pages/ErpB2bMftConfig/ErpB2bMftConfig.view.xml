@@ -51,9 +51,69 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] partnerId[合作伙伴]
+ protocol[传输协议] transportEndpoint[传输端点]
+=========>identity[身份标识]======
+ localAs2Id[本地AS2 ID] remoteAs2Id[对方AS2 ID]
+ sftpUsername[SFTP用户名] sftpPort[SFTP端口]
+ ftpsPort[FTPS端口] ftpsImplicitTls[隐式TLS]
+=========>security[安全]======
+ compression[启用压缩] encryption[启用加密]
+ encryptionAlgo[加密算法] signature[启用签名]
+ signatureAlgo[签名算法] certId[关联证书]
+=========>retry[重试]======
+ maxRetries[最大重试次数] retryIntervalMin[重试间隔(分钟)]
+ deadLetterEnabled[启用死信队列]
+=========>monitor[监控]======
+ monitorDirectory[监控目录] monitorIntervalSec[监控间隔(秒)]
+ active[启用]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] partnerId[合作伙伴]
+ protocol[传输协议] transportEndpoint[传输端点]
+=========>identity[身份标识]======
+ localAs2Id[本地AS2 ID] remoteAs2Id[对方AS2 ID]
+ sftpUsername[SFTP用户名] sftpPort[SFTP端口]
+ ftpsPort[FTPS端口] ftpsImplicitTls[隐式TLS]
+=========>security[安全]======
+ compression[启用压缩] encryption[启用加密]
+ encryptionAlgo[加密算法] signature[启用签名]
+ signatureAlgo[签名算法] certId[关联证书]
+=========>retry[重试]======
+ maxRetries[最大重试次数] retryIntervalMin[重试间隔(分钟)]
+ deadLetterEnabled[启用死信队列]
+=========>monitor[监控]======
+ monitorDirectory[监控目录] monitorIntervalSec[监控间隔(秒)]
+ active[启用]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] partnerId[合作伙伴]
+ protocol[传输协议] active[启用]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="protocol" filterOp="eq"/>
+                <cell id="active" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

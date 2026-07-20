@@ -41,9 +41,53 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] employeeId[员工]
+ orgId[业务组织] businessDate[业务日期]
+=========>period[周期]======
+ periodFrom[周期开始] periodTo[周期结束]
+ totalHours[总工时] 
+=========>approval[审批信息]======
+ status[状态] 
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] employeeId[员工]
+ orgId[业务组织] businessDate[业务日期]
+=========>period[周期]======
+ periodFrom[周期开始] periodTo[周期结束]
+ totalHours[总工时] 
+=========>approval[审批信息]======
+ status[状态] 
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] employeeId[员工]
+ orgId[业务组织] status[状态]
+ businessDate[业务日期] 
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

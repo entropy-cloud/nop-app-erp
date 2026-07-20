@@ -39,9 +39,53 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ carrierId[承运商ID] orgId[业务组织]
+ configCode[配置编码] serviceType[服务类型]
+=========>endpoint[接口端点]======
+ apiEndpoint[接口地址] trackingUrlTemplate[追踪URL模板]
+=========>format[面单格式]======
+ printFormat[面单打印格式] additionalProperties[扩展参数]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ carrierId[承运商ID] orgId[业务组织]
+ configCode[配置编码] serviceType[服务类型]
+=========>endpoint[接口端点]======
+ apiEndpoint[接口地址] trackingUrlTemplate[追踪URL模板]
+=========>format[面单格式]======
+ printFormat[面单打印格式] additionalProperties[扩展参数]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ carrierId[承运商ID] orgId[业务组织]
+ configCode[配置编码] serviceType[服务类型]
+ isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="carrierId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="configCode" filterOp="like"/>
+                <cell id="serviceType" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

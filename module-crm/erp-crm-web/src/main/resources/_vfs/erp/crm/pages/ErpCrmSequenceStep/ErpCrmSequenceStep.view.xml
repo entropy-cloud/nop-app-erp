@@ -19,9 +19,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ sequenceId[销售序列] orgId[业务组织]
+ stepName[步骤名称] stepOrder[步骤顺序]
+=========>action[动作]======
+ activityType[活动类型] stepDescription[步骤描述]
+ dueDays[到期天数] completionCondition[完成条件]
+ isMandatory[是否必填] autoCreateEvent[自动创建事件]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ sequenceId[销售序列] orgId[业务组织]
+ stepName[步骤名称] stepOrder[步骤顺序]
+=========>action[动作]======
+ activityType[活动类型] stepDescription[步骤描述]
+ dueDays[到期天数] completionCondition[完成条件]
+ isMandatory[是否必填] autoCreateEvent[自动创建事件]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ sequenceId[销售序列] stepName[步骤名称]
+ orgId[业务组织] activityType[活动类型]
+ stepOrder[步骤顺序]
+            </layout>
+            <cells>
+                <cell id="sequenceId" filterOp="eq"/>
+                <cell id="stepName" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="activityType" filterOp="eq"/>
+                <cell id="stepOrder" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -34,9 +34,60 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ partnerId[客户] contractId[支持合同]
+ slaPolicyId[SLA策略]
+=========>service[服务周期]======
+ serviceType[服务类型] startDate[生效日期]
+ endDate[失效日期]
+=========>quota[配额与承诺]======
+ maxTickets[最大工单数] usedTickets[已用工单数]
+ maxResponseTime[承诺响应时限(分钟)] maxResolutionTime[承诺解决时限(分钟)]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ notes[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ partnerId[客户] contractId[支持合同]
+ slaPolicyId[SLA策略]
+=========>service[服务周期]======
+ serviceType[服务类型] startDate[生效日期]
+ endDate[失效日期]
+=========>quota[配额与承诺]======
+ maxTickets[最大工单数] usedTickets[已用工单数]
+ maxResponseTime[承诺响应时限(分钟)] maxResolutionTime[承诺解决时限(分钟)]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ notes[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] orgId[业务组织]
+ partnerId[客户] contractId[支持合同]
+ serviceType[服务类型] isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="contractId" filterOp="eq"/>
+                <cell id="serviceType" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

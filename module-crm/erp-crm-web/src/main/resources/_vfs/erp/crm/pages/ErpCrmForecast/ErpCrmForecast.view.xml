@@ -39,9 +39,59 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] periodId[预测周期]
+ territoryId[销售区域] teamId[销售团队]
+ ownerId[负责人]
+=========>amount[金额]======
+ currencyId[币种] commitAmount[承诺金额]
+ upsideAmount[上行金额] weightedAmount[加权金额]
+ bestCaseAmount[最佳情景金额]
+=========>count[统计]======
+ opportunityCount[商机数] commitOpportunityCount[承诺商机数]
+ expectedClosedRevenue[预期成交收入] lastCalculatedAt[最后计算时间]
+ notes[备注]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] periodId[预测周期]
+ territoryId[销售区域] teamId[销售团队]
+ ownerId[负责人]
+=========>amount[金额]======
+ currencyId[币种] commitAmount[承诺金额]
+ upsideAmount[上行金额] weightedAmount[加权金额]
+ bestCaseAmount[最佳情景金额]
+=========>count[统计]======
+ opportunityCount[商机数] commitOpportunityCount[承诺商机数]
+ expectedClosedRevenue[预期成交收入] lastCalculatedAt[最后计算时间]
+ notes[备注](2)
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] territoryId[销售区域]
+ teamId[销售团队] ownerId[负责人]
+ periodId[预测周期]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="territoryId" filterOp="eq"/>
+                <cell id="teamId" filterOp="eq"/>
+                <cell id="ownerId" filterOp="eq"/>
+                <cell id="periodId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -19,9 +19,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ scoreId[评分头] orgId[业务组织]
+ configLineId[评分配置行] criterionCode[条件编码]
+ criterionName[条件名称]
+=========>value[分值]======
+ rawValue[原始值] lookupValue[查表值]
+ rawScore[原始分] weightedScore[加权分]
+ sequence[顺序号]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ scoreId[评分头] orgId[业务组织]
+ configLineId[评分配置行] criterionCode[条件编码]
+ criterionName[条件名称]
+=========>value[分值]======
+ rawValue[原始值] lookupValue[查表值]
+ rawScore[原始分] weightedScore[加权分]
+ sequence[顺序号]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ scoreId[评分头] configLineId[评分配置行]
+ orgId[业务组织] criterionCode[条件编码]
+ criterionName[条件名称]
+            </layout>
+            <cells>
+                <cell id="scoreId" filterOp="eq"/>
+                <cell id="configLineId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="criterionCode" filterOp="like"/>
+                <cell id="criterionName" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

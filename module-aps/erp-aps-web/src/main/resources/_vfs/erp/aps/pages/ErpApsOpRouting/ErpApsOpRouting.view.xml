@@ -53,9 +53,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] operationId[工序]
+ machineId[工作中心] priority[优先级]
+=========>delta[时间差]======
+ setupTimeDelta[换模时间差(分钟)] runtimePerUnitDelta[单件加工时间差(分钟)]
+=========>validity[生效条件]======
+ isDefault[默认路由] isEnabled[启用]
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+ minBatchQty[最小批量] maxBatchQty[最大批量]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] operationId[工序]
+ machineId[工作中心] priority[优先级]
+=========>delta[时间差]======
+ setupTimeDelta[换模时间差(分钟)] runtimePerUnitDelta[单件加工时间差(分钟)]
+=========>validity[生效条件]======
+ isDefault[默认路由] isEnabled[启用]
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+ minBatchQty[最小批量] maxBatchQty[最大批量]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] operationId[工序]
+ machineId[工作中心] isDefault[默认路由]
+ isEnabled[启用]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="operationId" filterOp="eq"/>
+                <cell id="machineId" filterOp="eq"/>
+                <cell id="isDefault" filterOp="eq"/>
+                <cell id="isEnabled" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

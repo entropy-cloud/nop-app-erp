@@ -74,9 +74,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractId[合同ID] versionNo[版本号]
+ versionDate[版本日期] isCurrent[是否当前版本]
+ status[版本状态]
+=========>content[版本内容]======
+ content[版本内容]
+ attachmentFileId[版本附件]
+=========>approval[审批信息]======
+ approvedBy[批准人] approvedAt[批准时间]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractId[合同ID] versionNo[版本号]
+ versionDate[版本日期] isCurrent[是否当前版本]
+ status[版本状态]
+=========>content[版本内容]======
+ content[版本内容]
+ attachmentFileId[版本附件]
+=========>approval[审批信息]======
+ approvedBy[批准人] approvedAt[批准时间]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ contractId[合同ID] versionNo[版本号]
+ status[版本状态] isCurrent[是否当前版本]
+ versionDate[版本日期]
+            </layout>
+            <cells>
+                <cell id="contractId" filterOp="eq"/>
+                <cell id="versionNo" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="isCurrent" filterOp="eq"/>
+                <cell id="versionDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

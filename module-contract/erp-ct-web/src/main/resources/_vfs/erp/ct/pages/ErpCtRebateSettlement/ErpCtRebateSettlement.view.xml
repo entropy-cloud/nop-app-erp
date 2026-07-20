@@ -88,9 +88,59 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ rebateAgreementId[返利协议] orgId[业务组织]
+ businessDate[业务日期] settlementDate[结算日期]
+ status[状态]
+=========>amount[金额信息]======
+ totalRebateAmount[结算返利总额]
+=========>credit[信用单]======
+ creditMemoBillType[信用单类型] creditMemoBillCode[信用单号]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ rebateAgreementId[返利协议] orgId[业务组织]
+ businessDate[业务日期] settlementDate[结算日期]
+ status[状态]
+=========>amount[金额信息]======
+ totalRebateAmount[结算返利总额]
+=========>credit[信用单]======
+ creditMemoBillType[信用单类型] creditMemoBillCode[信用单号]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ rebateAgreementId[返利协议] orgId[业务组织]
+ status[状态] businessDate[业务日期]
+ settlementDate[结算日期]
+            </layout>
+            <cells>
+                <cell id="rebateAgreementId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+                <cell id="settlementDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

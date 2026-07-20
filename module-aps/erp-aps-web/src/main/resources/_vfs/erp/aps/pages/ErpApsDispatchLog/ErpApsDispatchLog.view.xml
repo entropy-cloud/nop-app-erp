@@ -41,9 +41,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] operationOrderId[工序工单]
+ workcenterId[工作中心]
+=========>dispatch[派工]======
+ dispatchType[派工类型] previousStatus[派工前状态]
+ newStatus[派工后状态] dispatchedBy[派工人]
+ dispatchedAt[派工时间]
+=========>condition[条件检查]======
+ conditionCheckResult[条件检查结果(JSON)] materialAvailable[物料齐套]
+ operatorAvailable[操作工可用] toolingAvailable[工装可用]
+========^audit[审计信息]=========
+ note[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] operationOrderId[工序工单]
+ workcenterId[工作中心]
+=========>dispatch[派工]======
+ dispatchType[派工类型] previousStatus[派工前状态]
+ newStatus[派工后状态] dispatchedBy[派工人]
+ dispatchedAt[派工时间]
+=========>condition[条件检查]======
+ conditionCheckResult[条件检查结果(JSON)] materialAvailable[物料齐套]
+ operatorAvailable[操作工可用] toolingAvailable[工装可用]
+========^audit[审计信息]=========
+ note[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] operationOrderId[工序工单]
+ workcenterId[工作中心] dispatchType[派工类型]
+ dispatchedAt[派工时间]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="operationOrderId" filterOp="eq"/>
+                <cell id="workcenterId" filterOp="eq"/>
+                <cell id="dispatchType" filterOp="eq"/>
+                <cell id="dispatchedAt" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

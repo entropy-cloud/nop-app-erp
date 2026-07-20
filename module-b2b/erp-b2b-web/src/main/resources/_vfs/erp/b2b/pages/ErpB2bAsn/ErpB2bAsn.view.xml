@@ -81,9 +81,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[ASN 编码] orgId[业务组织]
+ sourceEdiDocId[来源 EDI 文档] partnerId[发货方（供应商）]
+ businessDate[业务日期]
+=========>schedule[发运计划]======
+ shipmentDate[发货日期] estimatedArrivalDate[预计到货日期]
+ trackingNo[物流单号]
+=========>reference[关联单据]======
+ relatedBillType[关联采购订单类型] relatedBillCode[关联采购订单号]
+ status[状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[ASN 编码] orgId[业务组织]
+ sourceEdiDocId[来源 EDI 文档] partnerId[发货方（供应商）]
+ businessDate[业务日期]
+=========>schedule[发运计划]======
+ shipmentDate[发货日期] estimatedArrivalDate[预计到货日期]
+ trackingNo[物流单号]
+=========>reference[关联单据]======
+ relatedBillType[关联采购订单类型] relatedBillCode[关联采购订单号]
+ status[状态]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[ASN 编码] orgId[业务组织]
+ partnerId[发货方（供应商）] status[状态]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

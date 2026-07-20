@@ -45,9 +45,59 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] workcenterId[工作中心]
+ ruleName[规则名称] enableAuto[自动派工启用]
+=========>constraint[约束条件]======
+ requireMaterial[物料齐套检查] requireOperator[操作工检查]
+ requireTooling[工装检查] maxLookaheadMinutes[前瞻窗口(分钟)]
+ dispatchAheadMinutes[提前派工(分钟)] autoConfirmMaterial[自动确认物料]
+ maxConcurrentOps[最大并行工序数] priorityThreshold[优先级阈值]
+ enabledHours[允许时段(JSON)]
+=========>action[动作]======
+ holdUntil[暂停到] holdReason[暂停原因]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] workcenterId[工作中心]
+ ruleName[规则名称] enableAuto[自动派工启用]
+=========>constraint[约束条件]======
+ requireMaterial[物料齐套检查] requireOperator[操作工检查]
+ requireTooling[工装检查] maxLookaheadMinutes[前瞻窗口(分钟)]
+ dispatchAheadMinutes[提前派工(分钟)] autoConfirmMaterial[自动确认物料]
+ maxConcurrentOps[最大并行工序数] priorityThreshold[优先级阈值]
+ enabledHours[允许时段(JSON)]
+=========>action[动作]======
+ holdUntil[暂停到] holdReason[暂停原因]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] workcenterId[工作中心]
+ ruleName[规则名称] enableAuto[自动派工启用]
+ holdUntil[暂停到]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="workcenterId" filterOp="eq"/>
+                <cell id="ruleName" filterOp="like"/>
+                <cell id="enableAuto" filterOp="eq"/>
+                <cell id="holdUntil" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

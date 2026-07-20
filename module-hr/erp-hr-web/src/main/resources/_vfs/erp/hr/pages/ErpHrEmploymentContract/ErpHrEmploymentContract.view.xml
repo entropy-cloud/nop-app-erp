@@ -62,9 +62,65 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[合同编号] employeeId[员工]
+ orgId[业务组织] businessDate[业务日期]
+=========>contract[合同信息]======
+ contractType[合同类型] signDate[签订日期]
+ startDate[生效日期] endDate[到期日期]
+ probationMonths[试用期月数] workingHoursPerWeek[每周工时]
+ status[合同状态] 
+=========>salary[薪资信息]======
+ annualSalary[年薪(税前)] monthlySalary[月薪(税前)]
+ salaryCurrencyId[薪资币种] salaryPayMethod[发薪方式]
+ socialInsuranceBase[社保基数] housingFundBase[公积金基数]
+=========>attachment[附件]======
+ attachmentFileId[合同文件] 
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[合同编号] employeeId[员工]
+ orgId[业务组织] businessDate[业务日期]
+=========>contract[合同信息]======
+ contractType[合同类型] signDate[签订日期]
+ startDate[生效日期] endDate[到期日期]
+ probationMonths[试用期月数] workingHoursPerWeek[每周工时]
+ status[合同状态] 
+=========>salary[薪资信息]======
+ annualSalary[年薪(税前)] monthlySalary[月薪(税前)]
+ salaryCurrencyId[薪资币种] salaryPayMethod[发薪方式]
+ socialInsuranceBase[社保基数] housingFundBase[公积金基数]
+=========>attachment[附件]======
+ attachmentFileId[合同文件] 
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[合同编号] employeeId[员工]
+ contractType[合同类型] status[合同状态]
+ businessDate[业务日期] 
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="contractType" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

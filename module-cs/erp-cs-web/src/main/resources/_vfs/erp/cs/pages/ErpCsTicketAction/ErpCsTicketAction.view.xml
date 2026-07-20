@@ -17,9 +17,45 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ ticketId[工单ID] actionType[操作类型]
+=========>transition[状态迁移]======
+ fromStatus[起始状态] toStatus[目标状态]
+ operatorId[操作人] content[操作内容]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ ticketId[工单ID] actionType[操作类型]
+=========>transition[状态迁移]======
+ fromStatus[起始状态] toStatus[目标状态]
+ operatorId[操作人] content[操作内容]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ ticketId[工单ID] actionType[操作类型]
+ fromStatus[起始状态] toStatus[目标状态]
+ operatorId[操作人]
+            </layout>
+            <cells>
+                <cell id="ticketId" filterOp="eq"/>
+                <cell id="actionType" filterOp="eq"/>
+                <cell id="fromStatus" filterOp="eq"/>
+                <cell id="toStatus" filterOp="eq"/>
+                <cell id="operatorId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

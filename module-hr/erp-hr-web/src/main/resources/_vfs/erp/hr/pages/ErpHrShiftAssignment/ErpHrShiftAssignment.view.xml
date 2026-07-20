@@ -42,9 +42,57 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ employeeId[员工] shiftId[班次]
+ orgId[业务组织] businessDate[业务日期]
+ assignmentDate[排班日期] 
+=========>actual[实际打卡]======
+ actualStartTime[实际签到时间] actualEndTime[实际签退时间]
+ isAbsent[是否缺勤] absenceReason[缺勤原因]
+ leaveRequestId[关联休假] swapRequestId[关联调换]
+ replacedByAssignmentId[被替换排班] 
+=========>status[状态]======
+ status[状态] 
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ employeeId[员工] shiftId[班次]
+ orgId[业务组织] businessDate[业务日期]
+ assignmentDate[排班日期] 
+=========>actual[实际打卡]======
+ actualStartTime[实际签到时间] actualEndTime[实际签退时间]
+ isAbsent[是否缺勤] absenceReason[缺勤原因]
+ leaveRequestId[关联休假] swapRequestId[关联调换]
+ replacedByAssignmentId[被替换排班] 
+=========>status[状态]======
+ status[状态] 
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ employeeId[员工] shiftId[班次]
+ orgId[业务组织] status[状态]
+ assignmentDate[排班日期] 
+            </layout>
+            <cells>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="shiftId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="assignmentDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

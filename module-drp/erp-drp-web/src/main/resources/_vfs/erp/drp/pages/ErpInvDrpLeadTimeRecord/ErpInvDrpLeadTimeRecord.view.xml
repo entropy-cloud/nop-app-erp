@@ -71,9 +71,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] supplierId[供应商]
+ materialId[物料]
+=========>order[订单信息]======
+ orderDate[订单日期] receiptDate[入库日期]
+ purchaseOrderCode[采购单号] actualLeadTime[实际提前期(天)]
+ expectedLeadTime[预期提前期(天)] varianceDays[偏差天数]
+=========>result[结果]======
+ isOnTime[是否准时] earlyLateFlag[提前/延迟标记]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] supplierId[供应商]
+ materialId[物料]
+=========>order[订单信息]======
+ orderDate[订单日期] receiptDate[入库日期]
+ purchaseOrderCode[采购单号] actualLeadTime[实际提前期(天)]
+ expectedLeadTime[预期提前期(天)] varianceDays[偏差天数]
+=========>result[结果]======
+ isOnTime[是否准时] earlyLateFlag[提前/延迟标记]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] supplierId[供应商]
+ materialId[物料] orderDate[订单日期]
+ isOnTime[是否准时]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="supplierId" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="orderDate" filterOp="date-between"/>
+                <cell id="isOnTime" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

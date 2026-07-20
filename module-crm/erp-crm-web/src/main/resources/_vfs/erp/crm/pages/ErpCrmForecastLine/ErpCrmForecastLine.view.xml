@@ -21,9 +21,49 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ forecastId[预测头] orgId[业务组织]
+ leadId[线索] probability[概率(%)]
+=========>amount[金额]======
+ expectedRevenue[预期收入] weightedRevenue[加权收入]
+ forecastCategory[预测类别] includedInCommit[纳入承诺]
+ stageName[阶段名称]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ forecastId[预测头] orgId[业务组织]
+ leadId[线索] probability[概率(%)]
+=========>amount[金额]======
+ expectedRevenue[预期收入] weightedRevenue[加权收入]
+ forecastCategory[预测类别] includedInCommit[纳入承诺]
+ stageName[阶段名称]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ forecastId[预测头] leadId[线索]
+ orgId[业务组织] forecastCategory[预测类别]
+ stageName[阶段名称]
+            </layout>
+            <cells>
+                <cell id="forecastId" filterOp="eq"/>
+                <cell id="leadId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="forecastCategory" filterOp="eq"/>
+                <cell id="stageName" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

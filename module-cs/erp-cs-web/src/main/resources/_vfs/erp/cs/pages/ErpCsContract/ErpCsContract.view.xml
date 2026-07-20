@@ -62,9 +62,58 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] partnerId[签约客户]
+ contractType[合同类型] businessDate[业务日期]
+=========>schedule[合同周期]======
+ startDate[生效日期] endDate[到期日期]
+ billingCycle[计费周期] status[合同状态]
+=========>amount[金额信息]======
+ totalAmount[合同总金额]
+=========>attachment[附件]======
+ attachmentFileId[合同附件]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] partnerId[签约客户]
+ contractType[合同类型] businessDate[业务日期]
+=========>schedule[合同周期]======
+ startDate[生效日期] endDate[到期日期]
+ billingCycle[计费周期] status[合同状态]
+=========>amount[金额信息]======
+ totalAmount[合同总金额]
+=========>attachment[附件]======
+ attachmentFileId[合同附件]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ orgId[业务组织] partnerId[签约客户]
+ contractType[合同类型] businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="contractType" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

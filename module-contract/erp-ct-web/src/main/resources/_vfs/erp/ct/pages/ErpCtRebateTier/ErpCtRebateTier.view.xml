@@ -52,9 +52,43 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ rebateAgreementId[返利协议]
+=========>range[金额范围]======
+ fromAmount[起始金额] toAmount[截止金额]
+=========>rebate[返利信息]======
+ rebatePercent[返利比例] rebateAmount[固定返利金额]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ rebateAgreementId[返利协议]
+=========>range[金额范围]======
+ fromAmount[起始金额] toAmount[截止金额]
+=========>rebate[返利信息]======
+ rebatePercent[返利比例] rebateAmount[固定返利金额]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ rebateAgreementId[返利协议]
+            </layout>
+            <cells>
+                <cell id="rebateAgreementId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

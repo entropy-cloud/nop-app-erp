@@ -23,9 +23,68 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] ruleType[规则类型]
+ priority[优先级] isActive[是否启用]
+=========>scope[作用范围]======
+ productId[产品] productCategory[产品类别]
+ customerId[客户] customerCategory[客户类别]
+=========>range[数量区间]======
+ minQuantity[最小数量] maxQuantity[最大数量]
+=========>price[价格]======
+ priceOverride[价格覆盖] discountPercent[折扣比例]
+ discountAmount[折扣金额] currencyId[币种]
+=========>validity[有效期]======
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ orgId[业务组织] ruleType[规则类型]
+ priority[优先级] isActive[是否启用]
+=========>scope[作用范围]======
+ productId[产品] productCategory[产品类别]
+ customerId[客户] customerCategory[客户类别]
+=========>range[数量区间]======
+ minQuantity[最小数量] maxQuantity[最大数量]
+=========>price[价格]======
+ priceOverride[价格覆盖] discountPercent[折扣比例]
+ discountAmount[折扣金额] currencyId[币种]
+=========>validity[有效期]======
+ effectiveFrom[生效日期] effectiveTo[失效日期]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ orgId[业务组织] ruleType[规则类型]
+ productId[产品] customerId[客户]
+ effectiveFrom[生效日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="ruleType" filterOp="eq"/>
+                <cell id="productId" filterOp="eq"/>
+                <cell id="customerId" filterOp="eq"/>
+                <cell id="effectiveFrom" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

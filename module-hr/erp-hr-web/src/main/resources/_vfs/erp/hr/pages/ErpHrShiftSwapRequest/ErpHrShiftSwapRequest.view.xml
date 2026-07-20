@@ -51,9 +51,53 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] requesterId[申请人]
+ targetEmployeeId[目标员工] orgId[业务组织]
+ businessDate[业务日期] 
+=========>detail[调换明细]======
+ sourceAssignmentId[原排班] targetAssignmentId[目标排班]
+ swapDate[调换日期] reason[调换原因]
+=========>approval[审批信息]======
+ status[状态] approvedById[审批人]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] requesterId[申请人]
+ targetEmployeeId[目标员工] orgId[业务组织]
+ businessDate[业务日期] 
+=========>detail[调换明细]======
+ sourceAssignmentId[原排班] targetAssignmentId[目标排班]
+ swapDate[调换日期] reason[调换原因]
+=========>approval[审批信息]======
+ status[状态] approvedById[审批人]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编号] requesterId[申请人]
+ targetEmployeeId[目标员工] status[状态]
+ businessDate[业务日期] 
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="requesterId" filterOp="eq"/>
+                <cell id="targetEmployeeId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

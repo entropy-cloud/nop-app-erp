@@ -33,9 +33,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ planId[发展计划] competencyId[目标胜任力]
+ gapId[关联差距分析] 
+=========>detail[明细]======
+ targetLevel[目标等级] developmentAction[发展行动]
+ mentorId[导师] startDate[开始日期]
+ endDate[预计完成日期] status[状态]
+ progressNote[进度说明] 
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ planId[发展计划] competencyId[目标胜任力]
+ gapId[关联差距分析] 
+=========>detail[明细]======
+ targetLevel[目标等级] developmentAction[发展行动]
+ mentorId[导师] startDate[开始日期]
+ endDate[预计完成日期] status[状态]
+ progressNote[进度说明] 
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ planId[发展计划] competencyId[目标胜任力]
+ mentorId[导师] status[状态]
+ startDate[开始日期] 
+            </layout>
+            <cells>
+                <cell id="planId" filterOp="eq"/>
+                <cell id="competencyId" filterOp="eq"/>
+                <cell id="mentorId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="startDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -26,9 +26,54 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] territoryId[销售区域]
+ teamId[销售团队] ownerId[负责人]
+=========>period[周期]======
+ periodType[周期类型] fiscalYear[财年]
+ periodLabel[周期标签]
+=========>amount[金额]======
+ quotaAmount[配额金额] currencyId[币种]
+ isFinalized[是否最终] notes[备注]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ orgId[业务组织] territoryId[销售区域]
+ teamId[销售团队] ownerId[负责人]
+=========>period[周期]======
+ periodType[周期类型] fiscalYear[财年]
+ periodLabel[周期标签]
+=========>amount[金额]======
+ quotaAmount[配额金额] currencyId[币种]
+ isFinalized[是否最终] notes[备注](2)
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ orgId[业务组织] territoryId[销售区域]
+ teamId[销售团队] ownerId[负责人]
+ fiscalYear[财年] periodType[周期类型]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="territoryId" filterOp="eq"/>
+                <cell id="teamId" filterOp="eq"/>
+                <cell id="ownerId" filterOp="eq"/>
+                <cell id="fiscalYear" filterOp="eq"/>
+                <cell id="periodType" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

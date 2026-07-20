@@ -45,9 +45,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ warehouseId[仓库] dockId[月台]
+ orgId[业务组织] appointmentDate[预约日期]
+=========>slot[时间窗口]======
+ slotStart[时间窗口开始] slotEnd[时间窗口结束]
+ crossDockId[关联越库] carrierInfo[承运商信息]
+ status[状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ warehouseId[仓库] dockId[月台]
+ orgId[业务组织] appointmentDate[预约日期]
+=========>slot[时间窗口]======
+ slotStart[时间窗口开始] slotEnd[时间窗口结束]
+ crossDockId[关联越库] carrierInfo[承运商信息]
+ status[状态]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ warehouseId[仓库] dockId[月台]
+ orgId[业务组织] status[状态]
+ appointmentDate[预约日期]
+            </layout>
+            <cells>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="dockId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="appointmentDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

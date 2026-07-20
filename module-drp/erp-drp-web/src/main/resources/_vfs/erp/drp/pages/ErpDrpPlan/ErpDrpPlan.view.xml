@@ -73,9 +73,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] planName[计划名称]
+ orgId[业务组织] businessDate[业务日期]
+=========>period[期间]======
+ periodFrom[期间开始] periodTo[期间结束]
+ status[状态]
+=========>run[运行信息]======
+ runAt[运行时间] runBy[运行人]
+ totalReplenishmentQty[总补货数量]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编号] planName[计划名称]
+ orgId[业务组织] businessDate[业务日期]
+=========>period[期间]======
+ periodFrom[期间开始] periodTo[期间结束]
+ status[状态]
+=========>run[运行信息]======
+ runAt[运行时间] runBy[运行人]
+ totalReplenishmentQty[总补货数量]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编号] planName[计划名称]
+ orgId[业务组织] status[状态]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="planName" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

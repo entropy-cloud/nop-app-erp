@@ -21,9 +21,55 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ title[模板标题] categoryId[应答分类]
+ sequence[排序]
+=========>content[模板内容]======
+ content[模板正文]
+ variableDefs[变量定义]
+=========>match[自动匹配]======
+ macroTicketTypeId[自动匹配工单类型] macroPriority[自动匹配优先级]
+ isActive[是否启用] usageCount[使用次数]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ title[模板标题] categoryId[应答分类]
+ sequence[排序]
+=========>content[模板内容]======
+ content[模板正文]
+ variableDefs[变量定义]
+=========>match[自动匹配]======
+ macroTicketTypeId[自动匹配工单类型] macroPriority[自动匹配优先级]
+ isActive[是否启用] usageCount[使用次数]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] title[模板标题]
+ orgId[业务组织] categoryId[应答分类]
+ isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="title" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="categoryId" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

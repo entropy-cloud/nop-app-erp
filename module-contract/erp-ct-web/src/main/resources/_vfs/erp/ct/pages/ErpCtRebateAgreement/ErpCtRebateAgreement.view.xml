@@ -102,9 +102,60 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[协议编号] orgId[业务组织]
+ contractId[关联合同] partnerId[对方伙伴]
+ rebateType[返利类型] businessDate[业务日期]
+=========>schedule[协议周期]======
+ agreementDate[签订日期] startDate[有效期开始]
+ endDate[有效期结束] status[状态]
+=========>amount[金额信息]======
+ totalAccumulatedAmount[当前累计金额] estimatedRebateAmount[预估返利金额]
+=========>meta[计提元数据]======
+ accrualMethod[计提方法]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[协议编号] orgId[业务组织]
+ contractId[关联合同] partnerId[对方伙伴]
+ rebateType[返利类型] businessDate[业务日期]
+=========>schedule[协议周期]======
+ agreementDate[签订日期] startDate[有效期开始]
+ endDate[有效期结束] status[状态]
+=========>amount[金额信息]======
+ totalAccumulatedAmount[当前累计金额] estimatedRebateAmount[预估返利金额]
+=========>meta[计提元数据]======
+ accrualMethod[计提方法]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[协议编号] orgId[业务组织]
+ contractId[关联合同] partnerId[对方伙伴]
+ status[状态] businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="contractId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

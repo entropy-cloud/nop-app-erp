@@ -20,9 +20,49 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ catalogItemId[目录项] sequence[执行顺序]
+=========>action[执行动作]======
+ actionType[动作类型] actionConfig[动作配置]
+ assignToRole[执行角色] estimatedDuration[预估时长(分钟)]
+ isMandatory[是否必须执行]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ catalogItemId[目录项] sequence[执行顺序]
+=========>action[执行动作]======
+ actionType[动作类型] actionConfig[动作配置]
+ assignToRole[执行角色] estimatedDuration[预估时长(分钟)]
+ isMandatory[是否必须执行]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] orgId[业务组织]
+ catalogItemId[目录项] actionType[动作类型]
+ isMandatory[是否必须执行]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="catalogItemId" filterOp="eq"/>
+                <cell id="actionType" filterOp="eq"/>
+                <cell id="isMandatory" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

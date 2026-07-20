@@ -25,9 +25,51 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ timesheetId[工时表ID] employeeId[员工]
+ workDate[工作日期] 
+=========>detail[明细]======
+ projectId[项目] taskId[任务]
+ activityType[活动类型] 
+=========>hours[工时]======
+ hours[小时数] description[工作内容]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ timesheetId[工时表ID] employeeId[员工]
+ workDate[工作日期] 
+=========>detail[明细]======
+ projectId[项目] taskId[任务]
+ activityType[活动类型] 
+=========>hours[工时]======
+ hours[小时数] description[工作内容]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ timesheetId[工时表ID] employeeId[员工]
+ projectId[项目] workDate[工作日期]
+ activityType[活动类型] 
+            </layout>
+            <cells>
+                <cell id="timesheetId" filterOp="eq"/>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="projectId" filterOp="eq"/>
+                <cell id="workDate" filterOp="date-between"/>
+                <cell id="activityType" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

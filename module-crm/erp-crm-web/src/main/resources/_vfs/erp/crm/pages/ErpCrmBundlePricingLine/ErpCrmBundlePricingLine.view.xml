@@ -30,9 +30,45 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ bundleId[套餐头] orgId[业务组织]
+ productId[产品] sequence[顺序号]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ bundleId[套餐头] orgId[业务组织]
+ productId[产品] sequence[顺序号]
+=========>quantity[数量与价格]======
+ quantity[数量] unitPrice[单价]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ bundleId[套餐头] productId[产品]
+ orgId[业务组织] sequence[顺序号]
+            </layout>
+            <cells>
+                <cell id="bundleId" filterOp="eq"/>
+                <cell id="productId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="sequence" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

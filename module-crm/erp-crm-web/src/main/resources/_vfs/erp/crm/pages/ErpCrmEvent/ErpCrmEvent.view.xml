@@ -59,9 +59,70 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ eventType[事件类型] eventCategoryId[事件分类]
+ subject[主题] description[描述]
+=========>schedule[时间安排]======
+ startDateTime[开始时间] endDateTime[结束时间]
+ duration[时长(分钟)]
+=========>association[业务关联]======
+ relatedLeadId[关联线索] relatedBillType[关联类型]
+ relatedBillCode[关联单号] partnerId[往来单位]
+ contactId[联系人] ownerId[负责人]
+=========>status[状态]======
+ status[状态] priority[优先级]
+=========>recurrence[重复]======
+ isRecurrent[是否重复] parentEventId[父事件]
+ reminderMinutesBefore[提前提醒(分钟)]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ eventType[事件类型] eventCategoryId[事件分类]
+ subject[主题] description[描述]
+=========>schedule[时间安排]======
+ startDateTime[开始时间] endDateTime[结束时间]
+ duration[时长(分钟)]
+=========>association[业务关联]======
+ relatedLeadId[关联线索] relatedBillType[关联类型]
+ relatedBillCode[关联单号] partnerId[往来单位]
+ contactId[联系人] ownerId[负责人]
+=========>status[状态]======
+ status[状态] priority[优先级]
+=========>recurrence[重复]======
+ isRecurrent[是否重复] parentEventId[父事件]
+ reminderMinutesBefore[提前提醒(分钟)]
+========^audit[审计信息]=========
+ remark[备注](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] subject[主题]
+ orgId[业务组织] eventType[事件类型]
+ status[状态] startDateTime[开始时间]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="subject" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="eventType" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="startDateTime" filterOp="date-between"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
