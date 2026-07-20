@@ -113,12 +113,24 @@
 ==========>schedule[日期信息]======
  startDate[生效日期] endDate[到期日期]
  signDate[签署日期]
+=========>lines[合同明细行]======
+ lines[合同明细行](2)
+=========>versions[合同版本]======
+ versions[合同版本](2)
 ==========^audit[审计信息]=========
  description[描述] attachmentFileId[合同附件]
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/ct/pages/ErpCtContractLine/ErpCtContractLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+                <cell id="versions">
+                    <view path="/erp/ct/pages/ErpCtContractVersion/ErpCtContractVersion.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
@@ -135,8 +147,20 @@
 ==========>schedule[日期信息]======
  startDate[生效日期] endDate[到期日期]
  signDate[签署日期]
+=========>lines[合同明细行]======
+ lines[合同明细行](2)
+=========>versions[合同版本]======
+ versions[合同版本](2)
  description[描述](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/ct/pages/ErpCtContractLine/ErpCtContractLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+                <cell id="versions">
+                    <view path="/erp/ct/pages/ErpCtContractVersion/ErpCtContractVersion.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="query" editMode="query" title="查询条件">

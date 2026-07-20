@@ -22,6 +22,73 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="workDate" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-date', name: 'workDate', required: true, format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="projectId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'projectId',
+                                source: '/erp/prj/pages/ErpPrjProject/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="taskId"/>
+                <col id="activityType"/>
+                <col id="hours" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'hours',
+                                required: true,
+                                step: 0.25,
+                                validations: { minimum: 0.01, maximum: 24 },
+                                validationErrors: { minimum: '工时必须大于 0', maximum: '单日工时不能超过 24 小时' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="description"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="workDate" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="projectId"/>
+                <col id="taskId"/>
+                <col id="activityType"/>
+                <col id="hours" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="description"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

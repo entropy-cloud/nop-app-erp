@@ -65,7 +65,7 @@
 =========>baseInfo[基本信息]======
  code[编号] title[问卷标题]
  surveyType[调研类型] isAnonymous[是否匿名]
- status[状态] 
+ status[状态]
 =========>schedule[周期与目标]======
  startDate[开始日期] endDate[截止日期]
  reminderDays[催填间隔天数] targetDepartmentId[目标部门]
@@ -74,19 +74,31 @@
 =========>stats[统计信息]======
  totalQuestions[总题数] totalResponses[总答卷数]
  completionRate[完成率] avgScore[平均分]
- eNpsScore[eNPS得分] 
+ eNpsScore[eNPS得分]
+=========>questions[问卷题目]======
+ questions[问卷题目](2)
+=========>responses[答卷列表]======
+ responses[答卷列表](2)
 ========^audit[审计信息]=========
  description[问卷说明] remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="questions">
+                    <view path="/erp/hr/pages/ErpHrSurveyQuestion/ErpHrSurveyQuestion.view.xml" grid="sub-grid-view"/>
+                </cell>
+                <cell id="responses">
+                    <view path="/erp/hr/pages/ErpHrSurveyResponse/ErpHrSurveyResponse.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[编号] title[问卷标题]
  surveyType[调研类型] isAnonymous[是否匿名]
- status[状态] 
+ status[状态]
 =========>schedule[周期与目标]======
  startDate[开始日期] endDate[截止日期]
  reminderDays[催填间隔天数] targetDepartmentId[目标部门]
@@ -95,12 +107,23 @@
 =========>stats[统计信息]======
  totalQuestions[总题数] totalResponses[总答卷数]
  completionRate[完成率] avgScore[平均分]
- eNpsScore[eNPS得分] 
-========^audit[审计信息]=========
+ eNpsScore[eNPS得分]
+=========>questions[问卷题目]======
+ questions[问卷题目](2)
+=========>responses[答卷列表]======
+ responses[答卷列表](2)
  description[问卷说明] remark[备注](2)
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="questions">
+                    <view path="/erp/hr/pages/ErpHrSurveyQuestion/ErpHrSurveyQuestion.view.xml" grid="sub-grid-edit"/>
+                </cell>
+                <cell id="responses">
+                    <view path="/erp/hr/pages/ErpHrSurveyResponse/ErpHrSurveyResponse.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件">

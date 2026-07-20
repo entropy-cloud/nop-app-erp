@@ -140,11 +140,28 @@
 ==========^delivery[送达信息]=========
  estimatedDeliveryDate[预计送达日期] actualDeliveryDate[实际送达日期]
  signedBy[签收人]
+=========>lines[明细行]======
+ lines[明细行](2)
+=========>parcels[包裹]======
+ parcels[包裹](2)
+=========>logs[操作日志]======
+ logs[操作日志](2)
 ==========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/log/pages/ErpLogShipmentLine/ErpLogShipmentLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+                <cell id="parcels">
+                    <view path="/erp/log/pages/ErpLogShipmentParcel/ErpLogShipmentParcel.view.xml" grid="sub-grid-view"/>
+                </cell>
+                <cell id="logs">
+                    <view path="/erp/log/pages/ErpLogShipmentLog/ErpLogShipmentLog.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
@@ -171,8 +188,25 @@
 ==========>delivery[送达信息]======
  estimatedDeliveryDate[预计送达日期] actualDeliveryDate[实际送达日期]
  signedBy[签收人]
+=========>lines[明细行]======
+ lines[明细行](2)
+=========>parcels[包裹]======
+ parcels[包裹](2)
+=========>logs[操作日志]======
+ logs[操作日志](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/log/pages/ErpLogShipmentLine/ErpLogShipmentLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+                <cell id="parcels">
+                    <view path="/erp/log/pages/ErpLogShipmentParcel/ErpLogShipmentParcel.view.xml" grid="sub-grid-edit"/>
+                </cell>
+                <cell id="logs">
+                    <view path="/erp/log/pages/ErpLogShipmentLog/ErpLogShipmentLog.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="query" editMode="query" title="查询条件">

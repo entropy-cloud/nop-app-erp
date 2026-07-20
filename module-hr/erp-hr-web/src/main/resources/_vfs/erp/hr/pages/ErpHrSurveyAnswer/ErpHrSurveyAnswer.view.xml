@@ -19,6 +19,42 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="questionId" mandatory="true"/>
+                <col id="ratingValue">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'ratingValue',
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '评分不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="selectedOption"/>
+                <col id="openText"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="questionId" mandatory="true"/>
+                <col id="ratingValue" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="selectedOption"/>
+                <col id="openText"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

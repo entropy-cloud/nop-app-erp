@@ -71,6 +71,57 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="versionNo" mandatory="true" ui:number="true"/>
+                <col id="versionDate" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-date', name: 'versionDate', required: true, format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="isCurrent">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'switch',
+                                name: 'isCurrent',
+                                remark: '勾选表示当前生效版本（同一合同下仅可有一个 isCurrent=1）'
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="status" mandatory="true"/>
+                <col id="attachmentFileId"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="versionNo" mandatory="true" ui:number="true"/>
+                <col id="versionDate" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="isCurrent"/>
+                <col id="status" mandatory="true"/>
+                <col id="approvedBy"/>
+                <col id="approvedAt">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

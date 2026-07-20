@@ -30,6 +30,83 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="competencyId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'competencyId',
+                                source: '/erp/hr/pages/ErpHrCompetency/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="targetLevel" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'targetLevel',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '目标等级不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="developmentAction"/>
+                <col id="mentorId"/>
+                <col id="startDate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-date', name: 'startDate', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-date', name: 'endDate', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="status" mandatory="true"/>
+                <col id="progressNote"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="competencyId"/>
+                <col id="targetLevel" mandatory="true" ui:number="true"/>
+                <col id="developmentAction"/>
+                <col id="mentorId"/>
+                <col id="startDate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="status" mandatory="true"/>
+                <col id="progressNote"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

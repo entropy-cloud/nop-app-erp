@@ -14,6 +14,23 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="actionType"/>
+                <col id="fromStatus"/>
+                <col id="toStatus"/>
+                <col id="operatorId"/>
+                <col id="content"/>
+                <col id="createTime" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

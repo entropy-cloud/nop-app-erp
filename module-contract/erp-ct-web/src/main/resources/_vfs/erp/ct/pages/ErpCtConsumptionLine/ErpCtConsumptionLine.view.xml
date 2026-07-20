@@ -58,6 +58,114 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="consumptionDate" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-date', name: 'consumptionDate', required: true, format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="quantity" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'quantity',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 0.0001 },
+                                validationErrors: { minimum: '消耗数量必须大于 0' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        amount: '${ROUND(quantity * unitPrice, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="unitPrice" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'unitPrice',
+                                required: true,
+                                step: 0.0001,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '单价不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        amount: '${ROUND(quantity * unitPrice, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amount"/>
+                <col id="sourceBillType"/>
+                <col id="sourceBillCode"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="consumptionDate" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="quantity" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="unitPrice" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amount" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="sourceBillType"/>
+                <col id="sourceBillCode"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

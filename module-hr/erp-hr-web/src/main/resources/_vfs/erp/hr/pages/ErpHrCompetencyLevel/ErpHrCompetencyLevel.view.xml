@@ -14,6 +14,43 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="levelNumber" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'levelNumber',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 1 },
+                                validationErrors: { minimum: '等级编号必须 ≥ 1' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="levelName"/>
+                <col id="behavioralAnchor"/>
+                <col id="sortOrder">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-number', name: 'sortOrder', step: 10 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="levelNumber" mandatory="true" ui:number="true"/>
+                <col id="levelName"/>
+                <col id="behavioralAnchor"/>
+                <col id="sortOrder" ui:number="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

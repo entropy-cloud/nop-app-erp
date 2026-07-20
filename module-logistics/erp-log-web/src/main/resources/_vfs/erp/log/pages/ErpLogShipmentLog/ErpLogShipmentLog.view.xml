@@ -37,6 +37,25 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="actionType" mandatory="true"/>
+                <col id="gatewayId" mandatory="true"/>
+                <col id="httpStatus" ui:number="true"/>
+                <col id="isSuccess"/>
+                <col id="errorCode"/>
+                <col id="errorMessage"/>
+                <col id="executedAt" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

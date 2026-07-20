@@ -44,6 +44,81 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="materialId" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'materialId',
+                                label: '物料',
+                                required: true,
+                                source: '/erp/md/pages/ErpMdMaterial/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="supplierPartNo"/>
+                <col id="quantity" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'quantity',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 0.0001 },
+                                validationErrors: { minimum: '数量必须大于 0' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="shippedQty">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'shippedQty',
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '发货数量不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="materialId"/>
+                <col id="supplierPartNo"/>
+                <col id="quantity" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="shippedQty" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

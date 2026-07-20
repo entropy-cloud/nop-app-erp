@@ -36,6 +36,40 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="configCode" mandatory="true"/>
+                <col id="serviceType"/>
+                <col id="apiEndpoint"/>
+                <col id="apiKey">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-password', name: 'apiKey', remark: '敏感字段，保存后由后端脱敏返回' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="apiSecret">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-password', name: 'apiSecret', remark: '敏感字段，保存后由后端脱敏返回' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="isActive" mandatory="true"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="configCode" mandatory="true"/>
+                <col id="serviceType"/>
+                <col id="apiEndpoint"/>
+                <col id="isActive"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

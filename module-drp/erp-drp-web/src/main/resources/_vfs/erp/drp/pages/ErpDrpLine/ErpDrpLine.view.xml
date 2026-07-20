@@ -91,6 +91,34 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="materialId"/>
+                <col id="warehouseId"/>
+                <col id="sourceWarehouseId"/>
+                <col id="replenishmentType" mandatory="true"/>
+                <col id="currentStock" ui:number="true"/>
+                <col id="netRequirement" ui:number="true"/>
+                <col id="suggestedQty" ui:number="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'suggestedQty',
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '建议补货量不能为负' },
+                                remark: '系统计算值，可手工覆盖调整'
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="approvedQty" ui:number="true"/>
+                <col id="status" mandatory="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

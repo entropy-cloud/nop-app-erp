@@ -14,6 +14,53 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="competencyId" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'competencyId',
+                                label: '胜任力',
+                                required: true,
+                                source: '/erp/hr/pages/ErpHrCompetency/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualLevel" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'actualLevel',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '实际等级不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="comment"/>
+                <col id="sourceType"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="competencyId"/>
+                <col id="actualLevel" ui:number="true"/>
+                <col id="comment"/>
+                <col id="sourceType"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

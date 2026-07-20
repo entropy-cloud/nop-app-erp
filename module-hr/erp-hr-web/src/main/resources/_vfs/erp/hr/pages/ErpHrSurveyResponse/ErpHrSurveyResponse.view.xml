@@ -14,6 +14,42 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="employeeId"/>
+                <col id="submittedAt">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-datetime', name: 'submittedAt', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="isComplete"/>
+                <col id="timeSpentSeconds">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'timeSpentSeconds',
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '耗时不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="employeeId"/>
+                <col id="submittedAt"/>
+                <col id="isComplete"/>
+                <col id="timeSpentSeconds" ui:number="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

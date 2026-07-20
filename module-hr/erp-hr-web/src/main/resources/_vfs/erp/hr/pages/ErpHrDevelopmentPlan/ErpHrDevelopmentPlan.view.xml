@@ -57,29 +57,42 @@
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  employeeId[员工] orgId[业务组织]
- businessDate[业务日期] 
+ businessDate[业务日期]
 =========>detail[计划明细]======
  planName[计划名称] targetDate[目标完成日期]
- status[状态] 
+ status[状态]
+=========>items[发展计划项]======
+ items[发展计划项](2)
 ========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="items">
+                    <view path="/erp/hr/pages/ErpHrDevelopmentPlanItem/ErpHrDevelopmentPlanItem.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  employeeId[员工] orgId[业务组织]
- businessDate[业务日期] 
+ businessDate[业务日期]
 =========>detail[计划明细]======
  planName[计划名称] targetDate[目标完成日期]
- status[状态] 
-========^audit[审计信息]=========
+ status[状态]
+=========>items[发展计划项]======
+ items[发展计划项](2)
  remark[备注](2)
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="items">
+                    <view path="/erp/hr/pages/ErpHrDevelopmentPlanItem/ErpHrDevelopmentPlanItem.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件">

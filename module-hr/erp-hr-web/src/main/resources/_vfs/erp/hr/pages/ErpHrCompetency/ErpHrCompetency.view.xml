@@ -15,17 +15,73 @@
                 <col id="orgId" label="业务组织"/>
             </cols>
         </grid>
-        <grid id="pick-list"/>
+        <grid id="pick-list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="category" mandatory="true" sortable="true"/>
+                <col id="competencyGroup" sortable="true"/>
+                <col id="isTechnical" sortable="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ category[类别] competencyGroup[胜任力分组]
+ isTechnical[是否技术类] parentId[上级]
+=========>levels[等级定义]======
+ levels[等级定义](2)
+========^audit[审计信息]=========
+ description[描述]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+            <cells>
+                <cell id="levels">
+                    <view path="/erp/hr/pages/ErpHrCompetencyLevel/ErpHrCompetencyLevel.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ category[类别] competencyGroup[胜任力分组]
+ isTechnical[是否技术类] parentId[上级]
+=========>levels[等级定义]======
+ levels[等级定义](2)
+ description[描述](2)
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+            <cells>
+                <cell id="levels">
+                    <view path="/erp/hr/pages/ErpHrCompetencyLevel/ErpHrCompetencyLevel.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="pick-query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] name[名称]
+ category[类别] competencyGroup[分组]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="category" filterOp="eq"/>
+                <cell id="competencyGroup" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
         <crud name="main"/>
-        <picker name="picker"/>
+        <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

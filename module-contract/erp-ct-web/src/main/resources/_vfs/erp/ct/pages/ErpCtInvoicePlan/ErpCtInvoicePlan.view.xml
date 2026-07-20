@@ -51,6 +51,73 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="planDate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-date', name: 'planDate', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="invoiceTerm" mandatory="true"/>
+                <col id="amount" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'amount',
+                                required: true,
+                                step: 0.01,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '开票金额不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="isInvoiced"/>
+                <col id="invoiceBillCode"/>
+                <col id="invoiceDate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-date', name: 'invoiceDate', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="planDate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="invoiceTerm" mandatory="true"/>
+                <col id="amount" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="isInvoiced"/>
+                <col id="invoiceBillCode"/>
+                <col id="invoiceDate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

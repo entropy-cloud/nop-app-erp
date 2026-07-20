@@ -93,11 +93,18 @@
 =========>reference[关联单据]======
  relatedBillType[关联采购订单类型] relatedBillCode[关联采购订单号]
  status[状态]
+=========>lines[明细行]======
+ lines[明细行](2)
 ========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/b2b/pages/ErpB2bAsnLine/ErpB2bAsnLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
@@ -111,11 +118,17 @@
 =========>reference[关联单据]======
  relatedBillType[关联采购订单类型] relatedBillCode[关联采购订单号]
  status[状态]
-========^audit[审计信息]=========
+=========>lines[明细行]======
+ lines[明细行](2)
  remark[备注](2)
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/b2b/pages/ErpB2bAsnLine/ErpB2bAsnLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件">

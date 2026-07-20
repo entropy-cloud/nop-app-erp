@@ -35,7 +35,16 @@
                 </col>
             </cols>
         </grid>
-        <grid id="pick-list"/>
+        <grid id="pick-list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="carrierName" mandatory="true" sortable="true"/>
+                <col id="carrierType" mandatory="true" sortable="true"/>
+                <col id="partnerId" label="承运商往来单位"/>
+                <col id="isActive" mandatory="true" ui:number="true" sortable="true"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
@@ -49,11 +58,18 @@
  gatewayId[网关标识] trackingUrlTemplate[追踪URL模板]
 =========>capability[能力]======
  maxParcelWeight[最大包裹重量(kg)] supportedServiceTypes[支持服务类型]
+=========>configs[配置项]======
+ configs[配置项](2)
 ========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="configs">
+                    <view path="/erp/log/pages/ErpLogCarrierConfig/ErpLogCarrierConfig.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
@@ -65,11 +81,17 @@
  gatewayId[网关标识] trackingUrlTemplate[追踪URL模板]
 =========>capability[能力]======
  maxParcelWeight[最大包裹重量(kg)] supportedServiceTypes[支持服务类型]
-========^audit[审计信息]=========
+=========>configs[配置项]======
+ configs[配置项](2)
  remark[备注](2)
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="configs">
+                    <view path="/erp/log/pages/ErpLogCarrierConfig/ErpLogCarrierConfig.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件">
@@ -87,10 +109,22 @@
                 <cell id="isActive" filterOp="eq"/>
             </cells>
         </form>
+        <form id="pick-query" editMode="query" title="查询条件">
+            <layout>
+ code[编码] carrierName[承运商名称]
+ carrierType[承运商类型] isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="carrierName" filterOp="like"/>
+                <cell id="carrierType" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
         <crud name="main"/>
-        <picker name="picker"/>
+        <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

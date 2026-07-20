@@ -43,6 +43,66 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="parcelNo" mandatory="true"/>
+                <col id="trackingNo"/>
+                <col id="labelUrl"/>
+                <col id="weight">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'weight',
+                                step: 0.01,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '重量不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="declaredValue">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'declaredValue',
+                                step: 0.01,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '申报价值不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="isActive" mandatory="true"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="parcelNo" mandatory="true"/>
+                <col id="trackingNo"/>
+                <col id="labelUrl"/>
+                <col id="weight" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="declaredValue" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="isActive"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
