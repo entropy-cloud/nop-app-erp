@@ -36,6 +36,137 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="lineType" mandatory="true"/>
+                <col id="materialId" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'materialId',
+                                label: '物料',
+                                required: true,
+                                source: '/erp/md/pages/ErpMdMaterial/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="uoMId" mandatory="true"/>
+                <col id="plannedQuantity" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'plannedQuantity',
+                                required: true,
+                                step: 0.0001,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '计划数量不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualQuantity">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'actualQuantity',
+                                step: 0.0001,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '实际数量不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="scrappedQuantity">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'scrappedQuantity',
+                                step: 0.0001,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '报废数量不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="sourceWarehouseId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'sourceWarehouseId',
+                                label: '领料仓库',
+                                source: '/erp/md/pages/ErpMdWarehouse/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="destWarehouseId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'destWarehouseId',
+                                label: '入库仓库',
+                                source: '/erp/md/pages/ErpMdWarehouse/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="lineType"/>
+                <col id="materialId"/>
+                <col id="uoMId"/>
+                <col id="plannedQuantity" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualQuantity" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="scrappedQuantity" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="sourceWarehouseId"/>
+                <col id="destWarehouseId"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

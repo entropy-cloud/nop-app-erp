@@ -14,6 +14,7 @@ import {
   MFG_EXPECT,
   SEED,
 } from './_helper';
+import { GraphQLClient } from '../pages';
 
 /**
  * 制造工单完整链路编排浏览器层 E2E（plan 2026-07-10-0704-2 Phase 1）。
@@ -111,6 +112,53 @@ test.describe('manufacturing WorkOrder full chain orchestration (WorkOrder + Mat
       expect(Number(woState?.unitCost ?? 0), 'unitCost = total/completed > 0').toBeGreaterThan(0);
       expect(Number(woState?.unitCost ?? 0), 'unitCost = 1100/10 = 110').toBe(MFG_EXPECT.unitCost);
       expect(woState?.posted, 'WorkOrder.posted=false (GL posting signal is on the stock move, not the WorkOrder)').toBe(false);
+    } finally {
+      await cleanupMfg(page, r);
+    }
+  });
+
+  /**
+   * F4 Phase 2 P2 — WorkOrderLine 子表写路径内联断言（plan 2026-07-20-1020-3 Phase 3）。
+   *
+   * runMfgChain 经独立 __save 创建 1 OUTPUT 行 + 1 INPUT 行（非头嵌套 `lines:[...]`，
+   * 因 mfg-chain 设计需要 bomId/routingId 后置解析）。本 spec 经 `ErpMfgWorkOrder__get`
+   * 反向断言嵌套 `lines` 关系展开 + 行字段（lineType/materialId/plannedQuantity/sourceWarehouseId/
+   * destWarehouseId）持久化，证明 WorkOrder form edit 内嵌 sub-grid-edit 的后端 `__save` 嵌套行端点
+   * 在前端 codegen 展开 input-table 前已可用（plan §25 抽样核实 _lines InputBean 字段）。
+   */
+  test('WorkOrder nested lines sub-table persists lineType/materialId/plannedQuantity/warehouses', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpMfgWorkOrder-main');
+
+    const r = await runMfgChain(page);
+    try {
+      const gql = new GraphQLClient(page);
+      const woWithLines = await gql.get<any>(
+        'ErpMfgWorkOrder',
+        r.wo.id,
+        'id lines{id lineNo lineType materialId plannedQuantity sourceWarehouseId destWarehouseId}',
+      );
+
+      expect(woWithLines?.id, 'WorkOrder should be retrievable with nested lines').toBe(r.wo.id);
+      const lines: any[] = woWithLines?.lines || [];
+      expect(lines.length, 'WorkOrder should expose 2 nested lines (OUTPUT + INPUT)').toBeGreaterThanOrEqual(2);
+
+      const outputLine = lines.find((l) => l.lineType === 'OUTPUT');
+      const inputLine = lines.find((l) => l.lineType === 'INPUT');
+      expect(outputLine, 'WorkOrder nested lines should include OUTPUT row').toBeTruthy();
+      expect(inputLine, 'WorkOrder nested lines should include INPUT row').toBeTruthy();
+
+      expect(
+        Number(outputLine?.plannedQuantity),
+        'OUTPUT line.plannedQuantity=10 (MFG_EXPECT.plannedQty)',
+      ).toBe(MFG_EXPECT.plannedQty);
+      expect(
+        Number(outputLine?.destWarehouseId),
+        'OUTPUT line.destWarehouseId should be set (completion move source)',
+      ).toBeGreaterThan(0);
+      expect(
+        Number(inputLine?.sourceWarehouseId),
+        'INPUT line.sourceWarehouseId should be set (issue move source)',
+      ).toBeGreaterThan(0);
     } finally {
       await cleanupMfg(page, r);
     }

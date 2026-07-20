@@ -77,49 +77,58 @@
     <forms>
         <form id="view" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[工单号] orgId[业务组织]
  docStatus[单据状态] approveStatus[审核状态]
  priority[优先级] businessDate[工单日期]
-==========>bom[BOM信息]======
+=========>bom[BOM信息]======
  bomId[BOM] routingId[工艺路线]
  productionVersionId[生产版本] productId[产品(主产出)]
-==========>plan[计划信息]======
+=========>plan[计划信息]======
  plannedQuantity[计划数量] completedQuantity[完工数量]
  scrappedQuantity[报废数量] plannedStartDate[计划开工日期]
  plannedEndDate[计划完工日期] actualStartDate[实际开工日期]
  actualEndDate[实际完工日期] sourceOrderType[来源单据类型]
  sourceOrderCode[来源单据号] sourceMrpPlanId[来源 MRP 计划]
  sourceScheduleId[APS排程来源(弱参照)]
-==========^cost[成本信息]=========
+=========>lines[明细行]======
+ lines[明细行](2)
+========^cost[成本信息]=========
  currencyId[币种] exchangeRate[汇率]
  materialCost[材料成本] laborCost[人工成本]
  overheadCost[制造费用] subcontractCost[委外成本]
  totalCost[总成本] unitCost[单位成本]
  amountSource[源币种金额] amountFunctional[本位币金额]
-==========^audit[审计信息]=========
+========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/mfg/pages/ErpMfgWorkOrderLine/ErpMfgWorkOrderLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[工单号] orgId[业务组织]
  docStatus[单据状态] approveStatus[审核状态]
  priority[优先级] businessDate[工单日期]
-==========>bom[BOM信息]======
+=========>bom[BOM信息]======
  bomId[BOM] routingId[工艺路线]
  productionVersionId[生产版本] productId[产品(主产出)]
-==========>plan[计划信息]======
+=========>plan[计划信息]======
  plannedQuantity[计划数量] completedQuantity[完工数量]
  scrappedQuantity[报废数量] plannedStartDate[计划开工日期]
  plannedEndDate[计划完工日期] actualStartDate[实际开工日期]
  actualEndDate[实际完工日期] sourceOrderType[来源单据类型]
  sourceOrderCode[来源单据号] sourceMrpPlanId[来源 MRP 计划]
  sourceScheduleId[APS排程来源(弱参照)]
-==========^cost[成本信息]=========
+=========>lines[明细行]======
+ lines[明细行](2)
+========^cost[成本信息]=========
  currencyId[币种] exchangeRate[汇率]
  materialCost[材料成本] laborCost[人工成本]
  overheadCost[制造费用] subcontractCost[委外成本]
@@ -127,8 +136,13 @@
  amountSource[源币种金额] amountFunctional[本位币金额]
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/mfg/pages/ErpMfgWorkOrderLine/ErpMfgWorkOrderLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
-        <form id="add"/>
+        <form id="add" x:prototype="edit" editMode="add"/>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[工单号] docStatus[单据状态]
