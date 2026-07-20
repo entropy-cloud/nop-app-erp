@@ -166,3 +166,127 @@
 | 质检模板按物料配置 | Odoo#quality.check | 模板关联物料，自动带出检验项目 |
 | 让步接收审批流 | Carbon#Concession | 让步接收需填写理由 + 审批 |
 | 四类检验统一框架 | Odoo#quality.check | inspection_type 区分，页面结构复用 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：质量域 10 个主交易实体（不含已 1500-1 覆盖的 `ErpQaInspection`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-1-f3-p1-mfg-tier-form-layout.md` Phase 0.D。
+> 质量域分化最丰富：NCR（不合格品）有 spec+disposition+status 三状态；SPC 三实体（Chart/Sample/Capability）有控制图/样本/能力指标专业组；Action 有 CAPA 三态；Recall 有召回范围。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpQaAction | baseInfo + status + verify + audit |
+| ErpQaCalibration | baseInfo + measure + schedule + status + audit |
+| ErpQaInspectionTemplate | baseInfo + audit |
+| ErpQaNonConformance | baseInfo + spec + disposition + status + posting + audit |
+| ErpQaRecall | baseInfo + status + audit |
+| ErpQaReview | baseInfo + result + status + audit |
+| ErpQaRiskRegister | baseInfo + risk + status + audit |
+| ErpQaSpcCapability | baseInfo + sample + capability + audit |
+| ErpQaSpcChart | baseInfo + spec + control + status + audit |
+| ErpQaSpcSample | baseInfo + measure + source + control + audit |
+
+### ErpQaNonConformance 模板（状态复杂实体：spec+disposition+status）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[NCR编号] ncrDate[发生日期]
+ sourceType[来源类型] sourceCode[来源单号]
+ materialId[物料] supplierId[供应商]
+ batchNo[批次] quantity[数量]
+ inspectionId[检验单] description[问题描述]
+=========>spec[规格信息]======
+ parameterName[参数名] measuredValue[实测值]
+ specMin[规格下限] specMax[规格上限]
+ severity[严重程度]
+=========>disposition[处置方式]======
+ dispositionType[处置类型] returnCode[退货单号]
+=========>status[状态信息]======
+ status[状态] assignedTo[指派给]
+ resolvedBy[解决人] resolvedAt[解决时间]
+ resolution[解决方案]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpQaSpcChart 模板（控制图配置实体）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[控制图编码] name[控制图名称]
+ orgId[业务组织] chartType[控制图类型]
+ materialId[物料] inspectionTypeId[检验类型]
+ parameterId[参数]
+=========>spec[规格/抽样]======
+ specMin[规格下限] specMax[规格上限]
+ subgroupSize[子组大小] samplingFrequency[抽样频率]
+=========>control[控制限/规则]======
+ clCenterType[中心线类型] ruleSet[规则集]
+ alarmThreshold[告警阈值]
+ ucl[控制上限] lcl[控制下限] cl[中心线]
+ calcStatus[计算状态] isActive[是否启用]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有质量域主实体的 `<form id="query">` 至少含 5 个查询字段。`code` 配 `filterOp=like`；`materialId`/`supplierId`/`status`/`docStatus`/`approveStatus` 配 `filterOp=eq`；`businessDate`/`ncrDate`/`reviewDate`/`riskDate` 配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：质量域 3 个 Line 子实体独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 质量域 Line 模板分化：检验行有 spec 组；模板行有 spec 组；召回目标行有 status 组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpQaInspectionLine | baseInfo + spec + reference + audit |
+| ErpQaInspectionTemplateLine | baseInfo + spec + reference + audit |
+| ErpQaRecallTarget | baseInfo + status + reference + audit |
+
+### ErpQaInspectionLine 模板（spec 组）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] parameterId[参数]
+ parameterName[参数名]
+=========>spec[规格信息]======
+ specMin[规格下限] specMax[规格上限]
+ measuredValue[实测值] unit[单位]
+ result[判定结果]
+=========>reference[业务关联]======
+ inspectionId[检验单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有质量域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo` 配 `filterOp=eq`；`parameterName` 配 `filterOp=like`；`result`/`inspectionId` 配 `filterOp=eq`。

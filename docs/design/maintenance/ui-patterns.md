@@ -153,3 +153,104 @@
 | 备件消耗联动库存 | SuperCMMS#Parts | 维护访问内嵌备件选择器 |
 | 设备维护历史时间轴 | Atlas CMMS#History | 设备详情页聚合全部维护记录 |
 | 停机记录关联工作中心 | Odoo#maintenance | 停机记录影响制造域排产 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：维护域 6 个主交易实体（不含已 1500-1 覆盖的 `ErpMntVisit`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-1-f3-p1-mfg-tier-form-layout.md` Phase 0.E。
+> 维护域主实体普遍字段数中等：Request 突出 5 态自定义 status；Equipment 突出设备状态/位置/分类（≥15 字段，size=lg）；Schedule 突出周期/触发规则；Calibration 与 ErpQaCalibration 同构。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpMntCalibration | baseInfo + measure + schedule + status + audit |
+| ErpMntDowntimeEntry | baseInfo + reason + audit |
+| ErpMntEquipment | baseInfo + audit（≥15 字段，size=lg） |
+| ErpMntRequest | baseInfo + dispatch + status + audit |
+| ErpMntSchedule | baseInfo + audit |
+| ErpMntSparePartUsage | baseInfo + amount + status + posting + audit |
+
+### ErpMntRequest 模板（自定义 5 态 status）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[请求单号] equipmentId[设备]
+ requestDate[请求日期] description[问题描述]
+ priority[优先级] requestedBy[请求人]
+=========>dispatch[派工]======
+ assignedTo[指派给] acceptedBy[受理人]
+=========>status[状态信息]======
+ status[状态] completedBy[完成人]
+ completedAt[完成时间]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpMntEquipment 模板（≥15 字段，size=lg）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[设备编码] name[设备名称]
+ orgId[业务组织] assetId[资产]
+ workcenterId[工作中心] locationId[位置]
+ categoryId[设备分类] status[状态]
+ serialNo[序列号] manufacturer[制造商]
+ model[型号] installDate[安装日期]
+ warrantyExpiry[保修到期]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有维护域主实体的 `<form id="query">` 至少含 5 个查询字段。`code` 配 `filterOp=like`；`equipmentId`/`status`/`docStatus`/`approveStatus`/`categoryId` 配 `filterOp=eq`；`requestDate`/`businessDate` 配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：维护域 2 个 Line 子实体独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 维护域 Line 模板：备件行 baseInfo+quantity+reference+audit；任务行 baseInfo+status+reference+audit。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpMntSparePartUsageLine | baseInfo + quantity + reference + audit |
+| ErpMntVisitTask | baseInfo + status + reference + audit |
+
+### ErpMntSparePartUsageLine 模板
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料]
+ uoMId[计量单位] batchNo[批次]
+=========>quantity[数量与价格]======
+ quantity[数量] unitCost[单价]
+ amount[金额]
+=========>reference[业务关联]======
+ sparePartUsageId[备件使用单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有维护域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo`/`materialId`/`sparePartUsageId` 配 `filterOp=eq`；`batchNo` 配 `filterOp=like`。

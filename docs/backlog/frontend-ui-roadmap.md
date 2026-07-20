@@ -71,7 +71,7 @@ Status: `partial completed`（plan `docs/plans/2026-07-20-0629-2-f8-f2-search-fi
 
 ### F3 — Form 布局分组（P0-P3 按域）
 
-Status: `P0 completed`（plan `docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md` 全 5 phase 全绿：Phase 0 4 域 Line 模板冻结 + Phase 1-4 共 47 实体 form 分组 + query filterOp）。P1/P2/P3 独立 plan 待启动。
+Status: `P0 + P1 completed`（plan `docs/plans/2026-07-19-1818-2-f3-core-line-and-remaining-main-form-layout.md` 全 5 phase 全绿：Phase 0 4 域 Line 模板冻结 + Phase 1-4 共 47 实体 form 分组 + query filterOp；plan `docs/plans/2026-07-20-2059-1-f3-p1-mfg-tier-form-layout.md` 全 6 phase 全绿：Phase 0 5 域模板冻结 + 68 实体 form 分组）。P2/P3 独立 plan 待启动。
 
 每域主实体 + 子实体，按 `ui-patterns.md` 设计分组。
 
@@ -525,7 +525,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 
 - [ ] F1: 18 域主实体 view.xml 按钮完整（0 blocker, 0 major），每按钮含状态驱动 `visibleOn`（F7 覆盖非状态驱动场景）
 - [x] F2: 核心 6 只读实体实现「搜索 → 行点击 → 详情 dialog」模式，无编辑/删除入口（plan `2026-07-20-0629-2`：inventory 4 + finance 2；长尾实体逐域补齐归 Deferred）
-- [ ] F3: 18 域主实体 form layout 按 `ui-patterns.md` 分组
+- [x] F3: 18 域主实体 form layout 按 `ui-patterns.md` 分组（P0 核心 4 域 + P1 mfg 5 域已完成；P2/P3 ext+master-data 待启动）
 - [x] F4 Phase1: 高频 picker（物料/供应商/客户/员工/资产/币种/科目）定制完成
 - [x] F4 Phase2 P0: purchase/sales 8 头行对的 child-table-editor 配置完成（含 M2M picker、自动推算、行校验，plan `2026-07-19-2200-1-f4p2-child-table-editor-p0`）
 - [ ] F4 Phase2 P2/P3 + finance: ~39+ 剩余头行实体对的 child-table-editor 配置待启动（P1 inventory 3 对已落地；finance ErpFinVoucher + P2 3 对 + P3 ext 8 域 ~36 对待启动）

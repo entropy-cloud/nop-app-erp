@@ -1,6 +1,6 @@
 # 2026-07-20-2200-1 独立审计发现整改计划
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-07-20
 > Source: `audit/2026-07-20-independent-multi-dimensional-audit.md`, `audit/2026-07-20-independent-open-ended-audit.md`, 代码质量审计、平台合规审计、状态机审计（3 独立子代理）
 > Related: `docs/audits/2026-07-07-1900-comprehensive-design-and-implementation-audit.md`
@@ -80,7 +80,7 @@
 ### Phase 1 — 高严重性修复 (H-1 ~ H-5)
 
 Status: planned
-Targets: `module-cs/erp-cs-service/src/test/`, `module-mfg/erp-mfg-service/src/test/`, `module-finance/erp-fin-service/src/test/`, `module-contract/erp-ct-service/src/main/java/`, `docs/lessons/`, `docs/bugs/`, `docs/testing/known-good-baselines.md`
+Targets: `module-cs/erp-cs-service/src/test/`, `module-manufacturing/erp-mfg-service/src/test/`, `module-finance/erp-fin-service/src/test/`, `module-contract/erp-ct-service/src/main/java/`, `docs/lessons/`, `docs/bugs/`, `docs/testing/known-good-baselines.md`
 Skill: `nop-debugging | nop-backend-dev`
 
 - Item Types: `Fix | Add | Decision`
@@ -97,6 +97,7 @@ Skill: `nop-debugging | nop-backend-dev`
   - 方案 A：修复 antlr 版本兼容性（涉及 pom.xml，ask-first）
   - 方案 B：将 `ErpAllWebPagesCollectTest` 临时 `@Disabled` 直到独立环境修复，并注释明确重新启用条件
   - 方案 C：仅记录已知限制到 `known-good-baselines.md` 的 Known Failures 段
+  - **默认决策树**：始终执行方案 C（文档记录）；若方案 A 获人工批准则一并执行 A；否则执行方案 B 作为运行时缓解。executor 必须在执行日志中记录实际选择与理由
   - Skill: `nop-debugging`
 - [ ] H-3 Fix: 在 `docs/lessons/` 新增教训 06：「代码生成产物编辑：`_` 前缀和 `__XGEN_FORCE_OVERRIDE__` 文件被 `mvn clean install` 覆盖——始终编辑保留层」
   - 引用 notify inbox saga（3 轮审计）和 business-type.dict.yaml（3 轮审计）作为真实案例
@@ -139,10 +140,11 @@ Skill: `nop-backend-dev`
   - 在 roles-and-permissions.md 的「运行基线」节后新增「浏览器层审批路径已知限制」小节，引用 2330-1 裁决
   - 受影响域（finance Payment/Receipt、assets Disposal、hr Salary）的 `state-machine.md` 追加注记
   - Skill: none
-- [ ] M-3 Decision: 设计 owner-doc 漂移扫描方案
-  - 方案 A：编写扫描脚本（grep owner doc 中的断言类表述 `must`/`必须`/`should` 并交叉引用代码）
-  - 方案 B：在 `nop-platform-conformance-audit-prompt.md` 中新增漂移检测维度
-  - 方案 C：在每次 closure audit 中增加「owner-doc → 代码关键断言抽样核查」步骤
+- [ ] M-3 Decision: 建立 owner-doc 漂移扫描机制（采用方案 B+C，方案 A 列为 Follow-up）
+  - **选择**：方案 C 作为基线（在 `nop-platform-conformance-audit-prompt.md` 与 closure audit 提示模板中新增「owner-doc → 代码关键断言抽样核查」维度）+ 方案 B 作为同步增强（更新审计提示模板）
+  - **替代方案**：方案 A（独立扫描脚本）成本高、误报风险大，列为 Follow-up：当 owner docs 总量 > 50 或单次 closure audit 抽样发现 ≥ 2 处漂移时重新评估
+  - **残留风险**：抽样核查可能漏掉低频漂移；通过将抽样纳入每次 closure audit 标准步骤降低漏检率
+  - 输出：更新后的提示模板文件路径与新维度说明
   - Skill: none
 - [ ] M-4 Fix: 对齐 `domain-design-guidelines.md` §16.2 与 4 域 `state-machine.md`
   - quality: §16.2 的 DRAFT/IN_PROGRESS/COMPLETED/CANCELLED → 实际 Inspection 用 PENDING/ACCEPTED/CONDITIONAL/REJECTED，NCR 用 OPEN/IN_REVIEW/RESOLVED/ESCALATED_TO_RECALL/CANCELLED
@@ -168,7 +170,7 @@ Exit Criteria:
 - [ ] §16.2 与 4 域 state-machine.md 已对齐
 - [ ] 42 Processor xbiz 审计结果已记录（含不需桥接的理由）
 - [ ] 13 处 `findAllByQuery()` 注释已补齐
-- [ ] 漂移扫描方案已设计（可选择方案后 deferred）
+- [ ] 漂移扫描机制已落地（提示模板更新 + closure audit 步骤新增）；方案 A 作为 Follow-up 已记录触发条件
 
 ### Phase 3 — 低严重性修复 (L-1 ~ L-8)
 
@@ -223,7 +225,10 @@ Exit Criteria:
 
 ## Draft Review Record
 
-- （待独立草案审查）
+- Independent draft review iteration 1: acceptable as-is after fix-forward (review session 2026-07-20) — 2 Major issues found and fixed in place:
+  1. Phase 1 Targets 路径错误 `module-mfg/` → `module-manufacturing/`（物理目录名验证）
+  2. M-3 违反反松弛规则（Exit Criteria 允许 Decision "deferred"）— 已改为采用方案 B+C，方案 A 列为带触发条件的 Follow-up
+- Minor：H-2 Decision 增加默认决策树，明确执行顺序 C 始终执行、A 优先（需 ask-first）、B 兜底；不阻塞执行。
 
 ## Closure Gates
 

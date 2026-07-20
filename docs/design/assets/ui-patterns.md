@@ -128,3 +128,128 @@ assets 域含字段值驱动 visibleOn 的实体：
 `CAPITALIZE` 时 `capitalizedAmount` 显；`EXPENSE` 时隐藏并清空（防隐藏字段提交脏数据）。
 
 写法与反模式见 `visible-on-patterns.md §4`。
+
+## 主交易实体 form 布局分组
+
+> 适用范围：固定资产域 8 个主交易实体（不含已 1500-1 覆盖的 `ErpAstAsset` / `ErpAstDepreciationSchedule` 与 F4P2 已覆盖的 `ErpAstInventory`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-1-f3-p1-mfg-tier-form-layout.md` Phase 0.B。
+> 资产域主实体高度同构：基本都含 `docStatus/approveStatus/approvedBy/approvedAt` 审批轴 + `posted/postedAt/postedBy` 过账轴 + 多币种金额（amountSource/amountFunctional/exchangeRate/currencyId）。CIP / Disposal / ValueAdjustment 为状态复杂实体，需突出处置/调整类型字段。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpAstAssetCapitalization | baseInfo + amount + status + posting + audit |
+| ErpAstCip | baseInfo + amount + status + posting + audit（≥20 字段，size=lg） |
+| ErpAstDisposal | baseInfo + amount + status + posting + audit |
+| ErpAstMaintenance | baseInfo + amount + status + posting + audit |
+| ErpAstMerge | baseInfo + amount + status + posting + audit |
+| ErpAstMovement | baseInfo + transfer + amount + status + posting + audit |
+| ErpAstSplit | baseInfo + amount + status + posting + audit |
+| ErpAstValueAdjustment | baseInfo + amount + status + posting + audit |
+
+### ErpAstDisposal 模板（状态复杂实体，含处置类型 + 审批轴）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[处置单号] orgId[业务组织]
+ assetId[资产] disposalType[处置类型]
+ businessDate[业务日期] gainLoss[处置损益]
+ reason[处置原因]
+=========>amount[金额信息]======
+ disposalAmount[处置金额] currencyId[币种]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpAstCip 模板（≥20 字段，size=lg）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[CIP编码] name[CIP名称]
+ orgId[业务组织] categoryId[资产类别]
+ projectId[项目] businessDate[业务日期]
+ estimatedCompletionDate[预计完工日期]
+ accumulatedCost[累计成本] isCompleted[是否已完工]
+ completedAssetId[转资后资产] cipAssetCategorySnapshot[类别快照]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ status[状态]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有资产域主实体的 `<form id="query">` 至少含 5 个查询字段。`code` 配 `filterOp=like`；`orgId`/`assetId`/`status`/`docStatus`/`approveStatus` 配 `filterOp=eq`；`businessDate` 配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：固定资产域 6 个 Line 子实体独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 资产域 Line 模板分化大：CIP 类有专属 cost/billing 组；盘点行（InventoryLine）有 quantity+value 双组；分拆/合并行（SplitLine/MergeLine）有 value 组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpAstCipCostItem | baseInfo + amount + posting + reference + audit |
+| ErpAstCipProgressBilling | baseInfo + amount + reference + audit |
+| ErpAstInventoryLine | baseInfo + quantity + value + reference + audit |
+| ErpAstMaintenanceCost | baseInfo + amount + reference + audit |
+| ErpAstMergeLine | baseInfo + value + reference + audit |
+| ErpAstSplitLine | baseInfo + value + reference + audit |
+
+### ErpAstInventoryLine 模板（quantity + value 双组）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] assetId[资产]
+ assetCodeSnapshot[资产编码快照] assetNameSnapshot[资产名称快照]
+ categoryId[资产类别]
+=========>quantity[数量信息]======
+ bookQuantity[账面数量] actualQuantity[实际数量]
+ varianceQuantity[差异数量] varianceType[差异类型]
+=========>value[价值信息]======
+ bookValue[账面价值] assessedValue[评估价值]
+ varianceAmount[差异金额] disposition[处置方式]
+=========>reference[业务关联]======
+ inventoryId[资产盘点单] newAssetId[新资产]
+ capitalizationId[转资单] disposalId[处置单]
+========^audit[审计信息]=========
+ remark[备注] investigatedRemark[调查备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有资产域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo`/`assetId`/`categoryId` 配 `filterOp=eq`；`assetCodeSnapshot`/`assetNameSnapshot` 配 `filterOp=like`；`varianceType` 配 `filterOp=eq`。

@@ -153,3 +153,153 @@ BOM 定义 → [BOM 展开查询] → [引用此 BOM 的工单列表]
 | BOM 树形展开 + 多版本 | Odoo#mrp.bom | 树形浏览 + is_active/is_default 版本管理 |
 | 齐套校验 + 物料预留维度 | ERPNext#Material Request | 工单领料阶段的预留量展示 |
 | 联副产品管理 | Odoo#mrp.bom.byproduct | BOM 子表增加联副产品子表 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：制造域 11 个主交易实体（不含已 1500-1 覆盖的 `ErpMfgWorkOrder` / `ErpMfgBom` / `ErpMfgJobCard`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-1-f3-p1-mfg-tier-form-layout.md` Phase 0.A。
+> 制造域主实体普遍含 `docStatus/approveStatus/status` 单一状态轴；委外/领料/差异类需要 amount/posting/variance 等业务专用组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpMfgMrpPlan | baseInfo + status + audit |
+| ErpMfgForecast | baseInfo + status + audit |
+| ErpMfgSubcontractOrder | baseInfo + amount + status + posting + audit |
+| ErpMfgMaterialIssue | baseInfo + amount + status + posting + audit |
+| ErpMfgCostRollup | baseInfo + status + audit |
+| ErpMfgCostVariance | baseInfo + standard + actual + variance + audit |
+| ErpMfgMrpDemand | baseInfo + quantity + reference + audit |
+| ErpMfgBatchGenealogy | baseInfo + input + output + date + audit |
+| ErpMfgProductionVersion | baseInfo + validity + audit |
+| ErpMfgRouting | baseInfo + audit |
+| ErpMfgCrpLoad | baseInfo + load + audit |
+
+### ErpMfgSubcontractOrder 模板（含金额+审批+过账三状态轴，状态复杂实体）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[委外单号] orgId[业务组织]
+ workOrderId[工单] supplierId[供应商]
+ workcenterId[工作中心] routingId[工艺路线]
+ productionVersionId[生产版本] productId[产品]
+ businessDate[业务日期]
+=========>amount[金额信息]======
+ currencyId[币种] exchangeRate[汇率]
+ processingFee[加工费] totalAmount[总金额]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+=========>status[状态信息]======
+ docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedStatus[过账状态]
+ postedAt[过账时间] postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpMfgCostVariance 模板（突出差异分析）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ workOrderId[工单] lineNo[行号]
+ varianceType[差异类型] costElement[成本要素]
+ materialId[物料] operationId[工序]
+ workcenterId[工作中心] businessDate[业务日期]
+=========>standard[标准成本]======
+ standardQty[标准数量] standardPrice[标准单价]
+ standardAmount[标准金额]
+=========>actual[实际成本]======
+ actualQty[实际数量] actualPrice[实际单价]
+ actualAmount[实际金额]
+=========>variance[差异分析]======
+ varianceAmount[差异金额] variancePercent[差异百分比]
+ posted[已过账]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有制造域主实体的 `<form id="query">` 至少含 5 个查询字段。`code` 配 `filterOp=like`；`orgId`/`status`/`docStatus`/`approveStatus` 配 `filterOp=eq`；含日期字段（如 `businessDate`）的实体配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：制造域 11 个 Line 子实体（不含已 1500-1 覆盖的 ErpMfgBom 的内嵌 lines cell）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 制造域 Line 模板**统一度高**：多数为 baseInfo + quantity + reference + audit；含成本行（ErpMfgCostRollupLine）增加 cost 组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpMfgWorkOrderLine | baseInfo + quantity + reference + audit |
+| ErpMfgMaterialIssueLine | baseInfo + quantity + cost + reference + audit |
+| ErpMfgSubcontractOrderLine | baseInfo + quantity + amount + reference + audit |
+| ErpMfgBomLine | baseInfo + quantity + reference + audit |
+| ErpMfgBomByproduct | baseInfo + quantity + reference + audit |
+| ErpMfgBomOperation | baseInfo + operation + reference + audit |
+| ErpMfgCostRollupLine | baseInfo + cost + reference + audit |
+| ErpMfgForecastLine | baseInfo + quantity + reference + audit |
+| ErpMfgJobCardTimeLog | baseInfo + quantity + cost + reference + audit |
+| ErpMfgMrpPlanLine | baseInfo + quantity + reference + audit |
+| ErpMfgRoutingOperation | baseInfo + operation + reference + audit |
+
+### ErpMfgWorkOrderLine 模板（基准）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] lineType[行类型]
+ materialId[物料] skuId[SKU] uoMId[计量单位]
+=========>quantity[数量信息]======
+ plannedQuantity[计划数量] actualQuantity[实际数量]
+ scrappedQuantity[报废数量]
+ sourceWarehouseId[来源仓库] destWarehouseId[目标仓库]
+=========>reference[业务关联]======
+ workOrderId[工单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpMfgCostRollupLine 模板（成本行）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] materialId[物料] uoMId[计量单位]
+=========>cost[成本信息]======
+ materialCost[材料成本] laborCost[人工成本]
+ overheadCost[制造费用] subcontractCost[委外成本]
+ totalCost[总成本] unitCost[单位成本] currencyId[币种]
+=========>reference[业务关联]======
+ costRollupId[成本滚算单]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有制造域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo` 配 `filterOp=eq`；`materialId` 配 `filterOp=eq`；含日期字段（如 `plannedDate`/`workDate`）的实体配 `filterOp=date-between`；状态字段（如 `status`）配 `filterOp=eq`。

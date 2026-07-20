@@ -132,3 +132,116 @@
 | 工时周视图批量录入 | OFBiz#Timesheet | 日期×项目/任务的网格录入 |
 | 项目成本归集 + 预算控制 | ERPNext#Cost Center + Project | 成本进度条 + 预算阈值 |
 | 关联单据自动聚合 | Odoo#project | 项目详情聚合页展示关联业务单据 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：项目域 7 个主交易实体（不含已 1500-1 覆盖的 `ErpPrjProject` / `ErpPrjProjectSettlement` 与 F4P2 已覆盖的 `ErpPrjCostCollection`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-1-f3-p1-mfg-tier-form-layout.md` Phase 0.C。
+> 项目域主实体分化大：Billing/Budget 共享 baseInfo+amount+status+posting+audit；Timesheet 突出员工/工时/日期；Task 突出 DAG 前驱/状态；ProjectPnl 是超大表单（≥20 字段）按收入/成本/利润拆组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpPrjBilling | baseInfo + amount + status + posting + audit |
+| ErpPrjBudget | baseInfo + status + audit |
+| ErpPrjMilestone | baseInfo + amount + status + audit |
+| ErpPrjProjectPnl | baseInfo + revenue + cost + profit + amount + status + posting + audit（≥20 字段，size=lg） |
+| ErpPrjProjectUser | baseInfo + audit |
+| ErpPrjTask | baseInfo + schedule + hours + dag + audit |
+| ErpPrjTimesheet | baseInfo + hours + status + posting + audit |
+
+### ErpPrjTask 模板（DAG 前驱/状态实体）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ title[任务标题] projectId[项目]
+ parentTaskId[父任务] assigneeId[指派给]
+ priority[优先级] sortNum[排序]
+=========>schedule[进度]======
+ plannedStartDate[计划开始] plannedEndDate[计划结束]
+ actualStartDate[实际开始] actualEndDate[实际结束]
+=========>hours[工时]======
+ estimatedHours[预估工时] actualHours[实际工时]
+=========>dag[依赖]======
+ dependsOnId[前驱任务] status[状态]
+ blockReason[阻塞原因]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpPrjTimesheet 模板（员工/工时/日期）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[工时单号] orgId[业务组织]
+ projectId[项目] taskId[任务]
+ userId[员工] workDate[工作日期]
+ activityTypeId[活动类型]
+=========>hours[工时与成本]======
+ hours[工时] costRate[成本费率]
+ costAmount[成本金额] currencyId[币种]
+=========>status[状态信息]======
+ status[状态] approvedBy[审核人]
+ approvedAt[审核时间]
+=========>posting[过账信息]======
+ posted[已过账] postedAt[过账时间]
+ postedBy[过账人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有项目域主实体的 `<form id="query">` 至少含 5 个查询字段。`code` 配 `filterOp=like`；`projectId`/`taskId`/`userId`/`status`/`docStatus` 配 `filterOp=eq`；`workDate`/`businessDate` 配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：项目域 4 个 Line 子实体独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 项目域 Line 模板**统一**：baseInfo + amount + reference + audit（4 组）。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpPrjBillingLine | baseInfo + amount + reference + audit |
+| ErpPrjBudgetLine | baseInfo + amount + reference + audit |
+| ErpPrjCostCollectionLine | baseInfo + amount + reference + audit |
+| ErpPrjProjectSettlementLine | baseInfo + amount + reference + audit |
+
+### ErpPrjBudgetLine 模板（基准）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ lineNo[行号] costCategory[成本类别]
+ subjectId[科目] taskId[任务]
+=========>amount[金额信息]======
+ plannedAmount[计划金额] committedAmount[承诺金额]
+ actualAmount[实际金额]
+=========>reference[业务关联]======
+ budgetId[项目预算]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有项目域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo` 配 `filterOp=eq`；`costCategory`/`subjectId`/`taskId` 配 `filterOp=eq`；`budgetId` 配 `filterOp=eq`。
