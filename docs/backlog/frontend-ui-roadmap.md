@@ -132,12 +132,14 @@ Phase 2 — 子表行内编辑：
 | P0 | purchase/sales | 8 对 | ✅ completed（2026-07-20，plan `2026-07-19-2200-1-f4p2-child-table-editor-p0`） |
 | P1 | inventory | 3 对（StockMove/LandedCost/TransferOrder） | ✅ completed（2026-07-20，plan `2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory`） |
 | P1 | finance | ErpFinVoucher（独立 successor，依赖 F7/F9/F10 落地后启动） | ⏳ 待启动 |
-| P2 | mfg/assets/prj | 3 对 | ⏳ 待启动 |
+| P2 | mfg/assets/prj | 3 对 | ✅ completed（2026-07-20，plan `2026-07-20-1020-3-f4p2-child-table-editor-p2-mfg-assets-projects`） |
 | P3 | ext 8 域 | 对应头行实体 | ⏳ 待启动 |
 
 > P0 8 对（ErpPurOrder/Receive/Invoice/Return + ErpSalOrder/Delivery/Invoice/Return）已落地 `<view path=... grid="sub-grid-edit"/>` 范式 + 行内 picker + onEvent.setValue 自动推算（amount/taxAmount/amountWithTax）+ 行级校验（minimum/minimum）。范式见 `docs/design/child-table-editor-patterns.md`。
 
 > P1 inventory 3 对（ErpInvStockMove/LandedCost/TransferOrder）已落地同范式 + 退化变体规则（无可乘字段实体不引入 onEvent）+ ErpMdWarehouse/ErpMdLocation picker pick-list 补齐 + StockMove 自动推算 totalCost = qty × unitCost。范式扩展见 `docs/design/child-table-editor-patterns.md §12`。
+
+> P2 mfg/assets/projects 3 对（ErpMfgWorkOrder/Line + ErpAstInventory/Line + ErpPrjCostCollection/Line）已落地同范式 + 减法变体规则（ErpAstInventoryLine `varianceQuantity = actual - book`、`varianceAmount = assessed - book`）+ ErpPrjProject picker pick-list 补齐 + ErpAstInventory site map 注册。范式扩展见 `docs/design/child-table-editor-patterns.md §13-§15`。
 
 > 注：P0 8 对 + P1 inventory 3 对 + P2 3 对 ≈ 14 对已分配，剩余 ~36+ 对（P3 ext 8 域）+ finance ErpFinVoucher 待具体确认。
 

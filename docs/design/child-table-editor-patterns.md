@@ -227,6 +227,7 @@ input-table 自身已含 `needConfirm=false`，每次行内编辑都触发 `chan
 |------|------|------|
 | 2026-07-19 | 初版落地（P0 8 对头行子表编辑范式 + 列集表 + onEvent 自动推算 + 头聚合机制 + 反模式自检表） | `docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md` |
 | 2026-07-20 | P1 扩展（inventory 3 头行对列集表 + 退化变体 + add 表单嵌入决策 + warehouse/location picker 补齐） | `docs/plans/2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory.md` |
+| 2026-07-20 | P2 扩展（mfg/assets/projects 3 头行对列集表 + 减法变体 + ErpAstCip 不适用裁决 + ErpPrjProject picker 补齐） | `docs/plans/2026-07-20-1020-3-f4p2-child-table-editor-p2-mfg-assets-projects.md` |
 
 ## 12. P1 inventory 3 头行对列集表
 
@@ -314,3 +315,120 @@ F4 Phase 1 已落地 `ErpMdMaterial / ErpMdPartner / ErpMdCurrency / ErpMdSubjec
 - 退化变体规则（§12.2）可推广至 P2/P3 中所有无可乘字段的行实体（如 mfg JobCard 材料行、assets 维护成本行等）
 - add 表单嵌入决策（§12.3）可推广至 P2/P3 中所有已有业务 add 表单的头实体
 - warehouse/location picker 列集（§12.4）可作为 ext 域类似扁平主数据 picker 的模板
+
+## 13. P2 mfg/assets/projects 3 头行对列集表
+
+P2 mfg/assets/projects 各取 1 对头行子表编辑（F4 Phase 2 P2），延续 P0/P1 范式并扩展「减法变体」（§14）：
+
+### 13.1 P2 域列集
+
+| 头实体 | 行实体 | 列集（顺序） | 自动推算 |
+|--------|--------|-------------|---------|
+| `ErpMfgWorkOrder` | `ErpMfgWorkOrderLine` | `lineNo` `lineType` `materialId` `uoMId` `plannedQuantity` `actualQuantity` `scrappedQuantity` `sourceWarehouseId` `destWarehouseId` `remark`（10 列） | 无（退化变体；planned/actual/scrapped 三态独立录入，非乘法派生） |
+| `ErpAstInventory` | `ErpAstInventoryLine` | `lineNo` `assetId` `categoryId` `bookQuantity` `actualQuantity` `varianceQuantity` `bookValue` `assessedValue` `varianceAmount` `varianceType` `disposition` `remark`（12 列） | `varianceQuantity = actualQuantity - bookQuantity` + `varianceAmount = assessedValue - bookValue`（减法变体，scale=4 HALF_UP） |
+| `ErpPrjCostCollection` | `ErpPrjCostCollectionLine` | `lineNo` `costCategory` `sourceBillType` `sourceBillCode` `subjectId` `taskId` `amount` `remark`（8 列） | 无（退化变体；amount 直接录入） |
+
+**字段名核实证据**（实时仓库 ORM 抽样）：
+- `ErpMfgWorkOrderLine`（`module-manufacturing/model/app-erp-manufacturing.orm.xml:668-720`）：`lineType`（propId=4，dict=`erp-mfg/work-order-line-type`，OUTPUT/INPUT/BYPRODUCT）+ `materialId`（propId=5）+ `uoMId`（propId=7）+ `plannedQuantity`（propId=8，domain=quantity，scale=4）+ `actualQuantity`（propId=9，scale=4）+ `scrappedQuantity`（propId=10，scale=4）+ `sourceWarehouseId`（propId=11）+ `destWarehouseId`（propId=12）；**无 quantity × standardCost 可乘字段**
+- `ErpAstInventoryLine`（`module-assets/model/app-erp-assets.orm.xml:1214-1288`）：`assetId`（propId=5，可空：盘盈行无对应账面卡片）+ `categoryId`（propId=8）+ `bookQuantity`（propId=9，INTEGER）+ `actualQuantity`（propId=10，INTEGER）+ `varianceQuantity`（propId=11，INTEGER）+ `varianceType`（propId=12，dict=`erp-ast/variance-type`）+ `bookValue`（propId=13，domain=amount，scale=4）+ `assessedValue`（propId=14，scale=4）+ `varianceAmount`（propId=15，scale=4）+ `disposition`（propId=16，dict=`erp-ast/inventory-line-disposition`）；**含减法可推算对** `varianceQuantity = actualQuantity - bookQuantity` + `varianceAmount = assessedValue - bookValue`
+- `ErpPrjCostCollectionLine`（`module-projects/model/app-erp-projects.orm.xml:532-571`）：`costCategory`（propId=4）+ `sourceBillType`（propId=5）+ `sourceBillCode`（propId=6）+ `subjectId`（propId=7）+ `taskId`（propId=8）+ `amount`（propId=9，domain=amount，scale=4）；**无 quantity × unitPrice 可乘字段**
+
+### 13.2 P2 picker 接线
+
+| Line 列 | 接线 picker | 备注 |
+|---------|-------------|------|
+| `ErpMfgWorkOrderLine.materialId` | `/erp/md/pages/ErpMdMaterial/picker.page.yaml`（F4 Phase 1 已落地） | WorkOrderLine.materialId 可指向任何物料，无需 filter |
+| `ErpMfgWorkOrderLine.sourceWarehouseId` / `destWarehouseId` | `/erp/md/pages/ErpMdWarehouse/picker.page.yaml`（F4 P1 inventory 补齐 pick-list + pick-query） | 复用 P1 既有 pick-list |
+| `ErpAstInventoryLine.assetId` | `/erp/ast/pages/ErpAstAsset/picker.page.yaml`（F4 Phase 1 已落地，pick-list 含 6 业务列非空） | 资产 picker，**本计划无需补齐** |
+| `ErpAstInventoryLine.categoryId` | `/erp/ast/pages/ErpAstAssetCategory/picker.page.yaml`（codegen 默认） | 资产类别 picker |
+| `ErpPrjCostCollectionLine.subjectId` | `/erp/md/pages/ErpMdSubject/picker.page.yaml`（F4 Phase 1 已落地） | 科目 picker |
+| `ErpPrjCostCollectionLine.taskId` | `/erp/prj/pages/ErpPrjTask/picker.page.yaml`（codegen wrapper 存在） | 项目任务 picker |
+
+**P2 新补齐 picker**：`ErpPrjProject`（本计划 Phase 1 落地——view.xml 补非空 `<grid id="pick-list">` 7 列 + `<form id="pick-query">` 4 字段；picker.page.yaml wrapper 复用 codegen 既有产物），服务 ErpPrjCostCollection 头表 `projectId` 反向追溯。
+
+### 13.3 P2 头表单 lines cell 兼容性裁决
+
+3 头实体 view.xml 经实时仓库核实在嵌入 lines cell 前**均无既有嵌套结构或 tabs 容器**，可直接在 `<form id="view">` + `<form id="edit">` 末尾追加 lines 组：
+
+| 头实体 | 既有 form 结构 | 裁决 |
+|--------|---------------|------|
+| `ErpMfgWorkOrder` | `_gen/_ErpMfgWorkOrder.view.xml:156,182` 仅 2 `<layout>` 块（view + edit forms），无 tabs 容器；mfg-chain E2E spec 经 GraphQL 驱动不依赖 view.xml 结构 | 方案 A：直接追加 lines cell |
+| `ErpAstInventory` | `_gen/_ErpAstInventory.view.xml` 无既有嵌套结构 | 方案 A：直接追加 lines cell |
+| `ErpPrjCostCollection` | `_gen/_ErpPrjCostCollection.view.xml` 无既有嵌套结构 | 方案 A：直接追加 lines cell |
+
+## 14. 减法变体扩展范式（varianceQuantity = actualQuantity - bookQuantity）
+
+P0 §5 固化的是**乘法变体**（`amount = quantity × unitPrice`）。P2 引入 **减法变体**：账面/实盘的差异由减法派生，与乘法变体并列：
+
+```
+varianceQuantity = actualQuantity - bookQuantity           // 差异数量
+varianceAmount   = assessedValue - bookValue               // 差异金额
+```
+
+**机制（与 P0 §5 同型）**：行级 `bookQuantity` / `actualQuantity` / `bookValue` / `assessedValue` 列的 `<col>` 内通过 `<gen-control>` 注入 AMIS `input-number` + `onEvent.change` → `setValue` action，在行数据作用域内更新 `varianceQuantity` / `varianceAmount`。精度 scale=4 HALF_UP（对齐 xmeta `<schema domain="amount" precision="20" scale="4"/>`）。
+
+**触发器列**：`actualQuantity` 触发 `varianceQuantity` 推算；`assessedValue` 触发 `varianceAmount` 推算。账面列（`bookQuantity` / `bookValue`）通常由 picker 选资产后从快照填充（编辑态只读），不挂 onEvent；若允许手工修订账面（盘盈调整场景），账面列也挂同型 onEvent 同步差异。
+
+**示例 col 定义**（ErpAstInventoryLine `sub-grid-edit` 内 `actualQuantity` 列）：
+
+```xml
+<col id="actualQuantity" mandatory="true">
+    <gen-control>
+        <c:script><![CDATA[
+            return {
+                type: 'input-number',
+                name: 'actualQuantity',
+                required: true,
+                step: 1,
+                validations: { minimum: 0 },
+                validationErrors: { minimum: '实盘数量不能为负' },
+                onEvent: {
+                    change: {
+                        actions: [
+                            {
+                                actionType: 'setValue',
+                                args: {
+                                    value: {
+                                        varianceQuantity: '${ROUND(actualQuantity - bookQuantity, 4)}'
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            };
+        ]]></c:script>
+    </gen-control>
+</col>
+```
+
+`assessedValue` 列同型 onEvent 推算 `varianceAmount = ROUND(assessedValue - bookValue, 4)`。`varianceQuantity` / `varianceAmount` 列设编辑态只读（由推算填充）。
+
+**裁决依据**：
+- `ErpAstInventoryLine` ORM 字段 `bookQuantity`/`actualQuantity`/`varianceQuantity` + `bookValue`/`assessedValue`/`varianceAmount` 形成 2 对减法派生关系，业务语义即「实盘 − 账面 = 差异」（资产盘点核心规则）
+- 前端实时推算与 P0 §5 乘法变体同型，后端 BizModel 仍可二次校验（不冲突，因 ErpAstInventoryBizModel 无公开行级重算方法）
+
+## 15. ErpAstCip 不适用原因 + ErpAstInventory 替换裁决
+
+### 15.1 ErpAstCip 不适用范式（实时仓库核实证据）
+
+P2 初期草案曾列入 `ErpAstCip ↔ ErpAstCipCostItem` 作为 assets 域头行对。经实时仓库 ORM 核实**该对不适用子表编辑范式**：
+
+- `ErpAstCip.orm.xml` `<relations>` 仅含 4 to-one 关系（`category` / `currency` / `org` / `completedAsset`），**无 `<to-many>` 到 CipCostItem**
+- `ErpAstCipCostItem` 经 `cipId` 反向指针 + `ErpAstCipBizModel.addCostItem(cipId, ...)` 单行 RPC API 设计（`ErpAstCipBizModel.java:45,70`），**非聚合根嵌套**
+- 设计意图见 `docs/design/assets/cip.md:33,67,87`：CipCostItem 经跨域 hook `cipAssetId` 触发添加，业务流程是「资本化 → 资产转固 → CIP 余额迁移到新资产卡片」，CipCostItem 是 CIP 头的**只读成本明细视图**而非可编辑子表
+
+强行实施需 ORM 修改（增加 `<to-many>` 关系），属保护区域 Non-Goal。
+
+### 15.2 ErpAstInventory 替换裁决
+
+P2 改用 `ErpAstInventory ↔ ErpAstInventoryLine` 作为 assets 域代表头行对：
+
+- `ErpAstInventory.orm.xml` 含标准 `<to-many name="lines" refEntityName="...ErpAstInventoryLine" tagSet="pub,cascade-delete,insertable,updatable">` 关系 ✓
+- 业务语义对齐——「资产盘点单（头）+ 多资产盘点行（行）」是标准 1:N 头行结构（每行一个资产或一条盘盈新增项；账面/实盘/差异/处置）
+- 含减法自动推算（§14），范式新颖性高于 ErpAstCip，可作为 P3 ext 域类似头行对（如 hr 域薪酬头行、contract 域合同头行）的减法变体模板
+
+### 15.3 P2 范式可推广性
+
+- 减法变体规则（§14）可推广至 P3 中所有含「实盘/账面」「实际/预算」「本币/原币」差异派生关系的头行对
+- 「不适用范式裁决」（§15）流程可推广至 P3 中 ORM 缺 `<to-many>` 关系的初判头行对：先核实 ORM 关系，无关系则归 Non-Goal 并记录 successor condition（如「需 ORM 修改后启动」）
