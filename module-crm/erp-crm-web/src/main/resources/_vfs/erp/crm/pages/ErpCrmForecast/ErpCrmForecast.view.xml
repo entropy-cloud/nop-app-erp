@@ -78,18 +78,27 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="asideFilter" editMode="query" submitOnChange="true">
             <layout>
- orgId[业务组织] territoryId[销售区域]
- teamId[销售团队] ownerId[负责人]
- periodId[预测周期]
+ orgId[业务组织] periodId[预测周期]
+ territoryId[销售区域] teamId[销售团队]
+ ownerId[负责人]
             </layout>
             <cells>
                 <cell id="orgId" filterOp="eq"/>
+                <cell id="periodId" filterOp="eq"/>
                 <cell id="territoryId" filterOp="eq"/>
                 <cell id="teamId" filterOp="eq"/>
                 <cell id="ownerId" filterOp="eq"/>
-                <cell id="periodId" filterOp="eq"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ currencyId[币种] lastCalculatedAt[最近计算时间]
+            </layout>
+            <cells>
+                <cell id="currencyId" filterOp="eq"/>
+                <cell id="lastCalculatedAt" filterOp="date-between"/>
             </cells>
         </form>
     </forms>

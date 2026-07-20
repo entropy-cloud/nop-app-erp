@@ -94,19 +94,27 @@
             </cells>
         </form>
         <form id="add" x:prototype="edit"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ carrierType[承运商类型] gatewayId[网关标识]
+ partnerId[承运商往来单位ID] isActive[是否启用]
+ orgId[业务组织]
+            </layout>
+            <cells>
+                <cell id="carrierType" filterOp="eq"/>
+                <cell id="gatewayId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[编码] carrierName[承运商名称]
- orgId[业务组织] carrierType[承运商类型]
- partnerId[承运商往来单位ID] isActive[是否启用]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="carrierName" filterOp="like"/>
-                <cell id="orgId" filterOp="eq"/>
-                <cell id="carrierType" filterOp="eq"/>
-                <cell id="partnerId" filterOp="eq"/>
-                <cell id="isActive" filterOp="eq"/>
             </cells>
         </form>
         <form id="pick-query" editMode="query" title="查询条件">

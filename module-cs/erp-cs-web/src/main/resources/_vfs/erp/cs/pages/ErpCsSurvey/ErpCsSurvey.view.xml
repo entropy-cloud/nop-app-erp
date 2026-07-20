@@ -50,7 +50,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="asideFilter" editMode="query" submitOnChange="true">
             <layout>
  orgId[业务组织] ticketId[关联工单]
  surveyChannel[发送渠道] surveySentAt[调查发送时间]
@@ -62,6 +62,14 @@
                 <cell id="surveyChannel" filterOp="eq"/>
                 <cell id="surveySentAt" filterOp="date-between"/>
                 <cell id="respondedAt" filterOp="date-between"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ surveyToken[调查令牌]
+            </layout>
+            <cells>
+                <cell id="surveyToken" filterOp="like"/>
             </cells>
         </form>
     </forms>

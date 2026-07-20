@@ -58,6 +58,28 @@
         <form id="view"/>
         <form id="edit"/>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ status[状态] bankId[开户银行]
+ fileFormat[文件格式] orgId[业务组织]
+ paymentDate[发放日期]
+            </layout>
+            <cells>
+                <cell id="status" filterOp="in"/>
+                <cell id="bankId" filterOp="eq"/>
+                <cell id="fileFormat" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="paymentDate" filterOp="date-between"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ batchNo[批次号]
+            </layout>
+            <cells>
+                <cell id="batchNo" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

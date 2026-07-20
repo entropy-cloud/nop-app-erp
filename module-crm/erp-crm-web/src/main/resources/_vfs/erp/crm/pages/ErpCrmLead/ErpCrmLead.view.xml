@@ -106,14 +106,28 @@
             </layout>
         </form>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ leadType[线索/商机类型] sourceId[线索来源]
+ stageId[漏斗阶段] ownerId[负责人]
+ partnerId[客户] createTime[创建时间]
+            </layout>
+            <cells>
+                <cell id="leadType" filterOp="eq"/>
+                <cell id="sourceId" filterOp="eq"/>
+                <cell id="stageId" filterOp="eq"/>
+                <cell id="ownerId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="createTime" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[编码] leadStatusId[线索状态]
- stageId[漏斗阶段] ownerId[负责人]
- partnerId[客户]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
+                <cell id="leadStatusId" filterOp="eq"/>
             </cells>
         </form>
     </forms>

@@ -78,18 +78,25 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ orgId[业务组织] medium[渠道]
+ source[来源] startDate[开始日期]
+            </layout>
+            <cells>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="medium" filterOp="eq"/>
+                <cell id="source" filterOp="eq"/>
+                <cell id="startDate" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[活动编码] campaignName[活动主题]
- orgId[业务组织] medium[渠道]
- startDate[开始日期]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="campaignName" filterOp="like"/>
-                <cell id="orgId" filterOp="eq"/>
-                <cell id="medium" filterOp="eq"/>
-                <cell id="startDate" filterOp="date-between"/>
             </cells>
         </form>
     </forms>

@@ -183,37 +183,38 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="edit" size="lg">
-            <layout x:override="replace">
-=========>baseInfo[基本信息]======
- contractLineId[合同行ID] consumptionDate[消耗日期]
- sourceBillType[来源单据类型] sourceBillCode[来源单据号]
-=========>quantity[数量金额]======
- quantity[消耗数量] unitPrice[单价]
- amount[金额]
-========^audit[审计信息]=========
- remark[备注](2)
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
-            </layout>
-        </form>
-        <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
             <layout>
  contractLineId[合同行ID] sourceBillType[来源单据类型]
- sourceBillCode[来源单据号] consumptionDate[消耗日期]
+ consumptionDate[消耗日期]
             </layout>
             <cells>
                 <cell id="contractLineId" filterOp="eq"/>
                 <cell id="sourceBillType" filterOp="eq"/>
-                <cell id="sourceBillCode" filterOp="like"/>
                 <cell id="consumptionDate" filterOp="date-between"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ sourceBillCode[来源单据号]
+            </layout>
+            <cells>
+                <cell id="sourceBillCode" filterOp="like"/>
             </cells>
         </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge"/>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

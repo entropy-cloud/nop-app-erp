@@ -18,12 +18,38 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ surveyId[问卷] departmentId[部门]
+ lastCalculatedAt[最后计算时间]
+            </layout>
+            <cells>
+                <cell id="surveyId" filterOp="eq"/>
+                <cell id="departmentId" filterOp="eq"/>
+                <cell id="lastCalculatedAt" filterOp="date-between"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ surveyId[问卷]
+            </layout>
+            <cells>
+                <cell id="surveyId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge"/>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

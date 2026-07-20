@@ -3,7 +3,7 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-                <grid id="list">
+        <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="funnelId" label="漏斗"/>
@@ -22,12 +22,41 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ funnelId[漏斗] stageId[阶段]
+ orgId[业务组织] stageOrder[阶段顺序]
+ stageName[阶段名称]
+            </layout>
+            <cells>
+                <cell id="funnelId" filterOp="eq"/>
+                <cell id="stageId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="stageOrder" filterOp="eq"/>
+                <cell id="stageName" filterOp="like"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ funnelId[漏斗]
+            </layout>
+            <cells>
+                <cell id="funnelId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge"/>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

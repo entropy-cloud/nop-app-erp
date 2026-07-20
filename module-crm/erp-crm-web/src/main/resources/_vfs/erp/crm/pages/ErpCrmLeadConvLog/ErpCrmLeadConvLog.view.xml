@@ -2,7 +2,7 @@
 <view x:extends="_gen/_ErpCrmLeadConvLog.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-                <grid id="list">
+        <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="lead" label="关联线索"/>
@@ -18,12 +18,42 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ leadId[关联线索] orgId[业务组织]
+ fromStageId[原阶段] toStageId[目标阶段]
+ changedBy[变更人] changedAt[变更时间]
+            </layout>
+            <cells>
+                <cell id="leadId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="fromStageId" filterOp="eq"/>
+                <cell id="toStageId" filterOp="eq"/>
+                <cell id="changedBy" filterOp="eq"/>
+                <cell id="changedAt" filterOp="date-between"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ leadId[关联线索]
+            </layout>
+            <cells>
+                <cell id="leadId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge"/>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

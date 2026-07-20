@@ -85,10 +85,24 @@
             </layout>
         </form>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ departmentId[部门] positionId[职位]
+ employmentStatus[雇佣状态] employeeType[员工类型]
+ orgId[业务组织] hireDate[入职日期]
+            </layout>
+            <cells>
+                <cell id="departmentId" filterOp="eq"/>
+                <cell id="positionId" filterOp="eq"/>
+                <cell id="employmentStatus" filterOp="eq"/>
+                <cell id="employeeType" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="hireDate" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[工号] fullName[全名]
- departmentId[部门] employmentStatus[雇佣状态]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>

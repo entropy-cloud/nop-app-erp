@@ -99,17 +99,27 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ employeeId[员工] leaveType[休假类型]
+ status[状态] approverId[审批人]
+ orgId[业务组织] startDate[开始日期]
+            </layout>
+            <cells>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="leaveType" filterOp="eq"/>
+                <cell id="status" filterOp="in"/>
+                <cell id="approverId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="startDate" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- code[单号] employeeId[员工]
- leaveType[休假类型] status[状态]
- businessDate[业务日期] 
+ code[单号] businessDate[业务日期]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
-                <cell id="employeeId" filterOp="eq"/>
-                <cell id="leaveType" filterOp="eq"/>
-                <cell id="status" filterOp="eq"/>
                 <cell id="businessDate" filterOp="date-between"/>
             </cells>
         </form>

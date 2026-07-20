@@ -209,14 +209,28 @@
             </cells>
         </form>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ carrierId[承运商ID] relatedBillType[关联单据类型]
+ status[状态] shipperId[发货员]
+ orgId[业务组织] shipmentDate[发运日期]
+            </layout>
+            <cells>
+                <cell id="carrierId" filterOp="eq"/>
+                <cell id="relatedBillType" filterOp="eq"/>
+                <cell id="status" filterOp="in"/>
+                <cell id="shipperId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="shipmentDate" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- code[单号] status[状态]
- carrierId[承运商ID] shipmentDate[发运日期]
+ code[单号] trackingNo[运单号]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
-                <cell id="shipmentDate" filterOp="date-between"/>
+                <cell id="trackingNo" filterOp="like"/>
             </cells>
         </form>
     </forms>

@@ -60,40 +60,42 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="edit" size="lg">
-            <layout x:override="replace">
-=========>baseInfo[基本信息]======
- contractId[合同] orgId[业务组织]
- approvalMatrixId[审批矩阵] approvalOrder[顺序号]
- approverId[审批人]
-=========>result[审批结果]======
- approvalStatus[审批状态] comment[审批意见]
- approvedAt[通过时间] rejectedAt[驳回时间]
-========^audit[审计信息]=========
- remark[备注](2)
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
-            </layout>
-        </form>
-        <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
             <layout>
- contractId[合同] orgId[业务组织]
- approvalMatrixId[审批矩阵] approvalStatus[审批状态]
- approverId[审批人]
+ contractId[合同] approvalMatrixId[审批矩阵]
+ approvalStatus[审批状态] approverId[审批人]
+ orgId[业务组织] approvedAt[通过时间]
             </layout>
             <cells>
                 <cell id="contractId" filterOp="eq"/>
-                <cell id="orgId" filterOp="eq"/>
                 <cell id="approvalMatrixId" filterOp="eq"/>
-                <cell id="approvalStatus" filterOp="eq"/>
+                <cell id="approvalStatus" filterOp="in"/>
                 <cell id="approverId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="approvedAt" filterOp="date-between"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ approvalOrder[顺序号]
+            </layout>
+            <cells>
+                <cell id="approvalOrder" filterOp="eq"/>
             </cells>
         </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge"/>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

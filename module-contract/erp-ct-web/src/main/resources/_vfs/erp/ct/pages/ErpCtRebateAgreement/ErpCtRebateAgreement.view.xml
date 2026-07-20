@@ -141,19 +141,27 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ partnerId[对方伙伴] contractId[关联合同]
+ status[状态] rebateType[返利类型]
+ orgId[业务组织] startDate[有效期开始]
+            </layout>
+            <cells>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="contractId" filterOp="eq"/>
+                <cell id="status" filterOp="in"/>
+                <cell id="rebateType" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="startDate" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- code[协议编号] orgId[业务组织]
- contractId[关联合同] partnerId[对方伙伴]
- status[状态] businessDate[业务日期]
+ code[协议编号]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
-                <cell id="orgId" filterOp="eq"/>
-                <cell id="contractId" filterOp="eq"/>
-                <cell id="partnerId" filterOp="eq"/>
-                <cell id="status" filterOp="eq"/>
-                <cell id="businessDate" filterOp="date-between"/>
             </cells>
         </form>
     </forms>

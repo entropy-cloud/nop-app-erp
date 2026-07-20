@@ -50,6 +50,28 @@
         <form id="view"/>
         <form id="edit"/>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ warehouseId[仓库] materialId[物料]
+ replenishmentMethod[补货方法] preferredSupplierId[首选供应商]
+ orgId[业务组织]
+            </layout>
+            <cells>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="replenishmentMethod" filterOp="eq"/>
+                <cell id="preferredSupplierId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ preferredSourceWarehouseId[首选调出仓库]
+            </layout>
+            <cells>
+                <cell id="preferredSourceWarehouseId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

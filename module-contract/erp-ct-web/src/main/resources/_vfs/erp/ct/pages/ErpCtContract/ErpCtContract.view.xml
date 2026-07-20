@@ -163,11 +163,24 @@
             </cells>
         </form>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ partnerId[合作方] status[合同状态]
+ contractType[合同类型] contractDirection[合同方向]
+ orgId[业务组织] startDate[生效日期]
+            </layout>
+            <cells>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="status" filterOp="in"/>
+                <cell id="contractType" filterOp="eq"/>
+                <cell id="contractDirection" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="startDate" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[合同编号] contractName[合同名称]
- status[合同状态] contractType[合同类型]
- partnerId[合作方]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>

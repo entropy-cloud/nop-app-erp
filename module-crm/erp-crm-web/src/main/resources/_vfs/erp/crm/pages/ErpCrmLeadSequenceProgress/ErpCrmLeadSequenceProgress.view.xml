@@ -3,7 +3,7 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-                <grid id="list">
+        <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="lead" label="关联线索"/>
@@ -20,12 +20,43 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ leadId[关联线索] sequenceId[销售序列]
+ status[状态] orgId[业务组织]
+ startedAt[开始时间] completedAt[完成时间]
+            </layout>
+            <cells>
+                <cell id="leadId" filterOp="eq"/>
+                <cell id="sequenceId" filterOp="eq"/>
+                <cell id="status" filterOp="in"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="startedAt" filterOp="date-between"/>
+                <cell id="completedAt" filterOp="date-between"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ leadId[关联线索] sequenceId[销售序列]
+            </layout>
+            <cells>
+                <cell id="leadId" filterOp="eq"/>
+                <cell id="sequenceId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions x:override="bounded-merge"/>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

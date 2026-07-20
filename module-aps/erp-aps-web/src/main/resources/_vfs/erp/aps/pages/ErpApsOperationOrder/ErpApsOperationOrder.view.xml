@@ -139,19 +139,28 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ workOrderId[主工单] machineId[工作中心/设备]
+ status[状态] assignedToId[操作工]
+ orgId[业务组织] plannedStartDateT[计划开工时间]
+            </layout>
+            <cells>
+                <cell id="workOrderId" filterOp="eq"/>
+                <cell id="machineId" filterOp="eq"/>
+                <cell id="status" filterOp="in"/>
+                <cell id="assignedToId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="plannedStartDateT" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- code[编号] workOrderId[主工单]
- machineId[工作中心/设备] orgId[业务组织]
- status[状态] businessDate[业务日期]
+ code[编号] operationName[工序名称]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
-                <cell id="workOrderId" filterOp="eq"/>
-                <cell id="machineId" filterOp="eq"/>
-                <cell id="orgId" filterOp="eq"/>
-                <cell id="status" filterOp="eq"/>
-                <cell id="businessDate" filterOp="date-between"/>
+                <cell id="operationName" filterOp="like"/>
             </cells>
         </form>
     </forms>

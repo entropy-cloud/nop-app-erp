@@ -99,14 +99,25 @@
             </layout>
         </form>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ status[状态] schedulingMode[排产模式]
+ orgId[业务组织] scheduleDate[排产日期]
+            </layout>
+            <cells>
+                <cell id="status" filterOp="in"/>
+                <cell id="schedulingMode" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="scheduleDate" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- code[编号] status[状态]
- scheduleDate[排产日期]
+ code[编号] name[方案名称]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
-                <cell id="scheduleDate" filterOp="date-between"/>
+                <cell id="name" filterOp="like"/>
             </cells>
         </form>
     </forms>

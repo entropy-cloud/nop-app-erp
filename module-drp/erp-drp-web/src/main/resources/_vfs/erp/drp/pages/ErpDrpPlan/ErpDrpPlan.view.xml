@@ -121,18 +121,24 @@
             </cells>
         </form>
         <form id="add" x:prototype="edit"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ status[状态] orgId[业务组织]
+ periodFrom[期间开始]
+            </layout>
+            <cells>
+                <cell id="status" filterOp="in"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="periodFrom" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[编号] planName[计划名称]
- orgId[业务组织] status[状态]
- businessDate[业务日期]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="planName" filterOp="like"/>
-                <cell id="orgId" filterOp="eq"/>
-                <cell id="status" filterOp="eq"/>
-                <cell id="businessDate" filterOp="date-between"/>
             </cells>
         </form>
     </forms>

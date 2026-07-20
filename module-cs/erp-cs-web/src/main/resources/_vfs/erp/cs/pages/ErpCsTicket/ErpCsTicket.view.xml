@@ -258,13 +258,28 @@
                 </cell>
             </cells>
         </form>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ ticketTypeId[工单类型] slaPolicyId[SLA策略]
+ status[工单状态] priority[优先级]
+ assignedToId[分配处理人] createTime[创建时间]
+            </layout>
+            <cells>
+                <cell id="ticketTypeId" filterOp="eq"/>
+                <cell id="slaPolicyId" filterOp="eq"/>
+                <cell id="status" filterOp="in"/>
+                <cell id="priority" filterOp="eq"/>
+                <cell id="assignedToId" filterOp="eq"/>
+                <cell id="createTime" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- code[单号] status[工单状态]
- customerId[客户] priority[优先级]
+ code[单号] customerId[客户]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
+                <cell id="customerId" filterOp="eq"/>
             </cells>
         </form>
     </forms>

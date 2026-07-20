@@ -65,18 +65,27 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ employeeId[员工] orgId[业务组织]
+ source[来源] isAbsent[是否旷工]
+ date[考勤日期]
+            </layout>
+            <cells>
+                <cell id="employeeId" filterOp="eq"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="source" filterOp="eq"/>
+                <cell id="isAbsent" filterOp="eq"/>
+                <cell id="date" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  employeeId[员工] date[考勤日期]
- orgId[业务组织] source[来源]
- isAbsent[是否旷工] 
             </layout>
             <cells>
                 <cell id="employeeId" filterOp="eq"/>
                 <cell id="date" filterOp="date-between"/>
-                <cell id="orgId" filterOp="eq"/>
-                <cell id="source" filterOp="eq"/>
-                <cell id="isAbsent" filterOp="eq"/>
             </cells>
         </form>
     </forms>
