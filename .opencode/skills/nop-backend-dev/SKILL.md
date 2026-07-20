@@ -458,6 +458,54 @@ query.setLimit(20);
 
 ---
 
+---
+
+## 业务类型注册清单
+
+新增一个 BusinessType（业务类型）时，必须依次完成以下所有注册点，缺一不可：
+
+| # | 注册点 | 文件位置 | 说明 |
+|---|--------|---------|------|
+| 1 | ORM 字典定义 | `<domain>/model/*.orm.xml` `<dict name="biz-type">` | 真相源，code/value/desc 三者完备 |
+| 2 | 生成的 `dict.yaml` | codegen 生成 | 自动从 ORM 同步。**不要手改**（有 `__XGEN_FORCE_OVERRIDE__`） |
+| 3 | Java 常量 | `IAppErp<Domain>DaoConstants.java` | codegen 自动从 `biz-type` 字典生成 `BIZ_TYPE_XXX` 常量 |
+| 4 | ErrorCode | `*Errors.java` | 如果新类型有独立错误场景，定义 `ERR_...` |
+| 5 | Provider 注册 | 域内 `*AcctDocProvider.java` | 如果业务类型参与业财过账，注册 route |
+| 6 | Dispatcher 路由 | `*AcctDocRegistry` / Dispatcher | 保证 `businessType` → Provider 可路由 |
+| 7 | bean 注入 | `*-service.beans.xml` | Provider/Processor 类注册为 Nop IoC bean |
+| 8 | JUnit 测试 | `*Service/src/test/` | 至少测路由+过账语义 |
+| 9 | E2E 测试 | `tests/e2e/` | 如果业务类型有独立页面操作路径 |
+
+> **历史教训**：`MAINTENANCE_ISSUE` 因缺 ErrorCode + Provider 注册导致运行时 NPE；`business-type.dict.yaml` 因手改被 codegen 覆盖，废 3 轮执行。注册顺序从真相源（ORM）开始，逐级向下，不跳步。
+
+
+## ORM 实体构造反转模式（Revert Pattern Awareness）
+
+当你重构一个**纯函数组件**（无 IoC/DB 依赖），将其改为依赖注入的 ORM 实体构造方式（`new ErpXxx()` → `daoProvider().daoFor(...).newEntity()`），需要特别谨慎：
+
+| 判断 | 不应该改 | 应该保留原状 |
+|------|---------|-------------|
+| 组件创建实体后直接返回，不持久化 | ✅ 保持 `new XxxEntity()` | ❌ 不要改用 `newEntity()` |
+| 组件内部完成全部计算，无外部依赖 | ✅ 保持纯函数 | ❌ 不要加 `@Inject` |
+| 组件被多个 BizModel/Service 通过 `new` 直接调用 | ✅ 保持构造函数兼容 | ❌ 不要改为 Spring/Nop IoC 托管 |
+| 组件有对应的单元测试直接 `new Component()` 而不走容器 | ✅ 保持测试兼容 | ❌ 不要引入 `@Inject` 使测试需要启动容器 |
+
+### 具体反例
+
+```java
+// 问题：Engine 是纯函数，由多个调用方 `new Engine()` 使用
+// 改成 @Inject + daoProvider().daoFor(...).newEntity() 后：
+// 1. 所有调用方需改为容器注入 → 改动范围大
+// 2. 测试不能再 new Engine() → 必须上容器
+// 3. 无持久化行为的引擎内 newEntity() 无意义
+
+// ✅ 正确做法：纯函数保持纯函数。newEntity() 只在 BizModel 层使用，Engine 不碰 ORM。
+```
+
+**判断基准**：如果该组件的主要职责是计算/规则/转换（而非持久化），且调用方通过构造函数直接实例化，保留 `new XxxEntity()` + 手动 setter。只有当组件自身就是持久化流程的编排者时才改为 `newEntity()`。
+
+---
+
 ## 参考文件
 
 - `{DOCS-FOR-AI}/05-examples/ibiz-and-bizmodel.java` — IBiz + BizModel 完整示例

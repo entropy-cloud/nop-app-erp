@@ -316,11 +316,11 @@ Exit Criteria:
 - Why Not Blocking Closure: 本计划仅做 Line 实体独立 view.xml 的 form 分组；父视图（如 ErpPurOrder）内嵌子表行内编辑控件属 F4 Phase 2 结果面，需配合 picker 自动推算 + 行校验一并设计。
 - Successor Required: `yes`（触发条件：F4 Phase 2 plan 启动时）
 
-### 仅查询表单（query asideFilter 高级筛选区）
+### 仅查询表单（query asideFilter 高级筛选区）RELEASED 2026-07-20
 
 - Classification: `optimization candidate`
 - Why Not Blocking Closure: F8（搜索/过滤条件增强）覆盖列表页 asideFilter 多维筛选区设计；本计划仅做基础 query form（≥5 字段）。
-- Successor Required: `yes`（触发条件：F8 plan 启动时）
+- Successor Required: `released 2026-07-20`（plan `2026-07-20-0629-2-f8-f2-search-filter-and-readonly-views.md` 已落地 8 列表页 query + asideFilter 双筛选面）
 
 ### finance 域超大表单 ErpFinCashForecast/ErpFinNotesReceivable/ErpFinNotesPayable/ErpFinCreditFacility 等长尾实体
 

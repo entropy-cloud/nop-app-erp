@@ -255,6 +255,73 @@ view.xml
 
 ---
 
+---
+
+## AMIS 运行时约束（来自本项目踩坑记录）
+
+AMIS 在前端运行时有一些行为约束，如果未意识到会导致难以排查的 bug：
+
+### 序列化行为
+
+| 约束 | 表现 | 对策 |
+|------|------|------|
+| 空字段序列化为 `""`（空字符串）而非 `null` | 后端收到的空字符串不会被 `@NotEmpty` 拦截 | 在 AMIS adaptor 中将 `""` 转为 `null` 再提交 |
+| `DatePicker` 返回 Unix 毫秒时间戳 | 前端显示日期，但 GraphQL 提交的是 long 数字 | 在 route interceptor 中 patch 转换 |
+| `input-table`（子表）行内控件延迟渲染 | 用户点击"添加行"之前，行内的 picker/number 等控件不在 DOM 中 | E2E 测试中先点击 add row，再等待 row 控件渲染，不要直接断言行控件数量 |
+
+### 列虚拟化
+
+AMIS column virtualization 导致**列数超过一定数量（~13 列）时，viewport 外的列不在 DOM 中**。这会影响：
+
+- E2E 测试中按文本定位超出 viewport 的列内容 → 改用 scroll + 定位配合
+- status tag 等需要 DOM 可见的 visual spec → 将测试列移到前 13 位，或 scroll 后再断言
+
+### Adaptor 作用域
+
+AMIS adaptor 函数签名只暴露 `payload`、`response`、`api` 三个参数，**不包含 `data`**：
+
+```javascript
+// ❌ 错误：ReferenceError: data is not defined
+adaptor: function(payload, response, api) {
+    const type = data.notificationType; // data 未定义
+}
+
+// ✅ 正确：通过 api.data 或 payload 访问
+adaptor: function(payload, response, api) {
+    const type = api.data.notificationType;
+}
+```
+
+### FormDialog 定位
+
+```javascript
+// ❌ 错误：FormDialog 对象无 locator() 方法（是 getter 属性）
+const dialog = await new FormDialog(page, {...});
+await dialog.locator('.cxd-InputTable'); // TypeError
+
+// ✅ 正确：用 page.locator() 全局查询
+await page.locator('.cxd-Modal .cxd-InputTable').waitFor();
+```
+
+### E2E 测试模式（前端页面）
+
+```javascript
+// 按钮匹配锚定到 Crud 区域内，避免匹配到 sidebar/header 中的相同文本
+// ❌ 错误：page.locator('button:has-text("新增")') → 可能匹配菜单
+// ✅ 正确：crud 区域内双语文案匹配
+const crud = page.locator('.cxd-Crud');
+await crud.locator('button:has-text("新增"), button:has-text("Add")').click();
+
+// GraphQL response listener 必须在 navigation 之前注册
+// ❌ 错误：await page.goto(url); const resp = await page.waitForResponse(...);
+// ✅ 正确：
+const respPromise = page.waitForResponse(r => r.url().includes('graphql') && r.status() === 200);
+await page.goto(url);
+const resp = await respPromise;
+```
+
+---
+
 ## 项目内高价值样例
 
 | 样例 | 位置 | 展示的模式 |

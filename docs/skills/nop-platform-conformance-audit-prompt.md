@@ -84,6 +84,23 @@
     - 集成测试覆盖跨域协作（业财一体闭环、库存同步写）。
     - GraphQL 测试用 `graphql-doc` 自动生成测试输入。
 
+13. **Codegen 产物安全意识（致命禁区）**
+    - 永远不要直接编辑带有 `_` 前缀的文件（如 `_erp-notify.action-auth.xml`、`_app.orm.xml`、`_service.beans.xml`）——它们在 `mvn install` 时被 codegen 重新生成，任何手改都会丢失。
+    - 永远不要直接编辑带有 `# __XGEN_FORCE_OVERRIDE__` 标记的文件（如 `business-type.dict.yaml`）——同上，codegen 阶段覆盖。
+    - 定制必须写在**保留层**文件中（无 `_` 前缀），通过 `x:extends="_generated_file.xml"` 继承生成文件后追加内容。
+    - ORM 字典定义（`<dict>`）永远以或模型文件中的 `<dict>` 定义为真相源，生成到 `dict.yaml` — 编辑生成文件会被覆盖。
+    - 自动化检查：`grep -r '__XGEN_FORCE_OVERRIDE__' --include='*.yaml' --include='*.xml' | grep -v '_gen/'` 列出所有 codegen 强制覆盖文件，检查是否有手改。
+
+14. **聚合完整性检查（新模块/功能注册）**
+    - 当新增一个模块、功能入口、或页面时，检查以下聚合器是否都已包含它：
+      - 聚合器 `app.action-auth.xml` 的 `x:extends` 列表是否包含新模块
+      - 聚合器 app 的 POM 中是否包含新模块依赖
+      - 菜单/路由注册是否已经在聚合 action-auth 中生效
+    - 注意同时检查维度 13 的 codegen 产物安全意识：**新模块的 action-auth 文件必须写在保留层**（无 `_` 前缀），不能写在 codegen 生成的下划线文件上。且聚合器的 `x:extends` 必须引用保留层文件而非生成文件。
+    - 组合检查流程：新模块 → (a) 确认保留层 action-auth 存在且正确 → (b) 确认聚合器 `x:extends` 引用它 → (c) `mvn clean install` 验证两者都持久保留不被覆盖。
+    - 特例：如果只有 admin 可访问的配置页面，可以只注册在 admin TOPM 下；但如果有 user-facing 入口（如通知收件箱），必须在聚合器的 user TOPM 中注册。
+    - 自动化检查：`grep 'x:extends' app.action-auth.xml` 列出所有已注册模块，检查是否有遗漏。`grep 'notify\|<new-module>' app.action-auth.xml` 确认新模块存在。
+
 自动化核查建议：
 - grep 扫描源码：`extends RuntimeException`（应 NopException）、`@Inject private`（应非 private）、`@Transactional` 与 `@BizMutation` 共存（冗余）、`System.currentTimeMillis`（应 CoreMetrics）、`IDaoProvider` 直接注入（应 I*Biz）。
 - 扫描 `_gen/` 是否被手动修改（git diff 检测）。

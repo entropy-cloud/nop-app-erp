@@ -45,6 +45,7 @@
 | `orm-model-audit-prompt.md` | `<domain>/model/*.orm.xml` 需要规范与完整性审计（类型/长度/字典/标准字段/业务字段/关系） | 单模块内部审计、需求综合 | `domain-design-guidelines.md` §10/§11、平台 `orm-model-design.md`、所有 orm.xml | 按维度的问题清单 + 裁决 + 字段补齐统计 |
 | `cross-module-dependency-audit-prompt.md` | 多模块跨工程数据依赖合理性、DAG 合规性、外部实体引用一致性审计 | 单模块审计、需求综合 | `module-boundaries.md`、`data-dependency-matrix.md`、`cross-module-entity-reference.md`、所有 orm.xml | DAG 验证结果 + 外部实体声明完整性矩阵 + 裁决 |
 | `nop-platform-conformance-audit-prompt.md` | 项目设计与实现对 Nop Platform 最佳实践的遵循度审计 | 业务设计审计（用 design-doc-audit）、ORM 字段审计（用 orm-model-audit） | `../nop-entropy/docs-for-ai/` 全部、项目 architecture 文档 | 12 维度合规率 + 反模式清单 + 裁决 |
+| `development-wisdom-gate-prompt.md` | AI 开发过程中自检：假设面出、深度充电、跨层一致性、意图忠实度、生态约束、第一性原理验证，使用通用开发通识在声称完成前系统性挑战产出 | 审计特定对象需要针对性工具（plan-audit、multi-dimensional-audit 等） | 当前产出（设计/计划/代码）、项目 owner docs | 6 维度裁决 + 综合通过/不通过 |
 
 ## 入门技能
 
@@ -66,6 +67,7 @@
 - `cross-module-dependency-audit-prompt.md`
 - `nop-platform-conformance-audit-prompt.md`
 - `code-refactor-prompt.md`
+- `development-wisdom-gate-prompt.md`
 
 ## 与工具原生技能的关系
 
@@ -120,6 +122,79 @@
 6. **`@Inject private`**：Nop IoC 中 `@Inject` 字段不能是 `private`。
 7. **字符串比较用 `==`/`!=`**：字典 String 比较一律 `Objects.equals()` / `.equals()`。
 8. **propId 编号断续**：orm.xml 列定义 `propId` 必须连续（gap 会触发平台校验失败）。
+
+---
+
+## 技能组合使用方式：用技能系统代替人工审查
+
+### 设计意图
+
+这个技能库被设计为一个**协同工作的 AI 审查系统**。不是让一个 AI 运行一个技能就完成所有检查——而是让**不同的 AI 子代理在不同时机使用不同技能**，交替覆盖，使技能库整体覆盖人工在项目中提供的通用开发通识。
+
+### 核心原则
+
+1. **技能分立，组合出效果**。没有单个技能能覆盖所有人工审查——需按阶段交替使用多个技能。
+2. **时机决定技能选择**。同一项工作在不同阶段需不同技能（如：实施前用 `plan-audit`，实施中用 `development-wisdom-gate`，实施后用 `closure-audit`）。
+3. **每项产出至少经过两个技能门控**。任何非平凡的产出在声称完成前至少经过一次 `development-wisdom-gate` 自检 + 一次面向对象审计（`closure-audit`/`plan-audit`/`multi-dimensional-audit` 等）。
+4. **独立子代理做审计，实施代理做自检**。`development-wisdom-gate` 由实施 AI 自己运行（自检门控），对象级审计由独立子代理运行（外部审查）。
+
+### 开发全生命周期中的技能分配
+
+```
+阶段               实施AI自检门控             独立子代理审查
+────────────────────────────────────────────────────────────
+需求综合          development-wisdom-gate    document-audit
+                 (假设面出 + 意图忠实)       (需求文档完整性)
+
+设计定稿          development-wisdom-gate    design-doc-audit
+                 (跨层一致性 + 生态约束)      + orm-model-audit（如涉及ORM）
+                                           + state-machine-review（如涉及状态机）
+
+计划起草          自检-延后（计划本身        plan-audit
+                 不触发自检门控）              (拦截P0缺陷的最佳时机)
+                 plan draft 本身不触发自检    (拦截P0缺陷的最佳时机)
+
+实施中进行        development-wisdom-gate    code-quality-audit（复杂实现）
+                 (深度充电 + 第一性原理)      + nop-platform-conformance（平台合规）
+
+实施完毕准备      development-wisdom-gate    closure-audit（必须独立子代理）
+声称完成          (全6维度最终裁决)            + multi-dimensional-audit（高风险）
+                                           + nop-platform-conformance（如涉及平台变更）
+
+修复 Bug          bug-diagnosis（根因定位）   bug-diagnosis（由独立子代理复核根因）
+                 + development-wisdom-gate   + 确认修复后 closure-audit
+                 (检查是否修了症状而非根因)
+```
+
+### 技能触发规则
+
+在 AGENTS.md 的"任务路由"阶段（实施前），按以下规则选择技能：
+
+1. **扫描技能库**：读取本 README 的「技能注册表」+ 本「使用方式」节。
+2. **按阶段匹配**：当前属于上表中哪个阶段？该阶段需要的自检门控和外部审查各是什么？
+3. **加载匹配技能**：用 `skill` 工具加载**所有匹配的技能**（不要只加载一个）。
+4. **按顺序执行**：先自检（`development-wisdom-gate`），后外部审查。自检未通过时先修改，再进入外部审查。
+5. **记录技能使用**：在计划或日志中记录 `Skill: <name>` 供后续审计追踪。
+
+### 反模式
+
+| 反模式 | 后果 | 正确做法 |
+|--------|------|---------|
+| 只有一个 skills 加载运行全部检查 | 思维定势，漏检 | 按阶段交替使用不同 skills |
+| 实施 AI 自己审计自己的产出 | 盲区保留 | closure-audit / plan-audit 必须由独立子代理运行 |
+| 声称完成后才运行 development-wisdom-gate | 失去"开发过程中的自检"意义 | 在声称完成前作为门控运行 |
+| 认为某个 skill 可以覆盖所有检查 | 该 skill 膨胀，其他 skill 闲置 | 每个 skill 专注一个视角，组合使用 |
+| 只跑 scoped 验证就声明完成 | 假阳性 | closure-audit 强制 full reactor 验证检查 |
+| 跳过自检直接进入外部审查 | 低质量问题浪费审查者时间 | 每份产出先自检通过，再提交外部审查 |
+| 一个阶段未使用任何技能 | 该阶段无人检查，盲区保留 | 每个阶段至少使用一个技能（自检或审查） |
+
+### 已知覆盖盲区（设计上不试图通过技能本身解决）
+
+- **平台源码/文档变更**：当 nop-entropy 平台本身更改了行为，所有技能需要同步更新——这不在技能设计范围内。
+- **新领域知识**：技能不替代 owner docs。技能捕获"如何检查"的方法，不捕获"需要检查什么"的业务知识。
+- **非常规架构决策**：当项目做出架构级选择（如换数据库、换部署模式），现有技能不够用时，人工干预是预期路径——技能无法替代人的判断。
+
+---
 
 ### 与平台文档的关系
 

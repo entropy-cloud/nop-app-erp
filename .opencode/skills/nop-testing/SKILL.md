@@ -291,6 +291,133 @@ public class TestOrder extends JunitAutoTestCase {
 
 录制模式下每个测试方法执行完毕后框架抛 `nop.err.autotest.snapshot-finished` 异常表示录制完成。这是**预期行为**不是测试失败。Maven 输出会显示 `Tests run: X, Errors: X`，切换到 CHECKING 模式后 Errors 归零。
 
+### 特殊情况：拒绝路径与 ORM Hook 捕获临时插入
+
+当测试拒绝路径（如校验失败提前抛出异常）时，ORM Hook 可能在异常抛出前已捕获到临时插入的实体行，导致 RECORDING 模式捕获的 `output/tables/*.csv` 中包含这些临时行，而 CHECKING 模式因异常提前退出不产生这些行 → `output-row-not-exists` 比较失败。
+
+**处理方式**：
+
+- 如果能控制拒绝路径的触发时机，确保 ORM Hook 在触发前已经 flush：
+  ```java
+  ormTemplate().flushSession();
+  ```
+- 如果无法控制（如框架级校验在前），考虑将拒绝路径测试降级为 CHECKING 模式 + 显式 `@EnableSnapshot(checkOutput = false)`，仅验证响应结果不验证 DB 状态。
+- 如果拒绝路径不产生最终持久化业务结果，用 `@EnableSnapshot(saveOutput = false)` 只校验输入 → 输出的契约。**不要在 RECORDING 模式下录制拒绝路径场景的 DB snapshot**，这会产生不可比的基线。
+
+---
+
+## 清理顺序协议（跨域测试）
+
+持久化测试（尤其是涉及多个域的集成测试）必须按照确定的依赖链顺序清理数据，否则残留脏数据会污染后续测试的种子数据基线。
+
+### 清理顺序规则
+
+按**反向依赖链**清理（先子后父，先消费方后提供方）：
+
+```
+凭证行/凭证 → AR/AP 明细 → 域业务单据（采购/销售/库存/制造等）→
+库存流水 → 库存移动/盘点 → 库存余额 → 批次/序列号 →
+测试物料/往来单位/人员/科目 → 主数据（仓库/币种/计量单位等）
+```
+
+### 具体规则
+
+1. 每个域在 seed 数据和 `@Before`/`@After` 清理中遵循此顺序。
+2. 跨域集成测试必须在一个事务中完成清理，或在测试类级 `@DirtiesContext` 中重建 H2 schema。
+3. 永远不要依赖 `H2 MEMORY` 的 `@After` 自动清理——风险太大。**每次测试结束时对涉及的表显式 DELETE FROM**。
+4. 如果测试涉及多个域的实体，删除顺序必须遵从 DAG 依赖方向的反序。
+
+### 反例
+
+```java
+// ❌ 先删物料（被采购/库存/销售引用）→ DELETE 违反外键约束
+cleanup("ErpMdMaterial");
+// ❌ 先删财务凭证（被 AR/AP 引用）→ 同上
+```
+
+### 正例
+
+```java
+// ✅ 先删凭证行 → 凭证 → 业务单据 → 库存 → 物料
+cleanup("ErpFinVoucherLine", "ErpFinVoucher");
+cleanup("ErpPurOrderLine", "ErpPurOrder");
+cleanup("ErpInvStockLedger", "ErpInvStockMove", "ErpInvStockBalance");
+cleanup("ErpMdMaterial");
+```
+
+---
+
+## 种子数据附加规则
+
+**种子数据只能追加，不能修改已有行。** 这是 nop 快照测试框架的关键约束：
+
+- 已有测试的 `_cases/.../output/tables/*.csv` 快照文件中记录了种子数据行的 ID 值
+- 如果修改已有种子行的字段值，快照比较时会检测到差异 → 测试失败
+- 如果删除已有种子行，引用该行的测试也会失败（外键不可达）
+
+### 做法
+
+| 场景 | 做法 |
+|------|------|
+| 新增实体需要种子数据 | append 新文件或新行，ID 不冲突 |
+| 需要修改已有数据类型 | 在代码层面兼容，不修改种子数据 |
+| 添加种子关联行 | 新建独立的 seed CSV，引用已有种子 ID |
+| 确实需要修改 | `mvn clean install -DskipTests` 后全部测试 RECORDING 重录 |
+
+
+## 三层测试验证模型
+
+持久化业务逻辑测试推荐使用三层验证：
+
+| 层 | 验证内容 | 机制 | 定位 |
+|----|---------|------|------|
+| 层 1 | 显式锚点断言 | Java `assertEquals` / `assertNotNull` / `assertThrows` | 关键业务断言（状态、金额、异常） |
+| 层 2 | 输出响应快照 | `output("response.json5", result)` | 完整响应结构比对 |
+| 层 3 | DB 状态快照 | 自动录制 `output/tables/*.csv` | 持久化状态变化全量核对 |
+
+**什么时候用哪层：**
+
+| 测试类型 | 层 1 | 层 2 | 层 3 |
+|---------|------|------|------|
+| 异常路径/拒绝路径 | ✅ 必须 | ✅ 推荐 | ❌ 跳过（见拒绝路径节） |
+| 纯查询测试 | ❌ | ✅ 必须 | ✅ 推荐 |
+| 写入+持久化测试 | ✅ 关键字段 | ✅ 必须 | ✅ 必须 |
+| 多步流程快照测试 | ✅ 中间状态 | ✅ 每步 | ✅ 每步 |
+
+**层 3 DB 快照最佳实践**：当测试涉及复杂的实体间状态级联时，依赖 DB 快照而非手工逐一断言每字段。
+
+---
+
+## E2E 测试环境协议
+
+Playwright E2E 测试在本项目中有稳定的环境配置模式：
+
+### 环境变量
+
+```
+BASE_URL=http://127.0.0.1:8011
+SKIP_WEBSERVER=1
+```
+
+注意：`application.yaml` 中配置了 `quarkus.http.port=8011`（非默认 8080）。如果不设 `SKIP_WEBSERVER=1`，Playwright 的 webServer 配置会尝试自动启动 app（可能导致端口冲突）。
+
+### 配置位置
+
+需要在每个 E2E spec 的开头或 Playwright 配置中设此环境变量。推荐方式：
+
+```bash
+BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 npx playwright test tests/e2e/...
+```
+
+### 常见失败排查
+
+| 症状 | 可能原因 | 修复 |
+|------|---------|------|
+| 浏览器白屏（无法路由） | 8011 端口未启动 app | 先启动 runner.jar |
+| npm test 无法启动 webServer | port 8080 被占用 | `SKIP_WEBSERVER=1` + `BASE_URL=...` |
+| 测试超时 30s | app 未在 8011 监听 | `lsof -i :8011` 检查，启动 app |
+| AMIS 弹窗不渲染 | `FormDialog` 对象无 `locator()` 方法 | 用 `page.locator()` 全局查询替代 |
+
 ---
 
 ## 反模式表
