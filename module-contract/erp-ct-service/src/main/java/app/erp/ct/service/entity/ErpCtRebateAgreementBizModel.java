@@ -82,7 +82,7 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
             // 期末一次性：聚合期间全部新增发票金额，一次性喂入
             BigDecimal periodTotal = sumPeriodInvoices(agreement, periodStart, periodEnd, alreadyAccruedCodes);
             if (periodTotal.signum() != 0) {
-                rebateEngine.accruePeriodEnd(agreement, periodTotal);
+                rebateEngine.accruePeriodEnd(agreement, periodTotal, context);
             }
         } else {
             // PROGRESSIVE：逐张已过账发票即时计提
@@ -93,7 +93,7 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
                 if (alreadyAccruedCodes.contains(code)) {
                     continue;
                 }
-                rebateEngine.accrue(agreement, amount, billType, code);
+                rebateEngine.accrue(agreement, amount, billType, code, context);
             }
         }
         return agreement;

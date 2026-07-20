@@ -11,6 +11,7 @@ import app.erp.fin.service.ErpFinConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -154,7 +155,7 @@ public class TestErpFinBudgetIsolation extends JunitAutoTestCase {
         v.setCode(code);
         v.setVoucherType("TRANSFER");
         v.setPostingType(postingType);
-        v.setVoucherDate(LocalDate.now());
+        v.setVoucherDate(CoreMetrics.today());
         v.setOrgId(1L);
         v.setAcctSchemaId(1L);
         v.setPeriodId(periodId);

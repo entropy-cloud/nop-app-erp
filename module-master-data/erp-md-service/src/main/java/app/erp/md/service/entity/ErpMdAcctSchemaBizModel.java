@@ -31,6 +31,9 @@ public class ErpMdAcctSchemaBizModel extends CrudBizModel<ErpMdAcctSchema> imple
         }
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", orgId));
+        // 经 dao().findAllByQuery 绕过 findList 的 objMeta 管道以保留全部候选；
+        // 后续 stream+Comparator 在内存按 status/nature 优先级择优（业务规则在 Java 层而非 SQL）。
+        // 同域只读聚合，数据权限边界一致；M-6（plan 2026-07-20-2200-1）补注释。
         List<ErpMdAcctSchema> schemas = dao().findAllByQuery(q);
         return schemas.stream()
                 .min(Comparator.comparingInt(s -> {

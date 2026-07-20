@@ -7,6 +7,7 @@ import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.service.ErpCsConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -63,7 +64,7 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
 
     @Test
     public void testKpiAggregation() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
         ormTemplate.runInSession(() -> {
             seedClosedTicket(9501L, "TK-KPI-1", true, 120, today);
             seedClosedTicket(9502L, "TK-KPI-2", true, 60, today);
@@ -81,7 +82,7 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
 
     @Test
     public void testTeamSlaRanking() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
         ormTemplate.runInSession(() -> {
             Long teamId = seedTeam(9601L, "技术支持组");
             Long slaPolicyId = seedSlaPolicy(9602L, teamId);
@@ -104,7 +105,7 @@ public class TestErpCsQualityDashboard extends JunitAutoTestCase {
 
     @Test
     public void testAgentCsatBreakdown() {
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
         ormTemplate.runInSession(() -> {
             Long ticketId = seedClosedTicketAssigned(9520L, "TK-CSAT-1", true, 60, today, "agent-001");
             seedSurvey(9701L, ticketId, 5, 9, 4);

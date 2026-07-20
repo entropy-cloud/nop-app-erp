@@ -179,6 +179,11 @@ public class ErpCrmTerritoryBizModel extends CrudBizModel<ErpCrmTerritory> imple
         return ids;
     }
 
+    /**
+     * 递归收集子树 id。经 {@code dao().findAllByQuery} 直接查询绕过 findList 管道——
+     * 树形结构递归遍历，每层只取直接子节点；同域只读，数据权限在调用方校验。
+     * M-6（plan 2026-07-20-2200-1）补注释。
+     */
     protected void collectSubtreeIds(Long rootId, Set<Long> acc) {
         acc.add(rootId);
         QueryBean q = new QueryBean();
@@ -188,6 +193,10 @@ public class ErpCrmTerritoryBizModel extends CrudBizModel<ErpCrmTerritory> imple
         }
     }
 
+    /**
+     * 计算子树最大深度（循环深度校验用）。同 {@link #collectSubtreeIds} 的 dao() 直接查询理由。
+     * M-6（plan 2026-07-20-2200-1）补注释。
+     */
     protected int maxSubtreeDepthFrom(Long rootId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("parentId", rootId));

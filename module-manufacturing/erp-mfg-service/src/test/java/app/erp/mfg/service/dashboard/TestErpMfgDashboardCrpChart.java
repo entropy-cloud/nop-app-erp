@@ -9,6 +9,7 @@ import app.erp.mfg.dao.entity.ErpMfgWorkcenterCapacity;
 import app.erp.mfg.service.ErpMfgConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -147,7 +148,7 @@ public class TestErpMfgDashboardCrpChart extends JunitAutoTestCase {
         // 无 dateFrom/dateTo → 默认近 7 天；每个日期行均存在
         Map<String, Object> result = dashboardBiz.getCrpLoadChartData(null, null, null, CTX);
         List<?> series = (List<?>) result.get("series");
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
         assertEquals(7, series.size(), "默认窗口 7 天");
         // 第一行 = today - 6，最后一行 = today
         Map<?, ?> first = (Map<?, ?>) series.get(0);

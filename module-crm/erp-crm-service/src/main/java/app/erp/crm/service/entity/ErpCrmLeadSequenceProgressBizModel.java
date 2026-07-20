@@ -275,6 +275,10 @@ public class ErpCrmLeadSequenceProgressBizModel
     }
 
     // ---------- 内部辅助 ----------
+    // 以下 dao().findAllByQuery 调用均为同域只读内部辅助：
+    // - findActiveProgress / loadAllInProgress / loadProgressBySequenceIds 用于序列推进引擎的
+    //   状态查询，不走 CrudBizModel findList 管道以保留 setLimit(1) + stream 直接消费的简洁语义；
+    //   数据权限在调用方 @BizMutation 入口已校验。M-6（plan 2026-07-20-2200-1）补注释。
 
     protected ErpCrmLeadSequenceProgress findActiveProgress(Long leadId) {
         QueryBean q = new QueryBean();

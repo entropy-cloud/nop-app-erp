@@ -168,6 +168,13 @@ public class ErpCrmLeadFunnelBizModel extends CrudBizModel<ErpCrmLeadFunnel> imp
 
     // ---------- 内部辅助 ----------
 
+    /**
+     * 清理既有快照（重算前的 invalidate 步骤）。
+     *
+     * <p>实现说明：经 {@code dao().findAllByQuery(q)} 直接查询绕过 findList 管道——本步骤需读取全部匹配行做
+     * 级联删除（子表 ErpCrmFunnelStageMetrics + 头表 ErpCrmLeadFunnel），数据权限在
+     * 调用方 @BizMutation 入口已校验；同域只读+级联写场景。M-6（plan 2026-07-20-2200-1）补注释。
+     */
     protected void clearExistingSnapshots(LocalDate periodStart, LocalDate periodEnd,
                                            Long territoryId, Long teamId, Long sourceId,
                                            IServiceContext context) {

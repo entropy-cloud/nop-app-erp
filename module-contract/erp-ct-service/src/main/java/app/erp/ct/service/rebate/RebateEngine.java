@@ -4,9 +4,11 @@ package app.erp.ct.service.rebate;
 import app.erp.contract.dao.entity.ErpCtRebateAccrual;
 import app.erp.contract.dao.entity.ErpCtRebateAgreement;
 import app.erp.contract.dao.entity.ErpCtRebateTier;
+import app.erp.ct.biz.IErpCtRebateAccrualBiz;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -41,6 +43,9 @@ public class RebateEngine {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    IErpCtRebateAccrualBiz rebateAccrualBiz;
+
     /**
      * 对单张已过账发票事件计提返利。
      *
@@ -48,10 +53,12 @@ public class RebateEngine {
      * @param invoiceAmount   本张发票金额（退货为负）
      * @param sourceBillType  来源单据类型（AP_INVOICE / AR_INVOICE）
      * @param sourceBillCode  来源单据号
+     * @param context         服务上下文（穿透 CrudBizModel 数据权限/审计管道）
      * @return 新建的计提明细（accruedRebate 可能为负——跨档回落/退货）
      */
     public ErpCtRebateAccrual accrue(ErpCtRebateAgreement agreement, BigDecimal invoiceAmount,
-                                     String sourceBillType, String sourceBillCode) {
+                                     String sourceBillType, String sourceBillCode,
+                                     IServiceContext context) {
         validateActive(agreement);
 
         BigDecimal amount = invoiceAmount == null ? BigDecimal.ZERO : invoiceAmount;
@@ -71,7 +78,9 @@ public class RebateEngine {
         accrual.setAccruedRebate(delta);
         accrual.setAccrualDate(CoreMetrics.today());
         accrual.setIsSettled(false);
-        dao().saveEntity(accrual);
+        // H-4（plan 2026-07-20-2200-1）：经 I*Biz 走 CrudBizModel 管道（数据权限/审计/钩子），
+        // 不再直接 dao().saveEntity() 绕过生命周期。
+        rebateAccrualBiz.saveEntity(accrual, null, context);
 
         // 更新协议累计/预估
         agreement.setTotalAccumulatedAmount(newCumulative);
@@ -86,11 +95,13 @@ public class RebateEngine {
      *
      * @param agreement      返利协议
      * @param periodAmount   本期新增累计金额
+     * @param context        服务上下文（穿透 CrudBizModel 数据权限/审计管道）
      * @return 计提明细
      */
-    public ErpCtRebateAccrual accruePeriodEnd(ErpCtRebateAgreement agreement, BigDecimal periodAmount) {
+    public ErpCtRebateAccrual accruePeriodEnd(ErpCtRebateAgreement agreement, BigDecimal periodAmount,
+                                              IServiceContext context) {
         return accrue(agreement, periodAmount, "PERIOD_END",
-                "PERIOD-" + io.nop.api.core.time.CoreMetrics.today());
+                "PERIOD-" + io.nop.api.core.time.CoreMetrics.today(), context);
     }
 
     /**
