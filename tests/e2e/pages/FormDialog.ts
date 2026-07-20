@@ -1,44 +1,40 @@
-import { expect } from '@playwright/test';
-import type { Page as PlaywrightPage, Locator } from '@playwright/test';
+import type { Page as PlaywrightPage } from '@playwright/test';
 import type { EngineAdapter } from './types';
-import { DEFAULT_DIALOG_TIMEOUT } from './types';
 
 export class FormDialog {
   constructor(
-    private readonly page: PlaywrightPage,
-    private readonly engine: EngineAdapter,
+    private page: PlaywrightPage,
+    private engine: EngineAdapter,
   ) {}
 
-  get locator(): Locator {
+  get dialog() {
     return this.engine.dialog(this.page);
   }
 
   async waitForVisible(): Promise<void> {
-    await this.locator.waitFor({ state: 'visible', timeout: DEFAULT_DIALOG_TIMEOUT });
+    await this.dialog.waitFor({ state: 'visible' });
   }
 
   async waitForHidden(): Promise<void> {
-    await this.locator.waitFor({ state: 'hidden', timeout: DEFAULT_DIALOG_TIMEOUT }).catch(() => {});
+    await this.dialog.waitFor({ state: 'hidden' });
   }
 
   async setField(name: string, value: string): Promise<void> {
-    const field = this.engine.formField(this.locator, name);
-    await field.waitFor({ state: 'visible', timeout: DEFAULT_DIALOG_TIMEOUT });
+    const field = this.engine.formField(this.dialog, name);
     await field.fill(value);
   }
 
   async getField(name: string): Promise<string> {
-    const field = this.engine.formField(this.locator, name);
-    await field.waitFor({ state: 'visible', timeout: DEFAULT_DIALOG_TIMEOUT });
-    return (await field.inputValue()) || '';
+    const field = this.engine.formField(this.dialog, name);
+    return (await field.inputValue()) ?? '';
   }
 
   async selectOption(fieldLabels: string[], optionTexts: string[]): Promise<void> {
-    await this.engine.selectOption(this.locator, fieldLabels, optionTexts);
+    await this.engine.selectOption(this.dialog, fieldLabels, optionTexts);
   }
 
   async submit(): Promise<void> {
-    const btn = this.engine.submitButton(this.locator);
-    await btn.click();
+    await this.engine.submitButton(this.dialog).click();
+    await this.waitForHidden();
   }
 }

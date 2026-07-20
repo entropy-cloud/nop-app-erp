@@ -42,7 +42,7 @@ function runCrudListSmokePageObject(opts: CrudSmokeExampleOptions): void {
       await addBtn.click({ force: true });
       const dialog = new FormDialog(page, engine);
       await dialog.waitForVisible();
-      const field = engine.formField(dialog.locator, addFormField);
+      const field = engine.formField(dialog.dialog, addFormField);
       await expect(field).toBeVisible();
     });
   });

@@ -1,19 +1,18 @@
+import type { EngineAdapter, EngineType } from './types';
 import { AmisAdapter } from './AmisAdapter';
 import { FluxAdapter } from './FluxAdapter';
-import type { EngineAdapter } from './types';
 
-export type EngineType = 'amis' | 'flux';
-
-let cached: EngineAdapter | null = null;
+let cachedEngine: EngineAdapter | null = null;
 
 export function getEngineType(): EngineType {
-  const v = (process.env.E2E_ENGINE || 'amis').toLowerCase();
-  return v === 'flux' ? 'flux' : 'amis';
+  const raw = process.env.E2E_ENGINE;
+  if (raw === 'flux') return 'flux';
+  return 'amis';
 }
 
 export function createEngine(type?: EngineType): EngineAdapter {
-  const t = type || getEngineType();
-  switch (t) {
+  const resolvedType = type ?? getEngineType();
+  switch (resolvedType) {
     case 'flux':
       return new FluxAdapter();
     case 'amis':
@@ -23,8 +22,12 @@ export function createEngine(type?: EngineType): EngineAdapter {
 }
 
 export function getEngine(): EngineAdapter {
-  if (!cached) {
-    cached = createEngine();
+  if (!cachedEngine) {
+    cachedEngine = createEngine();
   }
-  return cached;
+  return cachedEngine;
+}
+
+export function resetEngine(): void {
+  cachedEngine = null;
 }

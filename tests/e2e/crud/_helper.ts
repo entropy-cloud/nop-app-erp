@@ -43,7 +43,7 @@ export function runCrudListSmoke(opts: CrudSmokeOptions): void {
       const dialog = new FormDialog(page, engine);
       await dialog.waitForVisible();
 
-      const formField = engine.formField(dialog.locator, addFormField);
+      const formField = engine.formField(dialog.dialog, addFormField);
       await formField.waitFor({ state: 'visible', timeout: 15_000 });
       expect(await formField.isVisible(), `${domain}: add form field ${addFormField} visible`).toBe(true);
     });

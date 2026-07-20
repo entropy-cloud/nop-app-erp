@@ -1,0 +1,8 @@
+{
+  "name": "e2e-shared-target",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@nop-chaos/e2e-shared": "file:/Users/abc/app/nop-chaos-next-wt/nop-chaos-next-master/packages/e2e-shared"
+  }
+}
