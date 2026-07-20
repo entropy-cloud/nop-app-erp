@@ -8,8 +8,32 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ periodId[期间] subjectId[科目]
+ currencyId[币种] partnerId[辅助-往来单位]
+ __includeUnposted[含未过账]
+            </layout>
+            <cells>
+                <cell id="periodId" filterOp="eq"/>
+                <cell id="subjectId" filterOp="eq"/>
+                <cell id="currencyId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="__includeUnposted" custom="true" domain="boolean" defaultValue="false"
+                      label="含未过账"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ periodId[期间] subjectId[科目]
+            </layout>
+            <cells>
+                <cell id="periodId" filterOp="eq"/>
+                <cell id="subjectId" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

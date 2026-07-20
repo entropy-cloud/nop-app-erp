@@ -8,8 +8,28 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ batchNo[批号] materialId[物料]
+ warehouseId[仓库] status[状态]
+            </layout>
+            <cells>
+                <cell id="batchNo" filterOp="like"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ batchNo[批号]
+            </layout>
+            <cells>
+                <cell id="batchNo" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

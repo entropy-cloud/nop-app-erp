@@ -65,10 +65,24 @@
             </layout>
         </form>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ voucherType[凭证字] docStatus[凭证状态]
+ voucherNo[凭证编号] periodId[会计期间]
+ postingType[过账类型] acctSchemaId[账套]
+            </layout>
+            <cells>
+                <cell id="voucherType" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="voucherNo" filterOp="like"/>
+                <cell id="periodId" filterOp="eq"/>
+                <cell id="postingType" filterOp="eq"/>
+                <cell id="acctSchemaId" filterOp="eq"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- code[凭证号] voucherType[凭证字]
- voucherDate[凭证日期] docStatus[凭证状态]
+ code[凭证号] voucherDate[凭证日期]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>

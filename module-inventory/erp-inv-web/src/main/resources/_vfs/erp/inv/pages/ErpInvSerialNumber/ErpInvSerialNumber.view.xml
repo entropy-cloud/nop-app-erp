@@ -9,8 +9,28 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ serialNo[序列号] materialId[物料]
+ status[状态] warehouseId[当前仓库]
+            </layout>
+            <cells>
+                <cell id="serialNo" filterOp="like"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ serialNo[序列号]
+            </layout>
+            <cells>
+                <cell id="serialNo" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

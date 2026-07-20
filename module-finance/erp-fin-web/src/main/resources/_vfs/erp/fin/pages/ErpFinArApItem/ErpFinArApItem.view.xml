@@ -51,6 +51,29 @@
         <form id="view"/>
         <form id="edit"/>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ partnerId[往来单位] direction[应收应付]
+ sourceBillType[来源单据类型] status[状态]
+ businessDate[业务日期]
+            </layout>
+            <cells>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="direction" filterOp="eq"/>
+                <cell id="sourceBillType" filterOp="eq"/>
+                <cell id="status" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[单号] sourceBillCode[来源单据号]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="sourceBillCode" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>

@@ -10,37 +10,38 @@
     <forms>
         <form id="view" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  orgId[业务组织] materialId[物料]
  skuId[SKU] warehouseId[仓库]
  locationId[库位] batchNo[批号]
-==========>quantity[数量信息]======
+=========>quantity[数量信息]======
  totalQuantity[总数量] reservedQuantity[预留数量]
  lockedQuantity[冻结数量] availableQuantity[可用数量]
-==========>cost[成本信息]======
+=========>cost[成本信息]======
  costMethod[计价方法] avgCost[平均成本]
  totalCost[总成本] currencyId[币种]
-==========>ownership[所有权]======
+=========>ownership[所有权]======
  ownerId[所有权往来单位] ownershipType[所有权类型]
             </layout>
         </form>
-        <form id="edit" size="lg">
-            <layout x:override="replace">
-==========>baseInfo[基本信息]======
- orgId[业务组织] materialId[物料]
- skuId[SKU] warehouseId[仓库]
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ materialId[物料] warehouseId[仓库]
  locationId[库位] batchNo[批号]
-==========>quantity[数量信息]======
- totalQuantity[总数量] reservedQuantity[预留数量]
- lockedQuantity[冻结数量] availableQuantity[可用数量]
-==========>cost[成本信息]======
- costMethod[计价方法] avgCost[平均成本]
- totalCost[总成本] currencyId[币种]
-==========>ownership[所有权]======
- ownerId[所有权往来单位] ownershipType[所有权类型]
+ orgId[业务组织] __includeZero[含零库存]
             </layout>
+            <cells>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="locationId" filterOp="eq"/>
+                <cell id="batchNo" filterOp="like"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="__includeZero" custom="true" domain="boolean" defaultValue="false"
+                      label="含零库存"/>
+            </cells>
         </form>
-        <form id="add"/>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  materialId[物料] warehouseId[仓库]

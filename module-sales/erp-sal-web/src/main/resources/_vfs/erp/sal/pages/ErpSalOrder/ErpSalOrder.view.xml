@@ -131,11 +131,23 @@
             </cells>
         </form>
         <form id="add"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ customerId[客户] warehouseId[发货仓库]
+ docStatus[单据状态] approveStatus[审核状态]
+ businessDate[订单日期]
+            </layout>
+            <cells>
+                <cell id="customerId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="docStatus" filterOp="eq"/>
+                <cell id="approveStatus" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- code[单号] docStatus[单据状态]
- customerId[客户] approveStatus[审核状态]
- businessDate[订单日期]
+ code[单号] businessDate[订单日期]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>

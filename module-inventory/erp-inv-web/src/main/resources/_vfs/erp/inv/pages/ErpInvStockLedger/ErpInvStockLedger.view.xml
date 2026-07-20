@@ -8,8 +8,31 @@
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit" x:abstract="true"/>
+        <form id="add" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" submitOnChange="true">
+            <layout>
+ materialId[物料] warehouseId[仓库]
+ costMethod[计价方法] ownershipType[所有权类型]
+ businessDate[业务日期] batchNo[批号]
+            </layout>
+            <cells>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="warehouseId" filterOp="eq"/>
+                <cell id="costMethod" filterOp="eq"/>
+                <cell id="ownershipType" filterOp="eq"/>
+                <cell id="businessDate" filterOp="date-between"/>
+                <cell id="batchNo" filterOp="like"/>
+            </cells>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[流水号]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
