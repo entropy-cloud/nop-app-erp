@@ -255,3 +255,129 @@
 | 合同模板 + 占位符替换 | 通用范式 | 模板富文本 + 变量占位符自动替换 |
 | 合同全生命周期状态机 | Axelor#contract 状态机 | DRAFT→NEGOTIATION→ACTIVE→SUSPENDED/EXPIRED/TERMINATED |
 | 弱指针关联业务单据 | 设计决策 | relatedBillType/relatedBillCode 保持模块独立 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：contract 域 8 个主交易实体（不含已 1500-1 覆盖的 `ErpCtContract`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-2-f3-p2p3-ext-masterdata-form-layout.md` Phase 0.D。
+> 合同版本（ContractVersion）突出版本号/生效日期/isCurrent；返利协议（RebateAgreement）/计提（Accrual）/结算（Settlement）三实体按 金额 + 状态 + 过账 分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpCtContractVersion | baseInfo + content + approval + audit |
+| ErpCtRebateAgreement | baseInfo + schedule + amount + meta + audit |
+| ErpCtRebateAccrual | baseInfo + amount + settle + audit |
+| ErpCtRebateSettlement | baseInfo + amount + credit + posting + audit |
+| ErpCtApprovalRecord | baseInfo + result + audit |
+| ErpCtApprovalMatrix | baseInfo + range + rule + audit |
+| ErpCtSignatureRequest | baseInfo + detail + result + attachment + audit |
+| ErpCtDocument | baseInfo + file + ocr + retention + audit |
+
+### ErpCtRebateAgreement 模板（返利协议头）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[协议编号] orgId[业务组织]
+ contractId[关联合同] partnerId[合作伙伴]
+ rebateType[返利类型] businessDate[业务日期]
+=========>schedule[周期]======
+ agreementDate[协议日期] startDate[生效日期]
+ endDate[失效日期] status[状态]
+=========>amount[金额]======
+ totalAccumulatedAmount[累计金额] estimatedRebateAmount[预计返利]
+=========>meta[计提方式]======
+ accrualMethod[计提方法]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpCtContractVersion 模板（合同版本）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractId[关联合同] versionNo[版本号]
+ versionDate[版本日期] isCurrent[是否当前版本]
+ status[状态]
+=========>content[内容]======
+ content[版本内容] attachmentFileId[附件]
+=========>approval[审批信息]======
+ approvedBy[审核人] approvedAt[审核时间]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 contract 域主实体的 `<form id="query">` 至少含 5 个查询字段。`code`/`versionNo`/`ruleName`/`checklistItem`/`docName` 配 `filterOp=like`；`contractId`/`partnerId`/`orgId`/`rebateAgreementId`/`approvalMatrixId`/`contractVersionId`/`status`/`approvalStatus`/`isCurrent` 配 `filterOp=eq`；含日期字段（`agreementDate`/`versionDate`/`settlementDate`/`businessDate`）配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：contract 域 5 个 Line/child 子实体（ContractLine / ConsumptionLine / InvoicePlan / VolumeDiscount / RebateTier）独立 `view.xml` 的 form 分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpCtContractLine | baseInfo + quantity + audit |
+| ErpCtConsumptionLine | baseInfo + quantity + audit |
+| ErpCtInvoicePlan | baseInfo + amount + status + audit |
+| ErpCtVolumeDiscount | baseInfo + range + discount + audit |
+| ErpCtRebateTier | baseInfo + range + rebate + audit |
+
+### ErpCtInvoicePlan 模板（开票计划行）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractLineId[合同行] planDate[计划日期]
+ invoiceTerm[开票条款]
+=========>amount[金额]======
+ amount[金额]
+=========>status[状态]======
+ isInvoiced[是否已开票] invoiceBillCode[发票单号]
+ invoiceDate[开票日期]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpCtVolumeDiscount 模板（阶梯折扣行）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ contractLineId[合同行] orgId[业务组织]
+=========>range[阶梯范围]======
+ fromQty[起始数量] toQty[截止数量]
+=========>discount[折扣]======
+ discountPercent[折扣比例] unitPrice[单价]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 contract 域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo`（如有）配 `filterOp=eq`；外键头字段（`contractLineId`/`rebateAgreementId`）配 `filterOp=eq`；`materialId` 配 `filterOp=eq`；`consumptionDate`/`planDate` 配 `filterOp=date-between`；`invoiceBillCode` 配 `filterOp=like`。

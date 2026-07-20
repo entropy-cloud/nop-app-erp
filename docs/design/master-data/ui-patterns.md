@@ -265,3 +265,100 @@
 | 编码唯一性前置校验（async validator on blur） | 通用范式 | F7 §3 落地：3 高频主数据实体 `code` 字段 |
 | 删除引用预览（countReferences + dialog 阻断） | 通用范式 | F7 §3 落地：2 高频实体经 SPI 跨域聚合 |
 | 启用/停用 Switch 控件 | 通用范式 | F7 §3 落地：2 高频实体（替代 button-group-select） |
+
+## 主数据实体 form 布局分组（P3 B 类）
+
+> 适用范围：master-data 域 10 个 B 类（有分组价值）实体（不含已 1500-1 覆盖的 `ErpMdMaterial`/`ErpMdPartner`/`ErpMdSubject`/`ErpMdOrganization`；不含 A 类纯字典 10 个）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-2-f3-p2p3-ext-masterdata-form-layout.md` Phase 0.I。
+> A 类纯字典（Currency/UoM/UoMConversion/TaxRate/SettlementMethod/Location/CostCenter/SubjectMapping/AcctSchemaCoa/ErpSysConfig 共 10 个）维持 codegen 默认，本计划 Non-Goal。
+
+### 模板分化决策（B 类 10 实体）
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpMdWarehouse | baseInfo + storage + audit |
+| ErpMdEmployee | baseInfo + contact + link + audit |
+| ErpMdBankAccount | baseInfo + audit |
+| ErpMdPartnerContact | baseInfo + audit |
+| ErpMdPartnerAddress | baseInfo + contact + audit |
+| ErpMdMaterialSku | baseInfo + price + audit |
+| ErpMdMaterialCategory | baseInfo（tree，仅 form 分组，不改 tree grid） |
+| ErpMdAcctSchema | baseInfo + accounting + audit |
+| ErpMdExchangeRate | pair + validity + audit |
+| ErpMdSupplierApproval | baseInfo + validity + approval + audit |
+
+### ErpMdWarehouse 模板（仓库）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[仓库编码] name[仓库名称]
+ warehouseType[仓库类型] orgId[业务组织]
+ status[状态]
+=========>storage[仓储配置]======
+ address[地址] managerId[仓管员]
+ batchSelectionStrategy[批次选择策略]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpMdMaterialSku 模板（物料 SKU，含多档价格）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ materialId[物料] skuCode[SKU 编码]
+ barcode[条码] uoMId[计量单位]
+ conversionRate[换算率] isDefault[是否默认]
+=========>price[价格信息]======
+ purchasePrice[采购价] salePrice[销售价]
+ wholesalePrice[批发价] retailPrice[零售价]
+ taxRateId[税率]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpMdExchangeRate 模板（汇率）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>pair[货币对]======
+ fromCurrencyId[源币种] toCurrencyId[目标币种]
+ rateType[汇率类型] rate[汇率]
+=========>validity[生效期]======
+ validFrom[生效日期] validTo[失效日期]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpMdMaterialCategory 模板（物料分类树，仅 form 分组）
+
+```xml
+<form id="view">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[名称]
+ parentId[上级分类] sortNum[排序号]
+ priceValidationLevel[价格校验级别]
+    </layout>
+</form>
+```
+
+> 注：`ErpMdMaterialCategory` 的 tree grid 由 F10 plan 覆盖；本计划仅补其独立 form 分组，不改 tree-list grid 与 tree-select 控件。
+
+### query 表单基线
+
+所有 master-data B 类实体的 `<form id="query">` 至少含 5 个查询字段。`code`/`name`/`skuCode`/`barcode`/`bankAccount`/`contactPerson`/`address` 配 `filterOp=like`；`orgId`/`partnerId`/`materialId`/`warehouseType`/`nature`/`status`/`isDefault`/`isActive`/`accountType`/`addressType`/`parentId` 配 `filterOp=eq`；含日期字段（`validFrom`/`validTo`）配 `filterOp=date-between`。

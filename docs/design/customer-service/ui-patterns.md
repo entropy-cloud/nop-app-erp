@@ -321,3 +321,71 @@
 服务目录树叶子节点保留 `ticketTypeId`（工单类型）+ `slaPolicyId`（SLA 策略）+ `fulfillmentProcessId`（履行流程）业务字段。F12 工单详情 tabs 容器 successor 依赖此 tree CRUD 范式（用户在工单录入时通过 tree picker 选择服务目录叶子节点，自动带出关联的工单类型/SLA/履行流程）。
 
 详细配置模板与反模式自检见 `docs/design/tree-entity-patterns.md`。
+
+## 主交易实体 form 布局分组
+
+> 适用范围：CS 域 8 个主交易实体（不含已 1500-1 覆盖的 `ErpCsTicket`，不含 F10 tree 覆盖的 `ErpCsServiceCatalogItem`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-2-f3-p2p3-ext-masterdata-form-layout.md` Phase 0.C。
+> SLA 策略 / 权益 / 合同 / 快捷回复等实体按业务关键字段（响应时长/有效期/履约动作）分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpCsSlaPolicy | baseInfo + policy + escalate + audit |
+| ErpCsEntitlement | baseInfo + service + quota + audit |
+| ErpCsContract | baseInfo + schedule + amount + attachment + audit |
+| ErpCsCannedResponse | baseInfo + content + match + audit |
+| ErpCsCatalogFulfillment | baseInfo + action + audit |
+| ErpCsSurvey | baseInfo + score + time + audit |
+| ErpCsTimeEntry | baseInfo + time + approval + reference + audit |
+| ErpCsTicketAction | baseInfo + transition + audit |
+
+### ErpCsSlaPolicy 模板（SLA 策略）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] name[策略名称]
+ ticketTypeId[工单类型] minPriority[最低优先级]
+=========>policy[SLA 时长策略]======
+ resolveHours[解决时长(小时)] resolveDays[解决时长(天)]
+ isWorkingDays[按工作日计算]
+=========>escalate[升级处理]======
+ escalationUserId[升级处理人] teamId[处理团队]
+========^audit[审计信息]=========
+ description[描述]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpCsEntitlement 模板（服务权益）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ partnerId[客户] contractId[服务合同]
+ slaPolicyId[SLA 策略]
+=========>service[服务目录]======
+ serviceType[服务类型] startDate[生效日期]
+ endDate[失效日期]
+=========>quota[额度]======
+ maxTickets[最大工单数] usedTickets[已用工单数]
+ maxResponseTime[最大响应时长] maxResolutionTime[最大解决时长]
+ isActive[是否有效]
+========^audit[审计信息]=========
+ notes[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 CS 域主实体的 `<form id="query">` 至少含 5 个查询字段。`code`/`name`/`title` 配 `filterOp=like`；`orgId`/`partnerId`/`contractId`/`status`/`serviceType`/`approvalStatus` 配 `filterOp=eq`；含日期字段（`startDate`/`endDate`/`businessDate`）配 `filterOp=date-between`。

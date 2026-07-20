@@ -240,3 +240,50 @@
 | 排产模拟 vs 发布 | 通用 APS 范式 | Schedule 状态机 DRAFT → PUBLISHED → ARCHIVED |
 | 有限产能约束引擎 | Axelor#machine + OperationOrder 约束 | 设备日历 + 刀具寿命 + 人员约束叠加计算 |
 | 前向/后向排产策略 | 通用 APS 范式 | Schedule 头字段选择排产模式，引擎按策略计算 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：APS 域 4 个主交易实体（不含已 1500-1 覆盖的 `ErpApsSchedule`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-2-f3-p2p3-ext-masterdata-form-layout.md` Phase 0.E。
+> 工序工单（OperationOrder）等核心实体按 工作中心/机器 + 计划起止时间 + 优先级/状态 等业务关键字段分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpApsOperationOrder | baseInfo + assign + schedule + status + audit |
+| ErpApsDispatchLog | baseInfo + dispatch + condition + audit |
+| ErpApsDispatchRule | baseInfo + constraint + action + audit |
+| ErpApsOpRouting | baseInfo + delta + validity + audit |
+
+### ErpApsOperationOrder 模板（工序工单，22 字段大表单）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[工序工单号] workOrderId[工单]
+ operationName[工序名称] sequence[顺序号]
+ orgId[业务组织] businessDate[业务日期]
+=========>assign[资源分配]======
+ machineId[机器] assignedToId[指派人]
+ isOutsourced[是否委外]
+=========>schedule[排程时间]======
+ plannedStartDateT[计划开始] plannedEndDateT[计划结束]
+ realStartDateT[实际开始] realEndDateT[实际结束]
+ setupTime[准备时间] runtimePerUnit[单件工时]
+ qty[数量] totalDuration[总工时]
+ earliestStartDateT[最早开始] latestEndDateT[最晚结束]
+=========>status[状态]======
+ priority[优先级] status[状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 APS 域主实体的 `<form id="query">` 至少含 5 个查询字段。`code`/`ruleName`/`operationName` 配 `filterOp=like`；`workOrderId`/`machineId`/`operationId`/`orgId`/`status`/`enableAuto`/`isDefault`/`isEnabled` 配 `filterOp=eq`；含日期字段（`businessDate`/`plannedStartDateT`）配 `filterOp=date-between`。

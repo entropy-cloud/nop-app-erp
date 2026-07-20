@@ -293,3 +293,116 @@
 | 营销活动归因报表 | Odoo crm_lead_report.py | campaignId GROUP BY 归因聚合 |
 | 线索详情页 UTM 只读标签 | Odoo CRM | 绿色标签显示归因信息 |
 | 营销活动仪表板（ROI/CPA/趋势） | 🟢 Axelor axelor-marketing | 活动详情页展示归因报表 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：CRM 域 12 个主交易实体（不含已 1500-1 覆盖的 `ErpCrmLead` / `ErpCrmActivity`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-2-f3-p2p3-ext-masterdata-form-layout.md` Phase 0.A。
+> 营销活动（Campaign）/活动事件（Event）/销售配额（Quota）等需要按业务关键字段（日期/金额/状态）分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpCrmCampaign | baseInfo + schedule + amount + audit |
+| ErpCrmEvent | baseInfo + schedule + association + status + recurrence + audit |
+| ErpCrmQuota | baseInfo + period + amount + audit |
+| ErpCrmForecast | baseInfo + amount + count + audit |
+| ErpCrmTerritory | baseInfo + tree + audit |
+| ErpCrmBundlePricing | baseInfo + discount + validity + audit |
+| ErpCrmSequence | baseInfo + schedule + audit |
+| ErpCrmSequenceStep | baseInfo + action + audit |
+| ErpCrmTerritoryAssignmentRule | baseInfo + condition + audit |
+| ErpCrmProductConfigurator | baseInfo + validity + audit |
+| ErpCrmConfigRule | baseInfo + condition + audit |
+| ErpCrmPriceRule | baseInfo + scope + range + price + validity + audit |
+
+### ErpCrmCampaign 模板（基准，营销活动）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[活动编码] name[活动名称]
+ orgId[业务组织] campaignName[活动主题]
+ medium[渠道] source[来源]
+=========>schedule[活动周期]======
+ startDate[开始日期] endDate[结束日期]
+=========>amount[预算与实际]======
+ budgetAmount[预算金额] actualCost[实际成本]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpCrmEvent 模板（活动事件，多关联）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ eventType[事件类型] eventCategoryId[事件分类]
+ subject[主题] description[描述]
+=========>schedule[时间安排]======
+ startDateTime[开始时间] endDateTime[结束时间]
+ duration[时长(分钟)]
+=========>association[业务关联]======
+ relatedLeadId[关联线索] relatedBillType[关联类型]
+ relatedBillCode[关联单号] partnerId[往来单位]
+ contactId[联系人] ownerId[负责人]
+=========>status[状态]======
+ status[状态] priority[优先级]
+=========>recurrence[重复]======
+ isRecurrent[是否重复] parentEventId[父事件]
+ reminderMinutesBefore[提前提醒(分钟)]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 CRM 域主实体的 `<form id="query">` 至少含 5 个查询字段。`code`/`name` 配 `filterOp=like`；`orgId`/`status`/`medium`/`source`/`isActive` 配 `filterOp=eq`；含日期字段（如 `startDate`/`endDate`/`businessDate`）的实体配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：CRM 域 3 个 Line 子实体（BundlePricingLine / ForecastLine / LeadScoreLine）独立 `view.xml` 的 form 分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpCrmBundlePricingLine | baseInfo + quantity + audit |
+| ErpCrmForecastLine | baseInfo + amount + audit |
+| ErpCrmLeadScoreLine | baseInfo + value + audit |
+
+### ErpCrmForecastLine 模板（预测行）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ forecastId[预测头] orgId[业务组织]
+ leadId[线索] probability[概率(%)]
+=========>amount[金额信息]======
+ expectedRevenue[预期收入] weightedRevenue[加权收入]
+ forecastCategory[预测类别] includedInCommit[纳入承诺]
+ stageName[阶段名称]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 CRM 域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo`（如有）/`leadId` 配 `filterOp=eq`；外键头字段（`forecastId`/`bundleId`/`scoreId`）配 `filterOp=eq`；`stageName`/`criterionCode` 配 `filterOp=like`。

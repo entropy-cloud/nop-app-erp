@@ -290,3 +290,104 @@ ASN详情
 | ASN 入站五阶段流程 | 通用 EDI 实践 | 已接收→已匹配→已校验→待入库→已入库 |
 | 内外代码映射 | 通用 EDI 实践 | (合作方, 映射类型, 内部代码, 外部代码) 四元组 |
 | 数量差异容差处理 | 通用 EDI 实践 | ±5% 自动通过，超限标记待人工确认 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：B2B 域 8 个主交易实体（不含已 1500-1 覆盖的 `ErpB2bEdiDoc`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-2-f3-p2p3-ext-masterdata-form-layout.md` Phase 0.G。
+> ASN（高级发货通知）突出 partner/PO 引用/5 阶段状态；PartnerProfile/MftConfig 等含凭据/证书字段实体按 业务关联 + 协议/凭据 + 联系人 等业务关键字段分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpB2bAsn | baseInfo + schedule + reference + audit |
+| ErpB2bPartnerProfile | baseInfo + protocol + cert + contact + lifecycle + audit |
+| ErpB2bMftConfig | baseInfo + identity + security + retry + monitor + audit |
+| ErpB2bMftCertificate | baseInfo + detail + validity + audit |
+| ErpB2bMftLog | baseInfo + file + transfer + error + flags + audit |
+| ErpB2bEdiLog | baseInfo + payload + result + audit |
+| ErpB2bCertificationChecklist | baseInfo + detail + result + audit |
+| ErpB2bTestExchange | baseInfo + payload + result + audit |
+
+### ErpB2bAsn 模板（ASN 高级发货通知）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[ASN 编号] orgId[业务组织]
+ sourceEdiDocId[源 EDI 文档] partnerId[合作伙伴]
+ businessDate[业务日期]
+=========>schedule[发运时间]======
+ shipmentDate[发运日期] estimatedArrivalDate[预计到达日期]
+ trackingNo[运单号]
+=========>reference[业务关联]======
+ relatedBillType[关联类型] relatedBillCode[关联单号]
+ status[状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpB2bPartnerProfile 模板（合作伙伴档案，含凭据/证书）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ partnerId[往来单位] partnerName[合作伙伴名称]
+ status[状态]
+=========>protocol[协议信息]======
+ protocol[协议] transportEndpoint[传输端点]
+ authMethod[认证方式] webhookSecret[Webhook 密钥]
+ timezone[时区]
+=========>cert[证书信息]======
+ certExpiry[证书到期] certFingerprint[证书指纹]
+ allowedFormats[允许格式]
+=========>contact[联系人]======
+ contactName[联系人] contactEmail[邮箱]
+ contactPhone[电话]
+=========>lifecycle[生命周期]======
+ goLiveDate[上线日期] archivedAt[归档时间]
+ notes[备注]
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 B2B 域主实体的 `<form id="query">` 至少含 5 个查询字段。`code`/`partnerName`/`certName`/`fileName`/`checklistItem`/`testCaseCode` 配 `filterOp=like`；`partnerId`/`orgId`/`status`/`protocol`/`direction`/`partnerProfileId` 配 `filterOp=eq`；含日期字段（`shipmentDate`/`agreementDate`/`testedAt`/`logTime`）配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：B2B 域 1 个 Line 子实体（AsnLine）独立 `view.xml` 的 form 分组。
+
+### ErpB2bAsnLine 模板（ASN 明细行）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ asnId[ASN 头] lineNo[行号]
+ materialId[物料] supplierPartNo[供应商料号]
+=========>quantity[数量信息]======
+ quantity[数量] shippedQty[已发数量]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 B2B 域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo` 配 `filterOp=eq`；`asnId`/`materialId` 配 `filterOp=eq`；`supplierPartNo` 配 `filterOp=like`。

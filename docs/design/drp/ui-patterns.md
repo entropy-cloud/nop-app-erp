@@ -239,3 +239,103 @@ DRP计划详情
 | Min-Max / 定期 / 按需策略 | 通用库存补货理论 | 补货方法枚举 + 参数配置化 |
 | 补货类型自动决策 | ERPNext#Material Request 类型 | 仓间调拨 vs 采购的自动判定规则 |
 | 弱指针关联下游单据 | 设计决策 | orderBillType/orderBillCode 关联采购/调拨单 |
+
+## 主交易实体 form 布局分组
+
+> 适用范围：DRP 域 5 个主交易实体（1500-1 零覆盖，全 greenfield）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-2-f3-p2p3-ext-masterdata-form-layout.md` Phase 0.H。
+> 计划（Plan）突出 scenario/warehouse/状态；安全库存计算（SafetyStockCalc）突出计算结果；越库（CrossDock）/月台预约（DockAppointment）/提前期记录（LeadTimeRecord）按业务关键字段分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpDrpPlan | baseInfo + period + run + audit |
+| ErpInvDrpSafetyStockCalc | baseInfo + method + result + audit |
+| ErpInvDrpCrossDock | baseInfo + link + bill + detail + audit |
+| ErpInvDrpDockAppointment | baseInfo + slot + audit |
+| ErpInvDrpLeadTimeRecord | baseInfo + order + result + audit |
+
+### ErpDrpPlan 模板（DRP 计划头）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[计划编号] planName[计划名称]
+ orgId[业务组织] businessDate[业务日期]
+=========>period[周期]======
+ periodFrom[周期开始] periodTo[周期结束]
+ status[状态]
+=========>run[执行]======
+ runAt[执行时间] runBy[执行人]
+ totalReplenishmentQty[补货总量]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpInvDrpSafetyStockCalc 模板（安全库存计算）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[计算编号] orgId[业务组织]
+ materialId[物料] warehouseId[仓库]
+=========>method[计算方法]======
+ method[方法] serviceLevel[服务水平]
+ historyMonths[历史月数] leadTimeDays[提前期天数]
+=========>result[计算结果]======
+ calculatedSafetyStock[计算安全库存]
+ calculatedRop[计算再订货点]
+ overrideSafetyStock[覆盖安全库存]
+ lastCalculatedAt[最后计算时间]
+ overwrittenBy[覆盖人]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 DRP 域主实体的 `<form id="query">` 至少含 5 个查询字段。`code`/`planName`/`carrierInfo` 配 `filterOp=like`；`orgId`/`materialId`/`warehouseId`/`supplierId`/`status`/`method`/`dockId` 配 `filterOp=eq`；含日期字段（`businessDate`/`periodFrom`/`periodTo`/`appointmentDate`/`orderDate`/`receiptDate`）配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：DRP 域 1 个 Line 子实体（DrpLine）独立 `view.xml` 的 form 分组。
+
+### ErpDrpLine 模板（DRP 明细行）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ planId[DRP 计划] lineNo[行号]
+ orgId[业务组织] materialId[物料]
+ warehouseId[仓库] sourceWarehouseId[源仓库]
+=========>calc[计算明细]======
+ currentStock[当前库存] allocatedQty[已分配量]
+ onOrderQty[在单量] forecastDemand[预测需求]
+ safetyStock[安全库存] netRequirement[净需求]
+=========>result[补货结果]======
+ replenishmentType[补货类型] suggestedQty[建议数量]
+ approvedQty[批准数量] orderBillType[目标单据类型]
+ orderBillCode[目标单据号] status[状态]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 DRP 域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo` 配 `filterOp=eq`；`planId`/`materialId`/`warehouseId`/`sourceWarehouseId`/`status`/`replenishmentType` 配 `filterOp=eq`；`orderBillCode` 配 `filterOp=like`。

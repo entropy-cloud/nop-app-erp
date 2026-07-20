@@ -393,3 +393,95 @@
 - `logistics/carrier-integration.md`（承运商网关集成）
 - `model/app-erp-logistics.orm.xml`（权威 ORM 模型）
 - `quality/ui-patterns.md`（同域 UI 设计范式样板）
+
+## 主交易实体 form 布局分组
+
+> 适用范围：logistics 域 5 个主交易实体（不含已 1500-1 覆盖的 `ErpLogShipment`）独立 `view.xml` 的 `<form id="view">` / `<form id="edit">` 分组。
+> 决策来源：`docs/plans/2026-07-20-2059-2-f3-p2p3-ext-masterdata-form-layout.md` Phase 0.F。
+> 承运商（Carrier）/承运商配置（CarrierConfig 含 API 密钥）/包裹（Parcel）按业务关键字段（网关/凭据/尺寸/重量）分组。
+
+### 模板分化决策
+
+| 实体 | 分组结构 |
+|------|----------|
+| ErpLogCarrier | baseInfo + gateway + capability + audit |
+| ErpLogCarrierConfig | baseInfo + endpoint + credential + format + audit |
+| ErpLogShipmentLog | baseInfo + request + result + audit |
+| ErpLogShipmentParcel | baseInfo + dimension + value + audit |
+| ErpLogDeliveryWindow | baseInfo + capacity + audit |
+
+### ErpLogCarrier 模板（承运商）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[编码] orgId[业务组织]
+ carrierName[承运商名称] carrierType[承运商类型]
+ partnerId[往来单位] isActive[是否启用]
+=========>gateway[网关信息]======
+ gatewayId[网关标识] trackingUrlTemplate[追踪URL模板]
+=========>capability[能力]======
+ maxParcelWeight[最大包裹重量(kg)] supportedServiceTypes[支持服务类型]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### ErpLogCarrierConfig 模板（承运商配置，含敏感字段）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ carrierId[承运商] orgId[业务组织]
+ configCode[配置编码] serviceType[服务类型]
+=========>endpoint[端点配置]======
+ apiEndpoint[API端点] trackingUrlTemplate[追踪URL模板]
+=========>credential[凭据信息]======
+ apiKey[API Key] apiSecret[API Secret]
+ credentials[凭据]
+=========>format[格式配置]======
+ printFormat[打印格式] additionalProperties[附加属性]
+ isActive[是否启用]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 logistics 域主实体的 `<form id="query">` 至少含 5 个查询字段。`code`/`carrierName`/`configCode`/`gatewayId`/`parcelNo`/`trackingNo` 配 `filterOp=like`；`carrierId`/`partnerId`/`shipmentId`/`orgId`/`isActive`/`serviceType`/`carrierType` 配 `filterOp=eq`；含日期字段（`executedAt`/`appointmentDate`）配 `filterOp=date-between`。
+
+## Line 子实体 form 分组模板
+
+> 适用范围：logistics 域 1 个 Line 子实体（ShipmentLine）独立 `view.xml` 的 form 分组。
+
+### ErpLogShipmentLine 模板（发运明细行）
+
+```xml
+<form id="view" size="lg">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ shipmentId[发运单] lineNo[行号]
+ materialId[物料]
+=========>quantity[数量与包装]======
+ quantity[数量] unit[单位]
+ packageDescription[包装说明]
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+    </layout>
+</form>
+```
+
+### query 表单基线
+
+所有 logistics 域 Line 实体的 `<form id="query">` 至少含 5 个查询字段。`lineNo` 配 `filterOp=eq`；`shipmentId`/`materialId` 配 `filterOp=eq`；`batchNo`（如有）配 `filterOp=like`。
