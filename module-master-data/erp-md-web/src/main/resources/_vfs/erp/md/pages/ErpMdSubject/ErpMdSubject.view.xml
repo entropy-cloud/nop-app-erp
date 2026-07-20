@@ -54,6 +54,9 @@
                 <col id="remark" sortable="true"/>
             </cols>
         </grid>
+        <grid id="tree-list" x:prototype="list">
+            <selection>children @TreeChildren(max:5)</selection>
+        </grid>
         <grid id="pick-list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
@@ -72,12 +75,12 @@
     <forms>
         <form id="view" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[科目编码] name[科目名称]
  parentId[父级科目] subjectClass[科目类别]
  direction[余额方向] balanceType[余额类型]
  status[状态]
-==========>auxiliary[辅助核算]======
+=========>auxiliary[辅助核算]======
  isAuxiliaryPartner[辅助-往来单位] isAuxiliaryDepartment[辅助-部门]
  isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
  isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
@@ -92,20 +95,43 @@
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[科目编码] name[科目名称]
  parentId[父级科目] subjectClass[科目类别]
  direction[余额方向] balanceType[余额类型]
  status[状态]
-==========>auxiliary[辅助核算]======
+=========>auxiliary[辅助核算]======
  isAuxiliaryPartner[辅助-往来单位] isAuxiliaryDepartment[辅助-部门]
  isAuxiliaryProject[辅助-项目] isAuxiliaryWarehouse[辅助-仓库]
  isAuxiliaryProduct[辅助-物料] isAuxiliaryCostCenter[辅助-成本中心]
  currencyId[核算币种] isBudgetable[是否预算控制]
  isLeaf[是否明细科目] remark[备注](2)
             </layout>
+            <cells>
+                <cell id="parentId">
+                    <gen-control>
+                        <tree-select clearable="@:true">
+                            <source>
+                                <url>@query:ErpMdSubject__findList/{@listSelection}?filter_parentId=__null&amp;filter_id__ne=$id</url>
+                            </source>
+                        </tree-select>
+                    </gen-control>
+                </cell>
+            </cells>
         </form>
-        <form id="add"/>
+        <form id="add">
+            <cells>
+                <cell id="parentId">
+                    <gen-control>
+                        <tree-select clearable="@:true">
+                            <source>
+                                <url>@query:ErpMdSubject__findList/{@listSelection}?filter_parentId=__null&amp;filter_id__ne=$id</url>
+                            </source>
+                        </tree-select>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
         <form id="query" editMode="query" title="查询条件">
             <layout>
  code[科目编码] name[科目名称]
@@ -133,7 +159,27 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
-        <picker name="picker" filterForm="pick-query"/>
+        <crud name="main" grid="tree-list">
+            <table loadDataOnce="true" sortable="false" pager="none">
+                <api url="@query:ErpMdSubject__findList?filter_parentId=__null"
+                     gql:selection="{@listSelection}"/>
+            </table>
+            <rowActions>
+                <action id="row-add-child-button" level="primary" label="新增子节点">
+                    <dialog page="add-child"/>
+                </action>
+            </rowActions>
+        </crud>
+        <simple name="add-child" form="add">
+            <data>
+                <parentId>$id</parentId>
+            </data>
+        </simple>
+        <picker name="picker" filterForm="pick-query">
+            <table loadDataOnce="true" sortable="false" pager="none">
+                <api url="@query:ErpMdSubject__findList?filter_parentId=__null&amp;filter_isLeaf=1"
+                     gql:selection="{@listSelection}"/>
+            </table>
+        </picker>
     </pages>
 </view>

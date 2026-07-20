@@ -13,17 +13,64 @@
                 <col id="orgId" label="业务组织"/>
             </cols>
         </grid>
+        <grid id="tree-list" x:prototype="list">
+            <selection>children @TreeChildren(max:5)</selection>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 
     <forms>
         <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="edit">
+            <cells>
+                <cell id="parentId">
+                    <gen-control>
+                        <tree-select clearable="@:true">
+                            <source>
+                                <url>@query:ErpHrDepartment__findList/{@listSelection}?filter_parentId=__null&amp;filter_id__ne=$id</url>
+                            </source>
+                        </tree-select>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
+        <form id="add">
+            <cells>
+                <cell id="parentId">
+                    <gen-control>
+                        <tree-select clearable="@:true">
+                            <source>
+                                <url>@query:ErpHrDepartment__findList/{@listSelection}?filter_parentId=__null&amp;filter_id__ne=$id</url>
+                            </source>
+                        </tree-select>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
-        <picker name="picker"/>
+        <crud name="main" grid="tree-list">
+            <table loadDataOnce="true" sortable="false" pager="none">
+                <api url="@query:ErpHrDepartment__findList?filter_parentId=__null"
+                     gql:selection="{@listSelection}"/>
+            </table>
+            <rowActions>
+                <action id="row-add-child-button" level="primary" label="新增子节点">
+                    <dialog page="add-child"/>
+                </action>
+            </rowActions>
+        </crud>
+        <simple name="add-child" form="add">
+            <data>
+                <parentId>$id</parentId>
+            </data>
+        </simple>
+        <picker name="picker">
+            <table loadDataOnce="true" sortable="false" pager="none">
+                <api url="@query:ErpHrDepartment__findList?filter_parentId=__null"
+                     gql:selection="{@listSelection}"/>
+            </table>
+        </picker>
     </pages>
 </view>
