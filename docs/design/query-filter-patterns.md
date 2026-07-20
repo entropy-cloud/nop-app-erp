@@ -284,3 +284,397 @@ Nop codegen 为每个头实体生成两个独立筛选面，绑定到同一 `<cr
 - **GL → Sub-ledger → Voucher 3 级 drill-down**：F12 详情页结构范畴。本 plan GlBalance dialog 仅显示当前实体字段。
 - **StockLedger source 列点击跳转源单据**：F9 跨单据导航范畴。本 plan source 列仅显示文本，不可点击。
 - **含零库存勾选框的 visibleOn 控制**（按钮显隐联动）：F7 cross-cutting visibleOn 范畴。本 plan 勾选框作为 query 字段，前端不引入 visibleOn 联动。
+
+## 7. ext 8 域 22 列表页双筛选面字段集冻结表（plan 2026-07-21-0330-2 §5）
+
+> 决策来自 plan `2026-07-21-0330-2-f8-f2-ext-domains-list-page-enhancement.md` Phase 1。
+> 22 列表页 = crm 3 + cs 2 + hr 4 + aps 3 + logistics 3 + b2b 3 + contract 2 + drp 2。
+> 字段集按各域 ui-patterns.md + 实时 ORM 字段核实冻结。plan 原稿中的部分字段（如 ErpB2bEdiDoc.direction / ErpDrpParameter.parameterType / ErpHrAttendance.shiftId）在实际 ORM 中不存在，按实际可用字段替代。
+
+### 7.1 crm: ErpCrmLead（可编辑，含 leadType 切换）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | leadType | eq | 线索/商机类型（Phase 0 (a) 降级方案 A：asideFilter 字段实现，非独立 Tab）|
+| asideFilter | sourceId | eq | 线索来源 |
+| asideFilter | stageId | eq | 漏斗阶段 |
+| asideFilter | ownerId | eq | 负责人（Phase 0 (b) Decision C：My/Team/All 快捷按钮归 Deferred）|
+| asideFilter | partnerId | eq | 客户 |
+| asideFilter | createdAt | date-between | 创建时间（ORM 实际字段名为 `createTime`，plan 原文 `createdAt` 为笔误）|
+| query | code | like | 编码 |
+| query | leadStatusId | eq | 线索状态 |
+
+### 7.2 crm: ErpCrmCampaign（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | medium | eq | 渠道 |
+| asideFilter | source | eq | 来源 |
+| asideFilter | startDate | date-between | 开始日期 |
+| query | code | like | 编码 |
+| query | campaignName | like | 主题 |
+
+### 7.3 crm: ErpCrmForecast（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | periodId | eq | 预测周期 |
+| asideFilter | territoryId | eq | 销售区域 |
+| asideFilter | teamId | eq | 销售团队 |
+| asideFilter | ownerId | eq | 销售员 |
+| query | currencyId | eq | 币种 |
+| query | lastCalculatedAt | date-between | 最近计算时间 |
+
+### 7.4 cs: ErpCsTicket（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | ticketTypeId | eq | 工单类型 |
+| asideFilter | slaPolicyId | eq | SLA 策略 |
+| asideFilter | status | in | 工单状态（多选 IN 过滤）|
+| asideFilter | priority | eq | 优先级 |
+| asideFilter | assignedToId | eq | 分配处理人 |
+| asideFilter | createTime | date-between | 创建时间 |
+| query | code | like | 单号 |
+| query | customerId | eq | 客户 |
+
+### 7.5 cs: ErpCsSurvey（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | ticketId | eq | 关联工单 |
+| asideFilter | surveyChannel | eq | 发送渠道 |
+| asideFilter | surveySentAt | date-between | 调查发送时间 |
+| asideFilter | respondedAt | date-between | 响应时间 |
+| query | surveyToken | like | 调查令牌 |
+
+### 7.6 hr: ErpHrEmployee（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | departmentId | eq | 部门 |
+| asideFilter | positionId | eq | 职位 |
+| asideFilter | employmentStatus | eq | 雇佣状态 |
+| asideFilter | employeeType | eq | 员工类型 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | hireDate | date-between | 入职日期 |
+| query | code | like | 工号 |
+| query | fullName | like | 全名 |
+
+### 7.7 hr: ErpHrAttendance（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | employeeId | eq | 员工 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | source | eq | 来源 |
+| asideFilter | isAbsent | eq | 是否旷工 |
+| asideFilter | date | date-between | 考勤日期 |
+| query | employeeId | eq | 员工 |
+| query | date | date-between | 考勤日期 |
+
+### 7.8 hr: ErpHrLeaveRequest（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | employeeId | eq | 员工 |
+| asideFilter | leaveType | eq | 休假类型 |
+| asideFilter | status | in | 状态（多选）|
+| asideFilter | approverId | eq | 审批人 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | startDate | date-between | 开始日期 |
+| query | code | like | 单号 |
+| query | businessDate | date-between | 业务日期 |
+
+### 7.9 hr: ErpHrPayrollBankFile（可编辑，codegen 默认无 query）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | status | in | 状态（多选）|
+| asideFilter | bankId | eq | 开户银行 |
+| asideFilter | fileFormat | eq | 文件格式 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | paymentDate | date-between | 发放日期 |
+| query | batchNo | like | 批次号 |
+
+### 7.10 aps: ErpApsSchedule（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | status | in | 状态（多选）|
+| asideFilter | schedulingMode | eq | 排产模式 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | scheduleDate | date-between | 排产日期 |
+| query | code | like | 编号 |
+| query | name | like | 方案名称 |
+
+### 7.11 aps: ErpApsOperationOrder（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | workOrderId | eq | 主工单 |
+| asideFilter | machineId | eq | 工作中心/设备 |
+| asideFilter | status | in | 状态（多选）|
+| asideFilter | assignedToId | eq | 操作工 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | plannedStartDateT | date-between | 计划开工时间 |
+| query | code | like | 编号 |
+| query | operationName | like | 工序名称 |
+
+### 7.12 aps: ErpApsDispatchLog（**只读**）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | operationOrderId | eq | 工序工单 |
+| asideFilter | workcenterId | eq | 工作中心 |
+| asideFilter | dispatchType | eq | 派工类型 |
+| asideFilter | newStatus | eq | 派工后状态 |
+| asideFilter | dispatchedBy | eq | 派工人 |
+| asideFilter | dispatchedAt | date-between | 派工时间 |
+| query | orgId | eq | 业务组织 |
+
+### 7.13 logistics: ErpLogShipment（可编辑，含异常筛选）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | carrierId | eq | 承运商 |
+| asideFilter | relatedBillType | eq | 关联单据类型（plan 原指定 partnerId 在 erp_log_shipment 表不存在，按实际字段集冻结为 relatedBillType）|
+| asideFilter | status | in | 状态（Phase 0 (c) 降级方案 A：多选 IN 实现异常筛选）|
+| asideFilter | shipperId | eq | 发货员 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | shipmentDate | date-between | 发运日期 |
+| query | code | like | 单号 |
+| query | trackingNo | like | 运单号 |
+
+### 7.14 logistics: ErpLogShipmentLog（**只读**）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | shipmentId | eq | 发运单 |
+| asideFilter | gatewayId | eq | 网关标识 |
+| asideFilter | actionType | eq | 操作类型 |
+| asideFilter | isSuccess | eq | 是否成功 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | executedAt | date-between | 执行时间 |
+| query | errorCode | like | 错误码 |
+
+### 7.15 logistics: ErpLogCarrier（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | carrierType | eq | 承运商类型 |
+| asideFilter | gatewayId | eq | 网关标识 |
+| asideFilter | partnerId | eq | 承运商往来单位 |
+| asideFilter | isActive | eq | 是否启用 |
+| asideFilter | orgId | eq | 业务组织 |
+| query | code | like | 编码 |
+| query | carrierName | like | 承运商名称 |
+
+### 7.16 b2b: ErpB2bEdiDoc（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | formatId | eq | EDI 格式 |
+| asideFilter | state | in | 状态（多选）|
+| asideFilter | blockingLevel | eq | 阻断级别 |
+| asideFilter | relatedBillType | eq | 关联单据类型 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | sentAt | date-between | 发送时间 |
+| query | code | like | 事务编码 |
+| query | relatedBillCode | like | 关联单据号 |
+
+### 7.17 b2b: ErpB2bAsn（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | partnerId | eq | 发货方（供应商）|
+| asideFilter | status | in | 状态（多选）|
+| asideFilter | sourceEdiDocId | eq | 来源 EDI 文档 |
+| asideFilter | relatedBillType | eq | 关联采购订单类型 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | estimatedArrivalDate | date-between | 预计到货日期 |
+| query | code | like | ASN 编码 |
+| query | trackingNo | like | 物流单号 |
+
+### 7.18 b2b: ErpB2bEdiLog（**只读**）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | ediDocId | eq | EDI 事务 |
+| asideFilter | direction | eq | 方向 |
+| asideFilter | resultCode | like | 结果码 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | logTime | date-between | 日志时间 |
+| query | resultMsg | like | 结果消息 |
+
+### 7.19 contract: ErpCtContract（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | partnerId | eq | 合作方 |
+| asideFilter | status | in | 合同状态（多选）|
+| asideFilter | contractType | eq | 合同类型 |
+| asideFilter | contractDirection | eq | 合同方向 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | startDate | date-between | 生效日期 |
+| query | code | like | 合同编号 |
+| query | contractName | like | 合同名称 |
+
+### 7.20 contract: ErpCtRebateAgreement（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | partnerId | eq | 对方伙伴 |
+| asideFilter | contractId | eq | 关联合同 |
+| asideFilter | status | in | 状态（多选）|
+| asideFilter | rebateType | eq | 返利类型 |
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | startDate | date-between | 有效期开始 |
+| query | code | like | 协议编号 |
+
+### 7.21 drp: ErpDrpPlan（可编辑）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | status | in | 状态（多选）|
+| asideFilter | orgId | eq | 业务组织 |
+| asideFilter | periodFrom | date-between | 期间开始 |
+| query | code | like | 编号 |
+| query | planName | like | 计划名称 |
+
+### 7.22 drp: ErpDrpParameter（可编辑，codegen 默认无 query）
+
+| 面 | 字段 | filterOp | 说明 |
+|----|------|---------|------|
+| asideFilter | warehouseId | eq | 仓库 |
+| asideFilter | materialId | eq | 物料 |
+| asideFilter | replenishmentMethod | eq | 补货方法（plan 原指定 parameterType 不存在）|
+| asideFilter | preferredSupplierId | eq | 首选供应商 |
+| asideFilter | orgId | eq | 业务组织 |
+| query | preferredSourceWarehouseId | eq | 首选调出仓库 |
+
+## 8. 特殊筛选模式（plan 2026-07-21-0330-2 §6）
+
+### 8.1 leadType Tab/Chip 切换（Phase 0 (a) Decision A）
+
+- **场景**：crm Lead 列表需支持「全部 / 线索 / 商机」3 态切换
+- **裁决**：asideFilter 字段 + submitOnChange（**landed**），非独立 AMIS `<tabs>` 组件
+- **理由**：codegen 默认双筛选面架构（`<crud asideFilterForm="asideFilter" filterForm="query">`）不引入独立 Tab 容器；AMIS Tab 模式会偏离 codegen 默认 + 与 bounded-merge 不兼容；`leadType` 字段在 ORM 存在（dict `erp-crm/lead-type`），后端 `__findPage` filter map 默认支持
+- **模式**：`<cell id="leadType" filterOp="eq"/>` 渲染为 AMIS select（dict 自动），用户选择后 `submitOnChange="true"` 自动触发 `__findPage` 刷新
+
+### 8.2 「我的/团队/全部」快捷过滤（Phase 0 (b) Decision C — deferred）
+
+- **场景**：crm Lead + cs Ticket 按「我的/团队/全部」3 态快捷过滤
+- **裁决**：**deferred-with-trigger**（前端无法可靠获取当前用户 ID）
+- **降级实现**：仅落地常规 `ownerId` 字段（asideFilter），用户手动选择负责人筛选
+- **successor 触发**：F11 批量操作 plan 或后端 user-context 增强 plan 启动时
+- **后端 gap**：需新增 `@BizQuery findMyLeads` 或在 `__findPage` 注入当前用户上下文（触犯 Non-Goals 保护区域）
+
+### 8.3 异常筛选（Phase 0 (c) Decision A — landed）
+
+- **场景**：logistics Shipment 异常筛选「仅显示网关异常/追踪超期/退回」
+- **裁决**：**landed**（多选 status + `filterOp=in` 实现），「追踪超期」按钮 deferred
+- **模式**：`<cell id="status" filterOp="in"/>` 渲染为 AMIS multi-select tag，后端 QueryBean filter map 自动生成 `status: { in: [v1, v2, ...] }` 结构
+- **successor 触发**：异常发运单数量 > 1000 时后端专用 `findExceptionList @BizQuery` plan 启动（追踪超期需后端派生字段计算 dueDate < now）
+
+### 8.4 多选 IN 过滤模式
+
+适用场景：状态字段需要 OR 多值匹配（如「待审核 + 已提交」）。
+
+```xml
+<cell id="status" filterOp="in"/>
+```
+
+后端转译：`status IN (?, ?, ?)`。AMIS dict 字段自动渲染为 tag-select 多选控件。
+
+### 8.5 布尔 includeX 占位字段（继承核心域）
+
+适用场景：「含零库存」「含未过账」等 UI 占位字段，后端处理（前端 custom field + boolean）。
+
+```xml
+<cell id="__includeZero" custom="true" domain="boolean"/>
+```
+
+ext 8 域本 plan 未引入新的 includeX 字段（已通过 status/date 范围覆盖业务需求）。
+
+## 9. ext 8 域只读实体清单（plan 2026-07-21-0330-2 §7）
+
+共 14 实体（Phase 0 Explore 裁决：3 个原 pending Explore 半只读实体均按「父表 sub-grid 编辑，独立页只读」语义归类为 confirmed readonly）：
+
+| 实体 | 域 | 角色 | 来源 | 独立页只读 |
+|------|----|------|------|-----------|
+| ErpApsDispatchLog | aps | 调度引擎写入日志 | 派工引擎 | ✅ |
+| ErpLogShipmentLog | logistics | 网关回调日志 | 网关 | ✅ |
+| ErpLogShipmentParcel | logistics | 部分场景由网关回传 | 网关 + 父表 sub-grid | ✅（独立页只读，父表 ErpLogShipment 内 sub-grid-edit 保留）|
+| ErpB2bEdiLog | b2b | EDI 网关写入 | 网关 | ✅ |
+| ErpCrmLeadConvLog | crm | 线索转换引擎写入 | 转换引擎 | ✅ |
+| ErpCrmLeadScore | crm | 评分引擎写入 | 评分引擎 | ✅ |
+| ErpCrmLeadScoreLine | crm | 评分明细（评分头派生）| 评分引擎 | ✅ |
+| ErpCrmForecastAccuracy | crm | 准确度计算引擎写入 | 计算引擎 | ✅ |
+| ErpCrmFunnelStageMetrics | crm | 漏斗聚合引擎写入 | 聚合引擎 | ✅ |
+| ErpCrmLeadSequenceProgress | crm | 序列推进引擎写入 | 推进引擎 | ✅ |
+| ErpHrLeaveBalance | hr | 年初结转 + 请假审批引擎写入 | 结转 + 审批引擎 | ✅ |
+| ErpHrSurveyResult | hr | 调查结果聚合 | 聚合引擎 | ✅ |
+| ErpCtApprovalRecord | contract | 审批流程写入 | 审批流程 | ✅ |
+| ErpCtConsumptionLine | contract | 上游单据回写 | 上游回写 + 父表 sub-grid | ✅（独立页只读，父表 ErpCtContractLine 内 sub-grid-edit 保留）|
+
+**只读切断契约**（14/14 confirmed readonly）：
+1. `<form id="edit" x:abstract="true"/>` + `<form id="add" x:abstract="true"/>` 显式切断 _gen 继承
+2. `<listActions x:override="bounded-merge"/>` 空内容丢弃 batch-delete-button + add-button
+3. `<rowActions x:override="bounded-merge">` 白名单仅 `<action id="row-view-button"><dialog page="view"/></action>`
+4. asideFilter + query 双筛选面字段集（同核心域范式 §3.3）
+
+## 10. 实施证据（ext 8 域）
+
+| 实体 | 文件 | asideFilter 字段数 | query 字段数 | edit/add abstract |
+|------|------|---------|--------|---------|
+| ErpCrmLead | `module-crm/erp-crm-web/.../ErpCrmLead.view.xml` | 6 | 2 | — （可编辑）|
+| ErpCrmCampaign | `module-crm/erp-crm-web/.../ErpCrmCampaign.view.xml` | 4 | 2 | — |
+| ErpCrmForecast | `module-crm/erp-crm-web/.../ErpCrmForecast.view.xml` | 5 | 2 | — |
+| ErpCsTicket | `module-cs/erp-cs-web/.../ErpCsTicket.view.xml` | 6 | 2 | — |
+| ErpCsSurvey | `module-cs/erp-cs-web/.../ErpCsSurvey.view.xml` | 5 | 1 | — |
+| ErpHrEmployee | `module-hr/erp-hr-web/.../ErpHrEmployee.view.xml` | 6 | 2 | — |
+| ErpHrAttendance | `module-hr/erp-hr-web/.../ErpHrAttendance.view.xml` | 5 | 2 | — |
+| ErpHrLeaveRequest | `module-hr/erp-hr-web/.../ErpHrLeaveRequest.view.xml` | 6 | 2 | — |
+| ErpHrPayrollBankFile | `module-hr/erp-hr-web/.../ErpHrPayrollBankFile.view.xml` | 5 | 1 | — |
+| ErpApsSchedule | `module-aps/erp-aps-web/.../ErpApsSchedule.view.xml` | 4 | 2 | — |
+| ErpApsOperationOrder | `module-aps/erp-aps-web/.../ErpApsOperationOrder.view.xml` | 6 | 2 | — |
+| ErpApsDispatchLog | `module-aps/erp-aps-web/.../ErpApsDispatchLog.view.xml` | 6 | 1 | ✅ |
+| ErpLogShipment | `module-logistics/erp-log-web/.../ErpLogShipment.view.xml` | 6 | 2 | — |
+| ErpLogShipmentLog | `module-logistics/erp-log-web/.../ErpLogShipmentLog.view.xml` | 6 | 1 | ✅ |
+| ErpLogCarrier | `module-logistics/erp-log-web/.../ErpLogCarrier.view.xml` | 5 | 2 | — |
+| ErpB2bEdiDoc | `module-b2b/erp-b2b-web/.../ErpB2bEdiDoc.view.xml` | 6 | 2 | — |
+| ErpB2bAsn | `module-b2b/erp-b2b-web/.../ErpB2bAsn.view.xml` | 6 | 2 | — |
+| ErpB2bEdiLog | `module-b2b/erp-b2b-web/.../ErpB2bEdiLog.view.xml` | 5 | 1 | ✅ |
+| ErpCtContract | `module-contract/erp-ct-web/.../ErpCtContract.view.xml` | 6 | 2 | — |
+| ErpCtRebateAgreement | `module-contract/erp-ct-web/.../ErpCtRebateAgreement.view.xml` | 6 | 1 | — |
+| ErpDrpPlan | `module-drp/erp-drp-web/.../ErpDrpPlan.view.xml` | 3 | 2 | — |
+| ErpDrpParameter | `module-drp/erp-drp-web/.../ErpDrpParameter.view.xml` | 5 | 1 | — |
+
+只读实体（14 实体含 readonly cut-off，含 11 独立只读 + 3 父表 sub-grid 编辑）：
+
+| 实体 | 文件 | asideFilter 字段数 | edit/add abstract |
+|------|------|---------|---------|
+| ErpApsDispatchLog | （见上）| 6 | ✅ |
+| ErpLogShipmentLog | （见上）| 6 | ✅ |
+| ErpLogShipmentParcel | `module-logistics/erp-log-web/.../ErpLogShipmentParcel.view.xml` | 2 | ✅ |
+| ErpB2bEdiLog | （见上）| 5 | ✅ |
+| ErpCrmLeadConvLog | `module-crm/erp-crm-web/.../ErpCrmLeadConvLog.view.xml` | 6 | ✅ |
+| ErpCrmLeadScore | `module-crm/erp-crm-web/.../ErpCrmLeadScore.view.xml` | 6 | ✅ |
+| ErpCrmLeadScoreLine | `module-crm/erp-crm-web/.../ErpCrmLeadScoreLine.view.xml` | 4 | ✅ |
+| ErpCrmForecastAccuracy | `module-crm/erp-crm-web/.../ErpCrmForecastAccuracy.view.xml` | 6 | ✅ |
+| ErpCrmFunnelStageMetrics | `module-crm/erp-crm-web/.../ErpCrmFunnelStageMetrics.view.xml` | 5 | ✅ |
+| ErpCrmLeadSequenceProgress | `module-crm/erp-crm-web/.../ErpCrmLeadSequenceProgress.view.xml` | 6 | ✅ |
+| ErpHrLeaveBalance | `module-hr/erp-hr-web/.../ErpHrLeaveBalance.view.xml` | 4 | ✅ |
+| ErpHrSurveyResult | `module-hr/erp-hr-web/.../ErpHrSurveyResult.view.xml` | 3 | ✅ |
+| ErpCtApprovalRecord | `module-contract/erp-ct-web/.../ErpCtApprovalRecord.view.xml` | 6 | ✅ |
+| ErpCtConsumptionLine | `module-contract/erp-ct-web/.../ErpCtConsumptionLine.view.xml` | 3 | ✅ |
+
+## 11. ext 域 deferred 项（plan 2026-07-21-0330-2）
+
+- **My/Team/All 快捷过滤**（crm Lead + cs Ticket）：后端 user-context 缺失，归 Deferred。触发：F11 批量操作 plan 或后端 user-context 增强 plan 启动。
+- **追踪超期异常筛选**（logistics Shipment）：需后端派生字段计算。归 Deferred。触发：异常发运单数量 > 1000 时后端专用 `findExceptionList @BizQuery` plan 启动。
+- **核心域已有的列表页优化**（purchase/sales/inventory/finance 4 主域）：F8 核心 8 列表页已由 plan `2026-07-20-0629-2` 落地，本节仅扩展 ext 8 域。
