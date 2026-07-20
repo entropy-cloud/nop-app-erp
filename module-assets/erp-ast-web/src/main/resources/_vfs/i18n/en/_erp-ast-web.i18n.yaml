@@ -12,6 +12,8 @@ site:
       displayName: Depreciation Schedule
     ErpAstDisposal-main:
       displayName: Asset Disposal
+    ErpAstInventory-main:
+      displayName: Asset Stocktake
     ErpAstMaintenance-main:
       displayName: Asset Maintenance
     ErpAstMaintenanceCost-main:
@@ -28,8 +30,6 @@ site:
       displayName: Asset Depreciation Detail
     asset-disposal-detail:
       displayName: Asset Disposal Detail
-    asset-stocktake:
-      displayName: Asset Stocktake
     ast-dashboard:
       displayName: Assets Overview
     ast-dashboard-main:

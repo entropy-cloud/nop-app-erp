@@ -40,6 +40,222 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="assetId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'assetId',
+                                label: '账面资产',
+                                source: '/erp/ast/pages/ErpAstAsset/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="categoryId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'categoryId',
+                                label: '资产类别',
+                                source: '/erp/ast/pages/ErpAstAssetCategory/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="bookQuantity">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'bookQuantity',
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '账面数量不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        varianceQuantity: '${ROUND(actualQuantity - bookQuantity, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualQuantity">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'actualQuantity',
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '实盘数量不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        varianceQuantity: '${ROUND(actualQuantity - bookQuantity, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="varianceQuantity">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="bookValue">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'bookValue',
+                                step: 0.0001,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '账面价值不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        varianceAmount: '${ROUND(assessedValue - bookValue, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="assessedValue">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'assessedValue',
+                                step: 0.0001,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '评估价值不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        varianceAmount: '${ROUND(assessedValue - bookValue, 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="varianceAmount">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="varianceType"/>
+                <col id="disposition"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="assetId"/>
+                <col id="categoryId"/>
+                <col id="bookQuantity" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualQuantity" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="varianceQuantity" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="bookValue" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="assessedValue" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="varianceAmount" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="varianceType"/>
+                <col id="disposition"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

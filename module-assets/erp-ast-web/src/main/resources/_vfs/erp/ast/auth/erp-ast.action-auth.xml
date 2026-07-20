@@ -87,10 +87,10 @@
                 <resource id="ast-stocktake" displayName="资产盘点" i18n-en:displayName="Asset Stocktake"
                           icon="clipboard-list" resourceType="SUBM" orderNo="600">
                     <children>
-                        <resource id="asset-stocktake" app:useCases="UC-AST-09" displayName="资产盘点单"
+                        <resource id="ErpAstInventory-main" app:useCases="UC-AST-09" displayName="资产盘点单"
                                   i18n-en:displayName="Asset Stocktake" icon="clipboard-list"
                                   component="AMIS" resourceType="SUBM" orderNo="6010"
-                                  url="/erp/ast/pages/asset-stocktake/main.page.yaml"/>
+                                  url="/erp/ast/pages/ErpAstInventory/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 资产报表 -->
