@@ -37,12 +37,360 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <!--
+          凭证分录子表编辑（F4 Phase 2 P1 finance successor）。
+          范式源：docs/design/child-table-editor-patterns.md §2-§7（P0 sub-grid-edit 范式）
+                  docs/design/visible-on-patterns.md §8（dcDirection 切换 visibleOn 预冻结表达式库）
+                  docs/design/finance/ui-patterns.md §1（凭证录入 6 列子表布局 + 行增删 + 借贷平衡）
+          列序对齐 ui-patterns §1：摘要/科目/辅助核算/借方/贷方/币种。
+          列数 17（突破 P0 8-12 列基线）：凭证行是业务最复杂的子表，含 dcDirection 切换 + 科目树 picker 8 字段快照 + subject 驱动 6 维度 visibleOn + 多币种自动推算。
+          AMIS column virtualization 注意：列数 > 13 时 viewport 外列不在 DOM，E2E 视觉抽样需 scroll 配合（见 nop-frontend-dev skill AMIS 运行时约束）。
+        -->
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'lineNo',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 1, isInt: true },
+                                validationErrors: { minimum: '行号必须大于 0', isInt: '行号必须为整数' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <!--
+                  科目 picker：onEvent.change 将所选 ErpMdSubject 的 8 字段（code/name + 6 个 isAuxiliary* flag）
+                  批量快照进 input-table row scope，驱动后续辅助维度 cell 的 visibleOn。
+                  快照机制经 Phase 0 Explore (b) 验证：picker source gql:selection={@listSelection} 返回全字段；
+                  AMIS picker change event 暴露 event.data.selectedItem（单选场景）供 setValue 消费。
+                  降级路径：若 selectedItem 不可达，row scope 字段未写入 → 辅助维度 cell visibleOn 采用宽松
+                  表达式（${!subjectId || isAuxiliaryXxx == true}）graceful degradation 全显（见各维度 cell）。
+                -->
+                <col id="subjectId" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'subjectId',
+                                label: '科目',
+                                required: true,
+                                source: '/erp/md/pages/ErpMdSubject/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true,
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        subjectCode: '${event.data.selectedItem ? event.data.selectedItem.code : ""}',
+                                                        subjectName: '${event.data.selectedItem ? event.data.selectedItem.name : ""}',
+                                                        isAuxiliaryPartner: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryPartner || 0) : 0}',
+                                                        isAuxiliaryDepartment: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryDepartment || 0) : 0}',
+                                                        isAuxiliaryProject: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryProject || 0) : 0}',
+                                                        isAuxiliaryWarehouse: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryWarehouse || 0) : 0}',
+                                                        isAuxiliaryProduct: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryProduct || 0) : 0}',
+                                                        isAuxiliaryCostCenter: '${event.data.selectedItem ? (event.data.selectedItem.isAuxiliaryCostCenter || 0) : 0}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="subjectCode">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'static', name: 'subjectCode', label: '科目编码' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <!--
+                  dcDirection 借贷方向切换：select DEBIT/CREDIT。
+                  驱动 debitAmount/creditAmount cell 显隐（见下方，引用 visible-on-patterns §8 预冻结表达式）。
+                  per §8.3 裁决：禁止 onEvent.change 清空对侧金额——clearValueOnHidden 已自动处理。
+                -->
+                <col id="dcDirection" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'button-group-select',
+                                name: 'dcDirection',
+                                label: '借贷',
+                                required: true,
+                                options: [
+                                    { label: '借', value: 'DEBIT' },
+                                    { label: '贷', value: 'CREDIT' }
+                                ]
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <!--
+                  debitAmount / creditAmount：F7 §8 预冻结表达式落地。
+                  visibleOn + clearValueOnHidden=true 自动响应 dcDirection 切换隐藏并清空对侧（无 onEvent）。
+                  注：col 元素只允许 <visibleOn> 子节点，clearValueOnHidden 作为 AMIS column 属性经 gen-control 注入。
+                  行内 onEvent.change 同步触发 amountSource 派生（单边录入：DEBIT 行写 debitAmount，CREDIT 行写 creditAmount）。
+                -->
+                <col id="debitAmount">
+                    <visibleOn>${dcDirection == 'DEBIT'}</visibleOn>
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'debitAmount',
+                                label: '借方',
+                                clearValueOnHidden: true,
+                                step: 0.0001,
+                                precision: 4,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '借方金额不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        amountSource: '${debitAmount || 0}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="creditAmount">
+                    <visibleOn>${dcDirection == 'CREDIT'}</visibleOn>
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'creditAmount',
+                                label: '贷方',
+                                clearValueOnHidden: true,
+                                step: 0.0001,
+                                precision: 4,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '贷方金额不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        amountSource: '${creditAmount || 0}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="currencyId" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'currencyId',
+                                label: '币种',
+                                required: true,
+                                source: '/erp/md/pages/ErpMdCurrency/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'code',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <!--
+                  多币种自动推算（P0 §5 乘法变体新应用场景）：
+                  amountFunctional = ROUND(amountSource × exchangeRate, 4)
+                  exchangeRate 默认 1（本位币场景），用户可改。
+                  触发器列：amountSource（由 debit/credit 录入派生）+ exchangeRate（用户输入）。
+                -->
+                <col id="exchangeRate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'exchangeRate',
+                                label: '汇率',
+                                step: 0.00000001,
+                                precision: 8,
+                                value: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '汇率不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        amountFunctional: '${ROUND((amountSource || 0) * (exchangeRate || 1), 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amountSource">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'amountSource',
+                                label: '原币金额',
+                                step: 0.0001,
+                                precision: 4,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '原币金额不能为负' },
+                                onEvent: {
+                                    change: {
+                                        actions: [
+                                            {
+                                                actionType: 'setValue',
+                                                args: {
+                                                    value: {
+                                                        amountFunctional: '${ROUND((amountSource || 0) * (exchangeRate || 1), 4)}'
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amountFunctional">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'static', name: 'amountFunctional', label: '本位币金额' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <!--
+                  6 辅助维度 cell：subject 驱动 visibleOn（Phase 0 Explore (c) 验证）。
+                  宽松表达式 ${!subjectId || isAuxiliaryXxx == true} 兜底：无科目时全显 + 快照失败时也全显（graceful degradation）。
+                  ORM 核实（app-erp-finance.orm.xml ErpFinVoucherLine relations）：
+                    - partnerId → ErpMdPartner（picker 已落地 F4 Phase 1）
+                    - departmentId → ErpMdOrganization（codegen 默认 picker）
+                    - projectId → ErpPrjProject（picker F4 P2 补齐 pick-list）
+                    - warehouseId → ErpMdWarehouse（picker F4 P1 inventory 补齐）
+                    - materialId → ErpMdMaterial（picker F4 Phase 1）
+                    - costCenterId → ErpMdCostCenter（codegen 默认 picker）
+                  注：subject.isAuxiliaryProduct 对应 materialId（非 productId），见 Current Baseline §22-23。
+                -->
+                <col id="partnerId">
+                    <visibleOn>${!subjectId || isAuxiliaryPartner == true}</visibleOn>
+                </col>
+                <col id="departmentId">
+                    <visibleOn>${!subjectId || isAuxiliaryDepartment == true}</visibleOn>
+                </col>
+                <col id="projectId">
+                    <visibleOn>${!subjectId || isAuxiliaryProject == true}</visibleOn>
+                </col>
+                <col id="warehouseId">
+                    <visibleOn>${!subjectId || isAuxiliaryWarehouse == true}</visibleOn>
+                </col>
+                <col id="materialId">
+                    <visibleOn>${!subjectId || isAuxiliaryProduct == true}</visibleOn>
+                </col>
+                <col id="costCenterId">
+                    <visibleOn>${!subjectId || isAuxiliaryCostCenter == true}</visibleOn>
+                </col>
+                <col id="memo">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-text', name: 'memo', label: '摘要', placeholder: '分录摘要' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="subjectCode"/>
+                <col id="subjectName"/>
+                <col id="dcDirection"/>
+                <col id="debitAmount" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="creditAmount" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="currencyId"/>
+                <col id="exchangeRate" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 4 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amountSource" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amountFunctional" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="partnerId"/>
+                <col id="departmentId"/>
+                <col id="projectId"/>
+                <col id="warehouseId"/>
+                <col id="materialId"/>
+                <col id="costCenterId"/>
+                <col id="memo"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
         <form id="view" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  voucherId[凭证ID] lineNo[行号]
  subjectId[科目ID] subjectCode[科目编码]
  subjectName[科目名称] dcDirection[借贷方向]
@@ -64,7 +412,7 @@
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  voucherId[凭证ID] lineNo[行号]
  subjectId[科目ID] subjectCode[科目编码]
  subjectName[科目名称] dcDirection[借贷方向]

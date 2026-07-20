@@ -16,6 +16,31 @@
                 </col>
                 <col id="orgId" label="业务组织"/>
                 <col id="isReversed" sortable="true"/>
+                <col id="totalDebit" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalCredit" ui:number="true" sortable="true" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="balanceStatus" label="平衡状态" sortable="true" custom="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'tpl',
+                                tpl: '<span class="label label-${totalDebit == totalCredit ? "success" : "danger"}">' +
+                                    '${totalDebit == totalCredit ? "✓ 平衡" : "✗ 不平衡"}</span>'
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -40,29 +65,82 @@
     <forms>
         <form id="view">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[凭证号] voucherType[凭证字]
  voucherDate[凭证日期] voucherNo[凭证编号]
  orgId[核算组织] acctSchemaId[账套]
  periodId[会计期间] docStatus[凭证状态]
-==========^posting[过账信息]=========
+==========>posting[过账信息]=========
+ @totalDebit[借方合计] @totalCredit[贷方合计]
  postingType[过账类型] isReversed[是否红字冲销凭证]
  reversalOfVoucherId[原冲销凭证ID]
+=========>lines[分录行]======
+ lines[分录行](2)
 ==========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/fin/pages/ErpFinVoucherLine/ErpFinVoucherLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[凭证号] voucherType[凭证字]
  voucherDate[凭证日期] voucherNo[凭证编号]
  orgId[核算组织] acctSchemaId[账套]
  periodId[会计期间] docStatus[凭证状态]
+==========>posting[过账信息]=========
+ @totalDebit[借方合计] @totalCredit[贷方合计]
+=========>lines[分录行]======
+ autoBalance[借贷自动平衡](2)
+ lines[分录行](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <!--
+                  借贷自动平衡按钮（ui-patterns §1 line 67）+ 头余额合计刷新：
+                  点击计算 totalDebit - totalCredit 差额，填入最后一行（借<贷补借方，反之补贷方）。
+                  同时刷新头 totalDebit/totalCredit 实时聚合（行 SUM）。
+                  
+                  实时聚合 onEvent 在 P0/P1 plan 中已 DEFERRED（P1 plan `2026-07-20-0629-1` §Deferred「头聚合 onEvent
+                  在 P0 实际未实施」），本计划对齐既有行为：head totals 由本按钮 + 保存后服务端写入。
+                  actionType=custom + script 经 doAction(setValue) 写回 lines + totalDebit + totalCredit。
+                -->
+                <cell id="autoBalance" custom="true" notSubmit="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'button',
+                                label: '刷新合计 + 借贷自动平衡（差额填入末行）',
+                                level: 'warning',
+                                icon: 'fa fa-balance-scale',
+                                onEvent: {
+                                    click: {
+                                        actions: [
+                                            {
+                                                actionType: 'custom',
+                                                script: 'const lines = Array.isArray(event.data.lines) ? event.data.lines.slice() : []; const totalD = lines.reduce((s, l) => s + (Number(l.debitAmount) || 0), 0); const totalC = lines.reduce((s, l) => s + (Number(l.creditAmount) || 0), 0); if (lines.length === 0) { doAction({actionType:"setValue", args:{value:{totalDebit: 0, totalCredit: 0}}}); doAction({actionType:"toast", args:{msgtype:"info", msg:"无分录行"}}); return; } if (Math.abs(totalD - totalC) < 0.0001) { doAction({actionType:"setValue", args:{value:{totalDebit: totalD, totalCredit: totalC}}}); doAction({actionType:"toast", args:{msgtype:"success", msg:"凭证已平衡，合计已刷新"}}); return; } const last = lines[lines.length - 1]; const diff = totalD - totalC; if (diff > 0) { last.creditAmount = (Number(last.creditAmount) || 0) + diff; } else { last.debitAmount = (Number(last.debitAmount) || 0) + (-diff); } doAction({actionType:"setValue", args:{value:{lines: lines, totalDebit: totalD + (diff < 0 ? (-diff) : 0), totalCredit: totalC + (diff > 0 ? diff : 0)}}});'
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <!--
+                  lines 子表 cell：引用 ErpFinVoucherLine sub-grid-edit（17 列布局）。
+                  xview schema 限制 <view> 仅允许 <data> 子节点，onEvent 头聚合已移到 autoBalance 按钮触发。
+                -->
+                <cell id="lines">
+                    <view path="/erp/fin/pages/ErpFinVoucherLine/ErpFinVoucherLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="asideFilter" editMode="query" submitOnChange="true">
@@ -96,13 +174,15 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-post-button" label="过账" level="success" icon="fa fa-check-circle">
+                <action id="row-post-button" label="过账" level="success" icon="fa fa-check-circle"
+                        tooltip="借贷不平衡时无法过账（列表「平衡状态」列显示差额）">
                     <api url="@mutation:ErpFinVoucher__postVoucher?voucherId=$id"/>
                     <confirmText>确认过账此凭证？过账后不可编辑。</confirmText>
                     <messages>
                         <success>凭证已过账</success>
                     </messages>
                     <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
+                    <disabledOn>${(Number(totalDebit) || 0) != (Number(totalCredit) || 0)}</disabledOn>
                 </action>
                 <action id="row-reverse-button" label="红冲" level="danger" icon="fa fa-undo">
                     <api url="@mutation:ErpFinVoucher__reverseVoucher?voucherId=$id"/>
