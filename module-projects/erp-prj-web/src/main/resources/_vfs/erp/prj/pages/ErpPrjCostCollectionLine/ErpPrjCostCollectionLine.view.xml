@@ -23,6 +23,81 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="costCategory" mandatory="true"/>
+                <col id="sourceBillType"/>
+                <col id="sourceBillCode"/>
+                <col id="subjectId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'subjectId',
+                                label: '科目',
+                                source: '/erp/md/pages/ErpMdSubject/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="taskId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'taskId',
+                                label: '任务',
+                                source: '/erp/prj/pages/ErpPrjTask/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amount" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'amount',
+                                required: true,
+                                step: 0.0001,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '金额不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="costCategory"/>
+                <col id="sourceBillType"/>
+                <col id="sourceBillCode"/>
+                <col id="subjectId"/>
+                <col id="taskId"/>
+                <col id="amount" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

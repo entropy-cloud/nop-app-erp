@@ -62,9 +62,44 @@
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[归集单号] projectId[项目]
+ orgId[业务组织] businessDate[业务日期]
+ currencyId[币种] totalAmount[合计金额]
+ docStatus[单据状态] approveStatus[审核状态]
+=========>lines[明细行]======
+ lines[明细行](2)
+========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/prj/pages/ErpPrjCostCollectionLine/ErpPrjCostCollectionLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
+        </form>
+        <form id="edit">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[归集单号] projectId[项目]
+ orgId[业务组织] businessDate[业务日期]
+ currencyId[币种] totalAmount[合计金额]
+ docStatus[单据状态] approveStatus[审核状态]
+=========>lines[明细行]======
+ lines[明细行](2)
+ remark[备注](2)
+            </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/prj/pages/ErpPrjCostCollectionLine/ErpPrjCostCollectionLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
+        </form>
+        <form id="add" x:prototype="edit" editMode="add"/>
     </forms>
 
     <pages>
