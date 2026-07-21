@@ -29,7 +29,7 @@
     </grids>
 
     <forms>
-        <form id="view" size="lg">
+        <form id="view" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 ==========>baseInfo[基本信息]======
  code[工号] firstName[姓]
@@ -49,16 +49,20 @@
  costCenterId[默认成本中心] hireDate[入职日期]
  probationEndDate[试用期截止] regularDate[转正日期]
  resignationDate[离职日期] resignationReason[离职原因]
-==========^payroll[薪酬信息]=========
- bankAccountId[工资卡账户] socialSecurityNo[社保号]
- taxFileNo[个税档案号] userAccountId[系统用户ID]
+==========^payroll[薪酬信息（脱敏待落地，敏感字段隐藏）]=========
+ userAccountId[系统用户ID]
 ==========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="idCardNo">
+                    <visibleOn>${false}</visibleOn>
+                </cell>
+            </cells>
         </form>
-        <form id="edit" size="lg">
+        <form id="edit" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 ==========>baseInfo[基本信息]======
  code[工号] firstName[姓]
@@ -78,11 +82,24 @@
  costCenterId[默认成本中心] hireDate[入职日期]
  probationEndDate[试用期截止] regularDate[转正日期]
  resignationDate[离职日期] resignationReason[离职原因]
-==========^payroll[薪酬信息]=========
- bankAccountId[工资卡账户] socialSecurityNo[社保号]
- taxFileNo[个税档案号] userAccountId[系统用户ID]
+==========^payroll[薪酬信息（脱敏待落地，敏感字段隐藏）]=========
+ userAccountId[系统用户ID]
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="idCardNo">
+                    <visibleOn>${false}</visibleOn>
+                </cell>
+                <cell id="bankAccountId">
+                    <visibleOn>${false}</visibleOn>
+                </cell>
+                <cell id="socialSecurityNo">
+                    <visibleOn>${false}</visibleOn>
+                </cell>
+                <cell id="taxFileNo">
+                    <visibleOn>${false}</visibleOn>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="asideFilter" editMode="query" submitOnChange="true">

@@ -234,6 +234,9 @@ test.describe('sales domain child-table write', () => {
  * AMIS input-table 渲染验证（不可降级）：
  * 经浏览器 DOM 断言 ErpPurOrder 编辑表单含 input-table 子表控件。
  * 防止 GraphQL fallback 静默绕过 codegen 管线（Phase 1 Explore (a) 最高风险面）。
+ *
+ * F12 更新（plan 2026-07-21-0330-3）：ErpPurOrder form 已切换 layoutControl="tabs"，
+ * input-table 不再在打开 add dialog 后立即可见——需先点击「明细行」tab。
  */
 test.describe('AMIS input-table DOM verification', () => {
   test('ErpPurOrder edit form renders input-table for lines', async ({ page }) => {
@@ -245,6 +248,17 @@ test.describe('AMIS input-table DOM verification', () => {
 
     // 点击 add 按钮打开新增表单（弹窗 / drawer）
     const dialog = await crud.clickAdd();
+
+    // F12 tabs: form 现在用 layoutControl="tabs"，input-table 在「明细行」tab 内。
+    // 默认活动 tab 是「基本信息」，需切到「明细行」tab 后 input-table 才可见。
+    const modalOrDialog = page.locator('.cxd-Modal, .cxd-Drawer').last();
+    // 等待 Tabs 容器渲染
+    await modalOrDialog.locator('.cxd-Tabs').first().waitFor({ state: 'visible', timeout: 15_000 }).catch(() => {});
+    const linesTab = modalOrDialog.locator('.cxd-Tabs a').filter({ hasText: '明细行' }).first();
+    if (await linesTab.count() > 0) {
+      await linesTab.click({ force: true }).catch(() => {});
+      await page.waitForTimeout(1000);
+    }
 
     // 等待表单内 input-table 控件出现（AMIS cxd-InputTable 类）
     const inputTable = page.locator('.cxd-InputTable').first();

@@ -75,7 +75,7 @@
     </grids>
 
     <forms>
-        <form id="view" size="lg">
+        <form id="view" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[工单号] orgId[业务组织]
@@ -110,7 +110,7 @@
                 </cell>
             </cells>
         </form>
-        <form id="edit" size="lg">
+        <form id="edit" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[工单号] orgId[业务组织]

@@ -63,7 +63,7 @@
     </grids>
 
     <forms>
-        <form id="view">
+        <form id="view" layoutControl="tabs">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[凭证号] voucherType[凭证字]
@@ -87,7 +87,7 @@
                 </cell>
             </cells>
         </form>
-        <form id="edit">
+        <form id="edit" layoutControl="tabs">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[凭证号] voucherType[凭证字]

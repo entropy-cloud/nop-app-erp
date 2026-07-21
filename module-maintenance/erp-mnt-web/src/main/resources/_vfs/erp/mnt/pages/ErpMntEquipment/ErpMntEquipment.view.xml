@@ -51,7 +51,7 @@
     </grids>
 
     <forms>
-        <form id="view" size="lg">
+        <form id="view" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[设备编码] name[设备名称]
@@ -61,13 +61,13 @@
  serialNo[序列号] manufacturer[制造商]
  model[型号] installDate[安装日期]
  warrantyExpiry[保修到期]
-========^audit[审计信息]=========
+=========>audit[审计信息]======
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="edit" size="lg">
+        <form id="edit" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[设备编码] name[设备名称]
@@ -77,7 +77,7 @@
  serialNo[序列号] manufacturer[制造商]
  model[型号] installDate[安装日期]
  warrantyExpiry[保修到期]
-========^audit[审计信息]=========
+=========>audit[审计信息]======
  remark[备注](2)
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]

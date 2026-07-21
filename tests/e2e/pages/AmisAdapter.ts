@@ -46,14 +46,90 @@ export class AmisAdapter implements EngineAdapter {
     }).first();
   }
 
-  async selectOption(_dialog: Locator, _fieldLabels: string[], _optionText: string[]): Promise<void> {
-    const dialog = _dialog;
-    const fieldLabel = _fieldLabels[0];
-    const optionText = _optionText[0];
-    const input = dialog.locator(`input[name="${fieldLabel}"]`);
-    await input.click();
-    const option = dialog.locator('.cxd-DropDown-menuItem').filter({ hasText: optionText }).first();
-    await option.click();
+  async selectOption(
+    dialog: Locator,
+    fieldLabels: string[],
+    optionTexts: string[],
+  ): Promise<void> {
+    const page = dialog.page();
+
+    const probe = await page.evaluate(({ labels }) => {
+      const dialogs = Array.from(document.querySelectorAll('[role="dialog"], .cxd-Modal'));
+      const dlg = dialogs[dialogs.length - 1] || null;
+      if (!dlg) return { ok: false, reason: 'no-dialog' };
+      const items = Array.from(dlg.querySelectorAll('.cxd-Form-item'));
+      const target = items.find((it) => {
+        const label = it.querySelector('.cxd-Form-label');
+        const text = (label?.textContent || '').trim();
+        return labels.some((l) => text.includes(l));
+      });
+      if (!target) return { ok: false, reason: 'no-form-item' };
+      return { ok: true, componentTypes: target.className };
+    }, { labels: fieldLabels });
+
+    if (!probe.ok) {
+      throw new Error(`selectOption(${fieldLabels.join('|')}) failed: ${JSON.stringify(probe)}`);
+    }
+
+    const componentResult = await page.evaluate(({ labels, opts }) => {
+      const dialogs = Array.from(document.querySelectorAll('[role="dialog"], .cxd-Modal'));
+      const dlg = dialogs[dialogs.length - 1] || null;
+      if (!dlg) return { ok: false, reason: 'no-dialog' };
+      const items = Array.from(dlg.querySelectorAll('.cxd-Form-item'));
+      const target = items.find((it) => {
+        const label = it.querySelector('.cxd-Form-label');
+        const text = (label?.textContent || '').trim();
+        return labels.some((l) => text.includes(l));
+      });
+      if (!target) return { ok: false, reason: 'no-form-item' };
+
+      const select = target.querySelector('.cxd-Select') as HTMLElement | null;
+      if (select) {
+        select.click();
+        return { ok: true, type: 'select' };
+      }
+
+      const switchEl = target.querySelector('.cxd-Switch') as HTMLElement | null;
+      if (switchEl) {
+        const isOn = switchEl.classList.contains('cxd-Switch--on');
+        const wantOn = opts.some((o: string) => /ACTIVE|TRUE|ON|启用|ENABLED/i.test(o));
+        if ((wantOn && !isOn) || (!wantOn && isOn)) {
+          switchEl.click();
+        }
+        return { ok: true, type: 'switch' };
+      }
+
+      return { ok: false, reason: 'no-select-or-switch' };
+    }, { labels: fieldLabels, opts: optionTexts });
+
+    if (!componentResult.ok) {
+      throw new Error(`selectOption(${fieldLabels.join('|')}) failed: ${JSON.stringify(componentResult)}`);
+    }
+
+    if (componentResult.type === 'select') {
+      await page.waitForTimeout(300);
+
+      const picked = await page.evaluate((opts) => {
+        const menus = Array.from(document.querySelectorAll('.cxd-Select-menu'));
+        const menu = menus[menus.length - 1] || null;
+        if (!menu) return { ok: false, reason: 'no-menu' };
+        const optEls = Array.from(menu.querySelectorAll('.cxd-Select-option')) as HTMLElement[];
+        const texts = optEls.map((o) => (o.textContent || '').trim());
+        const match = optEls.find((o) => {
+          const t = (o.textContent || '').trim();
+          return opts.some((o2) => t.includes(o2));
+        });
+        if (!match) return { ok: false, reason: 'no-option', wanted: opts, optionTexts: texts };
+        match.click();
+        return { ok: true };
+      }, optionTexts);
+
+      if (!picked.ok) {
+        throw new Error(`selectOption option(${optionTexts.join('|')}) failed: ${JSON.stringify(picked)}`);
+      }
+
+      await page.waitForTimeout(300);
+    }
   }
 
   dateInputByLabel(page: Page, labelText: string): Locator {
