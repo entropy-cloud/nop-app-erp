@@ -46,4 +46,9 @@
         </form>
         <form id="add" x:prototype="edit"/>
     </forms>
+
+    <pages>
+        <crud name="main"/>
+        <picker name="picker"/>
+    </pages>
 </view>

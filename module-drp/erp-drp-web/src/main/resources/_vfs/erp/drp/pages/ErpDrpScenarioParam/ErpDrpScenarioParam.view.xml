@@ -13,6 +13,15 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="materialId"/>
+                <col id="warehouseId"/>
+                <col id="paramType" mandatory="true"/>
+                <col id="paramValue" mandatory="true" ui:number="true" align="right"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
