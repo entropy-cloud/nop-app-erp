@@ -114,6 +114,61 @@
                 <cell id="docStatus" filterOp="eq"/>
             </cells>
         </form>
+
+        <!-- A2 滚动预算复制参数表单（newFiscalYear + strategy） -->
+        <form id="rollForward" editMode="add" title="滚动预算复制" size="md">
+            <layout>
+ newFiscalYear[目标年度] strategy[复制策略]
+</layout>
+            <cells>
+                <cell id="newFiscalYear" label="目标年度" domain="int" custom="true">
+                    <gen-control>
+                        <input-number placeholder="目标预算年度"/>
+                    </gen-control>
+                </cell>
+                <cell id="strategy" label="复制策略" domain="string" custom="true">
+                    <gen-control>
+                        <select>
+                            <options j:list="true">
+                                <_ label="固定比例复制" value="FIXED_PERCENTAGE"/>
+                                <_ label="零基（仅结构）" value="ZERO_BASED"/>
+                                <_ label="增量调整" value="INCREMENTAL"/>
+                            </options>
+                        </select>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
+
+        <!-- A2 预算结转参数表单（targetScenarioId + rule） -->
+        <form id="carryForward" editMode="add" title="预算结转" size="md">
+            <layout>
+ targetScenarioId[目标方案] rule[结转规则]
+</layout>
+            <cells>
+                <cell id="targetScenarioId" label="目标方案" domain="long" custom="true">
+                    <gen-control>
+                        <select clearable="@:true">
+                            <source>
+                                <url>@query:ErpFinBudgetScenario__findList/value:id,label:name</url>
+                            </source>
+                        </select>
+                    </gen-control>
+                </cell>
+                <cell id="rule" label="结转规则" domain="string" custom="true">
+                    <gen-control>
+                        <select>
+                            <options j:list="true">
+                                <_ label="剩余全部结转" value="REMAINING_FULL"/>
+                                <_ label="剩余按比例结转" value="REMAINING_RATIO"/>
+                                <_ label="已用作为基线" value="USED_FULL"/>
+                                <_ label="不结转" value="NONE"/>
+                            </options>
+                        </select>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
@@ -136,45 +191,44 @@
                 <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpFinBudgetScenario__cancel?id=$id"/>
                 </action>
-                <!-- A2 滚动预算复制（budget.md §滚动预算自动复制引擎）：弹出 dialog 收集 newFiscalYear + strategy -->
+                <!-- A2 滚动预算复制（budget.md §滚动预算自动复制引擎）：drawer 收集 newFiscalYear + strategy -->
                 <action id="row-roll-forward-button" label="滚动复制" level="info" icon="fa fa-copy"
-                        dialog="rollForwardDialog"/>
-                <!-- A2 预算结转（budget.md §结转规则引擎）：弹出 dialog 收集 targetScenarioId + rule -->
+                        actionType="drawer">
+                    <dialog page="rollForward" size="md"/>
+                </action>
+                <!-- A2 预算结转（budget.md §结转规则引擎）：drawer 收集 targetScenarioId + rule -->
                 <action id="row-carry-forward-button" label="结转" level="info" icon="fa fa-arrow-right"
-                        dialog="carryForwardDialog"/>
+                        actionType="drawer">
+                    <dialog page="carryForward" size="md"/>
+                </action>
             </rowActions>
-            <!-- A2 滚动复制参数 dialog（newFiscalYear + strategy） -->
-            <dialogs>
-                <dialog id="rollForwardDialog" title="滚动预算复制" size="md">
-                    <body>
-                        <form>
-                            <api url="@mutation:ErpFinBudgetScenario__rollForward"/>
-                            <controls>
-                                <control id="id" type="hidden" value="${id}"/>
-                                <control id="newFiscalYear" label="目标年度" type="number" required="true"/>
-                                <control id="strategy" label="复制策略" type="select-text"
-                                         dict="erp-fin/budget-rollforward-strategy"/>
-                            </controls>
-                        </form>
-                    </body>
-                </dialog>
-                <dialog id="carryForwardDialog" title="预算结转" size="md">
-                    <body>
-                        <form>
-                            <api url="@mutation:ErpFinBudgetScenario__carryForward"/>
-                            <controls>
-                                <control id="id" type="hidden" value="${id}"/>
-                                <control id="targetScenarioId" label="目标方案" type="picker"
-                                         url="@query:ErpFinBudgetScenario__findList?filter=scenarioId&filter=scenarioId"
-                                         required="true"/>
-                                <control id="rule" label="结转规则" type="select-text"
-                                         dict="erp-fin/budget-carry-forward-rule"/>
-                            </controls>
-                        </form>
-                    </body>
-                </dialog>
-            </dialogs>
         </crud>
+        <!-- A2 滚动预算复制提交页 -->
+        <simple name="rollForward" form="rollForward" useFormActions="true">
+            <api url="@mutation:ErpFinBudgetScenario__rollForward/id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" actionType="cancel"/>
+                <action id="confirm" label="确认复制" actionType="submit" level="primary">
+                    <messages>
+                        <success>预算已滚动复制到新年度</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+
+        <!-- A2 预算结转提交页 -->
+        <simple name="carryForward" form="carryForward" useFormActions="true">
+            <api url="@mutation:ErpFinBudgetScenario__carryForward/id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" actionType="cancel"/>
+                <action id="confirm" label="确认结转" actionType="submit" level="primary">
+                    <messages>
+                        <success>预算已结转到目标方案</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+
         <picker name="picker"/>
     </pages>
 </view>
