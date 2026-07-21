@@ -14,9 +14,9 @@
 
 | State | Count |
 |-------|-------|
-| todo | 9 |
+| todo | 8 |
 | ready | 0 |
-| done | 2 |
+| done | 3 |
 
 ## 3. 框架/平台复用
 
@@ -50,7 +50,7 @@
 |-----------|--------|-----------|--------------|----------------|
 | A1: GL Mapping Rule Tables | done | `docs/design/finance/gl-mapping-rules.md` (**NEW**) | `posting.md` §科目映射 概念已定 | NopSysEvent? 可选作为规则变更事件 | **需要 `ErpFinGlMappingRule` 实体 ORM 变更** |
 | A2: Budget Multi-Year / Carry-Forward | done | `docs/design/finance/budget.md` (**EXPAND**) | A1 (budget control uses GL) | existing budget.md foundation | **可能需要新 budget 实体/字段 ORM 变更** |
-| A3: Multi-Company Operational Depth | todo | `docs/architecture/multi-company.md` (**EXPAND**) | `intercompany-consolidation.md` | nop tenant-model, orgId dimension | **可能需要跨公司交易/合并实体 ORM 变更** |
+| A3: Multi-Company Operational Depth | done | `docs/architecture/multi-company.md` (**EXPAND**) | `intercompany-consolidation.md` | nop tenant-model, orgId dimension | **可能需要跨公司交易/合并实体 ORM 变更** |
 
 ### Milestone B: Manufacturing Intelligence
 
@@ -338,3 +338,40 @@ D2（Business Module Metadata BT5-style）已落地，状态 `todo → done`：
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（codegen 管线扩展 + 19 yaml 源 + app-erp-all 新模块不破坏既有 154 模块基线）
   - 19 个 `_module-meta.json` 全 well-formed（`python -m json.tool` 校验）且含 version 字段
 - **Deferred successor**：版本范围求解器（SemVer range resolution，触发：模块业务版本数 > 3 + 不兼容升级场景）/ SaaS 多租户版本管理编排（触发：SaaS 多租户部署 + tenant-model 集成授权）/ D4 插件热管理研究（D2 提供元数据信息输入；D4 仅由 D1 解锁，见 §7 mermaid `D1 --> D4`）
+
+## 8.9 A3 落地证据（2026-07-22）
+
+A3（Multi-Company Operational Depth）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-22-1000-1-finance-multi-company-operational-depth.md`（5 Phase 全 done：Phase 0 Explore + Owner Doc EXPAND + 4 Decisions / Phase 1 ORM 实体 + 字典 + codegen / Phase 2 转移定价引擎 + 跨公司凭证生成 / Phase 3 公司间配对 + 合并抵消候选识别 / Phase 4 view.xml + owner doc 回链 + roadmap 同步）
+- **Owner Doc**：`docs/architecture/multi-company.md`（既有 52 行 → EXPAND 至 ~200 行，含 6 可执行语义段：跨公司交易生命周期状态机 / 转移定价规则模型 / 公司间自动配对算法 / 合并抵消范围与 successor / 与 Posting+GL Mapping 关系 / 反模式自检表 7 项 + 4 Decision 记录 + EXPAND subsumes intercompany-consolidation.md 说明）
+- **ORM 变更**：`module-finance/model/app-erp-finance.orm.xml`
+  - 新建 `ErpFinIntercompanyTransferPrice` 实体（22 字段 + 5 to-one relation + 2 idx）：转移定价规则表（fromOrgId/toOrgId/materialId/materialCategoryId + pricingMethod 三策略 + markupRate/fixedPrice/marketRefSource + validFrom/validTo C3 MUTEX 语义）
+  - 新建 `ErpFinIntercompanyMatch` 实体（20 字段 + 7 relation + 2 idx）：公司间配对记录（pairKey + arSideVoucherId/arOrgId + apSideVoucherId/apOrgId + matchedAmount/diffAmount + status）
+  - 新建 `ErpFinConsolidationElimination` 实体（19 字段 + 6 relation + 2 idx）：合并抵消候选（eliminationType 3 类 + periodId/pairKey/matchId + eliminationAmount + draftVoucherId + status 3 态）
+  - 字典扩展：`erp-fin/account-key` 增 4 INTERCOMPANY_* 键；新字典 `erp-fin/transfer-pricing-method`（3 键）+ `erp-fin/intercompany-match-status`（3 键）+ `erp-fin/elimination-type`（3 键）+ `erp-fin/elimination-status`（3 键）
+- **转移定价引擎**：`IErpFinTransferPriceResolver` 接口（erp-fin-dao）+ `ErpFinTransferPriceResolver` 实现（erp-fin-service，3 策略 COST_PLUS/MARKET/NEGOTIATED + 精确→materialCategoryId 回落→全通配 default 优先级链 + 进程内缓存 + 主动失效）
+- **跨公司凭证生成**（对齐 A2 CommitmentVoucherGenerator 同型，不走 Provider 路由）：
+  - `IErpFinIntercompanyTransferBiz` SPI（finance-dao 跨域契约面）+ `ErpFinIntercompanyTransferBizModel` 实现（finance-service）
+  - 跨法人判定 = warehouse.orgId 沿 parentId 链向上找首个 orgType=COMPANY（带环检测）
+  - `IntercompanyVoucherGenerator` 生成配对凭证（AR 侧 INTERCOMPANY_SALE + AP 侧 INTERCOMPANY_PURCHASE，各 2 行 Dr/Cr）
+  - `IntercompanyAcctDocProvider` 文档化约定（getSupportedBusinessTypes 返回空集，与 BUDGET/COMMITMENT 同型）
+  - config-gated（`erp-fin.intercompany-posting-enabled` 默认 false，保护既有 inventory 测试零回归）
+- **调拨触发钩子**：`ErpInvTransferOrderBizModel.confirm` 后置 try-catch 调 finance SPI（不阻塞库存确认，凭证失败兜底）
+- **GL Mapping intercompany 维度**：`GlMappingDimensions` DTO 增 fromOrgId/toOrgId 2 维（expandDimensions 透传）；4 INTERCOMPANY_* accountKey 经 A1 GlMappingResolver 解析科目（解除 A1 Deferred「intercompany 维度规则」）
+- **公司间自动配对**：`IErpFinIntercompanyMatchBiz` + `ErpFinIntercompanyMatchBizModel`：`runMatching(periodId)` 经 ErpFinVoucherBillR.billCode 配对 SALE/PURCHASE 凭证 → MATCHED/DIFF；`checkDualSideConsistency` 复用 DualSideDiffReport 结构
+- **合并抵消候选识别**：`IErpFinConsolidationEliminationBiz` + BizModel：`generateEliminationCandidates(periodId)` 扫描 3 类（AR_AP + REVENUE_COST 常态 + INVENTORY_PROFIT config-gated 试点）→ CANDIDATE；`postElimination(candidateId)` 生成 DRAFT_VOUCHER 草稿凭证（人工审核后过账）
+- **错误码**（`ErpFinErrors.java`）：`ERP_FIN_TRANSFER_PRICE_NOT_FOUND` / `ERP_FIN_INTERCOMPANY_SAME_LEGAL_ENTITY` / `ERP_FIN_TRANSFER_PRICE_PERIOD_INVALID` / `ERP_FIN_INTERCOMPANY_MATCH_PERIOD_CLOSED` / `ERP_FIN_ELIMINATION_ALREADY_POSTED` / `ERP_FIN_ELIMINATION_NO_CANDIDATES`
+- **view.xml 定制**：3 新实体 list grid bounded-merge 精选列 + form 分组；`erp-fin.action-auth.xml` 新增 `fin-intercompany`（公司间）菜单分组 orderNo=550，含 3 实体菜单
+- **owner doc 回链**：
+  - `docs/design/finance/posting.md` 增「跨法人内部交易凭证（A3）」段（凭证生成路径表 + config-gated + IntercompanyAcctDocProvider 定位）
+  - `docs/design/finance/gl-mapping-rules.md` 增「intercompany 维度接入（A3）」段（GlMappingDimensions 扩展 + 4 accountKey 表 + 消费路径）
+  - `docs/architecture/integration-and-transaction-patterns.md` 增「跨公司事务边界（A3）」段（config-gated + 不阻塞库存 + SYNC 同事务 + 抵消草稿不过账）
+  - `docs/design/master-data/README.md` 增「组织类型与集团语义（A3）」段（orgType GROUP/COMPANY + 法人根判定）
+- **测试基线**：
+  - `TestErpFinTransferPriceResolver`（**NEW**）7 场景全绿（COST_PLUS 110 / NEGOTIATED 250 / MARKET 300 / wildcard default 180 / no-match null / cache invalidate / validity period 过滤）
+  - `TestErpFinIntercompanyTransfer`（**NEW**）2 场景全绿（跨法人产 2 配对凭证 + 同法人零凭证）
+  - `TestErpFinIntercompanyMatchingAndElimination`（**NEW**）5 场景全绿（MATCHED 配对 / DIFF=200 差额 / checkDualSideConsistency 非空报告 / AR_AP+REVENUE_COST 两类候选 / postElimination DRAFT 凭证 + 状态翻转 DRAFT_VOUCHER）
+  - finance service 全 243 测试全绿（229 既有 + 14 新增，无回归）
+  - inventory service 全 114 测试全绿（ErpInvTransferOrderBizModel.confirm 钩子 config-gated 默认 false 保护既有测试）
+- **Deferred successor**：实时合并报表渲染（触发：业务客户合并报表需求 + report successor）/ 跨币种合并折算（触发：跨国集团多币种合并 + treasury owner doc）/ 集团预算合并/跨公司预算结转（A2 Deferred successor）/ 内部存货利润抵消自动化（触发：内部存货周转频次高 + 未实现利润核算需求）/ MARKET 策略真实市场价接入（触发：市场价数据源集成需求）/ 多账套精确解析（当前默认账套=1，触发：多账套 intercompany 科目差异化需求）/ 抵消科目经 GlMappingResolver 精确解析（当前默认编码兜底，触发：多维抵消科目差异化需求）/ 跨公司交易完整生命周期状态机（当前仅 confirm 触发，触发：跨公司采购/销售单据直接交易需求）

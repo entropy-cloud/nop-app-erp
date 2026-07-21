@@ -41,3 +41,15 @@
 - **API client 不可在事务内阻塞**：长时间外部调用应异步（logistics tracking 经 cron 轮询，不在用户事务内同步等待）。
 - **外部结果所有权**：结果源自外部系统响应时，本地系统负责启动/查询/下载，**不**伪造外部行为。
 - **重试与幂等**：见 [`idempotency-pattern.md §API client 重试与幂等`](./idempotency-pattern.md) + [`external-api-integration-pattern.md §6.2`](./external-api-integration-pattern.md)。
+
+## 跨公司事务边界（A3，plan `2026-07-22-1000-1`）
+
+> 跨法人内部交易凭证生成的事务边界（transfer pricing + 配对凭证 + 配对/抵消），见
+> [`multi-company.md §跨公司交易生命周期状态机`](./multi-company.md)。
+
+要点：
+
+- **config-gated 默认 false**：跨法人凭证生成（`erp-fin.intercompany-posting-enabled`）+ 配对/抵消（`erp-fin.consolidation-elimination-enabled`）均默认关闭，保护既有 inventory/finance 测试零回归。
+- **不阻塞库存移动**：`ErpInvTransferOrder.confirm` 调 finance SPI 时 try-catch 兜底——凭证生成失败仅记录日志，不回滚库存确认（库存移动与凭证生成解耦，凭证失败由 finance 异常工作台兜底）。
+- **配对/抵消 SYNC 同事务**：`runMatching` / `generateEliminationCandidates` / `postElimination` 均在调用方事务内同步执行（与既有 `IErpFinBudgetControlBiz.check()` 同范式，避免事务跨域复杂度）。
+- **抵消分录草稿不过账**：`postElimination` 生成 docStatus=DRAFT 凭证，需人工审核后过账（既有凭证过账路径，本机制不自动过账）。

@@ -538,3 +538,23 @@ VoucherBillR（业财回链）
 |--------|------|
 | `ERP_FIN_BUDGET_COMMITMENT_ALREADY_RELEASED` | 重复 release 守卫（原 COMMITMENT 凭证已红冲或不存在） |
 | `ERP_FIN_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED` | 启用承付但未配置承付科目编码 |
+
+## 跨法人内部交易凭证（A3，plan 2026-07-22-1000-1）
+
+> A3 落地 [`multi-company.md §跨公司交易生命周期状态机`](../architecture/multi-company.md) 既定义的跨法人调拨凭证生成逻辑。跨法人调拨 `ErpInvTransferOrder.confirm` 后置经 finance SPI 生成配对内部销售/采购凭证；同法人保持现状（仅库存移动）。
+
+### 凭证生成路径（与 COMMITMENT 同型，不走 Provider 路由）
+
+| 机制 | 实现 | 说明 |
+|------|------|------|
+| 跨法人判定 | `ErpFinIntercompanyTransferBizModel.resolveLegalEntityRoot` | warehouse.orgId 沿 parentId 链向上找首个 orgType=COMPANY |
+| 转移定价解析 | `IErpFinTransferPriceResolver` | 3 策略 cost-plus/market/negotiated + 优先级链 + 缓存 |
+| 配对凭证生成 | `IntercompanyVoucherGenerator` | AR 侧（INTERCOMPANY_SALE）+ AP 侧（INTERCOMPANY_PURCHASE），各 2 行 Dr/Cr |
+| 科目解析 | A1 `IErpFinGlMappingResolver` | 按 INTERCOMPANY_AR/AP/REVENUE/COST accountKey + intercompany 维度解析 |
+| `IntercompanyAcctDocProvider` | 文档化约定 | getSupportedBusinessTypes 返回空集，与 BUDGET/COMMITMENT 同型 |
+
+### config-gated 启用
+
+跨法人内部交易凭证经 `erp-fin.intercompany-posting-enabled`（默认 false）控制：
+- 默认关闭：保护既有 inventory 调拨测试不触发自动凭证（config-gated 回归安全）。
+- 调拨确认失败不阻塞库存移动（凭证生成异常 try-catch 兜底，保持库存与凭证解耦）。

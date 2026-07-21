@@ -87,6 +87,18 @@
 
 > Follow-up 实体清单（17 个未试点）见 `../date-ranged-validity-pattern.md §10`，按业务驱动逐域接入。
 
+### 组织类型与集团语义（A3）
+
+`ErpMdOrganization` 经 `parentId` 自引用表达集团层级，`orgType`（字典 `erp-md/org-type`）区分组织类型（A3，plan 2026-07-22-1000-1）：
+
+- **GROUP（集团）**：顶层组织（parentId=null），法人根的父节点。一个集团含多个 COMPANY。
+- **COMPANY（公司）**：**法人根** —— 法定独立核算实体。跨法人调拨触发内部交易凭证（见 `../architecture/multi-company.md`）。
+- **BRANCH/DEPARTMENT/WORKSHOP/STORE**：公司内部组织单元，不构成独立法人。
+
+**法人根判定**（权威 `multi-company.md §组织模型`）：沿 `parentId` 链向上走，首个 orgType=COMPANY 的节点即该组织所属法人。仓库（`ErpMdWarehouse.orgId`）归属的组织决定调拨是否跨法人。
+
+> 集团（`ErpMdCorporation`）未实体化 —— 仓库 grep 零命中；集团为顶层 orgType=GROUP 的 `ErpMdOrganization`。如未来需集团级独立属性（集团编码/合并币种），可补实体（successor）。
+
 ## 启用/停用（非状态机）
 
 主数据实体（物料、SKU、往来单位、仓库、库位、计量单位、币种、科目）采用简单的"启用/停用"二态，**不是工作流状态机**——主数据没有多步业务流转，只有"是否可被新业务单据引用"这一控制。
