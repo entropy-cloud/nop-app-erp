@@ -70,7 +70,7 @@
 
 | Work Item | Status | Owner Doc | Dependencies | Platform Reuse |
 |-----------|--------|-----------|--------------|----------------|
-| D1: External API Integration Reference Pattern | todo | `docs/architecture/external-api-integration-pattern.md` (**NEW**) | | GraphQL driver, xpl, IoC |
+| D1: External API Integration Reference Pattern | done | `docs/architecture/external-api-integration-pattern.md` (**NEW**) | | GraphQL driver, xpl, IoC |
 | D2: Business Module Metadata (BT5-style) | todo | `docs/architecture/business-module-metadata.md` (**NEW**) | | module-meta.json generation pipeline |
 | D3: Cost Calculation Sub-Calculator Injection | todo | `docs/design/finance/costing-methods.md` (**EXPAND**) | | existing CostingStrategy hierarchy |
 | D4: Plugin Hot Management Research | todo | `docs/analysis/plugin-hot-management-research.md` (**NEW**) | | P3 feasibility study |
@@ -225,6 +225,34 @@ A2（Budget Multi-Year / Carry-Forward / Commitment Accounting）已落地，状
   - purchase service 全 116 测试全绿（113 既有 + 3 新增）
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
 - **Deferred successor**：A3 多公司运营深度（跨公司预算结转/合并预算）/ A1 GL Mapping Rule 接入 BUDGET/COMMITMENT 多维规则 / 承付款业务场景全集（销售订单/付款单等其他场景）/ 预算物化快照表 / commitment 一并结转 / 预算对比报表多年度维度实施 / 跨币种预算结转汇率差异处理 / 预算冻结/解冻多级控制 / 预算编制工作流
+
+## 8.5 D1 落地证据（2026-07-21）
+
+D1（External API Integration Reference Pattern）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-21-1206-3-external-api-integration-reference-pattern.md`（3 Phase 全 done：Phase 0 Explore + Owner Doc NEW / Phase 1 参考实现 + 测试 / Phase 2 owner doc 回链 + roadmap 同步）
+- **Owner Doc**：`docs/architecture/external-api-integration-pattern.md`（**NEW** ~300 行，11 大段：§1 目的与范围 / §2 平台能力边界（决策树 + 9 项平台能力清单 + 反模式表）/ §3 Auth Pattern 参考模式（OAuth2/API Key/LWA + `IErpExternalApiAuthProvider` 参考接口，非强制 SPI）/ §4 Rate Limiting（候选 4 方案权衡 + Nop `IRateLimiter` 默认裁决 + per-tenant/key 约定）/ §5 Endpoint 配置范式（候选 C 裁决：yaml + 运行时 dict）/ §6 API Client Lifecycle（4 阶段 + 重试幂等 + 事务边界引用 + 文档/代码漂移记录）/ §7 参考实现案例（logistics + b2b + master-data 三案例对比 + 范式选择矩阵）/ §8 Wimoor ApiBuildService 对照（可借鉴 vs 不借鉴）/ §9 反模式自检表 12 项 / §10 EXPAND-vs-NEW Decision 记录 / §11 与既有集成文档关系）
+- **既有 owner doc 回链**（5 处段落新增）：
+  - `docs/architecture/integration-pattern.md` 末尾增「通用外部 API 集成参考模式」交叉引用段 + 「文档/代码漂移记录」段（webhook 表 `ErpSysWebhookConfig`/`ErpSysWebhookLog` 未实体化如实记录）
+  - `docs/architecture/b2b-integration.md` 末尾增「通用 API 集成参考（D1）」段（EDI Format 作为案例 B + 与 logistics 范式异构性说明）
+  - `docs/architecture/integration-and-transaction-patterns.md` 增「API client 事务边界（D1）」段（本地优先 + afterCommit + 不阻塞 + 引用 external-api-integration-pattern.md §6）
+  - `docs/architecture/idempotency-pattern.md` 增「API client 重试与幂等（D1）」段（可重试条件 + 指数退避 + 幂等键约定 + 缓存幂等）
+  - `docs/design/master-data/exchange-rate-management.md` 增「自动汇率刷新（API 客户端，D1）」段（接入入口 + 5 配置项 + 行为约定 + 与 logistics/b2b 范式异构 + Deferred successor）
+  - `docs/architecture/README.md` Initial Owner Docs 段追加 `external-api-integration-pattern.md` 介绍行
+- **EXPAND-vs-NEW Decision**：选 **NEW**（与 roadmap §D1 line 73 + post-survey-strategic-gaps.md line 467/491 两份源文档标注一致）。理由：roadmap 显式标注 NEW；既有 integration-pattern.md 范围明确（webhook-only 43 行）EXPAND 会破坏主题边界；NEW 文档聚焦通用外部 API 集成独立主题；既有 integration-pattern.md 末尾增交叉引用段避免引用断链。**此 Decision 取代 plan 早期版本的 EXPAND 假设**。
+- **参考实现（D1 §7.3 案例 C，无 ORM 变更）**：
+  - SPI：`IErpMdExchangeRateApiClient`（dao 模块）— `Map<String, BigDecimal> fetchRates(base, targets, asOf)`，3 错误码（API_UNAVAILABLE / RATE_LIMITED / RESPONSE_INVALID）
+  - Mock 实现：`MockExchangeRateApiClient`（service 模块）— 固定汇率表（USD/CNY/EUR 三基准）+ 测试钩子 stubRates
+  - Factory：`ErpMdExchangeRateApiClientFactory`（service 模块）— config-gated + `IRateLimiter`（Nop 令牌桶）+ TTL 缓存（ConcurrentHashMap）+ provider 派发
+  - BizModel：`ErpMdCurrencyBizModel.refreshRatesFromApi` `@BizMutation` 入口 + `IErpMdCurrencyBiz` 接口扩展
+  - **关键修正**：(i) `@BizMutation` 注解需同时在 IBiz + BizModel 实现（仅 IBiz 注解不生效，BizObjectImpl.requireAction 报 object-not-support-action）；(ii) 同域不同实体写入经父类 `daoProvider().daoFor(...)` 方法（非自声 @Inject 字段，避免字段 shadowing 注入失败）
+  - 配置：5 项 config-gated 默认关（`erp-md.exchange-rate-api-enabled/provider/key/rate-limit-rps/cache-ttl-secs`）
+- **rate limiting 裁决修订**：从 plan 早期 Guava RateLimiter 建议改为 **Nop Platform `IRateLimiter`/`DefaultRateLimiter`**（platform-first 规则；grep 实测 `nop-commons` 已提供令牌桶限流器，无需引入 Guava 依赖；既有项目 0 rate limiting 使用，平台能力即可满足）。多节点 Redis-based 触发条件：生产部署多节点 + 限流不一致。
+- **测试基线**：
+  - `TestErpMdExchangeRateApiClient`（**NEW**）5 场景全绿（Mock 确定性数据 / rate limiting RATE_LIMITED 错误 / 缓存 TTL 复用 / refreshRatesFromApi 端到端写入 / config-gated 默认 false 抛 UNAVAILABLE）
+  - master-data service 全 69 测试全绿（64 既有 + 5 新增）
+- **D4 Plugin Hot Management Research 解锁说明**：D1 是 D4 的前置（per §7 mermaid edge `D1 --> D4`）；D1 完成后 D4 可启动（D4 是独立 P3 可行性研究项 — OSGi-style vs Maven module isolation vs NocoBase-style plugin manager）。D1 提供的 master-data 汇率查询 API 客户端 + logistics Carrier Gateway + b2b EDI Format 三案例作为 D4 插件边界评估的参考输入。
+- **Deferred successor**：`ErpSysExternalSystem` 实体化（触发：多 API 配置场景 + ORM 授权）/ notify 域 Webhook 表实体化（触发：notify 域 webhook 业务需求）/ D4 Plugin Hot Management Research（触发：D1 完成 + 业务客户插件热管理需求）/ 多节点 Redis-based rate limiting（触发：生产部署多节点 + 限流不一致）/ OAuth2 完整通用实现 + `IErpExternalApiAuthProvider` 标准 SPI（触发：业务客户 OAuth2 接入 + 跨域统一 auth 需求）/ 第三方 API SDK 自动生成（触发：业务客户明确需求 + 工具链选型）/ API gateway 反向代理集成（触发：生产部署架构演进）/ API 监控/可观测性完整方案（触发：生产监控需求）/ API 安全审计（触发：合规审计需求 + security owner doc 授权）/ 跨境数据合规（触发：跨国集团业务 + 数据合规审计）/ 真实 provider 接入（exchangerate.host / 銀企直连）（触发：业务客户接入需求）。
 
 ## 9. Rules
 

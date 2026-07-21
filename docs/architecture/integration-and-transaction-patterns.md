@@ -29,3 +29,15 @@
 - `docs/design/finance/posting.md` — 过账三层模型（afterCommit ASYNC + posted 兜底幂等）
 - `cross-domain-constraints.md` — 跨域事务约束（库存同事务、凭证可配时序）
 - `../nop-entropy/docs-for-ai/02-core-guides/concurrency-and-transactions.md` — 平台事务机制
+
+## API client 事务边界（D1，plan `2026-07-21-1206-3`）
+
+> 第三方 API client 调用与业务事务边界（auth pattern + rate limiting + client lifecycle 完整范式），见
+> [`external-api-integration-pattern.md §6 API Client Lifecycle`](./external-api-integration-pattern.md)。
+
+要点（D1 §6.3）：
+
+- **本地优先**：影响本地状态的操作必须在任何外部写入之前持久化；外部写入在 `txn().afterCommit()` 钩子中运行（避免事务回滚后外部已生效）。
+- **API client 不可在事务内阻塞**：长时间外部调用应异步（logistics tracking 经 cron 轮询，不在用户事务内同步等待）。
+- **外部结果所有权**：结果源自外部系统响应时，本地系统负责启动/查询/下载，**不**伪造外部行为。
+- **重试与幂等**：见 [`idempotency-pattern.md §API client 重试与幂等`](./idempotency-pattern.md) + [`external-api-integration-pattern.md §6.2`](./external-api-integration-pattern.md)。

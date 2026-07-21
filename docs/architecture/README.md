@@ -49,6 +49,7 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `processor-extension-pattern.md` - Java Processor 扩展模式（拓扑稳定流程的 Facade+Processor 两层职责、protected 步骤 + IServiceContext + 派生 bean 同名覆盖的配置余地、反模式）
 - `integration-and-transaction-patterns.md` - 集成与事务模式
 - `integration-pattern.md` - 外部 API 集成模式（Webhook 出站/入站）
+- `external-api-integration-pattern.md` - 通用外部 API 集成参考模式（D1，plan `2026-07-21-1206-3`：auth pattern + rate limiting + endpoint 配置范式 + API client lifecycle + logistics/b2b/master-data 三案例对比 + Wimoor ApiBuildService 对照 + 反模式自检表）
 - `b2b-integration.md` - B2B **集成契约层**（EDI 格式 SPI 适用性派发 + 信封状态机 + ASN 入站、Webhook、技术边界）；**业务语义**（状态机业务含义、用例、页面）归 `docs/design/b2b/README.md`，两者相互引用
 - `competitive-comparison.md` - 竞品架构对标（Odoo/ERPNext/metasfresh/iDempiere/Tryton/Openbravo/MixERP），8 个"超越点"杠杆与汇总表、诚实声明
 - `wf-integration-design.md` - 审批流集成（ERP 应用层落位）：哪些 ERP 单据标 `use-approval`、ERP 业务联动如何在 xbiz 注入（`append`/`<observes>`）、首批 WORKFLOW 实体。**平台级设计权威在 nop-entropy**（`ai-dev/design/nop-wf/approvable-entity-design.md` + `docs-for-ai/03-runbooks/enable-approval-on-entity.md`）

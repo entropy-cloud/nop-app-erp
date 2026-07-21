@@ -103,3 +103,16 @@
 | 各域 `state-machine.md` | M1 状态机守卫的域特定状态定义和跃迁规则 |
 | `posting.md` | M2 posted-flag 的三层模型和稳定性约束 |
 | 各域 `use-cases.md` | 幂等需求的具体场景描述 |
+
+## API client 重试与幂等（D1，plan `2026-07-21-1206-3`）
+
+> 第三方 API client 调用的重试策略与幂等键设计，与本文 M3（EventId 去重）+ M4（导入键去重）互补；
+> 完整范式（auth + rate limiting + lifecycle）见 [`external-api-integration-pattern.md §6.2`](./external-api-integration-pattern.md)。
+
+要点（D1 §6.2）：
+
+- **可重试条件**：5xx / 网络超时 / 429 Too Many Requests；**不可重试**：4xx 客户端错误（除 429）。
+- **重试策略**：指数退避（base × 2^n，最大 maxRetries 次），参考 logistics `GatewayDispatcher`（`erp-log.gateway-max-retries` + `erp-log.retry-base-interval-secs`）。
+- **API client 幂等键约定**：每个 mutation API 必须接受 `clientRequestId` 参数（业务自然键，如 `purOrder.code`），重复请求返回已有结果。
+- **缓存幂等**：参考实现 master-data `ErpMdExchangeRateApiClientFactory` 用 cacheKey = `baseCurrency|sorted(targetCurrencies)|asOfDate` 做 TTL 缓存（300 秒），同一组合重复调用走缓存（隐式幂等）。
+- **应用规则**：API client 幂等键设计必须遵循本文 §规则 1（业务自然键）+ §规则 5（接口文档中声明幂等键）。

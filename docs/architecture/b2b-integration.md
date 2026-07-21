@@ -255,3 +255,14 @@ IErpB2bEdiProvider.parsePayload() 解析报文 → ParsedPayload
 - `docs/design/l10n/cn-golden-tax.md`（独立工程范式样板）
 - `docs/architecture/integration-pattern.md`（Webhook 出站/入站复用）
 - `docs/requirements/product-scope.md:49-52`（延迟范围）
+
+## 通用 API 集成参考（D1，plan `2026-07-21-1206-3`）
+
+> 本域 EDI Format 实现（`IErpB2bEdiProvider` SPI + `ErpB2bEdiRegistry` 收集器 + `UblInvoiceEdiProvider`/`UblDespatchAdviceEdiProvider` Provider 派发）是 D1 通用 API 集成参考的**案例 B**（按类型派发的 Provider/Registry 两层范式）。
+
+引用：
+
+- [`external-api-integration-pattern.md §7.2 案例 B`](./external-api-integration-pattern.md)（b2b EDI Format 既有实现作为 D1 参考案例）
+- [`external-api-integration-pattern.md §7.4 范式选择矩阵`](./external-api-integration-pattern.md)（b2b 与 logistics/master-data 三案例对比 + 各自适用场景）
+
+**与 logistics Carrier Gateway 范式异构性**：logistics 是 Client/Factory/Registry **三层**（Factory 读凭证构造 Client）；b2b 是 Provider/Registry **两层**（Provider 直接执行，无独立 Factory）—— 因 EDI 格式不需要 per-instance 凭证配置。**两域不强求同构**，各自适用场景不同（详见 §7.4 矩阵）。
