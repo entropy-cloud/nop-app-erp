@@ -158,6 +158,22 @@ D2 与 D4 的关系是**信息输入，非硬依赖**：
 - D4（roadmap §Milestone D，独立 P3 可行性研究）评估 OSGi-style vs Maven module isolation vs NocoBase-style 插件管理器在 Nop Platform 上的可行性，提供 enable/disable 生命周期。
 - D4 **仅由 D1 解锁**（roadmap §7 mermaid `D1 --> D4`），**不**由 D2 解锁。D2 的元数据**可作为** D4 评估的信息输入（模块边界、依赖拓扑），但 D4 启动不依赖 D2 完成。
 
+### 6.1 D4 可行性研究交叉引用（plan 2026-07-22-0444-1）
+
+> D4 已落地为 `docs/analysis/plugin-hot-management-research.md`（**NEW**）。本段记录 D2 元数据在 D4 推荐路径中的具体复用点。
+
+D4 研究按 3 个正交维度（D-Load 运行时类加载/卸载 / D-Select 启动期可选装载 / D-Switch 应用层路由级开关）评估 3 条候选路径，推荐裁决如下：
+
+| 推荐路径 | 覆盖维度 | 对 D2 元数据的复用 |
+|---------|---------|-------------------|
+| **路径 2 Maven module isolation**（默认推荐，裁剪部署需求触发） | D-Select | 直接复用 `ModuleMetaReader.checkDependencyIntegrity()`（§4.2）做裁剪后启动期完整性校验——`ERP_MODULE_DEPENDENCY_MISSING`/`ERP_MODULE_VERSION_MISMATCH` 错误码即用于发现"装载了下游但漏装上游"的裁剪错误 |
+| **路径 3 NocoBase-style plugin manager**（运行时启停需求触发） | D-Switch | 在 D2 `_module-meta.json` schema 基础上叠加 `enabled` + `disabledActions` 字段（轻量 schema 演进），复用 `ModuleMetaReader.listOptionalFeatures()` 汇总特性开关清单；`optionalFeatures`（§2.1）从"启动期 config-gated"提升为"运行时可变状态"经 `nop-dict` 覆盖 |
+| 路径 1 OSGi-style（不采用） | D-Load | 不依赖 D2 元数据（路径 1 自带 bundle manifest 模型） |
+
+**关键结论**：D2 的元数据投资在 D4 推荐路径（路径 2/3）中得到充分回报——`businessDependencies` 支撑裁剪校验，`optionalFeatures` 支撑特性级开关。D2 与 D4 是"元数据 → 生命周期管理"的演进关系。详见 `docs/analysis/plugin-hot-management-research.md` §4.2.1 + §6.2 + §7。
+
+路径 2/3 的实际实现均归 successor，由 D4 研究 §6.5 的触发条件驱动（业务客户明确裁剪/启停需求 + 架构 owner doc 授权）。
+
 ## 7. 反模式自检表
 
 | # | 反模式 | 正确做法 |

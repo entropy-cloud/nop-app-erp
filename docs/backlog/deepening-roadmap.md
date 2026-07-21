@@ -14,9 +14,9 @@
 
 | State | Count |
 |-------|-------|
-| todo | 7 |
+| todo | 0 |
 | ready | 0 |
-| done | 4 |
+| done | 11 |
 
 ## 3. 框架/平台复用
 
@@ -40,7 +40,7 @@
 | Master Data | Partner/Employee/Organization 分离实体 | 统一 Party 身份查询（P1）、跨境贸易字段（P2）、日期范围有效性模式（P2） |
 | Cross-cutting | integration-pattern.md webhooks | 外部 API 集成参考模式（P1）✅、业务模块元数据 BT5 风格（P2）✅ |
 | Inventory | 3 层模型 + 加权移动平均/FIFO/标准成本 | 成本计算子计算器注入模式文档化（P1） ✅ D3 done |
-| Platform | Maven 模块编译期依赖 | 插件热管理可行性研究（P3） |
+| Platform | Maven 模块编译期依赖 | 插件热管理可行性研究（P3）✅ D4 done |
 
 ## 5. Milestones
 
@@ -73,7 +73,7 @@
 | D1: External API Integration Reference Pattern | done | `docs/architecture/external-api-integration-pattern.md` (**NEW**) | | GraphQL driver, xpl, IoC |
 | D2: Business Module Metadata (BT5-style) | done | `docs/architecture/business-module-metadata.md` (**NEW**) | | module-meta.json generation pipeline |
 | D3: Cost Calculation Sub-Calculator Injection | done | `docs/design/finance/costing-methods.md` (**EXPAND**) | | existing CostingStrategy hierarchy |
-| D4: Plugin Hot Management Research | todo | `docs/analysis/plugin-hot-management-research.md` (**NEW**) | | P3 feasibility study |
+| D4: Plugin Hot Management Research | done | `docs/analysis/plugin-hot-management-research.md` (**NEW**) | | P3 feasibility study |
 
 ## 6. Work Item Details
 
@@ -420,3 +420,18 @@ B1（MRP/DRP Simulation Engine）已落地，状态 `todo → done`：
   - drp service 全 31 测试全绿（26 既有 + 5 新增 sim，无回归）
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块 + 新增仿真代码无回归）
 - **Deferred successor**：产能仿真（CRP successor，触发：APS 排产 what-if 需求）/ 概率/蒙特卡洛仿真（触发：业务方明确概率仿真需求 + 数据分布建模授权）/ 物料级 fixedLotSize/minOrderQty/maxOrderQty 主数据列加列（触发：物料级批量精细化核算 + ORM 加列授权）/ APS 排产甘特图可视化仿真（触发：F16 plan 启动 + APS 可视化需求）/ FORECAST_SCALE 参数（覆盖预测倍数，触发：业务方明确按预测敏感度分组仿真需求）/ 类别级参数覆盖粒度（触发：业务方明确按类别批量覆盖需求）/ 跨场景对比（触发：业务方明确跨业务假设对比需求）/ 对比结果实体化持久化（触发：业务方明确对比结果审计需求）/ material.standardCost 真实接入总采购额差计算（触发：标准成本接入 + cost owner doc）/ MARKET 真实市场价接入总采购额（触发：市场价数据源集成）
+
+## 8.11 D4 落地证据（2026-07-22）
+
+D4（Plugin Hot Management Research）已落地，状态 `todo → done`，deepening-roadmap 11/11 全 done：
+
+- **Plan**：`docs/plans/2026-07-22-0444-1-deepening-d4-plugin-hot-management-research.md`（2 Phase 全 done：Phase 1 3 路径调研 + 对比矩阵 + 推荐裁决 / Phase 2 平台约束复核 + owner doc 回链 + roadmap 同步）。含 1 轮独立草案审查（iteration 1 acceptable-as-is）
+- **Owner Doc / 交付物**：`docs/analysis/plugin-hot-management-research.md`（**NEW** ~280 行，10 节完整：§1 目的与范围 + 研究范围边界裁决（Decision R0，D-Load/D-Select/D-Switch 三维度正交分解）+ Non-Goals + 当前现状基线 / §2 路径 1 OSGi-style（D-Load，5 侵入面子段 + 类卸载现实约束）/ §3 路径 2 Maven module isolation（D-Select，DAG 裁剪正确性 + 多聚合工程治理）/ §4 路径 3 NocoBase-style（D-Switch，复用 D2 ModuleMetaReader + optionalFeatures + nop-dict 运行时覆盖）/ §5 三路径对比矩阵（6 维度 × 3 路径）/ §6 推荐路径裁决（Decision R1，路径 2 默认 + 路径 3 补充 + 路径 1 不采用）/ §7 与 D1/D2 关系 / §8 平台约束佐证 / §9 反模式自检表 7 项 / §10 Follow-up）
+- **2 Decisions 裁决**：
+  - **R0 研究范围边界** = 3 维度正交分解（D-Load 运行时类加载/卸载 / D-Select 启动期可选装载 / D-Switch 应用层路由级开关），使 3 路径可比；每路径只覆盖一段能力谱系
+  - **R1 推荐路径** = 路径 2（Maven module isolation）默认采用 + 路径 3（NocoBase-style）运行时启停需求补充 + 路径 1（OSGi）不采用。理由：需求维度匹配（业务客户裁剪部署本质是 D-Select）+ 平台契合度（路径 2/3 零核心侵入，符合「不改变平台核心」）+ D2 投资复用（businessDependencies 支撑裁剪校验，optionalFeatures 支撑特性开关）+ 风险可控（增量可回退）+ 演进路径保留
+- **平台约束复核（Phase 2 Proof）**：6 项断言经 `nop-entropy/docs-for-ai/` 佐证（ioc-and-config 模块发现规则 / api-and-graphql 统一分发 / model-first-development 生成链 / cross-module-entity-reference dao 依赖 / architecture-principles 不改生成物）。**2 处初稿表述修正**：(i) "Quarkus CDI 编译期发现" → 平台实际用 Nop 自有 IoC 启动期文件驱动发现（非 CDI）；(ii) "GraphQL schema 编译期生成" → 实际启动期从 BizModel 反射装配（非编译期生成 schema 文件）。修正已并入正文 §1.4/§2.2/§3.2/§4.2，强化了路径 2/3"零平台侵入"判断
+- **owner doc 回链**：`docs/architecture/business-module-metadata.md` §6 增「6.1 D4 可行性研究交叉引用」段（D4 推荐路径对 D2 元数据的具体复用点表 + businessDependencies → 裁剪校验 + optionalFeatures → 特性开关 + 关键结论 + successor 触发条件）
+- **roadmap 同步**：§5 Milestone D D4 行 `todo → done` + §2 Work Item Status 表 `todo:7,done:4 → todo:0,done:11`（修正预存 stale）+ §4 当前基线 Platform 行标注 ✅ + 本 §8.11 落地证据段（对齐既有 §8.1-§8.10 格式）+ `implementation-roadmap.md` deepening-roadmap 行 stale 状态修正
+- **纯文档无测试基线**：D4 不引入新代码（roadmap §6 明确 `D4 ORM 变更 = 否`），无新单测/E2E/visual smoke。Phase 2 验证 = 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS 保证既有代码无回归（确认未误改生产代码）
+- **Deferred successor**：路径 2 实现（触发：业务客户裁剪部署需求 + 可接受重启 + 架构 owner doc 授权聚合 profile）/ 路径 3 实现（触发：业务客户运行时启停需求 + 可接受不卸载类妥协 + 架构 owner doc 授权插件管理器；依赖 D2 module-meta.json 扩展 enabled/disabledActions 字段）/ 路径 1 重新评估（触发：§2.4 三条件全成立 = 运行时类卸载刚需 + 长生命周期常驻进程 + 平台核心改造授权）/ D2 businessDependencies 版本范围求解器（D2 Deferred，路径 2 裁剪校验精度依赖）/ SaaS 多租户版本管理编排（D2 Deferred，与路径 3 信息关联，可能演化为路径 1+3 组合）/ 路径 3 安全加固（禁用 action schema 级隐藏，触发：合规审计 + 平台核心改造授权）
