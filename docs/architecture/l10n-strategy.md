@@ -429,3 +429,29 @@ public class L10nRegistry {
 | Odoo | 本地化模块隔离 | 按版本分支隔离本地化 |
 | ERPNext | 本地化报表 | 区域报表模板机制 |
 | 赤龙 | 中国凭证模板 | 中式复式记账凭证字规范 |
+
+## 原产地与 FTA（C2 跨境贸易扩展）
+
+> Owner doc：`docs/design/master-data/cross-border-trade.md` §5 / §6。本段是该 owner doc 的回链摘要。
+
+跨境贸易涉及的原产地（Country of Origin）与优惠协定（FTA）字段：
+
+| 字段 | 位置 | 类型 / 字典 | 业务语义 |
+|------|------|------------|----------|
+| `countryOfOrigin` | `ErpMdMaterial` | VARCHAR(2) ISO 3166-1 alpha-2 | 原产国代码（如 `CN`/`US`/`VN`）。**不做字典约束**（ISO 标准 200+ 条，按需引用） |
+| `preferenceCode` | `ErpMdMaterial` | VARCHAR(20) + 字典 `erp-md/customs-preference-code` | FTA 优惠协定代码（东盟/中韩/中澳/RCEP/...） |
+
+### FTA 判定流程概要
+
+1. **原产地录入**：物料主表 `countryOfOrigin` 记录原产国（默认不按 `orgId` 隔离——同物料在多公司用同原产地）。
+2. **优惠协定选择**：报关时根据原产国 + 进口国选择适用的 FTA 协定代码（`preferenceCode` 字典值）。
+3. **税率优惠应用**：FTA 协定生效时适用协定优惠税率（如东盟协定下中国→东盟成员国零关税）。
+4. **per-transaction 覆盖**：`ErpMdMaterialCustoms` per-transaction 报关记录可覆盖物料层快查（同一物料在不同报关场景可能适用不同 FTA 协定）。
+
+> **详细 FTA 判定算法**（含原产地认定规则、增值比例计算、直接运输规则、关税计算引擎）属 finance/tax successor，本节仅提供字段基础。
+
+### 多账套/多公司隔离决策
+
+- **候选 A（采纳）**：物料主数据层**不**按 `orgId` 隔离（同物料在多公司用同 `countryOfOrigin`）。
+- **候选 B（拒绝）**：按 orgId 隔离（同一物料在出口公司 vs 内销公司可能不同原产地认定）。
+- **特殊场景**：候选 B 的需求由 `ErpMdMaterialCustoms` per-transaction 实体覆盖。

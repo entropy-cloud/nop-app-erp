@@ -14,9 +14,9 @@
 
 | State | Count |
 |-------|-------|
-| todo | 11 |
+| todo | 10 |
 | ready | 0 |
-| done | 0 |
+| done | 1 |
 
 ## 3. 框架/平台复用
 
@@ -63,7 +63,7 @@
 | Work Item | Status | Owner Doc | Dependencies | Platform Reuse |
 |-----------|--------|-----------|--------------|----------------|
 | C1: Unified Party Identity Query | done | `docs/design/master-data/unified-party-identity.md` (**NEW**) | `master-data/README.md` | 仅查询层，无需 ORM 变更 |
-| C2: Cross-Border Trade Extensions | todo | `docs/design/master-data/cross-border-trade.md` (**NEW**) | C1 (party identity) | **需要 ErpMdMaterial 加字段 + 新建 ErpMdMaterialCustoms 实体 ORM 变更** |
+| C2: Cross-Border Trade Extensions | done | `docs/design/master-data/cross-border-trade.md` (**NEW**) | C1 (party identity) | **需要 ErpMdMaterial 加字段 + 新建 ErpMdMaterialCustoms 实体 ORM 变更** |
 | C3: Date-Ranged Validity Pattern | todo | `docs/design/date-ranged-validity-pattern.md` (**NEW**) | | Convention used in 6+ entities | 仅为模式文档，实施时可能涉及 ORM 字段追加 |
 
 ### Milestone D: Integration & Architecture
@@ -156,6 +156,37 @@ C1（Unified Party Identity Query）已落地，状态 `todo → done`：
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
   - visual smoke `party-search-picker.visual.spec.ts`（**NEW**）3 测试全绿（findParties action 注册 + getParty null 容忍 + findReferences 空 Map）
 - **Deferred successor**：Employee/Organization 引用扫描下游域 SPI 实现 + ErpMdUserAccount 接入统一 Party + 物化视图/反向索引 + Party 合并去重 + 全文索引 + C2 跨境贸易字段扩展 + 业务单据 FK 通用化
+
+## 8.3 C2 落地证据（2026-07-21）
+
+C2（Cross-Border Trade Extensions）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-21-1206-1-master-data-cross-border-trade-extensions.md`（4 Phase 全 done）
+- **Owner Doc**：`docs/design/master-data/cross-border-trade.md`（**NEW**，8 节完整：目的与范围 / 物料层跨境字段表 / ErpMdMaterialCustoms 实体设计 / 报关场景工作流 / FTA 判定流程 / 与既有 owner doc 关系 / 反模式自检表 / 落地证据）
+- **ORM 变更**：`module-master-data/model/app-erp-master-data.orm.xml`
+  - `ErpMdMaterial` 增 9 字段（propId 26-34）：`vatRate` DECIMAL(6,4) / `drawbackRate` DECIMAL(6,4) / `customsHS` VARCHAR(12) / `countryOfOrigin` VARCHAR(2) ISO 3166-1 alpha-2 / `preferenceCode` VARCHAR(20) + 字典 / `customsNameCn` VARCHAR(200) / `customsNameEn` VARCHAR(200) / `declarationUnit` VARCHAR(20) / `supervisionCondition` VARCHAR(10)。全部 `mandatory="false"` + 默认 null，向后兼容
+  - 新建 `ErpMdMaterialCustoms` 实体（24 字段 + UK declarationNo + 4 idx + 3 relations to-one）
+  - 字典扩展：`erp-md/partner-type` 增 `CUSTOMS_BROKER`；新字典 `erp-md/customs-preference-code`（12 FTA 协定代码：ASEAN/CKFTA/CHAFTA/CCFTA/CNZFTA/CPFTA/COSTA_RICA/CIFTA/CHFTA/RCEP/GSP/OTHER）
+- **Codegen 产物**：`_ErpMdMaterial.java` 含 9 新字段 + `_ErpMdMaterialCustoms.java` 全套（Entity + DAO + IBiz + BizModel + xmeta + xbiz + view.xml + page.yaml + i18n 中英文 + dict yaml + DaoConstants `PARTNER_TYPE_CUSTOMS_BROKER`）
+- **view.xml 定制**：
+  - `ErpMdMaterial.view.xml` form（view/edit）增「跨境贸易」F3 分组（9 字段）+ grid list 增 vatRate/drawbackRate/customsHS/countryOfOrigin 列
+  - `ErpMdMaterialCustoms.view.xml` list grid bounded-merge 精选 16 列 + form F3 四段分组（baseInfo/crossBorderAmounts/sourceBill/audit）
+  - `erp-md.action-auth.xml` 新增 `md-trade`（跨境贸易）分组 orderNo=750，含 `ErpMdMaterialCustoms-main` 菜单
+- **BizModel 扩展**：`ErpMdMaterialCustomsBizModel` delta 文件（`@BizModel("ErpMdMaterialCustoms")`），3 个 `defaultPrepareSave`/`defaultPrepareUpdate` 钩子前置友好校验：
+  - declarationNo 唯一性（DB UK 前置友好，避免 stack trace 暴露）—— 使用 `dao().findAllByQuery(query)` 绕过 objMeta filter `ne` 限制
+  - partnerId Partner 类型校验（必须 `CUSTOMS_BROKER`，否则抛 `ERR_PARTNER_NOT_CUSTOMS_BROKER`）
+  - sourceBillType/sourceBillCode 业务回链必填校验
+- **错误码**（`ErpMdErrors.java`）：`ERP_MD_PARTNER_NOT_CUSTOMS_BROKER` / `ERP_MD_CUSTOMS_DECLARATION_NO_DUPLICATE` / `ERP_MD_CUSTOMS_SOURCE_BILL_REQUIRED`
+- **owner doc 回链**：
+  - `docs/architecture/tax-framework.md` 增「物料层跨境税快查（C2 跨境贸易扩展）」段（vatRate/drawbackRate 双轨设计 + 风险缓解 + 与 ErpMdMaterialCustoms.dutyAmount/vatAmount 关系）
+  - `docs/architecture/l10n-strategy.md` 增「原产地与 FTA（C2 跨境贸易扩展）」段（countryOfOrigin + preferenceCode + FTA 判定流程概要 + 多账套/多公司隔离决策）
+  - `docs/design/master-data/README.md` §核心业务对象 增 ErpMdMaterialCustoms 行 + §跨境贸易扩展段 + 本域文档表增 cross-border-trade.md
+- **测试基线**：
+  - `TestErpMdMaterialCustoms`（**NEW**）4 场景全绿（CRUD 生命周期 / partnerType=CUSTOMER 拒绝 / sourceBill 均空拒绝 / declarationNo 重复拒绝）
+  - master-data service 全 64 测试全绿（60 既有 + 4 新增）
+  - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
+  - visual smoke `material-customs.visual.spec.ts`（**NEW**）2 测试落地（ErpMdMaterial xmeta 9 跨境字段可达 + ErpMdMaterialCustoms findPage action 注册）；运行需启动 app
+- **Deferred successor**：finance 关税/退税 Provider 接入（触发：跨境业务量 > 100 单/月 或 财务 owner doc 授权）/ b2b 海关 EDI 报文接入（触发：业务客户 EDI 报关需求）/ HS 编码字典全集（触发：业务方明确需求 + 第三方服务集成）/ ErpMdMaterialSku 跨境字段扩展（触发：同物料多 SKU 差异需求）/ 海关申报完整业务流程编排（触发：业务流程需求 + 跨域 owner doc 授权）/ 跨境报表实施（触发：业务客户报表需求 + report successor）/ 关税计算引擎（触发：含反倾销税/报复性关税的复杂税率计算需求）
 
 ## 9. Rules
 

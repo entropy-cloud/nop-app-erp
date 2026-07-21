@@ -30,6 +30,7 @@
 |------|----------|----------|
 | 物料（Material） | ERP 管理对象的最小主数据：商品、原材料、产成品、服务 | inventory / purchase / sales / finance |
 | SKU | 物料 × 包装单位 × 条码 的唯一可销售/可库存单元，承载多档价格 | inventory / purchase / sales |
+| 物料报关记录（Material Customs） | per-transaction 报关记录：报关单号/报关行/申报数量金额/关税增值税/退税收据号 | （独立 CRUD，归 master-data 跨境贸易子域）|
 | 往来单位（Partner） | 客户与供应商统一主数据 | purchase / sales / finance |
 | 仓库（Warehouse） | 物理或逻辑库存地点 | inventory / purchase / sales |
 | 库位（Location） | 仓库内的细分储位 | inventory |
@@ -58,6 +59,19 @@
 - `party-search/main.picker.page.yaml`（首例手写 picker.page.yaml）— 联合 picker，跨实体关键字检索 + onEvent.setValue 回填。
 
 **约定**：当且仅当非实体 BizModel 有跨工程 `@Inject` 消费者时才暴露 `IErp*Biz` 接口；纯 UI 入口（如 Dashboard）保持无接口。
+
+### 跨境贸易扩展（C2）
+
+物料主表（`ErpMdMaterial`）含 9 个跨境贸易字段（详见 `cross-border-trade.md`）：
+
+- **税率快查**：`vatRate`（增值税率）/ `drawbackRate`（退税率）—— 冗余于 `defaultTaxRateId→ErpMdTaxRate.rate`，报关场景高频查询。
+- **海关申报标识**：`customsHS`（HS 编码，VARCHAR(12) 不字典化）/ `countryOfOrigin`（ISO 3166-1 alpha-2）/ `preferenceCode`（字典 `erp-md/customs-preference-code` FTA 协定代码）/ `supervisionCondition`（监管条件代码，自由 VARCHAR）。
+- **报关双语名**：`customsNameCn` / `customsNameEn`。
+- **申报单位**：`declarationUnit`（VARCHAR 而非 FK→ErpMdUoM，因海关法定单位字典与内部单位字典解耦）。
+
+`ErpMdMaterialCustoms` per-transaction 报关记录实体（报关单号/报关行/申报数量金额/关税增值税/退税收据号/业务单据回链）。报关行 Partner 类型登记为 `CUSTOMS_BROKER`（`erp-md/partner-type` 字典值）。
+
+> 关税/退税过账 Provider 接入归 finance successor；海关 EDI 报文接入归 b2b successor；状态机/审批流归跨域 successor。
 
 ## 启用/停用（非状态机）
 
@@ -145,6 +159,7 @@
 | `README.md`（本文件） | 域概览、核心对象、启停规则、跨域协作、关键规则 |
 | `sku-multi-unit.md` | SKU 多单位多 barcode 设计（物料 SKU 分离、多单位换算、多档价格） |
 | `unified-party-identity.md` | 统一 Party 身份查询（C1：跨 Partner/Employee/Organization 抽象 + `IErpPartyBiz` + 联合 picker） |
+| `cross-border-trade.md` | 跨境贸易扩展（C2：物料层 9 字段 + `ErpMdMaterialCustoms` per-transaction 实体 + FTA + 报关行 Partner 类型） |
 
 > 主数据域不包含状态机文档——主数据是启停二态而非工作流状态机（见上文"启用/停用"节）。
 
