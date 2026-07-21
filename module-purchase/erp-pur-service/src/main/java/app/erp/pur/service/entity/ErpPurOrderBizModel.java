@@ -1,6 +1,7 @@
 
 package app.erp.pur.service.entity;
 
+import app.erp.pur.biz.BatchOperationResult;
 import app.erp.pur.biz.ConvertToOrderRequest;
 import app.erp.pur.biz.IErpPurOrderBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
@@ -8,16 +9,19 @@ import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.dao.entity.ErpPurRequisitionLine;
 import app.erp.pur.service.ErpPurConstants;
+import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.processor.ErpPurOrderProcessor;
 import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,6 +49,31 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @BizMutation
     public ErpPurOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
         return orderProcessor.cancel(String.valueOf(orderId), context);
+    }
+
+    /**
+     * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）。逐行调 {@link ErpPurOrderProcessor#approve}；
+     * 行级失败（状态非 SUBMITTED / 业务规则不满足）记入 {@link BatchOperationResult#getFailures()}，不阻塞其他行。
+     *
+     * <p>逐行执行（模式 b）的理由见 Phase 0 决策记录；与单条审批共享同一 Processor，业务规则（供应商 active、
+     * 预算校验、commitment hook）与权限检查完全一致。
+     */
+    @Override
+    @BizMutation
+    public BatchOperationResult batchApprove(@Name("ids") Collection<String> ids, IServiceContext context) {
+        BatchOperationResult result = BatchOperationResult.forTotal(ids == null ? 0 : ids.size());
+        if (ids == null || ids.isEmpty()) {
+            return result;
+        }
+        for (String id : ids) {
+            try {
+                orderProcessor.approve(id, context);
+                result.recordSuccess();
+            } catch (NopException e) {
+                result.recordFailure(id, e.getErrorCode(), e.getDescription());
+            }
+        }
+        return result;
     }
 
     // ---------- 跨聚合写契约（请购→订单转化、收货进度回写） ----------

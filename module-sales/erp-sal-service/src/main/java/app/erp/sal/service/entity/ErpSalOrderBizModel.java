@@ -3,6 +3,7 @@ package app.erp.sal.service.entity;
 
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.sal.biz.BatchOperationResult;
 import app.erp.sal.biz.IErpSalOrderBiz;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
@@ -17,6 +18,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
@@ -26,6 +28,7 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,6 +63,28 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @BizMutation
     public ErpSalOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
         return orderProcessor.cancel(String.valueOf(orderId), context);
+    }
+
+    /**
+     * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）。逐行调 {@link ErpSalOrderProcessor#approve}；
+     * 行级失败（状态非 SUBMITTED / 业务规则不满足）记入 {@link BatchOperationResult#getFailures()}，不阻塞其他行。
+     */
+    @Override
+    @BizMutation
+    public BatchOperationResult batchApprove(@Name("ids") Collection<String> ids, IServiceContext context) {
+        BatchOperationResult result = BatchOperationResult.forTotal(ids == null ? 0 : ids.size());
+        if (ids == null || ids.isEmpty()) {
+            return result;
+        }
+        for (String id : ids) {
+            try {
+                orderProcessor.approve(id, context);
+                result.recordSuccess();
+            } catch (NopException e) {
+                result.recordFailure(id, e.getErrorCode(), e.getDescription());
+            }
+        }
+        return result;
     }
 
     // ---------- UC-SAL-11 促销规则应用 ----------

@@ -10,6 +10,7 @@ import io.nop.orm.biz.ICrudBiz;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>{
 
@@ -25,6 +26,15 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      */
     @BizMutation
     SchedulingResult scheduleBackward(@Name("scheduleId") Long scheduleId, IServiceContext context);
+
+    /**
+     * F11 批量前向排产（plan 2026-07-22-0444-2 Phase 2）：循环调单条 {@link #scheduleForward}，
+     * 逐行执行（模式 b：行级失败不阻塞其他行），返回 {@link BatchOperationResult} 含成功数 + 失败明细。
+     *
+     * <p>{@code ids} 为 {@code ErpApsSchedule.id} 列表（与单条 {@code scheduleId} 同语义）。
+     */
+    @BizMutation
+    BatchOperationResult batchScheduleForward(@Name("ids") Collection<String> ids, IServiceContext context);
 
     /**
      * 插单区间重排：急单窗口内优先级低于新单的 PLANNED 工序回退 DRAFT 重排，

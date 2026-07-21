@@ -1,6 +1,7 @@
 
 package app.erp.qa.service.entity;
 
+import app.erp.qa.biz.BatchOperationResult;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionLineResultInput;
 import app.erp.qa.dao.entity.ErpQaInspection;
@@ -20,6 +21,7 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import java.util.Objects;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -277,5 +279,29 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
         inspection.setResult(ErpQaConstants.INSPECTION_RESULT_PENDING);
         updateEntity(inspection, null, context);
         return inspection;
+    }
+
+    /**
+     * F11 批量判定合格（plan 2026-07-22-0444-2 Phase 1）。逐行调 {@link #passInspection}；
+     * 行级失败（result 非 PENDING 等）记入 {@link BatchOperationResult#getFailures()}，不阻塞其他行。
+     */
+    @Override
+    @BizMutation
+    public BatchOperationResult batchPassInspection(@Name("ids") Collection<String> ids, IServiceContext context) {
+        BatchOperationResult result = BatchOperationResult.forTotal(ids == null ? 0 : ids.size());
+        if (ids == null || ids.isEmpty()) {
+            return result;
+        }
+        for (String id : ids) {
+            try {
+                passInspection(Long.valueOf(id), context);
+                result.recordSuccess();
+            } catch (NopException e) {
+                result.recordFailure(id, e.getErrorCode(), e.getDescription());
+            } catch (NumberFormatException e) {
+                result.recordFailure(id, "INVALID_ID", "非数字 ID：" + id);
+            }
+        }
+        return result;
     }
 }

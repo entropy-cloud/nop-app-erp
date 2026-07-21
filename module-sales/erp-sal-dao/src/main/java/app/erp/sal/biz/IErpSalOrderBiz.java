@@ -8,6 +8,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 import io.nop.wf.core.biz.IApprovableBiz;
 
+import java.util.Collection;
 import java.util.List;
 
 import app.erp.sal.dao.entity.ErpSalOrder;
@@ -22,6 +23,13 @@ public interface IErpSalOrderBiz extends ICrudBiz<ErpSalOrder>, IApprovableBiz<E
 
     @BizMutation
     ErpSalOrder cancel(@Name("orderId") Long orderId, IServiceContext context);
+
+    /**
+     * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）：循环调单条 {@code ErpSalOrderProcessor.approve}，
+     * 逐行执行（模式 b：行级失败不阻塞其他行），返回 {@link BatchOperationResult} 含成功数 + 失败明细。
+     */
+    @BizMutation
+    BatchOperationResult batchApprove(@Name("ids") Collection<String> ids, IServiceContext context);
 
     /**
      * 由报价单派生销售订单（跨聚合写：报价 APPROVED+已确认 → 新建订单 + 行 + 回链 quotationId）。

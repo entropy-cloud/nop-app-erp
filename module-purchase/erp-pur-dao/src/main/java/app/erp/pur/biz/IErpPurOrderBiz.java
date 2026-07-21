@@ -8,6 +8,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 import io.nop.wf.core.biz.IApprovableBiz;
 
+import java.util.Collection;
 import java.util.List;
 
 import app.erp.pur.dao.entity.ErpPurOrder;
@@ -22,6 +23,16 @@ public interface IErpPurOrderBiz extends ICrudBiz<ErpPurOrder>, IApprovableBiz<E
 
     @BizMutation
     ErpPurOrder cancel(@Name("orderId") Long orderId, IServiceContext context);
+
+    /**
+     * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）：循环调单条 {@code ErpPurOrderProcessor.approve}，
+     * 逐行执行（模式 b：行级失败不阻塞其他行），返回 {@link BatchOperationResult} 含成功数 + 失败明细。
+     *
+     * <p>仅当行 {@code approveStatus=SUBMITTED} 才会被推进到 APPROVED；其他状态记入 failures（错误码 = 单条
+     * 审批抛出的 {@code ERR_ORDER_ILLEGAL_STATUS_TRANSITION}）。
+     */
+    @BizMutation
+    BatchOperationResult batchApprove(@Name("ids") Collection<String> ids, IServiceContext context);
 
     /**
      * 由请购单派生采购订单（跨聚合写：请购 APPROVED → 新建订单 + 行 + 回链 requisitionId）。

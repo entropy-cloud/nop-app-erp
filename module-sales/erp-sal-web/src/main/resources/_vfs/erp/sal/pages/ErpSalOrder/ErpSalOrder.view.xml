@@ -158,6 +158,15 @@
 
     <pages>
         <crud name="main">
+            <listActions>
+                <action id="batch-approve-button" label="批量审批" level="success" icon="fa fa-check-circle-o" batch="true">
+                    <api url="@mutation:ErpSalOrder__batchApprove?ids=$ids"/>
+                    <confirmText>确认批量审批选中的销售订单？仅 SUBMITTED 状态的单据会被审批，其他状态将记入失败清单。</confirmText>
+                    <messages>
+                        <success>批量审批已执行（详见返回结果）</success>
+                    </messages>
+                </action>
+            </listActions>
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>

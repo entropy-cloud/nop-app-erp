@@ -86,7 +86,23 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <listActions>
+                <action id="auto-reconcile-button" label="自动核销" level="primary" icon="fa fa-magic">
+                    <api url="@mutation:ErpFinReconciliation__runAutoReconciliation">
+                        <data>
+                            <direction>${direction | default:'RECEIVABLE'}</direction>
+                            <partnerId>${partnerId | default:null}</partnerId>
+                            <strategy>${strategy | default:null}</strategy>
+                        </data>
+                    </api>
+                    <confirmText>确认执行自动核销？系统将按 FIFO 策略匹配 OPEN/PARTIAL 收付款项与发票项。配置标志 erp-fin.auto-reconcile 必须开启，否则操作将被拒绝。</confirmText>
+                    <messages>
+                        <success>自动核销已完成（详见返回结果）</success>
+                    </messages>
+                </action>
+            </listActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

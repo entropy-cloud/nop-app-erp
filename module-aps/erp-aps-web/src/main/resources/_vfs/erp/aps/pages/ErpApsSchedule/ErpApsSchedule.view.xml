@@ -124,6 +124,15 @@
 
     <pages>
         <crud name="main">
+            <listActions>
+                <action id="batch-schedule-forward-button" label="批量前向排程" level="primary" icon="fa fa-forward" batch="true">
+                    <api url="@mutation:ErpApsOperationOrder__batchScheduleForward?ids=$ids"/>
+                    <confirmText>确认对选中的排程方案批量执行前向排程？失败方案将记入失败清单，不阻塞其他方案。</confirmText>
+                    <messages>
+                        <success>批量前向排程已执行（详见返回结果）</success>
+                    </messages>
+                </action>
+            </listActions>
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>

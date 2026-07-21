@@ -9,6 +9,7 @@ import io.nop.orm.biz.ICrudBiz;
 import io.nop.wf.core.biz.IApprovableBiz;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -77,4 +78,13 @@ public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection>, IApprova
      */
     @BizMutation
     ErpQaInspection reInspect(@Name("inspectionId") Long inspectionId, IServiceContext context);
+
+    /**
+     * F11 批量判定合格（plan 2026-07-22-0444-2 Phase 1）：循环调单条 {@link #passInspection}，
+     * 逐行执行（模式 b：行级失败不阻塞其他行），返回 {@link BatchOperationResult} 含成功数 + 失败明细。
+     *
+     * <p>仅当行 {@code result=PENDING} 才会被推进到 ACCEPTED；其他状态记入 failures。
+     */
+    @BizMutation
+    BatchOperationResult batchPassInspection(@Name("ids") Collection<String> ids, IServiceContext context);
 }

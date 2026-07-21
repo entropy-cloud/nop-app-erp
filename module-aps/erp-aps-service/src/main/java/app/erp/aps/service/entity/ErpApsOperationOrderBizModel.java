@@ -7,6 +7,7 @@ import app.erp.aps.biz.CtpResult;
 import app.erp.aps.biz.IErpApsAtpCtpService;
 import app.erp.aps.biz.IErpApsOperationOrderBiz;
 import app.erp.aps.biz.SchedulingResult;
+import app.erp.aps.biz.BatchOperationResult;
 import app.erp.aps.dao.entity.ErpApsOperationOrder;
 import app.erp.aps.service.ErpApsConstants;
 import app.erp.aps.service.processor.ErpApsSchedulingProcessor;
@@ -14,12 +15,14 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import io.nop.biz.crud.EntityData;
 
 @BizModel("ErpApsOperationOrder")
@@ -54,6 +57,30 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @BizMutation
     public SchedulingResult scheduleBackward(@Name("scheduleId") Long scheduleId, IServiceContext context) {
         return schedulingProcessor.scheduleBackward(scheduleId, context);
+    }
+
+    /**
+     * F11 批量前向排产（plan 2026-07-22-0444-2 Phase 2）。逐行调 {@link #scheduleForward}；
+     * 行级失败（排程引擎异常）记入 {@link BatchOperationResult#getFailures()}，不阻塞其他行。
+     */
+    @Override
+    @BizMutation
+    public BatchOperationResult batchScheduleForward(@Name("ids") Collection<String> ids, IServiceContext context) {
+        BatchOperationResult result = BatchOperationResult.forTotal(ids == null ? 0 : ids.size());
+        if (ids == null || ids.isEmpty()) {
+            return result;
+        }
+        for (String id : ids) {
+            try {
+                scheduleForward(Long.valueOf(id), context);
+                result.recordSuccess();
+            } catch (NopException e) {
+                result.recordFailure(id, e.getErrorCode(), e.getDescription());
+            } catch (NumberFormatException e) {
+                result.recordFailure(id, "INVALID_ID", "非数字 ID：" + id);
+            }
+        }
+        return result;
     }
 
     @Override

@@ -242,6 +242,32 @@
 
     <pages>
         <crud name="main">
+            <listActions>
+                <action id="batch-active-button" label="批量启用" level="success" icon="fa fa-check-circle-o" batch="true">
+                    <api url="@mutation:ErpMdPartner__batchUpdate">
+                        <data>
+                            <ids>${ids | split:','}</ids>
+                            <data>{status:'ACTIVE'}</data>
+                        </data>
+                    </api>
+                    <confirmText>确认批量启用选中的往来单位？</confirmText>
+                    <messages>
+                        <success>批量启用已完成</success>
+                    </messages>
+                </action>
+                <action id="batch-inactive-button" label="批量停用" level="warning" icon="fa fa-pause-circle-o" batch="true">
+                    <api url="@mutation:ErpMdPartner__batchUpdate">
+                        <data>
+                            <ids>${ids | split:','}</ids>
+                            <data>{status:'INACTIVE'}</data>
+                        </data>
+                    </api>
+                    <confirmText>确认批量停用选中的往来单位？已开单据不受影响，但新单据将不可使用。</confirmText>
+                    <messages>
+                        <success>批量停用已完成</success>
+                    </messages>
+                </action>
+            </listActions>
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>

@@ -128,6 +128,15 @@
 
     <pages>
         <crud name="main">
+            <listActions>
+                <action id="batch-pass-button" label="批量判合格" level="success" icon="fa fa-check-circle-o" batch="true">
+                    <api url="@mutation:ErpQaInspection__batchPassInspection?ids=$ids"/>
+                    <confirmText>确认批量判定选中的质检单为合格？仅 PENDING 状态的质检单会被判定，其他状态将记入失败清单。</confirmText>
+                    <messages>
+                        <success>批量判合格已执行（详见返回结果）</success>
+                    </messages>
+                </action>
+            </listActions>
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
