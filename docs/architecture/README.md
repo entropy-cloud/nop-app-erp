@@ -53,3 +53,4 @@ Use `docs/design/` for app-layer feature and business design. Use `docs/architec
 - `b2b-integration.md` - B2B **集成契约层**（EDI 格式 SPI 适用性派发 + 信封状态机 + ASN 入站、Webhook、技术边界）；**业务语义**（状态机业务含义、用例、页面）归 `docs/design/b2b/README.md`，两者相互引用
 - `competitive-comparison.md` - 竞品架构对标（Odoo/ERPNext/metasfresh/iDempiere/Tryton/Openbravo/MixERP），8 个"超越点"杠杆与汇总表、诚实声明
 - `wf-integration-design.md` - 审批流集成（ERP 应用层落位）：哪些 ERP 单据标 `use-approval`、ERP 业务联动如何在 xbiz 注入（`append`/`<observes>`）、首批 WORKFLOW 实体。**平台级设计权威在 nop-entropy**（`ai-dev/design/nop-wf/approvable-entity-design.md` + `docs-for-ai/03-runbooks/enable-approval-on-entity.md`）
+- `business-module-metadata.md` - 业务模块元数据 BT5 风格（D2，plan `2026-07-21-2225-3`：`_module-meta.json` 扩展 schema version+businessDependencies+optionalFeatures + meta 模块手写 `module-meta.yaml` 源经 `gen-meta.xgen` overlay 叠加不触 ORM + 运行时读取器（`app-erp-all`）依赖完整性校验 + 与 Maven POM/ERP5 BT5 边界 + 反模式自检表）

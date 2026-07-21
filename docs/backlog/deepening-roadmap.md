@@ -38,7 +38,7 @@
 | Finance | 3 层过账引擎、多账套、坏账 Allowance、汇兑损益、期间管理、预算基础 | GL 映射规则表（P1）、预算多年度/承付款（P2）、多公司运营深度（P2） |
 | Manufacturing | MRP 单次确定性计算、APS 排程、SPC、NCR/CAPA | MRP/DRP 多场景仿真引擎（P1） |
 | Master Data | Partner/Employee/Organization 分离实体 | 统一 Party 身份查询（P1）、跨境贸易字段（P2）、日期范围有效性模式（P2） |
-| Cross-cutting | integration-pattern.md webhooks | 外部 API 集成参考模式（P1）、业务模块元数据 BT5 风格（P2） |
+| Cross-cutting | integration-pattern.md webhooks | 外部 API 集成参考模式（P1）✅、业务模块元数据 BT5 风格（P2）✅ |
 | Inventory | 3 层模型 + 加权移动平均/FIFO/标准成本 | 成本计算子计算器注入模式文档化（P1） ✅ D3 done |
 | Platform | Maven 模块编译期依赖 | 插件热管理可行性研究（P3） |
 
@@ -71,7 +71,7 @@
 | Work Item | Status | Owner Doc | Dependencies | Platform Reuse |
 |-----------|--------|-----------|--------------|----------------|
 | D1: External API Integration Reference Pattern | done | `docs/architecture/external-api-integration-pattern.md` (**NEW**) | | GraphQL driver, xpl, IoC |
-| D2: Business Module Metadata (BT5-style) | todo | `docs/architecture/business-module-metadata.md` (**NEW**) | | module-meta.json generation pipeline |
+| D2: Business Module Metadata (BT5-style) | done | `docs/architecture/business-module-metadata.md` (**NEW**) | | module-meta.json generation pipeline |
 | D3: Cost Calculation Sub-Calculator Injection | done | `docs/design/finance/costing-methods.md` (**EXPAND**) | | existing CostingStrategy hierarchy |
 | D4: Plugin Hot Management Research | todo | `docs/analysis/plugin-hot-management-research.md` (**NEW**) | | P3 feasibility study |
 
@@ -315,3 +315,26 @@ D3（Cost Calculation Sub-Calculator Injection）已落地，状态 `todo → do
 2. Each work item requires an independent closure audit before `todo → done`
 3. Work items that discover new platform capabilities should update the Platform Reuse section
 4. 涉及 ORM 变更的工作项，mission driver 在实施时自动起草含 ORM 变更的计划并执行
+
+## 8.8 D2 落地证据（2026-07-22）
+
+D2（Business Module Metadata BT5-style）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-21-2225-3-business-module-metadata-bt5.md`（3 Phase 全 done：Phase 1 owner doc NEW + 4 Decisions / Phase 2 gen-meta.xgen 扩展 + 运行时读取器 + 单测 + purchase 试点 / Phase 3 全 19 域应用 + owner doc 回链 + roadmap 同步）。含 2 轮独立草案审查（iteration 1 needs-revision → iteration 2 acceptable-as-is）
+- **Owner Doc**：`docs/architecture/business-module-metadata.md`（**NEW** ~200 行，8 节完整：目的与范围 + Maven POM/平台 module-meta.json 边界 / Schema 字段表（Decision A）+ 版本号约定（Decision B）/ 生成管线扩展（Decision C，meta 模块 `precompile/module-meta.yaml` 手写源 + `gen-meta.xgen` overlay 不触 ORM）/ 运行时读取器契约（Decision D，app-erp-all 归属）/ ERP5 BT5 对照 / D4 关系（信息输入非硬依赖，D4 仅由 D1 解锁）/ 反模式自检表 8 项 / 落地证据）
+- **4 Decisions 裁决**：
+  - **A schema 字段集** = 候选 (a) 三 optional 字段（version + businessDependencies + optionalFeatures），否决 minPlatformVersion（Maven 已表达）与更粗二字段（config-gated 特性散布需统一清单）
+  - **B 版本号约定** = 候选 (a) SemVer 独立于 `ext:mavenVersion`，技术版本与业务版本解耦，不触碰既有 13 个 ext: 属性
+  - **C 生成管线扩展点** = 候选 (a) meta 模块手写 `module-meta.yaml`，否决 ORM 根 ext: 新属性（D2 不在 §8 ORM 授权清单 + AGENTS.md 硬停止 + roadmap「仅 module-meta.json 变更」），残留风险 = yaml moduleId 一致性由 gen-meta.xgen 校验
+  - **D 读取器归属** = 候选 (a) `app-erp-all`，否决新建 module-sys（增构建复杂度）与平台层（应用数据不下沉）
+- **生成管线扩展**：全 19 个 `erp-*-meta/precompile/gen-meta.xgen` 在 `renderModel` 后叠加 overlay 段（`JsonTool.parseYaml` 解析手写 yaml → moduleId 一致性校验 `IllegalArgumentException` → 合并 3 字段回写）。**不触 ORM 源模型**。向后兼容验证：yaml 缺失模块生成结果与现状一致（仅 4 既有字段）
+- **运行时读取器**（`app-erp-all` 新增模块 `app/all`）：
+  - `ModuleMetaReader`（POJO，经 `ModuleManager` + `VirtualFileSystem` 扫描）：`listModules`/`getModule`/`checkDependencyIntegrity`（存在性 + 精确版本匹配，不做 SemVer 范围求解）/`listOptionalFeatures`
+  - `ErpModuleMetaBizModel`（`@BizQuery` 诊断端点）+ `ErpModuleMetaErrors`（`erp.err.module-meta.dependency-missing` / `version-mismatch`，供硬失败场景）
+  - `ModuleMetaBean`/`DependencyIntegrityResult` DTO
+- **19 yaml 源应用**：全 19 域 `precompile/module-meta.yaml` 手写源（version=1.0.0 + businessDependencies 按真实跨域 Maven 依赖 + optionalFeatures 从 `Erp*Constants.java` `*_ENABLED` 镜像）。省略 businessDependencies：master-data（DAG 根）、notify（跨域基础设施）。省略 optionalFeatures：aps/logistics/b2b（无 config-gated 特性）
+- **测试基线**：
+  - `TestModuleMetaReader`（**NEW**，7 场景全绿）：多模块扫描（19 erp 域 + version 全声明）/ 依赖完整性正路径 / 缺失依赖负路径 / 版本不匹配负路径 / 特性清单查询 / 向后兼容（DAG 根省略 businessDependencies）/ 跨域依赖矩阵抽样（finance/manufacturing/maintenance 与 §4.1 DAG 一致）
+  - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（codegen 管线扩展 + 19 yaml 源 + app-erp-all 新模块不破坏既有 154 模块基线）
+  - 19 个 `_module-meta.json` 全 well-formed（`python -m json.tool` 校验）且含 version 字段
+- **Deferred successor**：版本范围求解器（SemVer range resolution，触发：模块业务版本数 > 3 + 不兼容升级场景）/ SaaS 多租户版本管理编排（触发：SaaS 多租户部署 + tenant-model 集成授权）/ D4 插件热管理研究（D2 提供元数据信息输入；D4 仅由 D1 解锁，见 §7 mermaid `D1 --> D4`）

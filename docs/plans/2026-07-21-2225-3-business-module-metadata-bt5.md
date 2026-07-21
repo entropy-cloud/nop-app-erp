@@ -1,7 +1,7 @@
 # 2026-07-21-2225-3-business-module-metadata-bt5 业务模块元数据 BT5 风格（D2）
 
-> Plan Status: active
-> Last Reviewed: 2026-07-21
+> Plan Status: completed
+> Last Reviewed: 2026-07-22
 > Source: `docs/backlog/deepening-roadmap.md` §Milestone D / D2（`todo`）；`docs/analysis/erp-survey/2026-07-20-post-survey-strategic-gaps.md` §3.12；`docs/analysis/erp-survey/2026-07-20-0000-erp5-compare.md` §4 / 建议 3
 > Related: `docs/architecture/external-api-integration-pattern.md`（§1 主题边界声明）、`docs/architecture/domain-module-split-analysis.md`（模块链）、`docs/plans/2026-07-21-1206-3-external-api-integration-reference-pattern.md`（D1 引用 D2 为独立主题）
 > Audit: required
@@ -64,84 +64,84 @@
 
 ### Phase 1 - owner doc NEW + schema 裁决
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/business-module-metadata.md`（NEW）
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Add`
 - Prereqs: 无
 
-- [ ] **Decision A — schema 字段集**：裁决 module-meta.json 扩展字段。候选：(a) `version`（字符串，模块业务版本）+ `businessDependencies`（数组，每项 `{moduleId, version?}`）+ `optionalFeatures`（数组，每项 `{feature, configKey, default}`）；(b) 更细粒度含 `minPlatformVersion`；(c) 更粗仅 version + businessDependencies。**预期裁决=a**（首版轻量，向后兼容），记录选择 + 替代方案 + 残留风险（范围求解 successor）
+- [x] **Decision A — schema 字段集**：裁决 module-meta.json 扩展字段。候选：(a) `version`（字符串，模块业务版本）+ `businessDependencies`（数组，每项 `{moduleId, version?}`）+ `optionalFeatures`（数组，每项 `{feature, configKey, default}`）；(b) 更细粒度含 `minPlatformVersion`；(c) 更粗仅 version + businessDependencies。**预期裁决=a**（首版轻量，向后兼容），记录选择 + 替代方案 + 残留风险（范围求解 successor）
   - Skill: `none`
-- [ ] **Decision B — 版本号约定**：裁决业务版本号格式与既有 `ext:mavenVersion=1.0-SNAPSHOT` 的关系。候选：(a) SemVer `MAJOR.MINOR.PATCH`，**独立于** `ext:mavenVersion`（理由：Maven SNAPSHOT 不表达业务变更，技术版本与业务版本解耦）；(b) 派生自 `ext:mavenVersion`；(c) 派生自 git tag。**预期裁决=a**，记录理由 + 与既有 13 个 ext: 属性的边界（本计划只新增业务 `version`，不触碰既有 ext:mavenVersion/platformVersion）
+- [x] **Decision B — 版本号约定**：裁决业务版本号格式与既有 `ext:mavenVersion=1.0-SNAPSHOT` 的关系。候选：(a) SemVer `MAJOR.MINOR.PATCH`，**独立于** `ext:mavenVersion`（理由：Maven SNAPSHOT 不表达业务变更，技术版本与业务版本解耦）；(b) 派生自 `ext:mavenVersion`；(c) 派生自 git tag。**预期裁决=a**，记录理由 + 与既有 13 个 ext: 属性的边界（本计划只新增业务 `version`，不触碰既有 ext:mavenVersion/platformVersion）
   - Skill: `none`
-- [ ] **Decision C — 生成管线扩展点（源文件位置）**：裁决新字段从何而来。候选：(a) meta 模块内独立手写源文件 `module-<domain>/erp-<short>-meta/precompile/module-meta.yaml`（与 ORM 源模型解耦，`gen-meta.xgen` 在读 ORM 根之后叠加此文件），**预期裁决=a**；(b) ORM 根 `ext:version` 等新属性——**否决**：D2 不在 deepening-roadmap §8 ORM 授权清单，加 ext: 属性属 ORM 源模型变更触发 AGENTS.md 硬停止，与 roadmap「D2 仅 module-meta.json 变更」框架冲突；(c) POM 派生。记录选择 + 否决理由 + 残留风险（手写 yaml 与 ORM 根 moduleId 须保持一致，由 gen-meta.xgen 校验）
+- [x] **Decision C — 生成管线扩展点（源文件位置）**：裁决新字段从何而来。候选：(a) meta 模块内独立手写源文件 `module-<domain>/erp-<short>-meta/precompile/module-meta.yaml`（与 ORM 源模型解耦，`gen-meta.xgen` 在读 ORM 根之后叠加此文件），**预期裁决=a**；(b) ORM 根 `ext:version` 等新属性——**否决**：D2 不在 deepening-roadmap §8 ORM 授权清单，加 ext: 属性属 ORM 源模型变更触发 AGENTS.md 硬停止，与 roadmap「D2 仅 module-meta.json 变更」框架冲突；(c) POM 派生。记录选择 + 否决理由 + 残留风险（手写 yaml 与 ORM 根 moduleId 须保持一致，由 gen-meta.xgen 校验）
   - Skill: `nop-backend-dev`
-- [ ] **Decision D — 读取器归属模块**：裁决运行时读取器实现位置。候选：(a) `app-erp-all`（聚合 app，已知全部模块）；(b) 新建 `module-sys` 风格基础设施模块；(c) `nop-entropy` 平台层。**预期裁决=a**（应用层元数据归应用，避免改平台），记录理由
+- [x] **Decision D — 读取器归属模块**：裁决运行时读取器实现位置。候选：(a) `app-erp-all`（聚合 app，已知全部模块）；(b) 新建 `module-sys` 风格基础设施模块；(c) `nop-entropy` 平台层。**预期裁决=a**（应用层元数据归应用，避免改平台），记录理由
   - Skill: `nop-backend-dev`
-- [ ] **Add**：NEW `docs/architecture/business-module-metadata.md`，含 8 节：目的与范围（与 Maven POM/平台 module-meta.json 的边界）/ schema 字段表（Decision A）+ 版本号约定（Decision B）/ 生成管线扩展（Decision C，含 meta 模块 `precompile/module-meta.yaml` 手写源 + `gen-meta.xgen` 叠加读取改造点）/ 运行时读取器契约（Decision D）/ 与 ERP5 BT5 对照（dependency_list / version / BusinessTemplate 机制）/ 与 D4 插件热管理的关系（D2 提供元数据信息输入，D4 提供生命周期，**非硬依赖**——D4 仅由 D1 解锁，见 roadmap §7 mermaid）/ 反模式自检表 / 落地证据
+- [x] **Add**：NEW `docs/architecture/business-module-metadata.md`，含 8 节：目的与范围（与 Maven POM/平台 module-meta.json 的边界）/ schema 字段表（Decision A）+ 版本号约定（Decision B）/ 生成管线扩展（Decision C，含 meta 模块 `precompile/module-meta.yaml` 手写源 + `gen-meta.xgen` 叠加读取改造点）/ 运行时读取器契约（Decision D）/ 与 ERP5 BT5 对照（dependency_list / version / BusinessTemplate 机制）/ 与 D4 插件热管理的关系（D2 提供元数据信息输入，D4 提供生命周期，**非硬依赖**——D4 仅由 D1 解锁，见 roadmap §7 mermaid）/ 反模式自检表 / 落地证据
   - Skill: `none`
 
 Exit Criteria:
 
 > 本阶段交付 owner doc + 4 项 Decision，解除 Phase 2/3 阻塞。无需仓库级验证。
 
-- [ ] `docs/architecture/business-module-metadata.md` 存在且含 8 节骨架
-- [ ] 4 项 Decision（A/B/C/D）均在 owner doc 内记录选择 + 替代方案 + 残留风险
-- [ ] meta 模块 `precompile/module-meta.yaml` 手写源约定 + `gen-meta.xgen` 叠加读取改造点已显式列出（**不**触 ORM 源模型）
+- [x] `docs/architecture/business-module-metadata.md` 存在且含 8 节骨架
+- [x] 4 项 Decision（A/B/C/D）均在 owner doc 内记录选择 + 替代方案 + 残留风险
+- [x] meta 模块 `precompile/module-meta.yaml` 手写源约定 + `gen-meta.xgen` 叠加读取改造点已显式列出（**不**触 ORM 源模型）
 
 ### Phase 2 - 生成管线扩展 + 运行时读取器
 
-Status: planned
+Status: completed
 Targets: `module-<domain>/erp-<short>-meta/precompile/gen-meta.xgen`、`module-<domain>/erp-<short>-meta/precompile/module-meta.yaml`（新源文件，**不**触 ORM）、读取器（按 Decision D 归属）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 Decision A/C/D 裁决完成
 
-- [ ] **Add**：扩展 `gen-meta.xgen` 模板在读完 ORM 根后**叠加读取** meta 模块内手写源 `precompile/module-meta.yaml`（若存在），合并到 `_module-meta.json` 输出（向后兼容：yaml 缺失时生成结果与现状一致，不输出新 JSON key）；模板内置一致性校验：yaml 中 moduleId 须与 ORM 根一致，否则 codegen 期报错
+- [x] **Add**：扩展 `gen-meta.xgen` 模板在读完 ORM 根后**叠加读取** meta 模块内手写源 `precompile/module-meta.yaml`（若存在），合并到 `_module-meta.json` 输出（向后兼容：yaml 缺失时生成结果与现状一致，不输出新 JSON key）；模板内置一致性校验：yaml 中 moduleId 须与 ORM 根一致，否则 codegen 期报错
   - Skill: `nop-backend-dev`
-- [ ] **Add**：运行时读取器（按 Decision D 归属，预期 `app-erp-all`）：扫描 classpath 全部 `_module-meta.json` → 反序列化 → 提供查询 API（`listModules` / `getModule(moduleId)` / `checkDependencyIntegrity` / `listOptionalFeatures`）；`checkDependencyIntegrity` 校验 `businessDependencies` 引用的 moduleId 存在 + 精确版本匹配（首版不做范围求解，归 successor）
+- [x] **Add**：运行时读取器（按 Decision D 归属，预期 `app-erp-all`）：扫描 classpath 全部 `_module-meta.json` → 反序列化 → 提供查询 API（`listModules` / `getModule(moduleId)` / `checkDependencyIntegrity` / `listOptionalFeatures`）；`checkDependencyIntegrity` 校验 `businessDependencies` 引用的 moduleId 存在 + 精确版本匹配（首版不做范围求解，归 successor）
   - Skill: `nop-backend-dev`
-- [ ] **Add**：错误码（如 `ERP_MODULE_DEPENDENCY_MISSING` / `ERP_MODULE_VERSION_MISMATCH`）+ 诊断 `@BizQuery` 暴露（供运维/升级前检查）
+- [x] **Add**：错误码（如 `ERP_MODULE_DEPENDENCY_MISSING` / `ERP_MODULE_VERSION_MISMATCH`）+ 诊断 `@BizQuery` 暴露（供运维/升级前检查）
   - Skill: `nop-backend-dev`
-- [ ] **Proof**：单测覆盖读取器（多模块 classpath 扫描 + 依赖完整性正负路径 + 特性清单查询 + 缺失字段向后兼容）；codegen 模板变更在 1 个试点模块（purchase，新建 `erp-pur-meta/precompile/module-meta.yaml`）验证生成新字段 JSON + 一致性校验负路径（moduleId 不匹配时 codegen 期报错）
+- [x] **Proof**：单测覆盖读取器（多模块 classpath 扫描 + 依赖完整性正负路径 + 特性清单查询 + 缺失字段向后兼容）；codegen 模板变更在 1 个试点模块（purchase，新建 `erp-pur-meta/precompile/module-meta.yaml`）验证生成新字段 JSON + 一致性校验负路径（moduleId 不匹配时 codegen 期报错）
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > 本阶段交付可用的生成管线扩展 + 读取器 + 单测，解除 Phase 3 全域应用阻塞。仅需本模块 + 试点模块 localized 验证。
 
-- [ ] gen-meta.xgen 扩展（叠加读 yaml，**不**触 ORM）+ 读取器 + 错误码实现落盘，单测全绿（含向后兼容场景 + 一致性校验负路径）
-- [ ] 试点模块（purchase）新建 `erp-pur-meta/precompile/module-meta.yaml` + codegen 生成含新字段的 `_module-meta.json`（localized codegen 验证）
-- [ ] 读取器所在模块 `mvn test` 通过（localized）
+- [x] gen-meta.xgen 扩展（叠加读 yaml，**不**触 ORM）+ 读取器 + 错误码实现落盘，单测全绿（含向后兼容场景 + 一致性校验负路径）
+- [x] 试点模块（purchase）新建 `erp-pur-meta/precompile/module-meta.yaml` + codegen 生成含新字段的 `_module-meta.json`（localized codegen 验证）
+- [x] 读取器所在模块 `mvn test` 通过（localized）
 
 ### Phase 3 - 全 18+1 域应用 + owner doc 回链 + roadmap 同步
 
-Status: planned
+Status: completed
 Targets: 全 `module-<domain>/erp-<short>-meta/precompile/module-meta.yaml`（新建手写源，**不**触 ORM 源模型）、全 `_module-meta.json` 再生、`docs/architecture/business-module-metadata.md` 落地证据
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2 生成管线 + 读取器落地
 
-- [ ] **Add**：为全 18+1 域 meta 模块新建 `precompile/module-meta.yaml` 手写源，填入：(1) `version`（初始业务版本，如 `1.0.0`）；(2) `businessDependencies`——**有跨域调用的模块声明**（按 `docs/architecture/domain-module-split-analysis.md` 真实跨域关系，如 finance→[master-data, inventory]、manufacturing→[master-data, inventory, finance]），**无跨域调用的独立模块省略此字段**（如 master-data 不声明）；(3) `optionalFeatures`——从各域 `Erp*Configs.java` 的 config-gated 特性清单抽取（如 finance 的 budget-commitment/roll-forward/cost-adjust-approval/landed-cost-enabled 4 开关）。owner doc 枚举「声明 vs 省略」两类模块清单
+- [x] **Add**：为全 18+1 域 meta 模块新建 `precompile/module-meta.yaml` 手写源，填入：(1) `version`（初始业务版本，如 `1.0.0`）；(2) `businessDependencies`——**有跨域调用的模块声明**（按 `docs/architecture/domain-module-split-analysis.md` 真实跨域关系，如 finance→[master-data, inventory]、manufacturing→[master-data, inventory, finance]），**无跨域调用的独立模块省略此字段**（如 master-data 不声明）；(3) `optionalFeatures`——从各域 `Erp*Configs.java` 的 config-gated 特性清单抽取（如 finance 的 budget-commitment/roll-forward/cost-adjust-approval/landed-cost-enabled 4 开关）。owner doc 枚举「声明 vs 省略」两类模块清单
   - Skill: `nop-backend-dev`
-- [ ] **Add**：触发 `mvn clean install -DskipTests` 增量再生全部 `_module-meta.json`，确认 19 个文件均含新字段且 JSON well-formed；全 workspace BUILD SUCCESS（codegen 管线扩展 + 19 yaml 源不破坏既有 154 模块基线）
+- [x] **Add**：触发 `mvn clean install -DskipTests` 增量再生全部 `_module-meta.json`，确认 19 个文件均含新字段且 JSON well-formed；全 workspace BUILD SUCCESS（codegen 管线扩展 + 19 yaml 源不破坏既有 154 模块基线）
   - Skill: `nop-backend-dev`
-- [ ] **Proof**：读取器 `checkDependencyIntegrity` 在聚合 app 运行时返回全绿（无 missing/mismatch）；抽取 2-3 域交叉核对生成的 businessDependencies 与 `domain-module-split-analysis.md` 真实跨域依赖一致
+- [x] **Proof**：读取器 `checkDependencyIntegrity` 在聚合 app 运行时返回全绿（无 missing/mismatch）；抽取 2-3 域交叉核对生成的 businessDependencies 与 `domain-module-split-analysis.md` 真实跨域依赖一致
   - Skill: `nop-backend-dev`
-- [ ] **Add**：owner doc `docs/architecture/business-module-metadata.md` 补「落地证据」节（生成管线变更 + 19 yaml 源清单 + 声明/省略分类 + 跨域依赖矩阵抽样 + 读取器 API + 测试基线）；交叉回链 `docs/architecture/domain-module-split-analysis.md` + `docs/architecture/README.md` Initial Owner Docs 段追加介绍行
+- [x] **Add**：owner doc `docs/architecture/business-module-metadata.md` 补「落地证据」节（生成管线变更 + 19 yaml 源清单 + 声明/省略分类 + 跨域依赖矩阵抽样 + 读取器 API + 测试基线）；交叉回链 `docs/architecture/domain-module-split-analysis.md` + `docs/architecture/README.md` Initial Owner Docs 段追加介绍行
   - Skill: `none`
-- [ ] **Add**：`docs/backlog/deepening-roadmap.md` D2 行 `todo → done` + §8.x 落地证据段（plan / owner doc NEW / 生成管线 + 读取器 / 19 yaml 源应用 / 测试基线 / deferred successor 含 D4 关系说明）
+- [x] **Add**：`docs/backlog/deepening-roadmap.md` D2 行 `todo → done` + §8.x 落地证据段（plan / owner doc NEW / 生成管线 + 读取器 / 19 yaml 源应用 / 测试基线 / deferred successor 含 D4 关系说明）
   - Skill: `none`
 
 Exit Criteria:
 
-- [ ] 全 18+1 域 meta 模块含新 `precompile/module-meta.yaml` 手写源（**不**触 ORM 源模型）+ 19 个 `_module-meta.json` 再生含新字段且 well-formed
-- [ ] 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（验证 codegen 管线扩展不破坏 154 模块基线）
-- [ ] 读取器依赖完整性校验全绿 + 跨域依赖矩阵抽样与架构文档一致
-- [ ] owner doc 落地证据段 + README 回链 + roadmap §8.x 落盘
+- [x] 全 18+1 域 meta 模块含新 `precompile/module-meta.yaml` 手写源（**不**触 ORM 源模型）+ 19 个 `_module-meta.json` 再生含新字段且 well-formed
+- [x] 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（验证 codegen 管线扩展不破坏 154 模块基线）
+- [x] 读取器依赖完整性校验全绿 + 跨域依赖矩阵抽样与架构文档一致
+- [x] owner doc 落地证据段 + README 回链 + roadmap §8.x 落盘
 
 ## Draft Review Record
 
@@ -152,14 +152,14 @@ Exit Criteria:
 
 > 在所有 Phase Exit Criteria 与下方门控全勾选后关闭。结束时运行一次全仓库 `mvn clean install -DskipTests` + 读取器模块 `mvn test`。
 
-- [ ] 范围内行为完成（owner doc NEW + 生成管线扩展 + 读取器 + 19 个 meta 模块 yaml 源应用；**不**触 ORM 源模型）
-- [ ] 相关文档对齐（business-module-metadata.md NEW + domain-module-split-analysis.md 交叉回链 + architecture/README.md 介绍行 + roadmap §8.x）
-- [ ] 已运行验证：全 workspace `mvn clean install -DskipTests` BUILD SUCCESS + 读取器模块 `mvn test` 全绿 + 19 个 `_module-meta.json` well-formed（`python -m json.tool` 或 jq 校验）
-- [ ] 无范围内项目降级为 deferred/follow-up（版本范围求解、SaaS 编排、插件热管理 D4 显式归 successor 并命名触发条件）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（owner doc NEW + 生成管线扩展 + 读取器 + 19 个 meta 模块 yaml 源应用；**不**触 ORM 源模型）
+- [x] 相关文档对齐（business-module-metadata.md NEW + domain-module-split-analysis.md 交叉回链 + architecture/README.md 介绍行 + roadmap §8.x）
+- [x] 已运行验证：全 workspace `mvn clean install -DskipTests` BUILD SUCCESS + 读取器模块 `mvn test` 全绿 + 19 个 `_module-meta.json` well-formed（`python -m json.tool` 校验）
+- [x] 无范围内项目降级为 deferred/follow-up（版本范围求解、SaaS 编排、插件热管理 D4 显式归 successor 并命名触发条件）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计（本次 closure-audit 独立会话执行，见 Closure 证据）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -183,12 +183,15 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待 Phase 1-3 全部完成 + 独立结束审计通过后填写。
+Status Note: Phase 1-3 全部完成（2026-07-22）。全 workspace `mvn clean install -DskipTests` BUILD SUCCESS + 读取器模块 `mvn test` 7 场景全绿 + 19 个 `_module-meta.json` well-formed 含新字段。Roadmap D2 `todo → done` + §8.8 落地证据落盘。结束审计门控已由独立 closure-audit 子代理（新会话）执行并放行（2026-07-22）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: `<independent auditor — TBD>`
-- Evidence: `<task id / log link / walkthrough record — TBD>`
+- Auditor / Agent: 独立 closure-audit 子代理（新会话，不重用执行者上下文），2026-07-22
+- Evidence: 独立会话针对实时仓库逐项核验。Phase 1 owner doc NEW（`docs/architecture/business-module-metadata.md` 18.4KB，8 节 `[1-8]` 标题全部就位，4 Decisions A/B/C/D 在 §2/§3 内记录选择+替代方案+残留风险）。Phase 2 gen-meta.xgen overlay 实现非空（19 模块均有，purchase 试点含 `IllegalArgumentException` moduleId 一致性校验负路径）+ 读取器 5 类（`app-erp-all/src/main/java/app/erp/all/meta/`：ModuleMetaReader/ErpModuleMetaBizModel/ErpModuleMetaErrors/ModuleMetaBean 132 行/DependencyIntegrityResult 65 行）非空体 + IoC 注册（`app-erp-all/_vfs/app/all/beans/app-service.beans.xml` 含 `app.erp.all.meta.ModuleMetaReader` bean + `ErpModuleMetaBizModel` ioc:type=@bean:id）+ `@BizQuery` 4 方法暴露 GraphQL；`TestModuleMetaReader` 7 个 `@Test` 全绿（list/positive/missing/mismatch/features/backward-compat/cross-domain-sampling）。Phase 3 全 19 `erp-*-meta/precompile/module-meta.yaml` 源 + 19 `src/main/resources/_vfs/erp/*/model/_module-meta.json` 再生含新字段且 well-formed；finance yaml 抽取 6 businessDependencies（md/inv/pur/sal/ast/prj）+ 13 optionalFeatures；master-data 向后兼容省略 businessDependencies；roadmap §8.8 落盘 + D2 `done`；README.md:56 + domain-module-split-analysis.md:188 交叉回链；`docs/logs/2026/07-22.md` 含 BT5/module-meta 条目。
+- Anti-Hollow Check: 读取器 5 类 grep 无 `return null;`/`{}`/TODO/FIXME/placeholder 残留；BizModel 经 `@BizModel("ErpModuleMeta")` + 4 `@BizQuery` 经 GraphQL 可达；ModuleMetaReader 经 IoC bean 注入 BizModel 可达；gen-meta.xgen overlay 在 codegen 期真实写回 `_module-meta.json`（非注册即弃用）。
+- Five-Point Consistency: Plan Status=completed / 三 Phase Status=completed / 三 Phase Exit Criteria 全 `[x]` / Closure Gates 全 `[x]` / Closure evidence 非占位 — 一致。
+- Deferred Honesty: 3 项 Deferred（SemVer 范围求解 / SaaS 编排 / D4 插件热管理）均命名具体触发条件，无范围内 live defect 隐藏。
 
 Follow-up:
 
