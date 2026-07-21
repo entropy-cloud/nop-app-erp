@@ -85,4 +85,19 @@ public interface ErpFinPostingErrors {
     /** 红冲监听者注册中心启动期校验失败：未注册任何监听者（O-19）。 */
     ErrorCode ERR_POSTING_NO_LISTENERS_REGISTERED = ErrorCode.define("erp.err.fin.posting.no-listeners-registered",
             "凭证红冲监听者注册中心启动时未发现任何监听者实现，红冲反写闭环不可用");
+
+    // ===================== GL 映射规则（A1：科目映射规则表 + 解析引擎） =====================
+
+    String ARG_ACCOUNT_KEY = "accountKey";
+    String ARG_DIMENSIONS = "dimensions";
+
+    /**
+     * GL 映射规则缺失：strict-mode（{@code erp-fin.gl-mapping.strict-mode=true}）下，{@code VoucherFact.accountKey}
+     * 已设置但规则表无对应 {@code businessType+accountKey} 任何配置时抛出。
+     * 默认 strict-mode=false（试点期保留 Provider 既有 fallback 行为）。
+     * 权威：{@code docs/design/finance/gl-mapping-rules.md §5.1}。
+     */
+    ErrorCode ERR_GL_MAPPING_NOT_FOUND = ErrorCode.define("erp.err.fin.posting.gl-mapping-not-found",
+            "GL 映射规则缺失: businessType={businessType} accountKey={accountKey} dimensions={dimensions}",
+            ARG_BUSINESS_TYPE, ARG_ACCOUNT_KEY, ARG_DIMENSIONS);
 }

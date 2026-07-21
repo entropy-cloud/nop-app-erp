@@ -1,8 +1,11 @@
 package app.erp.pur.service;
 
+import app.erp.fin.dao.api.IErpFinGlMappingResolver;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
+import app.erp.fin.dao.entity.ErpFinGlMappingRule;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.pur.dao.entity.ErpPurInvoice;
@@ -60,6 +63,8 @@ public class TestErpPurInvoicePosting extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IGraphQLEngine graphQLEngine;
+    @Inject
+    IErpFinGlMappingResolver glMappingResolver;
 
     @Test
     public void testApproveGeneratesApInvoiceVoucherAndPosted() {
@@ -119,6 +124,89 @@ public class TestErpPurInvoicePosting extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    /**
+     * A1 集成测试（plan 2026-07-21-0827-1）：种子 GL 映射 default 规则 priority=0 + 全 NULL 维度 +
+     * targetSubjectCode="9999"（非 Provider 既有 SUBJECT_PURCHASE="1403"），AP_INVOICE 过账 → 凭证 PURCHASE
+     * 行 subjectCode 应为 "9999"（验证 resolver 覆盖生效）。
+     *
+     * <p>本测试是 A1 端到端最小验证：证明 (a) PurAcctDocProvider AP_INVOICE 三行 fact 设置了 accountKey +
+     * (b) ErpFinPostingProcessor.resolveSubjects 注入的 resolver 钩子正确触发 + (c) 默认规则覆盖 fact.subjectCode
+     * 后既有 code→ErpMdSubject 查找流程仍工作。维度特定覆盖（priority≥100 + 具体维度）已在
+     * {@code TestErpFinGlMappingResolver} 单元测试中覆盖 8 场景。
+     */
+    @Test
+    public void testGlMappingRuleOverrideChangesSubjectCode() {
+        final String overrideSubjectCode = "9999";
+
+        seedPeriodAndSubjects();
+        ormTemplate.runInSession(() -> {
+            seedActiveSupplier(SUPPLIER_ID);
+            // 额外种子：覆盖目标科目 + default 规则（priority=0 + 全 NULL 维度 + targetSubjectCode=9999）
+            seedSubject(overrideSubjectCode, "测试覆盖科目");
+            seedGlMappingRule("RULE-IT-OVERRIDE-PURCHASE", "AP_INVOICE", "PURCHASE",
+                    null, null, null, null, null, null,
+                    overrideSubjectCode, 0);
+            seedGlMappingRule("RULE-IT-OVERRIDE-INPUTVAT", "AP_INVOICE", "INPUT_VAT",
+                    null, null, null, null, null, null,
+                    overrideSubjectCode, 0);
+            seedGlMappingRule("RULE-IT-OVERRIDE-AP", "AP_INVOICE", "ACCOUNTS_PAYABLE",
+                    null, null, null, null, null, null,
+                    overrideSubjectCode, 0);
+        });
+        // 测试经 DAO 直建规则绕过 BizModel.save → 需显式失效缓存使 resolver reload
+        glMappingResolver.invalidateCache();
+
+        ErpPurInvoice invoice = invoiceOf("PI-GLMAP-001",
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
+        invoice.setApproveStatus(ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+        ormTemplate.runInSession(() -> saveInvoiceWithLine(invoice));
+
+        assertEquals(0, approve(invoice.getId()).getStatus(), "approve 应成功");
+
+        ErpFinVoucherBillR link = findBillLink(invoice.getCode());
+        assertNotNull(link, "应生成业财回链");
+        ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(link.getVoucherId());
+        assertNotNull(voucher, "凭证应落库");
+
+        List<ErpFinVoucherLine> lines = loadLines(voucher.getId());
+        assertEquals(3, lines.size(), "AP_INVOICE 凭证 3 行");
+        for (ErpFinVoucherLine line : lines) {
+            assertEquals(overrideSubjectCode, line.getSubjectCode(),
+                    "所有 3 行（PURCHASE/INPUT_VAT/ACCOUNTS_PAYABLE）应被 GL 映射规则覆盖为 " + overrideSubjectCode);
+        }
+    }
+
+    private List<ErpFinVoucherLine> loadLines(Long voucherId) {
+        IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        return dao.findAllByQuery(q);
+    }
+
+    private void seedGlMappingRule(String code, String businessType, String accountKey, Long acctSchemaId,
+                                   Long partnerGroupId, Long materialCategoryId, Long warehouseId,
+                                   Long departmentId, Long projectId, String targetSubjectCode, int priority) {
+        IEntityDao<ErpFinGlMappingRule> dao = daoProvider.daoFor(ErpFinGlMappingRule.class);
+        ErpFinGlMappingRule rule = new ErpFinGlMappingRule();
+        rule.setCode(code);
+        rule.setName(code);
+        rule.setOrgId(ORG_ID);
+        rule.setBusinessType(businessType);
+        rule.setAccountKey(accountKey);
+        rule.setAcctSchemaId(acctSchemaId);
+        rule.setPartnerGroupId(partnerGroupId);
+        rule.setMaterialCategoryId(materialCategoryId);
+        rule.setWarehouseId(warehouseId);
+        rule.setDepartmentId(departmentId);
+        rule.setProjectId(projectId);
+        rule.setTargetSubjectCode(targetSubjectCode);
+        rule.setPriority(priority);
+        rule.setIsActive(Boolean.TRUE);
+        dao.saveEntity(rule);
+    }
+
+    // ---------- existing helpers ----------
 
     private ApiResponse<?> approve(Long id) {
         return executeRpc(mutation, "ErpPurInvoice__approve", ApiRequest.build(Map.of("id", String.valueOf(id))));

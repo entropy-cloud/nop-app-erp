@@ -18,6 +18,7 @@ entity:
     ErpFinExpenseClaimLine: Expense Claim Line
     ErpFinFundAccount: Fund Account
     ErpFinGlBalance: GL Balance
+    ErpFinGlMappingRule: GL Mapping Rule
     ErpFinNotesDiscount: Notes Discount
     ErpFinNotesPayable: Notes Payable
     ErpFinNotesReceivable: Notes Receivable
@@ -600,6 +601,43 @@ prop:
       warehouse.name: null
       project: null
       project.name: null
+    ErpFinGlMappingRule:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      businessType: Business Type
+      businessType_label: null
+      accountKey: Account Key
+      accountKey_label: null
+      acctSchemaId: Acct Schema
+      partnerGroupId: Partner Group
+      materialCategoryId: Material Category
+      warehouseId: Warehouse
+      departmentId: Department
+      projectId: Project
+      targetSubjectCode: Target Subject Code
+      priority: Priority
+      isActive: Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      acctSchema: Acct Schema
+      acctSchema.name: Acct Schema
+      materialCategory: Material Category
+      materialCategory.name: Material Category
+      warehouse: Warehouse
+      warehouse.name: Warehouse
+      department: Department
+      department.name: Department
+      project: Project
+      project.name: Project
+      org: Org
+      org.name: Org
     ErpFinNotesDiscount:
       id: ID
       notesReceivableId: Notes Receivable
@@ -974,6 +1012,7 @@ dict:
     erp-fin/voucher-status: Voucher Status
     erp-fin/dc-direction: Debit/Credit Direction
     erp-fin/business-type: Business Type
+    erp-fin/account-key: Account Key
     erp-fin/period-status: Period Status
     erp-fin/fund-account-type: Account Type
     erp-fin/fund-account-status: Account Status
@@ -1072,6 +1111,29 @@ dict.option.label:
     SUBCONTRACT_ISSUE: Subcontract Issue
     SUBCONTRACT_RECEIPT: Subcontract Receipt
     SUBCONTRACT_FEE: Subcontract Processing Fee
+  erp-fin/account-key:
+    PURCHASE: Purchase
+    INPUT_VAT: Input VAT
+    ACCOUNTS_PAYABLE: Accounts Payable
+    BANK_RECV: Bank Receive
+    ADJ_BANK_RECV: Adj Bank Receive
+    ADJ_BANK_PAID: Adj Bank Paid
+    BANK_PAID: Bank Paid
+    INVENTORY: Inventory
+    AP: AP
+    AR: AR
+    OUTPUT_TAX: Output Tax
+    BANK_DEPOSIT: Bank Deposit
+    CASH: Cash
+    FIXED_ASSET: Fixed Asset
+    ACCUMULATED_DEPRECIATION: Accumulated Depreciation
+    DEPRECIATION_EXPENSE: Depreciation Expense
+    SALARY_PAYABLE: Salary Payable
+    SALARY_EXPENSE: Salary Expense
+    TAX_PAYABLE: Tax Payable
+    REVENUE: Revenue
+    COGS: COGS
+    RETAINED_EARNINGS: Retained Earnings
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

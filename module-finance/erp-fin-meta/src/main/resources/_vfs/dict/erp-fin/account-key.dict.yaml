@@ -1,0 +1,95 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 科目映射键
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 采购(在途物资)
+    value: PURCHASE
+    description: 
+  
+  - label: 进项税额
+    value: INPUT_VAT
+    description: 
+  
+  - label: 应付账款
+    value: ACCOUNTS_PAYABLE
+    description: 
+  
+  - label: 银行收款
+    value: BANK_RECV
+    description: 
+  
+  - label: 银行对账调整-收款方
+    value: ADJ_BANK_RECV
+    description: 
+  
+  - label: 银行对账调整-付款方
+    value: ADJ_BANK_PAID
+    description: 
+  
+  - label: 银行付款
+    value: BANK_PAID
+    description: 
+  
+  - label: 存货
+    value: INVENTORY
+    description: 
+  
+  - label: 应付(AP通用)
+    value: AP
+    description: 
+  
+  - label: 应收(AR通用)
+    value: AR
+    description: 
+  
+  - label: 销项税额
+    value: OUTPUT_TAX
+    description: 
+  
+  - label: 银行存款
+    value: BANK_DEPOSIT
+    description: 
+  
+  - label: 库存现金
+    value: CASH
+    description: 
+  
+  - label: 固定资产
+    value: FIXED_ASSET
+    description: 
+  
+  - label: 累计折旧
+    value: ACCUMULATED_DEPRECIATION
+    description: 
+  
+  - label: 折旧费用
+    value: DEPRECIATION_EXPENSE
+    description: 
+  
+  - label: 应付职工薪酬
+    value: SALARY_PAYABLE
+    description: 
+  
+  - label: 薪酬费用
+    value: SALARY_EXPENSE
+    description: 
+  
+  - label: 应交税费
+    value: TAX_PAYABLE
+    description: 
+  
+  - label: 主营业务收入
+    value: REVENUE
+    description: 
+  
+  - label: 主营业务成本
+    value: COGS
+    description: 
+  
+  - label: 未分配利润
+    value: RETAINED_EARNINGS
+    description: 
+  

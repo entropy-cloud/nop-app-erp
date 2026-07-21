@@ -53,6 +53,14 @@
         <property name="bizObjName" value="ErpFinEmployeeAdvance"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinGlMappingRuleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinGlMappingRule" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinGlMappingRuleBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinGlMappingRule"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinVoucherTemplateLine" class="io.nop.biz.proxy.BizProxyFactoryBean"

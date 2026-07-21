@@ -114,6 +114,32 @@
             <option code="SUBCONTRACT_FEE" label="委外加工费" value="SUBCONTRACT_FEE"
                     i18n-en:label="Subcontract Processing Fee"/>
         </dict>
+        <dict label="科目映射键" name="erp-fin/account-key" valueType="string" i18n-en:label="Account Key">
+            <option code="PURCHASE" label="采购(在途物资)" value="PURCHASE" i18n-en:label="Purchase"/>
+            <option code="INPUT_VAT" label="进项税额" value="INPUT_VAT" i18n-en:label="Input VAT"/>
+            <option code="ACCOUNTS_PAYABLE" label="应付账款" value="ACCOUNTS_PAYABLE" i18n-en:label="Accounts Payable"/>
+            <option code="BANK_RECV" label="银行收款" value="BANK_RECV" i18n-en:label="Bank Receive"/>
+            <option code="ADJ_BANK_RECV" label="银行对账调整-收款方" value="ADJ_BANK_RECV" i18n-en:label="Adj Bank Receive"/>
+            <option code="ADJ_BANK_PAID" label="银行对账调整-付款方" value="ADJ_BANK_PAID" i18n-en:label="Adj Bank Paid"/>
+            <option code="BANK_PAID" label="银行付款" value="BANK_PAID" i18n-en:label="Bank Paid"/>
+            <option code="INVENTORY" label="存货" value="INVENTORY" i18n-en:label="Inventory"/>
+            <option code="AP" label="应付(AP通用)" value="AP" i18n-en:label="AP"/>
+            <option code="AR" label="应收(AR通用)" value="AR" i18n-en:label="AR"/>
+            <option code="OUTPUT_TAX" label="销项税额" value="OUTPUT_TAX" i18n-en:label="Output Tax"/>
+            <option code="BANK_DEPOSIT" label="银行存款" value="BANK_DEPOSIT" i18n-en:label="Bank Deposit"/>
+            <option code="CASH" label="库存现金" value="CASH" i18n-en:label="Cash"/>
+            <option code="FIXED_ASSET" label="固定资产" value="FIXED_ASSET" i18n-en:label="Fixed Asset"/>
+            <option code="ACCUMULATED_DEPRECIATION" label="累计折旧" value="ACCUMULATED_DEPRECIATION"
+                    i18n-en:label="Accumulated Depreciation"/>
+            <option code="DEPRECIATION_EXPENSE" label="折旧费用" value="DEPRECIATION_EXPENSE"
+                    i18n-en:label="Depreciation Expense"/>
+            <option code="SALARY_PAYABLE" label="应付职工薪酬" value="SALARY_PAYABLE" i18n-en:label="Salary Payable"/>
+            <option code="SALARY_EXPENSE" label="薪酬费用" value="SALARY_EXPENSE" i18n-en:label="Salary Expense"/>
+            <option code="TAX_PAYABLE" label="应交税费" value="TAX_PAYABLE" i18n-en:label="Tax Payable"/>
+            <option code="REVENUE" label="主营业务收入" value="REVENUE" i18n-en:label="Revenue"/>
+            <option code="COGS" label="主营业务成本" value="COGS" i18n-en:label="COGS"/>
+            <option code="RETAINED_EARNINGS" label="未分配利润" value="RETAINED_EARNINGS" i18n-en:label="Retained Earnings"/>
+        </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>
             <option code="CLOSING" label="结账中" value="CLOSING" i18n-en:label="Closing"/>
@@ -3300,6 +3326,122 @@
                 </to-one>
             </relations>
         </entity>
+        <entity className="app.erp.fin.dao.entity.ErpFinGlMappingRule" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="科目映射规则"
+                name="app.erp.fin.dao.entity.ErpFinGlMappingRule" registerShortName="true"
+                tableName="erp_fin_gl_mapping_rule" tagSet="gid,erp.finance,audit,audit-save"
+                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version"
+                ext:icon="arrow-right-left" i18n-en:displayName="GL Mapping Rule" orm:bizKeyProp="code">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="规则编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="规则名称" mandatory="true" name="name" precision="200" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="BUSINESS_TYPE" displayName="业务类型" mandatory="true" name="businessType" precision="30"
+                        propId="5" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/business-type"
+                        i18n-en:displayName="Business Type"/>
+                <column code="ACCOUNT_KEY" displayName="科目映射键" mandatory="true" name="accountKey" precision="50"
+                        propId="6" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/account-key"
+                        i18n-en:displayName="Account Key"/>
+                <column code="ACCT_SCHEMA_ID" displayName="账套(空=通配)" name="acctSchemaId" propId="7" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Acct Schema"/>
+                <column code="PARTNER_GROUP_ID" displayName="往来单位组(空=通配)" name="partnerGroupId" propId="8"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner Group"/>
+                <column code="MATERIAL_CATEGORY_ID" displayName="物料分类(空=通配)" name="materialCategoryId" propId="9"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material Category"/>
+                <column code="WAREHOUSE_ID" displayName="仓库(空=通配)" name="warehouseId" propId="10" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Warehouse"/>
+                <column code="DEPARTMENT_ID" displayName="部门(空=通配)" name="departmentId" propId="11" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Department"/>
+                <column code="PROJECT_ID" displayName="项目(空=通配)" name="projectId" propId="12" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Project"/>
+                <column code="TARGET_SUBJECT_CODE" displayName="目标科目编码" domain="subjectCode" mandatory="true"
+                        name="targetSubjectCode" precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Target Subject Code"/>
+                <column code="PRIORITY" defaultValue="0" displayName="优先级(0=最低default;越大越高)" mandatory="true"
+                        name="priority" propId="14" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Priority"/>
+                <column code="IS_ACTIVE" defaultValue="true" displayName="是否启用" mandatory="true" name="isActive"
+                        propId="15" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Active"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="16" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="17" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="20" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="22"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_FIN_GL_MAPPING_RULE_BIZ_KEY" unique="false">
+                    <column name="businessType"/>
+                    <column name="accountKey"/>
+                </index>
+                <index name="IDX_FIN_GL_MAPPING_RULE_ORG_ID" unique="false">
+                    <column name="orgId"/>
+                </index>
+                <index name="IDX_FIN_GL_MAPPING_RULE_ACCT_SCHEMA_ID" unique="false">
+                    <column name="acctSchemaId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub"
+                        i18n-en:displayName="Acct Schema">
+                    <join>
+                        <on leftProp="acctSchemaId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="materialCategory" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"
+                        i18n-en:displayName="Material Category">
+                    <join>
+                        <on leftProp="materialCategoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub"
+                        i18n-en:displayName="Warehouse">
+                    <join>
+                        <on leftProp="warehouseId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="department" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Department">
+                    <join>
+                        <on leftProp="departmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub"
+                        i18n-en:displayName="Project">
+                    <join>
+                        <on leftProp="projectId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key
+                            columns="orgId,businessType,accountKey,acctSchemaId,partnerGroupId,materialCategoryId,warehouseId,departmentId,projectId"
+                            name="UK_FIN_GL_MAPPING_RULE_BIZ"/>
+                <unique-key columns="code" name="UK_FIN_GL_MAPPING_RULE_CODE"/>
+            </unique-keys>
+        </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSubject" displayName="会计科目"
                 name="app.erp.md.dao.entity.ErpMdSubject" notGenCode="true" tableName="erp_md_subject"
                 biz:moduleId="erp/md">
@@ -3452,6 +3594,20 @@
                         i18n-en:displayName="Material Type"/>
                 <column code="STATUS" name="status" propId="5" stdDataType="int" stdSqlType="INTEGER"
                         i18n-en:displayName="Status"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.md.dao.entity.ErpMdMaterialCategory" displayName="物料分类"
+                name="app.erp.md.dao.entity.ErpMdMaterialCategory" notGenCode="true"
+                tableName="erp_md_material_category" biz:moduleId="erp/md">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
+                        tagSet="var" i18n-en:displayName="Code"/>
+                <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
+                        tagSet="disp" i18n-en:displayName="Name"/>
+                <column code="PARENT_ID" name="parentId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Parent"/>
             </columns>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjProject" displayName="项目"

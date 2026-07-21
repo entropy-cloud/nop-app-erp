@@ -19,6 +19,8 @@ alter table erp_md_cost_center add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NUL
 
 alter table erp_md_employee add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_material_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -32,6 +34,8 @@ alter table erp_fin_reconciliation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT
 alter table erp_fin_notes_receivable add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_employee_advance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_gl_mapping_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -111,6 +115,9 @@ alter table erp_md_cost_center add constraint PK_erp_md_cost_center primary key 
 alter table erp_md_employee drop constraint PK_erp_md_employee;
 alter table erp_md_employee add constraint PK_erp_md_employee primary key (NOP_TENANT_ID, id);
 
+alter table erp_md_material_category drop constraint PK_erp_md_material_category;
+alter table erp_md_material_category add constraint PK_erp_md_material_category primary key (NOP_TENANT_ID, id);
+
 alter table erp_ast_asset drop constraint PK_erp_ast_asset;
 alter table erp_ast_asset add constraint PK_erp_ast_asset primary key (NOP_TENANT_ID, id);
 
@@ -131,6 +138,9 @@ alter table erp_fin_notes_receivable add constraint PK_erp_fin_notes_receivable 
 
 alter table erp_fin_employee_advance drop constraint PK_erp_fin_employee_advance;
 alter table erp_fin_employee_advance add constraint PK_erp_fin_employee_advance primary key (NOP_TENANT_ID, id);
+
+alter table erp_fin_gl_mapping_rule drop constraint PK_erp_fin_gl_mapping_rule;
+alter table erp_fin_gl_mapping_rule add constraint PK_erp_fin_gl_mapping_rule primary key (NOP_TENANT_ID, id);
 
 alter table erp_fin_voucher_template_line drop constraint PK_erp_fin_voucher_template_line;
 alter table erp_fin_voucher_template_line add constraint PK_erp_fin_voucher_template_line primary key (NOP_TENANT_ID, id);

@@ -94,6 +94,14 @@ CREATE TABLE erp_md_employee(
   constraint PK_erp_md_employee primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_material_category(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  PARENT_ID BIGINT NULL    COMMENT 'null',
+  constraint PK_erp_md_material_category primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_ast_asset(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -258,6 +266,32 @@ CREATE TABLE erp_fin_employee_advance(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_fin_employee_advance primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_fin_gl_mapping_rule(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '规则编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '规则名称',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  BUSINESS_TYPE VARCHAR(30) NOT NULL    COMMENT '业务类型',
+  ACCOUNT_KEY VARCHAR(50) NOT NULL    COMMENT '科目映射键',
+  ACCT_SCHEMA_ID BIGINT NULL    COMMENT '账套(空=通配)',
+  PARTNER_GROUP_ID BIGINT NULL    COMMENT '往来单位组(空=通配)',
+  MATERIAL_CATEGORY_ID BIGINT NULL    COMMENT '物料分类(空=通配)',
+  WAREHOUSE_ID BIGINT NULL    COMMENT '仓库(空=通配)',
+  DEPARTMENT_ID BIGINT NULL    COMMENT '部门(空=通配)',
+  PROJECT_ID BIGINT NULL    COMMENT '项目(空=通配)',
+  TARGET_SUBJECT_CODE VARCHAR(50) NOT NULL    COMMENT '目标科目编码',
+  PRIORITY INTEGER default 0  NOT NULL    COMMENT '优先级(0=最低default;越大越高)',
+  IS_ACTIVE BOOLEAN default 1  NOT NULL    COMMENT '是否启用',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_fin_gl_mapping_rule primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_fin_voucher_template_line(
@@ -887,6 +921,8 @@ CREATE TABLE erp_fin_budget_control_log(
                 
    ALTER TABLE erp_md_employee COMMENT '职员';
                 
+   ALTER TABLE erp_md_material_category COMMENT '物料分类';
+                
    ALTER TABLE erp_ast_asset COMMENT '固定资产';
                 
    ALTER TABLE erp_fin_voucher_template COMMENT '凭证模板';
@@ -900,6 +936,8 @@ CREATE TABLE erp_fin_budget_control_log(
    ALTER TABLE erp_fin_notes_receivable COMMENT '应收票据';
                 
    ALTER TABLE erp_fin_employee_advance COMMENT '员工借款单';
+                
+   ALTER TABLE erp_fin_gl_mapping_rule COMMENT '科目映射规则';
                 
    ALTER TABLE erp_fin_voucher_template_line COMMENT '凭证模板行';
                 

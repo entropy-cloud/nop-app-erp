@@ -2,6 +2,8 @@ package app.erp.fin.service.posting;
 
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
+import app.erp.fin.dao.api.IErpFinGlMappingResolver;
+import app.erp.fin.dao.dto.GlMappingDimensions;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
@@ -103,6 +105,14 @@ public class ErpFinPostingProcessor {
 
     @Inject
     app.erp.md.dao.SubjectMappingResolver subjectMappingResolver;
+
+    /**
+     * GL 映射规则解析器（A1：科目映射规则表 + 解析引擎，plan 2026-07-21-0827-1）。
+     * 在 {@link #resolveSubjects} 开头按 (businessType, accountKey, dimensions) 查规则表覆盖 fact.subjectCode；
+     * 空匹配返回 null → 保留 Provider 既有 subjectCode（向后兼容）。{@code accountKey==null} 的 fact 直接跳过。
+     */
+    @Inject
+    IErpFinGlMappingResolver glMappingResolver;
 
     /**
      * 正向过账编排。幂等命中（源单已过账）返回 {@code null}。
@@ -543,6 +553,32 @@ public class ErpFinPostingProcessor {
         if (facts.isEmpty()) {
             return;
         }
+        // A1：GL 映射规则覆盖钩子（plan 2026-07-21-0827-1）。在既有 code→ErpMdSubject 查找之前，
+        // 对设置了 accountKey 的 fact 调 resolver 覆盖 subjectCode；空匹配保留 Provider 既有 subjectCode。
+        // 跨账套传播语义：resolver 仅运行一次 pre-translation；translateFactsForSchema 复制的 accountKey
+        // 在 translated fact 上仅为信息性（不再次触发 resolver，避免双重解析 —— 见 owner doc §5.2）。
+        for (VoucherFact fact : facts) {
+            if (fact.getSubjectId() != null) {
+                continue; // 已解析科目（如红冲草稿从原凭证复制 subjectId）跳过
+            }
+            if (StringHelper.isBlank(fact.getAccountKey())) {
+                continue; // Provider 未设置 accountKey → 行为完全不变（向后兼容）
+            }
+            GlMappingDimensions dims = buildGlMappingDimensions(fact);
+            String resolved = glMappingResolver.resolveSubjectCode(
+                    fact.getBusinessType(), fact.getAccountKey(), dims, resolveAcctSchemaIdFromContext());
+            if (resolved != null) {
+                fact.setSubjectCode(resolved);
+            } else if (isStrictMode()) {
+                throw new NopException(ErpFinPostingErrors.ERR_GL_MAPPING_NOT_FOUND)
+                        .param(ErpFinPostingErrors.ARG_BUSINESS_TYPE, fact.getBusinessType())
+                        .param(ErpFinPostingErrors.ARG_ACCOUNT_KEY, fact.getAccountKey())
+                        .param(ErpFinPostingErrors.ARG_DIMENSIONS, dims);
+            } else {
+                LOG.info("gl-mapping rule miss fallback: businessType={} accountKey={} → 保留 Provider 既有 subjectCode={}",
+                        fact.getBusinessType(), fact.getAccountKey(), fact.getSubjectCode());
+            }
+        }
         // 科目解析经 master-data 的 IErpMdSubjectBiz（跨域只读经 I*Biz 管道，对齐 service-layer 跨实体访问规则）。
         // finance→erp-md-service 仅 test 作用域，故非 BizModel 编排 bean 经 IBizObjectManager 按名解析（运行期 app-erp-all 注入）。
         Map<String, ErpMdSubject> cache = new HashMap<>();
@@ -570,6 +606,29 @@ public class ErpFinPostingProcessor {
             }
         }
     }
+
+    /** A1 辅助：从 VoucherFact 维度字段构造 {@link GlMappingDimensions}。 */
+    protected GlMappingDimensions buildGlMappingDimensions(VoucherFact fact) {
+        GlMappingDimensions dims = new GlMappingDimensions();
+        dims.setPartnerId(fact.getPartnerId());
+        dims.setMaterialId(fact.getMaterialId());
+        dims.setWarehouseId(fact.getWarehouseId());
+        dims.setDepartmentId(fact.getDepartmentId());
+        dims.setProjectId(fact.getProjectId());
+        return dims;
+    }
+
+    /** A1 辅助：当前过账上下文的 acctSchemaId（从首次 fact 推导；后续 translateFactsForSchema 不再调 resolver）。 */
+    protected Long resolveAcctSchemaIdFromContext() {
+        return null; // 多账套通配匹配（acctSchemaId IS NULL 规则命中）；具体账套精确规则可选
+    }
+
+    /** A1 辅助：是否启用 strict-mode（空匹配抛异常）。默认 false。 */
+    protected boolean isStrictMode() {
+        return AppConfig.var(CONFIG_GL_MAPPING_STRICT_MODE, false);
+    }
+
+    static final String CONFIG_GL_MAPPING_STRICT_MODE = "erp-fin.gl-mapping.strict-mode";
 
     /**
      * 跨账套科目翻译：将源账套的 facts 科目翻译为目标账套科目。

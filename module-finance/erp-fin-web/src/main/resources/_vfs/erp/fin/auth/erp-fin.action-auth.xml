@@ -75,6 +75,11 @@
                                   i18n-en:displayName="Trial Balance" icon="git-compare"
                                   component="AMIS" resourceType="SUBM" orderNo="510"
                                   url="/erp/fin/pages/ErpFinTrialBalance/main.page.yaml"/>
+                        <!-- A1（plan 2026-07-21-0827-1）：科目映射规则（多维业务规则覆盖层，运维配置） -->
+                        <resource id="ErpFinGlMappingRule-main" displayName="科目映射规则"
+                                  i18n-en:displayName="GL Mapping Rule" icon="arrow-right-left"
+                                  component="AMIS" resourceType="SUBM" orderNo="520"
+                                  url="/erp/fin/pages/ErpFinGlMappingRule/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 资金 -->

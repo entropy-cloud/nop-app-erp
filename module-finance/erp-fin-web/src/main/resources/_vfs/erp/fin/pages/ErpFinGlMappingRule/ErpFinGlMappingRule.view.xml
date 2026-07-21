@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpFinGlMappingRule.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+      xmlns:x="/nop/schema/xdsl.xdef">
+
+    <!-- plan 2026-07-21-0827-1 A1 Phase 3：list grid 列精选 + form 分组 + 缓存刷新按钮。
+         targetSubjectCode 保留为简单 code 输入（运维手填或粘贴；复杂 picker 后续按需扩展）。 -->
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="code" sortable="true"/>
+                <col id="businessType" sortable="true"/>
+                <col id="accountKey" sortable="true"/>
+                <col id="acctSchemaId" sortable="true"/>
+                <col id="partnerGroupId" sortable="true"/>
+                <col id="materialCategoryId" sortable="true"/>
+                <col id="warehouseId" sortable="true"/>
+                <col id="departmentId" sortable="true"/>
+                <col id="projectId" sortable="true"/>
+                <col id="targetSubjectCode" sortable="true"/>
+                <col id="priority" sortable="true"/>
+                <col id="isActive" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view"/>
+        <form id="edit">
+            <layout>
+ =======>baseInfo[基本信息]=======
+ code[规则编码] name[规则名称]
+ businessType[业务类型] accountKey[科目映射键]
+ acctSchemaId[账套(空=通配)] priority[优先级(0=最低;越大越高)]
+ isActive[是否启用]
+ =======>dimensions[维度条件(空=通配)]=======
+ partnerGroupId[往来单位组] materialCategoryId[物料分类]
+ warehouseId[仓库] departmentId[部门]
+ projectId[项目]
+ =======>target[目标科目]=======
+ targetSubjectCode[目标科目编码]
+ =======>audit[审计信息]=======
+ orgId[核算组织]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+    </forms>
+
+    <pages>
+        <crud name="main">
+            <listActions x:override="bounded-merge">
+                <action id="add-button"/>
+                <action id="batch-delete-button"/>
+                <!-- 缓存手动刷新按钮（多节点部署下仅刷新本节点） -->
+                <action id="refresh-cache-button" label="刷新缓存" level="default"
+                        icon="fa fa-refresh"
+                        tooltip="仅刷新本节点缓存；多节点生效请等待 TTL（默认 3600s）或重启">
+                    <api url="@mutation:ErpFinGlMappingRule__refreshCache"/>
+                    <confirmText>确认刷新本节点 GL 映射规则缓存？多节点部署需各自刷新或等待 TTL。</confirmText>
+                </action>
+            </listActions>
+        </crud>
+        <picker name="picker"/>
+    </pages>
+</view>

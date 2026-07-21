@@ -10,6 +10,8 @@ site:
       displayName: Fund Account
     ErpFinGlBalance-main:
       displayName: GL Balance
+    ErpFinGlMappingRule-main:
+      displayName: GL Mapping Rule
     ErpFinReconciliation-main:
       displayName: Reconciliation
     ErpFinTrialBalance-main:

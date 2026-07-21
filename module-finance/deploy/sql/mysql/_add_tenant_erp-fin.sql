@@ -19,6 +19,8 @@ alter table erp_md_cost_center add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NUL
 
 alter table erp_md_employee add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_material_category add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_ast_asset add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -32,6 +34,8 @@ alter table erp_fin_reconciliation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT
 alter table erp_fin_notes_receivable add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_employee_advance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_gl_mapping_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_voucher_template_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -111,6 +115,9 @@ alter table erp_md_cost_center add primary key (NOP_TENANT_ID, ID);
 alter table erp_md_employee drop primary key;
 alter table erp_md_employee add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_md_material_category drop primary key;
+alter table erp_md_material_category add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_ast_asset drop primary key;
 alter table erp_ast_asset add primary key (NOP_TENANT_ID, ID);
 
@@ -131,6 +138,9 @@ alter table erp_fin_notes_receivable add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_fin_employee_advance drop primary key;
 alter table erp_fin_employee_advance add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_fin_gl_mapping_rule drop primary key;
+alter table erp_fin_gl_mapping_rule add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_fin_voucher_template_line drop primary key;
 alter table erp_fin_voucher_template_line add primary key (NOP_TENANT_ID, ID);

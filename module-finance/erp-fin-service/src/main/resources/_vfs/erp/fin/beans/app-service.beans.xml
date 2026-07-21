@@ -40,6 +40,11 @@
     <bean id="app.erp.fin.service.posting.ErpFinPostingProcessor"
           class="app.erp.fin.service.posting.ErpFinPostingProcessor"/>
 
+    <!-- GL 映射规则解析器（plan 2026-07-21-0827-1 A1）：进程内缓存 + CRUD mutation 主动失效。
+         被 ErpFinPostingProcessor.resolveSubjects 注入 + ErpFinGlMappingRuleBizModel 调 invalidateCache。 -->
+    <bean id="app.erp.fin.service.posting.ErpFinGlMappingResolver"
+          class="app.erp.fin.service.posting.ErpFinGlMappingResolver"/>
+
     <!-- 多套账（并行账簿）传播解析器（multiple-accounting-schemas.md §配置项） -->
     <bean id="app.erp.fin.service.posting.SchemaPropagator"
           class="app.erp.fin.service.posting.SchemaPropagator"/>

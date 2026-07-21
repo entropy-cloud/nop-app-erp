@@ -18,6 +18,7 @@ entity:
     ErpFinExpenseClaimLine: 费用报销单行
     ErpFinFundAccount: 资金账户
     ErpFinGlBalance: 总账余额
+    ErpFinGlMappingRule: 科目映射规则
     ErpFinNotesDiscount: 票据贴现明细
     ErpFinNotesPayable: 应付票据
     ErpFinNotesReceivable: 应收票据
@@ -600,6 +601,43 @@ prop:
       warehouseId: 辅助-仓库
       yearOpeningCredit: 年初贷方
       yearOpeningDebit: 年初借方
+    ErpFinGlMappingRule:
+      accountKey: 科目映射键
+      accountKey_label: 科目映射键
+      acctSchema: null
+      acctSchema.name: null
+      acctSchemaId: 账套(空=通配)
+      businessType: 业务类型
+      businessType_label: 业务类型
+      code: 规则编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      department: null
+      department.name: null
+      departmentId: 部门(空=通配)
+      id: ID
+      isActive: 是否启用
+      materialCategory: null
+      materialCategory.name: null
+      materialCategoryId: 物料分类(空=通配)
+      name: 规则名称
+      org: null
+      org.name: null
+      orgId: 核算组织
+      partnerGroupId: 往来单位组(空=通配)
+      priority: 优先级(0=最低default;越大越高)
+      project: null
+      project.name: null
+      projectId: 项目(空=通配)
+      remark: 备注
+      targetSubjectCode: 目标科目编码
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      warehouse: null
+      warehouse.name: null
+      warehouseId: 仓库(空=通配)
     ErpFinNotesDiscount:
       bank: null
       bankId: 贴现银行账户

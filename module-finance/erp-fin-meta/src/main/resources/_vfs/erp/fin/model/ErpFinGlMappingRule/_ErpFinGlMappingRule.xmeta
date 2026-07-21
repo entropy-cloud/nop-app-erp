@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="arrow-right-left" ext:web-renderer="" xmlns:c="c"
+      xmlns:graphql="graphql" xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="科目映射规则"
+      i18n-en:displayName="GL Mapping Rule" tagSet="gid,erp.finance,audit,audit-save" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.fin.dao.entity.ErpFinGlMappingRule</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_FIN_GL_MAPPING_RULE_BIZ"
+             props="orgId,businessType,accountKey,acctSchemaId,partnerGroupId,materialCategoryId,warehouseId,departmentId,projectId"/>
+        <key name="UK_FIN_GL_MAPPING_RULE_CODE" props="code"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="规则编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="code" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="name" displayName="规则名称" propId="3" i18n-en:displayName="Name" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="orgId" displayName="核算组织" propId="4" i18n-en:displayName="Organization" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="businessType" displayName="业务类型" propId="5" i18n-en:displayName="Business Type" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="30" dict="erp-fin/business-type"/>
+        </prop>
+        <prop name="accountKey" displayName="科目映射键" propId="6" i18n-en:displayName="Account Key" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50" dict="erp-fin/account-key"/>
+        </prop>
+        <prop name="acctSchemaId" displayName="账套(空=通配)" propId="7" i18n-en:displayName="Acct Schema" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="acctSchema">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="partnerGroupId" displayName="往来单位组(空=通配)" propId="8" i18n-en:displayName="Partner Group"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="materialCategoryId" displayName="物料分类(空=通配)" propId="9" i18n-en:displayName="Material Category"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="materialCategory">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="warehouseId" displayName="仓库(空=通配)" propId="10" i18n-en:displayName="Warehouse" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="departmentId" displayName="部门(空=通配)" propId="11" i18n-en:displayName="Department" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="department">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="projectId" displayName="项目(空=通配)" propId="12" i18n-en:displayName="Project" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="project">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="targetSubjectCode" displayName="目标科目编码" propId="13" i18n-en:displayName="Target Subject Code"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="subjectCode" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="priority" displayName="优先级(0=最低default;越大越高)" propId="14" i18n-en:displayName="Priority"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="isActive" displayName="是否启用" propId="15" i18n-en:displayName="Active" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="16" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="17" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="18" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="19" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="20" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="21" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="22" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="acctSchema" i18n-en:displayName="Acct Schema" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdAcctSchema"/>
+        </prop>
+        <prop name="acctSchema.name" i18n-en:displayName="Acct Schema" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="materialCategory" i18n-en:displayName="Material Category" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="materialCategoryId" ext:joinRightProp="id"
+              ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdMaterialCategory"/>
+        </prop>
+        <prop name="materialCategory.name" i18n-en:displayName="Material Category" internal="true" queryable="true"
+              sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="warehouse" i18n-en:displayName="Warehouse" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="warehouseId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdWarehouse"/>
+        </prop>
+        <prop name="warehouse.name" i18n-en:displayName="Warehouse" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="department" i18n-en:displayName="Department" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="departmentId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="department.name" i18n-en:displayName="Department" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="project" i18n-en:displayName="Project" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="projectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/prj" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpPrjProject"/>
+        </prop>
+        <prop name="project.name" i18n-en:displayName="Project" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
+    </props>
+</meta>

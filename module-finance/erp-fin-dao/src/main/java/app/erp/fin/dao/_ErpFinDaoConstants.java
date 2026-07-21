@@ -339,6 +339,116 @@ public interface _ErpFinDaoConstants {
     String BUSINESS_TYPE_SUBCONTRACT_FEE = "SUBCONTRACT_FEE";
                     
     /**
+     * 科目映射键: 采购(在途物资) 
+     */
+    String ACCOUNT_KEY_PURCHASE = "PURCHASE";
+                    
+    /**
+     * 科目映射键: 进项税额 
+     */
+    String ACCOUNT_KEY_INPUT_VAT = "INPUT_VAT";
+                    
+    /**
+     * 科目映射键: 应付账款 
+     */
+    String ACCOUNT_KEY_ACCOUNTS_PAYABLE = "ACCOUNTS_PAYABLE";
+                    
+    /**
+     * 科目映射键: 银行收款 
+     */
+    String ACCOUNT_KEY_BANK_RECV = "BANK_RECV";
+                    
+    /**
+     * 科目映射键: 银行对账调整-收款方 
+     */
+    String ACCOUNT_KEY_ADJ_BANK_RECV = "ADJ_BANK_RECV";
+                    
+    /**
+     * 科目映射键: 银行对账调整-付款方 
+     */
+    String ACCOUNT_KEY_ADJ_BANK_PAID = "ADJ_BANK_PAID";
+                    
+    /**
+     * 科目映射键: 银行付款 
+     */
+    String ACCOUNT_KEY_BANK_PAID = "BANK_PAID";
+                    
+    /**
+     * 科目映射键: 存货 
+     */
+    String ACCOUNT_KEY_INVENTORY = "INVENTORY";
+                    
+    /**
+     * 科目映射键: 应付(AP通用) 
+     */
+    String ACCOUNT_KEY_AP = "AP";
+                    
+    /**
+     * 科目映射键: 应收(AR通用) 
+     */
+    String ACCOUNT_KEY_AR = "AR";
+                    
+    /**
+     * 科目映射键: 销项税额 
+     */
+    String ACCOUNT_KEY_OUTPUT_TAX = "OUTPUT_TAX";
+                    
+    /**
+     * 科目映射键: 银行存款 
+     */
+    String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+                    
+    /**
+     * 科目映射键: 库存现金 
+     */
+    String ACCOUNT_KEY_CASH = "CASH";
+                    
+    /**
+     * 科目映射键: 固定资产 
+     */
+    String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
+                    
+    /**
+     * 科目映射键: 累计折旧 
+     */
+    String ACCOUNT_KEY_ACCUMULATED_DEPRECIATION = "ACCUMULATED_DEPRECIATION";
+                    
+    /**
+     * 科目映射键: 折旧费用 
+     */
+    String ACCOUNT_KEY_DEPRECIATION_EXPENSE = "DEPRECIATION_EXPENSE";
+                    
+    /**
+     * 科目映射键: 应付职工薪酬 
+     */
+    String ACCOUNT_KEY_SALARY_PAYABLE = "SALARY_PAYABLE";
+                    
+    /**
+     * 科目映射键: 薪酬费用 
+     */
+    String ACCOUNT_KEY_SALARY_EXPENSE = "SALARY_EXPENSE";
+                    
+    /**
+     * 科目映射键: 应交税费 
+     */
+    String ACCOUNT_KEY_TAX_PAYABLE = "TAX_PAYABLE";
+                    
+    /**
+     * 科目映射键: 主营业务收入 
+     */
+    String ACCOUNT_KEY_REVENUE = "REVENUE";
+                    
+    /**
+     * 科目映射键: 主营业务成本 
+     */
+    String ACCOUNT_KEY_COGS = "COGS";
+                    
+    /**
+     * 科目映射键: 未分配利润 
+     */
+    String ACCOUNT_KEY_RETAINED_EARNINGS = "RETAINED_EARNINGS";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

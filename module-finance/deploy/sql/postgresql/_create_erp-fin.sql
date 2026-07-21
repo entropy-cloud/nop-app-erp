@@ -94,6 +94,14 @@ CREATE TABLE erp_md_employee(
   constraint PK_erp_md_employee primary key (id)
 );
 
+CREATE TABLE erp_md_material_category(
+  id INT8  ,
+  code VARCHAR(50)  ,
+  name VARCHAR(200)  ,
+  parent_id INT8  ,
+  constraint PK_erp_md_material_category primary key (id)
+);
+
 CREATE TABLE erp_ast_asset(
   id INT8  ,
   code VARCHAR(50)  ,
@@ -258,6 +266,32 @@ CREATE TABLE erp_fin_employee_advance(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_fin_employee_advance primary key (id)
+);
+
+CREATE TABLE erp_fin_gl_mapping_rule(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  org_id INT8 NOT NULL ,
+  business_type VARCHAR(30) NOT NULL ,
+  account_key VARCHAR(50) NOT NULL ,
+  acct_schema_id INT8  ,
+  partner_group_id INT8  ,
+  material_category_id INT8  ,
+  warehouse_id INT8  ,
+  department_id INT8  ,
+  project_id INT8  ,
+  target_subject_code VARCHAR(50) NOT NULL ,
+  priority INT4 default 0  NOT NULL ,
+  is_active BOOLEAN default true  NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_fin_gl_mapping_rule primary key (id)
 );
 
 CREATE TABLE erp_fin_voucher_template_line(
@@ -887,6 +921,8 @@ CREATE TABLE erp_fin_budget_control_log(
                 
       COMMENT ON TABLE erp_md_employee IS '职员';
                 
+      COMMENT ON TABLE erp_md_material_category IS '物料分类';
+                
       COMMENT ON TABLE erp_ast_asset IS '固定资产';
                 
       COMMENT ON TABLE erp_fin_voucher_template IS '凭证模板';
@@ -1166,6 +1202,52 @@ CREATE TABLE erp_fin_budget_control_log(
       COMMENT ON COLUMN erp_fin_employee_advance.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_employee_advance.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_gl_mapping_rule IS '科目映射规则';
+                
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.code IS '规则编码';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.name IS '规则名称';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.org_id IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.business_type IS '业务类型';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.account_key IS '科目映射键';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.acct_schema_id IS '账套(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.partner_group_id IS '往来单位组(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.material_category_id IS '物料分类(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.warehouse_id IS '仓库(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.department_id IS '部门(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.project_id IS '项目(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.target_subject_code IS '目标科目编码';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.priority IS '优先级(0=最低default;越大越高)';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.is_active IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_gl_mapping_rule.remark IS '备注';
                     
       COMMENT ON TABLE erp_fin_voucher_template_line IS '凭证模板行';
                 

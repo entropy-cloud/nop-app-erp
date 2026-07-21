@@ -45,6 +45,14 @@ public class PurAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_BANK_DEPOSIT = "1002";    // 银行存款
     static final String SUBJECT_INVENTORY = "1401";       // 库存商品（与 InvAcctDocProvider.PURCHASE_INPUT 同口径）
 
+    /**
+     * A1 GL 映射键（plan 2026-07-21-0827-1）：仅 AP_INVOICE 三行 fact 设置，作为 resolver 的输入。
+     * 业务语义命名与 SUBJECT_* 常量对齐：PURCHASE=1403 在途物资（不是 INVENTORY=1401 库存商品）。
+     */
+    static final String ACCOUNT_KEY_PURCHASE = "PURCHASE";
+    static final String ACCOUNT_KEY_INPUT_VAT = "INPUT_VAT";
+    static final String ACCOUNT_KEY_ACCOUNTS_PAYABLE = "ACCOUNTS_PAYABLE";
+
     static final String KEY_TOTAL_AMOUNT = "TOTAL_AMOUNT";
     static final String KEY_TOTAL_TAX_AMOUNT = "TOTAL_TAX_AMOUNT";
     static final String KEY_TOTAL_AMOUNT_WITH_TAX = "TOTAL_AMOUNT_WITH_TAX";
@@ -63,29 +71,32 @@ public class PurAcctDocProvider implements IErpFinAcctDocProvider {
             BigDecimal amount = readDecimal(event, KEY_TOTAL_AMOUNT);
             BigDecimal tax = readDecimal(event, KEY_TOTAL_TAX_AMOUNT);
             BigDecimal withTax = readDecimal(event, KEY_TOTAL_AMOUNT_WITH_TAX);
-            facts.add(fact(SUBJECT_PURCHASE, "在途物资", DC_DEBIT, amount, event));
-            facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, event));
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_CREDIT, withTax, event));
+            // A1：设置 accountKey 让 GL 映射规则解析器有机会覆盖 subjectCode（plan 2026-07-21-0827-1）。
+            // 既有 SUBJECT_* 常量保留作为 fallback（规则表无匹配时仍走既有，行为完全不变）。
+            facts.add(fact(SUBJECT_PURCHASE, "在途物资", DC_DEBIT, amount, event, ACCOUNT_KEY_PURCHASE));
+            facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, event, ACCOUNT_KEY_INPUT_VAT));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_CREDIT, withTax, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
         } else if (event.getBusinessType() == ErpFinBusinessType.PURCHASE_RETURN) {
             // 反向 PURCHASE_INPUT：借暂估应付 / 贷存货（不含税，对齐 InvAcctDocProvider.PURCHASE_INPUT 的 1401/2202）
             BigDecimal amount = readDecimal(event, KEY_TOTAL_AMOUNT);
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款-暂估", DC_DEBIT, amount, event));
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, event));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款-暂估", DC_DEBIT, amount, event, null));
+            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, event, null));
         } else { // PAYMENT
             BigDecimal total = readDecimal(event, KEY_TOTAL);
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, total, event));
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, total, event));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, total, event, null));
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, total, event, null));
         }
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }
