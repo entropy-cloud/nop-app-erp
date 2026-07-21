@@ -49,6 +49,16 @@
 
 往来单位是客户与供应商的统一主数据，一个单位可同时是客户和供应商（类型区分）。承载开票信息（税号、银行、账号、税率）、信用额度、账期。期初与累计应收应付余额由财务域维护，本域只承载主数据。
 
+### 统一 Party 抽象
+
+`Partner`（外部 Party）+ `Employee`（内部人员 Party）+ `Organization`（内部组织 Party）共享 `code/name/status` 公共字段，跨实体检索经统一抽象入口（详见 `unified-party-identity.md`）：
+
+- `IErpPartyBiz`（`module-master-data/erp-md-dao/src/main/java/app/erp/md/biz/`）— 跨域消费者 `@Inject` 入口，暴露 `findParties(keyword, partyTypes, limit)` / `getParty(partyType, partyId)` / `findReferences(partyType, partyId)`。
+- `PartyRef` DTO + `ErpPartyType` enum — 统一投影结构，容忍字段异构（Organization 无 phone/email 投影为 null）。
+- `party-search/main.picker.page.yaml`（首例手写 picker.page.yaml）— 联合 picker，跨实体关键字检索 + onEvent.setValue 回填。
+
+**约定**：当且仅当非实体 BizModel 有跨工程 `@Inject` 消费者时才暴露 `IErp*Biz` 接口；纯 UI 入口（如 Dashboard）保持无接口。
+
 ## 启用/停用（非状态机）
 
 主数据实体（物料、SKU、往来单位、仓库、库位、计量单位、币种、科目）采用简单的"启用/停用"二态，**不是工作流状态机**——主数据没有多步业务流转，只有"是否可被新业务单据引用"这一控制。
@@ -102,6 +112,7 @@
 |--------|--------|----------|
 | 物料 / SKU | inventory / purchase / sales / finance | 外键列 + `IErpMdMaterialBiz`/`IErpMdSkuBiz` |
 | 往来单位 | purchase / sales / finance | 外键列 + `IErpMdPartnerBiz` |
+| **统一 Party（Partner + Employee + Organization）** | **任意跨域消费者** | **`IErpPartyBiz.findParties` 跨实体检索（非实体 BizModel + 跨域 @Inject 入口）** |
 | 仓库 / 库位 | inventory / purchase / sales | 外键列 + `IErpMdWarehouseBiz` |
 | 计量单位 | inventory / purchase / sales | 外键列 + `IErpMdUoMBiz` |
 | 币种 / 汇率 | purchase / sales / finance | 外键列 + `IErpMdCurrencyBiz` |
@@ -133,6 +144,7 @@
 |------|------|
 | `README.md`（本文件） | 域概览、核心对象、启停规则、跨域协作、关键规则 |
 | `sku-multi-unit.md` | SKU 多单位多 barcode 设计（物料 SKU 分离、多单位换算、多档价格） |
+| `unified-party-identity.md` | 统一 Party 身份查询（C1：跨 Partner/Employee/Organization 抽象 + `IErpPartyBiz` + 联合 picker） |
 
 > 主数据域不包含状态机文档——主数据是启停二态而非工作流状态机（见上文"启用/停用"节）。
 

@@ -62,7 +62,7 @@
 
 | Work Item | Status | Owner Doc | Dependencies | Platform Reuse |
 |-----------|--------|-----------|--------------|----------------|
-| C1: Unified Party Identity Query | todo | `docs/design/master-data/unified-party-identity.md` (**NEW**) | `master-data/README.md` | 仅查询层，无需 ORM 变更 |
+| C1: Unified Party Identity Query | done | `docs/design/master-data/unified-party-identity.md` (**NEW**) | `master-data/README.md` | 仅查询层，无需 ORM 变更 |
 | C2: Cross-Border Trade Extensions | todo | `docs/design/master-data/cross-border-trade.md` (**NEW**) | C1 (party identity) | **需要 ErpMdMaterial 加字段 + 新建 ErpMdMaterialCustoms 实体 ORM 变更** |
 | C3: Date-Ranged Validity Pattern | todo | `docs/design/date-ranged-validity-pattern.md` (**NEW**) | | Convention used in 6+ entities | 仅为模式文档，实施时可能涉及 ORM 字段追加 |
 
@@ -131,6 +131,31 @@ A1（GL Mapping Rule Tables）已落地，状态 `todo → done`：
   - 全 workspace `mvn install -DskipTests` BUILD SUCCESS（154 模块）
   - visual smoke `gl-mapping-rule.visual.spec.ts`（**NEW**）2 测试全绿（refresh-cache 按钮可见 + page metadata 可达）
 - **Deferred successor**：其余 Provider 批量接入 + 多节点分布式缓存一致性 + GL Distribution + 模板驱动路径统一 + A2 预算多年度 + A3 多公司运营深度
+
+## 8.2 C1 落地证据（2026-07-21）
+
+C1（Unified Party Identity Query）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-21-0827-2-master-data-unified-party-identity-query.md`（3 Phase 全 done + 含 3 轮独立草案审查）
+- **Owner Doc**：`docs/design/master-data/unified-party-identity.md`（**NEW**，8 节完整：目的与范围 / Party 抽象边界 / 查询策略 / IErpPartyBiz 接口契约 + 非实体 BizModel 接口暴露约定 / 联合 picker 范式 / 试点场景实施记录 / 性能与扩展 / 反模式自检表）
+- **接口 + DTO + enum**（dao 模块，跨工程消费者经 erp-md-dao 依赖即可）：
+  - `IErpPartyBiz`（`module-master-data/erp-md-dao/src/main/java/app/erp/md/biz/`，与 23 个 `IErpMd*Biz.java` 同包）— 3 方法 `findParties`/`getParty`/`findReferences`
+  - `PartyRef` DTO（`app.erp.md.dao.dto` 包）— 9 字段（partyType/partyId/code/name/phone/email/status/displayName/extension Map）
+  - `ErpPartyType` enum（同包）— 3 值 PARTNER/EMPLOYEE/ORGANIZATION
+- **SPI 端口扩展**（Path A 严格同构既有 `IErpMdPartnerReferenceChecker`）：
+  - `IErpMdEmployeeReferenceChecker`（**NEW**）— `Map<String, Long> countReferences(Long)` 无 IServiceContext
+  - `IErpMdOrganizationReferenceChecker`（**NEW**）— 同上
+- **BizModel 实现**：`ErpPartyBizModel`（service 模块，非实体 + `IErpPartyBiz` 接口实现）— IOrmTemplate + `IDaoProvider` 3 实体查询 + Java merge + 字段投影 + Organization phone/email=null 容忍 + `@Inject(required=false)` 3 SPI 单实例 nullable + `@BizQuery` GraphQL 暴露
+- **错误码**：`ERP_MD_PARTY_NOT_FOUND`（`ErpMdErrors.java` 追加）
+- **Bean 注册**：`app-service.beans.xml` 追加 `app.erp.md.service.party.ErpPartyBizModel` 注册（非实体 BizModel 必须显式注册，与 Dashboard 同模式）
+- **联合 picker**（首例手写 picker.page.yaml）：`module-master-data/erp-md-web/src/main/resources/_vfs/erp/md/pages/party-search/main.picker.page.yaml` —— 与 `dashboard/main.page.yaml` 既有手写非实体 page.yaml 同构，AMIS `crud` + filterForm + onSelect 回填
+- **F7 兼容路径**：`ErpMdPartnerBizModel.countReferences` 既有签名 + view.xml 不变；`IErpPartyBiz.findReferences(PARTNER, ...)` 新增扩展入口经同一 SPI 端口
+- **测试基线**：
+  - `TestErpPartyBiz`（**NEW**）8 场景全绿（跨 3 实体检索 / partyType 过滤 / keyword < 2 字符返回空 / limit 截断 / getParty 三类型 / PartyRef 字段投影 + Organization phone/email=null 容忍 / findReferences Partner 路径经 partnerCheckers 收集 + Employee/Organization SPI 未注册返回空 Map 不抛异常 / 空数据集返回空）
+  - master-data service 全 60 测试全绿
+  - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
+  - visual smoke `party-search-picker.visual.spec.ts`（**NEW**）3 测试全绿（findParties action 注册 + getParty null 容忍 + findReferences 空 Map）
+- **Deferred successor**：Employee/Organization 引用扫描下游域 SPI 实现 + ErpMdUserAccount 接入统一 Party + 物化视图/反向索引 + Party 合并去重 + 全文索引 + C2 跨境贸易字段扩展 + 业务单据 FK 通用化
 
 ## 9. Rules
 
