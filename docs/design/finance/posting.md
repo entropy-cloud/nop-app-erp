@@ -281,6 +281,16 @@ ErpFinAcctDocRegistry
 - 科目映射在数据库配置（规则表或元数据驱动），不是硬编码 if-else。
 - 支持多套会计科目表并行（管理账/税务账），同一业务在多套下各解析一组科目。
 
+### 规则表实现（A1，plan 2026-07-21-0827-1）
+
+A1 已落地 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引擎，作为 Provider 之上的**可选多维覆盖层**：
+
+- **接入点**：`ErpFinPostingProcessor.resolveSubjects` 开头按 `VoucherFact.accountKey` 查规则表覆盖 `subjectCode`；其后既有 `code → ErpMdSubject` 查找流程不变。
+- **优先级链算法**：`(priority DESC, 维度具体度 DESC)` 排序匹配；`priority=0` 为 default 兜底（全 NULL 维度），`priority≥100` 为精确规则惯例。详见 [`docs/design/finance/gl-mapping-rules.md` §3 优先级链算法](gl-mapping-rules.md#3-优先级链算法)。
+- **试点进度**：`PurAcctDocProvider × AP_INVOICE × 3 键`（PURCHASE/INPUT_VAT/ACCOUNTS_PAYABLE）已接入；其余 Provider（Sal/Inv/Assets/Hr/Maintenance）opt-in 接入归 Deferred successor。
+- **接入步骤模板 + 试点清单**：详见 [`docs/design/finance/gl-mapping-rules.md` §5 Provider opt-in 集成契约](gl-mapping-rules.md#5-provider-opt-in-集成契约)。
+- **与 `ErpMdSubjectMapping` 边界**：`ErpMdSubjectMapping` 是 post-resolution 跨账套转换（subjectId → subjectId）；`ErpFinGlMappingRule` 是 pre-resolution 多维业务规则（businessType+accountKey+dimensions → subjectCode）。三层职责不重叠。
+
 ## 异步过账与失败处理
 
 > 本节描述总体架构 §第②层的 ASYNC 模式（方式 B）及其失败恢复。**默认走 SYNC（方式 A）**，ASYNC 仅为可选优化。无论 SYNC/ASYNC，库存写入（第①层）恒定强一致，兜底约束（第③层）恒定生效。

@@ -48,7 +48,7 @@
 
 | Work Item | Status | Owner Doc | Dependencies | Platform Reuse |
 |-----------|--------|-----------|--------------|----------------|
-| A1: GL Mapping Rule Tables | todo | `docs/design/finance/gl-mapping-rules.md` (**NEW**) | `posting.md` §科目映射 概念已定 | NopSysEvent? 可选作为规则变更事件 | **需要 `ErpFinGlMappingRule` 实体 ORM 变更** |
+| A1: GL Mapping Rule Tables | done | `docs/design/finance/gl-mapping-rules.md` (**NEW**) | `posting.md` §科目映射 概念已定 | NopSysEvent? 可选作为规则变更事件 | **需要 `ErpFinGlMappingRule` 实体 ORM 变更** |
 | A2: Budget Multi-Year / Carry-Forward | todo | `docs/design/finance/budget.md` (**EXPAND**) | A1 (budget control uses GL) | existing budget.md foundation | **可能需要新 budget 实体/字段 ORM 变更** |
 | A3: Multi-Company Operational Depth | todo | `docs/architecture/multi-company.md` (**EXPAND**) | `intercompany-consolidation.md` | nop tenant-model, orgId dimension | **可能需要跨公司交易/合并实体 ORM 变更** |
 
@@ -113,6 +113,24 @@ graph LR
 - **ORM 变更已授权**: 涉及 ORM 变更的工作项（A1/A2/A3/B1/C2），由 mission driver 在实施时自动拟制 ORM 变更计划并执行
 - **Platform-first**: Every item must check if Nop Platform already provides the capability before designing
 - **Delta-compatible**: New implementation code must follow existing patterns (xbiz delta, I\*Biz, Processor)
+
+## 8.1 A1 落地证据（2026-07-21）
+
+A1（GL Mapping Rule Tables）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-21-0827-1-finance-gl-mapping-rule-tables.md`（4 Phase 全 done，含 3 轮独立草案审查 + 1 轮执行验证）
+- **Owner Doc**：`docs/design/finance/gl-mapping-rules.md`（7 节完整：目的与范围 / 实体字段表 / 优先级链算法 / 缓存策略 / Provider opt-in 集成契约 / Operator UI 交互 / 反模式自检表）
+- **实体 + 字典**：`module-finance/model/app-erp-finance.orm.xml` 新增 `ErpFinGlMappingRule` 实体（22 字段 + UK + idx + tagSet audit）+ `erp-fin/account-key` 字典（22 键含试点 3 键 + BankReconAdj 4 字面量 + Template 4 字面量 + 11 扩展键）
+- **解析引擎**：`IErpFinGlMappingResolver` 接口（erp-fin-dao）+ `ErpFinGlMappingResolver` 实现（erp-fin-service，进程内缓存 + 主动失效 + 维度扩展）
+- **过账钩子**：`ErpFinPostingProcessor.resolveSubjects` 开头覆盖钩子 + `ERR_GL_MAPPING_NOT_FOUND` 错误码（strict-mode 配置门控）
+- **试点 Provider**：`PurAcctDocProvider × AP_INVOICE × 3 键`（PURCHASE/INPUT_VAT/ACCOUNTS_PAYABLE）接入 + 既有 SUBJECT_* 保留 fallback
+- **测试基线**：
+  - `TestErpFinGlMappingResolver`（**NEW**）8 场景全绿（exact/partial/default/empty-null/specific-schema/priority-tie/material-expand/cache-invalidate）
+  - `TestErpPurInvoicePosting`（既有扩展）3 测试全绿（2 既有行为不变 + 1 default 规则覆盖生效）
+  - finance service 全 218 测试 + purchase service 全 113 测试全绿
+  - 全 workspace `mvn install -DskipTests` BUILD SUCCESS（154 模块）
+  - visual smoke `gl-mapping-rule.visual.spec.ts`（**NEW**）2 测试全绿（refresh-cache 按钮可见 + page metadata 可达）
+- **Deferred successor**：其余 Provider 批量接入 + 多节点分布式缓存一致性 + GL Distribution + 模板驱动路径统一 + A2 预算多年度 + A3 多公司运营深度
 
 ## 9. Rules
 
