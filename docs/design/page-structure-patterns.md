@@ -1,0 +1,228 @@
+# 页面结构增强范式（Page Structure Patterns）
+
+> Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F12（页面结构增强）、`docs/architecture/view-and-page-strategy.md`（页面策略）、`docs/design/child-table-editor-patterns.md`（F4 子表编辑范式，与本范式正交）
+> 落地计划：`docs/plans/2026-07-21-0330-3-f12-page-structure-tabs-wizards.md`（F12 Tier A 5 头实体 + Tier B 3 头实体）
+
+## 1. 目的与范围
+
+固化「ERP 复杂页面结构」的标准范式，覆盖 **tabs 容器** 与 **仪表板/多 tab 详情** 两类，供后续域（projects/quality/crm/cs/contract 等长尾页面 successor plan）按图施工。
+
+**适用范围**：
+- 头+行单据需要按 section 分 tab 展示（基本信息 / 行明细 / 关联单据 / 审计信息）
+- 单实体多 group 仪表板（HR 员工档案 / AST 资产卡片 / MNT 设备详情）
+- 跨实体子表多 tab 详情（如 HR 员工 + 合同 + 考勤 + 休假）—— 本计划范围外，归 successor
+
+**不适用**：
+- 子表行内编辑本身 → `child-table-editor-patterns.md`（F4）
+- 跨单据行导入 → `cross-doc-navigation-patterns.md`（F9）
+- 多步骤业务向导（wizard） → Tier C successor（ErpFinAccountingPeriod 期末结账向导等）
+- 拖拽式看板视图、甘特图、日历 → F13 / F16
+
+## 2. tabs 容器：两种实现机制
+
+Nop view.xml 提供两条 tabs 实现路径，按场景选择。
+
+### 机制 A：`<form layoutControl="tabs">`（form 内 group→tab）
+
+**适用场景**：单实体 form 内多 group 已存在，希望「分段折叠显示」改为「分段 tab 显示」。
+
+**机制原理**：在 `<form id="view|edit">` 上加 `layoutControl="tabs"` 属性。Nop codegen `web.xlib:GenFormBody` 检测此属性后调用 `GenLayoutTabs` 而非 `GenLayoutGroups`，把 `<layout>` 中以 `=========>sectionId[Section Title]======`（10 个等号 + `>` 标记）或 `==========^sectionId[Section Title]=========`（10 个等号 + `^` 标记，原 collapsable fieldSet）分隔的 group 自动展开为 AMIS `tabs` + 每 group 一个 `tab`。
+
+**关键证据**：
+- `nop-entropy/.../nop-web/src/main/resources/_vfs/nop/web/xlib/web.xlib:130-153`（GenFormBody 内 `c:choose` 分发）
+- `nop-entropy/.../nop-web/src/main/resources/_vfs/nop/web/xlib/web.xlib:210-241`（GenLayoutTabs 实现）
+- `nop-entropy/.../nop-kernel/nop-xdefs/src/main/resources/_vfs/nop/schema/xui/form.xdef:5`（属性 schema 说明）
+
+**最小写法**：
+
+```xml
+<form id="view" size="lg" layoutControl="tabs">
+    <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[单号] orgId[业务组织]
+=========>amount[金额信息]======
+ @totalAmount[合计金额] @totalTaxAmount[合计税额]
+=========>lines[明细行]======
+ lines[明细行](2)
+=========>audit[审计信息]======
+ createdBy[创建人] createTime[创建时间]
+    </layout>
+    <cells>
+        <cell id="lines">
+            <view path="/erp/{short}/pages/{LineEntity}/{LineEntity}.view.xml" grid="sub-grid-view"/>
+        </cell>
+    </cells>
+</form>
+```
+
+**渲染输出**（_dump 验证）：
+```yaml
+body:
+- type: tabs
+  id: view-tabs
+  tabs:
+  - title: 基本信息
+    name: baseInfo
+    tab: [...]
+  - title: 金额信息
+    name: amount
+    tab: [...]
+  - title: 明细行
+    name: lines
+    tab:
+    - type: group
+      body:
+        name: lines
+        type: input-table  # F4 sub-grid-edit 仍渲染在 lines tab 内
+        columns: [...]
+  - title: 审计信息
+    name: audit
+    tab: [...]
+```
+
+**子表（F4 child-table-editor）兼容性**：form tabs 默认不 unmount 非活动 tab（不同于 `<pages><tabs unmountOnExit>`），切换 tab 不丢失子表行数据。`<cell id="lines"><view path="..." grid="sub-grid-edit|sub-grid-view"/></cell>` 配置完全不动，继续在 lines tab 内渲染 AMIS `input-table`。
+
+**F9 关联单据兼容性**：既有 row-action drawer（如 ErpPurOrder `row-view-receive-button` 打开关联入库单 drawer）保持不变；关联单据作为独立 row-action 触发，不嵌入 form tabs。这与 F9 范式正交，可叠加。
+
+### 机制 B：`<pages><tabs>` + 多 `<simple>/<crud>` 子页（page 级 tabs）
+
+**适用场景**：跨实体多 tab 详情（如员工档案 = 员工表单 + 合同子表 + 考勤子表 + 休假子表）；需要一个 row-action 打开复杂结构 drawer。
+
+**机制原理**：在 `<pages>` 内新增 `<tabs name="...">` 元素，其 `<tab page="..."/>` 引用同 `<pages>` 内其他已定义的 `<simple>` 或 `<crud>` 子页。row-action 通过 `dialog page="<tabs name>"` 打开包含 tabs 的 drawer。
+
+**真实样例**：`nop-entropy/nop-job/nop-job-web/.../NopJobSchedule/NopJobSchedule.view.xml:123-126` —— `<tabs name="runtimeTabs">` + `<tab page="runtimeSummary"/>` + `<tab page="runtimeFires"/>`，由 row-action `runtime-summary-button` 打开。
+
+**最小写法**：
+
+```xml
+<pages>
+    <crud name="main" x:inherit="true">
+        <rowActions>
+            <action id="row-view-tabs-button" label="查看详情" actionType="drawer">
+                <dialog page="detailTabs" size="xl">
+                    <data>
+                        <id>${id}</id>
+                    </data>
+                </dialog>
+            </action>
+        </rowActions>
+    </crud>
+
+    <simple name="headerForm" form="view">
+        <initApi url="@query:Entity__get?id=${id}" gql:selection="{@formSelection}"/>
+    </simple>
+
+    <crud name="relatedLines" x:prototype="view-list">
+        <table>
+            <api url="@query:RelatedEntity__findPage/{@pageSelection}?filter_entityId=${id}"/>
+        </table>
+    </crud>
+
+    <tabs name="detailTabs" tabsMode="vertical" mountOnEnter="true" unmountOnExit="true">
+        <tab name="headerForm" page="headerForm" title="基本信息"/>
+        <tab name="relatedLines" page="relatedLines" title="关联明细"/>
+    </tabs>
+</pages>
+```
+
+**何时用 B 而非 A**：
+- 需嵌入跨实体子 crud（如员工档案的合同/考勤子表） → B
+- 需独立数据加载策略（懒加载、缓存、reload） → B（`mountOnEnter=true` 仅在切到 tab 时拉数据）
+- 需不同 tab 用不同 form/page 模板 → B
+- 仅希望把单 form 的多 group 分 tab 显示 → A（最小代价）
+
+## 3. 仪表板范式：双列布局 + 时间线 + 数据加载策略
+
+### 双列布局
+
+AMIS `form` 的 `mode="inline"` + `<layout>` 中每行 2 cell（默认 `defaultColumnRatio=2`）天然形成双列。无需特殊配置，layout 写两字段一行即可。
+
+### 时间线/凭证列表
+
+**前置后端条件**：仪表板若需展示时间序列（折旧计划、维护历史、凭证流水等），按以下优先级选择数据源：
+
+1. **既有 `@BizQuery` 专用聚合**（最佳）—— 例：`ErpMntReport__maintenanceHistoryData(equipmentId, startDate, endDate)` 已就绪，返回 visit×equipment 聚合。
+2. **既有实体 `findPage` + filter_** （降级）—— 例：`ErpAstDepreciationSchedule__findPage?filter_assetId=$id` 直接拉按 assetId 过滤的折旧计划行；接受可能 N+1。
+3. **新增后端 `@BizQuery` 聚合**（性能优化）—— 仅当数据量 > 1000 行或加载 > 2s 时触发，归 successor plan。本计划不实施。
+
+### 数据加载策略：一次 GraphQL 拉全部 vs 每 tab 独立拉取
+
+| 策略 | 适用 | 优缺点 |
+|------|------|--------|
+| **一次拉全部**（form initApi gql:selection 含子表字段） | 单实体 form + 嵌套 lines 子表 | 优：1 RTT，初始化快；劣：子表数据量大时初始加载慢，无懒加载 |
+| **每 tab 独立拉**（mechanism B + `mountOnEnter=true`） | 跨实体多 tab 详情 | 优：初始只拉头，切 tab 时才拉子表；劣：N RTT，tab 切换有延迟 |
+
+**默认推荐**：
+- 机制 A `layoutControl="tabs"` 走「一次拉全部」（form initApi 已含 gql:selection）
+- 机制 B `<pages><tabs>` 走「每 tab 独立拉」+ `mountOnEnter=true` + `unmountOnExit=false`（避免重复拉，但保留 DOM 状态）
+
+## 4. F12 落地清单
+
+### 已落地（本计划 8 页面）
+
+| 实体 | 域 | 机制 | tab 列表 |
+|------|----|------|---------|
+| ErpPurOrder | purchase | A | 基本信息 / 金额信息 / 明细行 / 审批与过账 / 审计信息 |
+| ErpSalOrder | sales | A | 基本信息 / 金额信息 / 明细行 / 审批与过账 / 审计信息 |
+| ErpInvStockMove | inventory | A | 基本信息 / 仓库信息 / 关联信息 / 明细行 / 审计信息 |
+| ErpMfgWorkOrder | manufacturing | A | 基本信息 / BOM 信息 / 计划信息 / 明细行 / 成本信息 / 审计信息 |
+| ErpFinVoucher | finance | A | 基本信息 / 过账信息 / 分录行 / 审计信息 |
+| ErpHrEmployee | human-resource | A | 基本信息 / 联系方式 / 证件信息（idCardNo 隐藏）/ 雇佣信息 / 薪酬信息（敏感字段隐藏）/ 审计信息 |
+| ErpAstAsset | assets | A | 基本信息 / 价值信息 / 折旧信息 / 使用信息 / 审计信息 |
+| ErpMntEquipment | maintenance | A | 基本信息 / 审计信息 |
+
+### Deferred（Tier C / Tier D / 敏感字段脱敏 / 时间线专用 @BizQuery / 完整仪表板 drawer）
+
+| 实体/能力 | 类别 | 触发条件 |
+|-----------|------|---------|
+| ErpFinAccountingPeriod 期末结账向导（5 步） | Tier C wizard | 财务保护区域 owner doc 明确 wizard 行为 + 后端 mutation 重构授权（roadmap 描述的 5 步 mutation 与实际 BizModel 不一致） |
+| ErpMntVisit 任务+备件+停机 tabs / 4 步向导 | Tier C | maintenance F4 P2 successor 完成（child-table-editor 基线就绪） |
+| ErpPrjProject 任务+预算+成本 tabs | Tier D | projects 域 successor plan |
+| ErpQaInspection 行评测+结果+NCR tabs | Tier D | quality 域 successor plan |
+| ErpCrmLead 活动+时间线+报价 tabs | Tier D | crm 域 successor plan（依赖 F4 P3） |
+| ErpCsTicket 活动+SLA+调查 tabs | Tier D | cs 域 successor plan（依赖 F4 P3） |
+| ErpCtContract 基本信息+合同行+版本+开票+消耗+附件 tabs | Tier D | contract 域 successor plan（依赖 F4 P3） |
+| Timesheet 周网格（hr + projects 共享组件） | Tier D | 跨域共享组件独立 successor |
+| ErpHrEmployee 完整档案 drawer（合同/考勤/休假/工时子表 tab） | 完整仪表板 successor | ErpHrEmployee cross-cutting successor plan 启动 |
+| ErpAstAsset 完整仪表板 drawer（折旧时间线 + 相关凭证列表 tab） | 完整仪表板 successor | ErpAstAsset cross-cutting successor plan 启动 |
+| ErpMntEquipment 完整仪表板 drawer（状态色块 + 维护时间线 + 备件消耗 tab） | 完整仪表板 successor | ErpMntEquipment cross-cutting successor plan 启动 |
+| 敏感字段脱敏（hr bankAccount / salaryBase / logistics API Key/Secret） | cross-cutting | 敏感字段脱敏独立 plan 启动 |
+| 仪表板后端专用 `@BizQuery` | 性能优化 | 仪表板数据量 > 1000 行或加载 > 2s 时 |
+| F16 高风险复杂页面（凭证录入平衡校验 + 甘特图 + 三单匹配 + 版本对比 + ASN 五阶段流程条） | F16 territory | F16 plan 启动 |
+
+## 5. wizard 范式占位（待 successor 落地后回填）
+
+Nop view.xdef 已内置 `<wizard>` 元素（`xview.xdef:177-192`），支持 `<step page="..." title="..."/>` 多步骤。但 wizard 范式在本仓库**尚未在任何计划落地**——AMIS wizard 组件 + step-state 管理 + 步骤间状态守卫均未在生产代码中验证。
+
+**首个 wizard 落地建议**：选择 ErpFinAccountingPeriod 期末结账向导 successor plan 作为 PoC，但需先完成：
+1. 后端 mutation 重构（roadmap 描述的 5 步独立 mutation `closeCostTransfer/closeFx/closePnl/reviewVoucher/closePeriod` 当前不存在，closePeriod 内部一次性多步执行）
+2. 财务保护区域人工审查（AGENTS.md AI 阻塞条件）
+3. AMIS wizard PoC + 步骤间数据持久化 + 回退/前进守卫
+
+PoC 落地后回填本节，包含：
+- step-state 管理机制（前端 vs 后端）
+- 步骤间数据校验位置
+- 回退守卫（已确认步骤不可回退到未完成步骤）
+- wizard 与 `<pages><tabs>` 的关系（wizard 是 step + 顺序约束的 tabs）
+
+## 6. 反模式自检表
+
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 用 `<pages><tabs>` 包装单实体 form（多此一举） | 单实体多 group 用 `<form layoutControl="tabs">` |
+| 用 page.yaml 独立 AMIS tabs 绕过 view.xml 抽象 | 优先 view.xml `layoutControl="tabs"`；仅跨实体多 crud 才用 page.yaml |
+| 在 form tabs 内移除 `<cell id="lines">` 的 sub-grid-edit | 保持 `<cell id="lines"><view path=... grid="sub-grid-edit|sub-grid-view"/></cell>` 不变，tabs 自动包装 |
+| 把 F9 关联单据 drawer 改为嵌入 tab | 保持 F9 row-action drawer 独立；本范式与 F9 正交可叠加 |
+| 在 wizard 范式 PoC 落地前直接在财务保护区域手写 AMIS wizard JSON | 先完成后端 mutation 重构 + 人工审查 + wizard PoC，再回填 §5 |
+| 把敏感字段脱敏放在 view.xml layout 隐藏（layout 移除 = 隐藏） | layout 移除仅前端不可见，sql 直查仍可见；完整脱敏需后端 `@Sensitive` 或 BizModel `@BizLoader` mask transformer |
+| 仪表板时间线直接 N+1 查询（每行 visit 单独拉 sparePartUsage） | 用后端 `@BizQuery` 聚合或 GraphQL `findPage` + `gql:selection` 批量预取 |
+
+## 7. 参考
+
+- `nop-entropy/docs-for-ai/02-core-guides/view-and-page-customization.md` — view.xml 三层模型与 `<pages>` 结构
+- `nop-entropy/docs-for-ai/02-core-guides/page-dsl-pattern-catalog.md` — AMIS tabs / wizard / dashboard DSL 模式目录
+- `nop-entropy/docs-for-ai/03-runbooks/build-tabs-workspace-page.md` — `<pages><tabs>` 工作台页面构建 runbook
+- `nop-entropy/nop-job/.../NopJobSchedule.view.xml` — 真实样例（机制 B `<tabs>` + `<simple>` + `<crud>`）
+- `docs/design/child-table-editor-patterns.md` — F4 子表编辑范式（与本范式正交）
+- `docs/design/cross-doc-navigation-patterns.md` — F9 关联单据 drawer 范式（与本范式正交）
+- `docs/design/notify/inbox-patterns.md` — page.yaml + AMIS tabs 真实样例（跨实体 drawer）

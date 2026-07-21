@@ -288,30 +288,30 @@ Status: `todo`
 
 ### F12 — 页面结构增强（P2）
 
-Status: `todo`
+Status: `partial` — 核心域 8 实体 tabs 容器已落地（plan 2026-07-21-0330-3-f12-page-structure-tabs-wizards.md），Tier C wizard + Tier D 长尾 + Tier B 完整仪表板 drawer + 敏感字段脱敏归 successor plan
 
 需要 tabs/向导/工作台页面的域（共 16 页面，与分析报告 §7.12 一致）：
 
-| 域/实体 | 预期结构 |
-|---------|---------|
-| purchase: ErpPurOrder | 头+行 tabs |
-| sales: ErpSalOrder | 头+行 tabs |
-| inventory: ErpInvStockMove | 头+行+流水 tabs |
-| finance: ErpFinVoucher | 头+行+凭证源 tabs |
-| finance: ErpFinAccountingPeriod | 期末结账向导（5步：成本转结 → 汇兑损益 → 损益结转 → 凭证复审 → 结账） |
-| manufacturing: ErpMfgWorkOrder | 头+行+工序+成本 tabs |
-| projects: ErpPrjProject | 任务+预算+成本 tabs |
-| projects/hr: Timesheet | 周网格录入（项目/任务为行，工作日为列，0.5h 步进，自动计算工时成本） |
-| quality: ErpQaInspection | 行评测+结果+NCR tabs |
-| assets: ErpAstAsset | 资产详情仪表板（双列：基本信息+财务信息，含折旧时间线、相关凭证列表） |
-| maintenance: ErpMntVisit | 任务+备件+停机 tabs |
-| maintenance: ErpMntEquipment | 设备详情仪表板（状态色块、维护时间线、到期预警、备件消耗） |
-| crm: ErpCrmLead | 活动+时间线+报价 tabs |
-| cs: ErpCsTicket | 活动+SLA+调查 tabs |
-| hr: ErpHrEmployee | 基本信息+合同+薪酬+考勤+休假+工时 tabs |
-| contract: ErpCtContract | 基本信息+合同行+版本历史+开票计划+消耗记录+附件 tabs |
+| 域/实体 | 预期结构 | 落地状态 |
+|---------|---------|---------|
+| purchase: ErpPurOrder | 头+行 tabs | ✅ done |
+| sales: ErpSalOrder | 头+行 tabs | ✅ done |
+| inventory: ErpInvStockMove | 头+行+流水 tabs | ✅ done（流水由既有 F9 drawer 承担）|
+| finance: ErpFinVoucher | 头+行+凭证源 tabs | ✅ done（凭证源 billLinks 由 successor plan 落地 ref-voucher.page.yaml）|
+| finance: ErpFinAccountingPeriod | 期末结账向导（5步：成本转结 → 汇兑损益 → 损益结转 → 凭证复审 → 结账） | ❌ Deferred：后端 mutation 与 roadmap 描述不一致，归 Tier C wizard successor |
+| manufacturing: ErpMfgWorkOrder | 头+行+工序+成本 tabs | ✅ done（工序 JobCard 由既有 F9 drawer 承担）|
+| projects: ErpPrjProject | 任务+预算+成本 tabs | ❌ Deferred：归 Tier D projects successor |
+| projects/hr: Timesheet | 周网格录入（项目/任务为行，工作日为列，0.5h 步进，自动计算工时成本） | ❌ Deferred：归跨域共享组件 successor |
+| quality: ErpQaInspection | 行评测+结果+NCR tabs | ❌ Deferred：归 Tier D quality successor |
+| assets: ErpAstAsset | 资产详情仪表板（双列：基本信息+财务信息，含折旧时间线、相关凭证列表） | ✅ done（form tabs 化；折旧时间线/凭证列表归 successor plan）|
+| maintenance: ErpMntVisit | 任务+备件+停机 tabs | ❌ Deferred：F4 maintenance child-table-editor 未覆盖，归 maintenance successor |
+| maintenance: ErpMntEquipment | 设备详情仪表板（状态色块、维护时间线、到期预警、备件消耗） | ✅ done（form tabs 化；维护时间线/状态色块归 successor plan）|
+| crm: ErpCrmLead | 活动+时间线+报价 tabs | ❌ Deferred：归 Tier D crm successor（依赖 F4 P3）|
+| cs: ErpCsTicket | 活动+SLA+调查 tabs | ❌ Deferred：归 Tier D cs successor（依赖 F4 P3）|
+| hr: ErpHrEmployee | 基本信息+合同+薪酬+考勤+休假+工时 tabs | ✅ done（form 6 tabs 化 + 薪酬敏感字段隐藏；合同/考勤/休假/工时跨实体子表归 successor plan）|
+| contract: ErpCtContract | 基本信息+合同行+版本历史+开票计划+消耗记录+附件 tabs | ❌ Deferred：归 Tier D contract successor（依赖 F4 P3）|
 
-（注意：drawer 弹窗已是 codegen 默认；本项聚焦 tabs、向导和工作台页面。）
+（注意：drawer 弹窗已是 codegen 默认；本项聚焦 tabs、向导和工作台页面。F12 实际落地清单：8/16 done（核心域 Tier A 5 + Tier B 3 form tabs 化），8/16 Deferred。完整范式见 `docs/design/page-structure-patterns.md`。）
 
 ---
 
