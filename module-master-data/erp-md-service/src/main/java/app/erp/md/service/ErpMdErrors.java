@@ -173,4 +173,29 @@ public interface ErpMdErrors {
             "erp.err.md.customs.source-bill-required",
             "报关记录必须填写业务单据类型(sourceBillType)或业务单据编码(sourceBillCode)至少一项",
             ARG_DECLARATION_NO);
+
+    // --- D1 外部 API 集成参考实现：汇率查询 API 客户端（plan 2026-07-21-1206-3）---
+    // 对应 docs/architecture/external-api-integration-pattern.md §7.3 案例 C。
+
+    String ARG_BASE_CURRENCY = "baseCurrency";
+    String ARG_PROVIDER = "provider";
+    String ARG_RATE_LIMIT_RPS = "rateLimitRps";
+
+    /** API 不可达（网络错误 / 熔断 / config-gated 未启用）。 */
+    ErrorCode ERR_EXCHANGE_RATE_API_UNAVAILABLE = ErrorCode.define(
+            "erp.err.md.exchange-rate-api.unavailable",
+            "汇率查询 API 不可用（provider={provider}, baseCurrency={baseCurrency}）—— 请检查 erp-md.exchange-rate-api-enabled 是否启用 + provider 配置是否正确",
+            ARG_PROVIDER, ARG_BASE_CURRENCY);
+
+    /** 限流触发（超过 erp-md.exchange-rate-api-rate-limit-rps）。 */
+    ErrorCode ERR_EXCHANGE_RATE_API_RATE_LIMITED = ErrorCode.define(
+            "erp.err.md.exchange-rate-api.rate-limited",
+            "汇率查询 API 限流触发（provider={provider}, rateLimitRps={rateLimitRps}）—— 请降低调用频率或调高 erp-md.exchange-rate-api-rate-limit-rps 配置",
+            ARG_PROVIDER, ARG_RATE_LIMIT_RPS);
+
+    /** 响应格式错误（JSON 解析失败 / 缺必需字段）。 */
+    ErrorCode ERR_EXCHANGE_RATE_API_RESPONSE_INVALID = ErrorCode.define(
+            "erp.err.md.exchange-rate-api.response-invalid",
+            "汇率查询 API 响应格式错误（provider={provider}, baseCurrency={baseCurrency}）—— 响应非 JSON 或缺必需字段",
+            ARG_PROVIDER, ARG_BASE_CURRENCY);
 }

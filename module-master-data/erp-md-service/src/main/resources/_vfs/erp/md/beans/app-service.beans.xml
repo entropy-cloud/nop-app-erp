@@ -24,4 +24,12 @@
     <!-- 跨账套科目映射解析器（多套账传播时科目翻译） -->
     <bean id="app.erp.md.dao.SubjectMappingResolver"
           class="app.erp.md.dao.SubjectMappingResolver"/>
+
+    <!-- D1 外部 API 集成参考实现：汇率查询 API 客户端工厂（plan 2026-07-21-1206-3）。
+          对应 docs/architecture/external-api-integration-pattern.md §7.3 案例 C。
+          范式：单 provider per 配置切换 + 内置 IRateLimiter（Nop 令牌桶）+ TTL 缓存，
+          Client/Factory 两层（无 Registry，与 logistics Client/Factory/Registry 三层异构）。
+          被 ErpMdCurrencyBizModel.refreshRatesFromApi 注入调用；config-gated 默认 false。 -->
+    <bean id="app.erp.md.service.exchange.ErpMdExchangeRateApiClientFactory"
+          class="app.erp.md.service.exchange.ErpMdExchangeRateApiClientFactory"/>
 </beans>
