@@ -80,6 +80,7 @@ ErpMdExchangeRate（汇率日表）
 - **rate limiting**：超过 `erp-md.exchange-rate-api-rate-limit-rps` 抛 `ERR_EXCHANGE_RATE_API_RATE_LIMITED`。
 - **缓存**：同 cacheKey（`baseCurrency|sorted(targetCurrencies)|asOfDate`）在 TTL 内走缓存（隐式幂等）。
 - **幂等性**：写入 `ErpMdExchangeRate` 时按 `(fromCurrencyId, toCurrencyId, validFrom)` upsert（已存在则更新 rate 字段，对齐 `idempotency-pattern.md §规则 1`）。
+- **区间互斥（C3）**：`ErpMdExchangeRateBizModel.defaultPrepareSave/Update` 钩子接入 `ErpDateRangeOverlapValidator`，同 `fromCurrencyId + toCurrencyId + rateType` 维度区间互斥（MUTEX 策略），重叠抛 `ERR_MD_DATE_RANGE_OVERLAP`。详见 `../date-ranged-validity-pattern.md §6`。
 - **部分成功**：API 返回的 targetCurrency 不在主数据币种表中 → 跳过（不抛异常，部分成功语义）。
 
 ### 与 logistics/b2b 范式异构

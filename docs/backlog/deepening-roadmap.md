@@ -64,7 +64,7 @@
 |-----------|--------|-----------|--------------|----------------|
 | C1: Unified Party Identity Query | done | `docs/design/master-data/unified-party-identity.md` (**NEW**) | `master-data/README.md` | 仅查询层，无需 ORM 变更 |
 | C2: Cross-Border Trade Extensions | done | `docs/design/master-data/cross-border-trade.md` (**NEW**) | C1 (party identity) | **需要 ErpMdMaterial 加字段 + 新建 ErpMdMaterialCustoms 实体 ORM 变更** |
-| C3: Date-Ranged Validity Pattern | todo | `docs/design/date-ranged-validity-pattern.md` (**NEW**) | | Convention used in 6+ entities | 仅为模式文档，实施时可能涉及 ORM 字段追加 |
+| C3: Date-Ranged Validity Pattern | done | `docs/design/date-ranged-validity-pattern.md` (**NEW**) | | Convention used in 6+ entities | 仅为模式文档，实施时可能涉及 ORM 字段追加 |
 
 ### Milestone D: Integration & Architecture
 
@@ -253,6 +253,40 @@ D1（External API Integration Reference Pattern）已落地，状态 `todo → d
   - master-data service 全 69 测试全绿（64 既有 + 5 新增）
 - **D4 Plugin Hot Management Research 解锁说明**：D1 是 D4 的前置（per §7 mermaid edge `D1 --> D4`）；D1 完成后 D4 可启动（D4 是独立 P3 可行性研究项 — OSGi-style vs Maven module isolation vs NocoBase-style plugin manager）。D1 提供的 master-data 汇率查询 API 客户端 + logistics Carrier Gateway + b2b EDI Format 三案例作为 D4 插件边界评估的参考输入。
 - **Deferred successor**：`ErpSysExternalSystem` 实体化（触发：多 API 配置场景 + ORM 授权）/ notify 域 Webhook 表实体化（触发：notify 域 webhook 业务需求）/ D4 Plugin Hot Management Research（触发：D1 完成 + 业务客户插件热管理需求）/ 多节点 Redis-based rate limiting（触发：生产部署多节点 + 限流不一致）/ OAuth2 完整通用实现 + `IErpExternalApiAuthProvider` 标准 SPI（触发：业务客户 OAuth2 接入 + 跨域统一 auth 需求）/ 第三方 API SDK 自动生成（触发：业务客户明确需求 + 工具链选型）/ API gateway 反向代理集成（触发：生产部署架构演进）/ API 监控/可观测性完整方案（触发：生产监控需求）/ API 安全审计（触发：合规审计需求 + security owner doc 授权）/ 跨境数据合规（触发：跨国集团业务 + 数据合规审计）/ 真实 provider 接入（exchangerate.host / 銀企直连）（触发：业务客户接入需求）。
+
+## 8.6 C3 落地证据（2026-07-21）
+
+C3（Date-Ranged Validity Pattern）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-21-2225-1-date-ranged-validity-pattern.md`（4 Phase 全 done：Phase 1 Explore + Owner Doc NEW + 4 Decisions / Phase 2 helper + 校验器 + 单测 / Phase 3 3 试点接入 + 集成测试 + owner doc 回链 / Phase 4 roadmap 同步 + 全仓库验证）
+- **Owner Doc**：`docs/design/date-ranged-validity-pattern.md`（**NEW** ~260 行，10 节完整：目的与范围 / Decision A 规范字段命名 + Decision B 迁移策略 / 区间查询语义（边界含否约定 + 4 原语定义）/ Decision C 重叠策略分类矩阵 / Decision D helper 实现位置契约 / 重叠校验规则 + 错误码约定 / 试点实施记录 / 反模式自检表 10 项 / 与既有 owner doc 关系 / Follow-up 17 实体清单）
+- **4 Decisions 裁决**：
+  - **Decision A**：`validFrom/validTo` 为规范（4 核心域 12 实体已用，数量占优 + 与 `active-status` 字典同义链）；新实体强制采用，历史 `effectiveFrom/effectiveTo` 不重命名
+  - **Decision B**：不重命名既有非规范字段（高风险数据迁移 ≈ 0 业务价值）；helper 内部归一化历史命名
+  - **Decision C**：3 类语义分类 — MUTEX（同维度至多 1 条有效）/ PRIORITY（允许重叠按 priority 取首）/ STACKABLE（多条并行叠加）；3 试点均属 MUTEX
+  - **Decision D**：helper 位于 `erp-md-service/daterange/`（跨域经 `app-erp-master-data-service` 依赖可达）；纯 Java 静态工具类（无 IoC 依赖，跨域 service 已传递依赖）
+- **可复用组件**（无 ORM 变更，纯 Java 新增）：
+  - `IDateRange` 接口（`erp-md-dao/daterange/`，与 ORM 实体同层以便直接 implements）— 2 getter 归一化 `validFrom/validTo` 与 `effectiveFrom/effectiveTo` 历史变体
+  - `ErpDateRanges` 纯函数工具类（`erp-md-service/daterange/`）— 4 原语：`contains(range, date)` 含 `java.util.Date` 重载适配 TIMESTAMP 变体 / `overlaps(r1, r2)` / `effectiveOn(ranges, date)` / `longestOverlap(ranges)`（sweep line 算法）
+  - `ErpDateRangeOverlapValidator` 互斥校验器（同包）— `enforceMutex(candidate, existing, errorCode, selfId)` 含 selfId 排除 + 永久无区间跳过
+- **错误码**：`ERR_MD_DATE_RANGE_OVERLAP`（`erp.err.md.date-range.overlap`，参数 `entityName/validFrom/validTo/conflictId`，ARG_* 常量集中于 Validator 跨域复用）
+- **3 试点实体接入**（均在 master-data 域，无跨域 service 测试扩散）：
+  - `ErpMdExchangeRate`（维度 = fromCurrencyId + toCurrencyId + rateType）— `ErpMdExchangeRateBizModel` 增 `defaultPrepareSave/Update` 钩子 + `enforceNoOverlap` 方法
+  - `ErpMdTaxRate`（维度 = taxType）— `ErpMdTaxRateBizModel` 同范式
+  - `ErpMdSupplierApproval`（维度 = partnerId，status != REJECTED 时）— `ErpMdSupplierApprovalBizModel` 同范式 + 内存过滤 REJECTED 记录
+  - 3 实体均原生使用规范字段 `validFrom/validTo`，直接 `implements IDateRange`，无 ORM 字段追加（Decision B 规避授权门控）
+  - **关键发现**：`CrudBizModel.updateEntity()` 不触发 `defaultPrepareUpdate`（仅 GraphQL `__save`/`__update` Map 入口走 EntityData 管道才触发）；故 `ErpMdSupplierApprovalBizModel` 6 态状态机内部 `updateEntity` 调用不受 overlap 钩子干扰，仅用户经标准 CRUD API 创建/更新时校验
+- **owner doc 回链**：
+  - `docs/design/master-data/README.md` 增「日期范围有效性（C3）」段（规范字段命名 + 3 试点 MUTEX 策略 + helper 路径 + 错误码 + follow-up 引用）+ 本域文档表增 `../date-ranged-validity-pattern.md` 行
+  - `docs/design/master-data/exchange-rate-management.md` 增「区间互斥（C3）」行为约定条
+  - `docs/design/human-resource/README.md` 增「日期范围有效性（C3 交叉引用）」段（hr 历史 `effectiveFrom/effectiveTo` 命名变体不重命名 + 接入触发条件）
+- **测试基线**：
+  - `TestErpDateRanges`（**NEW**，纯函数单测）29 场景全绿（contains 闭区间/开放侧/双 null/util.Date 重载 + overlaps 相同端点/相邻日/完全包含/部分交叉/NULL 无穷 + effectiveOn 过滤/空集合 + longestOverlap 单条/三段不重叠/三重叠/相邻日/同日）
+  - `TestErpMdDateRangePilots`（**NEW**，集成测试经 GraphQL RPC）10 场景全绿（3 试点 × 正路径不重叠通过 + 负路径重叠拒绝 + 边界相邻日通过 + ErpMdExchangeRate 不同 rateType 通过 + ErpMdExchangeRate 更新自身排除 + ErpMdSupplierApproval REJECTED 不占区间 + ErpMdTaxRate 不同 taxType 通过）
+  - master-data service 全 108 测试全绿（98 既有 + 10 新增 pilot 集成测试）
+  - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
+  - 下游依赖模块（purchase/sales/finance service）`mvn test` 全绿无回归
+- **Deferred successor**：全量实体应用（17 个 follow-up 实体清单见 owner doc §10）/ PRIORITY 策略运行时取值 helper（`pickHighestPriority`，触发：sales `ErpSalPriceList` 接入）/ STACKABLE 策略叠加计算 helper（触发：sales `ErpSalPricingRule` 接入）/ 物化视图/反向索引按日期查询（触发：单实体有效记录数 > 10K 且 effectiveOn 查询 P95 > 200ms）/ helper 下沉到独立 `erp-common-dao` 模块（触发：跨域接入数 > 3，aps 域当前不依赖 md-service）
 
 ## 9. Rules
 

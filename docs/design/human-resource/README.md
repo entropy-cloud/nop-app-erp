@@ -240,6 +240,14 @@ HR 域的薪资凭证通过 `IErpFinAcctDocProvider` 注册 `SALARY/SALARY_PAYME
 - ⛔ **中国本地化硬编码**——社保比例/个税公式因城市而异，必须通过 erp-hr 配置表管理，不硬编码 Java。
 - ⛔ **薪酬与考勤耦合过紧**——考勤（ErpHrAttendance）是原始数据，薪酬（ErpHrSalary）计算依赖于考勤+休假+合同，但两者是独立实体，薪酬计算是 Job 聚合逻辑。
 
+### 日期范围有效性（C3 交叉引用）
+
+`ErpHrSocialInsuranceConfig` / `ErpHrSocialInsuranceBase` 使用 `effectiveFrom` / `effectiveTo` 字段表达记录有效期（薪酬档/社保配置的有效区间）。该命名属于历史变体（非规范 `validFrom/validTo`），按 `docs/design/date-ranged-validity-pattern.md §Decision B` **不重命名**：
+
+- 接入区间互斥校验时，调用方（hr-service BizModel）在 `defaultPrepareSave/Update` 中构造匿名 `IDateRange` 适配器包装 `effectiveFrom/effectiveTo`，再调 `ErpDateRangeOverlapValidator.enforceMutex`
+- helper（`ErpDateRanges` / `ErpDateRangeOverlapValidator`）位于 `erp-md-service/daterange/`，hr-service 经 `app-erp-master-data-service` 依赖可达
+- **接入触发条件**：薪酬档调整流程细化 + hr-service owner doc 授权（本计划未试点，归 follow-up）
+
 ## 证据强度标注
 
 | 证据 | 强度 | 说明 |

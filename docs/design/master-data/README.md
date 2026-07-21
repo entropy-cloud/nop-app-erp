@@ -73,6 +73,20 @@
 
 > 关税/退税过账 Provider 接入归 finance successor；海关 EDI 报文接入归 b2b successor；状态机/审批流归跨域 successor。
 
+### 日期范围有效性（C3）
+
+汇率/税率/供应商准入资格等使用 `validFrom` + `validTo` 表达记录有效期的实体，遵循统一约定（详见 `../date-ranged-validity-pattern.md`）：
+
+- **规范字段命名**：`validFrom` / `validTo`（双侧闭区间，含起止日）；新实体强制采用，历史 `effectiveFrom/effectiveTo` 命名变体不重命名（helper 归一化）
+- **同维度互斥（MUTEX）策略**：同维度同一时刻至多 1 条有效记录。试点 3 实体：
+  - `ErpMdExchangeRate`：维度 = `fromCurrencyId + toCurrencyId + rateType` → `defaultPrepareSave/Update` 钩子校验
+  - `ErpMdTaxRate`：维度 = `taxType` → 同上
+  - `ErpMdSupplierApproval`：维度 = `partnerId`（status != REJECTED 时；REJECTED 视为已废弃不占区间）→ 同上
+- **可复用 helper**：`ErpDateRanges`（区间运算原语 contains/overlaps/effectiveOn/longestOverlap）+ `ErpDateRangeOverlapValidator`（互斥校验器）位于 `erp-md-service/daterange/`，跨域经 `app-erp-master-data-service` 依赖可达
+- **错误码**：`ERR_MD_DATE_RANGE_OVERLAP`（`erp.err.md.date-range.overlap`）
+
+> Follow-up 实体清单（17 个未试点）见 `../date-ranged-validity-pattern.md §10`，按业务驱动逐域接入。
+
 ## 启用/停用（非状态机）
 
 主数据实体（物料、SKU、往来单位、仓库、库位、计量单位、币种、科目）采用简单的"启用/停用"二态，**不是工作流状态机**——主数据没有多步业务流转，只有"是否可被新业务单据引用"这一控制。
@@ -160,6 +174,7 @@
 | `sku-multi-unit.md` | SKU 多单位多 barcode 设计（物料 SKU 分离、多单位换算、多档价格） |
 | `unified-party-identity.md` | 统一 Party 身份查询（C1：跨 Partner/Employee/Organization 抽象 + `IErpPartyBiz` + 联合 picker） |
 | `cross-border-trade.md` | 跨境贸易扩展（C2：物料层 9 字段 + `ErpMdMaterialCustoms` per-transaction 实体 + FTA + 报关行 Partner 类型） |
+| `../date-ranged-validity-pattern.md`（跨域） | 日期范围有效性模式（C3：`validFrom/validTo` 规范 + 区间运算 helper + MUTEX 互斥校验，3 试点在 master-data 域） |
 
 > 主数据域不包含状态机文档——主数据是启停二态而非工作流状态机（见上文"启用/停用"节）。
 
