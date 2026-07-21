@@ -312,3 +312,43 @@
 3. 期间锁定机制是否严格
 4. 反结账流程是否有足够的审计与审批
 5. 与其他域的数据一致性是否保证
+
+## 预算结转与期间状态机（A2，plan 2026-07-21-1206-2）
+
+> A2 落地预算结转规则引擎（budget.md §结转规则引擎）。结转将上年度预算剩余（或已用）按规则结转至下年度，与期间状态机强相关。
+
+### 结转前置条件（期间状态机协调）
+
+- **源 Scenario 所在年度的所有会计期间必须 CLOSED**（`ErpFinAccountingPeriodStatus.glStatus = CLOSED`）——年度已结账是结转的硬前置。
+- 期间未结账时执行 carryForward 抛 `ERP_FIN_BUDGET_CARRY_FORWARD_RULE_INVALID`（rule 校验失败/前置不满足）。
+- 反结账（reverseClose）后，已结转的源 Scenario status=CLOSED 不回退（终态不可逆），但可经新 Scenario 重新结转。
+
+### 结转后 Scenario 状态扩展
+
+| 状态 | 含义 | A2 新增 |
+|------|------|---------|
+| DRAFT / SUBMITTED / APPROVED / REJECTED / CANCELLED | 既有 | 否 |
+| **CLOSED** | 已结转（源 Scenario 终态，结转后不可再调整） | ✅ |
+
+结转后源 Scenario：
+- `docStatus = CLOSED`（终态，结转后不可再调整，避免已结转数据被改）
+- `closedAt` = 结转时间戳（审计标识）
+- 写 `ErpFinBudgetCarryForwardLog`：sourceScenarioId / targetScenarioId / rule / sourceRemaining / sourceUsed / carriedAmount
+
+### 跨年度期间状态机协调
+
+```
+上年度 12 月期间 glStatus = OPEN/CLOSING → 拒绝结转
+       ↓
+上年度 12 月期间 glStatus = CLOSED → 允许结转
+       ↓
+carryForward 执行：源 Scenario status=CLOSED + 目标 Scenario 增补 BudgetLine + 写 BUDGET 凭证
+       ↓
+目标 Scenario 进入 DRAFT（待用户审批后生效参与预算控制）
+```
+
+### commitment 与结转
+
+A2 默认 **commitment 不结转**（与 actualAmount 合并记录在源 Scenario 的余量计算中，结转后由源 Scenario 的 CLOSED 终态保留审计轨迹）。客户如有"未释放 commitment 一并结转至下年度"需求，归 successor（`commitment 一并结转` Deferred）。
+
+详见 [`budget.md §结转规则引擎`](budget.md#结转规则引擎a2plan-2026-07-21-1206-2)。

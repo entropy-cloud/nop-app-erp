@@ -493,3 +493,48 @@ VoucherBillR（业财回链）
 | master-data | 引用科目表/科目/币种主数据 |
 
 财务域处于 DAG 顶层，不依赖具体业务域的实现细节，只通过 `IErpFinAcctDocProvider` 接口聚合各域的凭证生成规则。
+
+## 承付（COMMITMENT）实际过账（A2，plan 2026-07-21-1206-2）
+
+> A2 落地 budget.md §业务规则3 既定义的承付过账逻辑：采购订单 APPROVED 时生成 postingType=COMMITMENT 凭证；订单 CANCELLED 或被发票接收时红冲。详见 [`budget.md §承付会计`](budget.md#承付会计a2plan-2026-07-21-1206-2)。
+
+### 3 接入点（严格对齐 budget.md:78 业务规则）
+
+| # | hook 点 | 时机 | 动作 | 事务边界 |
+|---|---------|------|------|---------|
+| 1 | **commit** | `ErpPurOrder.approve` 后置 | 生成 COMMITMENT 凭证（Dr 承付占用科目） | **SYNC 同事务**（与既有 `IErpFinBudgetControlBiz.check()` 强一致） |
+| 2 | **release-on-cancel** | `ErpPurOrder.reverseApprove` / `cancel` | 红冲原 COMMITMENT 凭证 | SYNC 同事务（与既有 reverseApprove 同事务） |
+| 3 | **release-on-invoice-approve** | `ErpPurInvoice.approve`（**AP 发票过账 = 实际占用产生 = 释放承付**） | 红冲原 COMMITMENT 凭证 | SYNC 同事务 |
+
+### reject release-receive-complete（ErpPurReceive 入库路径）
+
+`ErpPurReceive.approve`（采购入库）是**库存移动**（inventory 物理入库），**不产生 AP ACTUAL 占用**。承付不应在入库时释放——业务规则 budget.md:78 "订单 CANCELLED 或被发票接收时红冲" 中的 "被发票接收" = `ErpPurInvoice.approve`（AP 发票过账产生 ACTUAL 应付），**不是** `ErpPurReceive.approve`。在入库时释放承付会导致 actual + commitment 双重占用预算（红冲 commitment 但 actual 尚未产生）。
+
+### 与既有 `IErpFinBudgetControlBiz.check()` 协同
+
+| SPI | 调用点 | 数据载体 | 强弱一致 |
+|-----|--------|---------|---------|
+| `IErpFinBudgetControlBiz.check()` | purchase/sales 域审核事务内 | `ErpFinBudgetControlLog`（审计日志，不落库占用） | SYNC 强一致 |
+| `IErpFinBudgetCommitmentBiz.commit()` | `ErpPurOrder.approve` 后置 | `ErpFinVoucher` + `VoucherLine`（承付凭证，落库占用） | SYNC 强一致 |
+| `IErpFinBudgetCommitmentBiz.release()` | `ErpPurOrder.reverseApprove/cancel` + `ErpPurInvoice.approve` | `ErpFinVoucher` + `VoucherLine`（红冲凭证，释放占用） | SYNC 强一致 |
+
+**协同关系**：check 是余量校验（不落库占用），commit 是实际占用（落库 COMMITMENT 凭证），release 是占用释放（红冲凭证）。三者事务边界均为 SYNC 同事务（release 不走事件总线 ASYNC，避免事务跨域复杂度）。
+
+### config-gated 启用
+
+承付过账经 `erp-fin.budget-commitment-enabled`（默认 false）控制：
+- 默认关闭：保护既有 113 purchase 测试不触发承付凭证（config-gated 回归安全）。
+- 启用时必配 `erp-fin.budget-commitment-subject-code`（承付占用科目编码）；缺失时抛 `ERR_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED`。
+
+### CommitmentAcctDocProvider
+
+新增 Provider（`app.erp.fin.service.posting.CommitmentAcctDocProvider`）实现 `IErpFinAcctDocProvider`：
+- 与 BUDGET 同型：**不走 Provider 路由**（`getSupportedBusinessTypes()` 返回空集），承付凭证直接由 `CommitmentVoucherGenerator` 写入。
+- 存在仅为：文档化承付科目解析约定 + 满足接口约定 + 为 successor（多维承付科目解析）保留接入点。
+
+### 错误码
+
+| 错误码 | 含义 |
+|--------|------|
+| `ERP_FIN_BUDGET_COMMITMENT_ALREADY_RELEASED` | 重复 release 守卫（原 COMMITMENT 凭证已红冲或不存在） |
+| `ERP_FIN_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED` | 启用承付但未配置承付科目编码 |

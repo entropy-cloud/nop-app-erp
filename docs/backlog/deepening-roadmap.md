@@ -49,7 +49,7 @@
 | Work Item | Status | Owner Doc | Dependencies | Platform Reuse |
 |-----------|--------|-----------|--------------|----------------|
 | A1: GL Mapping Rule Tables | done | `docs/design/finance/gl-mapping-rules.md` (**NEW**) | `posting.md` §科目映射 概念已定 | NopSysEvent? 可选作为规则变更事件 | **需要 `ErpFinGlMappingRule` 实体 ORM 变更** |
-| A2: Budget Multi-Year / Carry-Forward | todo | `docs/design/finance/budget.md` (**EXPAND**) | A1 (budget control uses GL) | existing budget.md foundation | **可能需要新 budget 实体/字段 ORM 变更** |
+| A2: Budget Multi-Year / Carry-Forward | done | `docs/design/finance/budget.md` (**EXPAND**) | A1 (budget control uses GL) | existing budget.md foundation | **可能需要新 budget 实体/字段 ORM 变更** |
 | A3: Multi-Company Operational Depth | todo | `docs/architecture/multi-company.md` (**EXPAND**) | `intercompany-consolidation.md` | nop tenant-model, orgId dimension | **可能需要跨公司交易/合并实体 ORM 变更** |
 
 ### Milestone B: Manufacturing Intelligence
@@ -187,6 +187,44 @@ C2（Cross-Border Trade Extensions）已落地，状态 `todo → done`：
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
   - visual smoke `material-customs.visual.spec.ts`（**NEW**）2 测试落地（ErpMdMaterial xmeta 9 跨境字段可达 + ErpMdMaterialCustoms findPage action 注册）；运行需启动 app
 - **Deferred successor**：finance 关税/退税 Provider 接入（触发：跨境业务量 > 100 单/月 或 财务 owner doc 授权）/ b2b 海关 EDI 报文接入（触发：业务客户 EDI 报关需求）/ HS 编码字典全集（触发：业务方明确需求 + 第三方服务集成）/ ErpMdMaterialSku 跨境字段扩展（触发：同物料多 SKU 差异需求）/ 海关申报完整业务流程编排（触发：业务流程需求 + 跨域 owner doc 授权）/ 跨境报表实施（触发：业务客户报表需求 + report successor）/ 关税计算引擎（触发：含反倾销税/报复性关税的复杂税率计算需求）
+
+## 8.4 A2 落地证据（2026-07-21）
+
+A2（Budget Multi-Year / Carry-Forward / Commitment Accounting）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-21-1206-2-finance-budget-multi-year-carryforward.md`（4 Phase 全 done：Phase 0 Explore + Owner Doc EXPAND / Phase 1 ORM + 字典 + codegen / Phase 2 滚动复制 + 结转 + 承付 + SPI + 测试 / Phase 3 view.xml + owner doc 回链 + roadmap 同步）
+- **Owner Doc**：`docs/design/finance/budget.md`（既有 109 行 → EXPAND 至 ~280 行，新增 6 段：§多年度视图（候选 C 裁决 + budgetGroupCode 字段语义 + 与 parentScenarioId 边界）/ §滚动预算自动复制引擎（3 策略算法 + periodId 重映射 + parentScenarioId 链关系）/ §结转规则引擎（4 规则算法 + 凭证落地 + status=CLOSED 状态扩展 + commitment 与结转）/ §承付会计（COMMITMENT Provider + 3 接入点 + reject release-receive-complete 理由 + SPI 契约）/ §承付占用/释放 SPI（commit/release 签名 + 与 check 协同）/ §版本审计链（RollforwardLog/CarryForwardLog 实体 + 多年度版本树语义）/ §反模式自检表扩展）
+- **ORM 变更**：`module-finance/model/app-erp-finance.orm.xml`
+  - `ErpFinBudgetScenario` 增 4 字段（propId 26-29）：`budgetGroupCode` VARCHAR(50) / `carryForwardRule` 字典 / `rollForwardStrategy` 字典 / `closedAt` TIMESTAMP。全部 `mandatory="false"` + 默认 null，向后兼容；新增 `IDX_FIN_BUDGET_SCENARIO_BUDGET_GROUP_CODE` 索引
+  - 新建 `ErpFinBudgetRollforwardLog` 实体（18 字段 + 4 relations + 2 idx）
+  - 新建 `ErpFinBudgetCarryForwardLog` 实体（18 字段 + 4 relations + 2 idx）
+  - 字典扩展：`erp-fin/budget-status` 增 `CLOSED`；新字典 `erp-fin/budget-carry-forward-rule`（4 键：REMAINING_FULL/REMAINING_RATIO/USED_FULL/NONE）+ `erp-fin/budget-rollforward-strategy`（3 键：FIXED_PERCENTAGE/ZERO_BASED/INCREMENTAL）
+- **Codegen 产物**：`_ErpFinBudgetScenario.java` 含 4 新字段 + `_ErpFinBudgetRollforwardLog.java` + `_ErpFinBudgetCarryForwardLog.java` 全套（Entity + DAO + IBiz + BizModel + xmeta + xbiz + view.xml + page.yaml + i18n 中英文 + dict yaml + DaoConstants）
+- **承付（COMMITMENT）实际过账**（3 接入点严格对齐 budget.md:78）：
+  - **commit hook**：`ErpPurOrderProcessor.approve` 后置 → `IErpFinBudgetCommitmentBiz.commit` → `CommitmentVoucherGenerator.generateCommitment` 生成 postingType=COMMITMENT 凭证
+  - **release-on-cancel hook**：`ErpPurOrderProcessor.reverseApprove` / `cancel` → `IErpFinBudgetCommitmentBiz.release` → `CommitmentVoucherGenerator.reverseCommitment` 红冲
+  - **release-on-invoice-approve hook**：`ErpPurInvoiceProcessor.approve` → 经 invoiceLine.receiveLineId → receive.orderId → order.code 反查 → `release` 红冲（reject release-receive-complete：ErpPurReceive 入库不产生 AP ACTUAL）
+  - `CommitmentAcctDocProvider`（实现 `IErpFinAcctDocProvider`，与 BUDGET 同型不走 Provider 路由，文档化承付科目解析约定）
+  - config-gated（`erp-fin.budget-commitment-enabled` 默认 false，保护既有 113 purchase 测试不触发承付凭证）
+- **承付占用/释放 SPI**：`IErpFinBudgetCommitmentBiz`（finance-dao 跨层契约面）+ `ErpFinBudgetCommitmentBizModel`（finance-service 实现，与既有 `IErpFinBudgetControlBiz.check()` 同 SYNC 强一致范式）
+- **滚动预算 + 结转引擎**：`ErpFinBudgetScenarioBizModel` delta 扩展（rollForward / carryForward mutations 委托 `ErpFinBudgetScenarioProcessor`），config-gated（`erp-fin.budget-roll-forward-enabled` / `erp-fin.budget-carry-forward-enabled` 默认 false）
+- **错误码**（`ErpFinErrors.java`）：`ERP_FIN_BUDGET_SCENARIO_NOT_APPROVED` / `ERP_FIN_BUDGET_PERIOD_MISMATCH` / `ERP_FIN_BUDGET_COMMITMENT_ALREADY_RELEASED` / `ERP_FIN_BUDGET_CARRY_FORWARD_RULE_INVALID` / `ERP_FIN_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED`
+- **owner doc 回链**：
+  - `docs/design/finance/posting.md` 增「承付（COMMITMENT）实际过账（A2）」段（3 接入点表 + reject release-receive-complete 理由 + 与既有 IErpFinBudgetControlBiz 协同 + config-gated + CommitmentAcctDocProvider 定位 + 错误码）
+  - `docs/design/finance/period-close.md` 增「预算结转与期间状态机（A2）」段（结转前置 CLOSED + status=CLOSED 终态 + 跨年度期间状态机协调 + commitment 不结转）
+- **view.xml 定制**：
+  - `ErpFinBudgetScenario.view.xml` form（view/edit）增「多年度/结转信息(A2)」F3 分组（4 字段：budgetGroupCode/closedAt/carryForwardRule/rollForwardStrategy）+ grid list 增 budgetGroupCode 列 + query form 增 budgetGroupCode 筛选
+  - 2 mutation 按钮（rollForward 滚动复制 / carryForward 结转）+ 2 dialog（rollForwardDialog 收集 newFiscalYear + strategy / carryForwardDialog 收集 targetScenarioId + rule）
+  - `erp-fin.action-auth.xml` 新增 `budget-rollforward-log` + `budget-carry-forward-log` 菜单到 `fin-budget` 分组（orderNo 10030/10040）
+- **测试基线**：
+  - `TestErpFinBudgetRollForward`（**NEW**）3 策略场景全绿（FIXED_PERCENTAGE 100% 复制 / ZERO_BASED 仅结构 / INCREMENTAL 5% 上调）
+  - `TestErpFinBudgetCarryForward`（**NEW**）4 规则场景全绿（REMAINING_FULL=600 / REMAINING_RATIO 50%=300 / USED_FULL=400 / NONE=0）
+  - `TestErpFinBudgetCommitment`（**NEW**）4 场景全绿（commit 生成 COMMITMENT 凭证 / release-on-cancel 红冲 / release-on-invoice-approve 红冲 / 重复 release 守卫）
+  - `TestErpPurOrderCommitment`（**NEW**）3 集成场景全绿（approve 触发 commit / reverseApprove 触发 release / cancel 触发 release）
+  - finance service 全 229 测试全绿（218 既有 + 11 新增）
+  - purchase service 全 116 测试全绿（113 既有 + 3 新增）
+  - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
+- **Deferred successor**：A3 多公司运营深度（跨公司预算结转/合并预算）/ A1 GL Mapping Rule 接入 BUDGET/COMMITMENT 多维规则 / 承付款业务场景全集（销售订单/付款单等其他场景）/ 预算物化快照表 / commitment 一并结转 / 预算对比报表多年度维度实施 / 跨币种预算结转汇率差异处理 / 预算冻结/解冻多级控制 / 预算编制工作流
 
 ## 9. Rules
 
