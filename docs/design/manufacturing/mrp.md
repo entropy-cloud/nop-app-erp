@@ -102,3 +102,16 @@ CRM 域 `ErpCrmForecast`/`ErpCrmForecastLine`（金额/分类/owner 维度，COM
 - 运营预测（ErpMfgForecast）服务于 MRP/DRP 单位级需求计算，单位为数量。
 
 **CRM 金额预测 → 运营数量预测的自动 disaggregation 本期不实现**（Decision：金额→数量分解依赖售价策略 + 多币种 + 折扣，误差大；归后继）。触发条件：CRM 金额预测驱动运营数量需求的产品决策落地时（successor）。
+
+### 仿真引擎关系（2026-07-22，plan 2026-07-22-1000-2）
+
+本节单次 MRP 引擎（`MrpEngine` / `DemandAggregator`）不变；MRP/DRP 多场景仿真包装经独立 owner doc [`simulation-engine.md`](simulation-engine.md) 承载：
+
+- **场景-版本模型**：`ErpMfgMrpScenario`（场景）1:N `ErpMfgMrpScenarioVersion`（版本，引用 COMPUTED `ErpMfgMrpPlan` 快照）+ `ErpMfgMrpScenarioParam`（参数变体覆盖）
+- **覆盖机制（Decision E2 fork）**：fork `SimulationMrpEngine` 复用 MrpEngine 算法但替换全局/主数据读取为场景覆盖值，**单次 MRP 路径零触及**（既有 200+ manufacturing 测试零回归）
+- **3 参数覆盖**：`LEAD_TIME`（提前期偏移）/ `LOT_SIZE`（批量）/ `SAFETY_STOCK`（安全库存），未覆盖时回退全局配置/主数据（Decision B 回退顺序）
+- **结果对比**：`compareVersions(versionIdA, versionIdB)` `@BizQuery` 返回 4 维 diff DTO（净需求差/建议量差/缺料物料集差/总采购额差），不持久化（Decision C）
+- **转正式计划**：`promoteToFormalPlan(versionId)` 生成新 DRAFT `ErpMfgMrpPlan`，原版本 ARCHIVED，转正后走既有单次释放路径（Decision D）
+- **config-gated**：`erp-mfg.simulation-enabled` 默认 false，门控仿真入口（不保护单次 MRP 路径回归——E2 零触及已保证）
+
+DRP 同构对应物（`ErpDrpScenario`/`ErpDrpScenarioVersion`/`ErpDrpScenarioParam` + `SimulationDrpEngine` + 2 维 diff 补货量差/安全库存差）见 `simulation-engine.md §DRP 对应物`。

@@ -85,6 +85,19 @@
 | `state-machine.md` | 工单与作业卡状态机 |
 | `bom-and-routing.md` | BOM 结构、工艺路线、展开规则、成本计算 |
 | `material-reservation.md` | 工单物料预留设计（预留量计算、齐套校验、预留释放） |
+| `simulation-engine.md` | MRP/DRP 仿真引擎（场景-版本模型、参数变体覆盖、结果对比、DRP 对应物；plan 2026-07-22-1000-2） |
+
+## MRP/DRP 仿真引擎（2026-07-22，plan 2026-07-22-1000-2）
+
+本域已落地 MRP/DRP 多场景仿真引擎，详见 [`simulation-engine.md`](simulation-engine.md)。核心要点：
+
+- **场景-版本模型**：`ErpMfgMrpScenario` 1:N `ErpMfgMrpScenarioVersion` + `ErpMfgMrpScenarioParam`（参数变体覆盖：LEAD_TIME/LOT_SIZE/SAFETY_STOCK）
+- **E2 fork 范式**：`SimulationMrpEngine` 复用 MrpEngine 算法但替换全局/主数据读取为场景覆盖值，**单次 MRP 路径零触及**（既有 200+ manufacturing 测试零回归）
+- **结果对比**：4 维 diff（净需求差/建议量差/缺料物料集差/总采购额差），返回 DTO 不持久化
+- **DRP 对应物**：`ErpDrpScenario`/`ErpDrpScenarioVersion`/`ErpDrpScenarioParam` + `SimulationDrpEngine` + 2 维 diff（补货量差/安全库存差）
+- **config-gated**：`erp-mfg.simulation-enabled` / `erp-drp.simulation-enabled` 默认 false
+
+触发条件：业务方明确多场景 what-if 仿真需求时启用配置。
 
 ## 实现落位提示
 

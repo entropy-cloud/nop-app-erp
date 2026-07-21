@@ -14,9 +14,9 @@
 
 | State | Count |
 |-------|-------|
-| todo | 8 |
+| todo | 7 |
 | ready | 0 |
-| done | 3 |
+| done | 4 |
 
 ## 3. 框架/平台复用
 
@@ -36,7 +36,7 @@
 | 域 | 已实现 | 待深化 |
 |----|--------|--------|
 | Finance | 3 层过账引擎、多账套、坏账 Allowance、汇兑损益、期间管理、预算基础 | GL 映射规则表（P1）、预算多年度/承付款（P2）、多公司运营深度（P2） |
-| Manufacturing | MRP 单次确定性计算、APS 排程、SPC、NCR/CAPA | MRP/DRP 多场景仿真引擎（P1） |
+| Manufacturing | MRP 单次确定性计算、APS 排程、SPC、NCR/CAPA、**MRP/DRP 仿真引擎**（P1）✅ B1 done | 产能仿真（CRP successor） |
 | Master Data | Partner/Employee/Organization 分离实体 | 统一 Party 身份查询（P1）、跨境贸易字段（P2）、日期范围有效性模式（P2） |
 | Cross-cutting | integration-pattern.md webhooks | 外部 API 集成参考模式（P1）✅、业务模块元数据 BT5 风格（P2）✅ |
 | Inventory | 3 层模型 + 加权移动平均/FIFO/标准成本 | 成本计算子计算器注入模式文档化（P1） ✅ D3 done |
@@ -56,7 +56,7 @@
 
 | Work Item | Status | Owner Doc | Dependencies | Platform Reuse |
 |-----------|--------|-----------|--------------|----------------|
-| B1: MRP/DRP Simulation Engine | todo | `docs/design/manufacturing/simulation-engine.md` (**NEW**) | `mrp.md` single-run computation | NopSysEvent for scenario eventing | **需要仿真场景/参数实体 ORM 变更** |
+| B1: MRP/DRP Simulation Engine | done | `docs/design/manufacturing/simulation-engine.md` (**NEW**) | `mrp.md` single-run computation | NopSysEvent for scenario eventing | **需要仿真场景/参数实体 ORM 变更** |
 
 ### Milestone C: Master Data & Identity
 
@@ -375,3 +375,48 @@ A3（Multi-Company Operational Depth）已落地，状态 `todo → done`：
   - finance service 全 243 测试全绿（229 既有 + 14 新增，无回归）
   - inventory service 全 114 测试全绿（ErpInvTransferOrderBizModel.confirm 钩子 config-gated 默认 false 保护既有测试）
 - **Deferred successor**：实时合并报表渲染（触发：业务客户合并报表需求 + report successor）/ 跨币种合并折算（触发：跨国集团多币种合并 + treasury owner doc）/ 集团预算合并/跨公司预算结转（A2 Deferred successor）/ 内部存货利润抵消自动化（触发：内部存货周转频次高 + 未实现利润核算需求）/ MARKET 策略真实市场价接入（触发：市场价数据源集成需求）/ 多账套精确解析（当前默认账套=1，触发：多账套 intercompany 科目差异化需求）/ 抵消科目经 GlMappingResolver 精确解析（当前默认编码兜底，触发：多维抵消科目差异化需求）/ 跨公司交易完整生命周期状态机（当前仅 confirm 触发，触发：跨公司采购/销售单据直接交易需求）
+
+## 8.10 B1 落地证据（2026-07-22）
+
+B1（MRP/DRP Simulation Engine）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-22-1000-2-manufacturing-mrp-drp-simulation-engine.md`（5 Phase 全 done：Phase 0 Explore + Owner Doc NEW + 5 Decisions / Phase 1 ORM + 字典 + codegen / Phase 2 MRP 参数变体 + 仿真计算编排 / Phase 3 结果对比引擎 + DRP 对应物 / Phase 4 view.xml + owner doc 回链 + roadmap 同步）
+- **Owner Doc**：`docs/design/manufacturing/simulation-engine.md`（**NEW** ~260 行，11 段完整：目的与范围 / 场景-版本模型（Decision A）/ 参数变体覆盖语义（Decision B）/ 结果对比算法（Decision C）/ 与单次引擎关系（Decision E E2 fork）/ 与 Forecast 输入边界 / 仿真到正式 plan 转正路径（Decision D）/ DRP 对应物 / 反模式自检表 10 项 / 配置项 / 与既有 owner doc 关系）
+- **5 Decisions 裁决**：
+  - **A 场景-版本关系**：选「场景 1:N 版本」（successor 可追溯性 + 对比基线稳定性 + DRP 同构性）
+  - **B 参数变体覆盖**：3 类参数子集（MRP LEAD_TIME/LOT_SIZE/SAFETY_STOCK；DRP SAFETY_STOCK/LEAD_TIME/REPLENISHMENT_QTY）；回退顺序 = 场景物料级 → 场景全局 → 全局配置/主数据；粒度 = 物料 + 全局（类别级 successor）
+  - **C 结果对比**：MRP 4 维 / DRP 2 维 diff；载体 = 临时查询返回 DTO（不可变快照可确定性派生）
+  - **D 转正路径**：仅产建议 + 显式 `promoteToFormalPlan` 转正（生成 DRAFT plan + 防重复 ARCHIVED）
+  - **E 仿真覆盖机制**：选 **E2（fork）**（单次路径零触及零回归；算法漂移由 Non-Goals 限定 + 头部注释约束）
+- **ORM 变更**：
+  - `module-manufacturing/model/app-erp-manufacturing.orm.xml` 新增 3 实体：`ErpMfgMrpScenario`（12 字段 + UK + 2 idx + 4 relations）+ `ErpMfgMrpScenarioVersion`（13 字段 + UK + 2 idx + 3 relations）+ `ErpMfgMrpScenarioParam`（11 字段 + UK + 3 idx + 2 relations）
+  - `module-drp/model/app-erp-drp.orm.xml` 新增 3 实体：`ErpDrpScenario` / `ErpDrpScenarioVersion` / `ErpDrpScenarioParam`（同构 MRP，Param 含 warehouseId 维度）
+  - 4 字典：`erp-mfg/simulation-status`（4 键）+ `erp-mfg/simulation-param-type`（3 键）+ `erp-drp/simulation-status`（4 键）+ `erp-drp/simulation-param-type`（3 键）
+- **MRP 仿真引擎（E2 fork）**：
+  - `IErpMfgSimulationParamResolver` SPI + `ErpMfgSimulationParamResolver` 实现（service 模块，按 scenarioId 进程内缓存 + 精确 materialId → 全局回退 → null 三级解析；3 default 方法封装 lead time/lot size/safety stock）
+  - `SimulationMrpEngine`（~430 行 fork）：复用 `BomExpander` + 从基线 plan 加载已整合 demands + 内存中 SAFETY_STOCK 覆盖重算 + fork MRP 核心算法（processMaterial/lotSize/mfgLeadDays/purLeadDays/availableQuantity/topDemandsByMaterial）
+  - `SimulationVersionComparator`：4 维 diff（netRequirementDelta/plannedQuantityDelta/totalPurchaseAmountDelta/shortageOnlyInA/B/inBoth）
+  - `SimulationDiffResult` DTO（dao 模块）
+- **DRP 仿真引擎（同构）**：
+  - `IErpDrpSimulationParamResolver` + impl（3 键 materialId+warehouseId+paramType 四级回退）
+  - `SimulationDrpEngine`（~280 行 fork DrpEngine，resolveSafetyStock/resolveOrderMultiple 经 paramResolver 覆盖）
+  - `DrpSimulationVersionComparator`（2 维 diff：replenishmentQtyDelta/safetyStockDelta）
+  - `DrpSimulationDiffResult` DTO（dao 模块）
+- **BizModel + bean**：
+  - `IErpMfgMrpScenarioBiz` 扩展 3 方法（runSimulation @BizMutation + promoteToFormalPlan @BizMutation + compareVersions @BizQuery）+ `ErpMfgMrpScenarioBizModel` 实现
+  - `IErpDrpScenarioBiz` 同构 3 方法 + `ErpDrpScenarioBizModel` 实现
+  - `app-service.beans.xml` 各注册 3 bean（ParamResolver + Engine + Comparator）
+- **错误码**：MRP 5 错误码（`ERR_MFG_SIMULATION_DISABLED/SCENARIO_NOT_DRAFT/NO_BASELINE_PLAN/VERSION_ALREADY_PROMOTED/VERSIONS_NOT_COMPARABLE`）+ DRP 5 同型错误码
+- **config-gated**：`erp-mfg.simulation-enabled` / `erp-drp.simulation-enabled` 默认 false（门控仿真入口，保护既有单次 MRP/DRP 测试零回归）
+- **view.xml 定制**：6 实体 view 定制（bounded-merge 精选列 + form 分组 + sub-grid 关联 + runSimulation/promoteToFormalPlan 按钮 + visibleOn status 守卫）；`erp-mfg.action-auth.xml` 新增 `mfg-mrp-simulation` 菜单分组（3 实体 orderNo 3500/3510/3520）；`erp-drp.action-auth.xml` 新增 `drp-simulation` 菜单分组（3 实体 orderNo 1200/1210/1220）
+- **owner doc 回链**：
+  - `docs/design/manufacturing/mrp.md` 增「仿真引擎关系（plan 2026-07-22-1000-2）」段（E2 fork 范式 + 3 参数覆盖 + 4 维 diff + 转正路径 + config-gated + DRP 对应物交叉引用）
+  - `docs/design/manufacturing/README.md` 增「MRP/DRP 仿真引擎」段 + 本域文档表追加 simulation-engine.md
+  - `docs/design/drp/README.md` 增「DRP 仿真场景对应物（plan 2026-07-22-1000-2）」段 + 参考增 simulation-engine.md 交叉引用
+- **测试基线**：
+  - `TestErpMfgMrpSimulation`（**NEW**）8 场景全绿（config-gate 拒绝 / LOT_SIZE 覆盖 12→20 / LEAD_TIME 覆盖 2026-08-13→2026-08-17 / SAFETY_STOCK 覆盖 5→10 / 参数解析回退顺序 精确→全局→空场景 null / promoteToFormalPlan + 防重复 + 计划行复制 + ARCHIVED / 非 DRAFT 场景重跑拒绝 / compareVersions 4 维 diff +20 + shortageInBoth 含物料）
+  - `TestErpDrpSimulation`（**NEW**）5 场景全绿（config-gate 拒绝 / SAFETY_STOCK 覆盖 10→20 / REPLENISHMENT_QTY 覆盖 15→ceil(15/10)*10=20 / compareVersions 2 维 diff +20 / promoteToFormalPlan DRAFT + 防重复）
+  - manufacturing service 全 135 测试全绿（128 既有 + 8 新增 sim，无回归）
+  - drp service 全 31 测试全绿（26 既有 + 5 新增 sim，无回归）
+  - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块 + 新增仿真代码无回归）
+- **Deferred successor**：产能仿真（CRP successor，触发：APS 排产 what-if 需求）/ 概率/蒙特卡洛仿真（触发：业务方明确概率仿真需求 + 数据分布建模授权）/ 物料级 fixedLotSize/minOrderQty/maxOrderQty 主数据列加列（触发：物料级批量精细化核算 + ORM 加列授权）/ APS 排产甘特图可视化仿真（触发：F16 plan 启动 + APS 可视化需求）/ FORECAST_SCALE 参数（覆盖预测倍数，触发：业务方明确按预测敏感度分组仿真需求）/ 类别级参数覆盖粒度（触发：业务方明确按类别批量覆盖需求）/ 跨场景对比（触发：业务方明确跨业务假设对比需求）/ 对比结果实体化持久化（触发：业务方明确对比结果审计需求）/ material.standardCost 真实接入总采购额差计算（触发：标准成本接入 + cost owner doc）/ MARKET 真实市场价接入总采购额（触发：市场价数据源集成）
