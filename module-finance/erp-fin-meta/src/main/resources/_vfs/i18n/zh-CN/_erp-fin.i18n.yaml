@@ -8,8 +8,10 @@ entity:
     ErpFinBankReconciliationLine: 银行对账调整行
     ErpFinBankStatement: 银行对账单
     ErpFinBankStatementLine: 银行对账单行
+    ErpFinBudgetCarryForwardLog: 预算结转日志
     ErpFinBudgetControlLog: 预算控制日志
     ErpFinBudgetLine: 预算明细行
+    ErpFinBudgetRollforwardLog: 预算滚动复制日志
     ErpFinBudgetScenario: 预算方案
     ErpFinCashForecast: 现金预测
     ErpFinCreditFacility: 银行授信额度
@@ -252,6 +254,31 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpFinBudgetCarryForwardLog:
+      carriedAmount: 结转金额
+      carriedAt: 结转时间
+      carriedBy: 结转人
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      org: null
+      org.name: null
+      orgId: 核算组织
+      remark: 备注
+      rule: 结转规则
+      rule_label: 结转规则
+      scenario: null
+      scenarioId: 预算方案
+      sourceRemaining: 源方案余量
+      sourceScenario: null
+      sourceScenarioId: 源方案
+      sourceUsed: 源方案已用
+      targetScenario: null
+      targetScenarioId: 目标方案
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpFinBudgetControlLog:
       actionResult: 控制结果
       actionResult_label: 控制结果
@@ -335,6 +362,31 @@ prop:
       warehouse: null
       warehouse.name: null
       warehouseId: 辅助-仓库
+    ErpFinBudgetRollforwardLog:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      newFiscalYear: 目标年度
+      org: null
+      org.name: null
+      orgId: 核算组织
+      remark: 备注
+      rolledAt: 复制时间
+      rolledBy: 复制人
+      scenario: null
+      scenarioId: 预算方案
+      sourceAmount: 源金额合计
+      sourceScenario: null
+      sourceScenarioId: 源方案
+      strategy: 复制策略
+      strategy_label: 复制策略
+      targetAmount: 目标金额合计
+      targetScenario: null
+      targetScenarioId: 目标方案
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpFinBudgetScenario:
       acctSchema: null
       acctSchema.name: null
@@ -343,6 +395,10 @@ prop:
       amountSource: 预算金额(源币种)
       approveStatus: 审核状态
       approveStatus_label: 审核状态
+      budgetGroupCode: 预算组编码
+      carryForwardRule: 结转规则
+      carryForwardRule_label: 结转规则
+      closedAt: 结转时间
       code: 方案编码
       controlLevel: 控制级别
       controlLevel_label: 控制级别
@@ -365,6 +421,8 @@ prop:
       parentScenario: null
       parentScenarioId: 源方案(调整预算版本链)
       remark: 备注
+      rollForwardStrategy: 滚动复制策略
+      rollForwardStrategy_label: 滚动复制策略
       scenarioType: 方案类型
       scenarioType_label: 方案类型
       updateTime: 修改时间

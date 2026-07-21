@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 预算滚动复制策略
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 固定比例复制
+    value: FIXED_PERCENTAGE
+    description: 
+  
+  - label: 零基（仅结构）
+    value: ZERO_BASED
+    description: 
+  
+  - label: 增量调整
+    value: INCREMENTAL
+    description: 
+  

@@ -889,6 +889,46 @@ public interface _ErpFinDaoConstants {
     String BUDGET_STATUS_CANCELLED = "CANCELLED";
                     
     /**
+     * 预算方案状态: 已结转 
+     */
+    String BUDGET_STATUS_CLOSED = "CLOSED";
+                    
+    /**
+     * 预算结转规则: 剩余全部结转 
+     */
+    String BUDGET_CARRY_FORWARD_RULE_REMAINING_FULL = "REMAINING_FULL";
+                    
+    /**
+     * 预算结转规则: 剩余按比例结转 
+     */
+    String BUDGET_CARRY_FORWARD_RULE_REMAINING_RATIO = "REMAINING_RATIO";
+                    
+    /**
+     * 预算结转规则: 已用作为基线 
+     */
+    String BUDGET_CARRY_FORWARD_RULE_USED_FULL = "USED_FULL";
+                    
+    /**
+     * 预算结转规则: 不结转 
+     */
+    String BUDGET_CARRY_FORWARD_RULE_NONE = "NONE";
+                    
+    /**
+     * 预算滚动复制策略: 固定比例复制 
+     */
+    String BUDGET_ROLLFORWARD_STRATEGY_FIXED_PERCENTAGE = "FIXED_PERCENTAGE";
+                    
+    /**
+     * 预算滚动复制策略: 零基（仅结构） 
+     */
+    String BUDGET_ROLLFORWARD_STRATEGY_ZERO_BASED = "ZERO_BASED";
+                    
+    /**
+     * 预算滚动复制策略: 增量调整 
+     */
+    String BUDGET_ROLLFORWARD_STRATEGY_INCREMENTAL = "INCREMENTAL";
+                    
+    /**
      * 预算控制结果: 通过 
      */
     String BUDGET_ACTION_PASS = "PASS";

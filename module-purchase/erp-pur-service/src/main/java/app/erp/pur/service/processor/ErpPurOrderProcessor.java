@@ -1,5 +1,6 @@
 package app.erp.pur.service.processor;
 
+import app.erp.fin.biz.IErpFinBudgetCommitmentBiz;
 import app.erp.fin.biz.IErpFinBudgetControlBiz;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.service.ErpFinConstants;
@@ -52,6 +53,9 @@ public class ErpPurOrderProcessor {
     @Inject
     IErpFinBudgetControlBiz budgetControlBiz;
 
+    @Inject
+    IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
+
     public ErpPurOrder submitForApproval(String id, IServiceContext context) {
         ErpPurOrder order = requireOrder(id, context);
         validateTransitionForSubmit(order, context);
@@ -77,6 +81,9 @@ public class ErpPurOrderProcessor {
         validateTransitionForApprove(order, context);
         validateBusinessRulesForApprove(order, context);
         doApprove(order, context);
+        // A2 承付 commit hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #1）：
+        // 订单审核后置 → 生成 COMMITMENT 凭证。config-gated（erp-fin.budget-commitment-enabled 默认 false）。
+        runCommitmentCommitHook(order, context);
         return order;
     }
 
@@ -94,6 +101,9 @@ public class ErpPurOrderProcessor {
             return order;
         }
         validateTransitionForReverseApprove(order, context);
+        // A2 承付 release-on-cancel hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #2）：
+        // 订单反审核 → 红冲原 COMMITMENT 凭证。config-gated；无原凭证静默跳过（容错路径）。
+        runCommitmentReleaseHook(order, context);
         doReverseApprove(order, context);
         return order;
     }
@@ -101,6 +111,9 @@ public class ErpPurOrderProcessor {
     public ErpPurOrder cancel(String orderId, IServiceContext context) {
         ErpPurOrder order = requireOrder(orderId, context);
         validateTransitionForCancel(order, context);
+        // A2 承付 release-on-cancel hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #2）：
+        // 订单作废 → 红冲原 COMMITMENT 凭证。config-gated；无原凭证静默跳过（容错路径）。
+        runCommitmentReleaseHook(order, context);
         doCancel(order, context);
         return order;
     }
@@ -183,6 +196,41 @@ public class ErpPurOrderProcessor {
         BigDecimal amount = order.getTotalAmountWithTax() != null
                 ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
         budgetControlBiz.check(subjectId, null, periodId, amount, "PURCHASE_ORDER", order.getCode(), context);
+    }
+
+    /**
+     * A2 承付 commit 钩子（budget.md §承付会计 §3 接入点 #1）。
+     * 订单审核通过后置 → 生成 postingType=COMMITMENT 凭证。
+     * config-gated（{@code erp-fin.budget-commitment-enabled} 默认 false，保护既有 113 purchase 测试）；
+     * 科目/期间/金额缺失时静默跳过（不阻塞业务流）。
+     */
+    protected void runCommitmentCommitHook(ErpPurOrder order, IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE);
+        if (subjectId == null) {
+            return;
+        }
+        Long periodId = resolvePeriodId(order.getBusinessDate());
+        BigDecimal amount = order.getTotalAmountWithTax() != null
+                ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
+        budgetCommitmentBiz.commit(
+                ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, order.getCode(),
+                subjectId, null, periodId, amount, context);
+    }
+
+    /**
+     * A2 承付 release 钩子（budget.md §承付会计 §3 接入点 #2 release-on-cancel）。
+     * 订单反审核/作废 → 红冲原 COMMITMENT 凭证。
+     * config-gated；无原凭证静默跳过（reverseApprove/cancel 路径容错，避免阻塞业务流）。
+     */
+    protected void runCommitmentReleaseHook(ErpPurOrder order, IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        budgetCommitmentBiz.release(
+                ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, order.getCode(), context);
     }
 
     protected Long resolveBudgetSubjectId(String configKey) {

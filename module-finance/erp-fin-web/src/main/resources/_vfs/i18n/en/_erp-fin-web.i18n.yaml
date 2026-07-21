@@ -32,8 +32,12 @@ site:
       displayName: Bank Reconciliation
     bank-statement:
       displayName: Bank Statement
+    budget-carry-forward-log:
+      displayName: Budget Carry-Forward Log
     budget-control-log:
       displayName: Budget Control Log
+    budget-rollforward-log:
+      displayName: Budget Roll-Forward Log
     budget-scenario:
       displayName: Budget Scenario
     cash-flow:

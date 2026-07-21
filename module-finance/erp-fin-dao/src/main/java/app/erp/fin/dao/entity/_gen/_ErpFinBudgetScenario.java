@@ -121,8 +121,24 @@ public class _ErpFinBudgetScenario extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 25;
     
+    /* 预算组编码: BUDGET_GROUP_CODE VARCHAR */
+    public static final String PROP_NAME_budgetGroupCode = "budgetGroupCode";
+    public static final int PROP_ID_budgetGroupCode = 26;
+    
+    /* 结转规则: CARRY_FORWARD_RULE VARCHAR */
+    public static final String PROP_NAME_carryForwardRule = "carryForwardRule";
+    public static final int PROP_ID_carryForwardRule = 27;
+    
+    /* 滚动复制策略: ROLL_FORWARD_STRATEGY VARCHAR */
+    public static final String PROP_NAME_rollForwardStrategy = "rollForwardStrategy";
+    public static final int PROP_ID_rollForwardStrategy = 28;
+    
+    /* 结转时间: CLOSED_AT TIMESTAMP */
+    public static final String PROP_NAME_closedAt = "closedAt";
+    public static final int PROP_ID_closedAt = 29;
+    
 
-    private static int _PROP_ID_BOUND = 26;
+    private static int _PROP_ID_BOUND = 30;
 
     
     /* relation:  */
@@ -147,7 +163,7 @@ public class _ErpFinBudgetScenario extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[26];
+    private static final String[] PROP_ID_TO_NAME = new String[30];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -226,6 +242,18 @@ public class _ErpFinBudgetScenario extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_budgetGroupCode] = PROP_NAME_budgetGroupCode;
+          PROP_NAME_TO_ID.put(PROP_NAME_budgetGroupCode, PROP_ID_budgetGroupCode);
+      
+          PROP_ID_TO_NAME[PROP_ID_carryForwardRule] = PROP_NAME_carryForwardRule;
+          PROP_NAME_TO_ID.put(PROP_NAME_carryForwardRule, PROP_ID_carryForwardRule);
+      
+          PROP_ID_TO_NAME[PROP_ID_rollForwardStrategy] = PROP_NAME_rollForwardStrategy;
+          PROP_NAME_TO_ID.put(PROP_NAME_rollForwardStrategy, PROP_ID_rollForwardStrategy);
+      
+          PROP_ID_TO_NAME[PROP_ID_closedAt] = PROP_NAME_closedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_closedAt, PROP_ID_closedAt);
+      
     }
 
     
@@ -303,6 +331,18 @@ public class _ErpFinBudgetScenario extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 预算组编码: BUDGET_GROUP_CODE */
+    private java.lang.String _budgetGroupCode;
+    
+    /* 结转规则: CARRY_FORWARD_RULE */
+    private java.lang.String _carryForwardRule;
+    
+    /* 滚动复制策略: ROLL_FORWARD_STRATEGY */
+    private java.lang.String _rollForwardStrategy;
+    
+    /* 结转时间: CLOSED_AT */
+    private java.sql.Timestamp _closedAt;
     
 
     public _ErpFinBudgetScenario(){
@@ -452,6 +492,18 @@ public class _ErpFinBudgetScenario extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_budgetGroupCode:
+               return getBudgetGroupCode();
+        
+            case PROP_ID_carryForwardRule:
+               return getCarryForwardRule();
+        
+            case PROP_ID_rollForwardStrategy:
+               return getRollForwardStrategy();
+        
+            case PROP_ID_closedAt:
+               return getClosedAt();
         
            default:
               return super.orm_propValue(propId);
@@ -714,6 +766,46 @@ public class _ErpFinBudgetScenario extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_budgetGroupCode:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_budgetGroupCode));
+               }
+               setBudgetGroupCode(typedValue);
+               break;
+            }
+        
+            case PROP_ID_carryForwardRule:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_carryForwardRule));
+               }
+               setCarryForwardRule(typedValue);
+               break;
+            }
+        
+            case PROP_ID_rollForwardStrategy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_rollForwardStrategy));
+               }
+               setRollForwardStrategy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_closedAt:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_closedAt));
+               }
+               setClosedAt(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -894,6 +986,34 @@ public class _ErpFinBudgetScenario extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_budgetGroupCode:{
+               onInitProp(propId);
+               this._budgetGroupCode = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_carryForwardRule:{
+               onInitProp(propId);
+               this._carryForwardRule = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_rollForwardStrategy:{
+               onInitProp(propId);
+               this._rollForwardStrategy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_closedAt:{
+               onInitProp(propId);
+               this._closedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1375,6 +1495,82 @@ public class _ErpFinBudgetScenario extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 预算组编码: BUDGET_GROUP_CODE
+     */
+    public final java.lang.String getBudgetGroupCode(){
+         onPropGet(PROP_ID_budgetGroupCode);
+         return _budgetGroupCode;
+    }
+
+    /**
+     * 预算组编码: BUDGET_GROUP_CODE
+     */
+    public final void setBudgetGroupCode(java.lang.String value){
+        if(onPropSet(PROP_ID_budgetGroupCode,value)){
+            this._budgetGroupCode = value;
+            internalClearRefs(PROP_ID_budgetGroupCode);
+            
+        }
+    }
+    
+    /**
+     * 结转规则: CARRY_FORWARD_RULE
+     */
+    public final java.lang.String getCarryForwardRule(){
+         onPropGet(PROP_ID_carryForwardRule);
+         return _carryForwardRule;
+    }
+
+    /**
+     * 结转规则: CARRY_FORWARD_RULE
+     */
+    public final void setCarryForwardRule(java.lang.String value){
+        if(onPropSet(PROP_ID_carryForwardRule,value)){
+            this._carryForwardRule = value;
+            internalClearRefs(PROP_ID_carryForwardRule);
+            
+        }
+    }
+    
+    /**
+     * 滚动复制策略: ROLL_FORWARD_STRATEGY
+     */
+    public final java.lang.String getRollForwardStrategy(){
+         onPropGet(PROP_ID_rollForwardStrategy);
+         return _rollForwardStrategy;
+    }
+
+    /**
+     * 滚动复制策略: ROLL_FORWARD_STRATEGY
+     */
+    public final void setRollForwardStrategy(java.lang.String value){
+        if(onPropSet(PROP_ID_rollForwardStrategy,value)){
+            this._rollForwardStrategy = value;
+            internalClearRefs(PROP_ID_rollForwardStrategy);
+            
+        }
+    }
+    
+    /**
+     * 结转时间: CLOSED_AT
+     */
+    public final java.sql.Timestamp getClosedAt(){
+         onPropGet(PROP_ID_closedAt);
+         return _closedAt;
+    }
+
+    /**
+     * 结转时间: CLOSED_AT
+     */
+    public final void setClosedAt(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_closedAt,value)){
+            this._closedAt = value;
+            internalClearRefs(PROP_ID_closedAt);
             
         }
     }

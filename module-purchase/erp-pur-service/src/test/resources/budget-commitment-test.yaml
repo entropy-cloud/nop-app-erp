@@ -1,0 +1,4 @@
+erp-fin:
+  budget-check-enabled: false
+  budget-commitment-enabled: true
+  budget-commitment-subject-code: "1408"

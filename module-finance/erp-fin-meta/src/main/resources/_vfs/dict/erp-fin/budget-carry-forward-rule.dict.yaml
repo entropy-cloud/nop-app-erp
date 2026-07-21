@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 预算结转规则
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 剩余全部结转
+    value: REMAINING_FULL
+    description: 
+  
+  - label: 剩余按比例结转
+    value: REMAINING_RATIO
+    description: 
+  
+  - label: 已用作为基线
+    value: USED_FULL
+    description: 
+  
+  - label: 不结转
+    value: NONE
+    description: 
+  

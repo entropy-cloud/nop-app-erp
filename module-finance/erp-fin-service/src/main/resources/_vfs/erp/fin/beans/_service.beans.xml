@@ -232,6 +232,22 @@
         <property name="bizObjName" value="ErpFinBudgetLine"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinBudgetRollforwardLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBudgetRollforwardLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBudgetRollforwardLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBudgetRollforwardLog"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinBudgetCarryForwardLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinBudgetCarryForwardLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinBudgetCarryForwardLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinBudgetCarryForwardLog"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinBankReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinBankReconciliationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"

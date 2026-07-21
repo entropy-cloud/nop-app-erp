@@ -402,6 +402,27 @@ public interface ErpFinErrors {
             "预算方案 {scenarioCode} 无预算明细行，无法生成预算凭证",
             ARG_SCENARIO_CODE);
 
+    // --- 预算管理 A2 扩展（plan 2026-07-21-1206-2：多年度/结转/承付） ---
+
+    ErrorCode ERR_BUDGET_SCENARIO_NOT_APPROVED = ErrorCode.define("erp.err.fin.budget.scenario.not-approved",
+            "预算方案 {scenarioCode} 当前状态 {currentDocStatus} 不允许此操作（rollForward/carryForward 前置：源方案必须 APPROVED）",
+            ARG_SCENARIO_CODE, ARG_CURRENT_DOC_STATUS);
+
+    ErrorCode ERR_BUDGET_PERIOD_MISMATCH = ErrorCode.define("erp.err.fin.budget.period-mismatch",
+            "预算期间 {periodId} 不在方案年度 {year} 范围（滚动复制/结转期间映射失败）",
+            ARG_PERIOD_ID, ARG_YEAR);
+
+    ErrorCode ERR_BUDGET_COMMITMENT_ALREADY_RELEASED = ErrorCode.define("erp.err.fin.budget.commitment.already-released",
+            "重复释放承付：单据 {sourceBillType}/{sourceBillCode} 的原 COMMITMENT 凭证已红冲或不存在",
+            ARG_SOURCE_BILL_TYPE, ARG_SOURCE_BILL_CODE);
+
+    ErrorCode ERR_BUDGET_CARRY_FORWARD_RULE_INVALID = ErrorCode.define("erp.err.fin.budget.carry-forward-rule-invalid",
+            "结转规则校验失败：源方案 {scenarioCode} 与目标方案 {targetScenarioCode} 跨 orgId/acctSchemaId/currencyId，或 rule={rule} 非法",
+            ARG_SCENARIO_CODE, "targetScenarioCode", "rule");
+
+    ErrorCode ERR_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED = ErrorCode.define("erp.err.fin.budget.commitment.subject-not-configured",
+            "承付占用科目未配置（启用 erp-fin.budget-commitment-enabled=true 时必须配置 erp-fin.budget-commitment-subject-code）");
+
     // --- 报表渲染作用域 ---
 
     ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define("erp.err.fin.report.name-invalid",

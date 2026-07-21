@@ -1,15 +1,21 @@
 package app.erp.pur.service.processor;
 
+import app.erp.fin.biz.IErpFinBudgetCommitmentBiz;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.dao.entity.ErpPurInvoiceLine;
+import app.erp.pur.dao.entity.ErpPurOrder;
+import app.erp.pur.dao.entity.ErpPurReceive;
+import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.entity.ThreeWayMatcher;
 import app.erp.pur.service.posting.PurInvoicePostingDispatcher;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -19,7 +25,9 @@ import jakarta.inject.Inject;
 import java.util.Objects;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -47,6 +55,9 @@ public class ErpPurInvoiceProcessor {
 
     @Inject
     PurInvoicePostingDispatcher postingDispatcher;
+
+    @Inject
+    IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
 
     public ErpPurInvoice submitForApproval(String id, IServiceContext context) {
         ErpPurInvoice invoice = requireInvoice(id, context);
@@ -76,6 +87,11 @@ public class ErpPurInvoiceProcessor {
         boolean posted = doPosting(invoice, context);
         invoice = invoiceDao().getEntityById(id);
         doApprove(invoice, posted, context);
+        // A2 承付 release-on-invoice-approve hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #3）：
+        // AP 发票过账 = 实际占用产生 = 释放承付。按关联订单 code 反查 COMMITMENT 凭证红冲。
+        // config-gated（erp-fin.budget-commitment-enabled 默认 false）；严格对齐 budget.md:78 "被发票接收时红冲"。
+        // **reject release-receive-complete**（ErpPurReceive 入库路径）——入库是库存移动不产生 AP ACTUAL 占用。
+        runCommitmentReleaseOnInvoiceApproveHook(invoice, context);
         return invoice;
     }
 
@@ -275,6 +291,91 @@ public class ErpPurInvoiceProcessor {
 
     protected IEntityDao<ErpPurInvoice> invoiceDao() {
         return daoProvider.daoFor(ErpPurInvoice.class);
+    }
+
+    /**
+     * A2 承付 release-on-invoice-approve hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #3）。
+     * AP 发票过账 = 实际占用产生 = 释放承付（红冲原 COMMITMENT 凭证）。
+     *
+     * <p>实现路径：发票 approve 后置 → 经 invoiceLine.receiveLineId 反查 receive → receive.orderId → order.code
+     * → 对每个唯一 order.code 调用 {@link IErpFinBudgetCommitmentBiz#release}（容错：无原凭证静默跳过）。
+     *
+     * <p>config-gated（{@code erp-fin.budget-commitment-enabled} 默认 false）。
+     * <b>reject release-receive-complete</b>（ErpPurReceive 入库路径）——入库是库存移动不产生 AP ACTUAL 占用。
+     */
+    protected void runCommitmentReleaseOnInvoiceApproveHook(ErpPurInvoice invoice, IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        Set<String> orderCodes = resolveLinkedOrderCodes(invoice);
+        if (orderCodes.isEmpty()) {
+            return;
+        }
+        for (String orderCode : orderCodes) {
+            try {
+                budgetCommitmentBiz.release(
+                        ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, orderCode, context);
+            } catch (NopException e) {
+                // 容错：无原凭证（ERR_BUDGET_COMMITMENT_ALREADY_RELEASED）静默跳过；其他异常重新抛出
+                if (!isCommitmentAlreadyReleased(e)) {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    /** 判断异常是否为"无原承付凭证可红冲"（invoice-approve 路径容错：无原凭证静默跳过）。 */
+    protected boolean isCommitmentAlreadyReleased(NopException e) {
+        return app.erp.fin.service.ErpFinErrors.ERR_BUDGET_COMMITMENT_ALREADY_RELEASED.getErrorCode()
+                .equals(e.getErrorCode());
+    }
+
+    /** 经 invoiceLine.receiveLineId → receiveLine.receiveId → receive.orderId → order.code 反查关联订单编码集合。 */
+    protected Set<String> resolveLinkedOrderCodes(ErpPurInvoice invoice) {
+        Set<String> codes = new HashSet<>();
+        List<ErpPurInvoiceLine> lines = loadLines(invoice);
+        Set<Long> receiveLineIds = new HashSet<>();
+        for (ErpPurInvoiceLine il : lines) {
+            if (il.getReceiveLineId() != null) {
+                receiveLineIds.add(il.getReceiveLineId());
+            }
+        }
+        if (receiveLineIds.isEmpty()) {
+            return codes;
+        }
+        IEntityDao<ErpPurReceiveLine> rlDao = daoProvider.daoFor(ErpPurReceiveLine.class);
+        Set<Long> receiveIds = new HashSet<>();
+        for (ErpPurReceiveLine rl : rlDao.findAllByQuery(inQuery("id", receiveLineIds))) {
+            if (rl.getReceiveId() != null) {
+                receiveIds.add(rl.getReceiveId());
+            }
+        }
+        if (receiveIds.isEmpty()) {
+            return codes;
+        }
+        IEntityDao<ErpPurReceive> rDao = daoProvider.daoFor(ErpPurReceive.class);
+        Set<Long> orderIds = new HashSet<>();
+        for (ErpPurReceive r : rDao.findAllByQuery(inQuery("id", receiveIds))) {
+            if (r.getOrderId() != null) {
+                orderIds.add(r.getOrderId());
+            }
+        }
+        if (orderIds.isEmpty()) {
+            return codes;
+        }
+        IEntityDao<ErpPurOrder> oDao = daoProvider.daoFor(ErpPurOrder.class);
+        for (ErpPurOrder o : oDao.findAllByQuery(inQuery("id", orderIds))) {
+            if (o.getCode() != null) {
+                codes.add(o.getCode());
+            }
+        }
+        return codes;
+    }
+
+    private static io.nop.api.core.beans.query.QueryBean inQuery(String field, Set<Long> values) {
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.in(field, new ArrayList<>(values)));
+        return q;
     }
 
     protected String currentUserId() {

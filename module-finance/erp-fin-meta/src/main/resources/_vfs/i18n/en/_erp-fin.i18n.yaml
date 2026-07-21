@@ -8,8 +8,10 @@ entity:
     ErpFinBankReconciliationLine: Bank Reconciliation Line
     ErpFinBankStatement: Bank Statement
     ErpFinBankStatementLine: Bank Statement Line
+    ErpFinBudgetCarryForwardLog: Budget Carry-Forward Log
     ErpFinBudgetControlLog: Budget Control Log
     ErpFinBudgetLine: Budget Line
+    ErpFinBudgetRollforwardLog: Budget Roll-Forward Log
     ErpFinBudgetScenario: Budget Scenario
     ErpFinCashForecast: Cash Forecast
     ErpFinCreditFacility: Credit Facility
@@ -252,6 +254,31 @@ prop:
       matchedLine: Matched Voucher Line
       currency: Currency
       currency.name: Currency
+    ErpFinBudgetCarryForwardLog:
+      id: ID
+      orgId: Organization
+      scenarioId: Scenario
+      sourceScenarioId: Source Scenario
+      targetScenarioId: Target Scenario
+      rule: Rule
+      rule_label: null
+      sourceRemaining: Source Remaining
+      sourceUsed: Source Used
+      carriedAmount: Carried Amount
+      carriedAt: Carried At
+      carriedBy: Carried By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scenario: Scenario
+      sourceScenario: Source Scenario
+      targetScenario: Target Scenario
+      org: Org
+      org.name: Org
     ErpFinBudgetControlLog:
       id: ID
       orgId: Organization
@@ -335,6 +362,31 @@ prop:
       currency.name: Currency
       org: Org
       org.name: Org
+    ErpFinBudgetRollforwardLog:
+      id: ID
+      orgId: Organization
+      scenarioId: Scenario
+      sourceScenarioId: Source Scenario
+      targetScenarioId: Target Scenario
+      strategy: Strategy
+      strategy_label: null
+      newFiscalYear: New Fiscal Year
+      sourceAmount: Source Amount
+      targetAmount: Target Amount
+      rolledAt: Rolled At
+      rolledBy: Rolled By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scenario: Scenario
+      sourceScenario: Source Scenario
+      targetScenario: Target Scenario
+      org: Org
+      org.name: Org
     ErpFinBudgetScenario:
       id: ID
       code: Code
@@ -365,6 +417,12 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      budgetGroupCode: Budget Group Code
+      carryForwardRule: Carry-Forward Rule
+      carryForwardRule_label: null
+      rollForwardStrategy: Roll-Forward Strategy
+      rollForwardStrategy_label: null
+      closedAt: Closed At
       acctSchema: Acct Schema
       acctSchema.name: Acct Schema
       currency: Currency
@@ -1037,6 +1095,8 @@ dict:
     erp-fin/budget-scenario-type: Budget Scenario Type
     erp-fin/budget-control-level: Budget Control Level
     erp-fin/budget-status: Budget Status
+    erp-fin/budget-carry-forward-rule: Budget Carry-Forward Rule
+    erp-fin/budget-rollforward-strategy: Budget Roll-Forward Strategy
     erp-fin/budget-action: Budget Action
 dict.option.label:
   erp-fin/voucher-type:
@@ -1246,6 +1306,16 @@ dict.option.label:
     APPROVED: Approved
     REJECTED: Rejected
     CANCELLED: Cancelled
+    CLOSED: Closed
+  erp-fin/budget-carry-forward-rule:
+    REMAINING_FULL: Remaining Full
+    REMAINING_RATIO: Remaining Ratio
+    USED_FULL: Used Full
+    NONE: None
+  erp-fin/budget-rollforward-strategy:
+    FIXED_PERCENTAGE: Fixed Percentage
+    ZERO_BASED: Zero Based
+    INCREMENTAL: Incremental
   erp-fin/budget-action:
     PASS: Pass
     WARNED: Warned

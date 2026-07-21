@@ -121,6 +121,22 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="budgetGroupCode" displayName="预算组编码" propId="26" i18n-en:displayName="Budget Group Code"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="carryForwardRule" displayName="结转规则" propId="27" i18n-en:displayName="Carry-Forward Rule"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/budget-carry-forward-rule"/>
+        </prop>
+        <prop name="rollForwardStrategy" displayName="滚动复制策略" propId="28" i18n-en:displayName="Roll-Forward Strategy"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/budget-rollforward-strategy"/>
+        </prop>
+        <prop name="closedAt" displayName="结转时间" propId="29" i18n-en:displayName="Closed At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
+        </prop>
         <prop name="acctSchema" i18n-en:displayName="Acct Schema" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="acctSchemaId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
               biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">

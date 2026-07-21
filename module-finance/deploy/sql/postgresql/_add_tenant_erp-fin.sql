@@ -81,6 +81,10 @@ alter table erp_fin_bank_statement_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0
 
 alter table erp_fin_budget_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_fin_budget_rollforward_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_fin_budget_carry_forward_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_fin_bank_reconciliation_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_fin_budget_control_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -207,6 +211,12 @@ alter table erp_fin_bank_statement_line add constraint PK_erp_fin_bank_statement
 
 alter table erp_fin_budget_line drop constraint PK_erp_fin_budget_line;
 alter table erp_fin_budget_line add constraint PK_erp_fin_budget_line primary key (NOP_TENANT_ID, id);
+
+alter table erp_fin_budget_rollforward_log drop constraint PK_erp_fin_budget_rollforward_log;
+alter table erp_fin_budget_rollforward_log add constraint PK_erp_fin_budget_rollforward_log primary key (NOP_TENANT_ID, id);
+
+alter table erp_fin_budget_carry_forward_log drop constraint PK_erp_fin_budget_carry_forward_log;
+alter table erp_fin_budget_carry_forward_log add constraint PK_erp_fin_budget_carry_forward_log primary key (NOP_TENANT_ID, id);
 
 alter table erp_fin_bank_reconciliation_line drop constraint PK_erp_fin_bank_reconciliation_line;
 alter table erp_fin_bank_reconciliation_line add constraint PK_erp_fin_bank_reconciliation_line primary key (NOP_TENANT_ID, id);

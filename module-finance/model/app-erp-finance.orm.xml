@@ -295,6 +295,21 @@
             <option code="APPROVED" label="已审批" value="APPROVED" i18n-en:label='Approved'/>
             <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label='Rejected'/>
             <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Cancelled'/>
+            <!-- A2 结转终态（plan 2026-07-21-1206-2，budget.md §结转规则引擎）：源 Scenario 经 carryForward 结转后置 CLOSED，不可再调整。 -->
+            <option code="CLOSED" label="已结转" value="CLOSED" i18n-en:label='Closed'/>
+        </dict>
+        <!-- A2 预算结转规则（plan 2026-07-21-1206-2，budget.md §结转规则引擎）：carryForward 按规则计算结转金额。 -->
+        <dict label="预算结转规则" name="erp-fin/budget-carry-forward-rule" valueType="string" i18n-en:label='Budget Carry-Forward Rule'>
+            <option code="REMAINING_FULL" label="剩余全部结转" value="REMAINING_FULL" i18n-en:label='Remaining Full'/>
+            <option code="REMAINING_RATIO" label="剩余按比例结转" value="REMAINING_RATIO" i18n-en:label='Remaining Ratio'/>
+            <option code="USED_FULL" label="已用作为基线" value="USED_FULL" i18n-en:label='Used Full'/>
+            <option code="NONE" label="不结转" value="NONE" i18n-en:label='None'/>
+        </dict>
+        <!-- A2 滚动预算复制策略（plan 2026-07-21-1206-2，budget.md §滚动预算自动复制引擎）：rollForward 按策略调整金额。 -->
+        <dict label="预算滚动复制策略" name="erp-fin/budget-rollforward-strategy" valueType="string" i18n-en:label='Budget Roll-Forward Strategy'>
+            <option code="FIXED_PERCENTAGE" label="固定比例复制" value="FIXED_PERCENTAGE" i18n-en:label='Fixed Percentage'/>
+            <option code="ZERO_BASED" label="零基（仅结构）" value="ZERO_BASED" i18n-en:label='Zero Based'/>
+            <option code="INCREMENTAL" label="增量调整" value="INCREMENTAL" i18n-en:label='Incremental'/>
         </dict>
         <dict label="预算控制结果" name="erp-fin/budget-action" valueType="string" i18n-en:label='Budget Action'>
             <option code="PASS" label="通过" value="PASS" i18n-en:label='Pass'/>
@@ -1683,6 +1698,15 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="23" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="24" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="25" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <!-- A2 多年度/结转扩展（plan 2026-07-21-1206-2，budget.md §多年度视图 §结转规则引擎）。
+                     budgetGroupCode: 同组 Scenario 共享 code，提供多年度聚合视图（横向并列）；
+                     carryForwardRule: 该 Scenario 默认结转规则（结转引擎可覆写）；
+                     rollForwardStrategy: 该 Scenario 默认滚动复制策略；
+                     closedAt: 结转时间戳（status=CLOSED 时填，标识源 Scenario 已结转终态）。 -->
+                <column name="budgetGroupCode" displayName="预算组编码" code="BUDGET_GROUP_CODE" propId="26" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Budget Group Code' />
+                <column name="carryForwardRule" displayName="结转规则" ext:dict="erp-fin/budget-carry-forward-rule" code="CARRY_FORWARD_RULE" propId="27" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Carry-Forward Rule' />
+                <column name="rollForwardStrategy" displayName="滚动复制策略" ext:dict="erp-fin/budget-rollforward-strategy" code="ROLL_FORWARD_STRATEGY" propId="28" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Roll-Forward Strategy' />
+                <column name="closedAt" displayName="结转时间" code="CLOSED_AT" propId="29" stdSqlType="TIMESTAMP" stdDataType="timestamp" tagSet="clock" i18n-en:displayName='Closed At' />
             </columns>
             <relations>
                 <to-one name="acctSchema" refEntityName="app.erp.md.dao.entity.ErpMdAcctSchema" tagSet="pub" i18n-en:displayName='Acct Schema'><join><on leftProp="acctSchemaId" rightProp="id"/></join></to-one>
@@ -1708,6 +1732,9 @@
                 </index>
                 <index name="IDX_FIN_BUDGET_SCENARIO_PARENT_SCENARIO_ID" unique="false">
                     <column name="parentScenarioId"/>
+                </index>
+                <index name="IDX_FIN_BUDGET_SCENARIO_BUDGET_GROUP_CODE" unique="false">
+                    <column name="budgetGroupCode"/>
                 </index>
             </indexes>
         </entity>
@@ -1828,8 +1855,90 @@
                     <column name="actionResult"/>
                 </index>
                 <index name="IDX_FIN_BUDGET_CONTROL_LOG_SOURCE_BILL" unique="false">
-                    <column name="sourceBillType"/>
-                    <column name="sourceBillCode"/>
+                     <column name="sourceBillType"/>
+                     <column name="sourceBillCode"/>
+                 </index>
+            </indexes>
+        </entity>
+
+        <!-- A2 滚动预算复制日志（plan 2026-07-21-1206-2，budget.md §版本审计链）：rollForward 操作审计记录。
+             仅审计记录，不参与预算控制；控制始终从 ErpFinVoucherLine 聚合派生。 -->
+        <entity className="app.erp.fin.dao.entity.ErpFinBudgetRollforwardLog"
+                displayName="预算滚动复制日志" ext:icon="history" i18n-en:displayName="Budget Roll-Forward Log" name="app.erp.fin.dao.entity.ErpFinBudgetRollforwardLog"
+                tableName="erp_fin_budget_rollforward_log" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="scenarioId" displayName="预算方案" stdSqlType="BIGINT" mandatory="true" code="SCENARIO_ID" propId="3" stdDataType="long" i18n-en:displayName='Scenario' />
+                <column name="sourceScenarioId" displayName="源方案" stdSqlType="BIGINT" mandatory="true" code="SOURCE_SCENARIO_ID" propId="4" stdDataType="long" i18n-en:displayName='Source Scenario' />
+                <column name="targetScenarioId" displayName="目标方案" stdSqlType="BIGINT" mandatory="true" code="TARGET_SCENARIO_ID" propId="5" stdDataType="long" i18n-en:displayName='Target Scenario' />
+                <column name="strategy" displayName="复制策略" ext:dict="erp-fin/budget-rollforward-strategy" mandatory="true" code="STRATEGY" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Strategy' />
+                <column name="newFiscalYear" displayName="目标年度" stdSqlType="INTEGER" mandatory="true" code="NEW_FISCAL_YEAR" propId="7" stdDataType="int" i18n-en:displayName='New Fiscal Year' />
+                <column name="sourceAmount" displayName="源金额合计" domain="amount" defaultValue="0" code="SOURCE_AMOUNT" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Source Amount' />
+                <column name="targetAmount" displayName="目标金额合计" domain="amount" defaultValue="0" code="TARGET_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Target Amount' />
+                <column name="rolledAt" displayName="复制时间" stdSqlType="TIMESTAMP" mandatory="true" code="ROLLED_AT" propId="10" tagSet="clock" i18n-en:displayName='Rolled At' />
+                <column name="rolledBy" displayName="复制人" stdDomain="userId" stdSqlType="VARCHAR" precision="36" code="ROLLED_BY" propId="11" stdDataType="string" i18n-en:displayName='Rolled By' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="scenario" refEntityName="app.erp.fin.dao.entity.ErpFinBudgetScenario" tagSet="pub" i18n-en:displayName='Scenario'><join><on leftProp="scenarioId" rightProp="id"/></join></to-one>
+                <to-one name="sourceScenario" refEntityName="app.erp.fin.dao.entity.ErpFinBudgetScenario" tagSet="pub" i18n-en:displayName='Source Scenario'><join><on leftProp="sourceScenarioId" rightProp="id"/></join></to-one>
+                <to-one name="targetScenario" refEntityName="app.erp.fin.dao.entity.ErpFinBudgetScenario" tagSet="pub" i18n-en:displayName='Target Scenario'><join><on leftProp="targetScenarioId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+            </relations>
+            <indexes>
+                <index name="IDX_FIN_BUDGET_ROLLFORWARD_LOG_SCENARIO_ID" unique="false">
+                    <column name="scenarioId"/>
+                </index>
+                <index name="IDX_FIN_BUDGET_ROLLFORWARD_LOG_SOURCE_SCENARIO_ID" unique="false">
+                    <column name="sourceScenarioId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- A2 预算结转日志（plan 2026-07-21-1206-2，budget.md §版本审计链）：carryForward 操作审计记录。
+             仅审计记录，不参与预算控制；控制始终从 ErpFinVoucherLine 聚合派生。 -->
+        <entity className="app.erp.fin.dao.entity.ErpFinBudgetCarryForwardLog"
+                displayName="预算结转日志" ext:icon="history" i18n-en:displayName="Budget Carry-Forward Log" name="app.erp.fin.dao.entity.ErpFinBudgetCarryForwardLog"
+                tableName="erp_fin_budget_carry_forward_log" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="核算组织" stdSqlType="BIGINT" mandatory="true" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="scenarioId" displayName="预算方案" stdSqlType="BIGINT" mandatory="true" code="SCENARIO_ID" propId="3" stdDataType="long" i18n-en:displayName='Scenario' />
+                <column name="sourceScenarioId" displayName="源方案" stdSqlType="BIGINT" mandatory="true" code="SOURCE_SCENARIO_ID" propId="4" stdDataType="long" i18n-en:displayName='Source Scenario' />
+                <column name="targetScenarioId" displayName="目标方案" stdSqlType="BIGINT" mandatory="true" code="TARGET_SCENARIO_ID" propId="5" stdDataType="long" i18n-en:displayName='Target Scenario' />
+                <column name="rule" displayName="结转规则" ext:dict="erp-fin/budget-carry-forward-rule" mandatory="true" code="RULE" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Rule' />
+                <column name="sourceRemaining" displayName="源方案余量" domain="amount" defaultValue="0" code="SOURCE_REMAINING" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Source Remaining' />
+                <column name="sourceUsed" displayName="源方案已用" domain="amount" defaultValue="0" code="SOURCE_USED" propId="8" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Source Used' />
+                <column name="carriedAmount" displayName="结转金额" domain="amount" defaultValue="0" code="CARRIED_AMOUNT" propId="9" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Carried Amount' />
+                <column name="carriedAt" displayName="结转时间" stdSqlType="TIMESTAMP" mandatory="true" code="CARRIED_AT" propId="10" tagSet="clock" i18n-en:displayName='Carried At' />
+                <column name="carriedBy" displayName="结转人" stdDomain="userId" stdSqlType="VARCHAR" precision="36" code="CARRIED_BY" propId="11" stdDataType="string" i18n-en:displayName='Carried By' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="12" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="13" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="14" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="15" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="16" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="17" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="18" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="scenario" refEntityName="app.erp.fin.dao.entity.ErpFinBudgetScenario" tagSet="pub" i18n-en:displayName='Scenario'><join><on leftProp="scenarioId" rightProp="id"/></join></to-one>
+                <to-one name="sourceScenario" refEntityName="app.erp.fin.dao.entity.ErpFinBudgetScenario" tagSet="pub" i18n-en:displayName='Source Scenario'><join><on leftProp="sourceScenarioId" rightProp="id"/></join></to-one>
+                <to-one name="targetScenario" refEntityName="app.erp.fin.dao.entity.ErpFinBudgetScenario" tagSet="pub" i18n-en:displayName='Target Scenario'><join><on leftProp="targetScenarioId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+            </relations>
+            <indexes>
+                <index name="IDX_FIN_BUDGET_CARRY_FORWARD_LOG_SCENARIO_ID" unique="false">
+                    <column name="scenarioId"/>
+                </index>
+                <index name="IDX_FIN_BUDGET_CARRY_FORWARD_LOG_SOURCE_SCENARIO_ID" unique="false">
+                    <column name="sourceScenarioId"/>
                 </index>
             </indexes>
         </entity>

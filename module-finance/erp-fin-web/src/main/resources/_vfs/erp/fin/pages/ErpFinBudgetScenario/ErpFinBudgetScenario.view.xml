@@ -10,6 +10,7 @@
                 <col id="name" label="方案名称"/>
                 <col id="fiscalYear" label="预算年度"/>
                 <col id="scenarioType" label="方案类型"/>
+                <col id="budgetGroupCode" label="预算组"/>
                 <col id="amountFunctional" label="预算金额(本位币)"/>
                 <col id="controlLevel" label="控制级别"/>
                 <col id="docStatus" label="方案状态">
@@ -52,21 +53,24 @@
     <forms>
         <form id="view" size="lg">
             <layout x:override="replace">
-=========>baseInfo[基本信息]======
+========>baseInfo[基本信息]======
  code[方案编码] name[方案名称]
  orgId[核算组织] acctSchemaId[账套]
  fiscalYear[预算年度] scenarioType[方案类型]
  parentScenarioId[源方案] validFrom[生效日期]
  validTo[失效日期]
-=========>amount[金额信息]======
+========>amount[金额信息]======
  currencyId[币种] exchangeRate[汇率]
  amountSource[预算金额(源币种)] amountFunctional[预算金额(本位币)]
-=========>control[控制信息]======
+========>control[控制信息]======
  controlLevel[控制级别]
-=========>status[状态信息]======
+========>multiYear[多年度/结转信息(A2)]======
+ budgetGroupCode[预算组编码] closedAt[结转时间]
+ carryForwardRule[结转规则] rollForwardStrategy[滚动复制策略]
+========>status[状态信息]======
  docStatus[方案状态] approveStatus[审核状态]
  voucherId[关联预算凭证ID]
-=========^audit[审计信息]=========
+========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
@@ -74,18 +78,21 @@
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
-=========>baseInfo[基本信息]======
+========>baseInfo[基本信息]======
  code[方案编码] name[方案名称]
  orgId[核算组织] acctSchemaId[账套]
  fiscalYear[预算年度] scenarioType[方案类型]
  parentScenarioId[源方案] validFrom[生效日期]
  validTo[失效日期]
-=========>amount[金额信息]======
+========>amount[金额信息]======
  currencyId[币种] exchangeRate[汇率]
  amountSource[预算金额(源币种)] amountFunctional[预算金额(本位币)]
-=========>control[控制信息]======
+========>control[控制信息]======
  controlLevel[控制级别]
-=========>status[状态信息]======
+========>multiYear[多年度/结转信息(A2)]======
+ budgetGroupCode[预算组编码] closedAt[结转时间]
+ carryForwardRule[结转规则] rollForwardStrategy[滚动复制策略]
+========>status[状态信息]======
  docStatus[方案状态] approveStatus[审核状态]
  voucherId[关联预算凭证ID]
  remark[备注](2)
@@ -96,13 +103,14 @@
             <layout>
  code[方案编码] fiscalYear[预算年度]
  scenarioType[方案类型] controlLevel[控制级别]
- docStatus[方案状态]
+ budgetGroupCode[预算组编码] docStatus[方案状态]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="fiscalYear" filterOp="eq"/>
                 <cell id="scenarioType" filterOp="eq"/>
                 <cell id="controlLevel" filterOp="eq"/>
+                <cell id="budgetGroupCode" filterOp="eq"/>
                 <cell id="docStatus" filterOp="eq"/>
             </cells>
         </form>
@@ -110,7 +118,8 @@
 
     <pages>
         <crud name="main" grid="list">
-            <!-- 预算方案审批操作（budget.md 状态机：DRAFT→SUBMITTED→APPROVED / →REJECTED / APPROVED→CANCELLED） -->
+            <!-- 预算方案审批操作（budget.md 状态机：DRAFT→SUBMITTED→APPROVED / →REJECTED / APPROVED→CANCELLED）
+                 + A2 多年度/结转操作（rollForward 滚动复制 / carryForward 结转，需 confirm dialog 收集参数）。 -->
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button" level="primary" label="@i18n:common.view">
                     <api url="@query:ErpFinBudgetScenario__get?id=$id" gql:selection="{@viewSelection}"/>
@@ -127,7 +136,44 @@
                 <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpFinBudgetScenario__cancel?id=$id"/>
                 </action>
+                <!-- A2 滚动预算复制（budget.md §滚动预算自动复制引擎）：弹出 dialog 收集 newFiscalYear + strategy -->
+                <action id="row-roll-forward-button" label="滚动复制" level="info" icon="fa fa-copy"
+                        dialog="rollForwardDialog"/>
+                <!-- A2 预算结转（budget.md §结转规则引擎）：弹出 dialog 收集 targetScenarioId + rule -->
+                <action id="row-carry-forward-button" label="结转" level="info" icon="fa fa-arrow-right"
+                        dialog="carryForwardDialog"/>
             </rowActions>
+            <!-- A2 滚动复制参数 dialog（newFiscalYear + strategy） -->
+            <dialogs>
+                <dialog id="rollForwardDialog" title="滚动预算复制" size="md">
+                    <body>
+                        <form>
+                            <api url="@mutation:ErpFinBudgetScenario__rollForward"/>
+                            <controls>
+                                <control id="id" type="hidden" value="${id}"/>
+                                <control id="newFiscalYear" label="目标年度" type="number" required="true"/>
+                                <control id="strategy" label="复制策略" type="select-text"
+                                         dict="erp-fin/budget-rollforward-strategy"/>
+                            </controls>
+                        </form>
+                    </body>
+                </dialog>
+                <dialog id="carryForwardDialog" title="预算结转" size="md">
+                    <body>
+                        <form>
+                            <api url="@mutation:ErpFinBudgetScenario__carryForward"/>
+                            <controls>
+                                <control id="id" type="hidden" value="${id}"/>
+                                <control id="targetScenarioId" label="目标方案" type="picker"
+                                         url="@query:ErpFinBudgetScenario__findList?filter=scenarioId&filter=scenarioId"
+                                         required="true"/>
+                                <control id="rule" label="结转规则" type="select-text"
+                                         dict="erp-fin/budget-carry-forward-rule"/>
+                            </controls>
+                        </form>
+                    </body>
+                </dialog>
+            </dialogs>
         </crud>
         <picker name="picker"/>
     </pages>

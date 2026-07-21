@@ -160,6 +160,15 @@
                                   i18n-en:displayName="Budget Control Log" icon="shield-alert"
                                   component="AMIS" resourceType="SUBM" orderNo="10020"
                                   url="/erp/fin/pages/ErpFinBudgetControlLog/main.page.yaml"/>
+                        <!-- A2 预算多年度/结转日志（plan 2026-07-21-1206-2，budget.md §版本审计链） -->
+                        <resource id="budget-rollforward-log" app:useCases="UC-FIN-13" displayName="预算滚动复制日志"
+                                  i18n-en:displayName="Budget Roll-Forward Log" icon="history"
+                                  component="AMIS" resourceType="SUBM" orderNo="10030"
+                                  url="/erp/fin/pages/ErpFinBudgetRollforwardLog/main.page.yaml"/>
+                        <resource id="budget-carry-forward-log" app:useCases="UC-FIN-13" displayName="预算结转日志"
+                                  i18n-en:displayName="Budget Carry-Forward Log" icon="history"
+                                  component="AMIS" resourceType="SUBM" orderNo="10040"
+                                  url="/erp/fin/pages/ErpFinBudgetCarryForwardLog/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 银行对账 -->

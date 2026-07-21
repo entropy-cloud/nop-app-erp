@@ -25,3 +25,7 @@ options:
     value: CANCELLED
     description: 
   
+  - label: 已结转
+    value: CLOSED
+    description: 
+  

@@ -675,6 +675,10 @@ CREATE TABLE erp_fin_budget_scenario(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  BUDGET_GROUP_CODE VARCHAR2(50)  ,
+  CARRY_FORWARD_RULE VARCHAR2(20)  ,
+  ROLL_FORWARD_STRATEGY VARCHAR2(20)  ,
+  CLOSED_AT TIMESTAMP  ,
   constraint PK_erp_fin_budget_scenario primary key (ID)
 );
 
@@ -851,6 +855,50 @@ CREATE TABLE erp_fin_budget_line(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_fin_budget_line primary key (ID)
+);
+
+CREATE TABLE erp_fin_budget_rollforward_log(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  SCENARIO_ID NUMBER(20) NOT NULL ,
+  SOURCE_SCENARIO_ID NUMBER(20) NOT NULL ,
+  TARGET_SCENARIO_ID NUMBER(20) NOT NULL ,
+  STRATEGY VARCHAR2(20) NOT NULL ,
+  NEW_FISCAL_YEAR INTEGER NOT NULL ,
+  SOURCE_AMOUNT NUMBER(20,4) default 0   ,
+  TARGET_AMOUNT NUMBER(20,4) default 0   ,
+  ROLLED_AT TIMESTAMP NOT NULL ,
+  ROLLED_BY VARCHAR2(36)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_budget_rollforward_log primary key (ID)
+);
+
+CREATE TABLE erp_fin_budget_carry_forward_log(
+  ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  SCENARIO_ID NUMBER(20) NOT NULL ,
+  SOURCE_SCENARIO_ID NUMBER(20) NOT NULL ,
+  TARGET_SCENARIO_ID NUMBER(20) NOT NULL ,
+  RULE VARCHAR2(20) NOT NULL ,
+  SOURCE_REMAINING NUMBER(20,4) default 0   ,
+  SOURCE_USED NUMBER(20,4) default 0   ,
+  CARRIED_AMOUNT NUMBER(20,4) default 0   ,
+  CARRIED_AT TIMESTAMP NOT NULL ,
+  CARRIED_BY VARCHAR2(36)  ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_fin_budget_carry_forward_log primary key (ID)
 );
 
 CREATE TABLE erp_fin_bank_reconciliation_line(
@@ -1927,6 +1975,14 @@ CREATE TABLE erp_fin_budget_control_log(
                     
       COMMENT ON COLUMN erp_fin_budget_scenario.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON COLUMN erp_fin_budget_scenario.BUDGET_GROUP_CODE IS '预算组编码';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.CARRY_FORWARD_RULE IS '结转规则';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.ROLL_FORWARD_STRATEGY IS '滚动复制策略';
+                    
+      COMMENT ON COLUMN erp_fin_budget_scenario.CLOSED_AT IS '结转时间';
+                    
       COMMENT ON TABLE erp_fin_reconciliation_line IS '核销单行';
                 
       COMMENT ON COLUMN erp_fin_reconciliation_line.ID IS 'ID';
@@ -2234,6 +2290,82 @@ CREATE TABLE erp_fin_budget_control_log(
       COMMENT ON COLUMN erp_fin_budget_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_budget_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_budget_rollforward_log IS '预算滚动复制日志';
+                
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.SCENARIO_ID IS '预算方案';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.SOURCE_SCENARIO_ID IS '源方案';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.TARGET_SCENARIO_ID IS '目标方案';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.STRATEGY IS '复制策略';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.NEW_FISCAL_YEAR IS '目标年度';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.SOURCE_AMOUNT IS '源金额合计';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.TARGET_AMOUNT IS '目标金额合计';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.ROLLED_AT IS '复制时间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.ROLLED_BY IS '复制人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_rollforward_log.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_budget_carry_forward_log IS '预算结转日志';
+                
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.SCENARIO_ID IS '预算方案';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.SOURCE_SCENARIO_ID IS '源方案';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.TARGET_SCENARIO_ID IS '目标方案';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.RULE IS '结转规则';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.SOURCE_REMAINING IS '源方案余量';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.SOURCE_USED IS '源方案已用';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.CARRIED_AMOUNT IS '结转金额';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.CARRIED_AT IS '结转时间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.CARRIED_BY IS '结转人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_budget_carry_forward_log.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_fin_bank_reconciliation_line IS '银行对账调整行';
                 

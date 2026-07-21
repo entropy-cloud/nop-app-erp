@@ -675,6 +675,10 @@ CREATE TABLE erp_fin_budget_scenario(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  BUDGET_GROUP_CODE VARCHAR(50) NULL    COMMENT '预算组编码',
+  CARRY_FORWARD_RULE VARCHAR(20) NULL    COMMENT '结转规则',
+  ROLL_FORWARD_STRATEGY VARCHAR(20) NULL    COMMENT '滚动复制策略',
+  CLOSED_AT DATETIME(3) NULL    COMMENT '结转时间',
   constraint PK_erp_fin_budget_scenario primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -853,6 +857,50 @@ CREATE TABLE erp_fin_budget_line(
   constraint PK_erp_fin_budget_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_budget_rollforward_log(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  SCENARIO_ID BIGINT NOT NULL    COMMENT '预算方案',
+  SOURCE_SCENARIO_ID BIGINT NOT NULL    COMMENT '源方案',
+  TARGET_SCENARIO_ID BIGINT NOT NULL    COMMENT '目标方案',
+  STRATEGY VARCHAR(20) NOT NULL    COMMENT '复制策略',
+  NEW_FISCAL_YEAR INTEGER NOT NULL    COMMENT '目标年度',
+  SOURCE_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '源金额合计',
+  TARGET_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '目标金额合计',
+  ROLLED_AT DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '复制时间',
+  ROLLED_BY VARCHAR(36) NULL    COMMENT '复制人',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_budget_rollforward_log primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_fin_budget_carry_forward_log(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  SCENARIO_ID BIGINT NOT NULL    COMMENT '预算方案',
+  SOURCE_SCENARIO_ID BIGINT NOT NULL    COMMENT '源方案',
+  TARGET_SCENARIO_ID BIGINT NOT NULL    COMMENT '目标方案',
+  RULE VARCHAR(20) NOT NULL    COMMENT '结转规则',
+  SOURCE_REMAINING DECIMAL(20,4) default 0  NULL    COMMENT '源方案余量',
+  SOURCE_USED DECIMAL(20,4) default 0  NULL    COMMENT '源方案已用',
+  CARRIED_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '结转金额',
+  CARRIED_AT DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '结转时间',
+  CARRIED_BY VARCHAR(36) NULL    COMMENT '结转人',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_fin_budget_carry_forward_log primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_bank_reconciliation_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   RECONCILIATION_ID BIGINT NOT NULL    COMMENT '对账记录ID',
@@ -982,6 +1030,10 @@ CREATE TABLE erp_fin_budget_control_log(
    ALTER TABLE erp_fin_bank_statement_line COMMENT '银行对账单行';
                 
    ALTER TABLE erp_fin_budget_line COMMENT '预算明细行';
+                
+   ALTER TABLE erp_fin_budget_rollforward_log COMMENT '预算滚动复制日志';
+                
+   ALTER TABLE erp_fin_budget_carry_forward_log COMMENT '预算结转日志';
                 
    ALTER TABLE erp_fin_bank_reconciliation_line COMMENT '银行对账调整行';
                 

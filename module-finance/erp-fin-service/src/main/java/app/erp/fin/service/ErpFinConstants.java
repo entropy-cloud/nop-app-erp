@@ -392,6 +392,53 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     String BUDGET_ACTION_WARNED = "WARNED";
     String BUDGET_ACTION_BLOCKED = "BLOCKED";
 
+    // budget-status A2 扩展（plan 2026-07-21-1206-2，budget.md §结转规则引擎）
+    /** 预算方案已结转（源 Scenario 终态，结转后不可再调整）。 */
+    String BUDGET_STATUS_CLOSED = "CLOSED";
+
+    // budget-carry-forward-rule（A2，budget.md §结转规则引擎）
+    String BUDGET_CARRY_FORWARD_REMAINING_FULL = "REMAINING_FULL";
+    String BUDGET_CARRY_FORWARD_REMAINING_RATIO = "REMAINING_RATIO";
+    String BUDGET_CARRY_FORWARD_USED_FULL = "USED_FULL";
+    String BUDGET_CARRY_FORWARD_NONE = "NONE";
+
+    // budget-rollforward-strategy（A2，budget.md §滚动预算自动复制引擎）
+    String BUDGET_ROLLFORWARD_FIXED_PERCENTAGE = "FIXED_PERCENTAGE";
+    String BUDGET_ROLLFORWARD_ZERO_BASED = "ZERO_BASED";
+    String BUDGET_ROLLFORWARD_INCREMENTAL = "INCREMENTAL";
+
+    // A2 预算多年度/结转/承付配置项（plan 2026-07-21-1206-2）
+    /** 承付过账总开关（默认 false，向后兼容保护既有 113 purchase 测试）。 */
+    String CONFIG_BUDGET_COMMITMENT_ENABLED = "erp-fin.budget-commitment-enabled";
+    /** 承付占用科目编码（启用承付时必配）。 */
+    String CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE = "erp-fin.budget-commitment-subject-code";
+    /** 预算结转总开关（默认 false）。 */
+    String CONFIG_BUDGET_CARRY_FORWARD_ENABLED = "erp-fin.budget-carry-forward-enabled";
+    /** 预算结转缺省规则（默认 REMAINING_FULL）。 */
+    String CONFIG_BUDGET_CARRY_FORWARD_DEFAULT_RULE = "erp-fin.budget-carry-forward-default-rule";
+    /** 预算结转 REMAINING_RATIO 比例（默认 0.5）。 */
+    String CONFIG_BUDGET_CARRY_FORWARD_RATIO = "erp-fin.budget-carry-forward-ratio";
+    /** 预算滚动复制总开关（默认 false）。 */
+    String CONFIG_BUDGET_ROLL_FORWARD_ENABLED = "erp-fin.budget-roll-forward-enabled";
+    /** 预算滚动复制缺省策略（默认 FIXED_PERCENTAGE）。 */
+    String CONFIG_BUDGET_ROLLFORWARD_DEFAULT_STRATEGY = "erp-fin.budget-rollforward-default-strategy";
+    /** 预算滚动复制 INCREMENTAL 增长率（默认 0.05）。 */
+    String CONFIG_BUDGET_ROLLFORWARD_INCREMENTAL_RATE = "erp-fin.budget-rollforward-incremental-rate";
+
+    /** A2 默认 INCREMENTAL 增长率。 */
+    java.math.BigDecimal DEFAULT_BUDGET_ROLLFORWARD_INCREMENTAL_RATE = new java.math.BigDecimal("0.05");
+    /** A2 默认 REMAINING_RATIO 比例。 */
+    java.math.BigDecimal DEFAULT_BUDGET_CARRY_FORWARD_RATIO = new java.math.BigDecimal("0.5");
+
+    /** 承付凭证业财回链 billType / businessType（不进入 ErpFinBusinessType 枚举，承付凭证不走 Provider 路由）。 */
+    String COMMITMENT_VOUCHER_BILL_TYPE = "PURCHASE_ORDER_COMMITMENT";
+    /** 承付凭证业财回链 billHeadCode 前缀（红冲按订单 code 反查）。 */
+    String COMMITMENT_VOUCHER_BILL_CODE_PREFIX = "COMMITMENT-";
+    /** 承付凭证红冲 billHeadCode 前缀。 */
+    String COMMITMENT_VOUCHER_REVERSAL_BILL_CODE_PREFIX = "COMMITMENT-REVERSAL-";
+    /** 承付触发单据类型：采购订单（IErpFinBudgetCommitmentBiz.commit 的 sourceBillType 入参）。 */
+    String COMMITMENT_SOURCE_BILL_PURCHASE_ORDER = "PURCHASE_ORDER";
+
     /** 预算凭证业财回链 billType / businessType（不进入 ErpFinBusinessType 枚举，预算凭证不走 Provider 模型）。 */
     String BUDGET_VOUCHER_BILL_TYPE = "BUDGET_SCENARIO";
     /** 预算凭证业财回链 billHeadCode 前缀（红冲按 scenario.code 反查）。 */

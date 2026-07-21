@@ -412,6 +412,86 @@
         }
 
 
+        private String _budgetGroupCode;
+
+    
+        @PropMeta(propId=26)
+    
+        public String getBudgetGroupCode(){
+            return _budgetGroupCode;
+        }
+
+        public void setBudgetGroupCode(String value){
+            this._budgetGroupCode = value;
+        }
+
+
+        private String _carryForwardRule;
+
+    
+        @PropMeta(propId=27)
+    
+        public String getCarryForwardRule(){
+            return _carryForwardRule;
+        }
+
+        public void setCarryForwardRule(String value){
+            this._carryForwardRule = value;
+        }
+
+
+        private String _carryForwardRule_label;
+
+    
+        public String getCarryForwardRule_label(){
+            return _carryForwardRule_label;
+        }
+
+        public void setCarryForwardRule_label(String value){
+            this._carryForwardRule_label = value;
+        }
+
+
+        private String _rollForwardStrategy;
+
+    
+        @PropMeta(propId=28)
+    
+        public String getRollForwardStrategy(){
+            return _rollForwardStrategy;
+        }
+
+        public void setRollForwardStrategy(String value){
+            this._rollForwardStrategy = value;
+        }
+
+
+        private String _rollForwardStrategy_label;
+
+    
+        public String getRollForwardStrategy_label(){
+            return _rollForwardStrategy_label;
+        }
+
+        public void setRollForwardStrategy_label(String value){
+            this._rollForwardStrategy_label = value;
+        }
+
+
+        private java.sql.Timestamp _closedAt;
+
+    
+        @PropMeta(propId=29)
+    
+        public java.sql.Timestamp getClosedAt(){
+            return _closedAt;
+        }
+
+        public void setClosedAt(java.sql.Timestamp value){
+            this._closedAt = value;
+        }
+
+
         private Map<String,Object> _acctSchema;
 
         public Map<String,Object> getAcctSchema(){

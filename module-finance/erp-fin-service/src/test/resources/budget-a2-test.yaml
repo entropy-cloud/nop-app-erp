@@ -1,0 +1,15 @@
+erp-fin:
+  current-year-profit-subject-code: "4103"
+  bad-debt-allowance-subject-code: "1231"
+  exchange-revaluation-enabled: false
+  auto-depreciation-on-close: false
+  auto-post-on-close: true
+  budget-check-enabled: false
+  budget-commitment-enabled: true
+  budget-commitment-subject-code: "1408"
+  budget-carry-forward-enabled: true
+  budget-carry-forward-default-rule: "REMAINING_FULL"
+  budget-carry-forward-ratio: 0.5
+  budget-roll-forward-enabled: true
+  budget-rollforward-default-strategy: "FIXED_PERCENTAGE"
+  budget-rollforward-incremental-rate: 0.05

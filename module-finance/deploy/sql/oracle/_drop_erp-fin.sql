@@ -40,6 +40,8 @@ drop table erp_fin_notes_payable;
 drop table erp_fin_expense_claim_line;
 drop table erp_fin_bank_statement_line;
 drop table erp_fin_budget_line;
+drop table erp_fin_budget_rollforward_log;
+drop table erp_fin_budget_carry_forward_log;
 drop table erp_fin_bank_reconciliation_line;
 drop table erp_fin_budget_control_log;
 

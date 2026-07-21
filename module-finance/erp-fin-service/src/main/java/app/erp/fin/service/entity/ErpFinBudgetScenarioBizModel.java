@@ -51,4 +51,22 @@ public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScena
     public ErpFinBudgetScenario cancel(@Name("id") Long id, IServiceContext context) {
         return budgetScenarioProcessor.cancel(id, context);
     }
+
+    @Override
+    @BizMutation
+    public ErpFinBudgetScenario rollForward(@Name("id") Long id,
+                                            @Name("newFiscalYear") Integer newFiscalYear,
+                                            @Name("strategy") String strategy,
+                                            IServiceContext context) {
+        return budgetScenarioProcessor.rollForward(id, newFiscalYear, strategy, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpFinBudgetScenario carryForward(@Name("id") Long id,
+                                             @Name("targetScenarioId") Long targetScenarioId,
+                                             @Name("rule") String rule,
+                                             IServiceContext context) {
+        return budgetScenarioProcessor.carryForward(id, targetScenarioId, rule, context);
+    }
 }
