@@ -367,6 +367,22 @@ CREATE TABLE erp_mfg_mrp_demand(
   constraint PK_erp_mfg_mrp_demand primary key (id)
 );
 
+CREATE TABLE erp_mfg_mrp_scenario(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  base_mrp_plan_id INT8  ,
+  description VARCHAR(1000)  ,
+  status VARCHAR(20) NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_mrp_scenario primary key (id)
+);
+
 CREATE TABLE erp_mfg_forecast_line(
   id INT8 NOT NULL ,
   forecast_id INT8 NOT NULL ,
@@ -478,6 +494,38 @@ CREATE TABLE erp_mfg_bom_line(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_mfg_bom_line primary key (id)
+);
+
+CREATE TABLE erp_mfg_mrp_scenario_version(
+  id INT8 NOT NULL ,
+  scenario_id INT8 NOT NULL ,
+  version_no INT4 NOT NULL ,
+  computed_mrp_plan_id INT8  ,
+  snapshot_summary VARCHAR(1000)  ,
+  status VARCHAR(20) NOT NULL ,
+  promoted_plan_id INT8  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_mrp_scenario_version primary key (id)
+);
+
+CREATE TABLE erp_mfg_mrp_scenario_param(
+  id INT8 NOT NULL ,
+  scenario_id INT8 NOT NULL ,
+  material_id INT8  ,
+  param_type VARCHAR(20) NOT NULL ,
+  param_value NUMERIC(20,4) NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_mrp_scenario_param primary key (id)
 );
 
 CREATE TABLE erp_mfg_crp_load(
@@ -1227,6 +1275,32 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_mrp_demand.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_mfg_mrp_scenario IS 'MRP仿真场景';
+                
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.code IS '场景号';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.base_mrp_plan_id IS '基线MRP计划';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.description IS '场景描述';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_mfg_forecast_line IS '需求预测行';
                 
       COMMENT ON COLUMN erp_mfg_forecast_line.id IS 'ID';
@@ -1428,6 +1502,58 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_bom_line.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_bom_line.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_mrp_scenario_version IS 'MRP仿真版本';
+                
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.scenario_id IS '仿真场景';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.version_no IS '版本号';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.computed_mrp_plan_id IS '计算结果MRP计划';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.snapshot_summary IS '快照摘要';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.promoted_plan_id IS '转正式计划ID';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_version.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_mrp_scenario_param IS 'MRP仿真参数';
+                
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.scenario_id IS '仿真场景';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.material_id IS '物料(空=全局覆盖)';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.param_type IS '参数类型';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.param_value IS '参数值';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_mrp_scenario_param.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_crp_load IS 'CRP负荷';
                 

@@ -18,6 +18,9 @@ entity:
     ErpMfgMrpDemand: MRP Demand
     ErpMfgMrpPlan: MRP Plan
     ErpMfgMrpPlanLine: MRP Plan Line
+    ErpMfgMrpScenario: MRP Simulation Scenario
+    ErpMfgMrpScenarioParam: MRP Simulation Param
+    ErpMfgMrpScenarioVersion: MRP Simulation Version
     ErpMfgProductionVersion: Production Version
     ErpMfgRouting: Routing
     ErpMfgRoutingOperation: Routing Operation
@@ -502,6 +505,59 @@ prop:
       uoM: Uo M
       uoM.name: Uo M
       parentLine: Parent Line
+    ErpMfgMrpScenario:
+      id: ID
+      code: Code
+      orgId: Organization
+      baseMrpPlanId: Base Mrp Plan
+      description: Description
+      status: Status
+      status_label: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      versions: Versions
+      params: Params
+      baseMrpPlan: Base Mrp Plan
+      org: Org
+      org.name: Org
+    ErpMfgMrpScenarioParam:
+      id: ID
+      scenarioId: Scenario
+      materialId: Material
+      paramType: Param Type
+      paramType_label: null
+      paramValue: Param Value
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scenario: Scenario
+      material: Material
+      material.name: Material
+    ErpMfgMrpScenarioVersion:
+      id: ID
+      scenarioId: Scenario
+      versionNo: Version No
+      computedMrpPlanId: Computed Mrp Plan
+      snapshotSummary: Snapshot Summary
+      status: Status
+      status_label: null
+      promotedPlanId: Promoted Plan
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scenario: Scenario
+      computedMrpPlan: Computed Mrp Plan
+      promotedPlan: Promoted Plan
     ErpMfgProductionVersion:
       id: ID
       code: Code

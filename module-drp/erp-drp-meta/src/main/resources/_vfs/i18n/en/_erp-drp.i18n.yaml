@@ -3,6 +3,9 @@ entity:
     ErpDrpLine: DRP Line
     ErpDrpParameter: DRP Parameter
     ErpDrpPlan: DRP Plan
+    ErpDrpScenario: DRP Simulation Scenario
+    ErpDrpScenarioParam: DRP Simulation Param
+    ErpDrpScenarioVersion: DRP Simulation Version
     ErpInvDrpCrossDock: Cross Dock
     ErpInvDrpDockAppointment: Dock Appointment
     ErpInvDrpLeadTimeRecord: Lead Time Record
@@ -102,6 +105,62 @@ prop:
       lines: Lines
       org: Org
       org.name: Org
+    ErpDrpScenario:
+      id: ID
+      code: Code
+      orgId: Organization
+      baseDrpPlanId: Base Drp Plan
+      description: Description
+      status: Status
+      status_label: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      versions: Versions
+      params: Params
+      baseDrpPlan: Base Drp Plan
+      org: Org
+      org.name: Org
+    ErpDrpScenarioParam:
+      id: ID
+      scenarioId: Scenario
+      materialId: Material
+      warehouseId: Warehouse
+      paramType: Param Type
+      paramType_label: null
+      paramValue: Param Value
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scenario: Scenario
+      material: Material
+      material.name: Material
+      warehouse: Warehouse
+      warehouse.name: Warehouse
+    ErpDrpScenarioVersion:
+      id: ID
+      scenarioId: Scenario
+      versionNo: Version No
+      computedDrpPlanId: Computed Drp Plan
+      snapshotSummary: Snapshot Summary
+      status: Status
+      status_label: null
+      promotedPlanId: Promoted Plan
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      scenario: Scenario
+      computedDrpPlan: Computed Drp Plan
+      promotedPlan: Promoted Plan
     ErpInvDrpCrossDock:
       id: ID
       code: Code

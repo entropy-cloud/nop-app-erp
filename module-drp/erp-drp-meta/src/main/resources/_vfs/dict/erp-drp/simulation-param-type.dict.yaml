@@ -1,0 +1,18 @@
+# __XGEN_FORCE_OVERRIDE__
+label: DRP仿真参数类型
+locale: zh-CN
+valueType: string
+description: DRP 仿真场景参数变体覆盖类型（plan 2026-07-22-1000-2 §Decision B §DRP 对应物）
+options:
+
+  - label: 安全库存
+    value: SAFETY_STOCK
+    description: 覆盖仓库补货参数的 safetyStock
+
+  - label: 提前期
+    value: LEAD_TIME
+    description: 覆盖仓库补货参数的 replenishmentLeadTime（天）
+
+  - label: 订货倍数
+    value: REPLENISHMENT_QTY
+    description: 覆盖仓库补货参数的 orderMultiple

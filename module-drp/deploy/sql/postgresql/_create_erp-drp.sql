@@ -164,6 +164,22 @@ CREATE TABLE erp_drp_line(
   constraint PK_erp_drp_line primary key (id)
 );
 
+CREATE TABLE erp_drp_scenario(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  org_id INT8  ,
+  base_drp_plan_id INT8  ,
+  description VARCHAR(1000)  ,
+  status VARCHAR(20) NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_drp_scenario primary key (id)
+);
+
 CREATE TABLE erp_inv_drp_cross_dock(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -190,6 +206,39 @@ CREATE TABLE erp_inv_drp_cross_dock(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_inv_drp_cross_dock primary key (id)
+);
+
+CREATE TABLE erp_drp_scenario_version(
+  id INT8 NOT NULL ,
+  scenario_id INT8 NOT NULL ,
+  version_no INT4 NOT NULL ,
+  computed_drp_plan_id INT8  ,
+  snapshot_summary VARCHAR(1000)  ,
+  status VARCHAR(20) NOT NULL ,
+  promoted_plan_id INT8  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_drp_scenario_version primary key (id)
+);
+
+CREATE TABLE erp_drp_scenario_param(
+  id INT8 NOT NULL ,
+  scenario_id INT8 NOT NULL ,
+  material_id INT8  ,
+  warehouse_id INT8  ,
+  param_type VARCHAR(20) NOT NULL ,
+  param_value NUMERIC(20,4) NOT NULL ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_drp_scenario_param primary key (id)
 );
 
 CREATE TABLE erp_inv_drp_dock_appointment(
@@ -444,6 +493,32 @@ CREATE TABLE erp_inv_drp_dock_appointment(
                     
       COMMENT ON COLUMN erp_drp_line.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_drp_scenario IS 'DRP仿真场景';
+                
+      COMMENT ON COLUMN erp_drp_scenario.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.code IS '场景号';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.base_drp_plan_id IS '基线DRP计划';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.description IS '场景描述';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_drp_scenario.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_inv_drp_cross_dock IS '越库执行记录';
                 
       COMMENT ON COLUMN erp_inv_drp_cross_dock.id IS 'ID';
@@ -493,6 +568,60 @@ CREATE TABLE erp_inv_drp_dock_appointment(
       COMMENT ON COLUMN erp_inv_drp_cross_dock.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_inv_drp_cross_dock.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_drp_scenario_version IS 'DRP仿真版本';
+                
+      COMMENT ON COLUMN erp_drp_scenario_version.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.scenario_id IS '仿真场景';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.version_no IS '版本号';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.computed_drp_plan_id IS '计算结果DRP计划';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.snapshot_summary IS '快照摘要';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.status IS '状态';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.promoted_plan_id IS '转正式计划ID';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_version.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_drp_scenario_param IS 'DRP仿真参数';
+                
+      COMMENT ON COLUMN erp_drp_scenario_param.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.scenario_id IS '仿真场景';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.material_id IS '物料(空=全局覆盖)';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.warehouse_id IS '仓库(空=全局覆盖)';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.param_type IS '参数类型';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.param_value IS '参数值';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_drp_scenario_param.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_inv_drp_dock_appointment IS '月台预约';
                 

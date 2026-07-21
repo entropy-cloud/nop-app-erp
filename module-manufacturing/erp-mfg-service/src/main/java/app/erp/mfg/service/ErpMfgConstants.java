@@ -290,4 +290,24 @@ public interface ErpMfgConstants {
     /** 看板 CRP 负荷图默认向前窗口天数（dateFrom/dateTo 缺省时取近 N 天；默认 7）。经 AppConfig.var 读取。 */
     String CONFIG_DASH_MFG_CRP_DEFAULT_DAYS = "erp-dash.mfg-crp-default-days";
     int DEFAULT_DASH_MFG_CRP_DEFAULT_DAYS = 7;
+
+    // ---- MRP/DRP 仿真引擎（plan 2026-07-22-1000-2；权威：docs/design/manufacturing/simulation-engine.md） ----
+
+    /** MRP 仿真入口总开关（默认 false=不启用 runSimulation / promoteToFormalPlan；门控仿真入口，不保护单次 MRP 路径回归）。 */
+    String CONFIG_MFG_SIMULATION_ENABLED = "erp-mfg.simulation-enabled";
+    boolean DEFAULT_MFG_SIMULATION_ENABLED = false;
+
+    // 仿真场景/版本状态（erp-mfg/simulation-status，4 态）
+    String SIMULATION_STATUS_DRAFT = "DRAFT";
+    String SIMULATION_STATUS_RUNNING = "RUNNING";
+    String SIMULATION_STATUS_COMPLETED = "COMPLETED";
+    String SIMULATION_STATUS_ARCHIVED = "ARCHIVED";
+
+    // MRP 仿真参数类型（erp-mfg/simulation-param-type，3 键）
+    String SIMULATION_PARAM_TYPE_LEAD_TIME = "LEAD_TIME";
+    String SIMULATION_PARAM_TYPE_LOT_SIZE = "LOT_SIZE";
+    String SIMULATION_PARAM_TYPE_SAFETY_STOCK = "SAFETY_STOCK";
+
+    /** promoteToFormalPlan 生成的正式计划 code 后缀模板（{0}=versionNo）。 */
+    String SIMULATION_PROMOTED_PLAN_CODE_SUFFIX = "-PROMOTED-{0}";
 }

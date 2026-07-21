@@ -52,58 +52,103 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvDrpCrossDock-main" displayName="越库执行记录" orderNo="10010"
+                <resource id="ErpDrpScenario-main" displayName="DRP仿真场景" orderNo="10010"
+                          i18n-en:displayName="DRP Simulation Scenario" icon="flask-conical" component="AMIS"
+                          resourceType="SUBM" url="/erp/drp/pages/ErpDrpScenario/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpDrpScenario:query" displayName="查询DRP仿真场景"
+                                  i18n-en:displayName="Query DRP Simulation Scenario" orderNo="10011"
+                                  resourceType="FNPT">
+                            <permissions>ErpDrpScenario:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpDrpScenario:mutation" displayName="修改DRP仿真场景"
+                                  i18n-en:displayName="Modify DRP Simulation Scenario" orderNo="10012"
+                                  resourceType="FNPT">
+                            <permissions>ErpDrpScenario:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpDrpScenarioParam-main" displayName="DRP仿真参数" orderNo="10013"
+                          i18n-en:displayName="DRP Simulation Param" icon="sliders-horizontal" component="AMIS"
+                          resourceType="SUBM" url="/erp/drp/pages/ErpDrpScenarioParam/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpDrpScenarioParam:query" displayName="查询DRP仿真参数"
+                                  i18n-en:displayName="Query DRP Simulation Param" orderNo="10014" resourceType="FNPT">
+                            <permissions>ErpDrpScenarioParam:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpDrpScenarioParam:mutation" displayName="修改DRP仿真参数"
+                                  i18n-en:displayName="Modify DRP Simulation Param" orderNo="10015" resourceType="FNPT">
+                            <permissions>ErpDrpScenarioParam:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpDrpScenarioVersion-main" displayName="DRP仿真版本" orderNo="10016"
+                          i18n-en:displayName="DRP Simulation Version" icon="git-branch" component="AMIS"
+                          resourceType="SUBM" url="/erp/drp/pages/ErpDrpScenarioVersion/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpDrpScenarioVersion:query" displayName="查询DRP仿真版本"
+                                  i18n-en:displayName="Query DRP Simulation Version" orderNo="10017" resourceType="FNPT">
+                            <permissions>ErpDrpScenarioVersion:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpDrpScenarioVersion:mutation" displayName="修改DRP仿真版本"
+                                  i18n-en:displayName="Modify DRP Simulation Version" orderNo="10018"
+                                  resourceType="FNPT">
+                            <permissions>ErpDrpScenarioVersion:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpInvDrpCrossDock-main" displayName="越库执行记录" orderNo="10019"
                           i18n-en:displayName="Cross Dock" icon="arrow-left-right" component="AMIS" resourceType="SUBM"
                           url="/erp/drp/pages/ErpInvDrpCrossDock/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvDrpCrossDock:query" displayName="查询越库执行记录"
-                                  i18n-en:displayName="Query Cross Dock" orderNo="10011" resourceType="FNPT">
+                                  i18n-en:displayName="Query Cross Dock" orderNo="10020" resourceType="FNPT">
                             <permissions>ErpInvDrpCrossDock:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvDrpCrossDock:mutation" displayName="修改越库执行记录"
-                                  i18n-en:displayName="Modify Cross Dock" orderNo="10012" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Cross Dock" orderNo="10021" resourceType="FNPT">
                             <permissions>ErpInvDrpCrossDock:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvDrpDockAppointment-main" displayName="月台预约" orderNo="10013"
+                <resource id="ErpInvDrpDockAppointment-main" displayName="月台预约" orderNo="10022"
                           i18n-en:displayName="Dock Appointment" icon="dock" component="AMIS" resourceType="SUBM"
                           url="/erp/drp/pages/ErpInvDrpDockAppointment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvDrpDockAppointment:query" displayName="查询月台预约"
-                                  i18n-en:displayName="Query Dock Appointment" orderNo="10014" resourceType="FNPT">
+                                  i18n-en:displayName="Query Dock Appointment" orderNo="10023" resourceType="FNPT">
                             <permissions>ErpInvDrpDockAppointment:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvDrpDockAppointment:mutation" displayName="修改月台预约"
-                                  i18n-en:displayName="Modify Dock Appointment" orderNo="10015" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Dock Appointment" orderNo="10024" resourceType="FNPT">
                             <permissions>ErpInvDrpDockAppointment:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvDrpLeadTimeRecord-main" displayName="提前期记录" orderNo="10016"
+                <resource id="ErpInvDrpLeadTimeRecord-main" displayName="提前期记录" orderNo="10025"
                           i18n-en:displayName="Lead Time Record" icon="clock" component="AMIS" resourceType="SUBM"
                           url="/erp/drp/pages/ErpInvDrpLeadTimeRecord/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvDrpLeadTimeRecord:query" displayName="查询提前期记录"
-                                  i18n-en:displayName="Query Lead Time Record" orderNo="10017" resourceType="FNPT">
+                                  i18n-en:displayName="Query Lead Time Record" orderNo="10026" resourceType="FNPT">
                             <permissions>ErpInvDrpLeadTimeRecord:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvDrpLeadTimeRecord:mutation" displayName="修改提前期记录"
-                                  i18n-en:displayName="Modify Lead Time Record" orderNo="10018" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Lead Time Record" orderNo="10027" resourceType="FNPT">
                             <permissions>ErpInvDrpLeadTimeRecord:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpInvDrpSafetyStockCalc-main" displayName="安全库存计算" orderNo="10019"
+                <resource id="ErpInvDrpSafetyStockCalc-main" displayName="安全库存计算" orderNo="10028"
                           i18n-en:displayName="Safety Stock Calc" icon="shield" component="AMIS" resourceType="SUBM"
                           url="/erp/drp/pages/ErpInvDrpSafetyStockCalc/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpInvDrpSafetyStockCalc:query" displayName="查询安全库存计算"
-                                  i18n-en:displayName="Query Safety Stock Calc" orderNo="10020" resourceType="FNPT">
+                                  i18n-en:displayName="Query Safety Stock Calc" orderNo="10029" resourceType="FNPT">
                             <permissions>ErpInvDrpSafetyStockCalc:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpInvDrpSafetyStockCalc:mutation" displayName="修改安全库存计算"
-                                  i18n-en:displayName="Modify Safety Stock Calc" orderNo="10021" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Safety Stock Calc" orderNo="10030" resourceType="FNPT">
                             <permissions>ErpInvDrpSafetyStockCalc:mutation</permissions>
                         </resource>
                     </children>

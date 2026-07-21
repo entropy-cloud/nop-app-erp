@@ -123,6 +123,16 @@
     <bean id="app.erp.mfg.service.report.ErpMfgReportBizModel" ioc:type="@bean:id"/>
 
     <!-- 制造看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
-          经 @BizQuery 暴露 getDashboardKpi/getWorkOrderStatusDistribution/getDashboardTrend/findDelayedWorkOrderAlert。 -->
+           经 @BizQuery 暴露 getDashboardKpi/getWorkOrderStatusDistribution/getDashboardTrend/findDelayedWorkOrderAlert。 -->
     <bean id="app.erp.mfg.service.dashboard.ErpMfgDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- MRP 仿真引擎（plan 2026-07-22-1000-2 §Decision E2 fork；权威：docs/design/manufacturing/simulation-engine.md）：
+           ErpMfgSimulationParamResolver = 场景参数变体覆盖解析器（Strategy+registry 范式，对齐 A3 TransferPriceResolver）；
+           SimulationMrpEngine = MRP 仿真计算引擎（fork MrpEngine 算法，单次路径零触及零回归）。 -->
+    <bean id="app.erp.mfg.service.simulation.ErpMfgSimulationParamResolver"
+          class="app.erp.mfg.service.simulation.ErpMfgSimulationParamResolver"/>
+    <bean id="app.erp.mfg.service.simulation.SimulationMrpEngine"
+          class="app.erp.mfg.service.simulation.SimulationMrpEngine"/>
+    <bean id="app.erp.mfg.service.simulation.SimulationVersionComparator"
+          class="app.erp.mfg.service.simulation.SimulationVersionComparator"/>
 </beans>

@@ -23,4 +23,15 @@
     <!-- 安全库存优化引擎（plan 2026-07-04-1115-2 Phase 4）：STATISTICAL/SIMPLE/DDMRP 三法 → ErpInvDrpSafetyStockCalc -->
     <bean id="app.erp.drp.service.safetystock.SafetyStockEngine"
           class="app.erp.drp.service.safetystock.SafetyStockEngine"/>
+
+    <!-- DRP 仿真引擎（plan 2026-07-22-1000-2 §DRP 对应物；权威：docs/design/manufacturing/simulation-engine.md）：
+           ErpDrpSimulationParamResolver = 场景参数变体覆盖解析器（同构 MRP）；
+           SimulationDrpEngine = DRP 仿真计算引擎（fork DrpEngine 算法，单次路径零触及零回归）；
+           DrpSimulationVersionComparator = DRP 版本对比引擎（2 维 diff）。 -->
+    <bean id="app.erp.drp.service.simulation.ErpDrpSimulationParamResolver"
+          class="app.erp.drp.service.simulation.ErpDrpSimulationParamResolver"/>
+    <bean id="app.erp.drp.service.simulation.SimulationDrpEngine"
+          class="app.erp.drp.service.simulation.SimulationDrpEngine"/>
+    <bean id="app.erp.drp.service.simulation.DrpSimulationVersionComparator"
+          class="app.erp.drp.service.simulation.DrpSimulationVersionComparator"/>
 </beans>

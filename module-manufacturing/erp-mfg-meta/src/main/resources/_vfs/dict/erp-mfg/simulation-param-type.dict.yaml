@@ -1,0 +1,18 @@
+# __XGEN_FORCE_OVERRIDE__
+label: MRP仿真参数类型
+locale: zh-CN
+valueType: string
+description: MRP 仿真场景参数变体覆盖类型（plan 2026-07-22-1000-2 §Decision B）
+options:
+
+  - label: 提前期偏移天数
+    value: LEAD_TIME
+    description: 覆盖物料采购/制造提前期（天）
+
+  - label: 批量
+    value: LOT_SIZE
+    description: 覆盖全局 lot size（>0 按倍数取整；0=lot-for-lot）
+
+  - label: 安全库存
+    value: SAFETY_STOCK
+    description: 覆盖物料安全库存（数量）

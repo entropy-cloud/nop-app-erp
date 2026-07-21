@@ -47,6 +47,8 @@ alter table erp_mfg_mrp_plan_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT 
 
 alter table erp_mfg_mrp_demand add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_mfg_mrp_scenario add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_mfg_forecast_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_cost_rollup_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -54,6 +56,10 @@ alter table erp_mfg_cost_rollup_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' N
 alter table erp_mfg_work_order add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_bom_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_mrp_scenario_version add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_mrp_scenario_param add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_crp_load add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -147,6 +153,9 @@ alter table erp_mfg_mrp_plan_line add primary key (NOP_TENANT_ID, ID);
 alter table erp_mfg_mrp_demand drop primary key;
 alter table erp_mfg_mrp_demand add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_mfg_mrp_scenario drop primary key;
+alter table erp_mfg_mrp_scenario add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_mfg_forecast_line drop primary key;
 alter table erp_mfg_forecast_line add primary key (NOP_TENANT_ID, ID);
 
@@ -158,6 +167,12 @@ alter table erp_mfg_work_order add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_bom_line drop primary key;
 alter table erp_mfg_bom_line add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_mrp_scenario_version drop primary key;
+alter table erp_mfg_mrp_scenario_version add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_mrp_scenario_param drop primary key;
+alter table erp_mfg_mrp_scenario_param add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_crp_load drop primary key;
 alter table erp_mfg_crp_load add primary key (NOP_TENANT_ID, ID);

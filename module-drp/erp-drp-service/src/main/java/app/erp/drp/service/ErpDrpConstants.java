@@ -70,4 +70,24 @@ public interface ErpDrpConstants {
 
     // 默认补货提前期天数（ErpDrpParameter.replenishmentLeadTime 与 SS.leadTimeDays 均空时兜底）
     int DEFAULT_REPLENISHMENT_LEAD_TIME_DAYS = 0;
+
+    // ---- DRP 仿真引擎（plan 2026-07-22-1000-2；权威：docs/design/manufacturing/simulation-engine.md §DRP 对应物） ----
+
+    /** DRP 仿真入口总开关（默认 false=不启用 runSimulation / promoteToFormalPlan）。 */
+    String CONFIG_DRP_SIMULATION_ENABLED = "erp-drp.simulation-enabled";
+    boolean DEFAULT_DRP_SIMULATION_ENABLED = false;
+
+    // DRP 仿真场景/版本状态（erp-drp/simulation-status，4 态；同 MRP）
+    String SIMULATION_STATUS_DRAFT = "DRAFT";
+    String SIMULATION_STATUS_RUNNING = "RUNNING";
+    String SIMULATION_STATUS_COMPLETED = "COMPLETED";
+    String SIMULATION_STATUS_ARCHIVED = "ARCHIVED";
+
+    // DRP 仿真参数类型（erp-drp/simulation-param-type，3 键）
+    String SIMULATION_PARAM_TYPE_SAFETY_STOCK = "SAFETY_STOCK";
+    String SIMULATION_PARAM_TYPE_LEAD_TIME = "LEAD_TIME";
+    String SIMULATION_PARAM_TYPE_REPLENISHMENT_QTY = "REPLENISHMENT_QTY";
+
+    /** promoteToFormalPlan 生成的正式计划 code 后缀模板（{0}=versionNo）。 */
+    String SIMULATION_PROMOTED_PLAN_CODE_SUFFIX = "-PROMOTED-{0}";
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpMfgMrpScenarioParam.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="scenarioId" label="场景" sortable="true"/>
+                <col id="materialId" label="物料(空=全局)" sortable="true"/>
+                <col id="paramType" mandatory="true" sortable="true"/>
+                <col id="paramValue" mandatory="true" ui:number="true" sortable="true" align="right"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+========>baseInfo[基本信息]======
+ scenarioId[场景] paramType[参数类型]
+ materialId[物料(空=全局覆盖)]
+ paramValue[参数值]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+ scenarioId[场景] paramType[参数类型]
+ materialId[物料(空=全局覆盖)]
+ paramValue[参数值]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ scenarioId[场景] paramType[参数类型]
+ materialId[物料]
+            </layout>
+            <cells>
+                <cell id="scenarioId" filterOp="eq"/>
+                <cell id="paramType" filterOp="in"/>
+                <cell id="materialId" filterOp="eq"/>
+            </cells>
+        </form>
+    </forms>
+
+    <pages>
+        <crud name="main"/>
+        <picker name="picker"/>
+    </pages>
+</view>

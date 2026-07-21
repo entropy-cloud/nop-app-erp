@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpMfgMrpScenarioVersion.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="scenarioId" label="场景" sortable="true"/>
+                <col id="versionNo" mandatory="true" ui:number="true" sortable="true" align="right"/>
+                <col id="computedMrpPlanId" label="计算结果计划" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="promotedPlanId" label="转正式计划ID" sortable="true"/>
+                <col id="snapshotSummary" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true" align="center"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+========>baseInfo[基本信息]======
+ scenarioId[场景] versionNo[版本号]
+========>snapshot[快照]======
+ computedMrpPlanId[计算结果计划]
+ status[状态] promotedPlanId[转正式计划ID]
+ snapshotSummary[快照摘要](2)
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ scenarioId[场景] status[状态]
+            </layout>
+            <cells>
+                <cell id="scenarioId" filterOp="eq"/>
+                <cell id="status" filterOp="in"/>
+            </cells>
+        </form>
+    </forms>
+
+    <pages>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-promote-button" label="转正式计划" level="success" icon="fa fa-check">
+                    <api url="@mutation:ErpMfgMrpScenario__promoteToFormalPlan?scenarioVersionId=$id"/>
+                    <confirmText>确认将此版本转正式 MRP 计划？生成 DRAFT 计划供后续释放。</confirmText>
+                    <messages>
+                        <success>已转正式计划，原版本归档</success>
+                    </messages>
+                    <visibleOn>${status == 'COMPLETED' &amp;&amp; !promotedPlanId}</visibleOn>
+                </action>
+            </rowActions>
+        </crud>
+        <picker name="picker"/>
+    </pages>
+</view>

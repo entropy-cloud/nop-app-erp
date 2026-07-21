@@ -253,4 +253,35 @@ public interface ErpMfgErrors {
             "erp.err.mfg.subcontract-order.cannot-reverse",
             "委外单[{subcontractOrderCode}]当前状态[{currentStatus}]不允许红冲，仅 COMPLETED 且已过账的委外单可红冲",
             ARG_SUBCONTRACT_ORDER_CODE, ARG_CURRENT_STATUS);
+
+    // --- MRP 仿真引擎（plan 2026-07-22-1000-2；权威：docs/design/manufacturing/simulation-engine.md） ---
+
+    String ARG_SCENARIO_ID = "scenarioId";
+    String ARG_SCENARIO_VERSION_ID = "scenarioVersionId";
+    String ARG_VERSION_NO = "versionNo";
+
+    ErrorCode ERR_MFG_SIMULATION_DISABLED = ErrorCode.define(
+            "erp.err.mfg.simulation.disabled",
+            "MRP仿真入口未启用，请在配置中开启 erp-mfg.simulation-enabled=true",
+            ARG_SCENARIO_ID);
+
+    ErrorCode ERR_MFG_SIMULATION_SCENARIO_NOT_DRAFT = ErrorCode.define(
+            "erp.err.mfg.simulation.scenario-not-draft",
+            "MRP仿真场景[{scenarioId}]当前状态不允许此操作，期望状态 DRAFT",
+            ARG_SCENARIO_ID, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_MFG_SIMULATION_NO_BASELINE_PLAN = ErrorCode.define(
+            "erp.err.mfg.simulation.no-baseline-plan",
+            "MRP仿真场景[{scenarioId}]未设置基线MRP计划(baseMrpPlanId)，无法运行仿真",
+            ARG_SCENARIO_ID);
+
+    ErrorCode ERR_MFG_SIMULATION_VERSION_ALREADY_PROMOTED = ErrorCode.define(
+            "erp.err.mfg.simulation.version-already-promoted",
+            "MRP仿真版本[{scenarioVersionId}]已转正式计划，不可重复转正",
+            ARG_SCENARIO_VERSION_ID);
+
+    ErrorCode ERR_MFG_SIMULATION_VERSIONS_NOT_COMPARABLE = ErrorCode.define(
+            "erp.err.mfg.simulation.versions-not-comparable",
+            "MRP仿真版本[{scenarioVersionId}]与[{expectedStatus}]不可对比（须同 orgId / 同基线计划）",
+            ARG_SCENARIO_VERSION_ID, ARG_EXPECTED_STATUS);
 }

@@ -6,6 +6,12 @@ site:
       displayName: Replenishment Parameter
     ErpDrpPlan-main:
       displayName: DRP Plan
+    ErpDrpScenario-main:
+      displayName: DRP Simulation Scenario
+    ErpDrpScenarioParam-main:
+      displayName: DRP Simulation Param
+    ErpDrpScenarioVersion-main:
+      displayName: DRP Simulation Version
     ErpInvDrpLeadTimeRecord-main:
       displayName: Lead Time Record
     ErpInvDrpSafetyStockCalc-main:
@@ -18,5 +24,7 @@ site:
       displayName: Optimization
     drp-plan:
       displayName: Plans
+    drp-simulation:
+      displayName: DRP Simulation
     erp-drp:
       displayName: Distribution Planning

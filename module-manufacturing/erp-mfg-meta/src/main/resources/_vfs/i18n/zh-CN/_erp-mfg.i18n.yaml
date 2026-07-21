@@ -18,6 +18,9 @@ entity:
     ErpMfgMrpDemand: MRP独立需求
     ErpMfgMrpPlan: MRP计划
     ErpMfgMrpPlanLine: MRP计划行
+    ErpMfgMrpScenario: MRP仿真场景
+    ErpMfgMrpScenarioParam: MRP仿真参数
+    ErpMfgMrpScenarioVersion: MRP仿真版本
     ErpMfgProductionVersion: 生产版本
     ErpMfgRouting: 工艺路线
     ErpMfgRoutingOperation: 工艺路线工序
@@ -502,6 +505,59 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpMfgMrpScenario:
+      baseMrpPlan: null
+      baseMrpPlanId: 基线MRP计划
+      code: 场景号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      description: 场景描述
+      id: ID
+      org: null
+      org.name: null
+      orgId: 业务组织
+      params: null
+      status: 状态
+      status_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      versions: null
+    ErpMfgMrpScenarioParam:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      material: null
+      material.name: null
+      materialId: 物料(空=全局覆盖)
+      paramType: 参数类型
+      paramType_label: 参数类型
+      paramValue: 参数值
+      scenario: null
+      scenarioId: 仿真场景
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpMfgMrpScenarioVersion:
+      computedMrpPlan: null
+      computedMrpPlanId: 计算结果MRP计划
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      promotedPlan: null
+      promotedPlanId: 转正式计划ID
+      scenario: null
+      scenarioId: 仿真场景
+      snapshotSummary: 快照摘要
+      status: 状态
+      status_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      versionNo: 版本号
     ErpMfgProductionVersion:
       bom: null
       bomId: BOM

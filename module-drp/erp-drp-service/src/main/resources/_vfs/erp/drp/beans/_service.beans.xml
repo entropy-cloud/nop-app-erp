@@ -42,12 +42,35 @@
         <property name="bizObjName" value="ErpDrpLine"/>
     </bean>
 
+    <bean id="app.erp.drp.service.entity.ErpDrpScenarioBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpDrpScenario" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.drp.biz.IErpDrpScenarioBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpDrpScenario"/>
+    </bean>
+
     <bean id="app.erp.drp.service.entity.ErpInvDrpCrossDockBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpInvDrpCrossDock" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.drp.biz.IErpInvDrpCrossDockBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpInvDrpCrossDock"/>
+    </bean>
+
+    <bean id="app.erp.drp.service.entity.ErpDrpScenarioVersionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpDrpScenarioVersion" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.drp.biz.IErpDrpScenarioVersionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpDrpScenarioVersion"/>
+    </bean>
+
+    <bean id="app.erp.drp.service.entity.ErpDrpScenarioParamBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpDrpScenarioParam" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.drp.biz.IErpDrpScenarioParamBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpDrpScenarioParam"/>
     </bean>
 
     <bean id="app.erp.drp.service.entity.ErpInvDrpDockAppointmentBizModel" ioc:type="@bean:id" ioc:default="true"/>

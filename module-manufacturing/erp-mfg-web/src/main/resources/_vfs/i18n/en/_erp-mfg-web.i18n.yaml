@@ -16,6 +16,12 @@ site:
       displayName: MRP Demand
     ErpMfgMrpPlan-main:
       displayName: MRP Plan
+    ErpMfgMrpScenario-main:
+      displayName: MRP Simulation Scenario
+    ErpMfgMrpScenarioParam-main:
+      displayName: MRP Simulation Param
+    ErpMfgMrpScenarioVersion-main:
+      displayName: MRP Simulation Version
     ErpMfgProductionVersion-main:
       displayName: Production Version
     ErpMfgRouting-main:
@@ -44,6 +50,8 @@ site:
       displayName: Master Data
     mfg-mrp:
       displayName: MRP
+    mfg-mrp-simulation:
+      displayName: MRP Simulation
     mfg-report:
       displayName: Manufacturing Reports
     mfg-subcontract:

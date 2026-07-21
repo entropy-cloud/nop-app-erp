@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpMfgMrpScenario.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="orgId" label="业务组织"/>
+                <col id="baseMrpPlanId" label="基线MRP计划" sortable="true"/>
+                <col id="status" mandatory="true" sortable="true"/>
+                <col id="description" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true" align="center"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+========>baseInfo[基本信息]======
+ code[场景号] orgId[业务组织]
+ baseMrpPlanId[基线MRP计划]
+========>desc[场景描述]======
+ description[场景描述](2)
+========>status[状态]======
+ status[状态]
+========>params[参数变体覆盖]======
+ params[参数变体覆盖](2)
+========>versions[版本历史]======
+ versions[版本历史](2)
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+            <cells>
+                <cell id="params">
+                    <view path="/erp/mfg/pages/ErpMfgMrpScenarioParam/ErpMfgMrpScenarioParam.view.xml" grid="sub-grid-view"/>
+                </cell>
+                <cell id="versions">
+                    <view path="/erp/mfg/pages/ErpMfgMrpScenarioVersion/ErpMfgMrpScenarioVersion.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+========>baseInfo[基本信息]======
+ code[场景号] orgId[业务组织]
+ baseMrpPlanId[基线MRP计划]
+========>desc[场景描述]======
+ description[场景描述](2)
+ status[状态]
+ params[参数变体覆盖](2)
+            </layout>
+            <cells>
+                <cell id="params">
+                    <view path="/erp/mfg/pages/ErpMfgMrpScenarioParam/ErpMfgMrpScenarioParam.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
+        </form>
+        <form id="add" x:prototype="edit"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[场景号] status[状态]
+ orgId[业务组织] baseMrpPlanId[基线MRP计划]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="status" filterOp="in"/>
+                <cell id="orgId" filterOp="eq"/>
+                <cell id="baseMrpPlanId" filterOp="eq"/>
+            </cells>
+        </form>
+    </forms>
+
+    <pages>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-run-simulation-button" label="运行仿真" level="primary" icon="fa fa-cogs">
+                    <api url="@mutation:ErpMfgMrpScenario__runSimulation?scenarioId=$id"/>
+                    <confirmText>确认运行此 MRP 仿真？将基于当前场景参数生成新版本。</confirmText>
+                    <messages>
+                        <success>仿真已运行，新版本已生成</success>
+                    </messages>
+                    <visibleOn>${status == 'DRAFT' || status == 'COMPLETED'}</visibleOn>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
+        <picker name="picker"/>
+    </pages>
+</view>

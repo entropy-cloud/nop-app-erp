@@ -21,7 +21,13 @@ alter table erp_inv_drp_lead_time_record add NOP_TENANT_ID VARCHAR2(32) DEFAULT 
 
 alter table erp_drp_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_drp_scenario add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_inv_drp_cross_dock add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_drp_scenario_version add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_drp_scenario_param add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_inv_drp_dock_appointment add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -58,8 +64,17 @@ alter table erp_inv_drp_lead_time_record add constraint PK_erp_inv_drp_lead_time
 alter table erp_drp_line drop constraint PK_erp_drp_line;
 alter table erp_drp_line add constraint PK_erp_drp_line primary key (NOP_TENANT_ID, ID);
 
+alter table erp_drp_scenario drop constraint PK_erp_drp_scenario;
+alter table erp_drp_scenario add constraint PK_erp_drp_scenario primary key (NOP_TENANT_ID, ID);
+
 alter table erp_inv_drp_cross_dock drop constraint PK_erp_inv_drp_cross_dock;
 alter table erp_inv_drp_cross_dock add constraint PK_erp_inv_drp_cross_dock primary key (NOP_TENANT_ID, ID);
+
+alter table erp_drp_scenario_version drop constraint PK_erp_drp_scenario_version;
+alter table erp_drp_scenario_version add constraint PK_erp_drp_scenario_version primary key (NOP_TENANT_ID, ID);
+
+alter table erp_drp_scenario_param drop constraint PK_erp_drp_scenario_param;
+alter table erp_drp_scenario_param add constraint PK_erp_drp_scenario_param primary key (NOP_TENANT_ID, ID);
 
 alter table erp_inv_drp_dock_appointment drop constraint PK_erp_inv_drp_dock_appointment;
 alter table erp_inv_drp_dock_appointment add constraint PK_erp_inv_drp_dock_appointment primary key (NOP_TENANT_ID, ID);

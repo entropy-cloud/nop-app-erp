@@ -121,4 +121,34 @@ public interface ErpDrpErrors {
             "erp.err.drp.line.illegal-transition",
             "DRP明细行[{drpLineId}]当前状态[{currentStatus}]不允许此操作",
             ARG_DRP_LINE_ID, ARG_CURRENT_STATUS);
+
+    // --- DRP 仿真引擎（plan 2026-07-22-1000-2；权威：docs/design/manufacturing/simulation-engine.md §DRP 对应物） ---
+
+    String ARG_SCENARIO_ID = "scenarioId";
+    String ARG_SCENARIO_VERSION_ID = "scenarioVersionId";
+
+    ErrorCode ERR_DRP_SIMULATION_DISABLED = ErrorCode.define(
+            "erp.err.drp.simulation.disabled",
+            "DRP仿真入口未启用，请在配置中开启 erp-drp.simulation-enabled=true",
+            ARG_SCENARIO_ID);
+
+    ErrorCode ERR_DRP_SIMULATION_SCENARIO_NOT_DRAFT = ErrorCode.define(
+            "erp.err.drp.simulation.scenario-not-draft",
+            "DRP仿真场景[{scenarioId}]当前状态不允许此操作，期望状态 DRAFT",
+            ARG_SCENARIO_ID, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_DRP_SIMULATION_NO_BASELINE_PLAN = ErrorCode.define(
+            "erp.err.drp.simulation.no-baseline-plan",
+            "DRP仿真场景[{scenarioId}]未设置基线DRP计划(baseDrpPlanId)，无法运行仿真",
+            ARG_SCENARIO_ID);
+
+    ErrorCode ERR_DRP_SIMULATION_VERSION_ALREADY_PROMOTED = ErrorCode.define(
+            "erp.err.drp.simulation.version-already-promoted",
+            "DRP仿真版本[{scenarioVersionId}]已转正式计划，不可重复转正",
+            ARG_SCENARIO_VERSION_ID);
+
+    ErrorCode ERR_DRP_SIMULATION_VERSIONS_NOT_COMPARABLE = ErrorCode.define(
+            "erp.err.drp.simulation.versions-not-comparable",
+            "DRP仿真版本[{scenarioVersionId}]与另一版本不可对比（须同 orgId / 同基线计划）",
+            ARG_SCENARIO_VERSION_ID);
 }

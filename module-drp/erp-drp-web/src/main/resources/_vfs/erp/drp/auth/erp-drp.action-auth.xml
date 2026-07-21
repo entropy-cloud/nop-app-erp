@@ -19,6 +19,24 @@
                                   url="/erp/drp/pages/ErpDrpLine/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- DRP仿真（plan 2026-07-22-1000-2） -->
+                <resource id="drp-simulation" displayName="DRP仿真" i18n-en:displayName="DRP Simulation"
+                          icon="flask-conical" resourceType="SUBM" orderNo="120">
+                    <children>
+                        <resource id="ErpDrpScenario-main" displayName="DRP仿真场景"
+                                  i18n-en:displayName="DRP Simulation Scenario" icon="flask-conical"
+                                  component="AMIS" resourceType="SUBM" orderNo="1200"
+                                  url="/erp/drp/pages/ErpDrpScenario/main.page.yaml"/>
+                        <resource id="ErpDrpScenarioVersion-main" displayName="DRP仿真版本"
+                                  i18n-en:displayName="DRP Simulation Version" icon="git-branch"
+                                  component="AMIS" resourceType="SUBM" orderNo="1210"
+                                  url="/erp/drp/pages/ErpDrpScenarioVersion/main.page.yaml"/>
+                        <resource id="ErpDrpScenarioParam-main" displayName="DRP仿真参数"
+                                  i18n-en:displayName="DRP Simulation Param" icon="sliders-horizontal"
+                                  component="AMIS" resourceType="SUBM" orderNo="1220"
+                                  url="/erp/drp/pages/ErpDrpScenarioParam/main.page.yaml"/>
+                    </children>
+                </resource>
                 <resource id="drp-optimize" displayName="优化分析" i18n-en:displayName="Optimization"
                           icon="shield" resourceType="SUBM" orderNo="150">
                     <children>

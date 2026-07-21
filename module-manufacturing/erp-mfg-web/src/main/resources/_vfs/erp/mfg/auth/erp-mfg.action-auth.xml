@@ -65,6 +65,24 @@
                                   url="/erp/mfg/pages/ErpMfgMrpDemand/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- MRP仿真（plan 2026-07-22-1000-2） -->
+                <resource id="mfg-mrp-simulation" displayName="MRP仿真" i18n-en:displayName="MRP Simulation"
+                          icon="flask-conical" resourceType="SUBM" orderNo="350">
+                    <children>
+                        <resource id="ErpMfgMrpScenario-main" displayName="MRP仿真场景"
+                                  i18n-en:displayName="MRP Simulation Scenario" icon="flask-conical"
+                                  component="AMIS" resourceType="SUBM" orderNo="3500"
+                                  url="/erp/mfg/pages/ErpMfgMrpScenario/main.page.yaml"/>
+                        <resource id="ErpMfgMrpScenarioVersion-main" displayName="MRP仿真版本"
+                                  i18n-en:displayName="MRP Simulation Version" icon="git-branch"
+                                  component="AMIS" resourceType="SUBM" orderNo="3510"
+                                  url="/erp/mfg/pages/ErpMfgMrpScenarioVersion/main.page.yaml"/>
+                        <resource id="ErpMfgMrpScenarioParam-main" displayName="MRP仿真参数"
+                                  i18n-en:displayName="MRP Simulation Param" icon="sliders-horizontal"
+                                  component="AMIS" resourceType="SUBM" orderNo="3520"
+                                  url="/erp/mfg/pages/ErpMfgMrpScenarioParam/main.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 委外 -->
                 <resource id="mfg-subcontract" displayName="委外" i18n-en:displayName="Subcontract"
                           icon="truck" resourceType="SUBM" orderNo="400">

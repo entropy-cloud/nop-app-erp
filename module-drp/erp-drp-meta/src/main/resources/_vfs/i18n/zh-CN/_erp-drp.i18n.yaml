@@ -3,6 +3,9 @@ entity:
     ErpDrpLine: DRP明细
     ErpDrpParameter: 仓库补货参数
     ErpDrpPlan: DRP计划
+    ErpDrpScenario: DRP仿真场景
+    ErpDrpScenarioParam: DRP仿真参数
+    ErpDrpScenarioVersion: DRP仿真版本
     ErpInvDrpCrossDock: 越库执行记录
     ErpInvDrpDockAppointment: 月台预约
     ErpInvDrpLeadTimeRecord: 提前期记录
@@ -102,6 +105,62 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpDrpScenario:
+      baseDrpPlan: null
+      baseDrpPlanId: 基线DRP计划
+      code: 场景号
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      description: 场景描述
+      id: ID
+      org: null
+      org.name: null
+      orgId: 业务组织
+      params: null
+      status: 状态
+      status_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      versions: null
+    ErpDrpScenarioParam:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      material: null
+      material.name: null
+      materialId: 物料(空=全局覆盖)
+      paramType: 参数类型
+      paramType_label: 参数类型
+      paramValue: 参数值
+      scenario: null
+      scenarioId: 仿真场景
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      warehouse: null
+      warehouse.name: null
+      warehouseId: 仓库(空=全局覆盖)
+    ErpDrpScenarioVersion:
+      computedDrpPlan: null
+      computedDrpPlanId: 计算结果DRP计划
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      promotedPlan: null
+      promotedPlanId: 转正式计划ID
+      scenario: null
+      scenarioId: 仿真场景
+      snapshotSummary: 快照摘要
+      status: 状态
+      status_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      versionNo: 版本号
     ErpInvDrpCrossDock:
       code: 编号
       createTime: 创建时间

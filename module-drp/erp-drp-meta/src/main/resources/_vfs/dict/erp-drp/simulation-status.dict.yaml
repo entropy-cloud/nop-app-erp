@@ -1,0 +1,22 @@
+# __XGEN_FORCE_OVERRIDE__
+label: DRP仿真场景状态
+locale: zh-CN
+valueType: string
+description: DRP 仿真场景与版本的共用状态（plan 2026-07-22-1000-2）
+options:
+
+  - label: 草稿
+    value: DRAFT
+    description: 场景/版本草稿态，参数可编辑
+
+  - label: 运算中
+    value: RUNNING
+    description: 仿真计算进行中
+
+  - label: 运算完成
+    value: COMPLETED
+    description: 仿真计算完成，结果可对比
+
+  - label: 已归档
+    value: ARCHIVED
+    description: 已转正式计划，版本不可变

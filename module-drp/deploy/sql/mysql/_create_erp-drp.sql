@@ -164,6 +164,22 @@ CREATE TABLE erp_drp_line(
   constraint PK_erp_drp_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_drp_scenario(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '场景号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BASE_DRP_PLAN_ID BIGINT NULL    COMMENT '基线DRP计划',
+  DESCRIPTION VARCHAR(1000) NULL    COMMENT '场景描述',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '状态',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_drp_scenario primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_inv_drp_cross_dock(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编号',
@@ -190,6 +206,39 @@ CREATE TABLE erp_inv_drp_cross_dock(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_inv_drp_cross_dock primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_drp_scenario_version(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SCENARIO_ID BIGINT NOT NULL    COMMENT '仿真场景',
+  VERSION_NO INTEGER NOT NULL    COMMENT '版本号',
+  COMPUTED_DRP_PLAN_ID BIGINT NULL    COMMENT '计算结果DRP计划',
+  SNAPSHOT_SUMMARY VARCHAR(1000) NULL    COMMENT '快照摘要',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '状态',
+  PROMOTED_PLAN_ID BIGINT NULL    COMMENT '转正式计划ID',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_drp_scenario_version primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_drp_scenario_param(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SCENARIO_ID BIGINT NOT NULL    COMMENT '仿真场景',
+  MATERIAL_ID BIGINT NULL    COMMENT '物料(空=全局覆盖)',
+  WAREHOUSE_ID BIGINT NULL    COMMENT '仓库(空=全局覆盖)',
+  PARAM_TYPE VARCHAR(20) NOT NULL    COMMENT '参数类型',
+  PARAM_VALUE DECIMAL(20,4) NOT NULL    COMMENT '参数值',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_drp_scenario_param primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_inv_drp_dock_appointment(
@@ -236,7 +285,13 @@ CREATE TABLE erp_inv_drp_dock_appointment(
                 
    ALTER TABLE erp_drp_line COMMENT 'DRP明细';
                 
+   ALTER TABLE erp_drp_scenario COMMENT 'DRP仿真场景';
+                
    ALTER TABLE erp_inv_drp_cross_dock COMMENT '越库执行记录';
+                
+   ALTER TABLE erp_drp_scenario_version COMMENT 'DRP仿真版本';
+                
+   ALTER TABLE erp_drp_scenario_param COMMENT 'DRP仿真参数';
                 
    ALTER TABLE erp_inv_drp_dock_appointment COMMENT '月台预约';
                 

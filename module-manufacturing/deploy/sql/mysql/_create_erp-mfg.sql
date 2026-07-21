@@ -367,6 +367,22 @@ CREATE TABLE erp_mfg_mrp_demand(
   constraint PK_erp_mfg_mrp_demand primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_mfg_mrp_scenario(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '场景号',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BASE_MRP_PLAN_ID BIGINT NULL    COMMENT '基线MRP计划',
+  DESCRIPTION VARCHAR(1000) NULL    COMMENT '场景描述',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '状态',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_mrp_scenario primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_mfg_forecast_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   FORECAST_ID BIGINT NOT NULL    COMMENT '需求预测ID',
@@ -478,6 +494,38 @@ CREATE TABLE erp_mfg_bom_line(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_mfg_bom_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_mrp_scenario_version(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SCENARIO_ID BIGINT NOT NULL    COMMENT '仿真场景',
+  VERSION_NO INTEGER NOT NULL    COMMENT '版本号',
+  COMPUTED_MRP_PLAN_ID BIGINT NULL    COMMENT '计算结果MRP计划',
+  SNAPSHOT_SUMMARY VARCHAR(1000) NULL    COMMENT '快照摘要',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '状态',
+  PROMOTED_PLAN_ID BIGINT NULL    COMMENT '转正式计划ID',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_mrp_scenario_version primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_mrp_scenario_param(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SCENARIO_ID BIGINT NOT NULL    COMMENT '仿真场景',
+  MATERIAL_ID BIGINT NULL    COMMENT '物料(空=全局覆盖)',
+  PARAM_TYPE VARCHAR(20) NOT NULL    COMMENT '参数类型',
+  PARAM_VALUE DECIMAL(20,4) NOT NULL    COMMENT '参数值',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_mrp_scenario_param primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mfg_crp_load(
@@ -783,6 +831,8 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
    ALTER TABLE erp_mfg_mrp_demand COMMENT 'MRP独立需求';
                 
+   ALTER TABLE erp_mfg_mrp_scenario COMMENT 'MRP仿真场景';
+                
    ALTER TABLE erp_mfg_forecast_line COMMENT '需求预测行';
                 
    ALTER TABLE erp_mfg_cost_rollup_line COMMENT '标准成本滚算行';
@@ -790,6 +840,10 @@ CREATE TABLE erp_mfg_material_issue_line(
    ALTER TABLE erp_mfg_work_order COMMENT '工单';
                 
    ALTER TABLE erp_mfg_bom_line COMMENT 'BOM行';
+                
+   ALTER TABLE erp_mfg_mrp_scenario_version COMMENT 'MRP仿真版本';
+                
+   ALTER TABLE erp_mfg_mrp_scenario_param COMMENT 'MRP仿真参数';
                 
    ALTER TABLE erp_mfg_crp_load COMMENT 'CRP负荷';
                 

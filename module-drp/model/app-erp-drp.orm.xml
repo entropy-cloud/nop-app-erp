@@ -410,6 +410,125 @@
             </indexes>
         </entity>
 
+        <!-- ============================ DRP 仿真引擎（plan 2026-07-22-1000-2；权威：docs/design/manufacturing/simulation-engine.md §DRP 对应物） ============================ -->
+
+        <!-- DRP 仿真场景头 -->
+        <entity className="app.erp.drp.dao.entity.ErpDrpScenario"
+                displayName="DRP仿真场景" ext:icon="flask-conical" i18n-en:displayName="DRP Simulation Scenario" name="app.erp.drp.dao.entity.ErpDrpScenario"
+                tableName="erp_drp_scenario" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="场景号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="baseDrpPlanId" displayName="基线DRP计划" stdSqlType="BIGINT" code="BASE_DRP_PLAN_ID" propId="4" stdDataType="long" i18n-en:displayName='Base Drp Plan' />
+                <column name="description" displayName="场景描述" domain="remark" code="DESCRIPTION" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Description' />
+                <column name="status" displayName="状态" ext:dict="erp-drp/simulation-status" mandatory="true" code="STATUS" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="7" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="8" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="9" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="10" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="11" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-many name="versions" refEntityName="app.erp.drp.dao.entity.ErpDrpScenarioVersion" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Versions' ext:estRows="20"><join><on leftProp="id" rightProp="scenarioId"/></join></to-many>
+                <to-many name="params" refEntityName="app.erp.drp.dao.entity.ErpDrpScenarioParam" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Params' ext:estRows="50"><join><on leftProp="id" rightProp="scenarioId"/></join></to-many>
+                <to-one name="baseDrpPlan" refEntityName="app.erp.drp.dao.entity.ErpDrpPlan" tagSet="pub" i18n-en:displayName='Base Drp Plan'><join><on leftProp="baseDrpPlanId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_DRP_SCENARIO_CODE_ORG" columns="code,orgId"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_DRP_SCENARIO_ORG_STATUS" unique="false">
+                    <column name="orgId"/>
+                    <column name="status"/>
+                </index>
+                <index name="IDX_DRP_SCENARIO_BASE_DRP_PLAN_ID" unique="false">
+                    <column name="baseDrpPlanId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- DRP 仿真场景版本（一次计算快照） -->
+        <entity className="app.erp.drp.dao.entity.ErpDrpScenarioVersion"
+                displayName="DRP仿真版本" ext:icon="git-branch" i18n-en:displayName="DRP Simulation Version" name="app.erp.drp.dao.entity.ErpDrpScenarioVersion"
+                tableName="erp_drp_scenario_version" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="scenarioId" displayName="仿真场景" stdSqlType="BIGINT" mandatory="true" code="SCENARIO_ID" propId="2" stdDataType="long" i18n-en:displayName='Scenario' />
+                <column name="versionNo" displayName="版本号" stdSqlType="INTEGER" mandatory="true" code="VERSION_NO" propId="3" stdDataType="int" i18n-en:displayName='Version No' />
+                <column name="computedDrpPlanId" displayName="计算结果DRP计划" stdSqlType="BIGINT" code="COMPUTED_DRP_PLAN_ID" propId="4" stdDataType="long" i18n-en:displayName='Computed Drp Plan' />
+                <column name="snapshotSummary" displayName="快照摘要" domain="remark" code="SNAPSHOT_SUMMARY" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Snapshot Summary' />
+                <column name="status" displayName="状态" ext:dict="erp-drp/simulation-status" mandatory="true" code="STATUS" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="promotedPlanId" displayName="转正式计划ID" stdSqlType="BIGINT" code="PROMOTED_PLAN_ID" propId="7" stdDataType="long" i18n-en:displayName='Promoted Plan' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="9" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="10" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="11" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="12" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="13" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="scenario" refEntityName="app.erp.drp.dao.entity.ErpDrpScenario" tagSet="pub" i18n-en:displayName='Scenario'><join><on leftProp="scenarioId" rightProp="id"/></join></to-one>
+                <to-one name="computedDrpPlan" refEntityName="app.erp.drp.dao.entity.ErpDrpPlan" tagSet="pub" i18n-en:displayName='Computed Drp Plan'><join><on leftProp="computedDrpPlanId" rightProp="id"/></join></to-one>
+                <to-one name="promotedPlan" refEntityName="app.erp.drp.dao.entity.ErpDrpPlan" tagSet="pub" i18n-en:displayName='Promoted Plan'><join><on leftProp="promotedPlanId" rightProp="id"/></join></to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_DRP_SCENARIO_VERSION_SCN_VER" columns="scenarioId,versionNo"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_DRP_SCENARIO_VERSION_SCENARIO_ID" unique="false">
+                    <column name="scenarioId"/>
+                </index>
+                <index name="IDX_DRP_SCENARIO_VERSION_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- DRP 仿真场景参数变体覆盖（materialId+warehouseId 双键定位补货参数） -->
+        <entity className="app.erp.drp.dao.entity.ErpDrpScenarioParam"
+                displayName="DRP仿真参数" ext:icon="sliders-horizontal" i18n-en:displayName="DRP Simulation Param" name="app.erp.drp.dao.entity.ErpDrpScenarioParam"
+                tableName="erp_drp_scenario_param" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="scenarioId" displayName="仿真场景" stdSqlType="BIGINT" mandatory="true" code="SCENARIO_ID" propId="2" stdDataType="long" i18n-en:displayName='Scenario' />
+                <column name="materialId" displayName="物料(空=全局覆盖)" stdSqlType="BIGINT" code="MATERIAL_ID" propId="3" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="warehouseId" displayName="仓库(空=全局覆盖)" stdSqlType="BIGINT" code="WAREHOUSE_ID" propId="4" stdDataType="long" i18n-en:displayName='Warehouse' />
+                <column name="paramType" displayName="参数类型" ext:dict="erp-drp/simulation-param-type" mandatory="true" code="PARAM_TYPE" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Param Type' />
+                <column name="paramValue" displayName="参数值" domain="quantity" mandatory="true" code="PARAM_VALUE" propId="6" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Param Value' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="7" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="8" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="9" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="10" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="11" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="scenario" refEntityName="app.erp.drp.dao.entity.ErpDrpScenario" tagSet="pub" i18n-en:displayName='Scenario'><join><on leftProp="scenarioId" rightProp="id"/></join></to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'><join><on leftProp="materialId" rightProp="id"/></join></to-one>
+                <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_DRP_SCENARIO_PARAM_SCN_MAT_WH_TYPE" columns="scenarioId,materialId,warehouseId,paramType"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_DRP_SCENARIO_PARAM_SCENARIO_ID" unique="false">
+                    <column name="scenarioId"/>
+                </index>
+                <index name="IDX_DRP_SCENARIO_PARAM_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_DRP_SCENARIO_PARAM_WAREHOUSE_ID" unique="false">
+                    <column name="warehouseId"/>
+                </index>
+                <index name="IDX_DRP_SCENARIO_PARAM_PARAM_TYPE" unique="false">
+                    <column name="paramType"/>
+                </index>
+            </indexes>
+        </entity>
+
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
         <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">

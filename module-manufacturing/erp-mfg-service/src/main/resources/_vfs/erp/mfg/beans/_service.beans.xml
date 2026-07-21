@@ -110,6 +110,14 @@
         <property name="bizObjName" value="ErpMfgMrpDemand"/>
     </bean>
 
+    <bean id="app.erp.mfg.service.entity.ErpMfgMrpScenarioBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgMrpScenario" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgMrpScenarioBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgMrpScenario"/>
+    </bean>
+
     <bean id="app.erp.mfg.service.entity.ErpMfgForecastLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMfgForecastLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -138,6 +146,22 @@
     <bean id="biz_ErpMfgBomLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
           ioc:type="app.erp.mfg.biz.IErpMfgBomLineBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpMfgBomLine"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgMrpScenarioVersionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgMrpScenarioVersion" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgMrpScenarioVersionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgMrpScenarioVersion"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgMrpScenarioParamBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgMrpScenarioParam" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgMrpScenarioParamBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgMrpScenarioParam"/>
     </bean>
 
     <bean id="app.erp.mfg.service.entity.ErpMfgCrpLoadBizModel" ioc:type="@bean:id" ioc:default="true"/>

@@ -47,6 +47,8 @@ alter table erp_mfg_mrp_plan_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT 
 
 alter table erp_mfg_mrp_demand add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_mfg_mrp_scenario add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_mfg_forecast_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_cost_rollup_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -54,6 +56,10 @@ alter table erp_mfg_cost_rollup_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' N
 alter table erp_mfg_work_order add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_bom_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_mrp_scenario_version add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_mrp_scenario_param add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_crp_load add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -147,6 +153,9 @@ alter table erp_mfg_mrp_plan_line add constraint PK_erp_mfg_mrp_plan_line primar
 alter table erp_mfg_mrp_demand drop constraint PK_erp_mfg_mrp_demand;
 alter table erp_mfg_mrp_demand add constraint PK_erp_mfg_mrp_demand primary key (NOP_TENANT_ID, id);
 
+alter table erp_mfg_mrp_scenario drop constraint PK_erp_mfg_mrp_scenario;
+alter table erp_mfg_mrp_scenario add constraint PK_erp_mfg_mrp_scenario primary key (NOP_TENANT_ID, id);
+
 alter table erp_mfg_forecast_line drop constraint PK_erp_mfg_forecast_line;
 alter table erp_mfg_forecast_line add constraint PK_erp_mfg_forecast_line primary key (NOP_TENANT_ID, id);
 
@@ -158,6 +167,12 @@ alter table erp_mfg_work_order add constraint PK_erp_mfg_work_order primary key 
 
 alter table erp_mfg_bom_line drop constraint PK_erp_mfg_bom_line;
 alter table erp_mfg_bom_line add constraint PK_erp_mfg_bom_line primary key (NOP_TENANT_ID, id);
+
+alter table erp_mfg_mrp_scenario_version drop constraint PK_erp_mfg_mrp_scenario_version;
+alter table erp_mfg_mrp_scenario_version add constraint PK_erp_mfg_mrp_scenario_version primary key (NOP_TENANT_ID, id);
+
+alter table erp_mfg_mrp_scenario_param drop constraint PK_erp_mfg_mrp_scenario_param;
+alter table erp_mfg_mrp_scenario_param add constraint PK_erp_mfg_mrp_scenario_param primary key (NOP_TENANT_ID, id);
 
 alter table erp_mfg_crp_load drop constraint PK_erp_mfg_crp_load;
 alter table erp_mfg_crp_load add constraint PK_erp_mfg_crp_load primary key (NOP_TENANT_ID, id);
