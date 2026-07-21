@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpFinIntercompanyMatch.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+      xmlns:x="/nop/schema/xdsl.xdef">
+
+    <!-- plan 2026-07-22-1000-1 A3 Phase 4：公司间配对记录 list grid 精选列 + form 分组。 -->
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="code" sortable="true"/>
+                <col id="pairKey" sortable="true"/>
+                <col id="periodId" sortable="true"/>
+                <col id="arOrgId" sortable="true"/>
+                <col id="apOrgId" sortable="true"/>
+                <col id="matchedAmount" sortable="true"/>
+                <col id="diffAmount" sortable="true"/>
+                <col id="status" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view"/>
+        <form id="edit">
+            <layout>
+ =======>baseInfo[基本信息]=======
+ code[记录编码]
+ =======>matchInfo[配对信息]=======
+ pairKey[配对键] periodId[会计期间]
+ status[配对状态]
+ =======>arApSide[AR/AP 侧]=======
+ arSideVoucherId[AR侧凭证] arOrgId[AR侧组织]
+ apSideVoucherId[AP侧凭证] apOrgId[AP侧组织]
+ materialId[物料]
+ matchedAmount[配对金额] diffAmount[差异金额]
+ =======>audit[审计信息]=======
+ orgId[核算组织]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+    </forms>
+</view>

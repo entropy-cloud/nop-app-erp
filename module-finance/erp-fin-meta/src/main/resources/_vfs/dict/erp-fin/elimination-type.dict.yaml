@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 合并抵消类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 内部应收应付
+    value: AR_AP
+    description: 
+  
+  - label: 内部收入成本
+    value: REVENUE_COST
+    description: 
+  
+  - label: 内部存货利润
+    value: INVENTORY_PROFIT
+    description: 
+  

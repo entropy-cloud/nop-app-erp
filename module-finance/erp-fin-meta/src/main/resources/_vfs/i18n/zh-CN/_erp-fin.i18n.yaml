@@ -14,6 +14,7 @@ entity:
     ErpFinBudgetRollforwardLog: 预算滚动复制日志
     ErpFinBudgetScenario: 预算方案
     ErpFinCashForecast: 现金预测
+    ErpFinConsolidationElimination: 合并抵消候选
     ErpFinCreditFacility: 银行授信额度
     ErpFinEmployeeAdvance: 员工借款单
     ErpFinExpenseClaim: 费用报销单
@@ -21,6 +22,8 @@ entity:
     ErpFinFundAccount: 资金账户
     ErpFinGlBalance: 总账余额
     ErpFinGlMappingRule: 科目映射规则
+    ErpFinIntercompanyMatch: 公司间配对记录
+    ErpFinIntercompanyTransferPrice: 跨法人转移定价规则
     ErpFinNotesDiscount: 票据贴现明细
     ErpFinNotesPayable: 应付票据
     ErpFinNotesReceivable: 应收票据
@@ -454,6 +457,37 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpFinConsolidationElimination:
+      code: 候选编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      draftVoucher: null
+      draftVoucherId: 草稿抵消凭证
+      eliminationAmount: 抵消金额
+      eliminationType: 抵消类型
+      eliminationType_label: 抵消类型
+      fromOrg: null
+      fromOrg.name: null
+      fromOrgId: 调出组织
+      id: ID
+      match: null
+      matchId: 配对记录
+      org: null
+      org.name: null
+      orgId: 核算组织
+      pairKey: 配对键
+      period: null
+      periodId: 会计期间
+      remark: 备注
+      status: 抵消状态
+      status_label: 抵消状态
+      toOrg: null
+      toOrg.name: null
+      toOrgId: 调入组织
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpFinCreditFacility:
       availableAmount: 可用额度
       code: 单号
@@ -696,6 +730,73 @@ prop:
       warehouse: null
       warehouse.name: null
       warehouseId: 仓库(空=通配)
+    ErpFinIntercompanyMatch:
+      apOrg: null
+      apOrg.name: null
+      apOrgId: AP侧组织
+      apSideVoucher: null
+      apSideVoucherId: AP侧凭证
+      arOrg: null
+      arOrg.name: null
+      arOrgId: AR侧组织
+      arSideVoucher: null
+      arSideVoucherId: AR侧凭证
+      code: 记录编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      diffAmount: 差异金额
+      id: ID
+      matchedAmount: 配对金额
+      material: null
+      material.name: null
+      materialId: 物料
+      org: null
+      org.name: null
+      orgId: 核算组织
+      pairKey: 配对键
+      period: null
+      periodId: 会计期间
+      remark: 备注
+      status: 配对状态
+      status_label: 配对状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpFinIntercompanyTransferPrice:
+      code: 规则编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      fixedPrice: 固定单价(NEGOTIATED/MARKET兜底)
+      fromOrg: null
+      fromOrg.name: null
+      fromOrgId: 调出组织(空=通配)
+      id: ID
+      isActive: 是否启用
+      marketRefSource: 市场价来源说明(MARKET)
+      markupRate: 加成率(COST_PLUS)
+      material: null
+      material.name: null
+      materialCategory: null
+      materialCategory.name: null
+      materialCategoryId: 物料分类(空=通配)
+      materialId: 物料(空=通配)
+      name: 规则名称
+      org: null
+      org.name: null
+      orgId: 核算组织
+      pricingMethod: 定价方法
+      pricingMethod_label: 定价方法
+      remark: 备注
+      toOrg: null
+      toOrg.name: null
+      toOrgId: 调入组织(空=通配)
+      updateTime: 修改时间
+      updatedBy: 修改人
+      validFrom: 生效日期
+      validTo: 失效日期
+      version: 数据版本
     ErpFinNotesDiscount:
       bank: null
       bankId: 贴现银行账户

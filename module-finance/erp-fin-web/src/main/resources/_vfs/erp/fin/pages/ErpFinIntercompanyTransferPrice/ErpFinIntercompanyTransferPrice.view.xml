@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpFinIntercompanyTransferPrice.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+      xmlns:x="/nop/schema/xdsl.xdef">
+
+    <!-- plan 2026-07-22-1000-1 A3 Phase 4：转移定价规则 list grid 精选列 + form 分组。 -->
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="code" sortable="true"/>
+                <col id="name" sortable="true"/>
+                <col id="fromOrgId" sortable="true"/>
+                <col id="toOrgId" sortable="true"/>
+                <col id="materialId" sortable="true"/>
+                <col id="pricingMethod" sortable="true"/>
+                <col id="markupRate" sortable="true"/>
+                <col id="fixedPrice" sortable="true"/>
+                <col id="validFrom" sortable="true"/>
+                <col id="validTo" sortable="true"/>
+                <col id="isActive" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view"/>
+        <form id="edit">
+            <layout>
+ =======>baseInfo[基本信息]=======
+ code[规则编码] name[规则名称]
+ =======>transferPricing[转移定价]=======
+ fromOrgId[调出组织(空=通配)] toOrgId[调入组织(空=通配)]
+ materialId[物料(空=通配)] materialCategoryId[物料分类(空=通配)]
+ pricingMethod[定价方法]
+ markupRate[加成率(COST_PLUS)] fixedPrice[固定单价]
+ marketRefSource[市场价来源说明]
+ validFrom[生效日期] validTo[失效日期]
+ isActive[是否启用]
+ =======>audit[审计信息]=======
+ orgId[核算组织]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+    </forms>
+</view>

@@ -294,6 +294,32 @@ CREATE TABLE erp_fin_gl_mapping_rule(
   constraint PK_erp_fin_gl_mapping_rule primary key (ID)
 );
 
+CREATE TABLE erp_fin_intercompany_transfer_price(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  NAME VARCHAR2(200) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  FROM_ORG_ID NUMBER(20)  ,
+  TO_ORG_ID NUMBER(20)  ,
+  MATERIAL_ID NUMBER(20)  ,
+  MATERIAL_CATEGORY_ID NUMBER(20)  ,
+  PRICING_METHOD VARCHAR2(20) NOT NULL ,
+  MARKUP_RATE NUMBER(20,8) default 0   ,
+  FIXED_PRICE NUMBER(20,4) default 0   ,
+  MARKET_REF_SOURCE VARCHAR2(200)  ,
+  VALID_FROM DATE  ,
+  VALID_TO DATE  ,
+  IS_ACTIVE CHAR(1) default 1  NOT NULL ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_fin_intercompany_transfer_price primary key (ID)
+);
+
 CREATE TABLE erp_fin_voucher_template_line(
   ID NUMBER(20) NOT NULL ,
   TEMPLATE_ID NUMBER(20) NOT NULL ,
@@ -682,6 +708,30 @@ CREATE TABLE erp_fin_budget_scenario(
   constraint PK_erp_fin_budget_scenario primary key (ID)
 );
 
+CREATE TABLE erp_fin_intercompany_match(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  PAIR_KEY VARCHAR2(200) NOT NULL ,
+  PERIOD_ID NUMBER(20) NOT NULL ,
+  AR_SIDE_VOUCHER_ID NUMBER(20)  ,
+  AR_ORG_ID NUMBER(20)  ,
+  AP_SIDE_VOUCHER_ID NUMBER(20)  ,
+  AP_ORG_ID NUMBER(20)  ,
+  MATERIAL_ID NUMBER(20)  ,
+  MATCHED_AMOUNT NUMBER(20,4) default 0   ,
+  DIFF_AMOUNT NUMBER(20,4) default 0   ,
+  STATUS VARCHAR2(20) NOT NULL ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_fin_intercompany_match primary key (ID)
+);
+
 CREATE TABLE erp_fin_reconciliation_line(
   ID NUMBER(20) NOT NULL ,
   RECONCILIATION_ID NUMBER(20) NOT NULL ,
@@ -899,6 +949,29 @@ CREATE TABLE erp_fin_budget_carry_forward_log(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_fin_budget_carry_forward_log primary key (ID)
+);
+
+CREATE TABLE erp_fin_consolidation_elimination(
+  ID NUMBER(20) NOT NULL ,
+  CODE VARCHAR2(50) NOT NULL ,
+  ORG_ID NUMBER(20) NOT NULL ,
+  ELIMINATION_TYPE VARCHAR2(20) NOT NULL ,
+  PERIOD_ID NUMBER(20) NOT NULL ,
+  PAIR_KEY VARCHAR2(200)  ,
+  MATCH_ID NUMBER(20)  ,
+  FROM_ORG_ID NUMBER(20)  ,
+  TO_ORG_ID NUMBER(20)  ,
+  ELIMINATION_AMOUNT NUMBER(20,4) default 0   ,
+  DRAFT_VOUCHER_ID NUMBER(20)  ,
+  STATUS VARCHAR2(20) NOT NULL ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  REMARK VARCHAR2(1000)  ,
+  constraint PK_erp_fin_consolidation_elimination primary key (ID)
 );
 
 CREATE TABLE erp_fin_bank_reconciliation_line(
@@ -1296,6 +1369,52 @@ CREATE TABLE erp_fin_budget_control_log(
       COMMENT ON COLUMN erp_fin_gl_mapping_rule.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON COLUMN erp_fin_gl_mapping_rule.REMARK IS '备注';
+                    
+      COMMENT ON TABLE erp_fin_intercompany_transfer_price IS '跨法人转移定价规则';
+                
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.CODE IS '规则编码';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.NAME IS '规则名称';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.FROM_ORG_ID IS '调出组织(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.TO_ORG_ID IS '调入组织(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.MATERIAL_ID IS '物料(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.MATERIAL_CATEGORY_ID IS '物料分类(空=通配)';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.PRICING_METHOD IS '定价方法';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.MARKUP_RATE IS '加成率(COST_PLUS)';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.FIXED_PRICE IS '固定单价(NEGOTIATED/MARKET兜底)';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.MARKET_REF_SOURCE IS '市场价来源说明(MARKET)';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.VALID_FROM IS '生效日期';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.VALID_TO IS '失效日期';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.IS_ACTIVE IS '是否启用';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_transfer_price.REMARK IS '备注';
                     
       COMMENT ON TABLE erp_fin_voucher_template_line IS '凭证模板行';
                 
@@ -1983,6 +2102,48 @@ CREATE TABLE erp_fin_budget_control_log(
                     
       COMMENT ON COLUMN erp_fin_budget_scenario.CLOSED_AT IS '结转时间';
                     
+      COMMENT ON TABLE erp_fin_intercompany_match IS '公司间配对记录';
+                
+      COMMENT ON COLUMN erp_fin_intercompany_match.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.CODE IS '记录编码';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.PAIR_KEY IS '配对键';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.PERIOD_ID IS '会计期间';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.AR_SIDE_VOUCHER_ID IS 'AR侧凭证';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.AR_ORG_ID IS 'AR侧组织';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.AP_SIDE_VOUCHER_ID IS 'AP侧凭证';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.AP_ORG_ID IS 'AP侧组织';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.MATCHED_AMOUNT IS '配对金额';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.DIFF_AMOUNT IS '差异金额';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.STATUS IS '配对状态';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_intercompany_match.REMARK IS '备注';
+                    
       COMMENT ON TABLE erp_fin_reconciliation_line IS '核销单行';
                 
       COMMENT ON COLUMN erp_fin_reconciliation_line.ID IS 'ID';
@@ -2366,6 +2527,46 @@ CREATE TABLE erp_fin_budget_control_log(
       COMMENT ON COLUMN erp_fin_budget_carry_forward_log.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_budget_carry_forward_log.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_fin_consolidation_elimination IS '合并抵消候选';
+                
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.CODE IS '候选编码';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.ORG_ID IS '核算组织';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.ELIMINATION_TYPE IS '抵消类型';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.PERIOD_ID IS '会计期间';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.PAIR_KEY IS '配对键';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.MATCH_ID IS '配对记录';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.FROM_ORG_ID IS '调出组织';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.TO_ORG_ID IS '调入组织';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.ELIMINATION_AMOUNT IS '抵消金额';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.DRAFT_VOUCHER_ID IS '草稿抵消凭证';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.STATUS IS '抵消状态';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_consolidation_elimination.REMARK IS '备注';
                     
       COMMENT ON TABLE erp_fin_bank_reconciliation_line IS '银行对账调整行';
                 

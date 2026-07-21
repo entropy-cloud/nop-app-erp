@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpFinConsolidationElimination.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+      xmlns:x="/nop/schema/xdsl.xdef">
+
+    <!-- plan 2026-07-22-1000-1 A3 Phase 4：合并抵消候选 list grid 精选列 + form 分组 + postElimination 按钮。
+         postElimination 按钮带 visibleOn status=CANDIDATE 守卫（非候选状态不可过账）。 -->
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="code" sortable="true"/>
+                <col id="eliminationType" sortable="true"/>
+                <col id="periodId" sortable="true"/>
+                <col id="pairKey" sortable="true"/>
+                <col id="fromOrgId" sortable="true"/>
+                <col id="toOrgId" sortable="true"/>
+                <col id="eliminationAmount" sortable="true"/>
+                <col id="status" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view"/>
+        <form id="edit">
+            <layout>
+ =======>baseInfo[基本信息]=======
+ code[候选编码]
+ =======>elimination[抵消信息]=======
+ eliminationType[抵消类型] periodId[会计期间]
+ pairKey[配对键] matchId[配对记录]
+ fromOrgId[调出组织] toOrgId[调入组织]
+ eliminationAmount[抵消金额]
+ status[抵消状态]
+ draftVoucherId[草稿抵消凭证]
+ =======>audit[审计信息]=======
+ orgId[核算组织]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注]
+            </layout>
+        </form>
+        <form id="add" x:prototype="edit"/>
+    </forms>
+</view>

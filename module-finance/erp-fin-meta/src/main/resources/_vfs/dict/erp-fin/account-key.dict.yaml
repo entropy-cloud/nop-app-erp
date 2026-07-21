@@ -93,3 +93,19 @@ options:
     value: RETAINED_EARNINGS
     description: 
   
+  - label: 内部应收
+    value: INTERCOMPANY_AR
+    description: 
+  
+  - label: 内部应付
+    value: INTERCOMPANY_AP
+    description: 
+  
+  - label: 内部销售收入
+    value: INTERCOMPANY_REVENUE
+    description: 
+  
+  - label: 内部采购成本
+    value: INTERCOMPANY_COST
+    description: 
+  

@@ -449,6 +449,26 @@ public interface _ErpFinDaoConstants {
     String ACCOUNT_KEY_RETAINED_EARNINGS = "RETAINED_EARNINGS";
                     
     /**
+     * 科目映射键: 内部应收 
+     */
+    String ACCOUNT_KEY_INTERCOMPANY_AR = "INTERCOMPANY_AR";
+                    
+    /**
+     * 科目映射键: 内部应付 
+     */
+    String ACCOUNT_KEY_INTERCOMPANY_AP = "INTERCOMPANY_AP";
+                    
+    /**
+     * 科目映射键: 内部销售收入 
+     */
+    String ACCOUNT_KEY_INTERCOMPANY_REVENUE = "INTERCOMPANY_REVENUE";
+                    
+    /**
+     * 科目映射键: 内部采购成本 
+     */
+    String ACCOUNT_KEY_INTERCOMPANY_COST = "INTERCOMPANY_COST";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";
@@ -942,5 +962,65 @@ public interface _ErpFinDaoConstants {
      * 预算控制结果: 拦截 
      */
     String BUDGET_ACTION_BLOCKED = "BLOCKED";
+                    
+    /**
+     * 转移定价方法: 成本加成 
+     */
+    String TRANSFER_PRICING_METHOD_COST_PLUS = "COST_PLUS";
+                    
+    /**
+     * 转移定价方法: 市场价 
+     */
+    String TRANSFER_PRICING_METHOD_MARKET = "MARKET";
+                    
+    /**
+     * 转移定价方法: 协议价 
+     */
+    String TRANSFER_PRICING_METHOD_NEGOTIATED = "NEGOTIATED";
+                    
+    /**
+     * 公司间配对状态: 未配对 
+     */
+    String INTERCOMPANY_MATCH_STATUS_UNMATCHED = "UNMATCHED";
+                    
+    /**
+     * 公司间配对状态: 已配对 
+     */
+    String INTERCOMPANY_MATCH_STATUS_MATCHED = "MATCHED";
+                    
+    /**
+     * 公司间配对状态: 差异 
+     */
+    String INTERCOMPANY_MATCH_STATUS_DIFF = "DIFF";
+                    
+    /**
+     * 合并抵消类型: 内部应收应付 
+     */
+    String ELIMINATION_TYPE_AR_AP = "AR_AP";
+                    
+    /**
+     * 合并抵消类型: 内部收入成本 
+     */
+    String ELIMINATION_TYPE_REVENUE_COST = "REVENUE_COST";
+                    
+    /**
+     * 合并抵消类型: 内部存货利润 
+     */
+    String ELIMINATION_TYPE_INVENTORY_PROFIT = "INVENTORY_PROFIT";
+                    
+    /**
+     * 合并抵消状态: 候选 
+     */
+    String ELIMINATION_STATUS_CANDIDATE = "CANDIDATE";
+                    
+    /**
+     * 合并抵消状态: 草稿分录 
+     */
+    String ELIMINATION_STATUS_DRAFT_VOUCHER = "DRAFT_VOUCHER";
+                    
+    /**
+     * 合并抵消状态: 已过账 
+     */
+    String ELIMINATION_STATUS_POSTED = "POSTED";
                     
 }

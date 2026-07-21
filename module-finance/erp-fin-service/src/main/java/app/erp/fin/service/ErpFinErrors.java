@@ -437,4 +437,35 @@ public interface ErpFinErrors {
             "erp.err.fin.voucher.illegal-transition",
             "凭证[{voucherId}]当前状态[{currentStatus}]不允许此操作",
             ARG_VOUCHER_ID, ARG_CURRENT_STATUS);
+
+    // --- 多公司运营深度作用域（A3，plan 2026-07-22-1000-1，multi-company.md） ---
+
+    String ARG_FROM_ORG_ID = "fromOrgId";
+    String ARG_TO_ORG_ID = "toOrgId";
+    String ARG_MATERIAL_ID = "materialId";
+    String ARG_PAIR_KEY = "pairKey";
+    String ARG_ELIMINATION_ID = "eliminationId";
+    String ARG_MATCH_ID = "matchId";
+
+    ErrorCode ERR_TRANSFER_PRICE_NOT_FOUND = ErrorCode.define("erp.err.fin.transfer-price.not-found",
+            "未找到转移定价规则：fromOrgId={fromOrgId} toOrgId={toOrgId} materialId={materialId}（跨法人调拨启用时必须配置定价规则）",
+            ARG_FROM_ORG_ID, ARG_TO_ORG_ID, ARG_MATERIAL_ID);
+
+    ErrorCode ERR_INTERCOMPANY_SAME_LEGAL_ENTITY = ErrorCode.define("erp.err.fin.intercompany.same-legal-entity",
+            "调拨双方 fromOrgId={fromOrgId} toOrgId={toOrgId} 属同一法人根，非跨法人交易，不应触发内部交易凭证生成",
+            ARG_FROM_ORG_ID, ARG_TO_ORG_ID);
+
+    ErrorCode ERR_TRANSFER_PRICE_PERIOD_INVALID = ErrorCode.define("erp.err.fin.transfer-price.period-invalid",
+            "转移定价规则有效期非法或与业务日期 {fromDate}~{toDate} 不匹配：fromOrgId={fromOrgId} materialId={materialId}",
+            ARG_FROM_DATE, ARG_TO_DATE, ARG_FROM_ORG_ID, ARG_MATERIAL_ID);
+
+    ErrorCode ERR_INTERCOMPANY_MATCH_PERIOD_CLOSED = ErrorCode.define("erp.err.fin.intercompany-match.period-closed",
+            "会计期间 {periodId} 已关闭，不允许执行公司间配对", ARG_PERIOD_ID);
+
+    ErrorCode ERR_ELIMINATION_ALREADY_POSTED = ErrorCode.define("erp.err.fin.elimination.already-posted",
+            "抵消候选 {eliminationId} 当前状态非 CANDIDATE，已生成草稿分录或已过账，不可重复处理",
+            ARG_ELIMINATION_ID);
+
+    ErrorCode ERR_ELIMINATION_NO_CANDIDATES = ErrorCode.define("erp.err.fin.elimination.no-candidates",
+            "会计期间 {periodId} 无可抵消候选（未识别到配对记录或候选已处理）", ARG_PERIOD_ID);
 }

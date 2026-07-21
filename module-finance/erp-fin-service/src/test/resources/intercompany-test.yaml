@@ -1,0 +1,8 @@
+erp-fin:
+  intercompany-posting-enabled: true
+  consolidation-elimination-enabled: true
+  ar-subject-code: "1131"
+  ap-subject-code: "2202"
+  current-year-profit-subject-code: "4103"
+  exchange-revaluation-enabled: false
+  auto-depreciation-on-close: false

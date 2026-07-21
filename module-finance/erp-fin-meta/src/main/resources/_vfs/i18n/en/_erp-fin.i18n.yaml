@@ -14,6 +14,7 @@ entity:
     ErpFinBudgetRollforwardLog: Budget Roll-Forward Log
     ErpFinBudgetScenario: Budget Scenario
     ErpFinCashForecast: Cash Forecast
+    ErpFinConsolidationElimination: Consolidation Elimination
     ErpFinCreditFacility: Credit Facility
     ErpFinEmployeeAdvance: Employee Advance
     ErpFinExpenseClaim: Expense Claim
@@ -21,6 +22,8 @@ entity:
     ErpFinFundAccount: Fund Account
     ErpFinGlBalance: GL Balance
     ErpFinGlMappingRule: GL Mapping Rule
+    ErpFinIntercompanyMatch: Intercompany Match
+    ErpFinIntercompanyTransferPrice: Intercompany Transfer Price
     ErpFinNotesDiscount: Notes Discount
     ErpFinNotesPayable: Notes Payable
     ErpFinNotesReceivable: Notes Receivable
@@ -454,6 +457,37 @@ prop:
       fundAccount: Fund Account
       partner: Partner
       partner.name: Partner
+    ErpFinConsolidationElimination:
+      id: ID
+      code: Code
+      orgId: Organization
+      eliminationType: Elimination Type
+      eliminationType_label: null
+      periodId: Period
+      pairKey: Pair Key
+      matchId: Match
+      fromOrgId: From Org
+      toOrgId: To Org
+      eliminationAmount: Elimination Amount
+      draftVoucherId: Draft Voucher
+      status: Status
+      status_label: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      period: Period
+      match: Match
+      draftVoucher: Draft Voucher
+      fromOrg: From Org
+      fromOrg.name: From Org
+      toOrg: To Org
+      toOrg.name: To Org
+      org: Org
+      org.name: Org
     ErpFinCreditFacility:
       id: ID
       code: Code
@@ -694,6 +728,73 @@ prop:
       department.name: Department
       project: Project
       project.name: Project
+      org: Org
+      org.name: Org
+    ErpFinIntercompanyMatch:
+      id: ID
+      code: Code
+      orgId: Organization
+      pairKey: Pair Key
+      periodId: Period
+      arSideVoucherId: AR Side Voucher
+      arOrgId: AR Org
+      apSideVoucherId: AP Side Voucher
+      apOrgId: AP Org
+      materialId: Material
+      matchedAmount: Matched Amount
+      diffAmount: Diff Amount
+      status: Status
+      status_label: null
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      period: Period
+      arSideVoucher: AR Side Voucher
+      apSideVoucher: AP Side Voucher
+      material: Material
+      material.name: Material
+      arOrg: AR Org
+      arOrg.name: AR Org
+      apOrg: AP Org
+      apOrg.name: AP Org
+      org: Org
+      org.name: Org
+    ErpFinIntercompanyTransferPrice:
+      id: ID
+      code: Code
+      name: Name
+      orgId: Organization
+      fromOrgId: From Org
+      toOrgId: To Org
+      materialId: Material
+      materialCategoryId: Material Category
+      pricingMethod: Pricing Method
+      pricingMethod_label: null
+      markupRate: Markup Rate
+      fixedPrice: Fixed Price
+      marketRefSource: Market Ref Source
+      validFrom: Valid From
+      validTo: Valid To
+      isActive: Active
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      fromOrg: From Org
+      fromOrg.name: From Org
+      toOrg: To Org
+      toOrg.name: To Org
+      material: Material
+      material.name: Material
+      materialCategory: Material Category
+      materialCategory.name: Material Category
       org: Org
       org.name: Org
     ErpFinNotesDiscount:
@@ -1098,6 +1199,10 @@ dict:
     erp-fin/budget-carry-forward-rule: Budget Carry-Forward Rule
     erp-fin/budget-rollforward-strategy: Budget Roll-Forward Strategy
     erp-fin/budget-action: Budget Action
+    erp-fin/transfer-pricing-method: Transfer Pricing Method
+    erp-fin/intercompany-match-status: Intercompany Match Status
+    erp-fin/elimination-type: Elimination Type
+    erp-fin/elimination-status: Elimination Status
 dict.option.label:
   erp-fin/voucher-type:
     RECEIPT: Receive
@@ -1194,6 +1299,10 @@ dict.option.label:
     REVENUE: Revenue
     COGS: COGS
     RETAINED_EARNINGS: Retained Earnings
+    INTERCOMPANY_AR: Intercompany AR
+    INTERCOMPANY_AP: Intercompany AP
+    INTERCOMPANY_REVENUE: Intercompany Revenue
+    INTERCOMPANY_COST: Intercompany Cost
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing
@@ -1320,3 +1429,19 @@ dict.option.label:
     PASS: Pass
     WARNED: Warned
     BLOCKED: Blocked
+  erp-fin/transfer-pricing-method:
+    COST_PLUS: Cost Plus
+    MARKET: Market
+    NEGOTIATED: Negotiated
+  erp-fin/intercompany-match-status:
+    UNMATCHED: Unmatched
+    MATCHED: Matched
+    DIFF: Diff
+  erp-fin/elimination-type:
+    AR_AP: AR vs AP
+    REVENUE_COST: Revenue vs Cost
+    INVENTORY_PROFIT: Inventory Profit
+  erp-fin/elimination-status:
+    CANDIDATE: Candidate
+    DRAFT_VOUCHER: Draft Voucher
+    POSTED: Posted

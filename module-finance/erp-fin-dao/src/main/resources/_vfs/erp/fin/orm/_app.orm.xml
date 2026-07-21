@@ -139,6 +139,11 @@
             <option code="REVENUE" label="主营业务收入" value="REVENUE" i18n-en:label="Revenue"/>
             <option code="COGS" label="主营业务成本" value="COGS" i18n-en:label="COGS"/>
             <option code="RETAINED_EARNINGS" label="未分配利润" value="RETAINED_EARNINGS" i18n-en:label="Retained Earnings"/>
+            <option code="INTERCOMPANY_AR" label="内部应收" value="INTERCOMPANY_AR" i18n-en:label="Intercompany AR"/>
+            <option code="INTERCOMPANY_AP" label="内部应付" value="INTERCOMPANY_AP" i18n-en:label="Intercompany AP"/>
+            <option code="INTERCOMPANY_REVENUE" label="内部销售收入" value="INTERCOMPANY_REVENUE"
+                    i18n-en:label="Intercompany Revenue"/>
+            <option code="INTERCOMPANY_COST" label="内部采购成本" value="INTERCOMPANY_COST" i18n-en:label="Intercompany Cost"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>
@@ -300,6 +305,28 @@
             <option code="PASS" label="通过" value="PASS" i18n-en:label="Pass"/>
             <option code="WARNED" label="告警" value="WARNED" i18n-en:label="Warned"/>
             <option code="BLOCKED" label="拦截" value="BLOCKED" i18n-en:label="Blocked"/>
+        </dict>
+        <dict label="转移定价方法" name="erp-fin/transfer-pricing-method" valueType="string"
+              i18n-en:label="Transfer Pricing Method">
+            <option code="COST_PLUS" label="成本加成" value="COST_PLUS" i18n-en:label="Cost Plus"/>
+            <option code="MARKET" label="市场价" value="MARKET" i18n-en:label="Market"/>
+            <option code="NEGOTIATED" label="协议价" value="NEGOTIATED" i18n-en:label="Negotiated"/>
+        </dict>
+        <dict label="公司间配对状态" name="erp-fin/intercompany-match-status" valueType="string"
+              i18n-en:label="Intercompany Match Status">
+            <option code="UNMATCHED" label="未配对" value="UNMATCHED" i18n-en:label="Unmatched"/>
+            <option code="MATCHED" label="已配对" value="MATCHED" i18n-en:label="Matched"/>
+            <option code="DIFF" label="差异" value="DIFF" i18n-en:label="Diff"/>
+        </dict>
+        <dict label="合并抵消类型" name="erp-fin/elimination-type" valueType="string" i18n-en:label="Elimination Type">
+            <option code="AR_AP" label="内部应收应付" value="AR_AP" i18n-en:label="AR vs AP"/>
+            <option code="REVENUE_COST" label="内部收入成本" value="REVENUE_COST" i18n-en:label="Revenue vs Cost"/>
+            <option code="INVENTORY_PROFIT" label="内部存货利润" value="INVENTORY_PROFIT" i18n-en:label="Inventory Profit"/>
+        </dict>
+        <dict label="合并抵消状态" name="erp-fin/elimination-status" valueType="string" i18n-en:label="Elimination Status">
+            <option code="CANDIDATE" label="候选" value="CANDIDATE" i18n-en:label="Candidate"/>
+            <option code="DRAFT_VOUCHER" label="草稿分录" value="DRAFT_VOUCHER" i18n-en:label="Draft Voucher"/>
+            <option code="POSTED" label="已过账" value="POSTED" i18n-en:label="Posted"/>
         </dict>
     </dicts>
 
@@ -3638,6 +3665,325 @@
                             columns="orgId,businessType,accountKey,acctSchemaId,partnerGroupId,materialCategoryId,warehouseId,departmentId,projectId"
                             name="UK_FIN_GL_MAPPING_RULE_BIZ"/>
                 <unique-key columns="code" name="UK_FIN_GL_MAPPING_RULE_CODE"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                displayName="跨法人转移定价规则" name="app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice"
+                registerShortName="true" tableName="erp_fin_intercompany_transfer_price"
+                tagSet="gid,erp.finance,audit,audit-save" updateTimeProp="updateTime" updaterProp="updatedBy"
+                useLogicalDelete="true" versionProp="version" ext:icon="tags"
+                i18n-en:displayName="Intercompany Transfer Price" orm:bizKeyProp="code">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="规则编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="规则名称" mandatory="true" name="name" precision="200" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="4" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="FROM_ORG_ID" displayName="调出组织(空=通配)" name="fromOrgId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="From Org"/>
+                <column code="TO_ORG_ID" displayName="调入组织(空=通配)" name="toOrgId" propId="6" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="To Org"/>
+                <column code="MATERIAL_ID" displayName="物料(空=通配)" name="materialId" propId="7" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                <column code="MATERIAL_CATEGORY_ID" displayName="物料分类(空=通配)" name="materialCategoryId" propId="8"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material Category"/>
+                <column code="PRICING_METHOD" displayName="定价方法" mandatory="true" name="pricingMethod" precision="20"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/transfer-pricing-method"
+                        i18n-en:displayName="Pricing Method"/>
+                <column code="MARKUP_RATE" defaultValue="0" displayName="加成率(COST_PLUS)" domain="exchangeRate"
+                        name="markupRate" precision="20" propId="10" scale="8" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Markup Rate"/>
+                <column code="FIXED_PRICE" defaultValue="0" displayName="固定单价(NEGOTIATED/MARKET兜底)" domain="unitPrice"
+                        name="fixedPrice" precision="20" propId="11" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Fixed Price"/>
+                <column code="MARKET_REF_SOURCE" displayName="市场价来源说明(MARKET)" name="marketRefSource" precision="200"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Market Ref Source"/>
+                <column code="VALID_FROM" displayName="生效日期" name="validFrom" propId="13" stdDataType="date"
+                        stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Valid From"/>
+                <column code="VALID_TO" displayName="失效日期" name="validTo" propId="14" stdDataType="date"
+                        stdSqlType="DATE" tagSet="clock" i18n-en:displayName="Valid To"/>
+                <column code="IS_ACTIVE" defaultValue="true" displayName="是否启用" mandatory="true" name="isActive"
+                        propId="15" stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Active"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="16" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="17" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="20" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="21" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="22"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_FIN_INTERCOMPANY_TRANSFER_PRICE_FROM_TO" unique="false">
+                    <column name="fromOrgId"/>
+                    <column name="toOrgId"/>
+                </index>
+                <index name="IDX_FIN_INTERCOMPANY_TRANSFER_PRICE_MATERIAL" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="fromOrg" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="From Org">
+                    <join>
+                        <on leftProp="fromOrgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="toOrg" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="To Org">
+                    <join>
+                        <on leftProp="toOrgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="materialCategory" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub"
+                        i18n-en:displayName="Material Category">
+                    <join>
+                        <on leftProp="materialCategoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_FIN_INTERCOMPANY_TRANSFER_PRICE_CODE"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.fin.dao.entity.ErpFinIntercompanyMatch" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="公司间配对记录"
+                name="app.erp.fin.dao.entity.ErpFinIntercompanyMatch" registerShortName="true"
+                tableName="erp_fin_intercompany_match" tagSet="gid,erp.finance,audit,audit-save"
+                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version"
+                ext:icon="link" i18n-en:displayName="Intercompany Match" orm:bizKeyProp="code">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="记录编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="PAIR_KEY" displayName="配对键" mandatory="true" name="pairKey" precision="200" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Pair Key"/>
+                <column code="PERIOD_ID" displayName="会计期间" mandatory="true" name="periodId" propId="5"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                <column code="AR_SIDE_VOUCHER_ID" displayName="AR侧凭证" name="arSideVoucherId" propId="6"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="AR Side Voucher"/>
+                <column code="AR_ORG_ID" displayName="AR侧组织" name="arOrgId" propId="7" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="AR Org"/>
+                <column code="AP_SIDE_VOUCHER_ID" displayName="AP侧凭证" name="apSideVoucherId" propId="8"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="AP Side Voucher"/>
+                <column code="AP_ORG_ID" displayName="AP侧组织" name="apOrgId" propId="9" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="AP Org"/>
+                <column code="MATERIAL_ID" displayName="物料" name="materialId" propId="10" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                <column code="MATCHED_AMOUNT" defaultValue="0" displayName="配对金额" domain="amount" name="matchedAmount"
+                        precision="20" propId="11" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Matched Amount"/>
+                <column code="DIFF_AMOUNT" defaultValue="0" displayName="差异金额" domain="amount" name="diffAmount"
+                        precision="20" propId="12" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Diff Amount"/>
+                <column code="STATUS" displayName="配对状态" mandatory="true" name="status" precision="20" propId="13"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/intercompany-match-status"
+                        i18n-en:displayName="Status"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="14" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="15" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="16" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="18" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="20"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_FIN_INTERCOMPANY_MATCH_PAIR_PERIOD" unique="false">
+                    <column name="pairKey"/>
+                    <column name="periodId"/>
+                </index>
+                <index name="IDX_FIN_INTERCOMPANY_MATCH_PERIOD_STATUS" unique="false">
+                    <column name="periodId"/>
+                    <column name="status"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"
+                        i18n-en:displayName="Period">
+                    <join>
+                        <on leftProp="periodId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="arSideVoucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub"
+                        i18n-en:displayName="AR Side Voucher">
+                    <join>
+                        <on leftProp="arSideVoucherId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="apSideVoucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub"
+                        i18n-en:displayName="AP Side Voucher">
+                    <join>
+                        <on leftProp="apSideVoucherId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="arOrg" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="AR Org">
+                    <join>
+                        <on leftProp="arOrgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="apOrg" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="AP Org">
+                    <join>
+                        <on leftProp="apOrgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_FIN_INTERCOMPANY_MATCH_CODE"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.fin.dao.entity.ErpFinConsolidationElimination" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="合并抵消候选"
+                name="app.erp.fin.dao.entity.ErpFinConsolidationElimination" registerShortName="true"
+                tableName="erp_fin_consolidation_elimination" tagSet="gid,erp.finance,audit,audit-save"
+                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version"
+                ext:icon="minus-circle" i18n-en:displayName="Consolidation Elimination" orm:bizKeyProp="code">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="候选编码" domain="code" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
+                <column code="ORG_ID" displayName="核算组织" mandatory="true" name="orgId" propId="3" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Organization"/>
+                <column code="ELIMINATION_TYPE" displayName="抵消类型" mandatory="true" name="eliminationType"
+                        precision="20" propId="4" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-fin/elimination-type" i18n-en:displayName="Elimination Type"/>
+                <column code="PERIOD_ID" displayName="会计期间" mandatory="true" name="periodId" propId="5"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Period"/>
+                <column code="PAIR_KEY" displayName="配对键" name="pairKey" precision="200" propId="6" stdDataType="string"
+                        stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Pair Key"/>
+                <column code="MATCH_ID" displayName="配对记录" name="matchId" propId="7" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Match"/>
+                <column code="FROM_ORG_ID" displayName="调出组织" name="fromOrgId" propId="8" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="From Org"/>
+                <column code="TO_ORG_ID" displayName="调入组织" name="toOrgId" propId="9" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="To Org"/>
+                <column code="ELIMINATION_AMOUNT" defaultValue="0" displayName="抵消金额" domain="amount"
+                        name="eliminationAmount" precision="20" propId="10" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Elimination Amount"/>
+                <column code="DRAFT_VOUCHER_ID" displayName="草稿抵消凭证" name="draftVoucherId" propId="11"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Draft Voucher"/>
+                <column code="STATUS" displayName="抵消状态" mandatory="true" name="status" precision="20" propId="12"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-fin/elimination-status"
+                        i18n-en:displayName="Status"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="13" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="14" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="15" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="16" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="17" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="19"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+            </columns>
+            <indexes>
+                <index name="IDX_FIN_CONSOLIDATION_ELIMINATION_PERIOD_TYPE" unique="false">
+                    <column name="periodId"/>
+                    <column name="eliminationType"/>
+                </index>
+                <index name="IDX_FIN_CONSOLIDATION_ELIMINATION_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="period" refEntityName="app.erp.fin.dao.entity.ErpFinAccountingPeriod" tagSet="pub"
+                        i18n-en:displayName="Period">
+                    <join>
+                        <on leftProp="periodId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="match" refEntityName="app.erp.fin.dao.entity.ErpFinIntercompanyMatch" tagSet="pub"
+                        i18n-en:displayName="Match">
+                    <join>
+                        <on leftProp="matchId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="draftVoucher" refEntityName="app.erp.fin.dao.entity.ErpFinVoucher" tagSet="pub"
+                        i18n-en:displayName="Draft Voucher">
+                    <join>
+                        <on leftProp="draftVoucherId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="fromOrg" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="From Org">
+                    <join>
+                        <on leftProp="fromOrgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="toOrg" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="To Org">
+                    <join>
+                        <on leftProp="toOrgId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_FIN_CONSOLIDATION_ELIMINATION_CODE"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSubject" displayName="会计科目"

@@ -6,12 +6,18 @@ site:
       displayName: Period Close Status
     ErpFinArApItem-main:
       displayName: AR/AP Subledger
+    ErpFinConsolidationElimination-main:
+      displayName: Consolidation Elimination
     ErpFinFundAccount-main:
       displayName: Fund Account
     ErpFinGlBalance-main:
       displayName: GL Balance
     ErpFinGlMappingRule-main:
       displayName: GL Mapping Rule
+    ErpFinIntercompanyMatch-main:
+      displayName: Intercompany Match
+    ErpFinIntercompanyTransferPrice-main:
+      displayName: Intercompany Transfer Price
     ErpFinReconciliation-main:
       displayName: Reconciliation
     ErpFinTrialBalance-main:
@@ -64,6 +70,8 @@ site:
       displayName: Fund
     fin-gl:
       displayName: General Ledger
+    fin-intercompany:
+      displayName: Intercompany
     fin-period:
       displayName: Accounting Period
     fin-recon:

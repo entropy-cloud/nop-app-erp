@@ -139,7 +139,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
 
     /**
      * 维度具体度：非 NULL 维度字段数（acctSchemaId + partnerGroupId + materialCategoryId + warehouseId +
-     * departmentId + projectId，共 6 维）。数值越大越具体。
+     * departmentId + projectId + fromOrgId + toOrgId，共 8 维）。数值越大越具体。
      */
     private static int specificity(ErpFinGlMappingRule rule) {
         int count = 0;
@@ -189,6 +189,9 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         expanded.setWarehouseId(input.getWarehouseId());
         expanded.setDepartmentId(input.getDepartmentId());
         expanded.setProjectId(input.getProjectId());
+        // A3 intercompany 维度透传（multi-company.md §与 Posting+GL Mapping 关系）
+        expanded.setFromOrgId(input.getFromOrgId());
+        expanded.setToOrgId(input.getToOrgId());
 
         // materialId → materialCategoryId 经 ErpMdMaterial.categoryId 扩展
         if (input.getMaterialCategoryId() != null) {

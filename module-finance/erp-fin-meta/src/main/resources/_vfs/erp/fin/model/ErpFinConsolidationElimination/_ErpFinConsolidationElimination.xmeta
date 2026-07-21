@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="minus-circle" ext:web-renderer="" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="合并抵消候选" i18n-en:displayName="Consolidation Elimination"
+      tagSet="gid,erp.finance,audit,audit-save" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.fin.dao.entity.ErpFinConsolidationElimination</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_FIN_CONSOLIDATION_ELIMINATION_CODE" props="code"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="code" displayName="候选编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema domain="code" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="orgId" displayName="核算组织" propId="3" i18n-en:displayName="Organization" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="eliminationType" displayName="抵消类型" propId="4" i18n-en:displayName="Elimination Type"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/elimination-type"/>
+        </prop>
+        <prop name="periodId" displayName="会计期间" propId="5" i18n-en:displayName="Period" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="period">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="pairKey" displayName="配对键" propId="6" i18n-en:displayName="Pair Key" tagSet="var" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="matchId" displayName="配对记录" propId="7" i18n-en:displayName="Match" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="match">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="fromOrgId" displayName="调出组织" propId="8" i18n-en:displayName="From Org" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="fromOrg">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="toOrgId" displayName="调入组织" propId="9" i18n-en:displayName="To Org" queryable="true" sortable="true"
+              insertable="true" updatable="true" ext:relation="toOrg">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="eliminationAmount" displayName="抵消金额" propId="10" i18n-en:displayName="Elimination Amount"
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema domain="amount" type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="draftVoucherId" displayName="草稿抵消凭证" propId="11" i18n-en:displayName="Draft Voucher"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="draftVoucher">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="status" displayName="抵消状态" propId="12" i18n-en:displayName="Status" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-fin/elimination-status"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="13" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="14" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="15" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="16" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="17" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="18" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="19" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="period" i18n-en:displayName="Period" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="periodId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpFinAccountingPeriod"/>
+        </prop>
+        <prop name="match" i18n-en:displayName="Match" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="matchId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpFinIntercompanyMatch"/>
+        </prop>
+        <prop name="draftVoucher" i18n-en:displayName="Draft Voucher" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="draftVoucherId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpFinVoucher"/>
+        </prop>
+        <prop name="fromOrg" i18n-en:displayName="From Org" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="fromOrgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="fromOrg.name" i18n-en:displayName="From Org" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="toOrg" i18n-en:displayName="To Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="toOrgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="toOrg.name" i18n-en:displayName="To Org" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
+    </props>
+</meta>

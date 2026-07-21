@@ -294,6 +294,32 @@ CREATE TABLE erp_fin_gl_mapping_rule(
   constraint PK_erp_fin_gl_mapping_rule primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_intercompany_transfer_price(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '规则编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '规则名称',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  FROM_ORG_ID BIGINT NULL    COMMENT '调出组织(空=通配)',
+  TO_ORG_ID BIGINT NULL    COMMENT '调入组织(空=通配)',
+  MATERIAL_ID BIGINT NULL    COMMENT '物料(空=通配)',
+  MATERIAL_CATEGORY_ID BIGINT NULL    COMMENT '物料分类(空=通配)',
+  PRICING_METHOD VARCHAR(20) NOT NULL    COMMENT '定价方法',
+  MARKUP_RATE DECIMAL(20,8) default 0  NULL    COMMENT '加成率(COST_PLUS)',
+  FIXED_PRICE DECIMAL(20,4) default 0  NULL    COMMENT '固定单价(NEGOTIATED/MARKET兜底)',
+  MARKET_REF_SOURCE VARCHAR(200) NULL    COMMENT '市场价来源说明(MARKET)',
+  VALID_FROM DATE NULL    COMMENT '生效日期',
+  VALID_TO DATE NULL    COMMENT '失效日期',
+  IS_ACTIVE BOOLEAN default 1  NOT NULL    COMMENT '是否启用',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_fin_intercompany_transfer_price primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_voucher_template_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   TEMPLATE_ID BIGINT NOT NULL    COMMENT '模板ID',
@@ -682,6 +708,30 @@ CREATE TABLE erp_fin_budget_scenario(
   constraint PK_erp_fin_budget_scenario primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_intercompany_match(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '记录编码',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  PAIR_KEY VARCHAR(200) NOT NULL    COMMENT '配对键',
+  PERIOD_ID BIGINT NOT NULL    COMMENT '会计期间',
+  AR_SIDE_VOUCHER_ID BIGINT NULL    COMMENT 'AR侧凭证',
+  AR_ORG_ID BIGINT NULL    COMMENT 'AR侧组织',
+  AP_SIDE_VOUCHER_ID BIGINT NULL    COMMENT 'AP侧凭证',
+  AP_ORG_ID BIGINT NULL    COMMENT 'AP侧组织',
+  MATERIAL_ID BIGINT NULL    COMMENT '物料',
+  MATCHED_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '配对金额',
+  DIFF_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '差异金额',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '配对状态',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_fin_intercompany_match primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_reconciliation_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   RECONCILIATION_ID BIGINT NOT NULL    COMMENT '核销单ID',
@@ -901,6 +951,29 @@ CREATE TABLE erp_fin_budget_carry_forward_log(
   constraint PK_erp_fin_budget_carry_forward_log primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_fin_consolidation_elimination(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '候选编码',
+  ORG_ID BIGINT NOT NULL    COMMENT '核算组织',
+  ELIMINATION_TYPE VARCHAR(20) NOT NULL    COMMENT '抵消类型',
+  PERIOD_ID BIGINT NOT NULL    COMMENT '会计期间',
+  PAIR_KEY VARCHAR(200) NULL    COMMENT '配对键',
+  MATCH_ID BIGINT NULL    COMMENT '配对记录',
+  FROM_ORG_ID BIGINT NULL    COMMENT '调出组织',
+  TO_ORG_ID BIGINT NULL    COMMENT '调入组织',
+  ELIMINATION_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '抵消金额',
+  DRAFT_VOUCHER_ID BIGINT NULL    COMMENT '草稿抵消凭证',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '抵消状态',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  constraint PK_erp_fin_consolidation_elimination primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_fin_bank_reconciliation_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   RECONCILIATION_ID BIGINT NOT NULL    COMMENT '对账记录ID',
@@ -987,6 +1060,8 @@ CREATE TABLE erp_fin_budget_control_log(
                 
    ALTER TABLE erp_fin_gl_mapping_rule COMMENT '科目映射规则';
                 
+   ALTER TABLE erp_fin_intercompany_transfer_price COMMENT '跨法人转移定价规则';
+                
    ALTER TABLE erp_fin_voucher_template_line COMMENT '凭证模板行';
                 
    ALTER TABLE erp_fin_voucher COMMENT '会计凭证';
@@ -1017,6 +1092,8 @@ CREATE TABLE erp_fin_budget_control_log(
                 
    ALTER TABLE erp_fin_budget_scenario COMMENT '预算方案';
                 
+   ALTER TABLE erp_fin_intercompany_match COMMENT '公司间配对记录';
+                
    ALTER TABLE erp_fin_reconciliation_line COMMENT '核销单行';
                 
    ALTER TABLE erp_fin_bad_debt COMMENT '坏账单';
@@ -1034,6 +1111,8 @@ CREATE TABLE erp_fin_budget_control_log(
    ALTER TABLE erp_fin_budget_rollforward_log COMMENT '预算滚动复制日志';
                 
    ALTER TABLE erp_fin_budget_carry_forward_log COMMENT '预算结转日志';
+                
+   ALTER TABLE erp_fin_consolidation_elimination COMMENT '合并抵消候选';
                 
    ALTER TABLE erp_fin_bank_reconciliation_line COMMENT '银行对账调整行';
                 

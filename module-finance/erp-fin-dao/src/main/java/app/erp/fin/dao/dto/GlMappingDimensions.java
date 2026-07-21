@@ -20,6 +20,10 @@ public class GlMappingDimensions {
     private Long warehouseId;
     private Long departmentId;
     private Long projectId;
+    /** A3 intercompany 维度（plan 2026-07-22-1000-1，multi-company.md §与 Posting+GL Mapping 关系）：跨法人交易双方组织。 */
+    private Long fromOrgId;
+    /** A3 intercompany 维度：调入方组织。 */
+    private Long toOrgId;
 
     public Long getPartnerId() {
         return partnerId;
@@ -75,5 +79,21 @@ public class GlMappingDimensions {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public Long getFromOrgId() {
+        return fromOrgId;
+    }
+
+    public void setFromOrgId(Long fromOrgId) {
+        this.fromOrgId = fromOrgId;
+    }
+
+    public Long getToOrgId() {
+        return toOrgId;
+    }
+
+    public void setToOrgId(Long toOrgId) {
+        this.toOrgId = toOrgId;
     }
 }

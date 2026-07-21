@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 公司间配对状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 未配对
+    value: UNMATCHED
+    description: 
+  
+  - label: 已配对
+    value: MATCHED
+    description: 
+  
+  - label: 差异
+    value: DIFF
+    description: 
+  

@@ -443,4 +443,55 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     String BUDGET_VOUCHER_BILL_TYPE = "BUDGET_SCENARIO";
     /** 预算凭证业财回链 billHeadCode 前缀（红冲按 scenario.code 反查）。 */
     String BUDGET_VOUCHER_BILL_CODE_PREFIX = "BUDGET-";
+
+    // ---- A3 多公司运营深度（plan 2026-07-22-1000-1，multi-company.md）----
+
+    /** 跨法人内部交易凭证生成总开关（默认 false，保护既有跨法人调拨测试不触发自动凭证）。 */
+    String CONFIG_INTERCOMPANY_POSTING_ENABLED = "erp-fin.intercompany-posting-enabled";
+    /** 合并抵消候选识别总开关（默认 false，期末批处理启用）。 */
+    String CONFIG_CONSOLIDATION_ELIMINATION_ENABLED = "erp-fin.consolidation-elimination-enabled";
+    /** 内部存货利润抵消识别开关（默认 false，依赖未实现利润计算复杂度，试点门控）。 */
+    String CONFIG_ELIMINATION_INVENTORY_PROFIT_ENABLED = "erp-fin.elimination-inventory-profit-enabled";
+
+    // transfer-pricing-method（erp-fin/transfer-pricing-method，multi-company.md §转移定价规则模型）
+    String TRANSFER_PRICING_COST_PLUS = "COST_PLUS";
+    String TRANSFER_PRICING_MARKET = "MARKET";
+    String TRANSFER_PRICING_NEGOTIATED = "NEGOTIATED";
+
+    // intercompany-match-status（erp-fin/intercompany-match-status）
+    String INTERCOMPANY_MATCH_UNMATCHED = "UNMATCHED";
+    String INTERCOMPANY_MATCH_MATCHED = "MATCHED";
+    String INTERCOMPANY_MATCH_DIFF = "DIFF";
+
+    // elimination-type（erp-fin/elimination-type）
+    String ELIMINATION_TYPE_AR_AP = "AR_AP";
+    String ELIMINATION_TYPE_REVENUE_COST = "REVENUE_COST";
+    String ELIMINATION_TYPE_INVENTORY_PROFIT = "INVENTORY_PROFIT";
+
+    // elimination-status（erp-fin/elimination-status）
+    String ELIMINATION_STATUS_CANDIDATE = "CANDIDATE";
+    String ELIMINATION_STATUS_DRAFT_VOUCHER = "DRAFT_VOUCHER";
+    String ELIMINATION_STATUS_POSTED = "POSTED";
+
+    /** 跨法人内部销售凭证业财回链 billType（INTERCOMPANY_SALE，不进 ErpFinBusinessType 枚举）。 */
+    String INTERCOMPANY_SALE_BILL_TYPE = "INTERCOMPANY_SALE";
+    /** 跨法人内部采购凭证业财回链 billType（INTERCOMPANY_PURCHASE，不进 ErpFinBusinessType 枚举）。 */
+    String INTERCOMPANY_PURCHASE_BILL_TYPE = "INTERCOMPANY_PURCHASE";
+    /** 跨法人内部交易凭证业财回链 billHeadCode 前缀（按调拨单 code 反查配对凭证）。 */
+    String INTERCOMPANY_VOUCHER_BILL_CODE_PREFIX = "INTERCOMPANY-";
+
+    /** 跨法人内部交易 accountKey（A1 account-key 字典扩展，经 GlMappingResolver 解析科目）。 */
+    String ACCOUNT_KEY_INTERCOMPANY_AR = "INTERCOMPANY_AR";
+    String ACCOUNT_KEY_INTERCOMPANY_AP = "INTERCOMPANY_AP";
+    String ACCOUNT_KEY_INTERCOMPANY_REVENUE = "INTERCOMPANY_REVENUE";
+    String ACCOUNT_KEY_INTERCOMPANY_COST = "INTERCOMPANY_COST";
+
+    /** 抵消分录凭证业财回链 billType。 */
+    String ELIMINATION_VOUCHER_BILL_TYPE = "CONSOLIDATION_ELIMINATION";
+    /** 抵消分录凭证业财回链 billHeadCode 前缀。 */
+    String ELIMINATION_VOUCHER_BILL_CODE_PREFIX = "ELIMINATION-";
+
+    /** org-type 集团/公司键（multi-company.md §组织模型）。 */
+    String ORG_TYPE_GROUP = "GROUP";
+    String ORG_TYPE_COMPANY = "COMPANY";
 }

@@ -82,6 +82,24 @@
                                   url="/erp/fin/pages/ErpFinGlMappingRule/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- A3 多公司运营深度（plan 2026-07-22-1000-1，multi-company.md）：跨法人内部交易 + 配对 + 合并抵消 -->
+                <resource id="fin-intercompany" displayName="公司间(多公司)" i18n-en:displayName="Intercompany"
+                          icon="building-2" resourceType="SUBM" orderNo="550">
+                    <children>
+                        <resource id="ErpFinIntercompanyTransferPrice-main" displayName="跨法人转移定价规则"
+                                  i18n-en:displayName="Intercompany Transfer Price" icon="tags"
+                                  component="AMIS" resourceType="SUBM" orderNo="5500"
+                                  url="/erp/fin/pages/ErpFinIntercompanyTransferPrice/main.page.yaml"/>
+                        <resource id="ErpFinIntercompanyMatch-main" displayName="公司间配对记录"
+                                  i18n-en:displayName="Intercompany Match" icon="link"
+                                  component="AMIS" resourceType="SUBM" orderNo="5510"
+                                  url="/erp/fin/pages/ErpFinIntercompanyMatch/main.page.yaml"/>
+                        <resource id="ErpFinConsolidationElimination-main" displayName="合并抵消候选"
+                                  i18n-en:displayName="Consolidation Elimination" icon="minus-circle"
+                                  component="AMIS" resourceType="SUBM" orderNo="5520"
+                                  url="/erp/fin/pages/ErpFinConsolidationElimination/main.page.yaml"/>
+                    </children>
+                </resource>
                 <!-- 资金 -->
                 <resource id="fin-fund" displayName="资金" i18n-en:displayName="Fund"
                           icon="wallet" resourceType="SUBM" orderNo="600">

@@ -61,6 +61,14 @@
         <property name="bizObjName" value="ErpFinGlMappingRule"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinIntercompanyTransferPriceBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinIntercompanyTransferPrice" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinIntercompanyTransferPriceBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinIntercompanyTransferPrice"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinVoucherTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinVoucherTemplateLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -178,6 +186,14 @@
         <property name="bizObjName" value="ErpFinBudgetScenario"/>
     </bean>
 
+    <bean id="app.erp.fin.service.entity.ErpFinIntercompanyMatchBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinIntercompanyMatch" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinIntercompanyMatchBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinIntercompanyMatch"/>
+    </bean>
+
     <bean id="app.erp.fin.service.entity.ErpFinReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpFinReconciliationLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -246,6 +262,14 @@
           ioc:type="app.erp.fin.biz.IErpFinBudgetCarryForwardLogBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpFinBudgetCarryForwardLog"/>
+    </bean>
+
+    <bean id="app.erp.fin.service.entity.ErpFinConsolidationEliminationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpFinConsolidationElimination" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.fin.biz.IErpFinConsolidationEliminationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpFinConsolidationElimination"/>
     </bean>
 
     <bean id="app.erp.fin.service.entity.ErpFinBankReconciliationLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
