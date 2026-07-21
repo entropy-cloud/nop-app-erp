@@ -2,5 +2,54 @@
   "moduleId": "erp/inv",
   "moduleName": "erp-inv",
   "appName": "erp-inv",
-  "icon": "warehouse"
+  "icon": "warehouse",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/pur",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/mfg",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/ast",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/prj",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "costing",
+      "configKey": "erp-inv.costing-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "trace-chain",
+      "configKey": "erp-inv.trace-chain-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "ownership-tracking",
+      "configKey": "erp-inv.ownership-tracking-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "standard-cost-ppv",
+      "configKey": "erp-inv.standard-cost-ppv-enabled",
+      "defaultValue": false
+    }
+  ]
 }

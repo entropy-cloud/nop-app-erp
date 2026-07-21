@@ -2,5 +2,63 @@
   "moduleId": "erp/cs",
   "moduleName": "erp-cs",
   "appName": "erp-cs",
-  "icon": "headset"
+  "icon": "headset",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "sla",
+      "configKey": "erp-cs.sla-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "sla-notify",
+      "configKey": "erp-cs.sla-notify-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "service-catalog",
+      "configKey": "erp-cs.service-catalog-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "entitlement-check",
+      "configKey": "erp-cs.entitlement-check-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "canned-response",
+      "configKey": "erp-cs.canned-response-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "survey",
+      "configKey": "erp-cs.survey-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "survey-csat",
+      "configKey": "erp-cs.survey-csat-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "survey-ces",
+      "configKey": "erp-cs.survey-ces-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "survey-nps",
+      "configKey": "erp-cs.survey-nps-enabled",
+      "defaultValue": false
+    }
+  ]
 }

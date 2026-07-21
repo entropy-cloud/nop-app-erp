@@ -2,5 +2,37 @@
   "moduleId": "erp/mnt",
   "moduleName": "erp-mnt",
   "appName": "erp-mnt",
-  "icon": "wrench"
+  "icon": "wrench",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/inv",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "equipment-status-link",
+      "configKey": "erp-mnt.equipment-status-link-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "labor-posting",
+      "configKey": "erp-mnt.labor-posting-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "spare-part-posting",
+      "configKey": "erp-mnt.spare-part-posting-enabled",
+      "defaultValue": false
+    }
+  ]
 }

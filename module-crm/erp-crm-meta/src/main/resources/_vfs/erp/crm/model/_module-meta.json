@@ -2,5 +2,43 @@
   "moduleId": "erp/crm",
   "moduleName": "erp-crm",
   "appName": "erp-crm",
-  "icon": "users"
+  "icon": "users",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/inv",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/sal",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/qa",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/ast",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/prj",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "event-reminder",
+      "configKey": "erp-crm.event-reminder-enabled",
+      "defaultValue": false
+    }
+  ]
 }

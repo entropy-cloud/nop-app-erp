@@ -1,0 +1,19 @@
+moduleId: erp/ct
+version: "1.0.0"
+businessDependencies:
+  - moduleId: erp/md
+    version: "1.0.0"
+  - moduleId: erp/pur
+    version: "1.0.0"
+  - moduleId: erp/sal
+    version: "1.0.0"
+optionalFeatures:
+  - feature: e-signature
+    configKey: erp-ct.e-signature-enabled
+    defaultValue: false
+  - feature: rebate
+    configKey: erp-ct.rebate-enabled
+    defaultValue: false
+  - feature: volume-discount
+    configKey: erp-ct.volume-discount-enabled
+    defaultValue: false

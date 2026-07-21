@@ -2,5 +2,99 @@
   "moduleId": "erp/fin",
   "moduleName": "erp-fin",
   "appName": "erp-fin",
-  "icon": "landmark"
+  "icon": "landmark",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/inv",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/pur",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/sal",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/ast",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/prj",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "budget-check",
+      "configKey": "erp-fin.budget-check-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "budget-commitment",
+      "configKey": "erp-fin.budget-commitment-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "budget-carry-forward",
+      "configKey": "erp-fin.budget-carry-forward-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "budget-roll-forward",
+      "configKey": "erp-fin.budget-roll-forward-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "expense-budget-check",
+      "configKey": "erp-fin.expense-budget-check-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "exchange-revaluation",
+      "configKey": "erp-fin.exchange-revaluation-enabled",
+      "defaultValue": true
+    },
+    {
+      "feature": "bank-fx-revaluation",
+      "configKey": "erp-fin.bank-fx-revaluation-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "notes-fx-gain-loss",
+      "configKey": "erp-fin.notes-fx-gain-loss-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "multi-schema",
+      "configKey": "erp-fin.multi-schema-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "annual-close",
+      "configKey": "erp-fin.annual-close-enabled",
+      "defaultValue": true
+    },
+    {
+      "feature": "bad-debt-allowance-gate",
+      "configKey": "erp-fin.bad-debt-allowance-gate-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "auxiliary-recon-gate",
+      "configKey": "erp-fin.auxiliary-recon-gate-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "posting-exception-notify",
+      "configKey": "erp-fin.posting-exception-notify-enabled",
+      "defaultValue": true
+    }
+  ]
 }

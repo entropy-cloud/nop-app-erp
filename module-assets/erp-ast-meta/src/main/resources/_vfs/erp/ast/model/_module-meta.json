@@ -2,5 +2,23 @@
   "moduleId": "erp/ast",
   "moduleName": "erp-ast",
   "appName": "erp-ast",
-  "icon": "truck"
+  "icon": "truck",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "cip-interest-capitalization",
+      "configKey": "erp-ast.cip-interest-capitalization-enabled",
+      "defaultValue": false
+    }
+  ]
 }

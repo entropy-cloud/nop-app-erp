@@ -1,0 +1,5 @@
+moduleId: erp/b2b
+version: "1.0.0"
+businessDependencies:
+  - moduleId: erp/pur
+    version: "1.0.0"

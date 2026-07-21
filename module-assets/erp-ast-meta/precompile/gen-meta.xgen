@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <c:script>
 codeGenerator.renderModel('/erp/ast/orm/app.orm.xml','/nop/templates/meta', '/',$scope);
+
+// BT5-style overlay: merge hand-written precompile/module-meta.yaml into generated _module-meta.json
+// (version + businessDependencies + optionalFeatures). See docs/architecture/business-module-metadata.md
+import io.nop.core.lang.json.JsonTool;
+import java.lang.IllegalArgumentException;
+
+const yamlRes = codeGenerator.getTplResource("module-meta.yaml");
+if (yamlRes.exists()) {
+    const metaRes = codeGenerator.getTargetResource("src/main/resources/_vfs/erp/ast/model/_module-meta.json");
+    const meta = JsonTool.parseMap(metaRes.readText());
+    const overlay = JsonTool.parseYaml(null, yamlRes.readText());
+    const ovModuleId = overlay.get("moduleId");
+    if (ovModuleId != null) {
+        if (!ovModuleId.equals(meta.get("moduleId")))
+            throw new IllegalArgumentException("module-meta.yaml moduleId=" + ovModuleId + " mismatches orm-generated moduleId=" + meta.get("moduleId"));
+    }
+    if (overlay.get("version") != null) meta.put("version", overlay.get("version"));
+    if (overlay.get("businessDependencies") != null) meta.put("businessDependencies", overlay.get("businessDependencies"));
+    if (overlay.get("optionalFeatures") != null) meta.put("optionalFeatures", overlay.get("optionalFeatures"));
+    metaRes.writeText(JsonTool.serialize(meta, true), null);
+}
 </c:script>

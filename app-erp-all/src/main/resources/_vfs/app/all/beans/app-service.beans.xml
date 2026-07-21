@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <!-- 业务模块元数据读取器（plan 2026-07-21-2225-3，BT5 风格）：扫描全 19 模块 _module-meta.json -->
+    <bean id="app.erp.all.meta.ModuleMetaReader" class="app.erp.all.meta.ModuleMetaReader"/>
+
+    <!-- 业务模块元数据诊断 BizModel：@BizQuery 暴露 listModules/getModule/checkDependencyIntegrity/listOptionalFeatures -->
+    <bean id="app.erp.all.meta.ErpModuleMetaBizModel" ioc:type="@bean:id"/>
+</beans>

@@ -2,5 +2,23 @@
   "moduleId": "erp/hr",
   "moduleName": "erp-hr",
   "appName": "erp-hr",
-  "icon": "people"
+  "icon": "people",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "shift-cross-day",
+      "configKey": "erp-hr.shift-cross-day-enabled",
+      "defaultValue": false
+    }
+  ]
 }

@@ -2,5 +2,16 @@
   "moduleId": "erp/log",
   "moduleName": "erp-log",
   "appName": "erp-log",
-  "icon": "truck"
+  "icon": "truck",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/inv",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    }
+  ]
 }

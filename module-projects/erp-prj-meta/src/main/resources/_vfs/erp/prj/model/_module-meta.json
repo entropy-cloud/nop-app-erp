@@ -2,5 +2,32 @@
   "moduleId": "erp/prj",
   "moduleName": "erp-prj",
   "appName": "erp-prj",
-  "icon": "briefcase"
+  "icon": "briefcase",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/ast",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "expense-aggregation",
+      "configKey": "erp-prj.expense-aggregation-enabled",
+      "defaultValue": false
+    },
+    {
+      "feature": "pnl-auto-calc",
+      "configKey": "erp-prj.pnl-auto-calc-enabled",
+      "defaultValue": false
+    }
+  ]
 }

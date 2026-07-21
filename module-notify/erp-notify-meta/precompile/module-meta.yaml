@@ -1,0 +1,12 @@
+moduleId: erp/notify
+version: "1.0.0"
+optionalFeatures:
+  - feature: email-channel
+    configKey: erp-notify.email-enabled
+    defaultValue: false
+  - feature: sms-channel
+    configKey: erp-notify.sms-enabled
+    defaultValue: false
+  - feature: merge
+    configKey: erp-notify.merge-enabled
+    defaultValue: false

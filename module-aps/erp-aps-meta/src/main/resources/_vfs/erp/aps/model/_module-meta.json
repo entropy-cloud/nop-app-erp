@@ -2,5 +2,16 @@
   "moduleId": "erp/aps",
   "moduleName": "erp-aps",
   "appName": "erp-aps",
-  "icon": "cpu"
+  "icon": "cpu",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/inv",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/mfg",
+      "version": "1.0.0"
+    }
+  ]
 }

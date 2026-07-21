@@ -1,0 +1,20 @@
+moduleId: erp/qa
+version: "1.0.0"
+businessDependencies:
+  - moduleId: erp/md
+    version: "1.0.0"
+  - moduleId: erp/inv
+    version: "1.0.0"
+  - moduleId: erp/fin
+    version: "1.0.0"
+  - moduleId: erp/pur
+    version: "1.0.0"
+  - moduleId: erp/sal
+    version: "1.0.0"
+optionalFeatures:
+  - feature: spc
+    configKey: erp-qa.spc-enabled
+    defaultValue: false
+  - feature: spc-auto-ncr
+    configKey: erp-qa.spc-auto-ncr-enabled
+    defaultValue: false

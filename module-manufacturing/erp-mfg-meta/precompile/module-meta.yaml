@@ -1,0 +1,43 @@
+moduleId: erp/mfg
+version: "1.0.0"
+businessDependencies:
+  - moduleId: erp/md
+    version: "1.0.0"
+  - moduleId: erp/inv
+    version: "1.0.0"
+  - moduleId: erp/fin
+    version: "1.0.0"
+  - moduleId: erp/pur
+    version: "1.0.0"
+  - moduleId: erp/sal
+    version: "1.0.0"
+  - moduleId: erp/qa
+    version: "1.0.0"
+optionalFeatures:
+  - feature: forecast-consume
+    configKey: erp-mfg.forecast-consume-enabled
+    defaultValue: false
+  - feature: genealogy-write
+    configKey: erp-mfg.genealogy-write-enabled
+    defaultValue: false
+  - feature: inspection-gate
+    configKey: erp-mfg.inspection-gate-enabled
+    defaultValue: false
+  - feature: overhead-allocation
+    configKey: erp-mfg.overhead-allocation-enabled
+    defaultValue: false
+  - feature: subcontract-cost-aggregation
+    configKey: erp-mfg.subcontract-cost-aggregation-enabled
+    defaultValue: false
+  - feature: subcontract-posting
+    configKey: erp-mfg.subcontract-posting-enabled
+    defaultValue: false
+  - feature: subcontract-release
+    configKey: erp-mfg.subcontract-release-enabled
+    defaultValue: false
+  - feature: variance-alert
+    configKey: erp-mfg.variance-alert-enabled
+    defaultValue: false
+  - feature: variance-auto-calc
+    configKey: erp-mfg.variance-auto-calc-enabled
+    defaultValue: false

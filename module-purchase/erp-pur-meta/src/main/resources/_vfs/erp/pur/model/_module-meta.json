@@ -2,5 +2,39 @@
   "moduleId": "erp/pur",
   "moduleName": "erp-pur",
   "appName": "erp-pur",
-  "icon": "shopping-cart"
+  "icon": "shopping-cart",
+  "version": "1.0.0",
+  "businessDependencies": [
+    {
+      "moduleId": "erp/md",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/inv",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/fin",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/qa",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/ast",
+      "version": "1.0.0"
+    },
+    {
+      "moduleId": "erp/prj",
+      "version": "1.0.0"
+    }
+  ],
+  "optionalFeatures": [
+    {
+      "feature": "supplier-scorecard-red-gate",
+      "configKey": "erp-pur.scorecard-prevent-on-red",
+      "defaultValue": true
+    }
+  ]
 }

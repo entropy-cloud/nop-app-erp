@@ -38,3 +38,7 @@ db/
 nul
 
 # Local tool configs (skills are versioned)
+
+# Codegen artifact: precompile/module-meta.yaml is copied to meta module root by the
+# precompile dir-walk (BT5 overlay source lives in precompile/, root copy is a stray build artifact)
+module-*/erp-*-meta/module-meta.yaml

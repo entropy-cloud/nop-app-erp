@@ -1,0 +1,6 @@
+moduleId: erp/md
+version: "1.0.0"
+optionalFeatures:
+  - feature: exchange-rate-api
+    configKey: erp-md.exchange-rate-api-enabled
+    defaultValue: false
