@@ -16,6 +16,11 @@
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /md/）。 -->
     <bean id="app.erp.md.service.report.ErpMdReportBizModel" ioc:type="@bean:id"/>
 
+    <!-- 统一 Party 跨实体查询入口（plan 2026-07-21-0827-2 C1）：非实体 BizModel，注入
+          IDaoProvider/IOrmTemplate + 3 跨域引用计数 SPI（Path A 单实例 nullable），
+          经 @BizQuery 暴露 findParties/getParty/findReferences（IErpPartyBiz 实现）。 -->
+    <bean id="app.erp.md.service.party.ErpPartyBizModel" ioc:type="@bean:id"/>
+
     <!-- 跨账套科目映射解析器（多套账传播时科目翻译） -->
     <bean id="app.erp.md.dao.SubjectMappingResolver"
           class="app.erp.md.dao.SubjectMappingResolver"/>

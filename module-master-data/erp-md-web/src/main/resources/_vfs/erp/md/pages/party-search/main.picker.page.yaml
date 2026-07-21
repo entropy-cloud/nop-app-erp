@@ -1,0 +1,126 @@
+# 全仓库首例手写 picker.page.yaml（plan 2026-07-21-0827-2 Phase 2）。
+# 结构上与 `_vfs/erp/md/pages/dashboard/main.page.yaml` 既有手写非实体 page.yaml 同构 ——
+# BizModel 非实体（ErpPartyBizModel），无法走 codegen `<web:GenPage view="Xxx.view.xml" page="picker"/>` 模板。
+#
+# 触发条件：BizModel 非实体 + 需要 AMIS picker 交互 → 手写 picker.page.yaml（owner doc §5）。
+#
+# onSelect 回填：父表单字段 partyType + partyId + displayName（+ 可选 phone/email）。
+# 父页面经 `/erp/md/pages/party-search/main.picker.page.yaml` 引用本文件。
+type: page
+title: "选择 Party（联合检索）"
+body:
+  - type: form
+    name: partyFilter
+    title: "过滤条件"
+    mode: inline
+    submitOnChange: true
+    submitOnInit: true
+    wrapWithPanel: false
+    controls:
+      - type: text
+        name: keyword
+        label: "关键字"
+        placeholder: "编码 / 名称 / 电话 / 邮箱（≥2 字符）"
+        value: ""
+      - type: tag
+        name: partyTypes
+        label: "Party 类型"
+        value: ["PARTNER", "EMPLOYEE", "ORGANIZATION"]
+        options:
+          - label: "往来单位"
+            value: "PARTNER"
+          - label: "职员"
+            value: "EMPLOYEE"
+          - label: "组织"
+            value: "ORGANIZATION"
+        displayMode: normal
+
+  - type: crud
+    name: partyCrud
+    className: m-3
+    title: "Party 列表"
+    syncLocation: false
+    headerToolbar: []
+    footerToolbar: [statistics]
+    primaryField: partyId
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: |
+          query($keyword: String, $partyTypes: [String], $limit: Int) {
+            ErpParty__findParties(keyword: $keyword, partyTypes: $partyTypes, limit: $limit) {
+              partyType
+              partyId
+              code
+              name
+              phone
+              email
+              status
+              displayName
+            }
+          }
+      requestAdaptor: |
+        const kw = api.data.keyword || "";
+        const types = api.data.partyTypes || ["PARTNER", "EMPLOYEE", "ORGANIZATION"];
+        const limit = 50;
+        return {
+          ...api,
+          data: {
+            query: api.data.query,
+            variables: { keyword: kw, partyTypes: types, limit: limit }
+          }
+        };
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpParty__findParties || [];
+        return { status: 0, msg: '', data: { items: rows, count: rows.length } };
+    columns:
+      - name: partyType
+        label: "类型"
+        type: mapping
+        map:
+          PARTNER: "<span class='label label-info'>往来单位</span>"
+          EMPLOYEE: "<span class='label label-success'>职员</span>"
+          ORGANIZATION: "<span class='label label-warning'>组织</span>"
+      - name: code
+        label: "编码"
+      - name: name
+        label: "名称"
+      - name: phone
+        label: "电话"
+        placeholder: "-"
+      - name: email
+        label: "邮箱"
+        placeholder: "-"
+      - name: status
+        label: "状态"
+        type: mapping
+        map:
+          ACTIVE: "<span class='label label-success'>启用</span>"
+          INACTIVE: "<span class='label label-default'>停用</span>"
+      - type: operation
+        label: "操作"
+        buttons:
+          - type: button
+            label: "选择"
+            level: primary
+            actionType: reload
+            target: ""
+            onClick: |
+              // 触发父页面 picker onSelect 回填（onEvent.setValue 由父页面 view.yaml 绑定）
+              doAction({
+                actionType: 'setValue',
+                componentId: '',
+                args: {
+                  value: {
+                    partyType: context.row.partyType,
+                    partyId: context.row.partyId,
+                    displayName: context.row.displayName,
+                    phone: context.row.phone,
+                    email: context.row.email
+                  }
+                }
+              });

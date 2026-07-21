@@ -140,4 +140,14 @@ public interface ErpMdErrors {
             "erp.err.md.org.not-found",
             "组织[{orgId}]不存在",
             "orgId");
+
+    // --- 统一 Party 身份查询（C1，docs/design/master-data/unified-party-identity.md）---
+
+    String ARG_PARTY_TYPE = "partyType";
+    String ARG_PARTY_ID = "partyId";
+
+    ErrorCode ERR_PARTY_NOT_FOUND = ErrorCode.define(
+            "erp.err.md.party.not-found",
+            "Party[{partyType}/{partyId}]不存在",
+            ARG_PARTY_TYPE, ARG_PARTY_ID);
 }
