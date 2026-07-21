@@ -14,9 +14,9 @@
 
 | State | Count |
 |-------|-------|
-| todo | 10 |
+| todo | 9 |
 | ready | 0 |
-| done | 1 |
+| done | 2 |
 
 ## 3. 框架/平台复用
 
@@ -39,7 +39,7 @@
 | Manufacturing | MRP 单次确定性计算、APS 排程、SPC、NCR/CAPA | MRP/DRP 多场景仿真引擎（P1） |
 | Master Data | Partner/Employee/Organization 分离实体 | 统一 Party 身份查询（P1）、跨境贸易字段（P2）、日期范围有效性模式（P2） |
 | Cross-cutting | integration-pattern.md webhooks | 外部 API 集成参考模式（P1）、业务模块元数据 BT5 风格（P2） |
-| Inventory | 3 层模型 + 加权移动平均/FIFO/标准成本 | 成本计算子计算器注入模式文档化（P1） |
+| Inventory | 3 层模型 + 加权移动平均/FIFO/标准成本 | 成本计算子计算器注入模式文档化（P1） ✅ D3 done |
 | Platform | Maven 模块编译期依赖 | 插件热管理可行性研究（P3） |
 
 ## 5. Milestones
@@ -72,7 +72,7 @@
 |-----------|--------|-----------|--------------|----------------|
 | D1: External API Integration Reference Pattern | done | `docs/architecture/external-api-integration-pattern.md` (**NEW**) | | GraphQL driver, xpl, IoC |
 | D2: Business Module Metadata (BT5-style) | todo | `docs/architecture/business-module-metadata.md` (**NEW**) | | module-meta.json generation pipeline |
-| D3: Cost Calculation Sub-Calculator Injection | todo | `docs/design/finance/costing-methods.md` (**EXPAND**) | | existing CostingStrategy hierarchy |
+| D3: Cost Calculation Sub-Calculator Injection | done | `docs/design/finance/costing-methods.md` (**EXPAND**) | | existing CostingStrategy hierarchy |
 | D4: Plugin Hot Management Research | todo | `docs/analysis/plugin-hot-management-research.md` (**NEW**) | | P3 feasibility study |
 
 ## 6. Work Item Details
@@ -287,6 +287,27 @@ C3（Date-Ranged Validity Pattern）已落地，状态 `todo → done`：
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
   - 下游依赖模块（purchase/sales/finance service）`mvn test` 全绿无回归
 - **Deferred successor**：全量实体应用（17 个 follow-up 实体清单见 owner doc §10）/ PRIORITY 策略运行时取值 helper（`pickHighestPriority`，触发：sales `ErpSalPriceList` 接入）/ STACKABLE 策略叠加计算 helper（触发：sales `ErpSalPricingRule` 接入）/ 物化视图/反向索引按日期查询（触发：单实体有效记录数 > 10K 且 effectiveOn 查询 P95 > 200ms）/ helper 下沉到独立 `erp-common-dao` 模块（触发：跨域接入数 > 3，aps 域当前不依赖 md-service）
+
+## 8.7 D3 落地证据（2026-07-21）
+
+D3（Cost Calculation Sub-Calculator Injection）已落地，状态 `todo → done`：
+
+- **Plan**：`docs/plans/2026-07-21-2225-2-costing-sub-calculator-injection-doc.md`（2 Phase 全 done：Phase 1 代码核对 + 章节骨架 + Decision E 同型分类裁决；Phase 2 7 小节正文 + roadmap 同步）。含 2 轮独立草案审查（iteration 1 needs-revision → iteration 2 acceptable-as-is）
+- **Owner Doc**：`docs/design/finance/costing-methods.md`（**EXPAND**，既有 566 行 → 追加 §子计算器注入模式（D3）新章节，7 小节完整：模式定义 / 结构组成 / 何时使用此模式 / 如何新增一个策略 / 同型与异型分类裁决（Decision E）/ 反模式自检表 / 落地证据）。既有 8 节正文与各 plan 实现注记不动，仅追加新章节保持向后兼容
+- **Decision E 同型分类裁决**（Phase 1 落盘，含代码行号证据）：
+  - **同型实例（2 个）**：`CostingStrategy`（inventory）+ `IErpFinAcctDocProvider`（finance）—— 相同形状不同分派键（String `costMethod` vs enum Set `businessType`），均满足「接口 + 多实现 + 自描述键 + registry + O(1) 分派」五要素
+  - **反模式实例（1 个）**：`CostAdjustmentService`（inventory，320 行）—— 内联 `if/Objects.equals` 链分派（`:108`/`:132`/`:189`/`:301`），应重构为 Strategy+registry。触发条件：业务方新增第 3 种 adjustType
+  - **非分派 helper（1 个）**：`CostRollupService`（manufacturing，379 行）—— 单一递归 BOM 聚合服务，无分派键、无接口/多实现拆分；`if/equals`（`:219`/`:222`）仅是 overhead mode 内部选择，**不是**分派模式。文档化目的：防止后续维护者误分类
+- **反模式自检表**（6 项，超过 plan 退出条件 ≥5 项）：AP-01 禁止手写 if/switch 分派（含 `CostAdjustmentService` 反例）/ AP-02 禁止策略内直接写库 / AP-03 禁止绕过 resolver / AP-04 漏改 isSupported 静默失败 / AP-05 必补单测 / AP-06 勿把聚合 helper 误分类为分派模式（含 `CostRollupService` 反例）
+- **新增策略步骤清单**（7 步）：实现接口 → 声明常量 → 字典扩码值 → Bean 注册 + 注入器 `@Inject`+`initRegistry` → resolver `isSupported` 识别 → 测试范式（7 类 costMethod 各一）→ 跨域解析验证（如适用）
+- **代码核对基线**（Phase 1 完成，Phase 2 复核一致）：
+  - 接口签名：`CostingStrategy.java:18`（38 行，3 方法）
+  - 策略清单：7 类 costMethod（常量值见 `ErpInvConstants.java:59-65`；7 独立测试类见 §4 表）
+  - 注入器/分派器：`StockMoveBookkeeper.java:56-128`（`@Inject` 7 策略 + CostMethodResolver + `Map<String, CostingStrategy> strategyByMethod` registry）
+  - Resolver 解析链：`CostMethodResolver.java:22-85`（3 级解析 + 7 码值白名单 + costing-enabled 总开关兜底）
+  - Context：`BookingContext.java:20-52`（6 方法，由 `StockMoveBookkeeper implements`）
+- **纯文档无测试基线**：D3 不引入新代码（roadmap §6 明确 `D3 ORM 变更 = 否`），无新单测/E2E/visual smoke。Phase 1/2 验证 = `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）保证既有代码无回归
+- **Deferred successor**：未完工策略实现（BATCH full / INDIVIDUAL full / LIFO full / WEIGHTED_AVERAGE full 月末结账，本节 §4 提供新增路径）/ `CostAdjustmentService` 反模式重构（触发：业务方新增第 3 种 adjustType）/ 同型模式推广到其他「多算法 + 数据驱动 + 统一输出」场景（触发：≥3 算法 + config 选择的具体需求）
 
 ## 9. Rules
 

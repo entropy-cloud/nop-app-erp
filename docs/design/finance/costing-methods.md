@@ -564,3 +564,199 @@ public BigDecimal findIncomingCost(Long moveId) {
 | Odoo | FIFO 队列 | stock_queue 字段 |
 | ERPNext | FIFO 队列实现 | stock_ledger_entry.json 的 stock_queue |
 | 赤龙 | 库存流水成本 | InvStock.stockNumber 正负数明细 |
+
+## 子计算器注入模式（D3）
+
+> 来源：`docs/plans/2026-07-21-2225-2-costing-sub-calculator-injection-doc.md`（D3 文档化）；权威实现 = `module-inventory/erp-inv-service` 代码。本节抽象既有「策略 + 注入器 + resolver + context」四要素为可复用范式，文档化「何时选用」+「如何新增策略」+「同型/异型分类裁决」+「反模式自检表」。**不引入新代码**（D3 = 纯文档扩展）。
+
+### 1. 模式定义
+
+**子计算器注入模式（Sub-calculator Injection Pattern）**：把同一操作的多种算法实现各自封装为独立的 Strategy Bean，由统一的**注入器/分派器**在启动期收集全部 Strategy 实例建立 registry，运行期按数据/配置携带的**分派键**路由到对应 Strategy，所有 Strategy 经共享 **Context** 访问记账基础设施、写**统一输出通道**。该模式由四要素组成：
+
+```
+                                子计算器注入模式四要素
+        ┌──────────────────────────────────────────────────────────────────┐
+        │                                                                  │
+        │  (1) Strategy 接口         ──→  多 Algorithm 实现                 │
+        │      costMethod()               (MOVING_AVERAGE/FIFO/...)        │
+        │      onIncoming/onOutgoing                                         │
+        │                  ▲                                                 │
+        │                  │ @Inject + 启动期 register                       │
+        │                  │                                                 │
+        │  (2) 注入器/分派器  ──────→  Map<key, Strategy> registry           │
+        │      bookCompletion               @PostConstruct initRegistry      │
+        │      resolveStrategy(method)      按键 O(1) 路由                   │
+        │                  ▲                                                 │
+        │                  │ resolve(line, acctSchemaId)                    │
+        │                  │                                                 │
+        │  (3) Resolver              ──→  解析链 + 兜底总开关                 │
+        │      Material.costMethod           erp-inv.costing-enabled        │
+        │      → AcctSchema.costingMethod    erp-inv.default-cost-method    │
+        │      → config default                                               │
+        │                                                                      │
+        │  (4) Context（共享记账上下文）—— Strategy 经此访问基础设施           │
+        │      upsertBalance / writeLedger / recomputeAvailable              │
+        │      updateBalanceWithRetry / daoProvider / ormTemplate            │
+        │                                                                      │
+        │  统一输出通道：策略只写 ErpInvStockLedger.unitCost/totalCost       │
+        │  既有 InvPostingDispatcher 读 ledger.totalCost 零改动拾取 COGS     │
+        └──────────────────────────────────────────────────────────────────┘
+```
+
+抽象定义：
+
+| 要素 | 角色 | 仓库实例 |
+|------|------|---------|
+| **Strategy 接口** | 算法契约；每个实现自描述分派键 + 实现该键对应的算法 | `CostingStrategy`（`costing/CostingStrategy.java:18`）|
+| **注入器/分派器** | 持有全部 Strategy Bean；启动期建 registry；运行期按键分派 | `StockMoveBookkeeper`（`stock/StockMoveBookkeeper.java:56`）|
+| **Resolver** | 按数据/配置解析分派键；提供兜底与总开关 | `CostMethodResolver`（`costing/CostMethodResolver.java:22`）|
+| **Context** | 共享记账基础设施接口；策略经此访问余额/流水/dao，避免循环耦合 | `BookingContext`（`costing/BookingContext.java:20`，由 `StockMoveBookkeeper` 实现）|
+
+### 2. 结构组成
+
+逐一说明四要素的实现细节（权威 = 代码）：
+
+**(2.1) Strategy 接口（`CostingStrategy.java:18`，38 行）** —— 3 方法：
+- `String costMethod()`（`:21`）—— 自描述分派键，对应字典 `erp-md/cost-method` 的码值。**由实现者声明**，registry 据此入键，避免分派器手写 `if/switch` 链。
+- `BigDecimal onIncoming(move, line, acctSchemaId, unitCost, ctx)`（`:29-30`）—— 入库记账：维护成本层（FIFO/BATCH/LIFO/SPECIFIC）/ 重算 avgCost（MOVING_AVERAGE/WEIGHTED_AVERAGE）+ 更新余额 + 写不可变流水；返回实际记入流水的单位成本。
+- `BigDecimal onOutgoing(move, line, acctSchemaId, ctx)`（`:37`）—— 出库记账：消耗成本层 / 取 avgCost + 扣减余额 + 写不可变流水；返回实际记入流水的单位成本。
+
+**当前 7 个实现**（每个 `costMethod()` 返回 `ErpInvConstants.COST_METHOD_*` 常量；常量值见 `ErpInvConstants.java:59-65`）：
+
+| Strategy 类 | `costMethod()` 返回 | 常量实际值 | 测试类 |
+|------------|---------------------|-----------|--------|
+| `MovingAverageCostingStrategy`（`:31-32`）| `COST_METHOD_MOVING_AVERAGE` | `MOVING_AVERAGE` | （基线，被 `TestErpInvCostingDispatch` 与全部 E2E 套件隐式覆盖）|
+| `WeightedAverageCostingStrategy`（`:37-38`）| `COST_METHOD_MONTHLY_WEIGHTED_AVERAGE` | `WEIGHTED_AVERAGE` | `TestErpInvWeightedAverageCosting` |
+| `FifoCostingStrategy`（`:56-57`）| `COST_METHOD_FIFO` | `FIFO` | `TestErpInvFifoCosting` + `TestErpInvFifoCostingEndToEnd` |
+| `LifoCostingStrategy`（`:48-49`）| `COST_METHOD_LIFO` | `LIFO` | `TestErpInvLifoCosting` |
+| `StandardCostingStrategy`（`:32-33`）| `COST_METHOD_STANDARD` | `STANDARD` | `TestErpInvStandardCosting` |
+| `SpecificCostingStrategy`（`:48-49`）| `COST_METHOD_INDIVIDUAL` | `SPECIFIC` | `TestErpInvSpecificCosting` |
+| `BatchCostingStrategy`（`:53-54`）| `COST_METHOD_BATCH` | `BATCH` | `TestErpInvBatchCosting` |
+
+> **字典 vs 常量值注意**：常量 `COST_METHOD_INDIVIDUAL = "SPECIFIC"`（个别计价法），常量 `COST_METHOD_MONTHLY_WEIGHTED_AVERAGE = "WEIGHTED_AVERAGE"`（全月一次加权平均）。新增策略时字典码值必须与常量字面量严格一致，否则 resolver `isSupported` 不识别。
+
+**(2.2) 注入器/分派器（`StockMoveBookkeeper.java:56-128`，322 行）**：
+- `@Inject` 字段注入全部 7 策略 + `CostMethodResolver`（`:58-86`，8 个 `@Inject`）。
+- `Map<String, CostingStrategy> strategyByMethod = new HashMap<>()`（`:88`）—— registry。
+- `@PostConstruct initStrategyRegistry()`（`:90-99`）—— 启动期逐个调 `register(strategy)`（`:101-103`，`strategyByMethod.put(strategy.costMethod(), strategy)`）建 registry。
+- `bookCompletion(move, lines, acctSchemaId)`（`:109-123`）—— 入口分派器：每行经 `costMethodResolver.resolve(line, acctSchemaId)`（`:111`）取键 → `resolveStrategy(method)`（`:125-128`，registry 查 + null 回退移动加权平均）→ 按 `moveType`（INCOMING/OUTGOING/INTERNAL_TRANSFER）调对应 `onIncoming`/`onOutgoing`。
+
+**(2.3) Resolver（`CostMethodResolver.java:22-85`，85 行）**：
+- `resolve(line, acctSchemaId)`（`:32-44`）—— 解析链（短路首个非空且 supported）：
+  1. `costing-enabled=false` → 立即返回 `MOVING_AVERAGE`（**总开关兜底**，`:33-35`）
+  2. `readMaterialCostMethod(materialId)` → 读 `ErpMdMaterial.costMethod`（`:36`/`:57-64`）
+  3. `acctSchemaId != null` → `readAcctSchemaCostingMethod` → 读 `ErpMdAcctSchema.costingMethod`（`:37-39`/`:66-73`）
+  4. `method == null || !isSupported(method)` → `defaultCostMethod()` → 读 config `erp-inv.default-cost-method`，默认 `MOVING_AVERAGE`（`:40-43`/`:80-84`）
+- `isSupported(method)`（`:47-55`）—— 7 码值白名单，**未识别码值回退默认**（避免记账中断，successor 接管时改策略分派表即可）。
+- `isCostingEnabled()`（`:75-78`）—— 读 `ErpInvConstants.CONFIG_COSTING_ENABLED = "erp-inv.costing-enabled"`（`ErpInvConstants.java:31`），默认 true；置 false 时**一律回退移动加权平均**（向后兼容总开关，对齐既有硬编码行为）。
+
+**(2.4) Context（`BookingContext.java:20-52`，52 行）** —— 6 方法接口，由 `StockMoveBookkeeper implements BookingContext`（`StockMoveBookkeeper.java:56`）实现，避免策略与记账器循环耦合：
+- `upsertBalance(move, line, warehouseId, locationId)`（`:22-23`）—— 余额维度 upsert（物料 × 仓库 × 库位 × 批次 × owner）。
+- `writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, signedQty, unitCost, signedTotalCost, costMethod)`（`:25-27`）—— 写不可变流水 `ErpInvStockLedger` + 结存快照。
+- `recomputeAvailable(balance)`（`:29`）—— 重算 available = total − reserved − locked。
+- `updateBalanceWithRetry(initialBaseline, applyDelta)`（`:46-47`）—— **乐观锁保护下的余额更新**（UC-INV-08 并发扣减加固，plan 2026-07-07-0024-2）：`applyDelta` 必须为纯函数，冲突时 evict + reload + 重试，重试上限 `erp-inv.concurrent-deduct-max-retry`（默认 5）。
+- `daoProvider()`（`:49`）+ `ormTemplate()`（`:51`）—— 数据访问底层（策略内查 `ErpInvCostLayer` 等用）。
+
+**(2.5) 统一输出通道（COGS 通道零改动）**：
+- 策略**只写** `ErpInvStockLedger.unitCost/totalCost`（经 `BookingContext.writeLedger`）。
+- 既有 `InvPostingDispatcher` 读 `ledger.getTotalCost()` 汇总为 `TOTAL_COST` 过账——**零改动拾取**，FIFO/STANDARD 等新策略的 COGS 经既有 SALES_OUTPUT/PURCHASE_INPUT 过账通道流动。
+- 这是本模式的关键不变量：**新增策略不改下游过账分派器**。
+
+### 3. 何时使用此模式
+
+**适用判定矩阵**（三个条件同时满足时选用本模式；任一不满足请用 Processor/task.xml/聚合 helper 等替代）：
+
+| # | 条件 | 本仓库正例 | 反例（不满足则不应用本模式）|
+|---|------|-----------|------------------------|
+| C1 | 同一操作有**多种算法**实现，且算法数量预期会增长（≥3）| 入库/出库记账有 7 种 costMethod | 单一算法（如 `CostRollupService.rollup` 是单一 BOM 卷算）→ 用聚合 helper，不用本模式 |
+| C2 | 算法选择**由数据/配置驱动**（物料 costMethod / 账套 costingMethod / config），而非由调用方硬编码 | `ErpMdMaterial.costMethod` / `ErpMdAcctSchema.costingMethod` / config | 调用方在代码里显式选择算法 → 直接调具体类即可 |
+| C3 | 所有算法需经**统一输出通道**（同一 ledger/同一过账 dispatcher），下游无需感知算法选择 | 7 策略均写 `ErpInvStockLedger`，`InvPostingDispatcher` 零改动 | 各算法输出形态不同（不同表/不同事件）→ 拆为独立 Provider + 各自过账通道 |
+
+**与 iDempiere CostingMethod 的对照**：iDempiere 用 `MCost` + `MCostDetail` + `CostingMethod` enum + `CostingMethodFactory`（按 enum 查 strategy）实现同型模式；本仓库把 factory 简化为 `StockMoveBookkeeper.strategyByMethod` HashMap + `@PostConstruct` 装配，把 CostingMethod enum 简化为 String 码值（与字典 `erp-md/cost-method` 同源），更贴合 Nop 的字典驱动约定。
+
+**与 Processor/task.xml 的边界**：本模式解决「同一操作的算法多态」，**不解决**「多步编排拓扑可变」。多步流程（如审批-触发-过账三段）用 Processor/task.xml；纯算法多态用本模式。两者正交：一个 Processor 的某一步可委派给本模式的分派器。
+
+### 4. 如何新增一个策略
+
+以「新增 INDIVIDUAL（个别计价）full 支持」为例（当前 `SpecificCostingStrategy` 已落地，此处仅作步骤示范）：
+
+| 步骤 | 动作 | 文件位置 | 关键约束 |
+|------|------|---------|---------|
+| 1 | **实现 Strategy 接口** | `module-inventory/erp-inv-service/.../costing/XxxCostingStrategy.java` | `@Override costMethod()` 返回新码值常量；`onIncoming`/`onOutgoing` 经 `ctx.upsertBalance`/`ctx.writeLedger`/`ctx.updateBalanceWithRetry` 访问基础设施；**不要在策略内直接 `new ErpInvStockLedger()` 或 `daoProvider().daoFor(...)` 写库**——必须经 ctx，以保证乐观锁/审计/COGS 通道统一 |
+| 2 | **声明常量** | `ErpInvConstants.java` | `String COST_METHOD_XXX = "XXX";` —— 字面量必须与字典 `erp-md/cost-method` 的 code 完全一致 |
+| 3 | **字典扩码值** | `module-master-data/model/app-erp-master-data.orm.xml` 的 `<dict name="erp-md/cost-method">` | 追加 `<option value="XXX" label="..."/>`；ORM 变更触发 `mvn clean install -DskipTests` 增量重新生成 dict.yaml + DaoConstants |
+| 4 | **Bean 注册（注入器）** | `module-inventory/erp-inv-service/.../beans/app-service.beans.xml` | `<bean id="...XxxCostingStrategy" class="...XxxCostingStrategy"/>`；同时在 `StockMoveBookkeeper` 增 `@Inject XxxCostingStrategy` 字段 + `initStrategyRegistry()` 内调 `register(xxxCostingStrategy)` |
+| 5 | **Resolver 识别** | `CostMethodResolver.isSupported`（`:47-55`）| 增 `Objects.equals(method, ErpInvConstants.COST_METHOD_XXX)` 分支；未加则 resolver 走默认回退，策略永不分派（**静默失败**，详见反模式自检表 AP-04）|
+| 6 | **测试范式（7 类 costMethod 各一）** | `module-inventory/erp-inv-service/src/test/.../TestErpInvXxxCosting.java` | 继承 `JunitAutoTestCase`；`@NopTestConfig(localDb=true, initDatabaseSchema=TRUE, enableActionAuth=FALSE)`；经 `IGraphQLExecutor` 触发移动单 DONE → 断言 `ErpInvStockLedger.unitCost/totalCost` + `ErpInvStockBalance.avgCost/totalCost` + `ErpInvCostLayer`（如适用）；至少覆盖正路径（入库+出库）+ 边界（余额 0 拒绝 / 红冲不变量）|
+| 7 | **跨域解析验证（如适用）** | 若策略依赖其他域（如 STANDARD 依赖 mfg `CostRollupLine`）| 注入跨域 dao（经 `erp-mfg-dao` 编译期依赖）；config-gated 默认关，单域测试不依赖跨域 service 启动 |
+
+> **新增策略的反模式自检**（执行步骤 1-7 后逐项确认，详见 §6）：
+> - AP-01：是否在分派器里写了 `if/switch` 按码值分派？（应为 registry 自动入键）
+> - AP-02：策略是否直接 `daoProvider().daoFor(ErpInvStockLedger.class).saveEntity(...)` 写库？（应经 `ctx.writeLedger`）
+> - AP-03：策略是否绕过 resolver 在调用方硬编码 `costMethod`？（应让 resolver 决定）
+> - AP-04：是否漏改 `CostMethodResolver.isSupported`？（漏改 = 策略永不分派 = 静默失败）
+> - AP-05：是否漏写单测？（7 类 costMethod 各一，新增必须补）
+
+### 5. 同型与异型分类裁决（Decision E）
+
+> **Decision E（2026-07-21，Phase 1 落盘）**：经代码核实，仓库内「子计算器注入模式」的真正实例仅 2 个；另有 1 个反模式实例 + 1 个非分派 helper 必须显式区分以免误分类。所有结论附代码行号证据。
+
+**同型实例（2 个，相同形状不同分派键）**：
+
+| 实例 | 接口 | 分派键 | 注入器/分派器 | registry 形态 | 代码证据 |
+|------|------|--------|--------------|--------------|----------|
+| 存货成本计算 | `CostingStrategy`（`module-inventory/erp-inv-service/.../costing/CostingStrategy.java:18`）| `costMethod()` 自描述字符串（对应 `erp-md/cost-method` 码值）| `StockMoveBookkeeper`（`.../stock/StockMoveBookkeeper.java:56`）| `Map<String, CostingStrategy> strategyByMethod`（`StockMoveBookkeeper.java:88`），`@PostConstruct initStrategyRegistry()`（`:90-99`）逐个 `register(strategy)`（`:101-103`）按 `strategy.costMethod()` 入键 | `bookCompletion` 按 `costMethodResolver.resolve(line, acctSchemaId)`（`:111`）取键 → `resolveStrategy(method)`（`:125-128`）查 registry 分派 `onIncoming`/`onOutgoing` |
+| 业财过账凭证生成 | `IErpFinAcctDocProvider`（`module-finance/erp-fin-service/.../posting/IErpFinAcctDocProvider.java:16`）| `getSupportedBusinessTypes()` 自描述 `Set<ErpFinBusinessType>`（`:21`）| `ErpFinAcctDocRegistry`（`.../posting/ErpFinAcctDocRegistry.java:28`）| `Map<ErpFinBusinessType, IErpFinAcctDocProvider> providerMap`（`:33-34`），`@PostConstruct init()`（`:45-79`）双层装配（非默认 Provider 优先 + 默认 Provider 仅填充空缺，冲突 fail-fast `:55-60`）| `getProvider(businessType)`（`:81-83`）O(1) 查 registry 分派 `createFacts` |
+
+两实例**同型**的判定依据：均满足「接口 + 多实现 + 由实现自描述分派键（`costMethod()` / `getSupportedBusinessTypes()`）+ 注入器统一 `@Inject` 收集 + 启动期建 registry + 运行期按键 O(1) 分派」五要素。差异仅在分派键的值类型（String vs enum Set）与 registry 装配策略（后者多了 fail-fast 冲突裁决 + 默认 Provider 兜底）——这些是**同型内的实现变体**，不构成独立的模式分叉。
+
+**反模式实例（1 个，应重构为 Strategy+registry）**：
+
+| 实例 | 现状（代码证据）| 为什么是反模式 | 重构方向 |
+|------|----------------|---------------|---------|
+| `CostAdjustmentService`（`module-inventory/erp-inv-service/.../costing/CostAdjustmentService.java`，320 行）| 内联 `if (Objects.equals(costMethod, COST_METHOD_FIFO))` 分派成本层应用（`:108-112` 调 `applyFifo`/`applyAverageLike`）；内联 `if (Objects.equals(adjust.getAdjustType(), ADJUST_TYPE_STANDARD_REVALUATION))` 分派 rollup 发布（`:132`/`:189`/`:301`，3 处重复同表达式）| 用手写 `if/Objects.equals` 链做键分派，而非「接口 + registry」——新增 `adjustType` 或 `costMethod` 码值需多处改 `if` 链，扩展点散落；同表达式在 apply/reverse/resolveOldUnitCost 三处复制，违反 DRY | 抽 `CostAdjustApplier` 接口（`appliesTo(costMethod, adjustType)` + `apply`/`reverse`），各类型实现注册为 bean，`CostAdjustmentService` 持 `Map<Key, Applier>` registry。触发条件：业务方新增第 3 种 adjustType 或非 FIFO/AVERAGE 的 costMethod 调整路径 |
+
+**非分派 helper（1 个，必须与分派模式区分）**：
+
+| 实例 | 现状（代码证据）| 为什么不是分派模式 | 文档化目的 |
+|------|----------------|---------------|-----------|
+| `CostRollupService`（`module-manufacturing/erp-mfg-service/.../costing/CostRollupService.java`，379 行）| 单一递归 BOM 成本聚合服务（`rollup(bomId)` `:85-95` → `computeUnit` `:130-180` 记忆化递归）；`@Inject IDaoProvider` + `BomExpander`（`:69-72`），无接口/多实现拆分；overhead 模式选择用内联 `if/equals`（`:219` MACHINE_HOUR / `:222` LABOR_RATIO），仅是 helper 内部算法分支 | 无分派键（单一入口 `rollup(bomId)`）、无接口/多实现拆分、无 registry；`if/equals` 是聚合算法内部的策略选择（且仅 2 个 mode，config-gated 默认关），不是「按数据/配置选择算法」的多实现分派 | 防止后续维护者看到 `if/equals` 模式标签误分类为「分派模式反例」，浪费重构成本。这是聚合 helper，其 `if/equals` 是合法的内部算法选择 |
+
+**对 owner doc 对照表的影响**：
+- 同型表（§5）仅含 2 实例：`CostingStrategy` vs `IErpFinAcctDocProvider`。
+- 反模式表（§6）含 2 仓库内具体例证：`CostAdjustmentService`（应重构为 Strategy+registry）+ `CostRollupService`（聚合 helper，**勿**误分类为分派模式反例）。
+
+### 6. 反模式自检表
+
+新增或修改策略 / 分派器 / resolver 后，必须逐项确认下列 **6 项反模式均不存在**（≥5 项为 plan 退出条件，本节交付 6 项含 2 个仓库内具体例证）。每项附「反模式」「应为」「仓库内例证/出处」三栏。
+
+| ID | 反模式 | 应为 | 仓库内例证 / 出处 |
+|----|--------|------|------------------|
+| **AP-01** | 在分派器/调用方用 `switch/case` 或 `if/Objects.equals` 链按分派键分派算法 | 由 `Map<key, Strategy>` registry + `@PostConstruct initRegistry()` 自动入键；新增策略只需 `register(strategy)` | ❌ **反例**：`CostAdjustmentService.applyLine:108` 用 `if (Objects.equals(costMethod, COST_METHOD_FIFO))` 分派成本层应用；`applyAverageLike:132` / `reverseLine:189` / `resolveOldUnitCost:301` 三处重复 `Objects.equals(adjust.getAdjustType(), ADJUST_TYPE_STANDARD_REVALUATION)` —— 新增 adjustType 或 costMethod 需改 ≥4 处 `if`。✅ **正例**：`StockMoveBookkeeper.bookCompletion:111` 经 `resolveStrategy(method)` 查 registry，零 `if/switch` |
+| **AP-02** | 策略内直接 `daoProvider().daoFor(ErpInvStockLedger.class).saveEntity(...)` 写库（绕过 Context） | 经 `BookingContext.writeLedger(...)` 写流水，保证乐观锁 + 审计 + COGS 通道统一 | ✅ **正例**：`MovingAverageCostingStrategy` / `FifoCostingStrategy` 等全部 7 策略均经 `ctx.writeLedger` / `ctx.upsertBalance` / `ctx.updateBalanceWithRetry`，无直接 `daoFor(ErpInvStockLedger.class)` 写库（grep `costing/*CostingStrategy.java` 验证）|
+| **AP-03** | 调用方绕过 resolver 硬编码 `costMethod`（如 `if (material.isFifo()) strategy.onOutgoing(...)`） | 让 `CostMethodResolver.resolve(line, acctSchemaId)` 唯一决定分派键；调用方只持有 resolver 返回的 String | ✅ **正例**：`StockMoveBookkeeper.bookCompletion:111` 只调 `costMethodResolver.resolve(line, acctSchemaId)`，不读 `material.costMethod`；移动单状态机/过账分派器均不感知 costMethod |
+| **AP-04** | 新增策略后漏改 `CostMethodResolver.isSupported`（`:47-55`） | 同步在 `isSupported` 增 `Objects.equals(method, COST_METHOD_NEW)` 分支 | ⚠️ **静默失败风险**：漏改时 resolver 走 `defaultCostMethod()`（`:40-43`），策略永不被分派——`bookCompletion` 不抛异常但 ledger 用错成本法。这是本模式唯一的「编译期不报错、运行期静默走默认」陷阱，单测必须覆盖（见 AP-05）|
+| **AP-05** | 新增策略后不补单测 | 至少 1 个集成测试（`JunitAutoTestCase` + `IGraphQLExecutor` 触发 DONE → 断言 ledger/balance/layer），覆盖正路径 + 边界（余额 0 拒绝 / 红冲不变量） | ✅ **正例**：7 类 costMethod 均有独立测试类（`TestErpInvWeightedAverageCosting` / `TestErpInvFifoCosting` + `TestErpInvFifoCostingEndToEnd` / `TestErpInvLifoCosting` / `TestErpInvStandardCosting` / `TestErpInvSpecificCosting` / `TestErpInvBatchCosting`，外加 `TestErpInvCostingDispatch` 验证 resolver 分派链 + 总开关兜底）|
+| **AP-06** | 把**聚合 helper**（单一入口、无分派键、无接口/多实现拆分）误分类为分派模式并强行重构 | 区分「分派模式」（多算法 + 数据驱动 + 统一通道，C1+C2+C3 全满足）vs「聚合 helper」（单一算法、内部含 if/equals 仅是算法分支）；聚合 helper 的内联 `if/equals` 合法，不适用本模式 | ❌ **误分类反例**：`CostRollupService`（`module-manufacturing/erp-mfg-service/.../costing/CostRollupService.java`，379 行）—— 单一入口 `rollup(bomId)`（`:85`），无 Strategy 接口，`if/equals`（`:219`/`:222`）仅是 overhead 分配 mode 选择（且仅 2 个 mode，config-gated 默认关），**不是**分派模式。强行重构为 Strategy+registry 会增加 4 类无业务价值的样板代码 |
+
+> **反模式自检纪律**：每新增/修改 1 个策略、分派器或 resolver 方法后，必须立即逐项核对 AP-01 至 AP-06，不能批量写完所有代码后统一自检（与 `nop-backend-dev` skill 的「自检纪律」一致）。
+
+### 7. 落地证据
+
+> 本节为 D3 文档化的落地记录。D3 = 纯文档扩展（roadmap §6 明确 `D3 ORM 变更 = 否 — 仅为文档扩展`），无新代码、无新测试基线。
+
+- **Plan**：`docs/plans/2026-07-21-2225-2-costing-sub-calculator-injection-doc.md`（2 Phase 全 done：Phase 1 代码核对 + 章节骨架 + Decision E 同型分类裁决；Phase 2 7 小节正文 + roadmap 同步）
+- **Owner Doc**：本节（`docs/design/finance/costing-methods.md §子计算器注入模式（D3）`），EXPAND 既有 8 节正文与各 plan 实现注记不动，仅追加新章节。
+- **代码核对基线**（Phase 1 完成，Phase 2 复核一致）：
+  - 接口签名：`CostingStrategy.java:18`（38 行，3 方法）
+  - 策略清单：7 类（见 §2.1 表，`costMethod()` 返回值与 `ErpInvConstants.java:59-65` 严格一致）
+  - 注入器/分派器：`StockMoveBookkeeper.java:56-128`（322 行，`@Inject` 7 策略 + `CostMethodResolver` + `Map<String, CostingStrategy> strategyByMethod` registry + `@PostConstruct initStrategyRegistry`）
+  - Resolver 解析链：`CostMethodResolver.java:22-85`（Material.costMethod → AcctSchema.costingMethod → config default；`isSupported` 7 码值白名单；`costing-enabled=false` 总开关兜底）
+  - Context：`BookingContext.java:20-52`（6 方法，由 `StockMoveBookkeeper implements`）
+  - Bean 注册：`module-inventory/erp-inv-service/.../beans/app-service.beans.xml`（7 策略 + Bookkeeper + Resolver 各 1 bean，共 9 bean）
+  - 测试范式：7 类 costMethod 各 1 独立测试类 + `TestErpInvCostingDispatch`（分派链）
+- **纯文档无测试基线**：D3 不引入新代码，无新单测/E2E/visual smoke。Phase 1/2 验证 = `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）保证既有代码无回归。
+- **Deferred successor**：
+  - 未完工策略实现（BATCH full / INDIVIDUAL full / LIFO full / WEIGHTED_AVERAGE full 月末结账）：本节 §4 提供新增路径，触发条件 = 业务方启用对应 costMethod 需求。
+  - `CostAdjustmentService` 反模式重构为 Strategy+registry（AP-01 反例）：触发条件 = 业务方新增第 3 种 `adjustType` 或非 FIFO/AVERAGE 的 costMethod 调整路径，使 `if` 链扩展成本超过重构成本。
+  - 同型模式推广：本模式可作为其他「多算法 + 数据驱动 + 统一输出」场景（如多币种汇兑计算、多税制税额计算）的参考范式，触发条件 = 出现 ≥3 算法且需 config 选择的具体需求。
