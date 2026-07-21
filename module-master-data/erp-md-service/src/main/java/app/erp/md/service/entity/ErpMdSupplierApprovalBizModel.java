@@ -5,6 +5,7 @@ import app.erp.md.biz.IErpMdSupplierApprovalBiz;
 import app.erp.md.dao.entity.ErpMdSupplierApproval;
 import app.erp.md.service.ErpMdConstants;
 import app.erp.md.service.ErpMdErrors;
+import app.erp.md.service.daterange.ErpDateRangeOverlapValidator;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -14,6 +15,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import java.util.Objects;
@@ -33,12 +35,57 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *
  * <p>{@link #suspendByPartner} 为评分 standing=RED 跨域联动入口（purchase→master-data I*Biz，单事务）。
  * DAO 访问走 {@link CrudBizModel#dao()} / {@link #findFirst} 管道（对齐 service-layer 跨实体访问规则）。
+ *
+ * <p>C3 日期范围有效性模式试点（docs/design/date-ranged-validity-pattern.md §6/§7）：扩展
+ * {@code defaultPrepareSave} / {@code defaultPrepareUpdate} 钩子，对同 partnerId 维度做区间互斥校验
+ * （MUTEX 策略）。{@code status=REJECTED} 的记录视为「已废弃」不参与互斥（业务上 REJECTED 不生效）。
  */
 @BizModel("ErpMdSupplierApproval")
 public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApproval> implements IErpMdSupplierApprovalBiz {
 
     public ErpMdSupplierApprovalBizModel() {
         setEntityName(ErpMdSupplierApproval.class.getName());
+    }
+
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpMdSupplierApproval> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        enforceNoOverlapIfEffective(entityData.getEntity());
+    }
+
+    @Override
+    protected void defaultPrepareUpdate(EntityData<ErpMdSupplierApproval> entityData, IServiceContext context) {
+        super.defaultPrepareUpdate(entityData, context);
+        enforceNoOverlapIfEffective(entityData.getEntity());
+    }
+
+    /**
+     * 同 partnerId 区间互斥校验（仅当 status != REJECTED 时生效）。
+     *
+     * <p>REJECTED 记录视为「已废弃」不参与互斥（业务上不生效）；其他 5 态（APPLIED/APPROVED/PROBATION/SUSPENDED
+     * + null）视为有效记录参与区间检查。同 partnerId 同一时刻至多 1 条有效 AVL 资格。
+     */
+    protected void enforceNoOverlapIfEffective(ErpMdSupplierApproval entity) {
+        if (entity == null) {
+            return;
+        }
+        String status = entity.getStatus();
+        if (Objects.equals(status, ErpMdConstants.APPROVAL_STATUS_REJECTED)) {
+            return;
+        }
+        QueryBean query = new QueryBean();
+        query.addFilter(eq("partnerId", entity.getPartnerId()));
+        List<ErpMdSupplierApproval> samePartner = dao().findAllByQuery(query);
+        // 排除同 partnerId 下所有 REJECTED 记录（不参与互斥）
+        List<ErpMdSupplierApproval> effective = new ArrayList<>();
+        for (ErpMdSupplierApproval other : samePartner) {
+            String s = other.getStatus();
+            if (!Objects.equals(s, ErpMdConstants.APPROVAL_STATUS_REJECTED)) {
+                effective.add(other);
+            }
+        }
+        ErpDateRangeOverlapValidator.enforceMutex(
+                entity, effective, ErpMdErrors.ERR_MD_DATE_RANGE_OVERLAP, entity.getId());
     }
 
     @Override

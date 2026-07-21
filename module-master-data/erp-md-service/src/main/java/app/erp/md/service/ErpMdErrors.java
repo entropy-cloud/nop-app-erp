@@ -1,5 +1,6 @@
 package app.erp.md.service;
 
+import app.erp.md.service.daterange.ErpDateRangeOverlapValidator;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -198,4 +199,17 @@ public interface ErpMdErrors {
             "erp.err.md.exchange-rate-api.response-invalid",
             "汇率查询 API 响应格式错误（provider={provider}, baseCurrency={baseCurrency}）—— 响应非 JSON 或缺必需字段",
             ARG_PROVIDER, ARG_BASE_CURRENCY);
+
+    // --- C3 日期范围有效性模式（docs/design/date-ranged-validity-pattern.md §6）---
+    // 试点 master-data 域通用错误码；其他域接入时按域前缀独立定义，不复用此码。
+    // ARG_* 参数键常量集中于 ErpDateRangeOverlapValidator（跨域复用，不在此重复声明）。
+
+    /** 「同维度互斥」重叠校验失败（friendly pre-save check，避免 DB 无 UK 兜底导致数据不一致）。 */
+    ErrorCode ERR_MD_DATE_RANGE_OVERLAP = ErrorCode.define(
+            "erp.err.md.date-range.overlap",
+            "{entityName} 在区间 [validFrom={validFrom}, validTo={validTo}] 与既有记录(id={conflictId}) 重叠，同维度互斥策略不允许",
+            ErpDateRangeOverlapValidator.ARG_ENTITY_NAME,
+            ErpDateRangeOverlapValidator.ARG_VALID_FROM,
+            ErpDateRangeOverlapValidator.ARG_VALID_TO,
+            ErpDateRangeOverlapValidator.ARG_CONFLICT_ID);
 }
