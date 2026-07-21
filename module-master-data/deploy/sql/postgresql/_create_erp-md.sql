@@ -394,6 +394,15 @@ CREATE TABLE erp_md_material(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
+  vat_rate NUMERIC(6,4)  ,
+  drawback_rate NUMERIC(6,4)  ,
+  customs_hs VARCHAR(12)  ,
+  country_of_origin VARCHAR(2)  ,
+  preference_code VARCHAR(20)  ,
+  customs_name_cn VARCHAR(200)  ,
+  customs_name_en VARCHAR(200)  ,
+  declaration_unit VARCHAR(20)  ,
+  supervision_condition VARCHAR(10)  ,
   constraint PK_erp_md_material primary key (id)
 );
 
@@ -411,6 +420,34 @@ CREATE TABLE erp_md_location(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   constraint PK_erp_md_location primary key (id)
+);
+
+CREATE TABLE erp_md_material_customs(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  material_id INT8 NOT NULL ,
+  declaration_no VARCHAR(50) NOT NULL ,
+  partner_id INT8  ,
+  declaration_date DATE NOT NULL ,
+  qty_declared NUMERIC(20,4) NOT NULL ,
+  uom_declared VARCHAR(20) NOT NULL ,
+  amount_declared NUMERIC(18,2) NOT NULL ,
+  currency_id INT8  ,
+  exchange_rate NUMERIC(20,8)  ,
+  amount_functional NUMERIC(18,2)  ,
+  duty_amount NUMERIC(18,2)  ,
+  vat_amount NUMERIC(18,2)  ,
+  drawback_receipt_no VARCHAR(50)  ,
+  source_bill_type VARCHAR(50)  ,
+  source_bill_code VARCHAR(50)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  remark VARCHAR(1000)  ,
+  constraint PK_erp_md_material_customs primary key (id)
 );
 
 CREATE TABLE erp_md_material_sku(
@@ -1121,6 +1158,24 @@ CREATE TABLE erp_md_uom_conversion(
                     
       COMMENT ON COLUMN erp_md_material.remark IS '备注';
                     
+      COMMENT ON COLUMN erp_md_material.vat_rate IS '增值税率(报关快查)';
+                    
+      COMMENT ON COLUMN erp_md_material.drawback_rate IS '退税率(报关快查)';
+                    
+      COMMENT ON COLUMN erp_md_material.customs_hs IS '海关HS编码';
+                    
+      COMMENT ON COLUMN erp_md_material.country_of_origin IS '原产地';
+                    
+      COMMENT ON COLUMN erp_md_material.preference_code IS '优惠协定代码';
+                    
+      COMMENT ON COLUMN erp_md_material.customs_name_cn IS '报关中文名';
+                    
+      COMMENT ON COLUMN erp_md_material.customs_name_en IS '报关英文名';
+                    
+      COMMENT ON COLUMN erp_md_material.declaration_unit IS '申报计量单位';
+                    
+      COMMENT ON COLUMN erp_md_material.supervision_condition IS '监管条件代码';
+                    
       COMMENT ON TABLE erp_md_location IS '库位';
                 
       COMMENT ON COLUMN erp_md_location.id IS 'ID';
@@ -1146,6 +1201,56 @@ CREATE TABLE erp_md_uom_conversion(
       COMMENT ON COLUMN erp_md_location.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_md_location.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_md_material_customs IS '物料报关记录';
+                
+      COMMENT ON COLUMN erp_md_material_customs.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.code IS '报关记录编码';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.declaration_no IS '报关单号';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.partner_id IS '报关行';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.declaration_date IS '报关日期';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.qty_declared IS '申报数量';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.uom_declared IS '申报计量单位';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.amount_declared IS '申报金额';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.currency_id IS '申报币种';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.exchange_rate IS '报关日汇率';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.amount_functional IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.duty_amount IS '关税金额';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.vat_amount IS '增值税金额';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.drawback_receipt_no IS '退税收据号';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.source_bill_type IS '业务单据类型';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.source_bill_code IS '业务单据编码';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_md_material_customs.remark IS '备注';
                     
       COMMENT ON TABLE erp_md_material_sku IS '物料SKU';
                 

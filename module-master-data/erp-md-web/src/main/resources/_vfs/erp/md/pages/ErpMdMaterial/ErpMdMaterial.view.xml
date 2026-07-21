@@ -35,6 +35,11 @@
                 <col id="weight" ui:number="true" sortable="true"/>
                 <col id="volume" ui:number="true" sortable="true"/>
                 <col id="defaultTaxRateId" label="默认税率"/>
+                <!-- C2 跨境贸易扩展：vatRate/drawbackRate 在 grid 列表显示（报关场景高频查询） -->
+                <col id="vatRate" ui:number="true" sortable="true"/>
+                <col id="drawbackRate" ui:number="true" sortable="true"/>
+                <col id="customsHS" sortable="true"/>
+                <col id="countryOfOrigin" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
                 <col id="createTime" mandatory="true" sortable="true" align="center">
@@ -88,6 +93,13 @@
  code[物料编码] name[物料名称]
  materialType[物料类型] categoryId[分类ID]
  uoMId[主计量单位] status[状态]
+=========>crossBorder[跨境贸易]======
+ vatRate[增值税率] drawbackRate[退税率]
+ customsHS[海关HS编码] countryOfOrigin[原产地]
+ preferenceCode[优惠协定] supervisionCondition[监管条件]
+ customsNameCn[报关中文名](2)
+ customsNameEn[报关英文名](2)
+ declarationUnit[申报单位](2)
 =========>inventory[库存管理]======
  isBatchManaged[是否批次管理] isSerialManaged[是否序列号管理]
  defaultWarehouseId[默认仓库] minStock[最低库存]
@@ -152,6 +164,13 @@
  code[物料编码] name[物料名称]
  materialType[物料类型] categoryId[分类ID]
  uoMId[主计量单位] status[状态]
+=========>crossBorder[跨境贸易]======
+ vatRate[增值税率] drawbackRate[退税率]
+ customsHS[海关HS编码] countryOfOrigin[原产地]
+ preferenceCode[优惠协定] supervisionCondition[监管条件]
+ customsNameCn[报关中文名](2)
+ customsNameEn[报关英文名](2)
+ declarationUnit[申报单位](2)
 =========>inventory[库存管理]======
  isBatchManaged[是否批次管理] isSerialManaged[是否序列号管理]
  defaultWarehouseId[默认仓库] minStock[最低库存]

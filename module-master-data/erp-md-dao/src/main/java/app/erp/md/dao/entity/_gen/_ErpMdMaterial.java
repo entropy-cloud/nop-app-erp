@@ -121,8 +121,44 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 25;
     
+    /* 增值税率(报关快查): VAT_RATE DECIMAL */
+    public static final String PROP_NAME_vatRate = "vatRate";
+    public static final int PROP_ID_vatRate = 26;
+    
+    /* 退税率(报关快查): DRAWBACK_RATE DECIMAL */
+    public static final String PROP_NAME_drawbackRate = "drawbackRate";
+    public static final int PROP_ID_drawbackRate = 27;
+    
+    /* 海关HS编码: CUSTOMS_HS VARCHAR */
+    public static final String PROP_NAME_customsHS = "customsHS";
+    public static final int PROP_ID_customsHS = 28;
+    
+    /* 原产地: COUNTRY_OF_ORIGIN VARCHAR */
+    public static final String PROP_NAME_countryOfOrigin = "countryOfOrigin";
+    public static final int PROP_ID_countryOfOrigin = 29;
+    
+    /* 优惠协定代码: PREFERENCE_CODE VARCHAR */
+    public static final String PROP_NAME_preferenceCode = "preferenceCode";
+    public static final int PROP_ID_preferenceCode = 30;
+    
+    /* 报关中文名: CUSTOMS_NAME_CN VARCHAR */
+    public static final String PROP_NAME_customsNameCn = "customsNameCn";
+    public static final int PROP_ID_customsNameCn = 31;
+    
+    /* 报关英文名: CUSTOMS_NAME_EN VARCHAR */
+    public static final String PROP_NAME_customsNameEn = "customsNameEn";
+    public static final int PROP_ID_customsNameEn = 32;
+    
+    /* 申报计量单位: DECLARATION_UNIT VARCHAR */
+    public static final String PROP_NAME_declarationUnit = "declarationUnit";
+    public static final int PROP_ID_declarationUnit = 33;
+    
+    /* 监管条件代码: SUPERVISION_CONDITION VARCHAR */
+    public static final String PROP_NAME_supervisionCondition = "supervisionCondition";
+    public static final int PROP_ID_supervisionCondition = 34;
+    
 
-    private static int _PROP_ID_BOUND = 26;
+    private static int _PROP_ID_BOUND = 35;
 
     
     /* relation:  */
@@ -144,7 +180,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[26];
+    private static final String[] PROP_ID_TO_NAME = new String[35];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -223,6 +259,33 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_vatRate] = PROP_NAME_vatRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_vatRate, PROP_ID_vatRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_drawbackRate] = PROP_NAME_drawbackRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_drawbackRate, PROP_ID_drawbackRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_customsHS] = PROP_NAME_customsHS;
+          PROP_NAME_TO_ID.put(PROP_NAME_customsHS, PROP_ID_customsHS);
+      
+          PROP_ID_TO_NAME[PROP_ID_countryOfOrigin] = PROP_NAME_countryOfOrigin;
+          PROP_NAME_TO_ID.put(PROP_NAME_countryOfOrigin, PROP_ID_countryOfOrigin);
+      
+          PROP_ID_TO_NAME[PROP_ID_preferenceCode] = PROP_NAME_preferenceCode;
+          PROP_NAME_TO_ID.put(PROP_NAME_preferenceCode, PROP_ID_preferenceCode);
+      
+          PROP_ID_TO_NAME[PROP_ID_customsNameCn] = PROP_NAME_customsNameCn;
+          PROP_NAME_TO_ID.put(PROP_NAME_customsNameCn, PROP_ID_customsNameCn);
+      
+          PROP_ID_TO_NAME[PROP_ID_customsNameEn] = PROP_NAME_customsNameEn;
+          PROP_NAME_TO_ID.put(PROP_NAME_customsNameEn, PROP_ID_customsNameEn);
+      
+          PROP_ID_TO_NAME[PROP_ID_declarationUnit] = PROP_NAME_declarationUnit;
+          PROP_NAME_TO_ID.put(PROP_NAME_declarationUnit, PROP_ID_declarationUnit);
+      
+          PROP_ID_TO_NAME[PROP_ID_supervisionCondition] = PROP_NAME_supervisionCondition;
+          PROP_NAME_TO_ID.put(PROP_NAME_supervisionCondition, PROP_ID_supervisionCondition);
+      
     }
 
     
@@ -300,6 +363,33 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 增值税率(报关快查): VAT_RATE */
+    private java.math.BigDecimal _vatRate;
+    
+    /* 退税率(报关快查): DRAWBACK_RATE */
+    private java.math.BigDecimal _drawbackRate;
+    
+    /* 海关HS编码: CUSTOMS_HS */
+    private java.lang.String _customsHS;
+    
+    /* 原产地: COUNTRY_OF_ORIGIN */
+    private java.lang.String _countryOfOrigin;
+    
+    /* 优惠协定代码: PREFERENCE_CODE */
+    private java.lang.String _preferenceCode;
+    
+    /* 报关中文名: CUSTOMS_NAME_CN */
+    private java.lang.String _customsNameCn;
+    
+    /* 报关英文名: CUSTOMS_NAME_EN */
+    private java.lang.String _customsNameEn;
+    
+    /* 申报计量单位: DECLARATION_UNIT */
+    private java.lang.String _declarationUnit;
+    
+    /* 监管条件代码: SUPERVISION_CONDITION */
+    private java.lang.String _supervisionCondition;
     
 
     public _ErpMdMaterial(){
@@ -449,6 +539,33 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_vatRate:
+               return getVatRate();
+        
+            case PROP_ID_drawbackRate:
+               return getDrawbackRate();
+        
+            case PROP_ID_customsHS:
+               return getCustomsHS();
+        
+            case PROP_ID_countryOfOrigin:
+               return getCountryOfOrigin();
+        
+            case PROP_ID_preferenceCode:
+               return getPreferenceCode();
+        
+            case PROP_ID_customsNameCn:
+               return getCustomsNameCn();
+        
+            case PROP_ID_customsNameEn:
+               return getCustomsNameEn();
+        
+            case PROP_ID_declarationUnit:
+               return getDeclarationUnit();
+        
+            case PROP_ID_supervisionCondition:
+               return getSupervisionCondition();
         
            default:
               return super.orm_propValue(propId);
@@ -711,6 +828,96 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_vatRate:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_vatRate));
+               }
+               setVatRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_drawbackRate:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_drawbackRate));
+               }
+               setDrawbackRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_customsHS:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_customsHS));
+               }
+               setCustomsHS(typedValue);
+               break;
+            }
+        
+            case PROP_ID_countryOfOrigin:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_countryOfOrigin));
+               }
+               setCountryOfOrigin(typedValue);
+               break;
+            }
+        
+            case PROP_ID_preferenceCode:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_preferenceCode));
+               }
+               setPreferenceCode(typedValue);
+               break;
+            }
+        
+            case PROP_ID_customsNameCn:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_customsNameCn));
+               }
+               setCustomsNameCn(typedValue);
+               break;
+            }
+        
+            case PROP_ID_customsNameEn:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_customsNameEn));
+               }
+               setCustomsNameEn(typedValue);
+               break;
+            }
+        
+            case PROP_ID_declarationUnit:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_declarationUnit));
+               }
+               setDeclarationUnit(typedValue);
+               break;
+            }
+        
+            case PROP_ID_supervisionCondition:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_supervisionCondition));
+               }
+               setSupervisionCondition(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -891,6 +1098,69 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_vatRate:{
+               onInitProp(propId);
+               this._vatRate = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_drawbackRate:{
+               onInitProp(propId);
+               this._drawbackRate = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_customsHS:{
+               onInitProp(propId);
+               this._customsHS = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_countryOfOrigin:{
+               onInitProp(propId);
+               this._countryOfOrigin = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_preferenceCode:{
+               onInitProp(propId);
+               this._preferenceCode = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_customsNameCn:{
+               onInitProp(propId);
+               this._customsNameCn = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_customsNameEn:{
+               onInitProp(propId);
+               this._customsNameEn = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_declarationUnit:{
+               onInitProp(propId);
+               this._declarationUnit = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_supervisionCondition:{
+               onInitProp(propId);
+               this._supervisionCondition = (java.lang.String)value;
                
                break;
             }
@@ -1372,6 +1642,177 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 增值税率(报关快查): VAT_RATE
+     */
+    public final java.math.BigDecimal getVatRate(){
+         onPropGet(PROP_ID_vatRate);
+         return _vatRate;
+    }
+
+    /**
+     * 增值税率(报关快查): VAT_RATE
+     */
+    public final void setVatRate(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_vatRate,value)){
+            this._vatRate = value;
+            internalClearRefs(PROP_ID_vatRate);
+            
+        }
+    }
+    
+    /**
+     * 退税率(报关快查): DRAWBACK_RATE
+     */
+    public final java.math.BigDecimal getDrawbackRate(){
+         onPropGet(PROP_ID_drawbackRate);
+         return _drawbackRate;
+    }
+
+    /**
+     * 退税率(报关快查): DRAWBACK_RATE
+     */
+    public final void setDrawbackRate(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_drawbackRate,value)){
+            this._drawbackRate = value;
+            internalClearRefs(PROP_ID_drawbackRate);
+            
+        }
+    }
+    
+    /**
+     * 海关HS编码: CUSTOMS_HS
+     */
+    public final java.lang.String getCustomsHS(){
+         onPropGet(PROP_ID_customsHS);
+         return _customsHS;
+    }
+
+    /**
+     * 海关HS编码: CUSTOMS_HS
+     */
+    public final void setCustomsHS(java.lang.String value){
+        if(onPropSet(PROP_ID_customsHS,value)){
+            this._customsHS = value;
+            internalClearRefs(PROP_ID_customsHS);
+            
+        }
+    }
+    
+    /**
+     * 原产地: COUNTRY_OF_ORIGIN
+     */
+    public final java.lang.String getCountryOfOrigin(){
+         onPropGet(PROP_ID_countryOfOrigin);
+         return _countryOfOrigin;
+    }
+
+    /**
+     * 原产地: COUNTRY_OF_ORIGIN
+     */
+    public final void setCountryOfOrigin(java.lang.String value){
+        if(onPropSet(PROP_ID_countryOfOrigin,value)){
+            this._countryOfOrigin = value;
+            internalClearRefs(PROP_ID_countryOfOrigin);
+            
+        }
+    }
+    
+    /**
+     * 优惠协定代码: PREFERENCE_CODE
+     */
+    public final java.lang.String getPreferenceCode(){
+         onPropGet(PROP_ID_preferenceCode);
+         return _preferenceCode;
+    }
+
+    /**
+     * 优惠协定代码: PREFERENCE_CODE
+     */
+    public final void setPreferenceCode(java.lang.String value){
+        if(onPropSet(PROP_ID_preferenceCode,value)){
+            this._preferenceCode = value;
+            internalClearRefs(PROP_ID_preferenceCode);
+            
+        }
+    }
+    
+    /**
+     * 报关中文名: CUSTOMS_NAME_CN
+     */
+    public final java.lang.String getCustomsNameCn(){
+         onPropGet(PROP_ID_customsNameCn);
+         return _customsNameCn;
+    }
+
+    /**
+     * 报关中文名: CUSTOMS_NAME_CN
+     */
+    public final void setCustomsNameCn(java.lang.String value){
+        if(onPropSet(PROP_ID_customsNameCn,value)){
+            this._customsNameCn = value;
+            internalClearRefs(PROP_ID_customsNameCn);
+            
+        }
+    }
+    
+    /**
+     * 报关英文名: CUSTOMS_NAME_EN
+     */
+    public final java.lang.String getCustomsNameEn(){
+         onPropGet(PROP_ID_customsNameEn);
+         return _customsNameEn;
+    }
+
+    /**
+     * 报关英文名: CUSTOMS_NAME_EN
+     */
+    public final void setCustomsNameEn(java.lang.String value){
+        if(onPropSet(PROP_ID_customsNameEn,value)){
+            this._customsNameEn = value;
+            internalClearRefs(PROP_ID_customsNameEn);
+            
+        }
+    }
+    
+    /**
+     * 申报计量单位: DECLARATION_UNIT
+     */
+    public final java.lang.String getDeclarationUnit(){
+         onPropGet(PROP_ID_declarationUnit);
+         return _declarationUnit;
+    }
+
+    /**
+     * 申报计量单位: DECLARATION_UNIT
+     */
+    public final void setDeclarationUnit(java.lang.String value){
+        if(onPropSet(PROP_ID_declarationUnit,value)){
+            this._declarationUnit = value;
+            internalClearRefs(PROP_ID_declarationUnit);
+            
+        }
+    }
+    
+    /**
+     * 监管条件代码: SUPERVISION_CONDITION
+     */
+    public final java.lang.String getSupervisionCondition(){
+         onPropGet(PROP_ID_supervisionCondition);
+         return _supervisionCondition;
+    }
+
+    /**
+     * 监管条件代码: SUPERVISION_CONDITION
+     */
+    public final void setSupervisionCondition(java.lang.String value){
+        if(onPropSet(PROP_ID_supervisionCondition,value)){
+            this._supervisionCondition = value;
+            internalClearRefs(PROP_ID_supervisionCondition);
             
         }
     }

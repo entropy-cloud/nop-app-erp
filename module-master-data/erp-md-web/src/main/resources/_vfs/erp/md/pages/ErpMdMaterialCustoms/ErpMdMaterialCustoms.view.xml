@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:extends="_gen/_ErpMdMaterialCustoms.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+      xmlns:x="/nop/schema/xdsl.xdef">
+
+    <grids>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="declarationNo" mandatory="true" sortable="true"/>
+                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="declarationDate" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="qtyDeclared" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="uomDeclared" mandatory="true" sortable="true"/>
+                <col id="amountDeclared" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="dutyAmount" ui:number="true" sortable="true"/>
+                <col id="vatAmount" ui:number="true" sortable="true"/>
+                <col id="drawbackReceiptNo" sortable="true"/>
+                <col id="sourceBillType" sortable="true"/>
+                <col id="sourceBillCode" sortable="true"/>
+                <col id="createdBy" mandatory="true" sortable="true"/>
+                <col id="createTime" mandatory="true" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
+        <grid id="pick-list"/>
+    </grids>
+
+    <forms>
+        <form id="view" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[报关记录编码] materialId[物料]
+ declarationNo[报关单号] partnerId[报关行]
+ declarationDate[报关日期]
+=========>crossBorderAmounts[申报与税额]======
+ qtyDeclared[申报数量] uomDeclared[申报单位]
+ amountDeclared[申报金额] currencyId[申报币种]
+ exchangeRate[报关日汇率] amountFunctional[本位币金额]
+ dutyAmount[关税金额] vatAmount[增值税金额]
+ drawbackReceiptNo[退税收据号](2)
+==========^sourceBill[业务单据回链]=========
+ sourceBillType[业务单据类型] sourceBillCode[业务单据编码]
+==========^audit[审计信息]=========
+ remark[备注]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+        </form>
+        <form id="edit" size="lg">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[报关记录编码] materialId[物料]
+ declarationNo[报关单号] partnerId[报关行]
+ declarationDate[报关日期]
+=========>crossBorderAmounts[申报与税额]======
+ qtyDeclared[申报数量] uomDeclared[申报单位]
+ amountDeclared[申报金额] currencyId[申报币种]
+ exchangeRate[报关日汇率] amountFunctional[本位币金额]
+ dutyAmount[关税金额] vatAmount[增值税金额]
+ drawbackReceiptNo[退税收据号](2)
+==========^sourceBill[业务单据回链]=========
+ sourceBillType[业务单据类型] sourceBillCode[业务单据编码]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form id="add">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[报关记录编码] materialId[物料]
+ declarationNo[报关单号] partnerId[报关行]
+ declarationDate[报关日期]
+=========>crossBorderAmounts[申报与税额]======
+ qtyDeclared[申报数量] uomDeclared[申报单位]
+ amountDeclared[申报金额] currencyId[申报币种]
+ exchangeRate[报关日汇率] amountFunctional[本位币金额]
+ dutyAmount[关税金额] vatAmount[增值税金额]
+ drawbackReceiptNo[退税收据号](2)
+==========^sourceBill[业务单据回链]=========
+ sourceBillType[业务单据类型] sourceBillCode[业务单据编码]
+ remark[备注](2)
+            </layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[报关记录编码] declarationNo[报关单号]
+ materialId[物料] partnerId[报关行]
+ declarationDate[报关日期] sourceBillCode[业务单据编码]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="declarationNo" filterOp="like"/>
+                <cell id="materialId" filterOp="eq"/>
+                <cell id="partnerId" filterOp="eq"/>
+                <cell id="declarationDate" filterOp="dateBetween"/>
+                <cell id="sourceBillCode" filterOp="like"/>
+            </cells>
+        </form>
+    </forms>
+
+    <pages>
+        <crud name="main" grid="list" filterForm="query"/>
+        <picker name="picker"/>
+    </pages>
+</view>

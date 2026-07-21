@@ -10,6 +10,7 @@ entity:
     ErpMdLocation: 库位
     ErpMdMaterial: 物料
     ErpMdMaterialCategory: 物料分类
+    ErpMdMaterialCustoms: 物料报关记录
     ErpMdMaterialSku: 物料SKU
     ErpMdOrganization: 组织
     ErpMdPartner: 往来单位
@@ -183,8 +184,13 @@ prop:
       code: 物料编码
       costMethod: 存货计价方法
       costMethod_label: 存货计价方法
+      countryOfOrigin: 原产地
       createTime: 创建时间
       createdBy: 创建人
+      customsHS: 海关HS编码
+      customsNameCn: 报关中文名
+      customsNameEn: 报关英文名
+      declarationUnit: 申报计量单位
       defaultTaxRate: null
       defaultTaxRate.name: null
       defaultTaxRateId: 默认税率
@@ -192,6 +198,7 @@ prop:
       defaultWarehouse.name: null
       defaultWarehouseId: 默认仓库
       delVersion: 逻辑删除版本
+      drawbackRate: 退税率(报关快查)
       id: ID
       isBatchManaged: 是否批次管理
       isSerialManaged: 是否序列号管理
@@ -201,16 +208,20 @@ prop:
       maxStock: 最高库存
       minStock: 最低库存
       name: 物料名称
+      preferenceCode: 优惠协定代码
+      preferenceCode_label: 优惠协定代码
       remark: 备注
       safetyStock: 安全库存
       skus: null
       status: 状态
       status_label: 状态
+      supervisionCondition: 监管条件代码
       uoM: null
       uoM.name: null
       uoMId: 主计量单位
       updateTime: 修改时间
       updatedBy: 修改人
+      vatRate: 增值税率(报关快查)
       version: 数据版本
       volume: 体积(m3)
       weight: 重量(kg)
@@ -230,6 +241,37 @@ prop:
       sortNum: 排序
       updateTime: 修改时间
       updatedBy: 修改人
+      version: 数据版本
+    ErpMdMaterialCustoms:
+      amountDeclared: 申报金额
+      amountFunctional: 本位币金额
+      code: 报关记录编码
+      createTime: 创建时间
+      createdBy: 创建人
+      currency: null
+      currency.name: null
+      currencyId: 申报币种
+      declarationDate: 报关日期
+      declarationNo: 报关单号
+      delVersion: 逻辑删除版本
+      drawbackReceiptNo: 退税收据号
+      dutyAmount: 关税金额
+      exchangeRate: 报关日汇率
+      id: ID
+      material: null
+      material.name: null
+      materialId: 物料
+      partner: null
+      partner.name: null
+      partnerId: 报关行
+      qtyDeclared: 申报数量
+      remark: 备注
+      sourceBillCode: 业务单据编码
+      sourceBillType: 业务单据类型
+      uomDeclared: 申报计量单位
+      updateTime: 修改时间
+      updatedBy: 修改人
+      vatAmount: 增值税金额
       version: 数据版本
     ErpMdMaterialSku:
       barcode: 条码

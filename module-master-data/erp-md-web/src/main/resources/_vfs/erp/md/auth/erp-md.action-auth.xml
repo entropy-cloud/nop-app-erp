@@ -161,6 +161,16 @@
                                   url="/erp/md/pages/cost-center/main.page.yaml"/>
                     </children>
                 </resource>
+                <!-- C2 跨境贸易扩展：报关记录归独立分组（介于核算维度 700 与报表 800 之间，orderNo=750） -->
+                <resource id="md-trade" displayName="跨境贸易" i18n-en:displayName="Cross-Border Trade"
+                          icon="file-text" resourceType="SUBM" orderNo="750">
+                    <children>
+                        <resource id="ErpMdMaterialCustoms-main" displayName="物料报关记录"
+                                  i18n-en:displayName="Material Customs Declaration" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="75010"
+                                  url="/erp/md/pages/ErpMdMaterialCustoms/main.page.yaml"/>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

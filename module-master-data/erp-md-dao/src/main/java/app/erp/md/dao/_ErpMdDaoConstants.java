@@ -119,6 +119,71 @@ public interface _ErpMdDaoConstants {
     String PARTNER_TYPE_EMPLOYEE = "EMPLOYEE";
                     
     /**
+     * 往来单位类型: 报关行 
+     */
+    String PARTNER_TYPE_CUSTOMS_BROKER = "CUSTOMS_BROKER";
+                    
+    /**
+     * FTA 优惠协定代码: 中国-东盟 
+     */
+    String CUSTOMS_PREFERENCE_CODE_ASEAN = "ASEAN";
+                    
+    /**
+     * FTA 优惠协定代码: 中韩 
+     */
+    String CUSTOMS_PREFERENCE_CODE_CKFTA = "CKFTA";
+                    
+    /**
+     * FTA 优惠协定代码: 中澳 
+     */
+    String CUSTOMS_PREFERENCE_CODE_CHAFTA = "CHAFTA";
+                    
+    /**
+     * FTA 优惠协定代码: 中智 
+     */
+    String CUSTOMS_PREFERENCE_CODE_CCFTA = "CCFTA";
+                    
+    /**
+     * FTA 优惠协定代码: 中新(新西兰) 
+     */
+    String CUSTOMS_PREFERENCE_CODE_CNZFTA = "CNZFTA";
+                    
+    /**
+     * FTA 优惠协定代码: 中巴(巴基斯坦) 
+     */
+    String CUSTOMS_PREFERENCE_CODE_CPFTA = "CPFTA";
+                    
+    /**
+     * FTA 优惠协定代码: 中哥(哥斯达黎加) 
+     */
+    String CUSTOMS_PREFERENCE_CODE_COSTA_RICA = "COSTA_RICA";
+                    
+    /**
+     * FTA 优惠协定代码: 中冰(冰岛) 
+     */
+    String CUSTOMS_PREFERENCE_CODE_CIFTA = "CIFTA";
+                    
+    /**
+     * FTA 优惠协定代码: 中瑞(瑞士) 
+     */
+    String CUSTOMS_PREFERENCE_CODE_CHFTA = "CHFTA";
+                    
+    /**
+     * FTA 优惠协定代码: 区域全面经济伙伴关系 
+     */
+    String CUSTOMS_PREFERENCE_CODE_RCEP = "RCEP";
+                    
+    /**
+     * FTA 优惠协定代码: 普惠制 
+     */
+    String CUSTOMS_PREFERENCE_CODE_GSP = "GSP";
+                    
+    /**
+     * FTA 优惠协定代码: 其他 
+     */
+    String CUSTOMS_PREFERENCE_CODE_OTHER = "OTHER";
+                    
+    /**
      * 仓库类型: 普通仓 
      */
     String WAREHOUSE_TYPE_NORMAL = "NORMAL";

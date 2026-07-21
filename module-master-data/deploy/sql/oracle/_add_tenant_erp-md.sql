@@ -43,6 +43,8 @@ alter table erp_md_material add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_location add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_md_material_customs add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_material_sku add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_md_uom_conversion add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -112,6 +114,9 @@ alter table erp_md_material add constraint PK_erp_md_material primary key (NOP_T
 
 alter table erp_md_location drop constraint PK_erp_md_location;
 alter table erp_md_location add constraint PK_erp_md_location primary key (NOP_TENANT_ID, ID);
+
+alter table erp_md_material_customs drop constraint PK_erp_md_material_customs;
+alter table erp_md_material_customs add constraint PK_erp_md_material_customs primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_material_sku drop constraint PK_erp_md_material_sku;
 alter table erp_md_material_sku add constraint PK_erp_md_material_sku primary key (NOP_TENANT_ID, ID);

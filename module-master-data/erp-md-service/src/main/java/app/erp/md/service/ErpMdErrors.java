@@ -150,4 +150,27 @@ public interface ErpMdErrors {
             "erp.err.md.party.not-found",
             "Party[{partyType}/{partyId}]不存在",
             ARG_PARTY_TYPE, ARG_PARTY_ID);
+
+    // --- C2 跨境贸易扩展（docs/design/master-data/cross-border-trade.md §3 ErpMdMaterialCustoms） ---
+
+    String ARG_DECLARATION_NO = "declarationNo";
+    String ARG_PARTNER_TYPE = "partnerType";
+
+    /** ErpMdMaterialCustoms.partnerId 引用的 Partner 类型非 CUSTOMS_BROKER。 */
+    ErrorCode ERR_PARTNER_NOT_CUSTOMS_BROKER = ErrorCode.define(
+            "erp.err.md.partner.not-customs-broker",
+            "报关行[{partnerId}]的类型[{partnerType}]不是 CUSTOMS_BROKER，不可作为报关记录的报关行",
+            ARG_PARTNER_ID, ARG_PARTNER_TYPE);
+
+    /** ErpMdMaterialCustoms.declarationNo 重复（DB UK 前置友好校验，避免 stack trace 暴露）。 */
+    ErrorCode ERR_CUSTOMS_DECLARATION_NO_DUPLICATE = ErrorCode.define(
+            "erp.err.md.customs.declaration-no-duplicate",
+            "报关单号[{declarationNo}]已存在，不允许重复",
+            ARG_DECLARATION_NO);
+
+    /** ErpMdMaterialCustoms.sourceBillType/sourceBillCode 业务回链必填校验。 */
+    ErrorCode ERR_CUSTOMS_SOURCE_BILL_REQUIRED = ErrorCode.define(
+            "erp.err.md.customs.source-bill-required",
+            "报关记录必须填写业务单据类型(sourceBillType)或业务单据编码(sourceBillCode)至少一项",
+            ARG_DECLARATION_NO);
 }

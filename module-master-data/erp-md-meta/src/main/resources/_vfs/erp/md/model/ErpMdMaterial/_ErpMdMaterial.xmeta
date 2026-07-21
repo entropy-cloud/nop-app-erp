@@ -123,6 +123,42 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
+        <prop name="vatRate" displayName="增值税率(报关快查)" propId="26" i18n-en:displayName="VAT Rate (Customs)"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="6" scale="4"/>
+        </prop>
+        <prop name="drawbackRate" displayName="退税率(报关快查)" propId="27" i18n-en:displayName="Drawback Rate (Customs)"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="6" scale="4"/>
+        </prop>
+        <prop name="customsHS" displayName="海关HS编码" propId="28" i18n-en:displayName="Customs HS Code" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="12"/>
+        </prop>
+        <prop name="countryOfOrigin" displayName="原产地" propId="29" i18n-en:displayName="Country of Origin"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="2"/>
+        </prop>
+        <prop name="preferenceCode" displayName="优惠协定代码" propId="30" i18n-en:displayName="FTA Preference Code"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-md/customs-preference-code"/>
+        </prop>
+        <prop name="customsNameCn" displayName="报关中文名" propId="31" i18n-en:displayName="Customs Name (CN)"
+              queryable="true" sortable="true" insertable="true" updatable="true" ui:show="F">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="customsNameEn" displayName="报关英文名" propId="32" i18n-en:displayName="Customs Name (EN)"
+              queryable="true" sortable="true" insertable="true" updatable="true" ui:show="F">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="declarationUnit" displayName="申报计量单位" propId="33" i18n-en:displayName="Declaration UoM"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20"/>
+        </prop>
+        <prop name="supervisionCondition" displayName="监管条件代码" propId="34" i18n-en:displayName="Supervision Condition"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="10"/>
+        </prop>
         <prop name="category" i18n-en:displayName="Category" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="categoryId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
               insertable="false" updatable="false" lazy="true">

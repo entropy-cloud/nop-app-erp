@@ -21,6 +21,7 @@ drop table  if exists  erp_md_acct_schema_coa;
 drop table  if exists  erp_md_subject_mapping;
 drop table  if exists  erp_md_material;
 drop table  if exists  erp_md_location;
+drop table  if exists  erp_md_material_customs;
 drop table  if exists  erp_md_material_sku;
 drop table  if exists  erp_md_uom_conversion;
 

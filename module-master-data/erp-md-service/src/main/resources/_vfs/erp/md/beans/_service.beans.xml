@@ -166,6 +166,14 @@
         <property name="bizObjName" value="ErpMdLocation"/>
     </bean>
 
+    <bean id="app.erp.md.service.entity.ErpMdMaterialCustomsBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMdMaterialCustoms" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.md.biz.IErpMdMaterialCustomsBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMdMaterialCustoms"/>
+    </bean>
+
     <bean id="app.erp.md.service.entity.ErpMdMaterialSkuBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMdMaterialSku" class="io.nop.biz.proxy.BizProxyFactoryBean"

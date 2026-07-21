@@ -400,6 +400,144 @@
         }
 
 
+        private java.math.BigDecimal _vatRate;
+
+    
+        @PropMeta(propId=26)
+    
+        public java.math.BigDecimal getVatRate(){
+            return _vatRate;
+        }
+
+        public void setVatRate(java.math.BigDecimal value){
+            this._vatRate = value;
+        }
+
+
+        private java.math.BigDecimal _drawbackRate;
+
+    
+        @PropMeta(propId=27)
+    
+        public java.math.BigDecimal getDrawbackRate(){
+            return _drawbackRate;
+        }
+
+        public void setDrawbackRate(java.math.BigDecimal value){
+            this._drawbackRate = value;
+        }
+
+
+        private String _customsHS;
+
+    
+        @PropMeta(propId=28)
+    
+        public String getCustomsHS(){
+            return _customsHS;
+        }
+
+        public void setCustomsHS(String value){
+            this._customsHS = value;
+        }
+
+
+        private String _countryOfOrigin;
+
+    
+        @PropMeta(propId=29)
+    
+        public String getCountryOfOrigin(){
+            return _countryOfOrigin;
+        }
+
+        public void setCountryOfOrigin(String value){
+            this._countryOfOrigin = value;
+        }
+
+
+        private String _preferenceCode;
+
+    
+        @PropMeta(propId=30)
+    
+        public String getPreferenceCode(){
+            return _preferenceCode;
+        }
+
+        public void setPreferenceCode(String value){
+            this._preferenceCode = value;
+        }
+
+
+        private String _preferenceCode_label;
+
+    
+        public String getPreferenceCode_label(){
+            return _preferenceCode_label;
+        }
+
+        public void setPreferenceCode_label(String value){
+            this._preferenceCode_label = value;
+        }
+
+
+        private String _customsNameCn;
+
+    
+        @PropMeta(propId=31)
+    
+        public String getCustomsNameCn(){
+            return _customsNameCn;
+        }
+
+        public void setCustomsNameCn(String value){
+            this._customsNameCn = value;
+        }
+
+
+        private String _customsNameEn;
+
+    
+        @PropMeta(propId=32)
+    
+        public String getCustomsNameEn(){
+            return _customsNameEn;
+        }
+
+        public void setCustomsNameEn(String value){
+            this._customsNameEn = value;
+        }
+
+
+        private String _declarationUnit;
+
+    
+        @PropMeta(propId=33)
+    
+        public String getDeclarationUnit(){
+            return _declarationUnit;
+        }
+
+        public void setDeclarationUnit(String value){
+            this._declarationUnit = value;
+        }
+
+
+        private String _supervisionCondition;
+
+    
+        @PropMeta(propId=34)
+    
+        public String getSupervisionCondition(){
+            return _supervisionCondition;
+        }
+
+        public void setSupervisionCondition(String value){
+            this._supervisionCondition = value;
+        }
+
+
         private Map<String,Object> _category;
 
         public Map<String,Object> getCategory(){

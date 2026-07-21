@@ -79,6 +79,23 @@
             <option code="SUPPLIER" label="供应商" value="SUPPLIER" i18n-en:label='Supplier'/>
             <option code="BOTH" label="客户且供应商" value="BOTH" i18n-en:label='Customer &amp; Supplier'/>
             <option code="EMPLOYEE" label="员工(内部往来)" value="EMPLOYEE" i18n-en:label='Employee (Internal)'/>
+            <!-- C2 跨境贸易扩展：报关行作为 Partner 类型登记，复用既有 Partner 模型 -->
+            <option code="CUSTOMS_BROKER" label="报关行" value="CUSTOMS_BROKER" i18n-en:label='Customs Broker'/>
+        </dict>
+        <!-- C2 跨境贸易扩展：FTA 优惠协定代码字典（docs/design/master-data/cross-border-trade.md §2 preferenceCode） -->
+        <dict label="FTA 优惠协定代码" name="erp-md/customs-preference-code" valueType="string" i18n-en:label='FTA Preference Code'>
+            <option code="ASEAN" label="中国-东盟" value="ASEAN" i18n-en:label='China-ASEAN'/>
+            <option code="CKFTA" label="中韩" value="CKFTA" i18n-en:label='China-Korea'/>
+            <option code="CHAFTA" label="中澳" value="CHAFTA" i18n-en:label='China-Australia'/>
+            <option code="CCFTA" label="中智" value="CCFTA" i18n-en:label='China-Chile'/>
+            <option code="CNZFTA" label="中新(新西兰)" value="CNZFTA" i18n-en:label='China-New Zealand'/>
+            <option code="CPFTA" label="中巴(巴基斯坦)" value="CPFTA" i18n-en:label='China-Pakistan'/>
+            <option code="COSTA_RICA" label="中哥(哥斯达黎加)" value="COSTA_RICA" i18n-en:label='China-Costa Rica'/>
+            <option code="CIFTA" label="中冰(冰岛)" value="CIFTA" i18n-en:label='China-Iceland'/>
+            <option code="CHFTA" label="中瑞(瑞士)" value="CHFTA" i18n-en:label='China-Switzerland'/>
+            <option code="RCEP" label="区域全面经济伙伴关系" value="RCEP" i18n-en:label='RCEP'/>
+            <option code="GSP" label="普惠制" value="GSP" i18n-en:label='GSP'/>
+            <option code="OTHER" label="其他" value="OTHER" i18n-en:label='Other'/>
         </dict>
         <dict label="仓库类型" name="erp-md/warehouse-type" valueType="string" i18n-en:label='Warehouse Type'>
             <option code="NORMAL" label="普通仓" value="NORMAL" i18n-en:label='Normal Warehouse'/>
@@ -200,6 +217,16 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="23" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="24" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
                 <column name="remark" code="REMARK" displayName="备注" propId="25" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+                <!-- C2 跨境贸易扩展字段（docs/design/master-data/cross-border-trade.md §2）：全部 nullable + 默认 null + 不 mandatory，向后兼容既有 INSERT/UPDATE 测试 -->
+                <column name="vatRate" code="VAT_RATE" displayName="增值税率(报关快查)" propId="26" stdSqlType="DECIMAL" precision="6" scale="4" stdDataType="decimal" i18n-en:displayName='VAT Rate (Customs)' /><!-- 冗余快查于 defaultTaxRateId→ErpMdTaxRate.rate，报关场景高频查询；详见 tax-framework.md 物料层跨境税快查段 -->
+                <column name="drawbackRate" code="DRAWBACK_RATE" displayName="退税率(报关快查)" propId="27" stdSqlType="DECIMAL" precision="6" scale="4" stdDataType="decimal" i18n-en:displayName='Drawback Rate (Customs)' /><!-- 中国出口退税核心字段快查 -->
+                <column name="customsHS" code="CUSTOMS_HS" displayName="海关HS编码" propId="28" stdSqlType="VARCHAR" precision="12" stdDataType="string" i18n-en:displayName='Customs HS Code' /><!-- Harmonized System Code 国际标准 6 位 + 中国延伸 8/10 位；不做字典约束（全集上万条） -->
+                <column name="countryOfOrigin" code="COUNTRY_OF_ORIGIN" displayName="原产地" propId="29" stdSqlType="VARCHAR" precision="2" stdDataType="string" i18n-en:displayName='Country of Origin' /><!-- ISO 3166-1 alpha-2 国家代码（如 CN/US/VN），FTA 判定依据；详见 l10n-strategy.md 原产地与 FTA 段 -->
+                <column name="preferenceCode" code="PREFERENCE_CODE" displayName="优惠协定代码" propId="30" stdSqlType="VARCHAR" precision="20" stdDataType="string" ext:dict="erp-md/customs-preference-code" i18n-en:displayName='FTA Preference Code' /><!-- FTA 协定代码字典化（协定数量有限且变更慢） -->
+                <column name="customsNameCn" code="CUSTOMS_NAME_CN" displayName="报关中文名" propId="31" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Customs Name (CN)' ui:show="F"/><!-- 仅 form 显示，避免 grid 列过宽 -->
+                <column name="customsNameEn" code="CUSTOMS_NAME_EN" displayName="报关英文名" propId="32" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Customs Name (EN)' ui:show="F"/><!-- Invoice/Packing List 用 -->
+                <column name="declarationUnit" code="DECLARATION_UNIT" displayName="申报计量单位" propId="33" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Declaration UoM' /><!-- 海关法定单位，VARCHAR 而非 FK→ErpMdUoM（海关法定单位与内部单位字典解耦） -->
+                <column name="supervisionCondition" code="SUPERVISION_CONDITION" displayName="监管条件代码" propId="34" stdSqlType="VARCHAR" precision="10" stdDataType="string" i18n-en:displayName='Supervision Condition' /><!-- 中国海关监管条件 A/B... 代码；不做字典约束（海关总署频繁更新） -->
             </columns>
             <relations>
                 <to-one name="category" refEntityName="app.erp.md.dao.entity.ErpMdMaterialCategory" tagSet="pub" i18n-en:displayName='Category'>
@@ -233,6 +260,70 @@
                 </index>
                 <index name="IDX_MD_MATERIAL_DEFAULT_TAX_RATE_ID" unique="false">
                     <column name="defaultTaxRateId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- C2 跨境贸易扩展：per-transaction 报关记录实体（docs/design/master-data/cross-border-trade.md §3） -->
+        <entity className="app.erp.md.dao.entity.ErpMdMaterialCustoms"
+                displayName="物料报关记录" ext:icon="file-text" i18n-en:displayName="Material Customs Declaration" name="app.erp.md.dao.entity.ErpMdMaterialCustoms"
+                tableName="erp_md_material_customs" tagSet="gid,erp.master-data" registerShortName="true"
+                useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy"
+                updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" code="ID" displayName="ID" propId="1" stdSqlType="BIGINT" stdDataType="long" primary="true" mandatory="true" tagSet="seq-default" i18n-en:displayName='ID' />
+                <column name="code" code="CODE" displayName="报关记录编码" propId="2" domain="code" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Code' tagSet="var" />
+                <column name="materialId" code="MATERIAL_ID" displayName="物料" propId="3" stdSqlType="BIGINT" stdDataType="long" mandatory="true" i18n-en:displayName='Material' />
+                <column name="declarationNo" code="DECLARATION_NO" displayName="报关单号" propId="4" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Declaration No' /><!-- 海关分配，UK 强制全局唯一 -->
+                <column name="partnerId" code="PARTNER_ID" displayName="报关行" propId="5" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Customs Broker' /><!-- FK→ErpMdPartner；BizModel 校验 partnerType=CUSTOMS_BROKER -->
+                <column name="declarationDate" code="DECLARATION_DATE" displayName="报关日期" propId="6" stdSqlType="DATE" stdDataType="date" mandatory="true" i18n-en:displayName='Declaration Date' />
+                <column name="qtyDeclared" code="QTY_DECLARED" displayName="申报数量" propId="7" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" mandatory="true" i18n-en:displayName='Qty Declared' />
+                <column name="uomDeclared" code="UOM_DECLARED" displayName="申报计量单位" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" i18n-en:displayName='UoM Declared' /><!-- 海关法定单位，VARCHAR 而非 FK→ErpMdUoM（海关/内部单位字典解耦） -->
+                <column name="amountDeclared" code="AMOUNT_DECLARED" displayName="申报金额" propId="9" stdSqlType="DECIMAL" precision="18" scale="2" stdDataType="decimal" mandatory="true" i18n-en:displayName='Amount Declared' />
+                <column name="currencyId" code="CURRENCY_ID" displayName="申报币种" propId="10" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Currency' />
+                <column name="exchangeRate" code="EXCHANGE_RATE" displayName="报关日汇率" propId="11" domain="exchangeRate" stdSqlType="DECIMAL" precision="20" scale="8" stdDataType="decimal" i18n-en:displayName='Exchange Rate' />
+                <column name="amountFunctional" code="AMOUNT_FUNCTIONAL" displayName="本位币金额" propId="12" stdSqlType="DECIMAL" precision="18" scale="2" stdDataType="decimal" i18n-en:displayName='Amount Functional' />
+                <column name="dutyAmount" code="DUTY_AMOUNT" displayName="关税金额" propId="13" stdSqlType="DECIMAL" precision="18" scale="2" stdDataType="decimal" i18n-en:displayName='Duty Amount' /><!-- 由 finance successor 关税计算引擎填充；本计划仅落地字段 -->
+                <column name="vatAmount" code="VAT_AMOUNT" displayName="增值税金额" propId="14" stdSqlType="DECIMAL" precision="18" scale="2" stdDataType="decimal" i18n-en:displayName='VAT Amount' /><!-- 同上 -->
+                <column name="drawbackReceiptNo" code="DRAWBACK_RECEIPT_NO" displayName="退税收据号" propId="15" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Drawback Receipt No' />
+                <column name="sourceBillType" code="SOURCE_BILL_TYPE" displayName="业务单据类型" propId="16" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Source Bill Type' /><!-- 与 sourceBillCode 至少一个非空（BizModel 校验） -->
+                <column name="sourceBillCode" code="SOURCE_BILL_CODE" displayName="业务单据编码" propId="17" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Source Bill Code' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="21" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="22" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="remark" code="REMARK" displayName="备注" propId="24" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+            </columns>
+            <relations>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Material'>
+                    <join><on leftProp="materialId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="partner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Customs Broker'>
+                    <join><on leftProp="partnerId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="currency" refEntityName="app.erp.md.dao.entity.ErpMdCurrency" tagSet="pub" i18n-en:displayName='Currency'>
+                    <join><on leftProp="currencyId" rightProp="id"/></join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_MD_MATERIAL_CUSTOMS_DECL_NO" columns="declarationNo"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_MD_MATERIAL_CUSTOMS_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_CUSTOMS_PARTNER_ID" unique="false">
+                    <column name="partnerId"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_CUSTOMS_DECL_DATE" unique="false">
+                    <column name="declarationDate"/>
+                </index>
+                <index name="IDX_MD_MATERIAL_CUSTOMS_SOURCE_BILL" unique="false">
+                    <column name="sourceBillType"/>
+                    <column name="sourceBillCode"/>
                 </index>
             </indexes>
         </entity>

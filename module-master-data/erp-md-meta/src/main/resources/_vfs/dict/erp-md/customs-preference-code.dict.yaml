@@ -1,0 +1,55 @@
+# __XGEN_FORCE_OVERRIDE__
+label: FTA 优惠协定代码
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 中国-东盟
+    value: ASEAN
+    description: 
+  
+  - label: 中韩
+    value: CKFTA
+    description: 
+  
+  - label: 中澳
+    value: CHAFTA
+    description: 
+  
+  - label: 中智
+    value: CCFTA
+    description: 
+  
+  - label: 中新(新西兰)
+    value: CNZFTA
+    description: 
+  
+  - label: 中巴(巴基斯坦)
+    value: CPFTA
+    description: 
+  
+  - label: 中哥(哥斯达黎加)
+    value: COSTA_RICA
+    description: 
+  
+  - label: 中冰(冰岛)
+    value: CIFTA
+    description: 
+  
+  - label: 中瑞(瑞士)
+    value: CHFTA
+    description: 
+  
+  - label: 区域全面经济伙伴关系
+    value: RCEP
+    description: 
+  
+  - label: 普惠制
+    value: GSP
+    description: 
+  
+  - label: 其他
+    value: OTHER
+    description: 
+  

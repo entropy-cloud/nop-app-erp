@@ -89,6 +89,33 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--增值税率(报关快查)-->
+                <col id="vatRate" ui:number="true" sortable="true"/>
+
+                <!--退税率(报关快查)-->
+                <col id="drawbackRate" ui:number="true" sortable="true"/>
+
+                <!--海关HS编码-->
+                <col id="customsHS" sortable="true"/>
+
+                <!--原产地-->
+                <col id="countryOfOrigin" sortable="true"/>
+
+                <!--优惠协定代码-->
+                <col id="preferenceCode" sortable="true"/>
+
+                <!--报关中文名-->
+                <col id="customsNameCn" sortable="true"/>
+
+                <!--报关英文名-->
+                <col id="customsNameEn" sortable="true"/>
+
+                <!--申报计量单位-->
+                <col id="declarationUnit" sortable="true"/>
+
+                <!--监管条件代码-->
+                <col id="supervisionCondition" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -108,7 +135,11 @@
  defaultTaxRateId[默认税率] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] 
+ remark[备注] vatRate[增值税率(报关快查)]
+ drawbackRate[退税率(报关快查)] customsHS[海关HS编码]
+ countryOfOrigin[原产地] preferenceCode[优惠协定代码]
+ customsNameCn[报关中文名] customsNameEn[报关英文名]
+ declarationUnit[申报计量单位] supervisionCondition[监管条件代码]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-物料" i18n-en:title="Add Material" x:prototype="edit"/>
@@ -123,6 +154,11 @@
  safetyStock[安全库存] leadTimeDays[采购提前期(天)]
  weight[重量(kg)] volume[体积(m3)]
  defaultTaxRateId[默认税率] remark[备注]
+ vatRate[增值税率(报关快查)] drawbackRate[退税率(报关快查)]
+ customsHS[海关HS编码] countryOfOrigin[原产地]
+ preferenceCode[优惠协定代码] customsNameCn[报关中文名]
+ customsNameEn[报关英文名] declarationUnit[申报计量单位]
+ supervisionCondition[监管条件代码] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

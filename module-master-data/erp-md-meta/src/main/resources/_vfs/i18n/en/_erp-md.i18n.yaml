@@ -10,6 +10,7 @@ entity:
     ErpMdLocation: Location
     ErpMdMaterial: Material
     ErpMdMaterialCategory: Material Category
+    ErpMdMaterialCustoms: Material Customs Declaration
     ErpMdMaterialSku: Material SKU
     ErpMdOrganization: Organization
     ErpMdPartner: Business Partner
@@ -205,6 +206,16 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      vatRate: VAT Rate (Customs)
+      drawbackRate: Drawback Rate (Customs)
+      customsHS: Customs HS Code
+      countryOfOrigin: Country of Origin
+      preferenceCode: FTA Preference Code
+      preferenceCode_label: null
+      customsNameCn: Customs Name (CN)
+      customsNameEn: Customs Name (EN)
+      declarationUnit: Declaration UoM
+      supervisionCondition: Supervision Condition
       category: Category
       category.name: Category
       uoM: Uo M
@@ -231,6 +242,37 @@ prop:
       parent: Parent
       parent.name: Parent
       children: Children
+    ErpMdMaterialCustoms:
+      id: ID
+      code: Code
+      materialId: Material
+      declarationNo: Declaration No
+      partnerId: Customs Broker
+      declarationDate: Declaration Date
+      qtyDeclared: Qty Declared
+      uomDeclared: UoM Declared
+      amountDeclared: Amount Declared
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountFunctional: Amount Functional
+      dutyAmount: Duty Amount
+      vatAmount: VAT Amount
+      drawbackReceiptNo: Drawback Receipt No
+      sourceBillType: Source Bill Type
+      sourceBillCode: Source Bill Code
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      remark: Remark
+      material: Material
+      material.name: Material
+      partner: Customs Broker
+      partner.name: Customs Broker
+      currency: Currency
+      currency.name: Currency
     ErpMdMaterialSku:
       id: ID
       materialId: Material
@@ -528,6 +570,7 @@ dict:
     erp-md/cost-method: Inventory Valuation Method
     erp-md/price-validation: Price Validation Level
     erp-md/partner-type: Partner Type
+    erp-md/customs-preference-code: FTA Preference Code
     erp-md/warehouse-type: Warehouse Type
     erp-md/subject-class: Subject Class
     erp-md/subject-direction: Account Balance Direction
@@ -570,6 +613,20 @@ dict.option.label:
     SUPPLIER: Supplier
     BOTH: Customer & Supplier
     EMPLOYEE: Employee (Internal)
+    CUSTOMS_BROKER: Customs Broker
+  erp-md/customs-preference-code:
+    ASEAN: China-ASEAN
+    CKFTA: China-Korea
+    CHAFTA: China-Australia
+    CCFTA: China-Chile
+    CNZFTA: China-New Zealand
+    CPFTA: China-Pakistan
+    COSTA_RICA: China-Costa Rica
+    CIFTA: China-Iceland
+    CHFTA: China-Switzerland
+    RCEP: RCEP
+    GSP: GSP
+    OTHER: Other
   erp-md/warehouse-type:
     NORMAL: Normal Warehouse
     IN_TRANSIT: In Transit

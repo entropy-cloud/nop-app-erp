@@ -18,6 +18,8 @@ site:
       displayName: Material
     ErpMdMaterialCategory-main:
       displayName: Material Category
+    ErpMdMaterialCustoms-main:
+      displayName: Material Customs Declaration
     ErpMdMaterialSku-main:
       displayName: Material SKU
     ErpMdOrganization-main:
@@ -64,6 +66,8 @@ site:
       displayName: Business Partner
     md-report:
       displayName: Master Data Reports
+    md-trade:
+      displayName: Cross-Border Trade
     md-uom:
       displayName: UoM & Pricing
     partner-list:
