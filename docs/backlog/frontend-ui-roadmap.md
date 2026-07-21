@@ -270,17 +270,17 @@ Status: `done`
 
 ### F11 — 批量操作（P2）
 
-Status: `todo`
+Status: `completed`（plan `docs/plans/2026-07-22-0444-2-frontend-f11-domain-batch-operations.md` 全 4 phase 全绿：Phase 0 后端就绪度审计 + 执行模式裁决 + 部分失败策略 + Phase 1 批量审批 3 域代表实体 + Phase 2 其余 4 类批量操作 + Phase 3 模式文档。5 类操作：批量审批（PurOrder/SalOrder/QaInspection）+ 从订单导入行（F9 已覆盖，文档说明）+ 自动核销（Reconciliation list-action）+ 批量启用/停用（ErpMdPartner/ErpMdMaterial 平台 builtin batchUpdate）+ 批量重新排程（ErpApsSchedule）。范式文档：`docs/design/batch-operation-patterns.md`。后端新增 `batchApprove`/`batchPassInspection`/`batchScheduleForward` + `BatchOperationResult` DTO（4 域独立维护）。测试 `tests/e2e/business-actions/f11-batch-operations.action.spec.ts` 5/5 全绿。）
 
 列表页 toolbar 添加批量操作：
 
-| 操作 | 适用域 |
-|------|--------|
-| 批量审批 | purchase/sales/quality |
-| 从订单导入行 | purchase/sales Receive/Delivery |
-| 自动核销 | finance Payment/Receipt |
-| 批量导入 | master-data Partner/Material |
-| 批量重新排程 | aps/manufacturing |
+| 操作 | 适用域 | 落地状态 |
+|------|--------|---------|
+| 批量审批 | purchase/sales/quality | ✅ done（模式 A 后端 batch mutation） |
+| 从订单导入行 | purchase/sales Receive/Delivery | ✅ done（F9 form-level `copyFromOrder` cell 已覆盖；非列表批量语义） |
+| 自动核销 | finance Payment/Receipt | ✅ done（list-action 触发现有 `runAutoReconciliation`，非 row-id 批量） |
+| 批量导入 | master-data Partner/Material | ✅ done（平台 builtin `__batchUpdate` 批量启用/停用；Excel 文件导入归 successor） |
+| 批量重新排程 | aps/manufacturing | ✅ done（aps ErpApsSchedule 模式 A batchScheduleForward；manufacturing 跨域经 aps 调度，无独立 mutation） |
 
 每个批量操作需要对应 `@BizMutation` 后端支持（已由后端路线图完成或待确认）。
 
@@ -539,7 +539,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F8: 8 核心列表页 + ext 22 列表页（共 30）查询条件扩展到域专用多维筛选（plan `2026-07-20-0629-2`：query + asideFilter 双筛选面，inventory/finance/purchase/sales 4 域；plan `2026-07-21-0330-2`：ext 8 域 crm 3 + cs 2 + hr 4 + aps 3 + logistics 3 + b2b 3 + contract 2 + drp 2 = 22 列表页）
 - [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`
 - [x] F10: 4 树形实体（ErpMdMaterialCategory/ErpMdSubject/ErpHrDepartment/ErpCsServiceCatalogItem）使用 AMIS tree 组件页面（plan `2026-07-20-1020-1`；ErpMfgBom/ErpAstAssetCategory 经 ORM 核实剔除，归 F16/无 tree 语义）
-- [ ] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现
+- [x] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现 ✅ plan `2026-07-22-0444-2-frontend-f11-domain-batch-operations`（5 类批量操作代表域全落地 + 模式文档 `docs/design/batch-operation-patterns.md`）
 - [ ] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板）
 - [ ] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现
 - [ ] F14: 18 域 action-auth 菜单完整可达，排序按业务流程
