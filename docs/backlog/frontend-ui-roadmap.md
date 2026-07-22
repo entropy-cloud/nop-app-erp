@@ -336,9 +336,9 @@ Status: `todo`
 
 ### F14 — Menu action-auth 对账（P3）
 
-Status: `todo`
+Status: `done`（plan `docs/plans/2026-07-22-0444-3-frontend-f14-menu-action-auth-reconciliation.md` 全 3 phase 全绿：Phase 0 19 域菜单缺口全量审计 + 分组命名约定裁决 + Phase 1 修复（4 TOPM orderNo 碰撞 + 4 dashboard 位置 + 7 子项 ×10 orderNo + cs 子项 parent-matching + 2 分组命名"配置管理"→"基础配置" + 27 孤儿页面菜单补全）+ Phase 2 回归验证（mvn test 全绿含 TestAppActionAuthMerge 无重复 resource id）。27 孤儿实体跨 11 域补全：md 3 + inv 3 + fin 6 + hr 6 + crm 4 + mfg 1 + aps 1 + pur 1 + qa 1 + drp 1。）
 
-检查 18 域 `action-auth.xml`：
+检查 19 域 `action-auth.xml`：
 
 1. 所有业务实体页面菜单可达
 2. 菜单 `orderNo` 按业务流程排列（非 codegen 字母序）
@@ -542,7 +542,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现 ✅ plan `2026-07-22-0444-2-frontend-f11-domain-batch-operations`（5 类批量操作代表域全落地 + 模式文档 `docs/design/batch-operation-patterns.md`）
 - [ ] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板）
 - [ ] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现
-- [ ] F14: 18 域 action-auth 菜单完整可达，排序按业务流程
+- [x] F14: 19 域 action-auth 菜单完整可达，排序按业务流程（plan `2026-07-22-0444-3`：4 TOPM orderNo 碰撞修复 + 27 孤儿页面补全 + 7 子项 ×10 orderNo 修复 + 2 分组命名统一 + cs 子项 parent-matching）
 - [ ] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性
 - [ ] F16: 16 个复杂手写页面核心交互实现（凭证录入平衡校验、甘特图拖拽、三单匹配差异高亮、版本对比 diff、EDI 语法高亮等）
 - [x] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选） ✅ plan `2026-07-19-2200-3`
