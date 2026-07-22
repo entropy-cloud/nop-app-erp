@@ -1,8 +1,24 @@
 # Frontend UI Completeness Roadmap
 
-> 最后更新：2026-07-19（v3 — 经全面审计 + 独立子代理审查：18+1 域 ui-patterns + Nop docs-for-ai + 架构文档 + 按钮审计 + 后端就绪度验证。详见 `docs/analysis/2026-07-19-frontend-ui-design-completeness-and-quality-analysis.md`。）
+> 最后更新：2026-07-22（v4 — 补充 Flux 渲染引擎备选说明）
 > 本路线图覆盖 view.xml 手写层的前端完整性。后端 3 个路线图（crud + core-business + extended）已全部 done。
 > **实施阶段采用跨 F 集成阶段（Phase 0/1a/1b/2/3/4），而非 F 内独立阶段。**
+
+## Flux 渲染引擎备选（复杂页面优先路径）
+
+`nop-web-site` 由 `nop-chaos-next` 打包，**同时支持 flux 和 amis 两种渲染引擎**（`pageType: 'flux'` / `pageType: 'amis'`）。标准 CRUD 页面继续用 view.xml → amis 路径；**复杂页面（F13/F16 等）优先用 flux DSL 编写 page.yaml**。
+
+Flux 已内置 AMIS 难以实现的高级组件（包 `@nop-chaos/flux-renderers-scheduling`）：
+
+| Flux 组件 | type | 覆盖场景 | 对应 roadmap 项 |
+|-----------|------|---------|----------------|
+| **Gantt**（可拖拽/缩放/依赖连线/里程碑） | `"gantt"` | APS 排产甘特图、项目 WBS、工单进度 | F16 aps 甘特图 |
+| **Kanban**（拖拽列/卡/过滤/排序） | `"kanban"` | CRM 商机/CS 工单/Project 任务看板 | F13 看板类 |
+| **Calendar**（月/周/日/资源视图/iCal） | `"calendar"` | CRM 活动日历/HR 休假矩阵 | F13 日历类 |
+| **Timeline**（纵向/交替/反转） | `"timeline"` | CRM 活动时间线/CS 操作日志/logistics 追踪 | F13 时间线类、F16 logistics |
+| **Steps / Wizard** | `"steps"` / `"wizard"` | maintenance 4 步向导/finance 期末结账向导 | F16 maintenance、F12 Deferred |
+
+> **决策原则**：当前 F13/F16 的 AMIS 实现因拖拽/缩放等交互在 AMIS 中难以实现而**降级**（拖拽→按钮、甘特图→只读 echarts）。执行到 successor 或增强项时，**改用 flux DSL 重写**以获得原生交互能力。flux DSL 权威文档：`~/app/nop-chaos-flux/flux-guide/`（入口 `README.md`，组件 cookbook 在 `design-patterns/`）。
 
 ## 背景
 
@@ -321,6 +337,8 @@ Status: `done`（plan `docs/plans/2026-07-22-0845-3-f13-non-standard-views-kanba
 
 覆盖所有域的非标准列表视图——这些是业务实体视图，不同于经营看板（Non-Goal）。实现方式为 AMIS `crud` 之外的独立页面结构。
 
+> **Flux 备选**：当前 AMIS 实现因 service scope prop 契约限制，拖拽降级为 row-action 按钮、原生 timeline/calendar 降级为 each+tpl。Flux 提供**原生 `kanban`（拖拽列/卡）+ `calendar`（月/周/日/资源视图）+ `timeline`（纵向/交替）**组件，执行 successor 或增强时优先用 flux DSL 重写以获得完整交互。见本路线图「Flux 渲染引擎备选」段。
+
 **看板类：**
 1. **CRM 商机看板**：线索详情页 Kanban，支持拖拽阶段切换（isWonStage 列禁止拖出，丢失列只读）。阶段列从 ErpCrmStage 动态读取
 2. **CS 工单看板**：按状态字典动态列，SLA 超时卡片含 🔴 标记。待分派列闪烁高亮，拖拽变更状态
@@ -358,9 +376,11 @@ codegen 生成文件包含 `i18n-en:title`。手写层使用中文 `label` 或 `
 
 ### F16 — 核心复杂手写页面（P1-P2）
 
-Status: `partial` — 低风险批 5 页面已落地（plan `2026-07-22-0845-2`：finance 凭证录入完成 + 凭证模板配置 + purchase 三单匹配 + mfg 工单进度仪表板 + quality NCR 详情页 + renderTemplate 表达式引擎 + 范式文档 §8）；高风险批 2 页面已落地（plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树 + 范式文档 §8.7-§8.8）；高风险余项（inventory PDA 扫码/maintenance 向导）+ P2 5 项（hr/logistics/b2b/contract/drp）归 successor plan
+Status: `partial` — 低风险批 5 页面已落地（plan `2026-07-22-0845-2`：finance 凭证录入完成 + 凭证模板配置 + purchase 三单匹配 + mfg 工单进度仪表板 + quality NCR 详情页 + renderTemplate 表达式引擎 + 范式文档 §8）；高风险批 2 页面已落地（plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树 + 范式文档 §8.7-§8.8）；P2 7 页面已落地（plan `2026-07-22-1400-2`：hr 薪酬核算审批 + hr 组织架构图 + logistics 发运追踪时间线 + b2b EDI 事务详情 + b2b ASN 流程条 + contract 合同版本对比 + drp 净需求计算报表 + 范式文档 §8.9-§8.12）；高风险余项（inventory PDA 扫码/maintenance 向导）归 successor plan
 
 以下页面被 `docs/architecture/view-and-page-strategy.md` 及多域 `ui-patterns.md` 列为「复杂手写页面」，非标准 CRUD，需独立 view.xml 或 AMIS 定制。这些页面 F1-F15 无法覆盖。
+
+> **Flux 备选**：当前 AMIS 实现中，aps 排产甘特图为 echarts custom series **只读**（无拖拽/缩放）、maintenance 向导为 successor 未落地。Flux 提供**原生 `gantt`（可拖拽/缩放/依赖连线/里程碑）+ `wizard`/`steps`（多步向导）**组件，执行 successor 或增强时优先用 flux DSL 重写以获得原生交互。见本路线图「Flux 渲染引擎备选」段。
 
 | 域 | 页面 | 复杂度 | 核心交互 | 优先级 |
 |----|------|--------|---------|--------|
@@ -544,7 +564,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现 ✅ plan `2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar`（7 页面 + 范式文档 + visual/action spec；Phase 0 拖拽 PoC 降级为 row-action + 原生 timeline/calendar 降级为 each+tpl）
 - [x] F14: 19 域 action-auth 菜单完整可达，排序按业务流程（plan `2026-07-22-0444-3`：4 TOPM orderNo 碰撞修复 + 27 孤儿页面补全 + 7 子项 ×10 orderNo 修复 + 2 分组命名统一 + cs 子项 parent-matching）
 - [ ] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性
-- [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险批 2/4 已落地 plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树；高风险余项 inventory PDA/maintenance 向导 2 + P2 7 归 successor）
+- [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险批 2/4 已落地 plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树；P2 7 页面已落地 plan `2026-07-22-1400-2`：hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表；高风险余项 inventory PDA/maintenance 向导 2 归 successor）
 - [x] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选） ✅ plan `2026-07-19-2200-3`
 - [ ] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret）
 - [ ] Timesheet 周网格共享组件实现（hr 考勤 + projects 工时录入合并）

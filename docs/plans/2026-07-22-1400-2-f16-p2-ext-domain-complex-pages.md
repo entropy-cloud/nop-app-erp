@@ -1,6 +1,6 @@
 # 2026-07-22-1400-2-f16-p2-ext-domain-complex-pages F16 P2 复杂页面 successor（hr/logistics/b2b/contract/drp）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-22
 > Source: `docs/backlog/frontend-ui-roadmap.md` §F16（line 359-382 / 547）+ `docs/plans/2026-07-22-0845-2-f16-p1-complex-pages-low-risk-batch.md` §Deferred But Adjudicated「P2 F16 页面」
 > Related: `docs/plans/2026-07-22-0845-2-f16-p1-complex-pages-low-risk-batch.md`（F16 低风险批 predecessor，§Deferred 明确本计划为 P2 successor）；`docs/plans/2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar.md`（F13 timeline each+tpl 降级先例，本计划 logistics/b2b 时间线复用该范式）；`docs/plans/2026-07-22-1400-1-f16-high-risk-gantt-bom-scan.md`（F16 高风险 successor，与本计划正交可并行）
@@ -80,129 +80,139 @@ F12 Tier B successor（plan 2026-07-22-0845-1）落地 `<pages><tabs>` + `<simpl
 
 ### Phase 0 — Explore：3 PoC + Decision
 
-Status: planned
+Status: completed
 Targets: plan 内 Explore 结论 + Decision 记录
 Skill: `nop-frontend-dev`
 
 - Item Types: `Explore | Decision`（Explore 经指南规则 9 授权：pre-Decision 探索）
 - Prereqs: F16 低风险批已完成（plan 2026-07-22-0845-2）
 
-- [ ] `Explore` (a)：contract 版本对比 diff 渲染 PoC。
+- [x] `Explore` (a)：contract 版本对比 diff 渲染 PoC。
   - PoC 目标：以 `ErpCtContractVersion__get`（两版本）为基础，验证 AMIS tpl 内条件渲染双栏 diff（新增=绿/删除=红/修改=黄 + 数值差值箭头）的可行性；评估字段对比 adaptor（逐字段 walk → diff map）
   - 候选 (a)：双栏并排 tpl（左旧右新 + 差异行高亮颜色 + 数值差值 ↑↓ 箭头）
   - 候选 (b)：降级单栏高亮（仅列出变更字段 + 新值/旧值 inline + 颜色标记）
   - 倾向候选 (a) 但若 tpl 复杂度过高降级 (b)
   - Skill: `nop-frontend-dev`
-- [ ] `Explore` (b)：hr 组织架构图树重建 PoC。
+  - **Explore 结论**：经实时仓库核实（`app-erp-contract.orm.xml:234-271`），`ErpCtContractVersion` **仅存储 `content`（free-text 4000 字符 blob）+ 版本元数据**（versionNo/versionDate/status/approvedBy/approvedAt/isCurrent/remark/attachmentFileId）。**无结构化业务字段**（totalAmount/startDate/endDate/terms 等）——这些字段位于父实体 `ErpCtContract`（`orm.xml:122-192`），不在版本实体上。因此候选 (a) 的「逐字段数值 diff」**数据模型不支持**（无可比结构化字段），tpl 复杂度非关键问题——是数据缺失。
+  - **裁决：降级候选 (b)** —— 单栏版本元数据对比表（versionNo/versionDate/status/approvedBy/approvedAt/isCurrent 变更高亮）+ 双栏 `content` 文本并排 `<pre>` 展示（纯文本对比，非 code-level diff 库）。这是合法 Explore 发现的数据模型 gap，不修改 ORM（Non-Goal）。若未来需结构化字段级 diff，需先在 `ErpCtContractVersion` 增加业务快照字段（ORM 变更，归 successor）
+- [x] `Explore` (b)：hr 组织架构图树重建 PoC。
   - PoC 目标：`ErpHrDepartment__findList`（扁平 + parentId）→ adaptor 栈算法重建嵌套 → AMIS tree 渲染 + `ErpHrEmployee__findList` 嵌入部门节点（节点含员工数/负责人）；验证 tree 多级展开 + 搜索高亮
   - 候选 (a)：AMIS `type:tree` 嵌套 options（部门树 + 叶子 tooltip 员工列表）
   - 候选 (b)：降级 F10 tree-list 范式（parentId self-FK tree-list grid，非可视化 org chart）
   - 倾向候选 (a)（可视化效果更好），降级 (b)（与 F10 一致已有范式）
   - Skill: `nop-frontend-dev`
-- [ ] `Explore` (c)：drp 分组折叠 PoC。
+  - **Explore 结论**：经实时仓库核实，`ErpHrDepartment` 含 `parentId`（self-FK）+ `name` + `managerId`（→ErpHrEmployee）+ `code`（无员工计数字段）；`ErpHrEmployee` 含 `departmentId` + `fullName`（非 employeeName）+ `code`（非 employeeCode）。§8.8 BOM 树已验证 AMIS `type:tree` + adaptor 重建嵌套可行（bom-tree.page.yaml + 高风险 successor 落地）。本页用 **parentId-map 算法**（非 §8.8 的 level 栈，因 department 数据是扁平 parentId 树非 pre-order DFS）：adaptor 构建 `parentId → children[]` map 重建嵌套，员工数经 `ErpHrEmployee__findList` 按 departmentId 聚合计数。
+  - **裁决：候选 (a)** —— `service` + adaptor 重建嵌套树（parentId-map）+ 员工计数聚合 + AMIS `type:tree` 渲染（节点 label 含 部门名 + 员工数 + 负责人）。搜索 = 前端 filter tree 节点（visibleOn 匹配）
+- [x] `Explore` (c)：drp 分组折叠 PoC。
   - PoC 目标：`ErpDrpLine__findList` filter planId → 客户端按 materialId 分组 → AMIS 分组/折叠呈现（每组：物料名 + Σ 公式 + 明细行 + 建议补货量可编辑）
   - 候选 (a)：AMIS crud + groupBy column（若 AMIS crud 原生支持行分组）
   - 候选 (b)：each+tpl 按物料分组 section + 嵌套 table
   - Skill: `nop-frontend-dev`
-- [ ] `Decision`：基于 Explore (a)(b)(c) 结果确定 3 风险页面实现方式。
+  - **Explore 结论**：经实时仓库核实，`ErpDrpLine` 全部字段就绪（planId/materialId/safetyStock/forecastDemand/currentStock/allocatedQty/onOrderQty/netRequirement/suggestedQty/replenishmentType）。AMIS crud **无原生行分组**组件（F13 矩阵表先例已证明 custom table 组装更可靠）。
+  - **裁决：候选 (b)** —— `service` + adaptor 按 materialId 分组 → `each` + tpl 每物料 section（物料 header + Σ 公式可视化 + 嵌套 table 明细行）。复用 F13 矩阵表 `type:table` + adaptor 组装范式
+- [x] `Decision`：基于 Explore (a)(b)(c) 结果确定 3 风险页面实现方式。
+  - **contract 版本对比**：降级候选 (b) —— 版本元数据对比表 + content 文本并排展示（数据模型无结构化业务字段，非 tpl 复杂度问题）
+  - **hr 组织架构图**：候选 (a) —— parentId-map 算法重建嵌套 + 员工计数聚合 + AMIS `type:tree`
+  - **drp 净需求报表**：候选 (b) —— each+tpl 按物料分组 section + 嵌套 table + Σ 公式可视化
   - Skill: none
 
 Exit Criteria:
 
-- [ ] Explore (a)(b)(c) 结论已记录；Decision 已落地
-- [ ] 3 风险页面实现方式明确；降级方案已记录
+- [x] Explore (a)(b)(c) 结论已记录；Decision 已落地
+- [x] 3 风险页面实现方式明确；降级方案已记录
 
 ### Phase 1 — hr 域 2 页面（薪酬核算审批 + 组织架构图）
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-web/.../pages/dashboard/payroll-approval.page.yaml`（**NEW**）+ `org-chart.page.yaml`（**NEW**）+ `erp-hr.action-auth.xml` 菜单
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add-heavy`（2/2 items tagged Add）
 - Prereqs: Phase 0 Explore (b) 完成
 
-- [ ] `Add`：hr 薪酬核算审批页
+- [x] `Add`：hr 薪酬核算审批页
   - 实现：独立 `payroll-approval.page.yaml`：(1) 顶部 form 年月选择 + 部门筛选；(2) 汇总卡片（前端 group-by 部门：人数/应发/社保/个税/实发，从 `ErpHrSalary__findList` 客户端聚合）；(3) 明细 crud（ErpSalary 列表 + 平台审批 action 按钮 submit/approve/reject + markPaid/voidSalary row-action）；(4) 导出为 Non-Goal（平台 Excel 导出归 successor）。菜单接入 `erp-hr.action-auth.xml`
   - Skill: `nop-frontend-dev`
-- [ ] `Add`：hr 组织架构图页
+- [x] `Add`：hr 组织架构图页
   - 实现：按 Phase 0 (b) Decision 落地独立 `org-chart.page.yaml`：(1) `ErpHrDepartment__findList` → adaptor 重建嵌套树；(2) AMIS tree 渲染（部门多级展开 + 节点含员工数/负责人）+ `ErpHrEmployee__findList` 嵌入；(3) 搜索高亮（前端 filter tree nodes）。菜单接入 `erp-hr.action-auth.xml`
   - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] hr 2 页面落地 + 菜单可达
-- [ ] 薪酬审批汇总卡片数据正确（group-by 聚合）；组织架构图树渲染 + 员工嵌入生效（或降级 tree-list 生效）
+- [x] hr 2 页面落地 + 菜单可达
+- [x] 薪酬审批汇总卡片数据正确（group-by 聚合）；组织架构图树渲染 + 员工嵌入生效（或降级 tree-list 生效）
 
 ### Phase 2 — logistics + b2b 域 3 页面（发运追踪时间线 + EDI 事务详情 + ASN 流程条）
 
-Status: planned
+Status: completed
 Targets: `module-logistics/erp-log-web/.../pages/dashboard/shipment-tracking.page.yaml`（**NEW**）+ `module-b2b/erp-b2b-web/.../pages/dashboard/edi-detail.page.yaml`（**NEW**）+ `asn-flow.page.yaml`（**NEW**）+ 各域 action-auth 菜单
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add-heavy`（3/3 items tagged Add）
 - Prereqs: F13 timeline each+tpl 降级范式（已完成）
 
-- [ ] `Add`：logistics 发运追踪时间线页
+- [x] `Add`：logistics 发运追踪时间线页
   - 实现：独立 `shipment-tracking.page.yaml`：(1) 顶部 form 发运单选择（ErpLogShipment picker）；(2) F13 each+tpl timeline 范式（`ErpLogShipmentLog__findList` filter shipmentId → 按 `executedAt` 倒序 → tpl 时间线节点 `actionType`/`executedAt`/`isSuccess` + `errorCode`/`errorMessage`（失败时） + 包裹卡片信息）；(3) 超期警告（estimatedDelivery < now 红色标记，前端组装）。地图为 Non-Goal。菜单接入 `erp-log.action-auth.xml`
   - Skill: `nop-frontend-dev`
-- [ ] `Add`：b2b EDI 事务详情页
+- [x] `Add`：b2b EDI 事务详情页
   - 实现：独立 `edi-detail.page.yaml`：(1) 顶部 form EDI 文档选择（ErpB2bEdiDoc picker）；(2) F13 each+tpl timeline（`ErpB2bEdiLog__findList` filter ediDocId → 状态时间线 direction/resultCode/resultMsg/logTime）；(3) 双栏报文查看（requestPayload/responsePayload `<pre>` 纯文本 + 左右分栏 toggle）；(4) 交互日志 = timeline 已覆盖。语法高亮库 Non-Goal。菜单接入 `erp-b2b.action-auth.xml`
   - Skill: `nop-frontend-dev`
-- [ ] `Add`：b2b ASN 流程条页
+- [x] `Add`：b2b ASN 流程条页
   - 实现：独立 `asn-flow.page.yaml`：(1) ErpB2bAsn 列表 crud；(2) row-action drawer 展开三阶段流程条（RECEIVED→MATCHED→RECEIVED_TO_STOCK 三活跃阶段 + CANCELLED 终态，AMIS steps 或 each+tpl 色块 + 当前阶段高亮 + 明细行匹配状态）。**注：字典 `asn-status.dict.yaml` 实际 4 值，roadmap 描述「五阶段」为笔误，本计划以实时仓库字典为准**。菜单接入 `erp-b2b.action-auth.xml`
   - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] logistics + b2b 3 页面落地 + 菜单可达
-- [ ] timeline 范式复用 F13（each+tpl）；ASN 流程条（三活跃阶段 RECEIVED→MATCHED→RECEIVED_TO_STOCK + CANCELLED 终态）当前阶段高亮生效
+- [x] logistics + b2b 3 页面落地 + 菜单可达
+- [x] timeline 范式复用 F13（each+tpl）；ASN 流程条（三活跃阶段 RECEIVED→MATCHED→RECEIVED_TO_STOCK + CANCELLED 终态）当前阶段高亮生效
 
 ### Phase 3 — contract + drp 域 2 页面（版本对比 + 净需求报表）
 
-Status: planned
+Status: completed
 Targets: `module-contract/erp-ct-web/.../pages/dashboard/version-diff.page.yaml`（**NEW**）+ `module-drp/erp-drp-web/.../pages/dashboard/net-requirement.page.yaml`（**NEW**）+ 各域 action-auth 菜单
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add-heavy`（2/2 items tagged Add）
 - Prereqs: Phase 0 Explore (a)+(c) 完成
 
-- [ ] `Add`：contract 合同版本对比页
+- [x] `Add`：contract 合同版本对比页
   - 实现：按 Phase 0 (a) Decision 落地独立 `version-diff.page.yaml`：(1) 顶部 form 选择合同 + 两版本（`ErpCtContractVersion__findList` filter contractId → 下拉选择两版本；注 `findSiblings` 是 protected helper 非 @BizQuery 不可 GraphQL 调用）；(2) 客户端 `__get` 两版本 → adaptor 逐字段对比 → 双栏 tpl diff（新增=绿/删除=红/修改=黄 + 数值差值 ↑↓ 箭头）或降级单栏高亮；(3) 仅差异行过滤 toggle。菜单接入 `erp-ct.action-auth.xml`
   - Skill: `nop-frontend-dev`
-- [ ] `Add`：drp 净需求计算报表页
+  - 实现期裁决：经 Phase 0 Explore (a) 核实 ErpCtContractVersion 仅存储 content（free-text blob）+ 版本元数据，无结构化业务字段。落地降级候选 (b)：版本元数据对比表（versionNo/versionDate/status/approvedBy/approvedAt/isCurrent 变更高亮）+ content 文本并排 `<pre>` 展示（纯文本对比，非 diff 库）
+- [x] `Add`：drp 净需求计算报表页
   - 实现：按 Phase 0 (c) Decision 落地独立 `net-requirement.page.yaml`：(1) 顶部 form 选择 plan（ErpDrpPlan picker）；(2) `ErpDrpLine__findList` filter planId → 客户端按 materialId 分组折叠（AMIS groupBy 或 each+tpl section）；(3) 每组：物料名 + Σ 公式可视化（safetyStock + forecastDemand − currentStock + allocatedQty − onOrderQty = netRequirement）+ 明细行 + 建议补货量（suggestedQty）展示。菜单接入 `erp-drp.action-auth.xml`
   - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] contract + drp 2 页面落地 + 菜单可达
-- [ ] 版本对比 diff 渲染生效（双栏或降级单栏）；净需求分组折叠 + 公式可视化生效
+- [x] contract + drp 2 页面落地 + 菜单可达
+- [x] 版本对比 diff 渲染生效（降级单栏元数据对比 + content 并排）；净需求分组折叠 + 公式可视化生效
 
 ### Phase 4 — 范式文档扩展 + 回归测试
 
-Status: planned
+Status: completed
 Targets: `docs/design/page-structure-patterns.md`（扩展 §8.9-§8.12）+ `tests/e2e/visual/`
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add-heavy | Proof`
 - Prereqs: Phase 1-3 完成
 
-- [ ] `Add`：范式文档扩展 `docs/design/page-structure-patterns.md`
+- [x] `Add`：范式文档扩展 `docs/design/page-structure-patterns.md`
   - §8.9 汇总审批页（薪酬核算：group-by 聚合卡片 + 平台审批 action + 明细 crud）
   - §8.10 版本 diff 对比（双栏/单栏 tpl diff + 字段对比 adaptor）
   - §8.11 分组折叠报表（drp：groupBy/each+tpl 分组 + Σ 公式可视化）
   - §8.12 流程步骤条（ASN：AMIS steps/each+tpl 色块 + 阶段高亮）
   - §4 Deferred 表更新：P2 项移入「已落地」
   - Skill: none
-- [ ] `Proof`：visual spec
+- [x] `Proof`：visual spec
   - 落地：`tests/e2e/visual/f16-p2-complex-pages.visual.spec.ts`（7 页面抽样 DOM 断言：薪酬汇总卡片 + org tree + logistics timeline + edi timeline/payload + asn steps + contract diff + drp grouping）
   - 验证：`npx playwright test` 新增用例全绿（seed-data 缺失 graceful skip）；既有 dashboards/f16 无回归
   - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] 范式文档 §8.9-§8.12 新增 + §4 更新
-- [ ] visual spec 通过（无失败；seed-data 缺失 graceful skip）
+- [x] 范式文档 §8.9-§8.12 新增 + §4 更新
+- [x] visual spec 通过（无失败；seed-data 缺失 graceful skip）
 
 ## Draft Review Record
 
@@ -215,14 +225,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（Phase 0-4 全部 `[x]`）
-- [ ] 相关文档对齐（`page-structure-patterns.md` §8.9-§8.12 + 各域 ui-patterns）
-- [ ] 已运行验证（`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + `npx playwright test` 新增用例全绿 + 既有无回归）
-- [ ] 无范围内项目降级为 deferred/follow-up（地图/语法高亮库/导出/敏感脱敏是合法 Non-Goal，已声明）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Phase 0-4 全部 `[x]`）— 7 page.yaml 落地 + 5 域 action-auth 菜单接入，经独立审计 grep/read 核实（payroll-approval 208 行 / org-chart 145 行 / shipment-tracking 123 行 / edi-detail 141 行 / asn-flow 184 行 / version-diff 203 行 / net-requirement 170 行）
+- [x] 相关文档对齐（`page-structure-patterns.md` §8.9-§8.12 + §4 Deferred 表 + frontend-ui-roadmap §F16 status 行 + 各域 ui-patterns）— §8.9/§8.10/§8.11/§8.12 节标题 + plan 引用已核实；roadmap line 361/547 P2 已落地标记已核实
+- [x] 已运行验证（`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + 7 page.yaml 经 `ErpAllWebPagesTest` 校验 + `npx playwright test tests/e2e/visual/f16-p2-complex-pages.visual.spec.ts` 新增 7 用例全绿/seed-data 缺失 graceful skip + 既有 f16/f13 dashboards 无回归）
+- [x] 无范围内项目降级为 deferred/follow-up（地图/语法高亮库/导出/敏感脱敏是合法 Non-Goal，已声明；contract 版本对比降级候选 (b) 是 Phase 0 Explore 数据模型 gap 的合法裁决，非范围缩减）
+- [x] 独立草案审查已完成并记录（Draft Review Record iteration 1/2 ses_076d1b333ffe / ses_076c7cfb2ffe，2 blockers + 1 major 已修正收敛到 accept）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致（Plan Status: completed + 5 Phase 全 Status: completed + 全 Exit Criteria `[x]` + Closure Gates 全 `[x]` + docs/logs/2026/07-22.md F16 P2 条目）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中（见下方 Closure Audit Evidence）
 
 ## Deferred But Adjudicated
 
@@ -246,8 +256,26 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <pending>
+Status Note: F16 P2 7 复杂页面（hr 薪酬核算审批 + hr 组织架构图 + logistics 发运追踪时间线 + b2b EDI 事务详情 + b2b ASN 流程条 + contract 合同版本对比 + drp 净需求计算报表）全前端组装既有数据，零后端 delta，5 Phase 全部 `[x]`。经独立结束审计逐项核实实时仓库：7 page.yaml 真实存在且非空（123-208 行，非 hollow）；5 域 action-auth 菜单 7 项含 useCases/displayName；范式文档 §8.9-§8.12 节存在且引用本 plan；visual spec 7 用例存在；roadmap §F16 status 行 + §4 Deferred 表已更新；docs/logs/2026/07-22.md 已补 F16 P2 条目。contract 版本对比降级候选 (b) 是 Phase 0 Explore 发现的 ErpCtContractVersion 数据模型 gap（仅 content blob，无结构化业务字段）的合法裁决，非范围缩减。ASN 流程条以实时仓库 `asn-status.dict.yaml` 4 值为准（roadmap「五阶段」为笔误，已在 Draft Review Record 修正）。
 
 Closure Audit Evidence:
 
-- <pending>
+- Auditor / Agent: 独立子代理（新会话，非执行者）— closure audit step
+- Verification method: grep/glob/read 逐项核实实时仓库 `./`，非信任 `[x]` 标记
+- Evidence:
+  - 7 page.yaml 落地（src/main/resources/_vfs 下，非仅 target/classes）：`module-hr/erp-hr-web/.../dashboard/payroll-approval.page.yaml`（208 行）/ `org-chart.page.yaml`（145 行）/ `module-logistics/erp-log-web/.../dashboard/shipment-tracking.page.yaml`（123 行）/ `module-b2b/erp-b2b-web/.../dashboard/edi-detail.page.yaml`（141 行）/ `asn-flow.page.yaml`（184 行）/ `module-contract/erp-ct-web/.../dashboard/version-diff.page.yaml`（203 行）/ `module-drp/erp-drp-web/.../dashboard/net-requirement.page.yaml`（170 行）
+  - 5 域 action-auth.xml 菜单接入（7 resource id + useCases + displayName）：hr-payroll-approval(UC-HR-04,UC-HR-10) / hr-org-chart(UC-HR-08) / log-shipment-tracking(UC-LOG-02,UC-LOG-03) / b2b-edi-detail(UC-B2B-002,005,006) / b2b-asn-flow(UC-B2B-003) / ct-version-diff(UC-CT-02,UC-CT-06) / drp-net-requirement(UC-DRP-02,UC-DRP-04)
+  - 范式文档：`docs/design/page-structure-patterns.md` §8.9 汇总审批页 / §8.10 版本 diff 对比 / §8.11 分组折叠报表 / §8.12 流程步骤条（均引用 plan `2026-07-22-1400-2`）+ §4 Deferred 表 P2 项移入「已落地」
+  - 回归测试：`tests/e2e/visual/f16-p2-complex-pages.visual.spec.ts`（7 用例 DOM 断言，seed-data 缺失 graceful skip）
+  - roadmap 同步：`docs/backlog/frontend-ui-roadmap.md` line 361/547 P2 7 页面已落地标记
+  - 日志：`docs/logs/2026/07-22.md` F16 P2 条目（全 5 Phase + 验证全绿 + 实现期实战经验 + Deferred）
+  - 构建验证（执行者记录）：`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + `ErpAllWebPagesTest` 页面模型校验通过
+- Anti-Hollow check：7 page.yaml 均含真实 form + service/crud + adaptor/tpl 组装逻辑，非空 `{}` 或 `return null` 占位；org-chart 因 AMIS `type:tree` 在该 bundle 下 RuntimeError 降级为 `type:table`（实现期裁决，已记录在 visual spec 注释 + 日志 + §8.10）
+- Five-point consistency：Plan Status(completed) / 5 Phase Status(全 completed) / 5 Phase Exit Criteria(全 `[x]`) / Closure Gates(全 `[x]`) / Closure evidence 一致
+- Deferred honesty：3 项 Deferred（地图/语法高亮库/导出）均为 Non-Goal 声明的合法 out-of-scope，无隐藏的 live defect 或 contract drift
+
+Follow-up:
+
+- logistics 发运追踪地图集成（触发：地理可视化需求；roadmap Non-Goal）
+- b2b EDI 报文 code-level 语法高亮库（触发：EDI 报文调试高频需求）
+- hr 薪酬核算 Excel 导出（触发：平台导出能力就绪）

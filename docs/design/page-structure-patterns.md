@@ -298,7 +298,7 @@ x:gen-extends: |
 | F16 低风险复杂页面（凭证录入完成 + 凭证模板配置 + 三单匹配联查 + 工单进度仪表板 + NCR 详情页） | F16 低风险批已完成 | ✅ 已落地（plan `2026-07-22-0845-2`），见 §8 F16 复杂页面范式 |
 | F16 高风险复杂页面（aps 甘特图 + mfg BOM 树） | F16 高风险批已完成 | ✅ 已落地（plan `2026-07-22-1400-1`），见 §8.7-§8.8 |
 | F16 高风险余项（inventory PDA 扫码 + maintenance 4 步向导） | F16 territory | inventory PDA 硬件 Non-Goal（归 Barcode/PDA cross-cutting successor）；maintenance 向导 BLOCKED（F4 child-table-editor 基线缺失） |
-| F16 P2（hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表） | F16 territory | F16 P2 successor plan 启动 |
+| F16 P2（hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表） | F16 territory | ✅ 已落地（plan `2026-07-22-1400-2`），见 §8.9-§8.12 |
 
 ## 5. wizard 范式占位（待 successor 落地后回填）
 
@@ -488,3 +488,83 @@ for n in flat:
 | 为 phantom 节点做前端特殊处理 | BomExpander 已合并 phantom（本身不出现），前端无需处理 |
 | service auto-fetch 空 bomId 导致 GraphQL error 冒泡到页面 | adaptor 探测 `payload.data.errors` 优雅返回空 + 占位提示 |
 | 用臆测字段名（如 `nonConformanceId`） | 经实时仓库核实实际字段名（此处 FK 为 sourceBomId/level/materialId） |
+
+### 8.9 汇总审批页（hr 薪酬核算审批，plan `2026-07-22-1400-2`）
+
+**场景**：薪酬记录（ErpHrSalary）按期间过滤，前端聚合汇总卡片（人数/应发/社保/个税/实发）+ 明细 crud + 审批/发放 row-action。
+
+**Phase 0 Explore 结论**：ErpHrSalary 实体经实时仓库核实：字段为 `grossSalary`/`netSalary`/`taxAmount`（非 grossAmount/netAmount/individualTax），期间为 `year`+`month` 双字段（非 payPeriod），双状态 `paymentStatus`（erp-hr/salary-payment-status）+ `approveStatus`（wf/approve-status）。**实体无 `departmentId` 字段**（有 `orgId` + `employeeId`），分组维度改用 orgId（业务组织）。
+
+**实现期裁决（filter 语法）**：erp 域实体的 `findPage` **不支持 `filter_<field>` 简写参数**（`nop.err.graphql.undefined-field-arg`），也不支持 `limit`/`orderBy` 作为直接参数。统一改用 `query:{limit:N}` 内联 QueryBean + adaptor 客户端过滤（`rows.filter(function(r){return r.field==val;})`）。这对 demo 级数据量充裕，大表需后端 `@BizQuery` 聚合（successor）。
+
+**落地范式（独立 page.yaml，service 聚合 + crud 明细）**：
+- 顶部 form 年月选择（year input-number + month select）
+- `type:service`（payrollSummary）：`ErpHrSalary__findPage(query:{limit:2000})` → adaptor 客户端 filter year/month + reduce 聚合（人数/grossSalary Σ/socialInsurance Σ/taxAmount Σ/netSalary Σ + 按 orgId 分组 table）
+- 汇总卡片 = 5 个 `type:tpl` panel（grid 布局），数值从 service data scope 取
+- 明细 `type:crud`：`ErpHrSalary__findPage(query:{limit:2000})`，adaptor 客户端 filter，行级 markPaid/voidSalary row-action（visibleOn paymentStatus，调 `__markPaid`/`__voidSalary` mutation）
+- Excel 导出 = Non-Goal（平台导出归 successor）
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 用臆测字段名（grossAmount/netAmount/individualTax/payPeriod） | 经实时仓库核实：grossSalary/netSalary/taxAmount/year+month |
+| 假设 salary 有 departmentId 做「group-by 部门」 | 实体无 departmentId（有 orgId），分组改用 orgId 或经 employee 关联 |
+| 用 `filter_<field>:val` 简写（erp 域实体不支持） | 用 `query:{limit:N}` 内联 + adaptor 客户端 filter |
+| visibleOn 双引号嵌套（`"${x == "Y"}"` → YAML 解析冲突） | 用单引号包裹 YAML 值（`'${x == "Y"}'`） |
+
+### 8.10 版本 diff 对比（contract 合同版本对比，plan `2026-07-22-1400-2`）
+
+**场景**：合同版本（ErpCtContractVersion）两版本对比，差异高亮。
+
+**Phase 0 Explore (a) PoC 结论（关键数据模型发现）**：`ErpCtContractVersion` 实体**仅存储 `content`（free-text 4000 字符 blob）+ 版本元数据**（versionNo/versionDate/status/approvedBy/approvedAt/isCurrent/remark/attachmentFileId）。**无结构化业务字段**（totalAmount/startDate/endDate/terms 在父实体 ErpCtContract 上，不在版本实体）。因此候选 (a) 的「逐字段数值 diff」**数据模型不支持**——是数据缺失，非 tpl 复杂度问题。
+
+**落地范式（降级候选 (b)，元数据对比表 + content 并排）**：
+- 顶部 form 选合同ID → `ErpCtContractVersion__findList(filter_contractId)` 加载版本列表 → select 下拉选两版本（`findSiblings` 是 protected helper 非 @BizQuery，用标准 findList）
+- `type:service`（compareService）：`__get` 两版本 → adaptor 逐字段对比元数据（versionNo/versionDate/status/approvedBy/approvedAt/isCurrent/remark）生成 `{field, valueA, valueB, changed}` rows
+- 元数据对比 `type:table`：变更行 `<span style="background:#fef9c3">` 黄色高亮 + changed 标签（label-warning/label-default）
+- content 并排对比：两个 `type:grid` 列各含 `<pre>` 纯文本展示（非 diff 库，非 code-level 高亮）
+- 结构化字段级 diff 需 ORM 变更（Non-Goal，归 successor）
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 假设版本实体有结构化业务字段（amount/dates/terms）做数值 diff | 经实时仓库核实：ErpCtContractVersion 仅 content blob + 元数据；结构化字段在父实体 |
+| 用 `findSiblings`（protected helper，非 @BizQuery） | 用标准 `ErpCtContractVersion__findList(filter_contractId)` |
+| content diff 引入 code-level 高亮库（highlight.js） | 纯 `<pre>` 文本展示满足可读性（语法高亮库 = Non-Goal） |
+
+### 8.11 分组折叠报表（drp 净需求计算报表，plan `2026-07-22-1400-2`）
+
+**场景**：净需求明细（ErpDrpLine）按物料分组，每组含 Σ 公式可视化 + 明细行。
+
+**Phase 0 Explore (c) PoC 结论**：AMIS crud **无原生行分组**组件（F13 矩阵表先例已证明 custom table 组装更可靠）。
+
+**落地范式（候选 (b)，service 分组 + each section + 嵌套 table）**：
+- 顶部 form 选 planId → `ErpDrpLine__findList(filter_planId)` + `ErpDrpPlan__get(id)`
+- `type:service`（netReqService）：adaptor 按 materialId 分组 reduce（Σ safetyStock/forecastDemand/currentStock/allocatedQty/onOrderQty/netRequirement/suggestedQty per group）
+- `type:each`（groups）：每物料一个 section —— tpl panel header（物料ID + 行数 + 净需求合计 + 建议补货）+ tpl Σ 公式可视化（`安全库存(X) + 预测需求(X) − 当前库存(X) + 已分配(X) − 在途(X) = 净需求(X)`，label-danger if >0）+ 嵌套 `type:table`（source: detailRows）
+- 字段经核实全部正确（safetyStock/forecastDemand/currentStock/allocatedQty/onOrderQty/netRequirement/suggestedQty/replenishmentType）
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 用 AMIS crud groupBy column（无原生支持） | service + adaptor 分组 + each section + 嵌套 table |
+| Σ 公式硬编码数值（静态） | tpl 插值 `${totSafety} + ${totForecast} − ...` 动态展示分组聚合 |
+
+### 8.12 流程步骤条（b2b ASN 流程跟踪，plan `2026-07-22-1400-2`）
+
+**场景**：ASN（ErpB2bAsn）状态流程条——三活跃阶段 RECEIVED→MATCHED→RECEIVED_TO_STOCK + CANCELLED 终态，当前阶段高亮。
+
+**Phase 0 / Draft Review 裁决**：字典 `erp-b2b/asn-status` 经实时仓库核实实际 **4 值**（RECEIVED/MATCHED/RECEIVED_TO_STOCK/CANCELLED）。roadmap 描述「五阶段」（含 VALIDATED/PENDING_RECEIPT）为**笔误传播**——VALIDATED/PENDING_RECEIPT 不存在于字典。本范式以实时仓库字典为准。
+
+**落地范式（each+tpl 色块 + row-action dialog）**：
+- ASN 列表 crud（`ErpB2bAsn__findPage(filter_status)`）+ row-action「查看流程」dialog
+- dialog 内 `type:service`：`ErpB2bAsn__get` + `ErpB2bAsnLine__findList(filter_asnId)` → adaptor 计算阶段状态（done/current/todo per stage by order.indexOf(status)）
+- 流程条 = `type:each`（flowSteps）每步 tpl 色块：current=蓝(`#3b82f6`,border 加粗)+done=绿(`#22c55e`)+todo=灰(`#f1f5f9`)
+- 明细行匹配状态：ErpB2bAsnLine **无 poLineId/receiveLineId/matched-status 字段**（经核实），改用 `quantity`（订单）vs `shippedQty`（发货）对比 → full/partial/unshipped 标签
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 按 roadmap「五阶段」建模（VALIDATED/PENDING_RECEIPT 不存在） | 以实时仓库字典 `asn-status.dict.yaml` 为准（4 值） |
+| 假设 ErpB2bAsnLine 有 matched-status 字段 | 经核实仅有 quantity/shippedQty，匹配状态经两者对比推断 |
+| 用 AMIS `type:steps`（prop 契约可能不稳） | each+tpl 色块（与 F13 拖拽降级先例一致的 custom JSON 组装） |
