@@ -288,7 +288,7 @@ Status: `completed`（plan `docs/plans/2026-07-22-0444-2-frontend-f11-domain-bat
 
 ### F12 — 页面结构增强（P2）
 
-Status: `partial` — 核心域 8 实体 tabs 容器已落地（plan 2026-07-21-0330-3-f12-page-structure-tabs-wizards.md），Tier C wizard + Tier D 长尾 + Tier B 完整仪表板 drawer + 敏感字段脱敏归 successor plan
+Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），Tier C wizard + 跨域凭证 tab + 敏感字段脱敏 + Tier D 子表 successor 归独立 plan
 
 需要 tabs/向导/工作台页面的域（共 16 页面，与分析报告 §7.12 一致）：
 
@@ -300,18 +300,18 @@ Status: `partial` — 核心域 8 实体 tabs 容器已落地（plan 2026-07-21-
 | finance: ErpFinVoucher | 头+行+凭证源 tabs | ✅ done（凭证源 billLinks 由 successor plan 落地 ref-voucher.page.yaml）|
 | finance: ErpFinAccountingPeriod | 期末结账向导（5步：成本转结 → 汇兑损益 → 损益结转 → 凭证复审 → 结账） | ❌ Deferred：后端 mutation 与 roadmap 描述不一致，归 Tier C wizard successor |
 | manufacturing: ErpMfgWorkOrder | 头+行+工序+成本 tabs | ✅ done（工序 JobCard 由既有 F9 drawer 承担）|
-| projects: ErpPrjProject | 任务+预算+成本 tabs | ❌ Deferred：归 Tier D projects successor |
+| projects: ErpPrjProject | 任务+预算+成本 tabs | ✅ done（form 4 tabs 化；tasks/budget 子表 tab 归 projects F4 successor）|
 | projects/hr: Timesheet | 周网格录入（项目/任务为行，工作日为列，0.5h 步进，自动计算工时成本） | ❌ Deferred：归跨域共享组件 successor |
-| quality: ErpQaInspection | 行评测+结果+NCR tabs | ❌ Deferred：归 Tier D quality successor |
-| assets: ErpAstAsset | 资产详情仪表板（双列：基本信息+财务信息，含折旧时间线、相关凭证列表） | ✅ done（form tabs 化；折旧时间线/凭证列表归 successor plan）|
+| quality: ErpQaInspection | 行评测+结果+NCR tabs | ✅ done（form 4 tabs 化；lines/results 子表 tab 归 quality F4 successor）|
+| assets: ErpAstAsset | 资产详情仪表板（双列：基本信息+财务信息，含折旧时间线、相关凭证列表） | ✅ done（form tabs 化 + 完整仪表板 drawer：基本信息/折旧时间线 2 tab；跨域凭证 tab Deferred）|
 | maintenance: ErpMntVisit | 任务+备件+停机 tabs | ❌ Deferred：F4 maintenance child-table-editor 未覆盖，归 maintenance successor |
-| maintenance: ErpMntEquipment | 设备详情仪表板（状态色块、维护时间线、到期预警、备件消耗） | ✅ done（form tabs 化；维护时间线/状态色块归 successor plan）|
-| crm: ErpCrmLead | 活动+时间线+报价 tabs | ❌ Deferred：归 Tier D crm successor（依赖 F4 P3）|
-| cs: ErpCsTicket | 活动+SLA+调查 tabs | ❌ Deferred：归 Tier D cs successor（依赖 F4 P3）|
-| hr: ErpHrEmployee | 基本信息+合同+薪酬+考勤+休假+工时 tabs | ✅ done（form 6 tabs 化 + 薪酬敏感字段隐藏；合同/考勤/休假/工时跨实体子表归 successor plan）|
-| contract: ErpCtContract | 基本信息+合同行+版本历史+开票计划+消耗记录+附件 tabs | ❌ Deferred：归 Tier D contract successor（依赖 F4 P3）|
+| maintenance: ErpMntEquipment | 设备详情仪表板（状态色块、维护时间线、到期预警、备件消耗） | ✅ done（form tabs 化 + 完整仪表板 drawer：基本信息/维护时间线/备件消耗 3 tab）|
+| crm: ErpCrmLead | 活动+时间线+报价 tabs | ✅ done（form 6 tabs 化；activities/quotations 子表 tab 归 crm F4 successor）|
+| cs: ErpCsTicket | 活动+SLA+调查 tabs | ✅ done（form 4 tabs 化 + 既有 actions sub-grid-view 在 tabs 内继续渲染）|
+| hr: ErpHrEmployee | 基本信息+合同+薪酬+考勤+休假+工时 tabs | ✅ done（form 6 tabs 化 + 薪酬敏感字段隐藏 + 完整档案 drawer：基本信息/合同/考勤/休假/工时 5 tab）|
+| contract: ErpCtContract | 基本信息+合同行+版本历史+开票计划+消耗记录+附件 tabs | ✅ done（form 7 tabs 化 + 既有 lines/versions sub-grid 在 tabs 内继续渲染）|
 
-（注意：drawer 弹窗已是 codegen 默认；本项聚焦 tabs、向导和工作台页面。F12 实际落地清单：8/16 done（核心域 Tier A 5 + Tier B 3 form tabs 化），8/16 Deferred。完整范式见 `docs/design/page-structure-patterns.md`。）
+（注意：drawer 弹窗已是 codegen 默认；本项聚焦 tabs、向导和工作台页面。F12 实际落地清单：14/16 done（核心域 Tier A 5 + Tier B 3 form tabs 化 + Tier D 5 长尾 form tabs 化 + Tier B 3 完整仪表板 drawer），2/16 Deferred（Tier C wizard + Timesheet 周网格）。完整范式见 `docs/design/page-structure-patterns.md`。）
 
 ---
 
@@ -540,7 +540,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`
 - [x] F10: 4 树形实体（ErpMdMaterialCategory/ErpMdSubject/ErpHrDepartment/ErpCsServiceCatalogItem）使用 AMIS tree 组件页面（plan `2026-07-20-1020-1`；ErpMfgBom/ErpAstAssetCategory 经 ORM 核实剔除，归 F16/无 tree 语义）
 - [x] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现 ✅ plan `2026-07-22-0444-2-frontend-f11-domain-batch-operations`（5 类批量操作代表域全落地 + 模式文档 `docs/design/batch-operation-patterns.md`）
-- [ ] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板）
+- [x] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板） ✅ plan `2026-07-21-0330-3`（Tier A/B 8 form tabs）+ plan `2026-07-22-0845-1`（Tier D 5 form tabs + Tier B 3 完整仪表板 drawer）；14/16 done，2/16 Deferred（Tier C wizard + Timesheet 周网格）
 - [ ] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现
 - [x] F14: 19 域 action-auth 菜单完整可达，排序按业务流程（plan `2026-07-22-0444-3`：4 TOPM orderNo 碰撞修复 + 27 孤儿页面补全 + 7 子项 ×10 orderNo 修复 + 2 分组命名统一 + cs 子项 parent-matching）
 - [ ] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性
