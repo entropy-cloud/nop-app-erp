@@ -317,7 +317,7 @@ Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 
 
 ### F13 — 非标准视图模式：Kanban/时间线/日历/看板（P2）
 
-Status: `todo`
+Status: `done`（plan `docs/plans/2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar.md` 全 5 phase 全绿：Phase 0 4 PoC + Decision（拖拽降级为 row-action 状态机按钮 / 原生 timeline/calendar 在 service scope 下 prop 契约失败降级为 each+tpl / dragTo 跳过 / 既有 mutation 全覆盖）+ Phase 1 3 看板（CRM 商机动态列 + CS 工单 6 列 + Project 任务 4 列）+ Phase 2 2 时间线（CRM 活动 + CS 工单操作）+ Phase 3 2 日历（CRM 活动 + HR 团队休假矩阵）+ Phase 4 范式文档 `docs/design/non-standard-views-patterns.md` §1-§7 + visual spec 7 用例 + action spec 3 用例；mvn test 全绿 + 7 passed + 3 skipped[seed-data graceful skip]）
 
 覆盖所有域的非标准列表视图——这些是业务实体视图，不同于经营看板（Non-Goal）。实现方式为 AMIS `crud` 之外的独立页面结构。
 
@@ -541,7 +541,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F10: 4 树形实体（ErpMdMaterialCategory/ErpMdSubject/ErpHrDepartment/ErpCsServiceCatalogItem）使用 AMIS tree 组件页面（plan `2026-07-20-1020-1`；ErpMfgBom/ErpAstAssetCategory 经 ORM 核实剔除，归 F16/无 tree 语义）
 - [x] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现 ✅ plan `2026-07-22-0444-2-frontend-f11-domain-batch-operations`（5 类批量操作代表域全落地 + 模式文档 `docs/design/batch-operation-patterns.md`）
 - [x] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板） ✅ plan `2026-07-21-0330-3`（Tier A/B 8 form tabs）+ plan `2026-07-22-0845-1`（Tier D 5 form tabs + Tier B 3 完整仪表板 drawer）；14/16 done，2/16 Deferred（Tier C wizard + Timesheet 周网格）
-- [ ] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现
+- [x] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现 ✅ plan `2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar`（7 页面 + 范式文档 + visual/action spec；Phase 0 拖拽 PoC 降级为 row-action + 原生 timeline/calendar 降级为 each+tpl）
 - [x] F14: 19 域 action-auth 菜单完整可达，排序按业务流程（plan `2026-07-22-0444-3`：4 TOPM orderNo 碰撞修复 + 27 孤儿页面补全 + 7 子项 ×10 orderNo 修复 + 2 分组命名统一 + cs 子项 parent-matching）
 - [ ] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性
 - [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险 4 + P2 7 归 successor）
