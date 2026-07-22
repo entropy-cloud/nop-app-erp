@@ -8,8 +8,12 @@ site:
       displayName: Campaign
     ErpCrmEvent-main:
       displayName: Event
+    ErpCrmEventCategory-main:
+      displayName: Event Category
     ErpCrmForecast-main:
       displayName: Sales Forecast
+    ErpCrmForecastPeriod-main:
+      displayName: Forecast Period
     ErpCrmLead-main:
       displayName: Lead / Opportunity
     ErpCrmLeadConvLog-main:
@@ -18,6 +22,8 @@ site:
       displayName: Lead Funnel
     ErpCrmLeadScore-main:
       displayName: Lead Score
+    ErpCrmLeadScoreConfig-main:
+      displayName: Lead Score Config
     ErpCrmLeadStatus-main:
       displayName: Lead Status
     ErpCrmLostReason-main:
@@ -28,6 +34,8 @@ site:
       displayName: Product Configurator
     ErpCrmQuota-main:
       displayName: Quota
+    ErpCrmQuoteTemplate-main:
+      displayName: Quote Template
     ErpCrmSequence-main:
       displayName: Sales Sequence
     ErpCrmSource-main:

@@ -69,6 +69,10 @@
                                   displayName="休假申请" i18n-en:displayName="Leave Request" icon="calendar-off"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/hr/pages/ErpHrLeaveRequest/main.page.yaml"/>
+                        <resource id="ErpHrLeaveBalance-main" displayName="休假额度"
+                                  i18n-en:displayName="Leave Balance" icon="calendar-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  url="/erp/hr/pages/ErpHrLeaveBalance/main.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="hr-salary" displayName="薪酬管理" i18n-en:displayName="Payroll"
@@ -82,6 +86,36 @@
                                   displayName="薪酬模拟" i18n-en:displayName="Salary Simulation" icon="calculator"
                                   component="AMIS" resourceType="SUBM" orderNo="510"
                                   url="/erp/hr/pages/ErpHrSalarySimulation/main.page.yaml"/>
+                        <resource id="ErpHrPayrollBankFile-main" displayName="银行代发文件"
+                                  i18n-en:displayName="Payroll Bank File" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="520"
+                                  url="/erp/hr/pages/ErpHrPayrollBankFile/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-social-insurance" displayName="社保管理" i18n-en:displayName="Social Insurance"
+                          icon="shield" resourceType="SUBM" orderNo="530">
+                    <children>
+                        <resource id="ErpHrSocialInsuranceConfig-main" displayName="社保配置"
+                                  i18n-en:displayName="Social Insurance Config" icon="settings"
+                                  component="AMIS" resourceType="SUBM" orderNo="530"
+                                  url="/erp/hr/pages/ErpHrSocialInsuranceConfig/main.page.yaml"/>
+                        <resource id="ErpHrSocialInsuranceBase-main" displayName="员工社保基数"
+                                  i18n-en:displayName="Social Insurance Base" icon="users"
+                                  component="AMIS" resourceType="SUBM" orderNo="540"
+                                  url="/erp/hr/pages/ErpHrSocialInsuranceBase/main.page.yaml"/>
+                    </children>
+                </resource>
+                <resource id="hr-tax" displayName="税务配置" i18n-en:displayName="Tax Configuration"
+                          icon="receipt" resourceType="SUBM" orderNo="560">
+                    <children>
+                        <resource id="ErpHrTaxConfig-main" displayName="个税配置"
+                                  i18n-en:displayName="Tax Config" icon="settings"
+                                  component="AMIS" resourceType="SUBM" orderNo="560"
+                                  url="/erp/hr/pages/ErpHrTaxConfig/main.page.yaml"/>
+                        <resource id="ErpHrTaxSpecialDeduction-main" displayName="专项附加扣除"
+                                  i18n-en:displayName="Tax Special Deduction" icon="file-deduct"
+                                  component="AMIS" resourceType="SUBM" orderNo="570"
+                                  url="/erp/hr/pages/ErpHrTaxSpecialDeduction/main.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="hr-survey" displayName="员工调研" i18n-en:displayName="Employee Survey"

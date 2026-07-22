@@ -18,6 +18,8 @@ site:
       displayName: Purchase RFQ
     ErpPurSupplierPriceList-main:
       displayName: Supplier Price List
+    ErpPurSupplierScorecard-main:
+      displayName: Supplier Scorecard
     erp-pur:
       displayName: Purchase
     erp-pur-billing:

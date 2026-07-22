@@ -16,8 +16,12 @@ site:
       displayName: Employment Contract
     ErpHrGapAnalysis-main:
       displayName: Gap Analysis
+    ErpHrLeaveBalance-main:
+      displayName: Leave Balance
     ErpHrLeaveRequest-main:
       displayName: Leave Request
+    ErpHrPayrollBankFile-main:
+      displayName: Payroll Bank File
     ErpHrPosition-main:
       displayName: Position
     ErpHrRecruitment-main:
@@ -32,12 +36,20 @@ site:
       displayName: Shift
     ErpHrShiftAssignment-main:
       displayName: Shift Assignment
+    ErpHrSocialInsuranceBase-main:
+      displayName: Social Insurance Base
+    ErpHrSocialInsuranceConfig-main:
+      displayName: Social Insurance Config
     ErpHrSurvey-main:
       displayName: Survey Template
     ErpHrSurveyResponse-main:
       displayName: Survey Response
     ErpHrSurveyResult-main:
       displayName: Survey Result
+    ErpHrTaxConfig-main:
+      displayName: Tax Config
+    ErpHrTaxSpecialDeduction-main:
+      displayName: Tax Special Deduction
     ErpHrTimesheet-main:
       displayName: Timesheet
     ErpHrTimesheetLine-main:
@@ -64,7 +76,11 @@ site:
       displayName: Payroll
     hr-shift-scheduling:
       displayName: Shift Scheduling
+    hr-social-insurance:
+      displayName: Social Insurance
     hr-survey:
       displayName: Employee Survey
+    hr-tax:
+      displayName: Tax Configuration
     payroll-simulation-comparison:
       displayName: Payroll Simulation Comparison

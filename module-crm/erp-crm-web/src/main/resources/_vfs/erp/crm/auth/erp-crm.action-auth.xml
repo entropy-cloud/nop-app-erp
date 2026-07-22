@@ -3,7 +3,7 @@
       xmlns:i18n-en="i18n-en" xmlns:app="app">
     <site id="main">
         <resource id="erp-crm" displayName="客户关系" i18n-en:displayName="Customer Relationship"
-                  icon="users" resourceType="TOPM" orderNo="400"
+                  icon="users" resourceType="TOPM" orderNo="350"
                   routePath="/erp-crm" component="layouts/default/index">
             <children>
                 <resource id="crm-lead" displayName="线索与商机" i18n-en:displayName="Leads &amp; Opportunities"
@@ -39,6 +39,10 @@
                                   displayName="活动/事件" i18n-en:displayName="Event" icon="calendar"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/crm/pages/ErpCrmEvent/main.page.yaml"/>
+                        <resource id="ErpCrmEventCategory-main" displayName="活动类别"
+                                  i18n-en:displayName="Event Category" icon="folder"
+                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  url="/erp/crm/pages/ErpCrmEventCategory/main.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="crm-cpq" displayName="CPQ 配置-定价-报价" i18n-en:displayName="CPQ Config-Price-Quote"
@@ -56,6 +60,10 @@
                                   displayName="价格规则" i18n-en:displayName="Price Rule" icon="dollar-sign"
                                   component="AMIS" resourceType="SUBM" orderNo="430"
                                   url="/erp/crm/pages/ErpCrmPriceRule/main.page.yaml"/>
+                        <resource id="ErpCrmQuoteTemplate-main" app:useCases="UC-CRM-13"
+                                  displayName="报价模板" i18n-en:displayName="Quote Template" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="440"
+                                  url="/erp/crm/pages/ErpCrmQuoteTemplate/main.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="crm-sequence" displayName="销售序列" i18n-en:displayName="Sales Sequence"
@@ -95,6 +103,10 @@
                                   displayName="销售配额" i18n-en:displayName="Quota" icon="target"
                                   component="AMIS" resourceType="SUBM" orderNo="840"
                                   url="/erp/crm/pages/ErpCrmQuota/main.page.yaml"/>
+                        <resource id="ErpCrmForecastPeriod-main" app:useCases="UC-CRM-10"
+                                  displayName="预测期间" i18n-en:displayName="Forecast Period" icon="calendar"
+                                  component="AMIS" resourceType="SUBM" orderNo="850"
+                                  url="/erp/crm/pages/ErpCrmForecastPeriod/main.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="crm-config" displayName="基础配置" i18n-en:displayName="Configuration"
@@ -120,6 +132,10 @@
                                   i18n-en:displayName="Sales Team" icon="users"
                                   component="AMIS" resourceType="SUBM" orderNo="940"
                                   url="/erp/crm/pages/ErpCrmTeam/main.page.yaml"/>
+                        <resource id="ErpCrmLeadScoreConfig-main" displayName="评分规则配置"
+                                  i18n-en:displayName="Lead Score Config" icon="award"
+                                  component="AMIS" resourceType="SUBM" orderNo="950"
+                                  url="/erp/crm/pages/ErpCrmLeadScoreConfig/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- CRM 报表 -->

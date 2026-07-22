@@ -34,6 +34,10 @@ site:
       displayName: Settlement Method
     ErpMdSubject-main:
       displayName: Accounting Subject
+    ErpMdSubjectMapping-main:
+      displayName: Subject Mapping
+    ErpMdSupplierApproval-main:
+      displayName: Supplier Approval
     ErpMdTaxRate-main:
       displayName: Tax Rate
     ErpMdUoM-main:
@@ -42,6 +46,8 @@ site:
       displayName: UoM Conversion
     ErpMdWarehouse-main:
       displayName: Warehouse
+    ErpSysConfig-main:
+      displayName: System Config
     cost-center:
       displayName: Cost Center
     erp-md:
@@ -66,6 +72,8 @@ site:
       displayName: Business Partner
     md-report:
       displayName: Master Data Reports
+    md-system:
+      displayName: System Config
     md-trade:
       displayName: Cross-Border Trade
     md-uom:

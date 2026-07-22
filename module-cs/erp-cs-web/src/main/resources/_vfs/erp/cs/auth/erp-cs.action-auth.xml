@@ -11,7 +11,7 @@
                     <children>
                         <resource id="ErpCsQualityDashboard-main" displayName="客服绩效看板"
                                   i18n-en:displayName="Quality Dashboard" icon="layout-dashboard"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="AMIS" resourceType="SUBM" orderNo="50"
                                   url="/erp/cs/pages/ErpCsQualityDashboard/main.page.yaml"/>
                     </children>
                 </resource>
@@ -33,11 +33,11 @@
                     <children>
                         <resource id="ErpCsCannedResponse-main" app:useCases="UC-CS-07"
                                   displayName="预设应答" i18n-en:displayName="Canned Response" icon="message-square"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/cs/pages/ErpCsCannedResponse/main.page.yaml"/>
                         <resource id="ErpCsCannedCategory-main" displayName="应答分类"
                                   i18n-en:displayName="Canned Category" icon="folder"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="AMIS" resourceType="SUBM" orderNo="210"
                                   url="/erp/cs/pages/ErpCsCannedCategory/main.page.yaml"/>
                     </children>
                 </resource>
@@ -46,7 +46,7 @@
                     <children>
                         <resource id="ErpCsSurvey-main" app:useCases="UC-CS-08"
                                   displayName="满意度调查" i18n-en:displayName="CSAT Survey" icon="star"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/cs/pages/ErpCsSurvey/main.page.yaml"/>
                     </children>
                 </resource>
@@ -55,11 +55,11 @@
                     <children>
                         <resource id="ErpCsEntitlement-main" app:useCases="UC-CS-09"
                                   displayName="服务权益" i18n-en:displayName="Entitlement" icon="shield"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/cs/pages/ErpCsEntitlement/main.page.yaml"/>
                         <resource id="ErpCsContract-main" displayName="支持合同"
                                   i18n-en:displayName="Support Contract" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="AMIS" resourceType="SUBM" orderNo="410"
                                   url="/erp/cs/pages/ErpCsContract/main.page.yaml"/>
                     </children>
                 </resource>
@@ -68,15 +68,15 @@
                     <children>
                         <resource id="ErpCsServiceCatalogItem-main" app:useCases="UC-CS-10"
                                   displayName="服务目录项" i18n-en:displayName="Catalog Item" icon="book"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/cs/pages/ErpCsServiceCatalogItem/main.page.yaml"/>
                         <resource id="ErpCsCatalogCategory-main" displayName="目录分类"
                                   i18n-en:displayName="Catalog Category" icon="folder"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="AMIS" resourceType="SUBM" orderNo="510"
                                   url="/erp/cs/pages/ErpCsCatalogCategory/main.page.yaml"/>
                         <resource id="ErpCsCatalogFulfillment-main" app:useCases="UC-CS-12"
                                   displayName="履行映射" i18n-en:displayName="Fulfillment" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  component="AMIS" resourceType="SUBM" orderNo="520"
                                   url="/erp/cs/pages/ErpCsCatalogFulfillment/main.page.yaml"/>
                     </children>
                 </resource>
@@ -85,15 +85,15 @@
                     <children>
                         <resource id="ErpCsTimeEntry-main" app:useCases="UC-CS-11"
                                   displayName="计时条目" i18n-en:displayName="Time Entry" icon="clock"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="AMIS" resourceType="SUBM" orderNo="600"
                                   url="/erp/cs/pages/ErpCsTimeEntry/main.page.yaml"/>
                         <resource id="ErpCsAgentRate-main" displayName="客服费率"
                                   i18n-en:displayName="Agent Rate" icon="dollar-sign"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="AMIS" resourceType="SUBM" orderNo="610"
                                   url="/erp/cs/pages/ErpCsAgentRate/main.page.yaml"/>
                     </children>
                 </resource>
-                <resource id="cs-config" displayName="配置管理" i18n-en:displayName="Configuration"
+                <resource id="cs-config" displayName="基础配置" i18n-en:displayName="Configuration"
                           icon="settings" resourceType="SUBM" orderNo="900">
                     <children>
                         <resource id="ErpCsTicketType-main" displayName="工单类型"

@@ -3,7 +3,7 @@
       xmlns:i18n-en="i18n-en" xmlns:app="app">
     <site id="main">
         <resource id="erp-log" displayName="运输管理" i18n-en:displayName="Transportation"
-                  icon="truck" resourceType="TOPM" orderNo="1000"
+                  icon="truck" resourceType="TOPM" orderNo="1050"
                   routePath="/erp-log" component="layouts/default/index">
             <children>
                 <resource id="log-shipment" displayName="发运管理" i18n-en:displayName="Shipments"

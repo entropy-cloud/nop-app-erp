@@ -3,7 +3,7 @@
       xmlns:i18n-en="i18n-en" xmlns:app="app">
     <site id="main">
         <resource id="erp-aps" displayName="高级排产" i18n-en:displayName="Advanced Planning &amp; Scheduling"
-                  icon="cpu" resourceType="TOPM" orderNo="800"
+                  icon="cpu" resourceType="TOPM" orderNo="850"
                   routePath="/erp-aps" component="layouts/default/index">
             <children>
                 <resource id="aps-schedule" displayName="排产执行" i18n-en:displayName="Scheduling"
@@ -17,6 +17,10 @@
                                   displayName="排产方案" i18n-en:displayName="Schedule Plan" icon="calendar-check"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/aps/pages/ErpApsSchedule/main.page.yaml"/>
+                        <resource id="ErpApsOpRouting-main" displayName="替代工艺路线"
+                                  i18n-en:displayName="Alternative Routing" icon="route"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  url="/erp/aps/pages/ErpApsOpRouting/main.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="aps-dispatch" displayName="派工管理" i18n-en:displayName="Dispatch"

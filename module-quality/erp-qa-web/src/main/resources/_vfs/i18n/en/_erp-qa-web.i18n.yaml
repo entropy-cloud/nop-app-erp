@@ -12,6 +12,8 @@ site:
       displayName: Non-Conformance Report
     ErpQaQualityGoal-main:
       displayName: Quality Goal
+    ErpQaRecall-main:
+      displayName: Recall Event
     ErpQaReview-main:
       displayName: Quality Review
     ErpQaRiskRegister-main:
@@ -38,6 +40,8 @@ site:
       displayName: Inspection
     qa-ncr:
       displayName: Non-Conformance
+    qa-recall:
+      displayName: Product Recall
     qa-report:
       displayName: Quality Reports
     qa-spc:

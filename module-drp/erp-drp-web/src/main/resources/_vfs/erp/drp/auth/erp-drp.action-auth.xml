@@ -17,6 +17,10 @@
                                   displayName="计划明细" i18n-en:displayName="DRP Line" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/drp/pages/ErpDrpLine/main.page.yaml"/>
+                        <resource id="ErpInvDrpCrossDock-main" app:useCases="UC-DRP-03"
+                                  displayName="越库执行" i18n-en:displayName="Cross-Dock" icon="arrow-left-right"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  url="/erp/drp/pages/ErpInvDrpCrossDock/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- DRP仿真（plan 2026-07-22-1000-2） -->
@@ -25,15 +29,15 @@
                     <children>
                         <resource id="ErpDrpScenario-main" displayName="DRP仿真场景"
                                   i18n-en:displayName="DRP Simulation Scenario" icon="flask-conical"
-                                  component="AMIS" resourceType="SUBM" orderNo="1200"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
                                   url="/erp/drp/pages/ErpDrpScenario/main.page.yaml"/>
                         <resource id="ErpDrpScenarioVersion-main" displayName="DRP仿真版本"
                                   i18n-en:displayName="DRP Simulation Version" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="1210"
+                                  component="AMIS" resourceType="SUBM" orderNo="130"
                                   url="/erp/drp/pages/ErpDrpScenarioVersion/main.page.yaml"/>
                         <resource id="ErpDrpScenarioParam-main" displayName="DRP仿真参数"
                                   i18n-en:displayName="DRP Simulation Param" icon="sliders-horizontal"
-                                  component="AMIS" resourceType="SUBM" orderNo="1220"
+                                  component="AMIS" resourceType="SUBM" orderNo="140"
                                   url="/erp/drp/pages/ErpDrpScenarioParam/main.page.yaml"/>
                     </children>
                 </resource>
@@ -55,7 +59,7 @@
                                   url="/erp/drp/pages/ErpInvDrpLeadTimeRecord/main.page.yaml"/>
                     </children>
                 </resource>
-                <resource id="drp-config" displayName="配置管理" i18n-en:displayName="Configuration"
+                <resource id="drp-config" displayName="基础配置" i18n-en:displayName="Configuration"
                           icon="settings" resourceType="SUBM" orderNo="200">
                     <children>
                         <resource id="ErpDrpParameter-main" app:useCases="UC-DRP-05,UC-DRP-06,UC-DRP-07"

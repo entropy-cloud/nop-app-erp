@@ -45,6 +45,10 @@
                                   i18n-en:displayName="Partner Contact" icon="contact"
                                   component="AMIS" resourceType="SUBM" orderNo="220"
                                   url="/erp/md/pages/ErpMdPartnerContact/main.page.yaml"/>
+                        <resource id="ErpMdSupplierApproval-main" displayName="供应商准入资格"
+                                  i18n-en:displayName="Supplier Approval" icon="badge-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="230"
+                                  url="/erp/md/pages/ErpMdSupplierApproval/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 仓储组织 -->
@@ -115,6 +119,10 @@
                                   i18n-en:displayName="Chart of Accounts" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="520"
                                   url="/erp/md/pages/ErpMdAcctSchemaCoa/main.page.yaml"/>
+                        <resource id="ErpMdSubjectMapping-main" displayName="科目映射"
+                                  i18n-en:displayName="Subject Mapping" icon="arrow-right-left"
+                                  component="AMIS" resourceType="SUBM" orderNo="530"
+                                  url="/erp/md/pages/ErpMdSubjectMapping/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 人员 -->
@@ -157,7 +165,7 @@
                     <children>
                         <resource id="cost-center" displayName="成本中心"
                                   i18n-en:displayName="Cost Center" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="70010"
+                                  component="AMIS" resourceType="SUBM" orderNo="700"
                                   url="/erp/md/pages/cost-center/main.page.yaml"/>
                     </children>
                 </resource>
@@ -167,8 +175,18 @@
                     <children>
                         <resource id="ErpMdMaterialCustoms-main" displayName="物料报关记录"
                                   i18n-en:displayName="Material Customs Declaration" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="75010"
+                                  component="AMIS" resourceType="SUBM" orderNo="750"
                                   url="/erp/md/pages/ErpMdMaterialCustoms/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 系统配置 -->
+                <resource id="md-system" displayName="系统配置" i18n-en:displayName="System Config"
+                          icon="settings" resourceType="SUBM" orderNo="850">
+                    <children>
+                        <resource id="ErpSysConfig-main" displayName="系统参数配置"
+                                  i18n-en:displayName="System Config" icon="settings"
+                                  component="AMIS" resourceType="SUBM" orderNo="850"
+                                  url="/erp/md/pages/ErpSysConfig/main.page.yaml"/>
                     </children>
                 </resource>
             </children>

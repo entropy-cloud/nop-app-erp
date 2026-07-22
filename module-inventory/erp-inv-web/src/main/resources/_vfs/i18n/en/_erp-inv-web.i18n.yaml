@@ -2,8 +2,14 @@ site:
   resource:
     ErpInvBatch-main:
       displayName: Batch Ledger
+    ErpInvCostAdjust-main:
+      displayName: Cost Adjustment
     ErpInvCostLayer-main:
       displayName: Cost Layer
+    ErpInvLandedCost-main:
+      displayName: Landed Cost
+    ErpInvOwnershipTransfer-main:
+      displayName: Ownership Transfer
     ErpInvPickingOrder-main:
       displayName: Picking Order
     ErpInvReservation-main:

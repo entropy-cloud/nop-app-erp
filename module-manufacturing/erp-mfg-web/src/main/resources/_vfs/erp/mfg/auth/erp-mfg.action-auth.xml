@@ -63,6 +63,10 @@
                                   i18n-en:displayName="MRP Demand" icon="git-pull-request-arrow"
                                   component="AMIS" resourceType="SUBM" orderNo="310"
                                   url="/erp/mfg/pages/ErpMfgMrpDemand/main.page.yaml"/>
+                        <resource id="ErpMfgForecast-main" displayName="需求预测"
+                                  i18n-en:displayName="Demand Forecast" icon="trending-up"
+                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  url="/erp/mfg/pages/ErpMfgForecast/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- MRP仿真（plan 2026-07-22-1000-2） -->
@@ -71,15 +75,15 @@
                     <children>
                         <resource id="ErpMfgMrpScenario-main" displayName="MRP仿真场景"
                                   i18n-en:displayName="MRP Simulation Scenario" icon="flask-conical"
-                                  component="AMIS" resourceType="SUBM" orderNo="3500"
+                                  component="AMIS" resourceType="SUBM" orderNo="350"
                                   url="/erp/mfg/pages/ErpMfgMrpScenario/main.page.yaml"/>
                         <resource id="ErpMfgMrpScenarioVersion-main" displayName="MRP仿真版本"
                                   i18n-en:displayName="MRP Simulation Version" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="3510"
+                                  component="AMIS" resourceType="SUBM" orderNo="360"
                                   url="/erp/mfg/pages/ErpMfgMrpScenarioVersion/main.page.yaml"/>
                         <resource id="ErpMfgMrpScenarioParam-main" displayName="MRP仿真参数"
                                   i18n-en:displayName="MRP Simulation Param" icon="sliders-horizontal"
-                                  component="AMIS" resourceType="SUBM" orderNo="3520"
+                                  component="AMIS" resourceType="SUBM" orderNo="370"
                                   url="/erp/mfg/pages/ErpMfgMrpScenarioParam/main.page.yaml"/>
                     </children>
                 </resource>

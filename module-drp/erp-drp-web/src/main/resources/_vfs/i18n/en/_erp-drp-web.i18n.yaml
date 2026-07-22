@@ -12,6 +12,8 @@ site:
       displayName: DRP Simulation Param
     ErpDrpScenarioVersion-main:
       displayName: DRP Simulation Version
+    ErpInvDrpCrossDock-main:
+      displayName: Cross-Dock
     ErpInvDrpLeadTimeRecord-main:
       displayName: Lead Time Record
     ErpInvDrpSafetyStockCalc-main:

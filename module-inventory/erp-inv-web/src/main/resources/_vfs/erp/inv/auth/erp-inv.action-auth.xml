@@ -23,6 +23,10 @@
                                   i18n-en:displayName="Picking Order" icon="package-search"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/inv/pages/ErpInvPickingOrder/main.page.yaml"/>
+                        <resource id="ErpInvOwnershipTransfer-main" app:useCases="UC-INV-04" displayName="所有权转移单"
+                                  i18n-en:displayName="Ownership Transfer" icon="arrow-left-right"
+                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  url="/erp/inv/pages/ErpInvOwnershipTransfer/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 流水余额 -->
@@ -91,6 +95,14 @@
                                   i18n-en:displayName="Cost Layer" icon="layers"
                                   component="AMIS" resourceType="SUBM" orderNo="700"
                                   url="/erp/inv/pages/ErpInvCostLayer/main.page.yaml"/>
+                        <resource id="ErpInvLandedCost-main" app:useCases="UC-INV-10" displayName="到岸成本单"
+                                  i18n-en:displayName="Landed Cost" icon="ship"
+                                  component="AMIS" resourceType="SUBM" orderNo="710"
+                                  url="/erp/inv/pages/ErpInvLandedCost/main.page.yaml"/>
+                        <resource id="ErpInvCostAdjust-main" app:useCases="UC-INV-10" displayName="成本调整单"
+                                  i18n-en:displayName="Cost Adjustment" icon="sliders-horizontal"
+                                  component="AMIS" resourceType="SUBM" orderNo="720"
+                                  url="/erp/inv/pages/ErpInvCostAdjust/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 库存报表 -->

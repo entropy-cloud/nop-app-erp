@@ -111,16 +111,26 @@
                     <children>
                         <resource id="spc-chart" app:useCases="UC-QA-09,UC-QA-10,UC-QA-11" displayName="控制图配置"
                                   i18n-en:displayName="SPC Chart" icon="activity"
-                                  component="AMIS" resourceType="SUBM" orderNo="70010"
+                                  component="AMIS" resourceType="SUBM" orderNo="700"
                                   url="/erp/qa/pages/spc-chart/main.page.yaml"/>
                         <resource id="spc-sample" app:useCases="UC-QA-09,UC-QA-11" displayName="样本数据"
                                   i18n-en:displayName="SPC Sample" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="70020"
+                                  component="AMIS" resourceType="SUBM" orderNo="710"
                                   url="/erp/qa/pages/spc-sample/main.page.yaml"/>
                         <resource id="spc-capability" app:useCases="UC-QA-10" displayName="过程能力分析"
                                   i18n-en:displayName="SPC Capability" icon="bar-chart-3"
-                                  component="AMIS" resourceType="SUBM" orderNo="70030"
+                                  component="AMIS" resourceType="SUBM" orderNo="720"
                                   url="/erp/qa/pages/spc-capability/main.page.yaml"/>
+                    </children>
+                </resource>
+                <!-- 产品召回 -->
+                <resource id="qa-recall" displayName="产品召回" i18n-en:displayName="Product Recall"
+                          icon="undo-2" resourceType="SUBM" orderNo="750">
+                    <children>
+                        <resource id="ErpQaRecall-main" app:useCases="UC-QA-05,UC-QA-09" displayName="召回事件"
+                                  i18n-en:displayName="Recall Event" icon="undo-2"
+                                  component="AMIS" resourceType="SUBM" orderNo="750"
+                                  url="/erp/qa/pages/ErpQaRecall/main.page.yaml"/>
                     </children>
                 </resource>
             </children>

@@ -27,6 +27,10 @@
                                   i18n-en:displayName="Supplier Price List" icon="list-checks"
                                   component="AMIS" resourceType="SUBM" orderNo="120"
                                   url="/erp/pur/pages/ErpPurSupplierPriceList/main.page.yaml"/>
+                        <resource id="ErpPurSupplierScorecard-main" app:useCases="UC-PUR-05" displayName="供应商评分卡"
+                                  i18n-en:displayName="Supplier Scorecard" icon="award"
+                                  component="AMIS" resourceType="SUBM" orderNo="130"
+                                  url="/erp/pur/pages/ErpPurSupplierScorecard/main.page.yaml"/>
                     </children>
                 </resource>
 

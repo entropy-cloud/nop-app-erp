@@ -6,8 +6,16 @@ site:
       displayName: Period Close Status
     ErpFinArApItem-main:
       displayName: AR/AP Subledger
+    ErpFinBadDebt-main:
+      displayName: Bad Debt Provision
+    ErpFinCashForecast-main:
+      displayName: Cash Forecast
     ErpFinConsolidationElimination-main:
       displayName: Consolidation Elimination
+    ErpFinCreditFacility-main:
+      displayName: Credit Facility
+    ErpFinEmployeeAdvance-main:
+      displayName: Employee Advance
     ErpFinFundAccount-main:
       displayName: Fund Account
     ErpFinGlBalance-main:
@@ -18,6 +26,10 @@ site:
       displayName: Intercompany Match
     ErpFinIntercompanyTransferPrice-main:
       displayName: Intercompany Transfer Price
+    ErpFinNotesPayable-main:
+      displayName: Notes Payable
+    ErpFinNotesReceivable-main:
+      displayName: Notes Receivable
     ErpFinReconciliation-main:
       displayName: Reconciliation
     ErpFinTrialBalance-main:
@@ -72,6 +84,8 @@ site:
       displayName: General Ledger
     fin-intercompany:
       displayName: Intercompany
+    fin-notes:
+      displayName: Notes Management
     fin-period:
       displayName: Accounting Period
     fin-recon:

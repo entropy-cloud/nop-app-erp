@@ -8,6 +8,8 @@ site:
       displayName: Cost Rollup
     ErpMfgCostVariance-main:
       displayName: Cost Variance Analysis
+    ErpMfgForecast-main:
+      displayName: Demand Forecast
     ErpMfgJobCard-main:
       displayName: Job Card
     ErpMfgMaterialIssue-main:
