@@ -1,0 +1,181 @@
+type: page
+title: "排产甘特图"
+remark: "只读 echarts 甘特图：Y=工作中心（machineId），X=时间（dataZoom 缩放）。每个甘特条=一道工序工单（plannedStartDateT→plannedEndDateT），颜色编码 status（DRAFT=灰/PLANNED=蓝/IN_PROGRESS=黄/FINISHED=绿/CANCELLED=红，对齐 scheduling.md §8.2）。拖拽调整为 Non-Goal（设计文档 scheduling.md:8 明确排除）；getGanttData 全实现（含拖拽/冲突报告）归 successor。数据源 ErpApsOperationOrder__findPage，前端 adaptor 按 machineId 分组转 echarts custom series。"
+body:
+  - type: form
+    name: filterForm
+    title: "筛选条件"
+    mode: inline
+    wrapWithPanel: false
+    className: m-3
+    body:
+      - type: input-number
+        name: machineId
+        label: "工作中心ID"
+        placeholder: "留空=全部工作中心"
+        clearable: true
+      - type: select
+        name: status
+        label: "状态"
+        placeholder: "留空=全部状态"
+        clearable: true
+        options:
+          - label: "草稿"
+            value: "DRAFT"
+          - label: "已计划"
+            value: "PLANNED"
+          - label: "进行中"
+            value: "IN_PROGRESS"
+          - label: "已完成"
+            value: "FINISHED"
+          - label: "已取消"
+            value: "CANCELLED"
+      - type: input-date
+        name: startDate
+        label: "开始日期"
+        format: "YYYY-MM-DD"
+        placeholder: "留空=不限"
+        clearable: true
+      - type: input-date
+        name: endDate
+        label: "结束日期"
+        format: "YYYY-MM-DD"
+        placeholder: "留空=不限"
+        clearable: true
+      - type: button
+        label: "刷新甘特图"
+        icon: "refresh-cw"
+        actionType: reload
+        target: "ganttChart"
+
+  - type: chart
+    name: ganttChart
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}mid:Long,${'$'}st:String,${'$'}lim:Int){ ErpApsOperationOrder__findPage(filter_machineId:${'$'}mid,filter_status:${'$'}st,limit:${'$'}lim,orderBy:\"plannedStartDateT ASC\"){ items{ id code workOrderId operationName machineId priority plannedStartDateT plannedEndDateT qty totalDuration status } total } }"
+        variables:
+          mid: "${machineId || null}"
+          st: "${status || null}"
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpApsOperationOrder__findPage || { items: [] };
+        let rows = page.items || [];
+
+        // 客户端按日期区间过滤（input-date 返回 Unix 毫秒时间戳）
+        const sMs = (typeof startDate === 'number') ? startDate : null;
+        const eMs = (typeof endDate === 'number') ? endDate + 86400000 : null;
+        rows = rows.filter(function(r){
+          if (!r.plannedStartDateT) return false;
+          const t = new Date(String(r.plannedStartDateT).replace(' ', 'T')).getTime();
+          if (isNaN(t)) return false;
+          if (sMs != null && t < sMs) return false;
+          if (eMs != null && t > eMs) return false;
+          return true;
+        });
+
+        // 状态颜色编码（对齐 scheduling.md §8.2）
+        const statusColor = {
+          DRAFT: '#999999',
+          PLANNED: '#4A90D9',
+          IN_PROGRESS: '#F0AD4E',
+          FINISHED: '#5cb85c',
+          CANCELLED: '#d9534f'
+        };
+        const statusLabel = {
+          DRAFT: '草稿', PLANNED: '已计划', IN_PROGRESS: '进行中', FINISHED: '已完成', CANCELLED: '已取消'
+        };
+
+        // 按 machineId 分组建 Y category 轴
+        const machineIds = [];
+        const machineSet = {};
+        rows.forEach(function(r){
+          const key = String(r.machineId == null ? '未分派' : r.machineId);
+          if (!machineSet[key]) { machineSet[key] = true; machineIds.push(key); }
+        });
+        const categoryIndex = {};
+        machineIds.forEach(function(m, i){ categoryIndex[m] = i; });
+        const categories = machineIds.map(function(m){ return '工作中心 ' + m; });
+
+        // 构建 custom series data：value=[startMs, endMs, categoryIndex]
+        const seriesData = rows.map(function(r){
+          const start = new Date(String(r.plannedStartDateT).replace(' ', 'T')).getTime();
+          const endRaw = r.plannedEndDateT ? new Date(String(r.plannedEndDateT).replace(' ', 'T')).getTime() : start + 3600000;
+          const end = isNaN(endRaw) ? start + 3600000 : endRaw;
+          const key = String(r.machineId == null ? '未分派' : r.machineId);
+          return {
+            value: [start, end, categoryIndex[key]],
+            itemStyle: { color: statusColor[r.status] || '#888' },
+            _op: {
+              id: r.id, code: r.code, workOrderId: r.workOrderId,
+              operationName: r.operationName, status: r.status,
+              statusLabel: statusLabel[r.status] || r.status,
+              qty: r.qty, totalDuration: r.totalDuration, priority: r.priority
+            }
+          };
+        });
+
+        // echarts custom series renderItem：渲染甘特条（rect）
+        function renderItem(params, api) {
+          const catIdx = api.value(2);
+          const start = api.coord([api.value(0), catIdx]);
+          const end = api.coord([api.value(1), catIdx]);
+          const height = api.size([0, 1])[1] * 0.6;
+          return {
+            type: 'rect',
+            shape: {
+              x: start[0],
+              y: start[1] - height / 2,
+              width: Math.max(end[0] - start[0], 2),
+              height: height
+            },
+            style: api.style()
+          };
+        }
+
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            title: { text: '排产甘特图（' + rows.length + ' 道工序）' },
+            tooltip: {
+              trigger: 'item',
+              formatter: function(p) {
+                const op = (p && p.data && p.data._op) || {};
+                const s = new Date(p.value[0]);
+                const e = new Date(p.value[1]);
+                const fmt = function(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0'); };
+                return '<b>' + (op.operationName || op.code || '') + '</b><br/>'
+                  + '状态：' + (op.statusLabel || op.status || '') + '<br/>'
+                  + '工单ID：' + (op.workOrderId || '-') + '<br/>'
+                  + '开始：' + fmt(s) + '<br/>'
+                  + '结束：' + fmt(e) + '<br/>'
+                  + '数量：' + (op.qty != null ? op.qty : '-') + '<br/>'
+                  + '耗时(分钟)：' + (op.totalDuration != null ? op.totalDuration : '-');
+              }
+            },
+            legend: {
+              data: ['草稿', '已计划', '进行中', '已完成', '已取消'],
+              top: 30
+            },
+            grid: { left: 100, right: 40, top: 80, bottom: 80 },
+            xAxis: { type: 'time', name: '时间' },
+            yAxis: { type: 'category', data: categories, inverse: true },
+            dataZoom: [
+              { type: 'slider', xAxisIndex: 0, start: 0, end: 100 },
+              { type: 'inside', xAxisIndex: 0 }
+            ],
+            series: [{
+              type: 'custom',
+              name: '工序',
+              renderItem: renderItem,
+              encode: { x: [0, 1], y: 2 },
+              data: seriesData
+            }]
+          }
+        };

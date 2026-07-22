@@ -40,6 +40,8 @@ site:
       displayName: Manufacturing
     forecast-variance-report:
       displayName: Forecast Variance Report
+    mfg-bom-tree:
+      displayName: BOM Tree
     mfg-cost:
       displayName: Cost
     mfg-dashboard:

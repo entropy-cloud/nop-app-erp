@@ -17,6 +17,10 @@
                                   displayName="排产方案" i18n-en:displayName="Schedule Plan" icon="calendar-check"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/aps/pages/ErpApsSchedule/main.page.yaml"/>
+                        <resource id="aps-schedule-gantt" displayName="排产甘特图"
+                                  i18n-en:displayName="Schedule Gantt" icon="calendar"
+                                  component="AMIS" resourceType="SUBM" orderNo="115"
+                                  url="/erp/aps/pages/dashboard/schedule-gantt.page.yaml"/>
                         <resource id="ErpApsOpRouting-main" displayName="替代工艺路线"
                                   i18n-en:displayName="Alternative Routing" icon="route"
                                   component="AMIS" resourceType="SUBM" orderNo="120"

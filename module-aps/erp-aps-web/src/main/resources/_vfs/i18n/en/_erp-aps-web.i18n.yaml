@@ -16,5 +16,7 @@ site:
       displayName: Dispatch
     aps-schedule:
       displayName: Scheduling
+    aps-schedule-gantt:
+      displayName: Schedule Gantt
     erp-aps:
       displayName: Advanced Planning & Scheduling

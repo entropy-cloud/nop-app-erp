@@ -1,0 +1,121 @@
+type: page
+title: "BOM 多级展开树"
+remark: "BOM 多级展开树浏览。调 IErpMfgBomBiz.explode(bomId, qty, useMultiLevel) 获取扁平 List<BomExplosionNode>（含 level/materialId/quantity/operationId/manufactured），adaptor 按 level 栈算法重建嵌套 tree options，AMIS tree 组件多级展开/折叠。phantom（bomType=20）已被 BomExpander 在展开时合并（本身不出现在结果中，前端无需特殊处理）。工艺路线水平流向图为 Non-Goal（BomExplosionNode 含 operationId 但无前后序关系数据，defer 到 routing successor）。"
+body:
+  - type: form
+    name: filterForm
+    title: "展开参数"
+    mode: inline
+    wrapWithPanel: false
+    className: m-3
+    body:
+      - type: input-number
+        name: bomId
+        label: "BOM ID"
+        placeholder: "输入要展开的 BOM 主键"
+        required: true
+        clearable: true
+      - type: input-number
+        name: qty
+        label: "期望产出量"
+        placeholder: "留空=BOM 标准批量"
+        clearable: true
+      - type: switch
+        name: useMultiLevel
+        label: "多级展开"
+        value: true
+        onText: "是"
+        offText: "否（仅单级）"
+      - type: button
+        label: "展开 BOM"
+        icon: "git-branch"
+        actionType: reload
+        target: "bomTreeService"
+
+  - type: service
+    name: bomTreeService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}bid:Long,${'$'}q:BigDecimal,${'$'}ml:Boolean){ ErpMfgBom__explode(bomId:${'$'}bid,qty:${'$'}q,useMultiLevel:${'$'}ml) }"
+        variables:
+          bid: "${bomId || null}"
+          q: "${qty || null}"
+          ml: "${useMultiLevel == null ? true : useMultiLevel}"
+      adaptor: |
+        const d = payload.data || {};
+        // 未填 bomId 时 explode 报错（requireBom）→ 优雅返回空，显示占位提示
+        if (d.errors || !d.data) {
+          return { status: 0, msg: '', data: { treeOptions: [], nodeCount: 0, hasData: false } };
+        }
+        const gql = d.data ? d.data : d;
+        const flat = gql.ErpMfgBom__explode || [];
+        if (!Array.isArray(flat) || flat.length === 0) {
+          return { status: 0, msg: '', data: { treeOptions: [], nodeCount: 0, hasData: false } };
+        }
+
+        // 按 level 栈算法重建嵌套 tree（BomExpander 返回 pre-order DFS，父节点先于子节点加入）
+        const roots = [];
+        const stack = []; // [{node, level}]
+        flat.forEach(function(n){
+          const manufactured = n.manufactured === true || n.manufactured === 'true';
+          const tag = manufactured ? '制造件' : '采购件';
+          const treeNode = {
+            label: '物料 ' + n.materialId + ' [' + tag + '] ×' + n.quantity,
+            value: n.materialId,
+            quantity: n.quantity,
+            operationId: n.operationId,
+            manufactured: manufactured,
+            sourceBomId: n.sourceBomId,
+            level: n.level,
+            children: []
+          };
+          // 弹栈直到栈顶 level < 当前 level（栈顶即父节点）
+          while (stack.length > 0 && stack[stack.length - 1].level >= n.level) {
+            stack.pop();
+          }
+          if (stack.length === 0) {
+            roots.push(treeNode);
+          } else {
+            stack[stack.length - 1].node.children.push(treeNode);
+          }
+          stack.push({ node: treeNode, level: n.level });
+        });
+
+        // 叶子节点（无 children）删除空 children 数组以让 AMIS tree 正确识别为叶子
+        function trimLeaves(nodes) {
+          nodes.forEach(function(nd){
+            if (nd.children && nd.children.length === 0) {
+              delete nd.children;
+            } else if (nd.children) {
+              trimLeaves(nd.children);
+            }
+          });
+        }
+        trimLeaves(roots);
+
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            treeOptions: roots,
+            nodeCount: flat.length,
+            hasData: flat.length > 0
+          }
+        };
+    body:
+      - type: tpl
+        visibleOn: "${!hasData}"
+        tpl: '<div class="text-muted p-3">请输入 BOM ID 后点击「展开 BOM」。若已点击仍无数据，可能该 BOM 无明细行或不存在。</div>'
+      - type: tpl
+        visibleOn: "${hasData}"
+        tpl: '<div class="text-muted m-b-sm">展开节点数：${nodeCount}（多级展开/折叠，叶子节点 = 采购件；制造件可继续展开）</div>'
+      - type: tree
+        name: bomTree
+        visibleOn: "${hasData}"
+        options: "${treeOptions}"
+        showOutline: true
+        initiallyOpen: 1

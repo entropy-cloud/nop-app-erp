@@ -19,6 +19,10 @@
                                   i18n-en:displayName="BOM" icon="git-branch"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/mfg/pages/ErpMfgBom/main.page.yaml"/>
+                        <resource id="mfg-bom-tree" app:useCases="UC-MFG-02,UC-MFG-10" displayName="BOM 展开树"
+                                  i18n-en:displayName="BOM Tree" icon="list-tree"
+                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  url="/erp/mfg/pages/dashboard/bom-tree.page.yaml"/>
                         <resource id="ErpMfgRouting-main" app:useCases="UC-MFG-07" displayName="工艺路线"
                                   i18n-en:displayName="Routing" icon="route"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
