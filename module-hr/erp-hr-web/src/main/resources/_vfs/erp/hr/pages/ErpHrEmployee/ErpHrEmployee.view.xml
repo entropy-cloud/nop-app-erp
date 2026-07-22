@@ -26,6 +26,127 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+        <!-- Drawer 相关 crud grids：仅展示直接字段（避免跨实体 to-one 关联）。
+             custom="true" 因为这些字段属于关联实体（ErpHrEmploymentContract 等），不在 ErpHrEmployee 的 objMeta 中。 -->
+        <grid id="archive-contract-list">
+            <cols>
+                <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="code" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="contractType" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="signDate" custom="true" mandatory="true" sortable="true" align="center" domain="date">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="startDate" custom="true" mandatory="true" sortable="true" align="center" domain="date">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate" custom="true" sortable="true" align="center" domain="date">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="status" custom="true" mandatory="true" sortable="true" domain="string">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'success' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
+        <grid id="archive-attendance-list">
+            <cols>
+                <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="date" custom="true" mandatory="true" sortable="true" align="center" domain="date">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="clockIn" custom="true" sortable="true" domain="string"/>
+                <col id="clockOut" custom="true" sortable="true" domain="string"/>
+                <col id="workHours" custom="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="lateMinutes" custom="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="earlyLeaveMinutes" custom="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="isAbsent" custom="true" sortable="true" domain="boolean"/>
+            </cols>
+        </grid>
+        <grid id="archive-leave-list">
+            <cols>
+                <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="code" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="leaveType" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="startDate" custom="true" mandatory="true" sortable="true" align="center" domain="date">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="endDate" custom="true" mandatory="true" sortable="true" align="center" domain="date">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="durationDays" custom="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="status" custom="true" mandatory="true" sortable="true" domain="string">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'APPROVED' ? 'success' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
+        <grid id="archive-timesheet-list">
+            <cols>
+                <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="code" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="periodFrom" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="periodTo" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="totalHours" custom="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="status" custom="true" mandatory="true" sortable="true" domain="string">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'APPROVED' ? 'success' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
@@ -180,6 +301,14 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-employee-archive-button" label="完整档案" level="info" icon="fa fa-id-card-o"
+                        actionType="drawer">
+                    <dialog page="employeeArchive" size="xl">
+                        <data>
+                            <id>${'$'}{id}</id>
+                        </data>
+                    </dialog>
+                </action>
                 <action id="row-transfer-button" label="调动" level="primary" icon="fa fa-exchange"
                         actionType="drawer">
                     <dialog page="transfer" size="lg">
@@ -191,6 +320,43 @@
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
+
+        <!-- 完整档案 drawer（机制 B）：headerForm simple + 4 跨实体 crud tab -->
+        <simple name="employeeHeader" form="view">
+            <initApi url="@query:ErpHrEmployee__get?id=${'$'}{id}" gql:selection="{@formSelection}"/>
+        </simple>
+
+        <crud name="employeeContracts" grid="archive-contract-list">
+            <table noOperations="true">
+                <api url="@query:ErpHrEmploymentContract__findPage/{@pageSelection}?filter_employeeId=${'$'}{id}"/>
+            </table>
+        </crud>
+
+        <crud name="employeeAttendance" grid="archive-attendance-list">
+            <table noOperations="true">
+                <api url="@query:ErpHrAttendance__findPage/{@pageSelection}?filter_employeeId=${'$'}{id}"/>
+            </table>
+        </crud>
+
+        <crud name="employeeLeaves" grid="archive-leave-list">
+            <table noOperations="true">
+                <api url="@query:ErpHrLeaveRequest__findPage/{@pageSelection}?filter_employeeId=${'$'}{id}"/>
+            </table>
+        </crud>
+
+        <crud name="employeeTimesheets" grid="archive-timesheet-list">
+            <table noOperations="true">
+                <api url="@query:ErpHrTimesheet__findPage/{@pageSelection}?filter_employeeId=${'$'}{id}"/>
+            </table>
+        </crud>
+
+        <tabs name="employeeArchive" mountOnEnter="true" unmountOnExit="false">
+            <tab name="header" page="employeeHeader" title="基本信息"/>
+            <tab name="contracts" page="employeeContracts" title="合同"/>
+            <tab name="attendance" page="employeeAttendance" title="考勤"/>
+            <tab name="leaves" page="employeeLeaves" title="休假"/>
+            <tab name="timesheets" page="employeeTimesheets" title="工时"/>
+        </tabs>
 
         <!-- 调动页面：表单提交调 transferEmployee mutation，employeeId 由 dialog data 预填 -->
         <simple name="transfer" form="transfer" useFormActions="true">

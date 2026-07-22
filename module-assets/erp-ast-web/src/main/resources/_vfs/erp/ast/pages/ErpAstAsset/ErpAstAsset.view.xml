@@ -48,6 +48,37 @@
                 <col id="status" sortable="true"/>
             </cols>
         </grid>
+        <!-- Drawer 相关 crud grid：仅展示直接字段（custom="true" 因为字段属于关联实体 ErpAstDepreciationSchedule）。
+             跨域凭证 tab 因 ErpFinVoucherBillR 无 assetId/sourceEntityType 字段，降级 Deferred（见 plan §Deferred）。 -->
+        <grid id="archive-depreciation-list">
+            <cols>
+                <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="period" custom="true" sortable="true" domain="string"/>
+                <col id="plannedAmount" custom="true" sortable="true" align="right" domain="amount">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="actualAmount" custom="true" sortable="true" align="right" domain="amount">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="netBookValue" custom="true" sortable="true" align="right" domain="amount">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="status" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="posted" custom="true" sortable="true" domain="boolean"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
@@ -126,6 +157,14 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-asset-dashboard-button" label="完整仪表板" level="info" icon="fa fa-tachometer"
+                        actionType="drawer">
+                    <dialog page="assetDashboard" size="xl">
+                        <data>
+                            <id>${'$'}{id}</id>
+                        </data>
+                    </dialog>
+                </action>
                 <action id="row-transfer-button" label="移动" level="primary" icon="fa fa-arrows-alt">
                     <api url="@mutation:ErpAstAsset__save/id"/>
                     <confirmText>移动操作请打开资产卡片详情后在子表中操作</confirmText>
@@ -141,6 +180,24 @@
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
+
+        <!-- 完整仪表板 drawer（机制 B）：headerForm simple + 折旧时间线 crud tab。
+             跨域凭证 tab（assets → finance ErpFinVoucherBillR）Deferred：ErpFinVoucherBillR 无 assetId/sourceEntityType 字段。 -->
+        <simple name="assetHeader" form="view">
+            <initApi url="@query:ErpAstAsset__get?id=${'$'}{id}" gql:selection="{@formSelection}"/>
+        </simple>
+
+        <crud name="assetDepreciation" grid="archive-depreciation-list">
+            <table noOperations="true">
+                <api url="@query:ErpAstDepreciationSchedule__findPage/{@pageSelection}?filter_assetId=${'$'}{id}"/>
+            </table>
+        </crud>
+
+        <tabs name="assetDashboard" mountOnEnter="true" unmountOnExit="false">
+            <tab name="header" page="assetHeader" title="基本信息"/>
+            <tab name="depreciation" page="assetDepreciation" title="折旧时间线"/>
+        </tabs>
+
         <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

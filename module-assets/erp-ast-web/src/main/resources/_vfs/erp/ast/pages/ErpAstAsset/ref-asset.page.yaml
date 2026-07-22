@@ -1,0 +1,5 @@
+# 资产完整仪表板 drawer 入口（机制 B）。
+# 主 view.xml 中已定义 <tabs name="assetDashboard">（headerForm + 折旧时间线 crud）。
+# 跨域凭证 tab 因 ErpFinVoucherBillR 无 assetId/sourceEntityType 字段，Deferred（见 plan §Deferred）。
+x:gen-extends: |
+  <web:GenPage view="ErpAstAsset.view.xml" page="assetDashboard" xpl:lib="/nop/web/xlib/web.xlib" />

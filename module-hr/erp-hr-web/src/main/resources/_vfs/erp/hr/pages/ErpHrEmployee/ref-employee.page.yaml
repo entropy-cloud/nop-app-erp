@@ -1,0 +1,5 @@
+# 员工完整档案 drawer 入口（机制 B）。
+# 主 view.xml 中已定义 <tabs name="employeeArchive">（headerForm + 4 跨实体 crud）。
+# 此 page.yaml 作为薄 wrapper，便于通过 URL 直接访问或被其他页面 dialog 引用。
+x:gen-extends: |
+  <web:GenPage view="ErpHrEmployee.view.xml" page="employeeArchive" xpl:lib="/nop/web/xlib/web.xlib" />

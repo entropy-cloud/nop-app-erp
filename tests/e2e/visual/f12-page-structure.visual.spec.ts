@@ -1,7 +1,8 @@
 // DOM assertions for F12 — page structure (tabs / dashboard) rendering
-// (plan 2026-07-21-0330-3-f12-page-structure-tabs-wizards.md).
+// (plan 2026-07-21-0330-3-f12-page-structure-tabs-wizards.md +
+//  plan 2026-07-22-0845-1-f12-tier-d-and-dashboard-drawer-successor.md).
 //
-// Validates that 8 sampled head entities actually render the AMIS `tabs`
+// Validates that sampled head entities actually render the AMIS `tabs`
 // component at runtime — proving the codegen pipeline (`<form layoutControl="tabs">`
 // → GenLayoutTabs → AMIS `type: tabs`) is wired end-to-end. Same DOM-className
 // strategy as readonly-views.visual.spec.ts / status-tag.visual.spec.ts /
@@ -11,11 +12,15 @@
 // and font/animation drift, while still proving the tabs contract is wired
 // end-to-end (view.xml layoutControl="tabs" → codegen → AMIS JSON → DOM).
 //
-// Coverage (4 sampled entities per plan Phase 3):
+// Coverage (8 sampled entities per plan Phase 3):
 //   - ErpPurOrder (purchase, Tier A: head+line tabs + sub-grid-edit lines tab)
 //   - ErpFinVoucher (finance, Tier A: voucher + 17-col sub-grid-edit + autoBalance button)
 //   - ErpHrEmployee (hr, Tier B: multi-tab employee profile + sensitive fields hidden)
 //   - ErpAstAsset (assets, Tier B: dashboard-style multi-group tabs)
+//   - ErpCtContract (contract, Tier D: 7-tab form + lines+versions sub-grid cells)
+//   - ErpQaInspection (quality, Tier D: 4-tab form)
+//   - ErpHrEmployee drawer (hr, Tier B drawer: 5-tab employee archive)
+//   - ErpMntEquipment drawer (mnt, Tier B drawer: 3-tab equipment dashboard)
 //
 // Two-layer assertion:
 //   1. AMIS `tabs` component rendered in the view/edit drawer (.cxd-Tabs)
@@ -23,6 +28,8 @@
 //   3. (Tier A only) AMIS `input-table` (sub-grid-edit) still rendered in lines tab
 //   4. (ErpHrEmployee only) sensitive fields (bankAccountId/socialSecurityNo/taxFileNo/idCardNo)
 //      NOT visible in the rendered form
+//   5. (Tier B drawer only) row-action triggers drawer + drawer contains .cxd-Tabs +
+//      switching tab loads crud data
 
 import { test, expect, loginAndNavigate } from '../fixtures';
 
@@ -39,6 +46,18 @@ interface F12Assertion {
   expectInputTable?: boolean;
   /** Sensitive field labels that must NOT be visible (ErpHrEmployee only). */
   hiddenSensitiveFields?: string[];
+}
+
+/** Tier B drawer assertion: row-action triggers a drawer that contains tabs. */
+interface F12DrawerAssertion {
+  /** Hash route for the head entity list page. */
+  route: string;
+  /** Human-readable label for logging. */
+  label: string;
+  /** Row action button text used to trigger the drawer (e.g. '完整档案'). */
+  drawerActionText: string[];
+  /** Expected tab titles inside the drawer. */
+  expectedDrawerTabTitles: string[];
 }
 
 const ASSERTIONS: F12Assertion[] = [
@@ -68,6 +87,34 @@ const ASSERTIONS: F12Assertion[] = [
     label: 'assets Asset edit drawer (Tier B: 5 tabs dashboard)',
     openActionText: ['编辑', 'Edit'],
     expectedTabTitles: ['基本信息', '价值信息', '折旧信息', '使用信息'],
+  },
+  {
+    route: '/ErpCtContract-main',
+    label: 'contract CtContract edit drawer (Tier D: 7 tabs + lines+versions sub-grid)',
+    openActionText: ['编辑', 'Edit'],
+    expectedTabTitles: ['基本信息', '合同方信息', '合同明细行', '合同版本'],
+    expectInputTable: true,
+  },
+  {
+    route: '/ErpQaInspection-main',
+    label: 'quality QaInspection edit drawer (Tier D: 4 tabs)',
+    openActionText: ['编辑', 'Edit'],
+    expectedTabTitles: ['基本信息', '检验信息', '抽样信息'],
+  },
+];
+
+const DRAWER_ASSERTIONS: F12DrawerAssertion[] = [
+  {
+    route: '/ErpHrEmployee-main',
+    label: 'hr Employee full archive drawer (Tier B drawer: 5 tabs)',
+    drawerActionText: ['完整档案'],
+    expectedDrawerTabTitles: ['基本信息', '合同', '考勤', '休假', '工时'],
+  },
+  {
+    route: '/ErpMntEquipment-main',
+    label: 'mnt Equipment full dashboard drawer (Tier B drawer: 3 tabs)',
+    drawerActionText: ['完整仪表板'],
+    expectedDrawerTabTitles: ['基本信息', '维护时间线', '备件消耗'],
   },
 ];
 
@@ -165,6 +212,71 @@ test.describe('F12 — page structure tabs DOM rendering', () => {
             `${assertion.label}: sensitive field "${hidden}" should NOT be visible. Found labels containing it: ${JSON.stringify(leaked)}`,
           ).toBe(0);
         }
+      }
+    });
+  }
+});
+
+test.describe('F12 — Tier B dashboard drawer DOM rendering', () => {
+  for (const assertion of DRAWER_ASSERTIONS) {
+    test(`${assertion.label} triggers drawer via row-action and renders tabs`, async ({ page }) => {
+      await navigateAndWaitForCrud(page, assertion.route);
+
+      const crud = page.locator('.cxd-Crud');
+      const firstRow = crud.locator('tbody tr').first();
+      const hasRow = await firstRow.count().then(c => c > 0).catch(() => false);
+      if (!hasRow) {
+        test.skip(true, `${assertion.label}: no seed row available — codegen-level coverage via ErpAllWebPagesTest`);
+        return;
+      }
+
+      await firstRow.hover();
+
+      // Click the drawer-trigger row-action (e.g. '完整档案' / '完整仪表板')
+      const drawerBtn = crud.locator('button, a').filter({ hasText: new RegExp(assertion.drawerActionText.join('|')) }).first();
+      await expect.poll(
+        async () => drawerBtn.count(),
+        { timeout: 10_000, message: `${assertion.label}: drawer trigger button should appear` },
+      ).toBeGreaterThan(0);
+      await drawerBtn.click();
+
+      // Wait for drawer to render with tabs
+      const drawer = page.locator('.cxd-Drawer').last();
+      await expect.poll(
+        async () => drawer.locator('.cxd-Tabs').count(),
+        { timeout: 30_000, message: `${assertion.label}: .cxd-Tabs should render in drawer` },
+      ).toBeGreaterThan(0);
+
+      // Collect rendered drawer tab titles
+      const tabLinks = drawer.locator('.cxd-Tabs .cxd-Tabs-link');
+      const tabLinkCount = await tabLinks.count();
+      expect(tabLinkCount, `${assertion.label}: drawer should have multiple tabs`).toBeGreaterThanOrEqual(2);
+
+      const renderedTitles: string[] = [];
+      for (let i = 0; i < tabLinkCount; i++) {
+        const text = await tabLinks.nth(i).innerText().catch(() => '');
+        renderedTitles.push(text.trim());
+      }
+
+      // All expected drawer tab titles must be present (drawer tabs are deterministic)
+      const missingTitles = assertion.expectedDrawerTabTitles.filter(
+        expected => !renderedTitles.some(rendered => rendered.includes(expected)),
+      );
+      expect(
+        missingTitles.length,
+        `${assertion.label}: missing drawer tab titles ${JSON.stringify(missingTitles)}. Rendered: ${JSON.stringify(renderedTitles)}`,
+      ).toBe(0);
+
+      // Click a non-header tab to verify crud data loads (switch from first tab)
+      if (tabLinkCount > 1) {
+        await tabLinks.nth(1).click().catch(() => {});
+        await page.waitForTimeout(800);
+        // Either a Crud table or a Form should be present in the tab body
+        const tabBody = drawer.locator('.cxd-Tabs-pane, .cxd-Tabs-body').last();
+        await expect.poll(
+          async () => tabBody.locator('.cxd-Crud, .cxd-Form, .cxd-Service').count(),
+          { timeout: 20_000, message: `${assertion.label}: tab body should render crud/form/service after switch` },
+        ).toBeGreaterThan(0);
       }
     });
   }

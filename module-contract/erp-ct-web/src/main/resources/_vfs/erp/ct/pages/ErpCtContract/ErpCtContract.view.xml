@@ -98,7 +98,7 @@
     </grids>
 
     <forms>
-        <form id="view" size="lg">
+        <form id="view" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 ==========>baseInfo[基本信息]======
  code[合同编号] contractName[合同名称]
@@ -132,7 +132,7 @@
                 </cell>
             </cells>
         </form>
-        <form id="edit" size="lg">
+        <form id="edit" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 ==========>baseInfo[基本信息]======
  code[合同编号] contractName[合同名称]

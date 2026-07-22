@@ -48,6 +48,80 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+        <!-- Drawer 相关 crud grids：仅展示直接字段（custom="true" 因为字段属于关联实体 ErpMntVisit/ErpMntSparePartUsage） -->
+        <grid id="archive-visit-list">
+            <cols>
+                <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="code" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="visitDate" custom="true" mandatory="true" sortable="true" align="center" domain="date">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="visitType" custom="true" sortable="true" domain="string"/>
+                <col id="status" custom="true" mandatory="true" sortable="true" domain="string">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'status';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            const successVals = ['COMPLETED','APPROVED','RECEIVED','DELIVERED','PAID','SETTLED','HONORED','RETRIED','EXECUTED','COMPUTED','CONFIRMED','RUNNING','MATERIAL_TRANSFERRED','ACTIVE','CLOSED','DONE','SUCCESS'];
+                            const dangerVals = ['REJECTED','CANCELLED','FAILED','DISHONORED','OVERDUE','DOWN','TERMINATED','WRITE_OFF'];
+                            const warningVals = ['ON_HOLD','SUSPENDED','EXPIRED','RETRYING'];
+                            const primaryVals = ['SUBMITTED','IN_PROGRESS','PARTIAL','PARTIALLY_TRANSFERRED','WORK_IN_PROGRESS','PROCESSING','NEGOTIATION','OPEN','UNDER_MAINTENANCE','COLLECTION_PENDING','DISCOUNTED','ENDORSED','ISSUED'];
+                            function quote(v){return "'" + v + "'";}
+                            function inList(vals){return "[" + vals.map(quote).join(",") + "].indexOf(" + valueProp + ") >= 0";}
+                            const expr = inList(successVals) + " ? 'success' : "
+                                + inList(dangerVals) + " ? 'danger' : "
+                                + inList(warningVals) + " ? 'warning' : "
+                                + inList(primaryVals) + " ? 'primary' : 'default'";
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + expr + "}"
+                                    + ">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalMinutes" custom="true" ui:number="true" sortable="true" domain="long"/>
+            </cols>
+        </grid>
+        <grid id="archive-spare-part-list">
+            <cols>
+                <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
+                <col id="code" custom="true" mandatory="true" sortable="true" domain="string"/>
+                <col id="businessDate" custom="true" mandatory="true" sortable="true" align="center" domain="date">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalAmount" custom="true" ui:number="true" sortable="true" align="right" domain="amount">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="docStatus" custom="true" mandatory="true" sortable="true" domain="string">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            const valueProp = dispMeta?.id || 'docStatus';
+                            const labelProp = propMeta?.['graphql:labelProp'] || (valueProp + '_label');
+                            return {
+                                type: "tpl",
+                                tpl: '<span class="label label-${' + valueProp
+                                    + " == 'ACTIVE' ? 'primary' : 'default'}\">"
+                                    + "${" + labelProp + "}</span>"
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
@@ -101,7 +175,47 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-equipment-dashboard-button" label="完整仪表板" level="info" icon="fa fa-tachometer"
+                        actionType="drawer">
+                    <dialog page="equipmentDashboard" size="xl">
+                        <data>
+                            <id>${'$'}{id}</id>
+                        </data>
+                    </dialog>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
+
+        <!-- 完整仪表板 drawer（机制 B）：headerForm simple + 维护时间线 + 备件消耗 crud tab。
+             状态色块由 headerForm 内既有 status gen-control 渲染（无需独立 tab）。
+             维护时间线用 ErpMntVisit findPage filter_equipmentId（分页）；@BizQuery maintenanceHistoryData 为非分页 List，归报表用。 -->
+        <simple name="equipmentHeader" form="view">
+            <initApi url="@query:ErpMntEquipment__get?id=${'$'}{id}" gql:selection="{@formSelection}"/>
+        </simple>
+
+        <crud name="equipmentMaintenanceHistory" grid="archive-visit-list">
+            <table noOperations="true">
+                <api url="@query:ErpMntVisit__findPage/{@pageSelection}?filter_equipmentId=${'$'}{id}"/>
+            </table>
+        </crud>
+
+        <crud name="equipmentSpareParts" grid="archive-spare-part-list">
+            <table noOperations="true">
+                <api url="@query:ErpMntSparePartUsage__findPage/{@pageSelection}?filter_equipmentId=${'$'}{id}"/>
+            </table>
+        </crud>
+
+        <tabs name="equipmentDashboard" mountOnEnter="true" unmountOnExit="false">
+            <tab name="header" page="equipmentHeader" title="基本信息"/>
+            <tab name="maintenance" page="equipmentMaintenanceHistory" title="维护时间线"/>
+            <tab name="spareParts" page="equipmentSpareParts" title="备件消耗"/>
+        </tabs>
+
         <picker name="picker"/>
     </pages>
 </view>

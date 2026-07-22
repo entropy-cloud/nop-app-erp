@@ -1,0 +1,5 @@
+# 设备完整仪表板 drawer 入口（机制 B）。
+# 主 view.xml 中已定义 <tabs name="equipmentDashboard">（headerForm + 维护时间线 + 备件消耗 crud）。
+# 状态色块由 headerForm 内既有 status gen-control 渲染。
+x:gen-extends: |
+  <web:GenPage view="ErpMntEquipment.view.xml" page="equipmentDashboard" xpl:lib="/nop/web/xlib/web.xlib" />
