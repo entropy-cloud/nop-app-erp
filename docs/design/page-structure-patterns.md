@@ -296,7 +296,9 @@ x:gen-extends: |
 | 敏感字段脱敏（hr bankAccount / salaryBase / logistics API Key/Secret） | cross-cutting | 敏感字段脱敏独立 plan 启动 |
 | 仪表板后端专用 `@BizQuery` | 性能优化 | 仪表板数据量 > 1000 行或加载 > 2s 时 |
 | F16 低风险复杂页面（凭证录入完成 + 凭证模板配置 + 三单匹配联查 + 工单进度仪表板 + NCR 详情页） | F16 低风险批已完成 | ✅ 已落地（plan `2026-07-22-0845-2`），见 §8 F16 复杂页面范式 |
-| F16 高风险复杂页面（aps 甘特图 + mfg BOM 树 + inventory PDA + maintenance 向导） + P2（hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表） | F16 territory | F16 高风险 / P2 successor plan 启动（需 custom AMIS 组件 PoC） |
+| F16 高风险复杂页面（aps 甘特图 + mfg BOM 树） | F16 高风险批已完成 | ✅ 已落地（plan `2026-07-22-1400-1`），见 §8.7-§8.8 |
+| F16 高风险余项（inventory PDA 扫码 + maintenance 4 步向导） | F16 territory | inventory PDA 硬件 Non-Goal（归 Barcode/PDA cross-cutting successor）；maintenance 向导 BLOCKED（F4 child-table-editor 基线缺失） |
+| F16 P2（hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表） | F16 territory | F16 P2 successor plan 启动 |
 
 ## 5. wizard 范式占位（待 successor 落地后回填）
 
@@ -433,3 +435,56 @@ PoC 落地后回填本节，包含：
 **场景**：凭证录入 toolbar 一键按模板生成分录行。
 
 **落地范式**：edit form 新增 `quickTemplate` cell button（`actionType:dialog`）：dialog 内 form 收集 businessType + DOC_TOTAL context → 调 §8.2 `renderTemplate` mutation → adaptor 转 `{previewLines}` → 预览 input-table → 「应用到凭证」按钮 `doAction(setValue,{lines:${previewLines}})` + `closeDialog` 写回头表单。AMIS setValue 于 dialog action 内写 dialog data scope，closeDialog 合并回父表单。
+
+### 8.7 甘特图（aps 排产，echarts custom series 只读）
+
+**场景**：排产甘特图——Y=工作中心 category 轴，X=时间轴（dataZoom 缩放），每道工序工单=一根甘特条（plannedStart→plannedEnd），颜色编码 status。
+
+**Phase 0 Explore (a) PoC 结论**：(1) Nop AMIS `type:chart` adaptor **可承载 echarts custom series**——qa dashboard 已证明 adaptor 返回 config 中的 JS 函数（`tooltip.formatter`/`renderItem`）被 AMIS 原样合并进 echarts option，不经 JSON 序列化。custom series 是 echarts 标准 series 类型，无需新平台机制。(2) **关键 schema 核实**：`_ErpApsOperationOrder` **无 scheduleId 字段**——经 `workOrderId`/`machineId`/`plannedStartDateT`/`plannedEndDateT`/`status` 表达，设计文档 `scheduling.md §8.3` 的 `IEtpApsGanttService`（含拖拽 `dragUpdateOperation` + 冲突报告）是**未来全实现 spec**，本范式仅落地只读甘特。(3) 数据量：按 date-between + machineId 过滤后典型 ≤ 200 行，客户端 reduce 分组性能充裕。
+
+**落地范式（候选 (b)，前端 adaptor + 不新增后端 delta）**：
+- 独立 page.yaml 顶部 form（machineId + status + dateRange）+ `type:chart`
+- API：`ErpApsOperationOrder__findPage`（`filter_machineId` + `filter_status` + `limit` 500 + orderBy plannedStartDateT ASC），adaptor 客户端按 dateRange 过滤 + 按 machineId 分组建 Y category
+- adaptor 构建 custom series data：`{value:[startMs, endMs, categoryIndex], itemStyle:{color: statusColor}, _op:{...meta}}`；`renderItem(params, api)` 返回 `{type:'rect', shape:{x: api.coord([v0,cat])[0], y: start[1]-h/2, width: max(end-start, 2), height: h}}`
+- xAxis `type:'time'`，dataZoom slider+inside；tooltip.formatter 读 `params.data._op` 展示 workOrderId/qty/duration/priority
+- 颜色编码对齐 `scheduling.md §8.2`：DRAFT=灰/PLANNED=蓝/IN_PROGRESS=黄/FINISHED=绿/CANCELLED=红
+- 拖拽 = Non-Goal（设计文档明确 + F13 先例裁决 AMIS service scope 拖拽不可行）
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 按草稿 `filter scheduleId` 过滤（entity 无 scheduleId） | 经 `_ErpApsOperationOrder.java` 核实实际字段，用 machineId + plannedStartDateT dateRange |
+| 在 adaptor 用 `new Date(plannedStartDateT)` 直接解析（空格分隔报错） | `.replace(' ','T')` 转 ISO 后 `new Date().getTime()` |
+| custom series renderItem 不设 `encode:{x:[0,1],y:2}` | encode 声明 value 数组到 x(0,1)/y(2) 的映射，否则坐标错乱 |
+| 期望 AMIS chart adaptor 返回值经 JSON 序列化（函数丢失） | adaptor 返回 config 中的 JS 函数被原样保留（qa dashboard 已验证） |
+
+### 8.8 BOM 树（manufacturing，AMIS tree 重建）
+
+**场景**：BOM 多级展开树浏览——选 BOM → 调 `explode` 多级展开 → AMIS tree 多级展开/折叠。
+
+**Phase 0 Explore (b) PoC 结论**：(1) `IErpMfgBomBiz.explode` 返回**扁平** `List<BomExplosionNode>`（字段 materialId/quantity/operationId/sourceBomId/level/manufactured），`BomExpander` 返回 **pre-order DFS**（父节点先于子节点 add），phantom（bomType=20）已在展开时合并、本身不出现在结果中（前端无需特殊处理）。(2) AMIS `type:tree` 经 F10 tree-list 范式验证可行；本页面用独立 page.yaml 的 `type:tree` + adaptor 栈算法重建嵌套。
+
+**落地范式（候选 (a)，adaptor level 栈算法 + 不新增后端 delta）**：
+- 独立 page.yaml 顶部 form（bomId required + qty 可选 + useMultiLevel switch 默认 true）+ `type:service`（fetch explode）内嵌 `type:tree`
+- API：`ErpMfgBom__explode`（`$bid:Long,$q:BigDecimal,$ml:Boolean`），adaptor 按 **level 栈算法**重建嵌套：对每个 node（pre-order），弹栈直到 `top.level < node.level`（top 即父），attach 到 `top.children`，push `{node, level}`；空 children 数组删除以让 AMIS tree 识别叶子
+- 未填 bomId 时 explode 报错（requireBom）→ adaptor 探测 `payload.data.errors` 优雅返回 `{hasData:false}`，tpl 占位提示（**adaptor 必须吞 GraphQL error**，否则页面 console 报错）
+- 节点 label 含物料ID + 制造件/采购件 tag + quantity；制造件可继续展开（有 children），采购件为叶子
+- 工艺路线水平流向图 = Non-Goal（BomExplosionNode 含 operationId 但无前后序关系数据，归 routing successor）
+
+**栈算法核心**（pre-order DFS 重建）：
+```
+roots=[]; stack=[]  // [{node, level}]
+for n in flat:
+  node = {label, value, children:[], ...meta}
+  while stack and stack.top.level >= n.level: stack.pop()   // top 即父
+  (stack.empty ? roots : stack.top.node.children).push(node)
+  stack.push({node, level: n.level})
+```
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 假设 explode 返回嵌套结构（实为扁平 + level） | 按 level 栈算法重建；BomExpander javadoc 明确「扁平化」 |
+| 为 phantom 节点做前端特殊处理 | BomExpander 已合并 phantom（本身不出现），前端无需处理 |
+| service auto-fetch 空 bomId 导致 GraphQL error 冒泡到页面 | adaptor 探测 `payload.data.errors` 优雅返回空 + 占位提示 |
+| 用臆测字段名（如 `nonConformanceId`） | 经实时仓库核实实际字段名（此处 FK 为 sourceBomId/level/materialId） |
