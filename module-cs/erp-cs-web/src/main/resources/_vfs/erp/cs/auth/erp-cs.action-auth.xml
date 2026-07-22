@@ -22,10 +22,18 @@
                                   displayName="客服工单" i18n-en:displayName="Ticket" icon="ticket"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/cs/pages/ErpCsTicket/main.page.yaml"/>
+                        <resource id="cs-ticket-kanban" app:useCases="UC-CS-01,UC-CS-02,UC-CS-06" displayName="工单看板"
+                                  i18n-en:displayName="Ticket Kanban" icon="kanban"
+                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  url="/erp/cs/pages/ErpCsTicket/kanban.page.yaml"/>
                         <resource id="ErpCsTicketAction-main" displayName="工单操作日志"
                                   i18n-en:displayName="Ticket Action Log" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/cs/pages/ErpCsTicketAction/main.page.yaml"/>
+                        <resource id="cs-action-log" displayName="工单操作时间线"
+                                  i18n-en:displayName="Ticket Action Timeline" icon="git-commit-vertical"
+                                  component="AMIS" resourceType="SUBM" orderNo="115"
+                                  url="/erp/cs/pages/ErpCsTicketAction/timeline.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="cs-canned-response" displayName="预设应答" i18n-en:displayName="Canned Responses"

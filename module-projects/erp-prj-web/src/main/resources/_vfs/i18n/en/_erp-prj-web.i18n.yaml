@@ -40,6 +40,8 @@ site:
       displayName: Projects Reports
     prj-task:
       displayName: Task & Timesheet
+    prj-task-kanban:
+      displayName: Task Kanban
     project-cost-summary:
       displayName: Project Cost Summary
     project-pnl:

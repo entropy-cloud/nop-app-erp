@@ -82,5 +82,7 @@ site:
       displayName: Employee Survey
     hr-tax:
       displayName: Tax Configuration
+    hr-team-vacation-calendar:
+      displayName: Team Vacation Calendar
     payroll-simulation-comparison:
       displayName: Payroll Simulation Comparison

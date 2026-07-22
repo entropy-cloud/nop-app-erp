@@ -1,0 +1,108 @@
+# CRM 商机看板（F13 非标准视图，plan 2026-07-22-0845-3 §Phase 1）。
+# 商机 = ErpCrmLead where leadType=OPPORTUNITY（CRM 不建模独立 Opportunity 实体，见 orm line 191）。
+# 动态列：阶段从 ErpCrmStage 实体读取（service + each 渲染一列 crud per stage）。
+# 行级 row-action「移动到阶段」dialog 选目标 stage → 触发 ErpCrmLead__moveStage（既有 mutation，
+# 经 LeadProcessor 守卫 isWonStage/序列）。Phase 0 Explore (a) 降级裁决：不使用拖拽。
+# isWonStage 列只读（visibleOn 守卫）+ 经后端 mutation 二次守卫。
+type: page
+title: "商机看板"
+remark: "商机（ErpCrmLead leadType=OPPORTUNITY 子集）按漏斗阶段（ErpCrmStage 动态列）展示。每列一个 crud，行级「移动到阶段」按钮经 ErpCrmLead__moveStage mutation 触发阶段切换（LeadProcessor 守卫 isWonStage / 阶段序列）。赢单阶段（isWonStage=true）列只读。"
+body:
+  # 阶段加载器：一次性拉取全部 ErpCrmStage（按 sequence 排序）注入 data scope 供 each + 移动 dialog 复用
+  - type: service
+    name: stagesLoader
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query{ ErpCrmStage__findPage(limit:50,orderBy:\"sequence ASC\"){ items{ id code stageName sequence isWonStage } total } }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpCrmStage__findPage || { items: [], total: 0 };
+        const stages = page.items || [];
+        const stageOptions = stages.map(function(s){ return { label: s.stageName, value: s.id }; });
+        return { status: 0, msg: '', data: { stages: stages, stageOptions: stageOptions } };
+    body:
+      - type: button
+        label: "刷新看板"
+        icon: "refresh-cw"
+        actionType: reload
+        target: "stagesLoader"
+        className: m-3
+
+      - type: each
+        name: stages
+        placeholder: "尚未配置商机阶段（请先在「漏斗阶段」中维护 ErpCrmStage）"
+        body:
+          - type: crud
+            title: "${stageName} ${isWonStage ? ' 🏆' : ''}"
+            headerToolbar: []
+            footerToolbar: ["statistics"]
+            syncLocation: false
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                query: "query(${'$'}sid:Long,${'$'}lim:Int){ ErpCrmLead__findPage(filter_leadType:\"OPPORTUNITY\",filter_stageId:${'$'}sid,limit:${'$'}lim){ items{ id code companyName expectedRevenue expectedCloseDate probability stageId } total } }"
+                variables:
+                  sid: "${id}"
+                  lim: 30
+              adaptor: |
+                const d = payload.data || {};
+                const gql = d.data ? d.data : d;
+                const page = gql.ErpCrmLead__findPage || { items: [], total: 0 };
+                return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+            columns:
+              - name: code
+                label: "商机号"
+                width: 120
+              - name: companyName
+                label: "客户"
+                width: 160
+              - name: expectedRevenue
+                label: "预期收入"
+                type: number
+                kilometer: true
+                precision: 2
+              - name: expectedCloseDate
+                label: "预期签单"
+                type: date
+                format: "YYYY-MM-DD"
+              - name: probability
+                label: "成交概率%"
+                type: tpl
+                tpl: '<span class="label label-${probability >= 75 ? "success" : probability >= 50 ? "warning" : "default"}">${probability}%</span>'
+              - type: operation
+                label: "操作"
+                # 赢单阶段（isWonStage=true）只读：移动按钮 visibleOn 守卫隐藏（后端 LeadProcessor 二次守卫）
+                buttons:
+                  - type: button
+                    label: "移动到阶段"
+                    level: primary
+                    size: sm
+                    visibleOn: "${!isWonStage}"
+                    actionType: dialog
+                    dialog:
+                      title: "移动商机到阶段"
+                      body:
+                        type: form
+                        api:
+                          method: post
+                          url: /graphql
+                          dataType: raw
+                          data:
+                            query: "mutation(${'$'}leadId:Long,${'$'}sid:Long){ ErpCrmLead__moveStage(leadId:${'$'}leadId,toStageId:${'$'}sid){ id stageId } }"
+                            variables:
+                              leadId: "${id}"
+                              sid: "${toStageId}"
+                        body:
+                          - type: select
+                            name: toStageId
+                            label: "目标阶段"
+                            required: true
+                            source: "${stageOptions}"
+                            placeholder: "选择目标阶段（赢单阶段经后端守卫拒绝非法迁移）"
+                    reload: "stagesLoader"

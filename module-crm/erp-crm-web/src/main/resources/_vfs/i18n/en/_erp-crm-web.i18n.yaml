@@ -46,6 +46,10 @@ site:
       displayName: Sales Team
     ErpCrmTerritory-main:
       displayName: Territory
+    crm-activity-calendar:
+      displayName: Activity Calendar
+    crm-activity-timeline:
+      displayName: Activity Timeline
     crm-calendar:
       displayName: Calendar
     crm-campaign:
@@ -60,6 +64,8 @@ site:
       displayName: Lead Analytics
     crm-lead:
       displayName: Leads & Opportunities
+    crm-opportunity-kanban:
+      displayName: Opportunity Kanban
     crm-report:
       displayName: CRM Reports
     crm-sequence:

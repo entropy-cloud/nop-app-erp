@@ -69,6 +69,10 @@
                                   displayName="休假申请" i18n-en:displayName="Leave Request" icon="calendar-off"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
                                   url="/erp/hr/pages/ErpHrLeaveRequest/main.page.yaml"/>
+                        <resource id="hr-team-vacation-calendar" app:useCases="UC-HR-02" displayName="团队休假日历"
+                                  i18n-en:displayName="Team Vacation Calendar" icon="calendar-days"
+                                  component="AMIS" resourceType="SUBM" orderNo="405"
+                                  url="/erp/hr/pages/ErpHrLeaveRequest/team-vacation-calendar.page.yaml"/>
                         <resource id="ErpHrLeaveBalance-main" displayName="休假额度"
                                   i18n-en:displayName="Leave Balance" icon="calendar-check"
                                   component="AMIS" resourceType="SUBM" orderNo="410"

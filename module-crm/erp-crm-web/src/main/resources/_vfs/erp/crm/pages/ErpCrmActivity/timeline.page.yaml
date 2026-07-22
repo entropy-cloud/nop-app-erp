@@ -1,0 +1,83 @@
+# CRM 活动时间线（F13 非标准视图，plan 2026-07-22-0845-3 §Phase 2）。
+# Phase 0 Explore (b) 裁决：原生 `type: timeline` 存在但 prop 契约（items 数组绑定）
+# 在 service scope 下经 `${items}` 字符串插值失败（TypeError: map is not a function）。
+# 实现期裁决：降级为 `each + tpl` 自定义纵向时间线（同 HR 矩阵的可靠范式），
+# 保留类型图标 + 颜色 + 倒序 + 详情语义。原生 timeline prop 绑定 successor 见 §Deferred。
+# 数据源 ErpCrmActivity__findPage，按 activityDate 倒序。
+# 注：实体实际字段为 activityDate（DATE），实现按真实字段名。
+type: page
+title: "活动时间线"
+remark: "CRM 活动按活动日期（activityDate）倒序的纵向时间线。类型经 erp-crm/activity-type 字典映射颜色：CALL=蓝 / EMAIL=灰 / MEETING=绿 / NOTE=黄。支持按 leadId 过滤。"
+body:
+  - type: form
+    name: filterForm
+    title: "筛选"
+    mode: inline
+    wrapWithPanel: false
+    className: m-3
+    body:
+      - type: input-number
+        name: leadId
+        label: "线索/商机ID"
+        placeholder: "过滤关联线索"
+        clearable: true
+      - type: button
+        label: "刷新时间线"
+        icon: "refresh-cw"
+        actionType: reload
+        target: "activityTimeline"
+
+  - type: service
+    name: activityTimeline
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lid:Long,${'$'}lim:Int){ ErpCrmActivity__findPage(filter_leadId:${'$'}lid,limit:${'$'}lim,orderBy:\"activityDate DESC\"){ items{ id activityType activityDate summary ownerId leadId lead{ companyName } } total } }"
+        variables:
+          lid: "${leadId || null}"
+          lim: 100
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpCrmActivity__findPage || { items: [], total: 0 };
+        const items = (page.items || []).map(function(a){
+          const typeMeta = {
+            CALL: { color: '#3b82f6', icon: '📞', label: '通话' },
+            EMAIL: { color: '#6b7280', icon: '✉️', label: '邮件' },
+            MEETING: { color: '#10b981', icon: '👥', label: '会议' },
+            NOTE: { color: '#f59e0b', icon: '📝', label: '备注' }
+          }[a.activityType] || { color: '#6b7280', icon: '•', label: a.activityType };
+          const customerName = a.lead && a.lead.companyName ? a.lead.companyName : '';
+          return {
+            id: a.id,
+            activityDate: a.activityDate,
+            activityType: a.activityType,
+            typeIcon: typeMeta.icon,
+            typeColor: typeMeta.color,
+            typeLabel: typeMeta.label,
+            customerName: customerName,
+            summary: a.summary || ''
+          };
+        });
+        return { status: 0, msg: '', data: { items: items, total: page.total || 0 } };
+    body:
+      - type: wrapper
+        className: "m-b"
+        body:
+          - type: tpl
+            tpl: '<div class="text-muted">共 ${total} 条活动记录</div>'
+      - type: each
+        name: items
+        placeholder: '<div class="text-center text-muted p-4">暂无活动记录</div>'
+        body:
+          - type: wrapper
+            className: "m-b-sm p-b-sm"
+            body:
+              - type: tpl
+                tpl: '<div class="flex justify-between"><span><strong>${typeIcon} ${typeLabel}</strong> · ${customerName}</span><span class="text-muted text-sm">${activityDate}</span></div>'
+              - type: tpl
+                tpl: '<div class="text-muted p-t-xs">${summary}</div>'
+                visibleOn: "${summary && summary.length > 0}"

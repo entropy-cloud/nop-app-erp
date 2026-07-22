@@ -13,6 +13,10 @@
                                   displayName="线索/商机" i18n-en:displayName="Lead / Opportunity" icon="user-plus"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/crm/pages/ErpCrmLead/main.page.yaml"/>
+                        <resource id="crm-opportunity-kanban" app:useCases="UC-CRM-03,UC-CRM-06" displayName="商机看板"
+                                  i18n-en:displayName="Opportunity Kanban" icon="kanban"
+                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  url="/erp/crm/pages/ErpCrmLead/opportunity-kanban.page.yaml"/>
                         <resource id="ErpCrmLeadConvLog-main" app:useCases="UC-CRM-06"
                                   displayName="阶段流转记录" i18n-en:displayName="Stage Transition Log" icon="history"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
@@ -30,6 +34,14 @@
                                   displayName="活动记录" i18n-en:displayName="Activity" icon="activity"
                                   component="AMIS" resourceType="SUBM" orderNo="210"
                                   url="/erp/crm/pages/ErpCrmActivity/main.page.yaml"/>
+                        <resource id="crm-activity-timeline" app:useCases="UC-CRM-05" displayName="活动时间线"
+                                  i18n-en:displayName="Activity Timeline" icon="git-commit-vertical"
+                                  component="AMIS" resourceType="SUBM" orderNo="220"
+                                  url="/erp/crm/pages/ErpCrmActivity/timeline.page.yaml"/>
+                        <resource id="crm-activity-calendar" app:useCases="UC-CRM-05" displayName="活动日历"
+                                  i18n-en:displayName="Activity Calendar" icon="calendar"
+                                  component="AMIS" resourceType="SUBM" orderNo="225"
+                                  url="/erp/crm/pages/ErpCrmActivity/calendar.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="crm-calendar" displayName="活动日历" i18n-en:displayName="Calendar"

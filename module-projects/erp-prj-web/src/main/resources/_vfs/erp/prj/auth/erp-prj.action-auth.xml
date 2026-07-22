@@ -41,6 +41,10 @@
                                   i18n-en:displayName="Task" icon="list-checks"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/prj/pages/ErpPrjTask/main.page.yaml"/>
+                        <resource id="prj-task-kanban" app:useCases="UC-PRJ-05" displayName="任务看板"
+                                  i18n-en:displayName="Task Kanban" icon="kanban"
+                                  component="AMIS" resourceType="SUBM" orderNo="205"
+                                  url="/erp/prj/pages/ErpPrjTask/kanban.page.yaml"/>
                         <resource id="ErpPrjActivityType-main" displayName="活动类型"
                                   i18n-en:displayName="Activity Type" icon="folder"
                                   component="AMIS" resourceType="SUBM" orderNo="210"

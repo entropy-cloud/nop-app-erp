@@ -34,6 +34,8 @@ site:
       displayName: Ticket Type
     ErpCsTimeEntry-main:
       displayName: Time Entry
+    cs-action-log:
+      displayName: Ticket Action Timeline
     cs-canned-response:
       displayName: Canned Responses
     cs-config:
@@ -50,6 +52,8 @@ site:
       displayName: CSAT Surveys
     cs-ticket:
       displayName: Tickets
+    cs-ticket-kanban:
+      displayName: Ticket Kanban
     cs-time-tracking:
       displayName: Time Tracking
     erp-cs:
