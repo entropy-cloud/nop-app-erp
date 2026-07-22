@@ -100,4 +100,22 @@ public interface ErpFinPostingErrors {
     ErrorCode ERR_GL_MAPPING_NOT_FOUND = ErrorCode.define("erp.err.fin.posting.gl-mapping-not-found",
             "GL 映射规则缺失: businessType={businessType} accountKey={accountKey} dimensions={dimensions}",
             ARG_BUSINESS_TYPE, ARG_ACCOUNT_KEY, ARG_DIMENSIONS);
+
+    // ===================== 凭证模板表达式预览（F16 P1，plan §Phase 2 renderTemplate） =====================
+
+    String ARG_EXPRESSION = "expression";
+    String ARG_VAR = "var";
+    String ARG_REASON = "reason";
+
+    /** 模板预览表达式语法非法（非白名单字符 / 括号不匹配 / 空表达式）。 */
+    ErrorCode ERR_TEMPLATE_EXPR_INVALID = ErrorCode.define("erp.err.fin.posting.template-expr-invalid",
+            "凭证模板金额表达式 {expression} 非法：{reason}", ARG_EXPRESSION, ARG_REASON);
+
+    /** 模板预览表达式除零。 */
+    ErrorCode ERR_TEMPLATE_EXPR_DIV_ZERO = ErrorCode.define("erp.err.fin.posting.template-expr-div-zero",
+            "凭证模板金额表达式 {expression} 出现除零", ARG_EXPRESSION);
+
+    /** 模板预览表达式引用未定义变量。 */
+    ErrorCode ERR_TEMPLATE_EXPR_VAR_UNDEF = ErrorCode.define("erp.err.fin.posting.template-expr-var-undef",
+            "凭证模板金额表达式 {expression} 引用未定义变量 {var}", ARG_EXPRESSION, ARG_VAR);
 }

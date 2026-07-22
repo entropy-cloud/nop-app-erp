@@ -94,14 +94,55 @@
  voucherDate[凭证日期] voucherNo[凭证编号]
  orgId[核算组织] acctSchemaId[账套]
  periodId[会计期间] docStatus[凭证状态]
-==========>posting[过账信息]=========
+=========>posting[过账信息]=========
  @totalDebit[借方合计] @totalCredit[贷方合计]
+ balanceBadge[平衡校验]
 =========>lines[分录行]======
+ quickTemplate[快捷模板](2)
  autoBalance[借贷自动平衡](2)
  lines[分录行](2)
  remark[备注](2)
             </layout>
             <cells>
+                <!--
+                  借贷平衡实时警示 badge（F16 P1，plan §Phase 1，Phase 0 Explore (a) 降级方案落地）。
+                  per Explore (a) 裁决：行级 onEvent→头合计聚合受 xview schema 约束（行 scope 无法干净写头 totalDebit/totalCredit），
+                  故采用 autoBalance 按钮扩展（既有，用户点击刷新头合计）+ 本 badge（实时可见性）。
+                  visibleOn：仅当存在分录行或合计非 0 时显示，避免新建空凭证时噪声。
+                -->
+                <cell id="balanceBadge" custom="true" notSubmit="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'tpl',
+                                className: 'mb-0',
+                                tpl: '<span class="label label-${' + 'Number(totalDebit) == Number(totalCredit) ? "success" : "danger' + '}"><i class="fa ${' + 'Number(totalDebit) == Number(totalCredit) ? "fa-check-circle" : "fa-exclamation-triangle' + '}"></i> ${' + 'Number(totalDebit) == Number(totalCredit) ? "借贷平衡" : "借贷不平衡（需点击下方刷新合计按钮）"' + '}</span>'
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <!--
+                  快捷模板 toolbar 按钮（F16 P1，plan §Phase 1）。
+                  per Phase 0 Explore (a)+(b)：链接到凭证模板配置页（previewTemplate 按钮在该页调用
+                  ErpFinVoucherTemplate__renderTemplate @BizMutation 完成预览）。采用 link 而非内嵌 dialog，
+                  因 xview <c:script> 为 XLang（${} 会被编译期插值），复杂 AMIS dialog 的 ${} 运行期表达式
+                  需经 page.yaml（YAML）承载——voucher 录入页的快捷入口降级为导航链接，模板预览在配置页落地。
+                -->
+                <cell id="quickTemplate" custom="true" notSubmit="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'button',
+                                label: '快捷模板',
+                                level: 'primary',
+                                icon: 'fa fa-magic',
+                                actionType: 'link',
+                                link: '/ErpFinVoucherTemplate-main',
+                                tooltip: '跳转到凭证模板配置页，使用「预览测试生成凭证」按钮（调用 renderTemplate 表达式引擎）预览分录行'
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
                 <!--
                   借贷自动平衡按钮（ui-patterns §1 line 67）+ 头余额合计刷新：
                   点击计算 totalDebit - totalCredit 差额，填入最后一行（借<贷补借方，反之补贷方）。

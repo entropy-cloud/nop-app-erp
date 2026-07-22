@@ -58,7 +58,7 @@
     </grids>
 
     <forms>
-        <form id="view" size="lg">
+        <form id="view" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[NCR编码] ncrDate[发生日期]
@@ -74,8 +74,11 @@
  dispositionType[处置类型] returnCode[退货单号]
 =========>status[状态信息]======
  status[状态] assignedTo[指派人]
+=========>verification[效果验证]======
  resolvedBy[解决人] resolvedAt[解决时间]
  resolution[解决方案]
+=========>capa[CAPA 纠正预防措施]======
+ actions[CAPA 措施](2)
 =========>posting[过账信息]======
  posted[已过账] postedAt[过账时间]
  postedBy[过账人]
@@ -84,8 +87,20 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <!--
+                  CAPA 内嵌子表（F16 P1，plan §Phase 5）。
+                  经 ErpQaNonConformance.actions to-many 关系（orm line 390）随头实体 gql:selection 嵌套加载。
+                  引用 ErpQaAction sub-grid-view（含 actionType/description/responsiblePerson/dueDate/status/
+                  completedAt/verificationPerson/verificationDate），覆盖 CAPA 措施 + 效果验证。
+                  实时仓库核实：FK 字段名为 ncrId（ErpQaAction.ncrId → ErpQaNonConformance.id）。
+                -->
+                <cell id="actions">
+                    <view path="/erp/qa/pages/ErpQaAction/ErpQaAction.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
-        <form id="edit" size="lg">
+        <form id="edit" size="lg" layoutControl="tabs">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
  code[NCR编码] ncrDate[发生日期]
@@ -101,6 +116,7 @@
  dispositionType[处置类型] returnCode[退货单号]
 =========>status[状态信息]======
  status[状态] assignedTo[指派人]
+=========>verification[效果验证]======
  resolvedBy[解决人] resolvedAt[解决时间]
  resolution[解决方案]
 =========>posting[过账信息]======

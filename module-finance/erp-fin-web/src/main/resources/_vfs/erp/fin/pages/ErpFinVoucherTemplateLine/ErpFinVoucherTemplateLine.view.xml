@@ -1,52 +1,137 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpFinVoucherTemplateLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
-      xmlns:x="/nop/schema/xdsl.xdef">
+<view x:extends="_gen/_ErpFinVoucherTemplateLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="subjectCode" mandatory="true" sortable="true"/>
+                <col id="dcDirection" mandatory="true" sortable="true"/>
+                <col id="amountExpression" sortable="true"/>
+                <col id="accountKey" sortable="true"/>
+                <col id="amountKey" sortable="true"/>
+                <col id="memoTemplate" sortable="true"/>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
+
+        <!--
+          凭证模板行子表编辑（F16 P1，plan §Phase 2）。
+          范式源：docs/design/child-table-editor-patterns.md §2-§7（sub-grid-edit）。
+          7 列：行号 / 科目编码(可含 ${placeholder}) / 借贷方向 / 金额表达式(支持算术，如 DOC_TOTAL * 0.13)
+                / 科目映射键 / 金额占位键 / 摘要模板(可含 ${placeholder})。
+          amountExpression 算术求值由 ErpFinVoucherTemplate__renderTemplate @BizMutation 承担（Phase 0 Explore (b) 候选 c）。
+        -->
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'lineNo',
+                                label: '行号',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 1, isInt: true },
+                                validationErrors: { minimum: '行号必须大于 0', isInt: '行号必须为整数' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="subjectCode" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-text', name: 'subjectCode', label: '科目编码', required: true, placeholder: '可含 ${占位符}' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="dcDirection" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'button-group-select',
+                                name: 'dcDirection',
+                                label: '借贷',
+                                required: true,
+                                options: [
+                                    { label: '借', value: 'DEBIT' },
+                                    { label: '贷', value: 'CREDIT' }
+                                ]
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amountExpression">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-text', name: 'amountExpression', label: '金额表达式', placeholder: '如 DOC_TOTAL * 0.13 或 100' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="accountKey">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-text', name: 'accountKey', label: '科目映射键', placeholder: '如 ACCOUNTS_PAYABLE' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="amountKey">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-text', name: 'amountKey', label: '金额占位键', placeholder: '如 DOC_TOTAL' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="memoTemplate">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-text', name: 'memoTemplate', label: '摘要模板', placeholder: '可含 ${占位符}' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="subjectCode"/>
+                <col id="dcDirection"/>
+                <col id="amountExpression"/>
+                <col id="accountKey"/>
+                <col id="amountKey"/>
+                <col id="memoTemplate"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
         <form id="view" size="lg">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
- lineNo[行号] subjectCode[科目编码]
- dcDirection[借贷方向] amountExpression[金额表达式]
-=========>template[模板信息]======
- accountKey[科目键] amountKey[金额键]
- memoTemplate[摘要模板]
-=========>reference[业务关联]======
- templateId[凭证模板ID]
-=========^audit[审计信息]=========
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ templateId[模板ID] lineNo[行号]
+ subjectCode[科目编码] dcDirection[借贷方向]
+ amountExpression[金额表达式] accountKey[科目映射键]
+ amountKey[金额占位键] memoTemplate[摘要模板]
             </layout>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
 =========>baseInfo[基本信息]======
- lineNo[行号] subjectCode[科目编码]
- dcDirection[借贷方向] amountExpression[金额表达式]
-=========>template[模板信息]======
- accountKey[科目键] amountKey[金额键]
- memoTemplate[摘要模板]
-=========>reference[业务关联]======
- templateId[凭证模板ID]
+ templateId[模板ID] lineNo[行号]
+ subjectCode[科目编码] dcDirection[借贷方向]
+ amountExpression[金额表达式] accountKey[科目映射键]
+ amountKey[金额占位键] memoTemplate[摘要模板]
             </layout>
         </form>
-        <form id="add"/>
+        <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件">
             <layout>
- lineNo[行号] subjectCode[科目编码]
- templateId[凭证模板ID] dcDirection[借贷方向]
+ templateId[模板ID] lineNo[行号]
+ dcDirection[借贷方向]
             </layout>
-            <cells>
-                <cell id="lineNo" filterOp="eq"/>
-                <cell id="subjectCode" filterOp="like"/>
-                <cell id="templateId" filterOp="eq"/>
-                <cell id="dcDirection" filterOp="eq"/>
-            </cells>
         </form>
     </forms>
 

@@ -1,0 +1,183 @@
+type: page
+title: "三单匹配联查"
+remark: "采购订单 ↔ 入库单 ↔ 发票 三表并列联查。顶部差异预警由 ErpPurDashboard__findThreeWayMatchDiffAlert 检测发票单价 vs 订单单价差异超容差（erp-pur.match-price-tolerance 配置，默认 5%）的发票。下方三表按供应商过滤并列展示，便于人工比对数量/单价。"
+body:
+  - type: form
+    name: filterForm
+    title: "筛选条件"
+    mode: inline
+    wrapWithPanel: false
+    className: m-3
+    body:
+      - type: input-number
+        name: supplierId
+        label: "供应商ID"
+        placeholder: "输入供应商ID过滤三表"
+        clearable: true
+      - type: button
+        label: "刷新联查"
+        icon: "refresh-cw"
+        actionType: reload
+        target: "threeWayMatchCrud,poCrud,receiveCrud,invoiceCrud"
+
+  # 顶部：差异预警 + 容差可视化（阈值经 erp-pur.match-price-tolerance 配置，默认 5%）
+  - type: crud
+    name: threeWayMatchCrud
+    className: m-3
+    title: "① 差异预警（发票单价 vs 订单单价超容差）"
+    headerToolbar: []
+    footerToolbar: []
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "{ ErpPurDashboard__findThreeWayMatchDiffAlert }"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const rows = gql.ErpPurDashboard__findThreeWayMatchDiffAlert || [];
+        const mapped = rows.map(function(r){
+          return {
+            invoiceId: r.invoiceId,
+            invoiceCode: r.invoiceCode,
+            supplierId: r.supplierId,
+            supplierName: r.supplierName,
+            varianceType: r.varianceType
+          };
+        });
+        return { status: 0, msg: '', data: { items: mapped, count: mapped.length } };
+    columns:
+      - name: invoiceCode
+        label: "发票号"
+      - name: supplierName
+        label: "供应商"
+      - name: varianceType
+        label: "差异类型"
+        type: tpl
+        tpl: '<span class="label label-danger">${varianceType == "PRICE" ? "价格差异" : varianceType}</span>'
+      - type: tpl
+        label: "容差可视化"
+        tpl: '<div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:100%;max-width:120px;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;position:relative;"><span style="display:block;width:5%;height:100%;background:#5cb85c;"></span></span><span class="text-muted">阈值 5% (erp-pur.match-price-tolerance)</span></div>'
+
+  # 下方：三表并列联查（按供应商过滤）
+
+  # 下方：三表联查（按 supplierId 过滤，纵向堆叠以最大化 AMIS 渲染兼容性）
+  - type: crud
+    name: poCrud
+    className: m-3
+    title: "② 采购订单"
+    headerToolbar: []
+    footerToolbar: ["statistics"]
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}f:Long,${'$'}lim:Int){ ErpPurOrder__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate deliveryDate totalAmount docStatus approveStatus } total } }"
+        variables:
+          f: "${supplierId || null}"
+          lim: 20
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpPurOrder__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - name: code
+        label: "订单号"
+      - name: businessDate
+        label: "订单日期"
+        type: date
+        format: "YYYY-MM-DD"
+      - name: deliveryDate
+        label: "交货日期"
+        type: date
+        format: "YYYY-MM-DD"
+      - name: totalAmount
+        label: "订单金额"
+        type: number
+        kilometer: true
+        precision: 2
+      - name: docStatus
+        label: "状态"
+        type: tpl
+        tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'
+
+  - type: crud
+    name: receiveCrud
+    className: m-3
+    title: "③ 采购入库单"
+    headerToolbar: []
+    footerToolbar: ["statistics"]
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}f:Long,${'$'}lim:Int){ ErpPurReceive__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate totalAmount docStatus approveStatus } total } }"
+        variables:
+          f: "${supplierId || null}"
+          lim: 20
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpPurReceive__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - name: code
+        label: "入库单号"
+      - name: businessDate
+        label: "入库日期"
+        type: date
+        format: "YYYY-MM-DD"
+      - name: totalAmount
+        label: "入库金额"
+        type: number
+        kilometer: true
+        precision: 2
+      - name: docStatus
+        label: "状态"
+        type: tpl
+        tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'
+
+  - type: crud
+    name: invoiceCrud
+    className: m-3
+    title: "④ 采购发票"
+    headerToolbar: []
+    footerToolbar: ["statistics"]
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}f:Long,${'$'}lim:Int){ ErpPurInvoice__findPage(filter_supplierId:${'$'}f,limit:${'$'}lim){ items{ id code businessDate totalAmount docStatus approveStatus } total } }"
+        variables:
+          f: "${supplierId || null}"
+          lim: 20
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpPurInvoice__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - name: code
+        label: "发票号"
+      - name: businessDate
+        label: "发票日期"
+        type: date
+        format: "YYYY-MM-DD"
+      - name: totalAmount
+        label: "发票金额"
+        type: number
+        kilometer: true
+        precision: 2
+      - name: docStatus
+        label: "状态"
+        type: tpl
+        tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'

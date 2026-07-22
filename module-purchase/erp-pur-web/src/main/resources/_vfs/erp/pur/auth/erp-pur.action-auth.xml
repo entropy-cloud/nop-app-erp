@@ -93,6 +93,11 @@
                                   i18n-en:displayName="Purchase Overview" icon="pie-chart"
                                   component="AMIS" resourceType="SUBM" orderNo="9990"
                                   url="/erp/pur/pages/dashboard/main.page.yaml"/>
+                        <!-- 三单匹配联查页（F16 P1，plan §Phase 3）：差异预警 + PO/Receive/Invoice 三表并列 -->
+                        <resource id="pur-three-way-match" app:useCases="UC-PUR-09" displayName="三单匹配联查"
+                                  i18n-en:displayName="Three-Way Match" icon="git-compare"
+                                  component="AMIS" resourceType="SUBM" orderNo="9991"
+                                  url="/erp/pur/pages/dashboard/three-way-match.page.yaml"/>
                     </children>
                 </resource>
             </children>

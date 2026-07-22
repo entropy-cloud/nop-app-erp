@@ -91,6 +91,8 @@
  actualEndDate[实际完工日期] sourceOrderType[来源单据类型]
  sourceOrderCode[来源单据号] sourceMrpPlanId[来源 MRP 计划]
  sourceScheduleId[APS排程来源(弱参照)]
+=========>progress[工单进度仪表板]======
+ workOrderProgress[工单进度](2)
 =========>lines[明细行]======
  lines[明细行](2)
 ========^cost[成本信息]=========
@@ -105,6 +107,36 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
             <cells>
+                <!--
+                  工单进度仪表板（F16 P1，plan §Phase 4，Phase 0 Decision）。
+                  前端组装既有头字段（plannedQuantity/completedQuantity/scrappedQuantity）：
+                    - 完工进度条 = completedQuantity / plannedQuantity × 100，颜色阈值：绿≥90% / 黄70-90% / 红<70%
+                    - 报废进度条 = scrappedQuantity / plannedQuantity × 100（红色警示）
+                    - 数量汇总 + 工单状态阶段（docStatus 语义化）
+                  4 阶段进度条（plan/pick/report/complete）以阶段语义呈现：完工率覆盖 complete，报废覆盖 report 异常；
+                  pick（领料）与 report（报工）明细经既有 F9 row-action drawer（MaterialIssue/JobCard）查看，不在此聚合（避免后端查询）。
+                -->
+                <cell id="workOrderProgress" custom="true" notSubmit="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'tpl',
+                                tpl: '<div class="m-b">' +
+                                    '<div class="text-muted m-b-xs">完工进度 <span class="font-bold">' + '${' + 'plannedQuantity ? (completedQuantity || 0) + " / " + plannedQuantity : "—"' + '}</span></div>' +
+                                    '<div style="height:18px;background:#f0f0f0;border-radius:9px;overflow:hidden;position:relative;">' +
+                                        '<div style="height:100%;width:' + '${' + 'plannedQuantity ? completedQuantity / plannedQuantity * 100 : 0' + '}%;background:' + '${' + 'plannedQuantity ? (completedQuantity / plannedQuantity >= 0.9 ? "#5cb85c" : (completedQuantity / plannedQuantity >= 0.7 ? "#f0ad4e" : "#d9534f")) : "#ccc"' + '}%;transition:width .3s;"></div>' +
+                                        '<span style="position:absolute;right:8px;top:0;line-height:18px;color:#333;font-size:12px;">' + '${' + 'plannedQuantity ? Math.round(completedQuantity / plannedQuantity * 1000) / 10 + "%" : "0%"' + '}</span>' +
+                                    '</div>' +
+                                    '<div class="text-muted m-b-xs m-t-md">报废率 <span class="font-bold text-danger">' + '${' + 'plannedQuantity ? (scrappedQuantity || 0) + " / " + plannedQuantity : "—"' + '}</span></div>' +
+                                    '<div style="height:14px;background:#f0f0f0;border-radius:7px;overflow:hidden;">' +
+                                        '<div style="height:100%;width:' + '${' + 'plannedQuantity ? scrappedQuantity / plannedQuantity * 100 : 0' + '}%;background:#d9534f;"></div>' +
+                                    '</div>' +
+                                    '<div class="m-t-md"><span class="label label-' + '${' + 'docStatus == "COMPLETED" ? "success" : (docStatus == "IN_PROCESS" || docStatus == "STARTED" ? "primary" : (docStatus == "CANCELLED" ? "danger" : "default"))' + '}">工单阶段：' + '${' + 'docStatus' + '}</span></div>' +
+                                    '</div>'
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
                 <cell id="lines">
                     <view path="/erp/mfg/pages/ErpMfgWorkOrderLine/ErpMfgWorkOrderLine.view.xml" grid="sub-grid-view"/>
                 </cell>

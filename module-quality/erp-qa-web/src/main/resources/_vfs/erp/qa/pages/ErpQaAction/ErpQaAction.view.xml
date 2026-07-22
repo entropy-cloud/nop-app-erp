@@ -42,6 +42,52 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <!--
+          CAPA 措施子表只读视图（F16 P1，plan §Phase 5）。
+          被 ErpQaNonConformance view form 的 capa tab 引用（grid="sub-grid-view"），
+          经 ErpQaNonConformance.actions to-many 关系随头实体 gql:selection 嵌套加载。
+          列含效果验证字段（verificationPerson/verificationDate），覆盖「效果验证」诉求。
+        -->
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="actionType" mandatory="true" sortable="true"/>
+                <col id="description" sortable="true"/>
+                <col id="responsiblePerson"/>
+                <col id="dueDate" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="status" mandatory="true" sortable="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'tpl',
+                                tpl: '<span class="label label-${status == "COMPLETED" || status == "APPROVED" ? "success" : status == "REJECTED" || status == "CANCELLED" ? "danger" : status == "IN_PROGRESS" || status == "OPEN" ? "primary" : "default"}">${status}</span>'
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="completedAt" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="verificationPerson" label="验证人"/>
+                <col id="verificationDate" label="验证日期" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
     </grids>
 
     <forms>

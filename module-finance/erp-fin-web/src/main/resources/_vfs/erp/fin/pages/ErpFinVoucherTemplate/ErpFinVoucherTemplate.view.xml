@@ -3,18 +3,162 @@
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
-        <grid id="list"/>
+        <grid id="list">
+            <cols x:override="bounded-merge">
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="code" mandatory="true" sortable="true"/>
+                <col id="name" mandatory="true" sortable="true"/>
+                <col id="businessType" mandatory="true" sortable="true"/>
+                <col id="voucherType" sortable="true"/>
+                <col id="templateType" sortable="true"/>
+                <col id="isActive" sortable="true"/>
+                <col id="validFrom" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="validTo" sortable="true" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+            </cols>
+        </grid>
         <grid id="pick-list"/>
     </grids>
 
     <forms>
-        <form id="view"/>
-        <form id="edit"/>
-        <form id="add"/>
+        <form id="view" size="lg" layoutControl="tabs">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[模板编码] name[模板名称]
+ businessType[业务类型] voucherType[凭证字]
+ templateType[模板类型] acctSchemaId[账套(空=通用)]
+ isActive[是否启用] validFrom[生效日期]
+ validTo[失效日期]
+=========>lines[模板行]======
+ lines[模板行](2)
+========^audit[审计信息]=========
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+            </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/fin/pages/ErpFinVoucherTemplateLine/ErpFinVoucherTemplateLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
+        </form>
+        <form id="edit" size="lg" layoutControl="tabs">
+            <layout x:override="replace">
+=========>baseInfo[基本信息]======
+ code[模板编码] name[模板名称]
+ businessType[业务类型] voucherType[凭证字]
+ templateType[模板类型] acctSchemaId[账套(空=通用)]
+ isActive[是否启用] validFrom[生效日期]
+ validTo[失效日期]
+=========>lines[模板行]======
+ previewTemplate[预览测试生成凭证](2)
+ lines[模板行](2)
+            </layout>
+            <cells>
+                <!--
+                  预览测试生成凭证按钮（F16 P1，plan §Phase 2）。
+                  dialog 收集测试 context（DOC_TOTAL 示例）→ 触发 ErpFinVoucherTemplate__renderTemplate(businessType, context)
+                  @BizMutation（Phase 0 Explore (b) 候选 c）→ 展示生成的分录行预览（只读 input-table）。
+                  businessType 取当前编辑模板的 businessType 字段（${businessType}）。
+                -->
+                <cell id="previewTemplate" custom="true" notSubmit="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'button',
+                                label: '预览测试生成凭证',
+                                level: 'info',
+                                icon: 'fa fa-eye',
+                                disabledOn: '${!businessType}',
+                                tooltip: '基于当前模板的 businessType + 测试 context 预览生成的分录行（amountExpression 支持算术如 DOC_TOTAL * 0.13）',
+                                actionType: 'dialog',
+                                dialog: {
+                                    title: '预览生成凭证',
+                                    size: 'lg',
+                                    actions: [],
+                                    body: {
+                                        type: 'form',
+                                        title: '',
+                                        mode: 'normal',
+                                        wrapWithPanel: false,
+                                        api: {
+                                            method: 'post',
+                                            url: '/graphql',
+                                            dataType: 'raw',
+                                            data: {
+                                                query: 'mutation($bt:String,$ctx:JSONObject){ ErpFinVoucherTemplate__renderTemplate(businessType:$bt,context:$ctx) }',
+                                                variables: {
+                                                    bt: '${' + 'businessType}',
+                                                    ctx: { DOC_TOTAL: '${' + 'DOC_TOTAL}' }
+                                                }
+                                            },
+                                            adaptor: 'const gql = (payload.data||{}).data || payload.data || {}; const rows = gql.ErpFinVoucherTemplate__renderTemplate || []; return { status: 0, msg: "", data: { previewLines: rows } };'
+                                        },
+                                        body: [
+                                            { type: 'static', name: 'businessType', label: '业务类型' },
+                                            { type: 'input-number', name: 'DOC_TOTAL', label: '单据金额(示例 context)', value: 1000, precision: 2 },
+                                            { type: 'submit', label: '生成预览', level: 'primary', icon: 'fa fa-cog' },
+                                            {
+                                                type: 'input-table',
+                                                name: 'previewLines',
+                                                label: '生成分录行预览',
+                                                columns: [
+                                                    { name: 'lineNo', label: '行号' },
+                                                    { name: 'subjectCode', label: '科目' },
+                                                    { name: 'dcDirection', label: '借贷' },
+                                                    { name: 'debitAmount', label: '借方', type: 'input-number', precision: 2 },
+                                                    { name: 'creditAmount', label: '贷方', type: 'input-number', precision: 2 },
+                                                    { name: 'memo', label: '摘要' }
+                                                ],
+                                                addable: false,
+                                                removable: false,
+                                                needConfirm: false
+                                            }
+                                        ]
+                                    }
+                                }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <cell id="lines">
+                    <view path="/erp/fin/pages/ErpFinVoucherTemplateLine/ErpFinVoucherTemplateLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
+        </form>
+        <form id="add" x:prototype="edit" editMode="add"/>
+        <form id="query" editMode="query" title="查询条件">
+            <layout>
+ code[模板编码] name[模板名称]
+ businessType[业务类型] isActive[是否启用]
+            </layout>
+            <cells>
+                <cell id="code" filterOp="like"/>
+                <cell id="name" filterOp="like"/>
+                <cell id="businessType" filterOp="eq"/>
+                <cell id="isActive" filterOp="eq"/>
+            </cells>
+        </form>
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>
