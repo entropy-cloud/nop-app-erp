@@ -13,6 +13,10 @@
                                   displayName="部门" i18n-en:displayName="Department" icon="building-2"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/hr/pages/ErpHrDepartment/main.page.yaml"/>
+                        <resource id="hr-org-chart" app:useCases="UC-HR-08" displayName="组织架构图"
+                                  i18n-en:displayName="Org Chart" icon="git-fork"
+                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  url="/erp/hr/pages/dashboard/org-chart.page.yaml"/>
                         <resource id="ErpHrPosition-main" displayName="职位"
                                   i18n-en:displayName="Position" icon="briefcase"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
@@ -86,6 +90,10 @@
                                   displayName="薪酬记录" i18n-en:displayName="Salary Record" icon="dollar-sign"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
                                   url="/erp/hr/pages/ErpHrSalary/main.page.yaml"/>
+                        <resource id="hr-payroll-approval" app:useCases="UC-HR-04,UC-HR-10" displayName="薪酬核算审批"
+                                  i18n-en:displayName="Payroll Approval" icon="clipboard-check"
+                                  component="AMIS" resourceType="SUBM" orderNo="505"
+                                  url="/erp/hr/pages/dashboard/payroll-approval.page.yaml"/>
                         <resource id="ErpHrSalarySimulation-main" app:useCases="UC-HR-10"
                                   displayName="薪酬模拟" i18n-en:displayName="Salary Simulation" icon="calculator"
                                   component="AMIS" resourceType="SUBM" orderNo="510"

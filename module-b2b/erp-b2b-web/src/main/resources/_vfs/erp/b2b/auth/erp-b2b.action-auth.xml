@@ -17,6 +17,10 @@
                                   displayName="EDI事务" i18n-en:displayName="EDI Document" icon="file"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/b2b/pages/ErpB2bEdiDoc/main.page.yaml"/>
+                        <resource id="b2b-edi-detail" app:useCases="UC-B2B-002,UC-B2B-005,UC-B2B-006" displayName="EDI事务详情"
+                                  i18n-en:displayName="EDI Transaction Detail" icon="file-text"
+                                  component="AMIS" resourceType="SUBM" orderNo="115"
+                                  url="/erp/b2b/pages/dashboard/edi-detail.page.yaml"/>
                     </children>
                 </resource>
                 <resource id="b2b-asn" displayName="ASN管理" i18n-en:displayName="ASN Management"
@@ -26,6 +30,10 @@
                                   displayName="提前发货通知" i18n-en:displayName="Advanced Shipping Notice" icon="truck"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/b2b/pages/ErpB2bAsn/main.page.yaml"/>
+                        <resource id="b2b-asn-flow" app:useCases="UC-B2B-003" displayName="ASN流程跟踪"
+                                  i18n-en:displayName="ASN Flow Tracking" icon="git-branch"
+                                  component="AMIS" resourceType="SUBM" orderNo="205"
+                                  url="/erp/b2b/pages/dashboard/asn-flow.page.yaml"/>
                         <resource id="ErpB2bAsnLine-main" displayName="ASN明细"
                                   i18n-en:displayName="ASN Line" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="210"

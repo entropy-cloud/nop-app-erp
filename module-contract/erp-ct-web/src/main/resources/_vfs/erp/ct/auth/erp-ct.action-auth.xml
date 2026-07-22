@@ -13,6 +13,10 @@
                                   displayName="合同" i18n-en:displayName="Contract" icon="file-text"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/ct/pages/ErpCtContract/main.page.yaml"/>
+                        <resource id="ct-version-diff" app:useCases="UC-CT-02,UC-CT-06" displayName="合同版本对比"
+                                  i18n-en:displayName="Contract Version Diff" icon="git-compare"
+                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  url="/erp/ct/pages/dashboard/version-diff.page.yaml"/>
                         <resource id="ErpCtContractLine-main" displayName="合同行"
                                   i18n-en:displayName="Contract Line" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="110"

@@ -22,6 +22,8 @@ site:
       displayName: Configuration
     drp-leadtime:
       displayName: Lead Time Tracking
+    drp-net-requirement:
+      displayName: Net Requirement Report
     drp-optimize:
       displayName: Optimization
     drp-plan:

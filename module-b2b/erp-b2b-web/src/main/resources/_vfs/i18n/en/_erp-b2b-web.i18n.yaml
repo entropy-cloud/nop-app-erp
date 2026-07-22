@@ -22,8 +22,12 @@ site:
       displayName: Partner Profile
     b2b-asn:
       displayName: ASN Management
+    b2b-asn-flow:
+      displayName: ASN Flow Tracking
     b2b-edi:
       displayName: EDI Management
+    b2b-edi-detail:
+      displayName: EDI Transaction Detail
     b2b-mapping:
       displayName: Mappings & Logs
     b2b-mft:

@@ -68,6 +68,10 @@ site:
       displayName: Leave Management
     hr-org:
       displayName: Organization
+    hr-org-chart:
+      displayName: Org Chart
+    hr-payroll-approval:
+      displayName: Payroll Approval
     hr-recruit:
       displayName: Recruitment
     hr-report:

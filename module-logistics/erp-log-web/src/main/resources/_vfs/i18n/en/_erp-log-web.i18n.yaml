@@ -18,3 +18,5 @@ site:
       displayName: Delivery
     log-shipment:
       displayName: Shipments
+    log-shipment-tracking:
+      displayName: Shipment Tracking

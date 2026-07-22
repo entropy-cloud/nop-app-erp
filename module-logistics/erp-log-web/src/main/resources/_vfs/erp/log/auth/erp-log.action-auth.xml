@@ -13,6 +13,10 @@
                                   displayName="发运单" i18n-en:displayName="Shipment" icon="truck"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
                                   url="/erp/log/pages/ErpLogShipment/main.page.yaml"/>
+                        <resource id="log-shipment-tracking" app:useCases="UC-LOG-02,UC-LOG-03" displayName="发运追踪时间线"
+                                  i18n-en:displayName="Shipment Tracking" icon="route"
+                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  url="/erp/log/pages/dashboard/shipment-tracking.page.yaml"/>
                         <resource id="ErpLogShipmentLine-main" displayName="发运明细"
                                   i18n-en:displayName="Shipment Line" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="110"

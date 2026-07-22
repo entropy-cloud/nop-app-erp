@@ -17,6 +17,10 @@
                                   displayName="计划明细" i18n-en:displayName="DRP Line" icon="list"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
                                   url="/erp/drp/pages/ErpDrpLine/main.page.yaml"/>
+                        <resource id="drp-net-requirement" app:useCases="UC-DRP-02,UC-DRP-04" displayName="净需求计算报表"
+                                  i18n-en:displayName="Net Requirement Report" icon="calculator"
+                                  component="AMIS" resourceType="SUBM" orderNo="115"
+                                  url="/erp/drp/pages/dashboard/net-requirement.page.yaml"/>
                         <resource id="ErpInvDrpCrossDock-main" app:useCases="UC-DRP-03"
                                   displayName="越库执行" i18n-en:displayName="Cross-Dock" icon="arrow-left-right"
                                   component="AMIS" resourceType="SUBM" orderNo="120"

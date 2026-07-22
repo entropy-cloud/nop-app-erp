@@ -1,0 +1,170 @@
+# drp 净需求计算报表（F16 P2 复杂页面，plan 2026-07-22-1400-2 §Phase 3，Phase 0 Explore (c) 候选 (b)）。
+# 经 Phase 0 Explore (c) 裁决：AMIS crud 无原生行分组 → 候选 (b) service + adaptor 按 materialId 分组
+# → each + tpl 每物料 section（物料 header + Σ 公式可视化 + 嵌套 table 明细行）。
+# 字段名经实时仓库核实：ErpDrpLine 全部正确（planId/materialId/safetyStock/forecastDemand/currentStock/
+# allocatedQty/onOrderQty/netRequirement/suggestedQty/replenishmentType）。ErpDrpPlan.code（非 planCode）。
+# Σ 公式：safetyStock + forecastDemand − currentStock + allocatedQty − onOrderQty = netRequirement
+type: page
+title: "净需求计算报表"
+remark: "选择 DRP 计划后，按物料（materialId）分组展示 ErpDrpLine 净需求计算。每组含 Σ 公式可视化（safetyStock + forecastDemand − currentStock + allocatedQty − onOrderQty = netRequirement）+ 明细行 + 建议补货量（suggestedQty）+ 补货类型（replenishmentType）。"
+body:
+  - type: form
+    name: filterForm
+    title: "计划选择"
+    mode: inline
+    wrapWithPanel: false
+    className: m-3
+    body:
+      - type: input-number
+        name: planId
+        label: "DRP计划ID"
+        placeholder: "输入 DRP 计划主键"
+        required: true
+        clearable: true
+      - type: button
+        label: "加载净需求"
+        icon: "calculator"
+        actionType: reload
+        target: "netReqService"
+
+  - type: service
+    name: netReqService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int,${'$'}pid:Long){ lines: ErpDrpLine__findPage(query:{limit:${'$'}lim}){ items{ id planId materialId warehouseId safetyStock forecastDemand currentStock allocatedQty onOrderQty netRequirement suggestedQty replenishmentType status } total } plan: ErpDrpPlan__get(id:${'$'}pid){ id code planName status periodFrom periodTo } }"
+        variables:
+          lim: 5000
+          pid: "${planId || 0}"
+      adaptor: |
+        const d = payload.data || {};
+        if (d.errors || !d.data) {
+          return { status: 0, msg: '', data: { groups: [], hasData: false, plan: null } };
+        }
+        const gql = d.data ? d.data : d;
+        const linesPage = gql.lines || { items: [], total: 0 };
+        let lines = linesPage.items || [];
+        // Client-side filter by planId
+        const pidVal = typeof planId !== 'undefined' ? planId : null;
+        if (pidVal != null && pidVal !== 0) {
+          lines = lines.filter(function(l){ return l.planId == pidVal; });
+        }
+        const plan = gql.plan || null;
+
+        const num = function(v){ return typeof v === 'number' ? v : (parseFloat(v)||0); };
+        const round2 = function(n){ return Math.round(n*100)/100; };
+
+        // 按 materialId 分组
+        const matMap = {};
+        const matOrder = [];
+        lines.forEach(function(l){
+          const mid = l.materialId;
+          if (matMap[mid] === undefined) {
+            matMap[mid] = {
+              materialId: mid,
+              lines: [],
+              totSafety: 0, totForecast: 0, totStock: 0, totAlloc: 0, totOnOrder: 0,
+              totNet: 0, totSuggested: 0,
+              warehouses: []
+            };
+            matOrder.push(mid);
+          }
+          const g = matMap[mid];
+          g.lines.push(l);
+          g.totSafety += num(l.safetyStock);
+          g.totForecast += num(l.forecastDemand);
+          g.totStock += num(l.currentStock);
+          g.totAlloc += num(l.allocatedQty);
+          g.totOnOrder += num(l.onOrderQty);
+          g.totNet += num(l.netRequirement);
+          g.totSuggested += num(l.suggestedQty);
+        });
+
+        const groups = matOrder.map(function(mid){
+          const g = matMap[mid];
+          // 明细行（保留原始值 + round）
+          const detailRows = g.lines.map(function(l){
+            return {
+              id: l.id,
+              warehouseId: l.warehouseId,
+              safetyStock: round2(num(l.safetyStock)),
+              forecastDemand: round2(num(l.forecastDemand)),
+              currentStock: round2(num(l.currentStock)),
+              allocatedQty: round2(num(l.allocatedQty)),
+              onOrderQty: round2(num(l.onOrderQty)),
+              netRequirement: round2(num(l.netRequirement)),
+              suggestedQty: round2(num(l.suggestedQty)),
+              replenishmentType: l.replenishmentType,
+              status: l.status
+            };
+          });
+          return {
+            materialId: mid,
+            lineCount: g.lines.length,
+            totSafety: round2(g.totSafety),
+            totForecast: round2(g.totForecast),
+            totStock: round2(g.totStock),
+            totAlloc: round2(g.totAlloc),
+            totOnOrder: round2(g.totOnOrder),
+            totNet: round2(g.totNet),
+            totSuggested: round2(g.totSuggested),
+            detailRows: detailRows
+          };
+        });
+
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            groups: groups,
+            hasData: groups.length > 0,
+            plan: plan,
+            groupCount: groups.length,
+            totalLines: lines.length,
+            grandNet: round2(groups.reduce(function(s,g){ return s + g.totNet; }, 0)),
+            grandSuggested: round2(groups.reduce(function(s,g){ return s + g.totSuggested; }, 0))
+          }
+        };
+    body:
+      - type: tpl
+        visibleOn: "${plan}"
+        tpl: '<div class="panel panel-default"><div class="panel-body"><strong>${plan.code || "—"}</strong> · ${plan.planName || ""} · 状态: ${plan.status || "—"} · 周期: ${plan.periodFrom || "—"} ~ ${plan.periodTo || "—"}</div></div>'
+      - type: tpl
+        visibleOn: "${hasData}"
+        tpl: '<div class="m-b-md"><strong>汇总</strong> · 物料分组数: ${groupCount} · 明细行数: ${totalLines} · 净需求合计: <span class="text-danger">${grandNet}</span> · 建议补货合计: <span class="text-primary">${grandSuggested}</span></div>'
+      - type: tpl
+        visibleOn: "${!hasData}"
+        tpl: '<div class="text-muted p-3">请输入有效的 DRP 计划ID 后点击「加载净需求」。若无数据，说明该计划尚未运行 DrpEngine.runDrp 计算。</div>'
+      - type: each
+        visibleOn: "${hasData}"
+        name: groups
+        items: "${groups}"
+        body:
+          - type: tpl
+            tpl: '<div class="panel panel-info m-t-md"><div class="panel-heading"><strong>物料 #${materialId}</strong> · 明细 ${lineCount} 行 · 净需求合计 ${totNet} · 建议补货 ${totSuggested}</div><div class="panel-body">'
+          - type: tpl
+            tpl: '<div class="text-muted m-b-sm"><strong>Σ 公式：</strong>安全库存(${totSafety}) + 预测需求(${totForecast}) − 当前库存(${totStock}) + 已分配(${totAlloc}) − 在途(${totOnOrder}) = <span class="label label-${totNet > 0 ? "danger" : "success"}">净需求 ${totNet}</span></div>'
+          - type: table
+            source: "${detailRows}"
+            columns:
+              - { name: warehouseId, label: "仓库" }
+              - { name: safetyStock, label: "安全库存", type: number, precision: 2 }
+              - { name: forecastDemand, label: "预测需求", type: number, precision: 2 }
+              - { name: currentStock, label: "当前库存", type: number, precision: 2 }
+              - { name: allocatedQty, label: "已分配", type: number, precision: 2 }
+              - { name: onOrderQty, label: "在途", type: number, precision: 2 }
+              - name: netRequirement
+                label: "净需求"
+                type: tpl
+                tpl: '<span class="label label-${netRequirement > 0 ? "danger" : "success"}">${netRequirement}</span>'
+              - { name: suggestedQty, label: "建议补货量", type: number, precision: 2 }
+              - name: replenishmentType
+                label: "补货类型"
+                type: tpl
+                tpl: '<span class="label label-${replenishmentType == "PURCHASE" ? "primary" : "info"}">${replenishmentType == "PURCHASE" ? "采购" : (replenishmentType == "TRANSFER" ? "调拨" : replenishmentType)}</span>'
+              - { name: status, label: "状态" }
+          - type: tpl
+            tpl: '</div></div>'

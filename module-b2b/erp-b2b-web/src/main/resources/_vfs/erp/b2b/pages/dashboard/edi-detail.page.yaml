@@ -1,0 +1,141 @@
+# b2b EDI 事务详情（F16 P2 复杂页面，plan 2026-07-22-1400-2 §Phase 2）。
+# 复用 F13 timeline each+tpl 范式（原生 type:timeline）。
+# 数据源 ErpB2bEdiLog__findList filter ediDocId → 状态时间线（direction/resultCode/resultMsg/logTime）+
+# 双栏报文查看（requestPayload/responsePayload <pre> 纯文本，左右 toggle）。
+# 字段名经实时仓库核实：ErpB2bEdiDoc.state（非 status）/code（非 ediDocCode，无 docType/partnerId，链接经 formatId/relatedBillType/relatedBillCode）；
+# ErpB2bEdiLog.ediDocId/direction/resultCode/resultMsg/requestPayload/responsePayload/logTime 全部正确。
+# 语法高亮库 = Non-Goal（纯 <pre> 文本展示）。
+type: page
+title: "EDI 事务详情"
+remark: "选择 EDI 文档后，按 ErpB2bEdiLog 展示状态时间线（direction/resultCode/logTime），并双栏查看 requestPayload/responsePayload 报文（纯文本 <pre>）。语法高亮库为 Non-Goal。"
+body:
+  - type: form
+    name: filterForm
+    title: "EDI 文档选择"
+    mode: inline
+    wrapWithPanel: false
+    className: m-3
+    body:
+      - type: input-number
+        name: ediDocId
+        label: "EDI文档ID"
+        placeholder: "输入 EDI 文档主键"
+        required: true
+        clearable: true
+      - type: switch
+        name: showPayload
+        label: "展开报文"
+        value: false
+        onText: "是"
+        offText: "否"
+      - type: button
+        label: "查询详情"
+        icon: "file-text"
+        actionType: reload
+        target: "ediDetailService"
+
+  - type: service
+    name: ediDetailService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int,${'$'}did:Long){ logs: ErpB2bEdiLog__findPage(query:{limit:${'$'}lim}){ items{ id ediDocId direction resultCode resultMsg requestPayload responsePayload logTime } total } doc: ErpB2bEdiDoc__get(id:${'$'}did){ id code state relatedBillType relatedBillCode formatId error retryCount sentAt acknowledgedAt } }"
+        variables:
+          lim: 5000
+          did: "${ediDocId || 0}"
+      adaptor: |
+        const d = payload.data || {};
+        if (d.errors || !d.data) {
+          return { status: 0, msg: '', data: { items: [], payloads: [], hasData: false, doc: null } };
+        }
+        const gql = d.data ? d.data : d;
+        const logsPage = gql.logs || { items: [], total: 0 };
+        let logs = logsPage.items || [];
+        // Client-side filter by ediDocId
+        const didVal = typeof ediDocId !== 'undefined' ? ediDocId : null;
+        if (didVal != null && didVal !== 0) {
+          logs = logs.filter(function(r){ return r.ediDocId == didVal; });
+        }
+        logs.sort(function(a,b){ return String(b.logTime||'').localeCompare(String(a.logTime||'')); });
+        const doc = gql.doc || null;
+
+        const dirColor = {
+          OUTBOUND: '#3b82f6',
+          INBOUND: '#22c55e',
+          BOTH: '#8b5cf6'
+        };
+
+        // 时间线 items
+        const items = logs.map(function(r){
+          const ok = (r.resultCode === 'OK' || r.resultCode === 'SUCCESS' || r.resultCode === '0');
+          const color = ok ? (dirColor[r.direction] || '#6b7280') : '#ef4444';
+          const titleParts = ['[' + (r.direction || '?') + ']'];
+          if (r.resultCode) titleParts.push(r.resultCode);
+          const detailParts = [];
+          if (r.resultMsg) detailParts.push(r.resultMsg);
+          return {
+            time: r.logTime,
+            title: titleParts.join(' · '),
+            detail: detailParts.join(' / '),
+            color: color,
+            _raw: r
+          };
+        });
+
+        // 报文列表（用于双栏查看，正序展示）
+        const payloads = logs.slice().reverse().map(function(r, idx){
+          return {
+            seq: idx + 1,
+            logTime: r.logTime,
+            direction: r.direction,
+            resultCode: r.resultCode,
+            requestPayload: r.requestPayload || '（无）',
+            responsePayload: r.responsePayload || '（无）'
+          };
+        });
+
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            items: items,
+            payloads: payloads,
+            hasData: items.length > 0 || doc != null,
+            doc: doc,
+            logCount: items.length
+          }
+        };
+    body:
+      - type: tpl
+        visibleOn: "${doc}"
+        tpl: '<div class="panel panel-default"><div class="panel-body"><strong>${doc.code || "—"}</strong> · 状态: <span class="label label-info">${doc.state || "—"}</span> · 关联单据: ${doc.relatedBillType || "—"} / ${doc.relatedBillCode || "—"} · 重试次数: ${doc.retryCount || 0} · 发送: ${doc.sentAt || "—"} · 确认: ${doc.acknowledgedAt || "—"}</div></div>'
+      - type: tpl
+        visibleOn: "${!hasData}"
+        tpl: '<div class="text-muted p-3">请输入有效的 EDI 文档ID 后点击「查询详情」。</div>'
+      - type: tpl
+        visibleOn: "${hasData}"
+        tpl: '<div class="text-muted m-b-sm">交互日志数：${logCount}（按 logTime 倒序）</div>'
+      - type: timeline
+        visibleOn: "${hasData}"
+        items: "${items}"
+        direction: vertical
+        placeholder: "该 EDI 文档暂无交互日志"
+      - type: tpl
+        visibleOn: "${hasData && showPayload}"
+        tpl: '<hr/><h4 class="m-t-md">报文详情（requestPayload / responsePayload）</h4><div class="text-muted">纯文本展示，非 code-level 语法高亮（语法高亮库为 Non-Goal）。</div>'
+      - type: each
+        visibleOn: "${hasData && showPayload}"
+        name: payloads
+        items: "${payloads}"
+        body:
+          - type: tpl
+            tpl: '<h5 class="m-t-md">#${seq} · ${direction} · ${resultCode} · ${logTime}</h5>'
+          - type: grid
+            columns:
+              - type: tpl
+                tpl: '<div><div class="text-muted">Request</div><pre style="max-height:300px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${requestPayload}</pre></div>'
+              - type: tpl
+                tpl: '<div><div class="text-muted">Response</div><pre style="max-height:300px;overflow:auto;background:#f6f8fa;padding:8px;border-radius:4px;font-size:12px;white-space:pre-wrap;word-break:break-all;">${responsePayload}</pre></div>'
