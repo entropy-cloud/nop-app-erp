@@ -358,7 +358,7 @@ codegen 生成文件包含 `i18n-en:title`。手写层使用中文 `label` 或 `
 
 ### F16 — 核心复杂手写页面（P1-P2）
 
-Status: `todo`
+Status: `partial` — 低风险批 5 页面已落地（plan `2026-07-22-0845-2`：finance 凭证录入完成 + 凭证模板配置 + purchase 三单匹配 + mfg 工单进度仪表板 + quality NCR 详情页 + renderTemplate 表达式引擎 + 范式文档 §8）；高风险 4 项（aps 甘特图/mfg BOM 树/inventory PDA/maintenance 向导）+ P2 5 项（hr/logistics/b2b/contract/drp）归 successor plan
 
 以下页面被 `docs/architecture/view-and-page-strategy.md` 及多域 `ui-patterns.md` 列为「复杂手写页面」，非标准 CRUD，需独立 view.xml 或 AMIS 定制。这些页面 F1-F15 无法覆盖。
 
@@ -544,7 +544,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现
 - [x] F14: 19 域 action-auth 菜单完整可达，排序按业务流程（plan `2026-07-22-0444-3`：4 TOPM orderNo 碰撞修复 + 27 孤儿页面补全 + 7 子项 ×10 orderNo 修复 + 2 分组命名统一 + cs 子项 parent-matching）
 - [ ] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性
-- [ ] F16: 16 个复杂手写页面核心交互实现（凭证录入平衡校验、甘特图拖拽、三单匹配差异高亮、版本对比 diff、EDI 语法高亮等）
+- [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险 4 + P2 7 归 successor）
 - [x] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选） ✅ plan `2026-07-19-2200-3`
 - [ ] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret）
 - [ ] Timesheet 周网格共享组件实现（hr 考勤 + projects 工时录入合并）

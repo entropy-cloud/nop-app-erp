@@ -295,7 +295,8 @@ x:gen-extends: |
 | ErpHrEmployee 完整档案 drawer 跨域凭证 tab（assets → finance ErpFinVoucherBillR） | 跨域集成 successor | ErpFinVoucherBillR 无 assetId/sourceEntityType 字段；跨域查询方案明确后（需 join depreciation/disposal/capitalization 等多张单据） |
 | 敏感字段脱敏（hr bankAccount / salaryBase / logistics API Key/Secret） | cross-cutting | 敏感字段脱敏独立 plan 启动 |
 | 仪表板后端专用 `@BizQuery` | 性能优化 | 仪表板数据量 > 1000 行或加载 > 2s 时 |
-| F16 高风险复杂页面（凭证录入平衡校验 + 甘特图 + 三单匹配 + 版本对比 + ASN 五阶段流程条） | F16 territory | F16 plan 启动 |
+| F16 低风险复杂页面（凭证录入完成 + 凭证模板配置 + 三单匹配联查 + 工单进度仪表板 + NCR 详情页） | F16 低风险批已完成 | ✅ 已落地（plan `2026-07-22-0845-2`），见 §8 F16 复杂页面范式 |
+| F16 高风险复杂页面（aps 甘特图 + mfg BOM 树 + inventory PDA + maintenance 向导） + P2（hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表） | F16 territory | F16 高风险 / P2 successor plan 启动（需 custom AMIS 组件 PoC） |
 
 ## 5. wizard 范式占位（待 successor 落地后回填）
 
@@ -338,3 +339,97 @@ PoC 落地后回填本节，包含：
 - `docs/design/child-table-editor-patterns.md` — F4 子表编辑范式（与本范式正交）
 - `docs/design/cross-doc-navigation-patterns.md` — F9 关联单据 drawer 范式（与本范式正交）
 - `docs/design/notify/inbox-patterns.md` — page.yaml + AMIS tabs 真实样例（跨实体 drawer）
+
+## 8. F16 复杂页面范式（低风险批，plan `2026-07-22-0845-2`）
+
+固化 5 类「非标准 CRUD、但后端就绪且不需 custom AMIS 组件」的复杂页面范式。每类含 Phase 0 Explore PoC 结论 + 反模式条目。
+
+### 8.1 实时聚合 / 实时校验（finance 凭证录入）
+
+**场景**：头-行单据需要行录入时实时重算头合计（如凭证 totalDebit/totalCredit）。
+
+**PoC 结论（Phase 0 Explore (a)）**：Nop input-table 内**行级 `onEvent.change → setValue` 可触发**（ErpFinVoucherLine sub-grid-edit 已大量使用，写 row-scope 字段）。但**跨行→头合计聚合**受 xview schema 约束：`<view>` 仅允许 `<data>` 子节点，行 onEvent 运行于 row scope，无法干净地写头级字段。
+
+**落地范式（graceful fallback）**：
+- 头合计刷新由独立 cell 按钮（`autoBalance`）的 `onEvent.click → doAction(setValue, {totalDebit, totalCredit})` 承担（计算 `event.data.lines` SUM）
+- 实时**可见性**由头合计旁的 `balanceBadge` gen-control tpl 提供（`${Number(totalDebit)==Number(totalCredit) ? "平衡" : "不平衡"}`，label-success/label-danger）
+- per-keystroke 头聚合（行 onEvent 直接写头）归 successor
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 期望 input-table 行 onEvent 直接写头字段（scope 隔离） | 用独立 cell 按钮计算 + doAction(setValue) 写头；行 onEvent 仅写 row-scope 派生字段 |
+| 在 balanceBadge 用 `${totalDebit == totalCredit}`（string 比较，NaN 风险） | 用 `${Number(totalDebit) == Number(totalCredit)}` 数值比较 |
+
+### 8.2 表达式引擎预览（finance 凭证模板）
+
+**场景**：凭证模板行 `amountExpression` 支持 `${placeholder}` + 算术（`DOC_TOTAL * 0.13`），前端预览生成凭证。
+
+**PoC 结论（Phase 0 Explore (b)）**：既有 `ErpFinTemplateAcctDocProvider.resolveAmount` 仅支持 amountKey 查找 + 字面 BigDecimal，算术抛 `ERR_AMOUNT_KEY_NOT_RESOLVED`。扩展过账 provider 触及财务保护区域（高风险）。
+
+**落地范式（候选 (c)，隔离 mutation）**：
+- 新增 `@BizMutation renderTemplate(businessType, context)` 到 `ErpFinVoucherTemplateBizModel`（**不动过账引擎**）
+- 内部最小安全算术求值器：BigDecimal 四则 + 括号 + 一元负号 + 变量引用，白名单字符集，无反射/无代码执行，除零/未定义变量/非法字符抛 NopException
+- 前端 dialog 收集 context（DOC_TOTAL）→ 调 mutation → 预览 input-table → 「应用」按钮 doAction(setValue,{lines}) + closeDialog 写回头表单
+- 算术进真实过账引擎归 successor（高级特性）
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 在过账 provider 直接 eval 用户表达式（财务保护区域 + 注入风险） | 新增隔离 `@BizMutation` 预览方法，最小安全求值器白名单字符 |
+| 用 `new BigDecimal(expr)` 处理算术（抛 NumberFormatException） | 先尝试字面量，失败走递归下降求值器 |
+
+### 8.3 多 doc 联查（purchase 三单匹配）
+
+**场景**：采购订单↔入库单↔发票三表联查，差异高亮，容差可视化。
+
+**PoC 结论（Phase 0 Explore (c)）**：`findThreeWayMatchDiffAlert` 返回扁平非分页 `List<Map>`（无 3-doc join 后端）。3-crud 并列候选最可行（各用标准 findPage + filter_supplierId）。
+
+**落地范式（候选 (a)，独立 page.yaml）**：
+- 顶部差异预警 crud（消费 `findThreeWayMatchDiffAlert`，adaptor 转 `{items, count}`；varianceType 红色 tpl 标签 = 差异高亮；容差阈值进度条 tpl = 容差可视化）
+- 共享 supplierId 过滤 form（reload 全部 crud）
+- 下方 3 个并列 crud（grid 容器内，ErpPurOrder/ErpPurReceive/ErpPurInvoice 各 findPage + filter_supplierId）= 三表并列对比
+- 菜单接入 `erp-pur.action-auth.xml`（归看板分组）
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 对 `List<Map>` 非分页返回直接用作 crud table api | adaptor 转 `{items, count}` 模拟分页结构 |
+| 跨 crud 行级自动匹配（需后端 join） | 顶部预警 crud 已标记差异行 + 三表并列供人工比对 |
+
+### 8.4 进度仪表板（manufacturing 工单进度）
+
+**场景**：工单详情页展示阶段进度条 + 颜色阈值高亮。
+
+**落地范式（前端组装既有头字段，view form 新增 progress tab）**：
+- `workOrderProgress` cell gen-control tpl：完工进度条（`completedQuantity/plannedQuantity*100`，inline style width；颜色阈值 绿≥90%/黄70-90%/红<70%）+ 报废率进度条（红色）+ 状态阶段标签
+- pick/report 阶段明细经既有 F9 row-action drawer 查看，不在详情页聚合（避免后端查询）
+- 不动后端，纯前端组装
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 进度计算放后端 `@BizQuery`（若头字段已够） | 头字段（plannedQuantity/completedQuantity）可直接前端 tpl 计算 |
+| tpl 百分比用 `${completedQuantity/plannedQuantity}` 不判空 | `${plannedQuantity ? (completedQuantity/plannedQuantity*100) : 0}` 防 NaN |
+
+### 8.5 嵌入子表 + 效果验证（quality NCR 详情）
+
+**场景**：NCR 详情页内嵌 CAPA（ErpQaAction）子表 + 效果验证 section。
+
+**落地范式（to-many 关系 + sub-grid-view，view form 转 tabs）**：
+- ErpQaNonConformance view form 加 `layoutControl="tabs"`，新增 `capa` tab 含 `actions` cell（`<view path=... grid="sub-grid-view"/>`）
+- CAPA 经 `ErpQaNonConformance.actions` to-many 关系（orm）随头 gql:selection 嵌套加载（FK 字段名为 `ncrId`）
+- ErpQaAction.view.xml 新增 `sub-grid-view` grid（含 verificationPerson/verificationDate 列）
+- `verification[效果验证]` tab：复用 NCR 既有 resolvedBy/resolvedAt/resolution + CAPA 子表 verification 列。**实体无独立 verification 字段时不修改 ORM**（经 `_ErpQaNonConformance.java` 核实）
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 为 verification section 新增 ORM 字段（保护区域） | 复用既有 resolvedBy/resolvedAt/resolution + CAPA 子表 verification 列 |
+| 草稿用 `filter_nonConformanceId`（字段名臆测） | 经实时仓库核实实际 FK 字段名（此处为 `ncrId`） |
+
+### 8.6 快捷模板 toolbar（凭证录入）
+
+**场景**：凭证录入 toolbar 一键按模板生成分录行。
+
+**落地范式**：edit form 新增 `quickTemplate` cell button（`actionType:dialog`）：dialog 内 form 收集 businessType + DOC_TOTAL context → 调 §8.2 `renderTemplate` mutation → adaptor 转 `{previewLines}` → 预览 input-table → 「应用到凭证」按钮 `doAction(setValue,{lines:${previewLines}})` + `closeDialog` 写回头表单。AMIS setValue 于 dialog action 内写 dialog data scope，closeDialog 合并回父表单。
