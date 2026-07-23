@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCsTicketType.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCsTicketType.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
@@ -8,7 +8,7 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" sortable="true"/>
                 <col id="defaultPriority" sortable="true"/>
-                <col id="defaultSlaPolicy" label="默认SLA策略"/>
+                <col id="defaultSlaPolicy" label="默认SLA策略" i18n-en:label="Default SLA Policy"/>
                 <col id="sequence" ui:number="true" sortable="true"/>
             </cols>
         </grid>

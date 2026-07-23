@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCtSignatureRequest.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCtSignatureRequest.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="contractVersionId" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="provider" mandatory="true" sortable="true"/>
-                <col id="providerRequestId" label="提供商请求"/>
+                <col id="providerRequestId" label="提供商请求" i18n-en:label="Provider Request"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -104,7 +104,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  orgId[业务组织] contractVersionId[合同版本]
  provider[签名提供商] status[签章状态]
@@ -125,21 +125,21 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-query-status-button" label="查询状态" level="primary" icon="fa fa-search">
+                <action id="row-query-status-button" label="查询状态" i18n-en:label="Query Status" level="primary" icon="fa fa-search">
                     <api url="@mutation:ErpCtSignatureRequest__queryAndUpdateStatus?requestId=$id"/>
                     <confirmText>确认从签署提供商查询并更新状态？</confirmText>
                     <messages>
                         <success>签署状态已更新</success>
                     </messages>
                 </action>
-                <action id="row-reject-button" label="拒绝" level="warning" icon="fa fa-times">
+                <action id="row-reject-button" label="拒绝" i18n-en:label="Refuse" level="warning" icon="fa fa-times">
                     <api url="@mutation:ErpCtSignatureRequest__rejectSignature?requestId=$id"/>
                     <confirmText>确认拒绝此签署请求？</confirmText>
                     <messages>
                         <success>签署请求已拒绝</success>
                     </messages>
                 </action>
-                <action id="row-cancel-button" label="取消" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="取消" i18n-en:label="Cancel" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpCtSignatureRequest__cancelSignatureRequest?requestId=$id"/>
                     <confirmText>确认取消此签署请求？</confirmText>
                     <messages>

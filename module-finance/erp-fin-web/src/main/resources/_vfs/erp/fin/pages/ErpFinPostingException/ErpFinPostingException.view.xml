@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpFinPostingException.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinPostingException.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -20,8 +20,8 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="orgId" label="业务组织"/>
-                <col id="acctSchema" label="账套"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="acctSchema" label="账套" i18n-en:label="Accounting Set"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -37,8 +37,8 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="voucher" label="凭证号"/>
-                <col id="currencyId" label="币种"/>
+                <col id="voucher" label="凭证号" i18n-en:label="Voucher No"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="occurrenceTime" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[

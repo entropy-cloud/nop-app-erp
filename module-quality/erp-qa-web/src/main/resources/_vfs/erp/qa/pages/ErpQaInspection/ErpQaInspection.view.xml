@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpQaInspection.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpQaInspection.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="组织"/>
+                <col id="orgId" label="组织" i18n-en:label="Organization"/>
                 <col id="inspectionType" mandatory="true" sortable="true"/>
-                <col id="materialId" label="物料"/>
-                <col id="supplierId" label="供应商"/>
-                <col id="warehouseId" label="仓库"/>
+                <col id="materialId" label="物料" i18n-en:label="Material"/>
+                <col id="supplierId" label="供应商" i18n-en:label="Supplier"/>
+                <col id="warehouseId" label="仓库" i18n-en:label="Warehouse"/>
                 <col id="batchNo" sortable="true"/>
                 <col id="inspectionDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
@@ -113,7 +113,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[单据状态]
  result[质检结果] materialId[物料]
@@ -129,7 +129,7 @@
     <pages>
         <crud name="main">
             <listActions>
-                <action id="batch-pass-button" label="批量判合格" level="success" icon="fa fa-check-circle-o" batch="true">
+                <action id="batch-pass-button" label="批量判合格" i18n-en:label="Batch Pass" level="success" icon="fa fa-check-circle-o" batch="true">
                     <api url="@mutation:ErpQaInspection__batchPassInspection?ids=$ids"/>
                     <confirmText>确认批量判定选中的质检单为合格？仅 PENDING 状态的质检单会被判定，其他状态将记入失败清单。</confirmText>
                     <messages>
@@ -140,7 +140,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-pass-button" label="合格" level="success" icon="fa fa-check">
+                <action id="row-pass-button" label="合格" i18n-en:label="Qualified" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpQaInspection__passInspection?inspectionId=$id"/>
                     <confirmText>确认判定此质检单为合格？</confirmText>
                     <messages>
@@ -148,7 +148,7 @@
                     </messages>
                     <visibleOn>${result == 'PENDING'}</visibleOn>
                 </action>
-                <action id="row-fail-button" label="不合格" level="danger" icon="fa fa-times">
+                <action id="row-fail-button" label="不合格" i18n-en:label="Unqualified" level="danger" icon="fa fa-times">
                     <api url="@mutation:ErpQaInspection__failInspection?inspectionId=$id"/>
                     <confirmText>确认判定此质检单为不合格？</confirmText>
                     <messages>
@@ -156,7 +156,7 @@
                     </messages>
                     <visibleOn>${result == 'PENDING'}</visibleOn>
                 </action>
-                <action id="row-re-inspect-button" label="复检" level="warning" icon="fa fa-undo">
+                <action id="row-re-inspect-button" label="复检" i18n-en:label="Re-inspect" level="warning" icon="fa fa-undo">
                     <api url="@mutation:ErpQaInspection__reInspect?inspectionId=$id"/>
                     <confirmText>确认将此质检单重置为待检？</confirmText>
                     <messages>

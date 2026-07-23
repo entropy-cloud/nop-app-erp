@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpPurReturn.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPurReturn.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="supplierId" label="供应商"/>
-                <col id="warehouseId" label="出库仓库"/>
-                <col id="currencyId" label="币种"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="supplierId" label="供应商" i18n-en:label="Supplier"/>
+                <col id="warehouseId" label="出库仓库" i18n-en:label="Outbound Warehouse"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="businessDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -114,7 +114,7 @@
             </cells>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[单据状态]
  supplierId[供应商] approveStatus[审核状态]
@@ -132,7 +132,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpPurReturn__submitForApproval?id=$id"/>
                     <confirmText>确认提交此采购退货单审批？</confirmText>
                     <messages>
@@ -140,7 +140,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
                 </action>
-                <action id="row-withdraw-approval-button" label="撤回提交" level="default" icon="fa fa-mail-reply">
+                <action id="row-withdraw-approval-button" label="撤回提交" i18n-en:label="Withdraw Submit" level="default" icon="fa fa-mail-reply">
                     <api url="@mutation:ErpPurReturn__withdrawApproval?id=$id"/>
                     <confirmText>确认撤回此采购退货单的提交？撤回后单据将回到未提交状态，可重新编辑提交。</confirmText>
                     <messages>
@@ -148,7 +148,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
+                <action id="row-approve-button" label="批准" i18n-en:label="Approve" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpPurReturn__approve?id=$id"/>
                     <confirmText>确认批准此采购退货单？</confirmText>
                     <messages>
@@ -156,7 +156,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-reject-button" label="驳回" level="warning" icon="fa fa-times">
+                <action id="row-reject-button" label="驳回" i18n-en:label="Reject" level="warning" icon="fa fa-times">
                     <api url="@mutation:ErpPurReturn__reject?id=$id"/>
                     <confirmText>确认驳回此采购退货单？</confirmText>
                     <messages>
@@ -164,7 +164,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-reverse-approve-button" label="反审批" level="info" icon="fa fa-undo">
+                <action id="row-reverse-approve-button" label="反审批" i18n-en:label="Un-approve" level="info" icon="fa fa-undo">
                     <api url="@mutation:ErpPurReturn__reverseApprove?id=$id"/>
                     <confirmText>确认反审批此采购退货单？反审批后单据将回到驳回状态，可重新编辑提交。</confirmText>
                     <messages>
@@ -172,7 +172,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpPurReturn__cancel?returnId=$id"/>
                     <confirmText>确认作废此采购退货单？</confirmText>
                     <messages>

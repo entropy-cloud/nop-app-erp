@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpQaSpcSample.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpQaSpcSample.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="chart" label="控制图"/>
-                <col id="orgId" label="组织"/>
+                <col id="chart" label="控制图" i18n-en:label="Control Chart"/>
+                <col id="orgId" label="组织" i18n-en:label="Organization"/>
                 <col id="subgroupNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="sampleTime" mandatory="true" sortable="true" align="center">
                     <gen-control>
@@ -18,7 +18,7 @@
                 <col id="mean" ui:number="true" sortable="true"/>
                 <col id="range" ui:number="true" sortable="true"/>
                 <col id="stdDev" ui:number="true" sortable="true"/>
-                <col id="inspectorId" label="检验员"/>
+                <col id="inspectorId" label="检验员" i18n-en:label="Inspector"/>
                 <col id="isOutOfControl" sortable="true"/>
             </cols>
         </grid>
@@ -69,7 +69,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  chartId[控制图] subgroupNo[子组号]
  inspectorId[检验员] isOutOfControl[是否失控]

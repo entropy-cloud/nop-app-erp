@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpAstInventoryLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstInventoryLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="inventory" label="盘点单编码"/>
-                <col id="orgId" label="所属组织"/>
+                <col id="inventory" label="盘点单编码" i18n-en:label="Stocktake Order Code"/>
+                <col id="orgId" label="所属组织" i18n-en:label="Owning Org"/>
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="assetCodeSnapshot" sortable="true"/>
                 <col id="assetNameSnapshot" sortable="true"/>
-                <col id="categoryId" label="资产类别"/>
+                <col id="categoryId" label="资产类别" i18n-en:label="Asset Category"/>
                 <col id="bookQuantity" ui:number="true" sortable="true" align="right">
                     <gen-control>
                         <c:script><![CDATA[
@@ -34,9 +34,9 @@
                     </gen-control>
                 </col>
                 <col id="disposition" sortable="true"/>
-                <col id="newAsset" label="新增资产编码"/>
-                <col id="capitalization" label="资本化单编码"/>
-                <col id="disposal" label="处置单编码"/>
+                <col id="newAsset" label="新增资产编码" i18n-en:label="New Asset Code"/>
+                <col id="capitalization" label="资本化单编码" i18n-en:label="Capitalization Order Code"/>
+                <col id="disposal" label="处置单编码" i18n-en:label="Disposal Order Code"/>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -302,7 +302,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  lineNo[行号] assetId[账面资产]
  inventoryId[盘点单] categoryId[资产类别]

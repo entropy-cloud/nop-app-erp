@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpPrjProjectUser.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPrjProjectUser.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="projectId" label="项目"/>
-                <col id="userId" label="用户"/>
+                <col id="projectId" label="项目" i18n-en:label="Project"/>
+                <col id="userId" label="用户" i18n-en:label="User"/>
                 <col id="role" sortable="true"/>
                 <col id="startDate" sortable="true" align="center">
                     <gen-control>
@@ -51,7 +51,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  projectId[项目] userId[用户]
  role[角色] startDate[开始日期]

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpLogShipment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpLogShipment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="carrierId" label="承运商"/>
-                <col id="carrierConfigId" label="承运商配置"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="carrierId" label="承运商" i18n-en:label="Carrier"/>
+                <col id="carrierConfigId" label="承运商配置" i18n-en:label="Carrier Config"/>
                 <col id="relatedBillType" sortable="true"/>
                 <col id="relatedBillCode" sortable="true"/>
                 <col id="shipmentDate" sortable="true" align="center">
@@ -27,7 +27,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="freightCurrencyId" label="运费币种"/>
+                <col id="freightCurrencyId" label="运费币种" i18n-en:label="Freight Currency"/>
                 <col id="freightTerms" sortable="true"/>
                 <col id="freightSettlementStatus" sortable="true"/>
                 <col id="totalWeight" ui:number="true" sortable="true"/>
@@ -58,7 +58,7 @@
                     </gen-control>
                 </col>
                 <col id="signedBy" sortable="true"/>
-                <col id="shipperId" label="发货员(职员)"/>
+                <col id="shipperId" label="发货员(职员)" i18n-en:label="Shipper (Employee)"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -224,7 +224,7 @@
                 <cell id="shipmentDate" filterOp="date-between"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] trackingNo[运单号]
             </layout>
@@ -240,7 +240,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-advise-button" label="发运" level="primary" icon="fa fa-paper-plane">
+                <action id="row-advise-button" label="发运" i18n-en:label="Shipment" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpLogShipment__advise?shipmentId=$id"/>
                     <confirmText>确认发送此运单给承运商？</confirmText>
                     <messages>
@@ -248,7 +248,7 @@
                     </messages>
                     <visibleOn>${status == 'DRAFT'}</visibleOn>
                 </action>
-                <action id="row-confirm-shipment-button" label="确认发运" level="success" icon="fa fa-check">
+                <action id="row-confirm-shipment-button" label="确认发运" i18n-en:label="Confirm Shipment" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpLogShipment__completeShipment?shipmentId=$id"/>
                     <confirmText>确认此运单已发运？</confirmText>
                     <messages>
@@ -256,7 +256,7 @@
                     </messages>
                     <visibleOn>${status == 'ADVISED'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpLogShipment__cancelShipment?shipmentId=$id"/>
                     <confirmText>确认作废此运单？</confirmText>
                     <messages>

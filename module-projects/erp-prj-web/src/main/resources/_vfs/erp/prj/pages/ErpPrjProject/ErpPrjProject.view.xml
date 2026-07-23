@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpPrjProject.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPrjProject.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
@@ -7,11 +7,11 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="projectTypeId" label="项目类型"/>
-                <col id="customerId" label="客户"/>
-                <col id="currencyId" label="币种"/>
-                <col id="managerId" label="项目经理"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="projectTypeId" label="项目类型" i18n-en:label="Project Type"/>
+                <col id="customerId" label="客户" i18n-en:label="Customer"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
+                <col id="managerId" label="项目经理" i18n-en:label="Project Manager"/>
                 <col id="startDate" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -72,7 +72,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="projectTypeId" label="项目类型"/>
+                <col id="projectTypeId" label="项目类型" i18n-en:label="Project Type"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -142,7 +142,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[项目编码] name[项目名称]
  status[状态] customerId[客户]
@@ -152,7 +152,7 @@
                 <cell id="name" filterOp="like"/>
             </cells>
         </form>
-        <form id="pick-query" editMode="query" title="查询条件">
+        <form id="pick-query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[项目编码] name[项目名称]
  projectTypeId[项目类型] status[状态]
@@ -171,7 +171,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-start-button" label="启动" level="primary" icon="fa fa-play">
+                <action id="row-start-button" label="启动" i18n-en:label="Launch" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpPrjProject__startProject?projectId=$id"/>
                     <confirmText>确认启动此项目？</confirmText>
                     <messages>
@@ -179,7 +179,7 @@
                     </messages>
                     <visibleOn>${status == 'DRAFT'}</visibleOn>
                 </action>
-                <action id="row-hold-button" label="暂停" level="warning" icon="fa fa-pause">
+                <action id="row-hold-button" label="暂停" i18n-en:label="Pause" level="warning" icon="fa fa-pause">
                     <api url="@mutation:ErpPrjProject__holdProject?projectId=$id"/>
                     <confirmText>确认暂停此项目？</confirmText>
                     <messages>
@@ -187,7 +187,7 @@
                     </messages>
                     <visibleOn>${status == 'OPEN'}</visibleOn>
                 </action>
-                <action id="row-resume-button" label="恢复" level="primary" icon="fa fa-play">
+                <action id="row-resume-button" label="恢复" i18n-en:label="Restore" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpPrjProject__resumeProject?projectId=$id"/>
                     <confirmText>确认恢复此项目？</confirmText>
                     <messages>
@@ -195,7 +195,7 @@
                     </messages>
                     <visibleOn>${status == 'ON_HOLD'}</visibleOn>
                 </action>
-                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check">
+                <action id="row-complete-button" label="完成" i18n-en:label="Complete" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpPrjProject__closeProject?projectId=$id"/>
                     <confirmText>确认完成此项目？</confirmText>
                     <messages>
@@ -203,7 +203,7 @@
                     </messages>
                     <visibleOn>${status == 'OPEN'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpPrjProject__cancelProject?projectId=$id"/>
                     <confirmText>确认作废此项目？</confirmText>
                     <messages>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMfgSubcontractOrder.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgSubcontractOrder.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -7,12 +7,12 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="workOrder" label="来源工单"/>
-                <col id="supplierId" label="委外供应商"/>
-                <col id="workcenterId" label="外协工作中心"/>
-                <col id="productId" label="产品"/>
-                <col id="currencyId" label="币种"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="workOrder" label="来源工单" i18n-en:label="Source Work Order"/>
+                <col id="supplierId" label="委外供应商" i18n-en:label="Subcontractor"/>
+                <col id="workcenterId" label="外协工作中心" i18n-en:label="Subcontract Work Center"/>
+                <col id="productId" label="产品" i18n-en:label="Product"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="businessDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -115,7 +115,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[委外单号] docStatus[单据状态]
  approveStatus[审核状态] supplierId[供应商]
@@ -133,12 +133,12 @@
 
         <!-- 发料参数收集（生命周期首个参数化 dialog 范式，plan 2026-07-13-0701-2 Phase 2）。
              无 objMeta 绑定，cells 显式声明 domain + gen-control（warehouse select）。 -->
-        <form id="issueMaterials" title="发料" size="md" editMode="edit">
+        <form id="issueMaterials" title="发料" i18n-en:title="Issue" size="md" editMode="edit">
             <layout>
                 sourceWarehouseId[发料仓库]
             </layout>
             <cells>
-                <cell id="sourceWarehouseId" label="发料仓库" domain="long" custom="true">
+                <cell id="sourceWarehouseId" label="发料仓库" i18n-en:label="Issue Warehouse" domain="long" custom="true">
                     <gen-control>
                         <select clearable="@:true">
                             <source>
@@ -151,13 +151,13 @@
         </form>
 
         <!-- 收货参数收集：receivedQty 数量输入 + destWarehouseId 仓库选择器 -->
-        <form id="receiveFinished" title="收货" size="md" editMode="edit">
+        <form id="receiveFinished" title="收货" i18n-en:title="Goods Receipt" size="md" editMode="edit">
             <layout>
                 receivedQty[收货数量] destWarehouseId[收货仓库]
             </layout>
             <cells>
-                <cell id="receivedQty" label="收货数量" domain="decimal" mandatory="true" custom="true"/>
-                <cell id="destWarehouseId" label="收货仓库" domain="long" custom="true">
+                <cell id="receivedQty" label="收货数量" i18n-en:label="Received Qty" domain="decimal" mandatory="true" custom="true"/>
+                <cell id="destWarehouseId" label="收货仓库" i18n-en:label="Receiving Warehouse" domain="long" custom="true">
                     <gen-control>
                         <select clearable="@:true">
                             <source>
@@ -177,7 +177,7 @@
                 <action id="row-update-button" actionType="drawer"/>
 
                 <!-- 审批轴 5 按钮（镜像 ErpMfgWorkOrder.view.xml :81–120 范式，参数名 id） -->
-                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpMfgSubcontractOrder__submitForApproval?id=$id"/>
                     <confirmText>确认提交此委外单审批？</confirmText>
                     <messages>
@@ -185,7 +185,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
                 </action>
-                <action id="row-withdraw-approval-button" label="撤回提交" level="default" icon="fa fa-mail-reply">
+                <action id="row-withdraw-approval-button" label="撤回提交" i18n-en:label="Withdraw Submit" level="default" icon="fa fa-mail-reply">
                     <api url="@mutation:ErpMfgSubcontractOrder__withdrawApproval?id=$id"/>
                     <confirmText>确认撤回此委外单的提交？撤回后单据将回到未提交状态，可重新编辑提交。</confirmText>
                     <messages>
@@ -193,7 +193,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
+                <action id="row-approve-button" label="批准" i18n-en:label="Approve" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpMfgSubcontractOrder__approve?id=$id"/>
                     <confirmText>确认批准此委外单？</confirmText>
                     <messages>
@@ -201,7 +201,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-reject-button" label="驳回" level="warning" icon="fa fa-times">
+                <action id="row-reject-button" label="驳回" i18n-en:label="Reject" level="warning" icon="fa fa-times">
                     <api url="@mutation:ErpMfgSubcontractOrder__reject?id=$id"/>
                     <confirmText>确认驳回此委外单？</confirmText>
                     <messages>
@@ -209,7 +209,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-reverse-approve-button" label="反审批" level="info" icon="fa fa-undo">
+                <action id="row-reverse-approve-button" label="反审批" i18n-en:label="Un-approve" level="info" icon="fa fa-undo">
                     <api url="@mutation:ErpMfgSubcontractOrder__reverseApprove?id=$id"/>
                     <confirmText>确认反审批此委外单？反审批后单据将回到未批准状态，可重新编辑提交。</confirmText>
                     <messages>
@@ -219,7 +219,7 @@
                 </action>
 
                 <!-- 生命周期 4 按钮（首个 lifecycle 按钮范式；参数名 subcontractOrderId 与后端 BizModel 一致） -->
-                <action id="row-cancel-button" label="取消" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="取消" i18n-en:label="Cancel" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpMfgSubcontractOrder__cancel?subcontractOrderId=$id"/>
                     <confirmText>确认取消此委外单？取消后单据将不可再推进。</confirmText>
                     <messages>
@@ -227,21 +227,21 @@
                     </messages>
                     <visibleOn>${docStatus == 'DRAFT' || docStatus == 'SUBMITTED' || docStatus == 'APPROVED'}</visibleOn>
                 </action>
-                <action id="row-issue-materials-button" label="发料" level="primary" icon="fa fa-outdent">
+                <action id="row-issue-materials-button" label="发料" i18n-en:label="Issue" level="primary" icon="fa fa-outdent">
                     <dialog page="issueMaterials"/>
                     <messages>
                         <success>委外单已发料</success>
                     </messages>
                     <visibleOn>${docStatus == 'APPROVED'}</visibleOn>
                 </action>
-                <action id="row-receive-finished-button" label="收货" level="primary" icon="fa fa-inbox">
+                <action id="row-receive-finished-button" label="收货" i18n-en:label="Goods Receipt" level="primary" icon="fa fa-inbox">
                     <dialog page="receiveFinished"/>
                     <messages>
                         <success>委外单已收货</success>
                     </messages>
                     <visibleOn>${docStatus == 'ISSUED'}</visibleOn>
                 </action>
-                <action id="row-post-processing-fee-button" label="加工费过账" level="success" icon="fa fa-calculator">
+                <action id="row-post-processing-fee-button" label="加工费过账" i18n-en:label="Post Processing Fee" level="success" icon="fa fa-calculator">
                     <api url="@mutation:ErpMfgSubcontractOrder__postProcessingFee?subcontractOrderId=$id"/>
                     <confirmText>确认对此委外单进行加工费过账？过账后单据将完工。</confirmText>
                     <messages>

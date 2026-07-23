@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpFinBudgetLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinBudgetLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="scenario" label="预算方案"/>
+                <col id="scenario" label="预算方案" i18n-en:label="Budget Plan"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="acctSchema" label="账套"/>
-                <col id="period" label="会计期间"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="acctSchema" label="账套" i18n-en:label="Accounting Set"/>
+                <col id="period" label="会计期间" i18n-en:label="Accounting Period"/>
                 <col id="subjectCode" mandatory="true" sortable="true"/>
-                <col id="subjectId" label="科目名称"/>
-                <col id="costCenterId" label="成本中心"/>
-                <col id="departmentId" label="部门"/>
-                <col id="projectId" label="项目"/>
-                <col id="partnerId" label="往来单位"/>
-                <col id="warehouseId" label="仓库"/>
-                <col id="materialId" label="物料"/>
+                <col id="subjectId" label="科目名称" i18n-en:label="Account Name"/>
+                <col id="costCenterId" label="成本中心" i18n-en:label="Cost Center"/>
+                <col id="departmentId" label="部门" i18n-en:label="Department"/>
+                <col id="projectId" label="项目" i18n-en:label="Project"/>
+                <col id="partnerId" label="往来单位" i18n-en:label="Business Partner"/>
+                <col id="warehouseId" label="仓库" i18n-en:label="Warehouse"/>
+                <col id="materialId" label="物料" i18n-en:label="Material"/>
                 <col id="budgetAmountSource" ui:number="true" sortable="true"/>
                 <col id="budgetAmountFunctional" ui:number="true" sortable="true"/>
-                <col id="currencyId" label="币种"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -67,7 +67,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  lineNo[行号] scenarioId[预算方案ID]
  subjectCode[科目编码] orgId[核算组织]

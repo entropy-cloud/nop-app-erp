@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpHrAttendance.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrAttendance.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="employee" label="员工"/>
+                <col id="employee" label="员工" i18n-en:label="Employee"/>
                 <col id="date" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -20,8 +20,8 @@
                 <col id="earlyLeaveMinutes" ui:number="true" sortable="true"/>
                 <col id="isAbsent" sortable="true"/>
                 <col id="source" sortable="true"/>
-                <col id="leaveRequest" label="请假申请"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="leaveRequest" label="请假申请" i18n-en:label="Leave Request"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -79,7 +79,7 @@
                 <cell id="date" filterOp="date-between"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  employeeId[员工] date[考勤日期]
             </layout>
@@ -93,7 +93,7 @@
     <pages>
         <crud name="main">
             <listActions x:override="bounded-merge">
-                <action id="list-clock-in-button" label="签到" level="primary" icon="fa fa-sign-in"
+                <action id="list-clock-in-button" label="签到" i18n-en:label="Check In" level="primary" icon="fa fa-sign-in"
                         actionType="ajax">
                     <api url="@mutation:ErpHrAttendance__clockIn?employeeId=$employeeId" dataType="raw"/>
                     <confirmText>确认签到？</confirmText>
@@ -101,7 +101,7 @@
                         <success>签到成功</success>
                     </messages>
                 </action>
-                <action id="list-clock-out-button" label="签退" level="info" icon="fa fa-sign-out"
+                <action id="list-clock-out-button" label="签退" i18n-en:label="Check Out" level="info" icon="fa fa-sign-out"
                         actionType="ajax">
                     <api url="@mutation:ErpHrAttendance__clockOut?employeeId=$employeeId" dataType="raw"/>
                     <confirmText>确认签退？</confirmText>

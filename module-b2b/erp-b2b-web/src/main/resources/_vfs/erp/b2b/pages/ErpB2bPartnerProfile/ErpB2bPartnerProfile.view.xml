@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpB2bPartnerProfile.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpB2bPartnerProfile.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -7,8 +7,8 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="partnerId" label="关联伙伴"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="partnerId" label="关联伙伴" i18n-en:label="Linked Partner"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -124,7 +124,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编码] partnerName[伙伴名称]
  orgId[业务组织] partnerId[关联伙伴]
@@ -145,7 +145,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-activate-button" label="上线" level="success" icon="fa fa-power-off">
+                <action id="row-activate-button" label="上线" i18n-en:label="Go-Live" level="success" icon="fa fa-power-off">
                     <api url="@mutation:ErpB2bPartnerProfile__activate?profileId=$id"/>
                     <confirmText>确认将此合作伙伴上线到生产环境？</confirmText>
                     <messages>
@@ -153,7 +153,7 @@
                     </messages>
                     <visibleOn>${status == 'CERTIFIED' || status == 'TESTING'}</visibleOn>
                 </action>
-                <action id="row-suspend-button" label="暂停" level="warning" icon="fa fa-pause">
+                <action id="row-suspend-button" label="暂停" i18n-en:label="Pause" level="warning" icon="fa fa-pause">
                     <api url="@mutation:ErpB2bPartnerProfile__suspend?profileId=$id"/>
                     <confirmText>确认暂停此合作伙伴？</confirmText>
                     <messages>
@@ -161,7 +161,7 @@
                     </messages>
                     <visibleOn>${status == 'PRODUCTION'}</visibleOn>
                 </action>
-                <action id="row-deactivate-button" label="终止" level="danger" icon="fa fa-stop">
+                <action id="row-deactivate-button" label="终止" i18n-en:label="Terminate" level="danger" icon="fa fa-stop">
                     <api url="@mutation:ErpB2bPartnerProfile__deactivate?profileId=$id"/>
                     <confirmText>确认终止此合作伙伴？</confirmText>
                     <messages>

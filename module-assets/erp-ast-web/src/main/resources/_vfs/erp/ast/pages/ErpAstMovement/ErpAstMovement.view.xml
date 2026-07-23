@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpAstMovement.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstMovement.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="所属组织"/>
-                <col id="asset" label="资产编码"/>
+                <col id="orgId" label="所属组织" i18n-en:label="Owning Org"/>
+                <col id="asset" label="资产编码" i18n-en:label="Asset Code"/>
                 <col id="businessDate" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -15,15 +15,15 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="fromDepartmentId" label="源部门"/>
-                <col id="toDepartmentId" label="目标部门"/>
-                <col id="fromStaffId" label="源使用人"/>
-                <col id="toStaffId" label="目标使用人"/>
-                <col id="fromLocationId" label="源地点"/>
-                <col id="toLocationId" label="目标地点"/>
-                <col id="handlerId" label="经办人"/>
+                <col id="fromDepartmentId" label="源部门" i18n-en:label="Source Department"/>
+                <col id="toDepartmentId" label="目标部门" i18n-en:label="Target Department"/>
+                <col id="fromStaffId" label="源使用人" i18n-en:label="Source User"/>
+                <col id="toStaffId" label="目标使用人" i18n-en:label="Target User"/>
+                <col id="fromLocationId" label="源地点" i18n-en:label="Source Location"/>
+                <col id="toLocationId" label="目标地点" i18n-en:label="Target Location"/>
+                <col id="handlerId" label="经办人" i18n-en:label="Handler"/>
                 <col id="docStatus" mandatory="true" sortable="true"/>
-                <col id="currencyId" label="币种"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -83,7 +83,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[调拨单号] docStatus[单据状态]
  approveStatus[审核状态] assetId[资产]

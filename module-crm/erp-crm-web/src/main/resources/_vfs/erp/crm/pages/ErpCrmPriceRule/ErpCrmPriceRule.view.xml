@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCrmPriceRule.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmPriceRule.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
@@ -7,12 +7,12 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="ruleType" sortable="true"/>
                 <col id="priority" ui:number="true" sortable="true"/>
-                <col id="product" label="产品"/>
-                <col id="customerId" label="客户"/>
-                <col id="currencyId" label="币种"/>
+                <col id="product" label="产品" i18n-en:label="Product"/>
+                <col id="customerId" label="客户" i18n-en:label="Customer"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="discountPercent" ui:number="true" sortable="true"/>
                 <col id="effectiveFrom" sortable="true"/>
                 <col id="effectiveTo" sortable="true"/>
@@ -68,7 +68,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编码] name[名称]
  orgId[业务组织] ruleType[规则类型]

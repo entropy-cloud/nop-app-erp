@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpFinAccountingPeriod.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinAccountingPeriod.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -38,7 +38,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编码] name[名称]
  year[年度] status[期间状态]
@@ -59,7 +59,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-close-period-button" label="结账" level="primary" icon="fa fa-lock">
+                <action id="row-close-period-button" label="结账" i18n-en:label="Close Account" level="primary" icon="fa fa-lock">
                     <api url="@mutation:ErpFinAccountingPeriod__closePeriod?periodId=$id"/>
                     <confirmText>确认结账此会计期间？结账后该期间凭证不可修改。</confirmText>
                     <messages>
@@ -67,7 +67,7 @@
                     </messages>
                     <visibleOn>${status == 'OPEN' || status == 'CLOSING'}</visibleOn>
                 </action>
-                <action id="row-reverse-close-button" label="反结账" level="warning" icon="fa fa-unlock">
+                <action id="row-reverse-close-button" label="反结账" i18n-en:label="Un-close" level="warning" icon="fa fa-unlock">
                     <api url="@mutation:ErpFinAccountingPeriod__reverseClose?periodId=$id"/>
                     <confirmText>确认反结账此会计期间？</confirmText>
                     <messages>

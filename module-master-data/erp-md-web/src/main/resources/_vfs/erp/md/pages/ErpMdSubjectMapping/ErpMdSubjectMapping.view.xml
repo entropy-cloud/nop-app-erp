@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMdSubjectMapping.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMdSubjectMapping.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="sourceSubjectId" label="源科目"/>
-                <col id="targetAcctSchemaId" label="目标账套"/>
-                <col id="targetSubjectId" label="目标科目"/>
+                <col id="sourceSubjectId" label="源科目" i18n-en:label="Source Account"/>
+                <col id="targetAcctSchemaId" label="目标账套" i18n-en:label="Target Accounting Set"/>
+                <col id="targetSubjectId" label="目标科目" i18n-en:label="Target Account"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
                 <col id="createTime" mandatory="true" sortable="true" align="center">

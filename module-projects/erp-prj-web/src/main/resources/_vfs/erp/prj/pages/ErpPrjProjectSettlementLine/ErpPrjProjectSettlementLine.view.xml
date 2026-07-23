@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpPrjProjectSettlementLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPrjProjectSettlementLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="settlement" label="结算单号"/>
+                <col id="settlement" label="结算单号" i18n-en:label="Settlement No"/>
                 <col id="lineNo" mandatory="true" sortable="true"/>
                 <col id="lineType" mandatory="true" sortable="true"/>
                 <col id="sourceBillType" sortable="true"/>
                 <col id="sourceBillCode" sortable="true"/>
-                <col id="subjectId" label="科目"/>
+                <col id="subjectId" label="科目" i18n-en:label="Account"/>
                 <col id="amount" mandatory="true" sortable="true" align="right">
                     <gen-control>
                         <c:script><![CDATA[
@@ -58,7 +58,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  lineNo[行号] lineType[行类型]
  sourceBillType[源单据类型] subjectId[科目]

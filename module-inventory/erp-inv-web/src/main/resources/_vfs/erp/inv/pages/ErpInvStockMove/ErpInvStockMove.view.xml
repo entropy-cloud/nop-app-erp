@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpInvStockMove.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpInvStockMove.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
@@ -7,9 +7,9 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="moveType" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="sourceWarehouseId" label="源仓库"/>
-                <col id="destWarehouseId" label="目标仓库"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="sourceWarehouseId" label="源仓库" i18n-en:label="Source Warehouse"/>
+                <col id="destWarehouseId" label="目标仓库" i18n-en:label="Target Warehouse"/>
                 <col id="businessDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -115,7 +115,7 @@
             </cells>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] moveType[作业类型]
  docStatus[单据状态] businessDate[业务日期]
@@ -132,7 +132,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-confirm-button" label="提交确认" level="primary" icon="fa fa-paper-plane">
+                <action id="row-confirm-button" label="提交确认" i18n-en:label="Submit Confirm" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpInvStockMove__confirm?moveId=$id"/>
                     <confirmText>确认提交此库存移动单？</confirmText>
                     <messages>
@@ -140,7 +140,7 @@
                     </messages>
                     <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
                 </action>
-                <action id="row-complete-button" label="执行完成" level="success" icon="fa fa-check">
+                <action id="row-complete-button" label="执行完成" i18n-en:label="Execution Complete" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpInvStockMove__complete?moveId=$id"/>
                     <confirmText>确认完成此库存移动单？</confirmText>
                     <messages>
@@ -148,7 +148,7 @@
                     </messages>
                     <visibleOn>${docStatus == 'CONFIRMED'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpInvStockMove__cancel?moveId=$id"/>
                     <confirmText>确认作废此库存移动单？</confirmText>
                     <messages>
@@ -156,7 +156,7 @@
                     </messages>
                     <visibleOn>${docStatus == 'DRAFT' || docStatus == 'CONFIRMED'}</visibleOn>
                 </action>
-                <action id="row-view-ledger-button" label="关联流水" level="info" icon="fa fa-list"
+                <action id="row-view-ledger-button" label="关联流水" i18n-en:label="Linked Transaction" level="info" icon="fa fa-list"
                         actionType="drawer">
                     <drawer page="/erp/inv/pages/ErpInvStockLedger/ref-move.page.yaml" size="xl">
                         <data>
@@ -164,7 +164,7 @@
                         </data>
                     </drawer>
                 </action>
-                <action id="row-view-ledger-link-button" label="查看流水" level="primary" icon="fa fa-arrow-right"
+                <action id="row-view-ledger-link-button" label="查看流水" i18n-en:label="View Transactions" level="primary" icon="fa fa-arrow-right"
                         tooltip="跳转到库存流水列表（带移动单上下文筛选）"
                         link="/ErpInvStockLedger-main?filter_moveId=${id}"/>
                 <action id="row-delete-button"/>

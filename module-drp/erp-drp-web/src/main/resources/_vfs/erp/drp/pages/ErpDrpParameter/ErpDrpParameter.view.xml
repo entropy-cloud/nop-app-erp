@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpDrpParameter.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpDrpParameter.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="warehouseId" label="仓库"/>
-                <col id="materialId" label="物料"/>
+                <col id="warehouseId" label="仓库" i18n-en:label="Warehouse"/>
+                <col id="materialId" label="物料" i18n-en:label="Material"/>
                 <col id="safetyStock" ui:number="true" sortable="true"/>
                 <col id="replenishmentLeadTime" ui:number="true" sortable="true" align="center">
                     <gen-control>
@@ -16,13 +16,13 @@
                     </gen-control>
                 </col>
                 <col id="orderMultiple" ui:number="true" sortable="true"/>
-                <col id="preferredSourceWarehouseId" label="首选调出仓库"/>
-                <col id="preferredSupplierId" label="首选供应商"/>
+                <col id="preferredSourceWarehouseId" label="首选调出仓库" i18n-en:label="Preferred Issue Warehouse"/>
+                <col id="preferredSupplierId" label="首选供应商" i18n-en:label="Preferred Supplier"/>
                 <col id="replenishmentMethod" mandatory="true" sortable="true"/>
                 <col id="minStockLevel" ui:number="true" sortable="true"/>
                 <col id="maxStockLevel" ui:number="true" sortable="true"/>
                 <col id="reviewPeriodDays" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
@@ -64,7 +64,7 @@
                 <cell id="orgId" filterOp="eq"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  preferredSourceWarehouseId[首选调出仓库]
             </layout>

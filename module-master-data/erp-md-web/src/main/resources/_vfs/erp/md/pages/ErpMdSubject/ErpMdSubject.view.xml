@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMdSubject.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMdSubject.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
@@ -7,11 +7,11 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="parentId" label="父级科目"/>
+                <col id="parentId" label="父级科目" i18n-en:label="Parent Account"/>
                 <col id="subjectClass" mandatory="true" sortable="true"/>
                 <col id="direction" mandatory="true" sortable="true"/>
                 <col id="balanceType" sortable="true"/>
-                <col id="currencyId" label="核算币种"/>
+                <col id="currencyId" label="核算币种" i18n-en:label="Accounting Currency"/>
                 <col id="isAuxiliaryPartner" sortable="true"/>
                 <col id="isAuxiliaryDepartment" sortable="true"/>
                 <col id="isAuxiliaryProject" sortable="true"/>
@@ -192,7 +192,7 @@
                 </cell>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[科目编码] name[科目名称]
  status[状态] subjectClass[科目类别]
@@ -204,7 +204,7 @@
                 <cell id="subjectClass" filterOp="eq"/>
             </cells>
         </form>
-        <form id="pick-query" editMode="query" title="查询条件">
+        <form id="pick-query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[科目编码] name[科目名称]
  subjectClass[科目类别] direction[余额方向]
@@ -225,7 +225,7 @@
                      gql:selection="{@listSelection}"/>
             </table>
             <rowActions>
-                <action id="row-add-child-button" level="primary" label="新增子节点">
+                <action id="row-add-child-button" level="primary" label="新增子节点" i18n-en:label="Add Child Node">
                     <dialog page="add-child"/>
                 </action>
             </rowActions>

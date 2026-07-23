@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMntRequest.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMntRequest.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="equipment" label="设备"/>
+                <col id="equipment" label="设备" i18n-en:label="Equipment"/>
                 <col id="requestDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -81,7 +81,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[请求单号] status[状态]
  equipmentId[设备] priority[优先级]
@@ -102,7 +102,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpMntRequest__submitForApproval?id=$id"/>
                     <confirmText>确认提交此报修单审批？</confirmText>
                     <messages>
@@ -110,7 +110,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
                 </action>
-                <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
+                <action id="row-approve-button" label="批准" i18n-en:label="Approve" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpMntRequest__approve?id=$id"/>
                     <confirmText>确认批准此报修单？</confirmText>
                     <messages>
@@ -118,7 +118,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-reject-button" label="驳回" level="warning" icon="fa fa-times">
+                <action id="row-reject-button" label="驳回" i18n-en:label="Reject" level="warning" icon="fa fa-times">
                     <api url="@mutation:ErpMntRequest__reject?id=$id"/>
                     <confirmText>确认驳回此报修单？</confirmText>
                     <messages>
@@ -126,7 +126,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-accept-button" label="受理" level="primary" icon="fa fa-hand-paper-o">
+                <action id="row-accept-button" label="受理" i18n-en:label="Accept" level="primary" icon="fa fa-hand-paper-o">
                     <api url="@mutation:ErpMntRequest__accept?requestId=$id"/>
                     <confirmText>确认受理此报修单？</confirmText>
                     <messages>
@@ -134,7 +134,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED' &amp;&amp; status == 'OPEN'}</visibleOn>
                 </action>
-                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check-circle">
+                <action id="row-complete-button" label="完成" i18n-en:label="Complete" level="success" icon="fa fa-check-circle">
                     <api url="@mutation:ErpMntRequest__complete?requestId=$id"/>
                     <confirmText>确认完成此报修单？</confirmText>
                     <messages>
@@ -142,7 +142,7 @@
                     </messages>
                     <visibleOn>${status == 'ACCEPTED' || status == 'IN_PROGRESS'}</visibleOn>
                 </action>
-                <action id="row-reject-request-button" label="拒绝" level="warning" icon="fa fa-ban">
+                <action id="row-reject-request-button" label="拒绝" i18n-en:label="Refuse" level="warning" icon="fa fa-ban">
                     <api url="@mutation:ErpMntRequest__rejectRequest?requestId=$id"/>
                     <confirmText>确认拒绝此报修单？</confirmText>
                     <messages>
@@ -150,7 +150,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED' &amp;&amp; status == 'OPEN'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpMntRequest__cancel?requestId=$id"/>
                     <confirmText>确认作废此报修单？</confirmText>
                     <messages>

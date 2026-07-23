@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpHrShiftAssignment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrShiftAssignment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="employee" label="员工"/>
-                <col id="shiftId" label="班次"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="employee" label="员工" i18n-en:label="Employee"/>
+                <col id="shiftId" label="班次" i18n-en:label="Shift"/>
                 <col id="assignmentDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -32,8 +32,8 @@
                 </col>
                 <col id="isAbsent" sortable="true"/>
                 <col id="absenceReason" sortable="true"/>
-                <col id="leaveRequest" label="关联休假"/>
-                <col id="swapRequest" label="关联调换"/>
+                <col id="leaveRequest" label="关联休假" i18n-en:label="Linked Leave"/>
+                <col id="swapRequest" label="关联调换" i18n-en:label="Linked Exchange"/>
                 <col id="replacedByAssignmentId" ui:number="true" sortable="true"/>
                 <col id="status" sortable="true"/>
             </cols>
@@ -79,7 +79,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  employeeId[员工] shiftId[班次]
  orgId[业务组织] status[状态]

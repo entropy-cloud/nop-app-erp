@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpHrSalarySimulationItemAdjustment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrSalarySimulationItemAdjustment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="simulation" label="薪资模拟"/>
-                <col id="employee" label="员工"/>
+                <col id="simulation" label="薪资模拟" i18n-en:label="Salary Simulation"/>
+                <col id="employee" label="员工" i18n-en:label="Employee"/>
                 <col id="salaryItemCode" mandatory="true" sortable="true"/>
                 <col id="originalAmount" mandatory="true" ui:number="true" sortable="true" align="right">
                     <gen-control>
@@ -26,7 +26,7 @@
                 <col id="adjustmentReason" sortable="true"/>
                 <col id="adjustedBy" sortable="true"/>
                 <col id="adjustedAt" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -64,7 +64,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  simulationId[模拟] employeeId[员工]
  salaryItemCode[薪酬项目编码] adjustedBy[调整人]

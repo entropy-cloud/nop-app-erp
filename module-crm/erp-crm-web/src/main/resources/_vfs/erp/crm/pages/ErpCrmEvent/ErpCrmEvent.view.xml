@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCrmEvent.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmEvent.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="eventType" sortable="true"/>
-                <col id="eventCategory" label="活动类别"/>
+                <col id="eventCategory" label="活动类别" i18n-en:label="Activity Category"/>
                 <col id="subject" sortable="true"/>
-                <col id="relatedLead" label="关联线索"/>
-                <col id="partnerId" label="客户"/>
-                <col id="contactId" label="联系人"/>
-                <col id="parentEvent" label="父活动"/>
+                <col id="relatedLead" label="关联线索" i18n-en:label="Linked Lead"/>
+                <col id="partnerId" label="客户" i18n-en:label="Customer"/>
+                <col id="contactId" label="联系人" i18n-en:label="Contact"/>
+                <col id="parentEvent" label="父活动" i18n-en:label="Parent Activity"/>
                 <col id="startDateTime" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -108,7 +108,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编码] subject[主题]
  orgId[业务组织] eventType[事件类型]
@@ -130,7 +130,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check">
+                <action id="row-complete-button" label="完成" i18n-en:label="Complete" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpCrmEvent__complete?eventId=$id"/>
                     <confirmText>确认完成此活动？</confirmText>
                     <messages>
@@ -138,7 +138,7 @@
                     </messages>
                     <visibleOn>${status == 'PLANNED'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="取消" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="取消" i18n-en:label="Cancel" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpCrmEvent__cancel?eventId=$id"/>
                     <confirmText>确认取消此活动？</confirmText>
                     <messages>

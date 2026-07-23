@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpFinTrialBalance.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinTrialBalance.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -21,10 +21,10 @@
                 <cell id="subjectId" filterOp="eq"/>
                 <cell id="acctSchemaId" filterOp="eq"/>
                 <cell id="__includeUnposted" custom="true" domain="boolean" defaultValue="false"
-                      label="含未过账"/>
+                      label="含未过账" i18n-en:label="Includes Unposted"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  periodId[期间] subjectCode[科目编码]
             </layout>

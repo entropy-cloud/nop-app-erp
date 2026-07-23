@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCrmForecastAccuracy.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmForecastAccuracy.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -7,10 +7,10 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="forecastId" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="period" label="预测期间"/>
-                <col id="teamId" label="销售团队"/>
-                <col id="territoryId" label="销售区域"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="period" label="预测期间" i18n-en:label="Forecast Period"/>
+                <col id="teamId" label="销售团队" i18n-en:label="Sales Team"/>
+                <col id="territoryId" label="销售区域" i18n-en:label="Sales Region"/>
                 <col id="commitAccuracy" ui:number="true" sortable="true"/>
                 <col id="upsideAccuracy" ui:number="true" sortable="true"/>
                 <col id="calculatedAt" sortable="true"/>
@@ -38,7 +38,7 @@
                 <cell id="calculatedAt" filterOp="date-between"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  forecastId[预测主表]
             </layout>

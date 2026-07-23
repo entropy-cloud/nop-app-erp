@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMfgMrpScenarioParam.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgMrpScenarioParam.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="scenarioId" label="场景" sortable="true"/>
-                <col id="materialId" label="物料(空=全局)" sortable="true"/>
+                <col id="scenarioId" label="场景" i18n-en:label="Scene" sortable="true"/>
+                <col id="materialId" label="物料(空=全局)" i18n-en:label="Material (blank=global)" sortable="true"/>
                 <col id="paramType" mandatory="true" sortable="true"/>
                 <col id="paramValue" mandatory="true" ui:number="true" sortable="true" align="right"/>
             </cols>
@@ -39,7 +39,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  scenarioId[场景] paramType[参数类型]
  materialId[物料]

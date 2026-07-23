@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpAstValueAdjustment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstValueAdjustment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -7,9 +7,9 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="所属组织"/>
-                <col id="asset" label="资产编码"/>
-                <col id="currencyId" label="币种"/>
+                <col id="orgId" label="所属组织" i18n-en:label="Owning Org"/>
+                <col id="asset" label="资产编码" i18n-en:label="Asset Code"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="businessDate" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -78,7 +78,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[调整单号] docStatus[单据状态]
  approveStatus[审核状态] assetId[资产]
@@ -99,7 +99,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpAstValueAdjustment__submitForApproval?id=$id"/>
                     <confirmText>确认提交此资产价值调整审批？</confirmText>
                     <messages>
@@ -107,7 +107,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
                 </action>
-                <action id="row-withdraw-approval-button" label="撤回提交" level="default" icon="fa fa-mail-reply">
+                <action id="row-withdraw-approval-button" label="撤回提交" i18n-en:label="Withdraw Submit" level="default" icon="fa fa-mail-reply">
                     <api url="@mutation:ErpAstValueAdjustment__withdrawApproval?id=$id"/>
                     <confirmText>确认撤回此资产价值调整的提交？撤回后单据将回到未提交状态，可重新编辑提交。</confirmText>
                     <messages>
@@ -115,7 +115,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
+                <action id="row-approve-button" label="批准" i18n-en:label="Approve" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpAstValueAdjustment__approve?id=$id"/>
                     <confirmText>确认批准此资产价值调整？</confirmText>
                     <messages>
@@ -123,7 +123,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-reject-button" label="驳回" level="warning" icon="fa fa-times">
+                <action id="row-reject-button" label="驳回" i18n-en:label="Reject" level="warning" icon="fa fa-times">
                     <api url="@mutation:ErpAstValueAdjustment__reject?id=$id"/>
                     <confirmText>确认驳回此资产价值调整？</confirmText>
                     <messages>
@@ -131,7 +131,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-reverse-approve-button" label="反审批" level="info" icon="fa fa-undo">
+                <action id="row-reverse-approve-button" label="反审批" i18n-en:label="Un-approve" level="info" icon="fa fa-undo">
                     <api url="@mutation:ErpAstValueAdjustment__reverseApprove?id=$id"/>
                     <confirmText>确认反审批此资产价值调整？反审批后单据将回到驳回状态，可重新编辑提交。</confirmText>
                     <messages>

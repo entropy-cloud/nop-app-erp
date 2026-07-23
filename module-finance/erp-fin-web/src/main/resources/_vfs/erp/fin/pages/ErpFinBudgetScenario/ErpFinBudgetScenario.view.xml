@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpFinBudgetScenario.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinBudgetScenario.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <!-- 预算方案列表：仅保留业务关键字段（bounded-merge 丢弃生成层冗余列） -->
             <cols x:override="bounded-merge">
-                <col id="code" label="方案编码"/>
-                <col id="name" label="方案名称"/>
-                <col id="fiscalYear" label="预算年度"/>
-                <col id="scenarioType" label="方案类型"/>
-                <col id="budgetGroupCode" label="预算组"/>
-                <col id="amountFunctional" label="预算金额(本位币)"/>
-                <col id="controlLevel" label="控制级别"/>
-                <col id="docStatus" label="方案状态">
+                <col id="code" label="方案编码" i18n-en:label="Plan Code"/>
+                <col id="name" label="方案名称" i18n-en:label="Plan Name"/>
+                <col id="fiscalYear" label="预算年度" i18n-en:label="Budget Year"/>
+                <col id="scenarioType" label="方案类型" i18n-en:label="Plan Type"/>
+                <col id="budgetGroupCode" label="预算组" i18n-en:label="Budget Group"/>
+                <col id="amountFunctional" label="预算金额(本位币)" i18n-en:label="Budget Amt (Functional)"/>
+                <col id="controlLevel" label="控制级别" i18n-en:label="Control Level"/>
+                <col id="docStatus" label="方案状态" i18n-en:label="Plan Status">
                     <gen-control>
                         <c:script><![CDATA[
                             const valueProp = dispMeta?.id || 'docStatus';
@@ -29,7 +29,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="approveStatus" label="审核状态">
+                <col id="approveStatus" label="审核状态" i18n-en:label="Audit Status">
                     <gen-control>
                         <c:script><![CDATA[
                             const valueProp = dispMeta?.id || 'approveStatus';
@@ -99,7 +99,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[方案编码] fiscalYear[预算年度]
  scenarioType[方案类型] controlLevel[控制级别]
@@ -116,23 +116,23 @@
         </form>
 
         <!-- A2 滚动预算复制参数表单（newFiscalYear + strategy） -->
-        <form id="rollForward" editMode="add" title="滚动预算复制" size="md">
+        <form id="rollForward" editMode="add" title="滚动预算复制" i18n-en:title="Rolling Budget Copy" size="md">
             <layout>
  newFiscalYear[目标年度] strategy[复制策略]
 </layout>
             <cells>
-                <cell id="newFiscalYear" label="目标年度" domain="int" custom="true">
+                <cell id="newFiscalYear" label="目标年度" i18n-en:label="Target Year" domain="int" custom="true">
                     <gen-control>
                         <input-number placeholder="目标预算年度"/>
                     </gen-control>
                 </cell>
-                <cell id="strategy" label="复制策略" domain="string" custom="true">
+                <cell id="strategy" label="复制策略" i18n-en:label="Copy Strategy" domain="string" custom="true">
                     <gen-control>
                         <select>
                             <options j:list="true">
-                                <_ label="固定比例复制" value="FIXED_PERCENTAGE"/>
-                                <_ label="零基（仅结构）" value="ZERO_BASED"/>
-                                <_ label="增量调整" value="INCREMENTAL"/>
+                                <_ label="固定比例复制" i18n-en:label="Fixed-Ratio Copy" value="FIXED_PERCENTAGE"/>
+                                <_ label="零基（仅结构）" i18n-en:label="Zero-Based (Structure Only)" value="ZERO_BASED"/>
+                                <_ label="增量调整" i18n-en:label="Incremental Adjust" value="INCREMENTAL"/>
                             </options>
                         </select>
                     </gen-control>
@@ -141,12 +141,12 @@
         </form>
 
         <!-- A2 预算结转参数表单（targetScenarioId + rule） -->
-        <form id="carryForward" editMode="add" title="预算结转" size="md">
+        <form id="carryForward" editMode="add" title="预算结转" i18n-en:title="Budget Carry-Forward" size="md">
             <layout>
  targetScenarioId[目标方案] rule[结转规则]
 </layout>
             <cells>
-                <cell id="targetScenarioId" label="目标方案" domain="long" custom="true">
+                <cell id="targetScenarioId" label="目标方案" i18n-en:label="Target Plan" domain="long" custom="true">
                     <gen-control>
                         <select clearable="@:true">
                             <source>
@@ -155,14 +155,14 @@
                         </select>
                     </gen-control>
                 </cell>
-                <cell id="rule" label="结转规则" domain="string" custom="true">
+                <cell id="rule" label="结转规则" i18n-en:label="Carry-Forward Rule" domain="string" custom="true">
                     <gen-control>
                         <select>
                             <options j:list="true">
-                                <_ label="剩余全部结转" value="REMAINING_FULL"/>
-                                <_ label="剩余按比例结转" value="REMAINING_RATIO"/>
-                                <_ label="已用作为基线" value="USED_FULL"/>
-                                <_ label="不结转" value="NONE"/>
+                                <_ label="剩余全部结转" i18n-en:label="Carry Forward All Remaining" value="REMAINING_FULL"/>
+                                <_ label="剩余按比例结转" i18n-en:label="Carry Forward Remaining Pro-Rata" value="REMAINING_RATIO"/>
+                                <_ label="已用作为基线" i18n-en:label="Used as Baseline" value="USED_FULL"/>
+                                <_ label="不结转" i18n-en:label="No Carry-Forward" value="NONE"/>
                             </options>
                         </select>
                     </gen-control>
@@ -179,25 +179,25 @@
                 <action id="row-view-button" level="primary" label="@i18n:common.view">
                     <api url="@query:ErpFinBudgetScenario__get?id=$id" gql:selection="{@viewSelection}"/>
                 </action>
-                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpFinBudgetScenario__submit?id=$id"/>
                 </action>
-                <action id="row-approve-button" label="审核通过" level="primary" icon="fa fa-check">
+                <action id="row-approve-button" label="审核通过" i18n-en:label="Audit Passed" level="primary" icon="fa fa-check">
                     <api url="@mutation:ErpFinBudgetScenario__approve?id=$id"/>
                 </action>
-                <action id="row-reject-button" label="驳回" level="danger" icon="fa fa-times">
+                <action id="row-reject-button" label="驳回" i18n-en:label="Reject" level="danger" icon="fa fa-times">
                     <api url="@mutation:ErpFinBudgetScenario__reject?id=$id"/>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpFinBudgetScenario__cancel?id=$id"/>
                 </action>
                 <!-- A2 滚动预算复制（budget.md §滚动预算自动复制引擎）：drawer 收集 newFiscalYear + strategy -->
-                <action id="row-roll-forward-button" label="滚动复制" level="info" icon="fa fa-copy"
+                <action id="row-roll-forward-button" label="滚动复制" i18n-en:label="Rolling Copy" level="info" icon="fa fa-copy"
                         actionType="drawer">
                     <dialog page="rollForward" size="md"/>
                 </action>
                 <!-- A2 预算结转（budget.md §结转规则引擎）：drawer 收集 targetScenarioId + rule -->
-                <action id="row-carry-forward-button" label="结转" level="info" icon="fa fa-arrow-right"
+                <action id="row-carry-forward-button" label="结转" i18n-en:label="Carry-Forward" level="info" icon="fa fa-arrow-right"
                         actionType="drawer">
                     <dialog page="carryForward" size="md"/>
                 </action>
@@ -207,8 +207,8 @@
         <simple name="rollForward" form="rollForward" useFormActions="true">
             <api url="@mutation:ErpFinBudgetScenario__rollForward/id" withFormData="true"/>
             <actions>
-                <action id="cancel" label="取消" actionType="cancel"/>
-                <action id="confirm" label="确认复制" actionType="submit" level="primary">
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认复制" i18n-en:label="Confirm Copy" actionType="submit" level="primary">
                     <messages>
                         <success>预算已滚动复制到新年度</success>
                     </messages>
@@ -220,8 +220,8 @@
         <simple name="carryForward" form="carryForward" useFormActions="true">
             <api url="@mutation:ErpFinBudgetScenario__carryForward/id" withFormData="true"/>
             <actions>
-                <action id="cancel" label="取消" actionType="cancel"/>
-                <action id="confirm" label="确认结转" actionType="submit" level="primary">
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认结转" i18n-en:label="Confirm Carry-Forward" actionType="submit" level="primary">
                     <messages>
                         <success>预算已结转到目标方案</success>
                     </messages>

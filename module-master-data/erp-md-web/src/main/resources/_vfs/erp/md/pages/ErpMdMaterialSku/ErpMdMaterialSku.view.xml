@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMdMaterialSku.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMdMaterialSku.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialId" label="物料"/>
+                <col id="materialId" label="物料" i18n-en:label="Material"/>
                 <col id="skuCode" mandatory="true" sortable="true"/>
                 <col id="barcode" sortable="true"/>
-                <col id="uoMId" label="计量单位"/>
+                <col id="uoMId" label="计量单位" i18n-en:label="UoM"/>
                 <col id="conversionRate" ui:number="true" sortable="true"/>
                 <col id="purchasePrice" ui:number="true" sortable="true" align="right">
                     <gen-control>
@@ -38,7 +38,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="taxRateId" label="默认税率"/>
+                <col id="taxRateId" label="默认税率" i18n-en:label="Default Tax Rate"/>
                 <col id="isDefault" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>

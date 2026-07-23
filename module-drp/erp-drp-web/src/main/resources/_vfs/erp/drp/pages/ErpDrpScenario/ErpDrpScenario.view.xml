@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpDrpScenario.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpDrpScenario.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="baseDrpPlanId" label="基线DRP计划" sortable="true"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="baseDrpPlanId" label="基线DRP计划" i18n-en:label="Baseline DRP Plan" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="description" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
@@ -61,7 +61,7 @@
             </cells>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[场景号] status[状态]
  orgId[业务组织] baseDrpPlanId[基线DRP计划]
@@ -80,7 +80,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-run-simulation-button" label="运行仿真" level="primary" icon="fa fa-cogs">
+                <action id="row-run-simulation-button" label="运行仿真" i18n-en:label="Run Simulation" level="primary" icon="fa fa-cogs">
                     <api url="@mutation:ErpDrpScenario__runSimulation?scenarioId=$id"/>
                     <confirmText>确认运行此 DRP 仿真？将基于当前场景参数生成新版本。</confirmText>
                     <messages>

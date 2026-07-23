@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCtContract.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCtContract.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="contractType" mandatory="true" sortable="true"/>
                 <col id="contractDirection" mandatory="true" sortable="true"/>
-                <col id="partnerId" label="合作方"/>
-                <col id="currencyId" label="币种"/>
+                <col id="partnerId" label="合作方" i18n-en:label="Collaborator"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="totalAmount" ui:number="true" sortable="true" align="right">
                     <gen-control>
                         <c:script><![CDATA[
@@ -63,8 +63,8 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="templateId" label="合同模板"/>
-                <col id="parentContractId" label="父合同"/>
+                <col id="templateId" label="合同模板" i18n-en:label="Contract Template"/>
+                <col id="parentContractId" label="父合同" i18n-en:label="Parent Contract"/>
                 <col id="description" sortable="true"/>
                 <col id="attachmentFileId" sortable="true"/>
                 <col id="remark" sortable="true"/>
@@ -178,7 +178,7 @@
                 <cell id="startDate" filterOp="date-between"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[合同编号] contractName[合同名称]
             </layout>
@@ -194,7 +194,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-activate-button" label="生效" level="success" icon="fa fa-check-circle">
+                <action id="row-activate-button" label="生效" i18n-en:label="Active" level="success" icon="fa fa-check-circle">
                     <api url="@mutation:ErpCtContract__activate?contractId=$id"/>
                     <confirmText>确认生效此合同？</confirmText>
                     <messages>
@@ -202,7 +202,7 @@
                     </messages>
                     <visibleOn>${status == 'DRAFT' || status == 'NEGOTIATION'}</visibleOn>
                 </action>
-                <action id="row-suspend-button" label="中止" level="warning" icon="fa fa-pause">
+                <action id="row-suspend-button" label="中止" i18n-en:label="Suspend" level="warning" icon="fa fa-pause">
                     <api url="@mutation:ErpCtContract__suspend?contractId=$id"/>
                     <confirmText>确认中止此合同？</confirmText>
                     <messages>
@@ -210,7 +210,7 @@
                     </messages>
                     <visibleOn>${status == 'ACTIVE'}</visibleOn>
                 </action>
-                <action id="row-resume-button" label="恢复" level="primary" icon="fa fa-play">
+                <action id="row-resume-button" label="恢复" i18n-en:label="Restore" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpCtContract__resume?contractId=$id"/>
                     <confirmText>确认恢复此合同？</confirmText>
                     <messages>
@@ -218,7 +218,7 @@
                     </messages>
                     <visibleOn>${status == 'SUSPENDED'}</visibleOn>
                 </action>
-                <action id="row-terminate-button" label="终止" level="danger" icon="fa fa-stop">
+                <action id="row-terminate-button" label="终止" i18n-en:label="Terminate" level="danger" icon="fa fa-stop">
                     <api url="@mutation:ErpCtContract__terminate?contractId=$id"/>
                     <confirmText>确认终止此合同？</confirmText>
                     <messages>

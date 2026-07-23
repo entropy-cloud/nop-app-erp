@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMntVisit.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMntVisit.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="组织"/>
+                <col id="orgId" label="组织" i18n-en:label="Organization"/>
                 <col id="visitDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -95,7 +95,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[访问编码] status[状态]
  equipmentId[设备ID] visitDate[访问日期]
@@ -112,7 +112,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-schedule-button" label="排程" level="primary" icon="fa fa-calendar">
+                <action id="row-schedule-button" label="排程" i18n-en:label="Schedule" level="primary" icon="fa fa-calendar">
                     <api url="@mutation:ErpMntVisit__schedule?visitId=$id"/>
                     <confirmText>确认排程此维保任务？</confirmText>
                     <messages>
@@ -120,7 +120,7 @@
                     </messages>
                     <visibleOn>${status == 'DRAFT'}</visibleOn>
                 </action>
-                <action id="row-start-button" label="开始" level="primary" icon="fa fa-play">
+                <action id="row-start-button" label="开始" i18n-en:label="Start" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpMntVisit__start?visitId=$id"/>
                     <confirmText>确认开始此维保任务？</confirmText>
                     <messages>
@@ -128,7 +128,7 @@
                     </messages>
                     <visibleOn>${status == 'SCHEDULED'}</visibleOn>
                 </action>
-                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check">
+                <action id="row-complete-button" label="完成" i18n-en:label="Complete" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpMntVisit__complete?visitId=$id"/>
                     <confirmText>确认完成此维保任务？</confirmText>
                     <messages>
@@ -136,7 +136,7 @@
                     </messages>
                     <visibleOn>${status == 'IN_PROGRESS'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpMntVisit__cancel?visitId=$id"/>
                     <confirmText>确认作废此维保任务？</confirmText>
                     <messages>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpPurQuotation.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPurQuotation.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list"/>
@@ -42,7 +42,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] supplierId[供应商]
  docStatus[单据状态] approveStatus[审核状态]
@@ -63,7 +63,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-submit-button" label="提交" level="primary" icon="fa fa-paper-plane">
+                <action id="row-submit-button" label="提交" i18n-en:label="Submit" level="primary" icon="fa fa-paper-plane">
                     <api url="@mutation:ErpPurQuotation__submitForApproval?id=$id"/>
                     <confirmText>确认提交此报价单？</confirmText>
                     <messages>
@@ -71,7 +71,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'UNSUBMITTED' || approveStatus == 'REJECTED'}</visibleOn>
                 </action>
-                <action id="row-accept-button" label="中标" level="success" icon="fa fa-trophy">
+                <action id="row-accept-button" label="中标" i18n-en:label="Won" level="success" icon="fa fa-trophy">
                     <api url="@mutation:ErpPurQuotation__approve?id=$id"/>
                     <confirmText>确认此报价单中标？</confirmText>
                     <messages>
@@ -79,7 +79,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-reject-button" label="未中标" level="warning" icon="fa fa-times">
+                <action id="row-reject-button" label="未中标" i18n-en:label="Not Won" level="warning" icon="fa fa-times">
                     <api url="@mutation:ErpPurQuotation__reject?id=$id"/>
                     <confirmText>确认此报价单未中标？</confirmText>
                     <messages>
@@ -87,7 +87,7 @@
                     </messages>
                     <visibleOn>${approveStatus == 'SUBMITTED'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpPurQuotation__cancel?quotationId=$id"/>
                     <confirmText>确认作废此报价单？</confirmText>
                     <messages>

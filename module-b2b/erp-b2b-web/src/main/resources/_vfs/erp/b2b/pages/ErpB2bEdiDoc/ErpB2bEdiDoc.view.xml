@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpB2bEdiDoc.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpB2bEdiDoc.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="formatId" label="EDI 格式"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="formatId" label="EDI 格式" i18n-en:label="EDI Format"/>
                 <col id="relatedBillType" sortable="true"/>
                 <col id="relatedBillCode" sortable="true"/>
                 <col id="state" mandatory="true" sortable="true"/>
@@ -97,7 +97,7 @@
                 <cell id="sentAt" filterOp="date-between"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[事务编码] relatedBillCode[关联单据号]
             </layout>
@@ -113,7 +113,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-retry-button" label="重试" level="primary" icon="fa fa-repeat">
+                <action id="row-retry-button" label="重试" i18n-en:label="Retry" level="primary" icon="fa fa-repeat">
                     <api url="@mutation:ErpB2bEdiDoc__retry?ediDocId=$id"/>
                     <confirmText>确认重试此 EDI 文档发送？</confirmText>
                     <messages>
@@ -121,7 +121,7 @@
                     </messages>
                     <visibleOn>${state == 'ERROR' || state == 'TO_SEND'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="取消" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="取消" i18n-en:label="Cancel" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpB2bEdiDoc__cancel?ediDocId=$id"/>
                     <confirmText>确认取消此 EDI 文档？</confirmText>
                     <messages>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCrmLeadScoreConfigLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmLeadScoreConfigLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="configId" label="评分配置"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="configId" label="评分配置" i18n-en:label="Scoring Config"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="criterionCode" sortable="true"/>
                 <col id="criterionName" sortable="true"/>
                 <col id="weight" ui:number="true" sortable="true"/>

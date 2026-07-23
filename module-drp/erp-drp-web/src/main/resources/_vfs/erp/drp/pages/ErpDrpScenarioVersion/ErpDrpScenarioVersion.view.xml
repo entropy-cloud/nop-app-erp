@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpDrpScenarioVersion.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpDrpScenarioVersion.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="scenarioId" label="场景" sortable="true"/>
+                <col id="scenarioId" label="场景" i18n-en:label="Scene" sortable="true"/>
                 <col id="versionNo" mandatory="true" ui:number="true" sortable="true" align="right"/>
-                <col id="computedDrpPlanId" label="计算结果计划" sortable="true"/>
+                <col id="computedDrpPlanId" label="计算结果计划" i18n-en:label="Calculated Result Plan" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true"/>
-                <col id="promotedPlanId" label="转正式计划ID" sortable="true"/>
+                <col id="promotedPlanId" label="转正式计划ID" i18n-en:label="To Official Plan ID" sortable="true"/>
                 <col id="snapshotSummary" sortable="true"/>
                 <col id="createTime" mandatory="true" sortable="true" align="center"/>
             </cols>
@@ -41,7 +41,7 @@
  updatedBy[修改人] updateTime[修改时间]
             </layout>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  scenarioId[场景] status[状态]
             </layout>
@@ -56,7 +56,7 @@
         <crud name="main">
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
-                <action id="row-promote-button" label="转正式计划" level="success" icon="fa fa-check">
+                <action id="row-promote-button" label="转正式计划" i18n-en:label="To Official Plan" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpDrpScenario__promoteToFormalPlan?scenarioVersionId=$id"/>
                     <confirmText>确认将此版本转正式 DRP 计划？生成 DRAFT 计划供后续释放。</confirmText>
                     <messages>

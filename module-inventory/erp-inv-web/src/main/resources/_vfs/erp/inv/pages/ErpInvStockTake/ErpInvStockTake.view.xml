@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpInvStockTake.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpInvStockTake.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list"/>
@@ -36,7 +36,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[单据状态]
  approveStatus[审核状态] warehouseId[仓库]
@@ -57,7 +57,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-start-take-button" label="开始盘点" level="primary" icon="fa fa-play">
+                <action id="row-start-take-button" label="开始盘点" i18n-en:label="Start Stocktake" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpInvStockTake__startTake?takeId=$id"/>
                     <confirmText>确认开始此盘点单？</confirmText>
                     <messages>
@@ -65,7 +65,7 @@
                     </messages>
                     <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
                 </action>
-                <action id="row-complete-take-button" label="完成盘点" level="success" icon="fa fa-check">
+                <action id="row-complete-take-button" label="完成盘点" i18n-en:label="Complete Stocktake" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpInvStockTake__completeTake?takeId=$id"/>
                     <confirmText>确认完成此盘点单？</confirmText>
                     <messages>
@@ -73,7 +73,7 @@
                     </messages>
                     <visibleOn>${docStatus == 'CONFIRMED'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpInvStockTake__cancelTake?takeId=$id"/>
                     <confirmText>确认作废此盘点单？</confirmText>
                     <messages>

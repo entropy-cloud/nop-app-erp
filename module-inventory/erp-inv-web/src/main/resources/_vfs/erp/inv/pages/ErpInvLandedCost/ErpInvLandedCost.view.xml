@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpInvLandedCost.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpInvLandedCost.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
@@ -128,7 +128,7 @@
                 </cell>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] docStatus[单据状态]
  approveStatus[审核状态] receiveId[采购入库单]
@@ -153,13 +153,13 @@
                 <action id="row-update-button" level="primary" label="@i18n:common.edit">
                     <dialog page="update"/>
                 </action>
-                <action id="row-approve-button" label="审核" level="success"
+                <action id="row-approve-button" label="审核" i18n-en:label="Audit" level="success"
                         icon="fa fa-check">
                     <api url="@mutation:ErpInvLandedCost__approve?id=$id"/>
                     <confirmText>确认审核此到岸成本单？审核后将执行分摊并生成凭证。</confirmText>
                 </action>
                 <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
-                    <action id="row-allocate-preview-button" label="分摊预览">
+                    <action id="row-allocate-preview-button" label="分摊预览" i18n-en:label="Allocation Preview">
                         <api url="@query:ErpInvLandedCost__allocate?id=$id"/>
                     </action>
                     <action id="row-delete-button" label="@i18n:common.delete">

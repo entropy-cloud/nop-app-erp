@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpHrTimesheetLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrTimesheetLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="timesheet" label="工时表"/>
-                <col id="employee" label="员工"/>
+                <col id="timesheet" label="工时表" i18n-en:label="Timesheet"/>
+                <col id="employee" label="员工" i18n-en:label="Employee"/>
                 <col id="workDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -15,8 +15,8 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="projectId" label="项目"/>
-                <col id="taskId" label="任务"/>
+                <col id="projectId" label="项目" i18n-en:label="Project"/>
+                <col id="taskId" label="任务" i18n-en:label="Task"/>
                 <col id="activityType" sortable="true"/>
                 <col id="hours" mandatory="true" ui:number="true" sortable="true"/>
             </cols>
@@ -123,7 +123,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  timesheetId[工时表ID] employeeId[员工]
  projectId[项目] workDate[工作日期]

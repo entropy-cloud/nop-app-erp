@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpB2bTestExchange.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpB2bTestExchange.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="partnerProfileId" label="伙伴档案"/>
+                <col id="partnerProfileId" label="伙伴档案" i18n-en:label="Partner Profile"/>
                 <col id="direction" mandatory="true" sortable="true"/>
                 <col id="formatCode" mandatory="true" sortable="true"/>
                 <col id="testCaseCode" sortable="true"/>
@@ -76,7 +76,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  partnerProfileId[伙伴档案] direction[方向]
  formatCode[EDI格式] testCaseCode[测试用例编号]

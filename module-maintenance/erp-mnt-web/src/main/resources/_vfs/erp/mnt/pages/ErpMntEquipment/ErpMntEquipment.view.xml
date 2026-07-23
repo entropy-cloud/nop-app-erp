@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMntEquipment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMntEquipment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
@@ -7,10 +7,10 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="orgId" label="组织"/>
-                <col id="categoryId" label="设备类别"/>
-                <col id="locationId" label="位置"/>
-                <col id="asset" label="资产"/>
+                <col id="orgId" label="组织" i18n-en:label="Organization"/>
+                <col id="categoryId" label="设备类别" i18n-en:label="Equipment Category"/>
+                <col id="locationId" label="位置" i18n-en:label="Location"/>
+                <col id="asset" label="资产" i18n-en:label="Asset"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -158,7 +158,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[设备编码] name[设备名称]
  status[状态] categoryId[分类]
@@ -179,7 +179,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-view-equipment-dashboard-button" label="完整仪表板" level="info" icon="fa fa-tachometer"
+                <action id="row-view-equipment-dashboard-button" label="完整仪表板" i18n-en:label="Full Dashboard" level="info" icon="fa fa-tachometer"
                         actionType="drawer">
                     <dialog page="equipmentDashboard" size="xl">
                         <data>
@@ -211,9 +211,9 @@
         </crud>
 
         <tabs name="equipmentDashboard" mountOnEnter="true" unmountOnExit="false">
-            <tab name="header" page="equipmentHeader" title="基本信息"/>
-            <tab name="maintenance" page="equipmentMaintenanceHistory" title="维护时间线"/>
-            <tab name="spareParts" page="equipmentSpareParts" title="备件消耗"/>
+            <tab name="header" page="equipmentHeader" title="基本信息" i18n-en:title="Basic Info"/>
+            <tab name="maintenance" page="equipmentMaintenanceHistory" title="维护时间线" i18n-en:title="Maintenance Timeline"/>
+            <tab name="spareParts" page="equipmentSpareParts" title="备件消耗" i18n-en:title="Spare Parts Used"/>
         </tabs>
 
         <picker name="picker"/>

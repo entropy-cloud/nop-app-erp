@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpFinBudgetControlLog.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinBudgetControlLog.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <!-- 预算控制日志：仅保留审计关键字段（只读日志，bounded-merge 丢弃冗余列） -->
             <cols x:override="bounded-merge">
-                <col id="businessDate" label="业务日期" align="center">
+                <col id="businessDate" label="业务日期" i18n-en:label="Business Date" align="center">
                     <gen-control>
                         <c:script><![CDATA[
                             return { type: 'date', format: 'YYYY-MM-DD' };
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="sourceBillType" label="单据类型"/>
-                <col id="sourceBillCode" label="单据号"/>
-                <col id="subjectId" label="科目"/>
-                <col id="requestedAmount" label="申请金额" align="right">
+                <col id="sourceBillType" label="单据类型" i18n-en:label="Doc Type"/>
+                <col id="sourceBillCode" label="单据号" i18n-en:label="Doc No"/>
+                <col id="subjectId" label="科目" i18n-en:label="Account"/>
+                <col id="requestedAmount" label="申请金额" i18n-en:label="Applied Amount" align="right">
                     <gen-control>
                         <c:script><![CDATA[
                             return { type: 'number', kilometer: true, precision: 2 };
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="availableAmount" label="检查时余量" align="right">
+                <col id="availableAmount" label="检查时余量" i18n-en:label="Qty at Check" align="right">
                     <gen-control>
                         <c:script><![CDATA[
                             return { type: 'number', kilometer: true, precision: 2 };
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="actionResult" label="控制结果"/>
-                <col id="operatorId" label="操作人"/>
-                <col id="operatedAt" label="操作时间"/>
-                <col id="reason" label="原因"/>
+                <col id="actionResult" label="控制结果" i18n-en:label="Control Result"/>
+                <col id="operatorId" label="操作人" i18n-en:label="Operator"/>
+                <col id="operatedAt" label="操作时间" i18n-en:label="Operation Time"/>
+                <col id="reason" label="原因" i18n-en:label="Reason"/>
             </cols>
         </grid>
         <grid id="pick-list"/>

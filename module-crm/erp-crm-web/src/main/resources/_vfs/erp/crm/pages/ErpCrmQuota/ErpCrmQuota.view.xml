@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCrmQuota.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmQuota.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="territoryId" label="销售区域"/>
-                <col id="teamId" label="销售团队"/>
-                <col id="currencyId" label="币种"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="territoryId" label="销售区域" i18n-en:label="Sales Region"/>
+                <col id="teamId" label="销售团队" i18n-en:label="Sales Team"/>
+                <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="periodType" sortable="true"/>
                 <col id="fiscalYear" ui:number="true" sortable="true"/>
                 <col id="periodLabel" sortable="true"/>
@@ -59,7 +59,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  orgId[业务组织] territoryId[销售区域]
  teamId[销售团队] ownerId[负责人]

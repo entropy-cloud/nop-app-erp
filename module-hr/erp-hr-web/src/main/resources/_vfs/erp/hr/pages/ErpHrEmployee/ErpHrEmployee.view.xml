@@ -7,12 +7,12 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="fullName" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="departmentId" label="部门"/>
-                <col id="positionId" label="职位"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="departmentId" label="部门" i18n-en:label="Department"/>
+                <col id="positionId" label="职位" i18n-en:label="Position"/>
                 <col id="jobTitle" sortable="true"/>
-                <col id="costCenterId" label="默认成本中心"/>
-                <col id="bankAccountId" label="工资卡账户">
+                <col id="costCenterId" label="默认成本中心" i18n-en:label="Default Cost Center"/>
+                <col id="bankAccountId" label="工资卡账户" i18n-en:label="Payroll Bank Account">
                     <gen-control>
                         <c:script><![CDATA[
                             return { type: 'tpl', tpl: '****${RIGHT(bankAccountId, 4)}' };
@@ -282,7 +282,7 @@
                 <cell id="hireDate" filterOp="date-between"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[工号] fullName[全名]
             </layout>
@@ -300,38 +300,38 @@
   effectiveDate[生效日期] handleContract[合同处理]
 </layout>
             <cells>
-                <cell id="employeeId" label="员工ID" domain="long" custom="true">
+                <cell id="employeeId" label="员工ID" i18n-en:label="Employee ID" domain="long" custom="true">
                     <gen-control>
                         <input-number hidden="true"/>
                     </gen-control>
                 </cell>
-                <cell id="targetDepartmentId" label="目标部门" domain="long" custom="true">
+                <cell id="targetDepartmentId" label="目标部门" i18n-en:label="Target Department" domain="long" custom="true">
                     <gen-control>
                         <input-number placeholder="目标部门ID（必填）"/>
                     </gen-control>
                 </cell>
-                <cell id="targetPositionId" label="目标职位" domain="long" custom="true">
+                <cell id="targetPositionId" label="目标职位" i18n-en:label="Target Position" domain="long" custom="true">
                     <gen-control>
                         <input-number placeholder="目标职位ID（可空）"/>
                     </gen-control>
                 </cell>
-                <cell id="targetSuperiorId" label="直接上级" domain="long" custom="true">
+                <cell id="targetSuperiorId" label="直接上级" i18n-en:label="Direct Supervisor" domain="long" custom="true">
                     <gen-control>
                         <input-number placeholder="直接上级员工ID（可空）"/>
                     </gen-control>
                 </cell>
-                <cell id="effectiveDate" label="生效日期" domain="date" custom="true">
+                <cell id="effectiveDate" label="生效日期" i18n-en:label="Effective Date" domain="date" custom="true">
                     <gen-control>
                         <input-date format="YYYY-MM-DD" placeholder="调动生效日期"/>
                     </gen-control>
                 </cell>
-                <cell id="handleContract" label="合同处理" domain="string" custom="true">
+                <cell id="handleContract" label="合同处理" i18n-en:label="Contract Handling" domain="string" custom="true">
                     <gen-control>
                         <select>
                             <options j:list="true">
-                                <_ label="AUTO（按配置，存在生效合同时处理）" value="AUTO"/>
-                                <_ label="YES（强制处理：终止原合同+新建）" value="YES"/>
-                                <_ label="NO（跳过合同处理）" value="NO"/>
+                                <_ label="AUTO（按配置，存在生效合同时处理）" i18n-en:label="AUTO (per config; process if active contract exists)" value="AUTO"/>
+                                <_ label="YES（强制处理：终止原合同+新建）" i18n-en:label="YES (force: terminate old contract + create new)" value="YES"/>
+                                <_ label="NO（跳过合同处理）" i18n-en:label="NO (skip contract handling)" value="NO"/>
                             </options>
                         </select>
                     </gen-control>
@@ -345,7 +345,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-view-employee-archive-button" label="完整档案" level="info" icon="fa fa-id-card-o"
+                <action id="row-view-employee-archive-button" label="完整档案" i18n-en:label="Full Profile" level="info" icon="fa fa-id-card-o"
                         actionType="drawer">
                     <dialog page="employeeArchive" size="xl">
                         <data>
@@ -353,7 +353,7 @@
                         </data>
                     </dialog>
                 </action>
-                <action id="row-transfer-button" label="调动" level="primary" icon="fa fa-exchange"
+                <action id="row-transfer-button" label="调动" i18n-en:label="Transfer" level="primary" icon="fa fa-exchange"
                         actionType="drawer">
                     <dialog page="transfer" size="lg">
                         <data>
@@ -395,19 +395,19 @@
         </crud>
 
         <tabs name="employeeArchive" mountOnEnter="true" unmountOnExit="false">
-            <tab name="header" page="employeeHeader" title="基本信息"/>
-            <tab name="contracts" page="employeeContracts" title="合同"/>
-            <tab name="attendance" page="employeeAttendance" title="考勤"/>
-            <tab name="leaves" page="employeeLeaves" title="休假"/>
-            <tab name="timesheets" page="employeeTimesheets" title="工时"/>
+            <tab name="header" page="employeeHeader" title="基本信息" i18n-en:title="Basic Info"/>
+            <tab name="contracts" page="employeeContracts" title="合同" i18n-en:title="Contract"/>
+            <tab name="attendance" page="employeeAttendance" title="考勤" i18n-en:title="Attendance"/>
+            <tab name="leaves" page="employeeLeaves" title="休假" i18n-en:title="Leave"/>
+            <tab name="timesheets" page="employeeTimesheets" title="工时" i18n-en:title="Work Hours"/>
         </tabs>
 
         <!-- 调动页面：表单提交调 transferEmployee mutation，employeeId 由 dialog data 预填 -->
         <simple name="transfer" form="transfer" useFormActions="true">
             <api url="@mutation:ErpHrEmployee__transferEmployee" withFormData="true"/>
             <actions>
-                <action id="cancel" label="取消" actionType="cancel"/>
-                <action id="confirm" label="确认调动" actionType="submit" level="primary">
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认调动" i18n-en:label="Confirm Transfer" actionType="submit" level="primary">
                     <messages>
                         <success>员工调动已提交</success>
                     </messages>

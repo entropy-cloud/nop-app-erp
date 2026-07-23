@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpInvDrpDockAppointment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpInvDrpDockAppointment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="warehouseId" label="仓库"/>
-                <col id="dockId" label="月台"/>
+                <col id="warehouseId" label="仓库" i18n-en:label="Warehouse"/>
+                <col id="dockId" label="月台" i18n-en:label="Dock"/>
                 <col id="appointmentDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -17,7 +17,7 @@
                 </col>
                 <col id="slotStart" mandatory="true" sortable="true"/>
                 <col id="slotEnd" mandatory="true" sortable="true"/>
-                <col id="crossDockId" label="关联越库"/>
+                <col id="crossDockId" label="关联越库" i18n-en:label="Linked Cross-Dock"/>
                 <col id="carrierInfo" sortable="true"/>
                 <col id="status" sortable="true"/>
                 <col id="remark" sortable="true"/>
@@ -38,7 +38,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -76,7 +76,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  warehouseId[仓库] dockId[月台]
  orgId[业务组织] status[状态]

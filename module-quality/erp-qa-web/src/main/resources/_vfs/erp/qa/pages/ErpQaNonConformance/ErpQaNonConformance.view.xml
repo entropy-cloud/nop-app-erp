@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpQaNonConformance.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpQaNonConformance.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -16,8 +16,8 @@
                 </col>
                 <col id="sourceType" sortable="true"/>
                 <col id="sourceCode" sortable="true"/>
-                <col id="materialId" label="物料"/>
-                <col id="inspection" label="质检单"/>
+                <col id="materialId" label="物料" i18n-en:label="Material"/>
+                <col id="inspection" label="质检单" i18n-en:label="QC Order"/>
                 <col id="quantity" ui:number="true" sortable="true" align="right">
                     <gen-control>
                         <c:script><![CDATA[
@@ -51,7 +51,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="supplierId" label="供应商"/>
+                <col id="supplierId" label="供应商" i18n-en:label="Supplier"/>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -129,7 +129,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[NCR编码] status[状态]
  materialId[物料] supplierId[供应商]
@@ -150,7 +150,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-investigate-button" label="评审" level="primary" icon="fa fa-search">
+                <action id="row-investigate-button" label="评审" i18n-en:label="Review" level="primary" icon="fa fa-search">
                     <api url="@mutation:ErpQaNonConformance__submitReview?ncrId=$id"/>
                     <confirmText>确认提交此 NCR 进入评审？</confirmText>
                     <messages>
@@ -158,7 +158,7 @@
                     </messages>
                     <visibleOn>${status == 'OPEN'}</visibleOn>
                 </action>
-                <action id="row-resolve-button" label="解决" level="success" icon="fa fa-check">
+                <action id="row-resolve-button" label="解决" i18n-en:label="Resolve" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpQaNonConformance__resolve?ncrId=$id&amp;resolution="/>
                     <confirmText>确认解决此 NCR？</confirmText>
                     <messages>
@@ -166,7 +166,7 @@
                     </messages>
                     <visibleOn>${status == 'IN_REVIEW'}</visibleOn>
                 </action>
-                <action id="row-reject-button" label="拒绝" level="warning" icon="fa fa-times">
+                <action id="row-reject-button" label="拒绝" i18n-en:label="Refuse" level="warning" icon="fa fa-times">
                     <api url="@mutation:ErpQaNonConformance__cancel?ncrId=$id"/>
                     <confirmText>确认拒绝/取消此 NCR？</confirmText>
                     <messages>

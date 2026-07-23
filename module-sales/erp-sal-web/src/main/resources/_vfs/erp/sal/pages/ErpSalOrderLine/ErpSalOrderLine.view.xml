@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpSalOrderLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpSalOrderLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialId" label="物料名称"/>
-                <col id="warehouseId" label="发货仓库"/>
+                <col id="materialId" label="物料名称" i18n-en:label="Material Name"/>
+                <col id="warehouseId" label="发货仓库" i18n-en:label="Shipping Warehouse"/>
                 <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right">
                     <gen-control>
                         <c:script><![CDATA[
@@ -275,7 +275,7 @@
             </layout>
         </form>
         <form id="add"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  lineNo[行号] materialId[物料]
  warehouseId[发货仓库] orderId[订单ID]

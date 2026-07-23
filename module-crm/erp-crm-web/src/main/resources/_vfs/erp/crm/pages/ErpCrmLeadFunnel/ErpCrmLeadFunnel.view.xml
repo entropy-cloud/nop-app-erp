@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCrmLeadFunnel.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmLeadFunnel.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="funnelName" sortable="true"/>
                 <col id="periodStart" sortable="true"/>
                 <col id="periodEnd" sortable="true"/>
-                <col id="territoryId" label="销售区域"/>
-                <col id="teamId" label="销售团队"/>
-                <col id="sourceId" label="线索来源"/>
+                <col id="territoryId" label="销售区域" i18n-en:label="Sales Region"/>
+                <col id="teamId" label="销售团队" i18n-en:label="Sales Team"/>
+                <col id="sourceId" label="线索来源" i18n-en:label="Lead Source"/>
                 <col id="totalLeadsAtTop" ui:number="true" sortable="true"/>
                 <col id="totalOpportunities" ui:number="true" sortable="true"/>
                 <col id="totalWon" ui:number="true" sortable="true"/>

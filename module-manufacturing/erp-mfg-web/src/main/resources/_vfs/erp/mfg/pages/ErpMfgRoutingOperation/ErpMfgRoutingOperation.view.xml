@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMfgRoutingOperation.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgRoutingOperation.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="routing" label="工艺路线"/>
+                <col id="routing" label="工艺路线" i18n-en:label="Routing"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="operationCode" sortable="true"/>
                 <col id="operationName" sortable="true"/>
-                <col id="workcenterId" label="工作中心"/>
+                <col id="workcenterId" label="工作中心" i18n-en:label="Work Center"/>
                 <col id="standardTime" ui:number="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -57,7 +57,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  lineNo[行号] operationCode[工序代码]
  routingId[工艺路线] workcenterId[工作中心]

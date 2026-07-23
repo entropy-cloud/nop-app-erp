@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMdMaterial.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMdMaterial.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
@@ -8,8 +8,8 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
                 <col id="materialType" mandatory="true" sortable="true"/>
-                <col id="categoryId" label="分类"/>
-                <col id="uoMId" label="主计量单位"/>
+                <col id="categoryId" label="分类" i18n-en:label="Category"/>
+                <col id="uoMId" label="主计量单位" i18n-en:label="Base UoM"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -27,14 +27,14 @@
                 <col id="costMethod" sortable="true"/>
                 <col id="isBatchManaged" sortable="true"/>
                 <col id="isSerialManaged" sortable="true"/>
-                <col id="defaultWarehouseId" label="默认仓库"/>
+                <col id="defaultWarehouseId" label="默认仓库" i18n-en:label="Default Warehouse"/>
                 <col id="minStock" ui:number="true" sortable="true"/>
                 <col id="maxStock" ui:number="true" sortable="true"/>
                 <col id="safetyStock" ui:number="true" sortable="true"/>
                 <col id="leadTimeDays" ui:number="true" sortable="true"/>
                 <col id="weight" ui:number="true" sortable="true"/>
                 <col id="volume" ui:number="true" sortable="true"/>
-                <col id="defaultTaxRateId" label="默认税率"/>
+                <col id="defaultTaxRateId" label="默认税率" i18n-en:label="Default Tax Rate"/>
                 <!-- C2 跨境贸易扩展：vatRate/drawbackRate 在 grid 列表显示（报关场景高频查询） -->
                 <col id="vatRate" ui:number="true" sortable="true"/>
                 <col id="drawbackRate" ui:number="true" sortable="true"/>
@@ -66,8 +66,8 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
                 <col id="materialType" sortable="true"/>
-                <col id="categoryId" label="分类"/>
-                <col id="uoMId" label="主计量单位"/>
+                <col id="categoryId" label="分类" i18n-en:label="Category"/>
+                <col id="uoMId" label="主计量单位" i18n-en:label="Base UoM"/>
                 <col id="status" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -289,7 +289,7 @@
                 </cell>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[物料编码] name[物料名称]
  status[状态] materialType[物料类型]
@@ -301,7 +301,7 @@
                 <cell id="materialType" filterOp="eq"/>
             </cells>
         </form>
-        <form id="pick-query" editMode="query" title="查询条件">
+        <form id="pick-query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[物料编码] name[物料名称]
  materialType[物料类型] status[状态]
@@ -318,7 +318,7 @@
     <pages>
         <crud name="main">
             <listActions>
-                <action id="batch-active-button" label="批量启用" level="success" icon="fa fa-check-circle-o" batch="true">
+                <action id="batch-active-button" label="批量启用" i18n-en:label="Batch Enable" level="success" icon="fa fa-check-circle-o" batch="true">
                     <api url="@mutation:ErpMdMaterial__batchUpdate">
                         <data>
                             <ids>${ids | split:','}</ids>
@@ -330,7 +330,7 @@
                         <success>批量启用已完成</success>
                     </messages>
                 </action>
-                <action id="batch-inactive-button" label="批量停用" level="warning" icon="fa fa-pause-circle-o" batch="true">
+                <action id="batch-inactive-button" label="批量停用" i18n-en:label="Batch Disable" level="warning" icon="fa fa-pause-circle-o" batch="true">
                     <api url="@mutation:ErpMdMaterial__batchUpdate">
                         <data>
                             <ids>${ids | split:','}</ids>
@@ -346,7 +346,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-delete-button" level="danger" label="删除">
+                <action id="row-delete-button" level="danger" label="删除" i18n-en:label="Delete">
                     <api url="@mutation:ErpMdMaterial__delete?id=$id"/>
                     <confirmText>确认删除此物料？</confirmText>
                     <onEvent>

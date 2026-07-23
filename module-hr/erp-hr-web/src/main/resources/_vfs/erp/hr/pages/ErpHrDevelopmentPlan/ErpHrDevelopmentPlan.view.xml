@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpHrDevelopmentPlan.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrDevelopmentPlan.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="employee" label="员工"/>
+                <col id="employee" label="员工" i18n-en:label="Employee"/>
                 <col id="planName" sortable="true"/>
                 <col id="targetDate" sortable="true" align="center">
                     <gen-control>
@@ -39,7 +39,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="businessDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -95,7 +95,7 @@
             </cells>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  employeeId[员工] planName[计划名称]
  status[状态] businessDate[业务日期]

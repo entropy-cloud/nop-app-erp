@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCrmStage.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmStage.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="stageName" sortable="true"/>
                 <col id="sequence" ui:number="true" sortable="true"/>
-                <col id="teamId" label="销售团队"/>
+                <col id="teamId" label="销售团队" i18n-en:label="Sales Team"/>
                 <col id="defaultProbability" ui:number="true" sortable="true"/>
                 <col id="isWonStage" sortable="true"/>
             </cols>

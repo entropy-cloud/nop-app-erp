@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpDrpLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpDrpLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="planId" label="计划"/>
+                <col id="planId" label="计划" i18n-en:label="Plan"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialId" label="物料"/>
-                <col id="warehouseId" label="目标仓库"/>
-                <col id="sourceWarehouseId" label="来源仓库"/>
+                <col id="materialId" label="物料" i18n-en:label="Material"/>
+                <col id="warehouseId" label="目标仓库" i18n-en:label="Target Warehouse"/>
+                <col id="sourceWarehouseId" label="来源仓库" i18n-en:label="Source Warehouse"/>
                 <col id="replenishmentType" mandatory="true" sortable="true"/>
                 <col id="currentStock" ui:number="true" sortable="true"/>
                 <col id="allocatedQty" ui:number="true" sortable="true" align="right">
@@ -69,7 +69,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
@@ -163,7 +163,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  planId[计划ID] lineNo[行号]
  materialId[物料] warehouseId[目标仓库]
@@ -185,7 +185,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-approve-button" label="批准" level="success" icon="fa fa-check">
+                <action id="row-approve-button" label="批准" i18n-en:label="Approve" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpDrpLine__approveLine?lineId=$id"/>
                     <confirmText>确认批准此补货建议？</confirmText>
                     <messages>
@@ -193,7 +193,7 @@
                     </messages>
                     <visibleOn>${status == 'SUGGESTED'}</visibleOn>
                 </action>
-                <action id="row-reject-button" label="驳回" level="warning" icon="fa fa-times">
+                <action id="row-reject-button" label="驳回" i18n-en:label="Reject" level="warning" icon="fa fa-times">
                     <api url="@mutation:ErpDrpLine__rejectLine?lineId=$id"/>
                     <confirmText>确认驳回此补货建议？</confirmText>
                     <messages>
@@ -201,7 +201,7 @@
                     </messages>
                     <visibleOn>${status == 'SUGGESTED'}</visibleOn>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpDrpLine__cancelLine?lineId=$id"/>
                     <confirmText>确认作废此补货建议？</confirmText>
                     <messages>

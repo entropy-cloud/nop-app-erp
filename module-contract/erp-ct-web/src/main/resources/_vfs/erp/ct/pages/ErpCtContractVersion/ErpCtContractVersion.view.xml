@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCtContractVersion.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCtContractVersion.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="contractId" label="合同"/>
+                <col id="contractId" label="合同" i18n-en:label="Contract"/>
                 <col id="versionNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="versionDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
@@ -160,7 +160,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  contractId[合同ID] versionNo[版本号]
  status[版本状态] isCurrent[是否当前版本]
@@ -181,14 +181,14 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-finalize-button" label="定稿" level="primary" icon="fa fa-check">
+                <action id="row-finalize-button" label="定稿" i18n-en:label="Finalize" level="primary" icon="fa fa-check">
                     <api url="@mutation:ErpCtContractVersion__finalizeVersion?versionId=$id"/>
                     <confirmText>确认定稿此合同版本？</confirmText>
                     <messages>
                         <success>合同版本已定稿</success>
                     </messages>
                 </action>
-                <action id="row-sign-button" label="签署" level="success" icon="fa fa-signature">
+                <action id="row-sign-button" label="签署" i18n-en:label="Sign" level="success" icon="fa fa-signature">
                     <api url="@mutation:ErpCtContractVersion__signVersion?versionId=$id"/>
                     <confirmText>确认签署此合同版本？</confirmText>
                     <messages>

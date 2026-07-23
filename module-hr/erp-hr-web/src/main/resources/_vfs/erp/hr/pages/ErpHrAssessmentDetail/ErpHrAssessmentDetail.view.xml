@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpHrAssessmentDetail.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrAssessmentDetail.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -7,7 +7,7 @@
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="assessmentId" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="competencyId" label="胜任力"/>
+                <col id="competencyId" label="胜任力" i18n-en:label="Competency"/>
                 <col id="actualLevel" ui:number="true" sortable="true"/>
                 <col id="comment" sortable="true"/>
                 <col id="sourceType" sortable="true"/>

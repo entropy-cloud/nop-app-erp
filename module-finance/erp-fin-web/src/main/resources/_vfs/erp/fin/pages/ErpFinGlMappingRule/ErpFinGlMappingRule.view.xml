@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpFinGlMappingRule.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinGlMappingRule.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <!-- plan 2026-07-21-0827-1 A1 Phase 3：list grid 列精选 + form 分组 + 缓存刷新按钮。
@@ -56,7 +56,7 @@
                 <action id="add-button"/>
                 <action id="batch-delete-button"/>
                 <!-- 缓存手动刷新按钮（多节点部署下仅刷新本节点） -->
-                <action id="refresh-cache-button" label="刷新缓存" level="default"
+                <action id="refresh-cache-button" label="刷新缓存" i18n-en:label="Refresh Cache" level="default"
                         icon="fa fa-refresh"
                         tooltip="仅刷新本节点缓存；多节点生效请等待 TTL（默认 3600s）或重启">
                     <api url="@mutation:ErpFinGlMappingRule__refreshCache"/>

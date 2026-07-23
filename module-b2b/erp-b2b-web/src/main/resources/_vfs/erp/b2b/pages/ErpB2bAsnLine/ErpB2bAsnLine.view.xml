@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpB2bAsnLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpB2bAsnLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
@@ -7,7 +7,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="asnId" label="ASN"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="materialId" label="物料"/>
+                <col id="materialId" label="物料" i18n-en:label="Material"/>
                 <col id="supplierPartNo" sortable="true"/>
                 <col id="quantity" ui:number="true" sortable="true" align="right">
                     <gen-control>
@@ -149,7 +149,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  asnId[ASN ID] lineNo[行号]
  materialId[物料] supplierPartNo[供应商料号]

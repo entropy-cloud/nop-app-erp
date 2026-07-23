@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpLogCarrier.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpLogCarrier.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="carrierName" mandatory="true" sortable="true"/>
                 <col id="carrierType" mandatory="true" sortable="true"/>
                 <col id="gatewayId" mandatory="true" sortable="true"/>
-                <col id="partnerId" label="承运商往来单位"/>
+                <col id="partnerId" label="承运商往来单位" i18n-en:label="Carrier Partner"/>
                 <col id="isActive" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="trackingUrlTemplate" sortable="true"/>
                 <col id="maxParcelWeight" ui:number="true" sortable="true"/>
@@ -41,7 +41,7 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="carrierName" mandatory="true" sortable="true"/>
                 <col id="carrierType" mandatory="true" sortable="true"/>
-                <col id="partnerId" label="承运商往来单位"/>
+                <col id="partnerId" label="承运商往来单位" i18n-en:label="Carrier Partner"/>
                 <col id="isActive" mandatory="true" ui:number="true" sortable="true"/>
             </cols>
         </grid>
@@ -108,7 +108,7 @@
                 <cell id="orgId" filterOp="eq"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编码] carrierName[承运商名称]
             </layout>
@@ -117,7 +117,7 @@
                 <cell id="carrierName" filterOp="like"/>
             </cells>
         </form>
-        <form id="pick-query" editMode="query" title="查询条件">
+        <form id="pick-query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编码] carrierName[承运商名称]
  carrierType[承运商类型] isActive[是否启用]

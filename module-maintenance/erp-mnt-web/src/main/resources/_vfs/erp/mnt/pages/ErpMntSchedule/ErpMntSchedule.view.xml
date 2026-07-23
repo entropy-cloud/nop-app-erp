@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMntSchedule.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMntSchedule.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
@@ -7,7 +7,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="equipment" label="设备"/>
+                <col id="equipment" label="设备" i18n-en:label="Equipment"/>
                 <col id="scheduleType" mandatory="true" sortable="true"/>
                 <col id="frequency" ui:number="true" sortable="true"/>
                 <col id="recurrenceType" sortable="true"/>
@@ -63,7 +63,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[计划编码] name[计划名称]
  equipmentId[设备] scheduleType[计划类型]

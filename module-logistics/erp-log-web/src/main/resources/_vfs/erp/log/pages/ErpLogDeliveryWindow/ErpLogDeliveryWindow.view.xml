@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpLogDeliveryWindow.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpLogDeliveryWindow.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="partnerId" label="客户"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="partnerId" label="客户" i18n-en:label="Customer"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="weekday" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="startTime" mandatory="true" sortable="true" align="center">
                     <gen-control>
@@ -86,7 +86,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  partnerId[客户] orgId[业务组织]
  weekday[星期] isActive[是否启用]

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCsTicket.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCsTicket.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="subject" sortable="true"/>
-                <col id="customerId" label="客户"/>
-                <col id="contactId" label="联系人"/>
-                <col id="ticketTypeId" label="工单类型"/>
-                <col id="slaPolicyId" label="SLA策略"/>
-                <col id="catalogItemId" label="目录项"/>
+                <col id="customerId" label="客户" i18n-en:label="Customer"/>
+                <col id="contactId" label="联系人" i18n-en:label="Contact"/>
+                <col id="ticketTypeId" label="工单类型" i18n-en:label="Work Order Type"/>
+                <col id="slaPolicyId" label="SLA策略" i18n-en:label="SLA Policy"/>
+                <col id="catalogItemId" label="目录项" i18n-en:label="Catalog Item"/>
                 <col id="priority" sortable="true"/>
                 <col id="status" sortable="true">
                     <gen-control>
@@ -161,7 +161,7 @@
                                                     <tpl tpl="&lt;strong&gt;${'$'}{title}&lt;/strong&gt;&lt;br/&gt;&lt;span class='text-muted text-sm'&gt;${'$'}{contentSummary}&lt;/span&gt;"/>
                                                 </body>
                                                 <actions j:list="true">
-                                                    <button label="采纳并参考" level="primary" size="sm" actionType="ajax"
+                                                    <button label="采纳并参考" i18n-en:label="Adopt &amp; Reference" level="primary" size="sm" actionType="ajax"
                                                             visibleOn="${'$'}{!!id}"
                                                             confirmText="确认采纳此知识库文章作为工单处理参考？">
                                                         <api method="post" url="/graphql" dataType="raw">
@@ -234,7 +234,7 @@
                                                     <tpl tpl="&lt;strong&gt;${'$'}{title}&lt;/strong&gt;&lt;br/&gt;&lt;span class='text-muted text-sm'&gt;${'$'}{contentSummary}&lt;/span&gt;"/>
                                                 </body>
                                                 <actions j:list="true">
-                                                    <button label="采纳并参考" level="primary" size="sm" actionType="ajax"
+                                                    <button label="采纳并参考" i18n-en:label="Adopt &amp; Reference" level="primary" size="sm" actionType="ajax"
                                                             visibleOn="${'$'}{!!id}"
                                                             confirmText="确认采纳此知识库文章作为工单处理参考？">
                                                         <api method="post" url="/graphql" dataType="raw">
@@ -273,7 +273,7 @@
                 <cell id="createTime" filterOp="date-between"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[单号] customerId[客户]
             </layout>
@@ -289,35 +289,35 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-assign-button" label="分派" level="primary" icon="fa fa-user">
+                <action id="row-assign-button" label="分派" i18n-en:label="Dispatch" level="primary" icon="fa fa-user">
                     <api url="@mutation:ErpCsTicket__assign?ticketId=$id&amp;assignedToId=0"/>
                     <confirmText>确认分派此工单？</confirmText>
                     <messages>
                         <success>工单已分派</success>
                     </messages>
                 </action>
-                <action id="row-start-button" label="开始处理" level="primary" icon="fa fa-play">
+                <action id="row-start-button" label="开始处理" i18n-en:label="Start Processing" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpCsTicket__start?ticketId=$id"/>
                     <confirmText>确认开始处理此工单？</confirmText>
                     <messages>
                         <success>工单已开始处理</success>
                     </messages>
                 </action>
-                <action id="row-resolve-button" label="解决" level="success" icon="fa fa-check">
+                <action id="row-resolve-button" label="解决" i18n-en:label="Resolve" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpCsTicket__resolve?ticketId=$id&amp;resolution="/>
                     <confirmText>确认解决此工单？</confirmText>
                     <messages>
                         <success>工单已解决</success>
                     </messages>
                 </action>
-                <action id="row-close-button" label="关闭" level="info" icon="fa fa-archive">
+                <action id="row-close-button" label="关闭" i18n-en:label="Close" level="info" icon="fa fa-archive">
                     <api url="@mutation:ErpCsTicket__close?ticketId=$id"/>
                     <confirmText>确认关闭此工单？</confirmText>
                     <messages>
                         <success>工单已关闭</success>
                     </messages>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpCsTicket__cancel?ticketId=$id"/>
                     <confirmText>确认作废此工单？</confirmText>
                     <messages>

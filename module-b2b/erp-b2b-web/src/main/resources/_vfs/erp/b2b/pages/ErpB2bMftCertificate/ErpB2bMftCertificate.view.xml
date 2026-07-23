@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpB2bMftCertificate.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpB2bMftCertificate.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="partnerId" label="合作伙伴"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="partnerId" label="合作伙伴" i18n-en:label="Partner"/>
                 <col id="certName" mandatory="true" sortable="true"/>
                 <col id="certType" mandatory="true" sortable="true"/>
                 <col id="algorithm" mandatory="true" sortable="true"/>
@@ -86,7 +86,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  orgId[业务组织] partnerId[合作伙伴]
  certName[证书名称] certType[证书类型]

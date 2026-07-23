@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpPrjTask.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPrjTask.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="projectId" label="项目"/>
-                <col id="parentTaskId" label="父任务"/>
+                <col id="projectId" label="项目" i18n-en:label="Project"/>
+                <col id="parentTaskId" label="父任务" i18n-en:label="Parent Task"/>
                 <col id="title" mandatory="true" sortable="true"/>
-                <col id="assigneeId" label="负责人"/>
-                <col id="dependsOn" label="依赖任务"/>
+                <col id="assigneeId" label="负责人" i18n-en:label="Owner"/>
+                <col id="dependsOn" label="依赖任务" i18n-en:label="Dependent Task"/>
                 <col id="plannedStartDate" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -98,7 +98,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  title[任务标题] projectId[项目]
  assigneeId[负责人] status[状态]
@@ -119,7 +119,7 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-start-button" label="开始" level="primary" icon="fa fa-play">
+                <action id="row-start-button" label="开始" i18n-en:label="Start" level="primary" icon="fa fa-play">
                     <api url="@mutation:ErpPrjTask__startTask?taskId=$id"/>
                     <confirmText>确认开始此任务？</confirmText>
                     <messages>
@@ -127,7 +127,7 @@
                     </messages>
                     <visibleOn>${status == 'TODO'}</visibleOn>
                 </action>
-                <action id="row-complete-button" label="完成" level="success" icon="fa fa-check">
+                <action id="row-complete-button" label="完成" i18n-en:label="Complete" level="success" icon="fa fa-check">
                     <api url="@mutation:ErpPrjTask__completeTask?taskId=$id"/>
                     <confirmText>确认完成此任务？</confirmText>
                     <messages>
@@ -135,7 +135,7 @@
                     </messages>
                     <visibleOn>${status == 'IN_PROGRESS' || status == 'BLOCKED'}</visibleOn>
                 </action>
-                <action id="row-block-button" label="阻塞" level="warning" icon="fa fa-exclamation-triangle">
+                <action id="row-block-button" label="阻塞" i18n-en:label="Block" level="warning" icon="fa fa-exclamation-triangle">
                     <api url="@mutation:ErpPrjTask__blockTask?taskId=$id&amp;reason=blocked"/>
                     <confirmText>确认标记此任务为阻塞？</confirmText>
                     <messages>
@@ -143,7 +143,7 @@
                     </messages>
                     <visibleOn>${status == 'TODO' || status == 'IN_PROGRESS'}</visibleOn>
                 </action>
-                <action id="row-unblock-button" label="解除阻塞" level="primary" icon="fa fa-unlock">
+                <action id="row-unblock-button" label="解除阻塞" i18n-en:label="Unblock" level="primary" icon="fa fa-unlock">
                     <api url="@mutation:ErpPrjTask__unblockTask?taskId=$id"/>
                     <confirmText>确认解除此任务阻塞？</confirmText>
                     <messages>

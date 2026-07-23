@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpHrRecruitment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrRecruitment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="positionId" label="职位"/>
-                <col id="departmentId" label="部门"/>
+                <col id="positionId" label="职位" i18n-en:label="Position"/>
+                <col id="departmentId" label="部门" i18n-en:label="Department"/>
                 <col id="headcount" ui:number="true" sortable="true"/>
                 <col id="candidateName" mandatory="true" sortable="true"/>
                 <col id="source" sortable="true"/>
@@ -35,7 +35,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="interviewer" label="面试官"/>
+                <col id="interviewer" label="面试官" i18n-en:label="Interviewer"/>
                 <col id="interviewDate" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -51,8 +51,8 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="employee" label="员工"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="employee" label="员工" i18n-en:label="Employee"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -100,7 +100,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编号] positionId[招聘职位]
  departmentId[招聘部门] status[状态]
@@ -116,17 +116,17 @@
         </form>
 
         <!-- UC-HR-05 安排面试表单 -->
-        <form id="scheduleInterview" editMode="add" title="安排面试">
+        <form id="scheduleInterview" editMode="add" title="安排面试" i18n-en:title="Schedule Interview">
             <layout>
   interviewerId[面试官ID] interviewDate[面试日期]
 </layout>
             <cells>
-                <cell id="interviewerId" label="面试官ID" domain="long" custom="true">
+                <cell id="interviewerId" label="面试官ID" i18n-en:label="Interviewer ID" domain="long" custom="true">
                     <gen-control>
                         <input-number placeholder="面试官员工ID"/>
                     </gen-control>
                 </cell>
-                <cell id="interviewDate" label="面试日期" domain="date" custom="true">
+                <cell id="interviewDate" label="面试日期" i18n-en:label="Interview Date" domain="date" custom="true">
                     <gen-control>
                         <input-date format="YYYY-MM-DD" placeholder="面试日期"/>
                     </gen-control>
@@ -135,12 +135,12 @@
         </form>
 
         <!-- UC-HR-05 发放Offer表单 -->
-        <form id="makeOffer" editMode="add" title="发放Offer">
+        <form id="makeOffer" editMode="add" title="发放Offer" i18n-en:title="Issue Offer">
             <layout>
   offerSalary[Offer薪资]
 </layout>
             <cells>
-                <cell id="offerSalary" label="Offer薪资(月薪)" domain="decimal" custom="true">
+                <cell id="offerSalary" label="Offer薪资(月薪)" i18n-en:label="Offer Salary (Monthly)" domain="decimal" custom="true">
                     <gen-control>
                         <input-number placeholder="月薪金额"/>
                     </gen-control>
@@ -149,12 +149,12 @@
         </form>
 
         <!-- UC-HR-05 入职表单 -->
-        <form id="hire" editMode="add" title="入职">
+        <form id="hire" editMode="add" title="入职" i18n-en:title="Onboard">
             <layout>
   hiredDate[入职日期]
 </layout>
             <cells>
-                <cell id="hiredDate" label="入职日期" domain="date" custom="true">
+                <cell id="hiredDate" label="入职日期" i18n-en:label="Hire Date" domain="date" custom="true">
                     <gen-control>
                         <input-date format="YYYY-MM-DD" placeholder="入职日期"/>
                     </gen-control>
@@ -168,14 +168,14 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-screening-button" label="筛选" level="primary" icon="fa fa-filter">
+                <action id="row-screening-button" label="筛选" i18n-en:label="Filter" level="primary" icon="fa fa-filter">
                     <api url="@mutation:ErpHrRecruitment__moveToScreening?id=$id"/>
                     <confirmText>确认推进到简历筛选？</confirmText>
                     <messages>
                         <success>已推进到筛选阶段</success>
                     </messages>
                 </action>
-                <action id="row-interview-button" label="面试" level="info" icon="fa fa-calendar"
+                <action id="row-interview-button" label="面试" i18n-en:label="Interview" level="info" icon="fa fa-calendar"
                         actionType="drawer">
                     <dialog page="scheduleInterview" size="md"/>
                 </action>
@@ -183,11 +183,11 @@
                         actionType="drawer">
                     <dialog page="makeOffer" size="md"/>
                 </action>
-                <action id="row-hire-button" label="入职" level="success" icon="fa fa-user-plus"
+                <action id="row-hire-button" label="入职" i18n-en:label="Onboard" level="success" icon="fa fa-user-plus"
                         actionType="drawer">
                     <dialog page="hire" size="md"/>
                 </action>
-                <action id="row-reject-button" label="拒绝" level="danger" icon="fa fa-times">
+                <action id="row-reject-button" label="拒绝" i18n-en:label="Refuse" level="danger" icon="fa fa-times">
                     <api url="@mutation:ErpHrRecruitment__reject?id=$id"/>
                     <confirmText>确认拒绝此候选人？</confirmText>
                     <messages>
@@ -202,8 +202,8 @@
         <simple name="scheduleInterview" form="scheduleInterview" useFormActions="true">
             <api url="@mutation:ErpHrRecruitment__scheduleInterview/id" withFormData="true"/>
             <actions>
-                <action id="cancel" label="取消" actionType="cancel"/>
-                <action id="confirm" label="确认安排" actionType="submit" level="primary">
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认安排" i18n-en:label="Confirm Schedule" actionType="submit" level="primary">
                     <messages>
                         <success>面试已安排</success>
                     </messages>
@@ -215,8 +215,8 @@
         <simple name="makeOffer" form="makeOffer" useFormActions="true">
             <api url="@mutation:ErpHrRecruitment__makeOffer/id" withFormData="true"/>
             <actions>
-                <action id="cancel" label="取消" actionType="cancel"/>
-                <action id="confirm" label="确认发放" actionType="submit" level="primary">
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认发放" i18n-en:label="Confirm Issue" actionType="submit" level="primary">
                     <messages>
                         <success>Offer已发放</success>
                     </messages>
@@ -228,8 +228,8 @@
         <simple name="hire" form="hire" useFormActions="true">
             <api url="@mutation:ErpHrRecruitment__hire/id" withFormData="true"/>
             <actions>
-                <action id="cancel" label="取消" actionType="cancel"/>
-                <action id="confirm" label="确认入职" actionType="submit" level="primary">
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认入职" i18n-en:label="Confirm Onboard" actionType="submit" level="primary">
                     <messages>
                         <success>入职已确认，员工档案已创建</success>
                     </messages>

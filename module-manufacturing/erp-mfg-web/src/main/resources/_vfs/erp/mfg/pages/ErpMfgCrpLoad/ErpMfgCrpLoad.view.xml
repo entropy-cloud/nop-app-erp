@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpMfgCrpLoad.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgCrpLoad.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="workcenterId" label="工作中心"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="workOrder" label="工单"/>
+                <col id="workcenterId" label="工作中心" i18n-en:label="Work Center"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="workOrder" label="工单" i18n-en:label="Work Order"/>
                 <col id="loadDate" mandatory="true" sortable="true" align="center">
                     <gen-control>
                         <c:script><![CDATA[
@@ -50,7 +50,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  workcenterId[工作中心] orgId[业务组织]
  workOrderId[工单] loadDate[负荷日期]

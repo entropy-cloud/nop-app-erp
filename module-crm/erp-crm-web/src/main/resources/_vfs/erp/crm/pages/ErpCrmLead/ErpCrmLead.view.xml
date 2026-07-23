@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCrmLead.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmLead.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="leadType" sortable="true"/>
-                <col id="partnerId" label="客户"/>
-                <col id="sourceId" label="线索来源"/>
-                <col id="leadStatusId" label="线索状态"/>
-                <col id="stageId" label="漏斗阶段"/>
+                <col id="partnerId" label="客户" i18n-en:label="Customer"/>
+                <col id="sourceId" label="线索来源" i18n-en:label="Lead Source"/>
+                <col id="leadStatusId" label="线索状态" i18n-en:label="Lead Status"/>
+                <col id="stageId" label="漏斗阶段" i18n-en:label="Funnel Stage"/>
                 <col id="expectedRevenue" ui:number="true" sortable="true"/>
                 <col id="probability" ui:number="true" sortable="true"/>
-                <col id="campaignId" label="营销活动"/>
-                <col id="teamId" label="销售团队"/>
-                <col id="territoryId" label="销售区域"/>
-                <col id="lostReasonId" label="丢单原因"/>
+                <col id="campaignId" label="营销活动" i18n-en:label="Campaign"/>
+                <col id="teamId" label="销售团队" i18n-en:label="Sales Team"/>
+                <col id="territoryId" label="销售区域" i18n-en:label="Sales Region"/>
+                <col id="lostReasonId" label="丢单原因" i18n-en:label="Lost Reason"/>
                 <col id="docStatus" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -121,7 +121,7 @@
                 <cell id="createTime" filterOp="date-between"/>
             </cells>
         </form>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[编码] leadStatusId[线索状态]
             </layout>
@@ -137,28 +137,28 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
-                <action id="row-qualify-button" label="资质认定" level="primary" icon="fa fa-thumbs-up">
+                <action id="row-qualify-button" label="资质认定" i18n-en:label="Qualification" level="primary" icon="fa fa-thumbs-up">
                     <api url="@mutation:ErpCrmLead__qualify?leadId=$id"/>
                     <confirmText>确认对此线索进行资质认定？</confirmText>
                     <messages>
                         <success>线索已资质认定</success>
                     </messages>
                 </action>
-                <action id="row-convert-button" label="转化为客户" level="success" icon="fa fa-user-plus">
+                <action id="row-convert-button" label="转化为客户" i18n-en:label="Convert to Customer" level="success" icon="fa fa-user-plus">
                     <api url="@mutation:ErpCrmLead__convertToCustomer?leadId=$id"/>
                     <confirmText>确认将此线索转化为客户？</confirmText>
                     <messages>
                         <success>线索已转化为客户</success>
                     </messages>
                 </action>
-                <action id="row-lose-button" label="丢单" level="warning" icon="fa fa-thumbs-down">
+                <action id="row-lose-button" label="丢单" i18n-en:label="Lost" level="warning" icon="fa fa-thumbs-down">
                     <api url="@mutation:ErpCrmLead__lose?leadId=$id&amp;lostReasonId=0&amp;lostReasonDesc="/>
                     <confirmText>确认标记此线索为丢单？</confirmText>
                     <messages>
                         <success>线索已标记为丢单</success>
                     </messages>
                 </action>
-                <action id="row-cancel-button" label="作废" level="danger" icon="fa fa-ban">
+                <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpCrmLead__cancel?leadId=$id"/>
                     <confirmText>确认作废此线索？</confirmText>
                     <messages>

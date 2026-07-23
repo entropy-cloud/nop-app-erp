@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpCsServiceCatalogItem.view.xml" x:schema="/nop/schema/xui/xview.xdef"
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCsServiceCatalogItem.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
@@ -8,11 +8,11 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" sortable="true"/>
-                <col id="orgId" label="业务组织"/>
-                <col id="categoryId" label="分类"/>
-                <col id="parentId" label="上级项"/>
-                <col id="ticketTypeId" label="工单类型"/>
-                <col id="slaPolicyId" label="SLA策略"/>
+                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
+                <col id="categoryId" label="分类" i18n-en:label="Category"/>
+                <col id="parentId" label="上级项" i18n-en:label="Parent Item"/>
+                <col id="ticketTypeId" label="工单类型" i18n-en:label="Work Order Type"/>
+                <col id="slaPolicyId" label="SLA策略" i18n-en:label="SLA Policy"/>
                 <col id="shortDescription" sortable="true"/>
                 <col id="isActive" sortable="true"/>
                 <col id="isPublic" sortable="true"/>
@@ -62,7 +62,7 @@
                      gql:selection="{@listSelection}"/>
             </table>
             <rowActions>
-                <action id="row-add-child-button" level="primary" label="新增子节点">
+                <action id="row-add-child-button" level="primary" label="新增子节点" i18n-en:label="Add Child Node">
                     <dialog page="add-child"/>
                 </action>
             </rowActions>

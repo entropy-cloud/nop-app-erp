@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:extends="_gen/_ErpAstMergeLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+<view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstMergeLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="merge" label="合并单编码"/>
-                <col id="orgId" label="所属组织"/>
+                <col id="merge" label="合并单编码" i18n-en:label="Merge Order Code"/>
+                <col id="orgId" label="所属组织" i18n-en:label="Owning Org"/>
                 <col id="lineNo" ui:number="true" sortable="true"/>
-                <col id="sourceAsset" label="源资产编码"/>
+                <col id="sourceAsset" label="源资产编码" i18n-en:label="Source Asset Code"/>
                 <col id="contributionProportion" sortable="true"/>
                 <col id="originalCostAmount" sortable="true" align="right">
                     <gen-control>
@@ -70,7 +70,7 @@
             </layout>
         </form>
         <form id="add" x:prototype="edit"/>
-        <form id="query" editMode="query" title="查询条件">
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  lineNo[行号] sourceAssetId[源资产]
  mergeId[合并单] contributionProportion[贡献比例]
