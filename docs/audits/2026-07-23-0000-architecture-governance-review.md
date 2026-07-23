@@ -35,7 +35,7 @@ nop-app-erp 的**主脊健康**——DAG 单向依赖、`I*Biz` 写契约、ORM 
 - `-web` 层零跨域 import
 - 693 个 `@Inject` 字段全部包级可见（Nop IoC 规则零违规）
 - 0 个 `@SqlLibMapper` 跨域使用
-- 22,413 个 `_` 前缀生成文件，最近 2 月 `_app.orm.xml` 86 次 commit 均成对出现源模型变更（**caveat**：全仓单 author `canonical`，无法用 blame 区分人写 vs 重生成，需 content-diff 抽样进一步验证）
+- 22,413 个 `_` 前缀生成文件（**口径调和**：实测 git-tracked `_` 前缀 java/xml = 797，any-ext = 2,238；22,413 不匹配任何 git-tracked 口径，推测为口误/位序错排或含工作树未跟踪文件，以 797 为权威——见 `docs/audits/2026-07-24-0605-generated-file-content-diff-evidence.md §1.2`）。最近 2 月 `_app.orm.xml` 94 次 commit（全历史）均成对出现源模型变更（**已 content-diff 实证**：19 个 `_app.orm.xml` 全量 94/94 配对 model 源 + 全 115 commit 级配对扫描零真手编辑漂移，详见闭包项 #12）
 
 漂移与可改进点集中在以下几处（按风险降序）：
 
@@ -58,7 +58,7 @@ nop-app-erp 的**主脊健康**——DAG 单向依赖、`I*Biz` 写契约、ORM 
 |---|---|
 | **Spine** | DAG 单向依赖 + 每域独立 Maven 工程 + `I*Biz` 跨域写契约（`module-boundaries.md` / `domain-module-split-analysis.md §4.1`）。主脊健康。 |
 | **Surface** | 写契约（`I*Biz`，`@BizMutation`）等级清晰；但 daoFor 数据访问层（965 处）退化为半公共表面，仅 11 条规则 checker 监管，未集成 CI。 |
-| **Truth** | `*.orm.xml` 真相源健康（最近 2 月 86 次 commit 配对源模型，**但全仓单 author `canonical`，content-diff 抽样未做**）；字典/状态枚举真相碎裂（F2）。 |
+| **Truth** | `*.orm.xml` 真相源健康（最近 2 月 94 次 commit 配对源模型，**content-diff 抽样已实证零手编辑漂移**——见闭包项 #12 + `docs/audits/2026-07-24-0605-generated-file-content-diff-evidence.md`）；字典/状态枚举真相碎裂（F2）。 |
 | **Ownership** | 模块级 DAG 清晰；finance/master-data 事实上成为隐性共享内核（`ErpFinBusinessType` 137 文件 import）；`notify` 子系统无 owner doc（F5）。 |
 | **Negative path** | 业财一体失败路径清晰（`posted` 兜底 + 兜底扫描）；2 处跨域写豁免的失败/回滚路径已在 `posting-exemptions.md` 显式记录；其余 daoFor 跨域写无文档承载。 |
 | **Time** | 重试/重放由 `posted` 标志 + `idempotency-pattern.md` 覆盖；daoFor 跨域写无独立幂等性论证。 |
@@ -329,7 +329,7 @@ Architecture Governance Prompt §7 要求回答"if people keep bypassing the int
 | `-web` 层零跨域 import | 全 19 域 `-web` 模块扫描清零 | — |
 | `@Inject` 可见性零违规 | 693 处全部包级可见，0 处 `private`/`protected` | — |
 | `@SqlLibMapper` 零使用 | 服务层主动注释规避（`ErpSalCustomerPriceResolver.java:38`） | — |
-| 生成文件 commit 配对源模型 | 最近 2 月 `_app.orm.xml` 86 次 commit 均成对出现源模型变更 | **全仓单 author `canonical`，无法用 blame 区分；应跑 `git log -p -- '_*.{java,xml}'` 做 content-diff 抽样进一步验证** |
+| 生成文件 commit 配对源模型 | 最近 2 月 `_app.orm.xml` 94 次 commit（全历史）均成对出现源模型变更 | **已实证消除**：content-diff 抽样（19 个 `_app.orm.xml` 全量 + 全 115 commit 级配对扫描 + 跨域实体样本）验证零手编辑漂移；口径调和 22,413→797（见 `docs/audits/2026-07-24-0605-generated-file-content-diff-evidence.md`） |
 | 业财 SPI 注册机制合规 | `IErpFinAcctDocProvider` + `ErpFinAcctDocRegistry` 模式落地 | — |
 | DAG 主依赖单向 | master-data 根 + finance 顶的 DAG 无环；600 跨域 refEntityName 中除 F3 的 1 条真漂移（drp→inv ErpInvStockMove）外全部合法 | — |
 | 真 `// TODO` 标记仅 1 处 | `TestErpPrjTaskDependency.java:158` | — |
@@ -353,7 +353,7 @@ Architecture Governance Prompt §7 要求回答"if people keep bypassing the int
 | 9 | ✅ **裁决完成（2026-07-24，plan `2026-07-24-0930-2`）**。裁决=保留在 `erp-inv/` 命名空间并登记命名例外（方案 b）；3 个 dict（`drp-service-level`/`drp-ss-method`/`drp-xdock-status`）ORM 定义+物理文件+消费者全归属 module-drp，迁移到 `erp-drp/` 需改 ORM `ext:dict`（保护区域），登记例外零 ORM 风险。命名例外已登记于 `docs/design/drp/README.md §命名例外登记` | F2 | P2 | ✅ `docs/design/drp/README.md` 含命名例外登记小节；3 dict 文件物理归属与裁决一致（保留 module-drp 内） |
 | 10 | ✅ **Done（2026-07-24，plan `2026-07-24-1400-2` Phase 1）**。在 `erp-qa-dao` 新建非生成常量接口 `ErpQaInspectionType`（`module-quality/erp-qa-dao/.../constants/ErpQaInspectionType.java`，承载 `INSPECTION_TYPE_INCOMING/IN_PROCESS/FINAL/OUTGOING` 四值，D1 先例同型产物；选新建专用接口而非扩展现有 `ErpQaDocStatus`，因检验类型与 doc/approve 状态属不同语义轴）；`ErpMfgWorkOrderProcessor.java` import 与使用点改引 `ErpQaInspectionType.INSPECTION_TYPE_FINAL`，删除 `_ErpQaDaoConstants` import。`mvn clean install -DskipTests` 全 154 模块 BUILD SUCCESS + checker 16 规则零回归 | F6 | P2 | ✅ `grep _ErpQaDaoConstants module-manufacturing` 返回 0 |
 | 11 | ✅ **裁决完成（2026-07-24，plan `2026-07-24-1400-2` Phase 2）**。裁决=登记命名例外（方案 b，零 ORM 风险）：4 实体（`ErpInvDrpSafetyStockCalc`/`ErpInvDrpCrossDock`/`ErpInvDrpDockAppointment`/`ErpInvDrpLeadTimeRecord`）保留 `ErpInvDrp*` 类名 + `erp_inv_drp_*` 表前缀，物理归属已正确（`module-drp`，className `app.erp.drp.dao.entity.*`），重命名触及 ORM 保护区域+表名+66 文件生成产物连锁，风险高于收益。逐项登记于 `docs/design/drp/README.md §ErpInvDrp* 实体命名例外登记`（类名/className/表名/所属域/消费 dict/豁免理由/收敛触发条件）；`docs/architecture/domain-module-split-analysis.md §3` 追加已登记命名例外交叉引用。重命名移入 Deferred（触发条件：drp 域重大 ORM 变更时顺带） | F7 | P2 | ✅ `grep ErpInvDrp module-drp` 全部 66 命中文件均落入 drp owner doc 命名例外登记覆盖范围 |
-| 12 | 跑一次 `git log -p -- '_*.{java,xml}' \| grep -E '^[+-]' \| grep -vE '^[+-]{3}'` 做 content-diff 抽样，验证 22,413 个 `_` 前缀文件零手编辑漂移（消除单 author 证据强度 caveat） | 绿色信号 | P2 | 抽样 N 个 `_` 前缀文件，diff 全部由 codegen 模板生成 |
+| 12 | ✅ **Done（2026-07-24，plan `2026-07-24-0605-1`）**。执行 content-diff 抽样验证生成文件零手编辑漂移。权威人口口径裁决=(a) git-tracked `_` 前缀 java/xml（实测 797，0 gitignored）；22,413↔797 口径调和（22,413 不匹配任何 git-tracked 口径，推测口误/位序错排或含工作树未跟踪文件，以 797 为权威）。分层 content-diff：(1) 19 个 `_app.orm.xml` 全量——94/94 commit 配对 model 源；(2) 全 115 commit 级配对扫描——21 初筛候选经复核（修正配对口径：`_gen/_Erp*.view.xml` 源为 XMeta+template+parent-view）全部判为 codegen 驱动；(3) 关键可证伪证据：action-auth post-extends 经 3 轮 ORM-regen 存活、view 布局变更纯机械字段重排经 2 轮 regen 保留。三态判定：codegen 驱动 115/115、已认可例外 0、**真手编辑漂移 0**（无需 Fix successor）。证据 + 方法论：`docs/audits/2026-07-24-0605-generated-file-content-diff-evidence.md` | 绿色信号 | P2 | ✅ 抽样结果可复现（命令记录在证据文件）；caveat（单 author 无法 blame 区分）经 content-diff 实证消除 |
 
 ---
 
@@ -382,7 +382,7 @@ Architecture Governance Prompt §7 要求回答"if people keep bypassing the int
 **未执行的核查**：
 - 未跑 `mvn clean install -DskipTests` 验证编译
 - 未跑 `nop-compliance-checker.sh` 得到精确 R2 基线（建议闭包项 #1 前置）
-- 未跑 content-diff 验证生成文件零手编辑（建议闭包项 #12）
+- ~~未跑 content-diff 验证生成文件零手编辑（建议闭包项 #12）~~ **已完成（闭包项 #12，2026-07-24，plan `2026-07-24-0605-1`）：content-diff 抽样验证 797 个 git-tracked `_` 前缀 java/xml 生成文件零手编辑漂移**
 
 ---
 
