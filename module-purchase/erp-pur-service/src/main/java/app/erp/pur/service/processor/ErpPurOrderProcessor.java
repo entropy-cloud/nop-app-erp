@@ -135,28 +135,28 @@ public class ErpPurOrderProcessor {
     protected void validateTransitionForWithdraw(ErpPurOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(order, status, "SUBMITTED");
+            throw illegalTransition(order, status, ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpPurOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(order, status, "SUBMITTED");
+            throw illegalTransition(order, status, ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpPurOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(order, status, "SUBMITTED");
+            throw illegalTransition(order, status, ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpPurOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(order, status, "APPROVED");
+            throw illegalTransition(order, status, ErpPurConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

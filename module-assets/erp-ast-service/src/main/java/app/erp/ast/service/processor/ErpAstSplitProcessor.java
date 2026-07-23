@@ -168,21 +168,21 @@ public class ErpAstSplitProcessor {
     protected void validateTransitionForWithdraw(ErpAstSplit split, IServiceContext context) {
         String status = currentApproveStatus(split);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(split, status, "SUBMITTED");
+            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstSplit split, IServiceContext context) {
         String status = currentApproveStatus(split);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(split, status, "SUBMITTED");
+            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpAstSplit split, IServiceContext context) {
         String status = currentApproveStatus(split);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(split, status, "SUBMITTED");
+            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 

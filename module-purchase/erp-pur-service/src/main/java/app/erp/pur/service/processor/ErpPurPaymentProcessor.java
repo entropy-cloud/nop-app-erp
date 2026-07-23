@@ -158,28 +158,28 @@ public class ErpPurPaymentProcessor {
     protected void validateTransitionForWithdraw(ErpPurPayment payment, IServiceContext context) {
         String status = payment.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(payment, status, "SUBMITTED");
+            throw illegalTransition(payment, status, ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpPurPayment payment, IServiceContext context) {
         String status = payment.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(payment, status, "SUBMITTED");
+            throw illegalTransition(payment, status, ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpPurPayment payment, IServiceContext context) {
         String status = payment.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(payment, status, "SUBMITTED");
+            throw illegalTransition(payment, status, ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpPurPayment payment, IServiceContext context) {
         String status = payment.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(payment, status, "APPROVED");
+            throw illegalTransition(payment, status, ErpPurConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

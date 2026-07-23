@@ -92,28 +92,28 @@ public class ErpFinEmployeeAdvanceProcessor {
     protected void validateTransitionForWithdraw(ErpFinEmployeeAdvance advance, IServiceContext context) {
         String status = currentApproveStatus(advance);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(advance, status, "SUBMITTED");
+            throw illegalTransition(advance, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpFinEmployeeAdvance advance, IServiceContext context) {
         String status = currentApproveStatus(advance);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(advance, status, "SUBMITTED");
+            throw illegalTransition(advance, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpFinEmployeeAdvance advance, IServiceContext context) {
         String status = currentApproveStatus(advance);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(advance, status, "SUBMITTED");
+            throw illegalTransition(advance, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpFinEmployeeAdvance advance, IServiceContext context) {
         String status = currentApproveStatus(advance);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(advance, status, "APPROVED");
+            throw illegalTransition(advance, status, ErpFinConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

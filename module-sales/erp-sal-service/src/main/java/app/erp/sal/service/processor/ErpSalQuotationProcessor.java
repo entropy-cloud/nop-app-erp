@@ -132,28 +132,28 @@ public class ErpSalQuotationProcessor {
     protected void validateTransitionForWithdraw(ErpSalQuotation quotation, IServiceContext context) {
         String status = quotation.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(quotation, status, "SUBMITTED");
+            throw illegalTransition(quotation, status, ErpSalConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpSalQuotation quotation, IServiceContext context) {
         String status = quotation.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(quotation, status, "SUBMITTED");
+            throw illegalTransition(quotation, status, ErpSalConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpSalQuotation quotation, IServiceContext context) {
         String status = quotation.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(quotation, status, "SUBMITTED");
+            throw illegalTransition(quotation, status, ErpSalConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpSalQuotation quotation, IServiceContext context) {
         String status = quotation.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(quotation, status, "APPROVED");
+            throw illegalTransition(quotation, status, ErpSalConstants.APPROVE_STATUS_APPROVED);
         }
     }
 
@@ -167,7 +167,7 @@ public class ErpSalQuotationProcessor {
     protected void validateTransitionForConfirm(ErpSalQuotation quotation, IServiceContext context) {
         String status = quotation.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(quotation, status, "APPROVED");
+            throw illegalTransition(quotation, status, ErpSalConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

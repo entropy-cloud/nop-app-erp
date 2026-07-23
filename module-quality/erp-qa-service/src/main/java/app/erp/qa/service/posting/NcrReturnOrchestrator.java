@@ -2,10 +2,12 @@ package app.erp.qa.service.posting;
 
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.pur.biz.IErpPurReturnBiz;
+import app.erp.pur.dao.constants.ErpPurDocStatus;
 import app.erp.pur.dao.entity.ErpPurReturn;
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import app.erp.qa.service.ErpQaErrors;
 import app.erp.sal.biz.IErpSalReturnBiz;
+import app.erp.sal.dao.constants.ErpSalDocStatus;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -91,8 +93,8 @@ public class NcrReturnOrchestrator {
         data.put("warehouseId", warehouseId);
         data.put("currencyId", currencyId);
         data.put("businessDate", resolveBusinessDate(ncr));
-        data.put("docStatus", "DRAFT");
-        data.put("approveStatus", "UNSUBMITTED");
+        data.put("docStatus", ErpPurDocStatus.DOC_STATUS_DRAFT);
+        data.put("approveStatus", ErpPurDocStatus.APPROVE_STATUS_UNSUBMITTED);
         data.put("remark", "NCR退货:" + ncr.getCode());
         ErpPurReturn purReturn = purReturnBiz.save(data, context);
         return purReturn != null ? purReturn.getCode() : null;
@@ -109,8 +111,8 @@ public class NcrReturnOrchestrator {
         data.put("warehouseId", warehouseId);
         data.put("currencyId", currencyId);
         data.put("businessDate", resolveBusinessDate(ncr));
-        data.put("docStatus", "DRAFT");
-        data.put("approveStatus", "UNSUBMITTED");
+        data.put("docStatus", ErpSalDocStatus.DOC_STATUS_DRAFT);
+        data.put("approveStatus", ErpSalDocStatus.APPROVE_STATUS_UNSUBMITTED);
         data.put("remark", "NCR退货:" + ncr.getCode());
         ErpSalReturn salReturn = salReturnBiz.save(data, context);
         return salReturn != null ? salReturn.getCode() : null;

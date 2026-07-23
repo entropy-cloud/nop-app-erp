@@ -132,28 +132,28 @@ public class ErpAstAssetCapitalizationProcessor {
     protected void validateTransitionForWithdraw(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(cap, status, "SUBMITTED");
+            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(cap, status, "SUBMITTED");
+            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(cap, status, "SUBMITTED");
+            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(cap, status, "APPROVED");
+            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

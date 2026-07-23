@@ -238,7 +238,7 @@ public class ErpFinBadDebtProcessor {
     protected void validateTransitionForSubmit(ErpFinBadDebt debt) {
         String status = currentApprovalStatus(debt);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED)) {
-            throw illegalTransition(debt, status, "UNSUBMITTED");
+            throw illegalTransition(debt, status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED);
         }
     }
 

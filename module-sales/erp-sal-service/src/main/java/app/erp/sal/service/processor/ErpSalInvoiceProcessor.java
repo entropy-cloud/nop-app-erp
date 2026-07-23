@@ -133,28 +133,28 @@ public class ErpSalInvoiceProcessor {
     protected void validateTransitionForWithdraw(ErpSalInvoice invoice, IServiceContext context) {
         String status = invoice.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(invoice, status, "SUBMITTED");
+            throw illegalTransition(invoice, status, ErpSalConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpSalInvoice invoice, IServiceContext context) {
         String status = invoice.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(invoice, status, "SUBMITTED");
+            throw illegalTransition(invoice, status, ErpSalConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpSalInvoice invoice, IServiceContext context) {
         String status = invoice.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(invoice, status, "SUBMITTED");
+            throw illegalTransition(invoice, status, ErpSalConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpSalInvoice invoice, IServiceContext context) {
         String status = invoice.getApproveStatus();
         if (status == null || !Objects.equals(status, ErpSalConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(invoice, status, "APPROVED");
+            throw illegalTransition(invoice, status, ErpSalConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

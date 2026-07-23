@@ -52,11 +52,6 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  */
 public class ErpInvLandedCostProcessor {
 
-    static final String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-    static final String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-    static final String APPROVE_STATUS_APPROVED = "APPROVED";
-    static final String APPROVE_STATUS_REJECTED = "REJECTED";
-
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ErpInvLandedCostProcessor.class);
 
     @Inject
@@ -79,7 +74,7 @@ public class ErpInvLandedCostProcessor {
     public ErpInvLandedCost approve(Long id, IServiceContext context) {
         ErpInvLandedCost landedCost = requireLandedCost(id, context);
 
-        if (Objects.equals(landedCost.getApproveStatus(), APPROVE_STATUS_APPROVED)) {
+        if (Objects.equals(landedCost.getApproveStatus(), ErpInvConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpInvErrors.ERR_LANDED_COST_ALREADY_APPROVED)
                     .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
         }
@@ -193,7 +188,7 @@ public class ErpInvLandedCostProcessor {
 
     protected void validateCanReverse(ErpInvLandedCost landedCost, IServiceContext context) {
         if (!Boolean.TRUE.equals(landedCost.getPosted())
-                || !Objects.equals(landedCost.getApproveStatus(), APPROVE_STATUS_APPROVED)) {
+                || !Objects.equals(landedCost.getApproveStatus(), ErpInvConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpInvErrors.ERR_LANDED_COST_NOT_POSTED)
                     .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
         }
@@ -232,7 +227,7 @@ public class ErpInvLandedCostProcessor {
         Timestamp now = CoreMetrics.currentTimestamp();
         managed.setPosted(false);
         managed.setPostedAt(now);
-        managed.setApproveStatus(APPROVE_STATUS_REJECTED);
+        managed.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
         managed.setDocStatus(ErpInvConstants.DOC_STATUS_CANCELLED);
         landedCostDao().updateEntity(managed);
         ormTemplate.flushSession();
@@ -281,7 +276,7 @@ public class ErpInvLandedCostProcessor {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("receiveId", receiveId),
-                ne("docStatus", "CANCELLED")
+                ne("docStatus", ErpInvConstants.DOC_STATUS_CANCELLED)
         ));
         List<ErpInvLandedCost> existing = dao.findAllByQuery(q);
         if (!existing.isEmpty()) {
@@ -312,7 +307,7 @@ public class ErpInvLandedCostProcessor {
         head.setTotalCostAmount(freightAmount);
         head.setAllocationMethod(ErpInvConstants.ALLOC_METHOD_BY_AMOUNT);
         head.setDocStatus(ErpInvConstants.DOC_STATUS_DRAFT);
-        head.setApproveStatus(APPROVE_STATUS_UNSUBMITTED);
+        head.setApproveStatus(ErpInvConstants.APPROVE_STATUS_UNSUBMITTED);
         head.setPosted(false);
         head.setBusinessDate(CoreMetrics.today());
         dao.saveEntity(head);
@@ -351,7 +346,7 @@ public class ErpInvLandedCostProcessor {
         adjust.setAdjustType(ErpInvConstants.ADJUST_TYPE_LANDED_COST_SUPPLEMENT);
         adjust.setReason("到岸成本分摊：" + landedCost.getCode());
         adjust.setDocStatus(ErpInvConstants.DOC_STATUS_DRAFT);
-        adjust.setApproveStatus(APPROVE_STATUS_APPROVED);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_APPROVED);
         adjust.setPosted(false);
         adjust.setCurrencyId(landedCost.getCurrencyId());
         adjustDao.saveEntity(adjust);
@@ -395,7 +390,7 @@ public class ErpInvLandedCostProcessor {
 
         landedCost = reload(landedCost.getId());
         Timestamp now = CoreMetrics.currentTimestamp();
-        landedCost.setApproveStatus(APPROVE_STATUS_APPROVED);
+        landedCost.setApproveStatus(ErpInvConstants.APPROVE_STATUS_APPROVED);
         landedCost.setApprovedBy(currentUserId());
         landedCost.setApprovedAt(now);
         landedCost.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
@@ -425,7 +420,7 @@ public class ErpInvLandedCostProcessor {
                     .param(ErpInvErrors.ARG_RECEIVE_ID, "null");
         }
         String status = receive.getApproveStatus();
-        if (!APPROVE_STATUS_APPROVED.equals(status)) {
+        if (!ErpInvConstants.APPROVE_STATUS_APPROVED.equals(status)) {
             throw new NopException(ErpInvErrors.ERR_LANDED_COST_RECEIVE_NOT_APPROVED)
                     .param(ErpInvErrors.ARG_RECEIVE_ID, receive.getId());
         }
@@ -436,7 +431,7 @@ public class ErpInvLandedCostProcessor {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("receiveId", receiveId),
-                eq("approveStatus", APPROVE_STATUS_APPROVED)
+                eq("approveStatus", ErpInvConstants.APPROVE_STATUS_APPROVED)
         ));
         List<ErpInvLandedCost> existing = dao.findAllByQuery(q);
         for (ErpInvLandedCost lc : existing) {

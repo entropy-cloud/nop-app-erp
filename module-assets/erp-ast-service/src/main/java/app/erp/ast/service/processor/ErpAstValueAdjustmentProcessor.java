@@ -138,28 +138,28 @@ public class ErpAstValueAdjustmentProcessor {
     protected void validateTransitionForWithdraw(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjustment, status, "SUBMITTED");
+            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjustment, status, "SUBMITTED");
+            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjustment, status, "SUBMITTED");
+            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(adjustment, status, "APPROVED");
+            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

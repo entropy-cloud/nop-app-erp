@@ -8,6 +8,7 @@ import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.pur.dao.constants.ErpPurDocStatus;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import io.nop.api.core.beans.query.QueryBean;
@@ -52,9 +53,6 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p><b>Non-Goal</b>：仅支持 PURCHASE_REQUEST / WORK_ORDER_REQUEST / SUBCONTRACT_REQUEST 三类释放。
  */
 public class MrpReleaseService {
-
-    static final String PUR_DOC_STATUS_DRAFT = "DRAFT";
-    static final String PUR_APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
 
     @Inject
     IDaoProvider daoProvider;
@@ -145,8 +143,8 @@ public class MrpReleaseService {
         order.setCurrencyId(currencyId);
         order.setBusinessDate(today);
         order.setDeliveryDate(line.getPlannedDate());
-        order.setDocStatus(PUR_DOC_STATUS_DRAFT);
-        order.setApproveStatus(PUR_APPROVE_STATUS_UNSUBMITTED);
+        order.setDocStatus(ErpPurDocStatus.DOC_STATUS_DRAFT);
+        order.setApproveStatus(ErpPurDocStatus.APPROVE_STATUS_UNSUBMITTED);
         // O-4 架构豁免：MRP 自动释放不走人工审批管道，跨模块直接持久化采购单骨架草稿（单价/金额 0 待采购员补录）。
         // 理由/风险/补偿见 docs/architecture/posting-exemptions.md §MrpReleaseService
         orderDao.saveEntity(order);

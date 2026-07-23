@@ -148,28 +148,28 @@ public class ErpAstDisposalProcessor {
     protected void validateTransitionForWithdraw(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(disposal, status, "SUBMITTED");
+            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(disposal, status, "SUBMITTED");
+            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(disposal, status, "SUBMITTED");
+            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(disposal, status, "APPROVED");
+            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

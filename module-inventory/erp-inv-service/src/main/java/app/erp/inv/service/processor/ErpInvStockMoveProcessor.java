@@ -188,7 +188,7 @@ public class ErpInvStockMoveProcessor {
             throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
                     .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT");
+                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, ErpInvConstants.DOC_STATUS_DRAFT);
         }
         validateAvailable(move, lines, context);
         applyReservation(move, lines, true, context);

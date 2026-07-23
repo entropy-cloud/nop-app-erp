@@ -112,28 +112,28 @@ public class ErpFinExpenseClaimProcessor {
     protected void validateTransitionForWithdraw(ErpFinExpenseClaim claim, IServiceContext context) {
         String status = currentApproveStatus(claim);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(claim, status, "SUBMITTED");
+            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpFinExpenseClaim claim, IServiceContext context) {
         String status = currentApproveStatus(claim);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(claim, status, "SUBMITTED");
+            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpFinExpenseClaim claim, IServiceContext context) {
         String status = currentApproveStatus(claim);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(claim, status, "SUBMITTED");
+            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpFinExpenseClaim claim, IServiceContext context) {
         String status = currentApproveStatus(claim);
         if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(claim, status, "APPROVED");
+            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_APPROVED);
         }
     }
 

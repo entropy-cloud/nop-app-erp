@@ -41,11 +41,6 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  */
 public class ErpInvCostAdjustProcessor {
 
-    static final String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-    static final String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-    static final String APPROVE_STATUS_APPROVED = "APPROVED";
-    static final String APPROVE_STATUS_REJECTED = "REJECTED";
-
     @Inject
     IDaoProvider daoProvider;
 
@@ -64,7 +59,7 @@ public class ErpInvCostAdjustProcessor {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
         validateNotCancelled(adjust, context);
         validateTransitionForSubmit(adjust);
-        adjust.setApproveStatus(APPROVE_STATUS_SUBMITTED);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_SUBMITTED);
         adjustDao().updateEntity(adjust);
         return adjust;
     }
@@ -73,7 +68,7 @@ public class ErpInvCostAdjustProcessor {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
         validateNotCancelled(adjust, context);
         validateTransitionForWithdraw(adjust);
-        adjust.setApproveStatus(APPROVE_STATUS_UNSUBMITTED);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_UNSUBMITTED);
         adjustDao().updateEntity(adjust);
         return adjust;
     }
@@ -85,7 +80,7 @@ public class ErpInvCostAdjustProcessor {
         }
         validateNotCancelled(adjust, context);
         validateTransitionForApprove(adjust);
-        adjust.setApproveStatus(APPROVE_STATUS_APPROVED);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_APPROVED);
         adjust.setApprovedBy(currentUserId());
         adjust.setApprovedAt(CoreMetrics.currentTimestamp());
         adjustDao().updateEntity(adjust);
@@ -96,7 +91,7 @@ public class ErpInvCostAdjustProcessor {
         ErpInvCostAdjust adjust = requireAdjustment(id, context);
         validateNotCancelled(adjust, context);
         validateTransitionForReject(adjust);
-        adjust.setApproveStatus(APPROVE_STATUS_REJECTED);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
         adjustDao().updateEntity(adjust);
         return adjust;
     }
@@ -110,7 +105,7 @@ public class ErpInvCostAdjustProcessor {
         if (Boolean.TRUE.equals(adjust.getPosted())) {
             throw illegalTransition(adjust, currentApproveStatus(adjust), "未过账（先冲销再反审）");
         }
-        adjust.setApproveStatus(APPROVE_STATUS_REJECTED);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
         adjustDao().updateEntity(adjust);
         return adjust;
     }
@@ -124,7 +119,7 @@ public class ErpInvCostAdjustProcessor {
             throw new NopException(ErpInvErrors.ERR_COST_ADJUST_ALREADY_APPLIED)
                     .param(ErpInvErrors.ARG_ADJUST_CODE, adjust.getCode());
         }
-        if (isApprovalRequired() && !Objects.equals(currentApproveStatus(adjust), APPROVE_STATUS_APPROVED)) {
+        if (isApprovalRequired() && !Objects.equals(currentApproveStatus(adjust), ErpInvConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpInvErrors.ERR_COST_ADJUST_NOT_APPROVED)
                     .param(ErpInvErrors.ARG_ADJUST_CODE, adjust.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, currentApproveStatus(adjust));
@@ -174,36 +169,36 @@ public class ErpInvCostAdjustProcessor {
 
     protected void validateTransitionForSubmit(ErpInvCostAdjust adjust) {
         String status = currentApproveStatus(adjust);
-        if (!Objects.equals(status, APPROVE_STATUS_UNSUBMITTED) && !Objects.equals(status, APPROVE_STATUS_REJECTED)) {
+        if (!Objects.equals(status, ErpInvConstants.APPROVE_STATUS_UNSUBMITTED) && !Objects.equals(status, ErpInvConstants.APPROVE_STATUS_REJECTED)) {
             throw illegalTransition(adjust, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpInvCostAdjust adjust) {
         String status = currentApproveStatus(adjust);
-        if (!Objects.equals(status, APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjust, status, "SUBMITTED");
+        if (!Objects.equals(status, ErpInvConstants.APPROVE_STATUS_SUBMITTED)) {
+            throw illegalTransition(adjust, status, ErpInvConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpInvCostAdjust adjust) {
         String status = currentApproveStatus(adjust);
-        if (!Objects.equals(status, APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjust, status, "SUBMITTED");
+        if (!Objects.equals(status, ErpInvConstants.APPROVE_STATUS_SUBMITTED)) {
+            throw illegalTransition(adjust, status, ErpInvConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpInvCostAdjust adjust) {
         String status = currentApproveStatus(adjust);
-        if (!Objects.equals(status, APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjust, status, "SUBMITTED");
+        if (!Objects.equals(status, ErpInvConstants.APPROVE_STATUS_SUBMITTED)) {
+            throw illegalTransition(adjust, status, ErpInvConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpInvCostAdjust adjust) {
         String status = currentApproveStatus(adjust);
-        if (!Objects.equals(status, APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(adjust, status, "APPROVED");
+        if (!Objects.equals(status, ErpInvConstants.APPROVE_STATUS_APPROVED)) {
+            throw illegalTransition(adjust, status, ErpInvConstants.APPROVE_STATUS_APPROVED);
         }
     }
 
@@ -219,7 +214,7 @@ public class ErpInvCostAdjustProcessor {
 
     protected String currentApproveStatus(ErpInvCostAdjust adjust) {
         String status = adjust.getApproveStatus();
-        return status != null ? status : APPROVE_STATUS_UNSUBMITTED;
+        return status != null ? status : ErpInvConstants.APPROVE_STATUS_UNSUBMITTED;
     }
 
     // ---------- 查询/加载辅助 ----------

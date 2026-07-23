@@ -170,21 +170,21 @@ public class ErpAstMergeProcessor {
     protected void validateTransitionForWithdraw(ErpAstMerge merge, IServiceContext context) {
         String status = currentApproveStatus(merge);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(merge, status, "SUBMITTED");
+            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstMerge merge, IServiceContext context) {
         String status = currentApproveStatus(merge);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(merge, status, "SUBMITTED");
+            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpAstMerge merge, IServiceContext context) {
         String status = currentApproveStatus(merge);
         if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(merge, status, "SUBMITTED");
+            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 

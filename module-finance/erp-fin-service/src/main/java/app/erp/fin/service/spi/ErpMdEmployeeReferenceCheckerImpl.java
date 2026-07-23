@@ -1,6 +1,7 @@
 package app.erp.fin.service.spi;
 
 import app.erp.fin.dao.entity.ErpFinEmployeeAdvance;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.spi.IErpMdEmployeeReferenceChecker;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IDaoProvider;
@@ -50,7 +51,7 @@ public class ErpMdEmployeeReferenceCheckerImpl implements IErpMdEmployeeReferenc
         QueryBean q = new QueryBean();
         q.addFilter(eq("employeeId", employeeId));
         // 仅计未取消的借款单（取消单不构成删除阻断）
-        q.addFilter(ne("docStatus", "CANCELLED"));
+        q.addFilter(ne("docStatus", ErpFinConstants.DOC_STATUS_CANCELLED));
         return dao.findAllByQuery(q).size();
     }
 }

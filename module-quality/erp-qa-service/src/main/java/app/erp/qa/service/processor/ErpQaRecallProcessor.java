@@ -81,28 +81,28 @@ public class ErpQaRecallProcessor {
     protected void validateTransitionForWithdraw(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
         if (aStatus == null || !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(recall, aStatus, "SUBMITTED");
+            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
         if (aStatus == null || !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(recall, aStatus, "SUBMITTED");
+            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
         if (aStatus == null || !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(recall, aStatus, "SUBMITTED");
+            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
         if (aStatus == null || !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(recall, aStatus, "APPROVED");
+            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_APPROVED);
         }
     }
 
