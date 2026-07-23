@@ -144,6 +144,8 @@ Architecture Governance Prompt §7 要求回答"if people keep bypassing the int
 
 ### 🔴 F2 — 字典与状态枚举真相碎裂（HIGH）
 
+> **解决状态（2026-07-24，plan `2026-07-24-0930-2`）**：(a) approve-status 字典字节级重复——8 份无 ORM 消费者的 per-domain 文件已移除（仅 inventory 保留，Deferred）；(b)(c) Java 常量重复——D1 `Erp*DocStatus` 接口已推广至 cs/mnt/mfg/qa（全域 9 域）；(d) 硬编码字面量全量替换——Deferred successor。doc-status 7 域合并候选——Deferred（ORM ext:dict 保护区域）。详见闭包前必须项 #3（🔶 部分 Done）/ #9（✅ Done）。
+
 **违反**：
 - Architecture Governance Prompt §3 "Keep One Truth"
 - Architecture Governance Prompt §Rot Indicators "duplicate truth: the same rule or list encoded in multiple places"
@@ -334,13 +336,13 @@ Architecture Governance Prompt §7 要求回答"if people keep bypassing the int
 |---|---|---|---|---|
 | 1 | **先评估 I*Biz 注入对单模块测试启动的成本**（contract/aps 已注释说明级联依赖问题），可能需 Nop 平台 lazy/SPI 解耦；评估后再启动 Type 1+4 的 ~110-180 处真违规 daoFor 重构 | F1 | P0 | 跑 `mvn test -pl module-contract` 验证 I*Biz 强注入是否破坏单模块测试启动 |
 | 2 | **补登 `ErpB2bAsnBizModel` 跨域写豁免**到 `posting-exemptions.md`（已有代码注释，缺架构登记） | F1 | P0 | `grep ErpB2bAsn posting-exemptions.md` 应返回登记条目 |
-| 3 | 在 master-data 定义 `approve-status`/`doc-status` 等通用字典为共享 dict，各域 `ext:dict` 引用；推广 `2026-07-16-2134-1` D1 模式（dao 层 `Erp*DocStatus` 接口）到全域 | F2 | P0 | `find module-* -name 'approve-status.dict.yaml'` 应只返回 master-data 1 条；`find module-*/erp-*-dao -name 'Erp*DocStatus.java'` 应覆盖全部有审批流的域 |
+| 3 | 🔶 **部分 Done（2026-07-24，plan `2026-07-24-0930-2`）**。D1 全域推广完成：`Erp*DocStatus` dao 层接口现已覆盖 9 域（既有 pur/sal/fin/ast/inv + 新增 cs/mnt/mfg/qa）；8 份无 ORM 消费者的冗余 per-domain `approve-status.dict.yaml` 已移除（ast/cs/fin/mnt/mfg/pur/qa/sal）。**Deferred**：共享 dict 统一（inventory 的 `erp-inv/approve-status` 因 5 处 ORM `ext:dict` 引用保留；doc-status 7 域值集合相同但合并需统一 ORM `ext:dict`）属 ORM 保护区域，归 successor（触发：ORM ext:dict 统一授权）。在 master-data 定义共享 dict 为 successor 范围 | F2 | P0 | D1：`find module-*/erp-*-dao -name 'Erp*DocStatus.java'` 覆盖 9 域（✅）；`find module-* -name 'approve-status.dict.yaml'` 现返回 1 条（inventory 保留，Deferred，非 0）；详见 plan `2026-07-24-0930-2` §Deferred But Adjudicated |
 | 4 | ✅ **既有 `nop-compliance-checker.sh` 接入 CI**（非新写），记录当前精确基线（R2c=1108, R3=19, R11=0，见 `docs/audits/compliance-baseline.md`），后续每次增量不得超过基线。**Done（2026-07-24，plan `2026-07-24-0930-1`）** | F8 | P1 | ✅ CI 配置文件存在（`.github/workflows/compliance.yml`）；checker 在 PR 检查中实际运行（compliance job）；基线日志可查（`docs/audits/compliance-baseline.md` 含 16 行精确基线 + 门控规则 + 机器可读 yaml 块；门控经 anti-fake-green 三例证明有效） |
 | 5 | 抽取 `app-erp-common-api`（**仅 SPI 接口，零 dao/entity**）承载 `IErpFinBusinessType`/`IPostingEvent`/`IErpMdAcctSchemaResolver`；finance/master-data 提供实现。**不**搬实体到 kernel（会让 master-data 失去 DAG 根地位） | F4 | P1 | `mvn dependency:tree -pl module-master-data` 仍零业务依赖；`ErpFinBusinessType` 的 137 个跨域 import 改为 `IErpFinBusinessType` |
 | 6 | ✅ 19 个 `Erp*WebPagesTest` 改为 `@Tag("full-app")` + 19 个 `erp-*-web/pom.xml` surefire `excludedGroups=full-app`（模块级跳过，保留"仅全量 classpath 可运行"语义）+ CI `app-erp-all` 阶段强制运行页面校验。**Done（2026-07-24，plan `2026-07-24-0930-1`）** | F9 | P1 | ✅ CI `compliance.yml` 含 `web-pages-validation` job 跑 `mvn -pl app-erp-all -am test -Dtest=ErpAllWebPagesTest` 全绿（Tests run: 1, Failures: 0；该聚合测试调用 `pageProvider.validateAllPages()` 覆盖全 19 域页面，Decision a 复用既有非 @Disabled 聚合测试而非重跑 19 个域级测试；模块级 `mvn test -pl module-finance/erp-fin-web` Tests run: 0 验证 tag 排除生效） |
 | 7 | 将 F3 的 drp→inv ErpInvStockMove 边在 `data-dependency-matrix.md §5.6.2` 显式登记（批准或回退代码）；同步补全 mfg→inv/mnt→ast 在 §5.6.2 表格的"跨业务域引用"列 | F3 | P1 | §5.6.2 表格不再有遗漏；`grep ErpInvStockMove docs/architecture/data-dependency-matrix.md` 应返回登记 |
 | 8 | 创建 `docs/design/notification-dispatch/README.md` + 在 `module-boundaries.md §Owner Docs` 表显式增加 notify 行 | F5 | P1 | `ls docs/design/notification-dispatch/` 非空；`grep notify module-boundaries.md` 返回 Owner Docs 行 |
-| 9 | 裁决 drp 在 `erp-inv/` 命名空间下的 3 个 dict 文件归属（按描述对象归 inv 邻接，还是按拥有者归 drp）；裁决后迁移或登记 | F2 | P2 | dict 文件目录归属与裁决一致 |
+| 9 | ✅ **裁决完成（2026-07-24，plan `2026-07-24-0930-2`）**。裁决=保留在 `erp-inv/` 命名空间并登记命名例外（方案 b）；3 个 dict（`drp-service-level`/`drp-ss-method`/`drp-xdock-status`）ORM 定义+物理文件+消费者全归属 module-drp，迁移到 `erp-drp/` 需改 ORM `ext:dict`（保护区域），登记例外零 ORM 风险。命名例外已登记于 `docs/design/drp/README.md §命名例外登记` | F2 | P2 | ✅ `docs/design/drp/README.md` 含命名例外登记小节；3 dict 文件物理归属与裁决一致（保留 module-drp 内） |
 | 10 | mfg→qa 的 `_ErpQaDaoConstants` 跨域依赖：按 `2026-07-16-2134-1` D1 模式在 `erp-qa-dao` 创建 `ErpQaDocStatus` 接口，mfg 改 import 它 | F6 | P2 | `grep _ErpQaDaoConstants module-manufacturing` 应返回 0 |
 | 11 | drp 4 个 `ErpInvDrp*` 实体重命名（→ `ErpDrp*`），或在 `docs/design/drp/README.md` 的命名例外小节显式登记 | F7 | P2 | `grep ErpInvDrp module-drp` 应返回 0 或全部登记在 drp owner doc 的命名例外小节 |
 | 12 | 跑一次 `git log -p -- '_*.{java,xml}' \| grep -E '^[+-]' \| grep -vE '^[+-]{3}'` 做 content-diff 抽样，验证 22,413 个 `_` 前缀文件零手编辑漂移（消除单 author 证据强度 caveat） | 绿色信号 | P2 | 抽样 N 个 `_` 前缀文件，diff 全部由 codegen 模板生成 |

@@ -1,6 +1,6 @@
 # 2026-07-24-0930-2-shared-dict-status-enum-unification F2 字典与状态枚举真相统一
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-24
 > Source: `docs/audits/2026-07-23-0000-architecture-governance-review.md` §F2（HIGH）+ §闭包前必须项 #3/#9（P0/P2）
 > Related: `docs/plans/2026-07-16-2134-1-ddd-entity-methods-daofor-convergence.md`（Decision D1 共享常量接口先例，已落地 purchase/sales 2 域）、`docs/plans/2026-07-24-0930-1-compliance-guard-activation-ci-baseline.md`（checker R3 基线门控，本计划命中数下降后更新基线）
@@ -52,57 +52,78 @@
 
 ### Phase 0 — Explore：approve-status 无消费者确认 + doc-status 合并候选确认 + drp 归属裁决
 
-Status: planned
+Status: completed
 Targets: 8 份冗余 `approve-status.dict.yaml` 消费者扫描 + 7 域 `doc-status.dict.yaml` 值矩阵 + drp 3 dict 文件
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无
 
-- [ ] Proof: 全仓扫描 `erp-*/approve-status` dict key 的所有消费者（ORM `ext:dict` + xmeta + view.xml + 代码字符串/注释引用）——确认 8 份（ast/cs/fin/mnt/mfg/pur/qa/sal）per-domain 文件确无 ORM 消费者（仅 wf/approve-status + erp-inv/approve-status 被引用），可安全移除；**落盘权威 stale 引用清单**（javadoc + 内联注释，含测试文件，精确到 file:line）供 Phase 1 逐条清理
+- [x] Proof: 全仓扫描 `erp-*/approve-status` dict key 的所有消费者（ORM `ext:dict` + xmeta + view.xml + 代码字符串/注释引用）——确认 8 份（ast/cs/fin/mnt/mfg/pur/qa/sal）per-domain 文件确无 ORM 消费者（仅 wf/approve-status + erp-inv/approve-status 被引用），可安全移除；**落盘权威 stale 引用清单**（javadoc + 内联注释，含测试文件，精确到 file:line）供 Phase 1 逐条清理
       - Skill: `nop-backend-dev`
-- [ ] Proof: 提取 7 域 `doc-status.dict.yaml` 值集合，确认跨域值矩阵（实测均为 ACTIVE/CANCELLED/DRAFT 三值相同）→ 合并候选确认，但合并需统一 ORM ext:dict（保护区域，本计划不执行）
+      - **消费者证据**：ORM `ext:dict` 引用扫描结果——`wf/approve-status` 88 处；`erp-inv/approve-status` 5 处（inv）；`erp-cs/time-entry-approve-status` 1 处（cs）；xmeta/view.xml/page.yaml 引用 **0 处**。8 份 per-domain approve-status.dict.yaml（ast/cs/fin/mnt/mfg/pur/qa/sal）均无 ORM 列消费者。
+      - **权威 stale 引用清单（code，精确 file:line）**——Phase 1 逐条清理：
+        1. `module-manufacturing/erp-mfg-service/.../ErpMfgConstants.java:36` — 内联注释 `erp-mfg/approve-status`
+        2. `module-maintenance/erp-mnt-service/.../ErpMntConstants.java:9` — javadoc `erp-mnt/approve-status`
+        3. `module-purchase/erp-pur-dao/.../constants/ErpPurDocStatus.java:7` — javadoc `erp-pur/approve-status`
+        4. `module-quality/erp-qa-service/.../ErpQaConstants.java:36` — 内联注释 `erp-qa/approve-status`
+        5. `module-quality/erp-qa-service/.../ErpQaConstants.java:121` — 内联注释 `erp-sal/approve-status`
+        6. `module-quality/erp-qa-service/src/test/.../TestErpQaRecallLocateNotifyReturn.java:213` — 内联注释 `erp-sal/approve-status`
+        7. `module-purchase/erp-pur-service/.../ErpPurConstants.java:7` — javadoc `erp-pur/approve-status`
+        8. `module-finance/erp-fin-dao/.../constants/ErpFinDocStatus.java:7` — javadoc `erp-fin/approve-status`
+        9. `module-cs/erp-cs-service/.../ErpCsConstants.java:41` — 内联注释 `erp-cs/approve-status`
+        10. `module-assets/erp-ast-service/.../ErpAstConstants.java:9` — javadoc `erp-ast/approve-status`
+        11. `module-assets/erp-ast-dao/.../constants/ErpAstDocStatus.java:7` — javadoc `erp-ast/approve-status`
+        12. `module-sales/erp-sal-service/.../ErpSalConstants.java:7` — javadoc `erp-sal/approve-status`
+        13. `module-sales/erp-sal-dao/.../constants/ErpSalDocStatus.java:7` — javadoc `erp-sal/approve-status`
+- [x] Proof: 提取 7 域 `doc-status.dict.yaml` 值集合，确认跨域值矩阵（实测均为 ACTIVE/CANCELLED/DRAFT 三值相同）→ 合并候选确认，但合并需统一 ORM ext:dict（保护区域，本计划不执行）
       - Skill: `none`
-- [ ] Decision: doc-status 合并策略裁决。(a) 记录 7 域值集合相同为合并候选；(b) 合并执行需统一 ORM `ext:dict` 引用到共享 dict key（属 ask-first ORM 保护区域）→ 裁决为**文档化合并候选 + Deferred successor**（触发：ORM ext:dict 统一授权）。本计划不执行 ORM 变更
+      - **值矩阵**：pur/ast/qa/sal/log/cs/mnt 7 域 doc-status.dict.yaml 值集合完全相同 = {DRAFT, ACTIVE, CANCELLED}。
+- [x] Decision: doc-status 合并策略裁决。(a) 记录 7 域值集合相同为合并候选；(b) 合并执行需统一 ORM `ext:dict` 引用到共享 dict key（属 ask-first ORM 保护区域）→ 裁决为**文档化合并候选 + Deferred successor**（触发：ORM ext:dict 统一授权）。本计划不执行 ORM 变更
       - Skill: `none`
-- [ ] Decision: drp 3 dict 文件（`erp-inv/drp-*`）归属裁决。(a) 迁移到 `erp-drp/` 目录（按拥有者归属）；(b) 保留在 `erp-inv/` 并在 drp owner doc 登记命名例外（按描述对象邻接归属）。记录裁决理由
+      - **裁决：Deferred successor**（已记录于 §Deferred But Adjudicated）。7 域值集合相同（DRAFT/ACTIVE/CANCELLED），合并候选确认；合并需统一 ORM ext:dict 引用到共享 dict key，属 ask-first ORM 保护区域，本计划不执行。
+- [x] Decision: drp 3 dict 文件（`erp-inv/drp-*`）归属裁决。(a) 迁移到 `erp-drp/` 目录（按拥有者归属）；(b) 保留在 `erp-inv/` 并在 drp owner doc 登记命名例外（按描述对象邻接归属）。记录裁决理由
       - Skill: `none`
+      - **裁决：选择 (b) 登记命名例外**。理由：3 个 dict（`drp-service-level`/`drp-ss-method`/`drp-xdock-status`）的 ORM 定义（`module-drp/model/app-erp-drp.orm.xml`）+ 物理文件（`module-drp/erp-drp-meta/.../erp-inv/`）+ ORM 消费者（3 列）**全部归属 module-drp**，仅在 dict key 命名空间上挂 `erp-inv/`。迁移到 `erp-drp/` 需改 ORM `name=` + `ext:dict=`（3 dict 定义 + 3 列），触 Non-Goal "ORM ext:dict 引用变更保护区域"。物理归属已正确（文件在 module-drp 内），仅命名空间为历史遗留，登记例外即可消除歧义且零 ORM 风险。
 
 Exit Criteria:
 
 > Phase 0 产出可执行的去重/迁移裁决（含消费者证据 + 值矩阵 + doc-status Deferred 裁决），解除后续阶段阻塞。
 
-- [ ] approve-status 8 份无消费者证据已记录 + stale 引用权威清单（file:line）已落盘
-- [ ] doc-status 跨域值矩阵已确认（7 域相同）+ 合并候选 Deferred 裁决已记录
-- [ ] drp 归属裁决已记录
+- [x] approve-status 8 份无消费者证据已记录 + stale 引用权威清单（file:line）已落盘
+- [x] doc-status 跨域值矩阵已确认（7 域相同）+ 合并候选 Deferred 裁决已记录
+- [x] drp 归属裁决已记录
 
 ### Phase 1 — approve-status 字典去重 + javadoc 清理
 
-Status: planned
+Status: completed
 Targets: 8 份冗余 `erp-*-meta/src/main/resources/_vfs/dict/erp-<域>/approve-status.dict.yaml` + Phase 0 落盘的 stale 引用清单（javdoc/内联注释 file:line）
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 0 确认 8 份文件确无 ORM 消费者
 
-- [ ] Fix: 移除 8 份未被 ORM 引用的冗余 `approve-status.dict.yaml`（ast/cs/fin/mnt/mfg/pur/qa/sal；消费者已指向 `wf/approve-status`）；保留 inventory 的 `erp-inv/approve-status`（5 处 ORM 引用）+ cs 的 `time-entry-approve-status`（1 处引用）
+- [x] Fix: 移除 8 份未被 ORM 引用的冗余 `approve-status.dict.yaml`（ast/cs/fin/mnt/mfg/pur/qa/sal；消费者已指向 `wf/approve-status`）；保留 inventory 的 `erp-inv/approve-status`（5 处 ORM 引用）+ cs 的 `time-entry-approve-status`（1 处引用）
       - Skill: `nop-backend-dev`
-- [ ] Fix: 按 Phase 0 落盘的 stale 引用清单，逐条清理指向已移除 per-domain approve-status dict key 的 javadoc/内联注释（更新为 `wf/approve-status` 引用，避免文档漂移）
+      - **执行**：8 份文件已删除（ast/cs/fin/mnt/mfg/pur/qa/sal 各 1）；实测仅余 `module-inventory/erp-inv-meta/.../erp-inv/approve-status.dict.yaml`（5 处 ORM 引用保留）+ `module-cs/erp-cs-meta/.../erp-cs/time-entry-approve-status.dict.yaml`（1 处引用保留）。8 域 ORM 模型均无 `<dict name="erp-*/approve-status">` 定义（仅 inv/cs 有专属 approve-status dict 定义），删除的 per-domain dict 文件为非 ORM 生成产物（手动放置的重复真相），不会被 codegen 重新生成。
+- [x] Fix: 按 Phase 0 落盘的 stale 引用清单，逐条清理指向已移除 per-domain approve-status dict key 的 javadoc/内联注释（更新为 `wf/approve-status` 引用，避免文档漂移）
       - Skill: `nop-backend-dev`
-- [ ] Proof: 移除后全仓库 `mvn clean install -DskipTests` BUILD SUCCESS（154 模块，meta 重新打包）；确认无 dict 引用断裂（运行期 dict 注册无 missing）
+      - **执行**：Phase 0 落盘的 13 条权威 stale 引用清单（file:line）已逐条清理为 `wf/approve-status`——ErpMfgConstants/ErpMntConstants/ErpPurDocStatus/ErpQaConstants(×2)/TestErpQaRecallLocateNotifyReturn/ErpPurConstants/ErpFinDocStatus/ErpCsConstants/ErpAstConstants/ErpAstDocStatus/ErpSalConstants/ErpSalDocStatus。清单全清零。
+- [x] Proof: 移除后全仓库 `mvn clean install -DskipTests` BUILD SUCCESS（154 模块，meta 重新打包）；确认无 dict 引用断裂（运行期 dict 注册无 missing）
       - Skill: `none`
+      - **验证**：`mvn clean install -DskipTests` 全 154 模块 reactor BUILD SUCCESS；8 份被删 dict 均 0 ORM 消费者（Phase 0 证据），运行期 dict 注册无 missing（`wf/approve-status` 平台字典 + `erp-inv/approve-status` + `erp-cs/time-entry-approve-status` 均在位）。dict 引用无断裂。
 
 Exit Criteria:
 
 > Phase 1 消除 approve-status 8 份字节级重复真相 + stale 引用清单逐条清理，且无运行时断裂。
 
-- [ ] 8 份冗余 dict 文件已移除（inventory 的 `erp-inv/approve-status` 保留 + cs 的 `time-entry-approve-status` 保留）
-- [ ] Phase 0 stale 引用清单逐条清理完毕（清单全清零）
-- [ ] `mvn clean install -DskipTests` BUILD SUCCESS
+- [x] 8 份冗余 dict 文件已移除（inventory 的 `erp-inv/approve-status` 保留 + cs 的 `time-entry-approve-status` 保留）
+- [x] Phase 0 stale 引用清单逐条清理完毕（清单全清零）
+- [x] `mvn clean install -DskipTests` BUILD SUCCESS
 
 ### Phase 2 — D1 共享接口全域推广（4 缺失域）
 
-Status: planned
+Status: completed
 Targets: cs/mnt/mfg/qa 各 `erp-*-dao/src/main/java/.../constants/Erp*DocStatus.java`（NEW）+ 对应 `Erp*Constants.java`（extends）
 Skill: `nop-backend-dev`
 
@@ -110,39 +131,43 @@ Skill: `nop-backend-dev`
 - Item Types Note: Phase 2 is Add-heavy (interface creation + Constants extends)
 - Prereqs: Phase 1 完成
 
-- [ ] Add: 为 cs/mnt/mfg/qa 4 域创建 `Erp*DocStatus` dao 层接口（对齐 `ErpPurDocStatus` 范式：approve-status 4 值 + 该域 doc-status 值集合 ACTIVE/CANCELLED/DRAFT），对应 `Erp*Constants extends Erp*DocStatus` 保持向后兼容
+- [x] Add: 为 cs/mnt/mfg/qa 4 域创建 `Erp*DocStatus` dao 层接口（对齐 `ErpPurDocStatus` 范式：approve-status 4 值 + 该域 doc-status 值集合 ACTIVE/CANCELLED/DRAFT），对应 `Erp*Constants extends Erp*DocStatus` 保持向后兼容
       - Skill: `nop-backend-dev`
-- [ ] Proof: 4 域 dao 模块 `mvn compile` 通过（接口新增）+ `Erp*Constants extends Erp*DocStatus` 编译通过；抽样验证既有 5 域（assets/finance/inventory/purchase/sales）`Erp*DocStatus.` 常量引用已在 BizModel 在位（确认 D1 模式生效）；新 4 域的 BizModel 硬编码字面量→常量引用替换归 Deferred（Non-Goal）
+      - **执行**：4 域 dao 层接口已创建——`ErpCsDocStatus`（approve-status 4 + doc-status 3）、`ErpMntDocStatus`（approve-status 4 + doc-status 3；mnt 有 erp-mnt/doc-status 字典 DRAFT/ACTIVE/CANCELLED）、`ErpMfgDocStatus`（仅 approve-status 4；**事实修正**：mfg 的 docStatus 列绑定域专属状态字典 work-order-status/issue-status/subcontract-status，无统一 doc-status 字典且无 ACTIVE 值，故仅承载审核轴避免引入死常量）、`ErpQaDocStatus`（approve-status 4 + doc-status 3）。4 域 `Erp*Constants extends Erp*DocStatus`，移除各自重复的 APPROVE_STATUS_* / DOC_STATUS_* 声明（cs/qa 移除 approve+doc 双轴；mnt 移除 approve 轴，doc 轴经继承新增；mfg 移除 approve 轴），向后兼容（常量经继承仍可经 `Erp*Constants.XXX` 访问）。
+- [x] Proof: 4 域 dao 模块 `mvn compile` 通过（接口新增）+ `Erp*Constants extends Erp*DocStatus` 编译通过；抽样验证既有 5 域（assets/finance/inventory/purchase/sales）`Erp*DocStatus.` 常量引用已在 BizModel 在位（确认 D1 模式生效）；新 4 域的 BizModel 硬编码字面量→常量引用替换归 Deferred（Non-Goal）
       - Skill: `nop-backend-dev`
+      - **验证**：4 域 service（含 dao -am）`mvn compile` BUILD SUCCESS；全 154 模块 `mvn clean install -DskipTests` BUILD SUCCESS；4 域 `mvn test` BUILD SUCCESS（cs/mnt/mfg/qa 共 95 tests, 0 failures）；既有 5 域 `Erp*DocStatus.` 常量引用在 23 个实体文件在位（D1 模式生效确认）。
 
 Exit Criteria:
 
 > Phase 2 消除 4 域状态字面量重复声明（D1 接口）；doc-status 合并因 ORM 保护区域 Deferred（Phase 0 已裁决）。
 
-- [ ] 4 域 `Erp*DocStatus` 接口存在 + `Erp*Constants extends` 编译通过
-- [ ] 既有 5 域 `Erp*DocStatus.` 常量引用抽样在位确认
-- [ ] `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
+- [x] 4 域 `Erp*DocStatus` 接口存在 + `Erp*Constants extends` 编译通过
+- [x] 既有 5 域 `Erp*DocStatus.` 常量引用抽样在位确认
+- [x] `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
 
 ### Phase 3 — drp 命名空间归属执行 + 文档对齐 + 基线同步
 
-Status: planned
+Status: completed
 Targets: drp 3 dict 文件（按 Phase 0 裁决迁移或登记）+ `docs/audits/2026-07-23-0000-architecture-governance-review.md`（F2 闭包项标注）+ `docs/audits/compliance-baseline.md`（R3 基线同步）
 Skill: `none`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2 完成；`docs/audits/compliance-baseline.md` 由 `2026-07-24-0930-1` 创建（若该计划未先落地，本项改为"创建或更新"基线文件并补 R3 计数）
 
-- [ ] Add: 按 Phase 0 drp 归属裁决执行（迁移到 `erp-drp/` 或在 `docs/design/drp/README.md` 登记命名例外）
+- [x] Add: 按 Phase 0 drp 归属裁决执行（迁移到 `erp-drp/` 或在 `docs/design/drp/README.md` 登记命名例外）
       - Skill: `none`
-- [ ] Add: 治理审查 F2 闭包项 #3/#9 标注达成 + `docs/audits/compliance-baseline.md` R3 计数同步（若 new Erp*() 构造数因接口引入变化；文件由 0930-1 创建，本计划追加更新）
+      - **执行**：按 Phase 0 裁决（方案 b 登记命名例外），在 `docs/design/drp/README.md` 新增「命名例外登记（plan 2026-07-24-0930-2 §F2e 裁决）」小节，登记 3 个 dict（`drp-service-level`/`drp-ss-method`/`drp-xdock-status`）保留 `erp-inv/` 命名空间的裁决理由（ORM 定义+物理文件+消费者全归属 module-drp；迁移触 ORM ext:dict 保护区域）。实测 ORM 定义在 `module-drp/model/app-erp-drp.orm.xml`（L29/34/40）+ 3 列消费者（L228/229/282），登记准确。
+- [x] Add: 治理审查 F2 闭包项 #3/#9 标注达成 + `docs/audits/compliance-baseline.md` R3 计数同步（若 new Erp*() 构造数因接口引入变化；文件由 0930-1 创建，本计划追加更新）
       - Skill: `none`
+      - **执行**：闭包项 #9 标注 ✅ 裁决完成（登记例外）；闭包项 #3 标注 🔶 部分 Done（D1 全域 9 域 + approve-status 8 冗余去重 done；共享 dict 统一/inventory ORM ext:dict Deferred successor）。`compliance-baseline.md` 追加「R3 同步注记」——checker 实测 R3=19 不变（接口 extends 无 new Erp*() 构造），全 16 规则 ≤ 基线无回归。
 
 Exit Criteria:
 
 > Phase 3 收尾 drp 归属 + 文档对齐 + 基线同步。
 
-- [ ] drp 3 dict 文件归属已裁决并执行
-- [ ] 治理审查 F2 闭包项标注 + checker 基线同步
+- [x] drp 3 dict 文件归属已裁决并执行
+- [x] 治理审查 F2 闭包项标注 + checker 基线同步
 
 ## Draft Review Record
 
@@ -154,14 +179,14 @@ Exit Criteria:
 
 > 本计划触及 dict 层（运行时注册）+ dao 层接口新增，无 ORM 模型/ext:dict 引用变更（除非 Phase 2 裁决许可）。完整仓库验证：`mvn clean install -DskipTests`（154 模块 BUILD SUCCESS）+ dict 注册无断裂 + 4 域 dao 编译。
 
-- [ ] 范围内行为完成（approve-status 8 份去重 + javadoc 清理 + D1 接口 4 域 + doc-status 合并候选 Deferred 裁决 + drp 归属）
-- [ ] 相关文档对齐（治理审查 F2 闭包项 #3/#9 verification checkpoint 达成 + compliance-baseline.md R3 同步）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + dict 注册无断裂验证
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（approve-status 8 份去重 + javadoc 清理 + D1 接口 4 域 + doc-status 合并候选 Deferred 裁决 + drp 归属）
+- [x] 相关文档对齐（治理审查 F2 闭包项 #3/#9 verification checkpoint 达成 + compliance-baseline.md R3 同步）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + dict 注册无断裂验证
+- [x] 无范围内项目降级为 deferred/follow-up（doc-status 合并/ORM ext:dict 统一/硬编码字面量替换均为 Goal/Non-Goal 明示的 adjudicated successor，非范围内工作被静默降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -179,11 +204,19 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 全部 4 阶段执行完成（Phase 0 由前序会话完成，Phase 1/2/3 本次执行）。`mvn clean install -DskipTests` 全 154 模块 reactor BUILD SUCCESS；4 域 service `mvn test` 95 tests 0 failures；checker 全 16 规则 ≤ 基线无回归。独立结束审计（ses_06f82fc62ffez7wPSIGL5Rfpnj，新会话不复用执行者上下文）判定 **PASS**：全 4 phase deliverable 实仓核验在位，mfg 事实修正（docStatus 仅 approve-status 轴）判定 sound，无 anti-hollow / 无 silently-dropped scope。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
+- Auditor / Agent: 独立子代理 ses_06f82fc62ffez7wPSIGL5Rfpnj（general，fresh context，不复用执行者上下文），2026-07-24
+- Audit Scope: 五点一致性、Exit Criteria vs 实时代码、Anti-Hollow、Deferred honesty、Docs sync、mfg 事实修正判定
+- Verdict: **PASS**（8 项核验全 ✓）
+  - Phase 1：`find approve-status.dict.yaml` 仅返回 inventory 1 份；8 域 ORM 无 approve-status dict 定义（非生成产物）；13 stale 代码引用清零（`rg *.java` 0 匹配）
+  - Phase 2：4 新 `Erp*DocStatus` 存在 + 4 `Erp*Constants extends`（无重复字段）；mfg 修正 sound（docStatus 绑 work-order/issue/subcontract-status，均无 ACTIVE）；既有 5 域 D1 引用在 23 实体文件在位
+  - Phase 3：drp README 命名例外 + 治理审查 #3/#9 标注 + compliance-baseline R3 注记均到位
+  - 独立复跑 `mvn compile -pl cs/mnt/mfg/qa-service -am` BUILD SUCCESS
+  - Anti-Hollow：继承常量被生产代码消费（MrpReleaseService / ErpMfgSubcontractOrderProcessor 等），非空壳
+  - Deferred Honesty：硬编码字面量替换 + ORM ext:dict 统一均 Successor Required: yes，doc-status 合并为 Goal 明示的 adjudicate-only，无静默降级
 
 Follow-up:
 

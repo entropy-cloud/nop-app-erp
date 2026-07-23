@@ -71,6 +71,26 @@
 | maxStockLevel | 最高库存（MIN_MAX 时） |
 | reviewPeriodDays | 审视周期天数（PERIODIC 时） |
 
+## 命名例外登记（plan 2026-07-24-0930-2 §F2e 裁决）
+
+> 治理审查 `docs/audits/2026-07-23-0000-architecture-governance-review.md` 闭包前必须项 #9（F2，P2）裁决产物。
+
+drp 域有 3 个 dict 文件物理归属 `module-drp/erp-drp-meta/.../erp-inv/`，dict key 挂在 `erp-inv/` 命名空间下（文件名均带 `drp-` 前缀）：
+
+| dict key | 物理文件 | ORM 定义 | ORM 消费者 |
+|----------|----------|----------|-----------|
+| `erp-inv/drp-service-level` | `module-drp/erp-drp-meta/.../erp-inv/drp-service-level.dict.yaml` | `module-drp/model/app-erp-drp.orm.xml` | `ErpDrpParameter.serviceLevel` 等 |
+| `erp-inv/drp-ss-method` | `module-drp/erp-drp-meta/.../erp-inv/drp-ss-method.dict.yaml` | `module-drp/model/app-erp-drp.orm.xml` | `ErpDrpParameter.ssMethod` 等 |
+| `erp-inv/drp-xdock-status` | `module-drp/erp-drp-meta/.../erp-inv/drp-xdock-status.dict.yaml` | `module-drp/model/app-erp-drp.orm.xml` | 越库状态列 |
+
+**裁决：保留在 `erp-inv/` 命名空间（命名例外，方案 b）。** 理由：
+
+1. 3 个 dict 的 ORM 定义（`module-drp/model/app-erp-drp.orm.xml`）+ 物理文件（`module-drp/erp-drp-meta/`）+ ORM 消费者（3 列）**全部归属 module-drp**，仅在 dict key 命名空间上挂 `erp-inv/`（历史遗留）。
+2. 迁移到 `erp-drp/` 命名空间需改 ORM `name=` + 列 `ext:dict=`（3 dict 定义 + 3 列），触 ORM `ext:dict` 引用变更保护区域（ask-first），收益为零风险行为变更。
+3. 物理归属已正确（文件在 module-drp 内），文件名 `drp-` 前缀已显式标识归属，登记命名例外即可消除歧义。
+
+> 与 F7（闭包项 #11，`ErpInvDrp*` 实体重命名）属不同 finding：本登记仅覆盖 3 个 dict 文件的命名空间归属；实体重命名裁决归 F7 successor。
+
 ## 业务规则
 
 1. **净需求计算**：`netRequirement = max(0, safetyStock + forecastDemand - currentStock + allocatedQty - onOrderQty)`。结果为 0 或负时表示库存充足，不产生补货建议。
