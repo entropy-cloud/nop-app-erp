@@ -193,7 +193,12 @@ test.describe('AMIS input-table DOM verification (inventory)', () => {
 
     await crud.clickAdd();
 
-    const inputTable = page.locator('.cxd-InputTable').first();
+    const modal = page.locator('.cxd-Modal, .cxd-Drawer').last();
+    const linesTab = modal.locator('.cxd-Tabs .cxd-Tabs-link').filter({ hasText: /明细行|Lines/ }).first();
+    await linesTab.click();
+    await page.waitForTimeout(300);
+
+    const inputTable = modal.locator('.cxd-InputTable').first();
     await inputTable.waitFor({ state: 'visible', timeout: 20_000 });
     expect(
       await inputTable.isVisible(),

@@ -117,15 +117,21 @@ body:
               data:
                 # findUnread(userId:null) 后端 resolveUserId 回退 ctx.getUserId()；返回 List
                 query: "query{ ErpSysNotification__findUnread(userId:null){ id notificationType channel subject body payloadJson sentAt status } }"
+                _fType: "${notificationType}"
+                _fChannel: "${channel}"
+                _fFrom: "${sentAtFrom}"
+                _fTo: "${sentAtTo}"
+                _fStatus: "${status}"
               adaptor: |
                 const d = payload.data || {};
                 const gql = d.data ? d.data : d;
                 let rows = gql.ErpSysNotification__findUnread || [];
-                const t = (data && data.notificationType) || '';
-                const c = (data && data.channel) || '';
-                const fromD = (data && data.sentAtFrom) || '';
-                const toD = (data && data.sentAtTo) || '';
-                const st = (data && data.status) || '';
+                const a = (api && api.data) || {};
+                const t = a._fType || '';
+                const c = a._fChannel || '';
+                const fromD = a._fFrom || '';
+                const toD = a._fTo || '';
+                const st = a._fStatus || '';
                 rows = rows.filter(function(r){
                   if (t && r.notificationType !== t) return false;
                   if (c && r.channel !== c) return false;
@@ -192,15 +198,21 @@ body:
               data:
                 # findRead(userId:null) 后端 resolveUserId 回退 ctx.getUserId()；返回 List
                 query: "query{ ErpSysNotification__findRead(userId:null){ id notificationType channel subject body payloadJson sentAt status } }"
+                _fType: "${notificationType}"
+                _fChannel: "${channel}"
+                _fFrom: "${sentAtFrom}"
+                _fTo: "${sentAtTo}"
+                _fStatus: "${status}"
               adaptor: |
                 const d = payload.data || {};
                 const gql = d.data ? d.data : d;
                 let rows = gql.ErpSysNotification__findRead || [];
-                const t = (data && data.notificationType) || '';
-                const c = (data && data.channel) || '';
-                const fromD = (data && data.sentAtFrom) || '';
-                const toD = (data && data.sentAtTo) || '';
-                const st = (data && data.status) || '';
+                const a = (api && api.data) || {};
+                const t = a._fType || '';
+                const c = a._fChannel || '';
+                const fromD = a._fFrom || '';
+                const toD = a._fTo || '';
+                const st = a._fStatus || '';
                 rows = rows.filter(function(r){
                   if (t && r.notificationType !== t) return false;
                   if (c && r.channel !== c) return false;
@@ -252,6 +264,11 @@ body:
               data:
                 # 单 GraphQL 请求内并发两个 query（GraphQL 允许 operation 多 field）
                 query: "query{ unread:ErpSysNotification__findUnread(userId:null){ id notificationType channel subject body payloadJson sentAt status } read:ErpSysNotification__findRead(userId:null){ id notificationType channel subject body payloadJson sentAt status } }"
+                _fType: "${notificationType}"
+                _fChannel: "${channel}"
+                _fFrom: "${sentAtFrom}"
+                _fTo: "${sentAtTo}"
+                _fStatus: "${status}"
               adaptor: |
                 const d = payload.data || {};
                 const gql = d.data ? d.data : d;
@@ -262,11 +279,12 @@ body:
                 for (const r of unread) { if (!seen[r.id]) { seen[r.id] = true; rows.push(Object.assign({read: false}, r)); } }
                 for (const r of read)  { if (!seen[r.id]) { seen[r.id] = true; rows.push(Object.assign({read: true}, r)); } }
                 rows.sort(function(a,b){ return (b.sentAt || '').localeCompare(a.sentAt || ''); });
-                const t = (data && data.notificationType) || '';
-                const c = (data && data.channel) || '';
-                const fromD = (data && data.sentAtFrom) || '';
-                const toD = (data && data.sentAtTo) || '';
-                const st = (data && data.status) || '';
+                const a = (api && api.data) || {};
+                const t = a._fType || '';
+                const c = a._fChannel || '';
+                const fromD = a._fFrom || '';
+                const toD = a._fTo || '';
+                const st = a._fStatus || '';
                 rows = rows.filter(function(r){
                   if (t && r.notificationType !== t) return false;
                   if (c && r.channel !== c) return false;

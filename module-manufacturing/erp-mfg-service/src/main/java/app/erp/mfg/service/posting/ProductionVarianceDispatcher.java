@@ -9,11 +9,14 @@ import app.erp.mfg.service.costing.ProductionVarianceCalculator;
 import app.erp.md.dao.AcctSchemaResolver;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static io.nop.api.core.beans.FilterBeans.eq;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -128,6 +131,15 @@ public class ProductionVarianceDispatcher {
      * try/catch（{@code :109-115}）。红冲失败孤儿凭证风险经 log warn 可观测，归 finance 5.1 异常工作台兜底。
      */
     public void reverseIfExists(Long workOrderId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("workOrderId", workOrderId));
+        q.addFilter(eq("posted", true));
+        q.setLimit(1);
+        IEntityDao<ErpMfgCostVariance> dao = daoProvider.daoFor(ErpMfgCostVariance.class);
+        List<ErpMfgCostVariance> posted = dao.findAllByQuery(q);
+        if (posted.isEmpty()) {
+            return;
+        }
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(workOrderId);
         if (wo == null) {
             return;

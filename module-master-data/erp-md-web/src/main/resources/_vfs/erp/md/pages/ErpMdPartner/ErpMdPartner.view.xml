@@ -113,26 +113,7 @@
                             return {
                                 type: 'input-text',
                                 name: 'code',
-                                required: true,
-                                onEvent: {
-                                    blur: {
-                                        actions: [
-                                            {
-                                                actionType: 'ajax',
-                                                api: {
-                                                    method: 'post',
-                                                    url: '/graphql',
-                                                    dataType: 'raw',
-                                                    data: {
-                                                        query: '${"query{ErpMdPartner__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
-                                                    },
-                                                    responseType: 'response',
-                                                    adapt: 'function(payload){ var ok = payload && payload.data && payload.data.ErpMdPartner__isCodeUnique === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
+                                required: true
                             };
                         ]]></c:script>
                     </gen-control>
@@ -188,26 +169,7 @@
                             return {
                                 type: 'input-text',
                                 name: 'code',
-                                required: true,
-                                onEvent: {
-                                    blur: {
-                                        actions: [
-                                            {
-                                                actionType: 'ajax',
-                                                api: {
-                                                    method: 'post',
-                                                    url: '/graphql',
-                                                    dataType: 'raw',
-                                                    data: {
-                                                        query: '${"query{ErpMdPartner__isCodeUnique(code:\"" + code + "\",excludeId:" + (id || "null") + "){v}}"}'
-                                                    },
-                                                    responseType: 'response',
-                                                    adapt: 'function(payload){ var ok = payload && payload.data && payload.data.ErpMdPartner__isCodeUnique === true; return { status: ok ? 0 : 500, msg: ok ? "" : "编码已存在" }; }'
-                                                }
-                                            }
-                                        ]
-                                    }
-                                }
+                                required: true
                             };
                         ]]></c:script>
                     </gen-control>

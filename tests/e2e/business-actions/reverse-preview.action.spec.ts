@@ -4,10 +4,10 @@ import {
     loginAndNavigate,
     createViaSave,
     callMutationOk,
-    callQuery,
     verifyState,
     deleteById,
 } from './_helper';
+import { GraphQLClient } from '../pages';
 import type { Page } from '@playwright/test';
 
 /**
@@ -53,9 +53,13 @@ test.describe('Reverse preview action (plan 2026-07-23-1145-2)', () => {
         const voucherId = await createPostedVoucher(page, code, amount);
 
         // 1. 预览：只读 @BizQuery，返回结构化冲销信息
-        const { data: preview, errors } = await callQuery(page, 'ErpFinVoucher', 'previewReverseVoucher',
-            { voucherId });
-        expect(errors, 'previewReverseVoucher should not return GraphQL errors').toBeNull();
+        const gql = new GraphQLClient(page);
+        const previewJson: any = await gql.raw(
+            `query(${'$'}vid:Long){ ErpFinVoucher__previewReverseVoucher(voucherId:${'$'}vid){ voucherCode totalDebit totalCredit reversedDebit reversedCredit willSetReversed } }`,
+            { vid: voucherId },
+        );
+        expect(previewJson?.errors, 'previewReverseVoucher should not return GraphQL errors').toBeFalsy();
+        const preview = previewJson?.data?.ErpFinVoucher__previewReverseVoucher;
         expect(preview, 'preview should be non-null').toBeTruthy();
         expect(preview.voucherCode).toBe(code);
         expect(Number(preview.totalDebit)).toBe(amount);

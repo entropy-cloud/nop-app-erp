@@ -1,4 +1,5 @@
 import { test, expect, loginAndNavigate, createViaSave, callMutationOk, verifyState, deleteById } from './_helper';
+import { GraphQLClient } from '../pages';
 
 /**
  * maintenance ErpMntVisit 执行向导 action E2E（plan 2026-07-23-1145-1 Phase 4）。
@@ -75,10 +76,9 @@ test.describe('maintenance visit-wizard action E2E (F4 tasks aggregate-save + wi
       expect(started.status, 'start should transition SCHEDULED → IN_PROGRESS').toBe('IN_PROGRESS');
 
       // ── Step 4: __save 结果字段（wizard Step 3 执行结果录入，result + remark）──
-      const GraphQLClient = (await import('../pages')).GraphQLClient;
       const gql = new GraphQLClient(page);
       const savedResult: any = await gql.raw(
-        `mutation($d:ErpMntVisit__save_input){ ErpMntVisit__save(data:$d){ id status result remark } }`,
+        `mutation($d:ErpMntVisit__update_input){ ErpMntVisit__update(data:$d){ id status result remark } }`,
         {
           d: {
             id: visit.id,
@@ -91,8 +91,8 @@ test.describe('maintenance visit-wizard action E2E (F4 tasks aggregate-save + wi
           },
         },
       );
-      expect(savedResult?.errors, '__save result should not return GraphQL errors').toBeFalsy();
-      expect(savedResult?.data?.ErpMntVisit__save?.result, 'result should be persisted as NORMAL').toBe('NORMAL');
+      expect(savedResult?.errors, '__update result should not return GraphQL errors').toBeFalsy();
+      expect(savedResult?.data?.ErpMntVisit__update?.result, 'result should be persisted as NORMAL').toBe('NORMAL');
 
       // ── Step 5: complete（IN_PROGRESS → COMPLETED + 设备恢复，wizard "确认完成" 按钮）──
       const completed = await callMutationOk(
