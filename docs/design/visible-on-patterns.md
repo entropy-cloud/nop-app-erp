@@ -289,6 +289,25 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
 | 删除时才查询引用 | 删除按钮点击时立即查询（dialog 前置） |
 | 引用预览 dialog 不阻断 | dialog 关闭后不调 __delete（condition 表达式守卫） |
 
+### 6.5 删除引用预览扩展：Employee / Organization（plan 2026-07-23-1145-2）
+
+§6 范式从 Material/Partner 扩展到 Employee/Organization，落地三点裁决：
+
+**裁决 1 — 范式对齐（blocker）**：Employee/Organization 删除复用 §6.3 的 reference-**blocker** dialog（有引用时弹 dialog 阻断 + "知道了"按钮，无引用时静默放行），与 Material/Partner 一致，不采用 preview-then-confirm（一致性优先于灵活性）。
+
+**裁决 2 — 实体身份纠正**：`ErpHrEmployee`（HR 完整人事档案，表 `erp_hr_employee`）与 `ErpMdEmployee`（master-data 业务经办人轻量引用，表 `erp_md_employee`）是**不同表**。删除按钮在 `ErpHrEmployee.view.xml`（HR），故其引用计数必须在 **HR 域内**统计（合同/工时/薪酬/考勤/休假 → `ErpHrEmployee`），经实体级 `@BizQuery ErpHrEmployee__countReferences` 调用——**不可**经 master-data 的 `ErpParty__findReferences(EMPLOYEE)` SPI（该 SPI 操作 `ErpMdEmployee` ID，实体错配）。`ErpMdOrganization` 删除同理走 master-data 实体级 `ErpMdOrganization__countReferences`。
+
+**裁决 3 — SPI 生产实现的落域**：
+
+| SPI 端口（master-data-dao 声明） | 生产实现落域 | 计数来源 | 依赖边合法性 |
+|---|---|---|---|
+| `IErpMdOrganizationReferenceChecker` | **master-data-service** | `ErpMdEmployee.orgId` + `ErpMdWarehouse.orgId`（均为 master-data 自有实体） | 域内，无环 |
+| `IErpMdEmployeeReferenceChecker` | **finance-service** | `ErpFinEmployeeAdvance.employeeId`（未取消借款单） | finance → master-data 为合法 DAG 边 |
+
+- master-data 自有的 Organization checker 在 master-data 测试即激活（返回真实计数）；finance 的 Employee checker 仅在 app-erp-all 聚合运行时被 `ErpPartyBizModel` 经 `@Nullable @Inject` 收集（master-data 单域测试 finance 不在 classpath → 返回空 Map，符合 SPI 默认行为）。
+- `orgId` 作为审计维度（每张单据都有）按 `IErpMdOrganizationReferenceChecker` javadoc 裁决**默认排除**，仅计语义归属引用（员工/仓库的 orgId），避免海量噪声。
+- 其余下游域（assets/maintenance）的 Employee 引用计数按 successor 触发条件逐域补齐（SPI 单实例注入，多域聚合需 List 收集器，归 Deferred）。
+
 ## 7. 主数据启用/停用 Switch 控件范式
 
 ### 7.1 覆盖范围裁决
@@ -503,11 +522,86 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
 | 行 cell visibleOn 用严格 `${isAuxiliaryPartner == true}` | 宽松 `${!subjectId \|\| isAuxiliaryPartner == true}` 防快照失败时全隐 |
 | onEvent.change.setValue 清空对侧金额（违反 §8.3） | 仅依赖 `clearValueOnHidden`（金额 cell）+ visibleOn 隐藏（维度 cell，无 clearValueOnHidden 需求） |
 
+## 8.5 反审核冲销预览范式（previewReverse @BizQuery + dialog，plan 2026-07-23-1145-2）
+
+删除引用预览（§6）是 **blocker** 范式（有引用阻断，无引用放行）；冲销预览是 **preview-then-confirm** 范式（展示影响 → 用户确认 → 执行 mutation）。二者均经 `@BizQuery` 前置查询 + AMIS dialog，但语义不同。
+
+**覆盖范围**：finance 域两类最高风险冲销——`ErpFinVoucher__reverseVoucher`（单凭证红字冲销）+ `ErpFinReconciliation__reverse`（核销单冲销）。
+
+### 8.5.1 后端 @BizQuery 预览范式
+
+预览方法镜像对应 `@BizMutation` 的前置校验（状态门控），但**只读不执行**，返回结构化 DTO：
+
+```java
+// IErpFinVoucherBiz
+@BizQuery
+VoucherReversePreview previewReverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context);
+```
+
+```java
+// ErpFinVoucherBizModel — 镜像 reverseVoucher 的状态校验，返回只读预览
+@Override
+@BizQuery
+public VoucherReversePreview previewReverseVoucher(Long voucherId, IServiceContext context) {
+    ErpFinVoucher voucher = requireEntity(...);
+    if (!POSTED) throw ERR_FIN_VOUCHER_ILLEGAL_TRANSITION;  // 与 reverseVoucher 同前置
+    // 填充 DTO：原凭证信息 + 红字预估（借/贷同向取负）+ willSetReversed + billLinks
+    // ⚠ 子表（lines/billLinks）用 daoProvider 显式查询，不依赖 to-many 懒加载（会话存活无关）
+}
+```
+
+**预览 DTO 必须反映 mutation 的真实副作用**：
+- `reverseVoucher` 仅标记 `isReversed=true`（不生成红字凭证、不回退域单据）→ DTO 的 `willSetReversed=true` + 红字金额预估（信息上下文，非实际生成）。
+- `Reconciliation.reverse` 反转辅助账 SETTLED→OPEN + 刷新 partner 余额，**不生成 GL 凭证**（凭证由收付款审核时生成）→ DTO 的 `revertedItems` 列表 + `willRefreshPartnerBalance`，**不含红字凭证段**。
+
+### 8.5.2 前端 view.xml preview-then-confirm 范式
+
+```xml
+<action id="row-reverse-button" label="红冲" level="danger">
+    <visibleOn>${docStatus == 'POSTED' &amp;&amp; !isReversed}</visibleOn>
+    <onEvent>
+        <click>
+            <actions>
+                <!-- Step 1: 调 previewReverse @BizQuery -->
+                <action>
+                    <actionType>ajax</actionType>
+                    <api><!-- GraphQL query previewReverseVoucher → outputVar: preview --></api>
+                    <outputVar>preview</outputVar>
+                </action>
+                <!-- Step 2: 展示预览 dialog + 确认按钮调实际 mutation -->
+                <action>
+                    <actionType>dialog</actionType>
+                    <dialog>
+                        <title>红字冲销预览</title>
+                        <body>${preview.data.ErpFinVoucher__previewReverseVoucher...}</body>
+                        <actions>
+                            <action><actionType>ajax</actionType><label>确认红冲</label>
+                                <api url="@mutation:ErpFinVoucher__reverseVoucher?voucherId=$id"/>
+                                <close>true</close></action>
+                            <action><actionType>close</actionType><label>取消</label></action>
+                        </actions>
+                    </dialog>
+                </action>
+            </actions>
+        </click>
+    </onEvent>
+</action>
+```
+
+**与 §6 blocker 范式的区别**：blocker 的 dialog 只有"知道了"（关闭不执行删除）；preview-then-confirm 的 dialog 有"确认执行"（调 mutation）+"取消"两个按钮。
+
+### 8.5.3 反模式
+
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 预览 DTO 描述 mutation 不做的副作用（如核销预览含红字凭证段） | DTO 严格镜像真实 mutation（reverseVoucher 仅 isReversed；reconciliation 无凭证） |
+| 预览方法内访问 to-many 懒加载（`voucher.getLines()`） | 用 `daoProvider` 显式查询子表（会话存活无关，对齐 `loadLines` 范式） |
+| 预览 dialog 不给取消按钮（强制执行） | preview-then-confirm 必须有"确认"+"取消"双按钮 |
+| 用 `<confirmText>` 静态文案代替预览 | 冲销前先 `@BizQuery` 拉取动态影响（红字金额/回退项）展示 |
+
 ## 9. 长尾域扩展参考
 
 后续域（projects/assets/maintenance/quality 等）按本范式补齐字段驱动 visibleOn 时，遵循：
-
-1. **ORM 字典核实**：字段名 + dict 值经实时仓库 `*.orm.xml` 核实（避免误用历史名）
 2. **3 步落地**：`<layout>` 保留占位 + `<cells>` 加 `<visibleOn>` + `<clearValueOnHidden="true">`
 3. **跨域引用预览**：经 SPI（`IErpMd<Entity>ReferenceChecker`）解耦，下游各域注册实现
 4. **唯一性前置校验**：每域至少覆盖 `code` 字段（高频业务实体扩展到业务编号如 `soCode`/`poCode`）

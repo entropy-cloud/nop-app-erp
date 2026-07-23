@@ -571,5 +571,5 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret） ✅ plan `2026-07-22-1400-3-cross-cutting-sensitive-field-masking`（hr 4 字段 gen-control tpl 动态打码 + logistics apiKey/apiSecret published="false" 写回型凭据查看态静态 `******`）
 - [ ] Timesheet 周网格共享组件实现（hr 考勤 + projects 工时录入合并）
 - [ ] Barcode/PDA 扫描交互模式落地（inventory 移动确认 + master-data 条码录入）
-- [ ] 敏感操作确认流程落地（删除引用预览、反审核冲销预览、停用业务影响预览）
+- [x] 敏感操作确认流程落地（删除引用预览、反审核冲销预览、停用业务影响预览） ✅ plan `2026-07-23-1145-2-cross-cutting-sensitive-operation-confirmations`（Employee/Organization 删除引用阻断 dialog：master-data Organization SPI 生产实现 + finance Employee SPI 生产实现 + HR 域内 ErpHrEmployee countReferences；finance 反审核冲销预览：ErpFinVoucher previewReverseVoucher + ErpFinReconciliation previewReverse @BizQuery + preview-then-confirm dialog）
 - [ ] 回归测试：`npx playwright test` 全绿（每 F 项对应测试用例更新通过）
