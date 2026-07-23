@@ -239,7 +239,7 @@ Status: `completed`（plan `docs/plans/2026-07-20-0629-2-f8-f2-search-filter-and
 
 ### F9 — 跨单据导航与关联回链（P1）
 
-Status: `done` (核心 4 域；长尾实体 defer 到后续)
+Status: `done` (核心 4 域 + 长尾高/中价值 15 头实体全落地)
 
 详情页底部添加关联单据区：
 
@@ -259,7 +259,7 @@ Status: `done` (核心 4 域；长尾实体 defer 到后续)
 - purchase / sales / inventory：FK 关联，使用 `fixedProps` 子表 drawer + `link` URL 跳转 + copy-line-from-order（4 子表 custom cell + AMIS dialog + picker multi-select + setValue 映射）
 - manufacturing：MaterialIssue + JobCard drawer + 完工入库 link 降级（mfg→inv 跨域非 FK）
 - 范式文档：`docs/design/cross-doc-navigation-patterns.md`
-- 长尾域（crm/cs/hr/aps/logistics/b2b/contract/drp/assets/projects/quality/maintenance）按需逐域补齐
+- ✅ **长尾域 successor 已落地（2026-07-23 plan `2026-07-23-1408-1-f9-long-tail-cross-doc-navigation`）**：11 长尾域中高+中价值 **15 头实体**（crm Lead / cs Ticket / contract Contract / logistics Shipment+Carrier / projects Project+Task / maintenance Equipment+Visit / quality NCR+Inspection+Recall / hr Survey / drp Plan / assets Inventory）row-action drawer + ref-*.page.yaml（30 个）+ link 跳转（projects 创建任务 / projects 子任务 / maintenance 创建维修请求）。copy-line 经 Phase 0 裁决长尾无双条件就绪域（contract Template 无 lines / quality Inspection 无 sub-grid-edit）→ successor。低价值头实体（hr Assessment/DevelopmentPlan、drp Scenario、assets MaintenanceCost、projects BudgetLine、quality InspectionTemplateLine）+ aps（零 to-many）+ hr Employee（无 to-many）按需 successor。新增 §11 GenPage 自引用 cycle 反模式（ErpPrjTask 踩坑）。E2E `cross-doc-navigation.action.spec.ts` +7 长尾用例（12 全绿）。
 
 ---
 
@@ -559,7 +559,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置）
 - [x] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地 ✅ plan `2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions`
 - [x] F8: 8 核心列表页 + ext 22 列表页（共 30）查询条件扩展到域专用多维筛选（plan `2026-07-20-0629-2`：query + asideFilter 双筛选面，inventory/finance/purchase/sales 4 域；plan `2026-07-21-0330-2`：ext 8 域 crm 3 + cs 2 + hr 4 + aps 3 + logistics 3 + b2b 3 + contract 2 + drp 2 = 22 列表页）
-- [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`
+- [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`；长尾域 successor ✅ plan `2026-07-23-1408-1-f9-long-tail-cross-doc-navigation`（11 域 15 高/中价值头实体 row-action drawer + 30 ref page + link 跳转；copy-line/低价值头/aps/hr Employee successor）
 - [x] F10: 4 树形实体（ErpMdMaterialCategory/ErpMdSubject/ErpHrDepartment/ErpCsServiceCatalogItem）使用 AMIS tree 组件页面（plan `2026-07-20-1020-1`；ErpMfgBom/ErpAstAssetCategory 经 ORM 核实剔除，归 F16/无 tree 语义）
 - [x] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现 ✅ plan `2026-07-22-0444-2-frontend-f11-domain-batch-operations`（5 类批量操作代表域全落地 + 模式文档 `docs/design/batch-operation-patterns.md`）
 - [x] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板） ✅ plan `2026-07-21-0330-3`（Tier A/B 8 form tabs）+ plan `2026-07-22-0845-1`（Tier D 5 form tabs + Tier B 3 完整仪表板 drawer）；15/16 done，1/16 Deferred（Timesheet 周网格）；maintenance ErpMntVisit Tier C wizard 落地 plan `2026-07-23-1145-1`

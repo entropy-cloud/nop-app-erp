@@ -99,12 +99,38 @@ mfg:       WorkOrder → MaterialIssue → JobCard → Completion → Voucher
 
 ## 6. 各域落地实体清单
 
+### 6.1 核心域（F9 先行，plan 2026-07-20-0629-3）
+
 | 域 | 头实体 | 关联单据 drawer | 一键跳转 link | copy-line 子表 |
 |----|--------|----------------|---------------|----------------|
 | purchase | ErpPurOrder | ref-order.page.yaml in ErpPurReceive (fixedProps=orderId) | 「创建入库单」→ `/ErpPurReceive-main?filter_orderId=${id}`（visibleOn approved） | ErpPurReceive 子表「从订单导入」+ ErpPurInvoice 子表「从入库导入」 |
 | sales | ErpSalOrder | ref-order.page.yaml in ErpSalDelivery (fixedProps=orderId) | 「创建出库单」→ `/ErpSalDelivery-main?filter_orderId=${id}`（visibleOn approved） | ErpSalDelivery 子表「从订单导入」+ ErpSalInvoice 子表「从出库导入」 |
 | inventory | ErpInvStockMove | ref-move.page.yaml in ErpInvStockLedger (fixedProps=moveId) | 「查看流水」→ `/ErpInvStockLedger-main?filter_moveId=${id}` | — |
 | mfg | ErpMfgWorkOrder | ref-work-order.page.yaml in ErpMfgMaterialIssue + ErpMfgJobCard (fixedProps=workOrderId) | 「查看完工入库」`link="/ErpInvStockMove-main"` **降级路径**（mfg→inv 跨域非 FK，Closure Evidence 命名实体 = `row-view-completion-move-button`） | — |
+
+### 6.2 长尾域（F9 successor，plan 2026-07-23-1408-1）
+
+> 落地范式同 §3.2 方案 A（row-action drawer + `ref-*.page.yaml` + `fixedProps`）。copy-line 经 Phase 0 核实长尾域无双条件就绪域，范围=空集（见 plan Phase 1 裁决）。
+
+| 域 | 头实体 | 关联单据 drawer（ref 页面 / fixedProps） | 一键跳转 link（visibleOn） |
+|----|--------|------------------------------------------|---------------------------|
+| crm | ErpCrmLead | ErpCrmEvent/ref-lead(relatedLeadId)、ErpCrmActivity/ref-lead(leadId)、ErpCrmLeadConvLog/ref-lead(leadId) | — |
+| cs | ErpCsTicket | ErpCsTicketAction/ref-ticket(ticketId) | — |
+| contract | ErpCtContract | ErpCtContractLine/ref-contract、ErpCtContractVersion/ref-contract(contractId) | — |
+| logistics | ErpLogShipment | ErpLogShipmentLine/ref-shipment、ErpLogShipmentParcel/ref-shipment、ErpLogShipmentLog/ref-shipment(shipmentId) | — |
+| logistics | ErpLogCarrier | ErpLogCarrierConfig/ref-carrier(carrierId) | — |
+| projects | ErpPrjProject | ErpPrjTask/ref-project、ErpPrjTimesheet/ref-project、ErpPrjProjectUser/ref-project、ErpPrjBudget/ref-project、ErpPrjMilestone/ref-project(projectId) | 「创建任务」→ `/ErpPrjTask-main?filter_projectId=${id}`（visibleOn status==OPEN） |
+| projects | ErpPrjTask | ErpPrjTimesheet/ref-task(taskId) | 「子任务」→ `/ErpPrjTask-main?filter_parentTaskId=${id}`（link，**非 drawer**——见 §11 cycle 规则） |
+| maintenance | ErpMntEquipment | ErpMntVisit/ref-equipment、ErpMntSchedule/ref-equipment、ErpMntRequest/ref-equipment、ErpMntSparePartUsage/ref-equipment、ErpMntDowntimeEntry/ref-equipment(equipmentId) | 「创建维修请求」→ `/ErpMntRequest-main?filter_equipmentId=${id}`（visibleOn status!=DECOMMISSIONED） |
+| maintenance | ErpMntVisit | ErpMntVisitTask/ref-visit、ErpMntSparePartUsage/ref-visit(visitId) | — |
+| quality | ErpQaNonConformance | ErpQaAction/ref-ncr(ncrId)（CAPA 闭环） | — |
+| quality | ErpQaInspection | ErpQaInspectionLine/ref-inspection(inspectionId) | — |
+| quality | ErpQaRecall | ErpQaRecallTarget/ref-recall(recallId) | — |
+| hr | ErpHrSurvey | ErpHrSurveyQuestion/ref-survey、ErpHrSurveyResponse/ref-survey(surveyId) | — |
+| drp | ErpDrpPlan | ErpDrpLine/ref-plan(planId) | — |
+| assets | ErpAstInventory | ErpAstInventoryLine/ref-inventory(inventoryId) | — |
+
+**移出范围（低价值/无 FK，归 successor）**：hr ErpHrEmployee（无 to-many）、hr Assessment/DevelopmentPlan、drp Scenario、assets MaintenanceCost、projects BudgetLine、quality InspectionTemplateLine、aps ErpApsSchedule（零 to-many）。
 
 ## 7. 实施证据（2026-07-20 Phase 2-4 落地）
 
@@ -158,6 +184,33 @@ mfg:       WorkOrder → MaterialIssue → JobCard → Completion → Voucher
 | 详情页底部嵌独立 `<crud>` tabs 容器 | 用 row-action drawer + ref-xxx.page.yaml（F12 tabs 范畴之外） |
 | `<action>` 内用 `<tooltip>` 子元素（xdef 不支持） | `<action tooltip="...">` 用属性（xdef:action.xdef:14） |
 | mfg → inv 跨域按字符串字段（sourceBillCode）当作 FK 用 fixedProps | 降级为单纯 link 跳转，Closure Evidence 命名实体记录 |
+| 实体 X 的 view 内 drawer 指向生成 X 自身的 ref 页面（GenPage 自引用 cycle） | 改用 `link` 跳转（GenPage 不递归解析 link）——见 §11 |
+
+## 11. GenPage 自引用 cycle 规则（plan 2026-07-23-1408-1 踩坑）
+
+**机制**：`ref-<role>.page.yaml` 经 `web:GenPage view="X.view.xml"` 生成实体 X 的 main 页。GenPage 会**递归解析** view 内 `<drawer page="...">` / `<dialog page="...">` 引用的子页面并内联生成。若实体 X 既是子实体（有 ref 页面生成 X）又是父实体（X 的 view 内含 drawer 指向生成 X 的 ref 页面），则形成无限递归：
+
+```
+ref-parent → GenPage(X main) → X.rowAction.drawer → ref-parent → GenPage(X main) → ...
+```
+
+`validateAllPages` / `getPage()` 会抛 `java.lang.StackOverflowError`（`JsonExtender.loadExtends` 递归不收敛；`-Xss16m` 亦无法缓解，确认为无限 cycle 而非深栈）。
+
+**判定规则**：若实体 X 同时满足 (a) 存在 `ref-*.page.yaml` 生成 X，(b) X 的 view 内有 `actionType="drawer"` 指向任一生成 X 的 ref 页面 → 必然 cycle。
+
+**正确写法**：对「自引用」导航（父实体导航到同实体子集，如 ErpPrjTask→子任务、ErpPrjTask 自身按 parentTaskId 过滤），**用 `link` 而非 drawer**：
+
+```xml
+<!-- ✅ 自引用导航用 link：GenPage 不递归解析 link -->
+<action id="row-view-child-task-button" link="/ErpPrjTask-main?filter_parentTaskId=${id}"/>
+
+<!-- ❌ 自引用导航用 drawer：触发 GenPage cycle -->
+<action id="row-view-child-task-button" actionType="drawer">
+    <drawer page="/erp/prj/pages/ErpPrjTask/ref-parent-task.page.yaml">...</drawer>
+</action>
+```
+
+**勘误记录**：本规则前，projects ErpPrjTask childTasks 误用 drawer 导致 `ErpAllWebPagesTest` StackOverflow；已改为 link 并删除 `ref-parent-task.page.yaml`。双父实体（如 ErpPrjTimesheet 同时为 project/task 子表）只要不在自身 view 加 drawer 即无 cycle（ref 页面生成它时不触发递归）。
 
 ## 10. 参考文件
 
