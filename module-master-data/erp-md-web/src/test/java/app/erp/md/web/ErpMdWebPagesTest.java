@@ -7,11 +7,11 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.autotest.junit.JunitBaseTestCase;
 import io.nop.web.page.PageProvider;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @NopTestConfig(initDatabaseSchema = OptionalBoolean.TRUE)
-@Disabled("WebPagesTest requires full app classpath (all module page resources). Run in app-erp-all context.")
+@Tag("full-app")
 public class ErpMdWebPagesTest extends JunitBaseTestCase {
 
     @Inject

@@ -76,6 +76,15 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- @Tag("full-app") tests need the full app classpath; excluded at module
+                         level, run via ErpAllWebPagesTest in app-erp-all. Plan 2026-07-24-0930-1. -->
+                    <excludedGroups>full-app</excludedGroups>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <configuration>
