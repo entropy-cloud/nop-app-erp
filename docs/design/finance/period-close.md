@@ -352,3 +352,37 @@ carryForward 执行：源 Scenario status=CLOSED + 目标 Scenario 增补 Budget
 A2 默认 **commitment 不结转**（与 actualAmount 合并记录在源 Scenario 的余量计算中，结转后由源 Scenario 的 CLOSED 终态保留审计轨迹）。客户如有"未释放 commitment 一并结转至下年度"需求，归 successor（`commitment 一并结转` Deferred）。
 
 详见 [`budget.md §结转规则引擎`](budget.md#结转规则引擎a2plan-2026-07-21-1206-2)。
+
+## 期末结账向导（F12 Tier C，plan 2026-07-23-0818-2）
+
+> **零后端 delta**：向导纯 UI 编排既有 M4 已审计 Facade mutation，不引入新会计逻辑/写入语义。前任 successor 触发条件「后端 mutation 重构授权」经 Phase 0 Explore 核实失效（moot）——5 个 Facade mutation（preCheck/closePeriod/finalizePeriod/reverseClose/generateNextYearPeriods）完全充分，roadmap §F12「5 步：成本转结→汇兑损益→损益结转→凭证复审→结账」属笔误（closePeriod 内部一次性多步执行）。
+
+### 向导页面
+
+- 路径：`module-finance/erp-fin-web/.../erp/fin/pages/period-close-wizard/main.page.yaml`
+- 菜单：`fin-period-close-wizard`（会计期间分组，orderNo=205，紧随 ErpFinAccountingPeriod）
+
+### 步骤映射（owner doc 8 步概念 + roadmap 5 步笔误 → 实际 mutation 链）
+
+| 向导步骤 | 调用 action | 类型 | 说明 |
+|---------|------------|------|------|
+| Step 1 选择期间 + 前置检查 | `ErpFinAccountingPeriod__preCheck(periodId)` | @BizQuery 只读 | 结构化展示 `PeriodPreCheckReport`（unpostedVoucherCodes/unsettledArApCodes/unresolvedPostingExceptionKeys + 坏账准备 shortfall/excess）。阻断项（unposted + allowanceShortfall>0）红色高亮，禁用继续 |
+| Step 2 执行月度结账 | `ErpFinAccountingPeriod__closePeriod(periodId)` | @BizMutation 一次性 | 一次性同步编排 AR→AP→INV→AST→GL 模块关账 + 损益结转 + 汇兑重估。UI 展示 per-module 关账**结果**（ErpFinAccountingPeriodStatus 的 arStatus/apStatus/invStatus/glStatus/assetStatus）——closePeriod 同步一次性，故展示执行后结果（非实时进度） |
+| Step 3 年度结转（仅 12 月可见） | （closePeriod 已内含年度分支） | 非独立 mutation | 12 月期间 closePeriod 一并执行本年利润→未分配利润结转凭证 + 次年年初余额 populate + `generateNextYearPeriods(year+1)`。向导此步展示年度结转结果（次年期间列表），非独立 action |
+| Step 4 终关 | `ErpFinAccountingPeriod__finalizePeriod(periodId)` | @BizMutation | CLOSED → CLOSED_FINAL 最终锁定 |
+| 反结账（独立入口） | `ErpFinAccountingPeriod__reverseClose(periodId)` | @BizMutation 一次性 | 一次性执行 §反结账步骤 8 步概念模型（红冲结转凭证 + 处理折旧/成本凭证 + 解锁业务单据 + 重开期间）。向导提供红冲影响预览 + 二次确认 dialog |
+
+### per-module 关账结果数据源
+
+`ErpFinAccountingPeriodStatus`（`app-erp-finance.orm.xml:669-673`）按 `periodId` 关联，字段 `arStatus`/`apStatus`/`invStatus`/`glStatus`/`assetStatus`（dict `erp-fin/module-close-status`：OPEN/CLOSING/CLOSED）。closePeriod 同步一次性执行，故向导展示执行**后**的 per-module status（result visualization，非实时 progress）。
+
+### 组件选型裁决（Phase 0）
+
+- `form layoutControl="wizard"` AMIS 渲染器**未实现**（仅实现 `tabs`，`nop-entropy/docs-for-ai/02-core-guides/layout-syntax-reference.md:288`）→ view.xml wizard 布局不可用
+- AMIS `type:steps` prop 契约不稳（`page-structure-patterns.md §8.12` b2b ASN 先例）→ 不采用
+- **采用**：手写 `page.yaml` + 步骤指示器（service adaptor 预渲染 HTML 单 tpl，避免 each+对象 scope 怪癖）+ 分步 button-driven mutation（`actionType:ajax` + `reload:wizardService`）
+
+### E2E 覆盖
+
+- action spec：`tests/e2e/business-actions/fin-period-close-wizard.action.spec.ts`——驱动 preCheck→closePeriod→finalizePeriod→reverseClose 全链 + 非法状态守卫（closePeriod on CLOSED_FINAL 拒绝）
+- visual spec：`tests/e2e/visual/fin-period-close-wizard.visual.spec.ts`——page 可达 + 步骤指示器 + preCheck 结果区 + 反结账 dialog DOM 结构

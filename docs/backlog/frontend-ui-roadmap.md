@@ -304,7 +304,7 @@ Status: `completed`（plan `docs/plans/2026-07-22-0444-2-frontend-f11-domain-bat
 
 ### F12 — 页面结构增强（P2）
 
-Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），敏感字段脱敏已落地（plan `2026-07-22-1400-3`），Tier C wizard + 跨域凭证 tab + Tier D 子表 successor 归独立 plan
+Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），敏感字段脱敏已落地（plan `2026-07-22-1400-3`），Tier C 期末结账向导已落地（plan `2026-07-23-0818-2`，零后端 delta 编排既有 M4 mutation），跨域凭证 tab + Tier D 子表 successor 归独立 plan
 
 需要 tabs/向导/工作台页面的域（共 16 页面，与分析报告 §7.12 一致）：
 
@@ -314,7 +314,7 @@ Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 
 | sales: ErpSalOrder | 头+行 tabs | ✅ done |
 | inventory: ErpInvStockMove | 头+行+流水 tabs | ✅ done（流水由既有 F9 drawer 承担）|
 | finance: ErpFinVoucher | 头+行+凭证源 tabs | ✅ done（凭证源 billLinks 由 successor plan 落地 ref-voucher.page.yaml）|
-| finance: ErpFinAccountingPeriod | 期末结账向导（5步：成本转结 → 汇兑损益 → 损益结转 → 凭证复审 → 结账） | ❌ Deferred：后端 mutation 与 roadmap 描述不一致，归 Tier C wizard successor |
+| finance: ErpFinAccountingPeriod | 期末结账向导（preCheck→closePeriod→年度结转→finalize + reverseClose） | ✅ done（plan `2026-07-23-0818-2`，零后端 delta 编排既有 M4 mutation；roadmap「5 步」属笔误，实际 closePeriod 一次性多步。范式见 `page-structure-patterns.md §5`）|
 | manufacturing: ErpMfgWorkOrder | 头+行+工序+成本 tabs | ✅ done（工序 JobCard 由既有 F9 drawer 承担）|
 | projects: ErpPrjProject | 任务+预算+成本 tabs | ✅ done（form 4 tabs 化；tasks/budget 子表 tab 归 projects F4 successor）|
 | projects/hr: Timesheet | 周网格录入（项目/任务为行，工作日为列，0.5h 步进，自动计算工时成本） | ❌ Deferred：归跨域共享组件 successor |
@@ -327,7 +327,7 @@ Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 
 | hr: ErpHrEmployee | 基本信息+合同+薪酬+考勤+休假+工时 tabs | ✅ done（form 6 tabs 化 + 薪酬敏感字段隐藏 + 完整档案 drawer：基本信息/合同/考勤/休假/工时 5 tab）|
 | contract: ErpCtContract | 基本信息+合同行+版本历史+开票计划+消耗记录+附件 tabs | ✅ done（form 7 tabs 化 + 既有 lines/versions sub-grid 在 tabs 内继续渲染）|
 
-（注意：drawer 弹窗已是 codegen 默认；本项聚焦 tabs、向导和工作台页面。F12 实际落地清单：14/16 done（核心域 Tier A 5 + Tier B 3 form tabs 化 + Tier D 5 长尾 form tabs 化 + Tier B 3 完整仪表板 drawer），2/16 Deferred（Tier C wizard + Timesheet 周网格）。完整范式见 `docs/design/page-structure-patterns.md`。）
+（注意：drawer 弹窗已是 codegen 默认；本项聚焦 tabs、向导和工作台页面。F12 实际落地清单：15/16 done（核心域 Tier A 5 + Tier B 3 form tabs 化 + Tier D 5 长尾 form tabs 化 + Tier B 3 完整仪表板 drawer + Tier C 期末结账向导 1），1/16 Deferred（Timesheet 周网格）。完整范式见 `docs/design/page-structure-patterns.md`。）
 
 ---
 
@@ -400,6 +400,8 @@ Status: `partial` — 低风险批 5 页面已落地（plan `2026-07-22-0845-2`�
 | drp | 净需求计算报表 | ★★★ | 按物料分组折叠、每列来源标注（Σ 公式可视化）、建议补货量可编辑 | P2 |
 | quality | NCR 详情页 | ★★★ | 不合格信息 + 处理决定单选 + CAPA 内嵌表格 + 效果验证 | P1 |
 | maintenance | 维护访问 4 步向导 | ★★★ | 步骤1:确认 → 2:备件消耗 → 3:执行结果 → 4:完成确认；备件实时库存量 | P1 |
+
+> **wizard 范式先例**：finance 期末结账向导已落地（plan `2026-07-23-0818-2`，`page-structure-patterns.md §5`），为 maintenance 4 步向导 successor 提供 wizard 范式参考（手写 page.yaml + 预渲染 HTML 步骤指示器 + 分步 button-driven mutation）。maintenance 向导 BLOCKED 于 F4 child-table-editor 基线，归独立 successor。
 
 ---
 

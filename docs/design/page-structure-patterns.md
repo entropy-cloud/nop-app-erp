@@ -289,8 +289,8 @@ x:gen-extends: |
 
 | 实体/能力 | 类别 | 触发条件 |
 |-----------|------|---------|
-| ErpFinAccountingPeriod 期末结账向导（5 步） | Tier C wizard | 财务保护区域 owner doc 明确 wizard 行为 + 后端 mutation 重构授权（roadmap 描述的 5 步 mutation 与实际 BizModel 不一致） |
-| ErpMntVisit 任务+备件+停机 tabs / 4 步向导 | Tier C | maintenance F4 P2 successor 完成（child-table-editor 基线就绪） |
+| ErpFinAccountingPeriod 期末结账向导 | Tier C wizard | ✅ 已落地（plan `2026-07-23-0818-2`），见 §5 wizard 范式 |
+| ErpMntVisit 任务+备件+停机 tabs / 4 步向导 | Tier C | maintenance F4 P2 successor 完成（child-table-editor 基线就绪）；本仓库 §5 wizard 范式已为先例 |
 | Tier D 域 F4 successor（crm Lead activities/quotations / projects tasks/budget / quality lines/results 子表基线补齐） | Tier D 子表 | 对应域 F4 successor plan 启动 |
 | ErpHrEmployee 完整档案 drawer 跨域凭证 tab（assets → finance ErpFinVoucherBillR） | 跨域集成 successor | ErpFinVoucherBillR 无 assetId/sourceEntityType 字段；跨域查询方案明确后（需 join depreciation/disposal/capitalization 等多张单据） |
 | 敏感字段脱敏（hr bankAccount / salaryBase / logistics API Key/Secret） | cross-cutting | 敏感字段脱敏独立 plan 启动 |
@@ -300,20 +300,76 @@ x:gen-extends: |
 | F16 高风险余项（inventory PDA 扫码 + maintenance 4 步向导） | F16 territory | inventory PDA 硬件 Non-Goal（归 Barcode/PDA cross-cutting successor）；maintenance 向导 BLOCKED（F4 child-table-editor 基线缺失） |
 | F16 P2（hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表） | F16 territory | ✅ 已落地（plan `2026-07-22-1400-2`），见 §8.9-§8.12 |
 
-## 5. wizard 范式占位（待 successor 落地后回填）
+## 5. wizard 范式（F12 Tier C 落地，plan 2026-07-23-0818-2）
 
-Nop view.xdef 已内置 `<wizard>` 元素（`xview.xdef:177-192`），支持 `<step page="..." title="..."/>` 多步骤。但 wizard 范式在本仓库**尚未在任何计划落地**——AMIS wizard 组件 + step-state 管理 + 步骤间状态守卫均未在生产代码中验证。
+Nop view.xdef 内置 `<wizard>` 元素（`xview.xdef:177-192`），但 **AMIS 渲染器仅实现了 `tabs`，未实现 `wizard`**（`layout-syntax-reference.md:288`）。故 view.xml `layoutControl="wizard"` 不可用，wizard 必须手写 `page.yaml`。本节为首个 wizard 落地（finance 期末结账向导）回填，供 maintenance 4 步向导 successor 等后续参考。
 
-**首个 wizard 落地建议**：选择 ErpFinAccountingPeriod 期末结账向导 successor plan 作为 PoC，但需先完成：
-1. 后端 mutation 重构（roadmap 描述的 5 步独立 mutation `closeCostTransfer/closeFx/closePnl/reviewVoucher/closePeriod` 当前不存在，closePeriod 内部一次性多步执行）
-2. 财务保护区域人工审查（AGENTS.md AI 阻塞条件）
-3. AMIS wizard PoC + 步骤间数据持久化 + 回退/前进守卫
+### 组件选型裁决
 
-PoC 落地后回填本节，包含：
-- step-state 管理机制（前端 vs 后端）
-- 步骤间数据校验位置
-- 回退守卫（已确认步骤不可回退到未完成步骤）
-- wizard 与 `<pages><tabs>` 的关系（wizard 是 step + 顺序约束的 tabs）
+| 候选 | 结论 |
+|------|------|
+| view.xml `layoutControl="wizard"` | ❌ AMIS 渲染器未实现（仅 `tabs`） |
+| AMIS `type:steps` | ❌ prop 契约不稳（§8.12 b2b ASN 先例降级为 each+tpl） |
+| AMIS `type:wizard` | ❌ 表单连续提交模型不契合 mutation 编排（结账各步为独立 GraphQL 调用） |
+| **手写 page.yaml + 步骤指示器 + 分步 button-driven mutation** | ✅ 采用 |
+
+### 落地范式（finance 期末结账向导）
+
+**场景**：引导式驱动既有 Facade mutation 链（preCheck→closePeriod→finalizePeriod + reverseClose），各步为独立 GraphQL 调用（非表单连续提交）。
+
+**结构**：
+```yaml
+type: page
+body:
+  # 1. 选择实体（select source=findPage，直接置于 page body 共享 scope，使 id 可被同级 service 读取）
+  - type: wrapper
+    body:
+      - type: select        # name: periodId，select 的值落入 page scope
+        source: { ... findPage ... }
+      - type: button        # actionType: reload, target: wizardService, disabledOn: !periodId
+  # 2. 向导主体 service：加载实体 + 计算步骤状态
+  - type: service
+    name: wizardService
+    api: { ... entity__get + 关联状态 findPage ... }  # variables.pid: ${periodId}
+    adaptor: |
+      // 计算 flowSteps 状态 + 预渲染步骤指示器 HTML 字符串（避免 each+对象 scope 怪癖）
+      return { data: { period, stepIndicatorHtml, canClose, canFinalize, canReverse, ... } };
+    body:
+      - type: tpl           # 当前实体 alert
+      - type: tpl           # 步骤指示器：tpl '${stepIndicatorHtml}'（预渲染 HTML，非 each）
+      # 各步骤 section（button actionType:ajax + visibleOn + reload wizardService）
+      - type: wrapper       # Step 1：preCheck button → dialog（service 调 @BizQuery + 结构化展示）
+      - type: wrapper       # Step 2：closePeriod button（actionType:ajax, visibleOn canClose, reload wizardService）+ per-module 结果卡（visibleOn CLOSED+）
+      - type: wrapper       # Step 3（visibleOn 条件分支，如 month==12）
+      - type: wrapper       # Step 4：finalize button + 反结账 dialog（红冲影响预览 + 二次确认）
+```
+
+**关键决策点**：
+- **select 置于 page body 共享 scope**（非 form）——form 会隔离 select 的值，导致同级 service 读不到 periodId（form scope isolation）。dashboard 范式（form+service）依赖 reload 传参，但 wizard 的 select+service 共享 scope 更直接可靠
+- **步骤指示器用预渲染 HTML 单 tpl**（`${stepIndicatorHtml}`），不用 `each+tpl`——each 的对象 item 在某些 AMIS scope 下渲染 `[object Object]`（实测怪癖）。adaptor 把 flowSteps map 成 HTML 字符串返回
+- **各步骤 button `actionType:ajax` + `reload: wizardService`**——mutation 执行后 reload service 刷新步骤状态 + 结果卡。`@BizMutation` 经 `/graphql` raw query 调用，adaptor 探测 `payload.data.errors` 转 `{status:1,msg}` 或 `{status:0,msg}`
+- **反结账 dialog 内含二次确认**（红冲影响预览 alert + reverseImpactService 显示当前→目标状态 + 确认 button）
+
+**GraphQL field selection 注意**：
+- 返回复杂类型（DTO 如 `PeriodPreCheckReport`）的 @BizQuery **必须显式指定 field selection**（`{ field1 field2 ... }`），否则报「不是简单类型，必须指定字段集合」
+- `has*()`/非 `getXxx()` 方法**不被 Nop bean 暴露为 GraphQL 字段**——如 `PeriodPreCheckReport.hasIssues()`/`issueCount()` 不可查，须客户端按同语义计算（`!list.isEmpty() || ...`）
+
+### wizard 与 `<pages><tabs>` 的关系
+
+wizard = step + 顺序约束 + 状态守卫的 tabs。区别：
+- tabs：并行切换，无顺序约束
+- wizard：步骤按状态机推进，前置步骤完成才解锁后续（visibleOn 消费 service 计算的 can* 标志）
+- 本范式用 service 计算 can* 标志 + visibleOn 实现「顺序约束」，无需 AMIS wizard 组件
+
+**反模式**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 用 view.xml `layoutControl="wizard"`（AMIS 未实现） | 手写 page.yaml |
+| 用 AMIS `type:steps`（prop 契约不稳） | 预渲染 HTML 单 tpl 步骤指示器 |
+| select 放 form 内导致 service 读不到值 | select 置于 page body 共享 scope |
+| each+tpl 渲染对象数组（[object Object] 怪癖） | adaptor 预渲染 HTML 字符串，单 tpl 消费 |
+| @BizQuery 复杂返回不指定 field selection | 显式 `{ field1 field2 }` |
+| 假设 `hasIssues()`/`issueCount()` 是 GraphQL 字段 | 客户端按同语义计算（Nop 不暴露 has*/非 get 方法） |
 
 ## 6. 反模式自检表
 
@@ -323,9 +379,11 @@ PoC 落地后回填本节，包含：
 | 用 page.yaml 独立 AMIS tabs 绕过 view.xml 抽象 | 优先 view.xml `layoutControl="tabs"`；仅跨实体多 crud 才用 page.yaml |
 | 在 form tabs 内移除 `<cell id="lines">` 的 sub-grid-edit | 保持 `<cell id="lines"><view path=... grid="sub-grid-edit|sub-grid-view"/></cell>` 不变，tabs 自动包装 |
 | 把 F9 关联单据 drawer 改为嵌入 tab | 保持 F9 row-action drawer 独立；本范式与 F9 正交可叠加 |
-| 在 wizard 范式 PoC 落地前直接在财务保护区域手写 AMIS wizard JSON | 先完成后端 mutation 重构 + 人工审查 + wizard PoC，再回填 §5 |
+| 在 wizard 范式 PoC 落地前直接在财务保护区域手写 AMIS wizard JSON | wizard 范式已落地（§5，plan `2026-07-23-0818-2`）；新 wizard 按图施工 |
 | 把敏感字段脱敏放在 view.xml layout 隐藏（layout 移除 = 隐藏） | layout 移除仅前端不可见，sql 直查仍可见；完整脱敏需后端 `@Sensitive` 或 BizModel `@BizLoader` mask transformer |
 | 仪表板时间线直接 N+1 查询（每行 visit 单独拉 sparePartUsage） | 用后端 `@BizQuery` 聚合或 GraphQL `findPage` + `gql:selection` 批量预取 |
+| select 放 form 内导致同级 service 读不到值（form scope isolation） | select 置于 page body 共享 scope（见 §5 wizard 范式） |
+| wizard 用 view.xml `layoutControl="wizard"`（AMIS 未实现）或 AMIS `type:steps`（prop 不稳） | 手写 page.yaml + 预渲染 HTML 步骤指示器单 tpl（见 §5） |
 | 跨实体 crud grid 列引用关联实体字段但不加 `custom="true"` | 加 `custom="true"` + 显式 `domain="..."` 绕过 `ERR_GRID_COL_NOT_PROP`（头实体 objMeta 不含关联实体字段） |
 | ref-*.page.yaml drawer 未配 `mountOnEnter=true` 导致初始 N+1（所有 tab 同时拉数据） | `<tabs mountOnEnter="true" unmountOnExit="false">` 仅在切到 tab 时拉数据，且保留 DOM 状态 |
 | 跨域 GraphQL selection 用不存在的 filter_ 字段（如 `filter_sourceEntityType=ASSET` 在 ErpFinVoucherBillR 上不存在） | 先核实目标实体实际字段；不可用则降级同域单 tab 或归跨域集成 successor |
