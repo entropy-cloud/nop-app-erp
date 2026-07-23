@@ -304,7 +304,7 @@ Status: `completed`（plan `docs/plans/2026-07-22-0444-2-frontend-f11-domain-bat
 
 ### F12 — 页面结构增强（P2）
 
-Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），Tier C wizard + 跨域凭证 tab + 敏感字段脱敏 + Tier D 子表 successor 归独立 plan
+Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），敏感字段脱敏已落地（plan `2026-07-22-1400-3`），Tier C wizard + 跨域凭证 tab + Tier D 子表 successor 归独立 plan
 
 需要 tabs/向导/工作台页面的域（共 16 页面，与分析报告 §7.12 一致）：
 
@@ -566,7 +566,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [ ] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性
 - [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险批 2/4 已落地 plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树；P2 7 页面已落地 plan `2026-07-22-1400-2`：hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表；高风险余项 inventory PDA/maintenance 向导 2 归 successor）
 - [x] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选） ✅ plan `2026-07-19-2200-3`
-- [ ] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret）
+- [x] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret） ✅ plan `2026-07-22-1400-3-cross-cutting-sensitive-field-masking`（hr 4 字段 gen-control tpl 动态打码 + logistics apiKey/apiSecret published="false" 写回型凭据查看态静态 `******`）
 - [ ] Timesheet 周网格共享组件实现（hr 考勤 + projects 工时录入合并）
 - [ ] Barcode/PDA 扫描交互模式落地（inventory 移动确认 + master-data 条码录入）
 - [ ] 敏感操作确认流程落地（删除引用预览、反审核冲销预览、停用业务影响预览）

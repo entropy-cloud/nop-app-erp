@@ -253,7 +253,134 @@ view.xml <col> + <gen-control>
 | --- | --- |
 | 币种符号本地化（CNY ¥ / USD $） | F15 i18n + l10n 域 plan 启动时 |
 | 负数红字（会计专用借贷方向色） | F5 状态色继承 / finance 域专用方向色 plan 启动时 |
-| F7 敏感字段脱敏 | F7 cross-cutting 敏感字段脱敏 plan 启动时（F6 是脱敏前置基础设施） |
+| ~~F7 敏感字段脱敏~~ | ✅ 已落地（见 §9 敏感字段脱敏段） |
 | 报表金额字段格式化（nop-report formatExpr） | 报表格式化增强 plan / nop-report 模板统一审计启动时 |
 | nop-entropy 平台 codegen 全局 domain → format 映射扩展 | nop-entropy 平台 codegen 扩展提案被采纳时（方案 C successor） |
 | Form 字段编辑态格式化 | Phase 1 Explore (a) 验证 form 字段 format 支持时（编辑态保留默认是当前设计） |
+
+## 9. 敏感字段脱敏（F7）
+
+> Owner: `docs/design/field-formatting-patterns.md` §9（单一真相源）
+> Plan: `docs/plans/2026-07-22-1400-3-cross-cutting-sensitive-field-masking.md`
+> 覆盖：hr `ErpHrEmployee`（idCardNo / mobilePhone / bankAccountId / socialSecurityNo）+ logistics `ErpLogCarrierConfig`（apiKey / apiSecret）
+
+### 9.1 决策摘要
+
+| 决策 | 裁决 | 理由 |
+| --- | --- | --- |
+| (a) gen-control tpl 字符串变换可行性 | **可行** | amis-formula 内置文本函数 `LEFT`/`RIGHT`/`MID`/`CONCATENATE`/`ISEMPTY`（证据：`baidu/amis` `packages/amis-formula/src/doc.ts`）；与 F5 status-tag tpl 同一 codegen 链路 |
+| (b) unhide+mask vs keep-hidden | **unhide+mask（候选 a）** | roadmap §跨切面 §4 明确要求「脱敏显示」；exit criterion 要求覆盖；hidden 与「脱敏」语义冲突 |
+| (c) 前端层 vs 后端层脱敏 | **前端 gen-control tpl（候选 a）** | 与 F5/F6 范式一致；不改后端保护区域；GraphQL 响应仍含明文（安全边界明确，后端 @BizLoader 留作 successor） |
+
+**安全边界声明**：本机制为**前端渲染层脱敏**（AMIS tpl 打码）。GraphQL 响应仍包含明文（浏览器开发者工具 / F12 网络面板可见）。若需 API 层脱敏（GraphQL 响应即打码），需后端 BizModel `@BizLoader` 实现（归安全审计 successor）。
+
+### 9.2 脱敏打码模板（3 类）
+
+#### 手机号（保留前 3 后 4）：`138****0000`
+
+```xml
+<col id="mobilePhone">
+    <gen-control>
+        <c:script><![CDATA[
+            return { type: 'tpl', tpl: '${LEFT(mobilePhone,3)}****${RIGHT(mobilePhone,4)}' };
+        ]]></c:script>
+    </gen-control>
+</col>
+```
+
+#### 证件号 / 银行卡（保留首 1 末 4 或仅末 4）：`张******1234` / `****1234`
+
+```xml
+<!-- 证件号：首1末4 -->
+<cell id="idCardNo">
+    <gen-control>
+        <c:script><![CDATA[
+            return { type: 'tpl', tpl: '${LEFT(idCardNo,1)}******${RIGHT(idCardNo,4)}' };
+        ]]></c:script>
+    </gen-control>
+</cell>
+
+<!-- 银行卡：仅末4 -->
+<col id="bankAccountId">
+    <gen-control>
+        <c:script><![CDATA[
+            return { type: 'tpl', tpl: '****${RIGHT(bankAccountId,4)}' };
+        ]]></c:script>
+    </gen-control>
+</col>
+```
+
+#### 高敏感凭据（全打码或保留首2末4）：`******` / `sk****89ab`
+
+```xml
+<!-- 社保号：全打码 -->
+<cell id="socialSecurityNo">
+    <gen-control>
+        <c:script><![CDATA[
+            return { type: 'tpl', tpl: '******' };
+        ]]></c:script>
+    </gen-control>
+</cell>
+
+<!-- API Key：首2末4（仅当字段 published="true"、GraphQL 回传明文时可用） -->
+<col id="apiKey">
+    <gen-control>
+        <c:script><![CDATA[
+            return { type: 'tpl', tpl: '${LEFT(apiKey,2)}****${RIGHT(apiKey,4)}' };
+        ]]></c:script>
+    </gen-control>
+</col>
+```
+
+**写回型凭据例外（logistics `ErpLogCarrierConfig.apiKey/apiSecret`）**：这两个字段在 xmeta 中 `published="false" queryable="false"`（写回型集成凭据：前端可录入、后端永不回传明文）。由于 GraphQL 响应不含字段值，**动态 `LEFT/RIGHT` tpl 会渲染 `undefined`（垃圾值）**，故查看态（form view cell + sub-grid-view col）改用**静态全打码** `******`（与社交号同模板）。编辑态仍用 `{type:'input-password'}` 录入。这比「发布明文 + 前端打码」更安全（明文永不离开服务端），是 Phase 0 Decision (c)「前端层脱敏」对集成凭据的合理例外。
+
+### 9.3 编辑态：input-password
+
+编辑态表单 cell 使用 `{type:'input-password'}` 替换 codegen 默认 input-text，用户键入时显示圆点。AMIS `input-password` 内置 `showRevealToggle`（眼睛图标切换明文/密文）。
+
+```xml
+<form id="edit">
+    <cells>
+        <cell id="idCardNo">
+            <gen-control>
+                <c:script><![CDATA[
+                    return { type: 'input-password' };
+                ]]></c:script>
+            </gen-control>
+        </cell>
+    </cells>
+</form>
+```
+
+**例外**：银行账户号（`bankAccountId`）编辑态保留 codegen 默认 input-text（需肉眼核对录入），仅查看态打码。
+
+### 9.4 前端层 vs 后端层脱敏边界
+
+| 层 | 机制 | 覆盖范围 | 安全性 | 适用场景 |
+| --- | --- | --- | --- | --- |
+| **前端渲染层**（本设计） | gen-control tpl 打码 AMIS 输出 | list grid col + form view cell + sub-grid-view col | 低（GraphQL 响应含明文，F12 可见） | UI 防偷窥、截图脱敏、合规展示 |
+| **写回型凭据**（logistics apiKey/apiSecret） | xmeta `published="false"` + 查看态静态 `******` | GraphQL 响应不含字段值 | 高（明文永不离开服务端） | 集成凭据（API key/secret）：前端可录不可读 |
+| 后端响应层（successor） | BizModel `@BizLoader` 打码 GraphQL 响应 | GraphQL response 全链路 | 高（API 消费者也拿到打码值） | 安全审计要求 API 层脱敏、第三方集成 |
+
+### 9.5 反模式自检表（脱敏补充）
+
+| 不要这样写 | 应该这样写 |
+| --- | --- |
+| 用 JS `.substring()` / `.padStart()` 写在 tpl 表达式里（amis-formula 不支持 JS 方法调用） | 用 amis-formula 内置函数 `LEFT(text,len)` / `RIGHT(text,len)` / `MID(text,from,len)` |
+| 编辑态也用 tpl 打码（导致无法录入真实值） | 编辑态用 `{type:'input-password'}`；查看态用 tpl 打码 |
+| 在 `<form id="edit">` cell 上加 gen-control tpl（覆盖了编辑控件） | edit form cell 用 input-password；view form cell 用 tpl 打码 |
+| 忘记从 layout 移除「敏感字段隐藏」注释 | 更新 layout section title（如 payroll 段去掉「脱敏待落地」字样） |
+| 用 `visibleOn="${false}"` 隐藏（字段不可见，非脱敏） | 移除 visibleOn + 加 gen-control tpl 打码（字段可见但打码） |
+| 对 xmeta `published="false"` 的写回型凭据用动态 `LEFT/RIGHT` tpl（渲染 `undefined` 垃圾值） | 改用静态全打码 `******`（字段值不回传前端，无法动态截取）；或评估是否发布字段 |
+
+### 9.6 PoC 结论（Phase 0 Explore (a)）
+
+amis-formula tpl 表达式 `${ expr }` 内置完整文本函数集（经 `baidu/amis` 官方源 `packages/amis-formula/src/doc.ts` 核实）：
+
+- `LEFT(text, len)` — 取左侧 N 字符
+- `RIGHT(text, len)` — 取右侧 N 字符
+- `MID(text, from, len)` — 从位置 from 取 len 字符
+- `CONCATENATE(t1, t2, ...)` / `+` — 拼接
+- `LEN(text)` / `ISEMPTY(text)` / `PADSTART(text, num, pad)` / `REPLACE(text, search, replace)`
+
+gen-control `{type:'tpl', tpl:'${LEFT(field,N)}****${RIGHT(field,M)}'}` 经 `flux-web.xlib:GenGridCol` → `eval(colXpl)` → putAll 到 AMIS col JSON 链路，在 list grid col、form view cell、sub-grid-view col 三态均生效（与 F5 status-tag tpl 同一机制）。

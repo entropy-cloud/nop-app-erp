@@ -1,6 +1,6 @@
 # 复杂前端控件盘点：nop-app-erp 视角下的 nop-chaos-flux 控件需求
 
-> 日期：2026-07-20（v2 — 补充 flux-guide 审计结果）
+> 日期：2026-07-20（v2 — 补充 flux-guide 审计结果）；**2026-07-22 更新**：§2.1-2.3 Gantt/Kanban/Calendar 已由 nop-chaos-flux `@nop-chaos/flux-renderers-scheduling` 包提供（`type: "gantt"`/`"kanban"`/`"calendar"`），状态从 ❌→✅，见各节更新注记
 > 范围：nop-app-erp 18+1 域全部 337 hand-written view.xml + 726 page.yaml + 设计文档
 > 数据来源：nop-chaos-flux-master `flux-guide/`（31 个 design-patterns + flux-types）
 > 目标：识别 nop-app-erp 需要的、但 nop-chaos-flux 尚未提供的非标准控件
@@ -49,7 +49,7 @@
 | **场景** | 工作中心×时间线资源排布、项目任务 WBS 时间线、工单计划 vs 实际进度 |
 | **核心交互** | Y=资源/工作中心 X=时间线、水平条拖拽调整、缩放(日/周/月)、依赖连线、约束叠加层(灰色维护块)、优先级颜色编码 |
 | **设计文档** | `docs/design/aps/scheduling.md §8`（完整 JSON 数据契约） |
-| **Flux 状态** | ❌ `type: "gantt"` 不存在。Chart 不支持甘特条渲染，Timeline 不支持资源行+时间线二维布局 |
+| **Flux 状态** | ✅ **已存在**（2026-07-22 更新）：`type: "gantt"`，包 `@nop-chaos/flux-renderers-scheduling`。支持任务层级、依赖链接、基线、里程碑、可拖拽编辑、缩放（天/周/月）。文档：`flux-guide/design-patterns/gantt.md` |
 | **建议优先级** | **P1** — 排产是 ERP 核心差异化功能 |
 | **工作量** | 高 — 需独立渲染器，含拖拽引擎和缩放控制 |
 
@@ -61,7 +61,7 @@
 | **场景** | 招聘管道、工单状态追踪、任务看板、商机阶段管理 |
 | **核心交互** | 多列管道、拖拽卡片跨列、卡片内容模板化、动态列数、SLA 超时标记 |
 | **设计文档** | `docs/design/human-resource/ui-patterns.md §6`、`docs/design/crm/ui-patterns.md` |
-| **Flux 状态** | ❌ `type: "kanban"` 不存在。Cards 不支持列分组和跨列拖拽 |
+| **Flux 状态** | ✅ **已存在**（2026-07-22 更新）：`type: "kanban"`，包 `@nop-chaos/flux-renderers-scheduling`。支持拖拽列/卡、过滤、受控排序、动态列配置。文档：`flux-guide/design-patterns/kanban.md` |
 | **建议优先级** | **P2** — 多域共享，非核心阻断 |
 | **工作量** | 高 — 需独立渲染器，含拖拽引擎 |
 
@@ -73,7 +73,7 @@
 | **场景** | 月度排班矩阵（员工×日期）、团队休假日历（颜色编码按假别）、会计期间日历（开/关/锁定状态） |
 | **核心交互** | 行=员工 列=日期矩阵、颜色编码色块、月切换、冲突检测、轮换模式预览 |
 | **设计文档** | `docs/design/human-resource/shift-scheduling.md`（356行）、`docs/design/human-resource/ui-patterns.md §4` |
-| **Flux 状态** | ❌ 无日历矩阵渲染器。有 `react-day-picker` 依赖，但那是单日期选择器，不是月视图排班矩阵 |
+| **Flux 状态** | ✅ **已存在**（2026-07-22 更新）：`type: "calendar"`，包 `@nop-chaos/flux-renderers-scheduling`。支持月/周/日视图、资源分组、拖拽编辑事件、iCal 导入导出。文档：`flux-guide/design-patterns/calendar.md` |
 | **建议优先级** | **P2** — HR 排班选配，但休假日历影响面广 |
 | **工作量** | 高 — 需独立渲染器 |
 
@@ -85,7 +85,7 @@
 | **场景** | PDA 仓库操作（收货/上架/拣货/发货/盘点/领料/质检）、物料条码/批次/序列号/库位多类型自动识别 |
 | **核心交互** | 相机扫描输入框、手动输入回退、批量扫描缓冲、扫描成功/失败即时反馈 |
 | **设计文档** | `docs/design/inventory/barcode-integration.md`（168行） |
-| **Flux 状态** | ❌ `type: "barcode-input"` 不存在。QrCode 只负责展示二维码，不负责扫描识别 |
+| **Flux 状态** | ✅ **已存在**（2026-07-22 更新）：`type: "barcode-input"`，包 `@nop-chaos/flux-renderers-scheduling`。文档：`flux-guide/design-patterns/barcode-input.md` |
 | **建议优先级** | **P3** — 项目级 Non-Goal（"PDA/条码扫描硬件集成 — 项目 2.x"），但控件定义可提前预留 |
 | **工作量** | 中 — 表单控件子类型，底层依赖 WebRTC + barcode-detection API |
 
@@ -97,7 +97,7 @@
 | **场景** | 合同版本双栏 diff、EDI 报文语法高亮对比、数值差值箭头 |
 | **核心交互** | 双栏 diff（新增=绿/删除=红/修改=黄）、仅差异行过滤 |
 | **设计文档** | `docs/design/contract/ui-patterns.md` |
-| **Flux 状态** | ❌ `type: "diff-view"` 不存在 |
+| **Flux 状态** | ✅ **已存在**（2026-07-22 更新）：`type: "diff-view"`。文档：`flux-guide/design-patterns/diff-view.md` |
 | **建议优先级** | **P3** — F16 项目，选配 |
 | **工作量** | 中 — 可集成 diff-match-patch |
 
@@ -143,11 +143,11 @@
 
 | 控件 | 修正后优先级 | 影响域数 | Flux 已有? | 工作量 | 核心程度 |
 |------|------------|---------|-----------|-------|---------|
-| 甘特图 Gantt | **P1** | 3 | ❌ 需新建 | 高 | ERP 核心差异化 |
-| 看板 Kanban | **P2** | 4 | ❌ 需新建 | 高 | 非标准视图 |
-| 排班日历 Calendar | **P2** | 3 | ❌ 需新建 | 高 | HR 核心 |
-| 条码扫描 Barcode | **P3** | 4 | ❌ 需新建 | 中 | PDA 场景 |
-| 版本对比 Diff | **P3** | 2 | ❌ 需新建 | 中 | 合同/B2B 专项 |
+| 甘特图 Gantt | **P1** | 3 | ✅ `type: "gantt"`（2026-07-22） | 零—直接使用 | ERP 核心差异化 |
+| 看板 Kanban | **P2** | 4 | ✅ `type: "kanban"`（2026-07-22） | 零—直接使用 | 非标准视图 |
+| 排班日历 Calendar | **P2** | 3 | ✅ `type: "calendar"`（2026-07-22） | 零—直接使用 | HR 核心 |
+| 条码扫描 Barcode | **P3** | 4 | ✅ `type: "barcode-input"`（scheduling 包内置） | 零—直接使用 | PDA 场景 |
+| 版本对比 Diff | **P3** | 2 | ✅ `type: "diff-view"`（`flux-guide/design-patterns/diff-view.md`） | 零—直接使用 | 合同/B2B 专项 |
 | SPC 控制图 | **P3** | 1 | 🔶 Chart 需增强 | 低 | 质量专项 |
 | 公式编辑器 Formula | **P4** | 2 | ❌ 需新建 | 中 | 低频配置 |
 | 工单进度仪表板 | **P3** | 1 | 🔶 可组合现有 | 低 | 制造专项 |
@@ -175,9 +175,9 @@
 
 **Phase 1**（flux-web.xlib）：创建 GenFluxPage/GenFluxGrid/GenFluxForm 等标签。Tabs/Wizard/Steps 等 view.xml 已有概念的容器，flux-web.xlib 输出对应 Flux JSON。
 
-**Phase 2（差异化控件）**：仅需新建 **3 个独立渲染器** — Gantt、Kanban、Calendar。这是真正的增量开发。
+**Phase 2（差异化控件）**：~~仅需新建 3 个独立渲染器 — Gantt、Kanban、Calendar。~~ **2026-07-22 更新**：Gantt/Kanban/Calendar/Barcode-input 均已由 `@nop-chaos/flux-renderers-scheduling` 包提供（`registerSchedulingRenderers`），无需新建。复杂页面（F13/F16）可直接用 flux DSL 编写 page.yaml。
 
-**Phase 3（专项增强）**：Barcode-input、Diff-view 为表单控件子类型；SPC 为 Chart 扩展。
+**Phase 3（专项增强）**：~~Barcode-input、Diff-view 为表单控件子类型；~~ Diff-view 已内置（`flux-guide/design-patterns/diff-view.md`）；SPC 为 Chart 扩展。Formula-input 仍需新建（低优先级）。
 
 ---
 
