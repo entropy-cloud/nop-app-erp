@@ -17,7 +17,7 @@ import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
-import app.erp.qa.dao._ErpQaDaoConstants;
+import app.erp.qa.dao.constants.ErpQaInspectionType;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -192,7 +192,7 @@ public class ErpMfgWorkOrderProcessor {
 
         if (willFinish && wo.getProductId() != null) {
             int gate = InspectionTrigger.enforceGate(inspectionBiz, ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER,
-                    wo.getCode(), wo.getProductId(), _ErpQaDaoConstants.INSPECTION_TYPE_FINAL,
+                    wo.getCode(), wo.getProductId(), ErpQaInspectionType.INSPECTION_TYPE_FINAL,
                     newCompleted, null, null, null, context);
             if (gate == InspectionTrigger.BLOCKED) {
                 throw new NopException(ErpMfgErrors.ERR_INSPECTION_REQUIRED)
