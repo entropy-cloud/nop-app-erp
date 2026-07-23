@@ -751,3 +751,46 @@ ext 8 域（logistics/b2b/cs/hr/contract/drp/crm/aps）子表行内编辑收尾�
 - ❌ 在 ErpHrSurvey 头表单直接嵌套 ErpHrSurveyAnswer 的 input-table（违反 §17.2 三级嵌套降级）
 - ❌ 漏写 ErpHrCompetency 的 pick-list（行级 competencyId picker 接线失败）
 - ✅ hr 域所有 picker 复用全局主数据 picker，无需新建独立 picker.page.yaml
+
+## 18. maintenance 变体（ErpMntVisitTask 简单行 + ErpMntSparePartUsage 嵌套文档渲染裁决）
+
+maintenance 域 F4 child-table-editor（plan `2026-07-23-1145-1`）含两种子表结构，引入**嵌套文档子表的渲染裁决**范式：
+
+### 18.1 列集与变体类型
+
+| 头实体 | 行实体 | to-many name | 变体类型 | 渲染裁决 |
+|--------|--------|--------------|---------|---------|
+| `ErpMntVisit` | `ErpMntVisitTask` | `tasks` | 退化变体（无可乘字段，picker + dict select） | **sub-grid-edit**（标准 F4 范式，对齐 §13 mfg WorkOrderLine） |
+| `ErpMntVisit` | `ErpMntSparePartUsage` | `sparePartUsages` | **嵌套文档**（header code/docStatus/approveStatus/posted + 子集合 lines） | **sub-grid-view 只读**（Phase 0 Decision 候选 a） |
+| `ErpMntSparePartUsage` | `ErpMntSparePartUsageLine` | `lines` | 退化变体（quantity × unitCost 可乘但无自动推算 onEvent） | **sub-grid-edit**（SparePartUsage 独立 CRUD 页面，覆盖 successor） |
+
+**ErpMntVisitTask 列集**（sub-grid-edit）：`lineNo` `taskDescription`(500) `status`(dict `erp-mnt/visit-task-status`: PENDING/IN_PROGRESS/COMPLETED/SKIPPED/FAILED) `completedBy`(picker ErpMdEmployee) `completedAt`(datetime) `remark`（6 列）
+
+**ErpMntSparePartUsageLine 列集**（sub-grid-edit，SparePartUsage 独立页面）：`lineNo` `materialId`(picker ErpMdMaterial) `uoMId`(picker ErpMdUoM) `quantity` `unitCost` `amount` `batchNo` `remark`（8 列）
+
+### 18.2 嵌套文档子表渲染裁决（Phase 0 Decision 候选 a）
+
+SparePartUsage 是嵌套文档（有独立审批/过账生命周期：code/docStatus/approveStatus/posted + 子集合 lines），不同于 F4 P0-P3 的简单行子实体。在 Visit 头表单的渲染裁决：
+
+| 候选 | 结论 | 理由 |
+|------|------|------|
+| (a) **sub-grid-view 只读 + 独立 CRUD/drawer 编辑** | ✅ 采用 | 满足 F4 可见性目标 + 尊重嵌套文档生命周期 + 5 mandatory 头字段经独立 CRUD 编辑表单满足 |
+| (b) sub-grid-edit 聚合保存 | ❌ 不可行 | 5 mandatory 头字段（含唯一 code UK 约束 + approveStatus 语义）无法在 Visit form 内隐式/合理填充 |
+| (c) wizard-only Step 2 | ❌ 未达成 F4 | 标准 CRUD form 仍无备件可见性 |
+
+**实现**：Visit edit/view form 用 `<cell name="sparePartUsages"><view grid="sub-grid-view"/></cell>`（只读展示 code/warehouseId/totalAmount/docStatus/approveStatus）。SparePartUsage 独立 CRUD 页面补 lines 的 sub-grid-edit/sub-grid-view（覆盖 SparePartUsage→Line successor）。备件消耗创建主路径：wizard Step 2 + 独立 CRUD 页面。
+
+### 18.3 maintenance 域 picker 接线清单
+
+| Line 列 | 接线 picker | 备注 |
+|---------|-------------|------|
+| `ErpMntVisitTask.completedBy` | `/erp/md/pages/ErpMdEmployee/picker.page.yaml` | 员工 picker（completedBy 无 ORM to-one 关系，需显式 picker gen-control） |
+| `ErpMntSparePartUsageLine.materialId` | `/erp/md/pages/ErpMdMaterial/picker.page.yaml` | 物料 picker（F4 P1 已落地） |
+| `ErpMntSparePartUsageLine.uoMId` | `/erp/md/pages/ErpMdUoM/picker.page.yaml` | 计量单位 picker |
+
+### 18.4 反模式自检（maintenance 域专用）
+
+- ❌ 对 ErpMntVisit 的 sparePartUsages 用 sub-grid-edit（5 mandatory 头字段无法填充，含唯一 code UK 约束）
+- ❌ 在 Visit form 内 inline 编辑 SparePartUsage 的 approveStatus/posted（审批/过账轴语义不属于 Visit 头表单）
+- ❌ 漏写 ErpMntVisitTask.status 的 dict 绑定（5 值 PENDING/IN_PROGRESS/COMPLETED/SKIPPED/FAILED，非 2 值）
+- ✅ 嵌套文档子表用 sub-grid-view 只读 + 独立 CRUD 编辑器覆盖 lines 子表（候选 a）

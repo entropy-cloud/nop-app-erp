@@ -61,7 +61,7 @@
 - 当前状态大色块展示，故障时状态区高亮闪烁（或醒目标记）
 - 维护时间轴按时间倒序，计划性维护=蓝色、响应性维修=橙色
 - 待执行计划显示到期倒计时（7 天内=黄色、已逾期=红色）
-- [注：ErpMntEquipment 尚无 to-many 指向 Schedule/Visit/DowntimeEntry，维护时间轴需通过 IDaoProvider 查询聚合。ErpMntVisit 尚无 visitType(计划/响应)/result(正常/异常)列及 to-many 指向 SparePartUsage，为设计意图待补充 ORM。]
+- [注：ORM 现已包含本节设计所需的全部关系与字段。ErpMntEquipment 已含 to-many 指向 visits/schedules/requests/sparePartUsages/downtimeEntries（`app-erp-maintenance.orm.xml` ErpMntEquipment relations），维护时间轴可直接经聚合关系渲染。ErpMntVisit 已含 visitType(PLANNED/RESPONSIVE)/result(NORMAL/ABNORMAL/PARTIAL) 列，以及 to-many 指向 tasks(ErpMntVisitTask) 与 sparePartUsages(ErpMntSparePartUsage)，维护访问执行页与子表编辑均已具备 ORM 基线。]
 
 ### 维护访问执行
 

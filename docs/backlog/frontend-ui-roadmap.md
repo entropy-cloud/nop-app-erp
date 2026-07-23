@@ -118,7 +118,7 @@ Status: `completed`（plan `docs/plans/2026-07-19-1818-2-f3-core-line-and-remain
 
 **合并 F9（Picker）为 F4 Phase 1，因为 Picker 是子表编辑的前置依赖。**
 
-Status: `F4 Phase 1 + Phase 2 P0 completed`（plan `docs/plans/2026-07-19-1818-1-f4p1-high-frequency-picker.md` + `docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md` 全绿）。Phase 2 P1 子表编辑独立 plan 待启动。
+Status: `completed`（plan `docs/plans/2026-07-19-1818-1-f4p1-high-frequency-picker.md` + `docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md` 全绿 + P1-P3 全绿 + maintenance 收尾 plan `2026-07-23-1145-1`：ErpMntVisit tasks/sparePartUsages child-table-editor，嵌套文档渲染裁决见 `child-table-editor-patterns.md §18`）。
 
 **覆盖范围**：所有头行实体对（~50+）。这是 view.xml 手写层**最大缺口**。
 
@@ -304,7 +304,7 @@ Status: `completed`（plan `docs/plans/2026-07-22-0444-2-frontend-f11-domain-bat
 
 ### F12 — 页面结构增强（P2）
 
-Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），敏感字段脱敏已落地（plan `2026-07-22-1400-3`），Tier C 期末结账向导已落地（plan `2026-07-23-0818-2`，零后端 delta 编排既有 M4 mutation），跨域凭证 tab + Tier D 子表 successor 归独立 plan
+Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），敏感字段脱敏已落地（plan `2026-07-22-1400-3`），Tier C 期末结账向导已落地（plan `2026-07-23-0818-2`，零后端 delta 编排既有 M4 mutation），Tier C maintenance ErpMntVisit 已落地（plan `2026-07-23-1145-1`：tasks/sparePartUsages child-table-editor + 4 步执行向导），跨域凭证 tab + Tier D 子表 successor 归独立 plan
 
 需要 tabs/向导/工作台页面的域（共 16 页面，与分析报告 §7.12 一致）：
 
@@ -320,7 +320,7 @@ Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 
 | projects/hr: Timesheet | 周网格录入（项目/任务为行，工作日为列，0.5h 步进，自动计算工时成本） | ❌ Deferred：归跨域共享组件 successor |
 | quality: ErpQaInspection | 行评测+结果+NCR tabs | ✅ done（form 4 tabs 化；lines/results 子表 tab 归 quality F4 successor）|
 | assets: ErpAstAsset | 资产详情仪表板（双列：基本信息+财务信息，含折旧时间线、相关凭证列表） | ✅ done（form tabs 化 + 完整仪表板 drawer：基本信息/折旧时间线 2 tab；跨域凭证 tab Deferred）|
-| maintenance: ErpMntVisit | 任务+备件+停机 tabs | ❌ Deferred：F4 maintenance child-table-editor 未覆盖，归 maintenance successor |
+| maintenance: ErpMntVisit | 任务+备件+停机 tabs | ✅ done（plan `2026-07-23-1145-1`：F4 maintenance child-table-editor 覆盖 tasks/sparePartUsages + F12/F16 4 步执行向导；SparePartUsage 嵌套文档渲染裁决 sub-grid-view 只读候选 a，范式见 `child-table-editor-patterns.md §18` + `page-structure-patterns.md §5.1`）|
 | maintenance: ErpMntEquipment | 设备详情仪表板（状态色块、维护时间线、到期预警、备件消耗） | ✅ done（form tabs 化 + 完整仪表板 drawer：基本信息/维护时间线/备件消耗 3 tab）|
 | crm: ErpCrmLead | 活动+时间线+报价 tabs | ✅ done（form 6 tabs 化；activities/quotations 子表 tab 归 crm F4 successor）|
 | cs: ErpCsTicket | 活动+SLA+调查 tabs | ✅ done（form 4 tabs 化 + 既有 actions sub-grid-view 在 tabs 内继续渲染）|
@@ -376,7 +376,7 @@ codegen 生成文件包含 `i18n-en:title`。手写层使用中文 `label` 或 `
 
 ### F16 — 核心复杂手写页面（P1-P2）
 
-Status: `partial` — 低风险批 5 页面已落地（plan `2026-07-22-0845-2`：finance 凭证录入完成 + 凭证模板配置 + purchase 三单匹配 + mfg 工单进度仪表板 + quality NCR 详情页 + renderTemplate 表达式引擎 + 范式文档 §8）；高风险批 2 页面已落地（plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树 + 范式文档 §8.7-§8.8）；P2 7 页面已落地（plan `2026-07-22-1400-2`：hr 薪酬核算审批 + hr 组织架构图 + logistics 发运追踪时间线 + b2b EDI 事务详情 + b2b ASN 流程条 + contract 合同版本对比 + drp 净需求计算报表 + 范式文档 §8.9-§8.12）；高风险余项（inventory PDA 扫码/maintenance 向导）归 successor plan
+Status: `partial` — 低风险批 5 页面已落地（plan `2026-07-22-0845-2`：finance 凭证录入完成 + 凭证模板配置 + purchase 三单匹配 + mfg 工单进度仪表板 + quality NCR 详情页 + renderTemplate 表达式引擎 + 范式文档 §8）；高风险批 2 页面已落地（plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树 + 范式文档 §8.7-§8.8）；P2 7 页面已落地（plan `2026-07-22-1400-2`：hr 薪酬核算审批 + hr 组织架构图 + logistics 发运追踪时间线 + b2b EDI 事务详情 + b2b ASN 流程条 + contract 合同版本对比 + drp 净需求计算报表 + 范式文档 §8.9-§8.12）；maintenance 4 步执行向导已落地（plan `2026-07-23-1145-1`：执行型变体见 `page-structure-patterns.md §5.1`）；高风险余项 inventory PDA 扫码归 successor plan（硬件集成 Non-Goal）
 
 以下页面被 `docs/architecture/view-and-page-strategy.md` 及多域 `ui-patterns.md` 列为「复杂手写页面」，非标准 CRUD，需独立 view.xml 或 AMIS 定制。这些页面 F1-F15 无法覆盖。
 
@@ -399,9 +399,9 @@ Status: `partial` — 低风险批 5 页面已落地（plan `2026-07-22-0845-2`�
 | contract | 合同版本对比 | ★★★ | 双栏 diff（新增=绿/删除=红/修改=黄）、数值差值箭头、仅差异行过滤 | P2 |
 | drp | 净需求计算报表 | ★★★ | 按物料分组折叠、每列来源标注（Σ 公式可视化）、建议补货量可编辑 | P2 |
 | quality | NCR 详情页 | ★★★ | 不合格信息 + 处理决定单选 + CAPA 内嵌表格 + 效果验证 | P1 |
-| maintenance | 维护访问 4 步向导 | ★★★ | 步骤1:确认 → 2:备件消耗 → 3:执行结果 → 4:完成确认；备件实时库存量 | P1 |
+| maintenance | 维护访问 4 步向导 | ★★★ | 步骤1:确认 → 2:备件消耗 → 3:执行结果 → 4:完成确认；备件实时库存量 | P1 | ✅ done（plan `2026-07-23-1145-1`：4 步执行型向导，零后端 delta 编排既有 BizModel mutation；执行型变体范式见 `page-structure-patterns.md §5.1`）|
 
-> **wizard 范式先例**：finance 期末结账向导已落地（plan `2026-07-23-0818-2`，`page-structure-patterns.md §5`），为 maintenance 4 步向导 successor 提供 wizard 范式参考（手写 page.yaml + 预渲染 HTML 步骤指示器 + 分步 button-driven mutation）。maintenance 向导 BLOCKED 于 F4 child-table-editor 基线，归独立 successor。
+> **wizard 范式先例**：finance 期末结账向导已落地（plan `2026-07-23-0818-2`，`page-structure-patterns.md §5`）；maintenance 4 步执行向导已落地（plan `2026-07-23-1145-1`，执行型变体见 `page-structure-patterns.md §5.1`）。两者均用手写 page.yaml + 预渲染 HTML 步骤指示器 + 分步 button-driven mutation。
 
 ---
 
@@ -562,11 +562,11 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`
 - [x] F10: 4 树形实体（ErpMdMaterialCategory/ErpMdSubject/ErpHrDepartment/ErpCsServiceCatalogItem）使用 AMIS tree 组件页面（plan `2026-07-20-1020-1`；ErpMfgBom/ErpAstAssetCategory 经 ORM 核实剔除，归 F16/无 tree 语义）
 - [x] F11: 核心域列表页批量操作（批量审批/导入/重新排程）实现 ✅ plan `2026-07-22-0444-2-frontend-f11-domain-batch-operations`（5 类批量操作代表域全落地 + 模式文档 `docs/design/batch-operation-patterns.md`）
-- [x] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板） ✅ plan `2026-07-21-0330-3`（Tier A/B 8 form tabs）+ plan `2026-07-22-0845-1`（Tier D 5 form tabs + Tier B 3 完整仪表板 drawer）；14/16 done，2/16 Deferred（Tier C wizard + Timesheet 周网格）
+- [x] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板） ✅ plan `2026-07-21-0330-3`（Tier A/B 8 form tabs）+ plan `2026-07-22-0845-1`（Tier D 5 form tabs + Tier B 3 完整仪表板 drawer）；15/16 done，1/16 Deferred（Timesheet 周网格）；maintenance ErpMntVisit Tier C wizard 落地 plan `2026-07-23-1145-1`
 - [x] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现 ✅ plan `2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar`（7 页面 + 范式文档 + visual/action spec；Phase 0 拖拽 PoC 降级为 row-action + 原生 timeline/calendar 降级为 each+tpl）
 - [x] F14: 19 域 action-auth 菜单完整可达，排序按业务流程（plan `2026-07-22-0444-3`：4 TOPM orderNo 碰撞修复 + 27 孤儿页面补全 + 7 子项 ×10 orderNo 修复 + 2 分组命名统一 + cs 子项 parent-matching）
 - [x] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性 ✅ plan `2026-07-23-0818-1`（19 域 view.xml 351 文件 + action-auth 全覆盖；page.yaml 因机制不匹配 Deferred 至 l10n successor）
-- [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险批 2/4 已落地 plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树；P2 7 页面已落地 plan `2026-07-22-1400-2`：hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表；高风险余项 inventory PDA/maintenance 向导 2 归 successor）
+- [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险批 2/4 已落地 plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树；P2 7 页面已落地 plan `2026-07-22-1400-2`：hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表；高风险余项 inventory PDA 1 归 successor（maintenance 向导已落地 plan `2026-07-23-1145-1`））
 - [x] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选） ✅ plan `2026-07-19-2200-3`
 - [x] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret） ✅ plan `2026-07-22-1400-3-cross-cutting-sensitive-field-masking`（hr 4 字段 gen-control tpl 动态打码 + logistics apiKey/apiSecret published="false" 写回型凭据查看态静态 `******`）
 - [ ] Timesheet 周网格共享组件实现（hr 考勤 + projects 工时录入合并）

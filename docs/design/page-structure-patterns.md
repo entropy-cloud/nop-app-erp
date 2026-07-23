@@ -371,6 +371,31 @@ wizard = step + 顺序约束 + 状态守卫的 tabs。区别：
 | @BizQuery 复杂返回不指定 field selection | 显式 `{ field1 field2 }` |
 | 假设 `hasIssues()`/`issueCount()` 是 GraphQL 字段 | 客户端按同语义计算（Nop 不暴露 has*/非 get 方法） |
 
+### 5.1 变体：执行型向导（maintenance 4 步维护访问执行，plan `2026-07-23-1145-1`）
+
+§5 首个 wizard（finance 期末结账）是**结账流向导**（驱动 Facade mutation 链推进期间状态机）。maintenance 维护访问执行向导是**执行型向导**变体——引导操作员按 4 步完成一次维护访问执行，区别：
+
+| 维度 | 结账流（§5 finance） | 执行型（§5.1 maintenance） |
+|------|---------------------|---------------------------|
+| 编排对象 | 单实体的 Facade mutation 链（preCheck→close→finalize） | 单实体的状态机 mutation（start→save→complete）+ 中间结果录入 |
+| 步骤推进 | 每步一个 mutation，前置完成才解锁 | Step 1 start 翻转状态后，Step 2-4 并行可见（同 IN_PROGRESS 态），Step 4 complete 终结 |
+| 中间数据录入 | 无（各步只调 mutation） | Step 3 经 `__save` 录入 result/remark（非状态机 mutation，纯字段保存） |
+| 嵌套子表展示 | 无 | Step 2 只读展示 SparePartUsage（嵌套文档，Phase 0 Decision 候选 a 经 service findPage 渲染） |
+| cancel 语义 | reverseClose 回退（CLOSED→OPEN） | validateNotTerminal 允许 IN_PROGRESS→CANCELLED（向导内中途放弃，扩展标准列表页 cancel 的 visibleOn） |
+
+**落地范式**（`module-maintenance/.../visit-wizard/main.page.yaml`）：
+- 复用 §5 全部结构决策：select 置于 page body 共享 scope、预渲染 HTML 单 tpl 步骤指示器、各步 button `actionType:ajax` + `reload: wizardService`、adaptor 探测 `payload.data.errors`
+- step 状态机由 `visit.status` 推导：DRAFT/SCHEDULED→Step1 current；IN_PROGRESS→Step1 done + Step2-4 current；COMPLETED→全 done；CANCELLED→skip
+- Step 3 结果录入用 `type:form` + `api`（`__save` mutation，保存 result/remark，非状态翻转）
+- Step 2 备件消耗经 `wizardService` 单次 GraphQL 查询 `ErpMntSparePartUsage__findPage` 渲染只读 table（嵌套文档不在向导内 inline 编辑）
+
+**反模式（执行型向导专用）**：
+| 不要这样写 | 应该这样写 |
+|-----------|-----------|
+| 在执行型向导内 inline 编辑 SparePartUsage 嵌套文档（5 mandatory 头字段无法填充） | service findPage 只读展示 + 独立 CRUD/wizard 创建（Phase 0 Decision 候选 a） |
+| 把 Step 3 结果录入当作状态机 mutation（result 字段保存不翻转 status） | `__save` 保存 result/remark，status 保持 IN_PROGRESS（complete 才终结） |
+| 限制 wizard cancel 仅 DRAFT/SCHEDULED（与列表页一致） | wizard 内 cancel 从 IN_PROGRESS 可达（validateNotTerminal 允许，中途放弃语义） |
+
 ## 6. 反模式自检表
 
 | 不要这样写 | 应该这样写 |
