@@ -515,15 +515,15 @@ GROUP BY vl.subject.name
 | **finance** | subject / acctSchema / currency / partner / organization / warehouse / material | **projects.project**（凭证行辅助核算 projectId） |
 | **assets** | organization / currency / employee / location / materialCategory / subject | — |
 | **projects** | organization / currency / employee / partner / subject | — |
-| **manufacturing** | material / materialSku / uom / warehouse / location / organization / currency / partner | — |
+| **manufacturing** | material / materialSku / uom / warehouse / location / organization / currency / partner | **inventory.ErpInvBatch**（工序 `inputLot`/`outputLot`，投入/产出批次追溯，`app-erp-manufacturing.orm.xml:1495,1497`；manufacturing 依赖 inventory 已在 `module-boundaries.md:47` 登记，R 只读，批准保留） |
 | **quality** | organization / material / partner / warehouse / employee | — |
-| **maintenance** | organization / location / materialCategory / employee / material / uom / warehouse | — |
+| **maintenance** | organization / location / materialCategory / employee / material / uom / warehouse | **assets.ErpAstAsset**（设备 `asset`，equipment→asset 关联，`app-erp-maintenance.orm.xml:153`；maintenance 依赖 assets 已在 `module-boundaries.md:49` 登记，R 只读，批准保留） |
 | **crm** | organization / partner / employee / material 等（实测 31 to-one） | — |
 | **cs** | organization / partner 等（实测 5 to-one） | — |
 | **hr** | organization / employee / partner 等（实测 19 to-one） | — |
 | **aps** | organization / material / warehouse 等（实测 6 to-one） | — |
 | **contract** | organization / partner / currency 等（实测 10 to-one） | — |
-| **drp** | organization / material / warehouse 等（实测 7 to-one） | — |
+| **drp** | organization / material / warehouse 等（实测 7 to-one） | **inventory.ErpInvStockMove**（`ErpInvDrpCrossDock` 跨码头 `inboundMove`/`outboundMove`，`app-erp-drp.orm.xml:297,298`；drp→inv 单向合法 DAG，批准保留） |
 | **logistics** | organization / partner / material 等（实测 9 to-one） | — |
 | **b2b** | organization / partner / material 等（实测 15 to-one） | — |
 
@@ -770,13 +770,13 @@ quotation → order → delivery → invoice → receipt
 |---|---|---|---|
 | assets | md（subject/category/currency/org/location/employee） | finance（折旧/处置/资本化过账） | voucher_bill_r（finance 反查资产） |
 | projects | md（org/partner/currency/employee/subject） + prj（self-ref：task→project） | finance（成本归集过账） | cost_collection_line（sourceBillType 反查） + finance voucher_line.projectId |
-| manufacturing | md（material/sku/uom/org/currency/partner/warehouse） | finance（工单完工过账）+ quality | mrp_demand（sourceBillType 反查销售/生产单） |
-| maintenance | md（org/location/category/employee/warehouse/material）+ assets（equipment→asset，R） | finance（维修领料过账）+ manufacturing（停机影响排产） | 无（被 manufacturing 反查 equipment） |
+| manufacturing | md（material/sku/uom/org/currency/partner/warehouse）+ inventory（`ErpInvBatch`：工序投入/产出批次 `inputLot`/`outputLot`，R） | finance（工单完工过账）+ quality | mrp_demand（sourceBillType 反查销售/生产单） |
+| maintenance | md（org/location/category/employee/warehouse/material）+ assets（equipment→asset `ErpAstAsset`，R） | finance（维修领料过账）+ manufacturing（停机影响排产） | 无（被 manufacturing 反查 equipment） |
 | quality | md（org/material/partner/warehouse） | 无（被业务域触发检验，非 S 写） | inspection / review（relatedBillType 反查采购/生产单） |
 
 #### 第二批（crm / cs / hr / aps / contract / drp / logistics / b2b）
 
-> 以下 8 域 ORM 层实测仅引用 master-data（见 §5.6.2）；业务层 S 写/P 关系待各域设计深化后补充。
+> 以下 8 域 ORM 层实测主要引用 master-data（见 §5.6.2）；其中 drp 额外只读引用 inventory（`ErpInvStockMove`，跨码头入/出库移动，见 §5.6.2）。业务层 S 写/P 关系待各域设计深化后补充。
 
 | 域 | 核心 R 引用（ORM 实测） | 对外 S 写 | 被 P 反查入口 |
 |---|---|---|---|
@@ -785,7 +785,7 @@ quotation → order → delivery → invoice → receipt
 | hr | md（organization/employee/partner 等，19 to-one） | 待深化（薪资过账 finance） | 待深化 |
 | aps | md（organization/material/warehouse 等，6 to-one） | 待深化（与 manufacturing 协作：排程→工单） | 待深化 |
 | contract | md（organization/partner/currency 等，10 to-one） | 待深化（合同关联 purchase/sales 单据） | 待深化 |
-| drp | md（organization/material/warehouse 等，7 to-one） | 待深化（分销网络与 inventory/sales） | 待深化 |
+| drp | md（organization/material/warehouse 等，7 to-one）+ inventory（`ErpInvStockMove`：跨码头 `inboundMove`/`outboundMove`，R） | 待深化（分销网络与 sales） | 待深化 |
 | logistics | md（organization/partner/material 等，9 to-one） | 待深化（运输与 inventory/sales 发货） | 待深化 |
 | b2b | md（organization/partner/material 等，15 to-one） | 待深化（B2B 订单与 purchase/sales） | 待深化 |
 

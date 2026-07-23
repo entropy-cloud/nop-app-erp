@@ -101,6 +101,7 @@ app-erp-hr（依赖 master-data + projects ORM 只读引用：员工项目分配
 | 分销资源域业务规则 | `docs/design/drp/README.md` |
 | 物流域业务规则 | `docs/design/logistics/README.md` |
 | B2B 域业务规则 | `docs/design/b2b/README.md` |
+| 通知派发子系统（跨域通知能力） | `docs/design/notify/README.md` |
 | 模块拆分决策与命名 | `docs/architecture/domain-module-split-analysis.md` |
 | 数据依赖矩阵（表级只读/同步写/弱指针） | `docs/architecture/data-dependency-matrix.md` |
 
