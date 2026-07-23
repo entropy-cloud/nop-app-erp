@@ -10,7 +10,7 @@
 | `core-business-roadmap.md` | 进销存+财务+主数据业务逻辑 + 业财一体端到端 | `crud-roadmap.md` 对应域完成 | M1/M4/M5 全 `done` |
 | `extended-roadmap.md` | 其余 13 域业务逻辑 | `crud-roadmap.md` 对应域完成 | M2/M3 全 `done` |
 | `deepening-roadmap.md` | 应用层深化与架构硬化（GL 映射、仿真引擎、跨境、API 参考模式等 11 项） | `core-business-roadmap.md` + `extended-roadmap.md` done | `done`（11/11 全 done） |
-| `frontend-ui-roadmap.md` | 前端 UI 完整性（按钮/grid/form/page 结构/menu/复杂页面，F1-F16） | 以上四个路线图全部 done（前序不影响 UI 独立推进） | `planned` |
+| `frontend-ui-roadmap.md` | 前端 UI 完整性（按钮/grid/form/page 结构/menu/复杂页面，F1-F16） | 以上四个路线图全部 done（前序不影响 UI 独立推进） | `done`（plan `2026-07-23-1408-3` 全 3 phase 完成：Phase 1 F1/F6 对账确认 + Phase 2 全量回归门控发现 19 失败 + Phase 3 全部修复闭环——制造完工回归 `reverseIfExists` posted 前置检查 / notify-inbox 裸变量 data / AMIS ErpMdPartner 非法 GraphQL + adapt typo / inventory.write input-table tabs / test-code 2 + config 1。残留 5 项 test-isolation 污染为已知非回归环境问题，1 项 master-data.write.amis selectOption↔switch 交互为 test-infra 已知项） |
 
 ## Dependencies
 

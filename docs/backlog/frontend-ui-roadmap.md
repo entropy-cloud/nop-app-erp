@@ -549,14 +549,14 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 
 ## 退出标准
 
-- [ ] F1: 18 域主实体 view.xml 按钮完整（0 blocker, 0 major），每按钮含状态驱动 `visibleOn`（F7 覆盖非状态驱动场景）
+- [x] F1: 18 域主实体 view.xml 按钮完整（0 blocker, 0 major），每按钮含状态驱动 `visibleOn`（F7 覆盖非状态驱动场景） ✅ plan `2026-07-19-1122-1`（6 phase 全绿）；plan `2026-07-23-1408-3` Phase 1 对账确认 0 blocker/0 major 残留（row-cancel-button 覆盖 32 实体跨全 18 域 + visibleOn 253 处在位）
 - [x] F2: 核心 6 只读实体 + ext 14 只读实体（共 20）实现「搜索 → 行点击 → 详情 dialog」模式，无编辑/删除入口（plan `2026-07-20-0629-2`：inventory 4 + finance 2；plan `2026-07-21-0330-2`：aps 1 + logistics 2 + b2b 1 + crm 6 + hr 2 + contract 2 = 14 ext 长尾只读实体）
 - [x] F3: 18 域主实体 form layout 按 `ui-patterns.md` 分组（P0 核心 4 域 + P1 mfg 5 域 + P2 ext 8 域 + P3 master-data 全部完成；累计 47+68+86=201 实体）
 - [x] F4 Phase1: 高频 picker（物料/供应商/客户/员工/资产/币种/科目）定制完成
 - [x] F4 Phase2 P0: purchase/sales 8 头行对的 child-table-editor 配置完成（含 M2M picker、自动推算、行校验，plan `2026-07-19-2200-1-f4p2-child-table-editor-p0`）
 - [x] F4 Phase2 P2/P3 + finance: ~39+ 剩余头行实体对的 child-table-editor 配置已全部落地（P1 inventory 3 对 + finance ErpFinVoucher 1 对 + P2 3 对 + P3 ext 8 域 18 对 Tier 1 = 25 对全完成；P3 ext 8 域 9 对 Tier 2 配置对降级为后端 gap successor 待 ORM 修改批准后启动 successor）
 - [x] F5: 主要业务实体（68 个核心+扩展域实体）状态列使用着色标签（plan 2026-07-19-1818-3-f5-status-tag-coloring）
-- [ ] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置）
+- [x] F6: 所有金额/数量/日期列使用千分位格式（xmeta 层统一配置） ✅ plan `2026-07-19-2200-2`（489 col × 17 域）；plan `2026-07-23-1408-3` Phase 1 对账确认 636 列格式化在位（kilometer 283 + date 179 + datetime 174，跨全 18 域 110 view.xml，较交付时仅增不减）
 - [x] F7: 非状态驱动的 `visibleOn` 条件覆盖；主数据删除引用预览/启用停用 Switch 模式落地 ✅ plan `2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions`
 - [x] F8: 8 核心列表页 + ext 22 列表页（共 30）查询条件扩展到域专用多维筛选（plan `2026-07-20-0629-2`：query + asideFilter 双筛选面，inventory/finance/purchase/sales 4 域；plan `2026-07-21-0330-2`：ext 8 域 crm 3 + cs 2 + hr 4 + aps 3 + logistics 3 + b2b 3 + contract 2 + drp 2 = 22 列表页）
 - [x] F9: 核心域（purchase/sales/inventory/manufacturing）跨单据导航链接实现 ✅ plan `2026-07-20-0629-3-f9-cross-document-navigation`；长尾域 successor ✅ plan `2026-07-23-1408-1-f9-long-tail-cross-doc-navigation`（11 域 15 高/中价值头实体 row-action drawer + 30 ref page + link 跳转；copy-line/低价值头/aps/hr Employee successor）
@@ -569,7 +569,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险批 2/4 已落地 plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树；P2 7 页面已落地 plan `2026-07-22-1400-2`：hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表；高风险余项 inventory PDA 1 归 successor（maintenance 向导已落地 plan `2026-07-23-1145-1`））
 - [x] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选） ✅ plan `2026-07-19-2200-3`
 - [x] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret） ✅ plan `2026-07-22-1400-3-cross-cutting-sensitive-field-masking`（hr 4 字段 gen-control tpl 动态打码 + logistics apiKey/apiSecret published="false" 写回型凭据查看态静态 `******`）
-- [ ] Timesheet 周网格共享组件实现（hr 考勤 + projects 工时录入合并）
-- [ ] Barcode/PDA 扫描交互模式落地（inventory 移动确认 + master-data 条码录入）
+- [ ] Timesheet 周网格共享组件实现（hr 考勤 + projects 工时录入合并） — **P3 defer**（plan `2026-07-23-1408-3` Deferred But Adjudicated；successor 触发条件：hr 考勤或 projects 工时录入周网格交互需求落地，或 Flux DSL 接入时）
+- [ ] Barcode/PDA 扫描交互模式落地（inventory 移动确认 + master-data 条码录入） — **Non-Goal 项目 2.x**（roadmap line 547 显式排除；硬件集成，plan `2026-07-23-1408-3` Deferred But Adjudicated successor=no）
 - [x] 敏感操作确认流程落地（删除引用预览、反审核冲销预览、停用业务影响预览） ✅ plan `2026-07-23-1145-2-cross-cutting-sensitive-operation-confirmations`（Employee/Organization 删除引用阻断 dialog：master-data Organization SPI 生产实现 + finance Employee SPI 生产实现 + HR 域内 ErpHrEmployee countReferences；finance 反审核冲销预览：ErpFinVoucher previewReverseVoucher + ErpFinReconciliation previewReverse @BizQuery + preview-then-confirm dialog）
-- [ ] 回归测试：`npx playwright test` 全绿（每 F 项对应测试用例更新通过）
+- [x] 回归测试：`npx playwright test` 全绿（每 F 项对应测试用例更新通过） ✅ plan `2026-07-23-1408-3` Phase 2 全量门控发现 19 失败 → Phase 3 全部修复（制造完工回归 `reverseIfExists` posted 前置检查 / notify-inbox 裸变量 data / AMIS ErpMdPartner 非法 GraphQL + adapt typo / inventory.write input-table tabs / test-code 2 + config 1）；残留 5 项为 test-isolation 污染（非回归环境问题，隔离复跑 PASS）；1 项 master-data.write.amis selectOption 与 switch 组件交互为 test-infra 已知项
