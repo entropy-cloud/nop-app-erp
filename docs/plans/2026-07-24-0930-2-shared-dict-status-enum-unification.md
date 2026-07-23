@@ -193,8 +193,9 @@ Exit Criteria:
 ### 硬编码状态字面量全量替换（126 处 "DRAFT" / 73 处 "APPROVED" 等）
 
 - Classification: `optimization candidate`
+- **Status: RELEASED（successor `docs/plans/2026-07-24-0605-2-hardcoded-status-literal-constant-convergence.md` 已完成；服务层全 9 域 doc/approve 轴字面量→`Erp*DocStatus` 常量引用，R3/R11 checker 基线无回归）**
 - Why Not Blocking Closure: 本计划消除常量声明层重复（D1 接口）+ dict 文件层重复；硬编码字面量替换为常量引用是逐文件低风险重构，数量大，归后续计划
-- Successor Required: `yes`（触发条件：D1 接口全域落地后，按域推进硬编码字面量→常量引用重构时）
+- Successor Required: `yes`（触发条件：D1 接口全域落地后，按域推进硬编码字面量→常量引用重构时）→ **已满足并执行完毕**
 
 ### ORM ext:dict 引用统一（approve-status/doc-status 共享 dict key）
 

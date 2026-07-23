@@ -44,6 +44,10 @@ R2c=1108 较 `docs/plans/2026-07-16-2134-1-ddd-entity-methods-daofor-convergence
 
 `2026-07-24-0930-2`（字典与状态枚举真相统一）为 cs/mnt/mfg/qa 4 域新增 dao 层 `Erp*DocStatus` 接口 + `Erp*Constants extends` 关系，消除 approve-status/doc-status 常量重复声明。该变更**不引入任何 `new Erp*()` 实体构造**（纯接口继承），故 R3 基线 **不变（=19）**。checker 实测全 16 规则均 ≤ 基线（R2c=1108 / R3=19 / R11=0 等），无回归。
 
+## R3/R11 同步注记（plan 2026-07-24-0605-2，F2(d) successor）
+
+`2026-07-24-0605-2`（硬编码状态字面量→`Erp*DocStatus` 常量收敛）将全 9 域服务层 doc/approve 轴裸字面量替换为常量引用，并消除 inv `ErpInvCostAdjustProcessor`/`ErpInvLandedCostProcessor` + mfg `MrpReleaseService` 的本地重复常量定义（统一引用 dao 层 `Erp*DocStatus`）。该变更**不引入任何 `new Erp*()` 实体构造**（纯字面量→常量引用 + import 替换），故 R3 基线 **不变（=19）**；不新增 Processor 重复状态判断方法，故 R11 基线 **不变（=0）**。checker 实测全 16 规则均 ≤ 基线（R3=19 / R11=0 / R2c=1108 等），无回归。替换框/排除集边界见 `docs/audits/hardcoded-status-literal-inventory.md`。
+
 ## R12 同步注记（plan 2026-07-24-1400-1）
 
 `2026-07-24-1400-1`（隐性共享内核显式化，F4 闭包项 #5）裁决=分支 (b)：接受 finance/master-data 的 3 个跨域语义类型（`ErpFinBusinessType` enum / `PostingEvent` DTO / `AcctSchemaResolver` dao 耦合工具）为**显式共享内核**——类型不迁移，经 owner doc 登记（`module-boundaries.md §共享内核` + `data-dependency-matrix.md`）+ 本 R12 守卫追踪跨域 import 基线。裁决依据（enum 不可降级为 SPI 接口）见 `docs/analysis/shared-kernel-extraction-decision.md`。

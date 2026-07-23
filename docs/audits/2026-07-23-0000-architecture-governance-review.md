@@ -146,7 +146,7 @@ Architecture Governance Prompt §7 要求回答"if people keep bypassing the int
 
 ### 🔴 F2 — 字典与状态枚举真相碎裂（HIGH）
 
-> **解决状态（2026-07-24，plan `2026-07-24-0930-2`）**：(a) approve-status 字典字节级重复——8 份无 ORM 消费者的 per-domain 文件已移除（仅 inventory 保留，Deferred）；(b)(c) Java 常量重复——D1 `Erp*DocStatus` 接口已推广至 cs/mnt/mfg/qa（全域 9 域）；(d) 硬编码字面量全量替换——Deferred successor。doc-status 7 域合并候选——Deferred（ORM ext:dict 保护区域）。详见闭包前必须项 #3（🔶 部分 Done）/ #9（✅ Done）。
+> **解决状态（2026-07-24，plan `2026-07-24-0930-2` + successor `2026-07-24-0605-2`）**：(a) approve-status 字典字节级重复——8 份无 ORM 消费者的 per-domain 文件已移除（仅 inventory 保留，Deferred）；(b)(c) Java 常量重复——D1 `Erp*DocStatus` 接口已推广至 cs/mnt/mfg/qa（全域 9 域）；**(d) 硬编码字面量→`Erp*DocStatus` 常量替换——RELEASED（successor `2026-07-24-0605-2` 已完成：服务层全 9 域 doc/approve 轴字面量替换为常量引用，含 inv/mfg 本地重复常量定义消除与跨域 MrpRelease/NcrReturn 收敛，R3/R11 checker 基线无回归）**。doc-status 7 域合并候选——Deferred（ORM ext:dict 保护区域）。详见闭包前必须项 #3（🔶 部分 Done）/ #9（✅ Done）。
 
 **违反**：
 - Architecture Governance Prompt §3 "Keep One Truth"
@@ -174,7 +174,7 @@ Architecture Governance Prompt §7 要求回答"if people keep bypassing the int
 
 > **注**：`docs/plans/2026-07-16-2134-1` 的 Decision D1 已建立共享常量接口先例（`ErpPurDocStatus` 在 `-dao` 模块，`ErpPurConstants extends ErpPurDocStatus`），但仅落地 purchase/sales 两域，未推广。
 
-**（d）服务层硬编码状态字面量**：`"DRAFT"` 126 处、`"APPROVED"` 73 处、`"UNSUBMITTED"` 41 处。
+**（d）服务层硬编码状态字面量**：`"DRAFT"` 126 处、`"APPROVED"` 73 处、`"UNSUBMITTED"` 41 处。**[RELEASED 2026-07-24，successor `2026-07-24-0605-2`]** 服务层 doc/approve 轴裸字面量已替换为 `Erp*DocStatus` 常量引用（含 mfg approve 轴；异语义/mfg doc-status 轴/跨域镜像常量定义按 Phase 1 语义轴判定排除，见 `docs/audits/hardcoded-status-literal-inventory.md`）。
 
 **（e）drp 在 erp-inv 命名空间下放置字典**（v1 措辞"反向命名空间污染"过强，已修订）：
 
