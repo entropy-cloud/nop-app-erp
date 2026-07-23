@@ -273,6 +273,15 @@
                         </click>
                     </onEvent>
                 </action>
+                <action id="row-view-source-bills-button" label="源单据" i18n-en:label="Source Bills" level="info" icon="fa fa-reply"
+                        tooltip="反查生成本凭证的源业务单据，并提供跳转（经 ErpFinVoucherBillR voucherId 反查）"
+                        actionType="drawer">
+                    <drawer page="/erp/fin/pages/ErpFinVoucherBillR/bills-by-voucher.page.yaml" size="lg">
+                        <data>
+                            <voucherId>${id}</voucherId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

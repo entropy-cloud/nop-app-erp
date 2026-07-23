@@ -1,0 +1,79 @@
+# 业务单据→关联凭证查看页（plan 2026-07-23-1408-2 Phase 1）。
+# 各域业务单据列表行经 row-action drawer 打开本页，data.billCode 注入（父页 view.xml 经 ${'$'}{code} 发字面 ${code} 由 AMIS 运行期解析为行 code）。
+# 经 ErpFinVoucherBillR__findPage(query:{filter:$f}) 查询，voucher.* relation selection（xmeta voucher prop queryable=true）
+# 取回凭证头字段——Phase 0 PoC 裁决：单步 relation selection 可行，替代 E2E _helper.ts:98 两步查询。
+#
+# filter 裁决（Phase 0 PoC 实测）：billCode 服务端仅允许 [eq,in,dateBetween,dateTimeBetween] 运算符（like/contains 禁用）。
+# 用 $type:eq 精确匹配 billCode（直接过账源单据：Invoice/StockMove/Payment/Receipt 等 billCode=entity.code 无修饰）。
+# AMIS 经 api.data.variables 标量值解析 ${billCode}（同 timeline.page.yaml 的 ${ticketId}，标量解析已验证）。
+# 带前后缀的 billCode（PO 承诺 COMMITMENT-/生产差异 -PV/资产折旧 code#period 等）无法经单值 eq 命中，
+# 归 successor（需后端开启 like 或前端按实体构造派生 billCode）。
+# TreeBean filter 须经 $f:Map 变量传递（inline $type 会被 GraphQL 误解析为变量）。范式：dql-query.md + GraphQLClient.findItems。
+type: page
+title: "关联凭证"
+body:
+  - type: service
+    name: voucherLinkService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}f:Map,${'$'}lim:Int){ ErpFinVoucherBillR__findPage(query:{offset:0,limit:${'$'}lim,filter:${'$'}f}){ items{ id billType billCode businessType voucher{ id code voucherType postingType isReversed totalDebit totalCredit } } total } }"
+        variables:
+          lim: 50
+          f:
+            $type: eq
+            name: billCode
+            value: "${billCode}"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinVoucherBillR__findPage || { items: [], total: 0 };
+        const items = (page.items || []).map(function(r){
+          const v = r.voucher || {};
+          return {
+            id: r.id,
+            voucherCode: v.code || '—',
+            voucherType: v.voucherType || '—',
+            businessType: r.businessType || '—',
+            postingType: v.postingType || '—',
+            isReversed: v.isReversed ? true : false,
+            totalDebit: v.totalDebit || 0,
+            totalCredit: v.totalCredit || 0
+          };
+        });
+        return { status: 0, msg: '', data: { items: items, total: page.total || 0 } };
+    body:
+      - type: wrapper
+        className: "m-b"
+        body:
+          - type: tpl
+            tpl: '<div class="text-muted">单据编号：<b>${billCode}</b> ｜ 共 ${total} 条关联凭证</div>'
+      - type: table
+        source: "${items}"
+        placeholder: '<div class="text-center text-muted p-4">该单据暂无关联凭证（尚未过账，或凭证按派生编号回链——如资产折旧按 code#period）</div>'
+        columns:
+          - name: voucherCode
+            label: "凭证号"
+          - name: businessType
+            label: "业务类型"
+          - name: voucherType
+            label: "凭证字"
+          - name: postingType
+            label: "过账类型"
+            type: tpl
+            tpl: '<span class="label label-${postingType == "REVERSAL" ? "danger" : "success"}">${postingType}</span>'
+          - name: totalDebit
+            label: "借方合计"
+            type: number
+            precision: 2
+          - name: totalCredit
+            label: "贷方合计"
+            type: number
+            precision: 2
+          - name: isReversed
+            label: "红冲状态"
+            type: tpl
+            tpl: '<span class="label label-${isReversed ? "danger" : "default"}">${isReversed ? "已红冲" : "正常"}</span>'

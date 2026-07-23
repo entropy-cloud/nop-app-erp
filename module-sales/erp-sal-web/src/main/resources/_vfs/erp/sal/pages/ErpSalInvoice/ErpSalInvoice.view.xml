@@ -289,6 +289,15 @@
                     </messages>
                     <visibleOn>${docStatus != 'CANCELLED'}</visibleOn>
                 </action>
+                <action id="row-view-voucher-button" label="关联凭证" i18n-en:label="Linked Voucher" level="info" icon="fa fa-link"
+                        tooltip="查看本单据生成的过账凭证（跨域经 ErpFinVoucherBillR 回链查询）"
+                        actionType="drawer">
+                    <drawer page="/erp/fin/pages/ErpFinVoucherBillR/voucher-by-bill.page.yaml" size="lg">
+                        <data>
+                            <billCode>${code}</billCode>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

@@ -1,0 +1,134 @@
+# 凭证→源业务单据反向跳转页（plan 2026-07-23-1408-2 Phase 2）。
+# ErpFinVoucher 列表行经 row-action drawer 打开本页，data.voucherId 注入（父页 view.xml 经 ${'$'}{id} 发字面 ${id}）。
+# 经 ErpFinVoucherBillR__findPage(query:{filter:{voucherId:{$eq}}}) 反查 billCode + billType（voucherId 为原生 Long 列，eq 精确）。
+# Phase 0 Decision 2 方案 a：静态 billType→目标实体路由映射表（编译期确定，简单可靠；新增 businessType 须改本表，归 successor）。
+# cleanCode：剥离已知后缀（-PV/-MI/-SI/-SR/-SF/-ML）、#period、前缀（COMMITMENT-/BUDGET-/INTERCOMPANY-/ELIMINATION-），
+# 使 ?filter_code= 精确命中目标实体 code（避免后缀/前缀导致 filter 失配）。
+# 系统生成凭证（PERIOD_CLOSE/EXCHANGE_GAIN_LOSS/PROFIT_TO_RETAINED_EARNINGS/BAD_DEBT_RESERVE/BAD_DEBT_RELEASE）无源单据，link='' 不显示跳转。
+type: page
+title: "源单据"
+body:
+  - type: service
+    name: sourceBillService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        # voucherId 为原生 Long 列，$type:eq 精确匹配。TreeBean filter 经 $f:Map 变量传递（inline $type 会被 GraphQL 误解析为变量）。
+        query: "query(${'$'}f:Map,${'$'}lim:Int){ ErpFinVoucherBillR__findPage(query:{offset:0,limit:${'$'}lim,filter:${'$'}f}){ items{ id billType billCode businessType } total } }"
+        variables:
+          lim: 50
+          f:
+            $type: eq
+            name: voucherId
+            value: "${voucherId || 0}"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinVoucherBillR__findPage || { items: [], total: 0 };
+        const routeMap = {
+          AP_INVOICE: '/ErpPurInvoice-main',
+          PAYMENT: '/ErpPurPayment-main',
+          PURCHASE_RETURN: '/ErpPurReturn-main',
+          PURCHASE_ORDER_COMMITMENT: '/ErpPurOrder-main',
+          AR_INVOICE: '/ErpSalInvoice-main',
+          RECEIPT: '/ErpSalReceipt-main',
+          SALES_RETURN: '/ErpSalReturn-main',
+          PURCHASE_INPUT: '/ErpInvStockMove-main',
+          SALES_OUTPUT: '/ErpInvStockMove-main',
+          MANUFACTURING_RECEIPT: '/ErpInvStockMove-main',
+          PURCHASE_PRICE_VARIANCE: '/ErpInvStockMove-main',
+          LANDED_COST: '/ErpInvLandedCost-main',
+          COST_ADJUSTMENT: '/ErpInvCostAdjust-main',
+          OWNERSHIP_TRANSFER: '/ErpInvOwnershipTransfer-main',
+          INTERCOMPANY_SALE: '/ErpInvOwnershipTransfer-main',
+          INTERCOMPANY_PURCHASE: '/ErpInvOwnershipTransfer-main',
+          PRODUCTION_VARIANCE: '/ErpMfgWorkOrder-main',
+          MANUFACTURING_ISSUE: '/ErpMfgMaterialIssue-main',
+          SUBCONTRACT_ISSUE: '/ErpMfgSubcontractOrder-main',
+          SUBCONTRACT_RECEIPT: '/ErpMfgSubcontractOrder-main',
+          SUBCONTRACT_FEE: '/ErpMfgSubcontractOrder-main',
+          DEPRECIATION: '/ErpAstAsset-main',
+          CAPITALIZATION: '/ErpAstCipCapitalization-main',
+          DISPOSAL: '/ErpAstDisposal-main',
+          VALUE_ADJUSTMENT: '/ErpAstValueAdjustment-main',
+          ASSET_SPLIT: '/ErpAstSplit-main',
+          ASSET_MERGE: '/ErpAstMerge-main',
+          ASSET_INVENTORY_ADJUSTMENT: '/ErpAstInventory-main',
+          MAINTENANCE_EXPENSE: '/ErpAstMaintenance-main',
+          MAINTENANCE_CAPITALIZATION: '/ErpAstMaintenance-main',
+          MAINTENANCE_ISSUE: '/ErpMntSparePartUsage-main',
+          MAINTENANCE_LABOR: '/ErpMntVisit-main',
+          EXPENSE_CLAIM: '/ErpFinExpenseClaim-main',
+          EMPLOYEE_ADVANCE: '/ErpFinEmployeeAdvance-main',
+          EMPLOYEE_ADVANCE_SETTLE: '/ErpFinEmployeeAdvance-main',
+          NOTES_RECEIVABLE_RECEIVED: '/ErpFinNotesReceivable-main',
+          NOTES_RECEIVABLE_DISCOUNTED: '/ErpFinNotesReceivable-main',
+          NOTES_RECEIVABLE_ENDORSED: '/ErpFinNotesReceivable-main',
+          NOTES_RECEIVABLE_COLLECTION: '/ErpFinNotesReceivable-main',
+          NOTES_PAYABLE_ISSUED: '/ErpFinNotesPayable-main',
+          NOTES_PAYABLE_HONORED: '/ErpFinNotesPayable-main',
+          CREDIT_FACILITY_INTEREST: '/ErpFinCreditFacility-main',
+          BAD_DEBT_WRITE_OFF: '/ErpFinBadDebt-main',
+          BAD_DEBT_RECOVERY: '/ErpFinBadDebt-main',
+          BANK_RECON_ADJ: '/ErpFinBankReconciliation-main',
+          BUDGET_SCENARIO: '/ErpFinBudgetScenario-main',
+          CONSOLIDATION_ELIMINATION: '/ErpFinConsolidationElimination-main',
+          SALARY: '/ErpHrSalary-main',
+          SALARY_PAYMENT: '/ErpHrSalary-main',
+          FREIGHT: '/ErpLogShipment-main',
+          NCR_SCRAP: '/ErpQaNcr-main',
+          PROJECT_COST_COLLECTION: '/ErpPrjTimesheet-main',
+          PROJECT_SETTLEMENT: '/ErpPrjProjectSettlement-main'
+        };
+        function cleanCode(code, billType){
+          if (!code) return '';
+          let c = code;
+          c = c.replace(/#.*$/, '');
+          c = c.replace(/-(PV|MI|SI|SR|SF|ML)$/, '');
+          c = c.replace(/^(COMMITMENT-|BUDGET-|INTERCOMPANY-|ELIMINATION-)/, '');
+          return c;
+        }
+        const items = (page.items || []).map(function(r){
+          const base = routeMap[r.billType] || '';
+          const cc = cleanCode(r.billCode, r.billType);
+          const link = (base && cc) ? (base + '?filter_code=' + encodeURIComponent(cc)) : '';
+          return {
+            id: r.id,
+            billType: r.billType || '—',
+            billCode: r.billCode || '—',
+            businessType: r.businessType || '—',
+            link: link
+          };
+        });
+        return { status: 0, msg: '', data: { items: items, total: page.total || 0 } };
+    body:
+      - type: wrapper
+        className: "m-b"
+        body:
+          - type: tpl
+            tpl: '<div class="text-muted">共 ${total} 条源单据关联</div>'
+      - type: table
+        source: "${items}"
+        placeholder: '<div class="text-center text-muted p-4">该凭证暂无源单据关联（可能为手工录入或系统生成凭证）</div>'
+        columns:
+          - name: billType
+            label: "单据类型"
+          - name: billCode
+            label: "单据编号"
+          - name: businessType
+            label: "业务类型"
+          - type: operation
+            label: "操作"
+            buttons:
+              - type: button
+                label: "跳转源单据"
+                i18nEn: "Go to source bill"
+                level: primary
+                size: sm
+                icon: fa fa-external-link
+                actionType: link
+                link: "${link}"
+                visibleOn: "${!!link}"
