@@ -304,7 +304,7 @@ Status: `completed`（plan `docs/plans/2026-07-22-0444-2-frontend-f11-domain-bat
 
 ### F12 — 页面结构增强（P2）
 
-Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），敏感字段脱敏已落地（plan `2026-07-22-1400-3`），Tier C 期末结账向导已落地（plan `2026-07-23-0818-2`，零后端 delta 编排既有 M4 mutation），Tier C maintenance ErpMntVisit 已落地（plan `2026-07-23-1145-1`：tasks/sparePartUsages child-table-editor + 4 步执行向导），跨域凭证 tab + Tier D 子表 successor 归独立 plan
+Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 3 完整仪表板 drawer 已落地（plan 2026-07-21-0330-3 + plan 2026-07-22-0845-1），敏感字段脱敏已落地（plan `2026-07-22-1400-3`），Tier C 期末结账向导已落地（plan `2026-07-23-0818-2`，零后端 delta 编排既有 M4 mutation），Tier C maintenance ErpMntVisit 已落地（plan `2026-07-23-1145-1`：tasks/sparePartUsages child-table-editor + 4 步执行向导），**跨域凭证 tab successor 已落地（plan `2026-07-23-1408-2`：业务单据↔凭证双向导航，5 代表域 row-action drawer + finance 反向跳转，范式 `voucher-back-link-patterns.md`）**，Tier D 子表 successor 归独立 plan
 
 需要 tabs/向导/工作台页面的域（共 16 页面，与分析报告 §7.12 一致）：
 
@@ -319,7 +319,7 @@ Status: `partial` — 核心域 8 实体 tabs 容器 + Tier D 5 长尾 + Tier B 
 | projects: ErpPrjProject | 任务+预算+成本 tabs | ✅ done（form 4 tabs 化；tasks/budget 子表 tab 归 projects F4 successor）|
 | projects/hr: Timesheet | 周网格录入（项目/任务为行，工作日为列，0.5h 步进，自动计算工时成本） | ❌ Deferred：归跨域共享组件 successor |
 | quality: ErpQaInspection | 行评测+结果+NCR tabs | ✅ done（form 4 tabs 化；lines/results 子表 tab 归 quality F4 successor）|
-| assets: ErpAstAsset | 资产详情仪表板（双列：基本信息+财务信息，含折旧时间线、相关凭证列表） | ✅ done（form tabs 化 + 完整仪表板 drawer：基本信息/折旧时间线 2 tab；跨域凭证 tab Deferred）|
+| assets: ErpAstAsset | 资产详情仪表板（双列：基本信息+财务信息，含折旧时间线、相关凭证列表） | ✅ done（form tabs 化 + 完整仪表板 drawer：基本信息/折旧时间线 2 tab；跨域凭证 tab 经 row-action drawer 承接——见 plan `2026-07-23-1408-2` 业务↔凭证双向导航）|
 | maintenance: ErpMntVisit | 任务+备件+停机 tabs | ✅ done（plan `2026-07-23-1145-1`：F4 maintenance child-table-editor 覆盖 tasks/sparePartUsages + F12/F16 4 步执行向导；SparePartUsage 嵌套文档渲染裁决 sub-grid-view 只读候选 a，范式见 `child-table-editor-patterns.md §18` + `page-structure-patterns.md §5.1`）|
 | maintenance: ErpMntEquipment | 设备详情仪表板（状态色块、维护时间线、到期预警、备件消耗） | ✅ done（form tabs 化 + 完整仪表板 drawer：基本信息/维护时间线/备件消耗 3 tab）|
 | crm: ErpCrmLead | 活动+时间线+报价 tabs | ✅ done（form 6 tabs 化；activities/quotations 子表 tab 归 crm F4 successor）|

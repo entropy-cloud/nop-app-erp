@@ -16,7 +16,7 @@
 - 多级下钻（PO → Receive → StockMove → Ledger → Voucher 5 级链）→ F12 + F16 范畴
 - 关联单据自动刷新 + WebSocket 实时推送 → notify inbox successor
 - 后端 `copyLinesFromOrder` `@BizMutation`（优化候选，性能问题触发时再上）
-- 凭证回链详情页（ErpFinVoucher 跨域）→ finance 域 successor
+- 凭证回链详情页（ErpFinVoucher 跨域）→ 已落地，见 `voucher-back-link-patterns.md`（跨域字符串指针导航，本文件同域 FK 导航的对偶）
 
 ## 2. 导航链路图（4 核心域）
 
