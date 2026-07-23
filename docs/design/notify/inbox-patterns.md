@@ -126,4 +126,4 @@ private String resolveUserId(String userId, IServiceContext ctx) {
 - `markUnread` 反向操作（当前 BizModel 单向 markRead）
 - 通知批量删除 / 归档 + 数据保留策略
 - 审批类通知专用渲染（含「去审批」跳转按钮，依赖 xwf 浏览器层可达性突破）
-- i18n（`i18n-en:` 属性）—— F15 i18n plan 覆盖
+- i18n（`i18n-en:` 属性）—— ✅ 已落地（F15 plan `2026-07-23-0818-1`：notify inbox view.xml 手写层 `i18n-en:label`/`i18n-en:title` 全覆盖）

@@ -85,7 +85,7 @@ public List<T> findList(@Optional @Name("query") QueryBean query,
 </crud>
 ```
 
-默认 `merge` 策略：与既有 row-view/row-update/row-delete 并存。label 中文，F15 i18n successor 加 `i18n-en:label`。
+默认 `merge` 策略：与既有 row-view/row-update/row-delete 并存。label 中文，已由 F15 plan `2026-07-23-0818-1` 补 `i18n-en:label` 全覆盖（含 add-child 页面 row-action label）。
 
 ## 4. tree-select 父节点选择器（替代扁平 picker）
 

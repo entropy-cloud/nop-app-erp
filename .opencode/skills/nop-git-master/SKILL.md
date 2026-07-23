@@ -38,6 +38,20 @@ description: Nop项目Git专家 - 智能提交、Rebase、历史搜索（基于�
 
 # SYNC MODE
 
+## ⚠️ 强制门控：`reset --hard` 是不可逆破坏性操作
+
+`git reset --hard` / `git clean -fd` 会**永久丢弃**工作树所有未提交改动（含他人或其它会话遗留的修改），不可恢复。
+
+**默认行为（强制）：**
+- SYNC 检测到本地落后远程时，**只报告差异并暂停**，绝不自动执行 `reset --hard`。
+- 仅当用户**显式**发出强制指令（如"强制更新"/"丢弃本地改动"/"确认 reset --hard"）**且**已明确处置未提交改动后，才允许执行。
+- 执行前必须再次 `git status` 向用户列明将被丢弃的全部改动，获确认后才动手。
+
+**绝对禁止：**
+- 任何"一命令/自动化"脚本默认串联 `reset --hard`。自动化只到"检查+报告"为止。
+- 在未提交改动存在、且未经用户明确"丢弃"确认时执行 `reset --hard`。
+- 把 `reset --hard` 当作"更新远程代码"的常规手段——优先用 `pull --rebase` / `merge` 等保留本地改动的安全方式。
+
 ## 核心原则：先用无缓存方式检查，再决定是否更新
 
 **❌ 错误做法：直接 pull/fetch**
@@ -63,35 +77,58 @@ REMOTE_SHA=$(git ls-remote origin master | awk '{print $1}')
 # 2. 获取本地 SHA
 LOCAL_SHA=$(git rev-parse HEAD)
 
-# 3. 对比
+# 3. 对比（默认只检查，不改动）
 if [ "$REMOTE_SHA" = "$LOCAL_SHA" ]; then
   echo "✅ 已是最新: $LOCAL_SHA"
 else
-  echo "⚠️ 需要更新: $LOCAL_SHA → $REMOTE_SHA"
-  # 4. 执行强制同步
-  git fetch origin $REMOTE_SHA --force
-  git checkout master
-  git reset --hard $REMOTE_SHA
-  git update-ref refs/remotes/origin/master $REMOTE_SHA
-  git log --oneline -3
+  echo "⚠️ 本地落后: $LOCAL_SHA → $REMOTE_SHA"
+  git status --short          # 列出未提交改动
+  echo "⏸️  已暂停。绝不自动 reset。"
+  echo "    查看远程新提交: git fetch origin && git log --oneline HEAD..$REMOTE_SHA"
+  echo "    安全更新(保留本地): 先 stash/commit，再 pull --rebase"
+  echo "    强制覆盖(丢弃全部本地改动): 需用户显式确认，见下方『强制同步(需确认)』"
 fi
+
+# === 强制同步（⚠️ 仅经用户显式确认后手动执行）===
+# 前置门控（全部满足才允许）：
+#   1. 用户已明确发出"强制更新/丢弃本地"指令
+#   2. 已向用户列明 `git status` 全部未提交改动，并获明确同意丢弃
+#   3. 工作树非空时拒绝静默执行（见下方自检）
+# git fetch origin $REMOTE_SHA --force
+# git checkout master
+# git reset --hard $REMOTE_SHA
+# git update-ref refs/remotes/origin/master $REMOTE_SHA
+# git log --oneline -3
 ```
 
-## 一命令版本（推荐）
+## 一命令版本：只检查不改动（推荐）
 
 ```bash
+# 仅对比 SHA 与列出未提交改动，绝不 reset。落后时暂停等待用户决策。
 REMOTE_SHA=$(git ls-remote origin master | awk '{print $1}') && \
 LOCAL_SHA=$(git rev-parse HEAD) && \
 if [ "$REMOTE_SHA" = "$LOCAL_SHA" ]; then \
   echo "✅ 已是最新: $(git log --oneline -1)"; \
 else \
-  echo "⚠️ 更新中: $LOCAL_SHA → $REMOTE_SHA" && \
-  git fetch origin $REMOTE_SHA --force && \
-  git checkout master && \
-  git reset --hard $REMOTE_SHA && \
-  git update-ref refs/remotes/origin/master $REMOTE_SHA && \
-  git log --oneline -3; \
+  echo "⚠️ 本地落后: $LOCAL_SHA → $REMOTE_SHA"; \
+  git status --short; \
+  echo "⏸️  已暂停，未执行任何写操作。需强制更新请显式确认后使用下方命令。"; \
 fi
+```
+
+## 强制同步（⚠️ 仅经用户显式确认后手动执行）
+
+> 触发条件：用户明确要求"强制更新/丢弃本地改动"，且已查看 `git status` 并同意丢弃全部未提交修改。否则**禁止**运行。
+
+```bash
+# 门控自检：工作树非空时拒绝静默执行，强制要求人工确认
+[ -n "$(git status --porcelain)" ] && echo "❌ 工作树有未提交改动，reset --hard 将永久丢弃。请先 stash/commit 或显式确认丢弃。" && exit 1
+REMOTE_SHA=$(git ls-remote origin master | awk '{print $1}') && \
+git fetch origin $REMOTE_SHA --force && \
+git checkout master && \
+git reset --hard $REMOTE_SHA && \
+git update-ref refs/remotes/origin/master $REMOTE_SHA && \
+git log --oneline -3
 ```
 
 ## 为什么必须用 `git ls-remote`？
@@ -125,9 +162,10 @@ git stash pop
 # 选项2：commit 提交
 git add -A && git commit -m "WIP"
 
-# 选项3：放弃修改（确认后）
-git reset --hard HEAD
-git clean -fd
+# 选项3：放弃修改（⚠️ reset --hard 不可逆，必须用户逐项显式确认丢弃）
+#   仅在用户明确同意丢弃全部未提交改动后执行：
+git reset --hard HEAD   # 需用户显式确认
+git clean -fd           # 需用户显式确认（删除未跟踪文件）
 ```
 
 ---
@@ -767,21 +805,22 @@ perf: 性能优化
 ## 同步速查
 
 ```bash
-# 标准同步流程（无缓存检查 → 更新）
+# 推荐：只检查不改动（落后时暂停，等待用户决策）
 REMOTE_SHA=$(git ls-remote origin master | awk '{print $1}') && \
 LOCAL_SHA=$(git rev-parse HEAD) && \
 if [ "$REMOTE_SHA" = "$LOCAL_SHA" ]; then \
   echo "✅ 已是最新: $(git log --oneline -1)"; \
 else \
-  echo "⚠️ 更新中: $LOCAL_SHA → $REMOTE_SHA" && \
-  git fetch origin $REMOTE_SHA --force && \
-  git checkout master && \
-  git reset --hard $REMOTE_SHA && \
-  git update-ref refs/remotes/origin/master $REMOTE_SHA && \
-  git log --oneline -3; \
+  echo "⚠️ 本地落后: $LOCAL_SHA → $REMOTE_SHA"; \
+  git status --short; \
+  echo "⏸️  已暂停，未做任何写操作。"; \
 fi
+```
 
-# 简化版（直接强制同步，不检查）
+```bash
+# ⚠️ 强制同步（仅经用户显式确认丢弃本地改动后执行）
+#   门控：工作树非空时拒绝静默执行
+[ -n "$(git status --porcelain)" ] && echo "❌ 有未提交改动，拒绝自动 reset --hard" && exit 1
 REMOTE_SHA=$(git ls-remote origin master | awk '{print $1}') && \
 git fetch origin $REMOTE_SHA --force && \
 git checkout master && \
@@ -824,6 +863,9 @@ git log --follow -- path/file.java      # 文件历史
 6. **从不使用模糊的分组理由** - "相关"不是理由
 7. **SYNC时从不直接 pull/fetch** - 必须先用 `git ls-remote` 无缓存检查，再决定是否更新
 8. **从不信任本地 refs 缓存** - `git fetch` 结果可能与远程真实状态不一致，必须用 `git ls-remote` 验证
+9. **从不自动执行 `git reset --hard`** - 检测到本地落后时默认只报告差异并暂停；`reset --hard` 会永久丢弃所有未提交改动，必须经用户显式强制要求、且已查看 `git status` 确认处置/同意丢弃后，才允许执行
+10. **从不在未提交改动存在时静默 reset --hard** - 工作树非空时，`reset --hard`/`git clean -fd` 必须向用户列明将被丢弃的全部改动并获明确同意；绝不作为"更新代码"的常规手段
+11. **从不在自动化/一命令脚本中默认串联 reset --hard** - 自动化流程只到"检查+报告"为止，破坏性步骤必须人工门控
 
 ---
 
@@ -845,6 +887,8 @@ git log --follow -- path/file.java      # 文件历史
 - [ ] 用 `git ls-remote` 获取远程真实 SHA？
 - [ ] 与本地 HEAD 对比，确认是否需要更新？
 - [ ] 工作目录干净（或已处理未提交修改）？
+- [ ] 检测到落后时，默认只报告+暂停，**未**自动 reset？
+- [ ] 若要执行 `reset --hard`：用户已显式强制要求 + 已查看 `git status` 全部未提交改动并同意丢弃？
 
 **提交后：**
 - [ ] 工作目录干净？

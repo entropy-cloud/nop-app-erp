@@ -16,7 +16,7 @@
 **不包含**：
 - 编辑态表单字段（输入态保留原始值，避免千分位干扰输入）
 - 报表 / 看板金额字段（nop-report 走 `formatExpr` 独立机制）
-- 币种符号本地化（CNY ¥ / USD $，归 F15 i18n + l10n）
+- 币种符号本地化（CNY ¥ / USD $，归 l10n successor——F15 i18n 文本标签层已落地 plan `2026-07-23-0818-1`，币种符号数值本地化属不同面，见本文件 §9 与 Deferred）
 - 负数红字显示（会计专用，归 F5 状态色继承/successor）
 
 ## 2. Phase 1 决策表
@@ -251,7 +251,7 @@ view.xml <col> + <gen-control>
 
 | 后续项 | 触发条件 |
 | --- | --- |
-| 币种符号本地化（CNY ¥ / USD $） | F15 i18n + l10n 域 plan 启动时 |
+| 币种符号本地化（CNY ¥ / USD $） | l10n successor plan 启动时（F15 i18n 文本标签层已独立落地 plan `2026-07-23-0818-1`，币种符号属 l10n 数值格式面，与文本 label 解耦） |
 | 负数红字（会计专用借贷方向色） | F5 状态色继承 / finance 域专用方向色 plan 启动时 |
 | ~~F7 敏感字段脱敏~~ | ✅ 已落地（见 §9 敏感字段脱敏段） |
 | 报表金额字段格式化（nop-report formatExpr） | 报表格式化增强 plan / nop-report 模板统一审计启动时 |

@@ -368,7 +368,7 @@ Status: `done`（plan `docs/plans/2026-07-22-0444-3-frontend-f14-menu-action-aut
 
 ### F15 — i18n 国际化标签补充（P3）
 
-Status: `todo`
+Status: `done` — ✅ plan `2026-07-23-0818-1-f15-i18n-label-internationalization`：19 业务域手写 `*.view.xml`（351 文件 / 1340 处中文 label·title）全部补 `i18n-en:label`/`i18n-en:title`（glossary `docs/design/i18n-glossary.md` 414 token 基准）+ `xmlns:i18n-en` 命名空间；19 域 `erp-*.action-auth.xml` 菜单 `i18n-en:displayName` 全覆盖（F14 既落，本次复核 0 缺口）；CI 回归门 `docs/audits/i18n-coverage-checker.sh`（缺陷+覆盖双检，anti-fake-green 验证）。page.yaml title 因 YAML 无 `i18n-en:` 属性机制（仅 `@i18n:` 消息包路径，且属 Non-Goal 边界）Deferred 至 l10n successor。
 
 codegen 生成文件包含 `i18n-en:title`。手写层使用中文 `label` 或 `layout[标签]` 时应补充 `i18n-en` 覆盖。建议工具扫描手写层的 `label`，生成 i18n 补充条目。
 
@@ -423,7 +423,7 @@ Status: `partial` — 低风险批 5 页面已落地（plan `2026-07-22-0845-2`�
 | F12 | `*.visual.spec.ts` | `tests/e2e/visual/` | tab 切换后内容断言 | — |
 | F13 | `*.visual.spec.ts` + 截图对比 | 待定 | 看板拖拽/日历日期变更 | ❌ 无自动测试策略；拖拽交互无法用标准 E2E 覆盖；建议：视觉效果用截图对比，拖拽用 Playwright `dragTo`（需 PoC） |
 | F14 | 手动审计 | — | — | — |
-| F15 | 手动 + CI check | — | — | 🟡 无自动化 i18n 条目验证；建议添加 CI check：扫描 `i18n-en:` key 是否都有对应值 |
+| F15 | CI check | `bash docs/audits/i18n-coverage-checker.sh` | 缺陷（空/裸key/与中文同值）+ 覆盖缺口（`--strict`）双检 | ✅ 已落地 plan `2026-07-23-0818-1`：`docs/audits/i18n-coverage-checker.sh`（anti-fake-green 注入缺陷验证通过；当前全绿 0 defects / 0 gaps） |
 | F16 | `*.visual.spec.ts` + `*.action.spec.ts` | `tests/e2e/visual/` | 每复杂页面至少 1 用例（核心交互路径断言） | ❌ 甘特图（拖拽/缩放）和版本对比（diff 渲染）无现成测试方案。自定义 AMIS 组件在 AMIS 升级后可能渲染失败。建议：自定义组件做快照测试 + 版本升级时回归验证全部自定义组件。 |
 
 退出标准项 "回归测试通过" 指 `npx playwright test` 全绿。
@@ -563,7 +563,7 @@ F1-F3 可部分并行（阶段 1a）。F4 Phase1（Picker）是 Phase 2（子表
 - [x] F12: ~16 个 tabs/向导/仪表板页面结构实现（含 finance 结账向导、hr 员工详情 tabs、contract 多标签页、timesheet 周网格、assets 资产仪表板、maintenance 设备仪表板） ✅ plan `2026-07-21-0330-3`（Tier A/B 8 form tabs）+ plan `2026-07-22-0845-1`（Tier D 5 form tabs + Tier B 3 完整仪表板 drawer）；14/16 done，2/16 Deferred（Tier C wizard + Timesheet 周网格）
 - [x] F13: CRM 商机看板 + CS 工单看板 + Project 任务看板 + CRM 活动时间线/日历 + CS 活动日志 + HR 休假日历实现 ✅ plan `2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar`（7 页面 + 范式文档 + visual/action spec；Phase 0 拖拽 PoC 降级为 row-action + 原生 timeline/calendar 降级为 each+tpl）
 - [x] F14: 19 域 action-auth 菜单完整可达，排序按业务流程（plan `2026-07-22-0444-3`：4 TOPM orderNo 碰撞修复 + 27 孤儿页面补全 + 7 子项 ×10 orderNo 修复 + 2 分组命名统一 + cs 子项 parent-matching）
-- [ ] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性
+- [x] F15: i18n 中文 label 手写层全部补充 `i18n-en` 属性 ✅ plan `2026-07-23-0818-1`（19 域 view.xml 351 文件 + action-auth 全覆盖；page.yaml 因机制不匹配 Deferred 至 l10n successor）
 - [x] F16: 16 个复杂手写页面核心交互实现（低风险批 5/16 已落地 plan `2026-07-22-0845-2`：凭证录入平衡校验 badge + 凭证模板 renderTemplate 表达式引擎 + 三单匹配联查 + 工单进度仪表板 + NCR CAPA/验证 tabs；高风险批 2/4 已落地 plan `2026-07-22-1400-1`：aps 排产甘特图 echarts custom series 只读 + mfg BOM 多级展开树；P2 7 页面已落地 plan `2026-07-22-1400-2`：hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表；高风险余项 inventory PDA/maintenance 向导 2 归 successor）
 - [x] 通知收件箱页面实现（未读/已读切换、批量标记已读、按类型筛选） ✅ plan `2026-07-19-2200-3`
 - [x] 敏感字段脱敏覆盖（hr 证件号/手机/银行账户、logistics API Key/Secret） ✅ plan `2026-07-22-1400-3-cross-cutting-sensitive-field-masking`（hr 4 字段 gen-control tpl 动态打码 + logistics apiKey/apiSecret published="false" 写回型凭据查看态静态 `******`）
