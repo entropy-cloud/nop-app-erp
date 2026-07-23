@@ -211,6 +211,51 @@
                     </messages>
                     <visibleOn>${status != 'COMPLETED' &amp;&amp; status != 'CANCELLED'}</visibleOn>
                 </action>
+                <action id="row-create-task-button" label="创建任务" i18n-en:label="Create Task" level="primary" icon="fa fa-plus"
+                        tooltip="跳转到任务列表（带项目上下文筛选），新建任务时自动预填项目"
+                        link="/ErpPrjTask-main?filter_projectId=${id}">
+                    <visibleOn>${status == 'OPEN'}</visibleOn>
+                </action>
+                <action id="row-view-task-button" label="项目任务" i18n-en:label="Project Tasks" level="info" icon="fa fa-tasks"
+                        actionType="drawer">
+                    <drawer page="/erp/prj/pages/ErpPrjTask/ref-project.page.yaml" size="xl">
+                        <data>
+                            <projectId>${id}</projectId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-timesheet-button" label="项目工时" i18n-en:label="Project Timesheets" level="info" icon="fa fa-clock-o"
+                        actionType="drawer">
+                    <drawer page="/erp/prj/pages/ErpPrjTimesheet/ref-project.page.yaml" size="xl">
+                        <data>
+                            <projectId>${id}</projectId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-member-button" label="项目成员" i18n-en:label="Project Members" level="info" icon="fa fa-users"
+                        actionType="drawer">
+                    <drawer page="/erp/prj/pages/ErpPrjProjectUser/ref-project.page.yaml" size="xl">
+                        <data>
+                            <projectId>${id}</projectId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-budget-button" label="项目预算" i18n-en:label="Project Budgets" level="info" icon="fa fa-money"
+                        actionType="drawer">
+                    <drawer page="/erp/prj/pages/ErpPrjBudget/ref-project.page.yaml" size="xl">
+                        <data>
+                            <projectId>${id}</projectId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-milestone-button" label="项目里程碑" i18n-en:label="Project Milestones" level="info" icon="fa fa-flag"
+                        actionType="drawer">
+                    <drawer page="/erp/prj/pages/ErpPrjMilestone/ref-project.page.yaml" size="xl">
+                        <data>
+                            <projectId>${id}</projectId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

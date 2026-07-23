@@ -151,6 +151,18 @@
                     </messages>
                     <visibleOn>${status == 'BLOCKED'}</visibleOn>
                 </action>
+                <action id="row-view-child-task-button" label="子任务" i18n-en:label="Child Tasks" level="info" icon="fa fa-sitemap"
+                        tooltip="跳转到任务列表（按父任务筛选），查看此任务的子任务"
+                        link="/ErpPrjTask-main?filter_parentTaskId=${id}">
+                </action>
+                <action id="row-view-timesheet-button" label="任务工时" i18n-en:label="Task Timesheets" level="info" icon="fa fa-clock-o"
+                        actionType="drawer">
+                    <drawer page="/erp/prj/pages/ErpPrjTimesheet/ref-task.page.yaml" size="xl">
+                        <data>
+                            <taskId>${id}</taskId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

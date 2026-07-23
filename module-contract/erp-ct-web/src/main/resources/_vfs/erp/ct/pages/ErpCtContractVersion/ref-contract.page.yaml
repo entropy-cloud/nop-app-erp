@@ -1,0 +1,4 @@
+# fixedProps=contractId：关联合同的版本子表。父页面（ErpCtContract 列表行）通过 row-action drawer 打开本页，data.contractId 注入。
+# 范式来源：docs/design/cross-doc-navigation-patterns.md §3.2 方案 A
+x:gen-extends: |
+  <web:GenPage view="ErpCtContractVersion.view.xml" page="main" fixedProps="contractId" xpl:lib="/nop/web/xlib/web.xlib" />

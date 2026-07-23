@@ -324,6 +324,14 @@
                         <success>工单已作废</success>
                     </messages>
                 </action>
+                <action id="row-view-action-button" label="操作历史" i18n-en:label="Action History" level="info" icon="fa fa-history"
+                        actionType="drawer">
+                    <drawer page="/erp/cs/pages/ErpCsTicketAction/ref-ticket.page.yaml" size="xl">
+                        <data>
+                            <ticketId>${id}</ticketId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

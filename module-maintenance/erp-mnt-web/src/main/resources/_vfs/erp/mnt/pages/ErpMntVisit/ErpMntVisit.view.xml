@@ -173,6 +173,22 @@
                     </messages>
                     <visibleOn>${status == 'DRAFT' || status == 'SCHEDULED'}</visibleOn>
                 </action>
+                <action id="row-view-task-button" label="维护任务" i18n-en:label="Visit Tasks" level="info" icon="fa fa-tasks"
+                        actionType="drawer">
+                    <drawer page="/erp/mnt/pages/ErpMntVisitTask/ref-visit.page.yaml" size="xl">
+                        <data>
+                            <visitId>${id}</visitId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-spare-part-button" label="备件消耗" i18n-en:label="Spare Parts" level="info" icon="fa fa-wrench"
+                        actionType="drawer">
+                    <drawer page="/erp/mnt/pages/ErpMntSparePartUsage/ref-visit.page.yaml" size="xl">
+                        <data>
+                            <visitId>${id}</visitId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

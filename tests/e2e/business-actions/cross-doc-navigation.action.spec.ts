@@ -223,3 +223,165 @@ test.describe('F9 cross-document navigation: data reachability + copy-line persi
     await deleteById(page, 'ErpInvStockMove', created.id);
   });
 });
+
+/**
+ * F9 长尾域跨单据导航 successor（plan 2026-07-23-1408-1）。
+ *
+ * 验证 7 高价值长尾域 row-action drawer 的 fixedProps 子表目标 `__findPage filter_<fk>` 可达 + 数据行非空。
+ * 范式同核心域：drawer 的数据契约 = 子表 `__findPage` 经 FK filter 可达。UI drawer DOM 渲染归视觉 spec。
+ *
+ * 种子引用（app-erp-all/_init-data）：crm lead id=1 / cs ticket id=1 / prj project id=1 /
+ * mnt equipment id=3（REQ-2026-001 被引用）/ qa ncr id=1（CAPA action 被引用）/ md partner id=1。
+ */
+test.describe('F9 long-tail cross-document navigation: drawer fixedProps target reachable + non-empty', () => {
+  test('6. CRM Lead → Activity drawer target: ErpCrmActivity __findPage filter_leadId non-empty', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpCrmLead-main');
+    const SEED_LEAD_ID = 1;
+
+    const activity = await createViaSave(
+      page, 'ErpCrmActivity',
+      { leadId: SEED_LEAD_ID, activityType: 'CALL', activityDate: '2026-07-15' },
+      'id',
+    );
+
+    const items = await findItems<any>(
+      page, 'ErpCrmActivity', eqFilter('leadId', SEED_LEAD_ID), 'id leadId activityType',
+    );
+    expect(items.length, 'ErpCrmActivity filter_leadId should be reachable with >=1 row').toBeGreaterThanOrEqual(1);
+
+    await deleteById(page, 'ErpCrmActivity', activity.id);
+  });
+
+  test('7. CS Ticket → Action drawer target: ErpCsTicketAction __findPage filter_ticketId non-empty', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpCsTicket-main');
+    const SEED_TICKET_ID = 1;
+
+    const action = await createViaSave(
+      page, 'ErpCsTicketAction',
+      { ticketId: SEED_TICKET_ID, actionType: 'NOTE' },
+      'id',
+    );
+
+    const items = await findItems<any>(
+      page, 'ErpCsTicketAction', eqFilter('ticketId', SEED_TICKET_ID), 'id ticketId actionType',
+    );
+    expect(items.length, 'ErpCsTicketAction filter_ticketId should be reachable with >=1 row').toBeGreaterThanOrEqual(1);
+
+    await deleteById(page, 'ErpCsTicketAction', action.id);
+  });
+
+  test('8. Project → Task drawer target: ErpPrjTask __findPage filter_projectId non-empty', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpPrjProject-main');
+    const SEED_PROJECT_ID = 1;
+
+    const task = await createViaSave(
+      page, 'ErpPrjTask',
+      { projectId: SEED_PROJECT_ID, title: `E2E-F9-PRJ-TASK-${Date.now()}`, status: 'TODO' },
+      'id',
+    );
+
+    const items = await findItems<any>(
+      page, 'ErpPrjTask', eqFilter('projectId', SEED_PROJECT_ID), 'id projectId title',
+    );
+    expect(items.length, 'ErpPrjTask filter_projectId should be reachable with >=1 row').toBeGreaterThanOrEqual(1);
+
+    await deleteById(page, 'ErpPrjTask', task.id);
+  });
+
+  test('9. Equipment → Request drawer target: ErpMntRequest __findPage filter_equipmentId non-empty (seed)', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpMntEquipment-main');
+    // 种子 REQ-2026-001 引用 equipmentId=3（输送带 DOWN 故障报修）
+    const SEED_EQUIPMENT_ID = 3;
+
+    const items = await findItems<any>(
+      page, 'ErpMntRequest', eqFilter('equipmentId', SEED_EQUIPMENT_ID), 'id equipmentId code',
+    );
+    expect(items.length, 'ErpMntRequest filter_equipmentId should return seeded request row').toBeGreaterThanOrEqual(1);
+  });
+
+  test('10. NCR → CAPA Action drawer target: ErpQaAction __findPage filter_ncrId non-empty (seed)', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpQaNonConformance-main');
+    // 种子 CAPA action 引用 ncrId=1（NCR-2026-001 纠正预防措施）
+    const SEED_NCR_ID = 1;
+
+    const items = await findItems<any>(
+      page, 'ErpQaAction', eqFilter('ncrId', SEED_NCR_ID), 'id ncrId actionType status',
+    );
+    expect(items.length, 'ErpQaAction filter_ncrId should return seeded CAPA row').toBeGreaterThanOrEqual(1);
+  });
+
+  test('11. Contract → Line drawer target: ErpCtContractLine __findPage filter_contractId non-empty', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpCtContract-main');
+
+    const contract = await createViaSave(
+      page, 'ErpCtContract',
+      {
+        code: `E2E-F9-CT-${Date.now()}`,
+        contractName: `E2E contract ${Date.now()}`,
+        contractType: 'SALES',
+        contractDirection: 'OUTBOUND',
+        partnerId: 1,
+        startDate: '2026-07-01',
+        endDate: '2027-06-30',
+        status: 'DRAFT',
+      },
+      'id',
+    );
+
+    const line = await createViaSave(
+      page, 'ErpCtContractLine',
+      { contractId: Number(contract.id), lineNo: 1 },
+      'id',
+    );
+
+    const items = await findItems<any>(
+      page, 'ErpCtContractLine', eqFilter('contractId', Number(contract.id)), 'id contractId lineNo',
+    );
+    expect(items.length, 'ErpCtContractLine filter_contractId should be reachable with 1 row').toBe(1);
+
+    await deleteById(page, 'ErpCtContractLine', line.id);
+    await deleteById(page, 'ErpCtContract', contract.id);
+  });
+
+  test('12. Shipment → Line drawer target: ErpLogShipmentLine __findPage filter_shipmentId non-empty', async ({ page }) => {
+    await loginAndNavigate(page, '/ErpLogShipment-main');
+
+    // logistics 域未 seed，先建承运商再建运单
+    const carrier = await createViaSave(
+      page, 'ErpLogCarrier',
+      {
+        code: `E2E-F9-CAR-${Date.now()}`,
+        carrierName: `E2E carrier ${Date.now()}`,
+        carrierType: 'EXPRESS',
+        gatewayId: 'manual',
+        isActive: true,
+      },
+      'id',
+    );
+
+    const shipment = await createViaSave(
+      page, 'ErpLogShipment',
+      {
+        code: `E2E-F9-SHP-${Date.now()}`,
+        carrierId: Number(carrier.id),
+        status: 'DRAFT',
+      },
+      'id',
+    );
+
+    const line = await createViaSave(
+      page, 'ErpLogShipmentLine',
+      { shipmentId: Number(shipment.id), lineNo: 1 },
+      'id',
+    );
+
+    const items = await findItems<any>(
+      page, 'ErpLogShipmentLine', eqFilter('shipmentId', Number(shipment.id)), 'id shipmentId lineNo',
+    );
+    expect(items.length, 'ErpLogShipmentLine filter_shipmentId should be reachable with 1 row').toBe(1);
+
+    await deleteById(page, 'ErpLogShipmentLine', line.id);
+    await deleteById(page, 'ErpLogShipment', shipment.id);
+    await deleteById(page, 'ErpLogCarrier', carrier.id);
+  });
+});

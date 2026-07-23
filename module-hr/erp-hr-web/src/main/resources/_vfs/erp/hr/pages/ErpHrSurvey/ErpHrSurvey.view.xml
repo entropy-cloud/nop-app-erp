@@ -143,7 +143,29 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-question-button" label="问卷题目" i18n-en:label="Survey Questions" level="info" icon="fa fa-question-circle"
+                        actionType="drawer">
+                    <drawer page="/erp/hr/pages/ErpHrSurveyQuestion/ref-survey.page.yaml" size="xl">
+                        <data>
+                            <surveyId>${id}</surveyId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-response-button" label="问卷答卷" i18n-en:label="Survey Responses" level="info" icon="fa fa-comments"
+                        actionType="drawer">
+                    <drawer page="/erp/hr/pages/ErpHrSurveyResponse/ref-survey.page.yaml" size="xl">
+                        <data>
+                            <surveyId>${id}</surveyId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

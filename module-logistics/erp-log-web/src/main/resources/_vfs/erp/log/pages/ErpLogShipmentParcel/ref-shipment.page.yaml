@@ -1,0 +1,4 @@
+# fixedProps=shipmentId：关联运单的包裹子表。父页面（ErpLogShipment 列表行）通过 row-action drawer 打开本页，data.shipmentId 注入。
+# 范式来源：docs/design/cross-doc-navigation-patterns.md §3.2 方案 A
+x:gen-extends: |
+  <web:GenPage view="ErpLogShipmentParcel.view.xml" page="main" fixedProps="shipmentId" xpl:lib="/nop/web/xlib/web.xlib" />

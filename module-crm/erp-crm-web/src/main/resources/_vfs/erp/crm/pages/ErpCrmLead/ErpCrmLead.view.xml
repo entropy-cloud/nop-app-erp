@@ -165,6 +165,30 @@
                         <success>线索已作废</success>
                     </messages>
                 </action>
+                <action id="row-view-event-button" label="关联事件" i18n-en:label="Linked Events" level="info" icon="fa fa-calendar"
+                        actionType="drawer">
+                    <drawer page="/erp/crm/pages/ErpCrmEvent/ref-lead.page.yaml" size="xl">
+                        <data>
+                            <relatedLeadId>${id}</relatedLeadId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-activity-button" label="关联活动" i18n-en:label="Linked Activities" level="info" icon="fa fa-tasks"
+                        actionType="drawer">
+                    <drawer page="/erp/crm/pages/ErpCrmActivity/ref-lead.page.yaml" size="xl">
+                        <data>
+                            <leadId>${id}</leadId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-conv-log-button" label="转化日志" i18n-en:label="Conversion Log" level="info" icon="fa fa-exchange"
+                        actionType="drawer">
+                    <drawer page="/erp/crm/pages/ErpCrmLeadConvLog/ref-lead.page.yaml" size="xl">
+                        <data>
+                            <leadId>${id}</leadId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

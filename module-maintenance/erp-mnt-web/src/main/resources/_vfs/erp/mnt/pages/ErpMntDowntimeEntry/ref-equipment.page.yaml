@@ -1,0 +1,4 @@
+# fixedProps=equipmentId：关联设备的停机记录子表。父页面（ErpMntEquipment 列表行）通过 row-action drawer 打开本页，data.equipmentId 注入。
+# 范式来源：docs/design/cross-doc-navigation-patterns.md §3.2 方案 A
+x:gen-extends: |
+  <web:GenPage view="ErpMntDowntimeEntry.view.xml" page="main" fixedProps="equipmentId" xpl:lib="/nop/web/xlib/web.xlib" />

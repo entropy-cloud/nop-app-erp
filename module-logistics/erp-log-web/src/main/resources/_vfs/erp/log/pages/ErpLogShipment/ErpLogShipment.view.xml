@@ -264,6 +264,30 @@
                     </messages>
                     <visibleOn>${status != 'CANCELLED' &amp;&amp; status != 'DELIVERED'}</visibleOn>
                 </action>
+                <action id="row-view-line-button" label="运单明细" i18n-en:label="Shipment Lines" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/log/pages/ErpLogShipmentLine/ref-shipment.page.yaml" size="xl">
+                        <data>
+                            <shipmentId>${id}</shipmentId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-parcel-button" label="包裹清单" i18n-en:label="Parcels" level="info" icon="fa fa-archive"
+                        actionType="drawer">
+                    <drawer page="/erp/log/pages/ErpLogShipmentParcel/ref-shipment.page.yaml" size="xl">
+                        <data>
+                            <shipmentId>${id}</shipmentId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-log-button" label="追踪日志" i18n-en:label="Tracking Log" level="info" icon="fa fa-history"
+                        actionType="drawer">
+                    <drawer page="/erp/log/pages/ErpLogShipmentLog/ref-shipment.page.yaml" size="xl">
+                        <data>
+                            <shipmentId>${id}</shipmentId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

@@ -1,0 +1,4 @@
+# fixedProps=leadId：关联线索的阶段转化日志子表。父页面（ErpCrmLead 列表行）通过 row-action drawer 打开本页，data.leadId 注入。
+# 范式来源：docs/design/cross-doc-navigation-patterns.md §3.2 方案 A
+x:gen-extends: |
+  <web:GenPage view="ErpCrmLeadConvLog.view.xml" page="main" fixedProps="leadId" xpl:lib="/nop/web/xlib/web.xlib" />

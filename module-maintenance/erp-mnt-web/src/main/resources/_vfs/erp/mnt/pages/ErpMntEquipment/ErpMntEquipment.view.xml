@@ -187,6 +187,51 @@
                         </data>
                     </dialog>
                 </action>
+                <action id="row-create-request-button" label="创建维修请求" i18n-en:label="Create Request" level="primary" icon="fa fa-plus"
+                        tooltip="跳转到维修请求列表（带设备上下文筛选），新建请求时自动预填设备"
+                        link="/ErpMntRequest-main?filter_equipmentId=${id}">
+                    <visibleOn>${status != 'DECOMMISSIONED'}</visibleOn>
+                </action>
+                <action id="row-view-visit-button" label="巡检记录" i18n-en:label="Visits" level="info" icon="fa fa-wrench"
+                        actionType="drawer">
+                    <drawer page="/erp/mnt/pages/ErpMntVisit/ref-equipment.page.yaml" size="xl">
+                        <data>
+                            <equipmentId>${id}</equipmentId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-schedule-button" label="保养计划" i18n-en:label="Schedules" level="info" icon="fa fa-calendar"
+                        actionType="drawer">
+                    <drawer page="/erp/mnt/pages/ErpMntSchedule/ref-equipment.page.yaml" size="xl">
+                        <data>
+                            <equipmentId>${id}</equipmentId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-request-button" label="维修请求" i18n-en:label="Requests" level="info" icon="fa fa-bell"
+                        actionType="drawer">
+                    <drawer page="/erp/mnt/pages/ErpMntRequest/ref-equipment.page.yaml" size="xl">
+                        <data>
+                            <equipmentId>${id}</equipmentId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-spare-part-button" label="备件消耗" i18n-en:label="Spare Parts" level="info" icon="fa fa-cogs"
+                        actionType="drawer">
+                    <drawer page="/erp/mnt/pages/ErpMntSparePartUsage/ref-equipment.page.yaml" size="xl">
+                        <data>
+                            <equipmentId>${id}</equipmentId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-downtime-button" label="停机记录" i18n-en:label="Downtime" level="info" icon="fa fa-power-off"
+                        actionType="drawer">
+                    <drawer page="/erp/mnt/pages/ErpMntDowntimeEntry/ref-equipment.page.yaml" size="xl">
+                        <data>
+                            <equipmentId>${id}</equipmentId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

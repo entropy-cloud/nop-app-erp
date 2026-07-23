@@ -1,0 +1,4 @@
+# fixedProps=ncrId：关联NCR的处置/纠正措施（CAPA）子表。父页面（ErpQaNonConformance 列表行）通过 row-action drawer 打开本页，data.ncrId 注入。
+# 范式来源：docs/design/cross-doc-navigation-patterns.md §3.2 方案 A
+x:gen-extends: |
+  <web:GenPage view="ErpQaAction.view.xml" page="main" fixedProps="ncrId" xpl:lib="/nop/web/xlib/web.xlib" />

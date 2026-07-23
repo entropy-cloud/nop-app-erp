@@ -132,7 +132,21 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-config-button" label="承运商配置" i18n-en:label="Carrier Config" level="info" icon="fa fa-cog"
+                        actionType="drawer">
+                    <drawer page="/erp/log/pages/ErpLogCarrierConfig/ref-carrier.page.yaml" size="xl">
+                        <data>
+                            <carrierId>${id}</carrierId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker" filterForm="pick-query"/>
     </pages>
 </view>

@@ -1,0 +1,4 @@
+# fixedProps=recallId：关联召回的目标子表。父页面（ErpQaRecall 列表行）通过 row-action drawer 打开本页，data.recallId 注入。
+# 范式来源：docs/design/cross-doc-navigation-patterns.md §3.2 方案 A
+x:gen-extends: |
+  <web:GenPage view="ErpQaRecallTarget.view.xml" page="main" fixedProps="recallId" xpl:lib="/nop/web/xlib/web.xlib" />

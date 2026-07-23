@@ -226,6 +226,22 @@
                     </messages>
                     <visibleOn>${status != 'TERMINATED'}</visibleOn>
                 </action>
+                <action id="row-view-line-button" label="合同明细行" i18n-en:label="Contract Lines" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/ct/pages/ErpCtContractLine/ref-contract.page.yaml" size="xl">
+                        <data>
+                            <contractId>${id}</contractId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-view-version-button" label="合同版本" i18n-en:label="Contract Versions" level="info" icon="fa fa-code-fork"
+                        actionType="drawer">
+                    <drawer page="/erp/ct/pages/ErpCtContractVersion/ref-contract.page.yaml" size="xl">
+                        <data>
+                            <contractId>${id}</contractId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

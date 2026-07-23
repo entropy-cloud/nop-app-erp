@@ -70,7 +70,21 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <action id="row-view-line-button" label="盘点明细" i18n-en:label="Inventory Lines" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/ast/pages/ErpAstInventoryLine/ref-inventory.page.yaml" size="xl">
+                        <data>
+                            <inventoryId>${id}</inventoryId>
+                        </data>
+                    </drawer>
+                </action>
+                <action id="row-delete-button"/>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

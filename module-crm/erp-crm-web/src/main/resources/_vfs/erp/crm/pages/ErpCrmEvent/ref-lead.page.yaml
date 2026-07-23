@@ -1,0 +1,4 @@
+# fixedProps=relatedLeadId：关联线索的CRM事件子表。父页面（ErpCrmLead 列表行）通过 row-action drawer 打开本页，data.relatedLeadId 注入。
+# 范式来源：docs/design/cross-doc-navigation-patterns.md §3.2 方案 A
+x:gen-extends: |
+  <web:GenPage view="ErpCrmEvent.view.xml" page="main" fixedProps="relatedLeadId" xpl:lib="/nop/web/xlib/web.xlib" />

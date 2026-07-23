@@ -164,6 +164,14 @@
                     </messages>
                     <visibleOn>${result != 'PENDING'}</visibleOn>
                 </action>
+                <action id="row-view-line-button" label="检验项明细" i18n-en:label="Inspection Lines" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/qa/pages/ErpQaInspectionLine/ref-inspection.page.yaml" size="xl">
+                        <data>
+                            <inspectionId>${id}</inspectionId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

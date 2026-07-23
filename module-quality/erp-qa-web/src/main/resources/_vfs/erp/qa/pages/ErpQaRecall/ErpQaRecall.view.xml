@@ -162,6 +162,14 @@
                     </messages>
                     <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
                 </action>
+                <action id="row-view-target-button" label="召回目标" i18n-en:label="Recall Targets" level="info" icon="fa fa-bullseye"
+                        actionType="drawer">
+                    <drawer page="/erp/qa/pages/ErpQaRecallTarget/ref-recall.page.yaml" size="xl">
+                        <data>
+                            <recallId>${id}</recallId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

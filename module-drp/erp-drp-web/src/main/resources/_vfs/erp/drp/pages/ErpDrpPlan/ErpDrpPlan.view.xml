@@ -177,6 +177,14 @@
                     </messages>
                     <visibleOn>${status == 'APPROVED'}</visibleOn>
                 </action>
+                <action id="row-view-line-button" label="DRP结果行" i18n-en:label="DRP Lines" level="info" icon="fa fa-list"
+                        actionType="drawer">
+                    <drawer page="/erp/drp/pages/ErpDrpLine/ref-plan.page.yaml" size="xl">
+                        <data>
+                            <planId>${id}</planId>
+                        </data>
+                    </drawer>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
