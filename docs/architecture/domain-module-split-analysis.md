@@ -158,6 +158,8 @@ app-erp-<domain>/
 - 二级简称取业务域英文首字母缩写（md/inv/pur/sal/fin），3 字符长度统一，表名 `erp_inv_stock_move` 比 `erp_inventory_stock_move` 更简洁直观。
 - 类名 `ErpInvStockMove` 比无二级前缀的 `ErpStockMove` 更易定位所属域，避免跨域实体名冲突（如 `ErpOrder` 不明确是采购还是销售订单）。
 
+> **已登记命名例外（drp 域）**：drp 域有 4 个实体保留 `ErpInvDrp*` 类名前缀 + `erp_inv_drp_*` 表前缀（`ErpInvDrpSafetyStockCalc`/`ErpInvDrpCrossDock`/`ErpInvDrpDockAppointment`/`ErpInvDrpLeadTimeRecord`，物理归属 `module-drp`，混用历史延续），以及 3 个 dict 文件挂在 `erp-inv/drp-*` 命名空间下。均经治理审查裁决登记为命名例外（重命名触及 ORM 保护区域+表名+生成产物连锁，收益低于风险），逐项登记与豁免理由见 `docs/design/drp/README.md` §命名例外登记（F2e dict 级）+ §`ErpInvDrp*` 实体命名例外登记（F7 实体级）。
+
 ## 4. 跨工程协作规则
 
 ### 4.1 依赖方向（DAG）

@@ -20,7 +20,7 @@
 
 ## 实体清单
 
-> 命名现状（ORM 为权威源）：DRP 计划/明细/补货参数三实体为 `ErpDrpPlan`/`ErpDrpLine`/`ErpDrpParameter`，表 `erp_drp_`，字典 `erp-drp/drp-*`；安全库存计算/提前期记录/越库/月台预约实体保留 `ErpInvDrp*`、表 `erp_inv_drp_`、字典 `erp-inv/drp-*`（混用历史延续）。本期已完成文档→ORM 命名对齐。
+> 命名现状（ORM 为权威源）：DRP 计划/明细/补货参数三实体为 `ErpDrpPlan`/`ErpDrpLine`/`ErpDrpParameter`，表 `erp_drp_`，字典 `erp-drp/drp-*`；安全库存计算/提前期记录/越库/月台预约实体保留 `ErpInvDrp*`、表 `erp_inv_drp_`、字典 `erp-inv/drp-*`（混用历史延续，**已作命名例外登记**：dict 级见 §命名例外登记 F2e，实体级见 §`ErpInvDrp*` 实体命名例外登记 F7）。本期已完成文档→ORM 命名对齐。
 
 ### ErpDrpPlan（DRP 计划头）
 
@@ -89,7 +89,36 @@ drp 域有 3 个 dict 文件物理归属 `module-drp/erp-drp-meta/.../erp-inv/`�
 2. 迁移到 `erp-drp/` 命名空间需改 ORM `name=` + 列 `ext:dict=`（3 dict 定义 + 3 列），触 ORM `ext:dict` 引用变更保护区域（ask-first），收益为零风险行为变更。
 3. 物理归属已正确（文件在 module-drp 内），文件名 `drp-` 前缀已显式标识归属，登记命名例外即可消除歧义。
 
-> 与 F7（闭包项 #11，`ErpInvDrp*` 实体重命名）属不同 finding：本登记仅覆盖 3 个 dict 文件的命名空间归属；实体重命名裁决归 F7 successor。
+> 与 F7（闭包项 #11，`ErpInvDrp*` 实体重命名）属不同 finding：本登记仅覆盖 3 个 dict 文件的命名空间归属。实体级命名例外裁决见下节 §`ErpInvDrp*` 实体命名例外登记（plan 2026-07-24-1400-2 §F7 裁决）。
+
+## `ErpInvDrp*` 实体命名例外登记（plan 2026-07-24-1400-2 §F7 裁决）
+
+> 治理审查 `docs/audits/2026-07-23-0000-architecture-governance-review.md` 闭包项 #11（F7，LOW）裁决产物。
+> 与上节 dict 命名空间例外（F2e）不同：本节覆盖 **实体类名/表名前缀** 的命名例外登记。
+
+### 裁决：登记命名例外（方案 b，零 ORM 风险）
+
+4 个 drp 实体保留 `ErpInvDrp*` 类名前缀 + `erp_inv_drp_*` 表前缀（命名例外），**不立即重命名**为 `ErpDrp*` / `erp_drp_*`。
+
+**裁决理由**：
+
+1. **物理归属已正确**：4 实体的 ORM 定义（`module-drp/model/app-erp-drp.orm.xml`）、生成产物（`erp-drp-dao/-meta/-service/-web`）、IBiz/BizModel/Processor/test 全部归属 `module-drp`，`className` 均为 `app.erp.drp.dao.entity.*`。仅类名/表名前缀段沿用 `Inv` 历史段（混用历史延续，见 §实体清单命名现状注释）。
+2. **重命名触及保护区域，风险高于收益**：重命名需改 ORM `*.orm.xml`（`className` + `tableName` + `name=` + 索引/唯一键名）+ 表名迁移 DDL + 全部 BizModel/Processor/IBiz/test/i18n/view/auth/codegen 产物（66 文件命中 `ErpInvDrp`），属保护区域高风险操作。收益仅为审美一致性（`Inv` 段已由 `Drp` 段 + `module-drp` 物理归属显式标识域归属），无行为变更。
+3. **#11 checkpoint 允许登记等效收口**：审查 #11 verification checkpoint 明确允许"`grep ErpInvDrp module-drp` 返回 0（重命名）**或**全部登记在 drp owner doc 的命名例外小节（登记豁免）"两个分支。本裁决采登记分支。
+4. **dict 级 F2e 先例**：同型命名例外登记先例（F2e，3 个 dict 文件 `erp-inv/drp-*` 命名空间归属）已由 plan `2026-07-24-0930-2` 裁决并落地，本裁决与之范式一致。
+
+**否决"立即重命名"**：重命名移入 Deferred（见下"收敛触发条件"），待 drp 域进行重大 ORM 变更时顺带处理。
+
+### 实体逐项登记
+
+| 类名 | className | 表名 | 所属域 | 消费 dict（命名空间归属） | 豁免理由 | 收敛触发条件 |
+|------|-----------|------|--------|--------------------------|---------|-------------|
+| `ErpInvDrpSafetyStockCalc` | `app.erp.drp.dao.entity.ErpInvDrpSafetyStockCalc` | `erp_inv_drp_safety_stock_calc` | drp（物理 `module-drp`） | `erp-inv/drp-ss-method`、`erp-inv/drp-service-level`（F2e 已登记） | 类名/表名沿用 `Inv` 历史段，物理归属与 `Drp` 段已标识域归属；重命名触及 ORM 保护区域+表名+66 文件生成产物连锁 | drp 域重大 ORM 变更时顺带重命名为 `ErpDrpSafetyStockCalc` |
+| `ErpInvDrpCrossDock` | `app.erp.drp.dao.entity.ErpInvDrpCrossDock` | `erp_inv_drp_cross_dock` | drp（物理 `module-drp`） | `erp-inv/drp-xdock-status`（F2e 已登记） | 同上 | 同上（`ErpDrpCrossDock`） |
+| `ErpInvDrpDockAppointment` | `app.erp.drp.dao.entity.ErpInvDrpDockAppointment` | `erp_inv_drp_dock_appointment` | drp（物理 `module-drp`） | （自由字符串 status，无 dict 绑定） | 同上 | 同上（`ErpDrpDockAppointment`） |
+| `ErpInvDrpLeadTimeRecord` | `app.erp.drp.dao.entity.ErpInvDrpLeadTimeRecord` | `erp_inv_drp_lead_time_record` | drp（物理 `module-drp`） | （无 dict 绑定） | 同上 | 同上（`ErpDrpLeadTimeRecord`） |
+
+> **登记覆盖范围**：`grep ErpInvDrp module-drp` 的全部命中（66 文件：ORM 模型 + 生成产物 `_gen/`、`_` 前缀文件 + 手写 BizModel/Processor/IBiz/test + i18n/view/auth/page）均落入上表 4 实体的登记覆盖范围内（满足 #11 checkpoint "或登记"分支）。
 
 ## 业务规则
 
