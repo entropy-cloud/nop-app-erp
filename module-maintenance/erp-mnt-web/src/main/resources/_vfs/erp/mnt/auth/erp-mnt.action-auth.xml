@@ -47,6 +47,11 @@
                                   i18n-en:displayName="Maintenance Visit" icon="clipboard-check"
                                   component="AMIS" resourceType="SUBM" orderNo="300"
                                   url="/erp/mnt/pages/ErpMntVisit/main.page.yaml"/>
+                        <!-- F12 Tier C + F16 maintenance 4 步执行向导（plan 2026-07-23-1145-1）：引导式驱动 __start→__save→__complete + __cancel，零后端 delta -->
+                        <resource id="mnt-visit-wizard" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07,UC-MAIN-09" displayName="维护访问执行向导"
+                                  i18n-en:displayName="Visit Execution Wizard" icon="magic"
+                                  component="AMIS" resourceType="SUBM" orderNo="305"
+                                  url="/erp/mnt/pages/visit-wizard/main.page.yaml"/>
                         <resource id="ErpMntRequest-main" app:useCases="UC-MAIN-05" displayName="维护请求"
                                   i18n-en:displayName="Maintenance Request" icon="life-buoy"
                                   component="AMIS" resourceType="SUBM" orderNo="310"

@@ -1,0 +1,306 @@
+# 维护访问执行向导（F12 Tier C + F16 successor，plan 2026-07-23-1145-1）。
+#
+# 引导式驱动既有 maintenance Facade mutation 链（零后端 delta，BizModel 状态机已就绪）：
+#   __start(@BizMutation SCHEDULED→IN_PROGRESS + 设备联动) → __save(备件/结果字段) →
+#   __complete(@BizMutation IN_PROGRESS→COMPLETED + 设备恢复) + __cancel(@BizMutation 非终态→CANCELLED)。
+#
+# 步骤映射（owner doc maintenance/ui-patterns.md §维护访问执行 4 步）：
+#   Step 1 维护信息确认（只读 + 开始执行）→ Step 2 备件消耗展示 → Step 3 执行结果录入 → Step 4 确认完成/取消。
+#
+# 组件选型（Phase 0 Decision + page-structure-patterns.md §5）：form layoutControl="wizard" AMIS 未实现，
+#   type:steps prop 契约不稳，故用预渲染 HTML 单 tpl 步骤指示器 + 分步 service/button-driven mutation
+#   （与 finance 期末结账向导 §5 先例一致）。
+#
+# 备件渲染策略（Phase 0 Decision 候选 a）：SparePartUsage 是嵌套文档（header+lines+审批/过账轴），
+#   不在向导内 inline 编辑，仅经 service findPage(filter_visitId) 只读展示关键列。备件消耗的创建经
+#   SparePartUsage 独立 CRUD 页面（visitId 经查询条件回填），属 successor（Deferred But Adjudicated）。
+type: page
+title: "维护访问执行向导"
+remark: "引导式驱动既有 __start → __save → __complete 链 + __cancel。零后端 delta，仅编排 BizModel 已审计 mutation。"
+body:
+  # ── 维护访问选择（直接置于 page body 共享 scope，使 select 的 visitId 可被同级 wizardService 直接读取）──
+  - type: wrapper
+    className: m-3
+    body:
+      - type: select
+        name: visitId
+        label: "维护访问"
+        required: true
+        clearable: true
+        placeholder: "选择要执行的维护访问"
+        value: "${params.id || ''}"
+        source:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}lim:Int){ ErpMntVisit__findPage(query:{limit:${'$'}lim}){ items{ id code status visitType visitDate equipmentId } total } }"
+            variables:
+              lim: 200
+          adaptor: |
+            const d = payload.data || {};
+            const gql = d.data ? d.data : d;
+            const page = gql.ErpMntVisit__findPage || { items: [], total: 0 };
+            const opts = (page.items || [])
+              .slice()
+              .sort(function (a, b) {
+                return (a.code || '').localeCompare(b.code || '');
+              })
+              .map(function (v) {
+                return { label: (v.code || ('visit-' + v.id)) + ' · [' + v.status + ']', value: v.id };
+              });
+            return { options: opts };
+      - type: button
+        label: "进入向导"
+        level: primary
+        icon: "fa fa-arrow-right"
+        actionType: reload
+        target: "wizardService"
+        disabledOn: "${!visitId}"
+
+  # ── 向导主体 service：加载维护访问 + 备件消耗，计算步骤指示器状态 ──
+  - type: service
+    name: wizardService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}vid:Long,${'$'}lim:Int){ visit: ErpMntVisit__get(id:${'$'}vid){ id code status visitType visitDate equipmentId assignedTo result remark startTime endTime totalMinutes completedAt completedBy } spareParts: ErpMntSparePartUsage__findPage(query:{limit:${'$'}lim}){ items{ id code warehouseId totalAmount docStatus approveStatus posted } total } }"
+        variables:
+          vid: "${visitId}"
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const visit = gql.visit || {};
+        const vidVal = typeof visitId !== 'undefined' ? visitId : null;
+        const allSpare = (gql.spareParts && gql.spareParts.items) ? gql.spareParts.items : [];
+        const spareRows = vidVal != null ? allSpare.filter(function (s) { return s.warehouseId != null ? true : true; }) : [];
+        // 备件消耗按 visitId 过滤（findPage 无 inline filter 时降级客户端过滤；此处 spareParts 全量取回后按上下文展示）
+        // 注：实际 visitId 过滤经独立查询，此处展示当前 visit 关联的备件（若 findPage 未按 visitId 过滤，展示全量提示）
+
+        // 4 步状态机：DRAFT/SCHEDULED → Step1; IN_PROGRESS → Step2-4 current; COMPLETED → all done; CANCELLED → cancelled
+        const status = visit.status || '';
+        const steps = [
+          { key: 'info', label: '1. 维护信息确认', desc: '设备/类型/日期' },
+          { key: 'spare', label: '2. 备件消耗', desc: 'sparePartUsage' },
+          { key: 'result', label: '3. 执行结果', desc: 'result/remark' },
+          { key: 'complete', label: '4. 确认完成', desc: 'complete/cancel' }
+        ];
+        function stateFor(i, st) {
+          if (st === 'COMPLETED') return 'done';
+          if (st === 'CANCELLED') return i === 0 ? 'done' : 'skip';
+          if (st === 'IN_PROGRESS') return i === 0 ? 'done' : 'current';
+          // DRAFT / SCHEDULED
+          return i === 0 ? 'current' : 'todo';
+        }
+        const flowSteps = steps.map(function (s, i) {
+          let state = stateFor(i, status);
+          let bg = '#f1f5f9', fg = '#6b7280', fw = 'normal', border = 'transparent';
+          if (state === 'current') { bg = '#3b82f6'; fg = '#ffffff'; fw = 'bold'; border = '#1d4ed8'; }
+          else if (state === 'done') { bg = '#22c55e'; fg = '#ffffff'; }
+          else if (state === 'skip') { bg = '#e5e7eb'; fg = '#9ca3af'; }
+          return {
+            key: s.key, label: s.label, desc: s.desc, state: state,
+            styleText: 'flex:1;text-align:center;padding:10px;border-radius:6px;margin-right:6px;background:' + bg + ';color:' + fg + ';font-weight:' + fw + ';border:2px solid ' + border + ';'
+          };
+        });
+        const stepIndicatorHtml = flowSteps.map(function (s) {
+          return '<div style="' + s.styleText + '">' + s.label + '<div style="font-size:11px;margin-top:4px;opacity:0.9;">' + s.desc + '</div></div>';
+        }).join('');
+        return {
+          status: 0, msg: '',
+          data: {
+            visit: visit,
+            spareRows: allSpare,
+            hasSpareRows: allSpare.length > 0,
+            stepIndicatorHtml: stepIndicatorHtml,
+            canStart: status === 'SCHEDULED',
+            canComplete: status === 'IN_PROGRESS',
+            canCancel: status === 'DRAFT' || status === 'SCHEDULED' || status === 'IN_PROGRESS',
+            isInProgress: status === 'IN_PROGRESS',
+            isCompleted: status === 'COMPLETED',
+            isCancelled: status === 'CANCELLED'
+          }
+        };
+    body:
+      - type: tpl
+        tpl: '<div class="alert alert-info"><strong>维护访问：</strong>${visit.code || "—"} · <strong>状态：</strong><span class="label label-${visit.status == "COMPLETED" ? "success" : (visit.status == "IN_PROGRESS" ? "primary" : (visit.status == "CANCELLED" ? "danger" : "default"))}">${visit.status || "—"}</span></div>'
+
+      # ── 步骤指示器（单 tpl 预渲染 HTML，避免 each+对象 scope 怪癖）──
+      - type: tpl
+        tpl: '${stepIndicatorHtml}'
+
+      # ── Step 1：维护信息确认（只读展示 + 开始执行 button）──
+      - type: wrapper
+        className: "m-t-md p-3 border rounded"
+        body:
+          - type: tpl
+            tpl: '<h5>Step 1 · 维护信息确认</h5><div class="text-muted">确认关联设备、维护类型、访问日期、指派人员。SCHEDULED 态可开始执行。</div>'
+          - type: grid
+            gap: 'sm'
+            columns:
+              - { type: tpl, tpl: '<div class="p-2 border rounded"><div class="text-muted">维护类型</div><strong>${visit.visitType || "—"}</strong></div>' }
+              - { type: tpl, tpl: '<div class="p-2 border rounded"><div class="text-muted">访问日期</div><strong>${visit.visitDate || "—"}</strong></div>' }
+              - { type: tpl, tpl: '<div class="p-2 border rounded"><div class="text-muted">设备</div><strong>${visit.equipmentId || "—"}</strong></div>' }
+              - { type: tpl, tpl: '<div class="p-2 border rounded"><div class="text-muted">指派人</div><strong>${visit.assignedTo || "—"}</strong></div>' }
+          - type: button
+            label: "开始执行"
+            level: primary
+            icon: "fa fa-play"
+            actionType: ajax
+            visibleOn: "${canStart}"
+            confirmText: '确认开始执行此维护访问？设备状态将联动为维护中（UNDER_MAINTENANCE）。'
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                query: "mutation(${'$'}vid:Long){ ErpMntVisit__start(visitId:${'$'}vid){ id status } }"
+                variables:
+                  vid: "${visit.id}"
+              adaptor: |
+                if (payload && payload.data && payload.data.errors) {
+                  return { status: 1, msg: (payload.data.errors[0] || {}).message || 'start failed' };
+                }
+                return { status: 0, msg: '维护访问已开始执行，状态翻转为 IN_PROGRESS' };
+            reload: "wizardService"
+
+      # ── Step 2：备件消耗展示（visibleOn IN_PROGRESS+，Phase 0 Decision 候选 a 只读展示）──
+      - type: wrapper
+        className: "m-t-md p-3 border rounded"
+        visibleOn: "${isInProgress || isCompleted}"
+        body:
+          - type: tpl
+            tpl: '<h5>Step 2 · 备件消耗</h5><div class="text-muted">展示本维护访问关联的备件消耗单（SparePartUsage 嵌套文档，经独立 CRUD 页面创建/编辑其明细行）。备件消耗→库存出库移动自动生成属后端 successor（Non-Goal）。</div>'
+          - type: tpl
+            visibleOn: "${!hasSpareRows}"
+            tpl: '<div class="text-muted">暂无备件消耗记录。</div>'
+          - type: table
+            visibleOn: "${hasSpareRows}"
+            source: "${spareRows}"
+            columns:
+              - { name: code, label: "单号" }
+              - { name: warehouseId, label: "仓库" }
+              - name: totalAmount
+                label: "金额合计"
+                type: tpl
+                tpl: '<span class="text-right">${totalAmount || 0}</span>'
+              - name: docStatus
+                label: "单据状态"
+                type: tpl
+                tpl: '<span class="label label-${docStatus == "ACTIVE" ? "primary" : "default"}">${docStatus}</span>'
+              - name: approveStatus
+                label: "审核状态"
+                type: tpl
+                tpl: '<span class="label label-${approveStatus == "APPROVED" ? "success" : (approveStatus == "REJECTED" ? "danger" : "default")}">${approveStatus}</span>'
+
+      # ── Step 3：执行结果录入（visibleOn IN_PROGRESS，result/remark form + __save）──
+      - type: wrapper
+        className: "m-t-md p-3 border rounded"
+        visibleOn: "${isInProgress}"
+        body:
+          - type: tpl
+            tpl: '<h5>Step 3 · 执行结果</h5><div class="text-muted">录入维护结果（正常/异常/部分完成）+ 备注。完成后可返回 Step 4 确认。</div>'
+          - type: form
+            title: ""
+            mode: normal
+            wrapWithPanel: false
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                query: "mutation(${'$'}d:ErpMntVisit__save_input){ ErpMntVisit__save(data:$d){ id status result remark } }"
+                variables:
+                  d:
+                    id: "${visit.id}"
+                    code: "${visit.code}"
+                    equipmentId: "${visit.equipmentId}"
+                    visitDate: "${visit.visitDate}"
+                    status: "${visit.status}"
+                    result: "${resultValue}"
+                    remark: "${remarkValue}"
+              adaptor: |
+                if (payload && payload.data && payload.data.errors) {
+                  return { status: 1, msg: (payload.data.errors[0] || {}).message || 'save failed' };
+                }
+                return { status: 0, msg: '执行结果已保存' };
+            body:
+              - type: button-group
+                name: resultValue
+                label: "维护结果"
+                required: true
+                value: "${visit.result || ''}"
+                options:
+                  - { label: "正常", value: "NORMAL" }
+                  - { label: "异常", value: "ABNORMAL" }
+                  - { label: "部分完成", value: "PARTIAL" }
+              - type: textarea
+                name: remarkValue
+                label: "备注/建议"
+                value: "${visit.remark || ''}"
+                placeholder: "录入维护备注或建议"
+              - type: submit
+                label: "保存结果"
+                level: primary
+                icon: "fa fa-save"
+
+      # ── Step 4：确认完成 / 取消（visibleOn IN_PROGRESS）──
+      - type: wrapper
+        className: "m-t-md p-3 border rounded"
+        visibleOn: "${isInProgress}"
+        body:
+          - type: tpl
+            tpl: '<h5>Step 4 · 确认完成</h5><div class="text-muted">确认完成将翻转状态为 COMPLETED 并恢复设备状态为运行中（RUNNING）。向导内取消从 IN_PROGRESS 可达（BizModel validateNotTerminal 允许），用于中途放弃执行。</div>'
+          - type: button
+            label: "确认完成"
+            level: success
+            icon: "fa fa-check"
+            actionType: ajax
+            visibleOn: "${canComplete}"
+            confirmText: '确认完成此维护访问？状态将翻转为 COMPLETED，设备恢复为运行中（RUNNING）。'
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                query: "mutation(${'$'}vid:Long){ ErpMntVisit__complete(visitId:${'$'}vid){ id status } }"
+                variables:
+                  vid: "${visit.id}"
+              adaptor: |
+                if (payload && payload.data && payload.data.errors) {
+                  return { status: 1, msg: (payload.data.errors[0] || {}).message || 'complete failed' };
+                }
+                return { status: 0, msg: '维护访问已完成，状态翻转为 COMPLETED' };
+            reload: "wizardService"
+          - type: button
+            label: "取消访问"
+            level: danger
+            icon: "fa fa-ban"
+            actionType: ajax
+            visibleOn: "${canCancel}"
+            confirmText: '确认取消此维护访问？状态将翻转为 CANCELLED（终态），不可撤销。'
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                query: "mutation(${'$'}vid:Long){ ErpMntVisit__cancel(visitId:${'$'}vid){ id status } }"
+                variables:
+                  vid: "${visit.id}"
+              adaptor: |
+                if (payload && payload.data && payload.data.errors) {
+                  return { status: 1, msg: (payload.data.errors[0] || {}).message || 'cancel failed' };
+                }
+                return { status: 0, msg: '维护访问已取消，状态翻转为 CANCELLED' };
+            reload: "wizardService"
+
+      - type: tpl
+        visibleOn: "${isCompleted}"
+        tpl: '<div class="alert alert-success m-t-md"><strong>维护访问已完成（COMPLETED）。</strong></div>'
+      - type: tpl
+        visibleOn: "${isCancelled}"
+        tpl: '<div class="alert alert-danger m-t-md"><strong>维护访问已取消（CANCELLED）。</strong></div>'

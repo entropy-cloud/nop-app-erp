@@ -63,36 +63,60 @@
     <forms>
         <form id="view">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[访问编码] scheduleId[维护计划ID]
  equipmentId[设备ID] visitDate[访问日期]
  status[状态] visitType[维护类型]
  orgId[业务组织] businessDate[业务日期]
-==========>execution[执行信息]======
+=========>execution[执行信息]======
  assignedTo[指派人] completedBy[完成人]
  completedAt[完成时间] startTime[开始时间]
  endTime[结束时间] totalMinutes[总分钟数]
  result[执行结果]
-==========^audit[审计信息]=========
+=========>tasks[维护任务]======
+ tasks[维护任务](2)
+=========>spareParts[备件消耗]======
+ sparePartUsages[备件消耗](2)
+========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="tasks">
+                    <view path="/erp/mnt/pages/ErpMntVisitTask/ErpMntVisitTask.view.xml" grid="sub-grid-view"/>
+                </cell>
+                <cell id="sparePartUsages">
+                    <view path="/erp/mnt/pages/ErpMntSparePartUsage/ErpMntSparePartUsage.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit">
             <layout x:override="replace">
-==========>baseInfo[基本信息]======
+=========>baseInfo[基本信息]======
  code[访问编码] scheduleId[维护计划ID]
  equipmentId[设备ID] visitDate[访问日期]
  status[状态] visitType[维护类型]
  orgId[业务组织] businessDate[业务日期]
-==========>execution[执行信息]======
+=========>execution[执行信息]======
  assignedTo[指派人] completedBy[完成人]
  completedAt[完成时间] startTime[开始时间]
  endTime[结束时间] totalMinutes[总分钟数]
  result[执行结果]
+=========>tasks[维护任务]======
+ tasks[维护任务](2)
+=========>spareParts[备件消耗]======
+ sparePartUsages[备件消耗](2)
  remark[备注](2)
             </layout>
+            <cells>
+                <cell id="tasks">
+                    <view path="/erp/mnt/pages/ErpMntVisitTask/ErpMntVisitTask.view.xml" grid="sub-grid-edit"/>
+                </cell>
+                <cell id="sparePartUsages">
+                    <view path="/erp/mnt/pages/ErpMntSparePartUsage/ErpMntSparePartUsage.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="add"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
@@ -112,6 +136,11 @@
             <rowActions x:override="bounded-merge">
                 <action id="row-view-button"/>
                 <action id="row-update-button" actionType="drawer"/>
+                <action id="row-visit-wizard-button" label="执行向导" i18n-en:label="Execution Wizard" level="info" icon="fa fa-magic"
+                        tooltip="打开维护访问执行向导（4 步：信息确认→备件消耗→执行结果→确认完成）"
+                        link="/mnt-visit-wizard?id=$id">
+                    <visibleOn>${status == 'SCHEDULED' || status == 'IN_PROGRESS'}</visibleOn>
+                </action>
                 <action id="row-schedule-button" label="排程" i18n-en:label="Schedule" level="primary" icon="fa fa-calendar">
                     <api url="@mutation:ErpMntVisit__schedule?visitId=$id"/>
                     <confirmText>确认排程此维保任务？</confirmText>

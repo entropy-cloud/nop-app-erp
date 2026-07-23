@@ -62,6 +62,32 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <!-- SparePartUsage 作为 ErpMntVisit 的嵌套文档子表时用 sub-grid-view 只读展示关键列
+            （Phase 0 Decision 候选 a：嵌套文档不在 Visit form 内 inline 编辑，经独立 CRUD/wizard 管理） -->
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="code"/>
+                <col id="warehouseId"/>
+                <col id="businessDate" align="center">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'date', format: 'YYYY-MM-DD' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="totalAmount" align="right">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'number', kilometer: true, precision: 2 };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="docStatus"/>
+                <col id="approveStatus"/>
+                <col id="posted"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
@@ -80,11 +106,18 @@
 =========>posting[过账信息]======
  posted[已过账] postedAt[过账时间]
  postedBy[过账人]
+=========>lines[备件消耗行]======
+ lines[备件消耗行](2)
 ========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/mnt/pages/ErpMntSparePartUsageLine/ErpMntSparePartUsageLine.view.xml" grid="sub-grid-view"/>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
@@ -102,10 +135,15 @@
  posted[已过账] postedAt[过账时间]
  postedBy[过账人]
 ========^audit[审计信息]=========
+=========>lines[备件消耗行]======
+ lines[备件消耗行](2)
  remark[备注](2)
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <cell id="lines">
+                    <view path="/erp/mnt/pages/ErpMntSparePartUsageLine/ErpMntSparePartUsageLine.view.xml" grid="sub-grid-edit"/>
+                </cell>
+            </cells>
         </form>
         <form id="add" x:prototype="edit"/>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">

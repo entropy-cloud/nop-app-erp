@@ -36,6 +36,73 @@
             </cols>
         </grid>
         <grid id="pick-list"/>
+
+        <grid id="sub-grid-edit" x:prototype="list" editMode="list-edit">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-number',
+                                name: 'lineNo',
+                                required: true,
+                                step: 1,
+                                validations: { minimum: 0 },
+                                validationErrors: { minimum: '行号不能为负' }
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="taskDescription" mandatory="true">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'input-text',
+                                name: 'taskDescription',
+                                required: true,
+                                maxLength: 500
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="status" mandatory="true"/>
+                <col id="completedBy">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return {
+                                type: 'picker',
+                                name: 'completedBy',
+                                label: '完成人',
+                                source: '/erp/md/pages/ErpMdEmployee/picker.page.yaml',
+                                valueField: 'id',
+                                labelField: 'name',
+                                joinValues: false,
+                                extractValue: true
+                            };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="completedAt">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-datetime', name: 'completedAt', format: 'YYYY-MM-DD HH:mm:ss' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="remark"/>
+            </cols>
+        </grid>
+
+        <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
+            <cols x:override="bounded-merge">
+                <col id="lineNo" mandatory="true" ui:number="true"/>
+                <col id="taskDescription"/>
+                <col id="status"/>
+                <col id="completedBy"/>
+                <col id="completedAt"/>
+                <col id="remark"/>
+            </cols>
+        </grid>
     </grids>
 
     <forms>
