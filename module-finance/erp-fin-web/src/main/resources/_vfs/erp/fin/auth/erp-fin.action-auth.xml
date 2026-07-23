@@ -37,6 +37,11 @@
                                   i18n-en:displayName="Accounting Period" icon="calendar"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
                                   url="/erp/fin/pages/ErpFinAccountingPeriod/main.page.yaml"/>
+                        <!-- F12 Tier C 期末结账向导（plan 2026-07-23-0818-2）：引导式驱动 preCheck→closePeriod→finalizePeriod + reverseClose，零后端 delta -->
+                        <resource id="fin-period-close-wizard" app:useCases="UC-FIN-06,UC-FIN-07" displayName="期末结账向导"
+                                  i18n-en:displayName="Period Close Wizard" icon="magic"
+                                  component="AMIS" resourceType="SUBM" orderNo="205"
+                                  url="/erp/fin/pages/period-close-wizard/main.page.yaml"/>
                         <resource id="ErpFinAccountingPeriodStatus-main" app:useCases="UC-FIN-06,UC-FIN-07" displayName="期间结账状态"
                                   i18n-en:displayName="Period Close Status" icon="calendar-check"
                                   component="AMIS" resourceType="SUBM" orderNo="210"

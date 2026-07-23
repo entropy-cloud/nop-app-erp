@@ -88,6 +88,8 @@ site:
       displayName: Notes Management
     fin-period:
       displayName: Accounting Period
+    fin-period-close-wizard:
+      displayName: Period Close Wizard
     fin-recon:
       displayName: Reconciliation
     fin-report:

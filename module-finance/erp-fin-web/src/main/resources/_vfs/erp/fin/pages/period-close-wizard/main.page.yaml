@@ -1,0 +1,416 @@
+# 期末结账向导（F12 Tier C successor，plan 2026-07-23-0818-2）。
+#
+# 引导式流程驱动既有 finance Facade mutation 链（零后端 delta，M4 已审计）：
+#   preCheck(@BizQuery 只读) → closePeriod(@BizMutation 一次性编排 AR/AP/INV/AST/GL + 12 月年度分支)
+#   → finalizePeriod(@BizMutation CLOSED→CLOSED_FINAL)；反结账 reverseClose(@BizMutation 红冲 + 重开)。
+#   generateNextYearPeriods 由 closePeriod 年度分支内部调用，无独立向导按钮。
+#
+# 步骤映射（owner doc period-close.md §期末结账步骤 8 步概念 + roadmap「5 步」笔误裁决）：
+#   Step 1 选择期间 + preCheck 前置检查 → Step 2 执行月度结账（per-module 关账结果卡）→
+#   Step 3 年度结转（仅 12 月可见，closePeriod 已内含）→ Step 4 终关 → 反结账入口。
+#
+# 组件选型（Phase 0 Decision）：form layoutControl="wizard" AMIS 未实现（layout-syntax-reference.md:288），
+#   type:steps prop 契约不稳（page-structure-patterns.md §8.12），故用 each+tpl 步骤指示器 +
+#   分步 service/button-driven mutation（与 b2b ASN §8.12 先例一致）。
+#
+# per-module 关账结果数据源：ErpFinAccountingPeriodStatus（arStatus/apStatus/invStatus/glStatus/assetStatus，
+#   dict erp-fin/module-close-status OPEN/CLOSING/CLOSED）。closePeriod 同步一次性，故展示执行后结果（非实时进度）。
+type: page
+title: "期末结账向导"
+remark: "引导式驱动既有 preCheck → closePeriod → (年度结转) → finalizePeriod 链 + reverseClose 反结账。零后端 delta，仅编排 M4 已审计 mutation。"
+body:
+  # ── 期间选择（直接置于 page body 共享 scope，使 select 的 periodId 可被同级 wizardService 直接读取）──
+  - type: wrapper
+    className: m-3
+    body:
+      - type: select
+        name: periodId
+        label: "会计期间"
+        required: true
+        clearable: true
+        placeholder: "选择要结账的会计期间"
+        source:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}lim:Int){ ErpFinAccountingPeriod__findPage(query:{limit:${'$'}lim}){ items{ id year month status code } total } }"
+            variables:
+              lim: 200
+          adaptor: |
+            const d = payload.data || {};
+            const gql = d.data ? d.data : d;
+            const page = gql.ErpFinAccountingPeriod__findPage || { items: [], total: 0 };
+            const opts = (page.items || [])
+              .slice().sort(function (a, b) {
+                if (a.year !== b.year) return b.year - a.year;
+                return b.month - a.month;
+              })
+              .map(function (p) {
+                const mm = p.month < 10 ? ('0' + p.month) : ('' + p.month);
+                return { label: (p.code || ('period-' + p.id)) + ' · ' + p.year + '-' + mm + '  [' + p.status + ']', value: p.id };
+              });
+            return { options: opts };
+      - type: button
+        label: "进入向导"
+        level: primary
+        icon: "fa fa-arrow-right"
+        actionType: reload
+        target: "wizardService"
+        disabledOn: "${!periodId}"
+
+  # ── 向导主体 service：加载期间 + per-module 关账状态，计算步骤指示器状态 ──
+  - type: service
+    name: wizardService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}pid:Long,${'$'}lim:Int){ period: ErpFinAccountingPeriod__get(id:${'$'}pid){ id year month status code name } statusPage: ErpFinAccountingPeriodStatus__findPage(query:{limit:${'$'}lim}){ items{ id periodId acctSchemaId arStatus apStatus invStatus glStatus assetStatus totalVouchers postedVouchers unpostedVouchers } total } }"
+        variables:
+          pid: "${periodId}"
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const period = gql.period || {};
+        const pidVal = typeof periodId !== 'undefined' ? periodId : null;
+        const allStatus = (gql.statusPage && gql.statusPage.items) ? gql.statusPage.items : [];
+        const statusRows = pidVal != null ? allStatus.filter(function (s) { return s.periodId == pidVal; }) : [];
+
+        // 4 forward steps + 1 reverse entry，状态由 period.status 推导
+        const order = ['OPEN', 'CLOSING', 'CLOSED', 'CLOSED_FINAL'];
+        const curIdx = order.indexOf(period.status);
+        const steps = [
+          { key: 'preCheck', label: '1. 前置检查', desc: 'preCheck' },
+          { key: 'closePeriod', label: '2. 月度结账', desc: 'closePeriod' },
+          { key: 'annualClose', label: '3. 年度结转', desc: '仅12月' },
+          { key: 'finalize', label: '4. 终关', desc: 'finalizePeriod' }
+        ];
+        const flowSteps = steps.map(function (s, i) {
+          let state = 'todo';
+          if (i === 0) {
+            state = (curIdx >= 1) ? 'done' : 'current';
+          } else if (i === 1) {
+            if (curIdx >= 2) state = 'done';
+            else if (curIdx === 0 || curIdx === 1) state = 'current';
+          } else if (i === 2) {
+            if (period.month != 12) { state = 'skip'; }
+            else if (curIdx >= 2) state = 'done';
+            else state = 'todo';
+          } else if (i === 3) {
+            if (curIdx >= 3) state = 'done';
+            else if (curIdx === 2) state = 'current';
+          }
+          let bg = '#f1f5f9', fg = '#6b7280', fw = 'normal', border = 'transparent';
+          if (state === 'current') { bg = '#3b82f6'; fg = '#ffffff'; fw = 'bold'; border = '#1d4ed8'; }
+          else if (state === 'done') { bg = '#22c55e'; fg = '#ffffff'; }
+          else if (state === 'skip') { bg = '#e5e7eb'; fg = '#9ca3af'; }
+          return {
+            key: s.key, label: s.label, desc: s.desc, state: state,
+            styleText: 'flex:1;text-align:center;padding:10px;border-radius:6px;margin-right:6px;background:' + bg + ';color:' + fg + ';font-weight:' + fw + ';border:2px solid ' + border + ';'
+          };
+        });
+        // 步骤指示器预渲染为单个 HTML 字符串（避免 each+对象 scope 渲染 [object Object] 的 AMIS 怪癖）
+        const stepIndicatorHtml = flowSteps.map(function (s) {
+          return '<div style="' + s.styleText + '">' + s.label + '<div style="font-size:11px;margin-top:4px;opacity:0.9;">' + s.desc + '</div></div>';
+        }).join('');
+        // 各步骤是否可达的扁平标志（visibleOn 消费，避免 each scope）
+        const stepPreCheckDone = curIdx >= 1;
+        const stepCloseDone = curIdx >= 2;
+        const stepFinalizeDone = curIdx >= 3;
+
+        return {
+          status: 0, msg: '',
+          data: {
+            period: period,
+            statusRows: statusRows,
+            hasStatusRows: statusRows.length > 0,
+            stepIndicatorHtml: stepIndicatorHtml,
+            isDecember: period.month == 12,
+            canClose: period.status === 'OPEN' || period.status === 'CLOSING',
+            canFinalize: period.status === 'CLOSED',
+            canReverse: period.status === 'CLOSED' || period.status === 'CLOSED_FINAL',
+            isFinal: period.status === 'CLOSED_FINAL'
+          }
+        };
+    body:
+      - type: tpl
+        tpl: '<div class="alert alert-info"><strong>当前期间：</strong>${period.code || "—"}（${period.year || "—"}年${period.month || "—"}月）· <strong>状态：</strong><span class="label label-${period.status == "CLOSED_FINAL" ? "default" : (period.status == "CLOSED" ? "primary" : (period.status == "CLOSING" ? "warning" : "success"))}">${period.status || "—"}</span></div>'
+
+      # ── 步骤指示器（单 tpl 预渲染 HTML，避免 each+对象 scope 怪癖）──
+      - type: tpl
+        tpl: '${stepIndicatorHtml}'
+
+      # ── Step 1：preCheck 前置检查（只读 @BizQuery）──
+      - type: wrapper
+        className: "m-t-md p-3 border rounded"
+        body:
+          - type: tpl
+            tpl: '<h5>Step 1 · 前置检查（preCheck）</h5><div class="text-muted">扫描未过账凭证 / 未核销应收应付 / 未处置过账异常 / 坏账准备充足性。阻断项存在时禁止继续结账。</div>'
+          - type: button
+            label: "执行前置检查"
+            level: info
+            icon: "fa fa-search"
+            actionType: dialog
+            dialog:
+              title: "前置检查报告 - ${period.code}"
+              size: lg
+              actions: []
+              body:
+                - type: service
+                  name: preCheckService
+                  api:
+                    url: /graphql
+                    method: post
+                    dataType: raw
+                    data:
+                      query: "query(${'$'}pid:Long){ report: ErpFinAccountingPeriod__preCheck(periodId:${'$'}pid){ unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess } }"
+                      variables:
+                        pid: "${period.id}"
+                    adaptor: |
+                      const d = payload.data || {};
+                      const gql = d.data ? d.data : d;
+                      const r = gql.report || {};
+                      const shortfall = Number(r.allowanceShortfall || 0);
+                      const excess = Number(r.allowanceExcess || 0);
+                      const unposted = r.unpostedVoucherCodes || [];
+                      const unsettled = r.unsettledArApCodes || [];
+                      const unresolved = r.unresolvedPostingExceptionKeys || [];
+                      // hasIssues/issueCount 非 GraphQL 字段（has*/非 get 方法不被 Nop bean 暴露），客户端按 PeriodPreCheckReport.hasIssues() 同语义计算
+                      const hasIssues = unposted.length > 0 || unsettled.length > 0 || unresolved.length > 0 || shortfall > 0;
+                      const issueCount = unposted.length + unsettled.length + unresolved.length + (shortfall > 0 ? 1 : 0);
+                      const issueRows = [
+                        { name: '未过账凭证', count: unposted.length, blocking: true },
+                        { name: '未核销应收应付', count: unsettled.length, blocking: true },
+                        { name: '未处置过账异常', count: unresolved.length, blocking: true },
+                        { name: '坏账准备缺口(shortfall>0)', count: shortfall > 0 ? 1 : 0, blocking: true },
+                        { name: '坏账准备超额(excess>0，提示)', count: excess > 0 ? 1 : 0, blocking: false }
+                      ];
+                      return { status: 0, msg: '', data: {
+                        unpostedVoucherCodes: unposted,
+                        unsettledArApCodes: unsettled,
+                        unresolvedPostingExceptionKeys: unresolved,
+                        allowanceRequired: r.allowanceRequired || 0,
+                        allowanceBalance: r.allowanceBalance || 0,
+                        allowanceShortfall: r.allowanceShortfall || 0,
+                        allowanceExcess: r.allowanceExcess || 0,
+                        hasIssues: hasIssues,
+                        issueCount: issueCount,
+                        issueRows: issueRows
+                      } };
+                  body:
+                    - type: tpl
+                      tpl: '<div class="alert alert-${hasIssues ? "danger" : "success"}"><strong>${hasIssues ? "阻断项存在（" + issueCount + "）—— 请先处理后再结账" : "前置检查通过，可继续结账"}</strong></div>'
+                    - type: table
+                      source: "${issueRows}"
+                      columns:
+                        - { name: name, label: "检查项" }
+                        - name: count
+                          label: "数量"
+                          type: tpl
+                          tpl: '<span class="label label-${count > 0 ? (blocking ? "danger" : "warning") : "success"}">${count}</span>'
+                    - type: tpl
+                      tpl: '<hr/><h6>坏账准备充足性</h6><div>必需准备：${allowanceRequired} · 当前 Allowance 账面：${allowanceBalance} · <strong class="text-${allowanceShortfall > 0 ? "danger" : "success"}">缺口：${allowanceShortfall}</strong> · 超额：${allowanceExcess}</div>'
+                    - type: tpl
+                      visibleOn: "${unpostedVoucherCodes.length > 0}"
+                      tpl: '<div class="m-t"><strong>未过账凭证号：</strong>${unpostedVoucherCodes | join:","}</div>'
+                    - type: tpl
+                      visibleOn: "${unsettledArApCodes.length > 0}"
+                      tpl: '<div class="m-t"><strong>未核销应收应付：</strong>${unsettledArApCodes | join:","}</div>'
+                    - type: tpl
+                      visibleOn: "${unresolvedPostingExceptionKeys.length > 0}"
+                      tpl: '<div class="m-t"><strong>未处置过账异常：</strong>${unresolvedPostingExceptionKeys | join:","}</div>'
+
+      # ── Step 2：执行月度结账（closePeriod 一次性 @BizMutation）──
+      - type: wrapper
+        className: "m-t-md p-3 border rounded"
+        body:
+          - type: tpl
+            tpl: '<h5>Step 2 · 执行月度结账（closePeriod）</h5><div class="text-muted">一次性同步编排 AR→AP→INV→AST→GL 模块关账 + 损益结转 + 汇兑重估。${isDecember ? "<strong class=''text-warning''>本期间为 12 月，closePeriod 将一并执行年度结转分支（本年利润→未分配利润 + 次年期间生成）。</strong>" : ""}</div>'
+          - type: button
+            label: "执行月度结账"
+            level: primary
+            icon: "fa fa-lock"
+            actionType: ajax
+            visibleOn: "${canClose}"
+            confirmText: '确认结账此会计期间？closePeriod 将一次性执行 AR/AP/INV/AST/GL 模块关账 + 损益结转${isDecember ? " + 年度结转" : ""}。结账后该期间凭证不可修改。'
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                query: "mutation(${'$'}pid:Long){ ErpFinAccountingPeriod__closePeriod(periodId:${'$'}pid){ id status } }"
+                variables:
+                  pid: "${period.id}"
+              adaptor: |
+                if (payload && payload.data && payload.data.errors) {
+                  return { status: 1, msg: (payload.data.errors[0] || {}).message || 'closePeriod failed' };
+                }
+                return { status: 0, msg: '月度结账已完成，期间状态已翻转为 CLOSED' };
+            reload: "wizardService"
+
+      # per-module 关账结果卡（visibleOn status CLOSED+，closePeriod 同步一次性故展示执行后结果）
+      - type: wrapper
+        className: "m-t-md"
+        visibleOn: "${hasStatusRows && (period.status == 'CLOSED' || period.status == 'CLOSED_FINAL')}"
+        body:
+          - type: tpl
+            tpl: '<h6>per-module 关账结果（ErpFinAccountingPeriodStatus）</h6>'
+          - type: each
+            name: statusRows
+            items: "${statusRows}"
+            placeholder: '<div class="text-muted">无 per-module 状态记录</div>'
+            body:
+              - type: tpl
+                tpl: '<div class="p-2 m-b-sm border rounded"><span class="text-muted">账套 ${acctSchemaId}：</span>凭证 ${postedVouchers}/${totalVouchers}（未过账 ${unpostedVouchers}）</div>'
+              - type: grid
+                gap: 'sm'
+                columns:
+                  - { type: tpl, tpl: '<div class="p-2 border rounded text-center"><div class="text-muted">AR</div><span class="label label-${arStatus == "CLOSED" ? "success" : (arStatus == "CLOSING" ? "warning" : "default")}">${arStatus}</span></div>' }
+                  - { type: tpl, tpl: '<div class="p-2 border rounded text-center"><div class="text-muted">AP</div><span class="label label-${apStatus == "CLOSED" ? "success" : (apStatus == "CLOSING" ? "warning" : "default")}">${apStatus}</span></div>' }
+                  - { type: tpl, tpl: '<div class="p-2 border rounded text-center"><div class="text-muted">INV</div><span class="label label-${invStatus == "CLOSED" ? "success" : (invStatus == "CLOSING" ? "warning" : "default")}">${invStatus}</span></div>' }
+                  - { type: tpl, tpl: '<div class="p-2 border rounded text-center"><div class="text-muted">AST</div><span class="label label-${assetStatus == "CLOSED" ? "success" : (assetStatus == "CLOSING" ? "warning" : "default")}">${assetStatus}</span></div>' }
+                  - { type: tpl, tpl: '<div class="p-2 border rounded text-center"><div class="text-muted">GL</div><span class="label label-${glStatus == "CLOSED" ? "success" : (glStatus == "CLOSING" ? "warning" : "default")}">${glStatus}</span></div>' }
+
+      # ── Step 3：年度结转（仅 12 月，closePeriod 已内含年度分支）──
+      - type: wrapper
+        className: "m-t-md p-3 border rounded"
+        visibleOn: "${isDecember && (period.status == 'CLOSED' || period.status == 'CLOSED_FINAL')}"
+        body:
+          - type: tpl
+            tpl: '<h5>Step 3 · 年度结转结果</h5><div class="text-muted">12 月期间 closePeriod 已执行年度结转分支：本年利润→未分配利润结转凭证（业务类型 PROFIT_TO_RETAINED_EARNINGS）+ 次年年初余额 populate + <code>generateNextYearPeriods(year+1)</code> 自动创建次年 12 期间。此步展示结果，非独立 mutation。</div>'
+          - type: button
+            label: "查看次年期间"
+            level: info
+            icon: "fa fa-calendar-plus"
+            actionType: dialog
+            dialog:
+              title: "次年期间（由 closePeriod 年度分支生成）"
+              size: md
+              actions: []
+              body:
+                - type: service
+                  name: nextYearService
+                  api:
+                    url: /graphql
+                    method: post
+                    dataType: raw
+                    data:
+                      query: "query(${'$'}lim:Int){ ErpFinAccountingPeriod__findPage(query:{limit:${'$'}lim}){ items{ id year month status code } total } }"
+                      variables:
+                        lim: 200
+                    adaptor: |
+                      const d = payload.data || {};
+                      const gql = d.data ? d.data : d;
+                      const page = gql.ErpFinAccountingPeriod__findPage || { items: [], total: 0 };
+                      const targetYear = (typeof period !== 'undefined' && period && period.year) ? (period.year + 1) : null;
+                      const rows = (page.items || [])
+                        .filter(function (p) { return targetYear == null || p.year == targetYear; })
+                        .sort(function (a, b) { return a.month - b.month; })
+                        .map(function (p) {
+                          const mm = p.month < 10 ? ('0' + p.month) : ('' + p.month);
+                          return { code: p.code || '—', yearMonth: p.year + '-' + mm, status: p.status };
+                        });
+                      return { status: 0, msg: '', data: { nextYearPeriods: rows, count: rows.length, targetYear: targetYear } };
+                  body:
+                    - type: tpl
+                      tpl: '<div class="m-b">次年 ${targetYear || "—"} 共生成 <strong>${count}</strong> 个期间：</div>'
+                    - type: table
+                      source: "${nextYearPeriods}"
+                      columns:
+                        - { name: code, label: "编码" }
+                        - { name: yearMonth, label: "年-月" }
+                        - { name: status, label: "状态", type: tpl, tpl: '<span class="label label-${status == "OPEN" ? "success" : "default"}">${status}</span>' }
+
+      # ── Step 4：终关（finalizePeriod CLOSED→CLOSED_FINAL）──
+      - type: wrapper
+        className: "m-t-md p-3 border rounded"
+        visibleOn: "${canFinalize}"
+        body:
+          - type: tpl
+            tpl: '<h5>Step 4 · 终关（finalizePeriod）</h5><div class="text-muted">CLOSED → CLOSED_FINAL，最终锁定期间。终关后只能经反结账回退。</div>'
+          - type: button
+            label: "执行终关"
+            level: danger
+            icon: "fa fa-lock"
+            actionType: ajax
+            confirmText: "确认终关此会计期间？终关后期间进入 CLOSED_FINAL 最终锁定态，只能经反结账回退。"
+            api:
+              url: /graphql
+              method: post
+              dataType: raw
+              data:
+                query: "mutation(${'$'}pid:Long){ ErpFinAccountingPeriod__finalizePeriod(periodId:${'$'}pid){ id status } }"
+                variables:
+                  pid: "${period.id}"
+              adaptor: |
+                if (payload && payload.data && payload.data.errors) {
+                  return { status: 1, msg: (payload.data.errors[0] || {}).message || 'finalizePeriod failed' };
+                }
+                return { status: 0, msg: '终关完成，期间状态已翻转为 CLOSED_FINAL' };
+            reload: "wizardService"
+
+      - type: tpl
+        visibleOn: "${isFinal}"
+        tpl: '<div class="alert alert-success m-t-md"><strong>期间已终关（CLOSED_FINAL）。</strong>如需调整，请使用下方反结账。</div>'
+
+      # ── 反结账（reverseClose 一次性 @BizMutation，owner doc 8 步反结账概念模型）──
+      - type: wrapper
+        className: "m-t-md p-3 border border-warning rounded"
+        visibleOn: "${canReverse}"
+        body:
+          - type: tpl
+            tpl: '<h5 class="text-warning">反结账（reverseClose）</h5><div class="text-muted">一次性执行 owner doc §反结账步骤概念模型（红冲结转凭证 + 处理折旧/成本凭证 + 解锁业务单据 + 重开期间）。反结账后期间状态回退至 OPEN，需重新结账。</div>'
+          - type: button
+            label: "反结账（需二次确认）"
+            level: warning
+            icon: "fa fa-unlock"
+            actionType: dialog
+            dialog:
+              title: "反结账确认 - ${period.code}"
+              size: md
+              actions: []
+              body:
+                - type: tpl
+                  tpl: '<div class="alert alert-danger"><strong>红冲影响预览：</strong>反结账将红冲本期结转凭证（损益结转/年度本年利润→未分配利润）、恢复收入/费用科目余额；若是 12 月期间，次年期间已创建时将阻止反结账（须先删次年期间）。反结账后期间回退至 OPEN。</div>'
+                - type: service
+                  name: reverseImpactService
+                  api:
+                    url: /graphql
+                    method: post
+                    dataType: raw
+                    data:
+                      query: "query(${'$'}pid:Long){ period: ErpFinAccountingPeriod__get(id:${'$'}pid){ id status year month } }"
+                      variables:
+                        pid: "${period.id}"
+                    adaptor: |
+                      const d = payload.data || {};
+                      const gql = d.data ? d.data : d;
+                      const p = gql.period || {};
+                      return { status: 0, msg: '', data: { period: p, currentStatus: p.status || '—' } };
+                  body:
+                    - type: tpl
+                      tpl: '<div class="m-b">当前状态：<span class="label label-${currentStatus == "CLOSED_FINAL" ? "default" : "primary"}">${currentStatus}</span> → 反结账后：<span class="label label-success">OPEN</span></div>'
+                    - type: button
+                      label: "我已确认红冲影响，执行反结账"
+                      level: danger
+                      icon: "fa fa-unlock-alt"
+                      actionType: ajax
+                      confirmText: "最后确认：执行反结账？此操作将红冲本期结转凭证并重开期间，不可撤销。"
+                      api:
+                        url: /graphql
+                        method: post
+                        dataType: raw
+                        data:
+                          query: "mutation(${'$'}pid:Long){ ErpFinAccountingPeriod__reverseClose(periodId:${'$'}pid){ id status } }"
+                          variables:
+                            pid: "${period.id}"
+                        adaptor: |
+                          if (payload && payload.data && payload.data.errors) {
+                            return { status: 1, msg: (payload.data.errors[0] || {}).message || 'reverseClose failed' };
+                          }
+                          return { status: 0, msg: '反结账完成，期间已重开（OPEN）' };
+                      reload: "wizardService"
