@@ -210,7 +210,7 @@ public class TestErpQaRecallLocateNotifyReturn extends JunitAutoTestCase {
             delivery.setCurrencyId(CURRENCY_ID);
             delivery.setBusinessDate(CoreMetrics.currentDate());
             delivery.setDocStatus("ACTIVE"); // erp-sal/doc-status ACTIVE
-            delivery.setApproveStatus("APPROVED"); // erp-sal/approve-status APPROVED
+            delivery.setApproveStatus("APPROVED"); // wf/approve-status APPROVED
             delivery.setPosted(Boolean.FALSE);
             dlvDao.saveEntity(delivery);
 

@@ -4,7 +4,7 @@ import app.erp.pur.dao.constants.ErpPurDocStatus;
 
 /**
  * 采购域状态码常量。权威值来自 {@code module-purchase/model/app-erp-purchase.orm.xml}
- * 关联字典 {@code erp-pur/approve-status}、{@code erp-pur/doc-status}、{@code erp-pur/receive-status}。
+ * 关联字典 {@code wf/approve-status}、{@code erp-pur/doc-status}、{@code erp-pur/receive-status}。
  *
  * <p>三轴状态分离见 {@code docs/design/purchase/state-machine.md}。
  *

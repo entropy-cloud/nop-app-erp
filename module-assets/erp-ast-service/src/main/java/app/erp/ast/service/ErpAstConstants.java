@@ -6,7 +6,7 @@ import app.erp.ast.dao.constants.ErpAstDocStatus;
  * 资产域状态码与配置键常量。权威值来自 {@code module-assets/model/app-erp-assets.orm.xml}
  * 关联字典 {@code erp-ast/asset-status}、{@code erp-ast/depreciation-method}、
  * {@code erp-ast/depreciation-schedule-status}、{@code erp-ast/disposal-type}、
- * {@code erp-ast/doc-status}、{@code erp-ast/approve-status}、{@code erp-ast/capitalization-source-type}。
+ * {@code erp-ast/doc-status}、{@code wf/approve-status}、{@code erp-ast/capitalization-source-type}。
  *
  * <p>{@code extends ErpAstDocStatus} 复用 dao 层 approve-status / doc-status 常量定义，
  * 保持单一真相源；本接口仅追加 service 层独有的派生状态与配置项。

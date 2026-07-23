@@ -1,14 +1,14 @@
-package app.erp.ast.dao.constants;
+package app.erp.cs.dao.constants;
 
 /**
- * 资产域单据状态常量（dao 层）。仅包含实体状态判断方法所需的稳定值。
+ * 客服域单据状态常量（dao 层）。仅包含实体状态判断方法所需的稳定值。
  *
- * <p>权威值来自 {@code module-assets/model/app-erp-assets.orm.xml} 关联字典
- * {@code wf/approve-status} 与 {@code erp-ast/doc-status}。本接口为 dao 层引用接口，
- * service 层的 {@code app.erp.ast.service.ErpAstConstants} 通过 {@code extends ErpAstDocStatus}
+ * <p>权威值来自 {@code module-cs/model/app-erp-cs.orm.xml} 关联字典
+ * {@code wf/approve-status} 与 {@code erp-cs/doc-status}。本接口为 dao 层引用接口，
+ * service 层的 {@code app.erp.cs.service.ErpCsConstants} 通过 {@code extends ErpCsDocStatus}
  * 保持向后兼容，避免常量漂移。
  */
-public interface ErpAstDocStatus {
+public interface ErpCsDocStatus {
 
     // 审核轴 approve-status
     String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";

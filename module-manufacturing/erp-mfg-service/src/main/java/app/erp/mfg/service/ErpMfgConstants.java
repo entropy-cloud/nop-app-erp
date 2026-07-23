@@ -1,12 +1,17 @@
 package app.erp.mfg.service;
 
+import app.erp.mfg.dao.constants.ErpMfgDocStatus;
+
 /**
  * 制造域常量。字典码值权威：`erp-mfg-meta/.../dict/*.dict.yaml` + `module-manufacturing/model/*.orm.xml`。
  *
  * <p>权威：`docs/design/manufacturing/bom-and-routing.md`、`docs/design/manufacturing/state-machine.md`、
  * `docs/plans/2026-07-02-1538-2-manufacturing-bom-routing-rollup.md`、`docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md`。
+ *
+ * <p>{@code extends ErpMfgDocStatus} 复用 dao 层常量定义，保持 approve-status 单一真相源；
+ * 本接口仅追加 service 层独有的派生状态与配置项。
  */
-public interface ErpMfgConstants {
+public interface ErpMfgConstants extends ErpMfgDocStatus {
 
     // BOM 类型（erp-mfg/bom-type）
     String BOM_TYPE_MANUFACTURED = "NORMAL";
@@ -33,11 +38,7 @@ public interface ErpMfgConstants {
     String WORK_ORDER_STATUS_CLOSED = "CLOSED";
     String WORK_ORDER_STATUS_CANCELLED = "CANCELLED";
 
-    // 审核状态（erp-mfg/approve-status，三轴审批的审核轴）
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-    String APPROVE_STATUS_REJECTED = "REJECTED";
+    // approve-status 常量继承自 ErpMfgDocStatus（dao 层单一真相源）
 
     // 领料状态（erp-mfg/issue-status）
     String ISSUE_STATUS_DRAFT = "DRAFT";

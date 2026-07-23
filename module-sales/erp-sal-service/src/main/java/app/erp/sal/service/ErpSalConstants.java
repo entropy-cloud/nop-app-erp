@@ -4,7 +4,7 @@ import app.erp.sal.dao.constants.ErpSalDocStatus;
 
 /**
  * 销售域状态码常量。权威值来自 {@code module-sales/model/app-erp-sales.orm.xml}
- * 关联字典 {@code erp-sal/approve-status}、{@code erp-sal/doc-status}、{@code erp-sal/delivery-status}。
+ * 关联字典 {@code wf/approve-status}、{@code erp-sal/doc-status}、{@code erp-sal/delivery-status}。
  *
  * <p>三轴状态分离见 {@code docs/design/sales/state-machine.md}（与采购域镜像对称）。
  *

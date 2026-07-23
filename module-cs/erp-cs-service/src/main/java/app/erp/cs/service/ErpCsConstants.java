@@ -1,13 +1,18 @@
 package app.erp.cs.service;
 
+import app.erp.cs.dao.constants.ErpCsDocStatus;
+
 /**
  * 客服域常量。字典码值权威：{@code module-cs/model/app-erp-cs.orm.xml}。
  *
  * <p>权威：{@code docs/design/customer-service/state-machine.md}、
  * {@code docs/design/customer-service/sla.md}、{@code docs/design/customer-service/csat.md}、
  * {@code docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md}。
+ *
+ * <p>{@code extends ErpCsDocStatus} 复用 dao 层常量定义，保持 approve-status / doc-status 单一真相源；
+ * 本接口仅追加 service 层独有的派生状态与配置项。
  */
-public interface ErpCsConstants {
+public interface ErpCsConstants extends ErpCsDocStatus {
 
     // 工单状态（erp-cs/ticket-status，6 态；权威：state-machine.md §1）
     String TICKET_STATUS_NEW = "NEW";
@@ -17,7 +22,7 @@ public interface ErpCsConstants {
     String TICKET_STATUS_CLOSED = "CLOSED";
     String TICKET_STATUS_CANCELLED = "CANCELLED";
 
-    // 工单优先级（erp-cs/ticket-priority）。数值越大优先级越高（matcher 与 SLA minPriority 比较用）
+    // 工单优先级（erp-cs/ticket-priority）。数值越高优先级越高（matcher 与 SLA minPriority 比较用）
     String TICKET_PRIORITY_LOW = "LOW";
     String TICKET_PRIORITY_NORMAL = "NORMAL";
     String TICKET_PRIORITY_HIGH = "HIGH";
@@ -33,16 +38,7 @@ public interface ErpCsConstants {
     String ACTION_TYPE_CLOSE = "CLOSE";
     String ACTION_TYPE_CANCEL = "CANCEL";
 
-    // 单据状态（erp-cs/doc-status）
-    String DOC_STATUS_DRAFT = "DRAFT";
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-    String DOC_STATUS_CANCELLED = "CANCELLED";
-
-    // 审核状态（erp-cs/approve-status）
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-    String APPROVE_STATUS_REJECTED = "REJECTED";
+    // approve-status / doc-status 常量继承自 ErpCsDocStatus（dao 层单一真相源）
 
     // 调查发送渠道（erp-cs/survey-channel）
     String SURVEY_CHANNEL_EMAIL = "EMAIL";

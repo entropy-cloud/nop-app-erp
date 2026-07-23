@@ -1,12 +1,17 @@
 package app.erp.qa.service;
 
+import app.erp.qa.dao.constants.ErpQaDocStatus;
+
 /**
  * 质量域常量。字典码值权威：{@code module-quality/model/app-erp-quality.orm.xml}。
  *
  * <p>权威：{@code docs/design/quality/state-machine.md}、
  * {@code docs/plans/2026-07-02-2237-3-quality-inspection-trigger-ncr-capa.md}。
+ *
+ * <p>{@code extends ErpQaDocStatus} 复用 dao 层常量定义，保持 approve-status / doc-status 单一真相源；
+ * 本接口仅追加 service 层独有的派生状态与配置项。
  */
-public interface ErpQaConstants {
+public interface ErpQaConstants extends ErpQaDocStatus {
 
     // 检验类型（erp-qa/inspection-type）
     String INSPECTION_TYPE_INCOMING = "INCOMING";
@@ -33,16 +38,7 @@ public interface ErpQaConstants {
     String ACTION_STATUS_COMPLETED = "COMPLETED";
     String ACTION_STATUS_OVERDUE = "OVERDUE";
 
-    // 审核状态（erp-qa/approve-status）
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-    String APPROVE_STATUS_REJECTED = "REJECTED";
-
-    // 单据状态（erp-qa/doc-status）
-    String DOC_STATUS_DRAFT = "DRAFT";
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-    String DOC_STATUS_CANCELLED = "CANCELLED";
+    // approve-status / doc-status 常量继承自 ErpQaDocStatus（dao 层单一真相源）
 
     // 处置决定（erp-qa/disposition-type）—— NCR 评审裁决时填
     String DISPOSITION_TYPE_SCRAP = "SCRAP";
@@ -118,7 +114,7 @@ public interface ErpQaConstants {
     String INV_MOVE_STATUS_DONE = "DONE";
     // erp-sal/doc-status：草稿（召回生成的退货单为草稿，召回不直接改余额，由销售标准流程审批过账）
     String SAL_DOC_STATUS_DRAFT = "DRAFT";
-    // erp-sal/approve-status：未提交（召回生成的退货单初始审核状态）
+    // wf/approve-status：未提交（召回生成的退货单初始审核状态）
     String SAL_APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
 
     // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
