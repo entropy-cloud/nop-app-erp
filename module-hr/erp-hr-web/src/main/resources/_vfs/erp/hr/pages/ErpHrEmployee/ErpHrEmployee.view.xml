@@ -12,7 +12,13 @@
                 <col id="positionId" label="职位"/>
                 <col id="jobTitle" sortable="true"/>
                 <col id="costCenterId" label="默认成本中心"/>
-                <col id="bankAccountId" label="工资卡账户"/>
+                <col id="bankAccountId" label="工资卡账户">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '****${RIGHT(bankAccountId, 4)}' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="employmentStatus" mandatory="true" sortable="true"/>
                 <col id="employeeType" mandatory="true" sortable="true"/>
                 <col id="hireDate" mandatory="true" sortable="true" align="center">
@@ -170,16 +176,42 @@
  costCenterId[默认成本中心] hireDate[入职日期]
  probationEndDate[试用期截止] regularDate[转正日期]
  resignationDate[离职日期] resignationReason[离职原因]
-==========^payroll[薪酬信息（脱敏待落地，敏感字段隐藏）]=========
- userAccountId[系统用户ID]
-==========^audit[审计信息]=========
+=========^payroll[薪酬信息]=========
+ userAccountId[系统用户ID] bankAccountId[工资卡账户]
+ socialSecurityNo[社保号]
+=========^audit[审计信息]=========
  remark[备注]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
             <cells>
                 <cell id="idCardNo">
-                    <visibleOn>${false}</visibleOn>
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '${LEFT(idCardNo, 1)}******${RIGHT(idCardNo, 4)}' };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <cell id="mobilePhone">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '${LEFT(mobilePhone, 3)}****${RIGHT(mobilePhone, 4)}' };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <cell id="bankAccountId">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '****${RIGHT(bankAccountId, 4)}' };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <cell id="socialSecurityNo">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '******' };
+                        ]]></c:script>
+                    </gen-control>
                 </cell>
             </cells>
         </form>
@@ -203,19 +235,31 @@
  costCenterId[默认成本中心] hireDate[入职日期]
  probationEndDate[试用期截止] regularDate[转正日期]
  resignationDate[离职日期] resignationReason[离职原因]
-==========^payroll[薪酬信息（脱敏待落地，敏感字段隐藏）]=========
- userAccountId[系统用户ID]
- remark[备注](2)
+=========^payroll[薪酬信息]=========
+ userAccountId[系统用户ID] bankAccountId[工资卡账户]
+ socialSecurityNo[社保号] remark[备注](2)
             </layout>
             <cells>
                 <cell id="idCardNo">
-                    <visibleOn>${false}</visibleOn>
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-password' };
+                        ]]></c:script>
+                    </gen-control>
                 </cell>
-                <cell id="bankAccountId">
-                    <visibleOn>${false}</visibleOn>
+                <cell id="mobilePhone">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-password' };
+                        ]]></c:script>
+                    </gen-control>
                 </cell>
                 <cell id="socialSecurityNo">
-                    <visibleOn>${false}</visibleOn>
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'input-password' };
+                        ]]></c:script>
+                    </gen-control>
                 </cell>
                 <cell id="taxFileNo">
                     <visibleOn>${false}</visibleOn>

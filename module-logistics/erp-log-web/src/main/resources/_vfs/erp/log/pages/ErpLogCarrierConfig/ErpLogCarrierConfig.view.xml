@@ -66,6 +66,22 @@
                 <col id="configCode" mandatory="true"/>
                 <col id="serviceType"/>
                 <col id="apiEndpoint"/>
+                <!-- apiKey/apiSecret 在 xmeta 中 published="false"（写回型凭据，后端不回传明文），
+                     故查看态用静态全打码，不能引用字段值（动态 LEFT/RIGHT 会渲染 undefined）。 -->
+                <col id="apiKey">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '******' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
+                <col id="apiSecret">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '******' };
+                        ]]></c:script>
+                    </gen-control>
+                </col>
                 <col id="isActive"/>
                 <col id="remark"/>
             </cols>
@@ -80,6 +96,8 @@
  configCode[配置编码] serviceType[服务类型]
 =========>endpoint[接口端点]======
  apiEndpoint[接口地址] trackingUrlTemplate[追踪URL模板]
+=========>credentials[接口凭证]======
+ apiKey[API Key] apiSecret[API Secret]
 =========>format[面单格式]======
  printFormat[面单打印格式] additionalProperties[扩展参数]
  isActive[是否启用]
@@ -88,6 +106,23 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <!-- apiKey/apiSecret published="false"（写回型凭据，后端不回传）→ 查看态静态全打码。 -->
+                <cell id="apiKey">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '******' };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+                <cell id="apiSecret">
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '******' };
+                        ]]></c:script>
+                    </gen-control>
+                </cell>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">

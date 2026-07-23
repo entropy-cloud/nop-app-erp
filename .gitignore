@@ -42,3 +42,7 @@ nul
 # Codegen artifact: precompile/module-meta.yaml is copied to meta module root by the
 # precompile dir-walk (BT5 overlay source lives in precompile/, root copy is a stray build artifact)
 module-*/erp-*-meta/module-meta.yaml
+
+# Stray root build artifacts: vfs-index/native-image config leaked to project root by a build
+# run with the wrong CWD. The authoritative copies live under app-erp-all/src/main/resources/.
+/src/
