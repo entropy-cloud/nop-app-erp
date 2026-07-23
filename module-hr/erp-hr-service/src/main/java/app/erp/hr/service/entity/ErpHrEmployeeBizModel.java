@@ -6,16 +6,20 @@ import app.erp.hr.biz.IErpHrEmployeeBiz;
 import app.erp.hr.biz.IErpHrEmploymentContractBiz;
 import app.erp.hr.biz.IErpHrLeaveRequestBiz;
 import app.erp.hr.biz.IErpHrPositionBiz;
+import app.erp.hr.dao.entity.ErpHrAttendance;
 import app.erp.hr.dao.entity.ErpHrDepartment;
 import app.erp.hr.dao.entity.ErpHrEmployee;
 import app.erp.hr.dao.entity.ErpHrEmploymentContract;
 import app.erp.hr.dao.entity.ErpHrLeaveRequest;
 import app.erp.hr.dao.entity.ErpHrPosition;
+import app.erp.hr.dao.entity.ErpHrSalary;
+import app.erp.hr.dao.entity.ErpHrTimesheet;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -29,7 +33,9 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.dateBetween;
@@ -107,6 +113,35 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         resolveHandleContract(handleContract, employee, effectiveDate, context);
 
         return employee;
+    }
+
+    /**
+     * F7 §3 删除引用预览。统计 HR 域内引用本员工的业务单据。
+     *
+     * <p>实现说明：使用 {@code daoProvider().daoFor(...)} 做同域只读引用计数聚合（合同/工时/薪酬/考勤/休假），
+     * 对齐 {@code ErpPartyBizModel} 同域只读聚合范式（非跨实体业务写入，无需经 IBiz 管道）。
+     * ORM {@code useLogicalDelete} 自动过滤已逻辑删除行。
+     */
+    @Override
+    @BizQuery
+    public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context) {
+        Map<String, Long> refs = new LinkedHashMap<>();
+        if (id == null) {
+            return refs;
+        }
+        refs.put("contract", countByEmployee(ErpHrEmploymentContract.class, id));
+        refs.put("timesheet", countByEmployee(ErpHrTimesheet.class, id));
+        refs.put("salary", countByEmployee(ErpHrSalary.class, id));
+        refs.put("attendance", countByEmployee(ErpHrAttendance.class, id));
+        refs.put("leave", countByEmployee(ErpHrLeaveRequest.class, id));
+        return refs;
+    }
+
+    // 同域只读引用计数（对齐 ErpPartyBizModel 同域聚合范式）
+    private <T extends io.nop.dao.api.IDaoEntity> long countByEmployee(Class<T> entityClass, Long employeeId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("employeeId", employeeId));
+        return daoProvider().daoFor(entityClass).findAllByQuery(q).size();
     }
 
     // ---------- validation gates ----------

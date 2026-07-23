@@ -224,6 +224,12 @@
     <bean id="app.erp.fin.service.report.ErpFinReportBizModel" ioc:type="@bean:id"/>
 
     <!-- 财务看板聚合入口（plan 2026-07-06-0935-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
-         经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findCashFlowAlert。 -->
+          经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findCashFlowAlert。 -->
     <bean id="app.erp.fin.service.dashboard.ErpFinDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- 职员业务单据引用计数 SPI 生产实现（plan 2026-07-23-1145-2 Phase 1）：
+         端口 IErpMdEmployeeReferenceChecker 声明在 master-data，本实现落在 finance-service（合法 DAG 边），
+         统计员工借款单引用。被 master-data 的 ErpPartyBizModel.employeeReferenceChecker 经 @Nullable @Inject 收集。 -->
+    <bean id="app.erp.fin.service.spi.ErpMdEmployeeReferenceCheckerImpl"
+          class="app.erp.fin.service.spi.ErpMdEmployeeReferenceCheckerImpl"/>
 </beans>

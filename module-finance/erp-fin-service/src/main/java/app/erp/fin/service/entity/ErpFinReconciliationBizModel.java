@@ -5,6 +5,7 @@ import app.erp.fin.biz.IErpFinReconciliationBiz;
 import app.erp.fin.dao.dto.AutoReconResult;
 import app.erp.fin.dao.dto.DualSideDiffReport;
 import app.erp.fin.dao.dto.ReconciliationLineInput;
+import app.erp.fin.dao.dto.ReconciliationReversePreview;
 import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinReconciliation;
 import app.erp.fin.dao.entity.ErpFinReconciliationLine;
@@ -153,6 +154,61 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
         flushBeforeBalance();
         partnerBalanceUpdater.refresh(head.getPartnerId());
         return head;
+    }
+
+    /**
+     * F7 §3 核销单冲销预览。只读，不执行实际冲销。镜像 {@link #reverse} 的前置校验（须 POSTED），
+     * 预览双方辅助账回退项 + partner 余额刷新影响，供前端 dialog 展示后再确认执行。
+     */
+    @Override
+    @BizQuery
+    public ReconciliationReversePreview previewReverse(@Name("reconciliationId") Long reconciliationId,
+                                                       IServiceContext context) {
+        ErpFinReconciliation head = requireHead(reconciliationId, context);
+        if (!ErpFinConstants.RECON_STATUS_POSTED.equals(head.getDocStatus())) {
+            throw statusError(head);
+        }
+        List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);
+
+        ReconciliationReversePreview preview = new ReconciliationReversePreview();
+        preview.setReconciliationId(head.getId());
+        preview.setCode(head.getCode());
+        preview.setDirection(head.getDirection());
+        preview.setTotalAmountFunctional(nz(head.getTotalAmountFunctional()));
+        preview.setPartnerId(head.getPartnerId());
+        preview.setWillSetReversed(true);
+        preview.setWillRefreshPartnerBalance(true);
+
+        for (ErpFinReconciliationLine line : lines) {
+            BigDecimal restore = nz(line.getSettledAmountFunctional());
+            preview.getRevertedItems().add(toRevertedItem(line.getPaymentItemId(), "payment",
+                    loadItem(line.getPaymentItemId()), restore));
+            preview.getRevertedItems().add(toRevertedItem(line.getInvoiceItemId(), "invoice",
+                    loadItem(line.getInvoiceItemId()), restore));
+        }
+        return preview;
+    }
+
+    private ReconciliationReversePreview.RevertedItem toRevertedItem(Long itemId, String side,
+                                                                     ErpFinArApItem item, BigDecimal restoreAmount) {
+        ReconciliationReversePreview.RevertedItem ri = new ReconciliationReversePreview.RevertedItem();
+        ri.setArApItemId(itemId);
+        ri.setSourceBillType(item.getSourceBillType());
+        ri.setSourceBillCode(item.getSourceBillCode());
+        ri.setSide(side);
+        ri.setCurrentStatus(item.getStatus());
+        ri.setRestoreAmountFunctional(restoreAmount);
+        ri.setWillBecomeStatus(estimateStatusAfterRevert(item, restoreAmount));
+        return ri;
+    }
+
+    /** 反推 reverseSettle 后的辅助账状态：回退后已核销额 ≤ 0 → OPEN，否则 PARTIAL。 */
+    private static String estimateStatusAfterRevert(ErpFinArApItem item, BigDecimal restoreAmount) {
+        BigDecimal remainingSettled = nz(item.getSettledAmountFunctional()).subtract(restoreAmount);
+        if (remainingSettled.compareTo(BigDecimal.ZERO) <= 0) {
+            return ErpFinConstants.AR_AP_STATUS_OPEN;
+        }
+        return ErpFinConstants.AR_AP_STATUS_PARTIAL;
     }
 
     // ---------- 自动核销 ----------

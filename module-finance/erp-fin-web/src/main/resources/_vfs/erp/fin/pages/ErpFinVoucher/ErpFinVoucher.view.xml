@@ -226,12 +226,52 @@
                     <disabledOn>${(Number(totalDebit) || 0) != (Number(totalCredit) || 0)}</disabledOn>
                 </action>
                 <action id="row-reverse-button" label="红冲" i18n-en:label="Red Reverse" level="danger" icon="fa fa-undo">
-                    <api url="@mutation:ErpFinVoucher__reverseVoucher?voucherId=$id"/>
-                    <confirmText>确认对此凭证执行红字冲销？</confirmText>
-                    <messages>
-                        <success>凭证已红冲</success>
-                    </messages>
                     <visibleOn>${docStatus == 'POSTED' &amp;&amp; !isReversed}</visibleOn>
+                    <!-- F7 §3 冲销预览（plan 2026-07-23-1145-2 Phase 2）：先调 previewReverseVoucher 展示冲销影响，
+                         用户确认后才执行 reverseVoucher。preview-then-confirm 范式（区别于删除的 blocker 范式）。 -->
+                    <onEvent>
+                        <click>
+                            <actions>
+                                <action>
+                                    <actionType>ajax</actionType>
+                                    <api>
+                                        <method>post</method>
+                                        <url>/graphql</url>
+                                        <data>
+                                            <query>${"query{ErpFinVoucher__previewReverseVoucher(voucherId:" + id + "){voucherCode voucherType voucherDate totalDebit totalCredit reversedDebit reversedCredit lineCount willSetReversed billLinks{billType billCode businessType}}}"}</query>
+                                        </data>
+                                        <responseType>response</responseType>
+                                    </api>
+                                    <outputVar>preview</outputVar>
+                                </action>
+                                <action>
+                                    <actionType>dialog</actionType>
+                                    <dialog>
+                                        <title>红字冲销预览</title>
+                                        <body>
+                                            <tpl tpl="凭证号：&lt;b&gt;${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.voucherCode}&lt;/b&gt;（${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.voucherType}）&lt;br/&gt;凭证日期：${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.voucherDate} ｜ 分录行数：${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.lineCount}&lt;br/&gt;原借方合计：${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.totalDebit} ｜ 原贷方合计：${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.totalCredit}&lt;br/&gt;红字预估借方：&lt;span style='color:#d9534f'&gt;${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.reversedDebit}&lt;/span&gt; ｜ 红字预估贷方：&lt;span style='color:#d9534f'&gt;${'$'}{preview.data.ErpFinVoucher__previewReverseVoucher.reversedCredit}&lt;/span&gt;&lt;br/&gt;确认后原凭证将被标记为「已红冲」，不可恢复。"/>
+                                        </body>
+                                        <actions>
+                                            <action>
+                                                <type>button</type>
+                                                <actionType>ajax</actionType>
+                                                <label>确认红冲</label>
+                                                <level>danger</level>
+                                                <api url="@mutation:ErpFinVoucher__reverseVoucher?voucherId=$id"/>
+                                                <messages><success>凭证已红冲</success></messages>
+                                                <close>true</close>
+                                            </action>
+                                            <action>
+                                                <type>button</type>
+                                                <actionType>close</actionType>
+                                                <label>取消</label>
+                                            </action>
+                                        </actions>
+                                    </dialog>
+                                </action>
+                            </actions>
+                        </click>
+                    </onEvent>
                 </action>
                 <action id="row-delete-button"/>
             </rowActions>

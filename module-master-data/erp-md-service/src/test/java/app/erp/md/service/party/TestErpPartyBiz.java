@@ -40,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>{@code testGetPartyAllThreeTypes}：getParty 三类型 + 投影正确性（含 Organization phone/email=null）。</li>
  *   <li>{@code testPartyRefProjection}：PartyRef 字段投影正确性 + extension Map。</li>
  *   <li>{@code testFindReferencesPartnerPathAndMissingSpisReturnEmpty}：Partner 路径经既有 partnerCheckers 收集
- *       + Employee/Organization SPI 端口存在但下游实现未注册时返回空 Map 不抛异常。</li>
+ *       + Employee SPI 端口存在但 finance 实现未注册（不在 master-data 测试 classpath）时返回空 Map；
+ *       Organization 路径 master-data 生产 SPI 已激活，返回真实结构 {employee, warehouse}。</li>
  * </ol>
  *
  * <p>Partner 路径经 {@code TestStubPartnerReferenceChecker} 桩注入（{@code test-partner-reference-checker.beans.xml}）；
@@ -244,15 +245,17 @@ public class TestErpPartyBiz extends JunitAutoTestCase {
         assertNotNull(emptyPartner, "无引用应返回非 null 空 Map");
         assertTrue(emptyPartner.isEmpty(), "无引用应返回空 Map");
 
-        // 3. Employee 路径：SPI 端口存在但下游实现未注册 → 空 Map 不抛异常
+        // 3. Employee 路径：SPI 端口存在但下游实现未注册（finance 实现不在 master-data 测试 classpath）→ 空 Map 不抛异常
         Map<String, Long> empRefs = partyBiz.findReferences(ErpPartyType.EMPLOYEE, employeeId, CTX);
         assertNotNull(empRefs, "Employee SPI 未注册时应返回非 null 空 Map");
         assertTrue(empRefs.isEmpty(), "Employee SPI 未注册时应返回空 Map，不抛异常");
 
-        // 4. Organization 路径：同上 → 空 Map 不抛异常
+        // 4. Organization 路径：master-data 生产 SPI（ErpMdOrganizationReferenceChecker，注册于 app-service.beans.xml）
+        //    已激活 → 返回真实结构 {employee, warehouse}。本测试种子中 org 3301 无归属员工/仓库，故值为 0（Map 非空）。
         Map<String, Long> orgRefs = partyBiz.findReferences(ErpPartyType.ORGANIZATION, orgId, CTX);
-        assertNotNull(orgRefs, "Organization SPI 未注册时应返回非 null 空 Map");
-        assertTrue(orgRefs.isEmpty(), "Organization SPI 未注册时应返回空 Map，不抛异常");
+        assertNotNull(orgRefs, "Organization SPI 已注册时应返回非 null Map");
+        assertEquals(0L, orgRefs.get("employee"), "无归属员工时 employee 计数应为 0");
+        assertEquals(0L, orgRefs.get("warehouse"), "无归属仓库时 warehouse 计数应为 0");
 
         // 5. partyType=null 或 partyId=null → 空 Map
         Map<String, Long> nullTypeRefs = partyBiz.findReferences(null, partnerId, CTX);

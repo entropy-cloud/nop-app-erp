@@ -3,12 +3,14 @@ package app.erp.hr.biz;
 
 import app.erp.hr.dao.entity.ErpHrEmployee;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 /**
  * 员工主数据聚合根 Biz（use-cases.md UC-HR-08 部门调动）。
@@ -44,4 +46,17 @@ public interface IErpHrEmployeeBiz extends ICrudBiz<ErpHrEmployee> {
                                    @Name("effectiveDate") LocalDate effectiveDate,
                                    @Name("handleContract") String handleContract,
                                    IServiceContext context);
+
+    /**
+     * F7 §3 删除引用预览（row-delete-button 点击时调用入口）。
+     *
+     * <p>统计 HR 域内引用本员工的业务单据（合同/工时/薪酬/考勤/休假）。{@code ErpHrEmployee} 与
+     * master-data 的 {@code ErpMdEmployee} 是不同表（前者为完整人事档案，后者为业务经办人轻量引用），
+     * 故本方法直接在 HR 域内计数，不经 master-data 的 Party SPI（避免实体 ID 错配）。
+     *
+     * @param employeeId ErpHrEmployee ID
+     * @return key=引用域名（contract/timesheet/salary/attendance/leave），value=引用行数。无引用返回空 Map
+     */
+    @BizQuery
+    Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context);
 }

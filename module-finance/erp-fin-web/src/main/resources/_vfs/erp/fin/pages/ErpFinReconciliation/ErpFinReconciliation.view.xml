@@ -102,6 +102,57 @@
                     </messages>
                 </action>
             </listActions>
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <!-- F7 §3 冲销预览（plan 2026-07-23-1145-2 Phase 2）：先调 previewReverse 展示辅助账回退影响，
+                     用户确认后才执行 reverse。核销冲销不生成 GL 凭证，预览仅含辅助账回退列表。 -->
+                <action id="row-reverse-button" label="红冲" i18n-en:label="Red Reverse" level="danger" icon="fa fa-undo">
+                    <visibleOn>${docStatus == 'POSTED'}</visibleOn>
+                    <onEvent>
+                        <click>
+                            <actions>
+                                <action>
+                                    <actionType>ajax</actionType>
+                                    <api>
+                                        <method>post</method>
+                                        <url>/graphql</url>
+                                        <data>
+                                            <query>${"query{ErpFinReconciliation__previewReverse(reconciliationId:" + id + "){code direction totalAmountFunctional partnerId willSetReversed willRefreshPartnerBalance revertedItems{arApItemId sourceBillType sourceBillCode side currentStatus willBecomeStatus restoreAmountFunctional}}}"}</query>
+                                        </data>
+                                        <responseType>response</responseType>
+                                    </api>
+                                    <outputVar>preview</outputVar>
+                                </action>
+                                <action>
+                                    <actionType>dialog</actionType>
+                                    <dialog>
+                                        <title>核销单冲销预览</title>
+                                        <body>
+                                            <tpl tpl="核销单号：&lt;b&gt;${'$'}{preview.data.ErpFinReconciliation__previewReverse.code}&lt;/b&gt;（${'$'}{preview.data.ErpFinReconciliation__previewReverse.direction}）&lt;br/&gt;核销总额(本位币)：${'$'}{preview.data.ErpFinReconciliation__previewReverse.totalAmountFunctional}&lt;br/&gt;将回退 ${'$'}{preview.data.ErpFinReconciliation__previewReverse.revertedItems.length | default:0} 项 AR/AP 辅助账（SETTLED→OPEN/PARTIAL），并刷新往来单位余额。&lt;br/&gt;&lt;span style='color:#8a6d3b'&gt;注意：核销冲销不生成红字凭证（凭证由收付款审核时生成）。&lt;/span&gt;&lt;br/&gt;确认后核销单状态将置为「已冲销」，不可恢复。"/>
+                                        </body>
+                                        <actions>
+                                            <action>
+                                                <type>button</type>
+                                                <actionType>ajax</actionType>
+                                                <label>确认冲销</label>
+                                                <level>danger</level>
+                                                <api url="@mutation:ErpFinReconciliation__reverse?reconciliationId=$id"/>
+                                                <messages><success>核销单已冲销</success></messages>
+                                                <close>true</close>
+                                            </action>
+                                            <action>
+                                                <type>button</type>
+                                                <actionType>close</actionType>
+                                                <label>取消</label>
+                                            </action>
+                                        </actions>
+                                    </dialog>
+                                </action>
+                            </actions>
+                        </click>
+                    </onEvent>
+                </action>
+            </rowActions>
         </crud>
         <picker name="picker"/>
     </pages>

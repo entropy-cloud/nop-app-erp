@@ -10,6 +10,7 @@ import io.nop.orm.biz.ICrudBiz;
 import app.erp.fin.dao.dto.AutoReconResult;
 import app.erp.fin.dao.dto.DualSideDiffReport;
 import app.erp.fin.dao.dto.ReconciliationLineInput;
+import app.erp.fin.dao.dto.ReconciliationReversePreview;
 import app.erp.fin.dao.entity.ErpFinReconciliation;
 
 import java.time.LocalDate;
@@ -40,6 +41,20 @@ public interface IErpFinReconciliationBiz extends ICrudBiz<ErpFinReconciliation>
      */
     @BizMutation
     ErpFinReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context);
+
+    /**
+     * F7 §3 核销单冲销预览（plan 2026-07-23-1145-2 Phase 2）。只读，不执行实际冲销。
+     *
+     * <p>返回核销单信息 + 将回退的 AR/AP 辅助账项列表（SETTLED→OPEN/PARTIAL）+ partner 余额将刷新。
+     * <b>核销冲销不生成 GL 凭证</b>（凭证由收付款审核时生成），故预览不含红字凭证段。
+     * 校验：核销单须为 POSTED，否则抛 {@code NopException}。
+     *
+     * @param reconciliationId 核销单 ID
+     * @return 冲销预览 DTO
+     */
+    @BizQuery
+    ReconciliationReversePreview previewReverse(@Name("reconciliationId") Long reconciliationId,
+                                                IServiceContext context);
 
     /**
      * 自动核销（{@code ar-ap-reconciliation.md §自动核销}）：按 {@code strategy}（FIFO/BY_AMOUNT/BY_RATIO，

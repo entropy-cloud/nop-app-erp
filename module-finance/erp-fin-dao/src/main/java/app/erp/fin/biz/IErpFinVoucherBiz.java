@@ -2,12 +2,14 @@
 package app.erp.fin.biz;
 
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
+import app.erp.fin.dao.dto.VoucherReversePreview;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 
 /**
@@ -53,4 +55,16 @@ public interface IErpFinVoucherBiz extends ICrudBiz<ErpFinVoucher> {
      */
     @BizMutation
     ErpFinVoucher reverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context);
+
+    /**
+     * F7 §3 凭证红字冲销预览（plan 2026-07-23-1145-2 Phase 2）。只读，不执行实际冲销。
+     *
+     * <p>返回原凭证信息 + 红字金额预估（借/贷同向取负）+ 关联业财回链 + {@code reverseVoucher} 的真实副作用
+     * （{@code isReversed} 将置 true）。校验：凭证须为 POSTED 且未红冲，否则抛 {@code NopException}。
+     *
+     * @param voucherId 凭证 ID
+     * @return 冲销预览 DTO
+     */
+    @BizQuery
+    VoucherReversePreview previewReverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context);
 }

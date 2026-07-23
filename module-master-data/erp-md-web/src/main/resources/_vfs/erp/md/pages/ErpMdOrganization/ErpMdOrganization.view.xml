@@ -80,7 +80,51 @@
     </forms>
 
     <pages>
-        <crud name="main"/>
+        <crud name="main">
+            <rowActions x:override="bounded-merge">
+                <action id="row-view-button"/>
+                <action id="row-update-button" actionType="drawer"/>
+                <!-- F7 §3 删除引用阻断（blocker 范式，对齐 ErpMdMaterial）：
+                     有引用时弹 dialog 阻断 + "知道了"，无引用时静默放行走原 __delete。 -->
+                <action id="row-delete-button" level="danger" label="删除" i18n-en:label="Delete">
+                    <api url="@mutation:ErpMdOrganization__delete?id=$id"/>
+                    <confirmText>确认删除此组织？</confirmText>
+                    <onEvent>
+                        <click>
+                            <actions>
+                                <action>
+                                    <actionType>ajax</actionType>
+                                    <api>
+                                        <method>post</method>
+                                        <url>/graphql</url>
+                                        <data>
+                                            <query>${"query{ErpMdOrganization__countReferences(id:" + id + "){k v}}"}</query>
+                                        </data>
+                                        <responseType>response</responseType>
+                                    </api>
+                                    <outputVar>refCount</outputVar>
+                                </action>
+                                <action>
+                                    <actionType>dialog</actionType>
+                                    <condition>${refCount &amp;&amp; refCount.data &amp;&amp; refCount.data.ErpMdOrganization__countReferences &amp;&amp; refCount.data.ErpMdOrganization__countReferences.length > 0}</condition>
+                                    <dialog>
+                                        <title>无法删除：存在引用</title>
+                                        <body>该组织被以下业务对象引用，删除将被阻断。请先解除引用关系。</body>
+                                        <actions>
+                                            <action>
+                                                <type>button</type>
+                                                <actionType>close</actionType>
+                                                <label>知道了</label>
+                                            </action>
+                                        </actions>
+                                    </dialog>
+                                </action>
+                            </actions>
+                        </click>
+                    </onEvent>
+                </action>
+            </rowActions>
+        </crud>
         <picker name="picker"/>
     </pages>
 </view>

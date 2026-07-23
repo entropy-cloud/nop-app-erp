@@ -21,6 +21,12 @@
           经 @BizQuery 暴露 findParties/getParty/findReferences（IErpPartyBiz 实现）。 -->
     <bean id="app.erp.md.service.party.ErpPartyBizModel" ioc:type="@bean:id"/>
 
+    <!-- 组织业务单据引用计数 SPI 生产实现（plan 2026-07-23-1145-2 Phase 1）：
+         扫描 master-data 自有归属引用（Employee/Warehouse 的 orgId），被
+         ErpMdOrganizationBizModel.organizationReferenceChecker 经 @Nullable @Inject 收集。 -->
+    <bean id="app.erp.md.service.spi.ErpMdOrganizationReferenceChecker"
+          class="app.erp.md.service.spi.ErpMdOrganizationReferenceChecker"/>
+
     <!-- 跨账套科目映射解析器（多套账传播时科目翻译） -->
     <bean id="app.erp.md.dao.SubjectMappingResolver"
           class="app.erp.md.dao.SubjectMappingResolver"/>

@@ -5,6 +5,7 @@ import io.nop.api.core.annotations.biz.AuditType;
 import io.nop.api.core.annotations.biz.BizAudit;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.txn.TransactionPropagation;
 import io.nop.api.core.annotations.txn.Transactional;
@@ -16,14 +17,22 @@ import io.nop.core.context.IServiceContext;
 import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
+import app.erp.fin.dao.dto.VoucherReversePreview;
 import app.erp.fin.dao.entity.ErpFinVoucher;
+import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.ErpFinPostingProcessor;
+import io.nop.api.core.beans.query.QueryBean;
+import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+
+import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 凭证聚合根 Biz（过账记录主实体）。CRUD 之外承载业财过账的两个动作入口（{@code post}/{@code reverse}），
@@ -104,4 +113,58 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
         return voucher;
     }
 
+    /**
+     * F7 §3 凭证红字冲销预览。只读，不执行实际冲销。镜像 {@link #reverseVoucher} 的前置校验
+     * （须 POSTED 且未红冲），返回结构化预览供前端 dialog 展示后再确认执行。
+     */
+    @Override
+    @BizQuery
+    public VoucherReversePreview previewReverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
+        ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
+        if (!Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_POSTED)) {
+            throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
+                    .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
+                    .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());
+        }
+
+        VoucherReversePreview preview = new VoucherReversePreview();
+        preview.setVoucherId(voucher.getId());
+        preview.setVoucherCode(voucher.getCode());
+        preview.setVoucherType(voucher.getVoucherType());
+        preview.setVoucherDate(voucher.getVoucherDate());
+        preview.setTotalDebit(nz(voucher.getTotalDebit()));
+        preview.setTotalCredit(nz(voucher.getTotalCredit()));
+        preview.setReversedDebit(nz(voucher.getTotalDebit()).negate());
+        preview.setReversedCredit(nz(voucher.getTotalCredit()).negate());
+        preview.setLineCount(countLines(voucherId));
+        preview.setWillSetReversed(true);
+        for (ErpFinVoucherBillR link : loadBillLinks(voucherId)) {
+            VoucherReversePreview.BillLinkInfo info = new VoucherReversePreview.BillLinkInfo();
+            info.setBillType(link.getBillType());
+            info.setBillCode(link.getBillCode());
+            info.setBusinessType(link.getBusinessType());
+            preview.getBillLinks().add(info);
+        }
+        return preview;
+    }
+
+    // 同聚合子表只读加载（对齐 ErpFinReconciliationBizModel.loadLines 的 D2 边界场景，
+    // 显式查询避免依赖 to-many 懒加载的会话存活）。
+    private int countLines(Long voucherId) {
+        IEntityDao<ErpFinVoucherLine> dao = daoProvider().daoFor(ErpFinVoucherLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        return dao.findAllByQuery(q).size();
+    }
+
+    private List<ErpFinVoucherBillR> loadBillLinks(Long voucherId) {
+        IEntityDao<ErpFinVoucherBillR> dao = daoProvider().daoFor(ErpFinVoucherBillR.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        return dao.findAllByQuery(q);
+    }
+
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
+    }
 }
