@@ -45,13 +45,21 @@
 
 ### PostingEvent 契约
 
+> `PostingEvent` 是登记的**共享内核类型**（所有者 `module-finance/erp-fin-dao`，跨域消费基线见 `module-boundaries.md §共享内核` + 裁决 `docs/analysis/shared-kernel-extraction-decision.md`）。
+
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| `businessType` | String | 业务类型枚举（如 PURCHASE_INPUT、AR_INVOICE） |
+| `businessType` | `ErpFinBusinessType`（enum，登记的共享内核类型） | 业务类型枚举（如 PURCHASE_INPUT、AR_INVOICE）；常量 `code` 与字典 `erp-fin/business-type` 数值逐一一致 |
 | `billHeadCode` | String | 业务单据编码（幂等键） |
 | `tenantId` | String | 租户 ID |
-| `acctSchemaId` | String | 账套 ID |
-| `billData` | Object | 单据数据（头+行，含金额、科目映射维度） |
+| `acctSchemaId` | Long | 账套 ID |
+| `orgId` | Long | 组织 ID |
+| `currencyId` | Long | 币种 ID |
+| `exchangeRate` | BigDecimal | 汇率 |
+| `voucherDate` | LocalDate | 凭证日期 |
+| `billData` | Map<String,Object> | 单据数据（头+行，含金额、科目映射维度） |
+
+> `businessType` 经 `IErpFinVoucherBiz.post(PostingEvent, ...)` 强类型传入；派发消费方（各域 AcctDocProvider）用 `== ErpFinBusinessType.X` 常量比较路由，故该 enum 不可降级为 SPI 接口（详见裁决文档）。
 
 ### 幂等保证
 

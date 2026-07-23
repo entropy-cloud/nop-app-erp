@@ -52,6 +52,15 @@ rgrep_prodjava() {
     | xargs grep -Hn "$1" 2>/dev/null || true
 }
 
+# 共享内核跨域 import 计数（plan 2026-07-24-1400-1 R12）：
+# 排除 test 目录 + 类型所属域 + _gen/target（与 R12 基线 69/66/38 计数口径一致）
+rgrep_shared_import() {
+  local pattern="$1"
+  local exclude_dir="$2"
+  eval "find '$REPO_ROOT' $PRUNE_DIRS -o -type d -name test -prune -o -type d -name '$exclude_dir' -prune -o -name '*.java' -type f -print" 2>/dev/null \
+    | xargs grep -l "$pattern" 2>/dev/null || true
+}
+
 cnt() { [[ -z "$1" ]] && echo 0 || echo "$1" | wc -l | tr -d ' '; }
 
 echo "╔══════════════════════════════════════════════════════════════╗"
@@ -283,6 +292,36 @@ echo "  → 命中: $R11_N 处（实体方法上提后应为 0）"
 echo "$R11_N" > "$TMPDIR/r11"
 
 # ============================================================
+# R12: 共享内核跨域 import 计数（F4 闭包项 #5 显式共享内核基线）
+# ============================================================
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "[R12] 🟡 中 — 共享内核跨域 import 计数（裁决见 docs/analysis/shared-kernel-extraction-decision.md）"
+echo "规则: F4 闭包项 #5 — 3 共享类型跨域 import 不得无记录增长（基线 69/66/38）"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+echo ""
+echo "▸ R12a: import ErpFinBusinessType（跨域，排除 module-finance）"
+R12A=$(rgrep_shared_import 'import app\.erp\.fin\.dao\.ErpFinBusinessType;' 'module-finance')
+R12A_N=$(cnt "$R12A")
+echo "  → 命中: $R12A_N 处"
+echo "$R12A_N" > "$TMPDIR/r12a"
+
+echo ""
+echo "▸ R12b: import PostingEvent（跨域，排除 module-finance）"
+R12B=$(rgrep_shared_import 'import app\.erp\.fin\.dao\.PostingEvent;' 'module-finance')
+R12B_N=$(cnt "$R12B")
+echo "  → 命中: $R12B_N 处"
+echo "$R12B_N" > "$TMPDIR/r12b"
+
+echo ""
+echo "▸ R12c: import AcctSchemaResolver（跨域，排除 module-master-data）"
+R12C=$(rgrep_shared_import 'import app\.erp\.md\.dao\.AcctSchemaResolver;' 'module-master-data')
+R12C_N=$(cnt "$R12C")
+echo "  → 命中: $R12C_N 处"
+echo "$R12C_N" > "$TMPDIR/r12c"
+
+# ============================================================
 # 汇总
 # ============================================================
 echo ""
@@ -308,6 +347,9 @@ printf "%-6s %-42s %-8s %s\n" "R7" "System.currentTimeMillis()" "🟢 低" "$(ca
 printf "%-6s %-42s %-8s %s\n" "R8" "Processor 无 xbiz 接线" "🔴 高" "$(cat $TMPDIR/r8)"
 printf "%-6s %-42s %-8s %s\n" "R10" "REQUIRES_NEW 事务" "🟡 中" "$(cat $TMPDIR/r10)"
 printf "%-6s %-42s %-8s %s\n" "R11" "Processor 重复状态判断方法" "🟡 中" "$(cat $TMPDIR/r11)"
+printf "%-6s %-42s %-8s %s\n" "R12a" "共享内核 import ErpFinBusinessType" "🟡 中" "$(cat $TMPDIR/r12a)"
+printf "%-6s %-42s %-8s %s\n" "R12b" "共享内核 import PostingEvent" "🟡 中" "$(cat $TMPDIR/r12b)"
+printf "%-6s %-42s %-8s %s\n" "R12c" "共享内核 import AcctSchemaResolver" "🟡 中" "$(cat $TMPDIR/r12c)"
 echo ""
 echo "检测完成。"
 echo "注意: 命中项需人工逐一确认是否为合理偏离（如文档化的 REQUIRES_NEW）。"

@@ -30,6 +30,9 @@
 | R8 | Processor 无 xbiz 接线 | 🔴 高 | 42 |
 | R10 | REQUIRES_NEW 事务 | 🟡 中 | 51 |
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
+| R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 69 |
+| R12b | 共享内核 import PostingEvent | 🟡 中 | 66 |
+| R12c | 共享内核 import AcctSchemaResolver | 🟡 中 | 38 |
 
 > R9（doReverseApprove 一致性）为**定性校验**（输出 ✓/✗ 清单，无数值计数），故不在上表参与数值门控；其输出仍由 checker 打印供人工查阅，CI 不对其做数值断言。
 
@@ -40,6 +43,12 @@ R2c=1108 较 `docs/plans/2026-07-16-2134-1-ddd-entity-methods-daofor-convergence
 ## R3 同步注记（plan 2026-07-24-0930-2）
 
 `2026-07-24-0930-2`（字典与状态枚举真相统一）为 cs/mnt/mfg/qa 4 域新增 dao 层 `Erp*DocStatus` 接口 + `Erp*Constants extends` 关系，消除 approve-status/doc-status 常量重复声明。该变更**不引入任何 `new Erp*()` 实体构造**（纯接口继承），故 R3 基线 **不变（=19）**。checker 实测全 16 规则均 ≤ 基线（R2c=1108 / R3=19 / R11=0 等），无回归。
+
+## R12 同步注记（plan 2026-07-24-1400-1）
+
+`2026-07-24-1400-1`（隐性共享内核显式化，F4 闭包项 #5）裁决=分支 (b)：接受 finance/master-data 的 3 个跨域语义类型（`ErpFinBusinessType` enum / `PostingEvent` DTO / `AcctSchemaResolver` dao 耦合工具）为**显式共享内核**——类型不迁移，经 owner doc 登记（`module-boundaries.md §共享内核` + `data-dependency-matrix.md`）+ 本 R12 守卫追踪跨域 import 基线。裁决依据（enum 不可降级为 SPI 接口）见 `docs/analysis/shared-kernel-extraction-decision.md`。
+
+R12 计数口径 = import 语句级，排除 `test/` + 类型所属域（finance / master-data）+ `_gen`/`target`，与裁决文档 §2 基线一致。基线落盘值（69/66/38）经 checker 实测复核。**门控方向**：跨域 import 增长（actual > baseline）→ CI 失败，须开独立计划裁决新增消费方合理性后调高基线；类型演进（如新增 enum 常量）不触发 R12 增长（仅新增消费方文件才增长），故合法的字典扩充不受阻塞。
 
 ## 回归门控规则
 
@@ -68,6 +77,9 @@ R7: 2
 R8: 42
 R10: 51
 R11: 0
+R12a: 69
+R12b: 66
+R12c: 38
 ```
 
 ## 关联

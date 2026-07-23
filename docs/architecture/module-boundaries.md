@@ -77,6 +77,27 @@ app-erp-hr（依赖 master-data + projects ORM 只读引用：员工项目分配
 
 财务域定义 `IErpFinAcctDocProvider` 接口 + `ErpFinAcctDocRegistry`（注入 `List<IErpFinAcctDocProvider>`）；各业务域（purchase/sales/inventory）实现自己的凭证生成 Provider（`@Component`）。新增单据类型 = 新增 Provider Bean，零改动财务核心。详见 `docs/design/finance/posting.md`。
 
+## 共享内核（Shared Kernel）
+
+> **裁决来源**：`docs/analysis/shared-kernel-extraction-decision.md`（F4 闭包项 #5，裁决=分支 (b)：接受为显式共享内核，类型不迁移）。本节是 F4 治理 finding 的 owner-doc 登记面，使原隐性的跨域共享类型所有权/变更影响域/依赖方向**显式化**。
+
+finance 与 master-data 除作为 DAG 根/顶外，事实上承担 3 个跨域语义类型的公共内核职责。这 3 个类型**经裁决保留原位**（不抽公共模块、不降级为 SPI），由本节显式登记所有权 + 机器守卫（`nop-compliance-checker.sh` R12）追踪跨域 import 基线，不得无记录增长：
+
+| 共享类型 | 形态 | 所有者 Maven 模块 | 跨域消费域 | 跨域 import 基线¹ | 变更影响域 | 依赖方向 |
+|---|---|---|---|---|---|---|
+| `ErpFinBusinessType` | enum（56 常量，绑定字典 `erp-fin/business-type`） | `module-finance/erp-fin-dao` | assets/inventory/manufacturing/sales/purchase/projects/maintenance/quality/hr/logistics（10 域，`-service` 层） | **69** | 新增/重排 enum 常量级联全部过账派发消费方 | 各域 → finance-dao（单向，finance 是 DAG 顶） |
+| `PostingEvent` | 纯数据 DTO（业财过账事件契约） | `module-finance/erp-fin-dao` | 同上 10 域 `-service` 层 | **66** | 字段增删级联各域过账事件构造方 | 各域 → finance-dao（单向） |
+| `AcctSchemaResolver` | dao 耦合静态工具（`IDaoProvider` + `ErpMdAcctSchema`） | `module-master-data/erp-md-dao` | finance/assets/manufacturing/sales/purchase/inventory/projects/maintenance/logistics（9 域 `-service` 层） | **38** | 解析逻辑变更级联全部跨域消费方 | 各域 → master-data-dao（单向，master-data 是 DAG 根） |
+
+¹ import 语句级计数（排除 `test/` + 所属域 + `_gen`/`target`），由 R12 守卫；基线落盘见 `docs/audits/compliance-baseline.md`。
+
+**裁决约束（不得违反）**：
+
+- **不抽公共模块**：`AcctSchemaResolver` 耦合 entity/dao 无法进入"零 dao/entity" common 模块；`ErpFinBusinessType`/`PostingEvent` 虽物理可行但 enum 派发消费（`==` 常量比较 + `switch(enum)`）强绑定具体 enum 类，迁 package 仅付 135 站点改动而零治理增量（详见裁决文档 §3 候选 (a)/(c) 否决证据）。
+- **enum 不可降级为 SPI 接口**：跨域消费方用 `event.getBusinessType() == ErpFinBusinessType.X` 常量比较（7 站点 / 4 文件）+ finance 自身用 `switch(enum)`（3 站点），二者均要求编译期持有具体 enum 类，接口无法承载。`2026-07-16-2134-1` Decision D1 的 `Erp*DocStatus` 接口先例仅适用于 **String 状态常量**，不适用于 enum 类型。
+- **新增跨域消费方**：任何新文件 import 这 3 类型会使 R12 计数增长 → CI 失败 → 须开独立计划裁决合理性后调高基线（同既有"调高基线唯一途径"规则）。
+- **类型演进允许**：新增 enum 常量（如新过账业务类型）不触发 R12 增长（R12 计 import 文件数，非 enum 值数），但须同步更新 `docs/design/finance/posting.md §业务类型映射` 与字典 `erp-fin/business-type`（ORM 保护区域）。
+
 ## Owner Docs
 
 | 边界 | Owner Doc |

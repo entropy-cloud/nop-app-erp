@@ -24,6 +24,16 @@
 | 类名前缀 | `ErpMd*` |
 | 字典命名空间 | `erp-md/*` |
 
+## 共享内核工具
+
+本域除主数据外，承载 1 个登记的**跨域共享代码工具**（裁决=接受为显式共享内核，类型不迁移；详见 `docs/architecture/module-boundaries.md §共享内核` + 裁决 `docs/analysis/shared-kernel-extraction-decision.md`）：
+
+| 工具 | 位置 | 形态 | 跨域消费 | 说明 |
+|------|------|------|----------|------|
+| `AcctSchemaResolver` | `erp-md-dao/.../app/erp/md/dao/AcctSchemaResolver.java` | dao 耦合静态工具（`IDaoProvider` + `ErpMdAcctSchema`） | finance/assets/manufacturing/sales/purchase/inventory/projects/maintenance/logistics（9 域 `-service` 层，基线 38 处） | 解析组织主账套 ID（nature 优先级 FINANCIAL→MANAGEMENT→TAX→CONSOLIDATION→BUDGET），为 `PostingEvent.acctSchemaId` 设值。dao 耦合使其不可移入"零 dao/entity" common 模块，故保留本域原位 + R12 守卫 |
+
+> 新增跨域消费方会使 `nop-compliance-checker.sh` R12c 计数增长 → CI 失败 → 须开独立计划裁决。`AcctSchemaResolver` 变更（如解析优先级调整）级联全部 9 个跨域消费方。
+
 ## 核心业务对象
 
 | 对象 | 业务含义 | 被引用方 |

@@ -159,6 +159,18 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 
 > **关键规则**：finance 对业务域是**纯读**——从不写业务表。业财一体是"业务→财务"单向 S 写，财务不回写业务。
 
+### 3.3 共享内核类型归属（代码层，非表层）
+
+> 本表登记 finance/master-data 承担的**代码层**跨域共享类型（非表级 R/S/P 数据依赖）。裁决=接受为显式共享内核（类型不迁移），完整裁决依据见 `docs/analysis/shared-kernel-extraction-decision.md`，owner-doc 登记面见 `module-boundaries.md §共享内核`。
+
+| 共享类型 | 所有者模块 | 形态 | 跨域 import 基线¹ | 说明 |
+|---|---|---|---|---|
+| `ErpFinBusinessType` | `module-finance/erp-fin-dao` | enum（过账业务类型） | 69 | 过账派发契约；enum 派发消费（`==`/`switch`）不可降级为 SPI |
+| `PostingEvent` | `module-finance/erp-fin-dao` | 纯数据 DTO | 66 | 业财过账事件，提交给 `IErpFinVoucherBiz.post()` |
+| `AcctSchemaResolver` | `module-master-data/erp-md-dao` | dao 耦合静态工具 | 38 | 主账套解析（nature 优先级），dao 耦合不可入"零 dao/entity"模块 |
+
+¹ import 语句级（排除 test + 所属域 + `_gen`/`target`），由 `nop-compliance-checker.sh` R12 守卫，基线见 `docs/audits/compliance-baseline.md`。新增跨域消费方使计数增长 → CI 失败 → 须开独立计划裁决。
+
 ## 4. 同步修改（S）明细：业财一体的事务边界
 
 > 本节回答"哪些模块同步修改哪些表"。所有 S 写都发生在**同一 `@BizMutation` 方法、同一事务**内，保证强一致。`@BizMutation` 自动包装事务（见 `ai-defaults.md`）。
