@@ -31,12 +31,6 @@
             <option code="INBOUND" label="入库" value="INBOUND" i18n-en:label="Receipt"/>
             <option code="OUTBOUND" label="出库" value="OUTBOUND" i18n-en:label="Issue"/>
         </dict>
-        <dict label="审核状态" name="erp-inv/approve-status" valueType="string" i18n-en:label="Approve Status">
-            <option code="UNSUBMITTED" label="未提交" value="UNSUBMITTED" i18n-en:label="Unsubmitted"/>
-            <option code="SUBMITTED" label="已提交" value="SUBMITTED" i18n-en:label="Submitted"/>
-            <option code="APPROVED" label="已审核" value="APPROVED" i18n-en:label="Approved"/>
-            <option code="REJECTED" label="已驳回" value="REJECTED" i18n-en:label="Rejected"/>
-        </dict>
         <dict label="批次状态" name="erp-inv/batch-status" valueType="string" i18n-en:label="Batch Status">
             <option code="OPEN" label="在用" value="OPEN" i18n-en:label="In Use"/>
             <option code="LOCKED" label="锁定" value="LOCKED" i18n-en:label="Locked"/>
@@ -160,7 +154,7 @@
                         propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="12"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
@@ -1035,7 +1029,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
+                        propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="10"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
@@ -1229,7 +1223,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
+                        propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="9"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
@@ -2181,7 +2175,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
+                        propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="9"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>
@@ -2373,7 +2367,7 @@
                         propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/move-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
-                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/approve-status"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
                         i18n-en:displayName="Approve Status"/>
                 <column code="POSTED" defaultValue="false" displayName="已过账" name="posted" propId="12"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Posted" ui:show="R"/>

@@ -54,26 +54,6 @@ public interface _ErpInvDaoConstants {
     String MOVE_DIRECTION_OUTBOUND = "OUTBOUND";
                     
     /**
-     * 审核状态: 未提交 
-     */
-    String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
-                    
-    /**
-     * 审核状态: 已提交 
-     */
-    String APPROVE_STATUS_SUBMITTED = "SUBMITTED";
-                    
-    /**
-     * 审核状态: 已审核 
-     */
-    String APPROVE_STATUS_APPROVED = "APPROVED";
-                    
-    /**
-     * 审核状态: 已驳回 
-     */
-    String APPROVE_STATUS_REJECTED = "REJECTED";
-                    
-    /**
      * 批次状态: 在用 
      */
     String BATCH_STATUS_OPEN = "OPEN";

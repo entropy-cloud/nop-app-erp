@@ -1,5 +1,7 @@
 package app.erp.inv.dao;
 
-public interface ErpInvDaoConstants extends _ErpInvDaoConstants{
+import app.erp.inv.dao.constants.ErpInvDocStatus;
+
+public interface ErpInvDaoConstants extends _ErpInvDaoConstants, ErpInvDocStatus {
 
 }

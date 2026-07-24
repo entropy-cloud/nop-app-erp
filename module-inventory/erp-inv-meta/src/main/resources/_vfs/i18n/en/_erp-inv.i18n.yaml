@@ -683,7 +683,6 @@ dict:
     erp-inv/move-status: Inventory Move Status
     erp-inv/operation-type: Inventory Operation Type
     erp-inv/move-direction: Move Direction
-    erp-inv/approve-status: Approve Status
     erp-inv/batch-status: Batch Status
     erp-inv/serial-status: Serial Status
     erp-inv/reservation-status: Reservation Status
@@ -709,11 +708,6 @@ dict.option.label:
   erp-inv/move-direction:
     INBOUND: Receipt
     OUTBOUND: Issue
-  erp-inv/approve-status:
-    UNSUBMITTED: Unsubmitted
-    SUBMITTED: Submitted
-    APPROVED: Approved
-    REJECTED: Rejected
   erp-inv/batch-status:
     OPEN: In Use
     LOCKED: Locked
