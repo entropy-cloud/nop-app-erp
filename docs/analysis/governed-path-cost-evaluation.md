@@ -92,6 +92,10 @@ daoFor 真违规子集分两类，**重构前置条件不同**：
 - **残留风险 1**：直接探针未执行——若未来发现某 Type 4 重构为 I*Biz 后单模块测试**未**失败（因 nop-entropy 已隐式支持某种延迟机制），则 Type 4 可提前解阻塞。建议 successor 重构首批时验证。
 - **残留风险 2**：Type 1 的 ORM 导航重构需逐处确认 ORM 关系确实存在（部分 daoFor 是因关系未建模），个别可能需补 ORM `<to-one>`（属 ORM 保护区域，需 owner doc 授权）。
 
+### 3.5 第一批落地证据（plan 2026-07-24-0605-3，F1 successor）
+
+`2026-07-24-0605-3` 完成第一批 Type 1 safe 子集重构：18 处 `daoProvider().daoFor(X).getEntityById(entity.getYId())` → ORM `<to-one>` 关系 getter，覆盖 assets（12）/ finance（5）/ manufacturing（1）域。逐处核实 ORM 关系已建模（无 ORM-gap）。全 154 模块 BUILD SUCCESS + 受影响域单模块测试全绿（ast 78/fin 264/mfg 136），验证 §4 前置条件 3（daoFor→关系重构后目标域单模块测试启动成功）。checker 基线下降：R2b 319→317 / R2c 1108→1090 / R2d 34→31（合规改善，非回归）。剩余 Type 1 估算≈82-132 处（原 ~100-150 − 本批 18），分布在其余 14 域，为按域分批 successor。
+
 ## 4. 重构前置条件总结
 
 1. **Type 1（~100-150 处）**：无前置阻塞，可立即开按域分批重构计划（目标：daoFor → ORM 关系 getter）。

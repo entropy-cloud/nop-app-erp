@@ -19,9 +19,9 @@
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 23 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 37 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 319 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1108 |
-| R2d | Processor daoFor(ErpMd*) | 🔴 高 | 34 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 317 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1090 |
+| R2d | Processor daoFor(ErpMd*) | 🔴 高 | 31 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 19 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
 | R5 | @Inject private | 🟡 中 | 0 |
@@ -60,6 +60,16 @@ R12 计数口径 = import 语句级，排除 `test/` + 类型所属域（finance
 - **调高基线的唯一途径**：开独立计划，在该计划中逐项人工确认新增命中的合理性（合理偏离 / 已登记豁免 / 需重构），并显式更新本文件的基线表与下方机器可读块。**禁止在功能 PR 中直接调高基线**。
 - **门控实现方式**：CI workflow（`.github/workflows/compliance.yml`）解析 checker 汇总表，比对下方 `## BASELINE (machine-readable)` 块。checker 脚本本身保持纯报告工具，不侵入其核心逻辑（Phase 1 Decision 裁决方案 b）。
 
+## R2b/R2c/R2d 基线下降注记（plan 2026-07-24-0605-3，F1 successor）
+
+`2026-07-24-0605-3`（daoFor Type 1 ORM 导航可替代重构第一批）将 18 处 `daoProvider().daoFor(X).getEntityById(entity.getYId())` 替换为 ORM `<to-one>` 关系 getter（`getAsset()`/`getCategory()`/`getSourceAsset()`/`getEmployee()`/`getClaimant()`/`getSubject()`/`getVoucher()`/`getBom()`），覆盖 assets（12 处）/ finance（5 处）/ manufacturing（1 处）域 Processor + BizModel。该变更为**合规改善**（非回归），checker 实测基线下降：
+
+- R2b（BizModel 跨域 daoFor）：319 → **317**（-2，ErpFinEmployeeAdvanceBizModel 2 处）
+- R2c（全生产代码 daoFor）：1108 → **1090**（-18，全部重构站点）
+- R2d（Processor daoFor(ErpMd*)）：34 → **31**（-3，finance 3 处 Processor ErpMd* 站点）
+
+R2a 不变（=37，BizModel ErpMd* 站点未触及）。全 154 模块 `mvn clean install -DskipTests` BUILD SUCCESS + 受影响域单模块测试全绿（ast 78/fin 264/mfg 136）。本批 ORM-gap=0，剩余 Type 1 域 safe 子集为 successor。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -70,9 +80,9 @@ R1b: 0
 R1c: 0
 R1d: 23
 R2a: 37
-R2b: 319
-R2c: 1108
-R2d: 34
+R2b: 317
+R2c: 1090
+R2d: 31
 R3: 19
 R4: 0
 R5: 0

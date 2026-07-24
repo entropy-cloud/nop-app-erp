@@ -72,6 +72,8 @@ nop-app-erp 的**主脊健康**——DAG 单向依赖、`I*Biz` 写契约、ORM 
 ### 🔴 F1 — daoFor 跨域访问真违规子集 + 已登记豁免（HIGH）
 
 > **解决状态（2026-07-24，plan `2026-07-24-0930-3`）**：(闭包项 #1) governed path 成本评估 ✅ Done——裁决=分支 (b)，I*Biz 强注入会破坏单模块测试（实测 contract 37/aps 22 全绿因回避 I*Biz），Type 1 可安全重构、Type 4 需平台解耦，裁决文档 `docs/analysis/governed-path-cost-evaluation.md`；(闭包项 #2) `ErpB2bAsnBizModel` 跨域写豁免 ✅ Done——已补登 `posting-exemptions.md`。真违规子集 Type 1+4 的 ~110-180 处重构归 successor（依赖 Phase 1 裁决前置条件）。
+>
+> **进展（2026-07-24，plan `2026-07-24-0605-3`）**：Type 1 第一批 safe 子集重构 ✅ Done——18 处 `daoFor().getEntityById()` → ORM `<to-one>` 关系 getter（assets 12/finance 5/mfg 1），ORM-gap=0，全 154 模块 BUILD SUCCESS + 受影响域单模块测试全绿（ast 78/fin 264/mfg 136）。checker 基线下降：R2b 319→317 / R2c 1108→1090 / R2d 34→31。剩余 Type 1 估算≈82-132 处分布在其余 14 域，为按域分批 successor。
 
 **违反**：
 - `AGENTS.md`："跨实体访问：始终为其他实体注入 `I*Biz` 接口。仅当 `I*Biz` 无法满足需求时才使用 `IDaoProvider` / `IOrmTemplate` / `@SqlLibMapper`，并在代码注释中记录原因。"

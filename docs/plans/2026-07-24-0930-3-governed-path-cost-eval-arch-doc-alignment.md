@@ -178,6 +178,6 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- Type 1（~100-150 ORM 导航可替代）daoFor 按域分批重构计划（Phase 1 裁决=可安全重构，无前置阻塞）
+- ~~Type 1（~100-150 ORM 导航可替代）daoFor 按域分批重构计划（Phase 1 裁决=可安全重构，无前置阻塞）~~ ✅ **第一批已落地（plan `2026-07-24-0605-3`）**：18 处 safe 子集重构，R2b 319→317 / R2c 1108→1090 / R2d 34→31。剩余 Type 1 估算≈82-132 处分布在其余 14 域，为按域分批 successor。
 - Type 4（~10-30 跨域写/读）daoFor 重构——阻塞中，待 nop-entropy 平台层 lazy/SPI 解耦或保留为登记豁免
 - `app-erp-common-api` 共享 SPI 内核（F4，独立 successor）

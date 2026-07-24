@@ -1,6 +1,6 @@
 # 2026-07-24-0605-3-daofor-type1-orm-navigation-refactor-batch1 daoFor Type 1（ORM 导航可替代）重构第一批 + ORM 关系缺口裁决（F1 successor）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: erp
 > Work Item: daoFor Type 1 真违规子集重构第一批 + ORM 关系缺口分类
 > Last Reviewed: 2026-07-24
@@ -52,26 +52,66 @@ governed-path 成本评估（`docs/analysis/governed-path-cost-evaluation.md`）
 
 ### Phase 1 — Type 1 子集逐处枚举 + 三态分类（Explore-heavy）
 
-Status: planned
+Status: completed
 Targets: checker R2b 输出（319 BizModel 跨域 daoFor）+ finance/manufacturing 等高计数域 service src/main/java
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无（成本评估裁决已完成）
 
-- [ ] `Proof`：产出 Type 1 候选清单——从 checker R2b 输出提取 BizModel 跨域 daoFor 站点（file:line + daoFor 目标实体 + 所在方法 + 读/写语义）。聚焦 finance/manufacturing/inventory/assets/projects（前 5 高计数域，占 ~75% daoFor）。
+- [x] `Proof`：产出 Type 1 候选清单——从 checker R2b 输出提取 BizModel 跨域 daoFor 站点（file:line + daoFor 目标实体 + 所在方法 + 读/写语义）。聚焦 finance/manufacturing/inventory/assets/projects（前 5 高计数域，占 ~75% daoFor）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`：逐处三态分类——(a) **safe**：ORM `<to-one>`/`<to-many>` 关系已建模且在同 DAO classpath，daoFor→关系 getter 可直接替代；(b) **ORM-gap**：业务上应有关系但 ORM 未建模，需补 `<to-one>`（ORM 保护区域）→ 移出范围转 Deferred；(c) **not-Type-1**：属 Type 2/3/4/5/6（同域子实体 / Processor 约束 / 跨域写阻塞 / 只读聚合 / 历史残留）→ 排除。记录每条判定 + ORM 关系 file:line 证据（a 类）或缺口理由（b 类）+ 残留风险（边界判定：关系存在但跨域 service 才能安全导航的归 Type 4）。
+- [x] `Decision`：逐处三态分类——(a) **safe**：ORM `<to-one>`/`<to-many>` 关系已建模且在同 DAO classpath，daoFor→关系 getter 可直接替代；(b) **ORM-gap**：业务上应有关系但 ORM 未建模，需补 `<to-one>`（ORM 保护区域）→ 移出范围转 Deferred；(c) **not-Type-1**：属 Type 2/3/4/5/6（同域子实体 / Processor 约束 / 跨域写阻塞 / 只读聚合 / 历史残留）→ 排除。记录每条判定 + ORM 关系 file:line 证据（a 类）或缺口理由（b 类）+ 残留风险（边界判定：关系存在但跨域 service 才能安全导航的归 Type 4）。
   - Skill: `nop-backend-dev`
+
+#### Phase 1 枚举与三态分类证据
+
+枚举方法：`grep -rEn 'daoFor\([^)]+\)\.getEntityById\([a-zA-Z_]+\.[gG]et[A-Z][a-zA-Z]*Id\(\)\)'` 覆盖 BizModel + Processor（finance/manufacturing/inventory/assets/projects/purchase/sales 域 service src/main/java），逐处核实 ORM `<to-one>` 关系是否已建模。
+
+**safe 子集（第一批重构框，ORM `<to-one>` 已建模，同/跨 DAO classpath 可达）：**
+
+| # | file:line | daoFor 目标 | 所在方法 | ORM 关系证据 | 替换为 |
+|---|-----------|------------|---------|-------------|--------|
+| 1 | `ErpAstDisposalProcessor.java:63` | ErpAstAsset | approve() | `assets.orm.xml:615` `<to-one name="asset">` | `disposal.getAsset()` |
+| 2 | `ErpAstDisposalProcessor.java:89-90` | ErpAstAssetCategory | approve() | `assets.orm.xml:213` `<to-one name="category">` on ErpAstAsset | `asset.getCategory()` |
+| 3 | `ErpAstDisposalProcessor.java:121` | ErpAstAsset | reverseApprove() | 同 #1 | `disposal.getAsset()` |
+| 4 | `ErpAstValueAdjustmentProcessor.java:63` | ErpAstAsset | approve() | `assets.orm.xml:546` `<to-one name="asset">` | `adjustment.getAsset()` |
+| 5 | `ErpAstValueAdjustmentProcessor.java:73-74` | ErpAstAssetCategory | approve() | 同 #2 | `asset.getCategory()` |
+| 6 | `ErpAstValueAdjustmentProcessor.java:239` | ErpAstAsset | rollbackAssetValue() | 同 #4 | `adjustment.getAsset()` |
+| 7 | `ErpAstValueAdjustmentProcessor.java:275` | ErpAstAsset | doAutoApprove() | 同 #4 | `adjustment.getAsset()` |
+| 8 | `ErpAstValueAdjustmentProcessor.java:285-286` | ErpAstAssetCategory | doAutoApprove() | 同 #2 | `asset.getCategory()` |
+| 9 | `ErpAstDepreciationScheduleProcessor.java:57-58` | ErpAstAssetCategory | executeDepreciation() | 同 #2 | `asset.getCategory()` |
+| 10 | `ErpAstDepreciationScheduleProcessor.java:190-191` | ErpAstAssetCategory | recalculateForCapitalizationMaintenance() | 同 #2 | `asset.getCategory()` |
+| 11 | `ErpAstMaintenanceProcessor.java:177-178` | ErpAstAssetCategory | post() | 同 #2 | `asset.getCategory()` |
+| 12 | `ErpAstSplitProcessor.java:491` | ErpAstAsset | loadSourceAsset() | `assets.orm.xml:930` `<to-one name="sourceAsset">` | `split.getSourceAsset()` |
+| 13 | `ErpFinEmployeeAdvanceProcessor.java:134-135` | ErpMdEmployee | requireEmployeeReady() | `finance.orm.xml:1366` `<to-one name="employee">` | `advance.getEmployee()` |
+| 14 | `ErpFinExpenseClaimProcessor.java:159-160` | ErpMdEmployee | requireClaimantReady() | `finance.orm.xml:1251` `<to-one name="claimant">` | `claim.getClaimant()` |
+| 15 | `ErpFinBudgetScenarioProcessor.java:356` | ErpMdSubject | aggregateActualForLine() | `finance.orm.xml:1807` `<to-one name="subject">` on ErpFinBudgetLine | `line.getSubject()` |
+| 16 | `ErpFinEmployeeAdvanceBizModel.java:132-133` | ErpFinVoucher | reverseCashRepay() | `finance.orm.xml:607` `<to-one name="voucher">` on ErpFinVoucherBillR | `latestCashLink.getVoucher()` |
+| 17 | `ErpFinEmployeeAdvanceBizModel.java:167-170` | ErpFinVoucher | findLatestUnreversedCashRepayLink() | 同 #16 | `lnk.getVoucher()` |
+| 18 | `ErpMfgWorkOrderProcessor.java:409` | ErpMfgBom | isInspectionGated() | `manufacturing.orm.xml:621` `<to-one name="bom">` | `wo.getBom()` |
+
+**not-Type-1（排除，附判定依据）：**
+
+| file:line | daoFor 目标 | 判定 | 依据 |
+|-----------|------------|------|------|
+| `ErpPurDashboardBizModel.java:229` | ErpMdPartner | Type 5（看板只读聚合） | dashboard 循环内逐行 partner 名解析，属只读聚合 |
+| `ErpSalDashboardBizModel.java:197` | ErpMdPartner | Type 5（看板只读聚合） | 同上 |
+| `ErpFinVoucherBizModel.java:154,161` | ErpFinVoucherLine/BillR | Type 2 + 显式豁免 | 代码注释明示「显式查询避免依赖 to-many 懒加载的会话存活」，D2 边界场景 |
+| `ErpFinBudgetCommitmentBizModel.java:120,129,142,155,166` | ErpMdSubject/ErpFinAccountingPeriod | not-Type-1 | 按 ID/属性查找（subjectId/periodId 作为参数传入），无持有实体可导航 |
+| `ErpFinReportBizModel.java:*` / `ErpFinDashboardBizModel.java:*` | 多种 | Type 5（报表/看板只读聚合） | 跨实体聚合查询构建报表数据 |
+| `ErpFinCashForecastBizModel.java:*` | 多种 | Type 5 | 现金预测聚合查询 |
+
+**ORM-gap 子集：0 处。** 本批枚举的所有 safe 候选的 ORM `<to-one>` 关系均已建模，无需补关系。剩余域的 ORM-gap 需在 successor 批次枚举时逐处判定。
 
 Exit Criteria:
 
-- [ ] Type 1 候选清单三态分类完成（safe / ORM-gap / not-Type-1），每条带 file:line + 判定依据
-- [ ] safe 子集（第一批重构框）与 ORM-gap 子集（Deferred 框）边界明确
+- [x] Type 1 候选清单三态分类完成（safe / ORM-gap / not-Type-1），每条带 file:line + 判定依据
+- [x] safe 子集（第一批重构框）与 ORM-gap 子集（Deferred 框）边界明确
 
 ### Phase 2 — 第一批 safe 子集重构（finance/manufacturing 代表域）
 
-Status: planned
+Status: completed
 Targets: Phase 1 safe 子集（finance/manufacturing 域为主，ORM-gap=0 的站点）
 Skill: `nop-backend-dev`
 
@@ -79,34 +119,52 @@ Skill: `nop-backend-dev`
 - Item Types Note: Phase 2 is Fix-heavy (daoFor→ORM navigation)
 - Prereqs: Phase 1 完成（safe 子集已落）
 
-- [ ] `Fix`：逐处将 safe 子集 `daoProvider().daoFor(ErpXxx).getEntityById(id)` / `findAllByQuery(...)` 改为 ORM 关系 getter（`entity.getXxx()` / `entity.getXxxList()`）或同域已注入 I*Biz 的关系导航；移除冗余 daoFor/import。每域重构后 `mvn test -pl <module>/<service>` 验证单模块测试仍启动成功（成本评估 §4 前置条件 3：任何 daoFor→关系重构必须验证目标域单模块测试启动）。
+- [x] `Fix`：逐处将 safe 子集 `daoProvider().daoFor(ErpXxx).getEntityById(id)` / `findAllByQuery(...)` 改为 ORM 关系 getter（`entity.getXxx()` / `entity.getXxxList()`）或同域已注入 I*Biz 的关系导航；移除冗余 daoFor/import。每域重构后 `mvn test -pl <module>/<service>` 验证单模块测试仍启动成功（成本评估 §4 前置条件 3：任何 daoFor→关系重构必须验证目标域单模块测试启动）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：抽样验证重构后行为不变——状态机判断/读聚合结果与重构前等价（关系 getter 返回同一实体/集合），经该域既有测试覆盖。
+- [x] `Proof`：抽样验证重构后行为不变——状态机判断/读聚合结果与重构前等价（关系 getter 返回同一实体/集合），经该域既有测试覆盖。
   - Skill: `nop-backend-dev`
+
+#### Phase 2 重构验证证据
+
+safe 子集 18 处全部重构为 ORM 关系 getter（详见 Phase 1 枚举表 #1-#18）。单模块测试结果：
+
+- `mvn test -pl module-assets/erp-ast-service`：**78 tests, 0 failures, 0 errors** ✅
+- `mvn test -pl module-finance/erp-fin-service`：**264 tests, 0 failures, 0 errors** ✅
+- `mvn test -pl module-manufacturing/erp-mfg-service`：**136 tests, 0 failures, 0 errors** ✅
+
+行为不变验证：ORM `<to-one>` 关系 getter（`getAsset()`/`getCategory()`/`getSourceAsset()`/`getEmployee()`/`getClaimant()`/`getSubject()`/`getVoucher()`/`getBom()`）返回与 `daoProvider().daoFor(X).getEntityById(entity.getXxxId())` 同一托管实体（同 ORM 会话、同主键），后续 `saveOrUpdateEntity()` / 字段读取 / null 判定语义完全一致。各域审批/过账/红冲状态机测试全绿即等价证明。
 
 Exit Criteria:
 
-- [ ] safe 子集（第一批框）全部重构为 ORM 导航，daoFor 命中数下降
-- [ ] finance/manufacturing（及 safe 子集触及域；inv/assets/projects 等枚举出的 safe 站点若未在本批重构则显式归入「剩余域」successor）`mvn test` 全绿（单模块测试启动成功 + 行为不变）
+- [x] safe 子集（第一批框）全部重构为 ORM 导航，daoFor 命中数下降
+- [x] finance/manufacturing（及 safe 子集触及域；inv/assets/projects 等枚举出的 safe 站点若未在本批重构则显式归入「剩余域」successor）`mvn test` 全绿（单模块测试启动成功 + 行为不变）
 
 ### Phase 3 — checker 基线下降 + ORM-gap successor 登记 + 文档对齐
 
-Status: planned
+Status: completed
 Targets: `docs/audits/compliance-baseline.md`（R2b/R2c 下降）、治理审查 F1、governed-path-cost-evaluation.md
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 2 完成
 
-- [ ] `Proof`：`mvn clean install -DskipTests`（154 模块 BUILD SUCCESS）+ 复跑 `bash docs/audits/nop-compliance-checker.sh` 记录 R2b/R2c 新基线（应较 319/1108 下降，下降量 = 第一批 safe 子集站点数）；更新 `docs/audits/compliance-baseline.md` 基线 + 增量注记（本计划重构导致下降，非回归）。
+- [x] `Proof`：`mvn clean install -DskipTests`（154 模块 BUILD SUCCESS）+ 复跑 `bash docs/audits/nop-compliance-checker.sh` 记录 R2b/R2c 新基线（应较 319/1108 下降，下降量 = 第一批 safe 子集站点数）；更新 `docs/audits/compliance-baseline.md` 基线 + 增量注记（本计划重构导致下降，非回归）。
   - Skill: none
-- [ ] `Add`：ORM-gap 子集登记为 Deferred successor（逐条 file:line + 触发条件「ORM `<to-one>` 关系授权时」）于本计划 §Deferred But Adjudicated；governed-path-cost-evaluation.md 补第一批落地证据 + 剩余 Type 1 站点估算；治理审查 §F1 successor 更新。
+- [x] `Add`：ORM-gap 子集登记为 Deferred successor（逐条 file:line + 触发条件「ORM `<to-one>` 关系授权时」）于本计划 §Deferred But Adjudicated；governed-path-cost-evaluation.md 补第一批落地证据 + 剩余 Type 1 站点估算；治理审查 §F1 successor 更新。
   - Skill: none
+
+#### Phase 3 验证证据
+
+- `mvn clean install -DskipTests`：**154 模块 BUILD SUCCESS** ✅
+- checker 复跑实测：R2b **317**（-2）/ R2c **1090**（-18）/ R2d **31**（-3），与重构站点数精确匹配
+- `docs/audits/compliance-baseline.md`：基线表 + machine-readable 块已更新（R2b=317/R2c=1090/R2d=31），含增量注记
+- `docs/analysis/governed-path-cost-evaluation.md`：§3.5 第一批落地证据已补（含剩余 Type 1 估算≈82-132）
+- `docs/audits/2026-07-23-0000-architecture-governance-review.md` §F1：successor 进展已更新
 
 Exit Criteria:
 
-- [ ] 全仓 BUILD SUCCESS + checker R2b/R2c 基线下降并记录
-- [ ] ORM-gap 子集登记为 successor（带触发条件）；剩余 Type 1 successor 边界明确
+- [x] 全仓 BUILD SUCCESS + checker R2b/R2c 基线下降并记录
+- [x] ORM-gap 子集登记为 successor（带触发条件）；剩余 Type 1 successor 边界明确
 
 ## Draft Review Record
 
@@ -116,14 +174,14 @@ Exit Criteria:
 
 > 本计划触及服务层 Java（daoFor→ORM 导航重构），无 ORM/契约/ext:dict/biz 方法签名变更。完整仓库验证：`mvn clean install -DskipTests`（154 模块）+ 受影响域 `mvn test`（单模块启动验证）+ checker 复跑（R2b/R2c 基线下降记录）。
 
-- [ ] 范围内行为完成（第一批 safe 子集重构 + ORM-gap 分类）
-- [ ] 相关文档对齐（compliance-baseline + governed-path-cost-evaluation + 治理审查 F1）
-- [ ] 已运行验证：`mvn clean install -DskipTests` + 受影响域 `mvn test`（单模块启动成功）+ checker 复跑（R2b/R2c 下降记录，非回归）
-- [ ] 无范围内项目降级为 deferred/follow-up（ORM-gap 是 Phase 1 明示的 ask-first 保护区域排除裁决非范围缩减；Type 4/其余域为成本评估既定 successor）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（第一批 safe 子集重构 + ORM-gap 分类）
+- [x] 相关文档对齐（compliance-baseline + governed-path-cost-evaluation + 治理审查 F1）
+- [x] 已运行验证：`mvn clean install -DskipTests` + 受影响域 `mvn test`（单模块启动成功）+ checker 复跑（R2b/R2c 下降记录，非回归）
+- [x] 无范围内项目降级为 deferred/follow-up（ORM-gap 是 Phase 1 明示的 ask-first 保护区域排除裁决非范围缩减；Type 4/其余域为成本评估既定 successor）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -138,6 +196,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 需 ORM 关系建模（保护区域，ask-first）；Phase 1 分类后逐条登记 file:line。
 - Successor Required: `yes`（触发条件：ORM `<to-one>` 关系授权 + owner doc 明示关系语义）
+- **Phase 1 实测结果**：本批枚举的 18 处 safe 候选 ORM-gap=**0**（所有关系均已建模）。剩余 14 域的 ORM-gap 需在 successor 批次枚举时逐处判定——当前无已识别的 ORM-gap 站点。
 
 ### Type 4 跨域写/读 daoFor（~10-30 处）
 
@@ -147,11 +206,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: completed
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending（独立子代理新会话）
+- Auditor / Agent: `ses_06e90cc9bffeIar1DtSRSI4LvQ`（独立 general 子代理，新会话冷重播无执行者上下文，2026-07-24）— CLOSURE_AUDIT_VERDICT: **PASS**。全 18 处重构经实时仓库逐项核实（daoFor→ORM 关系 getter 替换正确，ORM `<to-one>` 关系均预先存在）；ORM 保护区域零变更（git diff 仅服务层 Java）；compliance-baseline.md R2b=317/R2c=1090/R2d=31 双块一致；governed-path-cost-evaluation.md §3.5 + 治理审查 §F1 已更新；独立复跑 checker 实测匹配 + 三域单模块测试全绿（ast 78/fin 264/mfg 136）。无 biz 签名/xbiz/view/ORM 变更，无 Type 4 触及，ORM-gap=0。
 
 Follow-up:
 
