@@ -6,6 +6,7 @@ import app.erp.fin.dao.entity.ErpFinGlMappingRule;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.annotation.PostConstruct;
@@ -256,7 +257,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         cache.clear();
         cache.putAll(newCache);
         cacheLoaded = true;
-        lastLoadTimeMillis = System.currentTimeMillis();
+        lastLoadTimeMillis = CoreMetrics.currentTimeMillis();
         LOG.info("GL 映射规则缓存已加载：{} 条规则，{} 个 (businessType, accountKey) 索引", all.size(), newCache.size());
     }
 

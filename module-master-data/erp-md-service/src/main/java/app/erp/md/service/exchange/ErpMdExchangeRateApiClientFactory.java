@@ -5,6 +5,7 @@ import app.erp.md.service.ErpMdErrors;
 import app.erp.md.spi.IErpMdExchangeRateApiClient;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.concurrent.ratelimit.DefaultRateLimiter;
 import io.nop.commons.concurrent.ratelimit.IRateLimiter;
 
@@ -66,7 +67,7 @@ public class ErpMdExchangeRateApiClientFactory {
         // 2. 检查缓存（cacheKey = baseCurrency + sorted(targetCurrencies) + asOfDate）
         String cacheKey = buildCacheKey(baseCurrency, targetCurrencies, asOfDate);
         CacheEntry cached = responseCache.get(cacheKey);
-        long now = System.currentTimeMillis();
+        long now = CoreMetrics.currentTimeMillis();
         if (cached != null && cached.expiryTimeMillis > now) {
             return new LinkedHashMap<>(cached.rates);
         }
