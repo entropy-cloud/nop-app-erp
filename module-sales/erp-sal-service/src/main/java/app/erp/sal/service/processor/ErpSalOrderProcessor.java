@@ -1,9 +1,12 @@
 package app.erp.sal.service.processor;
 
+import app.erp.fin.biz.IErpFinBudgetCommitmentBiz;
 import app.erp.fin.biz.IErpFinIntercompanyTransferBiz;
+import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
@@ -11,6 +14,7 @@ import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.service.entity.CreditLimitChecker;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -18,6 +22,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import java.util.ArrayList;
@@ -27,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.le;
 
 /**
  * 销售订单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
@@ -55,6 +62,9 @@ public class ErpSalOrderProcessor {
     @Inject
     IErpFinIntercompanyTransferBiz intercompanyTransferBiz;
 
+    @Inject
+    IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
+
     public ErpSalOrder submitForApproval(String id, IServiceContext context) {
         ErpSalOrder order = requireOrder(id, context);
         validateNotCancelled(order, context);
@@ -82,6 +92,9 @@ public class ErpSalOrderProcessor {
         validateBusinessRulesForApprove(order, context);
         auditPricingSourceDistribution(order, context);
         doApprove(order, context);
+        // sales 承付 commit hook（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #1）：
+        // 订单审核后置 → 生成 COMMITMENT 凭证（billType=SALES_ORDER_COMMITMENT）。config-gated（erp-fin.budget-commitment-enabled 默认 false）。
+        runCommitmentCommitHook(order, context);
         // 跨公司 SO intercompany 钩子（plan 2026-07-24-1351-2，multi-company.md §跨公司 PO/SO 触发路径）：
         // 订单审核后置 → 跨法人时生成配对内部销售/采购凭证。config-gated；非阻塞（对齐 inventory confirm 范式）。
         runIntercompanyApproveHook(order, context);
@@ -102,6 +115,9 @@ public class ErpSalOrderProcessor {
             return order;
         }
         validateTransitionForReverseApprove(order, context);
+        // sales 承付 release-on-cancel hook（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #2）：
+        // 订单反审核 → 红冲原 COMMITMENT 凭证。config-gated；无原凭证静默跳过（容错路径）。
+        runCommitmentReleaseHook(order, context);
         // 跨公司 SO intercompany 红冲钩子（plan 2026-07-24-1351-2）：反审核 → 红冲原配对 intercompany 凭证。config-gated；非阻塞。
         runIntercompanyReverseHook(order, context);
         doReverseApprove(order, context);
@@ -111,6 +127,9 @@ public class ErpSalOrderProcessor {
     public ErpSalOrder cancel(String orderId, IServiceContext context) {
         ErpSalOrder order = requireOrder(orderId, context);
         validateTransitionForCancel(order, context);
+        // sales 承付 release-on-cancel hook（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #2）：
+        // 订单作废 → 红冲原 COMMITMENT 凭证。config-gated；无原凭证静默跳过（容错路径）。
+        runCommitmentReleaseHook(order, context);
         // 跨公司 SO intercompany 红冲钩子（plan 2026-07-24-1351-2）：作废 → 红冲原配对 intercompany 凭证。config-gated；非阻塞。
         runIntercompanyReverseHook(order, context);
         doCancel(order, context);
@@ -308,6 +327,72 @@ public class ErpSalOrderProcessor {
         } catch (RuntimeException e) {
             LOG.warn("intercompany reversal failed for sales order {}: {}", order.getCode(), e.getMessage());
         }
+    }
+
+    /**
+     * sales 承付 commit 钩子（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #1）。
+     * 订单审核通过后置 → 生成 postingType=COMMITMENT 凭证（billType=SALES_ORDER_COMMITMENT）。
+     * config-gated（{@code erp-fin.budget-commitment-enabled} 默认 false）；科目/期间/金额缺失时静默跳过（不阻塞业务流）。
+     * 科目经 {@code erp-fin.budget-commitment-sales-subject-code} 独立配置（与采购科目分离）。
+     */
+    protected void runCommitmentCommitHook(ErpSalOrder order, IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SALES_SUBJECT_CODE);
+        if (subjectId == null) {
+            return;
+        }
+        Long periodId = resolvePeriodId(order.getBusinessDate());
+        BigDecimal amount = order.getTotalAmountWithTax() != null
+                ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
+        budgetCommitmentBiz.commit(
+                ErpFinConstants.COMMITMENT_SOURCE_BILL_SALES_ORDER, order.getCode(),
+                subjectId, null, periodId, amount, context);
+    }
+
+    /**
+     * sales 承付 release 钩子（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #2 release-on-cancel）。
+     * 订单反审核/作废 → 红冲原 COMMITMENT 凭证。
+     * config-gated；无原凭证静默跳过（reverseApprove/cancel 路径容错，避免阻塞业务流）。
+     */
+    protected void runCommitmentReleaseHook(ErpSalOrder order, IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        try {
+            budgetCommitmentBiz.release(
+                    ErpFinConstants.COMMITMENT_SOURCE_BILL_SALES_ORDER, order.getCode(), context);
+        } catch (NopException e) {
+            // 容错：无原凭证（ERR_BUDGET_COMMITMENT_ALREADY_RELEASED）静默跳过
+            LOG.debug("commitment release skipped for sales order {}: {}", order.getCode(), e.getMessage());
+        }
+    }
+
+    protected Long resolveBudgetSubjectId(String configKey) {
+        String code = AppConfig.var(configKey, null);
+        if (code == null || code.isEmpty()) {
+            return null;
+        }
+        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", code));
+        q.setLimit(1);
+        List<ErpMdSubject> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0).getId();
+    }
+
+    protected Long resolvePeriodId(LocalDate businessDate) {
+        if (businessDate == null) {
+            return null;
+        }
+        IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(le("startDate", businessDate));
+        q.addFilter(ge("endDate", businessDate));
+        q.setLimit(1);
+        List<ErpFinAccountingPeriod> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0).getId();
     }
 
     protected List<ErpSalOrderLine> loadLines(Long orderId) {

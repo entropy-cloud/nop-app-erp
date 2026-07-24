@@ -171,6 +171,50 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
                 "重复 release 应抛 NopException(ERR_BUDGET_COMMITMENT_ALREADY_RELEASED)");
     }
 
+    @Test
+    public void testSalesCommitmentDispatchesSalesBillType() {
+        // plan 2026-07-24-1351-3：sales 承付 sourceBillType=SALES_ORDER 派发 billType=SALES_ORDER_COMMITMENT，
+        // 且与采购 billType=PURCHASE_ORDER_COMMITMENT lookup 不碰撞（同 billCode 不同 billType 隔离）。
+        Long[] ids = seedReturn(() -> {
+            Long pid = seedOpenPeriod("2024-CM-5", 2024, 10);
+            ErpMdSubject subject = seedSubject("6001", "销售承付收入预留科目",
+                    ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
+            return new Long[]{pid, subject.getId()};
+        });
+        Long periodId = ids[0];
+        Long subjectId = ids[1];
+
+        // 同一 billCode 同时存在采购承付与销售承付（验证 billType 隔离）
+        ormTemplate.runInSession(session ->
+                commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "MIXED-001",
+                        subjectId, null, periodId, new BigDecimal("100"), CTX));
+        Long salesVoucherId = ormTemplate.runInSession(session ->
+                commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_SALES_ORDER, "MIXED-001",
+                        subjectId, null, periodId, new BigDecimal("200"), CTX));
+        assertNotNull(salesVoucherId, "sales 承付应生成凭证");
+
+        // 验证 sales 凭证 billType=SALES_ORDER_COMMITMENT
+        QueryBean salesLink = new QueryBean();
+        salesLink.addFilter(eq("voucherId", salesVoucherId));
+        salesLink.addFilter(eq("billType", ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE_SALES));
+        List<ErpFinVoucherBillR> salesLinks = daoProvider.daoFor(ErpFinVoucherBillR.class).findAllByQuery(salesLink);
+        assertEquals(1, salesLinks.size(), "sales 承付应写 SALES_ORDER_COMMITMENT 回链");
+        assertEquals("MIXED-001", salesLinks.get(0).getBillCode());
+
+        // release sales 承付不应影响采购承付（billType 隔离）
+        Long reversalId = ormTemplate.runInSession(session ->
+                commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_SALES_ORDER, "MIXED-001", CTX));
+        assertNotNull(reversalId, "sales 承付 release 应成功");
+
+        ErpFinVoucher salesOriginal = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(salesVoucherId);
+        assertEquals(Boolean.TRUE, salesOriginal.getIsReversed(), "sales 原凭证应 isReversed=true");
+
+        // 采购承付仍可独立 release（未被 sales release 误红冲）
+        Long purReversalId = ormTemplate.runInSession(session ->
+                commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "MIXED-001", CTX));
+        assertNotNull(purReversalId, "采购承付 release 应成功（billType 隔离未被 sales release 影响）");
+    }
+
     // ---------- helpers ----------
 
     private <T> T seedReturn(java.util.function.Supplier<T> action) {

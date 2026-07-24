@@ -70,7 +70,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         Long orgId = orgSchema[0] != null ? orgSchema[0] : 1L;
         Long acctSchemaId = orgSchema[1] != null ? orgSchema[1] : 1L;
 
-        Long voucherId = commitmentVoucherGenerator.generateCommitment(sourceBillCode, subject, costCenterId,
+        Long voucherId = commitmentVoucherGenerator.generateCommitment(sourceBillType, sourceBillCode, subject, costCenterId,
                 orgId, acctSchemaId, periodId, currencyId, amount);
         LOG.info("承付占用：单据 {}/{} 科目 {} 期间 {} 金额 {} → 凭证 {}",
                 sourceBillType, sourceBillCode, subjectId, periodId, amount, voucherId);
@@ -85,12 +85,12 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         if (sourceBillCode == null || sourceBillCode.isEmpty()) {
             return null;
         }
-        if (!commitmentVoucherGenerator.hasUnreversedCommitment(sourceBillCode)) {
+        if (!commitmentVoucherGenerator.hasUnreversedCommitment(sourceBillType, sourceBillCode)) {
             throw new NopException(ErpFinErrors.ERR_BUDGET_COMMITMENT_ALREADY_RELEASED)
                     .param(ErpFinErrors.ARG_SOURCE_BILL_TYPE, sourceBillType)
                     .param(ErpFinErrors.ARG_SOURCE_BILL_CODE, sourceBillCode);
         }
-        List<Long> reversalIds = commitmentVoucherGenerator.reverseCommitment(sourceBillCode);
+        List<Long> reversalIds = commitmentVoucherGenerator.reverseCommitment(sourceBillType, sourceBillCode);
         if (reversalIds.isEmpty()) {
             return null;
         }
@@ -106,7 +106,7 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         if (sourceBillCode == null || sourceBillCode.isEmpty()) {
             return null;
         }
-        if (!commitmentVoucherGenerator.hasUnreversedCommitment(sourceBillCode)) {
+        if (!commitmentVoucherGenerator.hasUnreversedCommitment(sourceBillType, sourceBillCode)) {
             return null;
         }
         return release(sourceBillType, sourceBillCode, context);

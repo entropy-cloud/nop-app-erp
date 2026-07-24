@@ -1,9 +1,14 @@
 package app.erp.sal.service.processor;
 
+import app.erp.fin.biz.IErpFinBudgetCommitmentBiz;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.sal.dao.entity.ErpSalDelivery;
+import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.dao.entity.ErpSalInvoiceLine;
+import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.service.entity.CreditLimitChecker;
@@ -20,7 +25,9 @@ import jakarta.inject.Inject;
 import java.util.Objects;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -51,6 +58,9 @@ public class ErpSalInvoiceProcessor {
     @Inject
     CreditLimitChecker creditLimitChecker;
 
+    @Inject
+    IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
+
     public ErpSalInvoice submitForApproval(String id, IServiceContext context) {
         ErpSalInvoice invoice = requireInvoice(id, context);
         validateNotCancelled(invoice, context);
@@ -80,6 +90,10 @@ public class ErpSalInvoiceProcessor {
         boolean posted = doPosting(invoice, context);
         invoice = invoiceDao().getEntityById(id);
         doApprove(invoice, posted, context);
+        // sales 承付 release-on-invoice-approve hook（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #3）：
+        // AR 发票过账 = 实际收入产生 = 释放承付。经 invoiceLine→deliveryLine→delivery→order.code 反查 SALES_ORDER 承付凭证红冲。
+        // config-gated（erp-fin.budget-commitment-enabled 默认 false）。
+        runCommitmentReleaseOnInvoiceApproveHook(invoice, context);
         return invoice;
     }
 
@@ -319,5 +333,87 @@ public class ErpSalInvoiceProcessor {
                 .param(ErpSalErrors.ARG_INVOICE_CODE, invoice.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpSalErrors.ARG_EXPECTED_DOC_STATUS, expected);
+    }
+
+    /**
+     * sales 承付 release-on-invoice-approve hook（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #3）。
+     * AR 发票过账 = 实际收入产生 = 释放承付（红冲原 SALES_ORDER_COMMITMENT 凭证）。
+     *
+     * <p>实现路径：发票 approve 后置 → 经 invoiceLine.deliveryLineId 反查 delivery → delivery.orderId → order.code
+     * → 对每个唯一 order.code 调用 {@link IErpFinBudgetCommitmentBiz#release}（容错：无原凭证静默跳过）。
+     *
+     * <p>config-gated（{@code erp-fin.budget-commitment-enabled} 默认 false）。
+     */
+    protected void runCommitmentReleaseOnInvoiceApproveHook(ErpSalInvoice invoice, IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        Set<String> orderCodes = resolveLinkedOrderCodes(invoice);
+        if (orderCodes.isEmpty()) {
+            return;
+        }
+        for (String orderCode : orderCodes) {
+            try {
+                budgetCommitmentBiz.release(
+                        ErpFinConstants.COMMITMENT_SOURCE_BILL_SALES_ORDER, orderCode, context);
+            } catch (NopException e) {
+                if (!isCommitmentAlreadyReleased(e)) {
+                    throw e;
+                }
+            }
+        }
+    }
+
+    protected boolean isCommitmentAlreadyReleased(NopException e) {
+        return app.erp.fin.service.ErpFinErrors.ERR_BUDGET_COMMITMENT_ALREADY_RELEASED.getErrorCode()
+                .equals(e.getErrorCode());
+    }
+
+    /** 经 invoiceLine.deliveryLineId → deliveryLine.deliveryId → delivery.orderId → order.code 反查关联订单编码集合。 */
+    protected Set<String> resolveLinkedOrderCodes(ErpSalInvoice invoice) {
+        Set<String> codes = new HashSet<>();
+        List<ErpSalInvoiceLine> lines = loadLines(invoice.getId());
+        Set<Long> deliveryLineIds = new HashSet<>();
+        for (ErpSalInvoiceLine il : lines) {
+            if (il.getDeliveryLineId() != null) {
+                deliveryLineIds.add(il.getDeliveryLineId());
+            }
+        }
+        if (deliveryLineIds.isEmpty()) {
+            return codes;
+        }
+        IEntityDao<ErpSalDeliveryLine> dlDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
+        Set<Long> deliveryIds = new HashSet<>();
+        for (ErpSalDeliveryLine dl : dlDao.findAllByQuery(inQuery("id", deliveryLineIds))) {
+            if (dl.getDeliveryId() != null) {
+                deliveryIds.add(dl.getDeliveryId());
+            }
+        }
+        if (deliveryIds.isEmpty()) {
+            return codes;
+        }
+        IEntityDao<ErpSalDelivery> dDao = daoProvider.daoFor(ErpSalDelivery.class);
+        Set<Long> orderIds = new HashSet<>();
+        for (ErpSalDelivery d : dDao.findAllByQuery(inQuery("id", deliveryIds))) {
+            if (d.getOrderId() != null) {
+                orderIds.add(d.getOrderId());
+            }
+        }
+        if (orderIds.isEmpty()) {
+            return codes;
+        }
+        IEntityDao<ErpSalOrder> oDao = daoProvider.daoFor(ErpSalOrder.class);
+        for (ErpSalOrder o : oDao.findAllByQuery(inQuery("id", orderIds))) {
+            if (o.getCode() != null) {
+                codes.add(o.getCode());
+            }
+        }
+        return codes;
+    }
+
+    private static QueryBean inQuery(String field, Set<Long> values) {
+        QueryBean q = new QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.in(field, new ArrayList<>(values)));
+        return q;
     }
 }

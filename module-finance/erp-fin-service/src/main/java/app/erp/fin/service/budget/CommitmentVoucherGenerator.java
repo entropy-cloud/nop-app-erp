@@ -29,7 +29,9 @@ import java.util.List;
  * 简化实现：仅写 Dr 行（承付占用科目，金额取自 commit 入参），Cr 行使用同一科目反向（保持平衡），
  * 实际部署时由客户在 ErpMdSubject 中配置承付科目对（Dr 占用 / Cr 释放）。
  *
- * <p><b>业财回链</b>：{@code billType=PURCHASE_ORDER_COMMITMENT}，{@code billCode=订单 code}，便于按订单反查全部承付凭证。
+ * <p><b>业财回链</b>：billType 按 sourceBillType 派发（采购 → {@code PURCHASE_ORDER_COMMITMENT}，销售 →
+ * {@code SALES_ORDER_COMMITMENT}），{@code billCode=订单 code}，便于按订单反查全部承付凭证。三路径
+ * （commit/reverse/find）均使用 {@link #resolveCommitmentBillType} 派发的同一 billType，保证占用/释放 lookup 对称。
  *
  * <p>本类为 Bean（需 {@link IDaoProvider}），由 {@code ErpFinBudgetCommitmentBizModel} 在 commit/release 事务内调用。
  */
@@ -45,39 +47,43 @@ public class CommitmentVoucherGenerator {
     /**
      * 生成承付凭证（commit）。
      *
-     * @param sourceBillCode 订单号（业财回链 billCode）
-     * @param subject        承付占用科目
-     * @param costCenterId   成本中心（可空）
-     * @param orgId          组织
-     * @param acctSchemaId   账套
-     * @param periodId       期间
-     * @param currencyId     币种
-     * @param amount         金额（本位币，正数）
+     * @param sourceBillType  触发单据类型（派发业财回链 billType，避免跨场景 lookup 碰撞）
+     * @param sourceBillCode  订单号（业财回链 billCode）
+     * @param subject         承付占用科目
+     * @param costCenterId    成本中心（可空）
+     * @param orgId           组织
+     * @param acctSchemaId    账套
+     * @param periodId        期间
+     * @param currencyId      币种
+     * @param amount          金额（本位币，正数）
      * @return 凭证 ID
      */
-    public Long generateCommitment(String sourceBillCode, ErpMdSubject subject, Long costCenterId,
+    public Long generateCommitment(String sourceBillType, String sourceBillCode, ErpMdSubject subject, Long costCenterId,
                                    Long orgId, Long acctSchemaId, Long periodId, Long currencyId,
                                    BigDecimal amount) {
-        ErpFinVoucher voucher = writeCommitmentVoucher(sourceBillCode, subject, costCenterId, orgId,
+        String billType = resolveCommitmentBillType(sourceBillType);
+        ErpFinVoucher voucher = writeCommitmentVoucher(sourceBillCode, billType, subject, costCenterId, orgId,
                 acctSchemaId, periodId, currencyId, amount, false, null);
         return voucher != null ? voucher.getId() : null;
     }
 
     /**
-     * 红冲承付凭证（release）。按 {@code billCode=订单 code} 反查承付凭证，逐张生成红字冲销凭证
+     * 红冲承付凭证（release）。按 {@code sourceBillType 派发的 billType + billCode=订单 code} 反查承付凭证，逐张生成红字冲销凭证
      * （金额取负，{@code isReversed=true}，{@code reversalOfVoucherId} 指向原凭证）。
      *
+     * @param sourceBillType  触发单据类型（与 commit 时一致，派发 billType 保证 lookup 对称）
      * @return 红冲凭证 ID 列表（空列表表示无原凭证可红冲）
      */
-    public List<Long> reverseCommitment(String sourceBillCode) {
-        List<ErpFinVoucher> originals = findCommitmentVouchers(sourceBillCode);
+    public List<Long> reverseCommitment(String sourceBillType, String sourceBillCode) {
+        String billType = resolveCommitmentBillType(sourceBillType);
+        List<ErpFinVoucher> originals = findCommitmentVouchers(billType, sourceBillCode);
         List<Long> reversalIds = new ArrayList<>();
         for (ErpFinVoucher original : originals) {
             if (Boolean.TRUE.equals(original.getIsReversed())) {
                 continue;
             }
             List<ErpFinVoucherLine> origLines = loadVoucherLines(original.getId());
-            ErpFinVoucher reversal = writeReversalFromLines(original, origLines);
+            ErpFinVoucher reversal = writeReversalFromLines(original, origLines, billType);
             if (reversal != null) {
                 original.setIsReversed(true);
                 daoProvider.daoFor(ErpFinVoucher.class).updateEntity(original);
@@ -88,8 +94,9 @@ public class CommitmentVoucherGenerator {
     }
 
     /** 检查给定订单 code 是否存在未红冲的承付凭证（release 守卫：无原凭证时返回 false）。 */
-    public boolean hasUnreversedCommitment(String sourceBillCode) {
-        for (ErpFinVoucher v : findCommitmentVouchers(sourceBillCode)) {
+    public boolean hasUnreversedCommitment(String sourceBillType, String sourceBillCode) {
+        String billType = resolveCommitmentBillType(sourceBillType);
+        for (ErpFinVoucher v : findCommitmentVouchers(billType, sourceBillCode)) {
             if (!Boolean.TRUE.equals(v.getIsReversed())) {
                 return true;
             }
@@ -97,7 +104,19 @@ public class CommitmentVoucherGenerator {
         return false;
     }
 
-    private ErpFinVoucher writeCommitmentVoucher(String sourceBillCode, ErpMdSubject subject, Long costCenterId,
+    /**
+     * 按 sourceBillType 派发承付凭证业财回链 billType（plan 2026-07-24-1351-3 泛化）。
+     * 保证 commit/reverse/find 三路径使用同一 billType，使占用/释放 lookup 对称（不撞跨场景 billType）。
+     * 未知 sourceBillType 回退采购 billType（向后兼容既有 PURCHASE_ORDER 行为）。
+     */
+    public static String resolveCommitmentBillType(String sourceBillType) {
+        if (ErpFinConstants.COMMITMENT_SOURCE_BILL_SALES_ORDER.equals(sourceBillType)) {
+            return ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE_SALES;
+        }
+        return ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE;
+    }
+
+    private ErpFinVoucher writeCommitmentVoucher(String sourceBillCode, String billType, ErpMdSubject subject, Long costCenterId,
                                                  Long orgId, Long acctSchemaId, Long periodId, Long currencyId,
                                                  BigDecimal amount, boolean isReversal, Long reversalOfVoucherId) {
         if (amount == null || amount.signum() == 0 || subject == null) {
@@ -147,22 +166,22 @@ public class CommitmentVoucherGenerator {
         line.setAmountFunctional(absAmount);
         line.setAcctSchemaId(acctSchemaId);
         line.setOrgId(orgId);
-        line.setBusinessType(ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE);
-        line.setMemo(isReversal ? "承付释放红冲" : "采购订单承付占用");
+        line.setBusinessType(billType);
+        line.setMemo(isReversal ? "承付释放红冲" : "订单承付占用");
         line.setCostCenterId(costCenterId);
         lineDao.saveEntity(line);
 
         ErpFinVoucherBillR billR = billRDao.newEntity();
         billR.setVoucherId(voucherId);
-        billR.setBillType(ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE);
+        billR.setBillType(billType);
         billR.setBillCode(sourceBillCode);
-        billR.setBusinessType(ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE);
+        billR.setBusinessType(billType);
         billRDao.saveEntity(billR);
 
         return voucher;
     }
 
-    private ErpFinVoucher writeReversalFromLines(ErpFinVoucher original, List<ErpFinVoucherLine> origLines) {
+    private ErpFinVoucher writeReversalFromLines(ErpFinVoucher original, List<ErpFinVoucherLine> origLines, String billType) {
         if (origLines.isEmpty()) {
             return null;
         }
@@ -219,7 +238,7 @@ public class CommitmentVoucherGenerator {
             line.setAmountFunctional(origDebit.add(origCredit));
             line.setAcctSchemaId(ol.getAcctSchemaId());
             line.setOrgId(ol.getOrgId());
-            line.setBusinessType(ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE);
+            line.setBusinessType(billType);
             line.setMemo("承付释放红冲");
             line.setCostCenterId(ol.getCostCenterId());
             lineDao.saveEntity(line);
@@ -227,19 +246,19 @@ public class CommitmentVoucherGenerator {
 
         ErpFinVoucherBillR billR = billRDao.newEntity();
         billR.setVoucherId(reversalId);
-        billR.setBillType(ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE);
-        billR.setBillCode(findOriginalBillCode(original.getId()));
-        billR.setBusinessType(ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE);
+        billR.setBillType(billType);
+        billR.setBillCode(findOriginalBillCode(original.getId(), billType));
+        billR.setBusinessType(billType);
         billRDao.saveEntity(billR);
 
         return reversal;
     }
 
-    private String findOriginalBillCode(Long voucherId) {
+    private String findOriginalBillCode(Long voucherId, String billType) {
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucherId));
-        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("billType", ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE));
+        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("billType", billType));
         q.setLimit(1);
         List<ErpFinVoucherBillR> list = billRDao.findAllByQuery(q);
         return list.isEmpty() ? "" : list.get(0).getBillCode();
@@ -258,11 +277,11 @@ public class CommitmentVoucherGenerator {
         return dao.findAllByQuery(q);
     }
 
-    private List<ErpFinVoucher> findCommitmentVouchers(String sourceBillCode) {
+    private List<ErpFinVoucher> findCommitmentVouchers(String billType, String sourceBillCode) {
         IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         io.nop.api.core.beans.query.QueryBean bq = new io.nop.api.core.beans.query.QueryBean();
         bq.addFilter(io.nop.api.core.beans.FilterBeans.eq("billCode", sourceBillCode));
-        bq.addFilter(io.nop.api.core.beans.FilterBeans.eq("billType", ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE));
+        bq.addFilter(io.nop.api.core.beans.FilterBeans.eq("billType", billType));
         List<ErpFinVoucherBillR> links = billRDao.findAllByQuery(bq);
         if (links.isEmpty()) {
             return new ArrayList<>();

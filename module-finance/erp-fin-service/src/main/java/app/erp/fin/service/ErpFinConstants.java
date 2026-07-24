@@ -412,6 +412,8 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     String CONFIG_BUDGET_COMMITMENT_ENABLED = "erp-fin.budget-commitment-enabled";
     /** 承付占用科目编码（启用承付时必配）。 */
     String CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE = "erp-fin.budget-commitment-subject-code";
+    /** 销售承付占用科目编码（plan 2026-07-24-1351-3，与采购科目独立配置；sales 承付用收入面科目）。 */
+    String CONFIG_BUDGET_COMMITMENT_SALES_SUBJECT_CODE = "erp-fin.budget-commitment-sales-subject-code";
     /** 预算结转总开关（默认 false）。 */
     String CONFIG_BUDGET_CARRY_FORWARD_ENABLED = "erp-fin.budget-carry-forward-enabled";
     /** 预算结转缺省规则（默认 REMAINING_FULL）。 */
@@ -430,14 +432,18 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     /** A2 默认 REMAINING_RATIO 比例。 */
     java.math.BigDecimal DEFAULT_BUDGET_CARRY_FORWARD_RATIO = new java.math.BigDecimal("0.5");
 
-    /** 承付凭证业财回链 billType / businessType（不进入 ErpFinBusinessType 枚举，承付凭证不走 Provider 路由）。 */
+    /** 承付凭证业财回链 billType / businessType（采购场景，不进入 ErpFinBusinessType 枚举，承付凭证不走 Provider 路由）。 */
     String COMMITMENT_VOUCHER_BILL_TYPE = "PURCHASE_ORDER_COMMITMENT";
+    /** 承付凭证业财回链 billType / businessType（销售场景，plan 2026-07-24-1351-3，使 sales 承付 lookup 不撞采购 billType）。 */
+    String COMMITMENT_VOUCHER_BILL_TYPE_SALES = "SALES_ORDER_COMMITMENT";
     /** 承付凭证业财回链 billHeadCode 前缀（红冲按订单 code 反查）。 */
     String COMMITMENT_VOUCHER_BILL_CODE_PREFIX = "COMMITMENT-";
     /** 承付凭证红冲 billHeadCode 前缀。 */
     String COMMITMENT_VOUCHER_REVERSAL_BILL_CODE_PREFIX = "COMMITMENT-REVERSAL-";
     /** 承付触发单据类型：采购订单（IErpFinBudgetCommitmentBiz.commit 的 sourceBillType 入参）。 */
     String COMMITMENT_SOURCE_BILL_PURCHASE_ORDER = "PURCHASE_ORDER";
+    /** 承付触发单据类型：销售订单（plan 2026-07-24-1351-3，sales 承付 = 收入预算预留）。 */
+    String COMMITMENT_SOURCE_BILL_SALES_ORDER = "SALES_ORDER";
 
     /** 预算凭证业财回链 billType / businessType（不进入 ErpFinBusinessType 枚举，预算凭证不走 Provider 模型）。 */
     String BUDGET_VOUCHER_BILL_TYPE = "BUDGET_SCENARIO";
