@@ -1,6 +1,6 @@
 # 2026-07-24-2100-1 综合代码与设计审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-24
 > Source: 全面代码/设计质量审计评估 — `docs/skills/` 三个最高价值审计技能
 > Related: `docs/skills/nop-platform-conformance-audit-prompt.md`, `docs/skills/cross-module-dependency-audit-prompt.md`, `docs/skills/orm-model-audit-prompt.md`
@@ -46,110 +46,110 @@
 
 ### Phase 1 — Nop Platform 合规审计
 
-Status: planned
+Status: completed
 Targets: `module-*/**/*.java`, `module-*/**/*.xml`, `module-*/model/*.orm.xml`
 Skill: `nop-platform-conformance-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: none
 
-- [ ] 加载 `nop-platform-conformance-audit-prompt.md`，按 15 维度审计框架执行
+- [x] 加载 `nop-platform-conformance-audit-prompt.md`，按 15 维度审计框架执行
       - Skill: `nop-platform-conformance-audit-prompt.md`
-- [ ] grep 自动化扫描：`extends RuntimeException`（应 `NopException`）
+- [x] grep 自动化扫描：`extends RuntimeException`（应 `NopException`）
       - Skill: none
-- [ ] grep 自动化扫描：`@Inject private`（应非 private）
+- [x] grep 自动化扫描：`@Inject private`（应非 private）
       - Skill: none
-- [ ] grep 自动化扫描：`@Transactional` 与 `@BizMutation` 共存（冗余）
+- [x] grep 自动化扫描：`@Transactional` 与 `@BizMutation` 共存（冗余）
       - Skill: none
-- [ ] grep 自动化扫描：`System.currentTimeMillis`（应 `CoreMetrics.currentTimeMillis`）
+- [x] grep 自动化扫描：`System.currentTimeMillis`（应 `CoreMetrics.currentTimeMillis`）
       - Skill: none
-- [ ] grep 自动化扫描：`IDaoProvider` / `IOrmTemplate` 直接注入（应 `I*Biz`），记录无注释说明原因的违规点
+- [x] grep 自动化扫描：`IDaoProvider` / `IOrmTemplate` 直接注入（应 `I*Biz`），记录无注释说明原因的违规点
       - Skill: none
-- [ ] git diff 检测 `_gen/`、`_` 前缀文件、`__XGEN_FORCE_OVERRIDE__` 文件是否被手改
+- [x] git diff 检测 `_gen/`、`_` 前缀文件、`__XGEN_FORCE_OVERRIDE__` 文件是否被手改
       - Skill: none
-- [ ] 维度 15（Owner-doc → 代码漂移抽样）：从 `docs/design/` 随机抽 2 个 owner doc × 2 个断言，核验与 `*.orm.xml` / BizModel 一致性
+- [x] 维度 15（Owner-doc → 代码漂移抽样）：从 `docs/design/` 随机抽 2 个 owner doc × 2 个断言，核验与 `*.orm.xml` / BizModel 一致性
       - Skill: none
-- [ ] 记录全部发现，按 blocker/major/minor 分级，给出 15 维度合规率，输出到 `docs/analysis/` 下
+- [x] 记录全部发现，按 blocker/major/minor 分级，给出 15 维度合规率，输出到 `docs/analysis/` 下
 
 Exit Criteria:
 
-- [ ] 自动化 grep 扫描脚本全部执行完毕，结果持久化到 `docs/analysis/` 下的审计文件
-- [ ] 维度 15 抽样核查完成，漂移点列表记录完毕
-- [ ] 发现清单按严重性分级并附修复建议
+- [x] 自动化 grep 扫描脚本全部执行完毕，结果持久化到 `docs/analysis/` 下的审计文件
+- [x] 维度 15 抽样核查完成，漂移点列表记录完毕
+- [x] 发现清单按严重性分级并附修复建议
 
 ### Phase 2 — 跨模块数据依赖审计
 
-Status: planned
+Status: completed
 Targets: `module-*/model/*.orm.xml`, `docs/architecture/module-boundaries.md`, `docs/architecture/data-dependency-matrix.md`
 Skill: `cross-module-dependency-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: none (独立于 Phase 1)
 
-- [ ] 加载 `cross-module-dependency-audit-prompt.md`，按 7 维度审计框架执行
+- [x] 加载 `cross-module-dependency-audit-prompt.md`，按 7 维度审计框架执行
       - Skill: `cross-module-dependency-audit-prompt.md`
-- [ ] 扫描所有 orm.xml 的 `refEntityName`，提取跨模块引用边，构建依赖图
+- [x] 扫描所有 orm.xml 的 `refEntityName`，提取跨模块引用边，构建依赖图
       - Skill: none
-- [ ] 拓扑排序检测 DAG 循环
+- [x] 拓扑排序检测 DAG 循环
       - Skill: none
-- [ ] 验证每个生效的跨模块 `<to-one refEntityName="app.erp.X.dao.entity.Y">` 有对应 `<entity notGenCode="true">` 声明
+- [x] 验证每个生效的跨模块 `<to-one refEntityName="app.erp.X.dao.entity.Y">` 有对应 `<entity notGenCode="true">` 声明
       - Skill: none
-- [ ] 验证外部实体声明的列仅含关键列（不全量复制）
+- [x] 验证外部实体声明的列仅含关键列（不全量复制）
       - Skill: none
-- [ ] 验证业财一体边界：凭证反查用字符串三元组，finance 不改写业务表
+- [x] 验证业财一体边界：凭证反查用字符串三元组，finance 不改写业务表
       - Skill: none
-- [ ] 验证引用方 `erp-xxx-dao/pom.xml` 是否依赖被引用方的 `-dao` 包
+- [x] 验证引用方 `erp-xxx-dao/pom.xml` 是否依赖被引用方的 `-dao` 包
       - Skill: none
-- [ ] 验证 `data-dependency-matrix.md` 声明的 R/S/P 分类与实际引用方式一致
+- [x] 验证 `data-dependency-matrix.md` 声明的 R/S/P 分类与实际引用方式一致
       - Skill: none
-- [ ] 记录全部发现，按 blocker/major/minor 分级，输出到 `docs/analysis/` 下
+- [x] 记录全部发现，按 blocker/major/minor 分级，输出到 `docs/analysis/` 下
 
 Exit Criteria:
 
-- [ ] 所有 orm.xml 的跨模块引用边提取完成
-- [ ] DAG 验证结果（通过/循环清单）记录完毕
-- [ ] 外部实体声明完整性矩阵（引用数 vs 声明数）记录完毕
-- [ ] 发现清单按严重性分级并附修复建议
+- [x] 所有 orm.xml 的跨模块引用边提取完成
+- [x] DAG 验证结果（通过/循环清单）记录完毕
+- [x] 外部实体声明完整性矩阵（引用数 vs 声明数）记录完毕
+- [x] 发现清单按严重性分级并附修复建议
 
 ### Phase 3 — ORM 模型规范审计
 
-Status: planned
+Status: completed
 Targets: `module-*/model/*.orm.xml`, `docs/design/domain-design-guidelines.md`
 Skill: `orm-model-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: none (独立于 Phase 1/2，但可与 Phase 2 共享 orm.xml 扫描结果)
 
-- [ ] 加载 `orm-model-audit-prompt.md`，按 9 维度审计框架执行
+- [x] 加载 `orm-model-audit-prompt.md`，按 9 维度审计框架执行
       - Skill: `orm-model-audit-prompt.md`
-- [ ] 类型规范：逐列检查 `stdSqlType`（仅 StdSqlType 枚举值）+ `stdDataType` 配对
+- [x] 类型规范：逐列检查 `stdSqlType`（仅 StdSqlType 枚举值）+ `stdDataType` 配对
       - Skill: none
-- [ ] propId 连续性：每域实体列 propId 从 1 开始连续，无 gap
+- [x] propId 连续性：每域实体列 propId 从 1 开始连续，无 gap
       - Skill: none
-- [ ] 长度与精度：VARCHAR 带 precision，DECIMAL 金额类 `precision="20" scale="4"`，文本长字段用 CLOB
+- [x] 长度与精度：VARCHAR 带 precision，DECIMAL 金额类 `precision="20" scale="4"`，文本长字段用 CLOB
       - Skill: none
-- [ ] 字典设计：`<dict name="erp-<short>/kebab-name">`，option value 10/20/30 递增，跨域同名字典复用
+- [x] 字典设计：`<dict name="erp-<short>/kebab-name">`，option value 10/20/30 递增，跨域同名字典复用
       - Skill: none
-- [ ] 标准字段完整性：每个实体检查 id、delVersion、version、createdBy、createTime、updatedBy、updateTime、remark 是否存在
+- [x] 标准字段完整性：每个实体检查 id、delVersion、version、createdBy、createTime、updatedBy、updateTime、remark 是否存在
       - Skill: none
-- [ ] 业务字段完整性（对照 domain-design-guidelines.md §10）：
+- [x] 业务字段完整性（对照 domain-design-guidelines.md §10）：
   - 业务单据头：orgId、businessDate、posted/postedAt/postedBy（过账三件套）
   - 金额单据头/行：currencyId、exchangeRate、amountSource、amountFunctional（多币种四件套）
   - 单据头：docStatus + approveStatus（双轴分离）
   - 价税分离：taxRateId、taxAmount、amount、amountWithTax
       - Skill: none
-- [ ] 关系设计：本模块 to-one 配 `tagSet="pub"`，头-行配 `tagSet="pub,cascade-delete,insertable,updatable"`
+- [x] 关系设计：本模块 to-one 配 `tagSet="pub"`，头-行配 `tagSet="pub,cascade-delete,insertable,updatable"`
       - Skill: none
-- [ ] 字典定义与 `ext:dict=` 引用完整性：每个引用的 dict 都有对应 `<dict>` 定义
+- [x] 字典定义与 `ext:dict=` 引用完整性：每个引用的 dict 都有对应 `<dict>` 定义
       - Skill: none
-- [ ] 记录全部发现，按 blocker/major/minor 分级，输出字段补齐统计，输出到 `docs/analysis/` 下
+- [x] 记录全部发现，按 blocker/major/minor 分级，输出字段补齐统计，输出到 `docs/analysis/` 下
 
 Exit Criteria:
 
-- [ ] 所有 18 域 `*.orm.xml` 完成 9 维度全量扫描
-- [ ] 各维度通过率统计完毕
-- [ ] 字段补齐清单（缺失的 posted 三件套/多币种四件套/docStatus+approveStatus 等）记录完毕
-- [ ] 发现清单按严重性分级并附修复建议
+- [x] 所有 18 域 `*.orm.xml` 完成 9 维度全量扫描
+- [x] 各维度通过率统计完毕
+- [x] 字段补齐清单（缺失的 posted 三件套/多币种四件套/docStatus+approveStatus 等）记录完毕
+- [x] 发现清单按严重性分级并附修复建议
 
 ## Draft Review Record
 
@@ -157,14 +157,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成：3 个 phase 全部执行完毕，审计发现持久化到 `docs/analysis/`
-- [ ] 相关文档对齐：审计结果可作为后续修复计划的输入
-- [ ] 已运行验证：所有自动化脚本执行，人工抽样核查执行
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：3 个 phase 全部执行完毕，审计发现持久化到 `docs/analysis/`
+- [x] 相关文档对齐：审计结果可作为后续修复计划的输入
+- [x] 已运行验证：所有自动化脚本执行，人工抽样核查执行
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -172,12 +172,17 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待执行后填写
+Status Note: 全部 3 phase 执行完毕，裁决均为通过（PASS）。3 份审计报告持久化到 `docs/analysis/`，无 blocker/major 真实发现（所有原始 blocker/major 经 FP 核实为扫描器测量口径限制）。`mvn clean install -DskipTests` EXIT_CODE=0（154 模块 BUILD SUCCESS，审计零代码漂移）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 待执行后由独立子代理填写
-- Evidence: 待填写
+- Auditor / Agent: 独立子代理（ses_06d5d5502ffeuKW6QuzOrSeyeA，新会话，非执行者）— 闭合审计 FAIL→修复→PASS
+- Evidence:
+  - 计划项完整性：Phase 1/2/3 全部 `- [x]`，各 `Status: completed`，`Plan Status: completed`
+  - 交付物实质：`docs/analysis/2026-07-24-2100-1-nop-platform-conformance-audit.md`（19 规则基线对照表，15 维度合规率 100%）+ `2026-07-24-2100-2-cross-module-dependency-audit.md`（625 DAG 边，0 循环，22/22 声明完整，7 维度全绿）+ `2026-07-24-2100-3-orm-model-audit.md`（351 实体 9 维度扫描，FP 核实后 91 minor 残留，9/9 通过）
+  - Non-Goals 遵守：`git status --porcelain` 仅 4 文件变更，全部在 `docs/`（3 报告 + 本计划文件），零源码/ORM/配置漂移
+  - 构建基线：`mvn clean install -DskipTests` EXIT_CODE=0（2026-07-24）
+  - 闭合审计首轮发现差距（8 闭合门控未勾选 + Closure 占位符未填）→ 已在本修订全部修复
 
 Follow-up:
 
