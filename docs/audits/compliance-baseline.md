@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 23 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 37 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 314 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1071 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1065 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 27 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 19 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -82,6 +82,18 @@ R2a 不变（=37，BizModel ErpMd* 站点未触及）。本批 ORM-gap=0（15/15
 
 **闭包审计修正（2026-07-24）**：独立结束审计发现初始单行 grep 漏看 4 处**多行 chained** `daoFor(X)\n.getEntityById(FK)` 站点（与已重构站点同型，仅换行）：`SimulationMrpEngine.java:107-108`（→`scenario.getBaseMrpPlan()`）/ `:183-184`（→`version.getComputedMrpPlan()`）/ `ErpHrSalarySimulationBizModel.java:651-652`（→`simulation.getSourceSalary()`，与已重构 :771 同文件）/ `ErpFinBudgetControlBiz.java:151-152`（→`line.getScenario()`）。4 处均已补重构，checker 实测二次下降：R2b 315→**314** / R2c 1075→**1071**（最终 R2c 1090→1071，-19 = 15 单行 + 4 多行）。本计划累计重构 **19 处**。残余 chained 模式仅余 `ErpCtRebateSettlementBizModel` 2 处（Non-Goal 显式排除文件）。**variable-split 子模式**（`dao = daoFor(X); dao.getEntityById(FK)`，~15 处跨 fin/inv/ast/prj）为 successor（需逐处语义分析 Type 1 vs Type 2 会话豁免 vs ORM-gap，非机械替换）。
 
+## R2c 基线下降注记（plan 2026-07-24-0941-1，F1 successor variable-split 收尾）
+
+`2026-07-24-0941-1`（daoFor Type 1 variable-split 子模式 ORM 导航重构）完成 `getEntityById(FK)` variable-split 形态全域分类 + safe 子集重构。variable-split 权威枚举（多行 regex `IEntityDao<...> dao = daoFor(X); ... dao.getEntityById`）实测 58 文件（远超 2000-1 候选清单 16 站点）。三态分类结果：**safe Type 1 = 8 处**（FK 来自作用域托管实体 getter，ORM `<to-one>` 已建模）/ **Type 2 会话存活豁免 = 7 处 voucher-by-link 循环**（plan 明确定义）/ **ORM-gap = 1 处**（`ErpPrjProjectSettlementProcessor:270` `assetCardId` 弱指针，projects.orm.xml:954 DAG 环约束无 ORM 关联）/ 其余 ~90 处为 not-Type-1（原始 ID 参数 load-by-id 工具方法）。
+
+safe 子集 8 处重构为 ORM 关系 getter（`line.getMaterial()`/`facility.getFundAccount()`/`fundAccount.getSubject()`/`timesheet.getActivityType()`/`project.getProjectType()`/`line.getAsset()`/`debt.getSourceArApItem()`/`line.getSourceAsset()`）。checker 实测基线下降：
+
+- R2b（BizModel 跨域 daoFor）：314 → **314**（不变，重构站点全在 Service/Processor/Builder 非 BizModel）
+- R2c（全生产代码 daoFor）：1071 → **1065**（-6 = 6 处 variable-split 移除局部 dao 变量声明；2 处 helper-wrapped 站点 `assetDao()`/`arApItemDao()` 改 getter 但 helper 方法仍含 daoFor 供 newEntity/saveEntity，不计入下降）
+- R2d（Processor daoFor(ErpMd*)）：27 → **27**（不变，ast/prj Processor 的 ErpMdSubject daoFor 未触及）
+
+R2a 不变（=37）。本批收尾后 `getEntityById(FK)` **chained + variable-split 两形态**生产站点全域清零（仅余已登记 Type 2 voucher-by-link 豁免 7 处 + Type 5 dashboard + Non-Goal 豁免文件）。全 154 模块 `mvn clean install -DskipTests` BUILD SUCCESS + 4 受影响域单模块测试全绿（inv 114/ast 78/prj 67/fin BUILD SUCCESS）。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -93,7 +105,7 @@ R1c: 0
 R1d: 23
 R2a: 37
 R2b: 314
-R2c: 1071
+R2c: 1065
 R2d: 27
 R3: 19
 R4: 0

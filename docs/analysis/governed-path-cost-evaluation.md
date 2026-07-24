@@ -106,11 +106,11 @@ daoFor 真违规子集分两类，**重构前置条件不同**：
 
 **`findAllByQuery` Type 1 评估结论**：全域 113 处 `daoFor(...).findAllByQuery(...)` 生产站点经抽样评估（CrpLoadCalculator/DrpDemandAggregator/ReceiptSettler/各 *ReportBizModel），可机械替换为 ORM 导航的候选 **<10 处**（普遍含复合条件 + 调用方以 ID 参数构造 query 非持有托管父实体）→ **watch-only residual**，successor 触发条件（≥10 处可机械替换）未满足，不开 successor。
 
-**variable-split 子模式 successor**：独立结束审计发现 `IEntityDao<X> dao = daoFor(X); dao.getEntityById(FK)` 变量拆分形式另有 ~15 处（跨 fin/inv/ast/prj 域）。该子模式需逐处语义分析（部分为 Type 2 会话存活豁免——如 voucher link 查询 batch 1 已豁免；部分为 Type 1 可替换），非纯机械替换 → 归 **successor**（触发条件：逐处 Type 1/Type 2 分类完成）。
+**variable-split 子模式收尾（plan 2026-07-24-0941-1，F1 successor 落地）**：`IEntityDao<X> dao = daoFor(X); dao.getEntityById(FK)` 变量拆分形态经全域多行 regex 权威枚举（58 文件，远超 2000-1 候选清单 16 站点）逐处三态分类后收尾。safe Type 1 = 8 处（FK 来自作用域托管实体 getter，ORM `<to-one>` 已建模，重构为 getter）/ Type 2 会话存活豁免 = 7 处 voucher-by-link 循环（plan 明确定义，登记理由保留）/ ORM-gap = 1 处（`ErpPrjProjectSettlementProcessor:270` `assetCardId` 弱指针，projects.orm.xml:954 DAG 环约束）/ 其余 ~90 处为 not-Type-1（原始 ID 参数 load-by-id 工具方法）。checker R2c 1071→1065（-6，6 处 variable-split 移除局部 dao 变量；2 处 helper-wrapped 改 getter 但 helper 仍含 daoFor）。R2b/R2d/R2a 不变。全 154 模块 BUILD SUCCESS + 4 受影响域测试全绿。**此 successor 触发条件已满足并完成**。
 
 **MrpReleaseService 豁免裁决**：该文件跨域写豁免（mfg→pur `ErpPurOrder`，`posting-exemptions.md` 登记）与同域只读 `getEntityById(line.getMrpPlanId())`（mfg→mfg `ErpMfgMrpPlan`）独立处理——裁决=选 A（局部重构 3 处只读站点为 `line.getMrpPlan()`，豁免仅约束跨域写路径；`posting-exemptions.md` 无需改动）。
 
-**Type 1 `getEntityById(FK)` chained 工作流收尾**：两批共重构 37 处（batch1 18 + batch2 19），checker 累计下降 R2b 319→314（-5）/ R2c 1108→1071（-37）/ R2d 34→27（-7）。`getEntityById(FK)` chained 模式全域清零，Type 1 chained 工作流**收尾**。残余形态：variable-split 子模式（successor）、`findAllByQuery` 子集（watch-only residual）、Type 4（既定阻塞 successor）。
+**Type 1 `getEntityById(FK)` 全形态工作流收尾**：chained 两批共重构 37 处（batch1 18 + batch2 19）+ variable-split safe 子集 8 处 = **累计 45 处**，checker 累计下降 R2b 319→314（-5）/ R2c 1108→1065（-43）/ R2d 34→27（-7）。`getEntityById(FK)` **chained + variable-split 两形态**全域清零（仅余已登记 Type 2 voucher-by-link 豁免 7 处 + Type 5 dashboard + ErpCtRebateSettlementBizModel Non-Goal 排除 + helper-wrapped 广义模式 successor 边界），Type 1 `getEntityById(FK)` 工作流**收尾**。残余形态：`findAllByQuery` 子集（watch-only residual）、Type 4（既定阻塞 successor）、helper-wrapped chained-via-helper 变体（独立 successor 边界）。
 
 ## 4. 重构前置条件总结
 
