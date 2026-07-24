@@ -35,6 +35,12 @@ public class SubcontractReceiptAcctDocProvider implements IErpFinAcctDocProvider
     static final String KEY_FINISHED_COST = "FINISHED_COST";
     static final String KEY_FINISHED_SUBJECT = "FINISHED_SUBJECT";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FINISHED_GOODS(借方产成品) 域专用键；SUBCONTRACT_MATERIAL(贷方汇总) 域专用键。
+     */
+    static final String ACCOUNT_KEY_FINISHED_GOODS = "FINISHED_GOODS";
+    static final String ACCOUNT_KEY_SUBCONTRACT_MATERIAL = "SUBCONTRACT_MATERIAL";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.unmodifiableSet(EnumSet.of(ErpFinBusinessType.SUBCONTRACT_RECEIPT));
@@ -62,11 +68,11 @@ public class SubcontractReceiptAcctDocProvider implements IErpFinAcctDocProvider
             String materialCode = readString(line.get(KEY_MATERIAL_CODE), "");
 
             facts.add(fact(finishedSubject, "产成品", DC_DEBIT, lineCost,
-                    buildMemo(subcontractCode, materialCode), event));
+                    buildMemo(subcontractCode, materialCode), event, ACCOUNT_KEY_FINISHED_GOODS));
         }
 
         facts.add(fact(subcontractSubject, "委外物资", DC_CREDIT, totalCost,
-                buildMemo(subcontractCode, null), event));
+                buildMemo(subcontractCode, null), event, ACCOUNT_KEY_SUBCONTRACT_MATERIAL));
         return facts;
     }
 
@@ -77,12 +83,13 @@ public class SubcontractReceiptAcctDocProvider implements IErpFinAcctDocProvider
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection,
-                             BigDecimal amount, String memo, PostingEvent event) {
+                             BigDecimal amount, String memo, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(memo);
         return fact;

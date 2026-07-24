@@ -38,6 +38,13 @@ public class MaintenanceCapitalizationAcctDocProvider implements IErpFinAcctDocP
     static final String SUBJECT_BANK = "1002";          // 银行存款
     static final String SUBJECT_INVENTORY = "1403";     // 存货
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET/BANK_DEPOSIT 通用键复用；MAINTENANCE_CLEARING 域专用键。
+     */
+    static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
+    static final String ACCOUNT_KEY_MAINTENANCE_CLEARING = "MAINTENANCE_CLEARING";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.MAINTENANCE_CAPITALIZATION);
@@ -55,22 +62,23 @@ public class MaintenanceCapitalizationAcctDocProvider implements IErpFinAcctDocP
         String bankSubject = readCode(event, ErpAstConstants.BILL_DATA_MAINTENANCE_BANK_SUBJECT_CODE, SUBJECT_BANK);
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event));
+        facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
         if (linkedVisit) {
-            facts.add(fact(clearingSubject, "维修中转清算", DC_CREDIT, amount, event));
+            facts.add(fact(clearingSubject, "维修中转清算", DC_CREDIT, amount, event, ACCOUNT_KEY_MAINTENANCE_CLEARING));
         } else {
-            facts.add(fact(bankSubject, "银行存款", DC_CREDIT, amount, event));
+            facts.add(fact(bankSubject, "银行存款", DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
         }
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

@@ -44,6 +44,12 @@ public class ManufacturingIssueAcctDocProvider implements IErpFinAcctDocProvider
     static final String KEY_MATERIAL_COST = "MATERIAL_COST";
     static final String KEY_INVENTORY_SUBJECT = "INVENTORY_SUBJECT";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：INVENTORY(贷方原材料) 通用键复用；MANUFACTURING_WIP(借方汇总) 域专用键。
+     */
+    static final String ACCOUNT_KEY_INVENTORY = "INVENTORY";
+    static final String ACCOUNT_KEY_MANUFACTURING_WIP = "MANUFACTURING_WIP";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.unmodifiableSet(EnumSet.of(ErpFinBusinessType.MANUFACTURING_ISSUE));
@@ -71,12 +77,12 @@ public class ManufacturingIssueAcctDocProvider implements IErpFinAcctDocProvider
 
             // 贷方：原材料存货（按物料分列）
             facts.add(fact(invSubject, "原材料存货", DC_CREDIT, lineCost,
-                    buildMemo(workOrderCode, materialCode), event));
+                    buildMemo(workOrderCode, materialCode), event, ACCOUNT_KEY_INVENTORY));
         }
 
         // 借方：WIP 在制品（汇总）
         facts.add(fact(wipSubject, "在制品-WIP", DC_DEBIT, totalCost,
-                buildMemo(workOrderCode, null), event));
+                buildMemo(workOrderCode, null), event, ACCOUNT_KEY_MANUFACTURING_WIP));
 
         return facts;
     }
@@ -88,12 +94,13 @@ public class ManufacturingIssueAcctDocProvider implements IErpFinAcctDocProvider
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection,
-                             BigDecimal amount, String memo, PostingEvent event) {
+                             BigDecimal amount, String memo, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(memo);
         return fact;

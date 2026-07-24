@@ -31,6 +31,12 @@ public class DepreciationAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_EXPENSE = "6602";       // 折旧费用（管理费用）
     static final String SUBJECT_ACCUM_DEPRE = "1602";   // 累计折旧
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：DEPRECIATION_EXPENSE/ACCUMULATED_DEPRECIATION 通用键复用。
+     */
+    static final String ACCOUNT_KEY_DEPRECIATION_EXPENSE = "DEPRECIATION_EXPENSE";
+    static final String ACCOUNT_KEY_ACCUMULATED_DEPRECIATION = "ACCUMULATED_DEPRECIATION";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.DEPRECIATION);
@@ -43,18 +49,19 @@ public class DepreciationAcctDocProvider implements IErpFinAcctDocProvider {
         String accumSubject = readCode(event, ErpAstConstants.BILL_DATA_ACCUM_DEPRE_SUBJECT_CODE, SUBJECT_ACCUM_DEPRE);
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(expenseSubject, "折旧费用", DC_DEBIT, amount, event));
-        facts.add(fact(accumSubject, "累计折旧", DC_CREDIT, amount, event));
+        facts.add(fact(expenseSubject, "折旧费用", DC_DEBIT, amount, event, ACCOUNT_KEY_DEPRECIATION_EXPENSE));
+        facts.add(fact(accumSubject, "累计折旧", DC_CREDIT, amount, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION));
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

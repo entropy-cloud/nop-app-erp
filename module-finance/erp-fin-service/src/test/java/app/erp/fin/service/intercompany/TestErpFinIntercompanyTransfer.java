@@ -128,6 +128,155 @@ public class TestErpFinIntercompanyTransfer extends JunitAutoTestCase {
         assertTrue(voucherIds.isEmpty(), "同法人调拨不应生成凭证");
     }
 
+    // ---------- 跨公司 PO/SO trade-document 路径（plan 2026-07-24-1351-2）----------
+
+    @Test
+    public void testCrossLegalEntityPurchaseOrderGeneratesPairedVouchers() {
+        Long[] ids = seedReturn(() -> {
+            ErpMdOrganization seller = seedOrganization("ORG-PO-S", "卖方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            ErpMdOrganization buyer = seedOrganization("ORG-PO-B", "买方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            // 定价规则：fromOrg=seller(卖方) → toOrg=buyer(买方)，编码 intercompany 关系
+            seedPricingRule(seller.getId(), buyer.getId());
+            seedSubject("1131", "内部应收");
+            seedSubject("5001", "内部销售收入");
+            seedSubject("1401", "内部采购成本");
+            seedSubject("2202", "内部应付");
+            seedOpenPeriod("2026-IC-PO", 2026, 7);
+            return new Long[]{seller.getId(), buyer.getId()};
+        });
+        transferPriceResolver.invalidateCache();
+        Long sellerId = ids[0];
+        Long buyerId = ids[1];
+
+        List<Long> voucherIds = ormTemplate.runInSession(session ->
+                intercompanyTransferBiz.onTradeDocumentApproved(
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, 7001L, "PO-TEST-1",
+                        buyerId, new BigDecimal("1000"), LocalDate.of(2026, 7, 15), CTX));
+
+        assertEquals(2, voucherIds.size(), "跨法人 PO approve 应生成 2 条配对凭证（AR + AP）");
+
+        ErpFinVoucher arVoucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(voucherIds.get(0));
+        assertEquals(sellerId, arVoucher.getOrgId(), "AR 凭证 orgId 应为卖方法人（对手方）");
+
+        ErpFinVoucher apVoucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(voucherIds.get(1));
+        assertEquals(buyerId, apVoucher.getOrgId(), "AP 凭证 orgId 应为买方法人（执行方）");
+
+        assertIntercompanyBillR(voucherIds.get(0), ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, "PO-TEST-1");
+        assertIntercompanyBillR(voucherIds.get(1), ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, "PO-TEST-1");
+        assertVoucherBalanced(voucherIds.get(0), new BigDecimal("1000"));
+    }
+
+    @Test
+    public void testCrossLegalEntitySalesOrderGeneratesPairedVouchers() {
+        Long[] ids = seedReturn(() -> {
+            ErpMdOrganization seller = seedOrganization("ORG-SO-S", "卖方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            ErpMdOrganization buyer = seedOrganization("ORG-SO-B", "买方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            seedPricingRule(seller.getId(), buyer.getId());
+            seedSubject("1131", "内部应收");
+            seedSubject("5001", "内部销售收入");
+            seedSubject("1401", "内部采购成本");
+            seedSubject("2202", "内部应付");
+            seedOpenPeriod("2026-IC-SO", 2026, 7);
+            return new Long[]{seller.getId(), buyer.getId()};
+        });
+        transferPriceResolver.invalidateCache();
+        Long sellerId = ids[0];
+        Long buyerId = ids[1];
+
+        List<Long> voucherIds = ormTemplate.runInSession(session ->
+                intercompanyTransferBiz.onTradeDocumentApproved(
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_SALES_ORDER, 8001L, "SO-TEST-1",
+                        sellerId, new BigDecimal("2000"), LocalDate.of(2026, 7, 16), CTX));
+
+        assertEquals(2, voucherIds.size(), "跨法人 SO approve 应生成 2 条配对凭证（AR + AP）");
+        assertEquals(sellerId,
+                daoProvider.daoFor(ErpFinVoucher.class).getEntityById(voucherIds.get(0)).getOrgId(),
+                "AR 凭证 orgId 应为卖方法人（执行方）");
+        assertEquals(buyerId,
+                daoProvider.daoFor(ErpFinVoucher.class).getEntityById(voucherIds.get(1)).getOrgId(),
+                "AP 凭证 orgId 应为买方法人（对手方）");
+        assertVoucherBalanced(voucherIds.get(0), new BigDecimal("2000"));
+    }
+
+    @Test
+    public void testTradeDocumentReverseApproveRedLetters() {
+        Long[] ids = seedReturn(() -> {
+            ErpMdOrganization seller = seedOrganization("ORG-RV-S", "卖方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            ErpMdOrganization buyer = seedOrganization("ORG-RV-B", "买方法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            seedPricingRule(seller.getId(), buyer.getId());
+            seedSubject("1131", "内部应收");
+            seedSubject("5001", "内部销售收入");
+            seedSubject("1401", "内部采购成本");
+            seedSubject("2202", "内部应付");
+            seedOpenPeriod("2026-IC-RV", 2026, 7);
+            return new Long[]{seller.getId(), buyer.getId()};
+        });
+        transferPriceResolver.invalidateCache();
+        Long buyerId = ids[1];
+
+        String docCode = "PO-REV-1";
+        List<Long> originalIds = ormTemplate.runInSession(session ->
+                intercompanyTransferBiz.onTradeDocumentApproved(
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, 9001L, docCode,
+                        buyerId, new BigDecimal("500"), LocalDate.of(2026, 7, 17), CTX));
+        assertEquals(2, originalIds.size(), "前置：approve 应生成 2 条配对凭证");
+
+        List<Long> reversalIds = ormTemplate.runInSession(session ->
+                intercompanyTransferBiz.onTradeDocumentReversed(
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, 9001L, docCode, CTX));
+        assertEquals(2, reversalIds.size(), "reverseApprove 应红冲 2 条配对凭证");
+
+        for (Long originalId : originalIds) {
+            ErpFinVoucher original = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(originalId);
+            assertTrue(Boolean.TRUE.equals(original.getIsReversed()), "原凭证应标记 isReversed=true");
+        }
+        for (Long reversalId : reversalIds) {
+            ErpFinVoucher reversal = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(reversalId);
+            assertTrue(Boolean.TRUE.equals(reversal.getIsReversed()), "红冲凭证应 isReversed=true");
+            assertTrue(reversal.getReversalOfVoucherId() != null, "红冲凭证应回链原凭证 reversalOfVoucherId");
+        }
+    }
+
+    @Test
+    public void testSameLegalEntityTradeDocumentNoVoucher() {
+        Long[] ids = seedReturn(() -> {
+            ErpMdOrganization solo = seedOrganization("ORG-SOLO", "单法人", ErpFinConstants.ORG_TYPE_COMPANY, null);
+            return new Long[]{solo.getId()};
+        });
+
+        List<Long> voucherIds = ormTemplate.runInSession(session ->
+                intercompanyTransferBiz.onTradeDocumentApproved(
+                        ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER, 9101L, "PO-SOLO-1",
+                        ids[0], new BigDecimal("300"), LocalDate.of(2026, 7, 18), CTX));
+        assertTrue(voucherIds.isEmpty(), "无定价规则（无对手方）的单法人订单不应生成 intercompany 凭证");
+    }
+
+    // ---------- trade-document 断言辅助 ----------
+
+    private void assertIntercompanyBillR(Long voucherId, String billType, String expectedBillCode) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        q.addFilter(eq("billType", billType));
+        List<ErpFinVoucherBillR> links = daoProvider.daoFor(ErpFinVoucherBillR.class).findAllByQuery(q);
+        assertEquals(1, links.size(), "凭证应写 1 条 " + billType + " 业财回链");
+        assertEquals(expectedBillCode, links.get(0).getBillCode(), "业财回链 billCode 应为订单 code");
+    }
+
+    private void assertVoucherBalanced(Long voucherId, BigDecimal expectedAmount) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        List<ErpFinVoucherLine> lines = daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(q);
+        assertEquals(2, lines.size(), "凭证应有借/贷 2 行");
+        BigDecimal totalDebit = lines.stream()
+                .map(l -> l.getDebitAmount() != null ? l.getDebitAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalCredit = lines.stream()
+                .map(l -> l.getCreditAmount() != null ? l.getCreditAmount() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        assertEquals(0, totalDebit.compareTo(totalCredit), "凭证借贷应平衡");
+        assertEquals(0, totalDebit.compareTo(expectedAmount), "凭证金额应为订单金额 " + expectedAmount);
+    }
+
     // ---------- helpers ----------
 
     private <T> T seedReturn(java.util.function.Supplier<T> action) {

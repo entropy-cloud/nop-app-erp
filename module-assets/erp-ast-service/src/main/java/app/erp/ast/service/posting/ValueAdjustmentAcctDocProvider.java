@@ -38,6 +38,14 @@ public class ValueAdjustmentAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_IMPAIRMENT_PROVISION = "1604";     // 固定资产减值准备
     static final String SUBJECT_CAPITAL_RESERVE = "4002";          // 资本公积-其他资本公积
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET 通用键复用；IMPAIRMENT_LOSS/IMPAIRMENT_PROVISION/CAPITAL_RESERVE 域专用键。
+     */
+    static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
+    static final String ACCOUNT_KEY_IMPAIRMENT_LOSS = "IMPAIRMENT_LOSS";
+    static final String ACCOUNT_KEY_IMPAIRMENT_PROVISION = "IMPAIRMENT_PROVISION";
+    static final String ACCOUNT_KEY_CAPITAL_RESERVE = "CAPITAL_RESERVE";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.VALUE_ADJUSTMENT);
@@ -59,25 +67,26 @@ public class ValueAdjustmentAcctDocProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (Objects.equals(adjustmentType, ErpAstConstants.ADJUSTMENT_TYPE_IMPAIRMENT)) {
-            facts.add(fact(impairmentLossSubject, "资产减值损失", DC_DEBIT, amount, event));
-            facts.add(fact(impairmentProvisionSubject, "固定资产减值准备", DC_CREDIT, amount, event));
+            facts.add(fact(impairmentLossSubject, "资产减值损失", DC_DEBIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_LOSS));
+            facts.add(fact(impairmentProvisionSubject, "固定资产减值准备", DC_CREDIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_PROVISION));
         } else if (Objects.equals(adjustmentType, ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_UP)) {
-            facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event));
-            facts.add(fact(capitalReserveSubject, "资本公积-其他资本公积", DC_CREDIT, amount, event));
+            facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
+            facts.add(fact(capitalReserveSubject, "资本公积-其他资本公积", DC_CREDIT, amount, event, ACCOUNT_KEY_CAPITAL_RESERVE));
         } else if (Objects.equals(adjustmentType, ErpAstConstants.ADJUSTMENT_TYPE_REVALUATION_DOWN)) {
-            facts.add(fact(impairmentLossSubject, "资产减值损失", DC_DEBIT, amount, event));
-            facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, amount, event));
+            facts.add(fact(impairmentLossSubject, "资产减值损失", DC_DEBIT, amount, event, ACCOUNT_KEY_IMPAIRMENT_LOSS));
+            facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
         }
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

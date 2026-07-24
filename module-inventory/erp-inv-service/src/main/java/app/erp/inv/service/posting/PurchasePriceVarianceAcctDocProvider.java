@@ -46,6 +46,12 @@ public class PurchasePriceVarianceAcctDocProvider implements IErpFinAcctDocProvi
     static final String DIRECTION_DEBIT = "DEBIT";
     static final String DIRECTION_CREDIT = "CREDIT";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：PURCHASE_PRICE_VARIANCE 域专用键（1404）；ACCOUNTS_PAYABLE 通用键复用。
+     */
+    static final String ACCOUNT_KEY_PURCHASE_PRICE_VARIANCE = "PURCHASE_PRICE_VARIANCE";
+    static final String ACCOUNT_KEY_ACCOUNTS_PAYABLE = "ACCOUNTS_PAYABLE";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.unmodifiableSet(EnumSet.of(ErpFinBusinessType.PURCHASE_PRICE_VARIANCE));
@@ -60,22 +66,27 @@ public class PurchasePriceVarianceAcctDocProvider implements IErpFinAcctDocProvi
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (DIRECTION_DEBIT.equals(direction)) {
-            facts.add(fact(SUBJECT_PPV, "材料成本差异", DC_DEBIT, amount, materialId, warehouseId, event));
-            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_CREDIT, amount, materialId, warehouseId, event));
+            facts.add(fact(SUBJECT_PPV, "材料成本差异", DC_DEBIT, amount, materialId, warehouseId, event,
+                    ACCOUNT_KEY_PURCHASE_PRICE_VARIANCE));
+            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_CREDIT, amount, materialId, warehouseId, event,
+                    ACCOUNT_KEY_ACCOUNTS_PAYABLE));
         } else {
-            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_DEBIT, amount, materialId, warehouseId, event));
-            facts.add(fact(SUBJECT_PPV, "材料成本差异", DC_CREDIT, amount, materialId, warehouseId, event));
+            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_DEBIT, amount, materialId, warehouseId, event,
+                    ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+            facts.add(fact(SUBJECT_PPV, "材料成本差异", DC_CREDIT, amount, materialId, warehouseId, event,
+                    ACCOUNT_KEY_PURCHASE_PRICE_VARIANCE));
         }
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             Long materialId, Long warehouseId, PostingEvent event) {
+                             Long materialId, Long warehouseId, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMaterialId(materialId);
         fact.setWarehouseId(warehouseId);

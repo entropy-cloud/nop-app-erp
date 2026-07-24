@@ -1303,6 +1303,29 @@ dict.option.label:
     INTERCOMPANY_AP: Intercompany AP
     INTERCOMPANY_REVENUE: Intercompany Revenue
     INTERCOMPANY_COST: Intercompany Cost
+    COST_VARIANCE: Cost Variance
+    PURCHASE_PRICE_VARIANCE: Purchase Price Variance
+    MANUFACTURING_WIP: Manufacturing WIP
+    MANUFACTURING_VARIANCE: Manufacturing Variance
+    SUBCONTRACT_MATERIAL: Subcontract Material
+    FINISHED_GOODS: Finished Goods
+    CIP: Construction In Progress
+    IMPAIRMENT_LOSS: Impairment Loss
+    IMPAIRMENT_PROVISION: Impairment Provision
+    CAPITAL_RESERVE: Capital Reserve
+    NON_OPERATING_INCOME: Non-Operating Income
+    NON_OPERATING_EXPENSE: Non-Operating Expense
+    PROJECT_COST: Project Cost
+    PROFIT_LOSS: Profit For Current Year
+    MAINTENANCE_EXPENSE: Maintenance Expense
+    MAINTENANCE_CLEARING: Maintenance Clearing
+    NOTES_RECEIVABLE: Notes Receivable
+    NOTES_PAYABLE: Notes Payable
+    EMPLOYEE_ADVANCE_RECEIVABLE: Employee Advance Receivable
+    EMPLOYEE_PAYABLE: Employee Payable
+    FINANCIAL_EXPENSE: Financial Expense
+    EXCHANGE_GAIN_LOSS: Exchange Gain Loss
+    ADMIN_EXPENSE: Admin Expense
   erp-fin/period-status:
     OPEN: Open
     CLOSING: Closing

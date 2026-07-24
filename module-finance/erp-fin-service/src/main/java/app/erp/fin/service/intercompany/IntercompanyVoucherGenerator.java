@@ -112,6 +112,157 @@ public class IntercompanyVoucherGenerator {
     }
 
     /**
+     * 红冲配对 intercompany 凭证（reverseApprove）。按 {@code billCode} 反查 approve 时生成的配对凭证
+     * （billType=INTERCOMPANY_SALE/PURCHASE），逐张生成红字冲销凭证（借贷互换、isReversed=true、reversalOfVoucherId 回链）。
+     *
+     * <p>对齐 {@code CommitmentVoucherGenerator.reverseCommitment} 范式（plan 2026-07-24-1351-2）。
+     *
+     * @param sourceBillCode 业财回链 billCode（订单 code）
+     * @return 红冲凭证 ID 列表（空列表表示无原凭证可红冲）
+     */
+    public List<Long> reverseIntercompany(String sourceBillCode) {
+        List<ErpFinVoucher> originals = findIntercompanyVouchers(sourceBillCode);
+        List<Long> reversalIds = new ArrayList<>();
+        for (ErpFinVoucher original : originals) {
+            if (Boolean.TRUE.equals(original.getIsReversed())) {
+                continue;
+            }
+            List<ErpFinVoucherLine> origLines = loadVoucherLines(original.getId());
+            ErpFinVoucher reversal = writeIntercompanyReversalFromLines(original, origLines);
+            if (reversal != null) {
+                original.setIsReversed(true);
+                daoProvider.daoFor(ErpFinVoucher.class).updateEntity(original);
+                reversalIds.add(reversal.getId());
+            }
+        }
+        LOG.info("跨法人内部交易红冲：单据 {} → 红冲凭证 {}", sourceBillCode, reversalIds);
+        return reversalIds;
+    }
+
+    /** 检查给定 billCode 是否存在未红冲的 intercompany 配对凭证（reverseApprove 守卫）。 */
+    public boolean hasUnreversedIntercompany(String sourceBillCode) {
+        for (ErpFinVoucher v : findIntercompanyVouchers(sourceBillCode)) {
+            if (!Boolean.TRUE.equals(v.getIsReversed())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<ErpFinVoucher> findIntercompanyVouchers(String sourceBillCode) {
+        IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+        io.nop.api.core.beans.query.QueryBean bq = new io.nop.api.core.beans.query.QueryBean();
+        bq.addFilter(io.nop.api.core.beans.FilterBeans.eq("billCode", sourceBillCode));
+        bq.addFilter(io.nop.api.core.beans.FilterBeans.in("billType",
+                java.util.Arrays.asList(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE,
+                        ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE)));
+        List<ErpFinVoucherBillR> links = billRDao.findAllByQuery(bq);
+        if (links.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Long> voucherIds = new ArrayList<>(links.size());
+        for (ErpFinVoucherBillR link : links) {
+            voucherIds.add(link.getVoucherId());
+        }
+        IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
+        io.nop.api.core.beans.query.QueryBean vq = new io.nop.api.core.beans.query.QueryBean();
+        vq.addFilter(io.nop.api.core.beans.FilterBeans.in("id", voucherIds));
+        return voucherDao.findAllByQuery(vq);
+    }
+
+    private List<ErpFinVoucherLine> loadVoucherLines(Long voucherId) {
+        IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucherId));
+        return dao.findAllByQuery(q);
+    }
+
+    private ErpFinVoucher writeIntercompanyReversalFromLines(ErpFinVoucher original,
+                                                              List<ErpFinVoucherLine> origLines) {
+        if (origLines.isEmpty()) {
+            return null;
+        }
+        BigDecimal totalDebit = BigDecimal.ZERO;
+        BigDecimal totalCredit = BigDecimal.ZERO;
+        for (ErpFinVoucherLine l : origLines) {
+            BigDecimal debit = l.getDebitAmount() != null ? l.getDebitAmount() : BigDecimal.ZERO;
+            BigDecimal credit = l.getCreditAmount() != null ? l.getCreditAmount() : BigDecimal.ZERO;
+            totalDebit = totalDebit.add(credit);
+            totalCredit = totalCredit.add(debit);
+        }
+        if (totalDebit.signum() == 0 && totalCredit.signum() == 0) {
+            return null;
+        }
+
+        IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
+        IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+
+        String origBillType = origLines.get(0).getBusinessType();
+        ErpFinVoucher reversal = voucherDao.newEntity();
+        reversal.setCode(ErpFinConstants.INTERCOMPANY_VOUCHER_REVERSAL_BILL_CODE_PREFIX
+                + StringHelper.generateUUID().substring(0, 12));
+        reversal.setVoucherType("TRANSFER");
+        reversal.setVoucherDate(CoreMetrics.today());
+        reversal.setOrgId(original.getOrgId());
+        reversal.setAcctSchemaId(original.getAcctSchemaId());
+        reversal.setPeriodId(original.getPeriodId());
+        reversal.setTotalDebit(totalDebit);
+        reversal.setTotalCredit(totalCredit);
+        reversal.setIsReversed(true);
+        reversal.setReversalOfVoucherId(original.getId());
+        reversal.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
+        reversal.setPostedAt(CoreMetrics.currentTimestamp());
+        voucherDao.saveEntity(reversal);
+        Long reversalId = reversal.getId();
+
+        int lineNo = 1;
+        for (ErpFinVoucherLine ol : origLines) {
+            BigDecimal origDebit = ol.getDebitAmount() != null ? ol.getDebitAmount() : BigDecimal.ZERO;
+            BigDecimal origCredit = ol.getCreditAmount() != null ? ol.getCreditAmount() : BigDecimal.ZERO;
+            ErpFinVoucherLine line = lineDao.newEntity();
+            line.setVoucherId(reversalId);
+            line.setLineNo(lineNo++);
+            line.setSubjectId(ol.getSubjectId());
+            line.setSubjectCode(ol.getSubjectCode());
+            line.setSubjectName(ol.getSubjectName());
+            line.setDcDirection(ol.getDcDirection());
+            line.setDebitAmount(origCredit);
+            line.setCreditAmount(origDebit);
+            line.setCurrencyId(ol.getCurrencyId());
+            line.setExchangeRate(ol.getExchangeRate() != null ? ol.getExchangeRate() : BigDecimal.ONE);
+            line.setAmountSource(origDebit.add(origCredit));
+            line.setAmountFunctional(origDebit.add(origCredit));
+            line.setAcctSchemaId(ol.getAcctSchemaId());
+            line.setOrgId(ol.getOrgId());
+            line.setBusinessType(ol.getBusinessType());
+            line.setMemo("跨法人内部交易红冲");
+            lineDao.saveEntity(line);
+        }
+
+        ErpFinVoucherBillR billR = billRDao.newEntity();
+        billR.setVoucherId(reversalId);
+        billR.setBillType(origBillType);
+        billR.setBillCode(findOriginalIntercompanyBillCode(original.getId()));
+        billR.setBusinessType(origBillType);
+        billRDao.saveEntity(billR);
+
+        return reversal;
+    }
+
+    private String findOriginalIntercompanyBillCode(Long voucherId) {
+        IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.eq("voucherId", voucherId));
+        q.addFilter(io.nop.api.core.beans.FilterBeans.in("billType",
+                java.util.Arrays.asList(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE,
+                        ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE)));
+        q.setLimit(1);
+        List<ErpFinVoucherBillR> list = billRDao.findAllByQuery(q);
+        return list.isEmpty() ? "" : list.get(0).getBillCode();
+    }
+
+    /**
      * 经 A1 GlMappingResolver 解析 intercompany 科目；规则表无匹配时回落默认编码。
      */
     private String resolveSubjectCode(String billTypeForLog, String accountKey, GlMappingDimensions dims,

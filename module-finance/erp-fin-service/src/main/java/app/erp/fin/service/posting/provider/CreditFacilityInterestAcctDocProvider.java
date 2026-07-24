@@ -36,6 +36,12 @@ public class CreditFacilityInterestAcctDocProvider implements IErpFinAcctDocProv
     static final String SUBJECT_FINANCIAL_EXPENSE_INTEREST = "6603"; // 财务费用-利息支出
     static final String SUBJECT_BANK_DEPOSIT = "1002";                // 银行存款
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FINANCIAL_EXPENSE(财务费用-利息支出 6603) 域专用键；BANK_DEPOSIT 通用键复用。
+     */
+    static final String ACCOUNT_KEY_FINANCIAL_EXPENSE = "FINANCIAL_EXPENSE";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.CREDIT_FACILITY_INTEREST);
@@ -48,18 +54,20 @@ public class CreditFacilityInterestAcctDocProvider implements IErpFinAcctDocProv
         }
         BigDecimal amount = readDecimal(event, "TOTAL");
         List<VoucherFact> facts = new ArrayList<>();
-        facts.add(fact(SUBJECT_FINANCIAL_EXPENSE_INTEREST, "财务费用-利息支出", DC_DEBIT, amount, event));
-        facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, amount, event));
+        facts.add(fact(SUBJECT_FINANCIAL_EXPENSE_INTEREST, "财务费用-利息支出", DC_DEBIT, amount, event,
+                ACCOUNT_KEY_FINANCIAL_EXPENSE));
+        facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

@@ -36,6 +36,13 @@ public class AssetInventoryAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_NON_OPERATING_INCOME = "6301";  // 营业外收入
     static final String SUBJECT_NON_OPERATING_EXPENSE = "6711"; // 营业外支出
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET 通用键复用；NON_OPERATING_INCOME/NON_OPERATING_EXPENSE 域专用键。
+     */
+    static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
+    static final String ACCOUNT_KEY_NON_OPERATING_INCOME = "NON_OPERATING_INCOME";
+    static final String ACCOUNT_KEY_NON_OPERATING_EXPENSE = "NON_OPERATING_EXPENSE";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.ASSET_INVENTORY_ADJUSTMENT);
@@ -55,23 +62,24 @@ public class AssetInventoryAcctDocProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>(4);
         if (surplus.signum() > 0) {
-            facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, surplus, event));
-            facts.add(fact(nonOpIncomeSubject, "营业外收入", DC_CREDIT, surplus, event));
+            facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, surplus, event, ACCOUNT_KEY_FIXED_ASSET));
+            facts.add(fact(nonOpIncomeSubject, "营业外收入", DC_CREDIT, surplus, event, ACCOUNT_KEY_NON_OPERATING_INCOME));
         }
         if (shortage.signum() > 0) {
-            facts.add(fact(nonOpExpenseSubject, "营业外支出", DC_DEBIT, shortage, event));
-            facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, shortage, event));
+            facts.add(fact(nonOpExpenseSubject, "营业外支出", DC_DEBIT, shortage, event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
+            facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, shortage, event, ACCOUNT_KEY_FIXED_ASSET));
         }
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

@@ -48,10 +48,13 @@ public class PurAcctDocProvider implements IErpFinAcctDocProvider {
     /**
      * A1 GL 映射键（plan 2026-07-21-0827-1）：仅 AP_INVOICE 三行 fact 设置，作为 resolver 的输入。
      * 业务语义命名与 SUBJECT_* 常量对齐：PURCHASE=1403 在途物资（不是 INVENTORY=1401 库存商品）。
+     * 批量接入（plan 2026-07-24-1351-1）：PAYMENT/PURCHASE_RETURN 分支补全通用键（AP/银行/存货复用）。
      */
     static final String ACCOUNT_KEY_PURCHASE = "PURCHASE";
     static final String ACCOUNT_KEY_INPUT_VAT = "INPUT_VAT";
     static final String ACCOUNT_KEY_ACCOUNTS_PAYABLE = "ACCOUNTS_PAYABLE";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+    static final String ACCOUNT_KEY_INVENTORY = "INVENTORY";
 
     static final String KEY_TOTAL_AMOUNT = "TOTAL_AMOUNT";
     static final String KEY_TOTAL_TAX_AMOUNT = "TOTAL_TAX_AMOUNT";
@@ -79,12 +82,12 @@ public class PurAcctDocProvider implements IErpFinAcctDocProvider {
         } else if (event.getBusinessType() == ErpFinBusinessType.PURCHASE_RETURN) {
             // 反向 PURCHASE_INPUT：借暂估应付 / 贷存货（不含税，对齐 InvAcctDocProvider.PURCHASE_INPUT 的 1401/2202）
             BigDecimal amount = readDecimal(event, KEY_TOTAL_AMOUNT);
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款-暂估", DC_DEBIT, amount, event, null));
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, event, null));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款-暂估", DC_DEBIT, amount, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, event, ACCOUNT_KEY_INVENTORY));
         } else { // PAYMENT
             BigDecimal total = readDecimal(event, KEY_TOTAL);
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, total, event, null));
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, total, event, null));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, total, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, total, event, ACCOUNT_KEY_BANK_DEPOSIT));
         }
         return facts;
     }

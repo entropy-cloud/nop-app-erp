@@ -46,6 +46,12 @@ public class MaintenanceIssueAcctDocProvider implements IErpFinAcctDocProvider {
     static final String KEY_MATERIAL_AMOUNT = "MATERIAL_AMOUNT";
     static final String KEY_INVENTORY_SUBJECT = "INVENTORY_SUBJECT";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：MAINTENANCE_EXPENSE(借方汇总) 域专用键；INVENTORY(贷方按物料) 通用键复用。
+     */
+    static final String ACCOUNT_KEY_MAINTENANCE_EXPENSE = "MAINTENANCE_EXPENSE";
+    static final String ACCOUNT_KEY_INVENTORY = "INVENTORY";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.unmodifiableSet(EnumSet.of(ErpFinBusinessType.MAINTENANCE_ISSUE));
@@ -74,12 +80,12 @@ public class MaintenanceIssueAcctDocProvider implements IErpFinAcctDocProvider {
 
             // 贷方：存货（按物料分列）
             facts.add(fact(invSubject, "存货", DC_CREDIT, lineAmount,
-                    buildMemo(equipmentCode, materialCode), event));
+                    buildMemo(equipmentCode, materialCode), event, ACCOUNT_KEY_INVENTORY));
         }
 
         // 借方：维修费用（汇总）
         facts.add(fact(expenseSubject, "维修费用", DC_DEBIT, totalAmount,
-                buildMemo(equipmentCode, null), event));
+                buildMemo(equipmentCode, null), event, ACCOUNT_KEY_MAINTENANCE_EXPENSE));
 
         return facts;
     }
@@ -91,12 +97,13 @@ public class MaintenanceIssueAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection,
-                             BigDecimal amount, String memo, PostingEvent event) {
+                             BigDecimal amount, String memo, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(memo);
         return fact;

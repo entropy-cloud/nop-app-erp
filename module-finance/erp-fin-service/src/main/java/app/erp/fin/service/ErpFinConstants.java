@@ -479,6 +479,13 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     String INTERCOMPANY_PURCHASE_BILL_TYPE = "INTERCOMPANY_PURCHASE";
     /** 跨法人内部交易凭证业财回链 billHeadCode 前缀（按调拨单 code 反查配对凭证）。 */
     String INTERCOMPANY_VOUCHER_BILL_CODE_PREFIX = "INTERCOMPANY-";
+    /** 跨法人内部交易红冲凭证 billHeadCode 前缀（plan 2026-07-24-1351-2）。 */
+    String INTERCOMPANY_VOUCHER_REVERSAL_BILL_CODE_PREFIX = "INTERCOMPANY-REVERSAL-";
+
+    /** 跨公司 trade-document 触发单据类型：采购订单（onTradeDocumentApproved 的 docType 入参，plan 2026-07-24-1351-2）。 */
+    String INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER = "PURCHASE_ORDER";
+    /** 跨公司 trade-document 触发单据类型：销售订单（onTradeDocumentApproved 的 docType 入参，plan 2026-07-24-1351-2）。 */
+    String INTERCOMPANY_DOC_TYPE_SALES_ORDER = "SALES_ORDER";
 
     /** 跨法人内部交易 accountKey（A1 account-key 字典扩展，经 GlMappingResolver 解析科目）。 */
     String ACCOUNT_KEY_INTERCOMPANY_AR = "INTERCOMPANY_AR";

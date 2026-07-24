@@ -1,5 +1,7 @@
 package app.erp.sal.service.processor;
 
+import app.erp.fin.biz.IErpFinIntercompanyTransferBiz;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.dao.entity.ErpSalOrder;
@@ -15,6 +17,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import java.util.ArrayList;
@@ -49,6 +52,9 @@ public class ErpSalOrderProcessor {
     @Inject
     CreditLimitChecker creditLimitChecker;
 
+    @Inject
+    IErpFinIntercompanyTransferBiz intercompanyTransferBiz;
+
     public ErpSalOrder submitForApproval(String id, IServiceContext context) {
         ErpSalOrder order = requireOrder(id, context);
         validateNotCancelled(order, context);
@@ -76,6 +82,9 @@ public class ErpSalOrderProcessor {
         validateBusinessRulesForApprove(order, context);
         auditPricingSourceDistribution(order, context);
         doApprove(order, context);
+        // 跨公司 SO intercompany 钩子（plan 2026-07-24-1351-2，multi-company.md §跨公司 PO/SO 触发路径）：
+        // 订单审核后置 → 跨法人时生成配对内部销售/采购凭证。config-gated；非阻塞（对齐 inventory confirm 范式）。
+        runIntercompanyApproveHook(order, context);
         return order;
     }
 
@@ -93,6 +102,8 @@ public class ErpSalOrderProcessor {
             return order;
         }
         validateTransitionForReverseApprove(order, context);
+        // 跨公司 SO intercompany 红冲钩子（plan 2026-07-24-1351-2）：反审核 → 红冲原配对 intercompany 凭证。config-gated；非阻塞。
+        runIntercompanyReverseHook(order, context);
         doReverseApprove(order, context);
         return order;
     }
@@ -100,6 +111,8 @@ public class ErpSalOrderProcessor {
     public ErpSalOrder cancel(String orderId, IServiceContext context) {
         ErpSalOrder order = requireOrder(orderId, context);
         validateTransitionForCancel(order, context);
+        // 跨公司 SO intercompany 红冲钩子（plan 2026-07-24-1351-2）：作废 → 红冲原配对 intercompany 凭证。config-gated；非阻塞。
+        runIntercompanyReverseHook(order, context);
         doCancel(order, context);
         return order;
     }
@@ -261,6 +274,40 @@ public class ErpSalOrderProcessor {
         }
         LOG.debug("orderCode={} pricingSourceAudit: manual={} priceList={} promotion={} skuDefault={} unknown={}",
                 order.getCode(), manual, priceList, promotion, skuDefault, unknown);
+    }
+
+    /**
+     * 跨公司销售订单 intercompany approve 钩子（plan 2026-07-24-1351-2，multi-company.md §跨公司 PO/SO 触发路径）。
+     * 订单审核后置 → 跨法人时生成配对内部销售/采购凭证。
+     * config-gated（{@code erp-fin.intercompany-posting-enabled} 默认 false，SPI 自门控）；非阻塞 try-catch
+     * （对齐 inventory confirm 范式，凭证生成失败不阻塞订单审核）。金额取 totalAmountWithTax（本位币）。
+     */
+    protected void runIntercompanyApproveHook(ErpSalOrder order, IServiceContext context) {
+        if (order.getOrgId() == null || order.getBusinessDate() == null) {
+            return;
+        }
+        BigDecimal amount = order.getTotalAmountWithTax() != null
+                ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
+        try {
+            intercompanyTransferBiz.onTradeDocumentApproved(
+                    ErpFinConstants.INTERCOMPANY_DOC_TYPE_SALES_ORDER, order.getId(), order.getCode(),
+                    order.getOrgId(), amount, order.getBusinessDate(), context);
+        } catch (RuntimeException e) {
+            LOG.warn("intercompany posting failed for sales order {}: {}", order.getCode(), e.getMessage());
+        }
+    }
+
+    /**
+     * 跨公司销售订单 intercompany 红冲钩子（plan 2026-07-24-1351-2）。
+     * 反审核/作废 → 红冲原配对 intercompany 凭证。config-gated；无原凭证静默跳过；非阻塞 try-catch。
+     */
+    protected void runIntercompanyReverseHook(ErpSalOrder order, IServiceContext context) {
+        try {
+            intercompanyTransferBiz.onTradeDocumentReversed(
+                    ErpFinConstants.INTERCOMPANY_DOC_TYPE_SALES_ORDER, order.getId(), order.getCode(), context);
+        } catch (RuntimeException e) {
+            LOG.warn("intercompany reversal failed for sales order {}: {}", order.getCode(), e.getMessage());
+        }
     }
 
     protected List<ErpSalOrderLine> loadLines(Long orderId) {

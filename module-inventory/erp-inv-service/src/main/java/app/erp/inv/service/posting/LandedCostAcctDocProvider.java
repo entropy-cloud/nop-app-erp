@@ -37,6 +37,12 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_INVENTORY = ErpInvConstants.SUBJECT_INVENTORY;
     static final String SUBJECT_AP = ErpInvConstants.SUBJECT_ACCOUNTS_PAYABLE;
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：INVENTORY(借方分摊)/ACCOUNTS_PAYABLE(贷方费用) 通用键复用。
+     */
+    static final String ACCOUNT_KEY_INVENTORY = "INVENTORY";
+    static final String ACCOUNT_KEY_ACCOUNTS_PAYABLE = "ACCOUNTS_PAYABLE";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.unmodifiableSet(EnumSet.of(ErpFinBusinessType.LANDED_COST));
@@ -59,6 +65,7 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
             fact.setSubjectName("库存商品");
             fact.setDcDirection(DC_DEBIT);
             fact.setAmount(amount);
+            fact.setAccountKey(ACCOUNT_KEY_INVENTORY);
             fact.setBusinessType(event.getBusinessType().name());
             fact.setMaterialId(toLong(alloc.get("materialId")));
             fact.setWarehouseId(toLong(alloc.get("warehouseId")));
@@ -77,6 +84,7 @@ public class LandedCostAcctDocProvider implements IErpFinAcctDocProvider {
             fact.setSubjectName("应付账款");
             fact.setDcDirection(DC_CREDIT);
             fact.setAmount(amount);
+            fact.setAccountKey(ACCOUNT_KEY_ACCOUNTS_PAYABLE);
             fact.setBusinessType(event.getBusinessType().name());
             fact.setPartnerId(toLong(elem.get("apPartnerId")));
             facts.add(fact);

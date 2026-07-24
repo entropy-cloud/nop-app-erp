@@ -41,6 +41,12 @@ public class NcrScrapAcctDocProvider implements IErpFinAcctDocProvider {
     static final String KEY_MATERIAL_ID = "MATERIAL_ID";
     static final String KEY_WAREHOUSE_ID = "WAREHOUSE_ID";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：NON_OPERATING_EXPENSE(报废损失) 域专用键；INVENTORY 通用键复用。
+     */
+    static final String ACCOUNT_KEY_NON_OPERATING_EXPENSE = "NON_OPERATING_EXPENSE";
+    static final String ACCOUNT_KEY_INVENTORY = "INVENTORY";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.unmodifiableSet(EnumSet.of(ErpFinBusinessType.NCR_SCRAP));
@@ -53,18 +59,21 @@ public class NcrScrapAcctDocProvider implements IErpFinAcctDocProvider {
         Long warehouseId = (Long) event.getBillData().get(KEY_WAREHOUSE_ID);
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(SUBJECT_LOSS, "营业外支出-报废损失", DC_DEBIT, amount, materialId, warehouseId, event));
-        facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, materialId, warehouseId, event));
+        facts.add(fact(SUBJECT_LOSS, "营业外支出-报废损失", DC_DEBIT, amount, materialId, warehouseId, event,
+                ACCOUNT_KEY_NON_OPERATING_EXPENSE));
+        facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, materialId, warehouseId, event,
+                ACCOUNT_KEY_INVENTORY));
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             Long materialId, Long warehouseId, PostingEvent event) {
+                             Long materialId, Long warehouseId, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMaterialId(materialId);
         fact.setWarehouseId(warehouseId);

@@ -30,6 +30,11 @@ public class AssetSplitAcctDocProvider implements IErpFinAcctDocProvider {
 
     static final String SUBJECT_FIXED_ASSET = "1601";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET 通用键复用（借/贷均为固定资产）。
+     */
+    static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.ASSET_SPLIT);
@@ -39,10 +44,12 @@ public class AssetSplitAcctDocProvider implements IErpFinAcctDocProvider {
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
         List<VoucherFact> facts = new ArrayList<>();
         for (Map<String, Object> row : readLines(event, ErpAstConstants.BILL_DATA_DEBIT_LINES)) {
-            facts.add(fact(readCode(row, "1601"), readName(row, "固定资产"), DC_DEBIT, readAmount(row), event));
+            facts.add(fact(readCode(row, "1601"), readName(row, "固定资产"), DC_DEBIT, readAmount(row), event,
+                    ACCOUNT_KEY_FIXED_ASSET));
         }
         for (Map<String, Object> row : readLines(event, ErpAstConstants.BILL_DATA_CREDIT_LINES)) {
-            facts.add(fact(readCode(row, "1601"), readName(row, "固定资产"), DC_CREDIT, readAmount(row), event));
+            facts.add(fact(readCode(row, "1601"), readName(row, "固定资产"), DC_CREDIT, readAmount(row), event,
+                    ACCOUNT_KEY_FIXED_ASSET));
         }
         return facts;
     }
@@ -57,12 +64,13 @@ public class AssetSplitAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

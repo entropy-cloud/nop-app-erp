@@ -469,6 +469,121 @@ public interface _ErpFinDaoConstants {
     String ACCOUNT_KEY_INTERCOMPANY_COST = "INTERCOMPANY_COST";
                     
     /**
+     * 科目映射键: 成本差异 
+     */
+    String ACCOUNT_KEY_COST_VARIANCE = "COST_VARIANCE";
+                    
+    /**
+     * 科目映射键: 材料成本差异(PPV) 
+     */
+    String ACCOUNT_KEY_PURCHASE_PRICE_VARIANCE = "PURCHASE_PRICE_VARIANCE";
+                    
+    /**
+     * 科目映射键: 在制品(WIP) 
+     */
+    String ACCOUNT_KEY_MANUFACTURING_WIP = "MANUFACTURING_WIP";
+                    
+    /**
+     * 科目映射键: 制造差异 
+     */
+    String ACCOUNT_KEY_MANUFACTURING_VARIANCE = "MANUFACTURING_VARIANCE";
+                    
+    /**
+     * 科目映射键: 委外物资 
+     */
+    String ACCOUNT_KEY_SUBCONTRACT_MATERIAL = "SUBCONTRACT_MATERIAL";
+                    
+    /**
+     * 科目映射键: 产成品 
+     */
+    String ACCOUNT_KEY_FINISHED_GOODS = "FINISHED_GOODS";
+                    
+    /**
+     * 科目映射键: 在建工程 
+     */
+    String ACCOUNT_KEY_CIP = "CIP";
+                    
+    /**
+     * 科目映射键: 资产减值损失 
+     */
+    String ACCOUNT_KEY_IMPAIRMENT_LOSS = "IMPAIRMENT_LOSS";
+                    
+    /**
+     * 科目映射键: 固定资产减值准备 
+     */
+    String ACCOUNT_KEY_IMPAIRMENT_PROVISION = "IMPAIRMENT_PROVISION";
+                    
+    /**
+     * 科目映射键: 资本公积 
+     */
+    String ACCOUNT_KEY_CAPITAL_RESERVE = "CAPITAL_RESERVE";
+                    
+    /**
+     * 科目映射键: 营业外收入 
+     */
+    String ACCOUNT_KEY_NON_OPERATING_INCOME = "NON_OPERATING_INCOME";
+                    
+    /**
+     * 科目映射键: 营业外支出 
+     */
+    String ACCOUNT_KEY_NON_OPERATING_EXPENSE = "NON_OPERATING_EXPENSE";
+                    
+    /**
+     * 科目映射键: 项目成本 
+     */
+    String ACCOUNT_KEY_PROJECT_COST = "PROJECT_COST";
+                    
+    /**
+     * 科目映射键: 本年利润 
+     */
+    String ACCOUNT_KEY_PROFIT_LOSS = "PROFIT_LOSS";
+                    
+    /**
+     * 科目映射键: 维修费用 
+     */
+    String ACCOUNT_KEY_MAINTENANCE_EXPENSE = "MAINTENANCE_EXPENSE";
+                    
+    /**
+     * 科目映射键: 维修中转清算 
+     */
+    String ACCOUNT_KEY_MAINTENANCE_CLEARING = "MAINTENANCE_CLEARING";
+                    
+    /**
+     * 科目映射键: 应收票据 
+     */
+    String ACCOUNT_KEY_NOTES_RECEIVABLE = "NOTES_RECEIVABLE";
+                    
+    /**
+     * 科目映射键: 应付票据 
+     */
+    String ACCOUNT_KEY_NOTES_PAYABLE = "NOTES_PAYABLE";
+                    
+    /**
+     * 科目映射键: 其他应收款-员工预支 
+     */
+    String ACCOUNT_KEY_EMPLOYEE_ADVANCE_RECEIVABLE = "EMPLOYEE_ADVANCE_RECEIVABLE";
+                    
+    /**
+     * 科目映射键: 其他应付款-员工 
+     */
+    String ACCOUNT_KEY_EMPLOYEE_PAYABLE = "EMPLOYEE_PAYABLE";
+                    
+    /**
+     * 科目映射键: 财务费用-利息支出 
+     */
+    String ACCOUNT_KEY_FINANCIAL_EXPENSE = "FINANCIAL_EXPENSE";
+                    
+    /**
+     * 科目映射键: 汇兑损益 
+     */
+    String ACCOUNT_KEY_EXCHANGE_GAIN_LOSS = "EXCHANGE_GAIN_LOSS";
+                    
+    /**
+     * 科目映射键: 管理费用 
+     */
+    String ACCOUNT_KEY_ADMIN_EXPENSE = "ADMIN_EXPENSE";
+                    
+    /**
      * 期间状态: 开启 
      */
     String PERIOD_STATUS_OPEN = "OPEN";

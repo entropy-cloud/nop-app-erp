@@ -32,6 +32,13 @@ public class NotesPayableAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_NOTES_PAYABLE = "2203"; // 应付票据
     static final String SUBJECT_BANK_DEPOSIT = "1002"; // 银行存款
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：NOTES_PAYABLE 域专用键；ACCOUNTS_PAYABLE/BANK_DEPOSIT 通用键复用。
+     */
+    static final String ACCOUNT_KEY_ACCOUNTS_PAYABLE = "ACCOUNTS_PAYABLE";
+    static final String ACCOUNT_KEY_NOTES_PAYABLE = "NOTES_PAYABLE";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(
@@ -46,15 +53,16 @@ public class NotesPayableAcctDocProvider implements IErpFinAcctDocProvider {
         List<VoucherFact> facts = new ArrayList<>();
         switch (event.getBusinessType()) {
             case NOTES_PAYABLE_ISSUED: {
-                VoucherFact dr = fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, face, event);
+                VoucherFact dr = fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, face, event,
+                        ACCOUNT_KEY_ACCOUNTS_PAYABLE);
                 dr.setPartnerId(partnerId);
                 facts.add(dr);
-                facts.add(fact(SUBJECT_NOTES_PAYABLE, "应付票据", DC_CREDIT, face, event));
+                facts.add(fact(SUBJECT_NOTES_PAYABLE, "应付票据", DC_CREDIT, face, event, ACCOUNT_KEY_NOTES_PAYABLE));
                 break;
             }
             case NOTES_PAYABLE_HONORED: {
-                facts.add(fact(SUBJECT_NOTES_PAYABLE, "应付票据", DC_DEBIT, face, event));
-                facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, face, event));
+                facts.add(fact(SUBJECT_NOTES_PAYABLE, "应付票据", DC_DEBIT, face, event, ACCOUNT_KEY_NOTES_PAYABLE));
+                facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, face, event, ACCOUNT_KEY_BANK_DEPOSIT));
                 break;
             }
             default:
@@ -64,12 +72,13 @@ public class NotesPayableAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

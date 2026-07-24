@@ -45,6 +45,15 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
     static final String CONFIG_WIP_SUBJECT_CODE = "erp-mfg.wip-subject-code";
     static final String DEFAULT_WIP_SUBJECT_CODE = "1411";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：INVENTORY/COGS/ACCOUNTS_PAYABLE 通用键复用；
+     * MANUFACTURING_WIP 为制造域专用键（完工入库贷方）。
+     */
+    static final String ACCOUNT_KEY_INVENTORY = "INVENTORY";
+    static final String ACCOUNT_KEY_COGS = "COGS";
+    static final String ACCOUNT_KEY_ACCOUNTS_PAYABLE = "ACCOUNTS_PAYABLE";
+    static final String ACCOUNT_KEY_MANUFACTURING_WIP = "MANUFACTURING_WIP";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.PURCHASE_INPUT, ErpFinBusinessType.SALES_OUTPUT,
@@ -59,15 +68,21 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
 
         List<VoucherFact> facts = new ArrayList<>(2);
         if (event.getBusinessType() == ErpFinBusinessType.PURCHASE_INPUT) {
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_DEBIT, total, materialId, warehouseId, event));
-            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_CREDIT, total, materialId, warehouseId, event));
+            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_DEBIT, total, materialId, warehouseId, event,
+                    ACCOUNT_KEY_INVENTORY));
+            facts.add(fact(SUBJECT_ESTIMATED_AP, "应付账款-暂估", DC_CREDIT, total, materialId, warehouseId, event,
+                    ACCOUNT_KEY_ACCOUNTS_PAYABLE));
         } else if (event.getBusinessType() == ErpFinBusinessType.MANUFACTURING_RECEIPT) {
             String wipSubject = resolveWipSubjectCode();
-            facts.add(fact(SUBJECT_INVENTORY, "产成品存货", DC_DEBIT, total, materialId, warehouseId, event));
-            facts.add(fact(wipSubject, "在制品-WIP", DC_CREDIT, total, materialId, warehouseId, event));
+            facts.add(fact(SUBJECT_INVENTORY, "产成品存货", DC_DEBIT, total, materialId, warehouseId, event,
+                    ACCOUNT_KEY_INVENTORY));
+            facts.add(fact(wipSubject, "在制品-WIP", DC_CREDIT, total, materialId, warehouseId, event,
+                    ACCOUNT_KEY_MANUFACTURING_WIP));
         } else {
-            facts.add(fact(SUBJECT_COGS, "主营业务成本", DC_DEBIT, total, materialId, warehouseId, event));
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, total, materialId, warehouseId, event));
+            facts.add(fact(SUBJECT_COGS, "主营业务成本", DC_DEBIT, total, materialId, warehouseId, event,
+                    ACCOUNT_KEY_COGS));
+            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, total, materialId, warehouseId, event,
+                    ACCOUNT_KEY_INVENTORY));
         }
         return facts;
     }
@@ -82,12 +97,13 @@ public class InvAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             Long materialId, Long warehouseId, PostingEvent event) {
+                             Long materialId, Long warehouseId, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMaterialId(materialId);
         fact.setWarehouseId(warehouseId);

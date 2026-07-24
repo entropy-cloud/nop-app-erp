@@ -52,6 +52,17 @@ public class SalAcctDocProvider implements IErpFinAcctDocProvider {
     static final String KEY_TOTAL = "TOTAL";
     static final String KEY_TOTAL_COST = "TOTAL_COST";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：通用键复用（AR/REVENUE/OUTPUT_TAX/INVENTORY/COGS/BANK_DEPOSIT）。
+     * 既有 SUBJECT_* 常量保留作 fallback。
+     */
+    static final String ACCOUNT_KEY_AR = "AR";
+    static final String ACCOUNT_KEY_REVENUE = "REVENUE";
+    static final String ACCOUNT_KEY_OUTPUT_TAX = "OUTPUT_TAX";
+    static final String ACCOUNT_KEY_INVENTORY = "INVENTORY";
+    static final String ACCOUNT_KEY_COGS = "COGS";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.AR_INVOICE, ErpFinBusinessType.RECEIPT,
@@ -65,29 +76,30 @@ public class SalAcctDocProvider implements IErpFinAcctDocProvider {
             BigDecimal amount = readDecimal(event, KEY_TOTAL_AMOUNT);
             BigDecimal tax = readDecimal(event, KEY_TOTAL_TAX_AMOUNT);
             BigDecimal withTax = readDecimal(event, KEY_TOTAL_AMOUNT_WITH_TAX);
-            facts.add(fact(SUBJECT_ACCOUNTS_RECEIVABLE, "应收账款", DC_DEBIT, withTax, event));
-            facts.add(fact(SUBJECT_REVENUE, "主营业务收入", DC_CREDIT, amount, event));
-            facts.add(fact(SUBJECT_OUTPUT_VAT, "应交税费-销项税额", DC_CREDIT, tax, event));
+            facts.add(fact(SUBJECT_ACCOUNTS_RECEIVABLE, "应收账款", DC_DEBIT, withTax, event, ACCOUNT_KEY_AR));
+            facts.add(fact(SUBJECT_REVENUE, "主营业务收入", DC_CREDIT, amount, event, ACCOUNT_KEY_REVENUE));
+            facts.add(fact(SUBJECT_OUTPUT_VAT, "应交税费-销项税额", DC_CREDIT, tax, event, ACCOUNT_KEY_OUTPUT_TAX));
         } else if (event.getBusinessType() == ErpFinBusinessType.SALES_RETURN) {
             // 反向 SALES_OUTPUT：借库存商品 / 贷主营业务成本（对齐 InvAcctDocProvider.SALES_OUTPUT 的 6401/1401）
             BigDecimal totalCost = readDecimal(event, KEY_TOTAL_COST);
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_DEBIT, totalCost, event));
-            facts.add(fact(SUBJECT_COGS, "主营业务成本", DC_CREDIT, totalCost, event));
+            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_DEBIT, totalCost, event, ACCOUNT_KEY_INVENTORY));
+            facts.add(fact(SUBJECT_COGS, "主营业务成本", DC_CREDIT, totalCost, event, ACCOUNT_KEY_COGS));
         } else { // RECEIPT
             BigDecimal total = readDecimal(event, KEY_TOTAL);
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, total, event));
-            facts.add(fact(SUBJECT_ACCOUNTS_RECEIVABLE, "应收账款", DC_CREDIT, total, event));
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, total, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            facts.add(fact(SUBJECT_ACCOUNTS_RECEIVABLE, "应收账款", DC_CREDIT, total, event, ACCOUNT_KEY_AR));
         }
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

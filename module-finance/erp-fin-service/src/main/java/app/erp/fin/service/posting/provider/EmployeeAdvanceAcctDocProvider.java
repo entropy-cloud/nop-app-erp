@@ -39,6 +39,14 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_BANK_DEPOSIT = "1002";        // 银行存款
     static final String SUBJECT_PAYABLE_EMPLOYEE = "2241";    // 其他应付款-员工（应付-员工）
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：EMPLOYEE_ADVANCE_RECEIVABLE/EMPLOYEE_PAYABLE 域专用键；
+     * BANK_DEPOSIT 通用键复用。
+     */
+    static final String ACCOUNT_KEY_EMPLOYEE_ADVANCE_RECEIVABLE = "EMPLOYEE_ADVANCE_RECEIVABLE";
+    static final String ACCOUNT_KEY_EMPLOYEE_PAYABLE = "EMPLOYEE_PAYABLE";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.EMPLOYEE_ADVANCE, ErpFinBusinessType.EMPLOYEE_ADVANCE_SETTLE);
@@ -54,25 +62,29 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
         Long partnerId = asLong(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID));
 
         if (event.getBusinessType() == ErpFinBusinessType.EMPLOYEE_ADVANCE) {
-            VoucherFact debit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_DEBIT, amount, event);
+            VoucherFact debit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_DEBIT, amount, event,
+                    ACCOUNT_KEY_EMPLOYEE_ADVANCE_RECEIVABLE);
             debit.setPartnerId(partnerId);
             facts.add(debit);
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, amount, event));
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT));
         } else { // EMPLOYEE_ADVANCE_SETTLE
             String settleType = asString(event.getBillData().get(ErpFinConstants.BILL_DATA_SETTLE_TYPE));
             if (ErpFinConstants.SETTLE_TYPE_CASH.equals(settleType)) {
                 // 现金还款路径（plan 2026-07-18-0718-2）：Dr 1002 银行存款 / Cr 1221 其他应收款-员工预支
-                VoucherFact debit = fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, amount, event);
+                VoucherFact debit = fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, amount, event, ACCOUNT_KEY_BANK_DEPOSIT);
                 facts.add(debit);
-                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event);
+                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event,
+                        ACCOUNT_KEY_EMPLOYEE_ADVANCE_RECEIVABLE);
                 credit.setPartnerId(partnerId);
                 facts.add(credit);
             } else {
                 // 报销抵扣路径（默认 / OFFSET / null）：Dr 2241 应付-员工 / Cr 1221 应收-员工预支（既有行为不变）
-                VoucherFact debit = fact(SUBJECT_PAYABLE_EMPLOYEE, "其他应付款-员工", DC_DEBIT, amount, event);
+                VoucherFact debit = fact(SUBJECT_PAYABLE_EMPLOYEE, "其他应付款-员工", DC_DEBIT, amount, event,
+                        ACCOUNT_KEY_EMPLOYEE_PAYABLE);
                 debit.setPartnerId(partnerId);
                 facts.add(debit);
-                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event);
+                VoucherFact credit = fact(SUBJECT_RECEIVABLE_EMPLOYEE, "其他应收款-员工预支", DC_CREDIT, amount, event,
+                        ACCOUNT_KEY_EMPLOYEE_ADVANCE_RECEIVABLE);
                 credit.setPartnerId(partnerId);
                 facts.add(credit);
             }
@@ -81,12 +93,13 @@ public class EmployeeAdvanceAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

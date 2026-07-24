@@ -37,6 +37,15 @@ public class DisposalAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_DISPOSAL_LOSS = "6711";     // 营业外支出（清理损失）
     static final String SUBJECT_DISPOSAL_GAIN = "6301";     // 营业外收入（清理收益）
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET/ACCUMULATED_DEPRECIATION/BANK_DEPOSIT 通用键复用；
+     * NON_OPERATING_EXPENSE 清理损益域专用键（gainLossSubject 默认 6711，借贷方向由 dcDirection 承载）。
+     */
+    static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
+    static final String ACCOUNT_KEY_ACCUMULATED_DEPRECIATION = "ACCUMULATED_DEPRECIATION";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+    static final String ACCOUNT_KEY_NON_OPERATING_EXPENSE = "NON_OPERATING_EXPENSE";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.DISPOSAL);
@@ -59,30 +68,31 @@ public class DisposalAcctDocProvider implements IErpFinAcctDocProvider {
         List<VoucherFact> facts = new ArrayList<>(4);
         // 借：累计折旧（结转）
         if (accumDep.signum() != 0) {
-            facts.add(fact(accumSubject, "累计折旧", DC_DEBIT, accumDep, event));
+            facts.add(fact(accumSubject, "累计折旧", DC_DEBIT, accumDep, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION));
         }
         // 借：银行存款（处置收入，>0 时）
         if (disposalAmount.signum() > 0) {
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, disposalAmount, event));
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, disposalAmount, event, ACCOUNT_KEY_BANK_DEPOSIT));
         }
         // 清理损益（gainLoss 正=收益贷，负=损失借）
         if (gainLoss.signum() > 0) {
-            facts.add(fact(gainLossSubject, "营业外收入", DC_CREDIT, gainLoss, event));
+            facts.add(fact(gainLossSubject, "营业外收入", DC_CREDIT, gainLoss, event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
         } else if (gainLoss.signum() < 0) {
-            facts.add(fact(gainLossSubject, "营业外支出", DC_DEBIT, gainLoss.negate(), event));
+            facts.add(fact(gainLossSubject, "营业外支出", DC_DEBIT, gainLoss.negate(), event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
         }
         // 贷：固定资产（结转原值）
-        facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, original, event));
+        facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, original, event, ACCOUNT_KEY_FIXED_ASSET));
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

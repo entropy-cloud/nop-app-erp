@@ -51,6 +51,12 @@ public class MaintenanceLaborAcctDocProvider implements IErpFinAcctDocProvider {
     static final String KEY_HOURLY_RATE = "HOURLY_RATE";
     static final String KEY_VISIT_CODE = "VISIT_CODE";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：MAINTENANCE_EXPENSE 域专用键（维修费用 6602）；SALARY_PAYABLE 通用键复用。
+     */
+    static final String ACCOUNT_KEY_MAINTENANCE_EXPENSE = "MAINTENANCE_EXPENSE";
+    static final String ACCOUNT_KEY_SALARY_PAYABLE = "SALARY_PAYABLE";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.unmodifiableSet(EnumSet.of(ErpFinBusinessType.MAINTENANCE_LABOR));
@@ -73,10 +79,10 @@ public class MaintenanceLaborAcctDocProvider implements IErpFinAcctDocProvider {
         String memo = buildMemo(equipmentCode, visitCode);
 
         // 借方：维修费用（科目编码 6602，种子 subjectName 经实测为「折旧费用」）
-        facts.add(fact(expenseSubject, "维修费用", DC_DEBIT, amount, memo, event));
+        facts.add(fact(expenseSubject, "维修费用", DC_DEBIT, amount, memo, event, ACCOUNT_KEY_MAINTENANCE_EXPENSE));
 
         // 贷方：应付职工薪酬（科目编码 2211，权责发生制员工薪酬计提）
-        facts.add(fact(payableSubject, "应付职工薪酬", DC_CREDIT, amount, memo, event));
+        facts.add(fact(payableSubject, "应付职工薪酬", DC_CREDIT, amount, memo, event, ACCOUNT_KEY_SALARY_PAYABLE));
 
         return facts;
     }
@@ -94,12 +100,13 @@ public class MaintenanceLaborAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection,
-                             BigDecimal amount, String memo, PostingEvent event) {
+                             BigDecimal amount, String memo, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(memo);
         return fact;

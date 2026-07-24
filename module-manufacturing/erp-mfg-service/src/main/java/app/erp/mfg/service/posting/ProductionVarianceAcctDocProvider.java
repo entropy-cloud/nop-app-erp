@@ -73,6 +73,14 @@ public class ProductionVarianceAcctDocProvider implements IErpFinAcctDocProvider
     static final String DIRECTION_DEBIT = "DEBIT";
     static final String DIRECTION_CREDIT = "CREDIT";
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：MANUFACTURING_VARIANCE(差异侧)/MANUFACTURING_WIP(WIP侧) 域专用键。
+     * 4 要素（材料/人工/制造费用/委外）共用同键：规则无匹配时各自回落至要素特定 fallback 编码（1410~1417）；
+     * 规则匹配后可将全部差异/WIP 统一路由至单一科目（简化科目表场景）。
+     */
+    static final String ACCOUNT_KEY_MANUFACTURING_VARIANCE = "MANUFACTURING_VARIANCE";
+    static final String ACCOUNT_KEY_MANUFACTURING_WIP = "MANUFACTURING_WIP";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.unmodifiableSet(EnumSet.of(ErpFinBusinessType.PRODUCTION_VARIANCE));
@@ -107,21 +115,26 @@ public class ProductionVarianceAcctDocProvider implements IErpFinAcctDocProvider
         String direction = readDirection(data.get(directionKey));
         String memo = buildMemo(data, varianceSubjectName);
         if (DIRECTION_DEBIT.equals(direction)) {
-            facts.add(fact(varianceSubject, varianceSubjectName, DC_DEBIT, amount, memo, event));
-            facts.add(fact(wipSubject, wipSubjectName, DC_CREDIT, amount, memo, event));
+            facts.add(fact(varianceSubject, varianceSubjectName, DC_DEBIT, amount, memo, event,
+                    ACCOUNT_KEY_MANUFACTURING_VARIANCE));
+            facts.add(fact(wipSubject, wipSubjectName, DC_CREDIT, amount, memo, event,
+                    ACCOUNT_KEY_MANUFACTURING_WIP));
         } else {
-            facts.add(fact(wipSubject, wipSubjectName, DC_DEBIT, amount, memo, event));
-            facts.add(fact(varianceSubject, varianceSubjectName, DC_CREDIT, amount, memo, event));
+            facts.add(fact(wipSubject, wipSubjectName, DC_DEBIT, amount, memo, event,
+                    ACCOUNT_KEY_MANUFACTURING_WIP));
+            facts.add(fact(varianceSubject, varianceSubjectName, DC_CREDIT, amount, memo, event,
+                    ACCOUNT_KEY_MANUFACTURING_VARIANCE));
         }
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection,
-                             BigDecimal amount, String memo, PostingEvent event) {
+                             BigDecimal amount, String memo, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(memo);
         return fact;

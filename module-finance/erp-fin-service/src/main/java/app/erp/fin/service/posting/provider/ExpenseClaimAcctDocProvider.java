@@ -36,6 +36,15 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_PAYABLE_EMPLOYEE = "2241"; // 其他应付款-员工（应付-员工）
     static final String SUBJECT_BANK_DEPOSIT = "1002";   // 银行存款
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：ADMIN_EXPENSE(管理费用 6602) 域专用键；INPUT_VAT 通用键复用；
+     * 贷方 EMPLOYEE_PAYABLE(OWN_ACCOUNT) 或 BANK_DEPOSIT(COMPANY_ACCOUNT)。
+     */
+    static final String ACCOUNT_KEY_ADMIN_EXPENSE = "ADMIN_EXPENSE";
+    static final String ACCOUNT_KEY_INPUT_VAT = "INPUT_VAT";
+    static final String ACCOUNT_KEY_EMPLOYEE_PAYABLE = "EMPLOYEE_PAYABLE";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.singleton(ErpFinBusinessType.EXPENSE_CLAIM);
@@ -50,14 +59,14 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
                 ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT);
 
         List<VoucherFact> facts = new ArrayList<>();
-        facts.add(fact(SUBJECT_EXPENSE, "管理费用", DC_DEBIT, amountWithoutTax, event));
-        facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, event));
+        facts.add(fact(SUBJECT_EXPENSE, "管理费用", DC_DEBIT, amountWithoutTax, event, ACCOUNT_KEY_ADMIN_EXPENSE));
+        facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, event, ACCOUNT_KEY_INPUT_VAT));
 
-        String creditSubject = Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT)
-                ? SUBJECT_BANK_DEPOSIT : SUBJECT_PAYABLE_EMPLOYEE;
-        String creditName = Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT)
-                ? "银行存款" : "其他应付款-员工";
-        VoucherFact credit = fact(creditSubject, creditName, DC_CREDIT, withTax, event);
+        boolean companyAccount = Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_COMPANY_ACCOUNT);
+        String creditSubject = companyAccount ? SUBJECT_BANK_DEPOSIT : SUBJECT_PAYABLE_EMPLOYEE;
+        String creditName = companyAccount ? "银行存款" : "其他应付款-员工";
+        String creditAccountKey = companyAccount ? ACCOUNT_KEY_BANK_DEPOSIT : ACCOUNT_KEY_EMPLOYEE_PAYABLE;
+        VoucherFact credit = fact(creditSubject, creditName, DC_CREDIT, withTax, event, creditAccountKey);
         // 员工垫付挂应付-员工，携带往来维度（partnerId = employee.partnerId），便于辅助账与余额归集。
         if (Objects.equals(paymentMode, ErpFinConstants.PAYMENT_MODE_OWN_ACCOUNT)) {
             credit.setPartnerId(asLong(event.getBillData().get(ErpFinConstants.BILL_DATA_EMPLOYEE_ID)));
@@ -67,12 +76,13 @@ public class ExpenseClaimAcctDocProvider implements IErpFinAcctDocProvider {
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

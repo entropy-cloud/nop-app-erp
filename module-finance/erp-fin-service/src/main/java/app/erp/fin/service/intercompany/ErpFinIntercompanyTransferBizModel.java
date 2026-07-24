@@ -3,9 +3,11 @@ package app.erp.fin.service.intercompany;
 import app.erp.fin.biz.IErpFinIntercompanyTransferBiz;
 import app.erp.fin.dao.api.IErpFinTransferPriceResolver;
 import app.erp.fin.dao.dto.TransferPriceResult;
+import app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice;
 import app.erp.md.dao.entity.ErpMdOrganization;
 import app.erp.md.dao.entity.ErpMdWarehouse;
 import app.erp.fin.service.ErpFinConstants;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -15,11 +17,16 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.le;
 
 import static app.erp.fin.service.ErpFinErrors.ERR_INTERCOMPANY_SAME_LEGAL_ENTITY;
 import static app.erp.fin.service.ErpFinErrors.ERR_TRANSFER_PRICE_NOT_FOUND;
@@ -95,7 +102,94 @@ public class ErpFinIntercompanyTransferBizModel implements IErpFinIntercompanyTr
                 fromAcctSchemaId, toAcctSchemaId, periodId, currencyId, amount);
     }
 
+    @Override
+    public List<Long> onTradeDocumentApproved(String docType, Long docId, String docCode, Long executingOrgId,
+                                              BigDecimal amount, LocalDate businessDate, IServiceContext context) {
+        if (!isIntercompanyPostingEnabled()) {
+            return Collections.emptyList();
+        }
+        if (executingOrgId == null || amount == null || amount.signum() <= 0 || docCode == null || docCode.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Long executingLegal = resolveLegalEntityRoot(executingOrgId);
+        if (executingLegal == null) {
+            return Collections.emptyList();
+        }
+
+        Long counterpartyLegal = resolveCounterpartyLegalEntity(executingLegal, docType, businessDate);
+        if (counterpartyLegal == null) {
+            LOG.debug("intercompany trade-document skip (no counterparty pricing rule): docType={} docCode={} executingLegal={}",
+                    docType, docCode, executingLegal);
+            return Collections.emptyList();
+        }
+        if (executingLegal.equals(counterpartyLegal)) {
+            LOG.debug("intercompany trade-document skip (same legal entity): docCode={} legal={}", docCode, executingLegal);
+            return Collections.emptyList();
+        }
+
+        // AR/AP 方向固定：seller(fromOrg)=AR，buyer(toOrg)=AP（Decision C）
+        Long sellerLegal;
+        Long buyerLegal;
+        if (ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER.equals(docType)) {
+            // PO 执行方=买方，对手=卖方
+            sellerLegal = counterpartyLegal;
+            buyerLegal = executingLegal;
+        } else {
+            // SO 执行方=卖方，对手=买方
+            sellerLegal = executingLegal;
+            buyerLegal = counterpartyLegal;
+        }
+
+        Long sellerAcctSchemaId = resolveOrgAcctSchemaId(sellerLegal);
+        Long buyerAcctSchemaId = resolveOrgAcctSchemaId(buyerLegal);
+        Long periodId = resolvePeriodId(businessDate);
+        Long currencyId = 1L;
+
+        return intercompanyVoucherGenerator.generatePairedVouchers(docCode, sellerLegal, buyerLegal,
+                sellerAcctSchemaId, buyerAcctSchemaId, periodId, currencyId, amount);
+    }
+
+    @Override
+    public List<Long> onTradeDocumentReversed(String docType, Long docId, String docCode, IServiceContext context) {
+        if (!isIntercompanyPostingEnabled()) {
+            return Collections.emptyList();
+        }
+        if (docCode == null || docCode.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return intercompanyVoucherGenerator.reverseIntercompany(docCode);
+    }
+
     // ---------- 内部辅助 ----------
+
+    /**
+     * 经转移定价规则表反向查找对手方法人根（Decision B）。
+     * PO（执行方=买方）：查 toOrgId=executingLegal 的活跃规则 → fromOrgId 为卖方对手。
+     * SO（执行方=卖方）：查 fromOrgId=executingLegal 的活跃规则 → toOrgId 为买方对手。
+     *
+     * <p>不按 validFrom/validTo 过滤：intercompany 交易关系是稳定的（org A 与 org B 互为对手），
+     * 有效期窗口仅影响转移定价金额解析（经 IErpFinTransferPriceResolver），不影响对手方关系存在性。
+     */
+    private Long resolveCounterpartyLegalEntity(Long executingLegalId, String docType, LocalDate businessDate) {
+        IEntityDao<ErpFinIntercompanyTransferPrice> dao =
+                daoProvider.daoFor(ErpFinIntercompanyTransferPrice.class);
+        QueryBean q = new QueryBean();
+        if (ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER.equals(docType)) {
+            q.addFilter(eq("toOrgId", executingLegalId));
+        } else {
+            q.addFilter(eq("fromOrgId", executingLegalId));
+        }
+        q.addFilter(eq("isActive", Boolean.TRUE));
+        q.setLimit(1);
+        List<ErpFinIntercompanyTransferPrice> rules = dao.findAllByQuery(q);
+        if (rules.isEmpty()) {
+            return null;
+        }
+        ErpFinIntercompanyTransferPrice rule = rules.get(0);
+        return ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER.equals(docType)
+                ? rule.getFromOrgId() : rule.getToOrgId();
+    }
 
     private boolean isIntercompanyPostingEnabled() {
         return Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_INTERCOMPANY_POSTING_ENABLED, Boolean.FALSE));

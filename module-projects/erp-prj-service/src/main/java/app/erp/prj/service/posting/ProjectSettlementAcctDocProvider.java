@@ -39,6 +39,15 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
     static final String SUBJECT_CIP = "1603";               // 在建工程（CLOSE 转固贷方）
     static final String SUBJECT_PROFIT_LOSS = "4103";       // 本年利润（FINAL/INTERIM 损益平衡科目）
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET/REVENUE 通用键复用；CIP/PROJECT_COST/PROFIT_LOSS 域专用键。
+     */
+    static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
+    static final String ACCOUNT_KEY_CIP = "CIP";
+    static final String ACCOUNT_KEY_PROJECT_COST = "PROJECT_COST";
+    static final String ACCOUNT_KEY_PROFIT_LOSS = "PROFIT_LOSS";
+    static final String ACCOUNT_KEY_REVENUE = "REVENUE";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return Collections.singleton(ErpFinBusinessType.PROJECT_SETTLEMENT);
@@ -57,18 +66,20 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
 
         if (ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlementType) && transferToAsset) {
             // CLOSE 转固：借固定资产（资本化最终成本）/ 贷在建工程（项目成本结转）。借贷平衡（finalCost）。
-            VoucherFact debit = fact(SUBJECT_FIXED_ASSET, "固定资产", DC_DEBIT, finalCost, event, memo);
+            VoucherFact debit = fact(SUBJECT_FIXED_ASSET, "固定资产", DC_DEBIT, finalCost, event, memo,
+                    ACCOUNT_KEY_FIXED_ASSET);
             debit.setProjectId(projectId);
             facts.add(debit);
 
-            VoucherFact credit = fact(SUBJECT_CIP, "在建工程", DC_CREDIT, finalCost, event, memo);
+            VoucherFact credit = fact(SUBJECT_CIP, "在建工程", DC_CREDIT, finalCost, event, memo, ACCOUNT_KEY_CIP);
             credit.setProjectId(projectId);
             facts.add(credit);
         } else {
             // FINAL/INTERIM：借项目成本（结转）+ 本年利润（损益平衡）/ 贷项目收入（结转）。
             // 平衡：finalCost + profitLoss = finalRevenue。
             BigDecimal profitLoss = finalRevenue.subtract(finalCost);
-            VoucherFact debitCost = fact(SUBJECT_PROJECT_COST, "项目成本", DC_DEBIT, finalCost, event, memo);
+            VoucherFact debitCost = fact(SUBJECT_PROJECT_COST, "项目成本", DC_DEBIT, finalCost, event, memo,
+                    ACCOUNT_KEY_PROJECT_COST);
             debitCost.setProjectId(projectId);
             facts.add(debitCost);
 
@@ -77,12 +88,13 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
                 String plName = "本年利润";
                 String plDirection = profitLoss.signum() > 0 ? DC_DEBIT : DC_CREDIT;
                 BigDecimal plAmount = profitLoss.abs();
-                VoucherFact pl = fact(plSubject, plName, plDirection, plAmount, event, memo);
+                VoucherFact pl = fact(plSubject, plName, plDirection, plAmount, event, memo, ACCOUNT_KEY_PROFIT_LOSS);
                 pl.setProjectId(projectId);
                 facts.add(pl);
             }
 
-            VoucherFact creditRevenue = fact(SUBJECT_PROJECT_REVENUE, "项目收入", DC_CREDIT, finalRevenue, event, memo);
+            VoucherFact creditRevenue = fact(SUBJECT_PROJECT_REVENUE, "项目收入", DC_CREDIT, finalRevenue, event, memo,
+                    ACCOUNT_KEY_REVENUE);
             creditRevenue.setProjectId(projectId);
             facts.add(creditRevenue);
         }
@@ -90,12 +102,13 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event, String memo) {
+                             PostingEvent event, String memo, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(memo);
         return fact;

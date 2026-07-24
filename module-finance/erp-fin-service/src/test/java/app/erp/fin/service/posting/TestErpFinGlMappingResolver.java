@@ -205,6 +205,34 @@ public class TestErpFinGlMappingResolver extends JunitAutoTestCase {
         assertEquals("1406", fresh, "invalidate 后应 reload 并命中新精确规则");
     }
 
+    /**
+     * (i) 新增域专用键命中覆盖（plan 2026-07-24-1351-1）：MANUFACTURING_WIP 规则覆盖 subjectCode。
+     */
+    @Test
+    public void testNewDomainKeyManufacturingWipHit() {
+        ormTemplate.runInSession(() -> {
+            seedRule("RULE-I-MFG-WIP", "MANUFACTURING_RECEIPT", "MANUFACTURING_WIP",
+                    null, null, null, null, null, null, null, "1411", 0);
+        });
+        resolver.invalidateCache();
+
+        String result = resolver.resolveSubjectCode("MANUFACTURING_RECEIPT", "MANUFACTURING_WIP",
+                new GlMappingDimensions(), null);
+        assertEquals("1411", result, "MANUFACTURING_WIP 命中 default 规则应覆盖 subjectCode");
+    }
+
+    /**
+     * (j) 新增域专用键未命中返回 null（保留 Provider fallback）（plan 2026-07-24-1351-1）：
+     * NOTES_RECEIVABLE 无规则 → null（向后兼容关键）。
+     */
+    @Test
+    public void testNewDomainKeyNotesReceivableMissReturnsNull() {
+        resolver.invalidateCache();
+        String result = resolver.resolveSubjectCode("NOTES_RECEIVABLE_RECEIVED", "NOTES_RECEIVABLE",
+                new GlMappingDimensions(), null);
+        assertNull(result, "无规则时返回 null（保留 Provider fallback，向后兼容）");
+    }
+
     // ---------- helpers ----------
 
     private void seedRule(String code, String businessType, String accountKey, Long acctSchemaId,

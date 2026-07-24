@@ -37,6 +37,13 @@ public class CapitalizationAcctDocProvider implements IErpFinAcctDocProvider {
     static final String SUBJECT_CIP = "1603";               // 在建工程
     static final String SUBJECT_BANK_DEPOSIT = "1002";      // 银行存款（直接购置贷方）
 
+    /**
+     * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET/BANK_DEPOSIT 通用键复用；CIP(在建工程) 域专用键。
+     */
+    static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
+    static final String ACCOUNT_KEY_CIP = "CIP";
+    static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
+
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
         return EnumSet.of(ErpFinBusinessType.CAPITALIZATION);
@@ -51,28 +58,32 @@ public class CapitalizationAcctDocProvider implements IErpFinAcctDocProvider {
                 SUBJECT_FIXED_ASSET);
         String creditSubject;
         String creditName;
+        String creditAccountKey;
         if (Objects.equals(sourceType, ErpAstConstants.SOURCE_TYPE_CIP)) {
             creditSubject = readCode(event, ErpAstConstants.BILL_DATA_CREDIT_SUBJECT_CODE, SUBJECT_CIP);
             creditName = "在建工程";
+            creditAccountKey = ACCOUNT_KEY_CIP;
         } else {
             // DIRECT_PURCHASE → 银行存款/应付账款（基线取银行存款）
             creditSubject = readCode(event, ErpAstConstants.BILL_DATA_CREDIT_SUBJECT_CODE, SUBJECT_BANK_DEPOSIT);
             creditName = "银行存款";
+            creditAccountKey = ACCOUNT_KEY_BANK_DEPOSIT;
         }
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event));
-        facts.add(fact(creditSubject, creditName, DC_CREDIT, amount, event));
+        facts.add(fact(fixedAssetSubject, "固定资产", DC_DEBIT, amount, event, ACCOUNT_KEY_FIXED_ASSET));
+        facts.add(fact(creditSubject, creditName, DC_CREDIT, amount, event, creditAccountKey));
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event) {
+                             PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
         fact.setAmount(amount);
+        fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;
     }

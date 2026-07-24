@@ -34,8 +34,52 @@ public interface IErpFinIntercompanyTransferBiz {
      */
     @BizMutation
     java.util.List<Long> onTransferConfirmed(@Name("transferOrderId") Long transferOrderId,
-                                             @Name("fromWarehouseId") Long fromWarehouseId,
-                                             @Name("toWarehouseId") Long toWarehouseId,
-                                             @Name("businessDate") java.time.LocalDate businessDate,
-                                             IServiceContext context);
+                                              @Name("fromWarehouseId") Long fromWarehouseId,
+                                              @Name("toWarehouseId") Long toWarehouseId,
+                                              @Name("businessDate") java.time.LocalDate businessDate,
+                                              IServiceContext context);
+
+    /**
+     * 跨公司贸易单据（采购订单/销售订单）approve 后置触发：识别执行组织所属法人根 + 经转移定价规则表反向查找对手方法人根，
+     * 若跨法人则以订单金额生成配对内部销售/采购凭证（plan 2026-07-24-1351-2，multi-company.md §跨公司 PO/SO 触发路径）。
+     *
+     * <p>跨法人判定全在 finance 域（AP-7 合规）：执行方 = {@code resolveLegalEntityRoot(executingOrgId)}；
+     * 对手方 = 转移定价规则表反向查找（PO 查 toOrgId=执行方取 fromOrgId；SO 查 fromOrgId=执行方取 toOrgId）。
+     * 同法人 / config-gate 关闭 / 无定价规则 → 返回空列表（既有行为完全不变）。
+     *
+     * @param docType         单据类型（{@code ErpFinConstants.INTERCOMPANY_DOC_TYPE_PURCHASE_ORDER} / {@code ..._SALES_ORDER}）
+     * @param docId           单据 ID（审计/追踪）
+     * @param docCode         单据编码（业财回链 billCode，红冲按此反查）
+     * @param executingOrgId  执行组织 ID（订单头 orgId）
+     * @param amount          交易金额（本位币，订单 totalAmountWithTax）
+     * @param businessDate    业务日期（用于定价规则有效期匹配）
+     * @param context         服务上下文
+     * @return 配对凭证 ID 列表（AR 凭证 + AP 凭证）；config-gated 关闭或同法人或无定价规则时返回空列表
+     */
+    @BizMutation
+    java.util.List<Long> onTradeDocumentApproved(@Name("docType") String docType,
+                                                  @Name("docId") Long docId,
+                                                  @Name("docCode") String docCode,
+                                                  @Name("executingOrgId") Long executingOrgId,
+                                                  @Name("amount") java.math.BigDecimal amount,
+                                                  @Name("businessDate") java.time.LocalDate businessDate,
+                                                  IServiceContext context);
+
+    /**
+     * 跨公司贸易单据 reverseApprove 前置触发：按 {@code docCode} 反查 approve 时生成的配对 intercompany 凭证，
+     * 逐张生成红字冲销凭证（借贷互换、{@code isReversed=true}、{@code reversalOfVoucherId} 回链原凭证）。
+     *
+     * <p>config-gated 关闭或无原凭证时返回空列表（容错路径，不阻塞业务流，对齐 commitment release 范式）。
+     *
+     * @param docType  单据类型（审计用）
+     * @param docId    单据 ID（审计/追踪）
+     * @param docCode  单据编码（业财回链 billCode，按此反查原配对凭证）
+     * @param context  服务上下文
+     * @return 红冲凭证 ID 列表（空列表表示无原凭证可红冲）
+     */
+    @BizMutation
+    java.util.List<Long> onTradeDocumentReversed(@Name("docType") String docType,
+                                                  @Name("docId") Long docId,
+                                                  @Name("docCode") String docCode,
+                                                  IServiceContext context);
 }

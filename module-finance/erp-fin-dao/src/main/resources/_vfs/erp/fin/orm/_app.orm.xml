@@ -144,6 +144,40 @@
             <option code="INTERCOMPANY_REVENUE" label="内部销售收入" value="INTERCOMPANY_REVENUE"
                     i18n-en:label="Intercompany Revenue"/>
             <option code="INTERCOMPANY_COST" label="内部采购成本" value="INTERCOMPANY_COST" i18n-en:label="Intercompany Cost"/>
+            <option code="COST_VARIANCE" label="成本差异" value="COST_VARIANCE" i18n-en:label="Cost Variance"/>
+            <option code="PURCHASE_PRICE_VARIANCE" label="材料成本差异(PPV)" value="PURCHASE_PRICE_VARIANCE"
+                    i18n-en:label="Purchase Price Variance"/>
+            <option code="MANUFACTURING_WIP" label="在制品(WIP)" value="MANUFACTURING_WIP"
+                    i18n-en:label="Manufacturing WIP"/>
+            <option code="MANUFACTURING_VARIANCE" label="制造差异" value="MANUFACTURING_VARIANCE"
+                    i18n-en:label="Manufacturing Variance"/>
+            <option code="SUBCONTRACT_MATERIAL" label="委外物资" value="SUBCONTRACT_MATERIAL"
+                    i18n-en:label="Subcontract Material"/>
+            <option code="FINISHED_GOODS" label="产成品" value="FINISHED_GOODS" i18n-en:label="Finished Goods"/>
+            <option code="CIP" label="在建工程" value="CIP" i18n-en:label="Construction In Progress"/>
+            <option code="IMPAIRMENT_LOSS" label="资产减值损失" value="IMPAIRMENT_LOSS" i18n-en:label="Impairment Loss"/>
+            <option code="IMPAIRMENT_PROVISION" label="固定资产减值准备" value="IMPAIRMENT_PROVISION"
+                    i18n-en:label="Impairment Provision"/>
+            <option code="CAPITAL_RESERVE" label="资本公积" value="CAPITAL_RESERVE" i18n-en:label="Capital Reserve"/>
+            <option code="NON_OPERATING_INCOME" label="营业外收入" value="NON_OPERATING_INCOME"
+                    i18n-en:label="Non-Operating Income"/>
+            <option code="NON_OPERATING_EXPENSE" label="营业外支出" value="NON_OPERATING_EXPENSE"
+                    i18n-en:label="Non-Operating Expense"/>
+            <option code="PROJECT_COST" label="项目成本" value="PROJECT_COST" i18n-en:label="Project Cost"/>
+            <option code="PROFIT_LOSS" label="本年利润" value="PROFIT_LOSS" i18n-en:label="Profit For Current Year"/>
+            <option code="MAINTENANCE_EXPENSE" label="维修费用" value="MAINTENANCE_EXPENSE"
+                    i18n-en:label="Maintenance Expense"/>
+            <option code="MAINTENANCE_CLEARING" label="维修中转清算" value="MAINTENANCE_CLEARING"
+                    i18n-en:label="Maintenance Clearing"/>
+            <option code="NOTES_RECEIVABLE" label="应收票据" value="NOTES_RECEIVABLE" i18n-en:label="Notes Receivable"/>
+            <option code="NOTES_PAYABLE" label="应付票据" value="NOTES_PAYABLE" i18n-en:label="Notes Payable"/>
+            <option code="EMPLOYEE_ADVANCE_RECEIVABLE" label="其他应收款-员工预支" value="EMPLOYEE_ADVANCE_RECEIVABLE"
+                    i18n-en:label="Employee Advance Receivable"/>
+            <option code="EMPLOYEE_PAYABLE" label="其他应付款-员工" value="EMPLOYEE_PAYABLE" i18n-en:label="Employee Payable"/>
+            <option code="FINANCIAL_EXPENSE" label="财务费用-利息支出" value="FINANCIAL_EXPENSE"
+                    i18n-en:label="Financial Expense"/>
+            <option code="EXCHANGE_GAIN_LOSS" label="汇兑损益" value="EXCHANGE_GAIN_LOSS" i18n-en:label="Exchange Gain Loss"/>
+            <option code="ADMIN_EXPENSE" label="管理费用" value="ADMIN_EXPENSE" i18n-en:label="Admin Expense"/>
         </dict>
         <dict label="期间状态" name="erp-fin/period-status" valueType="string" i18n-en:label="Period Status">
             <option code="OPEN" label="开启" value="OPEN" i18n-en:label="Open"/>
