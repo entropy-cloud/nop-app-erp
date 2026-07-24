@@ -13,6 +13,8 @@
 
 ### Category (a) — 预存 test-isolation 污染（fresh-DB 隔离复跑 PASS，非产品缺陷，不阻断）
 
+> **状态更新（plan 2026-07-24-1945-1，2026-07-25）**：经 fresh-DB 非 visual 全量套件执行 + 诊断 dump 验证，下表 5 项**全部不再复现**（残留状态 = pristine 种子基线，diff=0）。消除归因：累积 cleanup 纪律充分（cleanupStockMove 删余额完整链 + cleanupMfg 用测试专用组件物料隔离）+ 07-24 后生产侧变更改善删除语义。诊断证据见 `docs/analysis/2026-07-24-1945-1-test-isolation-pollutant-map.md`。全套件绿基线见 `docs/testing/known-good-baselines.md` 2026-07-25 条目。
+
 | # | spec | 证据 |
 |---|------|------|
 | 1 | dashboards/inventory.value KPI | totalValue 期望 10450 实得 16950；隔离首跑 PASS |
@@ -54,6 +56,8 @@
 |---|------|--------|
 | 19 | business-actions/fin-period-close-wizard | `ErpFinAccountingPeriod__closePeriod` 报 `期末结账所需科目/汇率未配置：配置键 erp-fin.period-end-exchange-rate`；playwright.config.ts webServer JVM args 未含此键（plan 0818 交付时漏加） |
 
+> **状态更新（plan 2026-07-24-1945-1，2026-07-25）**：#19 原 07-23 修复（加 `-Derp-fin.period-end-exchange-rate=8.5`）**不完整**——执行期发现 `closePeriod` 的汇兑重估步骤（`ExchangeRevaluationService.revalueArAp`）全局查询未核销外币 AR/AP 项时仍需 `erp-fin.ap-subject-code` / `exchange-gain-loss-subject-code`（且 AST 模块关账 `auto-depreciation-on-close` 默认 true 致折旧种子资产）。plan 2026-07-24-1945-1 补齐 webServer JVM args 4 键（`ap-subject-code=2202` / `exchange-gain-loss-subject-code=6603` / `current-year-profit-subject-code=4103` / `auto-depreciation-on-close=false`，对齐 finance 单测 yaml `period-close-end-to-end-test.yaml`），完整收口。fresh-DB 全量执行 #19 PASS。
+
 ## 处置
 
 - 全部 19 失败已在 plan `2026-07-23-1408-3` Phase 3 修复闭环：
@@ -62,5 +66,6 @@
   - **AMIS 前端缺陷（2 用例）**：`ErpMdPartner.view.xml` blur 事件 GraphQL `isCodeUnique(code:"..."){v}` 非法 selection set `{v}` 移除 + `adapt` typo 修正为 `adaptor`；`inventory.write.spec.ts` input-table 断言增加 tabs 切换。
   - **测试代码缺陷（2 项）**：`maintenance-visit-wizard` ESM 目录导入改静态 import + `__save` 改 `__update`；`reverse-preview` `callQuery` 改 `gql.raw()` + 显式 selection set。
   - **配置缺口（1 项）**：`playwright.config.ts` 增加 `-Derp-fin.period-end-exchange-rate=8.5`。
-- Category (a) 5 项为预存 test-isolation 环境问题（非回归），隔离复跑 PASS。
-- frontend-ui-roadmap 退出标准「回归测试 npx playwright test 全绿」**已达成**（残留 5 test-isolation 污染 + 1 master-data.write.amis selectOption↔switch test-infra 已知项，均非产品缺陷）。
+- Category (a) 5 项原为预存 test-isolation 环境问题（非回归），隔离复跑 PASS。**2026-07-25 经 plan `2026-07-24-1945-1` fresh-DB 全量验证不再复现**（诊断 dump 残留=pristine 基线，详见上方 Category (a) 状态更新段）。
+- #19 配置缺口经 plan `2026-07-24-1945-1` 完整收口（补 4 键 webServer JVM args，见上方 Category 配置缺口状态更新段）。
+- frontend-ui-roadmap 退出标准「回归测试 npx playwright test 全绿」**已达成**：2026-07-25 fresh-DB 非 visual 全套件 490 passed / 1 failed（master-data.write.amis selectOption↔switch test-infra 已知 Non-Goal）/ 3 skipped。残留 1 master-data.write.amis 为非产品缺陷的 test-infra 已知项。全套件绿基线见 `docs/testing/known-good-baselines.md` 2026-07-25 条目。
