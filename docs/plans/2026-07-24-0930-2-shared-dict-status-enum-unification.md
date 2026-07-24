@@ -202,6 +202,7 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: ORM `ext:dict` 变更属 ask-first 保护区域。approve-status：inventory 5 处 + cs 1 处特化引用可保留（值相同，仅 dict key 不同）。doc-status：7 域值集合相同（ACTIVE/CANCELLED/DRAFT）为合并候选，但合并需统一 ORM ext:dict 到共享 dict key（保护区域）
 - Successor Required: `yes`（触发条件：ORM 变更授权 + 强制统一 dict key 引用需求）
+- **RELEASED（inventory approve-status 子项）by `2026-07-24-1600-1`**：触发条件已满足（ORM 变更人工批准 + 计划 §Approval & Execution Status）。inventory 5 列 `ext:dict="erp-inv/approve-status"` → `wf/approve-status` + 内联 `<dict name="erp-inv/approve-status">` 移除 + `erp-inv/approve-status.dict.yaml` 删除 + `ErpInvDaoConstants extends ErpInvDocStatus` 兼容；154 模块 BUILD SUCCESS + inv 114 测试 0 失败 + checker 零回归。**仍 Deferred**：cs `erp-cs/time-entry-approve-status`（1 处特化保留）+ doc-status 7 域合并（需统一 ORM ext:dict 授权）
 
 ## Closure
 

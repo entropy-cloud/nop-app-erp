@@ -1,6 +1,6 @@
 # 2026-07-24-2100-1 综合代码与设计审计
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-07-24
 > Source: 全面代码/设计质量审计评估 — `docs/skills/` 三个最高价值审计技能
 > Related: `docs/skills/nop-platform-conformance-audit-prompt.md`, `docs/skills/cross-module-dependency-audit-prompt.md`, `docs/skills/orm-model-audit-prompt.md`
@@ -153,7 +153,7 @@ Exit Criteria:
 
 ## Draft Review Record
 
-- Independent draft review iteration 1: pending
+- Independent draft review iteration 1: accept — 格式合规（front matter/sections/phase 结构/命名约定全部满足）；3 phase 边界清晰且各有独立退出标准；Non-Goals 明确排除修复与其他审计技能，无范围蔓延；Closure Gates 已按纯审计计划正确定制（无 build 门控，审计脚本执行即验证）；引用的 6 个 owner doc/skill 文件均存在。Minor：各 Proof 项的 grep 模式已内联说明但未给出确切命令行，由执行阶段落实即可，不阻塞。
 
 ## Closure Gates
 
