@@ -1,6 +1,6 @@
 # 2026-07-24-1351-3 Commitment Accounting Expansion
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-24
 > Source: `docs/backlog/deepening-roadmap.md` §8.4 A2 落地证据 Deferred successor「承付款业务场景全集（销售订单/付款单等其他场景）」（line 227）；`docs/plans/2026-07-21-1206-2-finance-budget-multi-year-carryforward.md` §Deferred But Adjudicated
 > Related: `docs/plans/2026-07-21-1206-2-finance-budget-multi-year-carryforward.md`（A2 — commitment 基础设施 + 采购订单试点）；`docs/design/finance/budget.md`（A2 EXPAND owner doc，承付段 L238-252 当前仅采购）
@@ -76,59 +76,59 @@
 
 ### Phase 1 - Sales 承付合理性裁决 + Generator 泛化 + Owner Doc 设计
 
-Status: planned
+Status: completed
 Targets: `CommitmentVoucherGenerator`、`ErpFinConstants`、`docs/design/finance/budget.md`、`docs/design/finance/posting.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Add`
 - Prereqs: A2 基础设施已落地（plan 2026-07-21-1206-2 completed）
 
-- [ ] Decision: sales 承付业务合理性 — 销售订单 approve 生成 COMMITMENT 凭证在预算会计中的语义（收入预算预留）。候选裁决：(a) 采纳 — sales 承付作为收入预算预留，与采购支出承诺对称（Dr/Cr 方向经 Phase 1 Explore 确认，参考 OFBiz/iDempiere 对比报告 `docs/analysis/erp-survey/`）；(b) 否决 — sales 不适用承付，仅文档化否决理由，本计划 Phase 2 降级为纯文档输出。记录选择 + 替代方案 + 残留风险（收入面承付非主流，业务方接受度需验证）。**此 Decision 门控 Phase 2 实施。**
+- [x] Decision: sales 承付业务合理性 — **裁决 (a) 采纳**（收入预算预留，与采购支出承诺对称；iDempiere Fact.java COMMITMENT 支持对称；config-gate 默认关隔离风险；Dr/Cr 经 subject.direction 自动取）。替代方案 (b) 否决（收入面承付非主流但 config-gate 已隔离）。残留风险：业务方接受度需验证（缓解：默认关 + 独立科目配置）。门控 Phase 2。
   - Skill: `nop-backend-dev`
-- [ ] Add（无条件）：泛化 `CommitmentVoucherGenerator` 的 billType/sourceBillType — 新增 `SALES_ORDER_COMMITMENT` 常量（ErpFinConstants）；`commit()` SPI 按 sourceBillType 派发对应 billType；`findCommitmentVouchers` + `reverseCommitment` 路径同步使用派发 billType，保证占用/释放 lookup 对称（不撞采购 billType）。SPI 入参 sourceBillType 已泛型，无需改接口签名。即使 Phase 1 裁决否决 sales 承付，此泛化也落地（为 successor 预留 + 消除硬编码耦合）。
-- [ ] Add（条件依赖 Decision (a)）：EXPAND `budget.md` 承付段（L238-252）补充「sales 承付语义」子段（裁决结论 + 接入点表）+ 业务规则 3 扩展（L82 增 sales 场景）；EXPAND `posting.md` 承付段。若裁决否决 (b)，改为在 budget.md 显式登记「sales 承付 Deferred（否决理由）」。
+- [x] Add（无条件）：泛化 `CommitmentVoucherGenerator` 的 billType/sourceBillType — 新增 `SALES_ORDER_COMMITMENT` 常量（ErpFinConstants）+ `COMMITMENT_SOURCE_BILL_SALES_ORDER`；`resolveCommitmentBillType(sourceBillType)` 按 sourceBillType 派发对应 billType；`findCommitmentVouchers` + `reverseCommitment` + `hasUnreversedCommitment` 路径同步使用派发 billType，保证占用/释放 lookup 对称（grep 核实 SALES_ORDER_COMMITMENT 在 generateCommitment + reverseCommitment + findCommitmentVouchers 三路径）。
+- [x] Add（条件依赖 Decision (a)）：EXPAND `budget.md` 承付段补充「sales 承付扩展」子段（Decision 裁决结论 + Generator 泛化说明 + sales 接入点表 + 科目独立配置）+ 业务规则 3 扩展；EXPAND `posting.md` 承付段 config-gated 启用回链 sales 承付。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > 仅写此阶段交付的可观察结果。完整仓库 build 在 Closure Gates。
 
-- [ ] sales 承付 Decision 落盘（选择 + 替代方案 + 残留风险，明确门控 Phase 2）；CommitmentVoucherGenerator billType 常量泛化（grep 核实 SALES_ORDER_COMMITMENT 在 generateCommitment + reverseCommitment + findCommitmentVouchers 三路径）；budget.md 承付段含裁决结论
+- [x] sales 承付 Decision 落盘（选择 + 替代方案 + 残留风险，明确门控 Phase 2）；CommitmentVoucherGenerator billType 常量泛化（resolveCommitmentBillType 贯穿 commit/reverse/find 三路径）；budget.md 承付段含裁决结论
 
 ### Phase 2 - 销售订单 commitment 钩子（gated by Phase 1 Decision (a)）
 
-Status: planned
+Status: completed
 Targets: `ErpSalOrderProcessor`、`ErpSalInvoiceProcessor`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 Decision 裁决 (a)（采纳 sales 承付）
 
-- [ ] Add: `ErpSalOrderProcessor.approve`（L69）后置 `runCommitmentCommitHook`（镜像 `ErpPurOrderProcessor:207-221` 范式，sourceBillType=`"SALES_ORDER"`，subjectId/periodId/amount 经订单头/行派生）+ `reverseApprove`（L90）+ cancel `runCommitmentReleaseHook`。config-gated。
-- [ ] Add: `ErpSalInvoiceProcessor.approve`（L71）后置 release-on-invoice 镜像钩子（经 invoiceLine→deliveryLine→delivery→order.code 反查，对齐 `ErpPurInvoiceProcessor:306-373` 范式）。
-- [ ] Proof: 单元测试 — SO approve 产 COMMITMENT 凭证（billType=SALES_ORDER_COMMITMENT）+ SO reverseApprove/cancel 红冲 + invoice approve release + 重复 release 守卫 + 既有采购 commitment 测试零回归。复用 `TestErpFinBudgetCommitment` + `TestErpPurOrderCommitment` 范式扩展。
+- [x] Add: `ErpSalOrderProcessor.approve`（L69）后置 `runCommitmentCommitHook`（镜像 `ErpPurOrderProcessor:207-221` 范式，sourceBillType=`"SALES_ORDER"`，subjectId/periodId/amount 经订单头/行派生）+ `reverseApprove`（L90）+ cancel `runCommitmentReleaseHook`。config-gated。
+- [x] Add: `ErpSalInvoiceProcessor.approve`（L71）后置 release-on-invoice 镜像钩子（经 invoiceLine→deliveryLine→delivery→order.code 反查，对齐 `ErpPurInvoiceProcessor:306-373` 范式）。
+- [x] Proof: 单元测试 — SO approve 产 COMMITMENT 凭证（billType=SALES_ORDER_COMMITMENT）+ SO reverseApprove/cancel 红冲 + invoice approve release + 重复 release 守卫 + 既有采购 commitment 测试零回归。复用 `TestErpFinBudgetCommitment` + `TestErpPurOrderCommitment` 范式扩展（新增 `TestErpSalOrderCommitment` + `TestErpFinBudgetCommitment.testSalesCommitmentDispatchesSalesBillType`）。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] SO approve→COMMITMENT 凭证可观测（postingType + billType）；sales service 局部 `mvn test` 通过；finance commitment 测试零回归
+- [x] SO approve→COMMITMENT 凭证可观测（postingType + billType）；sales service 局部 `mvn test` 通过（125 tests）；finance commitment 测试零回归
 
 ### Phase 3 - Owner doc 回链 + roadmap 同步 + 全仓库验证
 
-Status: planned
+Status: completed
 Targets: `docs/design/finance/budget.md`、`docs/design/finance/posting.md`、`docs/backlog/deepening-roadmap.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add`
 - Prereqs: Phase 1-2
 
-- [ ] Add: budget.md 承付段回链实际落地路径（sales 接入点表若适用 + Generator 泛化说明 + config-gate + 科目配置）；posting.md 承付段回链。deepening-roadmap §8.4 Deferred successor「承付款业务场景全集」标注 sales 已落地/已否决 + 资金承诺 successor 登记。
-- [ ] Add: 更新每日开发日志 `docs/logs/2026/07-24.md`。
+- [x] Add: budget.md 承付段回链实际落地路径（sales 接入点表若适用 + Generator 泛化说明 + config-gate + 科目配置）；posting.md 承付段回链。deepening-roadmap §8.4 Deferred successor「承付款业务场景全集」标注 sales 已落地/已否决 + 资金承诺 successor 登记。
+- [x] Add: 更新每日开发日志 `docs/logs/2026/07-24.md`。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] owner doc 回链完成；roadmap Deferred successor 状态更新
+- [x] owner doc 回链完成；roadmap Deferred successor 状态更新
 
 ## Draft Review Record
 
@@ -139,14 +139,14 @@ Exit Criteria:
 
 > 完整仓库验证在此处：结束时运行 `mvn clean install -DskipTests` + finance/sales service `mvn test` 一次。
 
-- [ ] 范围内行为完成（Phase 1 Generator 泛化贯穿 commit/reverse/find 三路径 + Decision 落盘；若裁决采纳：SO approve→COMMITMENT 凭证 + reverseApprove/cancel 红冲 + 既有采购 commitment 零回归 + config-gate 默认 false）
-- [ ] 相关文档对齐（budget.md 承付段 EXPAND sales 裁决结论；posting.md 承付段）
-- [ ] 已运行验证（`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + finance/sales `mvn test` 全绿）
-- [ ] 无范围内项目降级为 deferred/follow-up（资金承诺降级经核实为领域对象不存在的前提性降级，非范围内项目偷降；sales 承付若 Phase 1 裁决否决则 Phase 2 明确标记为 Decision-gated 不实施）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Phase 1 Generator 泛化贯穿 commit/reverse/find 三路径 + Decision 落盘；若裁决采纳：SO approve→COMMITMENT 凭证 + reverseApprove/cancel 红冲 + 既有采购 commitment 零回归 + config-gate 默认 false）
+- [x] 相关文档对齐（budget.md 承付段 EXPAND sales 裁决结论；posting.md 承付段）
+- [x] 已运行验证（`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + finance/sales `mvn test` 全绿）
+- [x] 无范围内项目降级为 deferred/follow-up（资金承诺降级经核实为领域对象不存在的前提性降级，非范围内项目偷降；sales 承付若 Phase 1 裁决否决则 Phase 2 明确标记为 Decision-gated 不实施）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -176,11 +176,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: completed
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
+- Auditor / Agent: independent closure audit (ses_06c15edb2ffeFB5Ehmda5TPmAD) — PASS. All 8 claims verified true against live repository: Generator generalization (resolveCommitmentBillType 贯穿 commit/reverse/find), Constants (SALES_ORDER_COMMITMENT + CONFIG_BUDGET_COMMITMENT_SALES_SUBJECT_CODE), ErpSalOrderProcessor hooks (commit/release config-gated), ErpSalInvoiceProcessor release-on-invoice hook, tests (TestErpSalOrderCommitment 3 场景 + TestErpFinBudgetCommitment sales dispatch), owner docs (budget.md §sales 承付扩展 + posting.md), roadmap sync, daily log.
 
 Follow-up:
 

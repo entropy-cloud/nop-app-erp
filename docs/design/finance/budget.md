@@ -79,7 +79,7 @@
 
 2. **预算控制钩子位置**:作为 `IErpFinFactsValidator` 之外的**业务校验扩展点**——在 purchase/sales 域审核动作的事务内同步调用 `IErpFinBudgetControlBiz.check(subjectId, costCenterId, periodId, amount, sourceBill)`。返回 BLOCKED → throw 阻断审核;WARN → 写日志放行;PASS → 静默。这是强一致校验(控制必须实时),不走事件。
 
-3. **承付款生成**:采购订单 APPROVED 时生成 `postingType=COMMITMENT` 凭证;订单 CANCELLED 或被发票接收时红冲 COMMITMENT。budgetLine.commitmentAmount = Σ Commitment 凭证。
+3. **承付款生成**：采购订单 APPROVED 时生成 `postingType=COMMITMENT` 凭证；订单 CANCELLED 或被发票接收时红冲 COMMITMENT。budgetLine.commitmentAmount = Σ Commitment 凭证。销售订单承付（收入预算预留）经 plan 2026-07-24-1351-3 落地，语义对称（详见 §承付会计 §sales 承付扩展）。
 
 4. **实际数派生**:实际凭证 postingType=ACTUAL(现有所有凭证默认),actualAmount = Σ Actual 凭证在匹配维度的本位币金额。
 
@@ -280,7 +280,49 @@ Long release(String sourceBillType, String sourceBillCode, IServiceContext conte
 | 键 | 默认值 | 含义 |
 |----|--------|------|
 | `erp-fin.budget-commitment-enabled` | false | 总开关（默认关，保护既有 113 purchase 测试不触发承付凭证） |
-| `erp-fin.budget-commitment-subject-code` | （必配） | 承付占用科目编码（启用时必填） |
+| `erp-fin.budget-commitment-subject-code` | （必配） | 采购承付占用科目编码（启用采购承付时必填） |
+| `erp-fin.budget-commitment-sales-subject-code` | （启用 sales 承付时必配） | 销售承付占用科目编码（plan 2026-07-24-1351-3，与采购科目独立；sales 承付用收入面科目） |
+
+---
+
+## sales 承付扩展（plan 2026-07-24-1351-3）
+
+> 将承付凭证生成从采购订单扩展至销售订单，使**收入预算预留**可经承付凭证表达。承付传统是支出面概念（采购占用支出预算），
+> 但在预算会计中收入面承付同样成立：销售订单 approve 时预留收入预算容量，销售发票过账（实际收入产生）时释放。
+
+### Phase 1 Decision：采纳 sales 承付
+
+| 候选 | 裁决 | 理由 |
+|------|------|------|
+| **(a) 采纳 sales 承付**（收入预算预留） | ✅ **选择** | (i) 与采购支出承诺对称（commit/release 范式完全复用）；(ii) iDempiere Fact.java COMMITMENT 支持对称；(iii) 基础设施已泛型（SPI 按 sourceBillType 派发，Dr/Cr 方向经 subject.direction 自动取）；(iv) config-gated 默认关 = opt-in 零回归 |
+| (b) 否决 — sales 不适用承付 | ❌ reject | 收入面承付虽非主流，但 config-gate 已隔离风险；否决会使收入预算控制缺乏预留表达能力 |
+
+**残留风险**：收入面承付非主流 ERP 范式，业务方接受度需验证。缓解：config-gate 默认关（`erp-fin.budget-commitment-enabled` + 独立科目配置），仅显式启用场景生效。
+
+### Generator 泛化（billType 派发）
+
+`CommitmentVoucherGenerator` 的 billType/sourceBillType 从采购硬编码泛化为按 sourceBillType 派发（plan 2026-07-24-1351-3 §Phase 1 无条件泛化，即使 sales 承付否决也落地，消除硬编码耦合 + 为 successor 预留）：
+
+| sourceBillType | 派发 billType | 适用场景 |
+|----------------|---------------|---------|
+| `PURCHASE_ORDER` | `PURCHASE_ORDER_COMMITMENT` | 采购承付（既有） |
+| `SALES_ORDER` | `SALES_ORDER_COMMITMENT` | 销售承付（收入预留） |
+
+`resolveCommitmentBillType(sourceBillType)` 贯穿 commit/reverse/find 三路径，保证占用/释放 lookup 对称（不撞跨场景 billType）。未知 sourceBillType 回退采购 billType（向后兼容）。
+
+### sales 接入点（镜像采购 3 接入点）
+
+| # | hook 点 | 时机 | 动作 | 事务边界 |
+|---|---------|------|------|---------|
+| 1 | **commit** | `ErpSalOrder.approve` 后置 | 生成 COMMITMENT 凭证（billType=SALES_ORDER_COMMITMENT） | SYNC 同事务 |
+| 2 | **release-on-cancel** | `ErpSalOrder.reverseApprove` / `cancel` | 红冲原 COMMITMENT 凭证 | SYNC 同事务 |
+| 3 | **release-on-invoice-approve** | `ErpSalInvoice.approve`（AR 发票过账 = 实际收入产生 = 释放承付） | 红冲原 COMMITMENT 凭证 | SYNC 同事务 |
+
+release-on-invoice 反查路径（镜像采购 invoiceLine→receiveLine→receive→order）：
+`invoiceLine.deliveryLineId → deliveryLine.deliveryId → delivery.orderId → order.code`，
+对每个唯一 order.code 调用 `IErpFinBudgetCommitmentBiz.release(SALES_ORDER, orderCode)`。
+
+**科目独立配置**：sales 承付科目经 `erp-fin.budget-commitment-sales-subject-code` 独立配置（与采购 `budget-commitment-subject-code` 并列），使收入面承付科目（贷方/收入类方向）与支出面（借方/费用类方向）分离。
 
 ---
 

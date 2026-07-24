@@ -532,7 +532,8 @@ VoucherBillR（业财回链）
 
 承付过账经 `erp-fin.budget-commitment-enabled`（默认 false）控制：
 - 默认关闭：保护既有 113 purchase 测试不触发承付凭证（config-gated 回归安全）。
-- 启用时必配 `erp-fin.budget-commitment-subject-code`（承付占用科目编码）；缺失时抛 `ERR_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED`。
+- 启用时必配 `erp-fin.budget-commitment-subject-code`（采购承付占用科目编码）；缺失时抛 `ERR_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED`。
+- sales 承付（plan 2026-07-24-1351-3）经同一总开关启用，科目经 `erp-fin.budget-commitment-sales-subject-code` 独立配置（收入面科目）；billType 按 sourceBillType 派发（PURCHASE_ORDER → PURCHASE_ORDER_COMMITMENT，SALES_ORDER → SALES_ORDER_COMMITMENT），详见 [`budget.md §sales 承付扩展`](budget.md#sales-承付扩展plan-2026-07-24-1351-3)。
 
 ### CommitmentAcctDocProvider
 

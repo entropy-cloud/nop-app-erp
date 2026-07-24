@@ -224,7 +224,7 @@ A2（Budget Multi-Year / Carry-Forward / Commitment Accounting）已落地，状
   - finance service 全 229 测试全绿（218 既有 + 11 新增）
   - purchase service 全 116 测试全绿（113 既有 + 3 新增）
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
-- **Deferred successor**：A3 多公司运营深度（跨公司预算结转/合并预算）/ A1 GL Mapping Rule 接入 BUDGET/COMMITMENT 多维规则 / 承付款业务场景全集（销售订单/付款单等其他场景）/ 预算物化快照表 / commitment 一并结转 / 预算对比报表多年度维度实施 / 跨币种预算结转汇率差异处理 / 预算冻结/解冻多级控制 / 预算编制工作流
+- **Deferred successor**：A3 多公司运营深度（跨公司预算结转/合并预算）/ A1 GL Mapping Rule 接入 BUDGET/COMMITMENT 多维规则 / 承付款业务场景全集剩余项（销售订单已落地见 plan 2026-07-24-1351-3；资金承诺=付款单/收款单待资金单据域对象构建后；其他业务单据类型待业务方需求）/ 预算物化快照表 / commitment 一并结转 / 预算对比报表多年度维度实施 / 跨币种预算结转汇率差异处理 / 预算冻结/解冻多级控制 / 预算编制工作流
 
 ## 8.5 D1 落地证据（2026-07-21）
 
