@@ -121,9 +121,7 @@ public class BankReconAdjustmentVoucherBuilder {
                     .param(ErpFinErrors.ARG_FUND_ACCOUNT_ID, fundAccount.getId())
                     .param(ErpFinErrors.ARG_ACCOUNT_TYPE, fundAccount.getAccountType());
         }
-        IEntityDao<app.erp.md.dao.entity.ErpMdSubject> dao =
-                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdSubject.class);
-        app.erp.md.dao.entity.ErpMdSubject subject = dao.getEntityById(fundAccount.getSubjectId());
+        app.erp.md.dao.entity.ErpMdSubject subject = fundAccount.getSubject();
         if (subject == null || subject.getCode() == null) {
             throw new NopException(ErpFinErrors.ERR_FUND_ACCOUNT_NOT_BANK)
                     .param(ErpFinErrors.ARG_FUND_ACCOUNT_ID, fundAccount.getId());

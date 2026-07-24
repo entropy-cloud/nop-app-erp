@@ -165,15 +165,13 @@ public class ProjectCostAggregator {
 
     private Long resolveLaborSubjectId(ErpPrjTimesheet timesheet, ErpPrjProject project) {
         if (timesheet.getActivityTypeId() != null) {
-            IEntityDao<ErpPrjActivityType> dao = daoProvider.daoFor(ErpPrjActivityType.class);
-            ErpPrjActivityType activityType = dao.getEntityById(timesheet.getActivityTypeId());
+            ErpPrjActivityType activityType = timesheet.getActivityType();
             if (activityType != null && activityType.getSubjectId() != null) {
                 return activityType.getSubjectId();
             }
         }
         if (project != null && project.getProjectTypeId() != null) {
-            IEntityDao<ErpPrjProjectType> dao = daoProvider.daoFor(ErpPrjProjectType.class);
-            ErpPrjProjectType projectType = dao.getEntityById(project.getProjectTypeId());
+            ErpPrjProjectType projectType = project.getProjectType();
             if (projectType != null) {
                 return projectType.getDefaultSubjectId();
             }

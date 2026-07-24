@@ -204,8 +204,7 @@ public class CostAdjustmentService {
     // ---------- standard revaluation rollup ----------
 
     private void publishFirmedRollup(ErpInvCostAdjust adjust, ErpInvCostAdjustLine line, BigDecimal newUnitCost) {
-        IEntityDao<ErpMdMaterial> mdDao = daoProvider.daoFor(ErpMdMaterial.class);
-        ErpMdMaterial material = mdDao.getEntityById(line.getMaterialId());
+        ErpMdMaterial material = line.getMaterial();
         Long uomId = material != null ? material.getUoMId() : null;
 
         IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);

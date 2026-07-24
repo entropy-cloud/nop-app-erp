@@ -136,7 +136,7 @@ public class ErpFinBadDebtProcessor {
         finPostingExecutor.reverse(debt.getCode(), businessType);
 
         // step 2：回退 ArApItem 状态对称（与 executeWriteOff/executeRecovery 反向）
-        ErpFinArApItem item = arApItemDao().getEntityById(debt.getSourceArApItemId());
+        ErpFinArApItem item = debt.getSourceArApItem();
         if (item != null) {
             BigDecimal amount = debt.getAmount();
             if (Objects.equals(debt.getDocType(), ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF)) {

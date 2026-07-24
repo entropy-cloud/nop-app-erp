@@ -434,9 +434,8 @@ public class ErpAstMergeProcessor {
 
     protected List<ErpAstAsset> loadSources(List<ErpAstMergeLine> lines) {
         List<ErpAstAsset> sources = new ArrayList<>();
-        IEntityDao<ErpAstAsset> dao = daoProvider.daoFor(ErpAstAsset.class);
         for (ErpAstMergeLine line : lines) {
-            sources.add(line.getSourceAssetId() == null ? null : dao.getEntityById(line.getSourceAssetId()));
+            sources.add(line.getSourceAsset());
         }
         return sources;
     }

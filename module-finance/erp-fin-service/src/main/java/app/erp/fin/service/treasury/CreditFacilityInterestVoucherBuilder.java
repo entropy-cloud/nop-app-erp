@@ -91,8 +91,7 @@ public class CreditFacilityInterestVoucherBuilder {
      */
     protected Long resolveCurrencyId(ErpFinCreditFacility facility, Long acctSchemaId) {
         if (facility.getFundAccountId() != null) {
-            IEntityDao<ErpFinFundAccount> dao = daoProvider.daoFor(ErpFinFundAccount.class);
-            ErpFinFundAccount account = dao.getEntityById(facility.getFundAccountId());
+            ErpFinFundAccount account = facility.getFundAccount();
             if (account != null && account.getCurrencyId() != null) {
                 return account.getCurrencyId();
             }

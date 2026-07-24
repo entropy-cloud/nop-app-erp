@@ -337,7 +337,7 @@ public class ErpAstInventoryProcessor {
         if (line.getDisposalId() != null) {
             return;
         }
-        ErpAstAsset asset = assetDao().getEntityById(line.getAssetId());
+        ErpAstAsset asset = line.getAsset();
         if (asset == null) {
             return;
         }
