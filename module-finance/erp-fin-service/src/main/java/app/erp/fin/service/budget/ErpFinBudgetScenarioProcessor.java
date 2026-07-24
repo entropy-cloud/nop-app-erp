@@ -353,7 +353,7 @@ public class ErpFinBudgetScenarioProcessor {
         if (line.getPeriodId() == null || line.getSubjectId() == null) {
             return BigDecimal.ZERO;
         }
-        ErpMdSubject subject = daoProvider.daoFor(ErpMdSubject.class).getEntityById(line.getSubjectId());
+        ErpMdSubject subject = line.getSubject();
         if (subject == null) {
             return BigDecimal.ZERO;
         }

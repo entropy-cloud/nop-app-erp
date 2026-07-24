@@ -174,8 +174,7 @@ public class ErpAstMaintenanceProcessor {
         m.setTotalCostAmount(totalCost);
 
         ErpAstAsset asset = requireAsset(m.getAssetId());
-        ErpAstAssetCategory category = asset.getCategoryId() == null ? null
-                : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
+        ErpAstAssetCategory category = asset.getCategory();
 
         Long voucherId;
         if (Objects.equals(m.getTreatment(), ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE)) {

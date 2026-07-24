@@ -60,7 +60,7 @@ public class ErpAstDisposalProcessor {
         validateTransitionForApprove(disposal, context);
         validateForApproval(disposal, context);
 
-        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(disposal.getAssetId());
+        ErpAstAsset asset = disposal.getAsset();
         validateAssetDisposable(asset, context);
 
         BigDecimal original = nz(asset.getOriginalValue());
@@ -86,8 +86,7 @@ public class ErpAstDisposalProcessor {
         disposalDao().updateEntity(disposal);
         orm().flushSession();
 
-        ErpAstAssetCategory category = asset.getCategoryId() == null ? null
-                : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
+        ErpAstAssetCategory category = asset.getCategory();
         Long voucherId = postingDispatcher.tryPost(disposal, asset, category);
 
         disposal = reload(id);
@@ -118,7 +117,7 @@ public class ErpAstDisposalProcessor {
         validateTransitionForReverseApprove(disposal, context);
         if (Boolean.TRUE.equals(disposal.getPosted())) {
             postingDispatcher.reverse(disposal);
-            ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(disposal.getAssetId());
+            ErpAstAsset asset = disposal.getAsset();
             if (asset != null) {
                 asset.setStatus(ErpAstConstants.ASSET_STATUS_IN_SERVICE);
                 daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);

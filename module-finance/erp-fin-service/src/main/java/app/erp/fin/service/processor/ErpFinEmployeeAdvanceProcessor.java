@@ -131,8 +131,7 @@ public class ErpFinEmployeeAdvanceProcessor {
     }
 
     protected void requireEmployeeReady(ErpFinEmployeeAdvance advance, IServiceContext context) {
-        ErpMdEmployee employee = advance.getEmployeeId() == null ? null
-                : daoProvider.daoFor(ErpMdEmployee.class).getEntityById(advance.getEmployeeId());
+        ErpMdEmployee employee = advance.getEmployee();
         if (employee == null || employee.getStatus() == null
                 || !Objects.equals(employee.getStatus(), ErpFinConstants.EMPLOYEE_STATUS_ACTIVE)) {
             throw new NopException(ErpFinErrors.ERR_EMPLOYEE_ADVANCE_EMPLOYEE_INACTIVE)

@@ -406,7 +406,7 @@ public class ErpMfgWorkOrderProcessor {
         if (wo.getBomId() == null) {
             return false;
         }
-        ErpMfgBom bom = daoProvider.daoFor(ErpMfgBom.class).getEntityById(wo.getBomId());
+        ErpMfgBom bom = wo.getBom();
         return bom != null && Boolean.TRUE.equals(bom.getInspectionRequired());
     }
 

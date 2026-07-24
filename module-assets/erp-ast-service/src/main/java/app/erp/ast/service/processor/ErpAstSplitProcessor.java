@@ -488,7 +488,7 @@ public class ErpAstSplitProcessor {
         if (split.getSourceAssetId() == null) {
             return null;
         }
-        return daoProvider.daoFor(ErpAstAsset.class).getEntityById(split.getSourceAssetId());
+        return split.getSourceAsset();
     }
 
     protected List<ErpAstSplitLine> loadLines(ErpAstSplit split) {

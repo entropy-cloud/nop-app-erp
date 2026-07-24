@@ -156,8 +156,7 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected void requireClaimantReady(ErpFinExpenseClaim claim, IServiceContext context) {
-        ErpMdEmployee claimant = claim.getClaimantId() == null ? null
-                : daoProvider.daoFor(ErpMdEmployee.class).getEntityById(claim.getClaimantId());
+        ErpMdEmployee claimant = claim.getClaimant();
         if (claimant == null || claimant.getStatus() == null
                 || !Objects.equals(claimant.getStatus(), ErpFinConstants.EMPLOYEE_STATUS_ACTIVE)) {
             throw new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_CLAIMANT_INACTIVE)

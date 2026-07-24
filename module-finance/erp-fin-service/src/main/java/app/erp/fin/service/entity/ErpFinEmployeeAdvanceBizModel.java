@@ -17,7 +17,6 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
-import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
@@ -129,8 +128,7 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
                     .param(ErpFinErrors.ARG_ADVANCE_CODE, advance.getCode());
         }
 
-        ErpFinVoucher originalVoucher = daoProvider().daoFor(ErpFinVoucher.class)
-                .getEntityById(latestCashLink.getVoucherId());
+        ErpFinVoucher originalVoucher = latestCashLink.getVoucher();
         BigDecimal voucherAmount = originalVoucher != null && originalVoucher.getTotalDebit() != null
                 ? originalVoucher.getTotalDebit() : BigDecimal.ZERO;
 
@@ -153,8 +151,7 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
      * 排序：按 voucherId desc（cashRepay billHeadCode 含 millis 后缀，时间序≈voucherId 序）。
      */
     private ErpFinVoucherBillR findLatestUnreversedCashRepayLink(String billCodePrefix) {
-        IDaoProvider dp = daoProvider();
-        IEntityDao<ErpFinVoucherBillR> linkDao = dp.daoFor(ErpFinVoucherBillR.class);
+        IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider().daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 like("billCode", billCodePrefix + "%"),
@@ -164,10 +161,9 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
         if (links.isEmpty()) {
             return null;
         }
-        IEntityDao<ErpFinVoucher> voucherDao = dp.daoFor(ErpFinVoucher.class);
         return links.stream()
                 .filter(lnk -> {
-                    ErpFinVoucher v = voucherDao.getEntityById(lnk.getVoucherId());
+                    ErpFinVoucher v = lnk.getVoucher();
                     return v != null
                             && Objects.equals(ErpFinConstants.POSTING_TYPE_NORMAL, v.getPostingType())
                             && !Boolean.TRUE.equals(v.getIsReversed());

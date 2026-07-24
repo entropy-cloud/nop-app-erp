@@ -54,8 +54,7 @@ public class ErpAstDepreciationScheduleProcessor {
         validateAssetInService(asset, context);
         requirePeriodOpen(period, context);
 
-        ErpAstAssetCategory category = asset.getCategoryId() == null ? null
-                : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
+        ErpAstAssetCategory category = asset.getCategory();
         String method = asset.getDepreciationMethod() != null ? asset.getDepreciationMethod()
                 : (category != null && category.getDepreciationMethod() != null ? category.getDepreciationMethod()
                         : ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE);
@@ -187,8 +186,7 @@ public class ErpAstDepreciationScheduleProcessor {
         BigDecimal residual = nz(asset.getResidualValue());
         BigDecimal accumulated = nz(asset.getAccumulatedDepreciation());
 
-        ErpAstAssetCategory category = asset.getCategoryId() == null ? null
-                : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
+        ErpAstAssetCategory category = asset.getCategory();
         int totalMonths = asset.getUsefulLifeMonths() != null ? asset.getUsefulLifeMonths()
                 : (category != null && category.getUsefulLifeMonths() != null ? category.getUsefulLifeMonths() : 0);
 

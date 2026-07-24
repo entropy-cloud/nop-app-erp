@@ -60,7 +60,7 @@ public class ErpAstValueAdjustmentProcessor {
         validateTransitionForApprove(adjustment, context);
         validateForApproval(adjustment, context);
 
-        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(adjustment.getAssetId());
+        ErpAstAsset asset = adjustment.getAsset();
         validateAssetAdjustable(asset, context);
 
         adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
@@ -70,8 +70,7 @@ public class ErpAstValueAdjustmentProcessor {
         adjustmentDao().updateEntity(adjustment);
         orm().flushSession();
 
-        ErpAstAssetCategory category = asset.getCategoryId() == null ? null
-                : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
+        ErpAstAssetCategory category = asset.getCategory();
         Long voucherId = postingDispatcher.tryPost(adjustment, asset, category);
 
         if (voucherId != null) {
@@ -236,7 +235,7 @@ public class ErpAstValueAdjustmentProcessor {
     }
 
     protected void rollbackAssetValue(ErpAstValueAdjustment adjustment) {
-        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(adjustment.getAssetId());
+        ErpAstAsset asset = adjustment.getAsset();
         if (asset == null) {
             return;
         }
@@ -272,7 +271,7 @@ public class ErpAstValueAdjustmentProcessor {
     // ---------- 自动审批（无需审批流程时由 submitForApproval 调用） ----------
 
     protected ErpAstValueAdjustment doAutoApprove(String id, ErpAstValueAdjustment adjustment, IServiceContext context) {
-        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(adjustment.getAssetId());
+        ErpAstAsset asset = adjustment.getAsset();
         validateAssetAdjustable(asset, context);
 
         adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
@@ -282,8 +281,7 @@ public class ErpAstValueAdjustmentProcessor {
         adjustmentDao().updateEntity(adjustment);
         orm().flushSession();
 
-        ErpAstAssetCategory category = asset.getCategoryId() == null ? null
-                : daoProvider.daoFor(ErpAstAssetCategory.class).getEntityById(asset.getCategoryId());
+        ErpAstAssetCategory category = asset.getCategory();
         Long voucherId = postingDispatcher.tryPost(adjustment, asset, category);
 
         if (voucherId != null) {
