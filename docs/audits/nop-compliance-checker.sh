@@ -155,16 +155,38 @@ echo "$R2D_N" > "$TMPDIR/r2d"
 # ============================================================
 # R3: new Erp*() 构造实体
 # ============================================================
+# 测量口径校准（plan 2026-07-24-0941-2 Phase 1 裁决 option c）：
+# 原 regex `new Erp[A-Z]` 匹配任何 Erp* 前缀类，但 ~14/19 为非 ORM 实体类
+# （引擎 / support / value / DTO / 私有内部投影类），规则显著过匹配。
+# 校准=交叉引用 *.orm.xml <entity className> 声明构建已注册实体白名单，
+# R3 仅对 `new <RegisteredEntity>()` 计数（精确校准，0 FP / 0 FN；
+# 未来新增实体自动纳入白名单，因 checker 运行时从 orm.xml 动态提取）。
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "[R3] 🟡 中 — new Erp*() 直接构造实体"
-echo "规则: safe-api-reference.md — 应使用 newEntity()"
+echo "规则: safe-api-reference.md — 应使用 newEntity()（仅计已注册 ORM 实体构造）"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-R3=$(rgrep_prodjava 'new Erp[A-Z]' | grep -v '_gen/' | grep -v 'Test' | grep -v '/test/' || true)
+# 构建已注册 ORM 实体短名白名单（从源 model/*.orm.xml 动态提取，排除 _gen/target）
+ENTITY_WHITELIST=$(eval "find '$REPO_ROOT' $PRUNE_DIRS -o -path '*/model/*.orm.xml' -type f -print" 2>/dev/null \
+  | xargs grep -oh '<entity className="[^"]*"' 2>/dev/null \
+  | sed -E 's/.*className="([^"]*)".*/\1/' \
+  | sed -E 's/.*\.//' | sort -u)
+R3_RAW=$(rgrep_prodjava 'new Erp[A-Z]' | grep -v '_gen/' | grep -v 'Test' | grep -v '/test/' || true)
+R3=""
+if [[ -n "$R3_RAW" ]]; then
+  while IFS= read -r line; do
+    [[ -z "$line" ]] && continue
+    cls=$(echo "$line" | grep -oE 'new Erp[A-Za-z0-9_]+' | head -1 | sed 's/new //')
+    if [[ -n "$cls" ]] && echo "$ENTITY_WHITELIST" | grep -qxF "$cls"; then
+      R3="$R3$line"$'\n'
+    fi
+  done <<< "$R3_RAW"
+fi
+R3="${R3%$'\n'}"
 R3_N=$(cnt "$R3")
 [[ $R3_N -gt 0 ]] && echo "$R3" | head -15 | sed 's/^/  /'
 [[ $R3_N -gt 15 ]] && echo "  ... (共 $R3_N 处)"
-echo "  → 命中: $R3_N 处"
+echo "  → 命中: $R3_N 处（仅计已注册 ORM 实体；非实体 Erp* 前缀类已校准排除）"
 echo "$R3_N" > "$TMPDIR/r3"
 
 # ============================================================

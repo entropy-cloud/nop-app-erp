@@ -22,11 +22,11 @@
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 314 |
 | R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1065 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 27 |
-| R3 | new Erp*() 构造实体 | 🟡 中 | 19 |
+| R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
 | R5 | @Inject private | 🟡 中 | 0 |
 | R6 | @Transactional in BizModel | 🟢 低 | 7 |
-| R7 | System.currentTimeMillis() | 🟢 低 | 2 |
+| R7 | System.currentTimeMillis() | 🟢 低 | 0 |
 | R8 | Processor 无 xbiz 接线 | 🔴 高 | 42 |
 | R10 | REQUIRES_NEW 事务 | 🟡 中 | 51 |
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
@@ -94,6 +94,25 @@ safe 子集 8 处重构为 ORM 关系 getter（`line.getMaterial()`/`facility.ge
 
 R2a 不变（=37）。本批收尾后 `getEntityById(FK)` **chained + variable-split 两形态**生产站点全域清零（仅余已登记 Type 2 voucher-by-link 豁免 7 处 + Type 5 dashboard + Non-Goal 豁免文件）。全 154 模块 `mvn clean install -DskipTests` BUILD SUCCESS + 4 受影响域单模块测试全绿（inv 114/ast 78/prj 67/fin BUILD SUCCESS）。
 
+## R3/R7 收敛注记（plan 2026-07-24-0941-2，R3 构造 + R7 clock helper 收敛）
+
+`2026-07-24-0941-2`（R3 `new Erp*()` 构造 + R7 `System.currentTimeMillis()` 合规收敛）完成两项：
+
+**R7（2 → 0，确定性修复）**：两处 `System.currentTimeMillis()` 直调替换为平台 helper `CoreMetrics.currentTimeMillis()`——`ErpFinGlMappingResolver:259`（GL 映射缓存 TTL 降级时间戳）+ `ErpMdExchangeRateApiClientFactory:69`（汇率 API 客户端 TTL 缓存）。平台 helper 权威来源 `../nop-entropy/docs-for-ai/04-reference/common-java-helpers.md` + AGENTS.md 平台 helper 强制规则（R13 不可降级项）。语义等价（同 epoch millis），受影响域既有测试全绿（fin 264 / md 109 含 `TestErpMdExchangeRateApiClient`）。
+
+**R3（19 → 5，测量口径校准 + 瞬态登记）**：
+
+1. **三态分类**（iter-1/iter-2 独立审查 + Phase 1 全量复核定终值，A=14 / B=0 / C=5）：
+   - **A false positive（14 处，非 ORM 实体）**：`ErpApsSchedulingEngine`（aps 调度引擎 service 类 ×3，NOT in orm.xml）/ `ErpCrmTerritoryPipeline` + 其 3 个内部 `@DataBean`（crm，DTO/value 类，NOT in orm.xml）/ `ErpCrmPipelineAccumulator`（crm support 累加器）/ `ErpFinPostingMetricsSnapshot` + 其 `.MetricValue` 内部类 ×5（fin 跨层契约 DTO，代码注释明示「非 ORM 实体」）/ `ErpQaActionImpl`（qa 私有内部投影类，实体是 `ErpQaAction` 非 Impl）。
+   - **B 合法持久化创建（0 处）**：iter-1 审查逐处核实原草案 B 站点实为 C 或 A，B 类为空。
+   - **C 瞬态聚合/虚拟实体（5 处，ORM 实体作内存计算容器）**：`ErpCrmFunnelStageMetrics`（crm 纯函数引擎快照，调用方 saveEntity）/ `ErpCrmQuota`（crm 虚拟聚合行只读返回）/ `ErpHrGapAnalysis`（hr daoProvider==null fallback，已优先 newEntity）/ `ErpMfgMrpDemand`（mfg 仿真内存构造）/ `ErpSalOrderLine`（sal 赠品行评估快照，调用方持久化）。5 处代码注释均已文档化瞬态用途，符合 `nop-backend-dev` skill「ORM 实体构造反转模式」例外（纯函数引擎由调用方 new 实例化、测试直接 new，改 newEntity() 破坏无状态纯净性 + 测试可构造性），**全部保留登记**，无一改 DTO（改 DTO 破坏公共返回类型，触 Non-Goal）。
+
+2. **测量口径校准裁决=option (c) 交叉引用 `*.orm.xml` 实体声明**（精确校准，0 FP / 0 FN）：checker 脚本运行时从源 `model/*.orm.xml` `<entity className>` 动态提取已注册实体短名白名单，R3 仅对 `new <RegisteredEntity>()` 计数。option (a) 后缀排除法否决（iter-1 审查 Major-2 实证仅能排除 ~4/14，余 ~10 非实体类无匹配后缀仍被计数）。校准后 R3 从 19 下降至真实 domain entity 构造计数 **5**（=C 子集，健康合法基线 > 0，符合 Non-Goal「不强求 R3→0」）。未来新增实体自动纳入白名单（checker 运行时动态提取），无需手工维护。
+
+**合法持久化 B 类 baseline rationale**：B 类=0，无对象登记。B 类若未来出现（`new Erp*()` + 同方法块 `saveEntity()`）是 Nop 标准模式，非违规——但应在出现时开独立计划登记为合法基线，不在此预设。
+
+**校准实施位置**：`docs/audits/nop-compliance-checker.sh` R3 段（构建 ENTITY_WHITELIST + 逐行 cls 提取 + `grep -qxF` 白名单比对）。全仓 `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）+ 受影响域 `mvn test` 全绿（fin 264 / md 109）+ checker 复跑 R3=5 / R7=0。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -107,11 +126,11 @@ R2a: 37
 R2b: 314
 R2c: 1065
 R2d: 27
-R3: 19
+R3: 5
 R4: 0
 R5: 0
 R6: 7
-R7: 2
+R7: 0
 R8: 42
 R10: 51
 R11: 0

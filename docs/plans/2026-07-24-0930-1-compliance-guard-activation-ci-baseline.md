@@ -168,3 +168,5 @@ Closure Audit Evidence:
 Follow-up:
 
 - R8/R10/R1d/R3 命中项专项重构计划（基线门控上线后）
+  - **R3 + R7 已 RELEASED by `2026-07-24-0941-2`**（R3 19→5 经 orm.xml 白名单校准 + 瞬态登记；R7 2→0 经 CoreMetrics helper 替换）
+  - R8（42 Processor 无 xbiz）/ R10（51 REQUIRES_NEW）/ R1d（23 findAllByQuery）维持 watch-only residual（独立 successor，触发条件见各域裁决）
