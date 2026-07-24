@@ -96,6 +96,22 @@ daoFor 真违规子集分两类，**重构前置条件不同**：
 
 `2026-07-24-0605-3` 完成第一批 Type 1 safe 子集重构：18 处 `daoProvider().daoFor(X).getEntityById(entity.getYId())` → ORM `<to-one>` 关系 getter，覆盖 assets（12）/ finance（5）/ manufacturing（1）域。逐处核实 ORM 关系已建模（无 ORM-gap）。全 154 模块 BUILD SUCCESS + 受影响域单模块测试全绿（ast 78/fin 264/mfg 136），验证 §4 前置条件 3（daoFor→关系重构后目标域单模块测试启动成功）。checker 基线下降：R2b 319→317 / R2c 1108→1090 / R2d 34→31（合规改善，非回归）。剩余 Type 1 估算≈82-132 处（原 ~100-150 − 本批 18），分布在其余 14 域，为按域分批 successor。
 
+### 3.6 第二批落地证据 + 收尾评估（plan 2026-07-24-2000-1，F1 successor 收尾）
+
+`2026-07-24-2000-1` 完成第二批 Type 1 safe 子集重构 + `getEntityById(FK)` chained 模式全域收尾：累计 19 处 `daoProvider().daoFor(X).getEntityById(entity.getYId())` → ORM `<to-one>` 关系 getter，覆盖 drp（2）/ logistics（2）/ maintenance（2）/ manufacturing（9：含 SimulationMrpEngine 多行镜像 2 + MrpReleaseService 同域只读 3）/ hr（2：含多行镜像 1）/ sales（1）/ finance（1：多行镜像 ErpFinBudgetControlBiz）域 Processor + BizModel。逐处核实 ORM 关系已建模（ORM-gap=0，与第一批一致）。全 154 模块 BUILD SUCCESS + 受影响域单模块测试全绿（mfg 136 / sal 119 / mnt 54 / hr 113 / drp 34 / log 23 / fin 264）。checker 基线下降：R2b 317→314 / R2c 1090→1071 / R2d 31→27（合规改善，非回归）。
+
+**闭包审计修正**：初始单行 grep 漏看 4 处多行 chained 站点（`daoFor(X)\n.getEntityById(FK)`），经独立结束审计发现并补重构。最终重构 19 处 = 15 单行 + 4 多行。
+
+**估算校正**：§3.5 估算剩余 Type 1 ≈82-132 处基于 6 类分类的全形态估算（含 `findAllByQuery` 等非 `getEntityById` 模式）。经第二批全域机械扫描，`getEntityById(FK)` **chained** 模式实际共 ~37 处（batch1 18 + batch2 19），收尾后生产站点 chained 形态**清零**（仅余 2 处 Type 5 dashboard 排除 + 2 处 ErpCtRebateSettlementBizModel Non-Goal 排除）。差异原因：原估算覆盖所有 Type 1 形态，而 `findAllByQuery` 类的 Type 1 判定需逐处语义分析（非机械替换）。
+
+**`findAllByQuery` Type 1 评估结论**：全域 113 处 `daoFor(...).findAllByQuery(...)` 生产站点经抽样评估（CrpLoadCalculator/DrpDemandAggregator/ReceiptSettler/各 *ReportBizModel），可机械替换为 ORM 导航的候选 **<10 处**（普遍含复合条件 + 调用方以 ID 参数构造 query 非持有托管父实体）→ **watch-only residual**，successor 触发条件（≥10 处可机械替换）未满足，不开 successor。
+
+**variable-split 子模式 successor**：独立结束审计发现 `IEntityDao<X> dao = daoFor(X); dao.getEntityById(FK)` 变量拆分形式另有 ~15 处（跨 fin/inv/ast/prj 域）。该子模式需逐处语义分析（部分为 Type 2 会话存活豁免——如 voucher link 查询 batch 1 已豁免；部分为 Type 1 可替换），非纯机械替换 → 归 **successor**（触发条件：逐处 Type 1/Type 2 分类完成）。
+
+**MrpReleaseService 豁免裁决**：该文件跨域写豁免（mfg→pur `ErpPurOrder`，`posting-exemptions.md` 登记）与同域只读 `getEntityById(line.getMrpPlanId())`（mfg→mfg `ErpMfgMrpPlan`）独立处理——裁决=选 A（局部重构 3 处只读站点为 `line.getMrpPlan()`，豁免仅约束跨域写路径；`posting-exemptions.md` 无需改动）。
+
+**Type 1 `getEntityById(FK)` chained 工作流收尾**：两批共重构 37 处（batch1 18 + batch2 19），checker 累计下降 R2b 319→314（-5）/ R2c 1108→1071（-37）/ R2d 34→27（-7）。`getEntityById(FK)` chained 模式全域清零，Type 1 chained 工作流**收尾**。残余形态：variable-split 子模式（successor）、`findAllByQuery` 子集（watch-only residual）、Type 4（既定阻塞 successor）。
+
 ## 4. 重构前置条件总结
 
 1. **Type 1（~100-150 处）**：无前置阻塞，可立即开按域分批重构计划（目标：daoFor → ORM 关系 getter）。

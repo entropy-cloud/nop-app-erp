@@ -74,6 +74,8 @@ nop-app-erp 的**主脊健康**——DAG 单向依赖、`I*Biz` 写契约、ORM 
 > **解决状态（2026-07-24，plan `2026-07-24-0930-3`）**：(闭包项 #1) governed path 成本评估 ✅ Done——裁决=分支 (b)，I*Biz 强注入会破坏单模块测试（实测 contract 37/aps 22 全绿因回避 I*Biz），Type 1 可安全重构、Type 4 需平台解耦，裁决文档 `docs/analysis/governed-path-cost-evaluation.md`；(闭包项 #2) `ErpB2bAsnBizModel` 跨域写豁免 ✅ Done——已补登 `posting-exemptions.md`。真违规子集 Type 1+4 的 ~110-180 处重构归 successor（依赖 Phase 1 裁决前置条件）。
 >
 > **进展（2026-07-24，plan `2026-07-24-0605-3`）**：Type 1 第一批 safe 子集重构 ✅ Done——18 处 `daoFor().getEntityById()` → ORM `<to-one>` 关系 getter（assets 12/finance 5/mfg 1），ORM-gap=0，全 154 模块 BUILD SUCCESS + 受影响域单模块测试全绿（ast 78/fin 264/mfg 136）。checker 基线下降：R2b 319→317 / R2c 1108→1090 / R2d 34→31。剩余 Type 1 估算≈82-132 处分布在其余 14 域，为按域分批 successor。
+>
+> **收尾（2026-07-24，plan `2026-07-24-2000-1`）**：Type 1 第二批 + `getEntityById(FK)` chained 模式全域收尾 ✅ Done——累计 19 处 `daoFor().getEntityById()` → ORM `<to-one>` 关系 getter（drp 2/logistics 2/maintenance 2/manufacturing 9/hr 2/sales 1/finance 1），ORM-gap=0，全 154 模块 BUILD SUCCESS + 受影响域单模块测试全绿（mfg 136/sal 119/mnt 54/hr 113/drp 34/log 23/fin 264）。checker 基线下降：R2b 317→314 / R2c 1090→1071 / R2d 31→27。两批累计重构 37 处，`getEntityById(FK)` **chained** 模式生产站点全域清零（仅余 2 处 Type 5 dashboard + 2 处 ErpCtRebateSettlementBizModel Non-Goal 排除）。闭包审计修正：初始单行 grep 漏看 4 处多行 chained 站点，经独立结束审计发现并补重构（19 = 15 单行 + 4 多行）。`findAllByQuery` Type 1 评估：113 处站点可机械替换候选 <10 → watch-only residual。**variable-split 子模式**（`dao=daoFor(X); dao.getEntityById(FK)`，~15 处）为 successor（需逐处 Type 1/Type 2 分类）。MrpReleaseService 同域只读 3 处局部重构（选 A）。Type 1 chained 工作流**收尾**。
 
 **违反**：
 - `AGENTS.md`："跨实体访问：始终为其他实体注入 `I*Biz` 接口。仅当 `I*Biz` 无法满足需求时才使用 `IDaoProvider` / `IOrmTemplate` / `@SqlLibMapper`，并在代码注释中记录原因。"
