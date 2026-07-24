@@ -374,7 +374,7 @@ A3（Multi-Company Operational Depth）已落地，状态 `todo → done`：
   - `TestErpFinIntercompanyMatchingAndElimination`（**NEW**）5 场景全绿（MATCHED 配对 / DIFF=200 差额 / checkDualSideConsistency 非空报告 / AR_AP+REVENUE_COST 两类候选 / postElimination DRAFT 凭证 + 状态翻转 DRAFT_VOUCHER）
   - finance service 全 243 测试全绿（229 既有 + 14 新增，无回归）
   - inventory service 全 114 测试全绿（ErpInvTransferOrderBizModel.confirm 钩子 config-gated 默认 false 保护既有测试）
-- **Deferred successor**：实时合并报表渲染（触发：业务客户合并报表需求 + report successor）/ 跨币种合并折算（触发：跨国集团多币种合并 + treasury owner doc）/ 集团预算合并/跨公司预算结转（A2 Deferred successor）/ 内部存货利润抵消自动化（触发：内部存货周转频次高 + 未实现利润核算需求）/ MARKET 策略真实市场价接入（触发：市场价数据源集成需求）/ 多账套精确解析（当前默认账套=1，触发：多账套 intercompany 科目差异化需求）/ 抵消科目经 GlMappingResolver 精确解析（当前默认编码兜底，触发：多维抵消科目差异化需求）/ 跨公司交易完整生命周期状态机（当前仅 confirm 触发，触发：跨公司采购/销售单据直接交易需求）
+- **Deferred successor**：实时合并报表渲染（触发：业务客户合并报表需求 + report successor）/ 跨币种合并折算（触发：跨国集团多币种合并 + treasury owner doc）/ 集团预算合并/跨公司预算结转（A2 Deferred successor）/ 内部存货利润抵消自动化（触发：内部存货周转频次高 + 未实现利润核算需求）/ MARKET 策略真实市场价接入（触发：市场价数据源集成需求）/ 多账套精确解析（当前默认账套=1，触发：多账套 intercompany 科目差异化需求）/ 抵消科目经 GlMappingResolver 精确解析（当前默认编码兜底，触发：多维抵消科目差异化需求）/ ~~跨公司交易完整生命周期状态机~~（**已落地** plan 2026-07-24-1351-2：PO/SO approve/reverseApprove 接入 intercompany SPI，见 §8.12）/ partner→法人精确映射（触发：多对手 intercompany 消歧需求）/ receive/delivery 联级 intercompany（触发：货物实际跨法人移动需独立凭证）
 
 ## 8.10 B1 落地证据（2026-07-22）
 
@@ -435,3 +435,25 @@ D4（Plugin Hot Management Research）已落地，状态 `todo → done`，deepe
 - **roadmap 同步**：§5 Milestone D D4 行 `todo → done` + §2 Work Item Status 表 `todo:7,done:4 → todo:0,done:11`（修正预存 stale）+ §4 当前基线 Platform 行标注 ✅ + 本 §8.11 落地证据段（对齐既有 §8.1-§8.10 格式）+ `implementation-roadmap.md` deepening-roadmap 行 stale 状态修正
 - **纯文档无测试基线**：D4 不引入新代码（roadmap §6 明确 `D4 ORM 变更 = 否`），无新单测/E2E/visual smoke。Phase 2 验证 = 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS 保证既有代码无回归（确认未误改生产代码）
 - **Deferred successor**：路径 2 实现（触发：业务客户裁剪部署需求 + 可接受重启 + 架构 owner doc 授权聚合 profile）/ 路径 3 实现（触发：业务客户运行时启停需求 + 可接受不卸载类妥协 + 架构 owner doc 授权插件管理器；依赖 D2 module-meta.json 扩展 enabled/disabledActions 字段）/ 路径 1 重新评估（触发：§2.4 三条件全成立 = 运行时类卸载刚需 + 长生命周期常驻进程 + 平台核心改造授权）/ D2 businessDependencies 版本范围求解器（D2 Deferred，路径 2 裁剪校验精度依赖）/ SaaS 多租户版本管理编排（D2 Deferred，与路径 3 信息关联，可能演化为路径 1+3 组合）/ 路径 3 安全加固（禁用 action schema 级隐藏，触发：合规审计 + 平台核心改造授权）
+
+## 8.12 A3 扩展 — 跨公司 PO/SO intercompany 生命周期（2026-07-24）
+
+跨公司采购/销售订单 intercompany 凭证生命周期已落地（A3 Deferred successor「跨公司交易完整生命周期状态机」解除）：
+
+- **Plan**：`docs/plans/2026-07-24-1351-2-intercompany-cross-company-po-so-lifecycle.md`（4 Phase 全 done + Closure Gates）。含 2 轮独立草案审查（iteration 2 acceptable-as-is）
+- **目标**：将 intercompany 凭证生成从单一 inventory transfer confirm 扩展至跨公司 PO（ErpPurOrder）+ SO（ErpSalOrder）approve/reverseApprove 生命周期
+- **SPI 扩展**（`IErpFinIntercompanyTransferBiz`，向后兼容，`onTransferConfirmed` 不变）：
+  - `onTradeDocumentApproved(docType, docId, docCode, executingOrgId, amount, businessDate, context)` → 配对凭证
+  - `onTradeDocumentReversed(docType, docId, docCode, context)` → 红冲配对凭证
+- **BizModel 实现**（`ErpFinIntercompanyTransferBizModel`）：执行方法人根 = `resolveLegalEntityRoot(order.orgId)`；对手方法人根 = 转移定价规则表反向查找（PO 查 toOrgId、SO 查 fromOrgId）；同法人 skip；全 config-gated
+- **Generator 扩展**（`IntercompanyVoucherGenerator`）：新增 `reverseIntercompany` + `hasUnreversedIntercompany`（镜像 `CommitmentVoucherGenerator.reverseCommitment` 红冲范式：isReversed 翻转 + reversalOfVoucherId 回链 + 借贷互换）
+- **Processor 钩子**：`ErpPurOrderProcessor` + `ErpSalOrderProcessor` 各 approve/reverseApprove/cancel 三处接钩（非阻塞 try-catch，对齐 inventory confirm 范式）
+- **5 Decisions 裁决**（落盘 multi-company.md §Phase 1 决策记录）：A=候选(a)新增方法（向后兼容）/ B=对手方经定价规则反向查找（ErpMdPartner 无 orgId，ORM 变更属 Non-Goal）/ C=AR/AP 方向固定 seller→AR buyer→AP / D=receive/delivery 联级转 successor / E=复用单一 config-gate
+- **owner doc 回链**：`docs/architecture/multi-company.md` §跨公司 PO/SO 触发路径 EXPAND（状态机图 + 接入点表 + 5 决策记录）；`docs/design/finance/posting.md` §跨法人内部交易凭证 EXPAND（PO/SO 接入点表 + SPI 扩展表）
+- **测试基线**：
+  - `TestErpFinIntercompanyTransfer` 扩展至 6 场景全绿（2 既有 inventory + 4 新增 trade-document：跨法人 PO 配对凭证 / 跨法人 SO 配对凭证 / reverseApprove 红冲 / 同法人零凭证）
+  - finance service 全 279 测试全绿（无回归）
+  - purchase service 全 116 测试全绿（无回归）
+  - sales service 全 122 测试全绿（无回归）
+  - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
+- **Deferred successor**：partner→法人精确映射（触发：多对手 intercompany 消歧需求，需 ErpMdPartner.orgId 或映射实体）/ receive/delivery 联级 intercompany（触发：货物实际跨法人移动需独立凭证）/ 发票级 intercompany（ErpPurInvoice/ErpSalInvoice，触发：跨法人开票业务需求）

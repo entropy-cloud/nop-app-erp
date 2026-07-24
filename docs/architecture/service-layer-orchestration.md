@@ -19,20 +19,50 @@
 
 save、update、delete、get、findPage、findList 等标准 CRUD 方法使用 `CrudBizModel` 默认实现，**不写 task.xml，不写 Java，不写 xbiz**。CrudBizModel 已自动暴露为 GraphQL 服务。
 
+## CRUD 方法
+
+save、update、delete、get、findPage、findList 等标准 CRUD 方法使用 `CrudBizModel` 默认实现，**不写 task.xml，不写 Java Processor，不写 xbiz**。CrudBizModel 已自动暴露为 GraphQL 服务。
+
 ## 多步骤编排方法
 
-approve、submit、cancel、batchCreate、sync、import、recalc 及任何含 ≥2 步编排逻辑的方法，使用 `task.xml` + xbiz 绑定作为首选模式。
+approve、submit、cancel、batchCreate、sync、import、recalc 及任何含 ≥3 步编排逻辑的方法，拆分为 **Java Processor**（见 `processor-extension-pattern.md`），BizModel 的 `@BizMutation` 仅做参数解析 + 委托调用 Processor。
 
-> **审批例外**：`approve`/`reject` 等审批方法**必须**通过 ORM `tagSet="use-approval"` 接入平台机制（见 `wf-integration-design.md`）。默认采用三层桥接 `approval-support.xbiz → 自定义 xbiz <source> inject → Java Processor`。需要灵活编排时，将 xbiz action 从 `<source>` 改为 `task:name` 即可，同一套 Processor 在 task.xml 步骤中 `inject()` 调用——xbiz 一行改动，Java 零改动。
+Processor 是通用方法分解器：复杂方法拆到 Processor 的 `protected` 步骤方法中，保持 BizModel 轻量。
+
+> **task.xml 是进阶选项**：当流程拓扑需要按客户/行业定制时，将 Processor 步骤迁移到 task.xml（平台支持 xbiz action 从 `<source>` 改 `task:name` 一行迁移，Java 零改动）。初期统一用 Processor 降低认知负担。
+
+### 硬规则：每 mutation 一个 Processor
+
+**每个 `@BizMutation` 方法对应一个独立的 Processor 类**，不允许多个 mutation 共用同一个 Processor。命名规则：
+
+```
+<Entity><Method>Processor
+```
+
+例如：
+- `ErpPurOrder__approve` → `ErpPurOrderApproveProcessor`
+- `ErpPurOrder__cancel` → `ErpPurOrderCancelProcessor`
+- `ErpPurOrder__settle` → `ErpPurOrderSettleProcessor`
+- `ErpSalOrder__convertToOrder` → `ErpSalOrderConvertToOrderProcessor`
+
+**例外**（可以留在 BizModel，无需 Processor）：
+- 纯查询（`@BizQuery`）且 ≤2 步
+- 单步状态翻转（`setStatus` + `updateEntity`），且无关跨域编排
+
+**标准 CRUD 方法不在此规则范围内**（走 CrudBizModel 默认实现）。
+
+此规则保证：
+1. **机械定位**：知道 mutation 名就能推导出 Processor 类名，无需搜索
+2. **关注点聚焦**：每个文件只有一个 public 方法，打开即知职责
+3. **Delta 精确覆盖**：客户定制精确到单个 action，覆盖一个 Processor 不影响其他
 
 ### 判定标准
 
 | 方法特征 | 推荐模式 |
 |----------|----------|
-| 单步简单逻辑（一行校验 + 一行状态修改） | BizModel Java 方法 或 xbiz script |
-| 存在步骤概念（校验→规则→分支→调服务→后处理），且步骤顺序/组合可能需要在不同项目中定制 | **task.xml 编排** |
-| 存在步骤概念，但流程拓扑被域设计裁定为稳定约束（步骤顺序不可配），仅单步实现需按客户/行业覆盖 | **Java Processor + 派生 bean 覆盖**（见 `processor-extension-pattern.md`） |
-| 平台 xbiz action 覆盖 Java `@BizMutation`（如 `approval-support.xbiz`），需桥接到既有 Java Processor | **xbiz `<source>` inject Processor**（见 `wf-integration-design.md`） |
+| 单步简单逻辑（≤2 步） | BizModel Java 方法 或 xbiz script |
+| 多步骤逻辑（≥3 步），流程拓扑稳定 | **每 mutation 一个 Java Processor** |
+| 多步骤逻辑，且步骤顺序/组合需按项目定制 | **task.xml 编排** |
 | 纯 CRUD | CrudBizModel 默认 |
 
 ### 步骤实现方式选择
@@ -162,31 +192,48 @@ task.xml 中通过 `customType="rule:Execute"` 调用规则引擎，`rule:*` 前
 </step>
 ```
 
-## Java Processor 编排（拓扑稳定流程）
+## Java Processor 编排（默认模式）
 
-当流程的步骤顺序被域设计裁定为"稳定约束（不可配置）"时，改用 Java Processor 而非 task.xml——把刻意锁死的业务不变量放进可拖拽的 task.xml 反而违背设计意图。Java Processor 通过 `protected` 步骤 + `IServiceContext` 末参 + 派生 bean 同名覆盖为单步实现留配置余地（产品化按客户/行业覆盖单步，不改流程骨架）。
+≥3 步的编排方法默认拆入 Java Processor（`processor-extension-pattern.md` 的 Facade + Processor 两层结构）。Processor 通过 `protected` 步骤 + `IServiceContext` 末参 + 派生 bean 同名覆盖为单步实现留配置余地（产品化按客户/行业覆盖单步，不改流程骨架）。
+
+**改用 task.xml 的条件**：仅当流程的步骤顺序可能需要在不同项目中定制（拓扑可变）时，从 Processor 迁移到 task.xml。
 
 判定规则、Facade + Processor 两层职责、派生覆盖写法与反模式见 `processor-extension-pattern.md`。
 
-## 审批流实现模式：xbiz `<source>` inject Processor
+## BizModel Java + Processor 委托（标准模式）
 
-当实体标了 `use-approval`，`approval-support.xbiz` 在 xbiz 层生成标准 approve/reject action，**覆盖掉 Java `@BizMutation`**。此时推荐在自定义 xbiz 中用 `<source>` 覆盖标准 action、通过 `inject()` 获取 Java Processor bean 并调用：
+`@BizMutation` 方法在 BizModel Java 中直接调用对应的 per-mutation Processor：
 
-```xml
-<mutation name="approve">
-    <source><![CDATA[
-        const processor = inject("erpPurReceiveApproveProcessor");
-        return processor.approve(id, svcCtx);
-    ]]></source>
-</mutation>
+```java
+@BizMutation
+public ErpPurOrder approve(@Name("id") String id, IServiceContext svcCtx) {
+    return erpPurOrderApproveProcessor.approve(id, svcCtx);
+}
+
+@BizMutation
+public ErpPurOrder cancel(@Name("id") String id, IServiceContext svcCtx) {
+    return erpPurOrderCancelProcessor.cancel(id, svcCtx);
+}
 ```
 
-这条路径 **不是双轨之外的新轨道**，而是当 `approval-support.xbiz` 插在中间时，xbiz 层到 Java Processor 层的桥接。它保持：
-- 审批状态迁移由平台标准 action source 处理（不在 Processor 中手动修改 approveStatus）
-- 业务逻辑仍在 Processor 及其可覆盖的 protected 步骤中
-- task.xml 仅在需要拓扑可变编排时介入
+**不使用 xbiz `<source>` 委托**。xbiz 仅在 Delta 定制需要覆盖某个 mutation 的 Java 实现时使用。
 
-详细设计与方案对比见 `wf-integration-design.md`。
+此模式适用于任何 BizModel action → Processor 委托。每 mutation 一个 Processor 是强制架构纪律，见 `processor-extension-pattern.md`。
+
+## 与 use-approval / approval-support.xbiz 的关系
+
+**本项目不使用 `use-approval` ORM 标签和 `approval-support.xbiz` 平台资源**。
+
+`use-approval` 是 codegen 条件标签，作用是：
+1. 生成 `I*Biz extends IApprovableBiz`（5 个 default 方法占位）
+2. 生成 `_*Biz.xbiz` 继承 `approval-support.xbiz`（5 个 XLang mutation source）
+
+在 per-mutation Processor 模式下：
+- 状态校验/转换/审计字段回写完全由 Processor Java 实现
+- `IApprovableBiz` 的 5 个 default 方法全抛 `UnsupportedOperationException`，无运行时价值
+- 可选 wf 启动由 `AbstractSubmitForApprovalProcessor` 按实体 xmeta `wf:wfName` 配置条件执行（见 `processor-extension-pattern.md`）
+
+因此 ORM 模型中只保留 `useWorkflow="true"`（控制 `nopFlowId` 列），不继承 `approval-support.xbiz`。wf 回调 `bizObj.invoke('approve', ...)` 在没有 xbiz `<source>` 时自动 fallback 到 Java `@BizMutation`。
 
 ## 相关文档
 

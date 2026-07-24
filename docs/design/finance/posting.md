@@ -566,3 +566,25 @@ VoucherBillR（业财回链）
 跨法人内部交易凭证经 `erp-fin.intercompany-posting-enabled`（默认 false）控制：
 - 默认关闭：保护既有 inventory 调拨测试不触发自动凭证（config-gated 回归安全）。
 - 调拨确认失败不阻塞库存移动（凭证生成异常 try-catch 兜底，保持库存与凭证解耦）。
+
+### PO/SO 触发路径扩展（plan 2026-07-24-1351-2）
+
+> 将 intercompany 凭证生成从单一 inventory transfer confirm 扩展至跨公司 PO/SO approve/reverseApprove。完整生命周期设计与决策记录见 [`multi-company.md §跨公司 PO/SO 触发路径`](../architecture/multi-company.md#跨公司-poso-触发路径plan-2026-07-24-1351-2-expand)。
+
+**PO/SO 接入点表**：
+
+| 单据 | Processor | approve 钩子（后置） | reverseApprove 钩子（前置红冲） | 金额来源 | config-gate |
+|------|-----------|---------------------|-------------------------------|---------|-------------|
+| ErpPurOrder | `ErpPurOrderProcessor.approve` | `runIntercompanyApproveHook` | `runIntercompanyReverseHook` | `totalAmountWithTax`（本位币） | `erp-fin.intercompany-posting-enabled`（复用，默认 false） |
+| ErpSalOrder | `ErpSalOrderProcessor.approve` | `runIntercompanyApproveHook` | `runIntercompanyReverseHook` | `totalAmountWithTax`（本位币） | 同上 |
+
+**SPI 扩展**（`IErpFinIntercompanyTransferBiz`，向后兼容，`onTransferConfirmed` 不变）：
+
+| 方法 | 触发点 | 入参 | 出参 |
+|------|--------|------|------|
+| `onTradeDocumentApproved` | PO/SO approve 后置 | docType + docId + docCode + executingOrgId + amount + businessDate | 配对凭证 ID 列表（AR + AP） |
+| `onTradeDocumentReversed` | PO/SO reverseApprove 前置 | docType + docId + docCode | 红冲凭证 ID 列表 |
+
+**跨法人判定**（全在 finance 域，AP-7 合规）：执行方法人根 = `resolveLegalEntityRoot(order.orgId)`；对手方法人根 = 转移定价规则表反向查找（PO 查 toOrgId=执行方、SO 查 fromOrgId=执行方）。同法人 skip；钩子非阻塞 try-catch（对齐 inventory confirm 范式）。
+
+**receive/delivery 联级**：归 Deferred successor（订单级已表达跨法人交易，联级为增强，避免重复计量）。

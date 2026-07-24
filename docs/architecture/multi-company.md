@@ -90,6 +90,61 @@
 - **跨法人调拨**：config-gated 默认 false（保护既有基线）；启用后经转移定价规则生成配对凭证
 - **配对/抵消**：均为期末批处理，config-gated 默认 false，不改变日常过账路径
 
+### 跨公司 PO/SO 触发路径（plan 2026-07-24-1351-2 EXPAND）
+
+> 将 intercompany 凭证生成从单一 inventory transfer confirm 扩展至跨公司 **采购订单（ErpPurOrder）** + **销售订单（ErpSalOrder）** approve/reverseApprove 生命周期。订单级 approve 已完整表达跨法人交易语义（买卖双方 + 金额），故 receive/delivery 联级归 successor（避免订单级 + 货物移动级双重计量）。
+
+```
+[跨法人 PO/SO approve]
+        │
+        ▼ (config-gated: erp-fin.intercompany-posting-enabled，复用既有总开关)
+[SPI onTradeDocumentApproved(docType, docId, docCode, executingOrgId, amount, businessDate)]
+        │
+        ├─► resolveLegalEntityRoot(executingOrgId)  → 执行方法人根
+        ├─► resolveCounterpartyLegalEntity(executingLegal, docType)
+        │       │  PO: 执行方=买方 → 查定价规则 toOrgId=执行方 → 对手=fromOrgId(卖方)
+        │       └─ SO: 执行方=卖方 → 查定价规则 fromOrgId=执行方 → 对手=toOrgId(买方)
+        ├─► 同法人 → skip（仅订单业务，无 intercompany 凭证）
+        └─► generatePairedVouchers(docCode, sellerLegal, buyerLegal, amount)
+                 │   seller(fromOrg) 侧：INTERCOMPANY_SALE 凭证(AR)
+                 └─ buyer(toOrg)   侧：INTERCOMPANY_PURCHASE 凭证(AP)
+
+[跨法人 PO/SO reverseApprove]
+        │
+        ▼ (config-gated)
+[SPI onTradeDocumentReversed(docType, docId, docCode)]
+        │
+        └─► IntercompanyVoucherGenerator.reverseIntercompany(docCode)
+                │  按 billCode + billType IN (INTERCOMPANY_SALE/PURCHASE) 反查配对凭证
+                └─ 逐张红冲（isReversed=true + reversalOfVoucherId 回链 + 借贷互换取负）
+```
+
+**PO/SO 接入点表**：
+
+| 单据 | Processor | approve 钩子 | reverseApprove 钩子 | config-gate |
+|------|-----------|-------------|---------------------|-------------|
+| ErpPurOrder | `ErpPurOrderProcessor` | `runIntercompanyApproveHook`（doApprove 后置） | `runIntercompanyReverseHook`（doReverseApprove 前置，镜像 commitment release 顺序） | `erp-fin.intercompany-posting-enabled`（复用，默认 false） |
+| ErpSalOrder | `ErpSalOrderProcessor` | `runIntercompanyApproveHook`（doApprove 后置） | `runIntercompanyReverseHook`（doReverseApprove 前置） | 同上 |
+
+**钩子范式**：非阻塞 try-catch（对齐 inventory confirm L45-58）；config-gated 关闭或同法人或无定价规则时 SPI 返回空列表，既有行为完全不变。
+
+### Phase 1 决策记录（plan 2026-07-24-1351-2）
+
+**Decision A — SPI 泛化策略**：选择候选 (a) — 在既有 `IErpFinIntercompanyTransferBiz` 新增 2 个 trade-document 方法（`onTradeDocumentApproved` + `onTradeDocumentReversed`），保持 `onTransferConfirmed` 库存视角不变。理由：向后兼容（零触及既有 inventory 路径），最小接口面。替代方案 (b) 抽象统一入参 DTO 被否决（2 种调用形态不需要统一 DTO 抽象，徒增间接层）。残留风险：SPI 方法数从 1→3，但各方法语义正交（库存视角 vs 订单视角 vs 红冲），可读性可接受。
+
+**Decision B — PO/SO 跨法人判定来源**：
+- **执行方法人根** = `resolveLegalEntityRoot(order.orgId)`（复用既有 helper）。`ErpPurOrder.orgId` / `ErpSalOrder.orgId` 确认为「业务组织」持久化 BIGINT 列（propId 3），表达执行组织。
+- **对手方法人根**：`ErpMdPartner` **无 orgId 列**（实测确认；ORM 变更属 Non-Goal）。对手方经**转移定价规则表反向查找**解析：定价规则 `(fromOrgId=seller, toOrgId=buyer)` 本身编码了 intercompany 交易关系。
+  - PO：执行方=买方 → 查 `ErpFinIntercompanyTransferPrice.toOrgId = 执行方法人` → 对手 = `fromOrgId`（卖方）
+  - SO：执行方=卖方 → 查 `ErpFinIntercompanyTransferPrice.fromOrgId = 执行方法人` → 对手 = `toOrgId`（买方）
+- **残留风险 / successor**：当一个法人有对多个法人的定价规则时无法仅凭执行方消歧（需 partner→org 精确映射）。精确 partner→法人关联（如 `ErpMdPartner.orgId` 或独立映射实体）归 successor，触发条件：多对手 intercompany 业务需求。
+
+**Decision C — AR/AP 方向语义**：配对凭证生成器既有语义固定：fromOrg=卖方（INTERCOMPANY_SALE/AR），toOrg=买方（INTERCOMPANY_PURCHASE/AP）。PO/SO 路径仅影响对手方查找方向（Decision B），不影响生成器的 AR/AP 分配（始终 seller→AR、buyer→AP）。订单金额（`totalAmountWithTax`，本位币）作为配对凭证金额（订单已含明确交易价，不需转移定价 resolver 计算金额；定价规则仅用于对手方发现）。
+
+**Decision D — receive/delivery 联级**：转 Deferred successor。订单级 approve 已完整表达跨法人交易（买卖双方 + 金额 + 定价）；receive/delivery 联级生成独立 intercompany 凭证将与订单级重复计量。联级归「optimization candidate」（货物实际跨法人移动需独立凭证的业务需求时触发）。
+
+**Decision E — config-gate**：复用既有单一总开关 `erp-fin.intercompany-posting-enabled`（默认 false），不新增子门控。PO/SO intercompany 与 inventory intercompany 是同一特性的不同触发面，独立门控徒增配置面而无价值。
+
 ## 转移定价规则模型（A3 EXPAND）
 
 ### Decision A — 转移定价模型范围

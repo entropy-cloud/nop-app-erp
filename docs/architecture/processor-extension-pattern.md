@@ -2,9 +2,9 @@
 
 ## 定位
 
-定义 nop-app-erp 中**拓扑稳定的复杂业务流程**在 Java 层面的实现规范：何时用 Processor 而非 task.xml、Facade 与 Processor 的两层职责分工、以及如何通过 protected 步骤 + `IServiceContext` + 派生 bean 覆盖为产品化留出配置余地。
+定义 nop-app-erp 中**多步骤业务方法**在 Java 层面的默认实现规范：BizModel 的 `@BizMutation`/`@BizQuery` 仅负责 API 入口、参数解析、事务边界；多步骤编排逻辑拆入 Processor，通过 `protected` 步骤 + `IServiceContext` + 派生 bean 覆盖为产品化留出配置余地。
 
-本文是 `service-layer-orchestration.md`（task.xml 编排首选）的**补充**：task.xml 适用于拓扑可变的编排，本文适用于拓扑稳定但需要按客户/行业覆盖单步实现的编排。两者并行，按判定表选择。
+Processor 是通用方法分解器，不限于"跨域编排"——任何 ≥3 步的方法都应拆到 Processor。task.xml 是未来需要拓扑可配置时的升级路径，初期不引入。
 
 > 平台机制权威：Processor / Step / `IServiceContext` 的完整说明见 `../nop-entropy/docs-for-ai/02-core-guides/domain-logic-and-ddd.md` 与 `03-runbooks/implement-complex-business-flow.md`。本文只规定本项目的判定规则与配置余地约定。
 
@@ -24,12 +24,40 @@
 
 ## 两层结构：Facade + Processor
 
+### 粒度规则：每 mutation 一个 Processor
+
+**每个 `@BizMutation` 方法对应一个独立的 Processor 类**。命名规则：
+
+```
+<Entity><Method>Processor
+```
+
+| 方法 | Processor 类 | Bean 名 |
+|------|-------------|---------|
+| `ErpPurOrder__approve` | `ErpPurOrderApproveProcessor` | `erpPurOrderApproveProcessor` |
+| `ErpPurOrder__cancel` | `ErpPurOrderCancelProcessor` | `erpPurOrderCancelProcessor` |
+| `ErpPurOrder__settle` | `ErpPurOrderSettleProcessor` | `erpPurOrderSettleProcessor` |
+| `ErpSalOrder__convertToOrder` | `ErpSalOrderConvertToOrderProcessor` | `erpSalOrderConvertToOrderProcessor` |
+
+**不允许**多个 mutation 共用同一个 Processor 类。这是强制架构纪律，优先于"类文件数量可控"的工程弹性。
+
+**例外**（可以留在 BizModel，无需 Processor）：
+- 纯查询 `@BizQuery` 且 ≤2 步
+- 单步状态翻转（`setStatus` + `updateEntity`），且无关跨域编排
+- 标准 CRUD 方法（走 CrudBizModel，不在此规则范围内）
+
+**关于 `use-approval`**：本项目不使用 `use-approval` ORM 标签和 `approval-support.xbiz`。状态转换 + 审计字段 + 可选 wf 启动全部在 Processor Java 中实现。实体如需 nop-wf 工作流，单独设置 `useWorkflow="true"` 获得 `nopFlowId` 列，wf 启动由 `AbstractSubmitForApprovalProcessor` 按实体 xmeta `wf:wfName` 条件执行。xmeta 通过 `IBizObjectManager.getBizObject(bizObjName)` 读取，`bizObjName` 在构造函数中强制传入（如 `super("ErpPurOrder")`），不使用 `entity.getClass().getSimpleName()`（AOP 代理类名不可靠）。
+
+**理由**：机械定位（知道 mutation 名即知 Processor 类名）、关注点聚焦（每文件一职责）、Delta 精确覆盖（定制精确到单个 action）。
+
+### 层次定义
+
 复杂流程的 Java 实现拆为两层，职责严格分离：
 
 | 层 | 承载者（命名） | 职责 | 不做的事 |
 |----|--------------|------|----------|
 | Facade | `IErpXxxBiz` + `ErpXxxBizModel`（`@BizMutation`/`@BizQuery`） | API 入口、参数类型、事务入口、状态真相源写回、post-commit 副作用、跨域契约面 | 不堆编排逻辑 |
-| 编排 | `ErpXxxProcessor`（具体类，经 beans.xml 注册） | 流程的步骤分解与顺序、跨聚合协作、调 `I*Biz`/`CrudBizModel` 安全能力 | 不发明持久化旁路、不直接 `dao()` 写状态、不自带事务边界 |
+| 编排 | `ErpXxx<Method>Processor`（具体类，经 beans.xml 注册） | 单个 mutation 的步骤分解与顺序、跨聚合协作、调 `I*Biz`/`CrudBizModel` 安全能力 | 不发明持久化旁路、不直接 `dao()` 写状态、不自带事务边界 |
 
 **硬规则**：
 
@@ -38,7 +66,7 @@
    > **ORM Session 作用域（事务/Session 分层）**：事务边界（`@Transactional`）钉 Facade，但 **ORM Session 的刷新作用域（`@SingleSession`）应钉在编排方法（`process()`）上，而非 Facade**。原因：Facade 的 `@BizMutation` 拦截器会把 Session 的 flush 推迟到外层 mutation 作用域，导致编排方法抛出的异常（如落库前的强制属性校验）在外层事务提交时才以 `CompletionException`/`invoke-listener-fail` 形式抛出，逃出跨域调用方的 `try/catch` 并污染外层事务。`@SingleSession` 钉在编排方法上，使 Session 作用域精确覆盖 ORM 工作、在编排方法返回时同步刷新，异常稳定落入调用方的 `try/catch`。这是事务边界（`@Transactional`）与 ORM Session 刷新作用域（`@SingleSession`）的两个不同关注点，分别归属 Facade 与编排层。参照实例：业财过账引擎（`IErpFinVoucherBiz` + `ErpFinPostingProcessor`，见 `docs/plans/2026-07-01-2030-1-posting-engine-voucher-facade-processor.md`）。
 2. **跨域调用方注入 `IErpXxxBiz`（Facade 接口），不直接注入 Processor 具体类**。Processor 是 BizModel 内部的编排手段，不是跨域契约。直接注入编排具体类会绕过 `I*Biz` 管道，丢失数据权限并耦合实现细节。
 3. **Processor 内部优先调 `I*Biz` 或 `CrudBizModel` 安全能力**；直接 `dao()` 仅限同聚合子实体或域内部组件的标准用法（见 `service-layer-orchestration.md` 与平台 `implement-complex-business-flow.md`）。
-4. **命名遵守平台规范**：不创建 `*Service`/`*Controller` 类（`../nop-entropy/docs-for-ai/02-core-guides/service-layer.md`）；编排类用 `*Processor` 后缀，复用单步用 `*Step`。
+4. **命名遵守平台规范**：不创建 `*Service`/`*Controller` 类（`../nop-entropy/docs-for-ai/02-core-guides/service-layer.md`）；编排类用 `<Entity><Method>Processor` 命名，复用单步用 `*Step`。
 
 ## 配置余地：protected 步骤 + IServiceContext + 派生覆盖
 
@@ -48,22 +76,25 @@
 
 2. **每个步骤以 `IServiceContext` 为末参**。`IServiceContext` 承载用户身份（`IUserContext`）、数据权限、缓存与事务上下文；跨步骤、跨 `I*Biz` 调用必须透传，否则下游静默跳过数据权限、丢失缓存。**步骤方法不需要 `@BizMutation`/`@BizQuery`**（那是 Facade 的注解），只是普通 Java 方法。
 
-   ```java
-   public class ErpXxxProcessor {
-       @Inject protected IErpYyyBiz yyyBiz;
+    ```java
+    public class ErpXxxApproveProcessor {
+        @Inject protected IDaoProvider daoProvider;
+        @Inject protected IErpYyyBiz yyyBiz;
 
-       public Result process(XxxRequest req, IServiceContext context) {
-           validate(req, context);
-           Entity e = prepare(req, context);
-           Result r = execute(e, req, context);
-           return r;
-       }
+        public Result approve(@Name("id") String id, IServiceContext context) {
+            Entity e = requireEntity(id);
+            validate(e, context);
+            Result r = execute(e, context);
+            doStateChange(e, context);
+            return r;
+        }
 
-       protected void validate(XxxRequest req, IServiceContext context) { /* ... */ }
-       protected Entity prepare(XxxRequest req, IServiceContext context) { /* ... */ }
-       protected Result execute(Entity e, XxxRequest req, IServiceContext context) { /* ... */ }
-   }
-   ```
+        protected Entity requireEntity(String id) { /* ... */ }
+        protected void validate(Entity e, IServiceContext context) { /* ... */ }
+        protected Result execute(Entity e, IServiceContext context) { /* ... */ }
+        protected void doStateChange(Entity e, IServiceContext context) { /* ... */ }
+    }
+    ```
 
 3. **派生类覆盖 + 同名 bean 注册**。客户/行业需覆盖某步实现时，写一个继承基线 Processor 的派生类，重载目标 `protected` 方法，然后在 Delta 的 beans.xml 中以**同名 bean id** 注册派生类覆盖基线 bean。基线其余步骤不变，升级时自动合并。
 
@@ -85,6 +116,7 @@
 | Processor 所有 helper 是 `private` | 无法派生覆盖，产品化零配置余地 | 可覆盖步骤用 `protected`；仅真正不可变内部细节用 `private` |
 | 步骤方法无 `IServiceContext` 末参 | 下游 `I*Biz`/`CrudBizModel` 调用拿不到上下文，静默跳过权限/缓存 | 每个步骤方法末参带 `IServiceContext context`，主流程透传 |
 | 把流程骨架放进可配 task.xml 只为"留余地" | 稳定约束被实施人员误改，违背域设计文档的"不可配"裁定 | 骨架锁在 Java；只把单步实现留派生覆盖 |
+| 多个 mutation 共用同一个 Processor 类（如 `ErpPurOrderProcessor` 同时实现 approve + cancel + settle） | 关注点混在一个文件，定位需搜索，Delta 无法精确到单个 action | 每 mutation 独立 Processor：`ErpPurOrderApproveProcessor`、`ErpPurOrderCancelProcessor`、`ErpPurOrderSettleProcessor` |
 | 为不复现的扩展需求过早拆 Step / 过度派生设计 | 增加无稳定职责的类 | 先留在 Processor 的 `protected` 方法；复用边界稳定后再抽 Step |
 | 命名 `*Service`/`*Controller` | 与 Spring 混淆，违反平台 `service-layer.md` | 用 `*Processor` / `*BizModel` / `I*Biz` |
 
@@ -99,69 +131,21 @@
 | `../nop-entropy/docs-for-ai/02-core-guides/domain-logic-and-ddd.md` | 何时拆 Processor / Step 的平台权威 |
 | `../nop-entropy/docs-for-ai/02-core-guides/service-layer.md` | `IServiceContext` 末参与命名规范的平台权威 |
 
-## Processor → xbiz 桥接：何时不需 xbiz（M-5，plan 2026-07-20-2200-1）
+## Processor → BizModel 接线：BizModel Java 直接调用（M-5，plan 2026-07-20-2200-1）
 
-> 本节回应 M-5 审计发现："42 个 Processor 无对应 `.xbiz.xml` 桥接文件，Delta 定制方缺 VFS 层切入点"。审计结论：**42 Processor 全部合法，不需要新增 xbiz 桥接**——xbiz 不是 Processor 的契约层。
+> 本节回应 M-5 审计发现及 2026-07-24 架构决策：不使用 xbiz `<source>` 委托，BizModel Java 直接调用 Processor。
 
-### 合规检查器 R8 误报根因
+### 接线规则
 
-`docs/audits/nop-compliance-checker.sh` 的 R8 规则查找 `<ProcessorBase>.xbiz.xml` 文件（如 `ErpPurOrder.xbiz.xml`），但 **xbiz 文件按实体命名而非 Processor**：
+| Processor 调用方式 | 模式 |
+|--------------------|------|
+| BizModel `@Inject <Entity><Method>Processor` + `@BizMutation` 方法内调用 `processor.method(id, svcCtx)` | **标准模式**（本项目强制） |
+| 客户/行业 Delta 想覆盖 Processor 单步实现 | 写派生 Processor + Delta beans.xml 同名 bean 覆盖（见本文"配置余地"节） |
+| 客户/行业 Delta 想用脚本完全替换 Processor 实现 | 在 Delta xbiz 中新增 `<mutation name="method"><source>...</source></mutation>` 覆盖 Java `@BizMutation` |
 
-- `ErpPurOrder.xbiz`（实体 xbiz） → 存在
-- `ErpPurOrderProcessor.xbiz.xml`（Processor xbiz） → 不存在（按设计）
+### 合规检查器 R8 误报根因（历史）
 
-R8 把"实体 xbiz 存在"误判为"Processor 缺 xbiz"。**42 全部是误报**。
-
-### Nop 平台的 Processor 桥接规则（权威：`nop-backend-dev` skill §xbiz 的定位）
-
-| Processor 调用方式 | 是否需要 xbiz 桥接 | 模式 |
-|--------------------|-------------------|------|
-| BizModel `@Inject Processor` + `@BizMutation` 方法内调用 `processor.process()` | **不需要** | 41/42 Processor 走此模式（最常见，xbiz `<actions/>` 为空是正确状态） |
-| xbiz `<mutation><source>inject('FQCN').method()</source></mutation>` | **已存在 xbiz**（实体 xbiz 内的 source 脚本） | 1/42 Processor 走此模式（`ErpQaRecallProcessor`，经 `ErpQaRecall.xbiz` 的 source 脚本注入） |
-| 客户/行业 Delta 想覆盖 Processor 单步实现 | **不需要 xbiz** | 写派生 Processor + Delta beans.xml 同名 bean 覆盖（见本文"配置余地"节） |
-| 客户/行业 Delta 想用脚本完全替换 Processor 实现 | 需要 xbiz source | 在 Delta xbiz 中新增 `<mutation><source>...</source></mutation>` 覆盖 Java 默认 |
-
-### 42 Processor 实际接线统计（M-5 audit）
-
-- **41 个 Processor**：经 BizModel `@Inject` 注入，从 `@BizMutation` 方法内调用。Java 完整实现，xbiz `<actions/>` 为空（正确状态）。
-- **1 个 Processor**（`ErpQaRecallProcessor`）：经 `ErpQaRecall.xbiz` 的 `<source>` 脚本注入（`inject('app.erp.qa.service.processor.ErpQaRecallProcessor').submitForApproval(id, svcCtx)`）。xbiz 桥接**已存在**，只是 R8 因文件名匹配规则误判为缺失。
-- **0 个 Processor** 是真正的 orphan（无任何接线）。
-
-### 复现命令
-
-```bash
-python3 << 'PY'
-import os, re, glob
-REPO_ROOT = "/Users/abc/app/nop-app-erp"
-processors = [(f, os.path.basename(f).replace('.java',''))
-              for f in glob.glob(f"{REPO_ROOT}/module-*/erp-*-service/src/main/java/**/*Processor.java", recursive=True)
-              if '/target/' not in f and '/_gen/' not in f and '/test/' not in f]
-all_files = []
-for pat in ['module-*/erp-*-service/src/main/java/**/*.java',
-            'module-*/erp-*-service/src/main/resources/**/*.xbiz',
-            'module-*/erp-*-service/src/main/resources/**/app-service.beans.xml']:
-    all_files.extend([f for f in glob.glob(f"{REPO_ROOT}/{pat}", recursive=True) if '/target/' not in f])
-for f, cls in processors:
-    p = re.compile(rf'\b{cls}\b')
-    hits = {'java': 0, 'xbiz': 0, 'beans': 0}
-    for other in all_files:
-        if other == f: continue
-        try:
-            c = open(other).read()
-            if p.search(c):
-                if other.endswith('.java'): hits['java'] += 1
-                elif '.xbiz' in other: hits['xbiz'] += 1
-                elif 'beans.xml' in other: hits['beans'] += 1
-        except: pass
-    print(f"{cls}: java={hits['java']} xbiz={hits['xbiz']} beans={hits['beans']}")
-PY
-```
-
-### 后续行动（M-5）
-
-- **不需要新增任何 xbiz 桥接文件**
-- 修复合规检查器 R8 的命名匹配（查找 `<Entity>.xbiz` 而非 `<Processor>.xbiz.xml`）→ **列为 Follow-up**（不阻塞本计划，当前命中数已稳定为基线）
-- Delta 定制方覆盖 Processor 单步实现的标准入口已明确：派生 bean + beans.xml 同名覆盖（本文 §配置境地已说明）
+`docs/audits/nop-compliance-checker.sh` 的 R8 规则曾查找 `<ProcessorBase>.xbiz.xml` 文件来判定"Processor 缺 xbiz 桥接"。本项目的接线路径是 BizModel Java → Processor，xbiz 不是 Processor 的契约层，该项检查不适用。
 
 ## 状态判断方法的复用约定（L-6，plan 2026-07-20-2200-1）
 

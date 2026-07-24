@@ -364,7 +364,116 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 ---
 
-## 参考
+## §8 Provider 批量接入清单（plan 2026-07-24-1351-1）
+
+> A1 后续：将 GL Mapping Resolver 覆盖从 1 试点 Provider 扩展至全部 28 routing Provider。
+> 接入策略裁决（Phase 1 Decision）：**同一业务含义优先复用现有通用键**（INVENTORY/AP/AR/COGS/REVENUE/BANK_DEPOSIT/
+> FIXED_ASSET/ACCUMULATED_DEPRECIATION/DEPRECIATION_EXPENSE/SALARY_PAYABLE/INPUT_VAT/OUTPUT_TAX 等）；
+> **域独有的科目语义新增键**（制造 WIP/差异、委外物资、产成品、各类营业外收支、票据、员工往来、利息、汇兑等）。
+> 通用键跨域共享（同 accountKey 在不同 businessType 下可指向不同 targetSubjectCode，规则按 (businessType, accountKey) 索引）。
+
+### 8.1 accountKey 字典完整表
+
+通用键（既有，跨域复用）：`PURCHASE` `INPUT_VAT` `ACCOUNTS_PAYABLE` `INVENTORY` `AP` `AR` `OUTPUT_TAX` `BANK_DEPOSIT`
+`CASH` `FIXED_ASSET` `ACCUMULATED_DEPRECIATION` `DEPRECIATION_EXPENSE` `SALARY_PAYABLE` `SALARY_EXPENSE` `TAX_PAYABLE`
+`REVENUE` `COGS` `RETAINED_EARNINGS` + BankRecon/Template 既有键 + INTERCOMPANY_*（A3）。
+
+新增域专用键（23）：
+
+| accountKey | 中文标签 | 典型 fallback 编码 | 接入 Provider |
+|------------|----------|--------------------|---------------|
+| `COST_VARIANCE` | 成本差异 | 6603 | CostAdjustment |
+| `PURCHASE_PRICE_VARIANCE` | 材料成本差异(PPV) | 1404 | PurchasePriceVariance |
+| `MANUFACTURING_WIP` | 在制品(WIP) | 1411 | InvAcctDocProvider(MFG_RECEIPT) / ManufacturingIssue / ProductionVariance(WIP侧) |
+| `MANUFACTURING_VARIANCE` | 制造差异 | 1410~1416 | ProductionVariance(差异侧) |
+| `SUBCONTRACT_MATERIAL` | 委外物资 | 1408 | SubcontractIssue / SubcontractFee / SubcontractReceipt |
+| `FINISHED_GOODS` | 产成品 | 1405 | SubcontractReceipt |
+| `CIP` | 在建工程 | 1603 | Capitalization / ProjectSettlement(CLOSE转固) |
+| `IMPAIRMENT_LOSS` | 资产减值损失 | 6702 | ValueAdjustment |
+| `IMPAIRMENT_PROVISION` | 固定资产减值准备 | 1604 | ValueAdjustment |
+| `CAPITAL_RESERVE` | 资本公积 | 4002 | ValueAdjustment(重估增值) |
+| `NON_OPERATING_INCOME` | 营业外收入 | 6301 | AssetInventory(盘盈) |
+| `NON_OPERATING_EXPENSE` | 营业外支出 | 6711 | Disposal(清理损益) / AssetInventory(盘亏) / NcrScrap |
+| `PROJECT_COST` | 项目成本 | 5101 | ProjectSettlement |
+| `PROFIT_LOSS` | 本年利润 | 4103 | ProjectSettlement |
+| `MAINTENANCE_EXPENSE` | 维修费用 | 6602 | MaintenanceExpense / MaintenanceIssue / MaintenanceLabor |
+| `MAINTENANCE_CLEARING` | 维修中转清算 | 2502 | MaintenanceExpense / MaintenanceCapitalization |
+| `NOTES_RECEIVABLE` | 应收票据 | 1121 | NotesReceivable |
+| `NOTES_PAYABLE` | 应付票据 | 2203 | NotesPayable |
+| `EMPLOYEE_ADVANCE_RECEIVABLE` | 其他应收款-员工预支 | 1221 | EmployeeAdvance |
+| `EMPLOYEE_PAYABLE` | 其他应付款-员工 | 2241 | EmployeeAdvance(OFFSET) / ExpenseClaim |
+| `FINANCIAL_EXPENSE` | 财务费用-利息支出 | 6603 | CreditFacilityInterest / NotesReceivable(贴现息) |
+| `EXCHANGE_GAIN_LOSS` | 汇兑损益 | 6051 | NotesReceivable(贴现) |
+| `ADMIN_EXPENSE` | 管理费用 | 6602 | ExpenseClaim |
+
+> 编码冲突说明：`6602` 在折旧(DEPRECIATION_EXPENSE)/维修(MAINTENANCE_EXPENSE)/报销(ADMIN_EXPENSE)三场景含义不同，
+> `6603` 在成本差异(COST_VARIANCE)/利息(FINANCIAL_EXPENSE)两场景含义不同。accountKey 按语义拆分键以保留
+> 规则覆盖粒度；规则表无匹配时各自回落至 Provider 既有 fallback 编码（行为不变）。
+
+### 8.2 28 Provider × 业务类型 × accountKey 接入清单
+
+下表覆盖全部 28 routing Provider（dormant 的 Commitment/Intercompany 不在范围）。`通用` = 复用既有键。
+
+| 域 | Provider | 业务类型 | fact.accountKey（按 Dr→Cr 顺序） |
+|----|----------|----------|----------------------------------|
+| purchase | PurAcctDocProvider | AP_INVOICE | PURCHASE / INPUT_VAT / ACCOUNTS_PAYABLE |
+| purchase | PurAcctDocProvider | PAYMENT | ACCOUNTS_PAYABLE / BANK_DEPOSIT |
+| purchase | PurAcctDocProvider | PURCHASE_RETURN | ACCOUNTS_PAYABLE / INVENTORY |
+| sales | SalAcctDocProvider | AR_INVOICE | AR / REVENUE / OUTPUT_TAX |
+| sales | SalAcctDocProvider | RECEIPT | BANK_DEPOSIT / AR |
+| sales | SalAcctDocProvider | SALES_RETURN | INVENTORY / COGS |
+| inventory | InvAcctDocProvider | PURCHASE_INPUT | INVENTORY / ACCOUNTS_PAYABLE |
+| inventory | InvAcctDocProvider | MANUFACTURING_RECEIPT | INVENTORY / MANUFACTURING_WIP |
+| inventory | InvAcctDocProvider | SALES_OUTPUT | COGS / INVENTORY |
+| inventory | CostAdjustmentAcctDocProvider | COST_ADJUSTMENT | INVENTORY↔COST_VARIANCE（方向相关） |
+| inventory | PurchasePriceVarianceAcctDocProvider | PURCHASE_PRICE_VARIANCE | PURCHASE_PRICE_VARIANCE↔ACCOUNTS_PAYABLE |
+| inventory | LandedCostAcctDocProvider | LANDED_COST | INVENTORY(借) / ACCOUNTS_PAYABLE(贷) |
+| mfg | ManufacturingIssueAcctDocProvider | MANUFACTURING_ISSUE | MANUFACTURING_WIP(汇总借) / INVENTORY(贷按物料) |
+| mfg | SubcontractIssueAcctDocProvider | SUBCONTRACT_ISSUE | SUBCONTRACT_MATERIAL(汇总借) / INVENTORY(贷按物料) |
+| mfg | SubcontractFeeAcctDocProvider | SUBCONTRACT_FEE | SUBCONTRACT_MATERIAL / ACCOUNTS_PAYABLE |
+| mfg | SubcontractReceiptAcctDocProvider | SUBCONTRACT_RECEIPT | FINISHED_GOODS(借按物料) / SUBCONTRACT_MATERIAL(汇总贷) |
+| mfg | ProductionVarianceAcctDocProvider | PRODUCTION_VARIANCE | MANUFACTURING_VARIANCE↔MANUFACTURING_WIP（4要素方向相关） |
+| assets | DepreciationAcctDocProvider | DEPRECIATION | DEPRECIATION_EXPENSE / ACCUMULATED_DEPRECIATION |
+| assets | DisposalAcctDocProvider | DISPOSAL | ACCUMULATED_DEPRECIATION + BANK_DEPOSIT + NON_OPERATING_EXPENSE + FIXED_ASSET |
+| assets | AssetInventoryAcctDocProvider | ASSET_INVENTORY_ADJUSTMENT | FIXED_ASSET↔NON_OPERATING_INCOME(盘盈) / NON_OPERATING_EXPENSE↔FIXED_ASSET(盘亏) |
+| assets | ValueAdjustmentAcctDocProvider | VALUE_ADJUSTMENT | IMPAIRMENT_LOSS↔IMPAIRMENT_PROVISION / FIXED_ASSET↔CAPITAL_RESERVE / IMPAIRMENT_LOSS↔FIXED_ASSET |
+| assets | CapitalizationAcctDocProvider | CAPITALIZATION | FIXED_ASSET / CIP 或 BANK_DEPOSIT（按 sourceType） |
+| assets | AssetSplitAcctDocProvider | ASSET_SPLIT | FIXED_ASSET(借/贷) |
+| assets | MaintenanceCapitalizationAcctDocProvider | MAINTENANCE_CAPITALIZATION | FIXED_ASSET / MAINTENANCE_CLEARING 或 BANK_DEPOSIT |
+| assets | AssetMergeAcctDocProvider | ASSET_MERGE | FIXED_ASSET(借/贷) |
+| assets | MaintenanceExpenseAcctDocProvider | MAINTENANCE_EXPENSE | MAINTENANCE_EXPENSE / MAINTENANCE_CLEARING 或 BANK_DEPOSIT |
+| projects | ProjectSettlementAcctDocProvider | PROJECT_SETTLEMENT | FIXED_ASSET/CIP(CLOSE转固) 或 PROJECT_COST+PROFIT_LOSS+REVENUE(结转) |
+| quality | NcrScrapAcctDocProvider | NCR_SCRAP | NON_OPERATING_EXPENSE / INVENTORY |
+| maintenance | MaintenanceLaborAcctDocProvider | MAINTENANCE_LABOR | MAINTENANCE_EXPENSE / SALARY_PAYABLE |
+| maintenance | MaintenanceIssueAcctDocProvider | MAINTENANCE_ISSUE | MAINTENANCE_EXPENSE(汇总借) / INVENTORY(贷按物料) |
+| finance | EmployeeAdvanceAcctDocProvider | EMPLOYEE_ADVANCE | EMPLOYEE_ADVANCE_RECEIVABLE / BANK_DEPOSIT |
+| finance | EmployeeAdvanceAcctDocProvider | EMPLOYEE_ADVANCE_SETTLE | BANK_DEPOSIT/EMPLOYEE_ADVANCE_RECEIVABLE(CASH) 或 EMPLOYEE_PAYABLE/EMPLOYEE_ADVANCE_RECEIVABLE(OFFSET) |
+| finance | ExpenseClaimAcctDocProvider | EXPENSE_CLAIM | ADMIN_EXPENSE / INPUT_VAT / EMPLOYEE_PAYABLE 或 BANK_DEPOSIT |
+| finance | NotesPayableAcctDocProvider | NOTES_PAYABLE_ISSUED | ACCOUNTS_PAYABLE / NOTES_PAYABLE |
+| finance | NotesPayableAcctDocProvider | NOTES_PAYABLE_HONORED | NOTES_PAYABLE / BANK_DEPOSIT |
+| finance | CreditFacilityInterestAcctDocProvider | CREDIT_FACILITY_INTEREST | FINANCIAL_EXPENSE / BANK_DEPOSIT |
+| finance | NotesReceivableAcctDocProvider | NOTES_RECEIVABLE_RECEIVED | NOTES_RECEIVABLE / AR |
+| finance | NotesReceivableAcctDocProvider | NOTES_RECEIVABLE_DISCOUNTED | BANK_DEPOSIT / FINANCIAL_EXPENSE / EXCHANGE_GAIN_LOSS / NOTES_RECEIVABLE |
+| finance | NotesReceivableAcctDocProvider | NOTES_RECEIVABLE_ENDORSED | ACCOUNTS_PAYABLE / NOTES_RECEIVABLE |
+| finance | NotesReceivableAcctDocProvider | NOTES_RECEIVABLE_COLLECTION | BANK_DEPOSIT / NOTES_RECEIVABLE |
+
+### 8.3 接入步骤（对齐 §5.4 五步模板）
+
+每个 Provider 接入遵循 §5.4：(1) 字典加 accountKey（本次一次性补全 23 键）→ (2) createFacts 的 fact 构造设 accountKey，
+既有 SUBJECT_* 保留作 fallback → (3) 种子 default 规则（运维按需；测试中按需注入 priority=0 全 NULL 维度规则）→
+(4) 测试覆盖命中覆盖 + 未命中 fallback 双路径 → (5) 本清单 §8.2 更新状态。
+
+### 8.4 反模式自检（扩展 §7）
+
+| 不要这样用 | 应该这样 |
+|------------|----------|
+| 为复用通用键而丢弃域专用语义（如把委外物资当 INVENTORY） | 委外物资/产成品/WIP 用域专用键，保留 fallback 编码差异可被规则覆盖 |
+| 同一 voucher 内把借/贷配对的两行设为相同 accountKey | 配对行（如差异↔WIP）用不同键，否则规则会把两行覆盖为同科目破坏复式 |
+| 对方向相关的 fact（INCREASE/DECREASE）按方向拆键 | 同键 + 既有 SUBJECT_* 方向逻辑保留；方向不进 accountKey（DC 由 fact.dcDirection 承载） |
+
+---
+
+
 
 - Plan：`docs/plans/2026-07-21-0827-1-finance-gl-mapping-rule-tables.md`
 - Posting 设计：`docs/design/finance/posting.md` §科目映射 / §凭证模板机制 / §过账引擎 / §失败处理策略
